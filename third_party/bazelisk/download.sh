@@ -1,0 +1,19 @@
+#!/bin/bash
+# Aurora Innovation, Inc. Proprietary and Confidential. Copyright 2022.
+
+set -eux
+
+BAZELISK_V="1.14.0"
+BAZELISK_TARBALL="v${BAZELISK_V}.tar.gz"
+BAZELISK_DIR="bazelisk-${BAZELISK_V}"
+
+mkdir -p tmp
+pushd tmp
+curl -LO "https://github.com/bazelbuild/bazelisk/archive/${BAZELISK_TARBALL}"
+tar xf "${BAZELISK_TARBALL}"
+popd
+
+cp "tmp/${BAZELISK_DIR}"/LICENSE .
+cp "tmp/${BAZELISK_DIR}"/bazelisk.py .
+
+rm -rf tmp
