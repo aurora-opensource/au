@@ -10,15 +10,23 @@ This is very much a work in progress and the top priority for improvement right 
 the following command:
 
 ```sh
-bazel test //au/...:all --cxxopt='-std=c++14'
+bazel test //au/...:all
 ```
 
 This assumes you have set up `direnv` or installed `bazel` on your system.  If you haven't done
 either of those, then run `./tools/bin/bazel` instead of `bazel`.  (But you should probably set up
 `direnv`; it makes your life much easier!)
 
-The build will likely use whatever toolchain components you happen to have on your system.  Our
-immediate goal is to add one hermetic toolchain for each officially supported target platform, and
-to be able to select them by passing, say, `--config=clang11`, `--config=gcc10`, etc. While getting
-this to work, we have added only enough code to be able to kick the tires on the build process.
-Once we have it working, we'll add the rest of the code.
+The build will use a hermetic clang toolchain by default.
+
+### Available compilers
+
+Use the following `--config` settings to switch to different compilers.
+
+| Compiler | Config option |
+| --- | --- |
+| Latest supported Clang | `--config=clang` |
+| Clang 11 | `--config=clang11` |
+| Clang 14 | `--config=clang14` |
+
+Note that the sandboxed compilers do not use a sysroot.

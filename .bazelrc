@@ -1,0 +1,14 @@
+# Use platforms for compiling C/C++ code.
+build --incompatible_enable_cc_toolchain_resolution
+
+# Allow the user to switch to various Clang version for compiling everything.
+build:clang11 --platform_suffix=clang11
+build:clang11 --//build:requested_compiler_flag=clang11
+build:clang14 --platform_suffix=clang14
+build:clang14 --//build:requested_compiler_flag=clang14
+
+# Add a generic alias if the user doesn't care about the exact version.
+build:clang --config=clang14
+
+# Compile with clang by default
+build --config=clang14
