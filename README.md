@@ -13,8 +13,9 @@ the following command:
 bazel test //au/...:all --cxxopt='-std=c++14'
 ```
 
-This assumes you have set up `direnv`.  If you haven't, then run `./tools/bin/bazel` instead of
-`bazel`.  (But you should probably set up `direnv`; it makes your life much easier!)
+This assumes you have set up `direnv` or installed `bazel` on your system.  If you haven't done
+either of those, then run `./tools/bin/bazel` instead of `bazel`.  (But you should probably set up
+`direnv`; it makes your life much easier!)
 
 The build will likely use whatever toolchain components you happen to have on your system.  Our
 immediate goal is to add one hermetic toolchain for each officially supported target platform, and
