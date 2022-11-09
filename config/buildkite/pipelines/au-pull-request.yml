@@ -1,0 +1,10 @@
+# Aurora Innovation, Inc. Proprietary and Confidential. Copyright 2022.
+
+agents:
+  queue: "ci-tiny"
+
+steps:
+  - label: "Clang 11"
+    command: bazel test --config=clang11 //...:all
+  - label: "Clang 14"
+    command: bazel test --config=clang14 //...:all
