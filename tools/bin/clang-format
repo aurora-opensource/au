@@ -1,7 +1,9 @@
 #!/bin/bash
 # Aurora Innovation, Inc. Proprietary and Confidential. Copyright 2022.
 
-bazel run \
+bazel \
+  --nohome_rc \
+  run \
   --ui_event_filters=-info,-stdout,-stderr \
   --noshow_progress \
   @llvm_14_toolchain_llvm//:bin/clang-format \
