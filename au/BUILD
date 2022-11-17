@@ -2,9 +2,13 @@
 
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
+################################################################################
+# Public libraries and tests
+
 cc_library(
     name = "au",
     hdrs = ["au.hh"],
+    visibility = ["//visibility:public"],
     deps = [":math"],
 )
 
@@ -22,6 +26,7 @@ cc_test(
 cc_library(
     name = "io",
     hdrs = ["io.hh"],
+    visibility = ["//visibility:public"],
     deps = [
         ":quantity",
         ":quantity_point",
@@ -39,6 +44,31 @@ cc_test(
         "@com_google_googletest//:gtest_main",
     ],
 )
+
+cc_library(
+    name = "testing",
+    testonly = True,
+    hdrs = ["testing.hh"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":io",
+        ":stdx",
+        ":unit_of_measure",
+    ],
+)
+
+cc_test(
+    name = "testing_test",
+    size = "small",
+    srcs = ["testing_test.cc"],
+    deps = [
+        ":testing",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+################################################################################
+# Implementation detail libraries and tests
 
 cc_library(
     name = "chrono_policy_validation",
@@ -264,27 +294,6 @@ cc_test(
     srcs = glob(["stdx/test/*.cc"]),
     deps = [
         ":stdx",
-        "@com_google_googletest//:gtest_main",
-    ],
-)
-
-cc_library(
-    name = "testing",
-    testonly = True,
-    hdrs = ["testing.hh"],
-    deps = [
-        ":io",
-        ":stdx",
-        ":unit_of_measure",
-    ],
-)
-
-cc_test(
-    name = "testing_test",
-    size = "small",
-    srcs = ["testing_test.cc"],
-    deps = [
-        ":testing",
         "@com_google_googletest//:gtest_main",
     ],
 )
