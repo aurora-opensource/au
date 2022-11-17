@@ -25,6 +25,22 @@ cc_test(
 )
 
 cc_library(
+    name = "utility",
+    hdrs = glob(["utility/*.hh"]),
+    deps = [":stdx"],
+)
+
+cc_test(
+    name = "utility_test",
+    size = "small",
+    srcs = glob(["utility/test/*.cc"]),
+    deps = [
+        ":utility",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "zero",
     hdrs = ["zero.hh"],
 )
