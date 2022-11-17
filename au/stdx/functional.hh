@@ -4,6 +4,7 @@
 
 #include <utility>
 
+namespace au {
 namespace stdx {
 
 // Source: adapted from (https://en.cppreference.com/w/cpp/utility/functional/identity)
@@ -15,3 +16,4 @@ struct identity {
 };
 
 }  // namespace stdx
+}  // namespace au

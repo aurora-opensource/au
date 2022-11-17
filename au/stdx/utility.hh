@@ -5,6 +5,7 @@
 #include <limits>
 #include <type_traits>
 
+namespace au {
 namespace stdx {
 
 // Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
@@ -93,3 +94,4 @@ struct CmpLessImpl<T, U, std::enable_if_t<!std::is_signed<T>::value && std::is_s
 };
 
 }  // namespace stdx
+}  // namespace au

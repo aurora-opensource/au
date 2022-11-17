@@ -4,6 +4,7 @@
 
 #include "gtest/gtest.h"
 
+namespace au {
 namespace stdx {
 
 TEST(CmpLess, HandlesMixedSignedUnsigned) {
@@ -21,3 +22,4 @@ TEST(CmpEqual, HandlesMixedSignedUnsigned) {
 }
 
 }  // namespace stdx
+}  // namespace au

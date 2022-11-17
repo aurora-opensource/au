@@ -6,6 +6,7 @@
 
 #include "au/stdx/type_traits.hh"
 
+namespace au {
 namespace stdx {
 namespace experimental {
 
@@ -51,3 +52,4 @@ using detected_or_t = typename detected_or<Default, Op, Args...>::type;
 
 }  // namespace experimental
 }  // namespace stdx
+}  // namespace au

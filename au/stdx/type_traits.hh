@@ -4,6 +4,7 @@
 
 #include <type_traits>
 
+namespace au {
 namespace stdx {
 
 // Source: adapted from (https://en.cppreference.com/w/cpp/types/type_identity).
@@ -49,3 +50,4 @@ template <class...>
 using void_t = void;
 
 }  // namespace stdx
+}  // namespace au
