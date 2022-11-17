@@ -417,11 +417,6 @@ TEST(isnan, TransparentlyActsOnSameAsValue) {
     }
 }
 
-TEST(isnan, SupportsConstexpr) {
-    constexpr bool b = isnan((meters / second)(5.5));
-    EXPECT_FALSE(b);
-}
-
 TEST(isnan, UnqualifiedCallsGiveStdVersions) {
     // This test exists to make sure we don't break code with unqualified isnan calls.
     const bool b = isnan(5.5);

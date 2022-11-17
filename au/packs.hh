@@ -47,18 +47,18 @@ using ExpT = typename Exp<T>::type;
 //
 // This should be the identity for anything that is already a pack of this type, and otherwise
 // should wrap it in this type of pack.
-template <template <class... Ts> typename Pack, typename T>
+template <template <class... Ts> class Pack, typename T>
 struct AsPack : stdx::type_identity<Pack<T>> {};
-template <template <class... Ts> typename Pack, typename T>
+template <template <class... Ts> class Pack, typename T>
 using AsPackT = typename AsPack<Pack, T>::type;
 
 // Type trait to remove a Pack enclosing a single item.
 //
 // Defined only if T is Pack<Ts...> for some typelist.  Always the identity, unless sizeof...(Ts) is
 // exactly 1, in which case, it returns the (sole) element.
-template <template <class... Ts> typename Pack, typename T>
+template <template <class... Ts> class Pack, typename T>
 struct UnpackIfSolo;
-template <template <class... Ts> typename Pack, typename T>
+template <template <class... Ts> class Pack, typename T>
 using UnpackIfSoloT = typename UnpackIfSolo<Pack, T>::type;
 
 // Trait to define whether two types are in order, based on the total ordering for some pack.
@@ -67,12 +67,12 @@ using UnpackIfSoloT = typename UnpackIfSolo<Pack, T>::type;
 // prefer to inherit from LexicographicTotalOrdering (below), because it guards against the most
 // common way to fail to achieve a strict total ordering (namely, by having two types which are not
 // identical nevertheless compare equal).
-template <template <class...> typename Pack, typename A, typename B>
+template <template <class...> class Pack, typename A, typename B>
 struct InOrderFor;
 
 // A strict total ordering which combines strict partial orderings serially, using the first which
 // distinguishes A and B.
-template <typename A, typename B, template <class, class> typename... Orderings>
+template <typename A, typename B, template <class, class> class... Orderings>
 struct LexicographicTotalOrdering;
 
 // A (somewhat arbitrary) total ordering on _packs themselves_.
@@ -91,9 +91,9 @@ struct InStandardPackOrder;
 // `List<...>`, respect the _ordering_ for `List`, with no duplicates.  Otherwise, behaviour is
 // undefined.  (This precondition will automatically be satisfied if *every* instance of `List<...>`
 // arises as the result of a call to `FlatDedupedTypeListT<...>`.)
-template <template <class...> typename List, typename... Ts>
+template <template <class...> class List, typename... Ts>
 struct FlatDedupedTypeList;
-template <template <class...> typename List, typename... Ts>
+template <template <class...> class List, typename... Ts>
 using FlatDedupedTypeListT = typename FlatDedupedTypeList<List, AsPackT<List, Ts>...>::type;
 
 namespace detail {
@@ -105,15 +105,15 @@ using SimplifyBasePowersT = typename SimplifyBasePowers<T>::type;
 }  // namespace detail
 
 // Compute the product between two power packs.
-template <template <class...> typename Pack, typename... Ts>
+template <template <class...> class Pack, typename... Ts>
 struct PackProduct;
-template <template <class...> typename Pack, typename... Ts>
+template <template <class...> class Pack, typename... Ts>
 using PackProductT = detail::SimplifyBasePowersT<typename PackProduct<Pack, Ts...>::type>;
 
 // Compute a rational power of a pack.
-template <template <class...> typename Pack, typename T, typename E>
+template <template <class...> class Pack, typename T, typename E>
 struct PackPower;
-template <template <class...> typename Pack,
+template <template <class...> class Pack,
           typename T,
           std::intmax_t ExpNum,
           std::intmax_t ExpDen = 1>
@@ -121,11 +121,11 @@ using PackPowerT =
     detail::SimplifyBasePowersT<typename PackPower<Pack, T, std::ratio<ExpNum, ExpDen>>::type>;
 
 // Compute the inverse of a power pack.
-template <template <class...> typename Pack, typename T>
+template <template <class...> class Pack, typename T>
 using PackInverseT = PackPowerT<Pack, T, -1>;
 
 // Compute the quotient of two power packs.
-template <template <class...> typename Pack, typename T, typename U>
+template <template <class...> class Pack, typename T, typename U>
 using PackQuotientT = PackProductT<Pack, T, PackInverseT<Pack, U>>;
 
 namespace detail {
@@ -148,12 +148,12 @@ using DenominatorPartT = typename DenominatorPart<T>::type;
 // its parameters fulfill all of the appropriate type traits, namely:
 //
 // - `AreBasesInOrder<Pack, T>`
-template <template <class...> typename Pack, typename T>
+template <template <class...> class Pack, typename T>
 struct IsValidPack;
 
 // Assuming that `T` is an instance of `Pack<BPs...>`, validates that every consecutive pair from
 // `BaseT<BPs>...` satisfies the strict total ordering `InOrderFor<Pack, ...>` for `Pack`.
-template <template <class...> typename Pack, typename T>
+template <template <class...> class Pack, typename T>
 struct AreBasesInOrder;
 
 // Assuming that `T` is an instance of `Pack<BPs...>`, validates that every consecutive pair from
@@ -161,11 +161,11 @@ struct AreBasesInOrder;
 //
 // This is very similar to AreBasesInOrder, but is intended for packs that _don't_ represent
 // products-of-powers.
-template <template <class...> typename Pack, typename T>
+template <template <class...> class Pack, typename T>
 struct AreElementsInOrder;
 
 // Assuming `T` is an instance of `Pack<BPs...>`, validates that `Exp<BPs>...` is always nonzero.
-template <template <class...> typename Pack, typename T>
+template <template <class...> class Pack, typename T>
 struct AreAllPowersNonzero;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,18 +249,18 @@ struct Exp<RatioPow<T, N, D>> : stdx::type_identity<std::ratio<N, D>> {};
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `AsPackT` implementation.
 
-template <template <class... Ts> typename Pack, typename... Ts>
+template <template <class... Ts> class Pack, typename... Ts>
 struct AsPack<Pack, Pack<Ts...>> : stdx::type_identity<Pack<Ts...>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `UnpackIfSoloT` implementation.
 
 // Null pack case: do not unpack.
-template <template <class... Ts> typename Pack>
+template <template <class... Ts> class Pack>
 struct UnpackIfSolo<Pack, Pack<>> : stdx::type_identity<Pack<>> {};
 
 // Non-null pack case: unpack only if there is nothing after the head element.
-template <template <class... Ts> typename Pack, typename T, typename... Ts>
+template <template <class... Ts> class Pack, typename T, typename... Ts>
 struct UnpackIfSolo<Pack, Pack<T, Ts...>>
     : std::conditional<(sizeof...(Ts) == 0u), T, Pack<T, Ts...>> {};
 
@@ -281,9 +281,9 @@ struct LexicographicTotalOrdering<A, B> : std::false_type {
 template <typename A,
           typename B,
           template <class, class>
-          typename PrimaryOrdering,
+          class PrimaryOrdering,
           template <class, class>
-          typename... Tiebreakers>
+          class... Tiebreakers>
 struct LexicographicTotalOrdering<A, B, PrimaryOrdering, Tiebreakers...> :
 
     // Short circuit for when the inputs are the same.
@@ -314,34 +314,34 @@ namespace detail {
 // Helper: check that the lead bases are in order.
 template <typename T, typename U>
 struct LeadBasesInOrder;
-template <template <class...> typename P, typename H1, typename... T1, typename H2, typename... T2>
+template <template <class...> class P, typename H1, typename... T1, typename H2, typename... T2>
 struct LeadBasesInOrder<P<H1, T1...>, P<H2, T2...>> : InOrderFor<P, BaseT<H1>, BaseT<H2>> {};
 
 // Helper: check that the lead exponents are in order.
 template <typename T, typename U>
 struct LeadExpsInOrder;
-template <template <class...> typename P, typename H1, typename... T1, typename H2, typename... T2>
+template <template <class...> class P, typename H1, typename... T1, typename H2, typename... T2>
 struct LeadExpsInOrder<P<H1, T1...>, P<H2, T2...>>
     : stdx::bool_constant<(std::ratio_subtract<ExpT<H1>, ExpT<H2>>::num < 0)> {};
 
 // Helper: apply InStandardPackOrder to tails.
 template <typename T, typename U>
 struct TailsInStandardPackOrder;
-template <template <class...> typename P, typename H1, typename... T1, typename H2, typename... T2>
+template <template <class...> class P, typename H1, typename... T1, typename H2, typename... T2>
 struct TailsInStandardPackOrder<P<H1, T1...>, P<H2, T2...>>
     : InStandardPackOrder<P<T1...>, P<T2...>> {};
 }  // namespace detail
 
 // Base case: left pack is null.
-template <template <class...> typename P, typename... Ts>
+template <template <class...> class P, typename... Ts>
 struct InStandardPackOrder<P<>, P<Ts...>> : stdx::bool_constant<(sizeof...(Ts) > 0)> {};
 
 // Base case: right pack (only) is null.
-template <template <class...> typename P, typename H, typename... T>
+template <template <class...> class P, typename H, typename... T>
 struct InStandardPackOrder<P<H, T...>, P<>> : std::false_type {};
 
 // Recursive case: try ordering the heads, and fall back to the tails.
-template <template <class...> typename P, typename H1, typename... T1, typename H2, typename... T2>
+template <template <class...> class P, typename H1, typename... T1, typename H2, typename... T2>
 struct InStandardPackOrder<P<H1, T1...>, P<H2, T2...>>
     : LexicographicTotalOrdering<P<H1, T1...>,
                                  P<H2, T2...>,
@@ -355,20 +355,20 @@ struct InStandardPackOrder<P<H1, T1...>, P<H2, T2...>>
 // 1-ary Base case: a list with a single element is already done.
 //
 // (We explicitly assumed that any `List<...>` inputs would already be in sorted order.)
-template <template <class...> typename List, typename... Ts>
+template <template <class...> class List, typename... Ts>
 struct FlatDedupedTypeList<List, List<Ts...>> : stdx::type_identity<List<Ts...>> {};
 
 // 2-ary base case: if we exhaust elements in the second list, the first list is the answer.
 //
 // (Again: this relies on the explicit assumption that any `List<...>` inputs are already in order.)
-template <template <class...> typename List, typename... Ts>
+template <template <class...> class List, typename... Ts>
 struct FlatDedupedTypeList<List, List<Ts...>, List<>> : stdx::type_identity<List<Ts...>> {};
 
 // 2-ary recursive case, single-element head.
 //
 // This use case also serves as the core "insertion logic", inserting `T` into the proper place
 // within `List<H, Ts...>`.
-template <template <class...> typename List, typename T, typename H, typename... Ts>
+template <template <class...> class List, typename T, typename H, typename... Ts>
 struct FlatDedupedTypeList<List, List<T>, List<H, Ts...>> :
 
     // If the candidate element exactly equals the head, disregard it (de-dupe!).
@@ -387,7 +387,7 @@ struct FlatDedupedTypeList<List, List<T>, List<H, Ts...>> :
 };
 
 // 2-ary recursive case, multi-element head: insert head of second element, and recurse.
-template <template <class...> typename List,
+template <template <class...> class List,
           typename H1,
           typename N1,
           typename... T1,
@@ -402,7 +402,7 @@ struct FlatDedupedTypeList<List, List<H1, N1, T1...>, List<H2, T2...>>
 // N-ary case, multi-element head: peel off tail-of-head, and recurse.
 //
 // Note that this also handles the 2-ary case where the head list has more than one element.
-template <template <class...> typename List, typename L1, typename L2, typename L3, typename... Ls>
+template <template <class...> class List, typename L1, typename L2, typename L3, typename... Ls>
 struct FlatDedupedTypeList<List, L1, L2, L3, Ls...>
     : FlatDedupedTypeList<List, FlatDedupedTypeListT<List, L1, L2>, L3, Ls...> {};
 
@@ -410,23 +410,23 @@ struct FlatDedupedTypeList<List, L1, L2, L3, Ls...>
 // `PackProductT` implementation.
 
 // 0-ary case:
-template <template <class...> typename Pack>
+template <template <class...> class Pack>
 struct PackProduct<Pack> : stdx::type_identity<Pack<>> {};
 
 // 1-ary case:
-template <template <class...> typename Pack, typename T>
+template <template <class...> class Pack, typename T>
 struct PackProduct<Pack, Pack<T>> : stdx::type_identity<Pack<T>> {};
 
 // 2-ary Base case: two null packs.
-template <template <class...> typename Pack>
+template <template <class...> class Pack>
 struct PackProduct<Pack, Pack<>, Pack<>> : stdx::type_identity<Pack<>> {};
 
 // 2-ary Base case: only left pack is null.
-template <template <class...> typename Pack, typename T, typename... Ts>
+template <template <class...> class Pack, typename T, typename... Ts>
 struct PackProduct<Pack, Pack<>, Pack<T, Ts...>> : stdx::type_identity<Pack<T, Ts...>> {};
 
 // 2-ary Base case: only right pack is null.
-template <template <class...> typename Pack, typename T, typename... Ts>
+template <template <class...> class Pack, typename T, typename... Ts>
 struct PackProduct<Pack, Pack<T, Ts...>, Pack<>> : stdx::type_identity<Pack<T, Ts...>> {};
 
 namespace detail {
@@ -440,7 +440,7 @@ using ComputeRationalPowerT = typename ComputeRationalPower<B, E1, E2>::type;
 }  // namespace detail
 
 // 2-ary Recursive case: two non-null packs.
-template <template <class...> typename P, typename H1, typename... T1, typename H2, typename... T2>
+template <template <class...> class P, typename H1, typename... T1, typename H2, typename... T2>
 struct PackProduct<P, P<H1, T1...>, P<H2, T2...>> :
 
     // If the bases for H1 and H2 are in-order, prepend H1 to the product of the remainder.
@@ -464,7 +464,7 @@ struct PackProduct<P, P<H1, T1...>, P<H2, T2...>> :
 };
 
 // N-ary case, N > 2: recurse.
-template <template <class...> typename P,
+template <template <class...> class P,
           typename... T1s,
           typename... T2s,
           typename... T3s,
@@ -480,7 +480,7 @@ template <typename T, typename E>
 using MultiplyExpFor = std::ratio_multiply<ExpT<T>, E>;
 }
 
-template <template <class...> typename P, typename... Ts, typename E>
+template <template <class...> class P, typename... Ts, typename E>
 struct PackPower<P, P<Ts...>, E>
     : std::conditional<(E::num == 0),
                        P<>,
@@ -492,14 +492,14 @@ struct PackPower<P, P<Ts...>, E>
 // `IsValidPack` implementation.
 
 namespace detail {
-template <template <class...> typename Pack, typename T>
+template <template <class...> class Pack, typename T>
 struct IsPackOf : std::false_type {};
 
-template <template <class...> typename Pack, typename... Ts>
+template <template <class...> class Pack, typename... Ts>
 struct IsPackOf<Pack, Pack<Ts...>> : std::true_type {};
 }  // namespace detail
 
-template <template <class...> typename Pack, typename T>
+template <template <class...> class Pack, typename T>
 struct IsValidPack : stdx::conjunction<detail::IsPackOf<Pack, T>,
                                        AreBasesInOrder<Pack, T>,
                                        AreAllPowersNonzero<Pack, T>> {};
@@ -509,17 +509,17 @@ struct IsValidPack : stdx::conjunction<detail::IsPackOf<Pack, T>,
 
 namespace detail {
 
-template <template <class...> typename Pack>
+template <template <class...> class Pack>
 constexpr bool are_consecutive_elements_in_order_for() {
     return true;
 }
 
-template <template <class...> typename Pack, typename T>
+template <template <class...> class Pack, typename T>
 constexpr bool are_consecutive_elements_in_order_for() {
     return true;
 }
 
-template <template <class...> typename Pack, typename T1, typename T2, typename... Ts>
+template <template <class...> class Pack, typename T1, typename T2, typename... Ts>
 constexpr auto are_consecutive_elements_in_order_for() {
     return InOrderFor<Pack, T1, T2>::value &&
            are_consecutive_elements_in_order_for<Pack, T2, Ts...>();
@@ -536,20 +536,20 @@ constexpr bool all_true(const std::array<bool, N> &values) {
 }
 }  // namespace detail
 
-template <template <class...> typename Pack, typename... Ts>
+template <template <class...> class Pack, typename... Ts>
 struct AreElementsInOrder<Pack, Pack<Ts...>>
     : stdx::bool_constant<detail::are_consecutive_elements_in_order_for<Pack, Ts...>()> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `AreBasesInOrder` implementation.
 
-template <template <class...> typename Pack, typename... Ts>
+template <template <class...> class Pack, typename... Ts>
 struct AreBasesInOrder<Pack, Pack<Ts...>> : AreElementsInOrder<Pack, Pack<BaseT<Ts>...>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `AreAllPowersNonzero` implementation.
 
-template <template <class...> typename Pack, typename... Ts>
+template <template <class...> class Pack, typename... Ts>
 struct AreAllPowersNonzero<Pack, Pack<Ts...>>
     : stdx::bool_constant<detail::all_true(
           std::array<bool, sizeof...(Ts)>{(ExpT<Ts>::num != 0)...})> {};
@@ -576,7 +576,7 @@ struct SimplifyBasePower<RatioPow<B, N, D>>
     : std::conditional<(D == 1), SimplifyBasePowerT<Pow<B, N>>, RatioPow<B, N, D>> {};
 
 // To simplify the base powers in a pack, give the pack with each base power simplified.
-template <template <class...> typename Pack, typename... BPs>
+template <template <class...> class Pack, typename... BPs>
 struct SimplifyBasePowers<Pack<BPs...>> : stdx::type_identity<Pack<SimplifyBasePowerT<BPs>...>> {};
 }  // namespace detail
 
@@ -584,16 +584,16 @@ struct SimplifyBasePowers<Pack<BPs...>> : stdx::type_identity<Pack<SimplifyBaseP
 // `NumeratorPartT` and `DenominatorPartT` implementation.
 
 namespace detail {
-template <template <class...> typename Pack>
+template <template <class...> class Pack>
 struct NumeratorPart<Pack<>> : stdx::type_identity<Pack<>> {};
 
-template <template <class...> typename Pack, typename Head, typename... Tail>
+template <template <class...> class Pack, typename Head, typename... Tail>
 struct NumeratorPart<Pack<Head, Tail...>>
     : std::conditional<(ExpT<Head>::num > 0),
                        PackProductT<Pack, Pack<Head>, NumeratorPartT<Pack<Tail...>>>,
                        NumeratorPartT<Pack<Tail...>>> {};
 
-template <template <class...> typename Pack, typename... Ts>
+template <template <class...> class Pack, typename... Ts>
 struct DenominatorPart<Pack<Ts...>> : NumeratorPart<PackInverseT<Pack, Pack<Ts...>>> {};
 }  // namespace detail
 

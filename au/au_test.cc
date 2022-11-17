@@ -15,8 +15,9 @@ TEST(DurationQuantity, InterconvertsWithExactlyEquivalentChronoDuration) {
     constexpr QuantityD<Seconds> from_chrono = std::chrono::duration<double>{1.23};
     EXPECT_THAT(from_chrono, SameTypeAndValue(seconds(1.23)));
 
-    constexpr std::chrono::nanoseconds from_au = nano(seconds)(456L);
-    EXPECT_THAT(from_au.count(), SameTypeAndValue(456L));
+    constexpr auto val = std::chrono::nanoseconds::rep{456};
+    constexpr std::chrono::nanoseconds from_au = nano(seconds)(val);
+    EXPECT_THAT(from_au.count(), SameTypeAndValue(val));
 }
 
 TEST(DurationQuantity, InterconvertsWithIndirectlyEquivalentChronoDuration) {

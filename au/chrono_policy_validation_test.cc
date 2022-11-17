@@ -35,11 +35,11 @@ struct Equality {
 // Tests for the machinery introduced in this file.
 
 TEST(MapToUnitsLib, CreatesEquivalentType) {
-    EXPECT_THAT(map_to_au(8s), QuantityEquivalent(some_units(8L)));
+    EXPECT_THAT(map_to_au(8s), QuantityEquivalent(some_units((8s).count())));
 
     EXPECT_THAT(map_to_au(std::chrono::duration<double>(3.4)), QuantityEquivalent(some_units(3.4)));
 
-    EXPECT_THAT(map_to_au(3ms), QuantityEquivalent(milli(some_units)(3L)));
+    EXPECT_THAT(map_to_au(3ms), QuantityEquivalent(milli(some_units)((3ms).count())));
 }
 
 TEST(MapToUnitsLib, IsIdentityForNonChronoDurationObjects) {

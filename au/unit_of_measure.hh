@@ -507,23 +507,23 @@ namespace detail {
 // If none do, it will produce the target unit.
 
 // Generic template.
-template <template <class, class> typename Matcher,
+template <template <class, class> class Matcher,
           typename TargetUnit,
           typename UnitList = TargetUnit>
 struct FirstMatchingUnit;
 
 // Base case for an empty list: the target unit is the best match.
-template <template <class, class> typename Matcher,
+template <template <class, class> class Matcher,
           typename TargetUnit,
           template <class...>
-          typename List>
+          class List>
 struct FirstMatchingUnit<Matcher, TargetUnit, List<>> : stdx::type_identity<TargetUnit> {};
 
 // Recursive case for a non-empty list: return head if it matches, or else recurse.
-template <template <class, class> typename Matcher,
+template <template <class, class> class Matcher,
           typename TargetUnit,
           template <class...>
-          typename List,
+          class List,
           typename H,
           typename... Ts>
 struct FirstMatchingUnit<Matcher, TargetUnit, List<H, Ts...>>

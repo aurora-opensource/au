@@ -8,7 +8,7 @@
 
 namespace au {
 
-template <template <class U> typename Prefix>
+template <template <class U> class Prefix>
 struct PrefixApplier {
     // Applying a Prefix to a Unit instance, creates an instance of the Prefixed Unit.
     template <typename U>

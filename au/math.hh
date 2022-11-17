@@ -516,6 +516,14 @@ struct numeric_limits<au::Quantity<U, R>> {
     }
 };
 
+// Specialize for cv-qualified Quantity types by inheriting from bare Quantity implementation.
+template <typename U, typename R>
+struct numeric_limits<const au::Quantity<U, R>> : numeric_limits<au::Quantity<U, R>> {};
+template <typename U, typename R>
+struct numeric_limits<volatile au::Quantity<U, R>> : numeric_limits<au::Quantity<U, R>> {};
+template <typename U, typename R>
+struct numeric_limits<const volatile au::Quantity<U, R>> : numeric_limits<au::Quantity<U, R>> {};
+
 template <typename U, typename R>
 constexpr bool numeric_limits<au::Quantity<U, R>>::is_specialized;
 
