@@ -1,0 +1,84 @@
+// Aurora Innovation, Inc. Proprietary and Confidential. Copyright 2022.
+
+#pragma once
+
+#include "au/packs.hh"
+
+namespace au {
+
+template <typename... BPs>
+struct Dimension {
+    // Having separate `static_assert` instances for the individual conditions produces more
+    // readable errors if we fail.
+    static_assert(AreAllPowersNonzero<Dimension, Dimension<BPs...>>::value,
+                  "All powers must be nonzero");
+    static_assert(AreBasesInOrder<Dimension, Dimension<BPs...>>::value,
+                  "Bases must be listed in ascending order");
+
+    // We also want to use the "full" validity check.  This should be equivalent to the above
+    // conditions, but if we add more conditions later, we want them to get picked up here
+    // automatically.
+    static_assert(IsValidPack<Dimension, Dimension<BPs...>>::value, "Ill-formed Dimension");
+};
+
+// Define readable operations for product, quotient, power, inverse on Dimensions.
+template <typename... BPs>
+using DimProductT = PackProductT<Dimension, BPs...>;
+template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
+using DimPowerT = PackPowerT<Dimension, T, ExpNum, ExpDen>;
+template <typename T, typename U>
+using DimQuotientT = PackQuotientT<Dimension, T, U>;
+template <typename T>
+using DimInverseT = PackInverseT<Dimension, T>;
+
+template <typename... Dims>
+struct CommonDimension;
+template <typename... Dims>
+using CommonDimensionT = typename CommonDimension<Dims...>::type;
+
+template <typename... BaseDims>
+struct CommonDimension<Dimension<BaseDims...>> : stdx::type_identity<Dimension<BaseDims...>> {};
+template <typename Head, typename... Tail>
+struct CommonDimension<Head, Tail...> : CommonDimension<Tail...> {
+    static_assert(std::is_same<Head, CommonDimensionT<Tail...>>::value,
+                  "Common dimension only defined when all dimensions are identical");
+};
+
+namespace base_dim {
+
+template <int I>
+struct BaseDimension {
+    static constexpr int base_dim_index = I;
+};
+template <int I>
+constexpr int BaseDimension<I>::base_dim_index;
+
+template <typename T, typename U>
+struct OrderByBaseDimIndex : stdx::bool_constant<(T::base_dim_index < U::base_dim_index)> {};
+
+struct Length : BaseDimension<1> {};
+struct Mass : BaseDimension<2> {};
+struct Time : BaseDimension<3> {};
+struct Current : BaseDimension<4> {};
+struct Temperature : BaseDimension<5> {};
+struct Angle : BaseDimension<6> {};
+struct Information : BaseDimension<7> {};
+
+}  // namespace base_dim
+
+template <typename A, typename B>
+struct InOrderFor<Dimension, A, B>
+    : LexicographicTotalOrdering<A, B, base_dim::OrderByBaseDimIndex> {};
+
+// The types we want to expose to the rest of the library internals are the full-fledged Dimensions,
+// not the Base Dimensions, because Dimensions are easier to work with (we can take products,
+// quotients, powers, etc.).
+using Length = Dimension<base_dim::Length>;
+using Mass = Dimension<base_dim::Mass>;
+using Time = Dimension<base_dim::Time>;
+using Current = Dimension<base_dim::Current>;
+using Temperature = Dimension<base_dim::Temperature>;
+using Angle = Dimension<base_dim::Angle>;
+using Information = Dimension<base_dim::Information>;
+
+}  // namespace au
