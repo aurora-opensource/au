@@ -1,4 +1,4 @@
-# Aurora Innovation, Inc. Proprietary and Confidential. Copyright 2022.
+# Copyright 2022 Aurora Operations, Inc.
 
 load("@rules_cc//cc:defs.bzl", "cc_library")
 

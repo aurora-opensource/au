@@ -1,4 +1,4 @@
-// Aurora Innovation, Inc. Proprietary and Confidential. Copyright 2021.
+// Copyright 2022 Aurora Operations, Inc.
 
 #include "au/utility/string_constant.hh"
 
