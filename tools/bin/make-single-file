@@ -1,0 +1,160 @@
+#!/usr/bin/python3
+# Copyright 2022 Aurora Operations, Inc.
+
+
+import argparse
+import datetime
+import re
+import sys
+
+
+AURORA_COPYRIGHT = "Copyright {year} Aurora Operations, Inc."
+
+
+def main(argv=None):
+    """
+    Print, to stdout, the contents of a single-file version of the input file.
+
+    A "single-file version" means that we directly include the contents of all
+    transitively included files which are within the project, but we leave other
+    `#include` directives (such as standard library headers) untouched.
+    """
+    args = parse_command_line_args(argv)
+    files = parse_files(filenames=args.main_files, prefix=args.prefix)
+    print_unified_file(files)
+
+    return 0
+
+
+def parse_command_line_args(argv):
+    """Read the arguments from the command line."""
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("main_files", nargs="+", help="The main files to aggregate")
+
+    parser.add_argument(
+        "--prefix",
+        default="au",
+        help="Only files starting with this will be included",
+    )
+
+    return parser.parse_args()
+
+
+def parse_files(filenames, prefix):
+    """
+    Create a `SourceFile` for each of the transitive includes of `main_file`.
+    """
+    # Note: this loop is sloppy about preserving the same order.
+    # This shouldn't matter as long as it's topologically equivalent.
+    files = {}
+    while filenames:
+        next_file = filenames.pop()
+        files[next_file] = SourceFile(filename=next_file, prefix=prefix)
+        for target in files[next_file].graph_includes:
+            if target not in files:
+                filenames.append(target)
+
+    return files
+
+
+class SourceFile:
+    """
+    A structured representation of a file.
+
+    Besides the name, keeps track of project-internal includes, project-external
+    includes, and the lines of content in the file.
+    """
+
+    def __init__(self, filename, prefix):
+        self.name = filename
+        self.global_includes = []
+        self.graph_includes = []
+        self.lines = []
+
+        with open(filename) as f:
+            was_last_line_blank = False
+            for line in f:
+                if line.startswith("#pragma once"):
+                    continue
+                if re.search(AURORA_COPYRIGHT.format(year="20.."), line):
+                    continue
+
+                # Collapse consecutive blank lines into one.
+                if line.strip():
+                    was_last_line_blank = False
+                else:
+                    if was_last_line_blank:
+                        continue
+                    was_last_line_blank = True
+
+                # Put this line where it belongs.  If it's an `#include`, sort
+                # it with either the project-specific collection
+                # ("graph_includes"), or the global collection.  Otherwise,
+                # just add it to the list of content lines.
+                target = include_target(line)
+                if target:
+                    if target.startswith(prefix):
+                        self.graph_includes.append(target)
+                    else:
+                        self.global_includes.append(line.rstrip())
+                else:
+                    self.lines.append(line.rstrip())
+
+
+def include_target(line):
+    """The name of the file if this is an `#include` line, else None."""
+    m = re.match(r'\#include [<"]([^"]+)[>"]', line)
+    return m.group(1) if m else None
+
+
+def sort_topologically(files):
+    """
+    Produce a topologically sorted list of the keys of `files`.
+
+    Topological sorting means that no file can appear before any of its
+    transitive includes.
+
+    :param files:  A dictionary mapping filenames onto `SourceFile` instances.
+    """
+    ready_files = []
+    unvisited_deps = {f: files[f].graph_includes for f in files}
+    while unvisited_deps:
+        added_this_cycle = []
+        for f in unvisited_deps:
+            if not unvisited_deps[f]:
+                for f_to_clean in unvisited_deps:
+                    if f in unvisited_deps[f_to_clean]:
+                        unvisited_deps[f_to_clean].remove(f)
+
+                added_this_cycle.append(f)
+
+        for f in added_this_cycle:
+            unvisited_deps.pop(f)
+
+        ready_files.extend(added_this_cycle)
+    return ready_files
+
+
+def include_lines(files):
+    """The set of global includes, deduplicated across all project files."""
+    return set(line for f in files for line in files[f].global_includes)
+
+
+def print_unified_file(files):
+    """Print the single-file output to stdout."""
+    print(f"// {AURORA_COPYRIGHT.format(year=datetime.datetime.now().year)}")
+    print()
+    print("#pragma once")
+    print()
+
+    for i in sorted(include_lines(files)):
+        print(i)
+
+    for f in sort_topologically(files):
+        for line in files[f].lines:
+            print(line)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
