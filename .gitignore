@@ -1,1 +1,4 @@
 /bazel-*
+
+venv
+site
