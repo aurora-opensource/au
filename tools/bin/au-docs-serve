@@ -5,8 +5,6 @@ source venv/bin/activate
 python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 
-echo "VIRTUAL ENV CHECK: $VIRTUAL_ENV"
 python3 -m mkdocs serve
 
 deactivate
-echo "VIRTUAL ENV CHECK: $VIRTUAL_ENV"
