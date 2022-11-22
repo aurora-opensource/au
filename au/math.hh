@@ -5,7 +5,9 @@
 #include <cmath>
 #include <limits>
 
-#include "au/units.hh"
+#include "au/quantity.hh"
+#include "au/quantity_point.hh"
+#include "au/units/radians.hh"
 
 namespace au {
 

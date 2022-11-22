@@ -2,7 +2,16 @@
 
 #include "au/math.hh"
 
+#include "au/prefix.hh"
 #include "au/testing.hh"
+#include "au/units/celsius.hh"
+#include "au/units/degrees.hh"
+#include "au/units/fahrenheit.hh"
+#include "au/units/hertz.hh"
+#include "au/units/inches.hh"
+#include "au/units/meters.hh"
+#include "au/units/ohms.hh"
+#include "au/units/seconds.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
