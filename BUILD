@@ -10,6 +10,7 @@ compile_pip_requirements(
 py_binary(
     name = "update_docs",
     srcs = ["update_docs.py"],
+    data = ["mkdocs.yml"] + glob(["docs/**"]),
     deps = [
         "@pip_deps_mkdocs//:pkg",
     ],
