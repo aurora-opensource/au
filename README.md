@@ -5,6 +5,8 @@ building out the machinery for building the code and docs: making it easy to get
 getting the toolchains we need, and setting up CI builds.  Once that foundation
 is in place, we'll port the full code.
 
+[![Explanation Video](https://user-images.githubusercontent.com/10720055/203602853-9437f26a-9b1f-4b54-8a4d-2fb242ed9953.png)](https://www.youtube.com/watch?v=5dhFtSu3wCo)
+
 ## How to build
 
 This is very much a work in progress and the top priority for improvement right now.  You can try
