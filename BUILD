@@ -1,4 +1,5 @@
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+load("@pip_deps//:requirements.bzl", "requirement")
 
 # This rule adds a convenient way to update the requirements file.
 compile_pip_requirements(
@@ -10,7 +11,9 @@ compile_pip_requirements(
 py_binary(
     name = "update_docs",
     srcs = ["update_docs.py"],
+    data = ["mkdocs.yml"] + glob(["docs/**"]),
     deps = [
-        "@pip_deps_mkdocs//:pkg",
+        requirement("mkdocs"),
+        requirement("mkdocs-material"),
     ],
 )

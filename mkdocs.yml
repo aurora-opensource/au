@@ -1,0 +1,42 @@
+# Aurora Innovation, Inc. Proprietary and Confidential. Copyright 2021.
+
+site_name: au
+site_description: "A C++ units library, by Aurora"
+site_url: https://aurora-tech.github.io/au
+site_author: "au team"
+copyright: Copyright &copy; 2022, Aurora Innovation, Inc. All rights reserved
+
+repo_url: https://github.com/aurora-tech/au
+
+theme:
+  name: material
+
+extra_javascript:
+  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+
+  - attr_list
+  - admonition
+  - footnotes
+  - meta
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: true
