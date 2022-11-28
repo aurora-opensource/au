@@ -13,7 +13,7 @@ py_binary(
     srcs = ["update_docs.py"],
     data = ["mkdocs.yml"] + glob(["docs/**"]),
     deps = [
-        "@pip_deps_mkdocs//:pkg",
+        requirement("mkdocs"),
         requirement("mkdocs-material"),
     ],
 )
