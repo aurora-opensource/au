@@ -2,29 +2,59 @@
 
 This page explains how to define new units that aren't included in the library.
 
+!!! tip
+    If it's a common unit---one which _should_ be in the library, but _isn't_---go ahead and
+    [file an issue](https://github.com/aurora-tech/au/issues)!  We should be able to turn it around
+    pretty quickly (either adding it to the library, or explaining why we won't).
+
+## Definition features
+
 Many libraries provide "convenience" macros for creating new units, but ours tries to avoid macros
-completely.  Instead, you define new units by just writing regular C++ code.
+completely.[^1]  Instead, you define new units by just writing regular C++ code.
 
-There are several pieces you can add, each of which provides some particular feature. Here is an
-example "batteries fully included" definition of a new Unit, annotated with the various features and
-what each buys you.
+[^1]:  Macros have long been considered contrary to C++ best practices.  If we're going to use one,
+especially in user-facing code, it needs to meet a very high bar.  Unit definition macros don't meet
+this bar.  They mostly exist to save typing.  But code is read far more often than written, and
+macros actually make the definitions _harder_ to read and understand (because they use _positional_
+arguments, so the meaning of the parameters is unclear at the callsite).
 
-```cpp
-// Example custom unit definition below.
-//
-// Items labeled with `*` are _required_; everything else is optional.
+There are several pieces you can add, each of which provides some particular feature. Here is
+a complete sample definition of a new Unit, with these features annotated and explained.
 
-// In .hh file:
-struct Fathoms : decltype(Inches{} * mag<72>()) {           // *[1]
-    static constexpr const char label[] = "ftm";            //  [2a]
-};
-constexpr auto fathom  = SingularNameFor<Fathoms>{};        //  [3]
-constexpr auto fathoms = QuantityMaker<Fathoms>{};          // *[4]
-constexpr auto fathoms_pt = QuantityPointMaker<Fathoms>{};  //  [5; less common]
+=== "C++14"
 
-// In .cc file:
-constexpr const char Fathoms::label[];                      //  [2b]
-```
+    ```cpp
+    // Example custom unit definition below.
+    //
+    // Items labeled with `*` are _required_; everything else is optional.
+
+    // In .hh file:
+    struct Fathoms : decltype(Inches{} * mag<72>()) {           // *[1]
+        static constexpr const char label[] = "ftm";            //  [2a]
+    };
+    constexpr auto fathom  = SingularNameFor<Fathoms>{};        //  [3]
+    constexpr auto fathoms = QuantityMaker<Fathoms>{};          // *[4]
+    constexpr auto fathoms_pt = QuantityPointMaker<Fathoms>{};  //  [5; less common]
+
+    // In .cc file:
+    constexpr const char Fathoms::label[];                      //  [2b]
+    ```
+
+=== "C++17 or later"
+
+    ```cpp
+    // Example custom unit definition below.
+    //
+    // Items labeled with `*` are _required_; everything else is optional.
+
+    // In .hh file:
+    struct Fathoms : decltype(Inches{} * mag<72>()) {           // *[1]
+        static constexpr inline const char label[] = "ftm";     //  [2]
+    };
+    constexpr auto fathom  = SingularNameFor<Fathoms>{};        //  [3]
+    constexpr auto fathoms = QuantityMaker<Fathoms>{};          // *[4]
+    constexpr auto fathoms_pt = QuantityPointMaker<Fathoms>{};  //  [5; less common]
+    ```
 
 !!! note
     If you've seen the unit definitions included in our library, you may notice they look a little
@@ -45,7 +75,7 @@ Here are the features.
       `u` is some _unit expression_ which gives it the right Dimension and Magnitude.  (We'll
       explain unit expressions in the next section.)
 
-2. _Label._
+2. _Label_.
     - A `sizeof()`-compatible label which is useful for printing the Unit.
     - Note that _if_ your project needs C++14 compatibility, then besides the label itself (`[2a]`),
       you'll need to provide a _definition_ (`[2b]`) in the `.cc` file.  By contrast, if you use
@@ -58,7 +88,7 @@ Here are the features.
       example, the traditional unit for torque is "**newton** meters", _not_ "**newtons** meters".
     - **If omitted:** you'll sacrifice some readability flow: the grammar becomes strange.  You'll
       end up with constructs like `speed.in(miles / hours)`, rather than `speed.in(miles / hour)`.
-      [^1]
+      [^2]
 
 4. _Quantity maker_.
     - **Required.**  This gives you a `snake_case` version of your unit which acts like a function.
@@ -73,7 +103,7 @@ Here are the features.
     - **If omitted:** _this is usually fine to omit:_ most Units are only used with `Quantity`, not
       `QuantityPoint`.
 
-[^1]: Note that this requires us to build out multiplication and division between two
+[^2]: Note that this requires us to build out multiplication and division between two
 `QuantityMaker` instances, rather than just a `QuantityMaker` and a `SingularNameFor`.  We haven't
 done this yet, but it's inevitable that we will, to support composing units whose singular name is
 identical to the plural name (e.g., `hertz`).
@@ -100,9 +130,10 @@ Conceptually, units are defined by combining _other units_.  In general, given a
 can multiply them, divide them, raise them to powers, or scale them by real numbers ("magnitudes"):
 the result of any of these operations defines a new unit.
 
-In C++ code, the easiest way to do this is by working with _instances_ of the unit types.  This lets
-us multiply them naturally by writing `*`, rather than using cumbersome template traits such as
-`UnitProductT<...>`.  Here are some examples:
+In C++ code, the easiest way to do this is by working with _instances_ of the unit types.  (`Meters`
+is the _type_; `Meters{}` is an _instance_ of the type.)  This lets us multiply them naturally by
+writing `*`, rather than using cumbersome template traits such as `UnitProductT<...>`.  Here are
+some examples:
 
 - Newtons: `Kilo<Grams>{} * Meters{} / squared(Seconds{})`
 - Miles: `Feet{} * mag<5280>()`
@@ -118,10 +149,10 @@ constexpr auto miles_per_hour = miles / hour;
 ```
 
 We can use the alias, `MilesPerHour`, anywhere we'd use a unit type.  And we can call the
-QuantityMaker, `miles_per_hour`, just as we would call `miles`.[^2]    We even get an automatically
+QuantityMaker, `miles_per_hour`, just as we would call `miles`.[^3]    We even get an automatically
 generated unit label: `mi / h`.
 
-[^2]:  Note that we don't "need" to define this.  We could write `(miles / hour)(65)`, and get
+[^3]:  Note that we don't "need" to define this.  We could write `(miles / hour)(65)`, and get
 exactly the same result as `miles_per_hour(65)`.  However, some users may prefer the latter syntax.
 
 Despite this convenience, aliases aren't always the best choice.  Here's the best practices guidance
