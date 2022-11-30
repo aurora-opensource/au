@@ -379,3 +379,12 @@ cc_test(
         "@com_google_googletest//:gtest_main",
     ],
 )
+
+################################################################################
+# Filegroups for the single-file tool
+
+filegroup(
+    name = "headers",
+    srcs = glob(["**/*.hh"]),
+    visibility = ["//:__pkg__"],
+)
