@@ -11,9 +11,29 @@ compile_pip_requirements(
 py_binary(
     name = "update_docs",
     srcs = ["update_docs.py"],
-    data = ["mkdocs.yml"] + glob(["docs/**"]),
+    data = [
+        "mkdocs.yml",
+        ":single_file_au",
+        ":single_file_au_noio",
+    ] + glob(["docs/**"]),
     deps = [
         requirement("mkdocs"),
         requirement("mkdocs-material"),
     ],
+)
+
+genrule(
+    name = "single_file_au",
+    srcs = ["//au:headers"],
+    outs = ["docs/au.hh"],
+    cmd = "$(location tools/bin/make-single-file) au/au.hh au/io.hh > $@",
+    tools = ["tools/bin/make-single-file"],
+)
+
+genrule(
+    name = "single_file_au_noio",
+    srcs = ["//au:headers"],
+    outs = ["docs/au_noio.hh"],
+    cmd = "$(location tools/bin/make-single-file) au/au.hh > $@",
+    tools = ["tools/bin/make-single-file"],
 )
