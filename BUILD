@@ -13,8 +13,8 @@ py_binary(
     srcs = ["update_docs.py"],
     data = [
         "mkdocs.yml",
-        ":single_file_au",
-        ":single_file_au_noio",
+        ":au_hh",
+        ":au_noio_hh",
     ] + glob(["docs/**"]),
     deps = [
         requirement("mkdocs"),
@@ -23,7 +23,7 @@ py_binary(
 )
 
 genrule(
-    name = "single_file_au",
+    name = "au_hh",
     srcs = ["//au:headers"],
     outs = ["docs/au.hh"],
     cmd = "$(location tools/bin/make-single-file) au/au.hh au/io.hh > $(OUTS)",
@@ -31,7 +31,7 @@ genrule(
 )
 
 genrule(
-    name = "single_file_au_noio",
+    name = "au_noio_hh",
     srcs = ["//au:headers"],
     outs = ["docs/au_noio.hh"],
     cmd = "$(location tools/bin/make-single-file) au/au.hh > $(OUTS)",
