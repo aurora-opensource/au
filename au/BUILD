@@ -67,6 +67,29 @@ cc_test(
     ],
 )
 
+cc_library(
+    name = "units",
+    hdrs = glob(["units/*.hh"]),
+    visibility = ["//visibility:public"],
+    deps = [
+        ":prefix",
+        ":quantity",
+        ":quantity_point",
+        ":unit_of_measure",
+    ],
+)
+
+cc_test(
+    name = "units_test",
+    size = "small",
+    srcs = glob(["units/test/*.cc"]),
+    deps = [
+        ":testing",
+        ":units",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
 ################################################################################
 # Implementation detail libraries and tests
 
@@ -173,7 +196,11 @@ cc_test(
 cc_library(
     name = "math",
     hdrs = ["math.hh"],
-    deps = [":units"],
+    deps = [
+        ":quantity",
+        ":quantity_point",
+        ":units",
+    ],
 )
 
 cc_test(
@@ -318,28 +345,6 @@ cc_test(
         ":prefix",
         ":testing",
         ":unit_of_measure",
-        "@com_google_googletest//:gtest_main",
-    ],
-)
-
-cc_library(
-    name = "units",
-    hdrs = ["units.hh"],
-    deps = [
-        ":prefix",
-        ":quantity",
-        ":quantity_point",
-        ":unit_of_measure",
-    ],
-)
-
-cc_test(
-    name = "units_test",
-    size = "small",
-    srcs = ["units_test.cc"],
-    deps = [
-        ":testing",
-        ":units",
         "@com_google_googletest//:gtest_main",
     ],
 )
