@@ -2,7 +2,10 @@
 
 #include "au/au.hh"
 
+#include "au/prefix.hh"
 #include "au/testing.hh"
+#include "au/units/hertz.hh"
+#include "au/units/meters.hh"
 #include "gtest/gtest.h"
 
 using ::testing::StaticAssertTypeEq;
