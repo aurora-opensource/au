@@ -20,7 +20,8 @@ def main(argv=None):
     `#include` directives (such as standard library headers) untouched.
     """
     args = parse_command_line_args(argv)
-    files = parse_files(filenames=args.main_files, prefix=args.prefix)
+    filenames = args.main_files + [f"au/units/{unit}.hh" for unit in args.units]
+    files = parse_files(filenames=filenames, prefix=args.prefix)
     print_unified_file(files)
 
     return 0
@@ -31,6 +32,8 @@ def parse_command_line_args(argv):
     parser = argparse.ArgumentParser()
 
     parser.add_argument("main_files", nargs="+", help="The main files to aggregate")
+
+    parser.add_argument("--units", nargs="+", help="The units to include")
 
     parser.add_argument(
         "--prefix",
