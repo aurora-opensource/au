@@ -33,7 +33,7 @@ def parse_command_line_args(argv):
 
     parser.add_argument("main_files", nargs="+", help="The main files to aggregate")
 
-    parser.add_argument("--units", nargs="+", help="The units to include")
+    parser.add_argument("--units", nargs="*", default=[], help="The units to include")
 
     parser.add_argument(
         "--prefix",
