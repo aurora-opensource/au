@@ -63,6 +63,8 @@ struct Current : BaseDimension<4> {};
 struct Temperature : BaseDimension<5> {};
 struct Angle : BaseDimension<6> {};
 struct Information : BaseDimension<7> {};
+struct AmountOfSubstance : BaseDimension<8> {};
+struct LuminousIntensity : BaseDimension<9> {};
 
 }  // namespace base_dim
 
@@ -80,5 +82,7 @@ using Current = Dimension<base_dim::Current>;
 using Temperature = Dimension<base_dim::Temperature>;
 using Angle = Dimension<base_dim::Angle>;
 using Information = Dimension<base_dim::Information>;
+using AmountOfSubstance = Dimension<base_dim::AmountOfSubstance>;
+using LuminousIntensity = Dimension<base_dim::LuminousIntensity>;
 
 }  // namespace au

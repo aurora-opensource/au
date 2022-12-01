@@ -14,7 +14,15 @@ using Accel = DimQuotientT<Speed, Time>;
 TEST(Dimension, AllProvidedBaseDimensionsAreCompatible) {
     // This tests the strict total ordering for all recognized base dimensions.  It makes sure they
     // are all distinguishable and orderable, and thus can be combined in a single dimension.
-    (void)DimProductT<Length, Mass, Time, Current, Temperature, Angle, Information>{};
+    (void)DimProductT<Length,
+                      Mass,
+                      Time,
+                      Current,
+                      Temperature,
+                      AmountOfSubstance,
+                      LuminousIntensity,
+                      Angle,
+                      Information>{};
 }
 
 TEST(Dimension, ProductAndQuotientBehaveAsExpected) {
