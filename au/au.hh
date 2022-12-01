@@ -5,6 +5,7 @@
 #include <chrono>
 
 #include "au/math.hh"
+#include "au/prefix.hh"
 #include "au/units/seconds.hh"
 
 namespace au {
