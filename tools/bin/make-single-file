@@ -20,31 +20,48 @@ def main(argv=None):
     `#include` directives (such as standard library headers) untouched.
     """
     args = parse_command_line_args(argv)
-    filenames = args.main_files + [f"au/units/{unit}.hh" for unit in args.units]
-    files = parse_files(filenames=filenames, prefix=args.prefix)
+    files = parse_files(filenames=filenames(args=args))
     print_unified_file(files)
 
     return 0
+
+
+def filenames(args):
+    """Construct the list of project filenames to include.
+
+    The script will be sure to include all of these, and will also include any
+    transitive dependencies from within the project.
+
+    :param args:  A Namespace object whose fields include the lists `main_files`
+        and `units`, and the boolean `include_io`.
+    """
+    names = (
+        ["au/au.hh"] + [f"au/units/{unit}.hh" for unit in args.units] + args.main_files
+    )
+    if args.include_io:
+        names.append("au/io.hh")
+    return names
 
 
 def parse_command_line_args(argv):
     """Read the arguments from the command line."""
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("main_files", nargs="+", help="The main files to aggregate")
+    parser.add_argument("main_files", nargs="*", help="The main files to aggregate")
 
     parser.add_argument("--units", nargs="*", default=[], help="The units to include")
 
     parser.add_argument(
-        "--prefix",
-        default="au",
-        help="Only files starting with this will be included",
+        "--noio",
+        action="store_false",
+        dest="include_io",
+        help="Exclude I/O capabilities",
     )
 
     return parser.parse_args()
 
 
-def parse_files(filenames, prefix):
+def parse_files(filenames):
     """
     Create a `SourceFile` for each of the transitive includes of `main_file`.
     """
@@ -53,7 +70,7 @@ def parse_files(filenames, prefix):
     files = {}
     while filenames:
         next_file = filenames.pop()
-        files[next_file] = SourceFile(filename=next_file, prefix=prefix)
+        files[next_file] = SourceFile(filename=next_file)
         for target in files[next_file].graph_includes:
             if target not in files:
                 filenames.append(target)
@@ -69,7 +86,7 @@ class SourceFile:
     includes, and the lines of content in the file.
     """
 
-    def __init__(self, filename, prefix):
+    def __init__(self, filename):
         self.name = filename
         self.global_includes = []
         self.graph_includes = []
@@ -97,7 +114,7 @@ class SourceFile:
                 # just add it to the list of content lines.
                 target = include_target(line)
                 if target:
-                    if target.startswith(prefix):
+                    if target.startswith("au"):
                         self.graph_includes.append(target)
                     else:
                         self.global_includes.append(line.rstrip())

@@ -13,8 +13,8 @@ py_binary(
     srcs = ["update_docs.py"],
     data = [
         "mkdocs.yml",
-        ":single_file_au",
-        ":single_file_au_noio",
+        ":au_hh",
+        ":au_noio_hh",
     ] + glob(["docs/**"]),
     deps = [
         requirement("mkdocs"),
@@ -22,18 +22,58 @@ py_binary(
     ],
 )
 
+BASE_UNITS = [
+    "meters",
+    "seconds",
+    "grams",
+    "kelvins",
+    "amperes",
+    "radians",
+    "bits",
+    "unos",
+]
+
+BASE_UNIT_STRING = " ".join(BASE_UNITS)
+
+CMD_ROOT = "$(location tools/bin/make-single-file) {extra_opts} --units {units} > $(OUTS)"
+
+################################################################################
+# Release single-file package `au.hh`
+
 genrule(
-    name = "single_file_au",
+    name = "au_hh",
     srcs = ["//au:headers"],
     outs = ["docs/au.hh"],
-    cmd = "$(location tools/bin/make-single-file) au/au.hh au/io.hh > $(OUTS)",
+    cmd = CMD_ROOT.format(
+        extra_opts = "",
+        units = BASE_UNIT_STRING,
+    ),
     tools = ["tools/bin/make-single-file"],
 )
 
+cc_library(
+    name = "au_hh_lib",
+    hdrs = ["docs/au.hh"],
+    visibility = ["//release:__pkg__"],
+)
+
+################################################################################
+# Release single-file package `au_noio.hh`
+
 genrule(
-    name = "single_file_au_noio",
+    name = "au_noio_hh",
     srcs = ["//au:headers"],
     outs = ["docs/au_noio.hh"],
-    cmd = "$(location tools/bin/make-single-file) au/au.hh > $(OUTS)",
+    cmd = CMD_ROOT.format(
+        extra_opts = "--noio",
+        units = BASE_UNIT_STRING,
+    ),
     tools = ["tools/bin/make-single-file"],
+    visibility = ["//release:__pkg__"],
+)
+
+cc_library(
+    name = "au_noio_hh_lib",
+    hdrs = ["docs/au_noio.hh"],
+    visibility = ["//release:__pkg__"],
 )
