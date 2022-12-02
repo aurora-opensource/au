@@ -35,7 +35,7 @@ BASE_UNITS = [
 
 BASE_UNIT_STRING = " ".join(BASE_UNITS)
 
-CMD_ROOT = "$(location tools/bin/make-single-file) {files} --units {units} > $(OUTS)"
+CMD_ROOT = "$(location tools/bin/make-single-file) {extra_opts} --units {units} > $(OUTS)"
 
 ################################################################################
 # Release single-file package `au.hh`
@@ -45,7 +45,7 @@ genrule(
     srcs = ["//au:headers"],
     outs = ["docs/au.hh"],
     cmd = CMD_ROOT.format(
-        files = "au/au.hh au/io.hh",
+        extra_opts = "",
         units = BASE_UNIT_STRING,
     ),
     tools = ["tools/bin/make-single-file"],
@@ -65,7 +65,7 @@ genrule(
     srcs = ["//au:headers"],
     outs = ["docs/au_noio.hh"],
     cmd = CMD_ROOT.format(
-        files = "au/au.hh",
+        extra_opts = "--noio",
         units = BASE_UNIT_STRING,
     ),
     tools = ["tools/bin/make-single-file"],
