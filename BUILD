@@ -22,7 +22,7 @@ py_binary(
     ],
 )
 
-base_units = [
+BASE_UNITS = [
     "meters",
     "seconds",
     "grams",
@@ -33,9 +33,9 @@ base_units = [
     "unos",
 ]
 
-base_unit_string = " ".join(base_units)
+BASE_UNIT_STRING = " ".join(BASE_UNITS)
 
-cmd_root = "$(location tools/bin/make-single-file) {files} --units {units} > $(OUTS)"
+CMD_ROOT = "$(location tools/bin/make-single-file) {files} --units {units} > $(OUTS)"
 
 ################################################################################
 # Release single-file package `au.hh`
@@ -44,9 +44,9 @@ genrule(
     name = "au_hh",
     srcs = ["//au:headers"],
     outs = ["docs/au.hh"],
-    cmd = cmd_root.format(
+    cmd = CMD_ROOT.format(
         files = "au/au.hh au/io.hh",
-        units = base_unit_string,
+        units = BASE_UNIT_STRING,
     ),
     tools = ["tools/bin/make-single-file"],
 )
@@ -64,9 +64,9 @@ genrule(
     name = "au_noio_hh",
     srcs = ["//au:headers"],
     outs = ["docs/au_noio.hh"],
-    cmd = cmd_root.format(
+    cmd = CMD_ROOT.format(
         files = "au/au.hh",
-        units = base_unit_string,
+        units = BASE_UNIT_STRING,
     ),
     tools = ["tools/bin/make-single-file"],
     visibility = ["//release:__pkg__"],
