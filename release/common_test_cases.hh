@@ -14,6 +14,8 @@ TEST(CommonSingleFile, HasExpectedUnits) {
     EXPECT_EQ(kilo(grams)(1.23).in(kilo(grams)), 1.23);
     EXPECT_EQ(kelvins(1.23).in(kelvins), 1.23);
     EXPECT_EQ(amperes(1.23).in(amperes), 1.23);
+    EXPECT_EQ(moles(1.23).in(moles), 1.23);
+    EXPECT_EQ(candelas(1.23).in(candelas), 1.23);
     EXPECT_EQ(radians(1.23).in(radians), 1.23);
     EXPECT_EQ(bits(1.23).in(bits), 1.23);
     EXPECT_EQ(unos(1.23).in(unos), 1.23);

@@ -28,6 +28,8 @@ BASE_UNITS = [
     "grams",
     "kelvins",
     "amperes",
+    "moles",
+    "candelas",
     "radians",
     "bits",
     "unos",
