@@ -10,7 +10,6 @@
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
-namespace {}  // namespace
 
 struct Feet : UnitImpl<Length> {};
 constexpr auto feet = QuantityMaker<Feet>{};
