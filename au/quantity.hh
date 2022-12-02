@@ -211,6 +211,33 @@ class Quantity {
         return in<R>(U{});
     }
 
+    // Direct access to the underlying value member, with any Quantity-equivalent Unit.
+    //
+    // Mutable access, QuantityMaker input.
+    template <typename U>
+    Rep &data_in(const QuantityMaker<U> &) {
+        static_assert(AreUnitsQuantityEquivalent<U, Unit>::value,
+                      "Can only access value via Quantity-equivalent unit");
+        return value_;
+    }
+    // Mutable access, Unit input.
+    template <typename U>
+    Rep &data_in(const U &) {
+        return data_in(QuantityMaker<U>{});
+    }
+    // Const access, QuantityMaker input.
+    template <typename U>
+    const Rep &data_in(const QuantityMaker<U> &) const {
+        static_assert(AreUnitsQuantityEquivalent<U, Unit>::value,
+                      "Can only access value via Quantity-equivalent unit");
+        return value_;
+    }
+    // Const access, Unit input.
+    template <typename U>
+    const Rep &data_in(const U &) const {
+        return data_in(QuantityMaker<U>{});
+    }
+
     // Permit this factory functor to access our private constructor.
     //
     // We allow this because it explicitly names the unit at the callsite, even if people refer to
