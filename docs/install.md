@@ -1,0 +1,243 @@
+# Installation
+
+au can be installed in multiple ways.  First, we'll help you decide which one is right for you.
+Then, we'll provide full instructions for each option.
+
+Broadly, you can either do a "full install" of the library, or you can package it into a single
+header file.  For the latter approach, there are two options:
+
+- pre-built versions you can download right away
+- custom versions with exactly the units you choose
+
+## Choosing a method
+
+Here's an overview of the tradeoffs involved.
+
+<table>
+  <tr>
+    <th>Legend</th>
+    <td class="poor">Unsupported</td>
+    <td class="fair">Mediocre</td>
+    <td class="good">Good</td>
+    <td class="best">Best</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th rowspan=2></th>
+    <th colspan=2>Single File</th>
+    <th colspan=2>Full Install</th>
+  </tr>
+  <tr>
+    <td>Pre-built</td>
+    <td>Custom</td>
+    <td>bazel</td>
+    <td>CMake, conan, vcpkg, ...</td>
+  </tr>
+  <tr>
+    <td>Setup time</td>
+    <td class="best">~1 min</td>
+    <td class="good">~10 min</td>
+    <td class="good">~10 min</td>
+    <td class="poor">Not <i>yet</i> supported<br>(use <b>single-file</b> instead for now)</td>
+  </tr>
+  <tr>
+    <td>Unit selection</td>
+    <td class="fair">Base units only</td>
+    <td class="good">Any units desired</td>
+    <td colspan=2 class="best">Any units desired, <i>without</i> needing "reinstall"</td>
+  </tr>
+  <tr>
+    <td>Compile time cost</td>
+    <td class="good">~10 units</td>
+    <td class="good">Very competitive up to a few dozen units</td>
+    <td colspan=2 class="best">Each file only pays for the units it uses</td>
+  </tr>
+  <tr>
+    <td>Flexibility</td>
+    <td colspan=2 class="fair">
+      Awkward: would need to download <pre>io.hh</pre> and/or <pre>testing.hh</pre> separately, and
+      modify their includes manually
+    </td>
+    <td colspan=2 class="best">
+      Include I/O, testing utilities, individual units on a per-file basis
+    </td>
+  </tr>
+</table>
+
+So, which should _you_ use?
+
+``` mermaid
+graph TD
+Usage[What's your use case?]
+SetupTime[Got 10 minutes for setup?]
+BuildSystem[What's your build system?]
+UsePreBuilt[Use pre-built single file]
+UseCustom[Use custom single file]
+UseFullInstall[Use full install]
+Usage -->|Just playing around with au| SetupTime
+SetupTime -->|No! Just let me start!| UsePreBuilt
+SetupTime -->|Sure| UseCustom
+Usage -->|Ready to use in my project!| BuildSystem
+BuildSystem -->|bazel| UseFullInstall
+BuildSystem -->|other| UseCustom
+```
+
+## Installation instructions
+
+Here are the instructions for each installation method we support.
+
+### Single file
+
+The au library can be packaged as a single header file, which you can include in your project just
+like any other header.  This works with any build system!
+
+To take this approach, obtain the single file by one of the methods described below.  Then, put it
+inside a `third_party` folder (e.g., as `third_party/au.hh`).  Now you're up and running with au!
+
+Every single-file package automatically includes the following features:
+
+!!! warning
+    Before public release, we should ensure each of the following items has a documentation page,
+    and link to that page here:
+
+- Basic "unit container" types: `Quantity`, `QuantityPoint`
+- Magnitude types and values, including the constant `PI`, and constants for any integer such as
+  `mag<5280>()`.
+- All prefixes for SI (`kilo`, `mega`, ...) and informational (`kibi`, `mebi`, ...) quantities.
+- Math functions, including unit-aware rounding and inverses, trigonometric functions, square roots,
+  etc.
+- Bidirectional implicit conversion between `Quantity` types and any equivalent counterparts in the
+  `std::chrono` library.
+
+Here are the two ways to get a single-file packaging of the library.
+
+#### Pre-built Single File
+
+!!! tip
+    This approach is mainly for _playing_ with the library.  It's very fast to get up and running,
+    but it's not the best choice as the "production" installation of your library.
+
+    For a single-file approach, most users will be much better served by the next section, which
+    explains how to customize it to get exactly the units you want.
+
+We provide pre-generated single-file versions of the library, automatically generated from the
+latest commit in the repo:
+
+- [`au.hh`](./au.hh)
+- [`au_noio.hh`](./au_noio.hh)
+  (Same as above, but with `<iostream>` support stripped out)
+
+These include very few units (to keep compile times short).  However, _combinations_ of these units
+should get you any other unit you're likely to want.  The units we include are:
+
+- Every SI base unit (`seconds`, `meters`, `kilo(grams)`, `amperes`, `kelvins`, `moles`, `candelas`)
+- Base units for angles and information (`radians`, `bits`)
+- A base dimensionless unit (`unos`)
+
+!!! note
+    _How_ do you go about constructing other units from these?  By **composing** them.  For example,
+    you can make [other coherent SI units](https://www.nist.gov/pml/owm/metric-si/si-units) like
+    this:
+
+    ```cpp
+    constexpr auto newtons = kilo(gram) * meters / squared(second);
+    ```
+
+    Now you can call, say, `newtons(10)` and get a quantity equivalent to 10 Newtons.  You can also
+    **scale** a unit by multiplying by Magnitude objects.  For example:
+
+    ```cpp
+    constexpr auto degrees = radians * PI / mag<180>();
+    ```
+
+    These will "work", in the sense of producing correct results.  But these ad hoc unit definitions
+    are far less usable than [fully defined units](./howto/new-units.md).  Both the type names and
+    the unit symbols will be needlessly complicated.
+
+    Again, we recommend following the directions in the next section to get _exactly_ the units you
+    care about.
+
+#### Custom Single File
+
+It's easy to package the library in a _custom_ single file with _exactly_ the units you need.
+Here's how:
+
+1. **Clone the repo**.
+    - Head to the [aurora-tech/au](https://github.com/aurora-tech/au) repo, and follow the typical
+      instructions.
+    - If you're just a _user_ of `au`, not a _contributor_, this should be:<br>
+      `git clone https://github.com/aurora-tech/au.git`
+
+2. **Run the script**.
+    - `tools/bin/make-single-file --units meters seconds newtons > ~/au.hh` creates a file,
+      `~/au.hh`, which packages the entire library in a single file with these three units.
+        - To see the full list of available units, search the `.hh` files in the `au/units/` folder.
+          For example, `meters` will include the contents of `au/units/meters.hh`.
+        - Provide the `--noio` flag if you prefer to avoid the expense of the `<iostream>` library.
+
+Now you have a file, `~/au.hh`, which you can drop in your `third_party` folder.
+
+### Full Library Installation
+
+#### bazel
+
+!!! warning
+    These instructions were written while the au repo was still private.  Therefore, we couldn't
+    _fully_ test that they actually _work_.  However, when adding a backup `file:///` URL pointing
+    to a manually downloaded copy, they did work, which is a very promising sign.
+
+1. **Choose your au version**.
+    - This can be a tag, or a commit hash.  Let's call it `a1b2c3d` as an example.
+
+2. **Form the URL to the archive**.
+    - For `a1b2c3d`, this would be:
+      ```
+      https://github.com/aurora-tech/au/archive/a1b2c3d.tar.gz
+             NOTE: Your au version ID goes HERE ^^^^^^^
+      ```
+
+
+3. **Compute your SHA256 hash**.
+    - Follow the URL from the previous step to download the archive.
+    - Compute the SHA256 hash: `sha256sum a1b2c3d.tar.gz`
+    - The first token that appears is the hash.  Save it for the next step.
+
+4. **Add `http_archive` rule to `WORKSPACE`**.
+    - Follow this pattern:
+      ```python
+      http_archive(
+          name = "au",
+          sha256 = "01053379cbebea7c483dfea9e7e2f9d82740ddbdf87e327499982d98d7153b59",
+          strip_prefix = "au-a1b2c3d",
+          urls = ["https://github.com/aurora-tech/au/archive/a1b2c3d.tar.gz"],
+      )
+      ```
+    - In particular, here's how to fill out the fields:
+        - `sha256`: Use the SHA256 hash you got from step 3.
+        - `strip_prefix`: write `"au-a1b2c3d"`, except use your ID from step 1 instead of `a1b2c3d`.
+        - `urls`: This should be a list, whose only entry is the URL you formed in step 2.
+
+At this point, the au library is installed, and you can use it in your project!
+
+Here are the headers provided by each au target.  To use, add the "Dependency" to your `deps`
+attribute, and include the appropriate files.
+
+| Dependency | Headers provided | Notes |
+|------------|------------------|-------|
+| `@au//au` | `"au/au.hh"`<br>`"au/units.*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-tech/au/tree/main/au/units) |
+| `@au//au:io` | `"au/io.hh"` | `operator<<` support |
+| `@au//au:testing` | `"au/testing.hh"` | Utilities for testing<br>_Note:_ `testonly = True` |
+
+#### Other build systems (CMake / conan / vcpkg / ...)
+
+We plan to support all these build and packaging systems, and perhaps others!  But the initial
+public release is bazel-only, because we use bazel at Aurora, and we don't have experience with any
+of these alternatives.
+
+We'll be delighted to work with users of these tools to support them fully!  Meanwhile, the library
+itself is still at least partially available on all build environments, via the single-file options
+explained above.
+
+
