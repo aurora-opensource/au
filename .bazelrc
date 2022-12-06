@@ -6,9 +6,13 @@ build:clang11 --platform_suffix=clang11
 build:clang11 --//build:requested_compiler_flag=clang11
 build:clang14 --platform_suffix=clang14
 build:clang14 --//build:requested_compiler_flag=clang14
+build:gcc10 --platform_suffix=gcc10
+build:gcc10 --//build:requested_compiler_flag=gcc10
+build:gcc10 --features=static_libstdcxx
 
 # Add a generic alias if the user doesn't care about the exact version.
 build:clang --config=clang14
+build:gcc --config=gcc10
 
 # Compile with clang by default
 build --config=clang14

@@ -6,6 +6,7 @@ string_flag(
     values = [
         "clang11",
         "clang14",
+        "gcc10",
     ],
 )
 
@@ -18,5 +19,11 @@ config_setting(
 config_setting(
     name = "clang14_requested",
     flag_values = {"requested_compiler_flag": "clang14"},
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "gcc10_requested",
+    flag_values = {"requested_compiler_flag": "gcc10"},
     visibility = ["//visibility:public"],
 )
