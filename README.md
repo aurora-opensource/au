@@ -31,5 +31,7 @@ Use the following `--config` settings to switch to different compilers.
 | Latest supported Clang | `--config=clang` |
 | Clang 11 | `--config=clang11` |
 | Clang 14 | `--config=clang14` |
+| Latest supported GCC | `--config=gcc` |
+| GCC 10 | `--config=gcc10` |
 
-Note that the sandboxed compilers do not use a sysroot.
+Note that only GCC uses a sysroot.
