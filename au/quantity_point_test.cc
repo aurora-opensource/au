@@ -65,6 +65,65 @@ TEST(QuantityPoint, CanGetValueInDifferentUnits) {
     EXPECT_THAT(p.in(centi(meters_pt)), SameTypeAndValue(300));
 }
 
+TEST(QuantityPoint, SupportsDirectAccessWithSameUnit) {
+    auto p = celsius_pt(3);
+    ++(p.data_in(Celsius{}));
+    EXPECT_EQ(p, celsius_pt(4));
+}
+
+TEST(QuantityPoint, SupportsDirectConstAccessWithSameUnit) {
+    const auto p = meters_pt(3.5);
+    EXPECT_EQ(static_cast<const void *>(&p.data_in(Meters{})), static_cast<const void *>(&p));
+}
+
+TEST(QuantityPoint, SupportsDirectAccessWithEquivalentUnit) {
+    auto p = kelvins_pt(3);
+    ++(p.data_in(Micro<Mega<Kelvins>>{}));
+    EXPECT_EQ(p, kelvins_pt(4));
+
+    // Uncomment to test compile time failure:
+    // ++(p.data_in(Celsius{}));
+}
+
+TEST(QuantityPoint, SupportsDirectConstAccessWithEquivalentUnit) {
+    const auto p = milli(meters_pt)(3.5);
+    EXPECT_EQ(static_cast<const void *>(&p.data_in(Micro<Kilo<Meters>>{})),
+              static_cast<const void *>(&p));
+
+    // Uncomment to test compile time failure:
+    // EXPECT_EQ(static_cast<const void *>(&p.data_in(Micro<Meters>{})),
+    //           static_cast<const void *>(&p));
+}
+
+TEST(QuantityPoint, SupportsDirectAccessWithQuantityMakerOfSameUnit) {
+    auto p = meters_pt(3);
+    ++(p.data_in(meters_pt));
+    EXPECT_EQ(p, meters_pt(4));
+}
+
+TEST(QuantityPoint, SupportsDirectConstAccessWithQuantityMakerOfSameUnit) {
+    const auto p = celsius_pt(3.5);
+    EXPECT_EQ(static_cast<const void *>(&p.data_in(celsius_pt)), static_cast<const void *>(&p));
+}
+
+TEST(QuantityPoint, SupportsDirectAccessWithQuantityMakerOfEquivalentUnit) {
+    auto p = kelvins_pt(3);
+    ++(p.data_in(micro(mega(kelvins_pt))));
+    EXPECT_EQ(p, kelvins_pt(4));
+
+    // Uncomment to test compile time failure:
+    // ++(p.data_in(micro(kelvins_pt)));
+}
+
+TEST(QuantityPoint, SupportsDirectConstAccessWithQuantityMakerOfEquivalentUnit) {
+    const auto p = milli(meters_pt)(3.5);
+    EXPECT_EQ(static_cast<const void *>(&p.data_in(micro(kilo(meters_pt)))),
+              static_cast<const void *>(&p));
+
+    // Uncomment to test compile time failure:
+    // EXPECT_EQ(static_cast<const void*>(&p.data_in(meters_pt)), static_cast<const void*>(&p));
+}
+
 TEST(QuantityPoint, HasDefaultConstructor) {
     // All we are permitted to do with a default-constructed value is to assign to it.  However, the
     // default constructor must _exist_, so we can use it with, e.g., `std::atomic`.

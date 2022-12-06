@@ -160,6 +160,33 @@ class QuantityPoint {
         return in<R>(U{});
     }
 
+    // Direct access to the underlying value member, with any Point-equivalent Unit.
+    //
+    // Mutable access, QuantityPointMaker input.
+    template <typename U>
+    Rep &data_in(const QuantityPointMaker<U> &) {
+        static_assert(AreUnitsPointEquivalent<U, Unit>::value,
+                      "Can only access value via Point-equivalent unit");
+        return x_.data_in(QuantityMaker<U>{});
+    }
+    // Mutable access, Unit input.
+    template <typename U>
+    Rep &data_in(const U &) {
+        return data_in(QuantityPointMaker<U>{});
+    }
+    // Const access, QuantityPointMaker input.
+    template <typename U>
+    const Rep &data_in(const QuantityPointMaker<U> &) const {
+        static_assert(AreUnitsPointEquivalent<U, Unit>::value,
+                      "Can only access value via Point-equivalent unit");
+        return x_.data_in(QuantityMaker<U>{});
+    }
+    // Const access, Unit input.
+    template <typename U>
+    const Rep &data_in(const U &) const {
+        return data_in(QuantityPointMaker<U>{});
+    }
+
     // Comparison operators.
     constexpr friend bool operator==(QuantityPoint a, QuantityPoint b) { return a.x_ == b.x_; }
     constexpr friend bool operator!=(QuantityPoint a, QuantityPoint b) { return a.x_ != b.x_; }
