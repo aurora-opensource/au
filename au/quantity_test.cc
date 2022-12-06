@@ -102,7 +102,7 @@ TEST(Quantity, SupportsDirectAccessWithSameUnit) {
 
 TEST(Quantity, SupportsDirectConstAccessWithSameUnit) {
     const auto x = meters(3.5);
-    EXPECT_TRUE(first_seems_like_data_member_of_second(x.data_in(Meters{}), x));
+    EXPECT_EQ(static_cast<const void *>(&x.data_in(Meters{})), static_cast<const void *>(&x));
 }
 
 TEST(Quantity, SupportsDirectAccessWithEquivalentUnit) {
@@ -116,11 +116,12 @@ TEST(Quantity, SupportsDirectAccessWithEquivalentUnit) {
 
 TEST(Quantity, SupportsDirectConstAccessWithEquivalentUnit) {
     const auto x = (milli(meters) / minute)(3.5);
-    EXPECT_TRUE(first_seems_like_data_member_of_second(x.data_in(Meters{} / Kilo<Minutes>{}), x));
+    EXPECT_EQ(static_cast<const void *>(&x.data_in(Meters{} / Kilo<Minutes>{})),
+              static_cast<const void *>(&x));
 
     // Uncomment to test compile time failure:
-    // EXPECT_TRUE(first_seems_like_data_member_of_second(x.data_in(Meters{} / Mega<Minutes>{}),
-    // x));
+    // EXPECT_EQ(static_cast<const void *>(&x.data_in(Meters{} / Mega<Minutes>{})),
+    //           static_cast<const void *>(&x));
 }
 
 TEST(Quantity, SupportsDirectAccessWithQuantityMakerOfSameUnit) {
@@ -131,7 +132,7 @@ TEST(Quantity, SupportsDirectAccessWithQuantityMakerOfSameUnit) {
 
 TEST(Quantity, SupportsDirectConstAccessWithQuantityMakerOfSameUnit) {
     const auto x = meters(3.5);
-    EXPECT_TRUE(first_seems_like_data_member_of_second(x.data_in(meters), x));
+    EXPECT_EQ(static_cast<const void *>(&x.data_in(meters)), static_cast<const void *>(&x));
 }
 
 TEST(Quantity, SupportsDirectAccessWithQuantityMakerOfEquivalentUnit) {
@@ -145,10 +146,12 @@ TEST(Quantity, SupportsDirectAccessWithQuantityMakerOfEquivalentUnit) {
 
 TEST(Quantity, SupportsDirectConstAccessWithQuantityMakerOfEquivalentUnit) {
     const auto x = (milli(meters) / minute)(3.5);
-    EXPECT_TRUE(first_seems_like_data_member_of_second(x.data_in(meters / kilo(minute)), x));
+    EXPECT_EQ(static_cast<const void *>(&x.data_in(meters / kilo(minute))),
+              static_cast<const void *>(&x));
 
     // Uncomment to test compile time failure:
-    // EXPECT_TRUE(first_seems_like_data_member_of_second(x.data_in(meters / mega(minute)), x));
+    // EXPECT_EQ(static_cast<const void *>(&x.data_in(meters / mega(minute))),
+    //           static_cast<const void *>(&x));
 }
 
 TEST(Quantity, SupportsOldStyleInWithTemplates) {

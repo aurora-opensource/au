@@ -73,7 +73,7 @@ TEST(QuantityPoint, SupportsDirectAccessWithSameUnit) {
 
 TEST(QuantityPoint, SupportsDirectConstAccessWithSameUnit) {
     const auto p = meters_pt(3.5);
-    EXPECT_TRUE(first_seems_like_data_member_of_second(p.data_in(Meters{}), p));
+    EXPECT_EQ(static_cast<const void *>(&p.data_in(Meters{})), static_cast<const void *>(&p));
 }
 
 TEST(QuantityPoint, SupportsDirectAccessWithEquivalentUnit) {
@@ -87,10 +87,12 @@ TEST(QuantityPoint, SupportsDirectAccessWithEquivalentUnit) {
 
 TEST(QuantityPoint, SupportsDirectConstAccessWithEquivalentUnit) {
     const auto p = milli(meters_pt)(3.5);
-    EXPECT_TRUE(first_seems_like_data_member_of_second(p.data_in(Micro<Kilo<Meters>>{}), p));
+    EXPECT_EQ(static_cast<const void *>(&p.data_in(Micro<Kilo<Meters>>{})),
+              static_cast<const void *>(&p));
 
     // Uncomment to test compile time failure:
-    // EXPECT_TRUE(first_seems_like_data_member_of_second(p.data_in(Micro<Meters>{}), p));
+    // EXPECT_EQ(static_cast<const void *>(&p.data_in(Micro<Meters>{})),
+    //           static_cast<const void *>(&p));
 }
 
 TEST(QuantityPoint, SupportsDirectAccessWithQuantityMakerOfSameUnit) {
@@ -101,7 +103,7 @@ TEST(QuantityPoint, SupportsDirectAccessWithQuantityMakerOfSameUnit) {
 
 TEST(QuantityPoint, SupportsDirectConstAccessWithQuantityMakerOfSameUnit) {
     const auto p = celsius_pt(3.5);
-    EXPECT_TRUE(first_seems_like_data_member_of_second(p.data_in(celsius_pt), p));
+    EXPECT_EQ(static_cast<const void *>(&p.data_in(celsius_pt)), static_cast<const void *>(&p));
 }
 
 TEST(QuantityPoint, SupportsDirectAccessWithQuantityMakerOfEquivalentUnit) {
@@ -115,10 +117,11 @@ TEST(QuantityPoint, SupportsDirectAccessWithQuantityMakerOfEquivalentUnit) {
 
 TEST(QuantityPoint, SupportsDirectConstAccessWithQuantityMakerOfEquivalentUnit) {
     const auto p = milli(meters_pt)(3.5);
-    EXPECT_TRUE(first_seems_like_data_member_of_second(p.data_in(micro(kilo(meters_pt))), p));
+    EXPECT_EQ(static_cast<const void *>(&p.data_in(micro(kilo(meters_pt)))),
+              static_cast<const void *>(&p));
 
     // Uncomment to test compile time failure:
-    // EXPECT_TRUE(first_seems_like_data_member_of_second(p.data_in(meters_pt), p));
+    // EXPECT_EQ(static_cast<const void*>(&p.data_in(meters_pt)), static_cast<const void*>(&p));
 }
 
 TEST(QuantityPoint, HasDefaultConstructor) {

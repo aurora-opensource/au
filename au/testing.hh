@@ -48,26 +48,6 @@ void expect_label(const char (&label)[N]) {
     EXPECT_EQ(sizeof(unit_label<Unit>()), N);
 }
 
-// A loose heuristic to see whether the first "seems like" a data member of the second.
-//
-// Its address shouldn't be before its apparent container's address.  And the address of the "next"
-// member of this type shouldn't be before the address of the "next" container.
-//
-// Also, they shouldn't be the same type.
-template <typename First, typename Second>
-bool first_seems_like_data_member_of_second(const First &a, const Second &b) {
-    static_assert(!std::is_same<First, Second>::value,
-                  "This function only makes sense for distinct types");
-
-    const void *start_a = &a;
-    const void *start_b = &b;
-
-    const void *end_a = &a + sizeof(First);
-    const void *end_b = &b + sizeof(Second);
-
-    return (start_a >= start_b) && (end_a <= end_b);
-}
-
 namespace detail {
 // Compute the absolute difference in a specified Unit, with a floating point Rep.
 template <typename ResultUnit, typename Q1, typename Q2>
