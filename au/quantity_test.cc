@@ -34,6 +34,7 @@ constexpr auto hour = SingularNameFor<Hours>{};
 constexpr auto hours = QuantityMaker<Hours>{};
 
 struct Minutes : decltype(Hours{} / mag<60>()) {};
+constexpr auto minute = SingularNameFor<Minutes>{};
 constexpr auto minutes = QuantityMaker<Minutes>{};
 
 struct Days : decltype(Hours{} * mag<24>()) {};
@@ -91,6 +92,66 @@ TEST(QuantityMaker, CanDivideByMagnitudeToGetMakerOfDescaledUnit) {
 TEST(Quantity, CanRetrieveInDifferentUnitsWithSameDimension) {
     EXPECT_EQ(feet(4).in(inches), 48);
     EXPECT_EQ(yards(4).in(inches), 144);
+}
+
+TEST(Quantity, SupportsDirectAccessWithSameUnit) {
+    auto x = inches(3);
+    ++(x.data_in(Inches{}));
+    EXPECT_EQ(x, inches(4));
+}
+
+TEST(Quantity, SupportsDirectConstAccessWithSameUnit) {
+    const auto x = meters(3.5);
+    EXPECT_EQ(static_cast<const void *>(&x.data_in(Meters{})), static_cast<const void *>(&x));
+}
+
+TEST(Quantity, SupportsDirectAccessWithEquivalentUnit) {
+    auto x = (kilo(feet) / hour)(3);
+    ++(x.data_in(Feet{} / Milli<Hours>{}));
+    EXPECT_EQ(x, (kilo(feet) / hour)(4));
+
+    // Uncomment to test compile time failure:
+    // ++(x.data_in(Feet{} / Kilo<Hours>{}));
+}
+
+TEST(Quantity, SupportsDirectConstAccessWithEquivalentUnit) {
+    const auto x = (milli(meters) / minute)(3.5);
+    EXPECT_EQ(static_cast<const void *>(&x.data_in(Meters{} / Kilo<Minutes>{})),
+              static_cast<const void *>(&x));
+
+    // Uncomment to test compile time failure:
+    // EXPECT_EQ(static_cast<const void *>(&x.data_in(Meters{} / Mega<Minutes>{})),
+    //           static_cast<const void *>(&x));
+}
+
+TEST(Quantity, SupportsDirectAccessWithQuantityMakerOfSameUnit) {
+    auto x = inches(3);
+    ++(x.data_in(inches));
+    EXPECT_EQ(x, inches(4));
+}
+
+TEST(Quantity, SupportsDirectConstAccessWithQuantityMakerOfSameUnit) {
+    const auto x = meters(3.5);
+    EXPECT_EQ(static_cast<const void *>(&x.data_in(meters)), static_cast<const void *>(&x));
+}
+
+TEST(Quantity, SupportsDirectAccessWithQuantityMakerOfEquivalentUnit) {
+    auto x = (kilo(feet) / hour)(3);
+    ++(x.data_in(feet / milli(hour)));
+    EXPECT_EQ(x, (kilo(feet) / hour)(4));
+
+    // Uncomment to test compile time failure:
+    // ++(x.data_in(feet / micro(hour)));
+}
+
+TEST(Quantity, SupportsDirectConstAccessWithQuantityMakerOfEquivalentUnit) {
+    const auto x = (milli(meters) / minute)(3.5);
+    EXPECT_EQ(static_cast<const void *>(&x.data_in(meters / kilo(minute))),
+              static_cast<const void *>(&x));
+
+    // Uncomment to test compile time failure:
+    // EXPECT_EQ(static_cast<const void *>(&x.data_in(meters / mega(minute))),
+    //           static_cast<const void *>(&x));
 }
 
 TEST(Quantity, SupportsOldStyleInWithTemplates) {

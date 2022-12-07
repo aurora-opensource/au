@@ -59,6 +59,33 @@ load("@llvm_14_toolchain//:toolchains.bzl", llvm_14_register_toolchains="llvm_re
 llvm_14_register_toolchains()
 
 http_archive(
+    name = "aspect_gcc_toolchain",
+    urls = [
+        "https://github.com/aspect-build/gcc-toolchain/tarball/ac745d4685e2095cc4f057862800f3f0a473c201",
+    ],
+    patches = [
+        "@//:third_party/aspect_gcc_toolchain/0001-Expose-target_settings-and-set-std-c-14.patch",
+    ],
+    patch_args = ["-p1"],
+    sha256 = "e2e12202dd83f67d71101b24554044de25e1625d16b4b56bc453ecaa8f7c6bd0",
+    type = "tar.gz",
+    strip_prefix = "aspect-build-gcc-toolchain-ac745d4",
+)
+
+load("@aspect_gcc_toolchain//toolchain:defs.bzl", "gcc_register_toolchain", "ARCHS")
+load("@aspect_gcc_toolchain//sysroot:flags.bzl", gcc_sysroot_cflags="cflags", gcc_sysroot_cxxflags="cxxflags")
+
+gcc_register_toolchain(
+    name = "gcc_toolchain_x86_64",
+    sysroot_variant = "x86_64",
+    target_arch = ARCHS.x86_64,
+    gcc_version = "10.3.0",
+    target_settings = ["@//build:gcc10_requested"],
+    extra_cflags = gcc_sysroot_cflags,
+    extra_cxxflags = gcc_sysroot_cxxflags,
+)
+
+http_archive(
     name = "com_google_googletest",
     sha256 = "24564e3b712d3eb30ac9a85d92f7d720f60cc0173730ac166f27dda7fed76cb2",
     strip_prefix = "googletest-release-1.12.1",
