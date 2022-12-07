@@ -195,19 +195,19 @@ Now you have a file, `~/au.hh`, which you can add to your `third_party` folder.
     to a manually downloaded copy, they did work, which is a very promising sign.
 
 1. **Choose your Au version**.
-    - This can be a tag, or a commit hash.  Let's call it `a1b2c3d` as an example.
+    - This can be a tag, or a commit hash.  Let's take `0.2.0` as an example.
 
 2. **Form the URL to the archive**.
-    - For `a1b2c3d`, this would be:
+    - For `0.2.0`, this would be:
       ```
-      https://github.com/aurora-tech/au/archive/a1b2c3d.tar.gz
-             NOTE: Your au version ID goes HERE ^^^^^^^
+      https://github.com/aurora-tech/au/archive/0.2.0.tar.gz
+             NOTE: Your au version ID goes HERE ^^^^^
       ```
 
 
 3. **Compute your SHA256 hash**.
     1. Follow the URL from the previous step to download the archive.
-    2. Compute the SHA256 hash: `sha256sum a1b2c3d.tar.gz`
+    2. Compute the SHA256 hash: `sha256sum au-0.2.0.tar.gz`
     3. The first token that appears is the hash.  Save it for the next step.
 
 4. **Add `http_archive` rule to `WORKSPACE`**.
@@ -216,13 +216,13 @@ Now you have a file, `~/au.hh`, which you can add to your `third_party` folder.
       http_archive(
           name = "au",
           sha256 = "01053379cbebea7c483dfea9e7e2f9d82740ddbdf87e327499982d98d7153b59",
-          strip_prefix = "au-a1b2c3d",
-          urls = ["https://github.com/aurora-tech/au/archive/a1b2c3d.tar.gz"],
+          strip_prefix = "au-0.2.0",
+          urls = ["https://github.com/aurora-tech/au/archive/0.2.0.tar.gz"],
       )
       ```
     - In particular, here's how to fill out the fields:
         - `sha256`: Use the SHA256 hash you got from step 3.
-        - `strip_prefix`: write `"au-a1b2c3d"`, except use your ID from step 1 instead of `a1b2c3d`.
+        - `strip_prefix`: write `"au-0.2.0"`, except use your ID from step 1 instead of `0.2.0`.
         - `urls`: This should be a list, whose only entry is the URL you formed in step 2.
 
 At this point, the Au library is installed, and you can use it in your project!
