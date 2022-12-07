@@ -1,6 +1,6 @@
 # Installation
 
-au can be installed in multiple ways.  First, we'll help you decide which one is right for you.
+Au can be installed in multiple ways.  First, we'll help you decide which one is right for you.
 Then, we'll provide full instructions for each option.
 
 Broadly, you can either do a "full install" of the library, or you can package it into a single
@@ -76,7 +76,7 @@ BuildSystem[What's your build system?]
 UsePreBuilt[Use pre-built single file]
 UseCustom[Use custom single file]
 UseFullInstall[Use full install]
-Usage -->|Just playing around with au| SetupTime
+Usage -->|Just playing around with Au| SetupTime
 SetupTime -->|No! Just let me start!| UsePreBuilt
 SetupTime -->|Sure| UseCustom
 Usage -->|Ready to use in my project!| BuildSystem
@@ -90,11 +90,11 @@ Here are the instructions for each installation method we support.
 
 ### Single file
 
-The au library can be packaged as a single header file, which you can include in your project just
+The Au library can be packaged as a single header file, which you can include in your project just
 like any other header.  This works with any build system!
 
 To take this approach, obtain the single file by one of the methods described below.  Then, put it
-inside a `third_party` folder (e.g., as `third_party/au.hh`).  Now you're up and running with au!
+inside a `third_party` folder (e.g., as `third_party/au.hh`).  Now you're up and running with Au!
 
 Every single-file package automatically includes the following features:
 
@@ -167,7 +167,7 @@ Here's how:
 1. **Clone the repo**.
     - Head to the [aurora-tech/au](https://github.com/aurora-tech/au) repo, and follow the typical
       instructions.
-    - If you're just a _user_ of `au`, not a _contributor_, this should be:<br>
+    - If you're just a _user_ of Au, not a _contributor_, this should be:<br>
       `git clone https://github.com/aurora-tech/au.git`
 
 2. **Run the script**.
@@ -184,11 +184,11 @@ Now you have a file, `~/au.hh`, which you can drop in your `third_party` folder.
 #### bazel
 
 !!! warning
-    These instructions were written while the au repo was still private.  Therefore, we couldn't
+    These instructions were written while the Au repo was still private.  Therefore, we couldn't
     _fully_ test that they actually _work_.  However, when adding a backup `file:///` URL pointing
     to a manually downloaded copy, they did work, which is a very promising sign.
 
-1. **Choose your au version**.
+1. **Choose your Au version**.
     - This can be a tag, or a commit hash.  Let's call it `a1b2c3d` as an example.
 
 2. **Form the URL to the archive**.
@@ -219,9 +219,9 @@ Now you have a file, `~/au.hh`, which you can drop in your `third_party` folder.
         - `strip_prefix`: write `"au-a1b2c3d"`, except use your ID from step 1 instead of `a1b2c3d`.
         - `urls`: This should be a list, whose only entry is the URL you formed in step 2.
 
-At this point, the au library is installed, and you can use it in your project!
+At this point, the Au library is installed, and you can use it in your project!
 
-Here are the headers provided by each au target.  To use, add the "Dependency" to your `deps`
+Here are the headers provided by each Au target.  To use, add the "Dependency" to your `deps`
 attribute, and include the appropriate files.
 
 | Dependency | Headers provided | Notes |
