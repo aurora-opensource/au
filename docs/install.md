@@ -6,10 +6,16 @@ Then, we'll provide full instructions for each option.
 Broadly, you can either do a "full install" of the library, or you can package it into a single
 header file.  For the latter approach, there are two options:
 
-- pre-built versions you can download right away
-- custom versions with exactly the units you choose
+- Pre-built versions you can download right away.
+- Custom versions with exactly the units you choose.
 
 ## Choosing a method
+
+You should consider several factors before you decide how to install the Au library, such as:
+
+- Tradeoffs in setup time, unit selection, and flexibility.
+- Whether you're installing for production, or just trying it out.
+- Your build system.
 
 Here's an overview of the tradeoffs involved.
 
@@ -17,7 +23,7 @@ Here's an overview of the tradeoffs involved.
   <tr>
     <th>Legend</th>
     <td class="poor">Unsupported</td>
-    <td class="fair">Mediocre</td>
+    <td class="fair">Fair</td>
     <td class="good">Good</td>
     <td class="best">Best</td>
   </tr>
@@ -52,7 +58,7 @@ Here's an overview of the tradeoffs involved.
     <td>Compile time cost</td>
     <td class="good">~10 units</td>
     <td class="good">Very competitive up to a few dozen units</td>
-    <td colspan=2 class="best">Each file only pays for the units it uses</td>
+    <td colspan=2 class="best"><i>Each file</i> only pays for the units it uses</td>
   </tr>
   <tr>
     <td>Flexibility</td>
@@ -61,7 +67,7 @@ Here's an overview of the tradeoffs involved.
       modify their includes manually
     </td>
     <td colspan=2 class="best">
-      Include I/O, testing utilities, individual units on a per-file basis
+      Include I/O, testing utilities, individual units as desired, on a per-file basis
     </td>
   </tr>
 </table>
@@ -94,7 +100,8 @@ The Au library can be packaged as a single header file, which you can include in
 like any other header.  This works with any build system!
 
 To take this approach, obtain the single file by one of the methods described below.  Then, put it
-inside a `third_party` folder (e.g., as `third_party/au.hh`).  Now you're up and running with Au!
+inside a `third_party` folder (for example, as `third_party/au.hh`).  Now you're up and running with
+Au!
 
 Every single-file package automatically includes the following features:
 
@@ -107,13 +114,13 @@ Every single-file package automatically includes the following features:
   `mag<5280>()`.
 - All prefixes for SI (`kilo`, `mega`, ...) and informational (`kibi`, `mebi`, ...) quantities.
 - Math functions, including unit-aware rounding and inverses, trigonometric functions, square roots,
-  etc.
+  and so on.
 - Bidirectional implicit conversion between `Quantity` types and any equivalent counterparts in the
   `std::chrono` library.
 
 Here are the two ways to get a single-file packaging of the library.
 
-#### Pre-built Single File
+#### Pre-built single file
 
 !!! tip
     This approach is mainly for _playing_ with the library.  It's very fast to get up and running,
@@ -159,27 +166,26 @@ should get you any other unit you're likely to want.  The units we include are:
     Again, we recommend following the directions in the next section to get _exactly_ the units you
     care about.
 
-#### Custom Single File
+#### Custom single file
 
 It's easy to package the library in a _custom_ single file with _exactly_ the units you need.
 Here's how:
 
-1. **Clone the repo**.
-    - Head to the [aurora-tech/au](https://github.com/aurora-tech/au) repo, and follow the typical
-      instructions.
+1. **Clone the repo**.  Go to the [aurora-tech/au](https://github.com/aurora-tech/au) repo, and
+   follow the typical instructions.
     - If you're just a _user_ of Au, not a _contributor_, this should be:<br>
       `git clone https://github.com/aurora-tech/au.git`
 
-2. **Run the script**.
-    - `tools/bin/make-single-file --units meters seconds newtons > ~/au.hh` creates a file,
-      `~/au.hh`, which packages the entire library in a single file with these three units.
-        - To see the full list of available units, search the `.hh` files in the `au/units/` folder.
-          For example, `meters` will include the contents of `au/units/meters.hh`.
-        - Provide the `--noio` flag if you prefer to avoid the expense of the `<iostream>` library.
+2. **Run the script**.  `tools/bin/make-single-file --units meters seconds newtons > ~/au.hh`
+   creates a file, `~/au.hh`, which packages the entire library in a single file with these three
+   units.
+    - To see the full list of available units, search the `.hh` files in the `au/units/` folder. For
+      example, `meters` will include the contents of `au/units/meters.hh`.
+    - Provide the `--noio` flag if you prefer to avoid the expense of the `<iostream>` library.
 
-Now you have a file, `~/au.hh`, which you can drop in your `third_party` folder.
+Now you have a file, `~/au.hh`, which you can add to your `third_party` folder.
 
-### Full Library Installation
+### Full library installation
 
 #### bazel
 
@@ -200,9 +206,9 @@ Now you have a file, `~/au.hh`, which you can drop in your `third_party` folder.
 
 
 3. **Compute your SHA256 hash**.
-    - Follow the URL from the previous step to download the archive.
-    - Compute the SHA256 hash: `sha256sum a1b2c3d.tar.gz`
-    - The first token that appears is the hash.  Save it for the next step.
+    1. Follow the URL from the previous step to download the archive.
+    2. Compute the SHA256 hash: `sha256sum a1b2c3d.tar.gz`
+    3. The first token that appears is the hash.  Save it for the next step.
 
 4. **Add `http_archive` rule to `WORKSPACE`**.
     - Follow this pattern:
@@ -232,12 +238,9 @@ attribute, and include the appropriate files.
 
 #### Other build systems (CMake / conan / vcpkg / ...)
 
-We plan to support all these build and packaging systems, and perhaps others!  But the initial
-public release is bazel-only, because we use bazel at Aurora, and we don't have experience with any
-of these alternatives.
+We would like to support all these build and packaging systems, and perhaps others!  But the initial
+public release is bazel-only, because bazel is what we use at Aurora, and we don't have experience
+with any of these alternatives.  Thus, we'll need to lean on the community to support them.
 
-We'll be delighted to work with users of these tools to support them fully!  Meanwhile, the library
-itself is still at least partially available on all build environments, via the single-file options
-explained above.
-
-
+Meanwhile, the library itself is still at least partially available on all build environments, via
+the single-file options explained above.
