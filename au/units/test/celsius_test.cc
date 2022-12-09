@@ -13,7 +13,7 @@ namespace au {
 TEST(Celsius, HasExpectedLabel) { expect_label<Celsius>("degC"); }
 
 TEST(Celsius, QuantityEquivalentToKelvins) {
-    EXPECT_THAT(celsius(20), QuantityEquivalent(kelvins(20)));
+    EXPECT_THAT(celsius_qty(20), QuantityEquivalent(kelvins(20)));
 }
 
 TEST(Celsius, QuantityPointHasCorrectOffsetFromKelvins) {
