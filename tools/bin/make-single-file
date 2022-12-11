@@ -208,7 +208,9 @@ def git_id_description():
     # always.)
     try:
         return (
-            subprocess.check_output(["git", "describe", "--always", "--dirty"])
+            subprocess.check_output(
+                ["git", "describe", "--always", "--dirty"], stderr=subprocess.DEVNULL
+            )
             .decode("ascii")
             .strip()
         )
