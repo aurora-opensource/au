@@ -5,6 +5,7 @@
 import argparse
 import datetime
 import re
+import subprocess
 import sys
 
 
@@ -21,7 +22,7 @@ def main(argv=None):
     """
     args = parse_command_line_args(argv)
     files = parse_files(filenames=filenames(args=args))
-    print_unified_file(files)
+    print_unified_file(files, args)
 
     return 0
 
@@ -50,6 +51,12 @@ def parse_command_line_args(argv):
     parser.add_argument("main_files", nargs="*", help="The main files to aggregate")
 
     parser.add_argument("--units", nargs="*", default=[], help="The units to include")
+
+    parser.add_argument(
+        "--version-id",
+        default=git_id_description(),
+        help="An identifier for the version of code used to build this file",
+    )
 
     parser.add_argument(
         "--noio",
@@ -161,7 +168,7 @@ def include_lines(files):
     return set(line for f in files for line in files[f].global_includes)
 
 
-def print_unified_file(files):
+def print_unified_file(files, args):
     """Print the single-file output to stdout."""
     print(f"// {AURORA_COPYRIGHT.format(year=datetime.datetime.now().year)}")
     print()
@@ -171,9 +178,53 @@ def print_unified_file(files):
     for i in sorted(include_lines(files)):
         print(i)
 
+    print()
+    for line in manifest(args):
+        print(f"// {line}")
+
     for f in sort_topologically(files):
         for line in files[f].lines:
             print(line)
+
+
+def manifest(args):
+    """A sequence of lines describing the options that generated this file."""
+    return [
+        f"Version identifier: {args.version_id}",
+        f'<iostream> support: {"INCLUDED" if args.include_io else "EXCLUDED"}',
+        "List of included units:",
+    ] + [f"  {u}" for u in sorted(args.units)]
+
+
+def git_id_description():
+    """
+    A description of the ID (commit or tag) in git, and whether it's clean.
+    """
+    # TODO(#21):  The logic for the identifier currently lives in two places.
+    # After `make-single-file` becomes a thin wrapper on the underlying logic in
+    # python, we can fix this by making the `--version-id` argument _required_,
+    # and deleting this function.  (We can have the underlying python rule
+    # depend on the existence of the stable version stamp, and simply use that
+    # always.)
+    try:
+        return (
+            subprocess.check_output(["git", "describe", "--always", "--dirty"])
+            .decode("ascii")
+            .strip()
+        )
+    except subprocess.CalledProcessError:
+        # We do not ever expect this line to affect the generated file in normal
+        # operations.  If users are running the script manually, then the above
+        # command will succeed, because currently the command is not sandboxed.
+        # And if users are running a genrule for a pre-built single-file
+        # package, then that command is constructed to supply the version
+        # information, which means that the below value will be _returned_ but
+        # not _used_.
+        #
+        # Really, the point of the following line is to generate a valid default
+        # value (so that the script does not crash) in the cases where we know
+        # the default value won't be used.
+        return "(Unknown version)"
 
 
 if __name__ == "__main__":
