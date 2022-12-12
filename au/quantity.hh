@@ -195,19 +195,27 @@ class Quantity {
     //
     // Matches the syntax from the CppCon 2021 talk, and legacy Aurora usage.
     template <typename U>
-    constexpr auto as() const -> decltype(as(U{})) {
+    [[deprecated(
+        "Do not write `.as<YourUnits>()`; write `.as(your_units)` instead.")]] constexpr auto
+    as() const -> decltype(as(U{})) {
         return as(U{});
     }
     template <typename U, typename R, typename = std::enable_if_t<IsUnit<U>::value>>
-    constexpr auto as() const {
+    [[deprecated(
+        "Do not write `.as<YourUnits, T>()`; write `.as<T>(your_units)` instead.")]] constexpr auto
+    as() const {
         return as<R>(U{});
     }
     template <typename U>
-    constexpr auto in() const -> decltype(in(U{})) {
+    [[deprecated(
+        "Do not write `.in<YourUnits>()`; write `.in(your_units)` instead.")]] constexpr auto
+    in() const -> decltype(in(U{})) {
         return in(U{});
     }
     template <typename U, typename R, typename = std::enable_if_t<IsUnit<U>::value>>
-    constexpr auto in() const {
+    [[deprecated(
+        "Do not write `.in<YourUnits, T>()`; write `.in<T>(your_units)` instead.")]] constexpr auto
+    in() const {
         return in<R>(U{});
     }
 
