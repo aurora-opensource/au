@@ -189,11 +189,29 @@ def print_unified_file(files, args):
 
 def manifest(args):
     """A sequence of lines describing the options that generated this file."""
-    return [
+    args = CheckArgs(args)
+
+    lines = [
         f"Version identifier: {args.version_id}",
         f'<iostream> support: {"INCLUDED" if args.include_io else "EXCLUDED"}',
         "List of included units:",
     ] + [f"  {u}" for u in sorted(args.units)]
+
+    assert(args.are_all_used())
+    return lines
+
+
+class CheckArgs(dict):
+    def __init__(self, args):
+        self.vars = vars(args)
+        self.used = set()
+
+    def are_all_used(self):
+        return not set(self.vars.keys()).difference(self.used)
+
+    def __getattr__(self, k):
+        self.used.add(k)
+        return self.vars[k]
 
 
 def git_id_description():
