@@ -21,25 +21,26 @@ def main(argv=None):
     `#include` directives (such as standard library headers) untouched.
     """
     args = parse_command_line_args(argv)
-    files = parse_files(filenames=filenames(args=args))
-    print_unified_file(files, args)
+    files = parse_files(
+        filenames=filenames(
+            main_files=args.main_files, units=args.units, include_io=args.include_io
+        )
+    )
+    print_unified_file(files, args=args)
 
     return 0
 
 
-def filenames(args):
+def filenames(main_files, units, include_io):
     """Construct the list of project filenames to include.
 
     The script will be sure to include all of these, and will also include any
     transitive dependencies from within the project.
-
-    :param args:  A Namespace object whose fields include the lists `main_files`
-        and `units`, and the boolean `include_io`.
     """
     names = (
-        ["au/au.hh"] + [f"au/units/{unit}.hh" for unit in args.units] + args.main_files
+        ["au/au.hh"] + [f"au/units/{unit}.hh" for unit in units] + main_files
     )
-    if args.include_io:
+    if include_io:
         names.append("au/io.hh")
     return names
 
@@ -179,7 +180,7 @@ def print_unified_file(files, args):
         print(i)
 
     print()
-    for line in manifest(args):
+    for line in manifest(args=args):
         print(f"// {line}")
 
     for f in sort_topologically(files):
@@ -198,10 +199,10 @@ def manifest(args):
     ] + [f"  {u}" for u in sorted(args.units)]
 
     if args.main_files:
-        lines.append('Extra files included:')
+        lines.append("Extra files included:")
         lines.extend(f"  {f}" for f in sorted(args.main_files))
 
-    assert(args.are_all_used())
+    assert args.are_all_used()
     return lines
 
 
