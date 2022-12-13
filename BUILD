@@ -37,7 +37,9 @@ BASE_UNITS = [
 
 BASE_UNIT_STRING = " ".join(BASE_UNITS)
 
-CMD_ROOT = "$(location tools/bin/make-single-file) {extra_opts} --units {units} > $(OUTS)"
+GIT_ID_CMD = "cat bazel-out/stable-status.txt | grep STABLE_GIT_ID | sed 's/STABLE_GIT_ID \\(.*\\)/\\1/' | tr -d '\\n'"
+
+CMD_ROOT = "$(location tools/bin/make-single-file) {extra_opts} --units {units} --version-id $$({id_cmd}) > $(OUTS)"
 
 ################################################################################
 # Release single-file package `au.hh`
@@ -49,7 +51,9 @@ genrule(
     cmd = CMD_ROOT.format(
         extra_opts = "",
         units = BASE_UNIT_STRING,
+        id_cmd = GIT_ID_CMD,
     ),
+    stamp = True,
     tools = ["tools/bin/make-single-file"],
 )
 
@@ -69,7 +73,9 @@ genrule(
     cmd = CMD_ROOT.format(
         extra_opts = "--noio",
         units = BASE_UNIT_STRING,
+        id_cmd = GIT_ID_CMD,
     ),
+    stamp = True,
     tools = ["tools/bin/make-single-file"],
     visibility = ["//release:__pkg__"],
 )
