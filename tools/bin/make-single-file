@@ -197,9 +197,7 @@ def manifest(args):
 
 
 def git_id_description():
-    """
-    A description of the ID (commit or tag) in git, and whether it's clean.
-    """
+    """A description of the ID (commit or tag) in git, and whether it's clean."""
     # TODO(#21):  The logic for the identifier currently lives in two places.
     # After `make-single-file` becomes a thin wrapper on the underlying logic in
     # python, we can fix this by making the `--version-id` argument _required_,
