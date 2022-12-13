@@ -197,6 +197,10 @@ def manifest(args):
         "List of included units:",
     ] + [f"  {u}" for u in sorted(args.units)]
 
+    if args.main_files:
+        lines.append('Extra files included:')
+        lines.extend(f"  {f}" for f in sorted(args.main_files))
+
     assert(args.are_all_used())
     return lines
 
