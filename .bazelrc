@@ -1,6 +1,9 @@
 # Use platforms for compiling C/C++ code.
 build --incompatible_enable_cc_toolchain_resolution
 
+# Make git version information available to bazel rules.
+build --workspace_status_command=./tools/bin/workspace_status.sh
+
 # Allow the user to switch to various Clang version for compiling everything.
 build:clang11 --platform_suffix=clang11
 build:clang11 --//build:requested_compiler_flag=clang11
