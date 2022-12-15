@@ -10,6 +10,8 @@ repo_url: https://github.com/aurora-opensource/au
 
 theme:
   name: material
+  features:
+    - content.tabs.link
 
 extra_javascript:
   - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML

@@ -388,3 +388,13 @@ filegroup(
     srcs = glob(["**/*.hh"]),
     visibility = ["//:__pkg__"],
 )
+
+################################################################################
+# Examples of error conditions that can occur.
+
+cc_library(
+    name = "error_examples",
+    srcs = ["error_examples.cc"],
+    tags = ["manual"],
+    deps = ["//au"],
+)
