@@ -154,11 +154,6 @@ TEST(Quantity, SupportsDirectConstAccessWithQuantityMakerOfEquivalentUnit) {
     //           static_cast<const void *>(&x));
 }
 
-TEST(Quantity, SupportsOldStyleInWithTemplates) {
-    constexpr auto x = inches(3);
-    EXPECT_EQ(x.in<Inches>(), 3);
-}
-
 TEST(Quantity, CanImplicitlyConvertToDifferentUnitOfSameDimension) {
     constexpr QuantityI32<Inches> x = yards(2);
     EXPECT_EQ(x.in(inches), 72);
