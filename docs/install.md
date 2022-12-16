@@ -171,10 +171,10 @@ should get you any other unit you're likely to want.  The units we include are:
 It's easy to package the library in a _custom_ single file with _exactly_ the units you need.
 Here's how:
 
-1. **Clone the repo**.  Go to the [aurora-tech/au](https://github.com/aurora-tech/au) repo, and
-   follow the typical instructions.
+1. **Clone the repo**.  Go to the [aurora-opensource/au](https://github.com/aurora-opensource/au)
+   repo, and follow the typical instructions.
     - If you're just a _user_ of Au, not a _contributor_, this should be:<br>
-      `git clone https://github.com/aurora-tech/au.git`
+      `git clone https://github.com/aurora-opensource/au.git`
 
 2. **Run the script**.  `tools/bin/make-single-file --units meters seconds newtons > ~/au.hh`
    creates a file, `~/au.hh`, which packages the entire library in a single file with these three
@@ -200,8 +200,8 @@ Now you have a file, `~/au.hh`, which you can add to your `third_party` folder.
 2. **Form the URL to the archive**.
     - For `0.2.0`, this would be:
       ```
-      https://github.com/aurora-tech/au/archive/0.2.0.tar.gz
-             NOTE: Your au version ID goes HERE ^^^^^
+      https://github.com/aurora-opensource/au/archive/0.2.0.tar.gz
+                   NOTE: Your au version ID goes HERE ^^^^^
       ```
 
 
@@ -215,9 +215,9 @@ Now you have a file, `~/au.hh`, which you can add to your `third_party` folder.
       ```python
       http_archive(
           name = "au",
-          sha256 = "01053379cbebea7c483dfea9e7e2f9d82740ddbdf87e327499982d98d7153b59",
+          sha256 = "bdaec065b35f44af2cb22def5b69ac08ca40c47791ea3ed2eb3ebf3e85b3e0b0",
           strip_prefix = "au-0.2.0",
-          urls = ["https://github.com/aurora-tech/au/archive/0.2.0.tar.gz"],
+          urls = ["https://github.com/aurora-opensource/au/archive/0.2.0.tar.gz"],
       )
       ```
     - In particular, here's how to fill out the fields:
@@ -232,7 +232,7 @@ attribute, and include the appropriate files.
 
 | Dependency | Headers provided | Notes |
 |------------|------------------|-------|
-| `@au//au` | `"au/au.hh"`<br>`"au/units.*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-tech/au/tree/main/au/units) |
+| `@au//au` | `"au/au.hh"`<br>`"au/units.*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
 | `@au//au:io` | `"au/io.hh"` | `operator<<` support |
 | `@au//au:testing` | `"au/testing.hh"` | Utilities for testing<br>_Note:_ `testonly = True` |
 

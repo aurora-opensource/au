@@ -4,8 +4,8 @@ This page explains how to define new units that aren't included in the library.
 
 !!! tip
     If it's a common unit---one which _should_ be in the library, but _isn't_---go ahead and
-    [file an issue](https://github.com/aurora-tech/au/issues)!  We should be able to turn it around
-    pretty quickly (either adding it to the library, or explaining why we won't).
+    [file an issue](https://github.com/aurora-opensource/au/issues)!  We should be able to turn it
+    around pretty quickly (either adding it to the library, or explaining why we won't).
 
 ## Definition features
 
