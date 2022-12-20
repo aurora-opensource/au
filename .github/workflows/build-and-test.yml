@@ -15,4 +15,4 @@ jobs:
 
     steps:
       - name: Build and test (${{ matrix.config }})
-      - run: bazel test --config=${{ matrix.config }} //...:all
+        run: bazel test --config=${{ matrix.config }} //...:all
