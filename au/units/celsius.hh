@@ -21,7 +21,11 @@ struct Celsius : Kelvins, CelsiusLabel<void> {
     using CelsiusLabel<void>::label;
     static constexpr auto origin() { return centi(kelvins)(273'15); }
 };
-constexpr auto celsius = QuantityMaker<Celsius>{};
+constexpr auto celsius_qty = QuantityMaker<Celsius>{};
 constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
+
+[[deprecated(
+    "`celsius()` is ambiguous.  Use `celsius_pt()` for _points_, or `celsius_qty()` for "
+    "_quantities_")]] constexpr auto celsius = QuantityMaker<Celsius>{};
 
 }  // namespace au

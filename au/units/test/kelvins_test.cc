@@ -11,7 +11,7 @@ namespace au {
 TEST(Kelvins, HasExpectedLabel) { expect_label<Kelvins>("K"); }
 
 TEST(Kelvins, QuantityEquivalentToCelsius) {
-    EXPECT_THAT(kelvins(10), QuantityEquivalent(celsius(10)));
+    EXPECT_THAT(kelvins(10), QuantityEquivalent(celsius_qty(10)));
 }
 
 }  // namespace au

@@ -23,7 +23,11 @@ struct Fahrenheit : Rankines, FahrenheitLabel<void> {
     using FahrenheitLabel<void>::label;
     static constexpr auto origin() { return centi(rankines)(459'67); }
 };
-constexpr auto fahrenheit = QuantityMaker<Fahrenheit>{};
+constexpr auto fahrenheit_qty = QuantityMaker<Fahrenheit>{};
 constexpr auto fahrenheit_pt = QuantityPointMaker<Fahrenheit>{};
+
+[[deprecated(
+    "`fahrenheit()` is ambiguous.  Use `fahrenheit_pt()` for _points_, or `fahrenheit_qty()` for "
+    "_quantities_")]] constexpr auto fahrenheit = QuantityMaker<Fahrenheit>{};
 
 }  // namespace au
