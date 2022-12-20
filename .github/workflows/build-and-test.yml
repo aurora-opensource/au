@@ -1,3 +1,5 @@
+# Copyright 2022 Aurora Operations, Inc.
+
 name: build-and-test
 
 on:
