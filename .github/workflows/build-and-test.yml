@@ -14,5 +14,6 @@ jobs:
         config: ["clang11", "clang14", "gcc10"]
 
     steps:
+      - uses: actions/checkout@v2
       - name: Build and test (${{ matrix.config }})
         run: bazel test --config=${{ matrix.config }} //...:all
