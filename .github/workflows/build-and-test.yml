@@ -1,0 +1,18 @@
+name: build-and-test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: ["clang11", "clang14", "gcc10"]
+
+    steps:
+      - name: Build and test (${{ matrix.config }})
+      - run: bazel test --config=${{ matrix.config }} //...:all
