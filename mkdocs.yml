@@ -2,11 +2,11 @@
 
 site_name: au
 site_description: "A C++ units library, by Aurora"
-site_url: https://aurora-tech.github.io/au
+site_url: https://aurora-opensource.github.io/au
 site_author: "au team"
 copyright: Copyright &copy; 2022, Aurora Innovation, Inc. All rights reserved
 
-repo_url: https://github.com/aurora-tech/au
+repo_url: https://github.com/aurora-opensource/au
 
 theme:
   name: material
