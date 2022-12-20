@@ -23,7 +23,7 @@ constexpr QuantityPointMaker<Kelvins> kelvins_pt{};
 struct Celsius : Kelvins {
     static constexpr auto origin() { return centi(kelvins)(273'15); }
 };
-constexpr QuantityMaker<Celsius> celsius{};
+constexpr QuantityMaker<Celsius> celsius_qty{};
 constexpr QuantityPointMaker<Celsius> celsius_pt{};
 
 TEST(QuantityPoint, HasExpectedDiffType) {
@@ -216,7 +216,7 @@ TEST(QuantityPoint, MixedUnitAdditionUsesCommonDenominator) {
 
 TEST(QuantityPoint, MixedUnitAdditionWithQuantityDoesNotConsiderOrigin) {
     EXPECT_THAT(celsius_pt(20) + kelvins(5), PointEquivalent(celsius_pt(25)));
-    EXPECT_THAT(celsius(20) + kelvins_pt(5), PointEquivalent(kelvins_pt(25)));
+    EXPECT_THAT(celsius_qty(20) + kelvins_pt(5), PointEquivalent(kelvins_pt(25)));
 }
 
 TEST(QuantityPoint, MixedUnitSubtractionUsesCommonDenominator) {
@@ -229,7 +229,7 @@ TEST(QuantityPoint, MixedUnitSubtractionWithQuantityDoesNotConsiderOrigin) {
 }
 
 TEST(QuantityPoint, MixedUnitsWithIdenticalNonzeroOriginDontGetSubdivided) {
-    constexpr auto diff = kilo(celsius_pt)(1) - celsius(900);
+    constexpr auto diff = kilo(celsius_pt)(1) - celsius_qty(900);
     EXPECT_THAT(diff, PointEquivalent(celsius_pt(100)));
 
     // Just to leave no doubt: the centi-celsius units of the origin should _not_ influence the
@@ -279,7 +279,7 @@ TEST(QuantityPoint, InheritsOverflowSafetySurfaceFromUnderlyingQuantityTypes) {
     // Note that this is explicitly due to the influence of the origin _difference_.  For
     // _quantities_, rather than quantity _points_, this would work just fine, as the following test
     // shows.
-    ASSERT_TRUE(celsius(static_cast<uint16_t>(20)) < kelvins(static_cast<uint16_t>(293)));
+    ASSERT_TRUE(celsius_qty(static_cast<uint16_t>(20)) < kelvins(static_cast<uint16_t>(293)));
 }
 
 TEST(QuantityPointMaker, CanApplyPrefix) {

@@ -39,7 +39,7 @@ struct Celsius : Kelvins {
     static constexpr auto origin() { return centi(kelvins)(273'15); }
 };
 constexpr const char Celsius::label[];
-constexpr auto celsius = QuantityMaker<Celsius>{};
+constexpr auto celsius_qty = QuantityMaker<Celsius>{};
 constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
 
 }  // namespace
@@ -50,7 +50,7 @@ TEST(StreamingOutput, PrintsValueAndUnitLabel) {
 }
 
 TEST(StreamingOutput, DistinguishesPointFromQuantityByAtSign) {
-    EXPECT_EQ(stream_to_string(celsius(20)), "20 deg C");
+    EXPECT_EQ(stream_to_string(celsius_qty(20)), "20 deg C");
     EXPECT_EQ(stream_to_string(celsius_pt(20)), "@(20 deg C)");
 
     EXPECT_EQ(stream_to_string(kelvins(20)), "20 K");
