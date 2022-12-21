@@ -1,3 +1,5 @@
+# Copyright 2022 Aurora Operations, Inc.
+
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(

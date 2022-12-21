@@ -1,3 +1,5 @@
+# Copyright 2022 Aurora Operations, Inc.
+
 load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
 
 string_flag(

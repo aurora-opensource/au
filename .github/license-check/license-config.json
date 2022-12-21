@@ -1,0 +1,50 @@
+[
+  {
+    "include": [
+      "**/*.py",
+      "**/*.sh",
+      "**/*.yml",
+      "**/BUILD",
+      "tools/bin/au-docs-serve",
+      "tools/bin/clang-format",
+      "tools/bin/make-single-file",
+      ".bazelrc",
+      ".clang-format",
+      ".envrc",
+      "requirements.in",
+      "WORKSPACE"
+    ],
+    "exclude": [
+      "third_party/**/*"
+    ],
+    "license": "./.github/license-check/header-apache2-hashtag.txt"
+  },
+  {
+    "include": [
+      "**/*.hh",
+      "**/*.cc"
+    ],
+    "exclude": [
+      "third_party/**/*"
+    ],
+    "license": "./.github/license-check/header-apache2-double-slash.txt"
+  },
+  {
+    "include": [
+      "**/*.css"
+    ],
+    "exclude": [
+      "third_party/**/*"
+    ],
+    "license": "./.github/license-check/header-apache2-slash-star.txt"
+  },
+  {
+    "include": [
+      "**/*.md",
+      "**/*.txt",
+      "third_party/**/*",
+      "tools/bazel",
+      "tools/bin/bazel"
+    ]
+  }
+]
