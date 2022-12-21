@@ -1,0 +1,19 @@
+# Copyright 2022 Aurora Operations, Inc.
+
+name: buildifier-lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
+      - uses: thompsonja/bazel-buildifier@851a03879729721b9bbb4854a1779977c4718f01 # v0.4.0
+        with:
+          warnings: all
+          buildifier_version: 5.1.0
