@@ -1,3 +1,5 @@
+# Copyright 2022 Aurora Operations, Inc.
+
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 load("@pip_deps//:requirements.bzl", "requirement")
 

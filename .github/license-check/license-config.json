@@ -11,15 +11,29 @@
       "requirements.in",
       "WORKSPACE"
     ],
+    "exclude": [
+      "third_party/**/*"
+    ],
     "license": "./.github/license-check/header-apache2-hashtag.txt"
   },
   {
     "include": [
-      "**/*.css",
       "**/*.hh",
       "**/*.cc"
     ],
+    "exclude": [
+      "third_party/**/*"
+    ],
     "license": "./.github/license-check/header-apache2-double-slash.txt"
+  },
+  {
+    "include": [
+      "**/*.css"
+    ],
+    "exclude": [
+      "third_party/**/*"
+    ],
+    "license": "./.github/license-check/header-apache2-slash-star.txt"
   },
   {
     "include": [
