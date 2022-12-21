@@ -52,8 +52,8 @@ genrule(
     outs = ["docs/au.hh"],
     cmd = CMD_ROOT.format(
         extra_opts = "",
-        units = BASE_UNIT_STRING,
         id_cmd = GIT_ID_CMD,
+        units = BASE_UNIT_STRING,
     ),
     stamp = True,
     tools = ["tools/bin/make-single-file"],
@@ -74,8 +74,8 @@ genrule(
     outs = ["docs/au_noio.hh"],
     cmd = CMD_ROOT.format(
         extra_opts = "--noio",
-        units = BASE_UNIT_STRING,
         id_cmd = GIT_ID_CMD,
+        units = BASE_UNIT_STRING,
     ),
     stamp = True,
     tools = ["tools/bin/make-single-file"],
