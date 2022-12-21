@@ -46,7 +46,7 @@
     "include": [
       "tools/bin/make-single-file"
     ],
-    "license": "./.github/license-check/header-apache2-shebang-bash.txt"
+    "license": "./.github/license-check/header-apache2-shebang-python3.txt"
   },
   {
     "include": [
