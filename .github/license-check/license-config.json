@@ -8,15 +8,26 @@
       ".bazelrc",
       ".clang-format",
       ".envrc",
+      "requirements.in",
       "WORKSPACE"
     ],
     "license": "./.github/license-check/header-apache2-hashtag.txt"
   },
   {
     "include": [
+      "**/*.css",
       "**/*.hh",
       "**/*.cc"
     ],
     "license": "./.github/license-check/header-apache2-double-slash.txt"
+  },
+  {
+    "include": [
+      "**/*.md",
+      "**/*.txt",
+      "third_party/**/*",
+      "tools/bazel",
+      "tools/bin/bazel"
+    ]
   }
 ]
