@@ -5,6 +5,9 @@
       "**/*.sh",
       "**/*.yml",
       "**/BUILD",
+      "tools/bin/au-docs-serve",
+      "tools/bin/clang-format",
+      "tools/bin/make-single-file",
       ".bazelrc",
       ".clang-format",
       ".envrc",
@@ -34,19 +37,6 @@
       "third_party/**/*"
     ],
     "license": "./.github/license-check/header-apache2-slash-star.txt"
-  },
-  {
-    "include": [
-      "tools/bin/au-docs-serve",
-      "tools/bin/clang-format"
-    ],
-    "license": "./.github/license-check/header-apache2-shebang-bash.txt"
-  },
-  {
-    "include": [
-      "tools/bin/make-single-file"
-    ],
-    "license": "./.github/license-check/header-apache2-shebang-python3.txt"
   },
   {
     "include": [
