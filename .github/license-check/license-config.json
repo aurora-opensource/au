@@ -37,6 +37,19 @@
   },
   {
     "include": [
+      "tools/bin/au-docs-serve",
+      "tools/bin/clang-format"
+    ],
+    "license": "./.github/license-check/header-apache2-shebang-bash.txt"
+  },
+  {
+    "include": [
+      "tools/bin/make-single-file"
+    ],
+    "license": "./.github/license-check/header-apache2-shebang-bash.txt"
+  },
+  {
+    "include": [
       "**/*.md",
       "**/*.txt",
       "third_party/**/*",

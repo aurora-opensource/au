@@ -1,0 +1,2 @@
+#!/bin/bash
+# Copyright %year% Aurora Operations, Inc.
