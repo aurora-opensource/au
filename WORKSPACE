@@ -72,8 +72,8 @@ http_archive(
     strip_prefix = "aspect-build-gcc-toolchain-ac745d4",
 )
 
-load("@aspect_gcc_toolchain//toolchain:defs.bzl", "gcc_register_toolchain", "ARCHS")
 load("@aspect_gcc_toolchain//sysroot:flags.bzl", gcc_sysroot_cflags="cflags", gcc_sysroot_cxxflags="cxxflags")
+load("@aspect_gcc_toolchain//toolchain:defs.bzl", "gcc_register_toolchain", "ARCHS")
 
 gcc_register_toolchain(
     name = "gcc_toolchain_x86_64",
