@@ -1,0 +1,22 @@
+[
+  {
+    "include": [
+      "**/*.py",
+      "**/*.sh",
+      "**/*.yml",
+      "**/BUILD",
+      ".bazelrc",
+      ".clang-format",
+      ".envrc",
+      "WORKSPACE"
+    ],
+    "license": "./.github/license-check/header-apache2-hashtag.txt"
+  },
+  {
+    "include": [
+      "**/*.hh",
+      "**/*.cc"
+    ],
+    "license": "./.github/license-check/header-apache2-double-slash.txt"
+  }
+]

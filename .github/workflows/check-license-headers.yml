@@ -1,0 +1,20 @@
+# Copyright 2022 Aurora Operations, Inc.
+
+name: check-license-headers
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check license headers
+        uses: viperproject/check-license-header@971caaf7d1641bb2c6a49acd06b018a5ce51ad6e # v1.0.5
+        with:
+          path: "."
+          config: ".github/license-check/license-config.json"
+          strict: true
