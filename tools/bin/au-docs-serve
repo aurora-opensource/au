@@ -1,3 +1,4 @@
 #!/bin/bash
+# Copyright 2022 Aurora Operations, Inc.
 
 bazel run //:update_docs -- serve

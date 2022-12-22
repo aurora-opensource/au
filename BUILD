@@ -1,3 +1,5 @@
+# Copyright 2022 Aurora Operations, Inc.
+
 load("@pip_deps//:requirements.bzl", "requirement")
 load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@rules_python//python:defs.bzl", "py_binary")
