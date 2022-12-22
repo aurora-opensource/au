@@ -1,3 +1,5 @@
+# Copyright 2022 Aurora Operations, Inc.
+
 import sys
 
 import mkdocs.__main__

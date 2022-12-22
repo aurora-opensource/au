@@ -1,6 +1,6 @@
 # Copyright 2022 Aurora Operations, Inc.
 
-name: build-and-test
+name: buildifier-lint
 
 on:
   push:
@@ -11,11 +11,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        config: ["clang11", "clang14", "gcc10"]
-
     steps:
       - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
-      - name: Build and test (${{ matrix.config }})
-        run: bazel test --config=${{ matrix.config }} //...:all
+      - uses: thompsonja/bazel-buildifier@851a03879729721b9bbb4854a1779977c4718f01 # v0.4.0
+        with:
+          warnings: all
+          buildifier_version: 5.1.0
+          excludes: ./third_party/*
