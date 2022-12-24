@@ -18,5 +18,7 @@ jobs:
         run: git fetch --all --tags
       - name: Update remote gh-pages history
         run: git fetch origin gh-pages:gh-pages
+      - name: Update remote main history
+        run: git fetch origin main:main
       - name: Build and deploy doc site
         run: bazel run //:update_docs -- gh-deploy
