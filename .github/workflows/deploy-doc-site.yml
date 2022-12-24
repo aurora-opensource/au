@@ -14,6 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
       - uses: fregante/setup-git-user@2e28d51939d2a84005a917d2f844090637f435f8 #v1.1.0
+      - name: Fetch all tags
+        run: git fetch --all --tags
       - name: Update remote gh-pages history
         run: git fetch origin gh-pages:gh-pages
       - name: Build and deploy
