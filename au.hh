@@ -12,7 +12,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.2.0-5-gcfe2f6e
+// Version identifier: 1559df7
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -3348,7 +3348,7 @@ struct common_type<au::Quantity<U1, R1>, au::Quantity<U2, R2>>
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-tech.github.io/au/howto/new-units).
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/howto/new-units).
 template <typename T>
 struct UnosLabel {
     static constexpr const char label[] = "U";
@@ -3366,7 +3366,7 @@ constexpr auto unos = QuantityMaker<Unos>{};
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-tech.github.io/au/howto/new-units).
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/howto/new-units).
 template <typename T>
 struct BitsLabel {
     static constexpr const char label[] = "b";
@@ -3385,7 +3385,7 @@ constexpr auto bits = QuantityMaker<Bits>{};
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-tech.github.io/au/howto/new-units).
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/howto/new-units).
 template <typename T>
 struct RadiansLabel {
     static constexpr const char label[] = "rad";
@@ -3404,7 +3404,7 @@ constexpr auto radians = QuantityMaker<Radians>{};
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-tech.github.io/au/howto/new-units).
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/howto/new-units).
 template <typename T>
 struct CandelasLabel {
     static constexpr const char label[] = "cd";
@@ -3423,7 +3423,7 @@ constexpr auto candelas = QuantityMaker<Candelas>{};
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-tech.github.io/au/howto/new-units).
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/howto/new-units).
 template <typename T>
 struct MolesLabel {
     static constexpr const char label[] = "mol";
@@ -3442,7 +3442,7 @@ constexpr auto moles = QuantityMaker<Moles>{};
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-tech.github.io/au/howto/new-units).
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/howto/new-units).
 template <typename T>
 struct AmperesLabel {
     static constexpr const char label[] = "A";
@@ -3461,7 +3461,7 @@ constexpr auto amperes = QuantityMaker<Amperes>{};
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-tech.github.io/au/howto/new-units).
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/howto/new-units).
 template <typename T>
 struct GramsLabel {
     static constexpr const char label[] = "g";
@@ -3480,7 +3480,7 @@ constexpr auto grams = QuantityMaker<Grams>{};
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-tech.github.io/au/howto/new-units).
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/howto/new-units).
 template <typename T>
 struct SecondsLabel {
     static constexpr const char label[] = "s";
@@ -3860,7 +3860,7 @@ constexpr auto operator-(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-tech.github.io/au/howto/new-units).
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/howto/new-units).
 template <typename T>
 struct KelvinsLabel {
     static constexpr const char label[] = "K";
@@ -3880,7 +3880,7 @@ constexpr auto kelvins_pt = QuantityPointMaker<Kelvins>{};
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-tech.github.io/au/howto/new-units).
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/howto/new-units).
 template <typename T>
 struct MetersLabel {
     static constexpr const char label[] = "m";
