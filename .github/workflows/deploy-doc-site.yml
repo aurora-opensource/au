@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - main
-      - chiphogg/autodeploy-doc-site
 
 jobs:
   build:
@@ -19,9 +18,11 @@ jobs:
           # creating the manifest for `au.hh` in the doc site.  However, as the
           # repo grows, this may become less ideal over time.
           #
-          # It probably won't ever be a _hard_ blocker, but if there's ever a
-          # better solution---say, the ability to fetch `main` back to the
-          # latest tag---then it would be nice to switch to that someday.
+          # It probably won't ever be a _hard_ blocker: the whole checkout step
+          # currently takes 1 second, and we don't expect the repo to grow by
+          # orders of magnitude.  That said, if there's ever a better
+          # solution---say, the ability to fetch `main` back to the latest
+          # tag---then it would be nice to switch to that someday.
           fetch-depth: 0
 
       - uses: fregante/setup-git-user@2e28d51939d2a84005a917d2f844090637f435f8 #v1.1.0
