@@ -13,12 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
+        with:
+          # This will fetch all history for the repo: all branches and tags.  We
+          # need this in order for `git describe` to work correctly when
+          # creating the manifest for `au.hh` in the doc site.  However, as the
+          # repo grows, this may become less ideal over time.
+          #
+          # It probably won't ever be a _hard_ blocker, but if there's ever a
+          # better solution---say, the ability to fetch `main` back to the
+          # latest tag---then it would be nice to switch to that someday.
+          fetch-depth: 0
+
       - uses: fregante/setup-git-user@2e28d51939d2a84005a917d2f844090637f435f8 #v1.1.0
-      - name: Fetch all tags
-        run: git fetch --all --tags origin
-      - name: Update remote gh-pages history
-        run: git fetch origin gh-pages:gh-pages
-      - name: Update remote main history
-        run: git fetch origin main:main
+
       - name: Build and deploy doc site
         run: bazel run //:update_docs -- gh-deploy
