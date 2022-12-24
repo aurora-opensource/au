@@ -16,4 +16,4 @@ jobs:
       - name: Update remote gh-pages history
         run: git fetch origin gh-pages:gh-pages
       - name: Build and deploy
-        run: bazel run //:update_docs -- gh-deploy --force
+        run: bazel run //:update_docs -- gh-deploy
