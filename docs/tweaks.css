@@ -21,6 +21,10 @@ td.best, td.best * {
     color: white;
 }
 
+td.na {
+    background-color: #d9d9d9;
+}
+
 td.fair pre, td.poor pre, td.good pre, td.best pre {
     display: inline;
 }
