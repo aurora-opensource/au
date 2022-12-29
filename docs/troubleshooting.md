@@ -1,35 +1,11 @@
 # Troubleshooting Guide
 
-<style>
-/*
-We need to add invisible content to the "Broken" and "Fixed" tabs to _break_ their links with each
-other.  If we don't do this, then switching one tab group between "Broken" and "Fixed" will switch
-all the others.
-
-(Note that we _do_ want this linking for the _compiler_ tab groups.  Switching one group to "gcc 10"
-should switch all other groups at the same time.)
-*/
-span.tag {
-    color: rgba(0, 0, 0, 0);
-}
-</style>
-
 How do you interpret compiler errors from Au?  This page is a guide to the most commonly encountered
 types of error, what they mean, and how to fix them.
 
 The intended use case is to help you interpret an _actual error in your code_, at the point where
 you encounter it.  To use this page, copy some relevant snippets from your compiler error, and then
-search the text of this page using `Ctrl-F`.  Of course, the actual text can vary from one compiler
-to another, so before you start, select the tab that most closely matches your compiler below.
-
-=== "clang 14"
-    Compiler errors will be shown for clang 14.
-
-=== "clang 11"
-    Compiler errors will be shown for clang 11.
-
-=== "gcc 10"
-    Compiler errors will be shown for gcc 10.
+search the text of this page using `Ctrl-F`.
 
 !!! tip
     To help your chances in finding what you're looking for, we include full compiler errors from
@@ -71,34 +47,33 @@ a raw numeric value to an interface that expected a Quantity.
     This enables users who want to use this kind of "dimension-named alias" in their codebase to do
     so safely.
 
-**Example code:**
+!!! example
+    **Code**
 
-=== "Broken <span class='tag'>a</span>"
-    ```cpp
-    void set_timeout(QuantityD<Seconds> dt);
+    === "Broken"
+        ```cpp
+        void set_timeout(QuantityD<Seconds> dt);
 
-    // A (BROKEN): passing raw number where duration expected.
-    set_timeout(0.5);
+        // A (BROKEN): passing raw number where duration expected.
+        set_timeout(0.5);
 
-    // B (BROKEN): calling Quantity constructor directly.
-    constexpr QuantityD<Meters> length{5.5};
-    ```
+        // B (BROKEN): calling Quantity constructor directly.
+        constexpr QuantityD<Meters> length{5.5};
+        ```
 
 
-=== "Fixed <span class='tag'>a</span>"
-    ```cpp
-    void set_timeout(QuantityD<Seconds> dt);
+    === "Fixed"
+        ```cpp
+        void set_timeout(QuantityD<Seconds> dt);
 
-    // A (FIXED): name the unit.
-    set_timeout(seconds(0.5));
+        // A (FIXED): name the unit.
+        set_timeout(seconds(0.5));
 
-    // B (FIXED): calling Quantity constructor directly.
-    constexpr QuantityD<Meters> length = meters(5.5);
-    ```
+        // B (FIXED): calling Quantity constructor directly.
+        constexpr QuantityD<Meters> length = meters(5.5);
+        ```
 
-**Example compiler errors:**
-
-=== "clang 14"
+    **Compiler error (clang 14)**
     ```
     au/error_examples.cc:19:17: error: calling a private constructor of class 'au::Quantity<au::Seconds, double>'
         set_timeout(0.5);
@@ -114,7 +89,7 @@ a raw numeric value to an interface that expected a Quantity.
                   ^
     ```
 
-=== "clang 11"
+    **Compiler error (clang 11)**
     ```
     au/error_examples.cc:19:17: error: calling a private constructor of class 'au::Quantity<au::Seconds, double>'
         set_timeout(0.5);
@@ -130,7 +105,7 @@ a raw numeric value to an interface that expected a Quantity.
                   ^
     ```
 
-=== "gcc 10"
+    **Compiler error (gcc 10)**
     ```
     au/error_examples.cc: In function 'void au::example_private_constructor()':
     au/error_examples.cc:19:20: error: 'constexpr au::Quantity<UnitT, RepT>::Quantity(au::Quantity<UnitT, RepT>::Rep) [with UnitT = au::Seconds; RepT = double; au::Quantity<UnitT, RepT>::Rep = double]' is private within this context
@@ -183,39 +158,38 @@ operation (at least in this format).
     mechanism exists because sometimes you can know that it's OK, but remember to stop and check
     first!
 
-**Example code:**
+!!! example
+    **Code**
 
-=== "Broken <span class='tag'>b</span>"
-    ```cpp
-    // A (BROKEN): inexact conversion.
-    inches(24).as(feet);
+    === "Broken"
+        ```cpp
+        // A (BROKEN): inexact conversion.
+        inches(24).as(feet);
 
-    // B (BROKEN): overflow risk.
-    giga(hertz)(1).as(hertz);
-    ```
+        // B (BROKEN): overflow risk.
+        giga(hertz)(1).as(hertz);
+        ```
 
-=== "Fixed (1. Floating Point) <span class='tag'>b</span>"
-    ```cpp
-    // A (FIXED): 1. use floating point.
-    inches(24.0).as(feet);
+    === "Fixed (1. Floating Point)"
+        ```cpp
+        // A (FIXED): 1. use floating point.
+        inches(24.0).as(feet);
 
-    // B (FIXED): 1. use floating point.
-    giga(hertz)(1.0).as(hertz);
-    ```
+        // B (FIXED): 1. use floating point.
+        giga(hertz)(1.0).as(hertz);
+        ```
 
-=== "Fixed (2. Explicit Rep) <span class='tag'>b</span>"
-    ```cpp
-    // A (FIXED): 2. provide explicit Rep.
-    inches(24).as<int>(feet);
+    === "Fixed (2. Explicit Rep)"
+        ```cpp
+        // A (FIXED): 2. provide explicit Rep.
+        inches(24).as<int>(feet);
 
-    // B (FIXED): 2. provide explicit Rep.
-    giga(hertz)(1).as<int>(hertz);
-    ```
+        // B (FIXED): 2. provide explicit Rep.
+        giga(hertz)(1).as<int>(hertz);
+        ```
 
 
-**Example compiler errors:**
-
-=== "clang 14"
+    **Compiler error (clang 14)**
     ```
     ./au/quantity.hh:147:9: error: static_assert failed due to requirement 'implicit_rep_permitted_from_source_to_target<int>(unit, u)' "Dangerous conversion: use .as<Rep>(NewUnit) instead"
             static_assert(implicit_rep_permitted_from_source_to_target<Rep>(unit, u),
@@ -240,7 +214,7 @@ operation (at least in this format).
                        ^
     ```
 
-=== "clang 11"
+    **Compiler error (clang 11)**
     ```
     ./au/quantity.hh:147:9: error: static_assert failed due to requirement 'implicit_rep_permitted_from_source_to_target<int>(unit, u)' "Dangerous conversion: use .as<Rep>(NewUnit) instead"
             static_assert(implicit_rep_permitted_from_source_to_target<Rep>(unit, u),
@@ -265,7 +239,7 @@ operation (at least in this format).
                        ^
     ```
 
-=== "gcc 10"
+    **Compiler error (gcc 10)**
     ```
     ./au/quantity.hh: In instantiation of 'constexpr auto au::Quantity<UnitT, RepT>::as(NewUnit) const [with NewUnit = au::Feet; <template-parameter-2-2> = void; UnitT = au::Inches; RepT = int]':
     ./au/quantity.hh:183:18:   required from 'constexpr auto au::Quantity<UnitT, RepT>::as(au::QuantityMaker<NewUnit>) const [with NewUnit = au::Feet; UnitT = au::Inches; RepT = int]'
@@ -281,32 +255,34 @@ operation (at least in this format).
 
 ## No type named 'type' in 'std::common_type'
 
-**Meaning:**  You probably tried to perform a ["common-unit
-operation"](./implementation_docs/common_unit.md) (addition, subtraction, comparison) with two
-incompatible Quantities.  Typically, this means they have different _dimensions_, which makes this
-an intrinsically meaningless operation.
+**Meaning:**  You probably tried to perform a "common-unit operation" (addition, subtraction,
+comparison) with two incompatible Quantities.  Typically, this means they have different
+_dimensions_, which makes this an intrinsically meaningless operation.
+
+!!! warning "TODO"
+    Make a page which explains common-unit operations, and link to it.
 
 **Solution:**  Figure out what dimension you expected them to have, and which value had the wrong
 dimension.  Then, figure out how to fix your expression so it has the right dimension.
 
-**Example code:**
+!!! example
 
-=== "Broken <span class="tag">c</span>"
-    ```cpp
-    // (BROKEN): different dimensions.
-    meters(1) + seconds(1);
-    ```
+    **Code**
 
-=== "Fixed <span class="tag">c</span>"
-    ```cpp
-    // (FIXED): fix coding mistake.
-    meters(1) + seconds(1) * (meters / second)(10);
-    ```
+    === "Broken"
+        ```cpp
+        // (BROKEN): different dimensions.
+        meters(1) + seconds(1);
+        ```
+
+    === "Fixed"
+        ```cpp
+        // (FIXED): fix coding mistake.
+        meters(1) + seconds(1) * (meters / second)(10);
+        ```
 
 
-**Example compiler errors:**
-
-=== "clang 14"
+    **Compiler error (clang 14)**
     ```
     In file included from au/error_examples.cc:1:
     In file included from ./au/au.hh:5:
@@ -328,7 +304,7 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
                   ^
     ```
 
-=== "clang 11"
+    **Compiler error (clang 11)**
     ```
     In file included from au/error_examples.cc:1:
     In file included from ./au/au.hh:5:
@@ -347,7 +323,7 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
                   ^
     ```
 
-=== "gcc 10"
+    **Compiler error (gcc 10)**
     ```
     In file included from external/sysroot_x86_64//include/c++/10.3.0/ratio:39,
                      from external/sysroot_x86_64//include/c++/10.3.0/chrono:39,
@@ -378,32 +354,32 @@ lead to very large errors.
 **Solution:**  If you _really wanted_ integer division, call `integer_quotient()`.  Otherwise, use
 floating point types.
 
-**Example code:**
+!!! example
 
-How long does it take to travel 60 m at a speed of 65 MPH?
+    **Code**
 
-=== "Broken <span class='tag'>d</span>"
-    ```cpp
-    // (BROKEN): gives (60 / 65) == 0 before conversion!
-    QuantityD<Seconds> t = meters(60) / (miles / hour)(65);
-    ```
+    How long does it take to travel 60 m at a speed of 65 MPH?
 
-=== "Fixed (1. Floating point) <span class='tag'>d</span>"
-    ```cpp
-    // (FIXED): 1. Using floating point, we get ~= seconds(2.06486)
-    QuantityD<Seconds> t = meters(60.0) / (miles / hour)(65.0);
-    ```
+    === "Broken"
+        ```cpp
+        // (BROKEN): gives (60 / 65) == 0 before conversion!
+        QuantityD<Seconds> t = meters(60) / (miles / hour)(65);
+        ```
 
-=== "Fixed (2. `integer_quotient()`) <span class='tag'>d</span>"
-    ```cpp
-    // (FIXED): 2. Integer result == (meter * hours / mile)(0)
-    auto t = integer_quotient(meters(60), (miles / hour)(65));
-    ```
+    === "Fixed (1. Floating point)"
+        ```cpp
+        // (FIXED): 1. Using floating point, we get ~= seconds(2.06486)
+        QuantityD<Seconds> t = meters(60.0) / (miles / hour)(65.0);
+        ```
+
+    === "Fixed (2. `integer_quotient()`)"
+        ```cpp
+        // (FIXED): 2. Integer result == (meter * hours / mile)(0)
+        auto t = integer_quotient(meters(60), (miles / hour)(65));
+        ```
 
 
-**Example compiler errors:**
-
-=== "clang 14"
+    **Compiler error (clang 14)**
     ```
     In file included from au/error_examples.cc:1:
     In file included from ./au/au.hh:7:
@@ -416,7 +392,7 @@ How long does it take to travel 60 m at a speed of 65 MPH?
                                           ^
     ```
 
-=== "clang 11"
+    **Compiler error (clang 11)**
     ```
     In file included from au/error_examples.cc:1:
     In file included from ./au/au.hh:7:
@@ -429,7 +405,7 @@ How long does it take to travel 60 m at a speed of 65 MPH?
                                           ^
     ```
 
-=== "gcc 10"
+    **Compiler error (gcc 10)**
     ```
     ./au/quantity.hh:496:94: error: no type named 'type' in 'struct std::common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int> >'
       496 |         std::is_same<typename C::Rep, std::common_type_t<typename T::Rep, typename U::Rep>>::value,
@@ -448,45 +424,45 @@ an integral quantity in a given target unit, there is some smallest value that w
 down to zero (a tremendous error!).  If that value is "small enough to be scary" (currently 1,000),
 we forbid the conversion.
 
-**Solution:**  Consider using floating point; you'll always get the exact answer.  Alternatively,
+**Solution:**  Consider using floating point; you'll always get a precise answer.  Alternatively,
 use a smaller target unit.
 
-**Example code:**
+!!! example
 
-=== "Broken <span class='tag'>e</span>"
-    ```cpp
-    // (BROKEN): excessive truncation risk.
-    inverse_as(seconds, hertz(5));
-    ```
+    **Code**
 
-=== "Fixed (1. Floating point) <span class='tag'>e</span>"
-    ```cpp
-    // (FIXED): 1. Floating point result ~= seconds(0.2)
-    inverse_as(seconds, hertz(5.0));
-    ```
+    === "Broken"
+        ```cpp
+        // (BROKEN): excessive truncation risk.
+        inverse_as(seconds, hertz(5));
+        ```
 
-=== "Fixed (2. Smaller target unit) <span class='tag'>e</span>"
-    ```cpp
-    // (FIXED): 2. Integer result == milli(seconds)(200)
-    inverse_as(milli(seconds), hertz(5));
-    ```
+    === "Fixed (1. Floating point)"
+        ```cpp
+        // (FIXED): 1. Floating point result ~= seconds(0.2)
+        inverse_as(seconds, hertz(5.0));
+        ```
 
-!!! note
-    If you're _really_ sure it's OK, you can use the explicit-Rep version of `inverse_as`, which is
-    forcing like a `static_cast`.  This is rarely the right choice, though.  Consider:
+    === "Fixed (2. Smaller target unit)"
+        ```cpp
+        // (FIXED): 2. Integer result == milli(seconds)(200)
+        inverse_as(milli(seconds), hertz(5));
+        ```
 
-    ```cpp
-    inverse_as<int>(seconds, hertz(5));
-    ```
+    !!! note
+        If you're _really_ sure it's OK, you can use the explicit-Rep version of `inverse_as`, which is
+        forcing like a `static_cast`.  This is rarely the right choice, though.  Consider:
 
-    This yields `seconds(0)`, due to the gross truncation error which the check was designed to
-    prevent in the first place.
+        ```cpp
+        inverse_as<int>(seconds, hertz(5));
+        ```
+
+        This yields `seconds(0)`, due to the gross truncation error which the check was designed to
+        prevent in the first place.
 
 
 
-**Example compiler errors:**
-
-=== "clang 14"
+    **Compiler error (clang 14)**
     ```
     In file included from au/error_examples.cc:1:
     In file included from ./au/au.hh:7:
@@ -501,7 +477,7 @@ use a smaller target unit.
         ^
     ```
 
-=== "clang 11"
+    **Compiler error (clang 11)**
     ```
     In file included from au/error_examples.cc:1:
     In file included from ./au/au.hh:7:
@@ -516,7 +492,7 @@ use a smaller target unit.
         ^
     ```
 
-=== "gcc 10"
+    **Compiler error (gcc 10)**
     ```
     In file included from ./au/au.hh:7,
                      from au/error_examples.cc:1:
@@ -541,59 +517,59 @@ $\text{Hz}$ and $\text{s}^{-1}$, often won't work in these contexts!
 For the initializer list case, you can also make an explicit container, which will handle the
 casting automatically when possible.
 
-**Example code:**
+!!! example
 
-=== "Broken <span class='tag'>f</span>"
-    ```cpp
-    // (BROKEN): Initializer list confused by Hz and s^(-1).
-    for (const auto &frequency : {
-             hertz(1.0),
-             (1 / seconds(2.0)),
-         }) {
-        // ...
-    }
-    ```
+    **Code**
 
-=== "Fixed (1. Cast to explicit unit) <span class='tag'>f</span>"
-    ```cpp
-    // (FIXED): 1. Cast individual elements to desired unit.
-    for (const auto &frequency : {
-             hertz(1.0),
-             (1 / seconds(2.0)).as(hertz),
-         }) {
-        // ...
-    }
-    ```
+    === "Broken"
+        ```cpp
+        // (BROKEN): Initializer list confused by Hz and s^(-1).
+        for (const auto &frequency : {
+                 hertz(1.0),
+                 (1 / seconds(2.0)),
+             }) {
+            // ...
+        }
+        ```
 
-=== "Fixed (2. Use explicit container) <span class='tag'>f</span>"
-    ```cpp
-    // (FIXED): 2. Use container with explicit type.
-    for (const auto &frequency : std::vector<QuantityD<Hertz>>{
-             hertz(1.0),
-             (1 / seconds(2.0)),
-         }) {
-        // ...
-    }
-    ```
+    === "Fixed (1. Cast to explicit unit)"
+        ```cpp
+        // (FIXED): 1. Cast individual elements to desired unit.
+        for (const auto &frequency : {
+                 hertz(1.0),
+                 (1 / seconds(2.0)).as(hertz),
+             }) {
+            // ...
+        }
+        ```
+
+    === "Fixed (2. Use explicit container)"
+        ```cpp
+        // (FIXED): 2. Use container with explicit type.
+        for (const auto &frequency : std::vector<QuantityD<Hertz>>{
+                 hertz(1.0),
+                 (1 / seconds(2.0)),
+             }) {
+            // ...
+        }
+        ```
 
 
-**Example compiler errors:**
-
-=== "clang 14"
+    **Compiler error (clang 14)**
     ```
     au/error_examples.cc:65:34: error: deduced conflicting types ('Quantity<au::QuantityMaker<au::Hertz>::Unit, [...]>' vs 'Quantity<au::QuantityMaker<au::Pow<au::Seconds, -1>>::Unit, [...]>') for initializer list element type
         for (const auto &frequency : {
                                      ^
     ```
 
-=== "clang 11"
+    **Compiler error (clang 11)**
     ```
     au/error_examples.cc:65:34: error: deduced conflicting types ('Quantity<au::Hertz, [...]>' vs 'Quantity<au::Pow<au::Seconds, -1>, [...]>') for initializer list element type
         for (const auto &frequency : {
                                      ^
     ```
 
-=== "gcc 10"
+    **Compiler error (gcc 10)**
     ```
     au/error_examples.cc: In function 'void au::example_deduced_conflicting_types()':
     au/error_examples.cc:68:10: error: unable to deduce 'std::initializer_list<auto>&&' from '{au::hertz.au::QuantityMaker<au::Hertz>::operator()<double>(1.0e+0), au::operator/<int>(1, au::seconds.au::QuantityMaker<au::Seconds>::operator()<double>(2.0e+0))}'
@@ -613,8 +589,11 @@ same parameter pack (say, comparing them, adding them, or taking a product).
 !!! info
     In case you want to understand more, here is the gist.
 
-    Au is _heavily_ based on [parameter packs](./implementation_docs/packs.md).  Some of these
-    packs, such as `UnitProduct<...>` and `CommonUnit<...>`, take _Units_ as their arguments.
+    Au is _heavily_ based on parameter packs.  Some of these packs, such as `UnitProduct<...>` and
+    `CommonUnit<...>`, take _Units_ as their arguments.
+
+    !!! warning "TODO"
+        Make a doc page for parameter packs, and link to it here.
 
     Every parameter pack needs an unambiguous canonical ordering for any possible set of input
     arguments.  Therefore, we need to create a _strict total ordering_ for the (infinitely many!)
@@ -644,48 +623,48 @@ pausing to double-check that you're using the library correctly.
     After all, the alternative is not "correctly working program", but "silent undefined behaviour".
     A compiler error with a searchable error message is infinitely preferable to the latter.
 
-**Example code:**
+!!! example
 
-Note that this example is somewhat convoluted, but again, that's to be expected because this error
-is pretty hard to hit in practice.
+    **Code**
 
-=== "Broken <span class='tag'>g</span>"
-    ```cpp
-    struct Quarterfeet : decltype(Feet{} / mag<4>()) {};
-    constexpr auto quarterfeet = QuantityMaker<Quarterfeet>{};
+    Note that this example is somewhat convoluted, but again, that's to be expected because this error
+    is pretty hard to hit in practice.
 
-    struct Trinches : decltype(Inches{} * mag<3>()) {};
-    constexpr auto trinches = QuantityMaker<Trinches>{};
+    === "Broken"
+        ```cpp
+        struct Quarterfeet : decltype(Feet{} / mag<4>()) {};
+        constexpr auto quarterfeet = QuantityMaker<Quarterfeet>{};
 
-    // (BROKEN): Can't tell how to order Quarterfeet and Trinches when forming common type
-    if (quarterfeet(10) == trinches(10)) {
-        // ...
-    }
-    ```
+        struct Trinches : decltype(Inches{} * mag<3>()) {};
+        constexpr auto trinches = QuantityMaker<Trinches>{};
 
-=== "Fixed <span class='tag'>g</span>"
-    ```cpp
-    struct Quarterfeet : decltype(Feet{} / mag<4>()) {};
-    constexpr auto quarterfeet = QuantityMaker<Quarterfeet>{};
+        // (BROKEN): Can't tell how to order Quarterfeet and Trinches when forming common type
+        if (quarterfeet(10) == trinches(10)) {
+            // ...
+        }
+        ```
 
-    struct Trinches : decltype(Inches{} * mag<3>()) {};
-    constexpr auto trinches = QuantityMaker<Trinches>{};
+    === "Fixed"
+        ```cpp
+        struct Quarterfeet : decltype(Feet{} / mag<4>()) {};
+        constexpr auto quarterfeet = QuantityMaker<Quarterfeet>{};
 
-    namespace au { namespace detail {
-    template <>
-    struct UnitAvoidance<::Trinches> : std::integral_constant<int, 100> {};
-    }}
+        struct Trinches : decltype(Inches{} * mag<3>()) {};
+        constexpr auto trinches = QuantityMaker<Trinches>{};
 
-    // (FIXED): Trinches has high "unit avoidance", so it goes after Quarterfeet
-    if (quarterfeet(10) == trinches(10)) {
-        // ...
-    }
-    ```
+        namespace au { namespace detail {
+        template <>
+        struct UnitAvoidance<::Trinches> : std::integral_constant<int, 100> {};
+        }}
+
+        // (FIXED): Trinches has high "unit avoidance", so it goes after Quarterfeet
+        if (quarterfeet(10) == trinches(10)) {
+            // ...
+        }
+        ```
 
 
-**Example compiler errors:**
-
-=== "clang 14"
+    **Compiler error (clang 14)**
     ```
     In file included from au/error_examples.cc:1:
     In file included from ./au/au.hh:7:
@@ -723,7 +702,7 @@ is pretty hard to hit in practice.
                             ^
     ```
 
-=== "clang 11"
+    **Compiler error (clang 11)**
     ```
     In file included from au/error_examples.cc:1:
     In file included from ./au/au.hh:7:
@@ -761,7 +740,7 @@ is pretty hard to hit in practice.
                             ^
     ```
 
-=== "gcc 10"
+    **Compiler error (gcc 10)**
     ```
     In file included from ./au/magnitude.hh:7,
                      from ./au/conversion_policy.hh:7,
