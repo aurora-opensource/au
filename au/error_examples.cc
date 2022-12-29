@@ -1,3 +1,5 @@
+// Copyright 2022 Aurora Operations, Inc.
+
 #include "au/au.hh"
 #include "au/units/feet.hh"
 #include "au/units/hertz.hh"
