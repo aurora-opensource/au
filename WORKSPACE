@@ -127,7 +127,7 @@ install_deps()
 ################################################################################
 # SECTION: Install buildifier.
 #
-# Instructions adapted from:
+# Instructions adapted from
 # https://github.com/bazelbuild/buildtools/blob/762712d8/buildifier/README.md#setup-and-usage-via-bazel-not-supported-on-windows
 
 # buildifier is written in Go and hence needs rules_go to be built.
