@@ -6,6 +6,7 @@
       "**/*.yml",
       "**/BUILD",
       "tools/bin/au-docs-serve",
+      "tools/bin/buildifier",
       "tools/bin/clang-format",
       "tools/bin/make-single-file",
       ".bazelrc",
