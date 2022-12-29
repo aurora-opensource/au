@@ -503,7 +503,7 @@ use a smaller target unit.
       206 |         make_quantity<UnitProductT<>>(R{1}).in(associated_unit(target_units) * U{}) >= 1000 ||
           |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
       207 |             std::is_floating_point<R>::value,
-          |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                                 
+          |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ```
 
 ## Deduced conflicting types
