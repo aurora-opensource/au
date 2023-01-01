@@ -31,6 +31,7 @@ Second, we bring a number of rare or outright novel features in our own right, i
 - Proven track record supporting embedded applications as first class citizens, via such features as
   our safe handling of integer Rep, treating all Reps on equal footing, and our easy ability to
   exclude expensive `<iostream>` support.
+- Intelligent, unit-aware functions for rounding and computing inverses.
 - Minimal friction by using a single, short namespace: everything's in `au::`.
 
 ## Detailed comparison matrix
