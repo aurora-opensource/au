@@ -29,7 +29,7 @@ struct Zero {
     // Implicit conversion to chrono durations.
     template <typename Rep, typename Period>
     constexpr operator std::chrono::duration<Rep, Period>() const {
-        return std::chrono::duration<Rep, Period>{ 0};
+        return std::chrono::duration<Rep, Period>{0};
     }
 };
 
