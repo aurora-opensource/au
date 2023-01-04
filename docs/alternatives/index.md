@@ -48,8 +48,16 @@ th.highlight {
     background-color: #ccc;
 }
 
-.criterion {
+span.criterion {
     font-weight: bold;
+}
+
+.md-typeset details.criterion summary {
+    padding-left: 0.5rem;
+}
+
+details.criterion > summary::before {
+    display: none;
 }
 </style>
 
@@ -73,14 +81,30 @@ th.highlight {
         <th class="highlight">Au</th>
     </tr>
     <tr>
-        <td><a href="#unit_safety">Unit Safety</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Unit Safety</summary>
+                <p>
+                    The ability to judge the unit-correctness of every individual line of code
+                    by inspection, in isolation.
+                </p>
+            </details>
+        </td>
         <td class="fair"></td>
         <td class="fair"></td>
         <td class="fair"></td>
         <td class="best">Only contains unit-safe interfaces</td>
     </tr>
     <tr>
-        <td><a href="#composability">Composability</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Composability</summary>
+                <p>
+                    The ability to fluently combine the abstractions for units and prefixes to form
+                    new units on the fly.
+                </p>
+            </details>
+        </td>
         <td class="na"></td>
         <td class="na"></td>
         <td class="na"></td>
@@ -268,18 +292,6 @@ th.highlight {
 </table>
 
 ### Explanation of criteria
-
-
-<span class="criterion" id="unit_safety">Unit Safety:<a href="#unit_safety" class="headerlink" title="Permanent link">&para;</a></span>
-
-- To get a top score here, we must be able to judge the unit-correctness of every individual line of
-  code by inspection, in isolation.
-- The most common way to lose points here is to provide raw access to the underlying value without
-  naming the unit in which it's stored.
-
-<span class="criterion" id="composability">Composability:<a href="#composability" class="headerlink" title="Permanent link">&para;</a></span>
-
-- Can we fluently combine the abstractions for units and prefixes to form new units on the fly?
 
 <span class="criterion" id="mixed_rep_support">Mixed-Rep Support:<a href="#mixed_rep_support" class="headerlink" title="Permanent link">&para;</a></span>
 
