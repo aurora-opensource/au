@@ -1,4 +1,4 @@
-// Copyright 2022 Aurora Operations, Inc.
+// Copyright 2023 Aurora Operations, Inc.
 
 #pragma once
 
@@ -11,7 +11,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.0-14-g743e414
+// Version identifier: 0.3.0-5-gbb241c8
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes

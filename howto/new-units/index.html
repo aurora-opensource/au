@@ -340,6 +340,101 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Tutorial
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tutorial" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorial
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2">
+          Exercise
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Exercise" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Exercise
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers Exercise
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -408,15 +503,15 @@
 
 
 <h1 id="defining-new-units">Defining new units<a class="headerlink" href="#defining-new-units" title="Permanent link">&para;</a></h1>
-<p>This page explains how to define new units that aren't included in the library.</p>
+<p>This page explains how to define new units that aren&rsquo;t included in the library.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>If it's a common unit---one which <em>should</em> be in the library, but <em>isn't</em>---go ahead and
+<p>If it&rsquo;s a common unit&mdash;one which <em>should</em> be in the library, but <em>isn&rsquo;t</em>&mdash;go ahead and
 <a href="https://github.com/aurora-opensource/au/issues">file an issue</a>!  We should be able to turn it
-around pretty quickly (either adding it to the library, or explaining why we won't).</p>
+around pretty quickly (either adding it to the library, or explaining why we won&rsquo;t).</p>
 </div>
 <h2 id="definition-features">Definition features<a class="headerlink" href="#definition-features" title="Permanent link">&para;</a></h2>
-<p>Many libraries provide "convenience" macros for creating new units, but ours tries to avoid macros
+<p>Many libraries provide &ldquo;convenience&rdquo; macros for creating new units, but ours tries to avoid macros
 completely.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>  Instead, you define new units by just writing regular C++ code.</p>
 <p>There are several pieces you can add, each of which provides some particular feature. Here is
 a complete sample definition of a new Unit, with these features annotated and explained.</p>
@@ -457,13 +552,13 @@ a complete sample definition of a new Unit, with these features annotated and ex
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If you've seen the unit definitions included in our library, you may notice they look a little
-different from the above.  That's because the library has different goals and constraints than
+<p>If you&rsquo;ve seen the unit definitions included in our library, you may notice they look a little
+different from the above.  That&rsquo;s because the library has different goals and constraints than
 end user projects have.</p>
 <p>For example, the library needs to be both C++14-compatible and header-only.  This forces us to
 define our labels in a more complicated way.  By contrast, your project is unlikely to have both
 these constraints.</p>
-<p>Prefer the simpler approach outlined in this page, instead of treating our library's source code
+<p>Prefer the simpler approach outlined in this page, instead of treating our library&rsquo;s source code
 definitions as examples to follow.</p>
 </div>
 <p>Here are the features.</p>
@@ -472,7 +567,7 @@ definitions as examples to follow.</p>
 <p><em>Strong type definition</em>.</p>
 <ul>
 <li><strong>Required.</strong>  Make a <code>struct</code> with the name you want, and inherit from <code>decltype(u)</code>, where
-  <code>u</code> is some <em>unit expression</em> which gives it the right Dimension and Magnitude.  (We'll
+  <code>u</code> is some <em>unit expression</em> which gives it the right Dimension and Magnitude.  (We&rsquo;ll
   explain unit expressions in the next section.)</li>
 </ul>
 </li>
@@ -481,8 +576,8 @@ definitions as examples to follow.</p>
 <ul>
 <li>A <code>sizeof()</code>-compatible label which is useful for printing the Unit.</li>
 <li>Note that <em>if</em> your project needs C++14 compatibility, then besides the label itself (<code>[2a]</code>),
-  you'll need to provide a <em>definition</em> (<code>[2b]</code>) in the <code>.cc</code> file.  By contrast, if you use
-  C++17 or later, you can just use an inline variable, and you won't need a <code>.cc</code> file.</li>
+  you&rsquo;ll need to provide a <em>definition</em> (<code>[2b]</code>) in the <code>.cc</code> file.  By contrast, if you use
+  C++17 or later, you can just use an inline variable, and you won&rsquo;t need a <code>.cc</code> file.</li>
 <li><strong>If omitted:</strong>  Everything will still <em>work</em>; your Quantity will just be labeled as
   <code>[UNLABELED UNIT]</code> in printing contexts.</li>
 </ul>
@@ -491,8 +586,8 @@ definitions as examples to follow.</p>
 <p><em>Singular name</em>.</p>
 <ul>
 <li>An object whose name is the singular name for your unit.  Useful in certain contexts: for
-  example, the traditional unit for torque is "<strong>newton</strong> meters", <em>not</em> "<strong>newtons</strong> meters".</li>
-<li><strong>If omitted:</strong> you'll sacrifice some readability flow: the grammar becomes strange.  You'll
+  example, the traditional unit for torque is &ldquo;<strong>newton</strong> meters&rdquo;, <em>not</em> &ldquo;<strong>newtons</strong> meters&rdquo;.</li>
+<li><strong>If omitted:</strong> you&rsquo;ll sacrifice some readability flow: the grammar becomes strange.  You&rsquo;ll
   end up with constructs like <code>speed.in(miles / hours)</code>, rather than <code>speed.in(miles / hour)</code>.
   <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
@@ -501,7 +596,7 @@ definitions as examples to follow.</p>
 <p><em>Quantity maker</em>.</p>
 <ul>
 <li><strong>Required.</strong>  This gives you a <code>snake_case</code> version of your unit which acts like a function.
-  If you call this "function" and pass it any numeric type, it creates a <code>Quantity</code> of <em>your
+  If you call this &ldquo;function&rdquo; and pass it any numeric type, it creates a <code>Quantity</code> of <em>your
   unit</em>, whose Rep is that type.  Of course, a quantity maker is much more than a function: it
   composes nicely with prefixes, and with other quantity makers.</li>
 </ul>
@@ -525,14 +620,14 @@ case.  Even among those units, only a small subset have a non-default origin.  T
 are <code>Celsius</code> and <code>Fahrenheit</code>, and the library will provide those out of the box.</p>
 </div>
 <h2 id="unit-expressions">Unit expressions<a class="headerlink" href="#unit-expressions" title="Permanent link">&para;</a></h2>
-<p>Above, we said to inherit your unit's strong type from the <code>decltype</code> of a "unit expression".
+<p>Above, we said to inherit your unit&rsquo;s strong type from the <code>decltype</code> of a &ldquo;unit expression&rdquo;.
 Recall the line from above:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Fathoms</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Inches</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">72</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1">//        Unit Expression ^^^^^^^^^^^^^^^^^^^^</span>
 </code></pre></div>
 <p>This section explains what kinds of things can go inside of the <code>decltype(...)</code>.</p>
 <p>Conceptually, units are defined by combining <em>other units</em>.  In general, given any set of units, you
-can multiply them, divide them, raise them to powers, or scale them by real numbers ("magnitudes"):
+can multiply them, divide them, raise them to powers, or scale them by real numbers (&ldquo;magnitudes&rdquo;):
 the result of any of these operations defines a new unit.</p>
 <p>In C++ code, the easiest way to do this is by working with <em>instances</em> of the unit types.  (<code>Meters</code>
 is the <em>type</em>; <code>Meters{}</code> is an <em>instance</em> of the type.)  This lets us multiply them naturally by
@@ -548,10 +643,10 @@ some examples:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">using</span><span class="w"> </span><span class="n">MilesPerHour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Miles</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Hours</span><span class="p">{});</span><span class="w"></span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">miles_per_hour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<p>We can use the alias, <code>MilesPerHour</code>, anywhere we'd use a unit type.  And we can call the
+<p>We can use the alias, <code>MilesPerHour</code>, anywhere we&rsquo;d use a unit type.  And we can call the
 QuantityMaker, <code>miles_per_hour</code>, just as we would call <code>miles</code>.<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>    We even get an automatically
 generated unit label: <code>mi / h</code>.</p>
-<p>Despite this convenience, aliases aren't always the best choice.  Here's the best practices guidance
+<p>Despite this convenience, aliases aren&rsquo;t always the best choice.  Here&rsquo;s the best practices guidance
 to follow.</p>
 <ol>
 <li>
@@ -575,7 +670,7 @@ to follow.</p>
   rather than <em>strong types</em>.</li>
 <li><em>Rationale:</em> Keeping these as aliases increases support for cancellation: it enables the
   library to notice that <code>MetersPerSecond{} * Seconds{}</code> is <em>identical</em> to <code>Meters{}</code>, not
-  merely quantity-equivalent.  This doesn't <em>usually</em> matter, but it can reduce exposure to
+  merely quantity-equivalent.  This doesn&rsquo;t <em>usually</em> matter, but it can reduce exposure to
   compiler errors in the (rare) situations where exact-type-equality matters (e.g., initializer
   lists).</li>
 </ul>
@@ -585,20 +680,20 @@ to follow.</p>
 <hr />
 <ol>
 <li id="fn:1">
-<p>Macros have long been considered contrary to C++ best practices.  If we're going to use one,
-especially in user-facing code, it needs to meet a very high bar.  Unit definition macros don't meet
+<p>Macros have long been considered contrary to C++ best practices.  If we&rsquo;re going to use one,
+especially in user-facing code, it needs to meet a very high bar.  Unit definition macros don&rsquo;t meet
 this bar.  They mostly exist to save typing.  But code is read far more often than written, and
 macros actually make the definitions <em>harder</em> to read and understand (because they use <em>positional</em>
 arguments, so the meaning of the parameters is unclear at the callsite).&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>Note that this requires us to build out multiplication and division between two
-<code>QuantityMaker</code> instances, rather than just a <code>QuantityMaker</code> and a <code>SingularNameFor</code>.  We haven't
-done this yet, but it's inevitable that we will, to support composing units whose singular name is
+<code>QuantityMaker</code> instances, rather than just a <code>QuantityMaker</code> and a <code>SingularNameFor</code>.  We haven&rsquo;t
+done this yet, but it&rsquo;s inevitable that we will, to support composing units whose singular name is
 identical to the plural name (e.g., <code>hertz</code>).&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p>Note that we don't "need" to define this.  We could write <code>(miles / hour)(65)</code>, and get
+<p>Note that we don&rsquo;t &ldquo;need&rdquo; to define this.  We could write <code>(miles / hour)(65)</code>, and get
 exactly the same result as <code>miles_per_hour(65)</code>.  However, some users may prefer the latter syntax.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
@@ -637,6 +732,21 @@ exactly the same result as <code>miles_per_hour(65)</code>.  However, some users
           </div>
         </a>
       
+      
+        
+        <a href="../../tutorial/101-quantity-makers/" class="md-footer__link md-footer__link--next" aria-label="Next: Au 101: Quantity Makers" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Au 101: Quantity Makers
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
       
     </nav>
   

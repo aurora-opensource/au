@@ -2,17 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://aurora-opensource.github.io/au/</loc>
-         <lastmod>2022-12-24</lastmod>
+         <lastmod>2023-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/install/</loc>
-         <lastmod>2022-12-24</lastmod>
+         <lastmod>2023-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/howto/new-units/</loc>
-         <lastmod>2022-12-24</lastmod>
+         <lastmod>2023-01-04</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://aurora-opensource.github.io/au/tutorial/101-quantity-makers/</loc>
+         <lastmod>2023-01-04</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://aurora-opensource.github.io/au/tutorial/exercise/101-quantity-makers/</loc>
+         <lastmod>2023-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
