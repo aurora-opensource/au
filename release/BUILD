@@ -1,6 +1,6 @@
 # Copyright 2022 Aurora Operations, Inc.
 
-load("@rules_cc//cc:defs.bzl", "cc_test")
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 
 cc_library(
     name = "common_test_cases",

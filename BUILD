@@ -1,7 +1,9 @@
 # Copyright 2022 Aurora Operations, Inc.
 
-load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 load("@pip_deps//:requirements.bzl", "requirement")
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_python//python:defs.bzl", "py_binary")
+load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 
 # This rule adds a convenient way to update the requirements file.
 compile_pip_requirements(
@@ -52,8 +54,8 @@ genrule(
     outs = ["docs/au.hh"],
     cmd = CMD_ROOT.format(
         extra_opts = "",
-        units = BASE_UNIT_STRING,
         id_cmd = GIT_ID_CMD,
+        units = BASE_UNIT_STRING,
     ),
     stamp = True,
     tools = ["tools/bin/make-single-file"],
@@ -74,8 +76,8 @@ genrule(
     outs = ["docs/au_noio.hh"],
     cmd = CMD_ROOT.format(
         extra_opts = "--noio",
-        units = BASE_UNIT_STRING,
         id_cmd = GIT_ID_CMD,
+        units = BASE_UNIT_STRING,
     ),
     stamp = True,
     tools = ["tools/bin/make-single-file"],
