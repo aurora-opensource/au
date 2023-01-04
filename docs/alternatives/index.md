@@ -115,7 +115,7 @@ details.criterion > summary::before {
         <td class="na"></td>
         <td class="poor">Very slow, but can be <i>greatly</i> improved by removing I/O support and most units</td>
         <td class="na"></td>
-        <td class="good">Probably "best", but will need to assess all libraries on the same code</td>
+        <td class="good">Possibly "best", but will need to assess all libraries on the same code</td>
     </tr>
     <tr>
         <td><a href="#compiler_error_readability">Compiler Error Readability</a></td>
