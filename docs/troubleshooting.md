@@ -1,29 +1,33 @@
 # Troubleshooting Guide
 
-How do you interpret compiler errors from Au?  This page is a guide to the most commonly encountered
-types of error, what they mean, and how to fix them.
+This page is a guide to the most commonly encountered types of error, what they mean, and how to fix
+them.
 
 The intended use case is to help you interpret an _actual error in your code_, at the point where
 you encounter it.  To use this page, copy some relevant snippets from your compiler error, and then
-search the text of this page using `Ctrl-F`.
+search the text of this page using your browser's Find function.
 
 !!! tip
-    To help your chances in finding what you're looking for, we include full compiler errors from
+    To improve your chances of finding what you're looking for, we include full compiler errors from
     both gcc and clang, inline with the text.  Naturally, this makes this page very long, so it's
-    not meant to be read straight through.  Stick with the `Ctrl-F` route.
+    not meant to be read straight through.  Stick with your browser's Find function.
+
+Each section below lists one category of compiler error you might encounter when using the library.
+It explains what it means and how to solve it, and gives specific snippets of erroneous code, along
+with the compiler errors that each would yield.
 
 ## Private constructor
 
-**Meaning:**  This is the "classic" error the units library aims to prevent.  It means you passed
-a raw numeric value to an interface that expected a Quantity.
+**Meaning:**  This means you passed a raw numeric value to an interface that expected a Quantity.
+It's the "classic" error the units library aims to prevent.
 
 **Solution:** Call the appropriate Quantity maker: instead of passing `x`, pass `meters(x)`,
 `(kilo(meters) / hour)(x)`, etc.
 
 !!! note
-    Every other units library lets you construct its Quantity types from raw numeric values; it just
-    makes that constructor explicit.  Au goes further, and makes this constructor private.  The
-    reason is to preserve unit safety at all callsites.  We can't know whether you made an alias
+    Every other major units library lets you construct its Quantity types from raw numeric values;
+    it just makes that constructor explicit.  Au goes further, and makes this constructor private.
+    The reason is to preserve unit safety at all callsites.  We can't know whether you made an alias
     that doesn't name the unit.  For example, if you want everybody to measure lengths in `Meters`
     in your codebase, you might provide a common alias like this:
 
@@ -128,7 +132,7 @@ a raw numeric value to an interface that expected a Quantity.
           |               ^~~~~~~~
     ```
 
-## Dangerous Conversion
+## Dangerous conversion
 
 **Meaning:**  This is a _physically_ meaningful conversion, but we think the risk of a grossly
 incorrect answer is too high, so we forbid it.  There are two main sources for this risk, both
@@ -580,38 +584,41 @@ casting automatically when possible.
 
 ## Broken strict total ordering
 
-**Meaning:**  This one is very deep in the weeds and is generally pretty hard to hit.  You need two
-_distinct_ Units that have the _same_ Dimension, Magnitude, _and_ Origin.  That's a necessary but
-not sufficient condition: for example, even `UnitInverseT<Seconds>` and `Hertz` won't trigger this!
-Even once you have such Units, you need to perform some operation that puts them together in the
-same parameter pack (say, comparing them, adding them, or taking a product).
+**Meaning:**  This means you performed an operation that needs to put unit types into a parameter
+pack --- say, a common unit, or a unit product --- but the library couldn't figure out how to order
+the units inside that pack.
+
+If that sounds obscure, it is: ordering units inside packs is a deep library implementation detail,
+and we try to avoid letting end users encounter this.  To reach this error, you need two _distinct_
+units that have the _same_ Dimension, Magnitude, _and_ Origin.  That's a necessary but not
+sufficient condition: for example, even `UnitInverseT<Seconds>` and `Hertz` won't trigger this!
 
 !!! info
     In case you want to understand more, here is the gist.
 
     Au is _heavily_ based on parameter packs.  Some of these packs, such as `UnitProduct<...>` and
-    `CommonUnit<...>`, take _Units_ as their arguments.
+    `CommonUnit<...>`, take _units_ as their arguments.
 
     !!! warning "TODO"
         Make a doc page for parameter packs, and link to it here.
 
     Every parameter pack needs an unambiguous canonical ordering for any possible set of input
     arguments.  Therefore, we need to create a _strict total ordering_ for the (infinitely many!)
-    Unit types that could appear in these packs.  This ordering needs to be known _at compile time_.
+    unit types that could appear in these packs.  This ordering needs to be known _at compile time_.
     The ordering itself doesn't matter so much, but if we don't strictly adhere to _some_ ordering,
     it's undefined behaviour.
 
-    Our strategy is to construct a "gauntlet" of properties which we can measure for any Unit (e.g.,
+    Our strategy is to construct a "gauntlet" of properties which we can measure for any unit (e.g.,
     Dimension, Magnitude, ...), and define some arbitrary ordering for each property.  We then
-    compare the Units on each property in turn.  The first one where they differ "wins".  If we get
-    through _all_ the properties, and they're _still_ tied, then we have two _distinct_ Unit types
+    compare the units on each property in turn.  The first one where they differ "wins".  If we get
+    through _all_ the properties, and they're _still_ tied, then we have two _distinct_ unit types
     which _compare_ as equal.  This would be undefined behaviour!  Rather than silently ignoring
     this, we manifest this as a compiler error.
 
     That is what "broken strict total ordering" means.
 
-**Solution:**  If you have two distinct Units, and the library can't figure out how to order them,
-you can _force_ a particular ordering.  Choose one of the Units and give it a high "unit avoidance"
+**Solution:**  If you have two distinct units, and the library can't figure out how to order them,
+you can _force_ a particular ordering.  Choose one of the units and give it a high "unit avoidance"
 score (see example below).  This will break the tie.
 
 Again, this is pretty unusual.  For most normal ways of forming units, the library should
