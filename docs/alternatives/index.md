@@ -1,28 +1,21 @@
 # Comparison of Alternatives
 
-There are plenty of other open source C++ units libraries, many quite well established.  Why does Au
-exist?  What do we add to the C++ units library ecosystem?
+There are plenty of other open source C++ units libraries, many quite well established.  However,
+the tradeoffs required to use these libraries can be so significant that many people can't or won't
+use them.  For example: the compiler errors may be inscrutable or overwhelming; the compilation
+process may become unacceptably slow; or, it may require a C++ standard that is simply too new for a
+user.
 
-## Big picture
-
-The answer is twofold.
-
-First, we address the most common reasons that people can't, or won't, use the most prominent
-alternatives.
-
-- [mp-units](https://mpusz.github.io/units/) is a modern, high quality library, but its minimum
-  C++20 requirement is too steep for many.
-
-- [nholthaus/units](https://github.com/nholthaus/units) is accessible and easy to learn, but its
-  compile time penalty is severe, and it's hard to use different Rep types.
-
-Second, we bring a number of rare or outright novel features in our own right, including:
+Au is an accessible, production-tested alternative.  We provide a number of rare or outright novel
+features, with a small compile time footprint --- and we're compatible with every C++ version back
+to the mature and widely available C++14 standard. Key features include:
 
 - Fully unit-safe APIs, on both entry and exit.
 - The "safety surface": conversions that adapt to the overflow risk based on both conversion
   magnitude, and storage type.
-- Highly compsable "quantity maker" APIs make it easy to both compose new units, and apply unit
+- Highly composable "quantity maker" APIs make it easy to both compose new units, and apply unit
   prefixes, on the fly.
+- Human-readable and concise compiler errors, via strong typenames for units.
 - `ZERO`: novel, fluent handling of construction, comparison, and sign handling for quantities.
 - Ease of migration (both to and from Au): we support bidirectional implicit conversions with
   equivalent types from any other units library.
