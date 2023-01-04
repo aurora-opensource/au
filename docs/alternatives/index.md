@@ -81,6 +81,14 @@ details.criterion > summary::before {
                     The ability to judge the unit-correctness of every individual line of code
                     by inspection, in isolation.
                 </p>
+                <ul>
+                    <li>
+                        <b>Fair:</b> can achieve indirectly, by casting to known type before
+                        retrieving value.
+                    </li>
+                    <li><b>Good:</b> provide unit-safe interfaces.</li>
+                    <li><b>Best:</b> <i>only</i> provide unit-safe interfaces.</li>
+                </ul>
             </details>
         </td>
         <td class="fair"></td>
