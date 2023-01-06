@@ -12,6 +12,7 @@
       ".bazelrc",
       ".clang-format",
       ".envrc",
+      ".github/**/*.yml",
       "requirements.in",
       "WORKSPACE"
     ],
