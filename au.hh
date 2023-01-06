@@ -12,7 +12,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.0-7-ga7f884a
+// Version identifier: 0.3.0-8-ge4170d4
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
