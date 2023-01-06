@@ -391,101 +391,6 @@
   
 
     
-      
-      
-      
-
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_4">
-          Tutorial
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Tutorial" data-md-level="1">
-        <label class="md-nav__title" for="__nav_4">
-          <span class="md-nav__icon md-icon"></span>
-          Tutorial
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../tutorial/101-quantity-makers/" class="md-nav__link">
-        Au 101: Quantity Makers
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_4_2">
-          Exercise
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Exercise" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_2">
-          <span class="md-nav__icon md-icon"></span>
-          Exercise
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
-        Au 101: Quantity Makers Exercise
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -607,9 +512,9 @@
 
 
 <h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
-<p>Au can be installed in multiple ways.  First, we&rsquo;ll help you decide which one is right for you.
-Then, we&rsquo;ll provide full instructions for each option.</p>
-<p>Broadly, you can either do a &ldquo;full install&rdquo; of the library, or you can package it into a single
+<p>Au can be installed in multiple ways.  First, we'll help you decide which one is right for you.
+Then, we'll provide full instructions for each option.</p>
+<p>Broadly, you can either do a "full install" of the library, or you can package it into a single
 header file.  For the latter approach, there are two options:</p>
 <ul>
 <li>Pre-built versions you can download right away.</li>
@@ -619,10 +524,10 @@ header file.  For the latter approach, there are two options:</p>
 <p>You should consider several factors before you decide how to install the Au library, such as:</p>
 <ul>
 <li>Tradeoffs in setup time, unit selection, and flexibility.</li>
-<li>Whether you&rsquo;re installing for production, or just trying it out.</li>
+<li>Whether you're installing for production, or just trying it out.</li>
 <li>Your build system.</li>
 </ul>
-<p>Here&rsquo;s an overview of the tradeoffs involved.</p>
+<p>Here's an overview of the tradeoffs involved.</p>
 <table>
   <tr>
     <th>Legend</th>
@@ -696,7 +601,7 @@ BuildSystem --&gt;|other| UseCustom</code></pre>
 <p>The Au library can be packaged as a single header file, which you can include in your project just
 like any other header.  This works with any build system!</p>
 <p>To take this approach, obtain the single file by one of the methods described below.  Then, put it
-inside a <code>third_party</code> folder (for example, as <code>third_party/au.hh</code>).  Now you&rsquo;re up and running with
+inside a <code>third_party</code> folder (for example, as <code>third_party/au.hh</code>).  Now you're up and running with
 Au!</p>
 <p>Every single-file package automatically includes the following features:</p>
 <div class="admonition warning">
@@ -705,10 +610,10 @@ Au!</p>
 and link to that page here:</p>
 </div>
 <ul>
-<li>Basic &ldquo;unit container&rdquo; types: <code>Quantity</code>, <code>QuantityPoint</code></li>
+<li>Basic "unit container" types: <code>Quantity</code>, <code>QuantityPoint</code></li>
 <li>Magnitude types and values, including the constant <code>PI</code>, and constants for any integer such as
   <code>mag&lt;5280&gt;()</code>.</li>
-<li>All prefixes for SI (<code>kilo</code>, <code>mega</code>, &hellip;) and informational (<code>kibi</code>, <code>mebi</code>, &hellip;) quantities.</li>
+<li>All prefixes for SI (<code>kilo</code>, <code>mega</code>, ...) and informational (<code>kibi</code>, <code>mebi</code>, ...) quantities.</li>
 <li>Math functions, including unit-aware rounding and inverses, trigonometric functions, square roots,
   and so on.</li>
 <li>Bidirectional implicit conversion between <code>Quantity</code> types and any equivalent counterparts in the
@@ -718,8 +623,8 @@ and link to that page here:</p>
 <h4 id="pre-built-single-file">Pre-built single file<a class="headerlink" href="#pre-built-single-file" title="Permanent link">&para;</a></h4>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>This approach is mainly for <em>playing</em> with the library.  It&rsquo;s very fast to get up and running,
-but it&rsquo;s not the best choice as the &ldquo;production&rdquo; installation of your library.</p>
+<p>This approach is mainly for <em>playing</em> with the library.  It's very fast to get up and running,
+but it's not the best choice as the "production" installation of your library.</p>
 <p>For a single-file approach, most users will be much better served by the next section, which
 explains how to customize it to get exactly the units you want.</p>
 </div>
@@ -731,7 +636,7 @@ latest commit in the repo:</p>
   (Same as above, but with <code>&lt;iostream&gt;</code> support stripped out)</li>
 </ul>
 <p>These include very few units (to keep compile times short).  However, <em>combinations</em> of these units
-should get you any other unit you&rsquo;re likely to want.  The units we include are:</p>
+should get you any other unit you're likely to want.  The units we include are:</p>
 <ul>
 <li>Every SI base unit (<code>seconds</code>, <code>meters</code>, <code>kilo(grams)</code>, <code>amperes</code>, <code>kelvins</code>, <code>moles</code>, <code>candelas</code>)</li>
 <li>Base units for angles and information (<code>radians</code>, <code>bits</code>)</li>
@@ -748,21 +653,21 @@ this:</p>
 <strong>scale</strong> a unit by multiplying by Magnitude objects.  For example:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">degrees</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">radians</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">PI</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">180</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
 </code></pre></div>
-<p>These will &ldquo;work&rdquo;, in the sense of producing correct results.  But these ad hoc unit definitions
+<p>These will "work", in the sense of producing correct results.  But these ad hoc unit definitions
 are far less usable than <a href="../howto/new-units/">fully defined units</a>.  Both the type names and
 the unit symbols will be needlessly complicated.</p>
 <p>Again, we recommend following the directions in the next section to get <em>exactly</em> the units you
 care about.</p>
 </div>
 <h4 id="custom-single-file">Custom single file<a class="headerlink" href="#custom-single-file" title="Permanent link">&para;</a></h4>
-<p>It&rsquo;s easy to package the library in a <em>custom</em> single file with <em>exactly</em> the units you need.
-Here&rsquo;s how:</p>
+<p>It's easy to package the library in a <em>custom</em> single file with <em>exactly</em> the units you need.
+Here's how:</p>
 <ol>
 <li>
 <p><strong>Clone the repo</strong>.  Go to the <a href="https://github.com/aurora-opensource/au">aurora-opensource/au</a>
    repo, and follow the typical instructions.</p>
 <ul>
-<li>If you&rsquo;re just a <em>user</em> of Au, not a <em>contributor</em>, this should be:<br>
+<li>If you're just a <em>user</em> of Au, not a <em>contributor</em>, this should be:<br>
   <code>git clone https://github.com/aurora-opensource/au.git</code></li>
 </ul>
 </li>
@@ -782,7 +687,7 @@ Here&rsquo;s how:</p>
 <h4 id="bazel">bazel<a class="headerlink" href="#bazel" title="Permanent link">&para;</a></h4>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>These instructions were written while the Au repo was still private.  Therefore, we couldn&rsquo;t
+<p>These instructions were written while the Au repo was still private.  Therefore, we couldn't
 <em>fully</em> test that they actually <em>work</em>.  However, when adding a backup <code>file:///</code> URL pointing
 to a manually downloaded copy, they did work, which is a very promising sign.</p>
 </div>
@@ -790,7 +695,7 @@ to a manually downloaded copy, they did work, which is a very promising sign.</p
 <li>
 <p><strong>Choose your Au version</strong>.</p>
 <ul>
-<li>This can be a tag, or a commit hash.  Let&rsquo;s take <code>0.2.0</code> as an example.</li>
+<li>This can be a tag, or a commit hash.  Let's take <code>0.2.0</code> as an example.</li>
 </ul>
 </li>
 <li>
@@ -821,7 +726,7 @@ to a manually downloaded copy, they did work, which is a very promising sign.</p
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://github.com/aurora-opensource/au/archive/0.2.0.tar.gz&quot;</span><span class="p">],</span>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">)</span>
 </code></pre></div></li>
-<li>In particular, here&rsquo;s how to fill out the fields:<ul>
+<li>In particular, here's how to fill out the fields:<ul>
 <li><code>sha256</code>: Use the SHA256 hash you got from step 3.</li>
 <li><code>strip_prefix</code>: write <code>"au-0.2.0"</code>, except use your ID from step 1 instead of <code>0.2.0</code>.</li>
 <li><code>urls</code>: This should be a list, whose only entry is the URL you formed in step 2.</li>
@@ -831,7 +736,7 @@ to a manually downloaded copy, they did work, which is a very promising sign.</p
 </li>
 </ol>
 <p>At this point, the Au library is installed, and you can use it in your project!</p>
-<p>Here are the headers provided by each Au target.  To use, add the &ldquo;Dependency&rdquo; to your <code>deps</code>
+<p>Here are the headers provided by each Au target.  To use, add the "Dependency" to your <code>deps</code>
 attribute, and include the appropriate files.</p>
 <table>
 <thead>
@@ -859,10 +764,10 @@ attribute, and include the appropriate files.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="other-build-systems-cmake-conan-vcpkg">Other build systems (CMake / conan / vcpkg / &hellip;)<a class="headerlink" href="#other-build-systems-cmake-conan-vcpkg" title="Permanent link">&para;</a></h4>
+<h4 id="other-build-systems-cmake-conan-vcpkg">Other build systems (CMake / conan / vcpkg / ...)<a class="headerlink" href="#other-build-systems-cmake-conan-vcpkg" title="Permanent link">&para;</a></h4>
 <p>We would like to support all these build and packaging systems, and perhaps others!  But the initial
-public release is bazel-only, because bazel is what we use at Aurora, and we don&rsquo;t have experience
-with any of these alternatives.  Thus, we&rsquo;ll need to lean on the community to support them.</p>
+public release is bazel-only, because bazel is what we use at Aurora, and we don't have experience
+with any of these alternatives.  Thus, we'll need to lean on the community to support them.</p>
 <p>Meanwhile, the library itself is still at least partially available on all build environments, via
 the single-file options explained above.</p>
 

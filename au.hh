@@ -12,7 +12,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.0-5-gbb241c8
+// Version identifier: 0.3.0-24-gcaf49bc
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
