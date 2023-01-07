@@ -24,7 +24,7 @@ It's the "classic" error the units library aims to prevent.
 **Solution:** Call the appropriate Quantity maker: instead of passing `x`, pass `meters(x)`,
 `(kilo(meters) / hour)(x)`, etc.
 
-!!! note
+??? note "A note on quantity makers vs. constructors"
     Every other major units library lets you construct its Quantity types from raw numeric values;
     it just makes that constructor explicit.  Au goes further, and makes this constructor private.
     The reason is to preserve unit safety at all callsites.  We can't know whether you made an alias
@@ -593,7 +593,7 @@ and we try to avoid letting end users encounter this.  To reach this error, you 
 units that have the _same_ Dimension, Magnitude, _and_ Origin.  That's a necessary but not
 sufficient condition: for example, even `UnitInverseT<Seconds>` and `Hertz` won't trigger this!
 
-!!! info
+??? info "More background info on why this error exists"
     In case you want to understand more, here is the gist.
 
     Au is _heavily_ based on parameter packs.  Some of these packs, such as `UnitProduct<...>` and
