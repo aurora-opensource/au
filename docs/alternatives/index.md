@@ -17,8 +17,8 @@ to the mature and widely available C++14 standard. Key features include:
   prefixes, on the fly.
 - Human-readable and concise compiler errors, via strong typenames for units.
 - `ZERO`: novel, fluent handling of construction, comparison, and sign handling for quantities.
-- Ease of migration (both to and from Au): we support bidirectional implicit conversions with
-  equivalent types from any other units library.
+- Ease of migration (both to and from Au): with minimal setup, we support bidirectional implicit
+  conversions with equivalent types from any other units library.
 - Support for single-header-file delivery, but with easy customization of units and features to
   include.
 - Proven track record supporting embedded applications as first class citizens, via such features as
@@ -87,7 +87,6 @@ details.criterion > summary::before {
                         retrieving value.
                     </li>
                     <li><b>Good:</b> provide unit-safe interfaces.</li>
-                    <li><b>Best:</b> <i>only</i> provide unit-safe interfaces.</li>
                 </ul>
             </details>
         </td>
@@ -112,35 +111,115 @@ details.criterion > summary::before {
         <td class="best">QuantityMaker APIs</td>
     </tr>
     <tr>
-        <td><a href="#mixed_rep_support">Mixed-Rep Support</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Mixed-Rep Support</summary>
+                <p>The ease of freely mixing different storage types ("Reps") in the same program.</p>
+            </details>
+        </td>
         <td class="good"></td>
-        <td class="fair"></td>
+        <td class="fair">Possible, but user-facing types use a global "preferred" Rep.</td>
         <td class="good"></td>
         <td class="good"></td>
     </tr>
     <tr>
-        <td><a href="#compilation_speed">Compilation Speed</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Rep variety</summary>
+                <p>The range of different storage types ("Reps") permitted.</p>
+                <ul>
+                    <li><b>Poor:</b> only 1 or 2 types</li>
+                    <li><b>Fair:</b> all built-in numeric types</li>
+                    <li><b>Good:</b> also support custom numeric types</li>
+                </ul>
+            </details>
+        </td>
+        <td class="good">Supports custom numeric types</td>
+        <td class="poor">
+            Effectively floating-point only (integer types <a
+            href="https://github.com/nholthaus/units/issues/225">unsafe</a>)
+        </td>
+        <td class="best">
+            Well defined
+            <a href="https://mpusz.github.io/units/reference/core/concepts.html#_CPPv4I0EN5units14RepresentationE">Representation
+            concept</a>
+        </td>
+        <td class="fair">
+            Rep can only be <code>is_arithmetic</code> for now, but
+            <a href="https://github.com/aurora-opensource/au/issues/52">plan
+            to upgrade</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Compilation Speed</summary>
+                <p>The extra time the library adds to compiling a translation unit, compared to no units library.</p>
+                <ul>
+                    <li><b>Poor:</b> typically adds several seconds per translation unit</li>
+                    <li><b>Fair:</b> enough that end users tend to notice</li>
+                    <li><b>Good:</b> not "subjectively noticeable"</li>
+                </ul>
+            </details>
+        </td>
         <td class="na"></td>
         <td class="poor">Very slow, but can be <i>greatly</i> improved by removing I/O support and most units</td>
         <td class="na"></td>
         <td class="good">Possibly "best", but will need to assess all libraries on the same code</td>
     </tr>
     <tr>
-        <td><a href="#compiler_error_readability">Compiler Error Readability</a></td>
-        <td class="poor">Infamously challenging</td>
+        <td>
+            <details class="criterion">
+                <summary>Compiler Error Readability</summary>
+                <p>
+                    The ability to understand errors when the library catches a mistake it was
+                    designed to catch.
+                </p>
+                <ul>
+                    <li><b>Poor:</b> Excessively long, nested types</li>
+                    <li><b>Fair:</b> Short, but dimension names lacking</li>
+                    <li><b>Good:</b> Brief typenames with user-facing unit names</li>
+                </ul>
+            </details>
+        </td>
+        <td class="poor">
+            <a href="https://mpusz.github.io/wg21-papers/papers/1935R0_a_cpp_approach_to_physical_units.html#type-aliasing-issues">
+                Infamously challenging
+            </a>
+        </td>
         <td class="fair">Positional dimensions</td>
         <td class="good">Pioneered strong typedefs for units</td>
         <td class="best">No dimension in type name leads to shorter types</td>
     </tr>
     <tr>
-        <td><a href="#units_as_types">Units as types</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Units as types</summary>
+                <p>
+                    Types that represent abstract units (clearly distinct from quantities of that
+                    unit).
+                </p>
+            </details>
+        </td>
         <td class="good"></td>
         <td class="fair">Types exist, but conflated with quantity names</td>
         <td class="good"></td>
         <td class="best">Can form instances and do arithmetic</td>
     </tr>
     <tr>
-        <td><a href="#generic_dimensions">Generic dimensions</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Generic dimensions</summary>
+                <p>
+                    The ability to write (template) functions that operate on any dimensionally
+                    consistent inputs.
+                </p>
+                <p>
+                    (For example, a function that takes any length and time quantities, and returns
+                    the appropriate speed quantity.)
+                </p>
+            </details>
+        </td>
         <td class="na"></td>
         <td class="na"></td>
         <td class="best">Concepts excel here</td>
@@ -150,7 +229,21 @@ details.criterion > summary::before {
         </td>
     </tr>
     <tr>
-        <td><a href="#embedded_friendliness">Embedded Friendliness</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Embedded Friendliness</summary>
+                <p>
+                    Support common embedded use cases.  Key examples include:
+                </p>
+                <ul>
+                    <li>
+                        Flexibility in the Rep (usually a variety of integral types, and perhaps
+                        <code>float</code>, but rarely <code>double</code>).
+                    </li>
+                    <li>The easy ability to exclude <code>&lt;iostreams&gt;</code>.</li>
+                </ul>
+            </details>
+        </td>
         <td class="good">Assumed to be good, based on mixed-Rep support</td>
         <td class="fair">
             Can trim by excluding <code>&lt;iostream&gt;</code>, but integer-Rep support is poor.
@@ -165,7 +258,18 @@ details.criterion > summary::before {
         </td>
     </tr>
     <tr>
-        <td><a href="#ease_of_migration">Ease of Migration</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Ease of Migration</summary>
+                <p>
+                    Support for two migration use cases:
+                </p>
+                <ul>
+                    <li>From "no units" to this library</li>
+                    <li>Between this library and another units library (either direction)</li>
+                </ul>
+            </details>
+        </td>
         <td class="fair"></td>
         <td class="fair"></td>
         <td class="good">
@@ -176,18 +280,31 @@ details.criterion > summary::before {
         <td class="best">"Equivalent types" feature gives better API compatibility</td>
     </tr>
     <tr>
-        <td><a href="#extensibility">Extensibility</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Extensibility</summary>
+                <p>How easy it is to add new units, dimensions, or systems.</p>
+            </details>
+        </td>
         <td class="na"></td>
         <td class="fair"></td>
         <td class="best">Can even handle, e.g., systems of "natural" units</td>
         <td class="fair">
-            Rep can only be <code>is_arithmetic</code> for now, but
-            <a href="https://github.com/aurora-opensource/au/issues/52">plan
-            to upgrade</a>
+            Unit definitions more verbose, but more readable (no positional parameters).
         </td>
     </tr>
     <tr>
-        <td><a href="#friction">Friction</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Low Friction</summary>
+                <p>How easy it is to develop with the library.  Criteria include:</p>
+                <ul>
+                    <li>Headers: few, or easily guessable</li>
+                    <li>Simple namespace structure</li>
+                    <li>Reasonable, safe implicit conversions</li>
+                </ul>
+            </details>
+        </td>
         <td class="fair"></td>
         <td class="good">
             <ul>
@@ -207,16 +324,30 @@ details.criterion > summary::before {
         </td>
     </tr>
     <tr>
-        <td><a href="#explicit_measurement_systems">Explicit Systems of Measurement</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Explicit Systems of Measurement</summary>
+                <p>
+                    Support for different systems, each with their own (possibly incompatible)
+                    collection of dimensions.
+                </p>
+            </details>
+        </td>
         <td class="good"></td>
-        <td class="poor"></td>
+        <td class="poor">Single, implicit global system</td>
         <td class="good"></td>
         <td class="poor">
-            Intentional design tradeoff: reduces learning curve, and makes compiler errors shorter.
+            Single, implicit global system. (Intentional design tradeoff: reduces learning curve,
+            and makes compiler errors shorter.)
         </td>
     </tr>
     <tr>
-        <td><a href="#nonlinear_scales">Non-linear scales (such as dB)</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Non-linear scales (such as dB)</summary>
+                <p>Support for logarithmic "units", such as decibels or nepers</p>
+            </details>
+        </td>
         <td class="poor"></td>
         <td class="best"></td>
         <td class="poor"></td>
@@ -226,17 +357,37 @@ details.criterion > summary::before {
         </td>
     </tr>
     <tr>
-        <td><a href="#ease_of_bringing_into_project">Ease of bringing into project</a></td>
-        <td class="fair"></td>
+        <td>
+            <details class="criterion">
+                <summary>Ease of Acquisition</summary>
+                <p>Ease of including this library in projects using a wide variety of build environments</p>
+            </details>
+        </td>
+        <td class="fair">Part of boost</td>
         <td class="good">Single, self-contained header</td>
-        <td class="fair"></td>
-        <td class="best">Supports single-header delivery, with easy customization</td>
+        <td class="fair">First class conan support; available on vcpkg</td>
+        <td class="best">
+            <p>Supports single-header, with features:
+            <ul>
+                <li>Easy customization</li>
+                <li>Version-stamped for full reproducibility</li>
+            </ul>
+        </td>
     </tr>
     <tr>
-        <td><a href="#point_types">Point types</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Point Types</summary>
+                <p>
+                    Support for "point-like" quantities, also known as
+                    <a href="http://videocortex.io/2018/Affine-Space-Types/">"affine space
+                    types"</a>.
+                </p>
+            </details>
+        </td>
         <td class="good">
             <a href="https://www.boost.org/doc/libs/1_65_0/doc/html/boost/units/absolute.html"><code>absolute</code>
-            wrapper</a>
+            wrapper</a> for unit
         </td>
         <td class="fair">
             Optional "offset" for units, but can't distinguish quantity from point.
@@ -245,7 +396,16 @@ details.criterion > summary::before {
         <td class="good"></td>
     </tr>
     <tr>
-        <td><a href="#zero">Zero</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Zero</summary>
+                <p>
+                    Quantity support for constructing from, and comparing with, <code>0</code>: the
+                    only number which is meaningful for every unit.  (Includes facilities for
+                    working with quantity signs.)
+                </p>
+            </details>
+        </td>
         <td class="fair">
             Guidance:
             <a href="https://www.boost.org/doc/libs/1_81_0/doc/html/boost_units/FAQ.html#boost_units.FAQ.NoConstructorFromValueType">use
@@ -256,7 +416,14 @@ details.criterion > summary::before {
         <td class="best">Can use <code>ZERO</code> to construct or compare any quantity</td>
     </tr>
     <tr>
-        <td><a href="#angles">Angles</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Angles</summary>
+                <p>
+                    First-class support for angular quantities, including degrees and radians.
+                </p>
+            </details>
+        </td>
         <td class="fair">
             Curiously imprecise
             <a href="https://github.com/boostorg/units/blob/45787015/include/boost/units/base_units/angle/degree.hpp#L17">pi
@@ -267,7 +434,20 @@ details.criterion > summary::before {
         <td class="good"></td>
     </tr>
     <tr>
-        <td><a href="#magnitudes">Magnitudes</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Magnitudes</summary>
+                <p>
+                    The features of the representation for different units' sizes.  Key features
+                    include:
+                </p>
+                <ul>
+                    <li>Irrational numbers (such as \(\pi\))</li>
+                    <li>Powers (robust against overflow)</li>
+                    <li>Roots (exact representations)</li>
+                </ul>
+            </details>
+        </td>
         <td class="fair">Close: lacks only basis, and instance arithmetic.  Ahead of its time!</td>
         <td class="fair">Uses ratio plus "pi powers": good angle handling, but vulnerable to overflow</td>
         <td class="good"></td>
@@ -278,14 +458,28 @@ details.criterion > summary::before {
         </td>
     </tr>
     <tr>
-        <td><a href="#macro_usage">Macro usage</a></td>
+        <td>
+            <details class="criterion">
+                <summary>Macro Usage</summary>
+                <p>
+                    Avoidance of macros, especially in user-facing code.
+                </p>
+            </details>
+        </td>
         <td class="poor">Present in user-facing APIs</td>
         <td class="poor">Present in user-facing APIs</td>
         <td class="good">Confined to outer compatibility layer</td>
         <td class="best">No macros</td>
     </tr>
     <tr>
-        <td><a href="#compatibility">C++ Version Compatibility</a></td>
+        <td>
+            <details class="criterion">
+                <summary>C++ Version Compatibility</summary>
+                <p>
+                    Support for a wide variety of C++ versions.
+                </p>
+            </details>
+        </td>
         <td class="best">
             C++98 or C++03<br>
             (unclear which, but best in either case)
@@ -295,111 +489,3 @@ details.criterion > summary::before {
         <td class="good">C++14</td>
     </tr>
 </table>
-
-### Explanation of criteria
-
-<span class="criterion" id="mixed_rep_support">Mixed-Rep Support:<a href="#mixed_rep_support" class="headerlink" title="Permanent link">&para;</a></span>
-
-- Can we use arbitrary numeric types to store our quantities' values?  The worst score here means
-  there is only a single type (usually `double`). A medium score means there is one type, but it can
-  be customized at the library level.  The ideal here is to permit seamlessly and freely mixing
-  multiple Rep types.
-
-<span class="criterion" id="compilation_speed">Compilation Speed:<a href="#compilation_speed" class="headerlink" title="Permanent link">&para;</a></span>
-
-- How much does the library prolong compilation?
-    - "Good" means that the penalty is close to the level of measurement noise.
-    - "Fair" means "measurable, but not subjectively noticeable".
-    - "Poor" means that the penalty is so severe that end users tend to notice it.
-
-<span class="criterion" id="compiler_error_readability">Compiler Error Readability:<a href="#compiler_error_readability" class="headerlink" title="Permanent link">&para;</a></span>
-
-- When the library catches a mistake it was designed to catch, how hard is it to understand what has
-  gone wrong?
-    - The ideal here is to print out the actual unit names which users see in their code.
-    - Failing this, the type should at least label its dimensions, instead of using positional
-      dimensions.
-    - Most important of all is brevity: excessively long error messages are automatically "poor".
-
-<span class="criterion" id="units_as_types">Units as Types:<a href="#units_as_types" class="headerlink" title="Permanent link">&para;</a></span>
-
-- The library should maintain a clear distinction between the concept of a unit, and a quantity of
-  that unit.  Units should be represented by types so that we can perform computations on those
-  types.  "Poor" means that no such types exist; "fair" means that they do, but that the name is
-  conflated with the quantity of that unit.
-
-<span class="criterion" id="generic_dimensions">Generic Dimensions:<a href="#generic_dimensions" class="headerlink" title="Permanent link">&para;</a></span>
-
-- How hard is it to write a generic function which works for any dimensionally-consistent set of
-  units?  (For example, a "speed" function which divides a "length" and a "time")
-
-<span class="criterion" id="embedded_friendliness">Embedded friendliness:<a href="#embedded_friendliness" class="headerlink" title="Permanent link">&para;</a></span>
-
-- Key concerns of embedded developers include:
-    - Flexibility in the Rep (usually a variety of integral types, and perhaps `float`, but rarely
-      `double`).
-    - The easy ability to exclude `<iostreams>`.
-
-<span class="criterion" id="ease_of_migration">Ease of Migration:<a href="#ease_of_migration" class="headerlink" title="Permanent link">&para;</a></span>
-
-- How easy is it to migrate from "no units", or some other units library, to this one?
-- How easy is it to migrate away from this one to another units library?
-
-<span class="criterion" id="extensibility">Extensibility:<a href="#extensibility" class="headerlink" title="Permanent link">&para;</a></span>
-
-- How easy is it to add a new unit?  How about a new Rep type?
-
-<span class="criterion" id="friction">Friction:<a href="#friction" class="headerlink" title="Permanent link">&para;</a></span>
-
-- How many headers do you have to include, and how hard are they to guess?
-- Do users need to contend with a lot of nested namespaces (more friction), or is the structure more
-  flat (less friction)?
-- Do we provide reasonable implicit conversions?
-
-<span class="criterion" id="explicit_measurement_systems">Explicit Measurement Systems:<a href="#explicit_measurement_systems" class="headerlink" title="Permanent link">&para;</a></span>
-
-- Do we make the measurement system itself explicit, distinguishing between its "base units" and
-  "derived units"?  Or do we pick a single, unified, implicit measurement system, so that the
-  concept fades into the background?
-    - Note that we can make a conscious tradeoff: by removing the ability to support _explicit_
-      measurement systems, we can buy simplicity of implementation and use.  Au makes this choice.
-
-<span class="criterion" id="nonlinear_scales">Non-linear scales:<a href="#nonlinear_scales" class="headerlink" title="Permanent link">&para;</a></span>
-
-- Do we support "units" such as dB, which are logarithmic rather than linear?
-
-<span class="criterion" id="ease_of_bringing_into_project">Ease of Bringing Into Project:<a href="#ease_of_bringing_into_project" class="headerlink" title="Permanent link">&para;</a></span>
-
-- How easy is it to add support for this library to a project?
-
-<span class="criterion" id="point_types">Point types:<a href="#point_types" class="headerlink" title="Permanent link">&para;</a></span>
-
-- Can we support "point-type" quantities (temperature; position; etc.) as opposed to
-  "displacement-type" quantities (temperature change; displacement; etc.)?  See [this
-  article](http://videocortex.io/2018/Affine-Space-Types/) for background.
-
-<span class="criterion" id="zero">Zero:<a href="#zero" class="headerlink" title="Permanent link">&para;</a></span>
-
-- `0` is the only value that is meaningful for a quantity of any units.
-    - How easy is it to construct a quantity with this value?
-    - How easy is it to compare to zero, or work with the sign of a quantity generally?
-
-<span class="criterion" id="angles">Angles:<a href="#angles" class="headerlink" title="Permanent link">&para;</a></span>
-
-- Are angles given first class support, including degrees and radians?
-
-<span class="criterion" id="magnitudes">Magnitudes:<a href="#magnitudes" class="headerlink" title="Permanent link">&para;</a></span>
-
-- Does the library support different magnitudes of units (e.g., feet and inches) at all?
-- If so: is it restricted to a simple ratio, or can it handle roots, large numbers (without
-  overflow), and irrational quotients?
-
-<span class="criterion" id="macro_usage">Macro usage:<a href="#macro_usage" class="headerlink" title="Permanent link">&para;</a></span>
-
-- How much does the library depend on macros?  Any macros in the end user interfaces or key
-  definitions?  Ideally, we should aim for zero here, or at most for working around specific
-  compiler version issues.
-
-<span class="criterion" id="compatibility">C++ Version Compatibility:<a href="#compatibility" class="headerlink" title="Permanent link">&para;</a></span>
-
-- What versions of the C++ standard does the library support?
