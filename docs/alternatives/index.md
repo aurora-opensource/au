@@ -168,8 +168,12 @@ details.criterion > summary::before {
         <td><a href="#ease_of_migration">Ease of Migration</a></td>
         <td class="fair"></td>
         <td class="fair"></td>
-        <td class="fair"></td>
-        <td class="best">"Equivalent types" feature</td>
+        <td class="good">
+            <a href="https://mpusz.github.io/units/use_cases/interoperability.html">
+                <code>quantity_like_traits</code>
+            </a>
+        </td>
+        <td class="best">"Equivalent types" feature gives better API compatibility</td>
     </tr>
     <tr>
         <td><a href="#extensibility">Extensibility</a></td>
