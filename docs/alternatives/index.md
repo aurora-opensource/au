@@ -76,78 +76,34 @@ details.criterion > summary::before {
     <tr>
         <td>
             <details class="criterion">
-                <summary>Unit Safety</summary>
-                <p>
-                    The ability to judge the unit-correctness of every individual line of code
-                    by inspection, in isolation.
-                </p>
-                <ul>
-                    <li>
-                        <b>Fair:</b> can achieve indirectly, by casting to known type before
-                        retrieving value.
-                    </li>
-                    <li><b>Good:</b> provide unit-safe interfaces.</li>
-                </ul>
+                <summary>C++ Version Compatibility</summary>
+                <p>The minimum C++ standard required to use the library.</p>
             </details>
-        </td>
-        <td class="fair"></td>
-        <td class="fair"></td>
-        <td class="fair"></td>
-        <td class="best">Only contains unit-safe interfaces</td>
-    </tr>
-    <tr>
-        <td>
-            <details class="criterion">
-                <summary>Composability</summary>
-                <p>
-                    The ability to fluently combine the abstractions for units and prefixes to form
-                    new units on the fly.
-                </p>
-            </details>
-        </td>
-        <td class="na"></td>
-        <td class="na"></td>
-        <td class="na"></td>
-        <td class="best">QuantityMaker APIs</td>
-    </tr>
-    <tr>
-        <td>
-            <details class="criterion">
-                <summary>Mixed-Rep Support</summary>
-                <p>The ease of freely mixing different storage types ("Reps") in the same program.</p>
-            </details>
-        </td>
-        <td class="good"></td>
-        <td class="fair">Possible, but user-facing types use a global "preferred" Rep.</td>
-        <td class="good"></td>
-        <td class="good"></td>
-    </tr>
-    <tr>
-        <td>
-            <details class="criterion">
-                <summary>Rep variety</summary>
-                <p>The range of different storage types ("Reps") permitted.</p>
-                <ul>
-                    <li><b>Poor:</b> only 1 or 2 types</li>
-                    <li><b>Fair:</b> all built-in numeric types</li>
-                    <li><b>Good:</b> also support custom numeric types</li>
-                </ul>
-            </details>
-        </td>
-        <td class="good">Supports custom numeric types</td>
-        <td class="poor">
-            Effectively floating-point only (integer types <a
-            href="https://github.com/nholthaus/units/issues/225">unsafe</a>)
         </td>
         <td class="best">
-            Well defined
-            <a href="https://mpusz.github.io/units/reference/core/concepts.html#_CPPv4I0EN5units14RepresentationE">Representation
-            concept</a>
+            C++98 or C++03<br>
+            (unclear which, but best in either case)
         </td>
-        <td class="fair">
-            Rep can only be <code>is_arithmetic</code> for now, but
-            <a href="https://github.com/aurora-opensource/au/issues/52">plan
-            to upgrade</a>
+        <td class="good">C++14</td>
+        <td class="poor">C++20</td>
+        <td class="good">C++14</td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Ease of Acquisition</summary>
+                <p>Ease of including this library in projects using a wide variety of build environments</p>
+            </details>
+        </td>
+        <td class="fair">Part of boost</td>
+        <td class="good">Single, self-contained header</td>
+        <td class="fair">First class conan support; available on vcpkg</td>
+        <td class="best">
+            <p>Supports single-header delivery, with features:
+            <ul>
+                <li>Easy to customize units and I/O support</li>
+                <li>Version-stamped for full reproducibility</li>
+            </ul>
         </td>
     </tr>
     <tr>
@@ -194,104 +150,24 @@ details.criterion > summary::before {
     <tr>
         <td>
             <details class="criterion">
-                <summary>Units as types</summary>
+                <summary>Unit Safety</summary>
                 <p>
-                    Types that represent abstract units (clearly distinct from quantities of that
-                    unit).
-                </p>
-            </details>
-        </td>
-        <td class="good"></td>
-        <td class="fair">Types exist, but conflated with quantity names</td>
-        <td class="good"></td>
-        <td class="best">Can form instances and do arithmetic</td>
-    </tr>
-    <tr>
-        <td>
-            <details class="criterion">
-                <summary>Generic dimensions</summary>
-                <p>
-                    The ability to write (template) functions that operate on any dimensionally
-                    consistent inputs.
-                </p>
-                <p>
-                    (For example, a function that takes any length and time quantities, and returns
-                    the appropriate speed quantity.)
-                </p>
-            </details>
-        </td>
-        <td class="na"></td>
-        <td class="na"></td>
-        <td class="best">Concepts excel here</td>
-        <td class="fair">
-            Currently clunky.  Could be better by adding concepts in extra
-            C++20-only file, without compromising C++14 support.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <details class="criterion">
-                <summary>Embedded Friendliness</summary>
-                <p>
-                    Support common embedded use cases.  Key examples include:
+                    The ability to judge the unit-correctness of every individual line of code
+                    by inspection, in isolation.
                 </p>
                 <ul>
                     <li>
-                        Flexibility in the Rep (usually a variety of integral types, and perhaps
-                        <code>float</code>, but rarely <code>double</code>).
+                        <b>Fair:</b> can achieve indirectly, by casting to known type before
+                        retrieving value.
                     </li>
-                    <li>The easy ability to exclude <code>&lt;iostreams&gt;</code>.</li>
-                </ul>
-            </details>
-        </td>
-        <td class="good">Assumed to be good, based on mixed-Rep support</td>
-        <td class="fair">
-            Can trim by excluding <code>&lt;iostream&gt;</code>, but integer-Rep support is poor.
-        </td>
-        <td class="good">Assumed to be good, based on mixed-Rep support</td>
-        <td class="best">
-            Best choice of all:
-            <ul>
-                <li>No "preferred" Rep.</li>
-                <li>Safe integer operations.</li>
-            </ul>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <details class="criterion">
-                <summary>Ease of Migration</summary>
-                <p>
-                    Support for two migration use cases:
-                </p>
-                <ul>
-                    <li>From "no units" to this library</li>
-                    <li>Between this library and another units library (either direction)</li>
+                    <li><b>Good:</b> provide unit-safe interfaces.</li>
                 </ul>
             </details>
         </td>
         <td class="fair"></td>
         <td class="fair"></td>
-        <td class="good">
-            <a href="https://mpusz.github.io/units/use_cases/interoperability.html">
-                <code>quantity_like_traits</code>
-            </a>
-        </td>
-        <td class="best">"Equivalent types" feature gives better API compatibility</td>
-    </tr>
-    <tr>
-        <td>
-            <details class="criterion">
-                <summary>Extensibility</summary>
-                <p>How easy it is to add new units, dimensions, or systems.</p>
-            </details>
-        </td>
-        <td class="na"></td>
         <td class="fair"></td>
-        <td class="best">Can even handle, e.g., systems of "natural" units</td>
-        <td class="fair">
-            Unit definitions more verbose, but more readable (no positional parameters).
-        </td>
+        <td class="best">Only contains unit-safe interfaces</td>
     </tr>
     <tr>
         <td>
@@ -326,53 +202,87 @@ details.criterion > summary::before {
     <tr>
         <td>
             <details class="criterion">
-                <summary>Explicit Systems of Measurement</summary>
+                <summary>Composability</summary>
                 <p>
-                    Support for different systems, each with their own (possibly incompatible)
-                    collection of dimensions.
+                    The ability to fluently combine the abstractions for units and prefixes to form
+                    new units on the fly.
                 </p>
             </details>
         </td>
+        <td class="na"></td>
+        <td class="na"></td>
+        <td class="na"></td>
+        <td class="best">QuantityMaker and PrefixApplier APIs</td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Mixed-Rep Support</summary>
+                <p>The ease of freely mixing different storage types ("Reps") in the same program.</p>
+            </details>
+        </td>
         <td class="good"></td>
-        <td class="poor">Single, implicit global system</td>
+        <td class="fair">Possible, but user-facing types use a global "preferred" Rep.</td>
         <td class="good"></td>
-        <td class="poor">
-            Single, implicit global system. (Intentional design tradeoff: reduces learning curve,
-            and makes compiler errors shorter.)
+        <td class="good"></td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Generic dimensions</summary>
+                <p>
+                    The ability to write (template) functions that operate on any dimensionally
+                    consistent inputs.
+                </p>
+                <p>
+                    (For example, a function that takes any length and time quantities, and returns
+                    the appropriate speed quantity.)
+                </p>
+            </details>
+        </td>
+        <td class="na"></td>
+        <td class="na"></td>
+        <td class="best">Concepts excel here</td>
+        <td class="fair">
+            Currently clunky.  Could be better by adding concepts in extra
+            C++20-only file, without compromising C++14 support.
         </td>
     </tr>
     <tr>
         <td>
             <details class="criterion">
-                <summary>Non-linear scales (such as dB)</summary>
-                <p>Support for logarithmic "units", such as decibels or nepers</p>
+                <summary>Extensibility</summary>
+                <p>How easy it is to add new units, dimensions, or systems.</p>
             </details>
         </td>
-        <td class="poor"></td>
-        <td class="best"></td>
-        <td class="poor"></td>
-        <td class="poor">
-            Plan to support someday; see
-            <a href="https://github.com/aurora-opensource/au/issues/41">#41</a>.
+        <td class="na"></td>
+        <td class="fair"></td>
+        <td class="best">Can even handle, e.g., systems of "natural" units</td>
+        <td class="fair">
+            Unit definitions more verbose, but more readable (no positional parameters).
         </td>
     </tr>
     <tr>
         <td>
             <details class="criterion">
-                <summary>Ease of Acquisition</summary>
-                <p>Ease of including this library in projects using a wide variety of build environments</p>
+                <summary>Ease of Migration</summary>
+                <p>
+                    Support for two migration use cases:
+                </p>
+                <ul>
+                    <li>From "no units" to this library</li>
+                    <li>Between this library and another units library (either direction)</li>
+                </ul>
             </details>
         </td>
-        <td class="fair">Part of boost</td>
-        <td class="good">Single, self-contained header</td>
-        <td class="fair">First class conan support; available on vcpkg</td>
-        <td class="best">
-            <p>Supports single-header, with features:
-            <ul>
-                <li>Easy customization</li>
-                <li>Version-stamped for full reproducibility</li>
-            </ul>
+        <td class="fair"></td>
+        <td class="fair"></td>
+        <td class="good">
+            <a href="https://mpusz.github.io/units/use_cases/interoperability.html">
+                <code>quantity_like_traits</code>
+            </a>
         </td>
+        <td class="best">"Equivalent types" feature gives better API compatibility</td>
     </tr>
     <tr>
         <td>
@@ -436,6 +346,21 @@ details.criterion > summary::before {
     <tr>
         <td>
             <details class="criterion">
+                <summary>Non-linear scales (such as dB)</summary>
+                <p>Support for logarithmic "units", such as decibels or nepers</p>
+            </details>
+        </td>
+        <td class="poor"></td>
+        <td class="best"></td>
+        <td class="poor"></td>
+        <td class="poor">
+            Plan to support someday; see
+            <a href="https://github.com/aurora-opensource/au/issues/41">#41</a>.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
                 <summary>Magnitudes</summary>
                 <p>
                     The features of the representation for different units' sizes.  Key features
@@ -460,6 +385,96 @@ details.criterion > summary::before {
     <tr>
         <td>
             <details class="criterion">
+                <summary>Embedded Friendliness</summary>
+                <p>
+                    Support common embedded use cases.  Key examples include:
+                </p>
+                <ul>
+                    <li>
+                        Flexibility in the Rep (usually a variety of integral types, and perhaps
+                        <code>float</code>, but rarely <code>double</code>).
+                    </li>
+                    <li>The easy ability to exclude <code>&lt;iostreams&gt;</code>.</li>
+                </ul>
+            </details>
+        </td>
+        <td class="good">Assumed to be good, based on mixed-Rep support</td>
+        <td class="fair">
+            Can trim by excluding <code>&lt;iostream&gt;</code>, but integer-Rep support is poor.
+        </td>
+        <td class="good">Assumed to be good, based on mixed-Rep support</td>
+        <td class="best">
+            Best choice of all:
+            <ul>
+                <li>No "preferred" Rep.</li>
+                <li>Safe integer operations.</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Rep Variety</summary>
+                <p>The range of different storage types ("Reps") permitted.</p>
+                <ul>
+                    <li><b>Poor:</b> only 1 or 2 types</li>
+                    <li><b>Fair:</b> all built-in numeric types</li>
+                    <li><b>Good:</b> also support custom numeric types</li>
+                </ul>
+            </details>
+        </td>
+        <td class="good">Supports custom numeric types</td>
+        <td class="poor">
+            Effectively floating-point only (integer types <a
+            href="https://github.com/nholthaus/units/issues/225">unsafe</a>)
+        </td>
+        <td class="best">
+            Well defined
+            <a href="https://mpusz.github.io/units/reference/core/concepts.html#_CPPv4I0EN5units14RepresentationE">Representation
+            concept</a>
+        </td>
+        <td class="fair">
+            Rep can only be <code>is_arithmetic</code> for now, but
+            <a href="https://github.com/aurora-opensource/au/issues/52">plan
+            to upgrade</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Explicit Systems of Measurement</summary>
+                <p>
+                    Support for different systems, each with their own (possibly incompatible)
+                    collection of dimensions.
+                </p>
+            </details>
+        </td>
+        <td class="good"></td>
+        <td class="poor">Single, implicit global system</td>
+        <td class="good"></td>
+        <td class="poor">
+            Single, implicit global system. (Intentional design tradeoff: reduces learning curve,
+            and makes compiler errors shorter.)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Units as types</summary>
+                <p>
+                    Types that represent abstract units (clearly distinct from quantities of that
+                    unit).
+                </p>
+            </details>
+        </td>
+        <td class="good"></td>
+        <td class="fair">Types exist, but conflated with quantity names</td>
+        <td class="good"></td>
+        <td class="best">Can form instances and do arithmetic</td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
                 <summary>Macro Usage</summary>
                 <p>
                     Avoidance of macros, especially in user-facing code.
@@ -470,22 +485,5 @@ details.criterion > summary::before {
         <td class="poor">Present in user-facing APIs</td>
         <td class="good">Confined to outer compatibility layer</td>
         <td class="best">No macros</td>
-    </tr>
-    <tr>
-        <td>
-            <details class="criterion">
-                <summary>C++ Version Compatibility</summary>
-                <p>
-                    Support for a wide variety of C++ versions.
-                </p>
-            </details>
-        </td>
-        <td class="best">
-            C++98 or C++03<br>
-            (unclear which, but best in either case)
-        </td>
-        <td class="good">C++14</td>
-        <td class="poor">C++20</td>
-        <td class="good">C++14</td>
     </tr>
 </table>
