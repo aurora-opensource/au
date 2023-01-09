@@ -296,14 +296,14 @@ details.criterion > summary::before {
                 </ul>
             </details>
         </td>
-        <td class="fair"></td>
-        <td class="fair"></td>
+        <td class="fair">No interop with other units libraries</td>
+        <td class="fair">No interop with other units libraries</td>
         <td class="good">
             <a href="https://mpusz.github.io/units/use_cases/interoperability.html">
                 <code>quantity_like_traits</code>
             </a>
         </td>
-        <td class="best">"Equivalent types" feature gives better API compatibility</td>
+        <td class="best">"Equivalent types" feature gives more API compatibility</td>
     </tr>
     <tr>
         <td>
