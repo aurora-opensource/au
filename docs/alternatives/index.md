@@ -49,6 +49,20 @@ span.criterion {
     padding-left: 0.5rem;
 }
 
+li.check, li.x {
+    list-style: none;
+    margin-left: 0;
+    text-indent: -2ch;
+}
+
+li.check:before {
+    content: "\2713  ";
+}
+
+li.x:before {
+    content: "\2717  ";
+}
+
 details.criterion > summary::before {
     display: none;
 }
@@ -184,10 +198,11 @@ details.criterion > summary::before {
         <td class="fair"></td>
         <td class="good">
             <ul>
-                <li>Single file is good</li>
-                <li>
-                    Namespaces add verbosity, and friction (e.g.,
-                    <code>math::</code> namespace complicates name lookup)
+                <li class="check">Single file is very easy</li>
+                <li class="check">User-friendly API typenames (<code>meter_t</code>)</li>
+                <li class="x">
+                    Namespaces add verbosity, and friction (for example, <code>math::</code>
+                    namespace prevents <a href="https://abseil.io/tips/49">ADL</a>)
                 </li>
             </ul>
         </td>
@@ -256,10 +271,16 @@ details.criterion > summary::before {
             </details>
         </td>
         <td class="na"></td>
-        <td class="fair"></td>
-        <td class="best">Can even handle, e.g., systems of "natural" units</td>
         <td class="fair">
-            Unit definitions more verbose, but more readable (no positional parameters).
+            <ul>
+                <li class="check">One-line macro defines new units</li>
+                <li class="x"><a href="https://github.com/nholthaus/units/issues/131">Can't add dimensions</a></li>
+            </ul>
+        </td>
+        <td class="best">Can even handle, e.g., systems of "natural" units</td>
+        <td class="good">
+            Can add <a href="https://aurora-opensource.github.io/au/howto/new-units">new units</a>
+            and dimensions
         </td>
     </tr>
     <tr>
@@ -300,7 +321,9 @@ details.criterion > summary::before {
             wrapper</a> for unit
         </td>
         <td class="fair">
-            Optional "offset" for units, but can't distinguish quantity from point.
+            Optional "offset" for units, but <a
+            href="https://github.com/nholthaus/units/issues/240">can't distinguish quantity from
+            point</a>.
         </td>
         <td class="good"></td>
         <td class="good"></td>
