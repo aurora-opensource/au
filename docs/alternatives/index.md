@@ -331,59 +331,6 @@ details.criterion > summary::before {
     <tr>
         <td>
             <details class="criterion">
-                <summary>Zero</summary>
-                <p>
-                    Quantity support for constructing from, and comparing with, <code>0</code>: the
-                    only number which is meaningful for every unit.  (Includes facilities for
-                    working with quantity signs.)
-                </p>
-            </details>
-        </td>
-        <td class="fair">
-            Guidance:
-            <a href="https://www.boost.org/doc/libs/1_81_0/doc/html/boost_units/FAQ.html#boost_units.FAQ.NoConstructorFromValueType">use
-            default constructor</a> to construct, but no special facility for comparison
-        </td>
-        <td class="fair">Supports <code>copysign()</code>, but no special construction or comparison</td>
-        <td class="fair">Has <code>q::zero()</code> member, but no special construction or comparison</td>
-        <td class="best">Can use <code>ZERO</code> to construct or compare any quantity</td>
-    </tr>
-    <tr>
-        <td>
-            <details class="criterion">
-                <summary>Angles</summary>
-                <p>
-                    First-class support for angular quantities, including degrees and radians.
-                </p>
-            </details>
-        </td>
-        <td class="fair">
-            Curiously imprecise
-            <a href="https://github.com/boostorg/units/blob/45787015/include/boost/units/base_units/angle/degree.hpp#L17">pi
-            value </a>
-        </td>
-        <td class="good"></td>
-        <td class="good"></td>
-        <td class="good"></td>
-    </tr>
-    <tr>
-        <td>
-            <details class="criterion">
-                <summary>Non-linear scales (such as dB)</summary>
-                <p>Support for logarithmic "units", such as decibels or nepers</p>
-            </details>
-        </td>
-        <td class="poor"></td>
-        <td class="best"></td>
-        <td class="poor"></td>
-        <td class="poor">
-            Plan to support someday; see
-            <a href="https://github.com/aurora-opensource/au/issues/41">#41</a>.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <details class="criterion">
                 <summary>Magnitudes</summary>
                 <p>
                     The features of the representation for different units' sizes.  Key features
@@ -460,6 +407,59 @@ details.criterion > summary::before {
             Rep can only be <code>is_arithmetic</code> for now, but
             <a href="https://github.com/aurora-opensource/au/issues/52">plan
             to upgrade</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Zero</summary>
+                <p>
+                    Quantity support for constructing from, and comparing with, <code>0</code>: the
+                    only number which is meaningful for every unit.  (Includes facilities for
+                    working with quantity signs.)
+                </p>
+            </details>
+        </td>
+        <td class="fair">
+            Guidance:
+            <a href="https://www.boost.org/doc/libs/1_81_0/doc/html/boost_units/FAQ.html#boost_units.FAQ.NoConstructorFromValueType">use
+            default constructor</a> to construct, but no special facility for comparison
+        </td>
+        <td class="fair">Supports <code>copysign()</code>, but no special construction or comparison</td>
+        <td class="fair">Has <code>q::zero()</code> member, but no special construction or comparison</td>
+        <td class="best">Can use <code>ZERO</code> to construct or compare any quantity</td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Angles</summary>
+                <p>
+                    First-class support for angular quantities, including degrees and radians.
+                </p>
+            </details>
+        </td>
+        <td class="fair">
+            Curiously imprecise
+            <a href="https://github.com/boostorg/units/blob/45787015/include/boost/units/base_units/angle/degree.hpp#L17">pi
+            value </a>
+        </td>
+        <td class="good"></td>
+        <td class="good"></td>
+        <td class="good"></td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Non-linear scales (such as dB)</summary>
+                <p>Support for logarithmic "units", such as decibels or nepers</p>
+            </details>
+        </td>
+        <td class="poor"></td>
+        <td class="best"></td>
+        <td class="poor"></td>
+        <td class="poor">
+            Plan to support someday; see
+            <a href="https://github.com/aurora-opensource/au/issues/41">#41</a>.
         </td>
     </tr>
     <tr>
