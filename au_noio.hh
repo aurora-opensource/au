@@ -11,7 +11,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.0-8-ge4170d4
+// Version identifier: 0.3.0-9-g98833db
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
