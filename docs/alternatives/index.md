@@ -227,7 +227,7 @@ details.criterion > summary::before {
         <td class="na"></td>
         <td class="na"></td>
         <td class="na"></td>
-        <td class="best">QuantityMaker and PrefixApplier APIs</td>
+        <td class="good">QuantityMaker and PrefixApplier APIs</td>
     </tr>
     <tr>
         <td>
