@@ -6,11 +6,13 @@
       "**/*.yml",
       "**/BUILD",
       "tools/bin/au-docs-serve",
+      "tools/bin/buildifier",
       "tools/bin/clang-format",
       "tools/bin/make-single-file",
       ".bazelrc",
       ".clang-format",
       ".envrc",
+      ".github/**/*.yml",
       "requirements.in",
       "WORKSPACE"
     ],

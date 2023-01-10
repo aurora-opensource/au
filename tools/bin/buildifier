@@ -1,0 +1,11 @@
+#!/bin/bash
+# Copyright 2022 Aurora Operations, Inc.
+
+bazel \
+  --nohome_rc \
+  run \
+  --ui_event_filters=-info,-stdout,-stderr \
+  --noshow_progress \
+  @com_github_bazelbuild_buildtools//buildifier:buildifier \
+  -- \
+  $@
