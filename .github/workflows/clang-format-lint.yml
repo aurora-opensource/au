@@ -1,6 +1,12 @@
+# Copyright 2023 Aurora Operations, Inc.
+
 name: clang-format-lint
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   build:
