@@ -230,6 +230,28 @@ features.
     <tr>
         <td>
             <details class="criterion">
+                <summary>Conversion Safety</summary>
+                <p>Guarding against unit conversions that are likely to produce large errors.</p>
+                <p>
+                    (For example: we can convert an integer number of feet to inches, but not vice
+                    versa.)
+                </p>
+            </details>
+        </td>
+        <td class="good"></td>
+        <td class="fair">
+            Integer Reps <a href="https://github.com/nholthaus/units/issues/225">unsafe</a>
+        </td>
+        <td class="good">
+            Policy <a
+            href="https://mpusz.github.io/units/framework/conversions_and_casting.html">consistent
+            with <code>std::chrono</code> library</a>
+        </td>
+        <td class="best">Automatically adapts to level of overflow risk</td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
                 <summary>Unit Safety</summary>
                 <p>
                     The ability to judge the unit-correctness of every individual line of code
