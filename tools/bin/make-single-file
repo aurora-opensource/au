@@ -186,7 +186,7 @@ def print_unified_file(files, args):
     """Print the single-file output to stdout."""
     print(f"// {AURORA_COPYRIGHT.format(year=datetime.datetime.now().year)}")
     for line in APACHE_HEADER.splitlines():
-        print(f"// {line}")
+        print(f"// {line}".rstrip())
     print()
     print("#pragma once")
     print()
