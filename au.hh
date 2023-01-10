@@ -12,7 +12,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.0-10-gae0f31f
+// Version identifier: 0.3.0-11-geccea1d
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -907,7 +907,7 @@ using MagT = typename MagImpl<U>::type;
 
 template <typename B, std::intmax_t N>
 struct Pow {
-    // TODO(AV-134419): Clean up relationship between Dim/Mag and Pow, if compile times are OK.
+    // TODO(#40): Clean up relationship between Dim/Mag and Pow, if compile times are OK.
     using Dim = PackPowerT<Dimension, AsPackT<Dimension, detail::DimT<B>>, N>;
     using Mag = PackPowerT<Magnitude, AsPackT<Magnitude, detail::MagT<B>>, N>;
 };
@@ -918,7 +918,7 @@ struct Pow {
 // A base type B raised to a rational exponent (N/D).
 template <typename B, std::intmax_t N, std::intmax_t D>
 struct RatioPow {
-    // TODO(AV-134419): Clean up relationship between Dim/Mag and RatioPow, if compile times are OK.
+    // TODO(#40): Clean up relationship between Dim/Mag and RatioPow, if compile times are OK.
     using Dim = PackPowerT<Dimension, AsPackT<Dimension, detail::DimT<B>>, N, D>;
     using Mag = PackPowerT<Magnitude, AsPackT<Magnitude, detail::MagT<B>>, N, D>;
 };
