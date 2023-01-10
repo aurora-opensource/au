@@ -5,7 +5,9 @@
     Makers](../101-quantity-makers.md). We'll assume you're familiar with everything in that page,
     so if you're not, you'll want to read it first.
 
-TODO: Make a "development setup" page; link to it from here.
+!!! tip
+    Before you start, make sure you've followed the [developer's guide](../../develop.md) so you're
+    able to build and test the code!
 
 ## Introduction
 
