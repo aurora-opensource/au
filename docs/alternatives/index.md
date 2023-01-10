@@ -27,7 +27,7 @@ to the mature and widely available C++14 standard. Key features include:
 - Intelligent, unit-aware functions for rounding and computing inverses.
 - Minimal friction by using a single, short namespace: everything's in `au::`.
 
-## Detailed comparison matrix
+## Detailed comparison matrices
 
 Here's a more detailed comparison to the most prominent alternatives.  We'll use the following
 legend (chosen to be colorblind-friendly):
@@ -79,6 +79,11 @@ details.criterion > summary::before {
     </tr>
 </table>
 
+### Obtaining the library
+
+These are the first criteria to consider.  They will tell you whether you can even use the library
+at all, and if so, how hard it will be to obtain.
+
 <table>
     <tr>
         <th></th>
@@ -120,6 +125,38 @@ details.criterion > summary::before {
             </ul>
         </td>
     </tr>
+</table>
+
+!!! note
+    These ratings are written with **all** users and projects in mind.  Keep in mind that what
+    matters for _you_ is **your** project.
+
+    For example: mp-units gets low accessibility ratings because of its steep C++20 minimum
+    requirement, and its dependence on a package manager to make the installation easy.  However, if
+    your project is _already_ compatible with C++20, and _already_ uses conan, then these "low"
+    ratings would be completely irrelevant for you.
+
+### Generic developer experience
+
+Next: how will this library change the generic developer experience?  Leaving aside any library
+features, conventions, or implementation strategies, there are two main impacts to developer
+experience.
+
+1. Your program will take **longer to compile**, because the compiler is doing more work to produce
+   essentially the same program.
+
+2. You will get **more compiler errors** that developers will need to understand and fix.
+
+These costs can bring significant benefits, but we still want them to be as small as possible.
+
+<table>
+    <tr>
+        <th></th>
+        <th>Boost</th>
+        <th>nholthaus</th>
+        <th>mp-units</th>
+        <th class="highlight">Au</th>
+    </tr>
     <tr>
         <td>
             <details class="criterion">
@@ -159,7 +196,36 @@ details.criterion > summary::before {
         </td>
         <td class="fair">Positional dimensions</td>
         <td class="good">Pioneered strong typedefs for units</td>
-        <td class="best">No dimension in type name leads to shorter types</td>
+        <td class="best">
+            <ul>
+                <li class="check">No dimension in type name leads to shorter types</li>
+                <li class="check">
+                    Detailed troubleshooting guide (TODO: link to guide after <a
+                    href="https://github.com/aurora-opensource/au/pull/59">#59</a> lands)
+                </li>
+            </ul>
+        </td>
+    </tr>
+</table>
+
+### Library features
+
+At this point, you've assessed:
+
+- whether you can use each library at all;
+- how hard it will be to add to your project;
+- and, what costs you'll pay in developer experience if you do.
+
+Now we're ready to compare the libraries "as units libraries" --- that is, in terms of their core
+features.
+
+<table>
+    <tr>
+        <th></th>
+        <th>Boost</th>
+        <th>nholthaus</th>
+        <th>mp-units</th>
+        <th class="highlight">Au</th>
     </tr>
     <tr>
         <td>
@@ -199,7 +265,7 @@ details.criterion > summary::before {
         <td class="good">
             <ul>
                 <li class="check">Single file is very easy</li>
-                <li class="check">User-friendly API typenames (<code>meter_t</code>)</li>
+                <li class="check">User-friendly API typenames (<code>meter_t</code>, ...)</li>
                 <li class="x">
                     Namespaces add verbosity, and friction (for example, <code>math::</code>
                     namespace prevents <a href="https://abseil.io/tips/49">ADL</a>)
@@ -244,7 +310,7 @@ details.criterion > summary::before {
     <tr>
         <td>
             <details class="criterion">
-                <summary>Generic dimensions</summary>
+                <summary>Generic Dimensions</summary>
                 <p>
                     The ability to write (template) functions that operate on any dimensionally
                     consistent inputs.
@@ -343,13 +409,19 @@ details.criterion > summary::before {
                 </ul>
             </details>
         </td>
-        <td class="fair">Close: lacks only basis, and instance arithmetic.  Ahead of its time!</td>
-        <td class="fair">Uses ratio plus "pi powers": good angle handling, but vulnerable to overflow</td>
-        <td class="good"></td>
+        <td class="fair">
+            Close: lacks only irrationals, basis, and instance arithmetic.  Ahead of its time!
+        </td>
+        <td class="fair">
+            Uses ratio plus "pi powers": good angle handling, but vulnerable to overflow
+        </td>
         <td class="good">
-            Formerly, Au alone was best, but we shared
-            <a href="https://mpusz.github.io/units/framework/magnitudes.html">Magnitudes</a>
-            with mp-units
+            Full support for <a
+            href="https://mpusz.github.io/units/framework/magnitudes.html">Magnitudes</a>
+        </td>
+        <td class="good">
+            Formerly, Au alone was best, but we <a
+            href="https://github.com/mpusz/units/issues/300">shared</a> Magnitudes with mp-units
         </td>
     </tr>
     <tr>
