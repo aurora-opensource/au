@@ -1,0 +1,91 @@
+// Copyright 2022 Aurora Operations, Inc.
+
+#include "au/au.hh"
+#include "au/units/feet.hh"
+#include "au/units/hertz.hh"
+#include "au/units/hours.hh"
+#include "au/units/inches.hh"
+#include "au/units/meters.hh"
+#include "au/units/miles.hh"
+#include "au/units/seconds.hh"
+
+namespace au {
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SECTION: Private constructor
+
+void set_timeout(QuantityD<Seconds> dt);
+
+void example_private_constructor() {
+    // A (BROKEN): passing raw number where duration expected.
+    set_timeout(0.5);
+
+    // B (BROKEN): calling Quantity constructor directly.
+    constexpr QuantityD<Meters> length{5.5};
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SECTION: Dangerous conversion
+
+void example_dangerous_conversion() {
+    // A (BROKEN): inexact conversion.
+    inches(24).as(feet);
+
+    // B (BROKEN): overflow risk.
+    giga(hertz)(1).as(hertz);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SECTION: No type named 'type' in 'std::common_type'
+
+void example_no_type_named_type_in_std_common_type() {
+    // (BROKEN): different dimensions.
+    meters(1) + seconds(1);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SECTION: Integer division forbidden
+
+void example_integer_division_forbidden() {
+    // (BROKEN): gives (60 / 65) == 0 before conversion!
+    QuantityD<Seconds> t = meters(60) / (miles / hour)(65);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SECTION: Dangerous inversion
+
+void example_dangerous_inversion() {
+    // (BROKEN): excessive truncation risk.
+    inverse_as(seconds, hertz(5));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SECTION: Deduced conflicting types
+
+void example_deduced_conflicting_types() {
+    // (BROKEN): Initializer list confused by Hz and s^(-1).
+    for (const auto &frequency : {
+             hertz(1.0),
+             (1 / seconds(2.0)),
+         }) {
+        // ...
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SECTION:
+
+struct Quarterfeet : decltype(Feet{} / mag<4>()) {};
+constexpr auto quarterfeet = QuantityMaker<Quarterfeet>{};
+
+struct Trinches : decltype(Inches{} * mag<3>()) {};
+constexpr auto trinches = QuantityMaker<Trinches>{};
+
+void example_() {
+    // (BROKEN): Can't tell how to order Quarterfeet and Trinches when forming common type
+    if (quarterfeet(10) == trinches(10)) {
+        // ...
+    }
+}
+
+}  // namespace au
