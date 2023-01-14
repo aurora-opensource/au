@@ -16,7 +16,8 @@ to the mature and widely available C++14 standard. Key features include:
 - Highly composable "quantity maker" APIs make it easy to both compose new units, and apply unit
   prefixes, on the fly.
 - Human-readable and concise compiler errors, via strong typenames for units.
-- `ZERO`: novel, fluent handling of construction, comparison, and sign handling for quantities.
+- The `Zero` type: novel, fluent handling of construction, comparison, and sign handling for
+  quantities.
 - Ease of migration (both to and from Au): with minimal setup, we support bidirectional implicit
   conversions with equivalent types from any other units library.
 - Support for single-header-file delivery, but with easy customization of units and features to
