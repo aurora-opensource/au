@@ -1,11 +1,10 @@
 #!/bin/bash
 # Copyright 2022 Aurora Operations, Inc.
 
-bazel \
-  --nohome_rc \
-  run \
-  --ui_event_filters=-info,-stdout,-stderr \
-  --noshow_progress \
-  @com_github_bazelbuild_buildtools//buildifier:buildifier \
-  -- \
-  $@
+# Unfortunately, we need to handle this dependency _outside_ of bazel, because
+# this is just a thin wrapper over a bazel command.  This method is not
+# bulletproof (no method is), but it should be good enough in practice.
+SCRIPT_ROOT=$(dirname $(readlink -f $0))
+source "$SCRIPT_ROOT/../lib/command_from_bazel.sh"
+
+make_command_from_bazel_run @com_github_bazelbuild_buildtools//buildifier:buildifier "$@"
