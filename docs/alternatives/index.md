@@ -3,8 +3,8 @@
 There are plenty of other open source C++ units libraries, many quite well established.  However,
 the tradeoffs required to use these libraries can be so significant that many people can't or won't
 use them.  For example: the compiler errors may be inscrutable or overwhelming; the compilation
-process may become unacceptably slow; or, it may require a C++ standard that is simply too new for a
-user.
+process may become unacceptably slow; or, the required C++ standard may simply be too new for
+a user.
 
 Au is an accessible, production-tested alternative.  We provide a number of rare or outright novel
 features, with a small compile time footprint --- and we're compatible with every C++ version back
@@ -31,7 +31,11 @@ to the mature and widely available C++14 standard. Key features include:
 ## Detailed comparison matrices
 
 Here's a more detailed comparison to the most prominent alternatives.  We'll use the following
-legend (chosen to be colorblind-friendly):
+legend[^1]:
+
+[^1]: Users may have expected a "traffic light" style, green/yellow/red color scheme.  However,
+these traditional color schemes have poor accessibility for colorblind readers.  The present color
+scheme was designed to be colorblind-friendly.
 
 <style>
 td.na::before {
@@ -201,8 +205,9 @@ These costs can bring significant benefits, but we still want them to be as smal
             <ul>
                 <li class="check">No dimension in type name leads to shorter types</li>
                 <li class="check">
-                    Detailed troubleshooting guide (TODO: link to guide after <a
-                    href="https://github.com/aurora-opensource/au/pull/59">#59</a> lands)
+                    Detailed <a
+                    href="https://aurora-opensource.github.io/au/troubleshooting">troubleshooting
+                    guide</a>
                 </li>
             </ul>
         </td>
