@@ -4,7 +4,7 @@ Welcome to the Au library!  Au (pronounced "ay yoo") is a C++14-compatible units
 [Aurora](https://aurora.tech/).  Its key strengths include safety, accessibility, performance, and
 developer experience.
 
-The library source is on github, at
+The library source is on GitHub, at
 [aurora-opensource/au](https://github.com/aurora-opensource/au).
 
 ## Getting started
