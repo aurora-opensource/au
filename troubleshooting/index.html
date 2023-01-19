@@ -444,6 +444,129 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          Tutorial
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tutorial" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorial
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/102-api-types/" class="md-nav__link">
+        Au 102: API Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7_3" type="checkbox" id="__nav_7_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7_3">
+          Exercise
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Exercise" data-md-level="2">
+        <label class="md-nav__title" for="__nav_7_3">
+          <span class="md-nav__icon md-icon"></span>
+          Exercise
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/exercise/102-api-types/" class="md-nav__link">
+        Au 102: API Types Exercise
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -544,27 +667,27 @@
 them.</p>
 <p>The intended use case is to help you interpret an <em>actual error in your code</em>, at the point where
 you encounter it.  To use this page, copy some relevant snippets from your compiler error, and then
-search the text of this page using your browser's Find function.</p>
+search the text of this page using your browser&rsquo;s Find function.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>To improve your chances of finding what you're looking for, we include full compiler errors from
-both gcc and clang, inline with the text.  Naturally, this makes this page very long, so it's
-not meant to be read straight through.  Stick with your browser's Find function.</p>
+<p>To improve your chances of finding what you&rsquo;re looking for, we include full compiler errors from
+both gcc and clang, inline with the text.  Naturally, this makes this page very long, so it&rsquo;s
+not meant to be read straight through.  Stick with your browser&rsquo;s Find function.</p>
 </div>
 <p>Each section below lists one category of compiler error you might encounter when using the library.
 It explains what it means and how to solve it, and gives specific snippets of erroneous code, along
 with the compiler errors that each would yield.</p>
 <h2 id="private-constructor">Private constructor<a class="headerlink" href="#private-constructor" title="Permanent link">&para;</a></h2>
 <p><strong>Meaning:</strong>  This means you passed a raw numeric value to an interface that expected a Quantity.
-It's the "classic" error the units library aims to prevent.</p>
+It&rsquo;s the &ldquo;classic&rdquo; error the units library aims to prevent.</p>
 <p><strong>Solution:</strong> Call the appropriate Quantity maker: instead of passing <code>x</code>, pass <code>meters(x)</code>,
 <code>(kilo(meters) / hour)(x)</code>, etc.</p>
 <details class="note">
 <summary>A note on quantity makers vs. constructors</summary>
 <p>Every other major units library lets you construct its Quantity types from raw numeric values;
 it just makes that constructor explicit.  Au goes further, and makes this constructor private.
-The reason is to preserve unit safety at all callsites.  We can't know whether you made an alias
-that doesn't name the unit.  For example, if you want everybody to measure lengths in <code>Meters</code>
+The reason is to preserve unit safety at all callsites.  We can&rsquo;t know whether you made an alias
+that doesn&rsquo;t name the unit.  For example, if you want everybody to measure lengths in <code>Meters</code>
 in your codebase, you might provide a common alias like this:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">using</span><span class="w"> </span><span class="n">Length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
@@ -575,7 +698,7 @@ in your codebase, you might provide a common alias like this:</p>
 is to name the unit of measure, explicitly, at the callsite, like this:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="n">Length</span><span class="w"> </span><span class="n">MAX_LENGTH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="mf">5.5</span><span class="p">);</span><span class="w">  </span><span class="c1">// Usable!  Units unambiguous.  :)</span>
 </code></pre></div>
-<p>This enables users who want to use this kind of "dimension-named alias" in their codebase to do
+<p>This enables users who want to use this kind of &ldquo;dimension-named alias&rdquo; in their codebase to do
 so safely.</p>
 </details>
 <div class="admonition example">
@@ -678,16 +801,16 @@ operation (at least in this format).</p>
    <code>hertz(1'000'000'000.0)</code>.</p>
 </li>
 <li>
-<p><strong>Use "explicit Rep" form</strong>.  The "Rep" is the storage type for the Quantity.  If you pass it as
-   a template parameter, it is "morally equivalent" to a <code>static_cast</code>, and has the same "forcing"
+<p><strong>Use &ldquo;explicit Rep&rdquo; form</strong>.  The &ldquo;Rep&rdquo; is the storage type for the Quantity.  If you pass it as
+   a template parameter, it is &ldquo;morally equivalent&rdquo; to a <code>static_cast</code>, and has the same &ldquo;forcing&rdquo;
    semantics.  <code>inches(24).as&lt;int&gt;(feet)</code> produces <code>feet(2)</code>.</p>
 </li>
 </ol>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Stop and think before using the explicit Rep version.  If you're reviewing code that uses it,
+<p>Stop and think before using the explicit Rep version.  If you&rsquo;re reviewing code that uses it,
 ask about it.  The library is trying to protect you from an error prone operation.  The
-mechanism exists because sometimes you can know that it's OK, but remember to stop and check
+mechanism exists because sometimes you can know that it&rsquo;s OK, but remember to stop and check
 first!</p>
 </div>
 <div class="admonition example">
@@ -780,8 +903,8 @@ first!</p>
 <a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>./au/quantity.hh:147:72: error: static assertion failed: Dangerous conversion: use .as&lt;Rep&gt;(NewUnit) instead
 </code></pre></div></p>
 </div>
-<h2 id="no-type-named-type-in-stdcommon_type">No type named 'type' in 'std::common_type'<a class="headerlink" href="#no-type-named-type-in-stdcommon_type" title="Permanent link">&para;</a></h2>
-<p><strong>Meaning:</strong>  You probably tried to perform a "common-unit operation" (addition, subtraction,
+<h2 id="no-type-named-type-in-stdcommon_type">No type named &lsquo;type&rsquo; in &lsquo;std::common_type&rsquo;<a class="headerlink" href="#no-type-named-type-in-stdcommon_type" title="Permanent link">&para;</a></h2>
+<p><strong>Meaning:</strong>  You probably tried to perform a &ldquo;common-unit operation&rdquo; (addition, subtraction,
 comparison) with two incompatible Quantities.  Typically, this means they have different
 <em>dimensions</em>, which makes this an intrinsically meaningless operation.</p>
 <div class="admonition warning">
@@ -930,9 +1053,9 @@ floating point types.</p>
 <h2 id="dangerous-inversion">Dangerous inversion<a class="headerlink" href="#dangerous-inversion" title="Permanent link">&para;</a></h2>
 <p><strong>Meaning:</strong>  This is analogous to our overflow safety surface.  When computing the inverse of
 an integral quantity in a given target unit, there is some smallest value that will get truncated
-down to zero (a tremendous error!).  If that value is "small enough to be scary" (currently 1,000),
+down to zero (a tremendous error!).  If that value is &ldquo;small enough to be scary&rdquo; (currently 1,000),
 we forbid the conversion.</p>
-<p><strong>Solution:</strong>  Consider using floating point; you'll always get a precise answer.  Alternatively,
+<p><strong>Solution:</strong>  Consider using floating point; you&rsquo;ll always get a precise answer.  Alternatively,
 use a smaller target unit.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
@@ -958,7 +1081,7 @@ use a smaller target unit.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If you're <em>really</em> sure it's OK, you can use the explicit-Rep version of <code>inverse_as</code>, which is
+<p>If you&rsquo;re <em>really</em> sure it&rsquo;s OK, you can use the explicit-Rep version of <code>inverse_as</code>, which is
 forcing like a <code>static_cast</code>.  This is rarely the right choice, though.  Consider:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">inverse_as</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span><span class="w"> </span><span class="n">hertz</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span><span class="w"></span>
 </code></pre></div>
@@ -1005,10 +1128,10 @@ prevent in the first place.</p>
 </code></pre></div></p>
 </div>
 <h2 id="deduced-conflicting-types">Deduced conflicting types<a class="headerlink" href="#deduced-conflicting-types" title="Permanent link">&para;</a></h2>
-<p><strong>Meaning:</strong>  In some contexts, it's not enough to have Quantity types that can easily convert to
+<p><strong>Meaning:</strong>  In some contexts, it&rsquo;s not enough to have Quantity types that can easily convert to
 each other.  (Common examples include the ternary operator <code>?:</code>, and initializer lists.)  You need
 types that are identical, or very nearly so.  Even fully quantity-equivalent types, such as
-<span class="arithmatex"><span class="MathJax_Preview">\text{Hz}</span><script type="math/tex">\text{Hz}</script></span> and <span class="arithmatex"><span class="MathJax_Preview">\text{s}^{-1}</span><script type="math/tex">\text{s}^{-1}</script></span>, often won't work in these contexts!</p>
+<span class="arithmatex"><span class="MathJax_Preview">\text{Hz}</span><script type="math/tex">\text{Hz}</script></span> and <span class="arithmatex"><span class="MathJax_Preview">\text{s}^{-1}</span><script type="math/tex">\text{s}^{-1}</script></span>, often won&rsquo;t work in these contexts!</p>
 <p><strong>Solution:</strong>  You can always cast non-conforming instances to your favored unit, using <code>.as()</code>.
 For the initializer list case, you can also make an explicit container, which will handle the
 casting automatically when possible.</p>
@@ -1069,12 +1192,12 @@ casting automatically when possible.</p>
 </div>
 <h2 id="broken-strict-total-ordering">Broken strict total ordering<a class="headerlink" href="#broken-strict-total-ordering" title="Permanent link">&para;</a></h2>
 <p><strong>Meaning:</strong>  This means you performed an operation that needs to put unit types into a parameter
-pack --- say, a common unit, or a unit product --- but the library couldn't figure out how to order
+pack &mdash; say, a common unit, or a unit product &mdash; but the library couldn&rsquo;t figure out how to order
 the units inside that pack.</p>
 <p>If that sounds obscure, it is: ordering units inside packs is a deep library implementation detail,
 and we try to avoid letting end users encounter this.  To reach this error, you need two <em>distinct</em>
-units that have the <em>same</em> Dimension, Magnitude, <em>and</em> Origin.  That's a necessary but not
-sufficient condition: for example, even <code>UnitInverseT&lt;Seconds&gt;</code> and <code>Hertz</code> won't trigger this!</p>
+units that have the <em>same</em> Dimension, Magnitude, <em>and</em> Origin.  That&rsquo;s a necessary but not
+sufficient condition: for example, even <code>UnitInverseT&lt;Seconds&gt;</code> and <code>Hertz</code> won&rsquo;t trigger this!</p>
 <details class="info">
 <summary>More background info on why this error exists</summary>
 <p>In case you want to understand more, here is the gist.</p>
@@ -1087,32 +1210,32 @@ sufficient condition: for example, even <code>UnitInverseT&lt;Seconds&gt;</code>
 <p>Every parameter pack needs an unambiguous canonical ordering for any possible set of input
 arguments.  Therefore, we need to create a <em>strict total ordering</em> for the (infinitely many!)
 unit types that could appear in these packs.  This ordering needs to be known <em>at compile time</em>.
-The ordering itself doesn't matter so much, but if we don't strictly adhere to <em>some</em> ordering,
-it's undefined behaviour.</p>
-<p>Our strategy is to construct a "gauntlet" of properties which we can measure for any unit (e.g.,
-Dimension, Magnitude, ...), and define some arbitrary ordering for each property.  We then
-compare the units on each property in turn.  The first one where they differ "wins".  If we get
-through <em>all</em> the properties, and they're <em>still</em> tied, then we have two <em>distinct</em> unit types
+The ordering itself doesn&rsquo;t matter so much, but if we don&rsquo;t strictly adhere to <em>some</em> ordering,
+it&rsquo;s undefined behaviour.</p>
+<p>Our strategy is to construct a &ldquo;gauntlet&rdquo; of properties which we can measure for any unit (e.g.,
+Dimension, Magnitude, &hellip;), and define some arbitrary ordering for each property.  We then
+compare the units on each property in turn.  The first one where they differ &ldquo;wins&rdquo;.  If we get
+through <em>all</em> the properties, and they&rsquo;re <em>still</em> tied, then we have two <em>distinct</em> unit types
 which <em>compare</em> as equal.  This would be undefined behaviour!  Rather than silently ignoring
 this, we manifest this as a compiler error.</p>
-<p>That is what "broken strict total ordering" means.</p>
+<p>That is what &ldquo;broken strict total ordering&rdquo; means.</p>
 </details>
-<p><strong>Solution:</strong>  If you have two distinct units, and the library can't figure out how to order them,
-you can <em>force</em> a particular ordering.  Choose one of the units and give it a high "unit avoidance"
+<p><strong>Solution:</strong>  If you have two distinct units, and the library can&rsquo;t figure out how to order them,
+you can <em>force</em> a particular ordering.  Choose one of the units and give it a high &ldquo;unit avoidance&rdquo;
 score (see example below).  This will break the tie.</p>
 <p>Again, this is pretty unusual.  For most normal ways of forming units, the library should
 automatically be able to define an ordering for them.  If you do hit this error, it may be worth
-pausing to double-check that you're using the library correctly.</p>
+pausing to double-check that you&rsquo;re using the library correctly.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>If you hit this error, you might be annoyed by its obscurity.  Instead, try feeling relieved!
-After all, the alternative is not "correctly working program", but "silent undefined behaviour".
+After all, the alternative is not &ldquo;correctly working program&rdquo;, but &ldquo;silent undefined behaviour&rdquo;.
 A compiler error with a searchable error message is infinitely preferable to the latter.</p>
 </div>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
 <p><strong>Code</strong></p>
-<p>Note that this example is somewhat convoluted, but again, that's to be expected because this error
+<p>Note that this example is somewhat convoluted, but again, that&rsquo;s to be expected because this error
 is pretty hard to hit in practice.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">Broken</label><label for="__tabbed_7_2">Fixed</label></div>
 <div class="tabbed-content">

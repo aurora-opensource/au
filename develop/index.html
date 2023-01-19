@@ -469,6 +469,129 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          Tutorial
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tutorial" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorial
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/102-api-types/" class="md-nav__link">
+        Au 102: API Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7_3" type="checkbox" id="__nav_7_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7_3">
+          Exercise
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Exercise" data-md-level="2">
+        <label class="md-nav__title" for="__nav_7_3">
+          <span class="md-nav__icon md-icon"></span>
+          Exercise
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/exercise/102-api-types/" class="md-nav__link">
+        Au 102: API Types Exercise
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -604,23 +727,23 @@ users:</p>
 <h2 id="core-development-setup">Core development setup<a class="headerlink" href="#core-development-setup" title="Permanent link">&para;</a></h2>
 <p>These steps are common to all workflows.</p>
 <h3 id="step-0-decide-whether-to-fork">Step 0: Decide whether to fork<a class="headerlink" href="#step-0-decide-whether-to-fork" title="Permanent link">&para;</a></h3>
-<p>If you're <em>confident that you want to contribute</em>, you should start out by <em>forking</em> the repository.
+<p>If you&rsquo;re <em>confident that you want to contribute</em>, you should start out by <em>forking</em> the repository.
 This gives you your own copy which you can modify, and from which you can create pull requests to
-share your changes with the main repository.  Here are <a href="https://docs.github.com/en/get-started/quickstart/fork-a-repo">GitHub's instructions for forking</a>.</p>
+share your changes with the main repository.  Here are <a href="https://docs.github.com/en/get-started/quickstart/fork-a-repo">GitHub&rsquo;s instructions for forking</a>.</p>
 <p><strong>Everyone else can simply skip this step</strong> and work directly from the main repository.  If you
-decide later on to make a pull request, you'll still need to create a fork, but it's easy to set it
-up after the fact.  We'll provide detailed instructions below.</p>
+decide later on to make a pull request, you&rsquo;ll still need to create a fork, but it&rsquo;s easy to set it
+up after the fact.  We&rsquo;ll provide detailed instructions below.</p>
 <details class="info">
 <summary>Instructions for switching an existing clone to a fork</summary>
-<p>If you're here, you probably cloned the main repository directly, and then later decided to make
-a pull request.  For that, you'll need to switch your <code>origin</code> remote to point to your fork
+<p>If you&rsquo;re here, you probably cloned the main repository directly, and then later decided to make
+a pull request.  For that, you&rsquo;ll need to switch your <code>origin</code> remote to point to your fork
 instead of the main repository.</p>
 <p>You can directly use the instructions below, which we adapted from <a href="https://admcpr.com/what-the-fork/">this
 guide</a>.</p>
 <div class="admonition warning">
 <p class="admonition-title">TODO</p>
 <p>We need to try these instructions, in detail, to make sure they work.  Somebody should
-create a PR to remove this warning---and do so from a clone which was originally tracking
+create a PR to remove this warning&mdash;and do so from a clone which was originally tracking
 the main repository, but which transitioned to a fork by following these very instructions.</p>
 </div>
 <ol>
@@ -672,7 +795,7 @@ decided to fork or not in the previous step.</p>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<p>Follow <a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository">GitHub's cloning instructions</a>, using the fork you created as the repository.</p>
+<p>Follow <a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository">GitHub&rsquo;s cloning instructions</a>, using the fork you created as the repository.</p>
 </div>
 </div>
 </div>
@@ -682,12 +805,12 @@ contains the Au source code.</p>
 <h3 id="step-2-set-up-direnv">Step 2: Set up <code>direnv</code><a class="headerlink" href="#step-2-set-up-direnv" title="Permanent link">&para;</a></h3>
 <p><a href="https://direnv.net/">direnv</a> is a tool that makes it easy to use the correct version of every tool we use: <code>bazel</code>,
 <code>clang-format</code>, <code>buildifier</code>, and other project-specific ones like <code>make-single-file</code> and
-<code>au-docs-serve</code>.  It will add these tools to your <code>$PATH</code>, but <strong>only</strong> when you're inside your
+<code>au-docs-serve</code>.  It will add these tools to your <code>$PATH</code>, but <strong>only</strong> when you&rsquo;re inside your
 copy of the repository.</p>
 <details class="warning">
 <summary>What if you skip this step?</summary>
-<p>This step is optional, but highly recommended.  If you skip this step, you'll need to prepend
-<code>tools/bin/</code> to every command that comes from Au's tools directory.  For example,</p>
+<p>This step is optional, but highly recommended.  If you skip this step, you&rsquo;ll need to prepend
+<code>tools/bin/</code> to every command that comes from Au&rsquo;s tools directory.  For example,</p>
 <ul>
 <li>Replace <code>bazel</code> with <code>tools/bin/bazel</code>.</li>
 <li>Replace <code>clang-format</code> with <code>tools/bin/clang-format</code>.</li>
@@ -696,15 +819,15 @@ copy of the repository.</p>
 </details>
 <p>The first step to set up <code>direnv</code> is to install the tool itself, using <a href="https://direnv.net/docs/installation.html">their installation
 instructions</a>.</p>
-<p>The next time you enter your Au folder, you'll get a warning message like this:</p>
+<p>The next time you enter your Au folder, you&rsquo;ll get a warning message like this:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>direnv: error .envrc is blocked. Run `direnv allow` to approve its content.
 </code></pre></div>
-<p>Simply do what it says and run <code>direnv allow</code>, and you're all set!</p>
+<p>Simply do what it says and run <code>direnv allow</code>, and you&rsquo;re all set!</p>
 <details class="tip">
 <summary>Testing your installation</summary>
-<p>You can test that everything's working by running <code>bazel --version</code> inside your Au folder.  You
+<p>You can test that everything&rsquo;s working by running <code>bazel --version</code> inside your Au folder.  You
 should get a result compatible with the current contents of the <code>.bazelversion</code> file.  For
-example, at the time of writing, we're on bazel 5.3.0, so this command produces the output:</p>
+example, at the time of writing, we&rsquo;re on bazel 5.3.0, so this command produces the output:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>bazel 5.3.0
 </code></pre></div>
 </details>
@@ -718,7 +841,7 @@ example, at the time of writing, we're on bazel 5.3.0, so this command produces 
 downloading or configuring the tool itself.  This is a one-time cost, and each subsequent run
 should be fast.</p>
 </div>
-<p>You can also specify any number of specific targets or target patterns, using <a href="https://bazel.build/run/build#specifying-build-targets">bazel's target
+<p>You can also specify any number of specific targets or target patterns, using <a href="https://bazel.build/run/build#specifying-build-targets">bazel&rsquo;s target
 syntax</a>.  For example, if you wanted to test
 the core library code (which lives in <code>//au</code>), <em>and</em> test the generated single-file package (whose
 target is <code>//release:au_hh_test</code>), you could write:</p>
@@ -726,7 +849,7 @@ target is <code>//release:au_hh_test</code>), you could write:</p>
 </code></pre></div>
 <h4 id="using-different-toolchains">Using different toolchains<a class="headerlink" href="#using-different-toolchains" title="Permanent link">&para;</a></h4>
 <p>Au comes pre-packaged with support for several different compiler toolchains.  To use a specific
-toolchain --- say, <code>X</code> --- pass it as a <code>--config=X</code> argument.  For example, here's how you would
+toolchain &mdash; say, <code>X</code> &mdash; pass it as a <code>--config=X</code> argument.  For example, here&rsquo;s how you would
 run all of the tests using gcc 10:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>bazel <span class="nb">test</span> --config<span class="o">=</span>gcc10 //...:all
 </code></pre></div>
@@ -754,18 +877,18 @@ run all of the tests using gcc 10:</p>
 </tbody>
 </table>
 <details class="question">
-<summary>What if your preferred compiler isn't in this list?</summary>
+<summary>What if your preferred compiler isn&rsquo;t in this list?</summary>
 <p>Our goal is for Au to work with any standards-compliant compiler that fully supports C++14, or
-any later language standard.  We've had good results with a variety of compilers already, so we
+any later language standard.  We&rsquo;ve had good results with a variety of compilers already, so we
 recommend simply trying Au in yours!</p>
 <p>If you do, and you find a bug, please feel free to file an issue.  If the compiler is fully
-C++14-compatible, we'll do our best to find a fix, or an acceptable workaround.  We may also
+C++14-compatible, we&rsquo;ll do our best to find a fix, or an acceptable workaround.  We may also
 consider adding the compiler to our officially supported list, as long as we can use it via
 a hermetic bazel toolchain.</p>
 </details>
 <h3 id="building-and-viewing-documentation">Building and viewing documentation<a class="headerlink" href="#building-and-viewing-documentation" title="Permanent link">&para;</a></h3>
-<p>It's easy to set up a local version of the documentation website.  Simply run the included command,
-<code>au-docs-serve</code>.  Here's some example output:</p>
+<p>It&rsquo;s easy to set up a local version of the documentation website.  Simply run the included command,
+<code>au-docs-serve</code>.  Here&rsquo;s some example output:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>INFO: Analyzed target //:update_docs (0 packages loaded, 0 targets configured).
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>INFO: Found 1 target...
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>Target //:update_docs up-to-date:
@@ -789,13 +912,13 @@ reload the page!</p>
 <details class="note">
 <summary>Viewing documentation on a remote machine</summary>
 <p>Some users connect to a remote machine via <code>ssh</code> to do their development.  In this case,
-<code>au-docs-serve</code> won't work out of the box.  The reason is that it's running on your remote
+<code>au-docs-serve</code> won&rsquo;t work out of the box.  The reason is that it&rsquo;s running on your remote
 machine, but your web browser is on your local machine.  When you try to open the URL
-<code>http://127.0.0.1:8000/au/</code>, which points to the <em>local machine</em>, it can't find the web server,
-because it's running on the remote machine.</p>
+<code>http://127.0.0.1:8000/au/</code>, which points to the <em>local machine</em>, it can&rsquo;t find the web server,
+because it&rsquo;s running on the remote machine.</p>
 <p>The solution is to forward the port, <code>8000</code>, when you connect to your remote machine.  If you
 do, then <em>local</em> requests on that port will be forwarded along to the <em>remote</em> machine, where
-the web server is running.  Here's how you do that.</p>
+the web server is running.  Here&rsquo;s how you do that.</p>
 <ol>
 <li>
 <p><strong>Find your usual ssh command.</strong>  This is whatever you run on your <em>local</em> machine to connect
@@ -811,7 +934,7 @@ the web server is running.  Here's how you do that.</p>
 </code></pre></div>
 </li>
 <li>
-<p><strong>Run <code>au-docs-serve</code> on the remote host.</strong>  Naturally, you'll need to be in your Au folder
+<p><strong>Run <code>au-docs-serve</code> on the remote host.</strong>  Naturally, you&rsquo;ll need to be in your Au folder
    to do this.</p>
 </li>
 </ol>
