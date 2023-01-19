@@ -2,7 +2,7 @@
 
 This tutorial explains how to name your types in function parameters and member variables.
 
-- **Time:** TBD.
+- **Time:** 30 minutes.
 - **Prerequisites:** [Au 101: Quantity Makers](./101-quantity-makers.md).
 - **You will learn:**
     - The `Quantity<Unit, Rep>` type template.
@@ -18,11 +18,13 @@ learn it now---we'll need it in order to use a quantity as a function parameter,
 variable.
 
 We store our quantities in a type template with two template parameters: `Quantity<Unit, Rep>`.
-Here's how to provide each parameter.
+`Unit` is a type representing the unit of measure.  `Rep`, short for "Representation", is the
+underlying numeric storage type. Here's how to provide each parameter.
 
 - **`Unit`**:
-    - This will typically be the `CamelCase` version of the quantity maker, which is represented in
-      `snake_case`.  (For example, for the quantity maker `meters`, the unit type is `Meters`.)
+    - This will typically be the `CamelCase` version of the quantity maker, which is itself
+      represented in `snake_case`.  (For example, for the quantity maker `meters`, the unit type is
+      `Meters`.)
 
     - You can also provide a _compound_ unit.  We'll explain how to form compound units later in
       this section.
@@ -37,16 +39,16 @@ Here's how to provide each parameter.
 
 ## `QuantityD<Unit>`, and other aliases
 
-Templates with multiple parameters can be cumbersome.  The whitespace in the type name can make it
-harder to read at a glance.  Moreover, preprocessor macros will be unable to parse it unless you
-surround it with extra parentheses.[^1]
+Templates with multiple parameters (for example, `Quantity<Meters, double>`) can be cumbersome.  The
+whitespace in the type name can make it harder to read at a glance.  Moreover, preprocessor macros
+will be unable to parse it unless you surround it with extra parentheses.[^1]
 
 [^1]: While we avoid using macros in our own library, we can't avoid them in others!  Even within
 this repository, we use googletest for our test cases, and googletest is macro-based.
 
-Fortunately, we provide concise aliases to handle the most common cases.  For example,
-`QuantityD<Meters>` (think: `D` for `double`) is identical to `Quantity<Meters, double>`.  Here's a table
-of the ones we support out of the box:
+To make things easier, we provide concise aliases to handle the most common cases.  For example,
+`QuantityD<Meters>` (think: `D` for `double`) is identical to `Quantity<Meters, double>`.  Here's
+a table of the ones we support out of the box:
 
 | Rep | Alias |
 |-----|-------|

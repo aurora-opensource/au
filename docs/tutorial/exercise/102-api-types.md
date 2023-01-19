@@ -15,8 +15,8 @@ Here's a simple example of a function that deals with physical quantities, but l
 because it's using raw numeric types.
 
 ```cpp
-// The distance (in meters) it would take to stop, starting from a given speed
-// and acceleration.
+// The distance (in meters) it would take to stop, with a given starting speed
+// and constant (negative) acceleration.
 //
 // Parameters:
 // - speed_mps:  The starting speed, in meters per second.
@@ -55,7 +55,7 @@ They'll fail.
 
 !!! example "Exercise 1(a)"
     === "Task"
-        Make these new tests pass by declaring a new function, in `"tutorial/102_api_types.hh"`,
+        Make these new tests compile by declaring a new function, in `"tutorial/102_api_types.hh"`,
         with this signature:
 
         ```cpp
@@ -82,6 +82,13 @@ They'll fail.
         First, we declared the aliases for the compound units.  Then, we made a new signature with
         quantity types instead of raw `double`.  We used the `QuantityD<U>` form, rather than
         `Quantity<U, double>`, for conciseness.
+
+        !!! warning
+            When composing unit type instances (like `Meters{}`), we don't get the same fluency as
+            when we compose quantity makers (like `meters`).  In particular, we can't offer the same
+            grammatical fluency.  With quantity makers, we would write `meters / second`.  However,
+            with unit type instances, we end up needing to write `Meters{} / Seconds{}`, rather than
+            `Meters{} / Second{}`.
 
         Note that we also removed the suffixes (such as `_m`, `_mps`, and `_mpss`) from the variable
         and function names.  Those suffixes were there to help _humans_ keep track of units.  Now
@@ -116,6 +123,12 @@ makes sense: our function hasn't been implemented yet.
         is by carefully inspecting the order and comparing to the signature of
         `stopping_distance_m()`.  Fortunately, that function lives in the same file, so it's not too
         onerous to verify the correctness.
+
+        ??? info "Reminder about `.in(...)` syntax"
+            The argument you pass needs to be an _instance_, not a _type_.  It may be tempting to
+            call `speed.in(MetersPerSecond)`, but that's not valid C++ (you can't "pass a type" to
+            a function).  That's why we passed the quantity maker instead: `speed.in(meters
+            / second)`.
 
 ## Exercise 2: reverse the roles
 
