@@ -35,6 +35,17 @@ first class customers since the library's inception.
 To learn more about our place in the C++ units library ecosystem, see our [detailed library
 comparison](https://aurora-opensource.github.io/au/alternatives).
 
+## Getting started
+
+Our [installation instructions](https://aurora-opensource.github.io/au/install) can have you up and
+running in minutes, in any project that supports C++14 or newer.
+
+To use the library effectively, we recommend working through the
+[tutorials](https://aurora-opensource.github.io/au/tutorial/), starting with [Au 101: Quantity
+Makers](https://aurora-opensource.github.io/au/tutorial/101-quantity-makers).  To
+get set up with the tutorials — or, to contribute to the library — check out our [development
+guide](https://aurora-opensource.github.io/au/develop).
+
 ## As seen at CppCon 2021
 
 At CppCon 2021, we
@@ -50,14 +61,3 @@ deck](https://chogg.name/cppcon-2021-units/) if you like.
 talk: both in its user interfaces, _and_ under the hood!  The one downside is that matrix and vector
 support hasn't yet been implemented.  See [#70](https://github.com/aurora-opensource/au/issues/70)
 for more details, and subscribe to that issue to watch for progress.
-
-## Getting started
-
-Our [installation instructions](https://aurora-opensource.github.io/au/install) can have you up and
-running in minutes, in any project that supports C++14 or newer.
-
-To use the library effectively, we recommend working through the
-[tutorials](https://aurora-opensource.github.io/au/tutorial/), starting with [Au 101: Quantity
-Makers](https://aurora-opensource.github.io/au/tutorial/101-quantity-makers).  To
-get set up with the tutorials — or, to contribute to the library — check out our [development
-guide](https://aurora-opensource.github.io/au/develop).
