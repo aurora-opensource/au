@@ -4,6 +4,9 @@ Welcome to the Au library!  Au (pronounced "ay yoo") is a C++14-compatible units
 [Aurora](https://aurora.tech/).  Its key strengths include safety, accessibility, performance, and
 developer experience.
 
+The library source is on github, at
+[aurora-opensource/au](https://github.com/aurora-opensource/au).
+
 ## Getting started
 
 These pages will be most useful as you begin your Au journey.
@@ -30,6 +33,16 @@ effectively.
 
 - **[How-to guides](./howto/index.md).**  Detailed instructions for common tasks you may encounter
   in using the library.
+
+We also have a [GitHub Issues](https://github.com/aurora-opensource/au/issues) page for tracking
+problems and future work.  If you have a bug report or feature request, check the existing issues to
+see if it's been posted, and file a new one if it hasn't.  While we can't promise timely
+_resolution_, we will do our best to respond quickly so you know you've been heard, and where we
+stand on the issue.
+
+!!! tip
+    Feel free to vote for existing issues by reacting to the main post with the :+1: emoji: we'll take
+    this into account in prioritizing what to work on!
 
 ## Planned future content
 
