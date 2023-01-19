@@ -30,7 +30,8 @@ on the end of our variable name to make it clear that the value is the length _i
 a similar approach for our time _in seconds_.
 
 This strategy _works_, in the sense that it can prevent unit errors, but it's labor intensive and
-error prone.  Consider a function we might want to call:
+error prone.  The naming suffixes provide hints, but enforcement is basically on the honor system.
+Consider a function we might want to call:
 
 ```cpp
 double average_speed_mps(double length_m, double time_s);
@@ -158,7 +159,7 @@ example, we could call that API like so:
 
 ```cpp
 RacetrackBuilder builder;
-builder.set_length_m(track_length.in(meters))
+builder.set_length_m(track_length.in(meters));
 //                ^^             ^^^^^^^^^^^
 // API wants length in *meters*      Get value in *meters*
 ```
@@ -205,7 +206,7 @@ in future lessons.
     Here are a couple examples of operations among quantities with the _same unit_.
 
     ```cpp
-    constexpr auto distance = meters(1.0) + meters(2.0)
+    constexpr auto distance = meters(1.0) + meters(2.0);
     // distance -> meters(3.0)
 
     constexpr auto is_duration_greater = (seconds(60) > seconds(55));
