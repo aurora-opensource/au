@@ -9,7 +9,7 @@ The library source is on GitHub, at
 
 ## Getting started
 
-These pages will be most useful as you begin your Au journey.
+These pages will be most useful as you begin your Au journey:
 
 - **[Alternatives](./alternatives/index.md).**  First off: is Au the right fit for _your_ needs?
   What else is out there?  This page gives a detailed comparison to some of the most prominent other
@@ -25,7 +25,7 @@ These pages will be most useful as you begin your Au journey.
 ## Continuing your journey
 
 Once you're up and running with the library, these pages will be handy tools to help you use it more
-effectively.
+effectively:
 
 - **[Troubleshooting](./troubleshooting.md).**  A guide to the most commonly encountered types of
   error, what they mean, and how to fix them.  Take key snippets from your compiler errors, and
