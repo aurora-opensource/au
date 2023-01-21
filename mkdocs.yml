@@ -1,15 +1,17 @@
 # Copyright 2022 Aurora Operations, Inc.
 
-site_name: au
+site_name: "The Au units library"
 site_description: "A C++ units library, by Aurora"
 site_url: https://aurora-opensource.github.io/au
-site_author: "au team"
+site_author: "Au team"
 copyright: Copyright &copy; 2022, Aurora Innovation, Inc. All rights reserved
 
 repo_url: https://github.com/aurora-opensource/au
 
 theme:
   name: material
+  favicon: assets/favicon.ico
+  logo: assets/au-logo.png
 
 extra_javascript:
   - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML

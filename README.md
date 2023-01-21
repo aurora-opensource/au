@@ -1,37 +1,63 @@
-# au: A C++14 units library
+![Au library logo](docs/assets/au-logo-color.png)
 
-This repository is the future home of the `au` library.  In the initial stages, we are focused on
-building out the machinery for building the code and docs: making it easy to get and run bazel,
-getting the toolchains we need, and setting up CI builds.  Once that foundation
-is in place, we'll port the full code.
+# Au: A C++14-compatible units library, by Aurora
 
-[![Explanation Video](https://user-images.githubusercontent.com/10720055/203602853-9437f26a-9b1f-4b54-8a4d-2fb242ed9953.png)](https://www.youtube.com/watch?v=5dhFtSu3wCo)
+Au (pronounced "ay yoo") is a C++ units library, by
+[Aurora Innovation](https://aurora.tech/).  What the `<chrono>` library did for time
+variables, _Au_ does for _all physical quantities_ (lengths, speeds, voltages, and so on). Namely:
 
-## How to build
+- Catch unit errors at compile time, with **no runtime penalty**.
+- Make unit conversions effortless to get right.
+- _Accelerate and improve your general developer experience._
 
-This is very much a work in progress and the top priority for improvement right now.  You can try
-the following command:
+In short: if your C++ programs handle physical quantities, Au will make you faster and more
+effective at your job.  You'll find everything you need in our [full documentation
+website](https://aurora-opensource.github.io/au).
 
-```sh
-bazel test //au/...:all
-```
+## Why Au?
 
-This assumes you have set up `direnv` or installed `bazel` on your system.  If you haven't done
-either of those, then run `./tools/bin/bazel` instead of `bazel`.  (But you should probably set up
-`direnv`; it makes your life much easier!)
+There are many other C++ units libraries, several quite well established.  Each of them offers
+_some_ of the following properties, but **only Au** offers _all_ of them:
 
-The build will use a hermetic clang toolchain by default.
+- Wide compatibility with C++ versions (anything C++14 or newer).
+- Easy installation in any project (including a customizable single-header option).
+- Small compile time burden.
+- Concise, readable typenames in compiler errors.
 
-### Available compilers
+We also provide several totally new features, including fully unit-safe APIs, an adaptive "safety
+surface" that protects conversions against overflow, unit-aware rounding and inverse functions, and
+many more.
 
-Use the following `--config` settings to switch to different compilers.
+Forged in the crucible of Aurora's diverse, demanding use cases, Au has a proven track record of
+usability and reliability. This **includes embedded support**: Aurora's embedded teams have been
+first class customers since the library's inception.
 
-| Compiler | Config option |
-| --- | --- |
-| Latest supported Clang | `--config=clang` |
-| Clang 11 | `--config=clang11` |
-| Clang 14 | `--config=clang14` |
-| Latest supported GCC | `--config=gcc` |
-| GCC 10 | `--config=gcc10` |
+To learn more about our place in the C++ units library ecosystem, see our [detailed library
+comparison](https://aurora-opensource.github.io/au/alternatives).
 
-Note that only GCC uses a sysroot.
+## Getting started
+
+Our [installation instructions](https://aurora-opensource.github.io/au/install) can have you up and
+running in minutes, in any project that supports C++14 or newer.
+
+To use the library effectively, we recommend working through the
+[tutorials](https://aurora-opensource.github.io/au/tutorial/), starting with [Au 101: Quantity
+Makers](https://aurora-opensource.github.io/au/tutorial/101-quantity-makers).  To
+get set up with the tutorials — or, to contribute to the library — check out our [development
+guide](https://aurora-opensource.github.io/au/develop).
+
+## As seen at CppCon 2021
+
+At CppCon 2021, we
+[presented](https://cppcon2021.sched.com/event/nvCp/units-libraries-and-autonomous-vehicles-lessons-from-the-trenches)
+the properties we found to be most important in units libraries, and advice on using them
+effectively.  Because Au was designed from the ground up with these best practices in mind, it
+thoroughly exemplifies them.  Check out the video below, and follow along with [the slide
+deck](https://chogg.name/cppcon-2021-units/) if you like.
+
+[![Chip Hogg's CppCon 2021 Aurora units talk](https://user-images.githubusercontent.com/10720055/203602853-9437f26a-9b1f-4b54-8a4d-2fb242ed9953.png)](https://www.youtube.com/watch?v=5dhFtSu3wCo)
+
+> NOTE: This open-source version has been significantly improved from what was presented in the
+talk: both in its user interfaces, _and_ under the hood!  The one downside is that matrix and vector
+support hasn't yet been implemented.  See [#70](https://github.com/aurora-opensource/au/issues/70)
+for more details, and subscribe to that issue to watch for progress.
