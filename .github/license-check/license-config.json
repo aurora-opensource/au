@@ -44,6 +44,8 @@
     "include": [
       "**/*.md",
       "**/*.txt",
+      "**/*.png",
+      "**/*.ico",
       "third_party/**/*",
       "tools/bazel",
       "tools/bin/bazel"
