@@ -18,26 +18,25 @@ constexpr auto PLACEHOLDER = ZERO;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // EXERCISE 1
 //
-// Make the following test cases pass by making ad hoc conversions using Au.  Wherever you see
-// `PLACEHOLDER`, you should replace it with the conversion.
+// Migrate the following unit conversions to an inline Au-based solution.  Clean up the parts you no
+// longer need.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 TEST(AdHocConversions, DegreesToRadians) {
-    constexpr double angle_deg = 65.0;
+    constexpr double angle_deg = 135.0;
 
-    // Old-style, manual conversion.
     constexpr double RAD_PER_DEG = M_PI / 180.0;
-    constexpr double angle_rad_manual = angle_deg * RAD_PER_DEG;
 
-    // TODO: make an ad hoc conversion, using Au:
-    constexpr double angle_rad_au = PLACEHOLDER;
-    EXPECT_DOUBLE_EQ(angle_rad_au, angle_rad_manual);
+    // TODO: replace `angle_rad` computation with an ad hoc conversion, using Au.
+    constexpr double angle_rad = angle_deg * RAD_PER_DEG;
+
+    EXPECT_DOUBLE_EQ(angle_rad, 3.0 * M_PI / 4.0);
 }
 
 TEST(AdHocConversions, MilesPerHourToMetersPerSecond) {
     constexpr double speed_mph = 65.0;
 
-    // Old-style, manual conversion.
+    // Carefully compute conversion factor manually.
     constexpr double M_PER_CM = 0.01;
     constexpr double CM_PER_INCH = 2.54;
     constexpr double INCHES_PER_FEET = 12.0;
@@ -48,11 +47,10 @@ TEST(AdHocConversions, MilesPerHourToMetersPerSecond) {
 
     constexpr double MPS_PER_MPH = M_PER_MILE / S_PER_H;
 
-    constexpr double speed_mps_manual = speed_mph * MPS_PER_MPH;
+    // TODO: replace `speed_mps` computation with an ad hoc conversion, using Au.
+    constexpr double speed_mps = speed_mph * MPS_PER_MPH;
 
-    // TODO: make an ad hoc conversion, using Au:
-    constexpr double speed_mps_au = PLACEHOLDER;
-    EXPECT_DOUBLE_EQ(speed_mps_au, speed_mps_manual);
+    EXPECT_DOUBLE_EQ(speed_mps, 29.0576);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
