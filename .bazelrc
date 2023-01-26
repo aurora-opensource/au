@@ -21,3 +21,7 @@ build:gcc --config=gcc10
 
 # Compile with clang by default
 build --config=clang14
+
+# Show test output when there are errors.
+# Making this true by default significantly improves developer experience.
+test --test_output=errors
