@@ -37,9 +37,8 @@ Open up the file, `"tutorial/103_unit_conversions_test.cc"`, and scroll down to 
 section.  This takes you to two unit tests in the `AdHocConversions` group: `DegreesToRadians`, and
 `MilesPerHourToMetersPerSecond`.
 
-In each test, find the `PLACEHOLDER` string.  Replace it with an ad hoc conversion that converts the
-numeric variable (`angle_deg` in the first test; `speed_mph` in the second) to the desired target
-units.
+In each test, find the unit conversion, which is currently done with manual conversion factors.
+Replace it with an ad hoc inline conversion based on Au.
 
 !!! example "Exercise 1(a)"
     === "Task"
@@ -47,15 +46,14 @@ units.
 
         ```cpp
         TEST(AdHocConversions, DegreesToRadians) {
-            constexpr double angle_deg = 65.0;
+            constexpr double angle_deg = 135.0;
 
-            // Old-style, manual conversion.
             constexpr double RAD_PER_DEG = M_PI / 180.0;
-            constexpr double angle_rad_manual = angle_deg * RAD_PER_DEG;
 
-            // TODO: make an ad hoc conversion, using Au:
-            constexpr double angle_rad_au = PLACEHOLDER;
-            EXPECT_DOUBLE_EQ(angle_rad_au, angle_rad_manual);
+            // TODO: replace `angle_rad` computation with an ad hoc conversion, using Au.
+            constexpr double angle_rad = angle_deg * RAD_PER_DEG;
+
+            EXPECT_DOUBLE_EQ(angle_rad, 3.0 * M_PI / 4.0);
         }
         ```
 
@@ -64,25 +62,28 @@ units.
 
         ```cpp
         TEST(AdHocConversions, DegreesToRadians) {
-            constexpr double angle_deg = 65.0;
+            constexpr double angle_deg = 135.0;
 
-            // Old-style, manual conversion.
-            constexpr double RAD_PER_DEG = M_PI / 180.0;
-            constexpr double angle_rad_manual = angle_deg * RAD_PER_DEG;
 
-            // TODO: make an ad hoc conversion, using Au:
-            constexpr double angle_rad_au = degrees(angle_deg).in(radians);
-            EXPECT_DOUBLE_EQ(angle_rad_au, angle_rad_manual);
+
+
+            constexpr double angle_rad = degrees(angle_deg).in(radians);
+
+            EXPECT_DOUBLE_EQ(angle_rad, 3.0 * M_PI / 4.0);
         }
         ```
 
+        !!! tip
+            Instead of _deleting_ the obsolete lines, we replaced them with
+            blank lines.  This lets you go back and forth, using the left and
+            right arrow keys, to see exactly what changed.
+
         We start with a unit-safe handoff, `degrees(angle_deg)`, from the `_deg` suffix to the
         `degrees()` function.  Then we end with another unit-safe handoff: from `.in(radians)` to
-        the `_rad` "suffix" in the variable name.  (Of course, we added _another_ suffix to
-        distinguish it from `angle_rad_manual`, but the point is that it still indicates the units.)
+        the `_rad` "suffix" in the variable name.
 
-        It's nice not to need to worry about how to get a good value of $\pi$, and how to use it
-        correctly once we do.
+        Overall, we can see that this conversion is correct by just reading this single line of
+        code.  That's unit safety!
 
 !!! example "Exercise 1(b)"
     === "Task"
@@ -92,7 +93,7 @@ units.
         TEST(AdHocConversions, MilesPerHourToMetersPerSecond) {
             constexpr double speed_mph = 65.0;
 
-            // Old-style, manual conversion.
+            // Carefully compute conversion factor manually.
             constexpr double M_PER_CM = 0.01;
             constexpr double CM_PER_INCH = 2.54;
             constexpr double INCHES_PER_FEET = 12.0;
@@ -103,11 +104,10 @@ units.
 
             constexpr double MPS_PER_MPH = M_PER_MILE / S_PER_H;
 
-            constexpr double speed_mps_manual = speed_mph * MPS_PER_MPH;
+            // TODO: replace `speed_mps` computation with an ad hoc conversion, using Au.
+            constexpr double speed_mps = speed_mph * MPS_PER_MPH;
 
-            // TODO: make an ad hoc conversion, using Au:
-            constexpr double speed_mps_au = PLACEHOLDER;
-            EXPECT_DOUBLE_EQ(speed_mps_au, speed_mps_manual);
+            EXPECT_DOUBLE_EQ(speed_mps, 29.0576);
         }
         ```
 
@@ -118,37 +118,41 @@ units.
         TEST(AdHocConversions, MilesPerHourToMetersPerSecond) {
             constexpr double speed_mph = 65.0;
 
-            // Old-style, manual conversion.
-            constexpr double M_PER_CM = 0.01;
-            constexpr double CM_PER_INCH = 2.54;
-            constexpr double INCHES_PER_FEET = 12.0;
-            constexpr double FEET_PER_MILE = 5280.0;
-            constexpr double M_PER_MILE = M_PER_CM * CM_PER_INCH * INCHES_PER_FEET * FEET_PER_MILE;
 
-            constexpr double S_PER_H = 3600.0;
 
-            constexpr double MPS_PER_MPH = M_PER_MILE / S_PER_H;
 
-            constexpr double speed_mps_manual = speed_mph * MPS_PER_MPH;
 
-            // TODO: make an ad hoc conversion, using Au:
-            constexpr double speed_mps_au = (miles / hour)(speed_mph).in(meters / second);
-            EXPECT_DOUBLE_EQ(speed_mps_au, speed_mps_manual);
+
+
+
+
+
+
+
+
+            constexpr double speed_mps = (miles / hour)(speed_mph).in(meters / second);
+
+            EXPECT_DOUBLE_EQ(speed_mps, 29.0576);
         }
         ```
 
-        As before, we start and end with unit-safe handoffs.  The units themselves are a little more
-        complicated than before because they're compound units, but overall the readability is
-        pretty close to the previous case.
+        !!! tip
+            Instead of _deleting_ the obsolete lines, we replaced them with
+            blank lines.  This lets you go back and forth, using the left and
+            right arrow keys, to see exactly what changed.
 
-        We can't say the same for the old-style conversion, however --- it's _much_ more complicated
-        than the previous one.  In order to get it into a form which is clearly correct, we need to
-        chain together a string of carefully named elementary conversion factors.  Even once we do,
-        it probably takes some squinting to convince oneself that `MPS_PER_MPH` really is
+        As before, we start and end our conversion with _unit-safe handoffs_.  The units themselves
+        are a little more complicated than before because they're compound units, but overall this
+        Au-based conversion has similar readability to the one from the previous example.
+
+        We can't say the same for the code it replaced, however --- it's _much_ more complicated
+        than the previous example!  In order to write it in a form which is clearly correct, we need
+        to chain together a string of carefully named elementary conversion factors.  Even once we
+        do, it probably takes some squinting to convince yourself that `MPS_PER_MPH` really is
         "meters-per-mile" divided by "seconds-per-hour".
 
-        The Au-based conversion --- which, again, would _replace_ all this crufty code in a real use
-        case --- is a huge improvement in readability.
+        The Au-based conversion is a huge improvement in readability and simplicity, as evidenced by
+        all the whitespace above (which we can now remove).
 
 ## Exercise 2: decomposing inches onto feet-and-inches
 
