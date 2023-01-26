@@ -125,8 +125,8 @@ at all, and if so, how hard it will be to obtain.
         <td class="best">
             <p>Supports single-header delivery, with features:
             <ul>
-                <li>Easy to customize units and I/O support</li>
-                <li>Version-stamped for full reproducibility</li>
+                <li class="check">Easy to customize units and I/O support</li>
+                <li class="check">Version-stamped for full reproducibility</li>
             </ul>
         </td>
     </tr>
@@ -303,8 +303,8 @@ features.
         <td class="good"></td>
         <td class="best">
             <ul>
-                <li>Namespaces: just one, and it's short</li>
-                <li>Includes: either single-header, or easily-guessable header per unit</li>
+                <li class="check">Namespaces: just one, and it's short</li>
+                <li class="check">Includes: either single-header, or easily-guessable header per unit</li>
             </ul>
         </td>
     </tr>
@@ -318,10 +318,14 @@ features.
                 </p>
             </details>
         </td>
-        <td class="na"></td>
-        <td class="na"></td>
-        <td class="na"></td>
-        <td class="good">QuantityMaker and PrefixApplier APIs</td>
+        <td class="fair"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">Prefix only</a></td>
+        <td class="poor"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">No</a></td>
+        <td class="fair">
+            <a
+            href="https://mpusz.github.io/units/framework/quantities.html#quantity-references-experimental">Quantity
+            References</a> compose; prefixes don't
+        </td>
+        <td class="best">QuantityMaker and PrefixApplier APIs</td>
     </tr>
     <tr>
         <td>
@@ -349,8 +353,16 @@ features.
                 </p>
             </details>
         </td>
-        <td class="na"></td>
-        <td class="na"></td>
+        <td class="fair">
+            <a
+            href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#boost.units.usage.example">Generic
+            templates, constrained with traits</a>
+        </td>
+        <td class="fair">
+            <a
+            href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#nic-units.usage.example">Generic
+            templates, constrained with traits</a>
+        </td>
         <td class="best">Concepts excel here</td>
         <td class="fair">
             Currently clunky.  Could be better by adding concepts in extra
@@ -364,7 +376,11 @@ features.
                 <p>How easy it is to add new units, dimensions, or systems.</p>
             </details>
         </td>
-        <td class="na"></td>
+        <td class="good">
+            <a
+            href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">Can
+            add new units and dimensions</a>
+        </td>
         <td class="fair">
             <ul>
                 <li class="check">One-line macro defines new units</li>
@@ -476,9 +492,37 @@ features.
         <td class="best">
             Best choice of all:
             <ul>
-                <li>No "preferred" Rep.</li>
-                <li>Safe integer operations.</li>
+                <li class="check">No "preferred" Rep.</li>
+                <li class="check">Safe integer operations.</li>
             </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>User-defined literals (UDLs)</summary>
+                <p>
+                    Concise expressions such as `3_m` for "3 meters", or some comparable
+                    alternative.
+                </p>
+                <ul>
+                    <li>
+                        Flexibility in the Rep (usually a variety of integral types, and perhaps
+                        <code>float</code>, but rarely <code>double</code>).
+                    </li>
+                    <li>The easy ability to exclude <code>&lt;iostreams&gt;</code>.</li>
+                </ul>
+            </details>
+        </td>
+        <td class="poor"></td>
+        <td class="good">UDLs</td>
+        <td class="best">
+            UDLs and <a
+            href="https://mpusz.github.io/units/framework/quantities.html#quantity-references-experimental">Quantity
+            References</a>
+        </td>
+        <td class="poor">
+            Planned to add: <a href="https://github.com/aurora-opensource/au/issues/43">#43</a>
         </td>
     </tr>
     <tr>
@@ -561,6 +605,21 @@ features.
             Plan to support someday; see
             <a href="https://github.com/aurora-opensource/au/issues/41">#41</a>.
         </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>"Kind" Types</summary>
+                <p>
+                    Support for distinguishing different "kinds" of the same dimension, such as
+                    a length from a width.
+                </p>
+            </details>
+        </td>
+        <td class="na"></td>
+        <td class="poor"></td>
+        <td class="best"></td>
+        <td class="poor">No plans to support.</td>
     </tr>
     <tr>
         <td>
