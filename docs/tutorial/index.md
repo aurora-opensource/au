@@ -11,8 +11,9 @@ build your skills.
 
 These courses should be all you need to become proficient in day-to-day usage of the library.
 You'll learn how to store values safely inside a quantity; how to name types to make your interfaces
-safer; how to perform unit conversions **(forthcoming)**; and how to work effectively with the
-included math functions **(forthcoming)**.
+safer; how to perform unit conversions; and how to work effectively with the included math functions
+**(forthcoming)**.
 
 - [Au 101: Quantity Makers](./101-quantity-makers.md)
 - [Au 102: API Types](./102-api-types.md)
+- [Au 103: Unit Conversions](./103-unit-conversions.md)
