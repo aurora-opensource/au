@@ -2,7 +2,7 @@
 
 This tutorial explains how to perform unit conversions, both implicitly and explicitly.
 
-- **Time:** TBD.
+- **Time:** 30 minutes.
 - **Prerequisites:**
     - [Au 101: Quantity Makers](./101-quantity-makers.md).
     - [Au 102: API types](./102-api-types.md)
