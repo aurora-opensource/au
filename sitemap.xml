@@ -51,12 +51,22 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://aurora-opensource.github.io/au/tutorial/103-unit-conversions/</loc>
+         <lastmod>2023-01-27</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://aurora-opensource.github.io/au/tutorial/exercise/101-quantity-makers/</loc>
          <lastmod>2023-01-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/tutorial/exercise/102-api-types/</loc>
+         <lastmod>2023-01-27</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://aurora-opensource.github.io/au/tutorial/exercise/103-unit-conversions/</loc>
          <lastmod>2023-01-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
