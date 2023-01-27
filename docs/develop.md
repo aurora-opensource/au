@@ -32,11 +32,6 @@ up after the fact.  We'll provide detailed instructions below.
     You can directly use the instructions below, which we adapted from [this
     guide](https://admcpr.com/what-the-fork/).
 
-    !!! warning "TODO"
-        We need to try these instructions, in detail, to make sure they work.  Somebody should
-        create a PR to remove this warning---and do so from a clone which was originally tracking
-        the main repository, but which transitioned to a fork by following these very instructions.
-
     1. **[Create the fork][fork] on GitHub.**
 
            You will need to note the name of your fork, in the format `user_name/repo_name`.
