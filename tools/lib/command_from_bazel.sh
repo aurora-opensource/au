@@ -23,9 +23,9 @@ function make_command_from_bazel_run () {
 
   # Write message, then run _building_ command.
   # When done: back up; then, write spaces; then, back up again.
-  echo -n "$USER_MESSAGE"
+  echo -n "$USER_MESSAGE" >&2
   wrap_bazel build "$TARGET"
-  echo -n "$USER_MESSAGE" | sed 's/./\x08 \x08/g'
+  echo -n "$USER_MESSAGE" | sed 's/./\x08 \x08/g' >&2
 
   # Run _real_ command.
   wrap_bazel run "$TARGET" "$@"
