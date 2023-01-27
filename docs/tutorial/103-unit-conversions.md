@@ -55,37 +55,49 @@ double angle_deg = 90.0;
 }
 ```
 
-There's no need to mess with awkward constant macros.  However, there's also a downside: `.in(...)`
-_returns a raw number_, exiting the safety of the units library.  Fortunately, there's a safer
-alternative which is just as easy to use.
+With the old method, we needed to manually craft a carefully named conversion constant.  And because
+this was an _angular_ conversion, we also needed to worry about how to get a good value for $\pi$
+(here, we chose the `M_PI` macro).  By contrast, the Au-based alternative gives you a readable,
+clearly correct one-liner out of the box --- and it doesn't trouble the author or reader with the
+details of correctly obtaining (and using) $\pi$.
 
-## From `.in(...)` to `.as(...)`
+## `.as(...)`: like `.in(...)`, but makes a quantity
 
-`Quantity` has another member function which takes the same inputs: `.as(...)`.  You can pass it any
-unit you would pass to `.in(...)`, but `.as(...)` _returns a quantity_, not a raw number.  Building
-on our earlier example:
+Using `.in(...)` works very well when you want a raw number --- typically, when you're interacting
+with some legacy interface.  However, sometimes what you want is a _quantity_ that's expressed in a
+specific unit.  For example, you might be comparing quantities in a hot loop, and you'd rather avoid
+repeated conversions.  Or, you might want to print your quantity in some specific unit.
+
+We _could_ satisfy these use cases with `.in(...)`, but it's a little clunky:
 
 ```cpp
-constexpr auto length = feet(6);
-
-length.in(inches);
-//     ^^ Produces `72` (a raw number)
-
-length.as(inches);
-//     ^^ Produces `inches(72)` (a quantity)
+// Not recommended!  See below.
+auto angle = radians(degrees(angle_deg).in(radians));
+//           ^^^^^^^        Raw number--^^ ^^^^^^^
+//                 |                       |
+//                 \--Repeated identifier--/
 ```
 
-!!! tip
-    Prefer `.as(...)` to `.in(...)`.
+This approach wouldn't just be repetitive; it would also create a (small!) opportunity for error,
+because you temporarily leave the safety of the units library before re-entering it.
 
-    Only exit the library when you really need to.  Even then, stop and consider whether the library
-    could be improved to handle your use case natively.
+Fortunately, there's a better choice.  `Quantity` has another member function, `.as(...)`, for
+exactly this use case.  You can pass it any unit you would pass to `.in(...)`, but `.as(...)`
+_returns a quantity_, not a raw number.  Building on our earlier example:
+
+```cpp
+auto angle = degrees(angle_deg).as(radians);
+//      👍 Don't Repeat Yourself---^^^^^^^
+```
+
+Use `.as(...)` when you want easy, inline, fine-grained control over the units in which your
+quantities are expressed.
 
 ## Conversion categories
 
 The examples so far have been pretty straightforward.  To convert from `feet` to `inches`, we simply
-multiply the underlying value by 12.  That seems pretty safe for just about any Rep[^1] --- floating
-point, or integral.  However, other conversions can be more subtle.
+multiply the underlying value by 12.  That seems pretty safe for just about any Rep[^1], whether
+floating point or integral.  However, other conversions can be more subtle.
 
 [^1]: Recall that the "Rep" is shorthand for the underlying storage type of the quantity.
 
@@ -180,10 +192,11 @@ types.
                 variables with something like `mega(hertz)(500)`.  Thus, we'd like this operation
                 to succeed (although it should probably be near the border of what's allowed).
 
-            Putting it all together, we settled on [a value threshold of `4'294`][threshold].  If we
+            Putting it all together, we settled on [a value threshold of 4,294][threshold].  If we
             can convert this value without overflow, then we permit the operation; otherwise, we
-            don't.  This will fail operations that can't handle values of 1,000, but it still lets
-            us use $\text{MHz}$ freely when storing $\text{Hz}$ quantities in unsigned `int`.
+            don't.  We picked this value because it satisfies our above criteria nicely.  It will
+            prevent operations that can't handle values of 1,000, but it still lets us use
+            $\text{MHz}$ freely when storing $\text{Hz}$ quantities in `uint32_t`.
 
             We can picture this relationship in terms of the _biggest allowable conversion factor_,
             as a function of the _max value of the type_.  This function separates the allowed
