@@ -36,3 +36,15 @@ cc_test(
         "@com_google_googletest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "103_unit_conversions_test",
+    size = "small",
+    srcs = ["103_unit_conversions_test.cc"],
+    tags = ["manual"],
+    deps = [
+        "//au",
+        "//au:testing",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
