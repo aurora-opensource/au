@@ -3,6 +3,9 @@
 This section is for reference docs which most end users won't often encounter directly.  We collect
 these docs in this subfolder to keep the main folder less cluttered.  Here's a guide to the content:
 
+- **[Dimensions](./dimension.md).**  This is how we keep track of which units are mutually
+  compatible, in the sense that they can be compared and converted with each other.
+
 - **[Monovalue Types](./monovalue_types.md).**  This isn't a _specific type_ in the library; rather,
   it's a "concept" (loosely defined)[^1] which many core library types model.
 
