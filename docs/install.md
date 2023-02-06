@@ -105,13 +105,12 @@ Au!
 
 Every single-file package automatically includes the following features:
 
-!!! warning
-    Before public release, we should ensure each of the following items has a documentation page,
-    and link to that page here:
+!!! warning "TODO"
+    As reference docs become available for each of the following, we should link to them.
 
 - Basic "unit container" types: `Quantity`, `QuantityPoint`
-- Magnitude types and values, including the constant `PI`, and constants for any integer such as
-  `mag<5280>()`.
+- [Magnitude](./reference/magnitude.md) types and values, including the constant `PI`, and constants
+  for any integer such as `mag<5280>()`.
 - All prefixes for SI (`kilo`, `mega`, ...) and informational (`kibi`, `mebi`, ...) quantities.
 - Math functions, including unit-aware rounding and inverses, trigonometric functions, square roots,
   and so on.

@@ -31,8 +31,11 @@ effectively:
   error, what they mean, and how to fix them.  Take key snippets from your compiler errors, and
   use in-page search to get help!
 
-- **[How-to guides](./howto/index.md).**  Detailed instructions for common tasks you may encounter
-  in using the library.
+- **[How-to guides](./howto/index.md).**  Step-by-step instructions for accomplishing common tasks
+  you may encounter in using the library.
+
+- **[Reference](./reference/index.md).**  Detailed reference documentation on `Quantity`,
+  `QuantityPoint`, units, magnitudes, and other core library abstractions.
 
 We also have a [GitHub Issues](https://github.com/aurora-opensource/au/issues) page for tracking
 problems and future work.  If you have a bug report or feature request, check the existing issues to
@@ -41,17 +44,13 @@ _resolution_, we will do our best to respond quickly so you know you've been hea
 stand on the issue.
 
 !!! tip
-    Feel free to vote for existing issues by reacting to the main post with the :+1: emoji: we'll take
-    this into account in prioritizing what to work on!
+    Feel free to vote for existing issues by reacting to the main post with the :+1: emoji: we'll
+    take this into account in prioritizing what to work on!
 
-## Planned future content
+## Shoring up foundations
 
-While Au has had plenty of production experience internally at Aurora, its life as a public open
-source library is just beginning.  Here are some sections we know we'll need to add.
+When you're looking to understand the library better (as opposed to actively trying to accomplish
+some task), these docs will help you strengthen your foundations.
 
-- **Reference.**  Detailed reference documentation on `Quantity`, `QuantityPoint`, units,
-  magnitudes, and other core library abstractions.
-
-- **Explanation.**  There's plenty we'd love to share about the design choices that underpin the
-  library. While launching Au, we've de-prioritized this section in favor of the more directly
-  practical parts --- but while it may be less _urgent_, it's no less _important_.
+- **[Discussion](./discussion/index.md).**  Philosophy and principles, deep dives on design choices,
+  explanations of core concepts, and more.
