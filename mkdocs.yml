@@ -16,7 +16,7 @@ site_name: "The Au units library"
 site_description: "A C++ units library, by Aurora"
 site_url: https://aurora-opensource.github.io/au
 site_author: "Au team"
-copyright: Copyright &copy; 2022, Aurora Innovation, Inc. All rights reserved
+copyright: Copyright &copy; 2022, Aurora Operations, Inc. All rights reserved
 
 repo_url: https://github.com/aurora-opensource/au
 edit_uri: blob/main/docs
