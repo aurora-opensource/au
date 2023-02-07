@@ -5,7 +5,6 @@
       "**/*.sh",
       "**/*.yml",
       "**/BUILD",
-      "third_party/bazelisk/BUILD",
       "tools/bin/au-docs-serve",
       "tools/bin/buildifier",
       "tools/bin/clang-format",
@@ -19,6 +18,14 @@
     ],
     "exclude": [
       "third_party/**/*"
+    ],
+    "license": "./.github/license-check/header-apache2-hashtag.txt"
+  },
+  {
+    // We need to duplicate the above rule for any files we _do_ own which
+    // would otherwise be excluded by the `"third_party/**/*"` pattern.
+    "include": [
+      "third_party/bazelisk/BUILD"
     ],
     "license": "./.github/license-check/header-apache2-hashtag.txt"
   },
