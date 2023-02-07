@@ -22,8 +22,6 @@
     "license": "./.github/license-check/header-apache2-hashtag.txt"
   },
   {
-    // We need to duplicate the above rule for any files we _do_ own which
-    // would otherwise be excluded by the `"third_party/**/*"` pattern.
     "include": [
       "third_party/bazelisk/BUILD"
     ],
