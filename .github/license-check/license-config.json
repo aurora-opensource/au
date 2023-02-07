@@ -23,6 +23,12 @@
   },
   {
     "include": [
+      "third_party/bazelisk/BUILD"
+    ],
+    "license": "./.github/license-check/header-apache2-hashtag.txt"
+  },
+  {
+    "include": [
       "**/*.hh",
       "**/*.cc"
     ],
