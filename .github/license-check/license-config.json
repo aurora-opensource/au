@@ -5,6 +5,7 @@
       "**/*.sh",
       "**/*.yml",
       "**/BUILD",
+      "third_party/bazelisk/BUILD",
       "tools/bin/au-docs-serve",
       "tools/bin/buildifier",
       "tools/bin/clang-format",
