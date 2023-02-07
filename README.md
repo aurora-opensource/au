@@ -2,9 +2,9 @@
 
 # Au: A C++14-compatible units library, by Aurora
 
-Au (pronounced "ay yoo") is a C++ units library, by
-[Aurora Innovation](https://aurora.tech/).  What the `<chrono>` library did for time
-variables, _Au_ does for _all physical quantities_ (lengths, speeds, voltages, and so on). Namely:
+Au (pronounced "ay yoo") is a C++ units library, by [Aurora](https://aurora.tech/).  What the
+`<chrono>` library did for time variables, _Au_ does for _all physical quantities_ (lengths, speeds,
+voltages, and so on). Namely:
 
 - Catch unit errors at compile time, with **no runtime penalty**.
 - Make unit conversions effortless to get right.
