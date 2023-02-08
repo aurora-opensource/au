@@ -111,7 +111,8 @@ Every single-file package automatically includes the following features:
 - Basic "unit container" types: `Quantity`, `QuantityPoint`
 - [Magnitude](./reference/magnitude.md) types and values, including the constant `PI`, and constants
   for any integer such as `mag<5280>()`.
-- All prefixes for SI (`kilo`, `mega`, ...) and informational (`kibi`, `mebi`, ...) quantities.
+- All [prefixes](./reference/prefix.md) for SI (`kilo`, `mega`, ...) and informational (`kibi`,
+  `mebi`, ...) quantities.
 - Math functions, including unit-aware rounding and inverses, trigonometric functions, square roots,
   and so on.
 - Bidirectional implicit conversion between `Quantity` types and any equivalent counterparts in the
