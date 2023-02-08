@@ -108,7 +108,8 @@ Every single-file package automatically includes the following features:
 !!! warning "TODO"
     As reference docs become available for each of the following, we should link to them.
 
-- Basic "unit container" types: `Quantity`, `QuantityPoint`
+- Basic "unit container" types: [`Quantity`](./reference/quantity.md),
+  [`QuantityPoint`](./reference/quantity_point.md)
 - [Magnitude](./reference/magnitude.md) types and values, including the constant `PI`, and constants
   for any integer such as `mag<5280>()`.
 - All [prefixes](./reference/prefix.md) for SI (`kilo`, `mega`, ...) and informational (`kibi`,
