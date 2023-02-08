@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.0-31-gd650a3a
+// Version identifier: 0.3.0-32-ga776ce6
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -3904,6 +3904,22 @@ struct PrefixApplier {
 // SI Prefixes.
 
 template <typename U>
+struct Quetta : decltype(U{} * pow<30>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Q", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Quetta<U>::label;
+constexpr auto quetta = PrefixApplier<Quetta>{};
+
+template <typename U>
+struct Ronna : decltype(U{} * pow<27>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("R", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Ronna<U>::label;
+constexpr auto ronna = PrefixApplier<Ronna>{};
+
+template <typename U>
 struct Yotta : decltype(U{} * pow<24>(mag<10>())) {
     static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Y", unit_label<U>());
 };
@@ -4062,6 +4078,22 @@ struct Yocto : decltype(U{} * pow<-24>(mag<10>())) {
 template <typename U>
 constexpr detail::ExtendedLabel<1, U> Yocto<U>::label;
 constexpr auto yocto = PrefixApplier<Yocto>{};
+
+template <typename U>
+struct Ronto : decltype(U{} * pow<-27>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("r", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Ronto<U>::label;
+constexpr auto ronto = PrefixApplier<Ronto>{};
+
+template <typename U>
+struct Quecto : decltype(U{} * pow<-30>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("q", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Quecto<U>::label;
+constexpr auto quecto = PrefixApplier<Quecto>{};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Binary Prefixes.
