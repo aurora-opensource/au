@@ -66,6 +66,16 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://aurora-opensource.github.io/au/reference/quantity/</loc>
+         <lastmod>2023-02-08</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://aurora-opensource.github.io/au/reference/quantity_point/</loc>
+         <lastmod>2023-02-08</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://aurora-opensource.github.io/au/reference/unit/</loc>
          <lastmod>2023-02-08</lastmod>
          <changefreq>daily</changefreq>
