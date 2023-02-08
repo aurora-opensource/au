@@ -62,9 +62,7 @@ def filenames(main_files, units, include_io):
     The script will be sure to include all of these, and will also include any
     transitive dependencies from within the project.
     """
-    names = (
-        ["au/au.hh"] + [f"au/units/{unit}.hh" for unit in units] + main_files
-    )
+    names = ["au/au.hh"] + [f"au/units/{unit}.hh" for unit in units] + main_files
     if include_io:
         names.append("au/io.hh")
     return names
@@ -125,13 +123,20 @@ class SourceFile:
         self.graph_includes = []
         self.lines = []
 
+        in_copyright_header = False
         with open(filename) as f:
             was_last_line_blank = False
             for line in f:
                 if line.startswith("#pragma once"):
                     continue
                 if re.search(AURORA_COPYRIGHT.format(year="20.."), line):
+                    in_copyright_header = True
                     continue
+                if in_copyright_header:
+                    if line.startswith("//"):
+                        continue
+                    else:
+                        in_copyright_header = False
 
                 # Collapse consecutive blank lines into one.
                 if line.strip():
