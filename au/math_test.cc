@@ -738,4 +738,9 @@ TEST(InverseIn, HasSameValueAsInverseAs) {
     EXPECT_THAT((inverse_in<double>(seconds, hertz(3))),
                 SameTypeAndValue(inverse_as<double>(seconds, hertz(3)).in(seconds)));
 }
+
+TEST(InverseAs, ProducesCorrectRep) {
+    EXPECT_THAT(inverse_as<int64_t>(nano(seconds), hertz(50.0)),
+                SameTypeAndValue(rep_cast<int64_t>(nano(seconds)(20'000'000))));
+}
 }  // namespace au

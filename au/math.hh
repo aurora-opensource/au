@@ -194,8 +194,8 @@ constexpr auto int_pow(Quantity<U, R> q) {
 template <typename TargetRep, typename TargetUnits, typename U, typename R>
 constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     using Rep = std::common_type_t<TargetRep, R>;
-    return make_quantity<UnitProductT<>>(Rep{1}).in(associated_unit(target_units) * U{}) /
-           q.in(U{});
+    return static_cast<TargetRep>(
+        make_quantity<UnitProductT<>>(Rep{1}).in(associated_unit(target_units) * U{}) / q.in(U{}));
 }
 
 //
