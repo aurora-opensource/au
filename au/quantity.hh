@@ -415,6 +415,14 @@ constexpr auto rep_cast(Quantity<Unit, Rep> q) {
     return q.template as<NewRep>(Unit{});
 }
 
+// Help Zero act more faithfully like a Quantity.
+//
+// Casting Zero to any "Rep" is trivial, because it has no Rep, and is already consistent with all.
+template <typename NewRep>
+constexpr auto rep_cast(Zero z) {
+    return z;
+}
+
 //
 // Quantity aliases to set a particular Rep.
 //
