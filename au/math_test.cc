@@ -713,8 +713,8 @@ TEST(CeilIn, SupportsDifferentOutputTypes) {
 }
 
 TEST(InverseAs, HandlesIntegerRepCorrectly) {
-    constexpr auto period = inverse_as(milli(seconds), hertz(40));
-    EXPECT_THAT(period, SameTypeAndValue(milli(seconds)(25)));
+    constexpr auto period = inverse_as(micro(seconds), hertz(40));
+    EXPECT_THAT(period, SameTypeAndValue(micro(seconds)(25'000)));
 }
 
 TEST(InverseAs, SupportsDividendLessThanOneThousandForFloatingPointRepOnly) {
@@ -732,8 +732,8 @@ TEST(InverseAs, SupportsDividendLessThanOneThousandForFloatingPointRepOnly) {
 }
 
 TEST(InverseIn, HasSameValueAsInverseAs) {
-    EXPECT_THAT(inverse_in(milli(seconds), hertz(3)),
-                SameTypeAndValue(inverse_as(milli(seconds), hertz(3)).in(milli(seconds))));
+    EXPECT_THAT(inverse_in(micro(seconds), hertz(3)),
+                SameTypeAndValue(inverse_as(micro(seconds), hertz(3)).in(micro(seconds))));
 
     EXPECT_THAT((inverse_in<double>(seconds, hertz(3))),
                 SameTypeAndValue(inverse_as<double>(seconds, hertz(3)).in(seconds)));

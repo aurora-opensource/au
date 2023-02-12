@@ -55,20 +55,20 @@ TEST(ImplicitRepPermitted, TrueForFloatingPointTypesForVeryWideRanges) {
 
 TEST(ImplicitRepPermitted, TrueForIntegralTypesIfPurelyIntegerAndThresholdWouldNotOverflow) {
     // int16_t max value: roughly 32k.
-    EXPECT_TRUE((ImplicitRepPermitted<int16_t, decltype(mag<7>())>::value));
-    EXPECT_FALSE((ImplicitRepPermitted<int16_t, decltype(mag<8>())>::value));
+    EXPECT_TRUE((ImplicitRepPermitted<int16_t, decltype(mag<15>())>::value));
+    EXPECT_FALSE((ImplicitRepPermitted<int16_t, decltype(mag<16>())>::value));
 
     // uint16_t max value: roughly 65k.
-    EXPECT_TRUE((ImplicitRepPermitted<uint16_t, decltype(mag<15>())>::value));
-    EXPECT_FALSE((ImplicitRepPermitted<uint16_t, decltype(mag<16>())>::value));
+    EXPECT_TRUE((ImplicitRepPermitted<uint16_t, decltype(mag<30>())>::value));
+    EXPECT_FALSE((ImplicitRepPermitted<uint16_t, decltype(mag<31>())>::value));
 
     // int32_t max value: roughly 2.147e3 million.
-    EXPECT_TRUE((ImplicitRepPermitted<int32_t, decltype(mag<500'000>())>::value));
-    EXPECT_FALSE((ImplicitRepPermitted<int32_t, decltype(mag<600'000>())>::value));
+    EXPECT_TRUE((ImplicitRepPermitted<int32_t, decltype(mag<1'000'000>())>::value));
+    EXPECT_FALSE((ImplicitRepPermitted<int32_t, decltype(mag<1'100'000>())>::value));
 
     // uint32_t max value: roughly 4.294e3 million.
-    EXPECT_TRUE((ImplicitRepPermitted<uint32_t, decltype(mag<1'000'000>())>::value));
-    EXPECT_FALSE((ImplicitRepPermitted<uint32_t, decltype(mag<1'100'000>())>::value));
+    EXPECT_TRUE((ImplicitRepPermitted<uint32_t, decltype(mag<2'000'000>())>::value));
+    EXPECT_FALSE((ImplicitRepPermitted<uint32_t, decltype(mag<2'100'000>())>::value));
 }
 
 TEST(ImplicitRepPermitted, FalseForIntegralTypesUnlessRelativeScaleIsIntegral) {
