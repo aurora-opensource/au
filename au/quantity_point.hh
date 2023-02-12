@@ -49,6 +49,11 @@ constexpr auto make_quantity_point(T value) {
 template <typename P1, typename P2>
 struct AreQuantityPointTypesEquivalent;
 
+namespace detail {
+template <typename TargetRep, typename U1, typename U2>
+struct OriginDisplacementFitsIn;
+}  // namespace detail
+
 // QuantityPoint implementation and API elaboration.
 template <typename UnitT, typename RepT>
 class QuantityPoint {
@@ -128,7 +133,12 @@ class QuantityPoint {
 
     template <typename NewUnit, typename = std::enable_if_t<IsUnit<NewUnit>::value>>
     constexpr Rep in(NewUnit u) const {
-        return (x_ - OriginDisplacement<Unit, NewUnit>::value()).in(u);
+        static_assert(detail::OriginDisplacementFitsIn<Rep, NewUnit, Unit>::value,
+                      "Cannot represent origin displacement in desired Rep");
+
+        // `rep_cast` is needed because if these are integral types, their difference might become a
+        // different type due to integer promotion.
+        return rep_cast<Rep>(x_ + rep_cast<Rep>(OriginDisplacement<NewUnit, Unit>::value())).in(u);
     }
 
     // Overloads for passing a QuantityPointMaker.
@@ -376,4 +386,23 @@ constexpr auto operator-(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::using_common_point_unit(p1, p2, detail::minus);
 }
 
+namespace detail {
+
+template <typename TargetRep, typename U, typename R>
+constexpr bool underlying_value_in_range(Quantity<U, R> q) {
+    return stdx::in_range<TargetRep>(q.in(U{}));
+}
+
+template <typename TargetRep>
+constexpr bool underlying_value_in_range(Zero z) {
+    return true;
+}
+
+template <typename TargetRep, typename U1, typename U2>
+struct OriginDisplacementFitsIn
+    : std::conditional_t<std::is_integral<TargetRep>::value,
+                         stdx::bool_constant<underlying_value_in_range<TargetRep>(
+                             OriginDisplacement<U1, U2>::value())>,
+                         std::true_type> {};
+}  // namespace detail
 }  // namespace au

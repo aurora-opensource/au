@@ -33,7 +33,11 @@ constexpr QuantityMaker<Kelvins> kelvins{};
 constexpr QuantityPointMaker<Kelvins> kelvins_pt{};
 
 struct Celsius : Kelvins {
-    static constexpr auto origin() { return centi(kelvins)(273'15); }
+    // We must divide by 100 to turn the integer value of `273'15` into the decimal `273.15`.  We
+    // split that division between the unit and the value.  The goal is to divide the unit by as
+    // little as possible (while still keeping the value an integer), because that will make the
+    // conversion factor as small as possible in converting to the common-point-unit.
+    static constexpr auto origin() { return (kelvins / mag<20>())(273'15 / 5); }
 };
 constexpr QuantityMaker<Celsius> celsius_qty{};
 constexpr QuantityPointMaker<Celsius> celsius_pt{};
@@ -270,7 +274,7 @@ TEST(QuantityPoint, CanCompareUnitsWithDifferentOrigins) {
 }
 
 TEST(QuantityPoint, CanSubtractIntegralInputsWithNonintegralOriginDifference) {
-    EXPECT_THAT(celsius_pt(0) - kelvins_pt(273), QuantityEquivalent(centi(kelvins)(15)));
+    EXPECT_EQ(celsius_pt(0) - kelvins_pt(273), centi(kelvins)(15));
 }
 
 TEST(QuantityPoint, InheritsOverflowSafetySurfaceFromUnderlyingQuantityTypes) {
@@ -304,4 +308,44 @@ TEST(QuantityPointMaker, CanScaleByMagnitude) {
     StaticAssertTypeEq<decltype(kelvins_pt / mag<5>()),
                        QuantityPointMaker<decltype(Kelvins{} / mag<5>())>>();
 }
+
+namespace detail {
+TEST(OriginDisplacementFitsIn, CanRetrieveValueInGivenRep) {
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint64_t, Kelvins, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int64_t, Kelvins, Celsius>::value));
+
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint32_t, Kelvins, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int32_t, Kelvins, Celsius>::value));
+
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint16_t, Kelvins, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int16_t, Kelvins, Celsius>::value));
+
+    EXPECT_FALSE((OriginDisplacementFitsIn<uint8_t, Kelvins, Celsius>::value));
+    EXPECT_FALSE((OriginDisplacementFitsIn<int8_t, Kelvins, Celsius>::value));
+}
+
+TEST(OriginDisplacementFitsIn, AlwaysTrueForZero) {
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint64_t, Celsius, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int64_t, Celsius, Celsius>::value));
+
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint32_t, Celsius, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int32_t, Celsius, Celsius>::value));
+
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint16_t, Celsius, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int16_t, Celsius, Celsius>::value));
+
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint8_t, Celsius, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int8_t, Celsius, Celsius>::value));
+}
+
+TEST(OriginDisplacementFitsIn, FailsNegativeDisplacementForUnsignedRep) {
+    EXPECT_FALSE((OriginDisplacementFitsIn<uint64_t, Celsius, Kelvins>::value));
+    EXPECT_FALSE((OriginDisplacementFitsIn<uint32_t, Celsius, Kelvins>::value));
+    EXPECT_FALSE((OriginDisplacementFitsIn<uint16_t, Celsius, Kelvins>::value));
+
+    EXPECT_TRUE((OriginDisplacementFitsIn<int64_t, Celsius, Kelvins>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int32_t, Celsius, Kelvins>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int16_t, Celsius, Kelvins>::value));
+}
+}  // namespace detail
 }  // namespace au
