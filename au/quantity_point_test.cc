@@ -33,6 +33,10 @@ constexpr QuantityMaker<Kelvins> kelvins{};
 constexpr QuantityPointMaker<Kelvins> kelvins_pt{};
 
 struct Celsius : Kelvins {
+    // We must divide by 100 to turn the integer value of `273'15` into the decimal `273.15`.  We
+    // split that division between the unit and the value.  The goal is to divide the unit by as
+    // little as possible (while still keeping the value an integer), because that will make the
+    // conversion factor as small as possible in converting to the common-point-unit.
     static constexpr auto origin() { return (kelvins / mag<20>())(273'15 / 5); }
 };
 constexpr QuantityMaker<Celsius> celsius_qty{};
@@ -332,6 +336,16 @@ TEST(OriginDisplacementFitsIn, AlwaysTrueForZero) {
 
     EXPECT_TRUE((OriginDisplacementFitsIn<uint8_t, Celsius, Celsius>::value));
     EXPECT_TRUE((OriginDisplacementFitsIn<int8_t, Celsius, Celsius>::value));
+}
+
+TEST(OriginDisplacementFitsIn, FailsNegativeDisplacementForUnsignedRep) {
+    EXPECT_FALSE((OriginDisplacementFitsIn<uint64_t, Celsius, Kelvins>::value));
+    EXPECT_FALSE((OriginDisplacementFitsIn<uint32_t, Celsius, Kelvins>::value));
+    EXPECT_FALSE((OriginDisplacementFitsIn<uint16_t, Celsius, Kelvins>::value));
+
+    EXPECT_TRUE((OriginDisplacementFitsIn<int64_t, Celsius, Kelvins>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int32_t, Celsius, Kelvins>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int16_t, Celsius, Kelvins>::value));
 }
 }  // namespace detail
 }  // namespace au
