@@ -1208,16 +1208,16 @@ conversion.</p>
     <em>definitely</em> forbid the conversion.</p>
 </li>
 <li>
-<p>On the other hand, we&rsquo;ve found it useful to initialize, say, <code>QuantityU32&lt;Hertz&gt;</code>
+<p>On the other hand, we&rsquo;ve found it useful to initialize, say, <code>QuantityI32&lt;Hertz&gt;</code>
     variables with something like <code>mega(hertz)(500)</code>.  Thus, we&rsquo;d like this operation
     to succeed (although it should probably be near the border of what&rsquo;s allowed).</p>
 </li>
 </ul>
-<p>Putting it all together, we settled on <a href="https://github.com/aurora-opensource/au/blob/dbd79b2/au/conversion_policy.hh#L27-L28">a value threshold of 4,294</a>.  If we
+<p>Putting it all together, we settled on <a href="https://github.com/aurora-opensource/au/blob/dbd79b2/au/conversion_policy.hh#L27-L28">a value threshold of 2&lsquo;147</a>.  If we
 can convert this value without overflow, then we permit the operation; otherwise, we
 don&rsquo;t.  We picked this value because it satisfies our above criteria nicely.  It will
 prevent operations that can&rsquo;t handle values of 1,000, but it still lets us use
-<span class="arithmatex"><span class="MathJax_Preview">\text{MHz}</span><script type="math/tex">\text{MHz}</script></span> freely when storing <span class="arithmatex"><span class="MathJax_Preview">\text{Hz}</span><script type="math/tex">\text{Hz}</script></span> quantities in <code>uint32_t</code>.</p>
+<span class="arithmatex"><span class="MathJax_Preview">\text{MHz}</span><script type="math/tex">\text{MHz}</script></span> freely when storing <span class="arithmatex"><span class="MathJax_Preview">\text{Hz}</span><script type="math/tex">\text{Hz}</script></span> quantities in <code>int32_t</code>.</p>
 <p>We can picture this relationship in terms of the <em>biggest allowable conversion factor</em>,
 as a function of the <em>max value of the type</em>.  This function separates the allowed
 conversions from the forbidden ones, permitting bigger conversions for bigger types.
@@ -1357,7 +1357,7 @@ is their policy (paraphrased and simplified):</p>
 <p>And here is our refinement (the <em>overflow safety surface</em>):</p>
 <ul>
 <li>If an integral-Rep conversion would overflow the <em>destination type</em> for a <em>source value</em> <a href="https://github.com/aurora-opensource/au/blob/dbd79b2/au/conversion_policy.hh#L27-L28">as small
-  as <code>4'294</code></a>, we <em>forbid</em> the conversion.</li>
+  as <code>2'147</code></a>, we <em>forbid</em> the conversion.</li>
 </ul>
 <details class="info">
 <summary>Deeper dive: comparing overflow strategies for Au and <code>chrono</code></summary>

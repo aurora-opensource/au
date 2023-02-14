@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.0-36-g5d1a8ce
+// Version identifier: 0.3.0-37-g0bf9e58
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -2664,7 +2664,7 @@ constexpr bool can_scale_without_overflow(Magnitude<BPs...> m, Rep value) {
 
 namespace detail {
 // Chosen so as to allow populating a `QuantityU32<Hertz>` with an input in MHz.
-constexpr auto OVERFLOW_THRESHOLD = 4'294;
+constexpr auto OVERFLOW_THRESHOLD = 2'147;
 
 // This wrapper for `can_scale_without_overflow<...>(..., OVERFLOW_THRESHOLD)` can prevent an
 // instantiation via short-circuiting, speeding up compile times.
@@ -4383,9 +4383,9 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
 //
 // The value of the "smart" inverse of a Quantity, in a given destination unit.
 //
-// By "smart", we mean that, e.g., you can convert an integral Quantity of Mega<Hertz> to an
+// By "smart", we mean that, e.g., you can convert an integral Quantity of Kilo<Hertz> to an
 // integral Quantity of Nano<Seconds>, without ever leaving the integral domain.  (Under the hood,
-// in this case, the library will know to divide into 1000 instead of dividing into 1.)
+// in this case, the library will know to divide into 1'000'000 instead of dividing into 1.)
 //
 template <typename TargetUnits, typename U, typename R>
 constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
@@ -4394,10 +4394,22 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     // than 1000 would tend to be stored in the next SI-prefixed unit up, e.g., 1 km instead of 1000
     // m.)
     //
-    // The "bad outcome" here is the inverse of a nonzero value getting represented as 0.  To avoid
-    // this for all integral numbers 1000 and less, the dividend must be at least 1000.
+    // The "bad outcome" here is a lossy conversion.  Since we're mainly worried about the integral
+    // domain (because floating point numbers are already pretty well behaved), this means that:
+    //
+    //    inverse_in(a, inverse_as(b, a(n)))
+    //
+    // should be the identity for all n <= 1000.  For this to be true, we need a threshold of
+    // (1'000 ^ 2) = 1'000'000.
+    //
+    // (An extreme instance of this kind of lossiness would be the inverse of a nonzero value
+    // getting represented as 0, which would happen for values over the threshold.)
+
+    // This will fail at compile time for types that can't hold 1'000'000.
+    constexpr R threshold = 1'000'000;
+
     static_assert(
-        make_quantity<UnitProductT<>>(R{1}).in(associated_unit(target_units) * U{}) >= 1000 ||
+        make_quantity<UnitProductT<>>(R{1}).in(associated_unit(target_units) * U{}) >= threshold ||
             std::is_floating_point<R>::value,
         "Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired");
 
