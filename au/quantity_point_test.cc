@@ -280,22 +280,30 @@ TEST(QuantityPoint, CanSubtractIntegralInputsWithNonintegralOriginDifference) {
 TEST(QuantityPoint, InheritsOverflowSafetySurfaceFromUnderlyingQuantityTypes) {
     // This should fail to compile with a warning about a "dangerous conversion".  Here is why.
     //
-    // - The maximum `uint16_t` value is 65,535.
+    // - The maximum `int16_t` value is 32,767.
     // - The common point-unit of `Celsius` and `Kelvins` is _at most_ (1/20)K; so, we are
-    //   guaranteed to be multiplying by at least 20.  (In fact, it's currently implemented as
-    //   `Centi<Kelvins>`, so we're multiplying by 100.)
-    // - The safety surface kicks in if we would overflow a value of 4,294.
-    // - To be able to multiply any value of up to 4,294 by a number at least 20 without
-    //   overflowing, we need to be able to store 85,580.  This can't fit inside of a `uint16_t`;
+    //   guaranteed to be multiplying by at least 20.
+    // - The safety surface kicks in if we would overflow a value of 2,147.
+    // - To be able to multiply any value of up to 2,147 by a number at least 20 without
+    //   overflowing, we need to be able to store 42,940.  This can't fit inside of a `int16_t`;
     //   hence, dangerous conversion.
 
     // UNCOMMENT THE FOLLOWING LINE TO TEST:
-    // celsius_pt(static_cast<uint16_t>(20)) < kelvins_pt(static_cast<uint16_t>(293));
+    // ASSERT_FALSE(celsius_pt(static_cast<int16_t>(20)) < kelvins_pt(static_cast<int16_t>(293)));
 
-    // Note that this is explicitly due to the influence of the origin _difference_.  For
-    // _quantities_, rather than quantity _points_, this would work just fine, as the following test
-    // shows.
-    ASSERT_TRUE(celsius_qty(static_cast<uint16_t>(20)) < kelvins(static_cast<uint16_t>(293)));
+    // It so happens that moving from `int16_t` to `uint16_t` would give us enough room to make the
+    // test compile (and pass).
+    ASSERT_FALSE(celsius_pt(static_cast<uint16_t>(20)) < kelvins_pt(static_cast<uint16_t>(293)));
+
+    // Note also that the failure is explicitly due to the influence of the origin _difference_.
+    // For _quantities_, rather than quantity _points_, this would work just fine, as the following
+    // test shows.
+    ASSERT_TRUE(celsius_qty(static_cast<int16_t>(20)) < kelvins(static_cast<int16_t>(293)));
+}
+
+TEST(QuantityPoint, PreservesRep) {
+    EXPECT_THAT(celsius_pt(static_cast<uint16_t>(0)).in(kelvins_pt / mag<20>()),
+                SameTypeAndValue(static_cast<uint16_t>(27'315 / 5)));
 }
 
 TEST(QuantityPointMaker, CanApplyPrefix) {
