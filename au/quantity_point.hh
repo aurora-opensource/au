@@ -93,6 +93,9 @@ class QuantityPoint {
     static constexpr Unit unit{};
     using Diff = Quantity<Unit, Rep>;
 
+    static_assert(std::is_arithmetic<Rep>::value,
+                  "Rep must be built-in numeric type for now; see #52");
+
     // The default constructor produces a QuantityPoint in a valid but contractually unspecified
     // state.  It exists to give you an object you can assign to.  The main motivating factor for
     // including this is to support `std::atomic`, which requires its types to be
