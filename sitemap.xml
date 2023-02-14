@@ -2,137 +2,137 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://aurora-opensource.github.io/au/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/develop/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/install/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/troubleshooting/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/alternatives/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/discussion/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/discussion/implementation/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/discussion/implementation/vector_space/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/howto/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/howto/new-units/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/reference/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/reference/magnitude/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/reference/prefix/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/reference/quantity/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/reference/quantity_point/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/reference/unit/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/reference/detail/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/reference/detail/dimension/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/reference/detail/monovalue_types/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/reference/detail/packs/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/tutorial/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/tutorial/101-quantity-makers/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/tutorial/102-api-types/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/tutorial/103-unit-conversions/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/tutorial/exercise/101-quantity-makers/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/tutorial/exercise/102-api-types/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/tutorial/exercise/103-unit-conversions/</loc>
-         <lastmod>2023-02-12</lastmod>
+         <lastmod>2023-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
