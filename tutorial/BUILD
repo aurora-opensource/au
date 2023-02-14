@@ -23,6 +23,7 @@ cc_binary(
     name = "101_quantity_makers",
     testonly = True,
     srcs = ["101_quantity_makers.cc"],
+    tags = ["manual"],
     deps = [
         ":utils",
         "//au",
@@ -42,6 +43,7 @@ cc_test(
     name = "102_api_types_test",
     testonly = True,
     srcs = ["102_api_types_test.cc"],
+    tags = ["manual"],
     deps = [
         ":102_api_types",
         "//au:testing",
