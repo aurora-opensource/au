@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.0-37-g0bf9e58
+// Version identifier: 0.3.0-38-gdb8819c
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -2824,6 +2824,9 @@ class Quantity {
     using Rep = RepT;
     using Unit = UnitT;
     static constexpr auto unit = Unit{};
+
+    static_assert(std::is_arithmetic<Rep>::value,
+                  "Rep must be built-in numeric type for now; see #52");
 
     // IMPLICIT constructor for another Quantity of the same Dimension.
     template <typename OtherUnit,
