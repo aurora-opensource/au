@@ -16,8 +16,14 @@
 
 #include "au/prefix.hh"
 #include "au/testing.hh"
+#include "au/units/fathoms.hh"
+#include "au/units/furlongs.hh"
 #include "au/units/hertz.hh"
+#include "au/units/hours.hh"
+#include "au/units/knots.hh"
 #include "au/units/meters.hh"
+#include "au/units/miles.hh"
+#include "au/units/yards.hh"
 #include "gtest/gtest.h"
 
 using ::testing::StaticAssertTypeEq;
@@ -47,6 +53,50 @@ TEST(Conversions, SupportIntMHzToU32Hz) {
 
 TEST(CommonUnit, HandlesPrefixesReasonably) {
     StaticAssertTypeEq<CommonUnitT<Kilo<Meters>, Meters>, Meters>();
+}
+
+template <typename U, typename R>
+constexpr auto round_sequentially(Quantity<U, R> q) {
+    std::cout << q << std::endl;
+    return q;
+}
+
+template <typename U, typename R, typename FirstUnit, typename... NextUnits>
+constexpr auto round_sequentially(Quantity<U, R> q, FirstUnit first_unit, NextUnits... next_units) {
+    std::cout << q << "\n `-> ";
+    return round_sequentially(round_as(first_unit, q), next_units...);
+}
+
+TEST(RoundAs, ReproducesXkcd2585) {
+    constexpr auto true_speed = (miles / hour)(17);
+
+    const auto rounded_speed = round_sequentially(true_speed,
+                                                  meters / second,
+                                                  knots,
+                                                  fathoms / second,
+                                                  furlongs / minute,
+                                                  fathoms / second,
+                                                  kilo(meters) / hour,
+                                                  knots,
+                                                  kilo(meters) / hour,
+                                                  furlongs / hour,
+                                                  miles / hour,
+                                                  meters / second,
+                                                  furlongs / minute,
+                                                  yards / second,
+                                                  fathoms / second,
+                                                  meters / second,
+                                                  miles / hour,
+                                                  furlongs / minute,
+                                                  knots,
+                                                  yards / second,
+                                                  fathoms / second,
+                                                  knots,
+                                                  furlongs / minute,
+                                                  miles / hour);
+
+    // Authoritative reference: https://xkcd.com/2585/
+    EXPECT_EQ((miles / hour)(45), rounded_speed);
 }
 
 }  // namespace au
