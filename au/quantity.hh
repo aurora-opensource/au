@@ -113,6 +113,9 @@ class Quantity {
     using Unit = UnitT;
     static constexpr auto unit = Unit{};
 
+    static_assert(std::is_arithmetic<Rep>::value,
+                  "Rep must be built-in numeric type for now; see #52");
+
     // IMPLICIT constructor for another Quantity of the same Dimension.
     template <typename OtherUnit,
               typename OtherRep,
