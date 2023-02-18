@@ -19,4 +19,4 @@
 SCRIPT_ROOT=$(dirname $(readlink -f $0))
 source "$SCRIPT_ROOT/../lib/command_from_bazel.sh"
 
-make_command_from_bazel_run @com_github_bazelbuild_buildtools//buildifier:buildifier "$@"
+make_command_from_bazel_run build @com_github_bazelbuild_buildtools//buildifier:buildifier "$@"
