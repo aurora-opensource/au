@@ -30,15 +30,24 @@ function wrap_bazel () {
 }
 
 function make_command_from_bazel_run () {
+  BUILD_CMD="$1"; shift
   TARGET="$1"; shift
-  USER_MESSAGE="Building tool.  If slow, you can Ctrl-C and run: bazel --nohome_rc build $TARGET"
+  USER_MESSAGE="Building tool.  If slow, you can Ctrl-C and run: bazel --nohome_rc $BUILD_CMD $TARGET"
 
   # Write message, then run _building_ command.
   # When done: back up; then, write spaces; then, back up again.
   echo -n "$USER_MESSAGE" >&2
-  wrap_bazel build "$TARGET"
+  wrap_bazel "$BUILD_CMD" "$TARGET"
   echo -n "$USER_MESSAGE" | sed 's/./\x08 \x08/g' >&2
 
   # Run _real_ command.
-  wrap_bazel run "$TARGET" "$@"
+  if [ "$BUILD_CMD" == "fetch" ]; then
+    # A target that is simply fetched is a pre-built target.  Bazel 6.0.0 will complain if we use
+    # `bazel run`, because `bazel run` uses `bazel build` under the hood, and there is nothing to
+    # build.  So in this case, we simply execute the target directly.
+    QUERY_RESULT="$(bazel --nohome_rc query --noshow_progress $TARGET --output=location)"
+    "${QUERY_RESULT%%:*}" "$@"
+  else
+    wrap_bazel run "$TARGET" "$@"
+  fi
 }
