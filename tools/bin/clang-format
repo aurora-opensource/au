@@ -20,4 +20,4 @@
 SCRIPT_ROOT=$(dirname $(readlink -f $0))
 source "$SCRIPT_ROOT/../lib/command_from_bazel.sh"
 
-make_command_from_bazel_run @llvm_14_toolchain_llvm//:bin/clang-format "$@"
+make_command_from_bazel_run fetch @llvm_14_toolchain_llvm//:bin/clang-format "$@"
