@@ -1,0 +1,37 @@
+# Copyright 2023 Aurora Operations, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+
+cc_library(
+    name = "nholthaus_units",
+    hdrs = ["nholthaus_units.hh"],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "nholthaus_units_test",
+    size = "small",
+    srcs = [
+        "nholthaus_units_example_usage.hh",
+        "nholthaus_units_test.cc",
+    ],
+    deps = [
+        ":nholthaus_units",
+        "//au",
+        "//au:testing",
+        "@com_google_googletest//:gtest_main",
+        "@nholthaus_units",
+    ],
+)
