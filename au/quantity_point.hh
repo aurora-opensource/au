@@ -394,7 +394,7 @@ constexpr bool underlying_value_in_range(Quantity<U, R> q) {
 }
 
 template <typename TargetRep>
-constexpr bool underlying_value_in_range(Zero z) {
+constexpr bool underlying_value_in_range(Zero) {
     return true;
 }
 
