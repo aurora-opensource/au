@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.0-44-g0ab1c2f
+// Version identifier: 0.3.0-46-gb82849f
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -3892,7 +3892,7 @@ constexpr bool underlying_value_in_range(Quantity<U, R> q) {
 }
 
 template <typename TargetRep>
-constexpr bool underlying_value_in_range(Zero z) {
+constexpr bool underlying_value_in_range(Zero) {
     return true;
 }
 
