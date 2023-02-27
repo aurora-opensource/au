@@ -27,6 +27,8 @@ load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 bazel_skylib_workspace()
 
+load("//build:copts.bzl", "BASE_CLANG_COPTS", "EXTRA_COPTS")
+
 BAZEL_TOOLCHAIN_REF = "056aeaa01900f5050a9fed9b11e2d365a684831a"
 
 BAZEL_TOOLCHAIN_SHA = "93aa940bcaa2bfdd8153d4d029bad1ccc6c0601e29ffff3a23e1d89aba5f61fa"
@@ -47,6 +49,9 @@ load("@com_grail_bazel_toolchain//toolchain:rules.bzl", "llvm_toolchain")
 
 llvm_toolchain(
     name = "llvm_11_toolchain",
+    compile_flags = {
+        "": BASE_CLANG_COPTS + EXTRA_COPTS,
+    },
     cxx_standard = {
         "": "c++14",
     },
@@ -62,6 +67,9 @@ llvm_11_register_toolchains()
 
 llvm_toolchain(
     name = "llvm_14_toolchain",
+    compile_flags = {
+        "": BASE_CLANG_COPTS + EXTRA_COPTS,
+    },
     cxx_standard = {
         "": "c++14",
     },
@@ -94,8 +102,8 @@ load("@aspect_gcc_toolchain//toolchain:defs.bzl", "ARCHS", "gcc_register_toolcha
 
 gcc_register_toolchain(
     name = "gcc_toolchain_x86_64",
-    extra_cflags = gcc_sysroot_cflags,
-    extra_cxxflags = gcc_sysroot_cxxflags,
+    extra_cflags = gcc_sysroot_cflags + EXTRA_COPTS,
+    extra_cxxflags = gcc_sysroot_cxxflags + EXTRA_COPTS,
     gcc_version = "10.3.0",
     sysroot_variant = "x86_64",
     target_arch = ARCHS.x86_64,
