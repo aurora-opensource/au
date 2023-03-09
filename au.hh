@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.0-46-gb82849f
+// Version identifier: 0.3.0-47-gff7d47b
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -2153,7 +2153,15 @@ constexpr auto inverse(T x) -> decltype(pow<-1>(x)) {
 //   - `speed.as(miles / hour)`
 //                       ^^^^
 template <typename Unit>
-struct SingularNameFor {};
+struct SingularNameFor {
+
+    // Multiplying `SingularNameFor` instances enables compound units such as:
+    // `radians / (meter * second)`.
+    template <typename OtherUnit>
+    constexpr auto operator*(SingularNameFor<OtherUnit>) const {
+        return SingularNameFor<UnitProductT<Unit, OtherUnit>>{};
+    }
+};
 
 template <int Exp, typename Unit>
 constexpr auto pow(SingularNameFor<Unit>) {
@@ -3182,6 +3190,16 @@ struct QuantityMaker {
     template <typename MultiplierUnit>
     friend constexpr auto operator*(SingularNameFor<MultiplierUnit>, QuantityMaker) {
         return QuantityMaker<UnitProductT<MultiplierUnit, Unit>>{};
+    }
+
+    template <typename OtherUnit>
+    constexpr auto operator*(QuantityMaker<OtherUnit>) const {
+        return QuantityMaker<UnitProductT<Unit, OtherUnit>>{};
+    }
+
+    template <typename OtherUnit>
+    constexpr auto operator/(QuantityMaker<OtherUnit>) const {
+        return QuantityMaker<UnitQuotientT<Unit, OtherUnit>>{};
     }
 };
 

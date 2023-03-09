@@ -1064,8 +1064,7 @@ definitions as examples to follow.</p>
 <li>An object whose name is the singular name for your unit.  Useful in certain contexts: for
   example, the traditional unit for torque is &ldquo;<strong>newton</strong> meters&rdquo;, <em>not</em> &ldquo;<strong>newtons</strong> meters&rdquo;.</li>
 <li><strong>If omitted:</strong> you&rsquo;ll sacrifice some readability flow: the grammar becomes strange.  You&rsquo;ll
-  end up with constructs like <code>speed.in(miles / hours)</code>, rather than <code>speed.in(miles / hour)</code>.
-  <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+  end up with constructs like <code>speed.in(miles / hours)</code>, rather than <code>speed.in(miles / hour)</code>.</li>
 </ul>
 </li>
 <li>
@@ -1120,7 +1119,7 @@ some examples:</p>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">miles_per_hour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>We can use the alias, <code>MilesPerHour</code>, anywhere we&rsquo;d use a unit type.  And we can call the
-QuantityMaker, <code>miles_per_hour</code>, just as we would call <code>miles</code>.<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>    We even get an automatically
+QuantityMaker, <code>miles_per_hour</code>, just as we would call <code>miles</code>.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>    We even get an automatically
 generated unit label: <code>mi / h</code>.</p>
 <p>Despite this convenience, aliases aren&rsquo;t always the best choice.  Here&rsquo;s the best practices guidance
 to follow.</p>
@@ -1163,14 +1162,8 @@ macros actually make the definitions <em>harder</em> to read and understand (bec
 arguments, so the meaning of the parameters is unclear at the callsite).&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>Note that this requires us to build out multiplication and division between two
-<code>QuantityMaker</code> instances, rather than just a <code>QuantityMaker</code> and a <code>SingularNameFor</code>.  We haven&rsquo;t
-done this yet, but it&rsquo;s inevitable that we will, to support composing units whose singular name is
-identical to the plural name (e.g., <code>hertz</code>).&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
-</li>
-<li id="fn:3">
 <p>Note that we don&rsquo;t &ldquo;need&rdquo; to define this.  We could write <code>(miles / hour)(65)</code>, and get
-exactly the same result as <code>miles_per_hour(65)</code>.  However, some users may prefer the latter syntax.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+exactly the same result as <code>miles_per_hour(65)</code>.  However, some users may prefer the latter syntax.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
