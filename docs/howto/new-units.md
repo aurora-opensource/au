@@ -88,7 +88,6 @@ Here are the features.
       example, the traditional unit for torque is "**newton** meters", _not_ "**newtons** meters".
     - **If omitted:** you'll sacrifice some readability flow: the grammar becomes strange.  You'll
       end up with constructs like `speed.in(miles / hours)`, rather than `speed.in(miles / hour)`.
-      [^2]
 
 4. _Quantity maker_.
     - **Required.**  This gives you a `snake_case` version of your unit which acts like a function.
@@ -102,11 +101,6 @@ Here are the features.
       can also compose it with prefixes, or scale it with Magnitudes.
     - **If omitted:** _this is usually fine to omit:_ most Units are only used with `Quantity`, not
       `QuantityPoint`.
-
-[^2]: Note that this requires us to build out multiplication and division between two
-`QuantityMaker` instances, rather than just a `QuantityMaker` and a `SingularNameFor`.  We haven't
-done this yet, but it's inevitable that we will, to support composing units whose singular name is
-identical to the plural name (e.g., `hertz`).
 
 !!! note
     Not shown here: adding an `origin` member.  We skipped this because it is very rare.  It only

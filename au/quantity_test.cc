@@ -73,8 +73,20 @@ TEST(MakeQuantity, MakesQuantityInGivenUnit) {
 
 TEST(QuantityMaker, CreatesAppropriateQuantityIfCalled) { EXPECT_EQ(yards(3.14).in(yards), 3.14); }
 
-TEST(QuantityMaker, CanDivideByUnitToGetMakerOfQuotientUnit) {
+TEST(QuantityMaker, CanBeMultipliedBySingularUnitToGetMakerOfProductUnit) {
+    StaticAssertTypeEq<decltype(hour * feet), QuantityMaker<UnitProductT<Feet, Hours>>>();
+}
+
+TEST(QuantityMaker, CanMultiplyByOtherMakerToGetMakerOfProductUnit) {
+    StaticAssertTypeEq<decltype(hours * feet), QuantityMaker<UnitProductT<Feet, Hours>>>();
+}
+
+TEST(QuantityMaker, CanDivideBySingularUnitToGetMakerOfQuotientUnit) {
     StaticAssertTypeEq<decltype(feet / hour), QuantityMaker<UnitQuotientT<Feet, Hours>>>();
+}
+
+TEST(QuantityMaker, CanDivideByOtherMakerToGetMakerOfQuotientUnit) {
+    StaticAssertTypeEq<decltype(feet / hours), QuantityMaker<UnitQuotientT<Feet, Hours>>>();
 }
 
 TEST(QuantityMaker, CanTakePowerToGetMakerOfPowerUnit) {
@@ -87,6 +99,11 @@ TEST(QuantityMaker, CanMultiplyByMagnitudeToGetMakerOfScaledUnit) {
 
 TEST(QuantityMaker, CanDivideByMagnitudeToGetMakerOfDescaledUnit) {
     EXPECT_THAT((feet / mag<12>())(1.234), QuantityEquivalent(inches(1.234)));
+}
+
+TEST(QuantityMaker, CanMultiplyByMultipleSingularUnits) {
+    StaticAssertTypeEq<decltype(mile * minute * days),
+                       QuantityMaker<UnitProductT<Miles, Minutes, Days>>>();
 }
 
 TEST(Quantity, CanRetrieveInDifferentUnitsWithSameDimension) {
