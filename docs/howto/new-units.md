@@ -143,10 +143,10 @@ constexpr auto miles_per_hour = miles / hour;
 ```
 
 We can use the alias, `MilesPerHour`, anywhere we'd use a unit type.  And we can call the
-QuantityMaker, `miles_per_hour`, just as we would call `miles`.[^3]    We even get an automatically
+QuantityMaker, `miles_per_hour`, just as we would call `miles`.[^2]    We even get an automatically
 generated unit label: `mi / h`.
 
-[^3]:  Note that we don't "need" to define this.  We could write `(miles / hour)(65)`, and get
+[^2]:  Note that we don't "need" to define this.  We could write `(miles / hour)(65)`, and get
 exactly the same result as `miles_per_hour(65)`.  However, some users may prefer the latter syntax.
 
 Despite this convenience, aliases aren't always the best choice.  Here's the best practices guidance
