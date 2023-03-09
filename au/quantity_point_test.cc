@@ -1,4 +1,16 @@
 // Copyright 2022 Aurora Operations, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "au/quantity_point.hh"
 
@@ -21,7 +33,11 @@ constexpr QuantityMaker<Kelvins> kelvins{};
 constexpr QuantityPointMaker<Kelvins> kelvins_pt{};
 
 struct Celsius : Kelvins {
-    static constexpr auto origin() { return centi(kelvins)(273'15); }
+    // We must divide by 100 to turn the integer value of `273'15` into the decimal `273.15`.  We
+    // split that division between the unit and the value.  The goal is to divide the unit by as
+    // little as possible (while still keeping the value an integer), because that will make the
+    // conversion factor as small as possible in converting to the common-point-unit.
+    static constexpr auto origin() { return (kelvins / mag<20>())(273'15 / 5); }
 };
 constexpr QuantityMaker<Celsius> celsius_qty{};
 constexpr QuantityPointMaker<Celsius> celsius_pt{};
@@ -258,28 +274,36 @@ TEST(QuantityPoint, CanCompareUnitsWithDifferentOrigins) {
 }
 
 TEST(QuantityPoint, CanSubtractIntegralInputsWithNonintegralOriginDifference) {
-    EXPECT_THAT(celsius_pt(0) - kelvins_pt(273), QuantityEquivalent(centi(kelvins)(15)));
+    EXPECT_EQ(celsius_pt(0) - kelvins_pt(273), centi(kelvins)(15));
 }
 
 TEST(QuantityPoint, InheritsOverflowSafetySurfaceFromUnderlyingQuantityTypes) {
     // This should fail to compile with a warning about a "dangerous conversion".  Here is why.
     //
-    // - The maximum `uint16_t` value is 65,535.
+    // - The maximum `int16_t` value is 32,767.
     // - The common point-unit of `Celsius` and `Kelvins` is _at most_ (1/20)K; so, we are
-    //   guaranteed to be multiplying by at least 20.  (In fact, it's currently implemented as
-    //   `Centi<Kelvins>`, so we're multiplying by 100.)
-    // - The safety surface kicks in if we would overflow a value of 4,294.
-    // - To be able to multiply any value of up to 4,294 by a number at least 20 without
-    //   overflowing, we need to be able to store 85,580.  This can't fit inside of a `uint16_t`;
+    //   guaranteed to be multiplying by at least 20.
+    // - The safety surface kicks in if we would overflow a value of 2,147.
+    // - To be able to multiply any value of up to 2,147 by a number at least 20 without
+    //   overflowing, we need to be able to store 42,940.  This can't fit inside of a `int16_t`;
     //   hence, dangerous conversion.
 
     // UNCOMMENT THE FOLLOWING LINE TO TEST:
-    // celsius_pt(static_cast<uint16_t>(20)) < kelvins_pt(static_cast<uint16_t>(293));
+    // ASSERT_FALSE(celsius_pt(static_cast<int16_t>(20)) < kelvins_pt(static_cast<int16_t>(293)));
 
-    // Note that this is explicitly due to the influence of the origin _difference_.  For
-    // _quantities_, rather than quantity _points_, this would work just fine, as the following test
-    // shows.
-    ASSERT_TRUE(celsius_qty(static_cast<uint16_t>(20)) < kelvins(static_cast<uint16_t>(293)));
+    // It so happens that moving from `int16_t` to `uint16_t` would give us enough room to make the
+    // test compile (and pass).
+    ASSERT_FALSE(celsius_pt(static_cast<uint16_t>(20)) < kelvins_pt(static_cast<uint16_t>(293)));
+
+    // Note also that the failure is explicitly due to the influence of the origin _difference_.
+    // For _quantities_, rather than quantity _points_, this would work just fine, as the following
+    // test shows.
+    ASSERT_TRUE(celsius_qty(static_cast<int16_t>(20)) < kelvins(static_cast<int16_t>(293)));
+}
+
+TEST(QuantityPoint, PreservesRep) {
+    EXPECT_THAT(celsius_pt(static_cast<uint16_t>(0)).in(kelvins_pt / mag<20>()),
+                SameTypeAndValue(static_cast<uint16_t>(27'315 / 5)));
 }
 
 TEST(QuantityPointMaker, CanApplyPrefix) {
@@ -292,4 +316,44 @@ TEST(QuantityPointMaker, CanScaleByMagnitude) {
     StaticAssertTypeEq<decltype(kelvins_pt / mag<5>()),
                        QuantityPointMaker<decltype(Kelvins{} / mag<5>())>>();
 }
+
+namespace detail {
+TEST(OriginDisplacementFitsIn, CanRetrieveValueInGivenRep) {
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint64_t, Kelvins, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int64_t, Kelvins, Celsius>::value));
+
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint32_t, Kelvins, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int32_t, Kelvins, Celsius>::value));
+
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint16_t, Kelvins, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int16_t, Kelvins, Celsius>::value));
+
+    EXPECT_FALSE((OriginDisplacementFitsIn<uint8_t, Kelvins, Celsius>::value));
+    EXPECT_FALSE((OriginDisplacementFitsIn<int8_t, Kelvins, Celsius>::value));
+}
+
+TEST(OriginDisplacementFitsIn, AlwaysTrueForZero) {
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint64_t, Celsius, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int64_t, Celsius, Celsius>::value));
+
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint32_t, Celsius, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int32_t, Celsius, Celsius>::value));
+
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint16_t, Celsius, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int16_t, Celsius, Celsius>::value));
+
+    EXPECT_TRUE((OriginDisplacementFitsIn<uint8_t, Celsius, Celsius>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int8_t, Celsius, Celsius>::value));
+}
+
+TEST(OriginDisplacementFitsIn, FailsNegativeDisplacementForUnsignedRep) {
+    EXPECT_FALSE((OriginDisplacementFitsIn<uint64_t, Celsius, Kelvins>::value));
+    EXPECT_FALSE((OriginDisplacementFitsIn<uint32_t, Celsius, Kelvins>::value));
+    EXPECT_FALSE((OriginDisplacementFitsIn<uint16_t, Celsius, Kelvins>::value));
+
+    EXPECT_TRUE((OriginDisplacementFitsIn<int64_t, Celsius, Kelvins>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int32_t, Celsius, Kelvins>::value));
+    EXPECT_TRUE((OriginDisplacementFitsIn<int16_t, Celsius, Kelvins>::value));
+}
+}  // namespace detail
 }  // namespace au

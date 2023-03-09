@@ -1,4 +1,16 @@
 // Copyright 2022 Aurora Operations, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #pragma once
 
@@ -38,6 +50,22 @@ struct PrefixApplier {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SI Prefixes.
+
+template <typename U>
+struct Quetta : decltype(U{} * pow<30>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Q", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Quetta<U>::label;
+constexpr auto quetta = PrefixApplier<Quetta>{};
+
+template <typename U>
+struct Ronna : decltype(U{} * pow<27>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("R", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Ronna<U>::label;
+constexpr auto ronna = PrefixApplier<Ronna>{};
 
 template <typename U>
 struct Yotta : decltype(U{} * pow<24>(mag<10>())) {
@@ -198,6 +226,22 @@ struct Yocto : decltype(U{} * pow<-24>(mag<10>())) {
 template <typename U>
 constexpr detail::ExtendedLabel<1, U> Yocto<U>::label;
 constexpr auto yocto = PrefixApplier<Yocto>{};
+
+template <typename U>
+struct Ronto : decltype(U{} * pow<-27>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("r", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Ronto<U>::label;
+constexpr auto ronto = PrefixApplier<Ronto>{};
+
+template <typename U>
+struct Quecto : decltype(U{} * pow<-30>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("q", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Quecto<U>::label;
+constexpr auto quecto = PrefixApplier<Quecto>{};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Binary Prefixes.

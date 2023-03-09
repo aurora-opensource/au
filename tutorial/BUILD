@@ -1,4 +1,16 @@
 # Copyright 2022 Aurora Operations, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 
@@ -11,6 +23,7 @@ cc_binary(
     name = "101_quantity_makers",
     testonly = True,
     srcs = ["101_quantity_makers.cc"],
+    tags = ["manual"],
     deps = [
         ":utils",
         "//au",
@@ -30,6 +43,7 @@ cc_test(
     name = "102_api_types_test",
     testonly = True,
     srcs = ["102_api_types_test.cc"],
+    tags = ["manual"],
     deps = [
         ":102_api_types",
         "//au:testing",

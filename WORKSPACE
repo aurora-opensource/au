@@ -1,4 +1,16 @@
 # Copyright 2022 Aurora Operations, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
@@ -14,6 +26,8 @@ http_archive(
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 bazel_skylib_workspace()
+
+load("//build:copts.bzl", "BASE_CLANG_COPTS", "EXTRA_COPTS")
 
 BAZEL_TOOLCHAIN_REF = "056aeaa01900f5050a9fed9b11e2d365a684831a"
 
@@ -35,6 +49,9 @@ load("@com_grail_bazel_toolchain//toolchain:rules.bzl", "llvm_toolchain")
 
 llvm_toolchain(
     name = "llvm_11_toolchain",
+    compile_flags = {
+        "": BASE_CLANG_COPTS + EXTRA_COPTS,
+    },
     cxx_standard = {
         "": "c++14",
     },
@@ -50,6 +67,9 @@ llvm_11_register_toolchains()
 
 llvm_toolchain(
     name = "llvm_14_toolchain",
+    compile_flags = {
+        "": BASE_CLANG_COPTS + EXTRA_COPTS,
+    },
     cxx_standard = {
         "": "c++14",
     },
@@ -82,8 +102,8 @@ load("@aspect_gcc_toolchain//toolchain:defs.bzl", "ARCHS", "gcc_register_toolcha
 
 gcc_register_toolchain(
     name = "gcc_toolchain_x86_64",
-    extra_cflags = gcc_sysroot_cflags,
-    extra_cxxflags = gcc_sysroot_cxxflags,
+    extra_cflags = gcc_sysroot_cflags + EXTRA_COPTS,
+    extra_cxxflags = gcc_sysroot_cxxflags + EXTRA_COPTS,
     gcc_version = "10.3.0",
     sysroot_variant = "x86_64",
     target_arch = ARCHS.x86_64,
@@ -102,6 +122,15 @@ http_archive(
     sha256 = "a868059c8c6dd6ad45a205cca04084c652cfe1852e6df2d5aca036f6e5438380",
     strip_prefix = "rules_python-0.14.0",
     url = "https://github.com/bazelbuild/rules_python/archive/refs/tags/0.14.0.tar.gz",
+)
+
+http_archive(
+    name = "nholthaus_units",
+    add_prefix = "nholthaus_units",
+    build_file = "@//third_party/nholthaus_units:BUILD",
+    sha256 = "b1f3c1dd11afa2710a179563845ce79f13ebf0c8c090d6aa68465b18bd8bd5fc",
+    strip_prefix = "units-2.3.3/include/",
+    url = "https://github.com/nholthaus/units/archive/refs/tags/v2.3.3.tar.gz",
 )
 
 load("@rules_python//python:repositories.bzl", "python_register_toolchains")

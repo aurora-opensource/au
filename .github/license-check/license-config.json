@@ -1,6 +1,7 @@
 [
   {
     "include": [
+      "**/*.bzl",
       "**/*.py",
       "**/*.sh",
       "**/*.yml",
@@ -18,6 +19,12 @@
     ],
     "exclude": [
       "third_party/**/*"
+    ],
+    "license": "./.github/license-check/header-apache2-hashtag.txt"
+  },
+  {
+    "include": [
+      "third_party/bazelisk/BUILD"
     ],
     "license": "./.github/license-check/header-apache2-hashtag.txt"
   },

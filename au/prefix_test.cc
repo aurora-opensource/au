@@ -1,4 +1,16 @@
 // Copyright 2022 Aurora Operations, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "au/prefix.hh"
 
@@ -74,6 +86,8 @@ TEST(SiPrefixes, HaveCorrectAbsoluteValues) {
 TEST(SiPrefixes, PrefixAppliersPredefined) {
     constexpr QuantityMaker<Inches> inches{};
 
+    EXPECT_EQ(quetta(inches)(1), ronna(inches)(1000));
+    EXPECT_EQ(ronna(inches)(1), yotta(inches)(1000));
     EXPECT_EQ(yotta(inches)(1), zetta(inches)(1000));
     EXPECT_EQ(zetta(inches)(1), exa(inches)(1000));
     EXPECT_EQ(exa(inches)(1), peta(inches)(1000));
@@ -84,7 +98,9 @@ TEST(SiPrefixes, PrefixAppliersPredefined) {
 
     EXPECT_EQ(kilo(inches)(1), hecto(inches)(10));
     EXPECT_EQ(hecto(inches)(1), deka(inches)(10));
-    EXPECT_EQ(deka(inches)(1), deci(inches)(100));
+    EXPECT_EQ(deka(inches)(1), inches(10));
+
+    EXPECT_EQ(inches(1), deci(inches)(10));
     EXPECT_EQ(deci(inches)(1), centi(inches)(10));
     EXPECT_EQ(centi(inches)(1), milli(inches)(10));
 
@@ -95,6 +111,8 @@ TEST(SiPrefixes, PrefixAppliersPredefined) {
     EXPECT_EQ(femto(inches)(1), atto(inches)(1000));
     EXPECT_EQ(atto(inches)(1), zepto(inches)(1000));
     EXPECT_EQ(zepto(inches)(1), yocto(inches)(1000));
+    EXPECT_EQ(yocto(inches)(1), ronto(inches)(1000));
+    EXPECT_EQ(ronto(inches)(1), quecto(inches)(1000));
 }
 
 TEST(SiPrefixes, CorrectlyLabelUnits) {
@@ -107,6 +125,8 @@ TEST(SiPrefixes, CorrectlyLabelUnits) {
     expect_label<Exa<XeroxedBytes>>("EX");
     expect_label<Zetta<XeroxedBytes>>("ZX");
     expect_label<Yotta<XeroxedBytes>>("YX");
+    expect_label<Ronna<XeroxedBytes>>("RX");
+    expect_label<Quetta<XeroxedBytes>>("QX");
     expect_label<Milli<XeroxedBytes>>("mX");
     expect_label<Micro<XeroxedBytes>>("uX");
     expect_label<Nano<XeroxedBytes>>("nX");
@@ -115,6 +135,8 @@ TEST(SiPrefixes, CorrectlyLabelUnits) {
     expect_label<Atto<XeroxedBytes>>("aX");
     expect_label<Zepto<XeroxedBytes>>("zX");
     expect_label<Yocto<XeroxedBytes>>("yX");
+    expect_label<Ronto<XeroxedBytes>>("rX");
+    expect_label<Quecto<XeroxedBytes>>("qX");
     expect_label<Hecto<XeroxedBytes>>("hX");
     expect_label<Deka<XeroxedBytes>>("daX");
     expect_label<Deci<XeroxedBytes>>("dX");

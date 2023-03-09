@@ -188,15 +188,15 @@ types.
                 overflow --- so small that we haven't even _reached_ the next unit --- we should
                 _definitely_ forbid the conversion.
 
-              - On the other hand, we've found it useful to initialize, say, `QuantityU32<Hertz>`
+              - On the other hand, we've found it useful to initialize, say, `QuantityI32<Hertz>`
                 variables with something like `mega(hertz)(500)`.  Thus, we'd like this operation
                 to succeed (although it should probably be near the border of what's allowed).
 
-            Putting it all together, we settled on [a value threshold of 4,294][threshold].  If we
+            Putting it all together, we settled on [a value threshold of 2'147][threshold].  If we
             can convert this value without overflow, then we permit the operation; otherwise, we
             don't.  We picked this value because it satisfies our above criteria nicely.  It will
             prevent operations that can't handle values of 1,000, but it still lets us use
-            $\text{MHz}$ freely when storing $\text{Hz}$ quantities in `uint32_t`.
+            $\text{MHz}$ freely when storing $\text{Hz}$ quantities in `int32_t`.
 
             We can picture this relationship in terms of the _biggest allowable conversion factor_,
             as a function of the _max value of the type_.  This function separates the allowed
@@ -345,7 +345,7 @@ is their policy (paraphrased and simplified):
 And here is our refinement (the _overflow safety surface_):
 
 - If an integral-Rep conversion would overflow the _destination type_ for a _source value_ [as small
-  as `4'294`][threshold], we _forbid_ the conversion.
+  as `2'147`][threshold], we _forbid_ the conversion.
 
 ??? info "Deeper dive: comparing overflow strategies for Au and `chrono`"
     The `std::chrono` library doesn't consider overflow in its conversion policy, because they
