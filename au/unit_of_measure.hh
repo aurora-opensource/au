@@ -393,7 +393,15 @@ constexpr auto inverse(T x) -> decltype(pow<-1>(x)) {
 //   - `speed.as(miles / hour)`
 //                       ^^^^
 template <typename Unit>
-struct SingularNameFor {};
+struct SingularNameFor {
+
+    // Multiplying `SingularNameFor` instances enables compound units such as:
+    // `radians / (meter * second)`.
+    template <typename OtherUnit>
+    constexpr auto operator*(SingularNameFor<OtherUnit>) const {
+        return SingularNameFor<UnitProductT<Unit, OtherUnit>>{};
+    }
+};
 
 template <int Exp, typename Unit>
 constexpr auto pow(SingularNameFor<Unit>) {

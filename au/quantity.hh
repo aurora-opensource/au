@@ -470,6 +470,16 @@ struct QuantityMaker {
     friend constexpr auto operator*(SingularNameFor<MultiplierUnit>, QuantityMaker) {
         return QuantityMaker<UnitProductT<MultiplierUnit, Unit>>{};
     }
+
+    template <typename OtherUnit>
+    constexpr auto operator*(QuantityMaker<OtherUnit>) const {
+        return QuantityMaker<UnitProductT<Unit, OtherUnit>>{};
+    }
+
+    template <typename OtherUnit>
+    constexpr auto operator/(QuantityMaker<OtherUnit>) const {
+        return QuantityMaker<UnitQuotientT<Unit, OtherUnit>>{};
+    }
 };
 
 template <typename U>
