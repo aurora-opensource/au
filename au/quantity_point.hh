@@ -97,7 +97,7 @@ class QuantityPoint {
     // state.  It exists to give you an object you can assign to.  The main motivating factor for
     // including this is to support `std::atomic`, which requires its types to be
     // default-constructible.
-    constexpr QuantityPoint() : x_{ZERO} {}
+    constexpr QuantityPoint() noexcept : x_{ZERO} {}
 
     template <typename OtherUnit,
               typename OtherRep,
