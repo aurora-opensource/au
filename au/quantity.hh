@@ -131,7 +131,7 @@ class Quantity {
     // Construct this Quantity with a value of exactly Zero.
     constexpr Quantity(Zero) : value_{0} {}
 
-    constexpr Quantity() = default;
+    constexpr Quantity() noexcept = default;
 
     // Implicit construction from any exactly-equivalent type.
     template <
