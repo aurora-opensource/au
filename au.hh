@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.0-47-gff7d47b
+// Version identifier: 0.3.0-48-g70343db
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -2852,7 +2852,7 @@ class Quantity {
     // Construct this Quantity with a value of exactly Zero.
     constexpr Quantity(Zero) : value_{0} {}
 
-    constexpr Quantity() = default;
+    constexpr Quantity() noexcept = default;
 
     // Implicit construction from any exactly-equivalent type.
     template <
@@ -3613,7 +3613,7 @@ class QuantityPoint {
     // state.  It exists to give you an object you can assign to.  The main motivating factor for
     // including this is to support `std::atomic`, which requires its types to be
     // default-constructible.
-    constexpr QuantityPoint() : x_{ZERO} {}
+    constexpr QuantityPoint() noexcept : x_{ZERO} {}
 
     template <typename OtherUnit,
               typename OtherRep,
