@@ -3,7 +3,7 @@
 
 set -eux
 
-BAZELISK_V="1.14.0"
+BAZELISK_V="1.16.0"
 BAZELISK_TARBALL="v${BAZELISK_V}.tar.gz"
 BAZELISK_DIR="bazelisk-${BAZELISK_V}"
 
