@@ -25,6 +25,8 @@ theme:
   name: material
   favicon: assets/favicon.ico
   logo: assets/au-logo.png
+  features:
+    - navigation.footer
 
 extra_javascript:
   - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML
