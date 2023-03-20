@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.1-1-g1763853
+// Version identifier: 0.3.1-2-gcb61d4f
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -3100,7 +3100,7 @@ class Quantity {
  private:
     constexpr Quantity(Rep value) : value_{value} {}
 
-    Rep value_ = 0;
+    Rep value_{0};
 };
 
 // Force integer division beteween two integer Quantities, in a callsite-obvious way.
