@@ -12,5 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# To grab the latest version of every package, run:
+#
+#    bazel run //:requirements.update -- --upgrade
+#
+
 mkdocs
 mkdocs-material
