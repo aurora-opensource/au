@@ -2,6 +2,16 @@
 
 ## Preparing the release
 
+These are the steps to take before you actually cut the release.
+
+### Check Aurora's code
+
+Create a draft PR which updates Aurora's internal code to the candidate release.  Make sure all of
+the builds pass.  If any fail, check whether the best fix lies with Aurora's internal code, or with
+Au.
+
+### Gather information for release notes
+
 First, go to the [latest release](https://github.com/aurora-opensource/au/releases/latest).  Click
 the list of "commits to main since this release", found near the top.  Read through the commits, and
 keep track of the main changes as you go.  Use the following categories.
