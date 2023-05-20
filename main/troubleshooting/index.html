@@ -1,0 +1,1879 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++ units library, by Aurora">
+      
+      
+        <meta name="author" content="Au team">
+      
+      
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/troubleshooting/">
+      
+      
+        <link rel="prev" href="../install/">
+      
+      
+        <link rel="next" href="../alternatives/">
+      
+      <link rel="icon" href="../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Troubleshooting Guide - The Au units library</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.c4a75a56.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../tweaks.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#troubleshooting-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../assets/au-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            The Au units library
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Troubleshooting Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../assets/au-logo.png" alt="logo">
+
+    </a>
+    The Au units library
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Au documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../develop/" class="md-nav__link">
+        Development Setup
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Troubleshooting Guide
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Troubleshooting Guide
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#private-constructor" class="md-nav__link">
+    Private constructor
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dangerous-conversion" class="md-nav__link">
+    Dangerous conversion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-type-named-type-in-stdcommon_type" class="md-nav__link">
+    No type named 'type' in 'std::common_type'
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integer-division-forbidden" class="md-nav__link">
+    Integer division forbidden
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dangerous-inversion" class="md-nav__link">
+    Dangerous inversion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deduced-conflicting-types" class="md-nav__link">
+    Deduced conflicting types
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#broken-strict-total-ordering" class="md-nav__link">
+    Broken strict total ordering
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Alternatives
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Alternatives
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alternatives/" class="md-nav__link">
+        Comparison of Alternatives
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Discussion
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Discussion
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/" class="md-nav__link">
+        Discussion Docs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+          Implementation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6_2">
+          <span class="md-nav__icon md-icon"></span>
+          Implementation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/implementation/" class="md-nav__link">
+        Implementation Details
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/implementation/vector_space/" class="md-nav__link">
+        Vector Space Representations
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Howto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Howto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/" class="md-nav__link">
+        How-to guides
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/new-units/" class="md-nav__link">
+        Defining new units
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/" class="md-nav__link">
+        Reference Docs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/magnitude/" class="md-nav__link">
+        Magnitude
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/prefix/" class="md-nav__link">
+        Prefix
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/quantity/" class="md-nav__link">
+        Quantity
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/quantity_point/" class="md-nav__link">
+        QuantityPoint
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/unit/" class="md-nav__link">
+        Unit
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_7" id="__nav_8_7_label" tabindex="0">
+          Detail
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8_7">
+          <span class="md-nav__icon md-icon"></span>
+          Detail
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/detail/" class="md-nav__link">
+        Implementation Details
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/detail/dimension/" class="md-nav__link">
+        Dimension
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/detail/monovalue_types/" class="md-nav__link">
+        Monovalue Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/detail/packs/" class="md-nav__link">
+        Parameter packs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+          Tutorial
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorial
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/" class="md-nav__link">
+        Tutorials: home
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/102-api-types/" class="md-nav__link">
+        Au 102: API Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/103-unit-conversions/" class="md-nav__link">
+        Au 103: Unit Conversions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9_5" id="__nav_9_5_label" tabindex="0">
+          Exercise
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_9_5">
+          <span class="md-nav__icon md-icon"></span>
+          Exercise
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/exercise/102-api-types/" class="md-nav__link">
+        Au 102: API Types Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+        Au 103: Unit Conversions Exercise
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#private-constructor" class="md-nav__link">
+    Private constructor
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dangerous-conversion" class="md-nav__link">
+    Dangerous conversion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-type-named-type-in-stdcommon_type" class="md-nav__link">
+    No type named 'type' in 'std::common_type'
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integer-division-forbidden" class="md-nav__link">
+    Integer division forbidden
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dangerous-inversion" class="md-nav__link">
+    Dangerous inversion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deduced-conflicting-types" class="md-nav__link">
+    Deduced conflicting types
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#broken-strict-total-ordering" class="md-nav__link">
+    Broken strict total ordering
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="troubleshooting-guide">Troubleshooting Guide<a class="headerlink" href="#troubleshooting-guide" title="Permanent link">&para;</a></h1>
+<p>This page is a guide to the most commonly encountered types of error, what they mean, and how to fix
+them.</p>
+<p>The intended use case is to help you interpret an <em>actual error in your code</em>, at the point where
+you encounter it.  To use this page, copy some relevant snippets from your compiler error, and then
+search the text of this page using your browser&rsquo;s Find function.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>To improve your chances of finding what you&rsquo;re looking for, we include full compiler errors from
+both gcc and clang, inline with the text.  Naturally, this makes this page very long, so it&rsquo;s
+not meant to be read straight through.  Stick with your browser&rsquo;s Find function.</p>
+</div>
+<p>Each section below lists one category of compiler error you might encounter when using the library.
+It explains what it means and how to solve it, and gives specific snippets of erroneous code, along
+with the compiler errors that each would yield.</p>
+<h2 id="private-constructor">Private constructor<a class="headerlink" href="#private-constructor" title="Permanent link">&para;</a></h2>
+<p><strong>Meaning:</strong>  This means you passed a raw numeric value to an interface that expected a Quantity.
+It&rsquo;s the &ldquo;classic&rdquo; error the units library aims to prevent.</p>
+<p><strong>Solution:</strong> Call the appropriate Quantity maker: instead of passing <code>x</code>, pass <code>meters(x)</code>,
+<code>(kilo(meters) / hour)(x)</code>, etc.</p>
+<details class="note">
+<summary>A note on quantity makers vs. constructors</summary>
+<p>Every other major units library lets you construct its Quantity types from raw numeric values;
+it just makes that constructor explicit.  Au goes further, and makes this constructor private.
+The reason is to preserve unit safety at all callsites.  We can&rsquo;t know whether you made an alias
+that doesn&rsquo;t name the unit.  For example, if you want everybody to measure lengths in <code>Meters</code>
+in your codebase, you might provide a common alias like this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">using</span><span class="w"> </span><span class="n">Length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
+<p>If you did, then end users could write the following:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="n">Length</span><span class="w"> </span><span class="n">MAX_LENGTH</span><span class="p">{</span><span class="mf">5.5</span><span class="p">};</span><span class="w">  </span><span class="c1">// Unsafe!  Units unclear.  :(</span>
+</code></pre></div>
+<p>A core principle of the Au library is that the only way to enter or exit the library boundaries
+is to name the unit of measure, explicitly, at the callsite, like this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="n">Length</span><span class="w"> </span><span class="n">MAX_LENGTH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="mf">5.5</span><span class="p">);</span><span class="w">  </span><span class="c1">// Usable!  Units unambiguous.  :)</span>
+</code></pre></div>
+<p>This enables users who want to use this kind of &ldquo;dimension-named alias&rdquo; in their codebase to do
+so safely.</p>
+</details>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><strong>Code</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Broken</label><label for="__tabbed_1_2">Fixed</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">set_timeout</span><span class="p">(</span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Seconds</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dt</span><span class="p">);</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1">// A (BROKEN): passing raw number where duration expected.</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">set_timeout</span><span class="p">(</span><span class="mf">0.5</span><span class="p">);</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1">// B (BROKEN): calling Quantity constructor directly.</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">length</span><span class="p">{</span><span class="mf">5.5</span><span class="p">};</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">set_timeout</span><span class="p">(</span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Seconds</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dt</span><span class="p">);</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1">// A (FIXED): name the unit.</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">set_timeout</span><span class="p">(</span><span class="n">seconds</span><span class="p">(</span><span class="mf">0.5</span><span class="p">));</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1">// B (FIXED): calling Quantity constructor directly.</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="mf">5.5</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>Compiler error (clang 14)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>au/error_examples.cc:19:17: error: calling a private constructor of class &#39;au::Quantity&lt;au::Seconds, double&gt;&#39;
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    set_timeout(0.5);
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>                ^
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>./au/quantity.hh:369:15: note: declared private here
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    constexpr Quantity(Rep value) : value_{value} {}
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>              ^
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>au/error_examples.cc:22:33: error: calling a private constructor of class &#39;au::Quantity&lt;au::Meters, double&gt;&#39;
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    constexpr QuantityD&lt;Meters&gt; length{5.5};
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>                                ^
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>./au/quantity.hh:369:15: note: declared private here
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    constexpr Quantity(Rep value) : value_{value} {}
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>              ^
+</code></pre></div></p>
+<p><strong>Compiler error (clang 11)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>au/error_examples.cc:19:17: error: calling a private constructor of class &#39;au::Quantity&lt;au::Seconds, double&gt;&#39;
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    set_timeout(0.5);
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>                ^
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>./au/quantity.hh:369:15: note: declared private here
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    constexpr Quantity(Rep value) : value_{value} {}
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>              ^
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>au/error_examples.cc:22:33: error: calling a private constructor of class &#39;au::Quantity&lt;au::Meters, double&gt;&#39;
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    constexpr QuantityD&lt;Meters&gt; length{5.5};
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>                                ^
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>./au/quantity.hh:369:15: note: declared private here
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    constexpr Quantity(Rep value) : value_{value} {}
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>              ^
+</code></pre></div></p>
+<p><strong>Compiler error (gcc 10)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>au/error_examples.cc: In function &#39;void au::example_private_constructor()&#39;:
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>au/error_examples.cc:19:20: error: &#39;constexpr au::Quantity&lt;UnitT, RepT&gt;::Quantity(au::Quantity&lt;UnitT, RepT&gt;::Rep) [with UnitT = au::Seconds; RepT = double; au::Quantity&lt;UnitT, RepT&gt;::Rep = double]&#39; is private within this context
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>   19 |     set_timeout(0.5);
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>      |                    ^
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>In file included from ./au/math.hh:8,
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>                 from ./au/au.hh:7,
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>                 from au/error_examples.cc:1:
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>./au/quantity.hh:369:15: note: declared private here
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>  369 |     constexpr Quantity(Rep value) : value_{value} {}
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>      |               ^~~~~~~~
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>au/error_examples.cc:22:43: error: &#39;constexpr au::Quantity&lt;UnitT, RepT&gt;::Quantity(au::Quantity&lt;UnitT, RepT&gt;::Rep) [with UnitT = au::Meters; RepT = double; au::Quantity&lt;UnitT, RepT&gt;::Rep = double]&#39; is private within this context
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>   22 |     constexpr QuantityD&lt;Meters&gt; length{5.5};
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>      |                                           ^
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>In file included from ./au/math.hh:8,
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>                 from ./au/au.hh:7,
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>                 from au/error_examples.cc:1:
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>./au/quantity.hh:369:15: note: declared private here
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>  369 |     constexpr Quantity(Rep value) : value_{value} {}
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>      |               ^~~~~~~~
+</code></pre></div></p>
+</div>
+<h2 id="dangerous-conversion">Dangerous conversion<a class="headerlink" href="#dangerous-conversion" title="Permanent link">&para;</a></h2>
+<p><strong>Meaning:</strong>  This is a <em>physically</em> meaningful conversion, but we think the risk of a grossly
+incorrect answer is too high, so we forbid it.  There are two main sources for this risk, both
+having to do with integral storage types.</p>
+<ol>
+<li>
+<p><strong>Inexact conversion</strong>.  Example: <code>inches(24).as(feet)</code>.</p>
+</li>
+<li>
+<p><strong>Overflow</strong>.  Example: <code>giga(hertz)(1).as(hertz)</code>.</p>
+</li>
+</ol>
+<p>Both of these examples would in fact produce the correct answer with the specific values given (<code>24</code>
+and <code>1</code>).  However, many (most!) other values would not.  Thus, we disallow the entire conversion
+operation (at least in this format).</p>
+<p><strong>Solution:</strong>  There are different strategies to solve this, depending on your use case.</p>
+<ol>
+<li>
+<p><strong>Use floating point</strong>.  As mentioned above, these risks only apply to integer values.  If
+   floating point is what you want anyway, just use it.  <code>giga(hertz)(1.0).as(hertz)</code> produces
+   <code>hertz(1'000'000'000.0)</code>.</p>
+</li>
+<li>
+<p><strong>Use &ldquo;explicit Rep&rdquo; form</strong>.  The &ldquo;Rep&rdquo; is the storage type for the Quantity.  If you pass it as
+   a template parameter, it is &ldquo;morally equivalent&rdquo; to a <code>static_cast</code>, and has the same &ldquo;forcing&rdquo;
+   semantics.  <code>inches(24).as&lt;int&gt;(feet)</code> produces <code>feet(2)</code>.</p>
+</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Stop and think before using the explicit Rep version.  If you&rsquo;re reviewing code that uses it,
+ask about it.  The library is trying to protect you from an error prone operation.  The
+mechanism exists because sometimes you can know that it&rsquo;s OK, but remember to stop and check
+first!</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><strong>Code</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Broken</label><label for="__tabbed_2_2">Fixed (1. Floating Point)</label><label for="__tabbed_2_3">Fixed (2. Explicit Rep)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// A (BROKEN): inexact conversion.</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">inches</span><span class="p">(</span><span class="mi">24</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">feet</span><span class="p">);</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1">// B (BROKEN): overflow risk.</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">giga</span><span class="p">(</span><span class="n">hertz</span><span class="p">)(</span><span class="mi">1</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">hertz</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// A (FIXED): 1. use floating point.</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">inches</span><span class="p">(</span><span class="mf">24.0</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">feet</span><span class="p">);</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1">// B (FIXED): 1. use floating point.</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="n">giga</span><span class="p">(</span><span class="n">hertz</span><span class="p">)(</span><span class="mf">1.0</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">hertz</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// A (FIXED): 2. provide explicit Rep.</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">inches</span><span class="p">(</span><span class="mi">24</span><span class="p">).</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">feet</span><span class="p">);</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1">// B (FIXED): 2. provide explicit Rep.</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="n">giga</span><span class="p">(</span><span class="n">hertz</span><span class="p">)(</span><span class="mi">1</span><span class="p">).</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">hertz</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>Compiler error (clang 14)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>./au/quantity.hh:147:9: error: static_assert failed due to requirement &#39;implicit_rep_permitted_from_source_to_target&lt;int&gt;(unit, u)&#39; &quot;Dangerous conversion: use .as&lt;Rep&gt;(NewUnit) instead&quot;
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>        static_assert(implicit_rep_permitted_from_source_to_target&lt;Rep&gt;(unit, u),
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>./au/quantity.hh:183:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Inches, int&gt;::as&lt;au::Feet, void&gt;&#39; requested here
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>        return as(NewUnit{});
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>               ^
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>au/error_examples.cc:30:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Inches, int&gt;::as&lt;au::Feet&gt;&#39; requested here
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    inches(24).as(feet);
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>               ^
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>In file included from au/error_examples.cc:1:
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>In file included from ./au/au.hh:7:
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>In file included from ./au/math.hh:8:
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>./au/quantity.hh:147:9: error: static_assert failed due to requirement &#39;implicit_rep_permitted_from_source_to_target&lt;int&gt;(unit, u)&#39; &quot;Dangerous conversion: use .as&lt;Rep&gt;(NewUnit) instead&quot;
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>        static_assert(implicit_rep_permitted_from_source_to_target&lt;Rep&gt;(unit, u),
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>./au/quantity.hh:183:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Giga&lt;au::Hertz&gt;, int&gt;::as&lt;au::Hertz, void&gt;&#39; requested here
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>        return as(NewUnit{});
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>               ^
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>au/error_examples.cc:33:20: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Giga&lt;au::Hertz&gt;, int&gt;::as&lt;au::Hertz&gt;&#39; requested here
+<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>    giga(hertz)(1).as(hertz);
+<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>                   ^
+</code></pre></div></p>
+<p><strong>Compiler error (clang 11)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>./au/quantity.hh:147:9: error: static_assert failed due to requirement &#39;implicit_rep_permitted_from_source_to_target&lt;int&gt;(unit, u)&#39; &quot;Dangerous conversion: use .as&lt;Rep&gt;(NewUnit) instead&quot;
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>        static_assert(implicit_rep_permitted_from_source_to_target&lt;Rep&gt;(unit, u),
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>./au/quantity.hh:183:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Inches, int&gt;::as&lt;au::Feet, void&gt;&#39; requested here
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>        return as(NewUnit{});
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>               ^
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>au/error_examples.cc:30:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Inches, int&gt;::as&lt;au::Feet&gt;&#39; requested here
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    inches(24).as(feet);
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>               ^
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>In file included from au/error_examples.cc:1:
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>In file included from ./au/au.hh:7:
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>In file included from ./au/math.hh:8:
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>./au/quantity.hh:147:9: error: static_assert failed due to requirement &#39;implicit_rep_permitted_from_source_to_target&lt;int&gt;(unit, u)&#39; &quot;Dangerous conversion: use .as&lt;Rep&gt;(NewUnit) instead&quot;
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>        static_assert(implicit_rep_permitted_from_source_to_target&lt;Rep&gt;(unit, u),
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>./au/quantity.hh:183:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Giga&lt;au::Hertz&gt;, int&gt;::as&lt;au::Hertz, void&gt;&#39; requested here
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>        return as(NewUnit{});
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>               ^
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>au/error_examples.cc:33:20: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Giga&lt;au::Hertz&gt;, int&gt;::as&lt;au::Hertz&gt;&#39; requested here
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>    giga(hertz)(1).as(hertz);
+<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a>                   ^
+</code></pre></div></p>
+<p><strong>Compiler error (gcc 10)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>./au/quantity.hh: In instantiation of &#39;constexpr auto au::Quantity&lt;UnitT, RepT&gt;::as(NewUnit) const [with NewUnit = au::Feet; &lt;template-parameter-2-2&gt; = void; UnitT = au::Inches; RepT = int]&#39;:
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>./au/quantity.hh:183:18:   required from &#39;constexpr auto au::Quantity&lt;UnitT, RepT&gt;::as(au::QuantityMaker&lt;NewUnit&gt;) const [with NewUnit = au::Feet; UnitT = au::Inches; RepT = int]&#39;
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>au/error_examples.cc:30:23:   required from here
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>./au/quantity.hh:147:72: error: static assertion failed: Dangerous conversion: use .as&lt;Rep&gt;(NewUnit) instead
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>  147 |         static_assert(implicit_rep_permitted_from_source_to_target&lt;Rep&gt;(unit, u),
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>./au/quantity.hh: In instantiation of &#39;constexpr auto au::Quantity&lt;UnitT, RepT&gt;::as(NewUnit) const [with NewUnit = au::Hertz; &lt;template-parameter-2-2&gt; = void; UnitT = au::Giga&lt;au::Hertz&gt;; RepT = int]&#39;:
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>./au/quantity.hh:183:18:   required from &#39;constexpr auto au::Quantity&lt;UnitT, RepT&gt;::as(au::QuantityMaker&lt;NewUnit&gt;) const [with NewUnit = au::Hertz; UnitT = au::Giga&lt;au::Hertz&gt;; RepT = int]&#39;
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>au/error_examples.cc:33:28:   required from here
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>./au/quantity.hh:147:72: error: static assertion failed: Dangerous conversion: use .as&lt;Rep&gt;(NewUnit) instead
+</code></pre></div></p>
+</div>
+<h2 id="no-type-named-type-in-stdcommon_type">No type named &lsquo;type&rsquo; in &lsquo;std::common_type&rsquo;<a class="headerlink" href="#no-type-named-type-in-stdcommon_type" title="Permanent link">&para;</a></h2>
+<p><strong>Meaning:</strong>  You probably tried to perform a &ldquo;common-unit operation&rdquo; (addition, subtraction,
+comparison) with two incompatible Quantities.  Typically, this means they have different
+<em>dimensions</em>, which makes this an intrinsically meaningless operation.</p>
+<div class="admonition warning">
+<p class="admonition-title">TODO</p>
+<p>Make a page which explains common-unit operations, and link to it.</p>
+</div>
+<p><strong>Solution:</strong>  Figure out what dimension you expected them to have, and which value had the wrong
+dimension.  Then, figure out how to fix your expression so it has the right dimension.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><strong>Code</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Broken</label><label for="__tabbed_3_2">Fixed</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1">// (BROKEN): different dimensions.</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">meters</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1">// (FIXED): fix coding mistake.</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">meters</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">second</span><span class="p">)(</span><span class="mi">10</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>Compiler error (clang 14)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>In file included from au/error_examples.cc:1:
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>In file included from ./au/au.hh:5:
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>In file included from external/llvm_14_toolchain_llvm/bin/../include/c++/v1/chrono:697:
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>In file included from external/llvm_14_toolchain_llvm/bin/../include/c++/v1/__chrono/calendar.h:13:
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>In file included from external/llvm_14_toolchain_llvm/bin/../include/c++/v1/__chrono/duration.h:14:
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>In file included from external/llvm_14_toolchain_llvm/bin/../include/c++/v1/limits:105:
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>external/llvm_14_toolchain_llvm/bin/../include/c++/v1/type_traits:2388:25: error: no type named &#39;type&#39; in &#39;std::common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt;&gt;&#39;
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>template &lt;class ..._Tp&gt; using common_type_t = typename common_type&lt;_Tp...&gt;::type;
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>                        ^~~~~
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>./au/quantity.hh:494:20: note: in instantiation of template type alias &#39;common_type_t&#39; requested here
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>    using C = std::common_type_t&lt;T, U&gt;;
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>                   ^
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>./au/quantity.hh:532:20: note: in instantiation of function template specialization &#39;au::detail::using_common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt;, au::detail::Plus&gt;&#39; requested here
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>    return detail::using_common_type(q1, q2, detail::plus);
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>                   ^
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>au/error_examples.cc:41:15: note: in instantiation of function template specialization &#39;au::operator+&lt;au::Meters, au::Seconds, int, int&gt;&#39; requested here
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>    meters(1) + seconds(1);
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>              ^
+</code></pre></div></p>
+<p><strong>Compiler error (clang 11)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>In file included from au/error_examples.cc:1:
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>In file included from ./au/au.hh:5:
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>In file included from external/llvm_11_toolchain_llvm/bin/../include/c++/v1/chrono:828:
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>external/llvm_11_toolchain_llvm/bin/../include/c++/v1/type_traits:2462:25: error: no type named &#39;type&#39; in &#39;std::__1::common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt;&gt;&#39;
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>template &lt;class ..._Tp&gt; using common_type_t = typename common_type&lt;_Tp...&gt;::type;
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>                        ^~~~~
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>./au/quantity.hh:494:20: note: in instantiation of template type alias &#39;common_type_t&#39; requested here
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>    using C = std::common_type_t&lt;T, U&gt;;
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>                   ^
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>./au/quantity.hh:532:20: note: in instantiation of function template specialization &#39;au::detail::using_common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt;, au::detail::Plus&gt;&#39; requested here
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>    return detail::using_common_type(q1, q2, detail::plus);
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>                   ^
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>au/error_examples.cc:41:15: note: in instantiation of function template specialization &#39;au::operator+&lt;au::Meters, au::Seconds, int, int&gt;&#39; requested here
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>    meters(1) + seconds(1);
+<a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>              ^
+</code></pre></div></p>
+<p><strong>Compiler error (gcc 10)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>In file included from external/sysroot_x86_64//include/c++/10.3.0/ratio:39,
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>                 from external/sysroot_x86_64//include/c++/10.3.0/chrono:39,
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>                 from ./au/au.hh:5,
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>                 from au/error_examples.cc:1:
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>external/sysroot_x86_64//include/c++/10.3.0/type_traits: In substitution of &#39;template&lt;class ... _Tp&gt; using common_type_t = typename std::common_type::type [with _Tp = {au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt;}]&#39;:
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>./au/quantity.hh:494:11:   required from &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Meters, int&gt;; U = au::Quantity&lt;au::Seconds, int&gt;; Func = au::detail::Plus]&#39;
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>./au/quantity.hh:532:37:   required from &#39;constexpr auto au::operator+(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Meters; U2 = au::Seconds; R1 = int; R2 = int]&#39;
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>au/error_examples.cc:41:26:   required from here
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>external/sysroot_x86_64//include/c++/10.3.0/type_traits:2562:11: error: no type named &#39;type&#39; in &#39;struct std::common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt; &gt;&#39;
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a> 2562 |     using common_type_t = typename common_type&lt;_Tp...&gt;::type;
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>      |           ^~~~~~~~~~~~~
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>In file included from ./au/math.hh:8,
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>                 from ./au/au.hh:7,
+<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>                 from au/error_examples.cc:1:
+<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>./au/quantity.hh: In instantiation of &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Meters, int&gt;; U = au::Quantity&lt;au::Seconds, int&gt;; Func = au::detail::Plus]&#39;:
+<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>./au/quantity.hh:532:37:   required from &#39;constexpr auto au::operator+(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Meters; U2 = au::Seconds; R1 = int; R2 = int]&#39;
+<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>au/error_examples.cc:41:26:   required from here
+</code></pre></div></p>
+</div>
+<h2 id="integer-division-forbidden">Integer division forbidden<a class="headerlink" href="#integer-division-forbidden" title="Permanent link">&para;</a></h2>
+<p><strong>Meaning:</strong>  Although Au generally tries to act just like the underlying raw numeric types, we also
+try to prevent wrong code that <em>looks</em> correct from compiling.  It turns out to be just too easy to
+use integral Reps without noticing, and thus to get integer division without noticing.  This can
+lead to very large errors.</p>
+<p><strong>Solution:</strong>  If you <em>really wanted</em> integer division, call <code>integer_quotient()</code>.  Otherwise, use
+floating point types.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><strong>Code</strong></p>
+<p>How long does it take to travel 60 m at a speed of 65 MPH?</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Broken</label><label for="__tabbed_4_2">Fixed (1. Floating point)</label><label for="__tabbed_4_3">Fixed (2. <code>integer_quotient()</code>)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1">// (BROKEN): gives (60 / 65) == 0 before conversion!</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Seconds</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">)(</span><span class="mi">65</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1">// (FIXED): 1. Using floating point, we get ~= seconds(2.06486)</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Seconds</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="mf">60.0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">)(</span><span class="mf">65.0</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1">// (FIXED): 2. Integer result == (meter * hours / mile)(0)</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">integer_quotient</span><span class="p">(</span><span class="n">meters</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">)(</span><span class="mi">65</span><span class="p">));</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>Compiler error (clang 14)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>In file included from au/error_examples.cc:1:
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>In file included from ./au/au.hh:7:
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>In file included from ./au/math.hh:8:
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>./au/quantity.hh:304:9: error: static_assert failed due to requirement &#39;!uses_integer_division&#39; &quot;Integer division forbidden: use integer_quotient() if you really want it&quot;
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>        static_assert(!uses_integer_division,
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>        ^             ~~~~~~~~~~~~~~~~~~~~~~
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>au/error_examples.cc:49:39: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Meters, int&gt;::operator/&lt;au::UnitProduct&lt;au::Miles, au::Pow&lt;au::Hours, -1&gt;&gt;, int&gt;&#39; requested here
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>    QuantityD&lt;Seconds&gt; t = meters(60) / (miles / hour)(65);
+<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>                                      ^
+</code></pre></div></p>
+<p><strong>Compiler error (clang 11)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>In file included from au/error_examples.cc:1:
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>In file included from ./au/au.hh:7:
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>In file included from ./au/math.hh:8:
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>./au/quantity.hh:304:9: error: static_assert failed due to requirement &#39;!uses_integer_division&#39; &quot;Integer division forbidden: use integer_quotient() if you really want it&quot;
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>        static_assert(!uses_integer_division,
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>        ^             ~~~~~~~~~~~~~~~~~~~~~~
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>au/error_examples.cc:49:39: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Meters, int&gt;::operator/&lt;au::UnitProduct&lt;au::Miles, au::Pow&lt;au::Hours, -1&gt;&gt;, int&gt;&#39; requested here
+<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>    QuantityD&lt;Seconds&gt; t = meters(60) / (miles / hour)(65);
+<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>                                      ^
+</code></pre></div></p>
+<p><strong>Compiler error (gcc 10)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>./au/quantity.hh:496:94: error: no type named &#39;type&#39; in &#39;struct std::common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt; &gt;&#39;
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>  496 |         std::is_same&lt;typename C::Rep, std::common_type_t&lt;typename T::Rep, typename U::Rep&gt;&gt;::value,
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>      |                                                                                              ^~~~~
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>./au/quantity.hh: In instantiation of &#39;constexpr auto au::Quantity&lt;UnitT, RepT&gt;::operator/(au::Quantity&lt;OtherUnit, OtherRep&gt;) const [with OtherUnit = au::UnitProduct&lt;au::Miles, au::Pow&lt;au::Hours, -1&gt; &gt;; OtherRep = int; UnitT = au::Meters; RepT = int]&#39;:
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>au/error_examples.cc:49:58:   required from here
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>./au/quantity.hh:304:23: error: static assertion failed: Integer division forbidden: use integer_quotient() if you really want it
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a>  304 |         static_assert(!uses_integer_division,
+<a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a>      |                       ^~~~~~~~~~~~~~~~~~~~~~
+</code></pre></div></p>
+</div>
+<h2 id="dangerous-inversion">Dangerous inversion<a class="headerlink" href="#dangerous-inversion" title="Permanent link">&para;</a></h2>
+<p><strong>Meaning:</strong>  This is analogous to our overflow safety surface.  When computing the inverse of
+an integral quantity in a given target unit, there is some smallest value that will get truncated
+down to zero (a tremendous error!).  If that value is &ldquo;small enough to be scary&rdquo; (currently 1,000),
+we forbid the conversion.</p>
+<p><strong>Solution:</strong>  Consider using floating point; you&rsquo;ll always get a precise answer.  Alternatively,
+use a smaller target unit.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><strong>Code</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:3"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><input id="__tabbed_5_3" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">Broken</label><label for="__tabbed_5_2">Fixed (1. Floating point)</label><label for="__tabbed_5_3">Fixed (2. Smaller target unit)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1">// (BROKEN): excessive truncation risk.</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="n">inverse_as</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span><span class="w"> </span><span class="n">hertz</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1">// (FIXED): 1. Floating point result ~= seconds(0.2)</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="n">inverse_as</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span><span class="w"> </span><span class="n">hertz</span><span class="p">(</span><span class="mf">5.0</span><span class="p">));</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="c1">// (FIXED): 2. Integer result == milli(seconds)(200)</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="n">inverse_as</span><span class="p">(</span><span class="n">milli</span><span class="p">(</span><span class="n">seconds</span><span class="p">),</span><span class="w"> </span><span class="n">hertz</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you&rsquo;re <em>really</em> sure it&rsquo;s OK, you can use the explicit-Rep version of <code>inverse_as</code>, which is
+forcing like a <code>static_cast</code>.  This is rarely the right choice, though.  Consider:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">inverse_as</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span><span class="w"> </span><span class="n">hertz</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+</code></pre></div>
+<p>This yields <code>seconds(0)</code>, due to the gross truncation error which the check was designed to
+prevent in the first place.</p>
+</div>
+<p><strong>Compiler error (clang 14)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>In file included from au/error_examples.cc:1:
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>In file included from ./au/au.hh:7:
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>./au/math.hh:205:5: error: static_assert failed due to requirement &#39;make_quantity&lt;au::UnitProduct&lt;&gt;&gt;(int{1}).in(associated_unit(target_units) * au::Hertz{}) &gt;= 1000 || std::is_floating_point&lt;int&gt;::value&#39; &quot;Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired&quot;
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>    static_assert(
+<a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>    ^
+<a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>./au/math.hh:221:56: note: in instantiation of function template specialization &#39;au::inverse_in&lt;au::QuantityMaker&lt;au::Seconds&gt;, au::Hertz, int&gt;&#39; requested here
+<a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a>    return make_quantity&lt;AssociatedUnitT&lt;TargetUnits&gt;&gt;(inverse_in(target_units, q));
+<a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a>                                                       ^
+<a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a>au/error_examples.cc:57:5: note: in instantiation of function template specialization &#39;au::inverse_as&lt;au::QuantityMaker&lt;au::Seconds&gt;, au::Hertz, int&gt;&#39; requested here
+<a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a>    inverse_as(seconds, hertz(5));
+<a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a>    ^
+</code></pre></div></p>
+<p><strong>Compiler error (clang 11)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>In file included from au/error_examples.cc:1:
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>In file included from ./au/au.hh:7:
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>./au/math.hh:205:5: error: static_assert failed due to requirement &#39;make_quantity&lt;au::UnitProduct&lt;&gt;&gt;(int{1}).in(associated_unit(target_units) * au::Hertz{}) &gt;= 1000 || std::is_floating_point&lt;int&gt;::value&#39; &quot;Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired&quot;
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>    static_assert(
+<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>    ^
+<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>./au/math.hh:221:56: note: in instantiation of function template specialization &#39;au::inverse_in&lt;au::QuantityMaker&lt;au::Seconds&gt;, au::Hertz, int&gt;&#39; requested here
+<a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a>    return make_quantity&lt;AssociatedUnitT&lt;TargetUnits&gt;&gt;(inverse_in(target_units, q));
+<a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a>                                                       ^
+<a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a>au/error_examples.cc:57:5: note: in instantiation of function template specialization &#39;au::inverse_as&lt;au::QuantityMaker&lt;au::Seconds&gt;, au::Hertz, int&gt;&#39; requested here
+<a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a>    inverse_as(seconds, hertz(5));
+<a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a>    ^
+</code></pre></div></p>
+<p><strong>Compiler error (gcc 10)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>In file included from ./au/au.hh:7,
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>                 from au/error_examples.cc:1:
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>./au/math.hh: In instantiation of &#39;constexpr auto au::inverse_in(TargetUnits, au::Quantity&lt;Unit, Rep&gt;) [with TargetUnits = au::QuantityMaker&lt;au::Seconds&gt;; U = au::Hertz; R = int]&#39;:
+<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>./au/math.hh:221:66:   required from &#39;constexpr auto au::inverse_as(TargetUnits, au::Quantity&lt;Unit, Rep&gt;) [with TargetUnits = au::QuantityMaker&lt;au::Seconds&gt;; U = au::Hertz; R = int]&#39;
+<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>au/error_examples.cc:57:33:   required from here
+<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>./au/math.hh:206:93: error: static assertion failed: Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired
+<a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a>  206 |         make_quantity&lt;UnitProductT&lt;&gt;&gt;(R{1}).in(associated_unit(target_units) * U{}) &gt;= 1000 ||
+<a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a>      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+<a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a>  207 |             std::is_floating_point&lt;R&gt;::value,
+<a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a>      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</code></pre></div></p>
+</div>
+<h2 id="deduced-conflicting-types">Deduced conflicting types<a class="headerlink" href="#deduced-conflicting-types" title="Permanent link">&para;</a></h2>
+<p><strong>Meaning:</strong>  In some contexts, it&rsquo;s not enough to have Quantity types that can easily convert to
+each other.  (Common examples include the ternary operator <code>?:</code>, and initializer lists.)  You need
+types that are identical, or very nearly so.  Even fully quantity-equivalent types, such as
+<span class="arithmatex"><span class="MathJax_Preview">\text{Hz}</span><script type="math/tex">\text{Hz}</script></span> and <span class="arithmatex"><span class="MathJax_Preview">\text{s}^{-1}</span><script type="math/tex">\text{s}^{-1}</script></span>, often won&rsquo;t work in these contexts!</p>
+<p><strong>Solution:</strong>  You can always cast non-conforming instances to your favored unit, using <code>.as()</code>.
+For the initializer list case, you can also make an explicit container, which will handle the
+casting automatically when possible.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><strong>Code</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:3"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><input id="__tabbed_6_3" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">Broken</label><label for="__tabbed_6_2">Fixed (1. Cast to explicit unit)</label><label for="__tabbed_6_3">Fixed (2. Use explicit container)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="c1">// (BROKEN): Initializer list confused by Hz and s^(-1).</span>
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">frequency</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="w">         </span><span class="n">hertz</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+<a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a><span class="w">         </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)),</span>
+<a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a><span class="w">     </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a><span class="w">    </span><span class="c1">// ...</span>
+<a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="c1">// (FIXED): 1. Cast individual elements to desired unit.</span>
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">frequency</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="w">         </span><span class="n">hertz</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+<a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="w">         </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)).</span><span class="n">as</span><span class="p">(</span><span class="n">hertz</span><span class="p">),</span>
+<a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a><span class="w">     </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a><span class="w">    </span><span class="c1">// ...</span>
+<a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="c1">// (FIXED): 2. Use container with explicit type.</span>
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">frequency</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Hertz</span><span class="o">&gt;&gt;</span><span class="p">{</span>
+<a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a><span class="w">         </span><span class="n">hertz</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+<a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a><span class="w">         </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)),</span>
+<a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a><span class="w">     </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a><span class="w">    </span><span class="c1">// ...</span>
+<a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>Compiler error (clang 14)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>au/error_examples.cc:65:34: error: deduced conflicting types (&#39;Quantity&lt;au::QuantityMaker&lt;au::Hertz&gt;::Unit, [...]&gt;&#39; vs &#39;Quantity&lt;au::QuantityMaker&lt;au::Pow&lt;au::Seconds, -1&gt;&gt;::Unit, [...]&gt;&#39;) for initializer list element type
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>    for (const auto &amp;frequency : {
+<a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>                                 ^
+</code></pre></div></p>
+<p><strong>Compiler error (clang 11)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>au/error_examples.cc:65:34: error: deduced conflicting types (&#39;Quantity&lt;au::Hertz, [...]&gt;&#39; vs &#39;Quantity&lt;au::Pow&lt;au::Seconds, -1&gt;, [...]&gt;&#39;) for initializer list element type
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>    for (const auto &amp;frequency : {
+<a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>                                 ^
+</code></pre></div></p>
+<p><strong>Compiler error (gcc 10)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>au/error_examples.cc: In function &#39;void au::example_deduced_conflicting_types()&#39;:
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>au/error_examples.cc:68:10: error: unable to deduce &#39;std::initializer_list&lt;auto&gt;&amp;&amp;&#39; from &#39;{au::hertz.au::QuantityMaker&lt;au::Hertz&gt;::operator()&lt;double&gt;(1.0e+0), au::operator/&lt;int&gt;(1, au::seconds.au::QuantityMaker&lt;au::Seconds&gt;::operator()&lt;double&gt;(2.0e+0))}&#39;
+<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>   68 |          }) {
+<a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a>      |          ^
+<a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a>au/error_examples.cc:68:10: note:   deduced conflicting types for parameter &#39;auto&#39; (&#39;au::Quantity&lt;au::Hertz, double&gt;&#39; and &#39;au::Quantity&lt;au::Pow&lt;au::Seconds, -1&gt;, double&gt;&#39;)
+</code></pre></div></p>
+</div>
+<h2 id="broken-strict-total-ordering">Broken strict total ordering<a class="headerlink" href="#broken-strict-total-ordering" title="Permanent link">&para;</a></h2>
+<p><strong>Meaning:</strong>  This means you performed an operation that needs to put unit types into a parameter
+pack &mdash; say, a common unit, or a unit product &mdash; but the library couldn&rsquo;t figure out how to order
+the units inside that pack.</p>
+<p>If that sounds obscure, it is: ordering units inside packs is a deep library implementation detail,
+and we try to avoid letting end users encounter this.  To reach this error, you need two <em>distinct</em>
+units that have the <em>same</em> Dimension, Magnitude, <em>and</em> Origin.  That&rsquo;s a necessary but not
+sufficient condition: for example, even <code>UnitInverseT&lt;Seconds&gt;</code> and <code>Hertz</code> won&rsquo;t trigger this!</p>
+<details class="info">
+<summary>More background info on why this error exists</summary>
+<p>In case you want to understand more, here is the gist.</p>
+<p>Au is <em>heavily</em> based on <a href="../reference/detail/packs/">parameter packs</a>.  Some of these packs,
+such as <code>UnitProduct&lt;...&gt;</code> and <code>CommonUnit&lt;...&gt;</code>, take <em>units</em> as their arguments.</p>
+<p>Every parameter pack needs an unambiguous canonical ordering for any possible set of input
+arguments.  Therefore, we need to create a <em>strict total ordering</em> for the (infinitely many!)
+unit types that could appear in these packs.  This ordering needs to be known <em>at compile time</em>.
+The ordering itself doesn&rsquo;t matter so much, but if we don&rsquo;t strictly adhere to <em>some</em> ordering,
+it&rsquo;s undefined behaviour.</p>
+<p>Our strategy is to construct a &ldquo;gauntlet&rdquo; of properties which we can measure for any unit (e.g.,
+Dimension, Magnitude, &hellip;), and define some arbitrary ordering for each property.  We then
+compare the units on each property in turn.  The first one where they differ &ldquo;wins&rdquo;.  If we get
+through <em>all</em> the properties, and they&rsquo;re <em>still</em> tied, then we have two <em>distinct</em> unit types
+which <em>compare</em> as equal.  This would be undefined behaviour!  Rather than silently ignoring
+this, we manifest this as a compiler error.</p>
+<p>That is what &ldquo;broken strict total ordering&rdquo; means.</p>
+</details>
+<p><strong>Solution:</strong>  If you have two distinct units, and the library can&rsquo;t figure out how to order them,
+you can <em>force</em> a particular ordering.  Choose one of the units and give it a high &ldquo;unit avoidance&rdquo;
+score (see example below).  This will break the tie.</p>
+<p>Again, this is pretty unusual.  For most normal ways of forming units, the library should
+automatically be able to define an ordering for them.  If you do hit this error, it may be worth
+pausing to double-check that you&rsquo;re using the library correctly.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you hit this error, you might be annoyed by its obscurity.  Instead, try feeling relieved!
+After all, the alternative is not &ldquo;correctly working program&rdquo;, but &ldquo;silent undefined behaviour&rdquo;.
+A compiler error with a searchable error message is infinitely preferable to the latter.</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><strong>Code</strong></p>
+<p>Note that this example is somewhat convoluted, but again, that&rsquo;s to be expected because this error
+is pretty hard to hit in practice.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">Broken</label><label for="__tabbed_7_2">Fixed</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Quarterfeet</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Feet</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">4</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">quarterfeet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Quarterfeet</span><span class="o">&gt;</span><span class="p">{};</span>
+<a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a>
+<a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Trinches</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Inches</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">3</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-38-5" name="__codelineno-38-5" href="#__codelineno-38-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">trinches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Trinches</span><span class="o">&gt;</span><span class="p">{};</span>
+<a id="__codelineno-38-6" name="__codelineno-38-6" href="#__codelineno-38-6"></a>
+<a id="__codelineno-38-7" name="__codelineno-38-7" href="#__codelineno-38-7"></a><span class="c1">// (BROKEN): Can&#39;t tell how to order Quarterfeet and Trinches when forming common type</span>
+<a id="__codelineno-38-8" name="__codelineno-38-8" href="#__codelineno-38-8"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">quarterfeet</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">trinches</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-38-9" name="__codelineno-38-9" href="#__codelineno-38-9"></a><span class="w">    </span><span class="c1">// ...</span>
+<a id="__codelineno-38-10" name="__codelineno-38-10" href="#__codelineno-38-10"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Quarterfeet</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Feet</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">4</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">quarterfeet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Quarterfeet</span><span class="o">&gt;</span><span class="p">{};</span>
+<a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a>
+<a id="__codelineno-39-4" name="__codelineno-39-4" href="#__codelineno-39-4"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Trinches</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Inches</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">3</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-39-5" name="__codelineno-39-5" href="#__codelineno-39-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">trinches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Trinches</span><span class="o">&gt;</span><span class="p">{};</span>
+<a id="__codelineno-39-6" name="__codelineno-39-6" href="#__codelineno-39-6"></a>
+<a id="__codelineno-39-7" name="__codelineno-39-7" href="#__codelineno-39-7"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">au</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">detail</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-39-8" name="__codelineno-39-8" href="#__codelineno-39-8"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;&gt;</span>
+<a id="__codelineno-39-9" name="__codelineno-39-9" href="#__codelineno-39-9"></a><span class="k">struct</span><span class="w"> </span><span class="nc">UnitAvoidance</span><span class="o">&lt;::</span><span class="n">Trinches</span><span class="o">&gt;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">integral_constant</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-39-10" name="__codelineno-39-10" href="#__codelineno-39-10"></a><span class="p">}}</span>
+<a id="__codelineno-39-11" name="__codelineno-39-11" href="#__codelineno-39-11"></a>
+<a id="__codelineno-39-12" name="__codelineno-39-12" href="#__codelineno-39-12"></a><span class="c1">// (FIXED): Trinches has high &quot;unit avoidance&quot;, so it goes after Quarterfeet</span>
+<a id="__codelineno-39-13" name="__codelineno-39-13" href="#__codelineno-39-13"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">quarterfeet</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">trinches</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-39-14" name="__codelineno-39-14" href="#__codelineno-39-14"></a><span class="w">    </span><span class="c1">// ...</span>
+<a id="__codelineno-39-15" name="__codelineno-39-15" href="#__codelineno-39-15"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>Compiler error (clang 14)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>In file included from au/error_examples.cc:1:
+<a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>In file included from ./au/au.hh:7:
+<a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a>In file included from ./au/math.hh:8:
+<a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a>In file included from ./au/quantity.hh:7:
+<a id="__codelineno-40-5" name="__codelineno-40-5" href="#__codelineno-40-5"></a>In file included from ./au/conversion_policy.hh:7:
+<a id="__codelineno-40-6" name="__codelineno-40-6" href="#__codelineno-40-6"></a>In file included from ./au/magnitude.hh:7:
+<a id="__codelineno-40-7" name="__codelineno-40-7" href="#__codelineno-40-7"></a>./au/packs.hh:276:5: error: static_assert failed due to requirement &#39;std::is_same&lt;au::Quarterfeet, au::Trinches&gt;::value&#39; &quot;Broken strict total ordering: distinct input types compare equal&quot;
+<a id="__codelineno-40-8" name="__codelineno-40-8" href="#__codelineno-40-8"></a>    static_assert(std::is_same&lt;A, B&gt;::value,
+<a id="__codelineno-40-9" name="__codelineno-40-9" href="#__codelineno-40-9"></a>    ^             ~~~~~~~~~~~~~~~~~~~~~~~~~
+<a id="__codelineno-40-10" name="__codelineno-40-10" href="#__codelineno-40-10"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches&gt;&#39; requested here
+<a id="__codelineno-40-11" name="__codelineno-40-11" href="#__codelineno-40-11"></a>    std::conditional_t&lt;
+<a id="__codelineno-40-12" name="__codelineno-40-12" href="#__codelineno-40-12"></a>    ^
+<a id="__codelineno-40-13" name="__codelineno-40-13" href="#__codelineno-40-13"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-40-14" name="__codelineno-40-14" href="#__codelineno-40-14"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-40-15" name="__codelineno-40-15" href="#__codelineno-40-15"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-40-16" name="__codelineno-40-16" href="#__codelineno-40-16"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-40-17" name="__codelineno-40-17" href="#__codelineno-40-17"></a>./au/unit_of_measure.hh:868:40: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+<a id="__codelineno-40-18" name="__codelineno-40-18" href="#__codelineno-40-18"></a>struct InOrderFor&lt;UnitProduct, A, B&gt; : LexicographicTotalOrdering&lt;A,
+<a id="__codelineno-40-19" name="__codelineno-40-19" href="#__codelineno-40-19"></a>                                       ^
+<a id="__codelineno-40-20" name="__codelineno-40-20" href="#__codelineno-40-20"></a>./au/quantity.hh:631:7: note: in instantiation of template class &#39;au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;&gt;&#39; requested here
+<a id="__codelineno-40-21" name="__codelineno-40-21" href="#__codelineno-40-21"></a>    : au::CommonQuantity&lt;au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;&gt; {};
+<a id="__codelineno-40-22" name="__codelineno-40-22" href="#__codelineno-40-22"></a>      ^
+<a id="__codelineno-40-23" name="__codelineno-40-23" href="#__codelineno-40-23"></a>external/llvm_14_toolchain_llvm/bin/../include/c++/v1/type_traits:2388:25: note: in instantiation of template class &#39;std::common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;&gt;&#39; requested here
+<a id="__codelineno-40-24" name="__codelineno-40-24" href="#__codelineno-40-24"></a>template &lt;class ..._Tp&gt; using common_type_t = typename common_type&lt;_Tp...&gt;::type;
+<a id="__codelineno-40-25" name="__codelineno-40-25" href="#__codelineno-40-25"></a>                        ^
+<a id="__codelineno-40-26" name="__codelineno-40-26" href="#__codelineno-40-26"></a>./au/quantity.hh:494:20: note: in instantiation of template type alias &#39;common_type_t&#39; requested here
+<a id="__codelineno-40-27" name="__codelineno-40-27" href="#__codelineno-40-27"></a>    using C = std::common_type_t&lt;T, U&gt;;
+<a id="__codelineno-40-28" name="__codelineno-40-28" href="#__codelineno-40-28"></a>                   ^
+<a id="__codelineno-40-29" name="__codelineno-40-29" href="#__codelineno-40-29"></a>./au/quantity.hh:506:20: note: in instantiation of function template specialization &#39;au::detail::using_common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, au::detail::Equal&gt;&#39; requested here
+<a id="__codelineno-40-30" name="__codelineno-40-30" href="#__codelineno-40-30"></a>    return detail::using_common_type(q1, q2, detail::equal);
+<a id="__codelineno-40-31" name="__codelineno-40-31" href="#__codelineno-40-31"></a>                   ^
+<a id="__codelineno-40-32" name="__codelineno-40-32" href="#__codelineno-40-32"></a>au/error_examples.cc:84:25: note: in instantiation of function template specialization &#39;au::operator==&lt;au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
+<a id="__codelineno-40-33" name="__codelineno-40-33" href="#__codelineno-40-33"></a>    if (quarterfeet(10) == trinches(10)) {
+<a id="__codelineno-40-34" name="__codelineno-40-34" href="#__codelineno-40-34"></a>                        ^
+</code></pre></div></p>
+<p><strong>Compiler error (clang 11)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>In file included from au/error_examples.cc:1:
+<a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>In file included from ./au/au.hh:7:
+<a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>In file included from ./au/math.hh:8:
+<a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a>In file included from ./au/quantity.hh:7:
+<a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a>In file included from ./au/conversion_policy.hh:7:
+<a id="__codelineno-41-6" name="__codelineno-41-6" href="#__codelineno-41-6"></a>In file included from ./au/magnitude.hh:7:
+<a id="__codelineno-41-7" name="__codelineno-41-7" href="#__codelineno-41-7"></a>./au/packs.hh:276:5: error: static_assert failed due to requirement &#39;std::is_same&lt;au::Quarterfeet, au::Trinches&gt;::value&#39; &quot;Broken strict total ordering: distinct input types compare equal&quot;
+<a id="__codelineno-41-8" name="__codelineno-41-8" href="#__codelineno-41-8"></a>    static_assert(std::is_same&lt;A, B&gt;::value,
+<a id="__codelineno-41-9" name="__codelineno-41-9" href="#__codelineno-41-9"></a>    ^             ~~~~~~~~~~~~~~~~~~~~~~~~~
+<a id="__codelineno-41-10" name="__codelineno-41-10" href="#__codelineno-41-10"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches&gt;&#39; requested here
+<a id="__codelineno-41-11" name="__codelineno-41-11" href="#__codelineno-41-11"></a>    std::conditional_t&lt;
+<a id="__codelineno-41-12" name="__codelineno-41-12" href="#__codelineno-41-12"></a>    ^
+<a id="__codelineno-41-13" name="__codelineno-41-13" href="#__codelineno-41-13"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-41-14" name="__codelineno-41-14" href="#__codelineno-41-14"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, OrderByOrigin, OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-41-15" name="__codelineno-41-15" href="#__codelineno-41-15"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, OrderByMag, OrderByOrigin, OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-41-16" name="__codelineno-41-16" href="#__codelineno-41-16"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, OrderByDim, OrderByMag, OrderByOrigin, OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-41-17" name="__codelineno-41-17" href="#__codelineno-41-17"></a>./au/unit_of_measure.hh:868:40: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+<a id="__codelineno-41-18" name="__codelineno-41-18" href="#__codelineno-41-18"></a>struct InOrderFor&lt;UnitProduct, A, B&gt; : LexicographicTotalOrdering&lt;A,
+<a id="__codelineno-41-19" name="__codelineno-41-19" href="#__codelineno-41-19"></a>                                       ^
+<a id="__codelineno-41-20" name="__codelineno-41-20" href="#__codelineno-41-20"></a>./au/quantity.hh:631:7: note: in instantiation of template class &#39;au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, void&gt;&#39; requested here
+<a id="__codelineno-41-21" name="__codelineno-41-21" href="#__codelineno-41-21"></a>    : au::CommonQuantity&lt;au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;&gt; {};
+<a id="__codelineno-41-22" name="__codelineno-41-22" href="#__codelineno-41-22"></a>      ^
+<a id="__codelineno-41-23" name="__codelineno-41-23" href="#__codelineno-41-23"></a>external/llvm_11_toolchain_llvm/bin/../include/c++/v1/type_traits:2462:25: note: in instantiation of template class &#39;std::__1::common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;&gt;&#39; requested here
+<a id="__codelineno-41-24" name="__codelineno-41-24" href="#__codelineno-41-24"></a>template &lt;class ..._Tp&gt; using common_type_t = typename common_type&lt;_Tp...&gt;::type;
+<a id="__codelineno-41-25" name="__codelineno-41-25" href="#__codelineno-41-25"></a>                        ^
+<a id="__codelineno-41-26" name="__codelineno-41-26" href="#__codelineno-41-26"></a>./au/quantity.hh:494:20: note: in instantiation of template type alias &#39;common_type_t&#39; requested here
+<a id="__codelineno-41-27" name="__codelineno-41-27" href="#__codelineno-41-27"></a>    using C = std::common_type_t&lt;T, U&gt;;
+<a id="__codelineno-41-28" name="__codelineno-41-28" href="#__codelineno-41-28"></a>                   ^
+<a id="__codelineno-41-29" name="__codelineno-41-29" href="#__codelineno-41-29"></a>./au/quantity.hh:506:20: note: in instantiation of function template specialization &#39;au::detail::using_common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, au::detail::Equal&gt;&#39; requested here
+<a id="__codelineno-41-30" name="__codelineno-41-30" href="#__codelineno-41-30"></a>    return detail::using_common_type(q1, q2, detail::equal);
+<a id="__codelineno-41-31" name="__codelineno-41-31" href="#__codelineno-41-31"></a>                   ^
+<a id="__codelineno-41-32" name="__codelineno-41-32" href="#__codelineno-41-32"></a>au/error_examples.cc:84:25: note: in instantiation of function template specialization &#39;au::operator==&lt;au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
+<a id="__codelineno-41-33" name="__codelineno-41-33" href="#__codelineno-41-33"></a>    if (quarterfeet(10) == trinches(10)) {
+<a id="__codelineno-41-34" name="__codelineno-41-34" href="#__codelineno-41-34"></a>                        ^
+</code></pre></div></p>
+<p><strong>Compiler error (gcc 10)</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>In file included from ./au/magnitude.hh:7,
+<a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>                 from ./au/conversion_policy.hh:7,
+<a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a>                 from ./au/quantity.hh:7,
+<a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a>                 from ./au/math.hh:8,
+<a id="__codelineno-42-5" name="__codelineno-42-5" href="#__codelineno-42-5"></a>                 from ./au/au.hh:7,
+<a id="__codelineno-42-6" name="__codelineno-42-6" href="#__codelineno-42-6"></a>                 from au/error_examples.cc:1:
+<a id="__codelineno-42-7" name="__codelineno-42-7" href="#__codelineno-42-7"></a>./au/packs.hh: In instantiation of &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches&gt;&#39;:
+<a id="__codelineno-42-8" name="__codelineno-42-8" href="#__codelineno-42-8"></a>./au/packs.hh:287:8:   recursively required from &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39;
+<a id="__codelineno-42-9" name="__codelineno-42-9" href="#__codelineno-42-9"></a>./au/packs.hh:287:8:   required from &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByUnitAvoidance, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39;
+<a id="__codelineno-42-10" name="__codelineno-42-10" href="#__codelineno-42-10"></a>./au/unit_of_measure.hh:868:8:   required from &#39;struct au::InOrderFor&lt;au::UnitProduct, au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-42-11" name="__codelineno-42-11" href="#__codelineno-42-11"></a>./au/unit_of_measure.hh:502:8:   required from &#39;struct au::InOrderFor&lt;au::CommonUnit, au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-42-12" name="__codelineno-42-12" href="#__codelineno-42-12"></a>./au/packs.hh:372:8:   required from &#39;struct au::FlatDedupedTypeList&lt;au::CommonUnit, au::CommonUnit&lt;au::Quarterfeet&gt;, au::CommonUnit&lt;au::Trinches&gt; &gt;&#39;
+<a id="__codelineno-42-13" name="__codelineno-42-13" href="#__codelineno-42-13"></a>./au/unit_of_measure.hh:540:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-42-14" name="__codelineno-42-14" href="#__codelineno-42-14"></a>./au/quantity.hh:617:8:   required from &#39;struct au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, void&gt;&#39;
+<a id="__codelineno-42-15" name="__codelineno-42-15" href="#__codelineno-42-15"></a>./au/quantity.hh:630:8:   required from &#39;struct std::common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt; &gt;&#39;
+<a id="__codelineno-42-16" name="__codelineno-42-16" href="#__codelineno-42-16"></a>external/sysroot_x86_64//include/c++/10.3.0/type_traits:2562:11:   required by substitution of &#39;template&lt;class ... _Tp&gt; using common_type_t = typename std::common_type::type [with _Tp = {au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;}]&#39;
+<a id="__codelineno-42-17" name="__codelineno-42-17" href="#__codelineno-42-17"></a>./au/quantity.hh:494:11:   required from &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Quarterfeet, int&gt;; U = au::Quantity&lt;au::Trinches, int&gt;; Func = au::detail::Equal]&#39;
+<a id="__codelineno-42-18" name="__codelineno-42-18" href="#__codelineno-42-18"></a>./au/quantity.hh:506:37:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
+<a id="__codelineno-42-19" name="__codelineno-42-19" href="#__codelineno-42-19"></a>au/error_examples.cc:84:39:   required from here
+<a id="__codelineno-42-20" name="__codelineno-42-20" href="#__codelineno-42-20"></a>./au/packs.hh:276:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
+<a id="__codelineno-42-21" name="__codelineno-42-21" href="#__codelineno-42-21"></a>  276 |     static_assert(std::is_same&lt;A, B&gt;::value,
+<a id="__codelineno-42-22" name="__codelineno-42-22" href="#__codelineno-42-22"></a>      |                                       ^~~~~
+<a id="__codelineno-42-23" name="__codelineno-42-23" href="#__codelineno-42-23"></a>./au/packs.hh: In instantiation of &#39;struct au::LexicographicTotalOrdering&lt;au::Trinches, au::Quarterfeet&gt;&#39;:
+<a id="__codelineno-42-24" name="__codelineno-42-24" href="#__codelineno-42-24"></a>./au/packs.hh:287:8:   required from &#39;struct au::LexicographicTotalOrdering&lt;au::Trinches, au::Quarterfeet, au::detail::OrderByUnitAvoidance, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39;
+<a id="__codelineno-42-25" name="__codelineno-42-25" href="#__codelineno-42-25"></a>./au/unit_of_measure.hh:868:8:   [ skipping 8 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
+<a id="__codelineno-42-26" name="__codelineno-42-26" href="#__codelineno-42-26"></a>./au/unit_of_measure.hh:452:8:   required from &#39;struct au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;&#39;
+<a id="__codelineno-42-27" name="__codelineno-42-27" href="#__codelineno-42-27"></a>./au/stdx/type_traits.hh:26:61:   required from &#39;struct au::stdx::conjunction&lt;au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;, au::detail::HasSameMagnitude&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt; &gt;&#39;
+<a id="__codelineno-42-28" name="__codelineno-42-28" href="#__codelineno-42-28"></a>./au/unit_of_measure.hh:467:8:   required from &#39;struct au::AreUnitsQuantityEquivalent&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;&#39;
+<a id="__codelineno-42-29" name="__codelineno-42-29" href="#__codelineno-42-29"></a>./au/unit_of_measure.hh:529:8:   required from &#39;struct au::detail::FirstMatchingUnit&lt;au::AreUnitsQuantityEquivalent, au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt; &gt;&#39;
+<a id="__codelineno-42-30" name="__codelineno-42-30" href="#__codelineno-42-30"></a>./au/unit_of_measure.hh:540:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-42-31" name="__codelineno-42-31" href="#__codelineno-42-31"></a>./au/quantity.hh:617:8:   required from &#39;struct au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, void&gt;&#39;
+<a id="__codelineno-42-32" name="__codelineno-42-32" href="#__codelineno-42-32"></a>./au/quantity.hh:630:8:   required from &#39;struct std::common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt; &gt;&#39;
+<a id="__codelineno-42-33" name="__codelineno-42-33" href="#__codelineno-42-33"></a>external/sysroot_x86_64//include/c++/10.3.0/type_traits:2562:11:   required by substitution of &#39;template&lt;class ... _Tp&gt; using common_type_t = typename std::common_type::type [with _Tp = {au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;}]&#39;
+<a id="__codelineno-42-34" name="__codelineno-42-34" href="#__codelineno-42-34"></a>./au/quantity.hh:494:11:   required from &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Quarterfeet, int&gt;; U = au::Quantity&lt;au::Trinches, int&gt;; Func = au::detail::Equal]&#39;
+<a id="__codelineno-42-35" name="__codelineno-42-35" href="#__codelineno-42-35"></a>./au/quantity.hh:506:37:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
+<a id="__codelineno-42-36" name="__codelineno-42-36" href="#__codelineno-42-36"></a>au/error_examples.cc:84:39:   required from here
+<a id="__codelineno-42-37" name="__codelineno-42-37" href="#__codelineno-42-37"></a>./au/packs.hh:276:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
+<a id="__codelineno-42-38" name="__codelineno-42-38" href="#__codelineno-42-38"></a>In file included from ./au/conversion_policy.hh:10,
+<a id="__codelineno-42-39" name="__codelineno-42-39" href="#__codelineno-42-39"></a>                 from ./au/quantity.hh:7,
+<a id="__codelineno-42-40" name="__codelineno-42-40" href="#__codelineno-42-40"></a>                 from ./au/math.hh:8,
+<a id="__codelineno-42-41" name="__codelineno-42-41" href="#__codelineno-42-41"></a>                 from ./au/au.hh:7,
+<a id="__codelineno-42-42" name="__codelineno-42-42" href="#__codelineno-42-42"></a>                 from au/error_examples.cc:1:
+<a id="__codelineno-42-43" name="__codelineno-42-43" href="#__codelineno-42-43"></a>./au/unit_of_measure.hh: In instantiation of &#39;struct au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;&#39;:
+<a id="__codelineno-42-44" name="__codelineno-42-44" href="#__codelineno-42-44"></a>./au/packs.hh:192:7:   required by substitution of &#39;template&lt;class U&gt; using DimMemberT = typename U::Dim [with U = au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;]&#39;
+<a id="__codelineno-42-45" name="__codelineno-42-45" href="#__codelineno-42-45"></a>./au/packs.hh:194:8:   required from &#39;struct au::detail::DimImpl&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt; &gt;&#39;
+<a id="__codelineno-42-46" name="__codelineno-42-46" href="#__codelineno-42-46"></a>./au/unit_of_measure.hh:452:8:   required from &#39;struct au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;&#39;
+<a id="__codelineno-42-47" name="__codelineno-42-47" href="#__codelineno-42-47"></a>./au/stdx/type_traits.hh:26:61:   required from &#39;struct au::stdx::conjunction&lt;au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;, au::detail::HasSameMagnitude&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt; &gt;&#39;
+<a id="__codelineno-42-48" name="__codelineno-42-48" href="#__codelineno-42-48"></a>./au/unit_of_measure.hh:467:8:   [ skipping 2 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
+<a id="__codelineno-42-49" name="__codelineno-42-49" href="#__codelineno-42-49"></a>./au/unit_of_measure.hh:540:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-42-50" name="__codelineno-42-50" href="#__codelineno-42-50"></a>./au/quantity.hh:617:8:   required from &#39;struct au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, void&gt;&#39;
+<a id="__codelineno-42-51" name="__codelineno-42-51" href="#__codelineno-42-51"></a>./au/quantity.hh:630:8:   required from &#39;struct std::common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt; &gt;&#39;
+<a id="__codelineno-42-52" name="__codelineno-42-52" href="#__codelineno-42-52"></a>external/sysroot_x86_64//include/c++/10.3.0/type_traits:2562:11:   required by substitution of &#39;template&lt;class ... _Tp&gt; using common_type_t = typename std::common_type::type [with _Tp = {au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;}]&#39;
+<a id="__codelineno-42-53" name="__codelineno-42-53" href="#__codelineno-42-53"></a>./au/quantity.hh:494:11:   required from &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Quarterfeet, int&gt;; U = au::Quantity&lt;au::Trinches, int&gt;; Func = au::detail::Equal]&#39;
+<a id="__codelineno-42-54" name="__codelineno-42-54" href="#__codelineno-42-54"></a>./au/quantity.hh:506:37:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
+<a id="__codelineno-42-55" name="__codelineno-42-55" href="#__codelineno-42-55"></a>au/error_examples.cc:84:39:   required from here
+<a id="__codelineno-42-56" name="__codelineno-42-56" href="#__codelineno-42-56"></a>./au/unit_of_measure.hh:492:70: error: static assertion failed: Elements must be listed in ascending order
+<a id="__codelineno-42-57" name="__codelineno-42-57" href="#__codelineno-42-57"></a>  492 |     static_assert(AreElementsInOrder&lt;CommonUnit, CommonUnit&lt;Us...&gt;&gt;::value,
+<a id="__codelineno-42-58" name="__codelineno-42-58" href="#__codelineno-42-58"></a>      |                                                                      ^~~~~
+</code></pre></div></p>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../install/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Installation" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Installation
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../alternatives/" class="md-footer__link md-footer__link--next" aria-label="Next: Comparison of Alternatives" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Comparison of Alternatives
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022, Aurora Operations, Inc. All rights reserved
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      
+    
+  </body>
+</html>

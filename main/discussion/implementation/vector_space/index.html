@@ -1,0 +1,1350 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++ units library, by Aurora">
+      
+      
+        <meta name="author" content="Au team">
+      
+      
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/implementation/vector_space/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../../../howto/">
+      
+      <link rel="icon" href="../../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Vector Space Representations - The Au units library</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.c4a75a56.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../tweaks.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vector-space-representations" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../../assets/au-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            The Au units library
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Vector Space Representations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../../assets/au-logo.png" alt="logo">
+
+    </a>
+    The Au units library
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Au documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../develop/" class="md-nav__link">
+        Development Setup
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../install/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../troubleshooting/" class="md-nav__link">
+        Troubleshooting Guide
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Alternatives
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Alternatives
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../alternatives/" class="md-nav__link">
+        Comparison of Alternatives
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Discussion
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Discussion
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        Discussion Docs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+          Implementation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_6_2">
+          <span class="md-nav__icon md-icon"></span>
+          Implementation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Implementation Details
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Vector Space Representations
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Vector Space Representations
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fleshing-out-the-analogy" class="md-nav__link">
+    Fleshing out the analogy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#c-implementation-strategies" class="md-nav__link">
+    C++ Implementation Strategies
+  </a>
+  
+    <nav class="md-nav" aria-label="C++ Implementation Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#naive-approach-positional-arguments" class="md-nav__link">
+    Naive approach: positional arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-approach-variadic-templates" class="md-nav__link">
+    Advanced approach: variadic templates
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-vector-space-representations" class="md-nav__link">
+    Other vector space representations
+  </a>
+  
+    <nav class="md-nav" aria-label="Other vector space representations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#magnitude" class="md-nav__link">
+    Magnitude
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#units" class="md-nav__link">
+    Units
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Howto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Howto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/" class="md-nav__link">
+        How-to guides
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/new-units/" class="md-nav__link">
+        Defining new units
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/" class="md-nav__link">
+        Reference Docs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/magnitude/" class="md-nav__link">
+        Magnitude
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/prefix/" class="md-nav__link">
+        Prefix
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/quantity/" class="md-nav__link">
+        Quantity
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/quantity_point/" class="md-nav__link">
+        QuantityPoint
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/unit/" class="md-nav__link">
+        Unit
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_7" id="__nav_8_7_label" tabindex="0">
+          Detail
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8_7">
+          <span class="md-nav__icon md-icon"></span>
+          Detail
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/detail/" class="md-nav__link">
+        Implementation Details
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/detail/dimension/" class="md-nav__link">
+        Dimension
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/detail/monovalue_types/" class="md-nav__link">
+        Monovalue Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/detail/packs/" class="md-nav__link">
+        Parameter packs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+          Tutorial
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorial
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/" class="md-nav__link">
+        Tutorials: home
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/102-api-types/" class="md-nav__link">
+        Au 102: API Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/103-unit-conversions/" class="md-nav__link">
+        Au 103: Unit Conversions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9_5" id="__nav_9_5_label" tabindex="0">
+          Exercise
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_9_5">
+          <span class="md-nav__icon md-icon"></span>
+          Exercise
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/exercise/102-api-types/" class="md-nav__link">
+        Au 102: API Types Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+        Au 103: Unit Conversions Exercise
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fleshing-out-the-analogy" class="md-nav__link">
+    Fleshing out the analogy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#c-implementation-strategies" class="md-nav__link">
+    C++ Implementation Strategies
+  </a>
+  
+    <nav class="md-nav" aria-label="C++ Implementation Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#naive-approach-positional-arguments" class="md-nav__link">
+    Naive approach: positional arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-approach-variadic-templates" class="md-nav__link">
+    Advanced approach: variadic templates
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-vector-space-representations" class="md-nav__link">
+    Other vector space representations
+  </a>
+  
+    <nav class="md-nav" aria-label="Other vector space representations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#magnitude" class="md-nav__link">
+    Magnitude
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#units" class="md-nav__link">
+    Units
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="vector-space-representations">Vector Space Representations<a class="headerlink" href="#vector-space-representations" title="Permanent link">&para;</a></h1>
+<p>To understand why <em>vector space representations</em> are so important for units libraries, we&rsquo;ll dig
+into the most fundamental example.  After that, we&rsquo;ll look at some other instances of vector space
+representations in our library.</p>
+<p>Consider <a href="../../../reference/detail/dimension/">Dimensions</a>.  How can we teach the library to recognize
+that, say, the product of the Dimensions <code>Speed</code> and <code>Time</code> is the Dimension <code>Length</code>?  If these
+three Dimensions are all primitive, irreducible objects, this is very challenging.  However, if
+<code>Speed</code> is just an <em>alias</em> for <code>(Length / Time)</code>, then it&rsquo;s easy to see that <code>(Length / Time)
+* Time</code> reduces to <code>Length</code>.</p>
+<p>This is what we do: we single out certain Dimensions and call them &ldquo;Base Dimensions&rdquo;.  Any valid
+choice must fulfill these conditions:</p>
+<ol>
+<li>
+<p><strong>Independence:</strong> no product of rational powers of Base Dimensions is <em>dimensionless</em>, unless all
+   exponents are 0.</p>
+</li>
+<li>
+<p><strong>Completeness:</strong> every Dimension of interest can be represented as some product of rational
+   powers of Base Dimensions.</p>
+</li>
+</ol>
+<p>The reader may recognize these properties of <em>Base Dimensions</em> as analogous to the defining
+properties of <a href="https://en.wikipedia.org/wiki/Basis_(linear_algebra)"><em>Basis <strong>Vectors</strong></em></a> in
+a vector space, but with these differences:</p>
+<ul>
+<li>instead of <em>adding</em> vectors, we <em>multiply</em> Base Dimensions</li>
+<li>instead of <em>multiplying</em> vectors by a scalar, we <em>raise them to a power</em></li>
+</ul>
+<p>In fact, we can bridge this gap if we consider the <strong>exponents</strong> of the dimensions to be the
+<strong>scalars</strong> of the vector space.  In a sense, the &ldquo;logarithms&rdquo; of the dimensions form a vector
+space; in this case, over the rationals.</p>
+<p>This is the &ldquo;vector space representation&rdquo; for Dimensions.</p>
+<h2 id="fleshing-out-the-analogy">Fleshing out the analogy<a class="headerlink" href="#fleshing-out-the-analogy" title="Permanent link">&para;</a></h2>
+<p>How do the <a href="https://en.wikipedia.org/wiki/Vector_space#Definition_and_basic_properties">defining properties of vector
+spaces</a> manifest
+themselves here?  Let the space of all Dimensions be <span class="arithmatex"><span class="MathJax_Preview">\mathscr{D}</span><script type="math/tex">\mathscr{D}</script></span>.  For any dimensions <span class="arithmatex"><span class="MathJax_Preview">D, D_1,
+D_2, D_3 \in \mathscr{D}</span><script type="math/tex">D, D_1,
+D_2, D_3 \in \mathscr{D}</script></span>, and any rational numbers <span class="arithmatex"><span class="MathJax_Preview">a, b \in \mathbb{Q}</span><script type="math/tex">a, b \in \mathbb{Q}</script></span>, we have:</p>
+<ul>
+<li><strong>Associativity:</strong> <span class="arithmatex"><span class="MathJax_Preview">D_1 \cdot (D_2 \cdot D_3) = (D_1 \cdot D_2) \cdot D_3</span><script type="math/tex">D_1 \cdot (D_2 \cdot D_3) = (D_1 \cdot D_2) \cdot D_3</script></span></li>
+<li><strong>Commutativity:</strong> <span class="arithmatex"><span class="MathJax_Preview">D_1 \cdot D_2 = D_2 \cdot D_1</span><script type="math/tex">D_1 \cdot D_2 = D_2 \cdot D_1</script></span></li>
+<li><strong>Identity (Vector):</strong> <span class="arithmatex"><span class="MathJax_Preview">\exists \pmb1 \in \mathscr{D}: \,\, \pmb1 \cdot D = D \cdot \pmb1 = D,
+  \,\, \forall D</span><script type="math/tex">\exists \pmb1 \in \mathscr{D}: \,\, \pmb1 \cdot D = D \cdot \pmb1 = D,
+  \,\, \forall D</script></span></li>
+<li><strong>Inverse:</strong> <span class="arithmatex"><span class="MathJax_Preview">\forall D \in \mathscr{D}, \exists D^{-1} \in \mathscr{D}: \,\, D \cdot D^{-1}
+  = D^{-1} \cdot D = 1</span><script type="math/tex">\forall D \in \mathscr{D}, \exists D^{-1} \in \mathscr{D}: \,\, D \cdot D^{-1}
+  = D^{-1} \cdot D = 1</script></span></li>
+<li><strong>Scalar/Field Multiplication Compatibility:</strong> <span class="arithmatex"><span class="MathJax_Preview">(D^a)^b = D^{(ab)}</span><script type="math/tex">(D^a)^b = D^{(ab)}</script></span><ul>
+<li>(Recall that &ldquo;scalar multiplication&rdquo; in &ldquo;ordinary&rdquo; vector spaces corresponds to
+    <em>exponentiation</em> in <em>our</em> vector space.)</li>
+</ul>
+</li>
+<li><strong>Identity (Scalar):</strong>  <span class="arithmatex"><span class="MathJax_Preview">\exists 1 \in \mathbb{Q}: \,\, D^1 = D</span><script type="math/tex">\exists 1 \in \mathbb{Q}: \,\, D^1 = D</script></span></li>
+<li><strong>Distributivity (Vectors):</strong> <span class="arithmatex"><span class="MathJax_Preview">(D_1 \cdot D_2)^a = D_1^a \cdot D_2^a</span><script type="math/tex">(D_1 \cdot D_2)^a = D_1^a \cdot D_2^a</script></span></li>
+<li><strong>Distributivity (Scalars):</strong> <span class="arithmatex"><span class="MathJax_Preview">D^{(a + b)} = D^a \cdot D^b</span><script type="math/tex">D^{(a + b)} = D^a \cdot D^b</script></span></li>
+</ul>
+<h2 id="c-implementation-strategies">C++ Implementation Strategies<a class="headerlink" href="#c-implementation-strategies" title="Permanent link">&para;</a></h2>
+<p>The abstract concepts above form the core of basically every C++ units library.  When it comes to
+<em>implementation</em>, there are a variety of choices.</p>
+<h3 id="naive-approach-positional-arguments">Naive approach: positional arguments<a class="headerlink" href="#naive-approach-positional-arguments" title="Permanent link">&para;</a></h3>
+<p>The simplest implementation of a vector space is to use positional template parameters to represent
+the coefficients (exponents) of each basis vector (base dimension).  For example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// Basic approach (not used in this library)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">LengthExp</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TimeExp</span><span class="o">&gt;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Dimension</span><span class="p">;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">using</span><span class="w"> </span><span class="n">Length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">ratio</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ratio</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">using</span><span class="w"> </span><span class="n">Time</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">ratio</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ratio</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">using</span><span class="w"> </span><span class="n">Speed</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">DimQuotientT</span><span class="o">&lt;</span><span class="n">Length</span><span class="p">,</span><span class="w"> </span><span class="n">Time</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
+<p>This approach is easy to implement, but its simplicity comes at a cost.</p>
+<ul>
+<li>
+<p>Compiler errors are inscrutable.  (What exactly does
+  <code>Dimension&lt;std::ratio&lt;1, 1&gt;, std::ratio&lt;-1, 1&gt;&gt;</code> represent?)</p>
+</li>
+<li>
+<p>If we need to add a new basis vector, it will affect an immense number of callsites.</p>
+</li>
+<li>
+<p>Some applications need infinitely many basis vectors!  This approach is a complete non-starter.</p>
+</li>
+</ul>
+<h3 id="advanced-approach-variadic-templates">Advanced approach: variadic templates<a class="headerlink" href="#advanced-approach-variadic-templates" title="Permanent link">&para;</a></h3>
+<p>We can solve all of these problems by making <code>Dimension</code> a <em>variadic</em> template.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// Advanced approach (the one we use, although simplified here)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">BaseDimPowers</span><span class="o">&gt;</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Dimension</span><span class="p">;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">using</span><span class="w"> </span><span class="n">Length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&lt;</span><span class="n">base_dim</span><span class="o">::</span><span class="n">Length</span><span class="o">&gt;</span><span class="p">;</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">using</span><span class="w"> </span><span class="n">Time</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&lt;</span><span class="n">base_dim</span><span class="o">::</span><span class="n">Time</span><span class="o">&gt;</span><span class="p">;</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="k">using</span><span class="w"> </span><span class="n">Speed</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">DimQuotientT</span><span class="o">&lt;</span><span class="n">Length</span><span class="p">,</span><span class="w"> </span><span class="n">Time</span><span class="o">&gt;</span><span class="p">;</span><span class="w">  </span><span class="c1">// As before.</span>
+</code></pre></div>
+<p>Compiler errors are now easy (or at least possible) to read: when we see something like
+<code>Dimension&lt;base_dim::Length, Pow&lt;base_dim::Time, -1&gt;&gt;</code>, we can recognize it as &ldquo;Speed&rdquo;.  And adding
+new basis vectors&mdash;even <em>arbitrarily many</em> new ones&mdash;doesn&rsquo;t affect any existing callsites.</p>
+<p>The downside is that the added complexity incurs new risk.  Now we have to care about the <strong>order</strong>
+of the template parameters; otherwise, we could have <em>different types</em> representing the <em>same
+conceptual Dimension</em>.  Fortunately, that&rsquo;s exactly why we built the <a href="../../../reference/detail/packs/"><code>//au:packs</code>
+target</a>: to handle these subtleties robustly.</p>
+<h2 id="other-vector-space-representations">Other vector space representations<a class="headerlink" href="#other-vector-space-representations" title="Permanent link">&para;</a></h2>
+<p>Above, we focused on Dimensions as an example use case for the vector space representation.  Though
+by far the most common in units libraries, it&rsquo;s not the only one that adds value.  Here are some
+others worth recognizing.</p>
+<h3 id="magnitude">Magnitude<a class="headerlink" href="#magnitude" title="Permanent link">&para;</a></h3>
+<p>The ratio between two Units of the same Dimension is a positive real number: a &ldquo;Magnitude&rdquo;.  We use
+a vector space representation for Magnitudes, because then it will naturally support all the same
+operations which Dimensions support.  But then, what are the basis vectors?  What numbers can we use
+that are &ldquo;independent&rdquo;, in the sense that every Magnitude gets a <strong>unique</strong> representation?</p>
+<p>Prime numbers are a great start!  Given any collection of primes, <span class="arithmatex"><span class="MathJax_Preview">\{p_1, \ldots, p_N\}</span><script type="math/tex">\{p_1, \ldots, p_N\}</script></span>, and
+corresponding rational exponents <span class="arithmatex"><span class="MathJax_Preview">\{a_1, \ldots, a_N\}</span><script type="math/tex">\{a_1, \ldots, a_N\}</script></span>, the product
+<span class="arithmatex"><span class="MathJax_Preview">p_1^{a_1} \cdot (\ldots) \cdot p_N^{a_N}</span><script type="math/tex">p_1^{a_1} \cdot (\ldots) \cdot p_N^{a_N}</script></span> is <em>unique</em>: no other collection <span class="arithmatex"><span class="MathJax_Preview">\{a_1, \ldots, a_N\}</span><script type="math/tex">\{a_1, \ldots, a_N\}</script></span>
+can produce the same number<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</p>
+<p>This already lets us represent <em>anything</em> we could get with <code>std::ratio</code>.  And, unlike a
+<code>(num, denom)</code> representation, we&rsquo;re always automatically in lowest terms: any common factors cancel
+out automatically when we represent it via its prime factorization!</p>
+<p>In fact, we have <em>surpassed</em> <code>std::ratio</code>&lsquo;s functionality, too.  We can handle very large numbers
+with negligible risk of overflow: <code>yotta</code> (<span class="arithmatex"><span class="MathJax_Preview">10^{24}</span><script type="math/tex">10^{24}</script></span>) doesn&rsquo;t even fit in <code>std::intmax_t</code>, but
+<code>pow&lt;24&gt;(mag&lt;10&gt;())</code><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> handles it with ease.  We can even handle radicals: something unthinkable for
+<code>std::ratio</code>, like <span class="arithmatex"><span class="MathJax_Preview">\sqrt{2}</span><script type="math/tex">\sqrt{2}</script></span>, is as easy as <code>root&lt;2&gt;(mag&lt;2&gt;())</code><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>.</p>
+<p>Finally, we can incorporate other irrational numbers, too.  No units library is complete without
+robust support for <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span>, but <code>std::ratio</code> isn&rsquo;t up to the task.  For vector space magnitude
+representations, though, its difficulty becomes a strength.  We know there is no collection of
+exponents <span class="arithmatex"><span class="MathJax_Preview">\{a_i\}</span><script type="math/tex">\{a_i\}</script></span> such that <span class="arithmatex"><span class="MathJax_Preview">\pi = \prod\limits_{i=1}^N p_i^{a_i}</span><script type="math/tex">\pi = \prod\limits_{i=1}^N p_i^{a_i}</script></span>, for any collection of primes
+<span class="arithmatex"><span class="MathJax_Preview">\{p_i\}</span><script type="math/tex">\{p_i\}</script></span>.  This means that <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> is <strong>independent</strong>, and we can add it as a new basis vector.  Then
+the ratio of, say, <code>Degrees</code> to <code>Radians</code> (i.e., <span class="arithmatex"><span class="MathJax_Preview">\pi / 180</span><script type="math/tex">\pi / 180</script></span>) could be expressed as
+<code>PI / mag&lt;180&gt;()</code><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>.</p>
+<h3 id="units">Units<a class="headerlink" href="#units" title="Permanent link">&para;</a></h3>
+<p>If we form a Unit by combining other units&mdash;say, <code>Miles{} / Hours{}</code>&mdash;it&rsquo;s useful to retain the
+identities of the units that went into it.  There are several reasons to prefer this to, say,
+converting everything to a coherent combination of preferred &ldquo;base units&rdquo;, and some Magnitude for
+scaling.</p>
+<ul>
+<li>
+<p>It will be easy to generate a compound <em>label</em>, by combining the primitive labels for <code>Miles</code> and
+  <code>Hours</code>.</p>
+</li>
+<li>
+<p>Compiler errors will mention only familiar, recognizable Units.</p>
+</li>
+<li>
+<p>It promotes cancellation where appropriate: <code>Miles{} / Hours{}</code> times <code>Hours{}</code> will give simply
+  <code>Miles{}</code>.</p>
+</li>
+</ul>
+<p>Our treatment of Units differs from other vector space instances, because we prefer not to use the
+container type (in this case, <code>UnitProduct&lt;...&gt;</code>) unless we have to: after all, <code>Meters</code> is more
+user-friendly than <code>UnitProduct&lt;Meters&gt;</code>, let alone something awful like
+<code>UnitProduct&lt;RatioPow&lt;Meters, 1, 0&gt;&gt;</code>!  We support this use case with the following strategy:</p>
+<ul>
+<li>
+<p><strong>wrap-if-necessary</strong> on the way <strong>in</strong> (via <code>AsPackT</code>)</p>
+</li>
+<li>
+<p><strong>unwrap-if-possible</strong> on the way <strong>out</strong> (via <code>UnpackIfSoloT</code>)</p>
+</li>
+</ul>
+<p>This was the only machinery we needed to add: apart from that, we were able to leverage our
+pre-existing <a href="../../../reference/detail/packs/">packs</a> support to provide a fluent experience for
+compound units.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Technically, this is only true for a <em>finite</em> collection of primes, though the collection can
+be arbitrarily large.  If we took an <em>infinite</em> collection of primes, it wouldn&rsquo;t <em>just</em> give some
+numbers multiple representations &mdash; it would give <em>every</em> number <em>uncountably infinitely many</em>
+distinct representations!  In practice, this distinction is largely academic, because our library
+currently only targets computers with finite amounts of memory.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>pow&lt;24&gt;(mag&lt;10&gt;())</code> expands to <code>Magnitude&lt;Pow&lt;Prime&lt;2&gt;, 24&gt;, Pow&lt;Prime&lt;5&gt;, 24&gt;&gt;</code>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>root&lt;2&gt;(mag&lt;2&gt;())</code> expands to <code>Magnitude&lt;RatioPow&lt;Prime&lt;2&gt;, 1, 2&gt;&gt;</code>.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>PI / mag&lt;180&gt;()</code> expands to <code>Magnitude&lt;Pow&lt;Prime&lt;2&gt;, -2&gt;, Pow&lt;Prime&lt;3&gt;, -2&gt;, Pi,
+Pow&lt;Prime&lt;5&gt;, -1&gt;&gt;</code>.&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Implementation Details" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Implementation Details
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../../howto/" class="md-footer__link md-footer__link--next" aria-label="Next: How-to guides" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                How-to guides
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022, Aurora Operations, Inc. All rights reserved
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      
+    
+  </body>
+</html>
