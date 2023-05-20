@@ -41,12 +41,12 @@ py_binary(
 py_binary(
     name = "mike",
     srcs = ["mike_bin.py"],
-    main = "mike_bin.py",
     data = [
         "mkdocs.yml",
         ":au_hh",
         ":au_noio_hh",
     ] + glob(["docs/**"]),
+    main = "mike_bin.py",
     deps = [
         ":update_docs",
         requirement("mike"),
