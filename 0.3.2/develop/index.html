@@ -1,0 +1,1413 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++ units library, by Aurora">
+      
+      
+        <meta name="author" content="Au team">
+      
+      
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/0.3.2/develop/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../install/">
+      
+      <link rel="icon" href="../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Development Setup - The Au units library</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.c4a75a56.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../tweaks.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#development-setup" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../assets/au-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            The Au units library
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Development Setup
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../assets/au-logo.png" alt="logo">
+
+    </a>
+    The Au units library
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Au documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Development Setup
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Development Setup
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#core-development-setup" class="md-nav__link">
+    Core development setup
+  </a>
+  
+    <nav class="md-nav" aria-label="Core development setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-0-decide-whether-to-fork" class="md-nav__link">
+    Step 0: Decide whether to fork
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-clone-the-repository" class="md-nav__link">
+    Step 1: Clone the repository
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-set-up-direnv" class="md-nav__link">
+    Step 2: Set up direnv
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#specific-workflows" class="md-nav__link">
+    Specific workflows
+  </a>
+  
+    <nav class="md-nav" aria-label="Specific workflows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#building-and-testing-the-code" class="md-nav__link">
+    Building and testing the code
+  </a>
+  
+    <nav class="md-nav" aria-label="Building and testing the code">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-different-toolchains" class="md-nav__link">
+    Using different toolchains
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-and-viewing-documentation" class="md-nav__link">
+    Building and viewing documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        Troubleshooting Guide
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Alternatives
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Alternatives
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alternatives/" class="md-nav__link">
+        Comparison of Alternatives
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Discussion
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Discussion
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/" class="md-nav__link">
+        Discussion Docs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+          Implementation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6_2">
+          <span class="md-nav__icon md-icon"></span>
+          Implementation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/implementation/" class="md-nav__link">
+        Implementation Details
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/implementation/vector_space/" class="md-nav__link">
+        Vector Space Representations
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Howto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Howto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/" class="md-nav__link">
+        How-to guides
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/new-units/" class="md-nav__link">
+        Defining new units
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/" class="md-nav__link">
+        Reference Docs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/magnitude/" class="md-nav__link">
+        Magnitude
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/prefix/" class="md-nav__link">
+        Prefix
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/quantity/" class="md-nav__link">
+        Quantity
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/quantity_point/" class="md-nav__link">
+        QuantityPoint
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/unit/" class="md-nav__link">
+        Unit
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_7" id="__nav_8_7_label" tabindex="0">
+          Detail
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8_7">
+          <span class="md-nav__icon md-icon"></span>
+          Detail
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/detail/" class="md-nav__link">
+        Implementation Details
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/detail/dimension/" class="md-nav__link">
+        Dimension
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/detail/monovalue_types/" class="md-nav__link">
+        Monovalue Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/detail/packs/" class="md-nav__link">
+        Parameter packs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+          Tutorial
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorial
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/" class="md-nav__link">
+        Tutorials: home
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/102-api-types/" class="md-nav__link">
+        Au 102: API Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/103-unit-conversions/" class="md-nav__link">
+        Au 103: Unit Conversions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9_5" id="__nav_9_5_label" tabindex="0">
+          Exercise
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_9_5">
+          <span class="md-nav__icon md-icon"></span>
+          Exercise
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/exercise/102-api-types/" class="md-nav__link">
+        Au 102: API Types Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+        Au 103: Unit Conversions Exercise
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#core-development-setup" class="md-nav__link">
+    Core development setup
+  </a>
+  
+    <nav class="md-nav" aria-label="Core development setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-0-decide-whether-to-fork" class="md-nav__link">
+    Step 0: Decide whether to fork
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-clone-the-repository" class="md-nav__link">
+    Step 1: Clone the repository
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-set-up-direnv" class="md-nav__link">
+    Step 2: Set up direnv
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#specific-workflows" class="md-nav__link">
+    Specific workflows
+  </a>
+  
+    <nav class="md-nav" aria-label="Specific workflows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#building-and-testing-the-code" class="md-nav__link">
+    Building and testing the code
+  </a>
+  
+    <nav class="md-nav" aria-label="Building and testing the code">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-different-toolchains" class="md-nav__link">
+    Using different toolchains
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-and-viewing-documentation" class="md-nav__link">
+    Building and viewing documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="development-setup">Development Setup<a class="headerlink" href="#development-setup" title="Permanent link">&para;</a></h1>
+<p>This page explains how to set up the repository for development.  This is for two main groups of
+users:</p>
+<ul>
+<li>Those who want to <strong>contribute</strong> to the library, either the code or the docs.</li>
+<li>Those who want to work through the <strong>tutorial exercises</strong>.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If all you want to do is <strong>install</strong> the library in your project, you can simply use our
+<a href="../install/">installation guide</a>.</p>
+</div>
+<h2 id="core-development-setup">Core development setup<a class="headerlink" href="#core-development-setup" title="Permanent link">&para;</a></h2>
+<p>These steps are common to all workflows.</p>
+<h3 id="step-0-decide-whether-to-fork">Step 0: Decide whether to fork<a class="headerlink" href="#step-0-decide-whether-to-fork" title="Permanent link">&para;</a></h3>
+<p>If you&rsquo;re <em>confident that you want to contribute</em>, you should start out by <em>forking</em> the repository.
+This gives you your own copy which you can modify, and from which you can create pull requests to
+share your changes with the main repository.  Here are <a href="https://docs.github.com/en/get-started/quickstart/fork-a-repo">GitHub&rsquo;s instructions for forking</a>.</p>
+<p><strong>Everyone else can simply skip this step</strong> and work directly from the main repository.  If you
+decide later on to make a pull request, you&rsquo;ll still need to create a fork, but it&rsquo;s easy to set it
+up after the fact.  We&rsquo;ll provide detailed instructions below.</p>
+<details class="info">
+<summary>Instructions for switching an existing clone to a fork</summary>
+<p>If you&rsquo;re here, you probably cloned the main repository directly, and then later decided to make
+a pull request.  For that, you&rsquo;ll need to switch your <code>origin</code> remote to point to your fork
+instead of the main repository.</p>
+<p>You can directly use the instructions below, which we adapted from <a href="https://admcpr.com/what-the-fork/">this
+guide</a>.</p>
+<ol>
+<li>
+<p><strong><a href="https://docs.github.com/en/get-started/quickstart/fork-a-repo">Create the fork</a> on GitHub.</strong></p>
+<p>You will need to note the name of your fork, in the format <code>user_name/repo_name</code>.
+   Typically, the <code>user_name</code> part will be replaced with your GitHub username, and the
+   <code>repo_name</code> part will simply be <code>au</code>.</p>
+</li>
+<li>
+<p><strong>Rename <code>origin</code> to <code>upstream</code>.</strong>  We still want to track the main repository; we just need
+   to give it a different name.  Run this command verbatim:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>remote<span class="w"> </span>rename<span class="w"> </span>origin<span class="w"> </span>upstream
+</code></pre></div>
+</li>
+<li>
+<p><strong>Make your fork the new <code>origin</code>.</strong>  Your command will start with <code>git remote add origin</code>,
+   and end with a URL for your repository.  If your GitHub username were <code>user_name</code>, the full
+   command should look like this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>origin<span class="w"> </span>git@github.com:user_name/au.git
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1">#                                    ^^^^^^^^^</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># Example only: remember to replace user name!</span>
+</code></pre></div>
+</li>
+<li>
+<p><strong>Fetch from <code>origin</code>.</strong>  Run this command verbatim:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>git<span class="w"> </span>fetch<span class="w"> </span>origin
+</code></pre></div>
+</li>
+<li>
+<p><strong>Track <code>origin</code> from <code>main</code>.</strong>  Run this command verbatim:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git<span class="w"> </span>branch<span class="w"> </span>-u<span class="w"> </span>origin/main<span class="w"> </span>main
+</code></pre></div>
+</li>
+</ol>
+<p>At this point, you should be able to create a pull request in the usual way, simply by pushing
+a local branch to your fork via the <code>origin</code> remote.</p>
+</details>
+<h3 id="step-1-clone-the-repository">Step 1: Clone the repository<a class="headerlink" href="#step-1-clone-the-repository" title="Permanent link">&para;</a></h3>
+<p>This step gets the Au source code onto your machine.  The precise details depend on whether you
+decided to fork or not in the previous step.</p>
+<div class="admonition question">
+<p class="admonition-title">Did you fork, or not?</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">No fork (default)</label><label for="__tabbed_1_2">Fork</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>This is for users who just want to work through the tutorials, or play around with the code.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/aurora-opensource/au.git
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>Follow <a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository">GitHub&rsquo;s cloning instructions</a>, using the fork you created as the repository.</p>
+</div>
+</div>
+</div>
+</div>
+<p>Whichever approach you took, you should have a folder named <code>au/</code> in your current directory which
+contains the Au source code.</p>
+<h3 id="step-2-set-up-direnv">Step 2: Set up <code>direnv</code><a class="headerlink" href="#step-2-set-up-direnv" title="Permanent link">&para;</a></h3>
+<p><a href="https://direnv.net/">direnv</a> is a tool that makes it easy to use the correct version of every tool we use: <code>bazel</code>,
+<code>clang-format</code>, <code>buildifier</code>, and other project-specific ones like <code>make-single-file</code> and
+<code>au-docs-serve</code>.  It will add these tools to your <code>$PATH</code>, but <strong>only</strong> when you&rsquo;re inside your
+copy of the repository.</p>
+<details class="warning">
+<summary>What if you skip this step?</summary>
+<p>This step is optional, but highly recommended.  If you skip this step, you&rsquo;ll need to prepend
+<code>tools/bin/</code> to every command that comes from Au&rsquo;s tools directory.  For example,</p>
+<ul>
+<li>Replace <code>bazel</code> with <code>tools/bin/bazel</code>.</li>
+<li>Replace <code>clang-format</code> with <code>tools/bin/clang-format</code>.</li>
+</ul>
+<p>And so on.</p>
+</details>
+<p>The first step to set up <code>direnv</code> is to install the tool itself, using <a href="https://direnv.net/docs/installation.html">their installation
+instructions</a>.</p>
+<p>The next time you enter your Au folder, you&rsquo;ll get a warning message like this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>direnv: error .envrc is blocked. Run `direnv allow` to approve its content.
+</code></pre></div>
+<p>Simply do what it says and run <code>direnv allow</code>, and you&rsquo;re all set!</p>
+<details class="tip">
+<summary>Testing your installation</summary>
+<p>You can test that everything&rsquo;s working by running <code>bazel --version</code> inside your Au folder.  You
+should get a result compatible with the current contents of the <code>.bazelversion</code> file.  For
+example, at the time of writing, we&rsquo;re on bazel 5.3.0, so this command produces the output:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>bazel 5.3.0
+</code></pre></div>
+</details>
+<h2 id="specific-workflows">Specific workflows<a class="headerlink" href="#specific-workflows" title="Permanent link">&para;</a></h2>
+<p>Now that your basic development setup is complete, here are some types of workflows you can do.</p>
+<h3 id="building-and-testing-the-code">Building and testing the code<a class="headerlink" href="#building-and-testing-the-code" title="Permanent link">&para;</a></h3>
+<p>To build and test the entire repository, run <code>bazel test //...:all</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The first time you run any command such as <code>bazel</code>, there may be some additional overhead from
+downloading or configuring the tool itself.  This is a one-time cost, and each subsequent run
+should be fast.</p>
+</div>
+<p>You can also specify any number of specific targets or target patterns, using <a href="https://bazel.build/run/build#specifying-build-targets">bazel&rsquo;s target
+syntax</a>.  For example, if you wanted to test
+the core library code (which lives in <code>//au</code>), <em>and</em> test the generated single-file package (whose
+target is <code>//release:au_hh_test</code>), you could write:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>bazel<span class="w"> </span><span class="nb">test</span><span class="w"> </span>//au:all<span class="w"> </span>//release:au_hh_test
+</code></pre></div>
+<h4 id="using-different-toolchains">Using different toolchains<a class="headerlink" href="#using-different-toolchains" title="Permanent link">&para;</a></h4>
+<p>Au comes pre-packaged with support for several different compiler toolchains.  To use a specific
+toolchain &mdash; say, <code>X</code> &mdash; pass it as a <code>--config=X</code> argument.  For example, here&rsquo;s how you would
+run all of the tests using gcc 10:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>bazel<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--config<span class="o">=</span>gcc10<span class="w"> </span>//...:all
+</code></pre></div>
+<p>Here are the possible values we support for <code>--config</code>:</p>
+<table>
+<thead>
+<tr>
+<th><code>--config</code> value</th>
+<th>compiler</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>clang14</code></td>
+<td>Clang 14 (default)</td>
+</tr>
+<tr>
+<td><code>clang11</code></td>
+<td>Clang 11</td>
+</tr>
+<tr>
+<td><code>gcc10</code></td>
+<td>gcc 10</td>
+</tr>
+</tbody>
+</table>
+<details class="question">
+<summary>What if your preferred compiler isn&rsquo;t in this list?</summary>
+<p>Our goal is for Au to work with any standards-compliant compiler that fully supports C++14, or
+any later language standard.  We&rsquo;ve had good results with a variety of compilers already, so we
+recommend simply trying Au in yours!</p>
+<p>If you do, and you find a bug, please feel free to file an issue.  If the compiler is fully
+C++14-compatible, we&rsquo;ll do our best to find a fix, or an acceptable workaround.  We may also
+consider adding the compiler to our officially supported list, as long as we can use it via
+a hermetic bazel toolchain.</p>
+</details>
+<h3 id="building-and-viewing-documentation">Building and viewing documentation<a class="headerlink" href="#building-and-viewing-documentation" title="Permanent link">&para;</a></h3>
+<p>It&rsquo;s easy to set up a local version of the documentation website.  Simply run the included command,
+<code>au-docs-serve</code>.  Here&rsquo;s some example output:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>INFO: Analyzed target //:update_docs (0 packages loaded, 0 targets configured).
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>INFO: Found 1 target...
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>Target //:update_docs up-to-date:
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  bazel-bin/update_docs
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>INFO: Elapsed time: 0.309s, Critical Path: 0.06s
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>INFO: 1 process: 1 internal.
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>INFO: Build completed successfully, 1 total action
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>INFO: Build completed successfully, 1 total action
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>INFO     -  Building documentation...
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>INFO     -  Cleaning site directory
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>INFO     -  Documentation built in 0.35 seconds
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>INFO     -  [16:02:34] Watching paths for changes: &#39;docs&#39;, &#39;mkdocs.yml&#39;
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>INFO     -  [16:02:34] Serving on http://127.0.0.1:8000/au/
+</code></pre></div>
+<p>The last line shows that you can view the website at the included (local) URL,
+<code>http://127.0.0.1:8000/au/</code>.</p>
+<p>The command stays running until you interrupt it (typically via <code>Ctrl-C</code>, or <a href="https://superuser.com/a/1210919">the equivalent on your
+terminal</a>).  Note that as long as it stays running, it will
+automatically regenerate the website whenever you edit any file, and the browser will automatically
+reload the page!</p>
+<details class="note">
+<summary>Viewing documentation on a remote machine</summary>
+<p>Some users connect to a remote machine via <code>ssh</code> to do their development.  In this case,
+<code>au-docs-serve</code> won&rsquo;t work out of the box.  The reason is that it&rsquo;s running on your remote
+machine, but your web browser is on your local machine.  When you try to open the URL
+<code>http://127.0.0.1:8000/au/</code>, which points to the <em>local machine</em>, it can&rsquo;t find the web server,
+because it&rsquo;s running on the remote machine.</p>
+<p>The solution is to forward the port, <code>8000</code>, when you connect to your remote machine.  If you
+do, then <em>local</em> requests on that port will be forwarded along to the <em>remote</em> machine, where
+the web server is running.  Here&rsquo;s how you do that.</p>
+<ol>
+<li>
+<p><strong>Find your usual ssh command.</strong>  This is whatever you run on your <em>local</em> machine to connect
+   to the remote host.  For example, if your username is <code>user</code> and your remote hostname is
+   <code>remote.host</code>, this might look like the following:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ssh<span class="w"> </span>user@remote.host
+</code></pre></div>
+</li>
+<li>
+<p><strong>Add an option for port forwarding.</strong>  Expanding on the previous example, this would be:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>ssh<span class="w"> </span>-L<span class="w"> </span><span class="m">8000</span>:localhost:8000<span class="w"> </span>user@remote.host
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c1">#  ^^^^^^^^^^^^^^^^^^^^^^^ Note: this is added</span>
+</code></pre></div>
+</li>
+<li>
+<p><strong>Run <code>au-docs-serve</code> on the remote host.</strong>  Naturally, you&rsquo;ll need to be in your Au folder
+   to do this.</p>
+</li>
+</ol>
+<p>At this point, as long as that command stays running on your <em>remote</em> host, you should be able
+to visit the URL in your <em>local</em> browser, and view the documentation website.</p>
+</details>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href=".." class="md-footer__link md-footer__link--prev" aria-label="Previous: Au documentation" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                Au documentation
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../install/" class="md-footer__link md-footer__link--next" aria-label="Next: Installation" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Installation
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022, Aurora Operations, Inc. All rights reserved
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      
+    
+  </body>
+</html>
