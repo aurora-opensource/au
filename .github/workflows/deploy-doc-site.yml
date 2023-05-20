@@ -44,4 +44,4 @@ jobs:
       - uses: fregante/setup-git-user@2e28d51939d2a84005a917d2f844090637f435f8 #v1.1.0
 
       - name: Build and deploy doc site
-        run: bazel run //:update_docs -- gh-deploy
+        run: bazel run //:mike -- deploy --push main
