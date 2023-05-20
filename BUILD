@@ -38,6 +38,23 @@ py_binary(
     ],
 )
 
+py_binary(
+    name = "mike",
+    srcs = ["mike_bin.py"],
+    main = "mike_bin.py",
+    data = [
+        "mkdocs.yml",
+        ":au_hh",
+        ":au_noio_hh",
+    ] + glob(["docs/**"]),
+    deps = [
+        ":update_docs",
+        requirement("mike"),
+        requirement("mkdocs"),
+        requirement("mkdocs-material"),
+    ],
+)
+
 BASE_UNITS = [
     "meters",
     "seconds",

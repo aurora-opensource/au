@@ -34,6 +34,10 @@ extra_javascript:
 extra_css:
   - tweaks.css
 
+extra:
+  version:
+    provider: mike
+
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
