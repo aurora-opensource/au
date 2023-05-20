@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.1-1-ga4580bc
+// Version identifier: 0.3.1
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
