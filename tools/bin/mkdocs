@@ -1,4 +1,5 @@
-# Copyright 2022 Aurora Operations, Inc.
+#!/bin/bash
+# Copyright 2023 Aurora Operations, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,11 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# To grab the latest version of every package, run:
-#
-#    bazel run //:requirements.update -- --upgrade
-#
+if ! pwd | grep -q "execroot"; then
+  echo "This wrapper is only for use inside of 'bazel run //:mike'"
+  exit 1
+fi
 
-mike
-mkdocs
-mkdocs-material
+# We assume that `//:update_docs` (which is our version of `mkdocs`) is built.
+#
+# This will automatically be true if we use `bazel run //:mike`, because we've
+# listed `//:update_docs` as a dependency.
+~/au/bazel-bin/update_docs "$@"

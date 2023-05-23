@@ -120,8 +120,17 @@ On the tags page, click the three-dots menu, and select "Create release".
 
 ### Regenerate the doc website
 
-This will update the manifest for `au.hh` and `au_noio.hh`.
+First, create the version of the doc website corresponding to this release.
 
 ```sh
-bazel run //:update_docs -- gh-deploy
+bazel run //:mike -- deploy --push 0.3.1
+```
+
+Next, we need to make sure the manifest for `au.hh` and `au_noio.hh` on the `main` doc website
+includes this latest version tag.  Check out the `main` branch, and run a manual deploy to the
+`main` doc website:
+
+```sh
+git checkout main
+bazel run //:mike -- deploy --push main
 ```
