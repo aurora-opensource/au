@@ -1,0 +1,1840 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++ units library, by Aurora">
+      
+      
+        <meta name="author" content="Au team">
+      
+      
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/test/reference/unit/">
+      
+      
+        <link rel="prev" href="../quantity_point/">
+      
+      
+        <link rel="next" href="../detail/">
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Unit - The Au units library</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.c4a75a56.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../tweaks.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#unit" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../assets/au-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            The Au units library
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Unit
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../assets/au-logo.png" alt="logo">
+
+    </a>
+    The Au units library
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Au documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../develop/" class="md-nav__link">
+        Development Setup
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        Troubleshooting Guide
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Alternatives
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Alternatives
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alternatives/" class="md-nav__link">
+        Comparison of Alternatives
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Discussion
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Discussion
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/" class="md-nav__link">
+        Discussion Docs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+          Implementation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6_2">
+          <span class="md-nav__icon md-icon"></span>
+          Implementation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/" class="md-nav__link">
+        Implementation Details
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/vector_space/" class="md-nav__link">
+        Vector Space Representations
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Howto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Howto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/" class="md-nav__link">
+        How-to guides
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/new-units/" class="md-nav__link">
+        Defining new units
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Reference Docs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../magnitude/" class="md-nav__link">
+        Magnitude
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prefix/" class="md-nav__link">
+        Prefix
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quantity/" class="md-nav__link">
+        Quantity
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quantity_point/" class="md-nav__link">
+        QuantityPoint
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Unit
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Unit
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#identifying-unit-types" class="md-nav__link">
+    Identifying unit types
+  </a>
+  
+    <nav class="md-nav" aria-label="Identifying unit types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#making-unit-types" class="md-nav__link">
+    Making unit types
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#labels" class="md-nav__link">
+    Unit labels
+  </a>
+  
+    <nav class="md-nav" aria-label="Unit labels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unlabeled_unit" class="md-nav__link">
+    [UNLABELED_UNIT]
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#origins" class="md-nav__link">
+    Unit origins
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#types-for-combined-units" class="md-nav__link">
+    Types for combined units
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    Operations
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiplication" class="md-nav__link">
+    Multiplication
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#division" class="md-nav__link">
+    Division
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#powers" class="md-nav__link">
+    Powers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roots" class="md-nav__link">
+    Roots
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#helpers-for-powers-and-roots" class="md-nav__link">
+    Helpers for powers and roots
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scaling-by-magnitude" class="md-nav__link">
+    Scaling by Magnitude
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traits" class="md-nav__link">
+    Traits
+  </a>
+  
+    <nav class="md-nav" aria-label="Traits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#is-unit" class="md-nav__link">
+    Is unit?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#has-same-dimension" class="md-nav__link">
+    Has same dimension?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#are-units-quantity-equivalent" class="md-nav__link">
+    Are units quantity-equivalent?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#are-units-point-equivalent" class="md-nav__link">
+    Are units point-equivalent?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-dimensionless" class="md-nav__link">
+    Is dimensionless?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-unitless-unit" class="md-nav__link">
+    Is unitless unit?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unit-ratio" class="md-nav__link">
+    Unit ratio
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#origin-displacement" class="md-nav__link">
+    Origin displacement
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#associated-unit" class="md-nav__link">
+    Associated unit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-unit" class="md-nav__link">
+    Common unit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-point-unit" class="md-nav__link">
+    Common point unit
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_7" id="__nav_8_7_label" tabindex="0">
+          Detail
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8_7">
+          <span class="md-nav__icon md-icon"></span>
+          Detail
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/" class="md-nav__link">
+        Implementation Details
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/dimension/" class="md-nav__link">
+        Dimension
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/monovalue_types/" class="md-nav__link">
+        Monovalue Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/packs/" class="md-nav__link">
+        Parameter packs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+          Tutorial
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorial
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/" class="md-nav__link">
+        Tutorials: home
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/102-api-types/" class="md-nav__link">
+        Au 102: API Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
+        Au 103: Unit Conversions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9_5" id="__nav_9_5_label" tabindex="0">
+          Exercise
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_9_5">
+          <span class="md-nav__icon md-icon"></span>
+          Exercise
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
+        Au 102: API Types Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+        Au 103: Unit Conversions Exercise
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#identifying-unit-types" class="md-nav__link">
+    Identifying unit types
+  </a>
+  
+    <nav class="md-nav" aria-label="Identifying unit types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#making-unit-types" class="md-nav__link">
+    Making unit types
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#labels" class="md-nav__link">
+    Unit labels
+  </a>
+  
+    <nav class="md-nav" aria-label="Unit labels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unlabeled_unit" class="md-nav__link">
+    [UNLABELED_UNIT]
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#origins" class="md-nav__link">
+    Unit origins
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#types-for-combined-units" class="md-nav__link">
+    Types for combined units
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    Operations
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiplication" class="md-nav__link">
+    Multiplication
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#division" class="md-nav__link">
+    Division
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#powers" class="md-nav__link">
+    Powers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roots" class="md-nav__link">
+    Roots
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#helpers-for-powers-and-roots" class="md-nav__link">
+    Helpers for powers and roots
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scaling-by-magnitude" class="md-nav__link">
+    Scaling by Magnitude
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traits" class="md-nav__link">
+    Traits
+  </a>
+  
+    <nav class="md-nav" aria-label="Traits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#is-unit" class="md-nav__link">
+    Is unit?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#has-same-dimension" class="md-nav__link">
+    Has same dimension?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#are-units-quantity-equivalent" class="md-nav__link">
+    Are units quantity-equivalent?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#are-units-point-equivalent" class="md-nav__link">
+    Are units point-equivalent?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-dimensionless" class="md-nav__link">
+    Is dimensionless?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-unitless-unit" class="md-nav__link">
+    Is unitless unit?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unit-ratio" class="md-nav__link">
+    Unit ratio
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#origin-displacement" class="md-nav__link">
+    Origin displacement
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#associated-unit" class="md-nav__link">
+    Associated unit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-unit" class="md-nav__link">
+    Common unit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-point-unit" class="md-nav__link">
+    Common point unit
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="unit">Unit<a class="headerlink" href="#unit" title="Permanent link">&para;</a></h1>
+<p>A <em>unit</em> is a type which represents a unit of measure.  Examples include <code>Meters</code>, <code>Radians</code>,
+<code>Hours</code>, and so on.</p>
+<p>Users can work with units as either <em>types</em> or <em>instances</em>, and can freely convert between these
+representations.  That is to say: units are <a href="../detail/monovalue_types/"><em>monovalue types</em></a>.</p>
+<h2 id="identifying-unit-types">Identifying unit types<a class="headerlink" href="#identifying-unit-types" title="Permanent link">&para;</a></h2>
+<p>A unit is <em>not</em> forced to be a specialization of some central type template, such as a hypothetical
+<code>Unit&lt;...&gt;</code>. Rather, it&rsquo;s more open ended: a unit can be <strong>any</strong> type which fulfills certain
+defining properties.</p>
+<p>To be a unit, a type <code>U</code>:</p>
+<ol>
+<li>
+<p><strong>Must</strong> contain a public type alias, <code>U::Dim</code>, which refers to a valid <a href="../detail/dimension/">dimension
+   type</a>.</p>
+</li>
+<li>
+<p><strong>Must</strong> contain a public type alias, <code>U::Mag</code>, which refers to a valid <a href="../magnitude/">magnitude
+   type</a>.</p>
+</li>
+<li>
+<p><strong>Must</strong> be a <a href="../detail/monovalue_types/">monovalue type</a>.</p>
+</li>
+<li>
+<p><strong>May</strong> contain a <code>static constexpr</code> member named <code>label</code>, which is a C-style <code>const char[]</code>
+   (<strong>not</strong> a <code>const char*</code>).<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+</li>
+<li>
+<p><strong>May</strong> contain a <code>static constexpr</code> member function <code>origin()</code>, which returns a quantity whose
+   dimension type is <code>U::Dim</code>.</p>
+</li>
+</ol>
+<p>A custom <code>origin()</code> is very rarely needed.  Both <a href="#labels">labels</a> and <a href="#origins">origins</a> will be
+discussed further below.</p>
+<h3 id="making-unit-types">Making unit types<a class="headerlink" href="#making-unit-types" title="Permanent link">&para;</a></h3>
+<p>Although every unit type needs <code>Dim</code> and <code>Mag</code> members, users won&rsquo;t need to add them directly.
+Rather, the best way to make a unit type is by <em>combining existing unit types</em> via <a href="#operations">supported
+operations</a>.  This approach has two key advantages relative to defining your unit as
+a fully manual <code>struct</code>.</p>
+<ol>
+<li>
+<p>If your input types are all valid units, your output type will be too.</p>
+</li>
+<li>
+<p>It makes the definition more readable and physically meaningful.</p>
+</li>
+</ol>
+<p>To give your unit type the best ergonomics, follow our <a href="../../howto/new-units/">how-to guide for defining new
+units</a>.</p>
+<h2 id="labels">Unit labels<a class="headerlink" href="#labels" title="Permanent link">&para;</a></h2>
+<p>Every unit has a label.  Its label is a <code>constexpr const char[]</code> of the appropriate size.</p>
+<p>For a unit type <code>U</code>, or instance <code>u</code>, we can access the label as follows:</p>
+<ul>
+<li><code>unit_label&lt;U&gt;()</code></li>
+<li><code>unit_label(u)</code></li>
+</ul>
+<p>This function returns a reference to the array, which again is a compile time constant.</p>
+<p>Note especially that the type is an <em>array</em> (<code>[]</code>).  A pointer (<code>*</code>) is <em>not</em> acceptable.  This is
+so that we can support <code>sizeof(unit_label(u))</code>.</p>
+<p>Using C-style <code>char</code> arrays for our labels makes Au more friendly for embedded users, because it
+gives them full access to the labels without forcing them to depend on <code>&lt;string&gt;</code> or <code>&lt;iostream&gt;</code>.</p>
+<h3 id="unlabeled_unit"><code>[UNLABELED_UNIT]</code><a class="headerlink" href="#unlabeled_unit" title="Permanent link">&para;</a></h3>
+<p>If a unit does not have an explicit label, we will try to generate one automatically.  If we&rsquo;re
+unable to do so, we fall back to the &ldquo;default label&rdquo;, which is <code>"[UNLABELED_UNIT]"</code>.</p>
+<p>This is a label just like any other: we do not attempt to &ldquo;propagate the un-labeled-ness&rdquo;.  As
+a concrete example, if <code>Foos</code> is an unlabeled unit, then the label for <code>Nano&lt;Foos&gt;{} / Seconds{}</code>
+would be <code>"n[UNLABELED_UNIT] / s"</code>.  This is to preserve as much structure as possible for end
+users, so they have the best chance of recognizing the offending unit, and perhaps upgrading it.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A key design goal is for every combination of meaningfully labeled units, by every supported
+operation, to produce a meaningfully labeled unit.  Right now, the only missing operation is
+scaling a unit by a magnitude.  We are tracking this in
+<a href="https://github.com/aurora-opensource/au/issues/85">#85</a>.</p>
+</div>
+<h2 id="origins">Unit origins<a class="headerlink" href="#origins" title="Permanent link">&para;</a></h2>
+<p>The &ldquo;origin&rdquo; of a unit is only useful for <code>QuantityPoint</code>, our <a href="http://videocortex.io/2018/Affine-Space-Types/">affine space
+type</a>.  Even then, the origin by itself is not
+meaningful.  Only the difference between the origins of two units is meaningful.</p>
+<p>You would use this to implement an &ldquo;offset&rdquo; unit, such as <code>Celsius</code> or <code>Fahrenheit</code>.  However, note
+that both of these are already implemented in the library.</p>
+<p>The origin defaults to <code>ZERO</code> if not supplied.</p>
+<h2 id="types-for-combined-units">Types for combined units<a class="headerlink" href="#types-for-combined-units" title="Permanent link">&para;</a></h2>
+<p>A core tenet of Au&rsquo;s design philosophy is to avoid giving any units special status.  Every named
+unit enters into a unit computation on equal footing.  We will keep track of the accumulated powers
+of each named unit, cancelling as appropriate.  The final form will follow these rules.</p>
+<ol>
+<li>
+<p>Every power of a named unit will be represented according to the <a href="../detail/packs/#powers">representation
+   table</a>.  That is, it will be omitted if its power is zero, and will
+   otherwise appear as one of <code>Pow</code>, <code>RatioPow</code>, or the bare unit itself.</p>
+</li>
+<li>
+<p>If only one named unit remains with nonzero power, then that named unit power (as represented in
+   the previous rule) is the <em>complete</em> type.</p>
+</li>
+<li>
+<p>If multiple named units remain with nonzero power, then their representations (according to rule
+   1) are combined as the elements of a variadic <code>UnitProduct&lt;...&gt;</code> pack.</p>
+</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The ordering of the bases is deterministic, but is implementation defined, and can change at any
+time.  It is a programming error to write code that assumes any specific ordering of the units
+in a pack.</p>
+</div>
+<details class="example">
+<summary>A few examples</summary>
+<p>We have omitted the <code>au::</code> namespace in the following examples for greater clarity.</p>
+<table>
+<thead>
+<tr>
+<th>Unit expression</th>
+<th>Resulting unit type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>squared(Meters{})</code></td>
+<td><code>Pow&lt;Meters, 2&gt;</code></td>
+</tr>
+<tr>
+<td><code>Meters{} / Seconds{}</code></td>
+<td><code>UnitProduct&lt;Meters, Pow&lt;Seconds, -1&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>Seconds{} * Meters{} / Seconds{}</code></td>
+<td><code>Meters</code></td>
+</tr>
+</tbody>
+</table>
+</details>
+<h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
+<p>These are the operations which each unit type supports.  Because a unit must be a <a href="../detail/monovalue_types/">monovalue
+type</a>, it can take the form of either a <em>type</em> or an <em>instance</em>.
+In what follows, we&rsquo;ll use this convention:</p>
+<ul>
+<li><strong>Capital</strong> identifiers (<code>U</code>, <code>U1</code>, <code>U2</code>, &hellip;) refer to <strong>types</strong>.</li>
+<li><strong>Lowercase</strong> identifiers (<code>u</code>, <code>u1</code>, <code>u2</code>, &hellip;) refer to <strong>instances</strong>.</li>
+</ul>
+<h3 id="multiplication">Multiplication<a class="headerlink" href="#multiplication" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The product of two units.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>types</em> <code>U1</code> and <code>U2</code>:<ul>
+<li><code>UnitProductT&lt;U1, U2&gt;</code></li>
+</ul>
+</li>
+<li>For <em>instances</em> <code>u1</code> and <code>u2</code>:<ul>
+<li><code>u1 * u2</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="division">Division<a class="headerlink" href="#division" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The quotient of two units.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>types</em> <code>U1</code> and <code>U2</code>:<ul>
+<li><code>UnitQuotientT&lt;U1, U2&gt;</code></li>
+</ul>
+</li>
+<li>For <em>instances</em> <code>u1</code> and <code>u2</code>:<ul>
+<li><code>u1 / u2</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="powers">Powers<a class="headerlink" href="#powers" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A unit raised to an integral power.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>U</code>, and an integral power <code>N</code>:<ul>
+<li><code>UnitPowerT&lt;U, N&gt;</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>u</code>, and an integral power <code>N</code>:<ul>
+<li><code>pow&lt;N&gt;(u)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="roots">Roots<a class="headerlink" href="#roots" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> An integral root of a unit.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>U</code>, and an integral root <code>N</code>:<ul>
+<li><code>UnitPowerT&lt;U, 1, N&gt;</code> (because the <span class="arithmatex"><span class="MathJax_Preview">N^\text{th}</span><script type="math/tex">N^\text{th}</script></span> root is equivalent to the
+  <span class="arithmatex"><span class="MathJax_Preview">\left(\frac{1}{N}\right)^\text{th}</span><script type="math/tex">\left(\frac{1}{N}\right)^\text{th}</script></span> power)</li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>u</code>, and an integral root <code>N</code>:<ul>
+<li><code>root&lt;N&gt;(u)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="helpers-for-powers-and-roots">Helpers for powers and roots<a class="headerlink" href="#helpers-for-powers-and-roots" title="Permanent link">&para;</a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We plan to make these available for <a href="../magnitude/"><code>Magnitude</code></a> and
+<a href="../detail/dimension/"><code>Dimension</code></a> as well.  See
+<a href="https://github.com/aurora-opensource/au/issues/84">#84</a> to track progress.</p>
+</div>
+<p>Each of the following helpers are available to operate on a unit instance, <code>u</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Helper</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>inverse(u)</code></td>
+<td><code>pow&lt;-1&gt;(u)</code></td>
+</tr>
+<tr>
+<td><code>squared(u)</code></td>
+<td><code>pow&lt;2&gt;(u)</code></td>
+</tr>
+<tr>
+<td><code>cubed(u)</code></td>
+<td><code>pow&lt;3&gt;(u)</code></td>
+</tr>
+<tr>
+<td><code>sqrt(u)</code></td>
+<td><code>root&lt;2&gt;(u)</code></td>
+</tr>
+<tr>
+<td><code>cbrt(u)</code></td>
+<td><code>root&lt;3&gt;(u)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="scaling-by-magnitude">Scaling by <code>Magnitude</code><a class="headerlink" href="#scaling-by-magnitude" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A new unit which has been scaled by the given magnitude.  More specifically, for a unit
+<em>instance</em> <code>u</code> and magnitude instance <code>m</code>, this operation:</p>
+<ul>
+<li><strong>Preserves</strong> the <em>dimension</em> of <code>u</code>.</li>
+<li><strong>Scales</strong> the <em>magnitude</em> of <code>u</code> by a factor of <code>m</code>.</li>
+<li><strong>Deletes</strong> the <em>label</em> of <code>u</code>.</li>
+<li><strong>Preserves</strong> the <em>origin</em> of <code>u</code>.</li>
+</ul>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li><code>u * m</code></li>
+</ul>
+<h2 id="traits">Traits<a class="headerlink" href="#traits" title="Permanent link">&para;</a></h2>
+<p>Sections describing <code>bool</code> traits will be indicated with a trailing question mark, <code>"?"</code>.</p>
+<h3 id="is-unit">Is unit?<a class="headerlink" href="#is-unit" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> Indicates whether the argument is a valid unit.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>We don&rsquo;t currently have a trait that can detect whether or not a type is a <a href="../detail/monovalue_types/">monovalue
+type</a>.  Thus, the current implementation only checks whether the
+dimension and magnitude are valid.  Until we get such a trait, authors of unit types are
+responsible for satisfying the monovalue type requirement.</p>
+</div>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>type</em> <code>U</code>:<ul>
+<li><code>IsUnit&lt;U&gt;::value</code></li>
+</ul>
+</li>
+<li>For <em>instance</em> <code>u</code>:<ul>
+<li><code>is_unit(u)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="has-same-dimension">Has same dimension?<a class="headerlink" href="#has-same-dimension" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> Indicates whether two units have the same dimension.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>types</em> <code>U1</code> and <code>U2</code>:<ul>
+<li><code>HasSameDimension&lt;U1, U2&gt;::value</code></li>
+</ul>
+</li>
+<li>For <em>instances</em> <code>u1</code> and <code>u2</code>:<ul>
+<li><code>has_same_dimension(u1, u2)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="are-units-quantity-equivalent">Are units quantity-equivalent?<a class="headerlink" href="#are-units-quantity-equivalent" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> Indicates whether two units are quantity-equivalent.  This means that they have the same
+dimension and same magnitude.  Quantities of quantity-equivalent units may be trivially converted to
+each other with no conversion factor.</p>
+<p>For example, <code>Meters{} * Hertz{}</code> is not the <em>same unit</em> as <code>Meters{} / Seconds{}</code>, but they <em>are</em>
+<strong>quantity-equivalent</strong>.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>types</em> <code>U1</code> and <code>U2</code>:<ul>
+<li><code>AreUnitsQuantityEquivalent&lt;U1, U2&gt;::value</code></li>
+</ul>
+</li>
+<li>For <em>instances</em> <code>u1</code> and <code>u2</code>:<ul>
+<li><code>are_units_quantity_equivalent(u1, u2)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="are-units-point-equivalent">Are units point-equivalent?<a class="headerlink" href="#are-units-point-equivalent" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> Indicates whether two units are point-equivalent.  This means that they have the same
+dimension, same magnitude, <em>and</em> same origin.  <code>QuantityPoint</code> instances of point-equivalent units
+may be trivially converted to each other with no conversion factor and no additive offset.</p>
+<p>For example, while <code>Celsius</code> and <code>Kelvins</code> are quantity-equivalent, they are <em>not</em>
+<strong>point-equivalent</strong>.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>types</em> <code>U1</code> and <code>U2</code>:<ul>
+<li><code>AreUnitsPointEquivalent&lt;U1, U2&gt;::value</code></li>
+</ul>
+</li>
+<li>For <em>instances</em> <code>u1</code> and <code>u2</code>:<ul>
+<li><code>are_units_point_equivalent(u1, u2)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="is-dimensionless">Is dimensionless?<a class="headerlink" href="#is-dimensionless" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> Indicates whether the argument is a dimensionless unit.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>type</em> <code>U</code>:<ul>
+<li><code>IsDimensionless&lt;U&gt;::value</code></li>
+</ul>
+</li>
+<li>For <em>instance</em> <code>u</code>:<ul>
+<li><code>is_dimensionless(u)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="is-unitless-unit">Is unitless unit?<a class="headerlink" href="#is-unitless-unit" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> Indicates whether the argument is a &ldquo;unitless unit&rdquo;: that is, a <em>dimensionless</em> unit
+whose <em>magnitude</em> is 1.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>type</em> <code>U</code>:<ul>
+<li><code>IsUnitlessUnit&lt;U&gt;::value</code></li>
+</ul>
+</li>
+<li>For <em>instance</em> <code>u</code>:<ul>
+<li><code>is_unitless_unit(u)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="unit-ratio">Unit ratio<a class="headerlink" href="#unit-ratio" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The <a href="../magnitude/">magnitude</a> representing the ratio of the input units&rsquo; magnitudes.</p>
+<p>For units with non-trivial dimension, there is no such thing as &ldquo;the&rdquo; magnitude of a unit: it is not
+physically meaningful or observable.  However, the <em>ratio</em> of units&rsquo; magnitudes <em>is</em> well defined,
+and that is what this trait produces.</p>
+<p>For example, the unit ratio of <code>Feet</code> and <code>Inches</code> is <code>mag&lt;12&gt;()</code>, because a foot is 12 times as big
+as an inch.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>types</em> <code>U1</code> and <code>U2</code>:<ul>
+<li><code>UnitRatioT&lt;U1, U2&gt;::value</code></li>
+</ul>
+</li>
+<li>For <em>instances</em> <code>u1</code> and <code>u2</code>:<ul>
+<li><code>unit_ratio(u1, u2)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="origin-displacement">Origin displacement<a class="headerlink" href="#origin-displacement" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The displacement from the first unit&rsquo;s origin to the second unit&rsquo;s origin.</p>
+<p>Recall that there is no such thing as &ldquo;the&rdquo; origin of a unit: it is not physically meaningful or
+observable.  However, the <em>displacement</em> from one unit&rsquo;s origin to another <em>is</em> well defined, and
+that is what this trait produces.</p>
+<p>For example, the origin displacement from <code>Kelvins</code> to <code>Celsius</code> is equivalent to
+<span class="arithmatex"><span class="MathJax_Preview">273.15 \,\text{K}</span><script type="math/tex">273.15 \,\text{K}</script></span>.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>types</em> <code>U1</code> and <code>U2</code>:<ul>
+<li><code>OriginDisplacement&lt;U1, U2&gt;::value()</code></li>
+</ul>
+</li>
+<li>For <em>instances</em> <code>u1</code> and <code>u2</code>:<ul>
+<li><code>origin_displacement(u1, u2)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="associated-unit">Associated unit<a class="headerlink" href="#associated-unit" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">TODO: this is a stub.</p>
+</div>
+<h3 id="common-unit">Common unit<a class="headerlink" href="#common-unit" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">TODO: this is a stub.</p>
+</div>
+<h3 id="common-point-unit">Common point unit<a class="headerlink" href="#common-point-unit" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">TODO: this is a stub.</p>
+</div>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Unit types defined by the library may also use <code>au::detail::StringConstant&lt;N&gt;</code> for some
+integer length <code>N</code>.  Since this is in the <code>detail</code> namespace, we wanted to de-emphasize it in this
+document.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../quantity_point/" class="md-footer__link md-footer__link--prev" aria-label="Previous: QuantityPoint" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Previous
+                </span>
+                QuantityPoint
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../detail/" class="md-footer__link md-footer__link--next" aria-label="Next: Implementation Details" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Implementation Details
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022, Aurora Operations, Inc. All rights reserved
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      
+    
+  </body>
+</html>
