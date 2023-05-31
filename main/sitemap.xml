@@ -2,137 +2,137 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://aurora-opensource.github.io/au/main/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/develop/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/install/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/troubleshooting/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/alternatives/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/implementation/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/implementation/vector_space/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/new-units/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/magnitude/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/prefix/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/quantity/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/quantity_point/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/unit/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/detail/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/detail/dimension/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/detail/monovalue_types/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/detail/packs/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/101-quantity-makers/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/102-api-types/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/103-unit-conversions/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/exercise/101-quantity-makers/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/exercise/102-api-types/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/exercise/103-unit-conversions/</loc>
-         <lastmod>2023-05-24</lastmod>
+         <lastmod>2023-05-31</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
