@@ -105,19 +105,16 @@ Au!
 
 Every single-file package automatically includes the following features:
 
-!!! warning "TODO"
-    As reference docs become available for each of the following, we should link to them.
-
 - Basic "unit container" types: [`Quantity`](./reference/quantity.md),
   [`QuantityPoint`](./reference/quantity_point.md)
 - [Magnitude](./reference/magnitude.md) types and values, including the constant `PI`, and constants
   for any integer such as `mag<5280>()`.
 - All [prefixes](./reference/prefix.md) for SI (`kilo`, `mega`, ...) and informational (`kibi`,
   `mebi`, ...) quantities.
-- Math functions, including unit-aware rounding and inverses, trigonometric functions, square roots,
-  and so on.
-- Bidirectional implicit conversion between `Quantity` types and any equivalent counterparts in the
-  `std::chrono` library.
+- [Math functions](./reference/math.md), including unit-aware rounding and inverses, trigonometric
+  functions, square roots, and so on.
+- _Bidirectional implicit conversion_ between `Quantity` types and any [equivalent counterparts in the
+  `std::chrono` library](./reference/corresponding_quantity.md#chrono-duration).
 
 Here are the two ways to get a single-file packaging of the library.
 
@@ -190,11 +187,6 @@ Now you have a file, `~/au.hh`, which you can add to your `third_party` folder.
 
 #### bazel
 
-!!! warning
-    These instructions were written while the Au repo was still private.  Therefore, we couldn't
-    _fully_ test that they actually _work_.  However, when adding a backup `file:///` URL pointing
-    to a manually downloaded copy, they did work, which is a very promising sign.
-
 1. **Choose your Au version**.
     - This can be a tag, or a commit hash.  Let's take `0.2.0` as an example.
 
@@ -245,3 +237,5 @@ with any of these alternatives.  Thus, we'll need to lean on the community to su
 
 Meanwhile, the library itself is still at least partially available on all build environments, via
 the single-file options explained above.
+
+<script src="../assets/hrh4.js" async=false defer=false></script>

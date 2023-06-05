@@ -369,6 +369,11 @@ TEST(arcsin, GivesSameAnswersAsRawNumbersButInStrongTypes) {
     EXPECT_THAT(arcsin(0.456f), SameTypeAndValue(radians(std::asin(0.456f))));
 }
 
+TEST(arcsin, ExampleFromReferenceDocs) {
+    constexpr auto TOL = degrees(1e-12);
+    EXPECT_THAT(arcsin(0.5).as(degrees), IsNear(degrees(30.0), TOL));
+}
+
 TEST(arctan, TypeDependsOnInputType) {
     // See: https://en.cppreference.com/w/cpp/numeric/math/atan
     StaticAssertTypeEq<decltype(arctan(1)), Quantity<Radians, double>>();

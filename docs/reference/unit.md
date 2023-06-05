@@ -240,7 +240,7 @@ Sections describing `bool` traits will be indicated with a trailing question mar
 - For _instances_ `u1` and `u2`:
     - `has_same_dimension(u1, u2)`
 
-### Are units quantity-equivalent?
+### Are units quantity-equivalent? {#quantity-equivalent}
 
 **Result:** Indicates whether two units are quantity-equivalent.  This means that they have the same
 dimension and same magnitude.  Quantities of quantity-equivalent units may be trivially converted to
@@ -283,7 +283,7 @@ For example, while `Celsius` and `Kelvins` are quantity-equivalent, they are _no
 - For _instance_ `u`:
     - `is_dimensionless(u)`
 
-### Is unitless unit?
+### Is unitless unit? {#unitless-unit}
 
 **Result:** Indicates whether the argument is a "unitless unit": that is, a _dimensionless_ unit
 whose _magnitude_ is 1.
@@ -333,12 +333,80 @@ $273.15 \,\text{K}$.
 
 ### Associated unit
 
-!!! warning "TODO: this is a stub."
+**Result:** The actual unit associated with a "unit-alike".
+
+What's a "unit-alike"?  It's something that can be passed to an API expecting the name of a unit.
+Here are a few examples.
+
+```cpp
+round_in(meters, feet(20));
+//       ^^^^^^
+round_in(Meters{}, feet(20));
+//       ^^^^^^^^
+
+feet(6).in(inches);
+//         ^^^^^^
+feet(6).in(Inches{});
+//         ^^^^^^^^
+```
+
+The underlined arguments are all unit-alikes.  In practice, a unit-alike either a `QuantityMaker`
+for some unit, or a unit itself.
+
+The use case for this trait is to _implement_ a function that takes a unit-alike.
+
+**Syntax:**
+
+- For a _type_ `U`:
+    - `AssociatedUnitT<U>`
+- For an _instance_ `u`:
+    - `associated_unit(u)`
 
 ### Common unit
 
-!!! warning "TODO: this is a stub."
+**Result:** The largest unit that evenly divides its input units.  (Read more about the concept of
+[common units](../discussion/concepts/common_unit.md).)
+
+A specialization will only exist if all input types are units.
+
+If the inputs are units, but their Dimensions aren't all identical, then the request is ill-formed
+and we will produce a hard error.
+
+It may happen that the input units have the same Dimension, but there is no unit which evenly
+divides them (because some pair of input units has an irrational quotient).  In this case, there is
+no uniquely defined answer, but the program should still produce _some_ answer.  We guarantee that
+the result is associative, and symmetric under any reordering of the input units.  The specific
+implementation choice will be driven by convenience and simplicity.
+
+**Syntax:**
+
+- For _types_ `Us...`:
+    - `CommonUnitT<Us...>`
 
 ### Common point unit
 
-!!! warning "TODO: this is a stub."
+**Result:** The largest-magnitude, highest-origin unit which is "common" to the units of
+a collection of `QuantityPoint` instances.  (Read more about the concept of
+[common units for `QuantityPoint`](../discussion/concepts/common_unit.md#common-quantity-point).)
+
+The key goal to keep in mind is that for a `QuantityPoint` of any unit `U` in `Us...`, converting
+its value to the common point-unit should involve only:
+
+- multiplication by a _positive integer_
+- addition of a _non-negative integer_
+
+This helps us support the widest range of Rep types (in particular, unsigned integers).
+
+As with `CommonUnitT`, this isn't always possible: in particular, we can't do this for units with
+irrational relative magnitudes or origin displacements.  However, we still provide _some_ answer,
+which is consistent with the above policy whenever it's achievable, and produces reasonable results
+in all other cases.
+
+A specialization will only exist if the inputs are all units, and will exist but produce a hard
+error if any two input units have different Dimensions.  We also strive to keep the result
+associative, and symmetric under interchange of any inputs.
+
+**Syntax:**
+
+- For _types_ `Us...`:
+    - `CommonPointUnitT<Us...>`
