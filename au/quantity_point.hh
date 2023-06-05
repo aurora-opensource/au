@@ -114,7 +114,7 @@ class QuantityPoint {
 
     // The notion of "0" is *not* unambiguous for point types, because different scales can make
     // different decisions about what point is labeled as "0".
-    constexpr QuantityPoint(Zero)=delete;
+    constexpr QuantityPoint(Zero) = delete;
 
     template <typename NewRep,
               typename NewUnit,
