@@ -1,4 +1,4 @@
-# Unit expression APIs
+# Unit Expression APIs
 
 Many APIs in the library accept a _Unit expression_, `u`.  Common examples include (for some
 Quantity `q` and [arithmetic](https://en.cppreference.com/w/cpp/types/is_arithmetic) type `T`):
@@ -29,7 +29,7 @@ The Unit expression is _not the only thing_ that meets this description.  In fac
 not even the _best_ choice!  Anywhere you can pass an instance of a Unit `U`, you're usually better
 off passing a `QuantityMaker<U>`, because it reads better.
 
-## Examples: rounding to RPM
+## Examples: Rounding to RPM
 
 Let's look at some examples, using this quantity variable:
 
@@ -81,7 +81,7 @@ a quantity maker handy, but you _do_ know the unit type.
 
 ### Poor choice: manually constructed `QuantityMaker`
 
-This may look counter-intuitive, but we have seen a few instances of this approach in the wild!
+This may look counterintuitive, but we have seen a few instances of this approach in the wild!
 Presumably, this mistake comes from reading the signatures in the source code without understanding
 their core design goal: namely, to provide a place to specify the units, concisely and explicitly,
 at a callsite.  Here is an example:
