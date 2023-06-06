@@ -147,7 +147,7 @@ unspecified.
 
 ## Changes for `QuantityPoint` {#common-quantity-point}
 
-The common unit for `QuantityPoint` operations is different than for `Quantity`.  To see why
+The common unit for `QuantityPoint` operations is different from the common unit for `Quantity`.  To see why
 a single notion of "common unit" isn't enough, consider `Celsius` and `Kelvins`.
 
 - For a **`Quantity`**, these two units are identical.  The "common unit" will be
