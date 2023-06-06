@@ -11,14 +11,14 @@ Quantity arithmetic operations fall into two categories.
 
 We'll explain how the library handles each category below.  First, a brief refresher.
 
-## Quantities, Values, and Units 101
+## Quantities, values, and units 101
 
-A _quantity_ is an abstract concept: some physical property which can be measured.  To _work with_
+A _quantity_ is an abstract concept: some physical property that can be measured.  To _work with_
 that quantity, we need to pick a _unit of measure_, or "unit".  Once we've done so, the quantity
 obtains a _value_ with respect to that unit.
 
 Different choices of unit will lead to different values for the same quantity.  For example, suppose
-we have a rod which is one foot long.  The distance between its endpoints is `feet(1.0)`, where
+we have a rod that is one foot long.  The distance between its endpoints is `feet(1.0)`, where
 `feet` is the unit, and `1.0` is the value.  It's also equal to `inches(12.0)`, where `inches` is
 another unit we could have chosen, and `12.0` is the value we'd obtain if we did.
 
@@ -26,7 +26,7 @@ Note that `feet(1.0)` and `inches(12.0)` are the _same quantity_, conceptually! 
 different units, we'll end up _storing different values_ (i.e., `1.0` vs. `12.0`) in the bits and
 bytes of our computer program.
 
-## Arbitrary-Unit Operations {#arbitrary-unit}
+## Arbitrary-unit operations {#arbitrary-unit}
 
 For arbitrary-unit operations (products, quotients, powers, and roots), there is a simple, golden
 rule: apply the operation (say, multiplication) _independently_ to both the _value_ and the _unit_.
@@ -76,7 +76,7 @@ only a single multiplication or division at runtime.  The final printed result i
 And this makes sense!  We know intuitively that going from 0 to 60 MPH in 3 seconds "feels very
 fast".  We can see that in fact, it's pulling almost a full "g".
 
-## Common Unit Operations {#common-unit}
+## Common unit operations {#common-unit}
 
 If two quantities have the same dimension, it's _physically_ meaningful to add, subtract, or compare
 them.  Consider two lengths: we can _physically_ add them by placing them in series and measuring
@@ -92,7 +92,7 @@ the _greatest common divisor_.  This convention has two benefits:
 1. Converting each input quantity to the common unit involves _multiplying the value by an integer_.
    This is really important for quantities with integral storage types!
 
-2. The _value_ of that multiplier will be as _small as possible_ (relative to other units which
+2. The _value_ of that multiplier will be as _small as possible_ (relative to other units that
    evenly divide both input units).  This minimizes the risk of integer overflow.
 
 Let's look at a few examples.
