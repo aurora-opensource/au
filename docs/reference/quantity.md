@@ -170,8 +170,8 @@ access by value or by reference.
 
 ### `.in(unit)` {#extracting-with-in}
 
-This function returns the underlying stored value, by value.  See the [unit expression
-APIs](../discussion/idioms/unit-expression-api.md) discussion for valid choices for `unit`.
+This function returns the underlying stored value, by value.  See the [unit
+slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `unit`.
 
 ??? example "Example: extracting `4.56` from `seconds(4.56)`"
     Consider this `Quantity<Seconds, double>`:
@@ -185,8 +185,8 @@ APIs](../discussion/idioms/unit-expression-api.md) discussion for valid choices 
 
 ### `.data_in(unit)`
 
-This function returns a reference to the underlying stored value.  See the [unit expression
-APIs](../discussion/idioms/unit-expression-api.md) discussion for valid choices for `unit`.
+This function returns a reference to the underlying stored value.  See the [unit
+slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `unit`.
 
 ??? example "Example: incrementing the underlying stored value"
     ```cpp
@@ -204,9 +204,8 @@ different.  `as` returns another `Quantity`, but `in` exits the library and retu
 
 ### `.as(unit)`, `.as<T>(unit)` {#as}
 
-This function produces a new representation of the input `Quantity`, converted to the new unit.
-See the [unit expression APIs](../discussion/idioms/unit-expression-api.md) discussion for valid
-choices for `unit`.
+This function produces a new representation of the input `Quantity`, converted to the new unit. See
+the [unit slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `unit`.
 
 ??? example "Example: converting `feet(3)` to `inches`"
     Consider this `Quantity<Feet, int>`:
@@ -251,8 +250,7 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
 
 This function produces the value of the `Quantity`, re-expressed in the new unit.  `unit` can be
 either a `QuantityMaker` for the quantity's unit, or an instance of the unit itself. See the [unit
-expression APIs](../discussion/idioms/unit-expression-api.md) discussion for valid choices for
-`unit`.
+slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `unit`.
 
 ??? example "Example: getting the value of `feet(3)` in `inches`"
     Consider this `Quantity<Feet, int>`:

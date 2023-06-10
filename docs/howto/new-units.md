@@ -72,8 +72,8 @@ Here are the features.
 
 1. _Strong type definition_.
     - **Required.**  Make a `struct` with the name you want, and inherit from `decltype(u)`, where
-      `u` is some _unit expression_ which gives it the right Dimension and Magnitude.  (We'll
-      explain unit expressions in the next section.)
+      `u` is some [unit expression](../discussion/idioms/unit-slots.md#unit-expression) which gives
+      it the right Dimension and Magnitude.  (We'll explain unit expressions in the next section.)
 
 2. _Label_.
     - A `sizeof()`-compatible label which is useful for printing the Unit.
@@ -110,24 +110,25 @@ Here are the features.
 
 ## Unit expressions
 
-Above, we said to inherit your unit's strong type from the `decltype` of a "unit expression".
-Recall the line from above:
+Above, we said to inherit your unit's strong type from the `decltype` of a [unit
+expression](../discussion/idioms/unit-slots.md#unit-expression). Recall the line from above:
 
 ```cpp
 struct Fathoms : decltype(Inches{} * mag<72>()) {
 //        Unit Expression ^^^^^^^^^^^^^^^^^^^^
 ```
 
-This section explains what kinds of things can go inside of the `decltype(...)`.
+Some users may be surprised that we recommend using `decltype` and instances, instead of just naming
+the type directly.  The reason we do is that in C++ code generally, instances are easier to compose
+than types.  This is especially true for units, which support a variety of operations: multiplying
+and dividing by other units, scaling by magnitudes, and even raising to rational powers.
 
-Conceptually, units are defined by combining _other units_.  In general, given any set of units, you
-can multiply them, divide them, raise them to powers, or scale them by real numbers ("magnitudes"):
-the result of any of these operations defines a new unit.
+If we used types directly, users would need to learn obscure new traits, like `UnitProductT` for
+unit-unit products, and `ScaledUnit` for unit-magnitude products.  With instances, we can simply
+write `*` as we would for any other kind of instances --- and this `*` covers both use cases!
+Wrapping the result in `decltype(...)` is a small price to pay for this familiarity and flexibility.
 
-In C++ code, the easiest way to do this is by working with _instances_ of the unit types.  (`Meters`
-is the _type_; `Meters{}` is an _instance_ of the type.)  This lets us multiply them naturally by
-writing `*`, rather than using cumbersome template traits such as `UnitProductT<...>`.  Here are
-some examples:
+Here are some example unit expressions we might reach for to define various common units:
 
 - Newtons: `Kilo<Grams>{} * Meters{} / squared(Seconds{})`
 - Miles: `Feet{} * mag<5280>()`
