@@ -1,15 +1,18 @@
 # Quantity Point
-For a units library, `Quantity` is easy to understand.  It represents a _quantity_: the combination
-of a numeric _value_, and a _unit of measure_ which gives that value its meaning.  Thanks to
-quantity calculus, we can perform all kinds of operations with quantities: we can add and subtract
-them, multiply and divide them, and even take powers and roots.
 
-So, what more could we need?  Why did we go further, and provide `QuantityPoint`?
+While `Quantity` works well for most units library operations, there are some situations where it
+struggles.  The most important example is _temperature_: as we'll soon see in detail, `Quantity`
+alone could never handle all temperature use cases simultaneously.  The tool that solves this
+problem, `QuantityPoint`, also helps similar use cases, such as atmospheric pressure.  It even
+improves seemingly unrelated use cases as well, such as along-path positions ("mile markers").
+
+Overall, `QuantityPoint` is a subtle but critically important tool in a units library toolbox.
+Let's dive into the main motivating problem, and then learn about the properties of its solution.
 
 ## Temperatures are error prone
 
-To see why, let's look at a use case where `Quantity` struggles: _temperature_.  Consider:
-is 20 degrees Celsius the same as 20 Kelvins?
+Let's look at a use case where `Quantity` struggles: _temperature_.  Consider: is 20 degrees Celsius
+the same as 20 Kelvins?
 
 Answer: _it depends_.
 
@@ -126,9 +129,38 @@ As hoped, this test passes.
     the offset between Kelvins and Fahrenheit (or Celsius) is not an integer!  As an exercise,
     ponder how we might do that.
 
+## `QuantityPoint` and `std::chrono::time_point`
+
+Readers familiar with the `std::chrono` library may recognize this kind of interface: it's similar
+to `std::chrono::time_point`.  This class has the same relationship to `std::chrono::duration` as
+`QuantityPoint` has to `Quantity`. In each case, we have a "point" type and a "displacement" type.
+And the allowed operations are similar, for example:
+
+- You can subtract two points to get a displacement.
+- You can add (or subtract) a displacement to (or from) a point.
+- You **can't** add two **points**; that's a meaningless operation.
+
+These similarities may tempt the reader to reach for a time-units `QuantityPoint` to replace
+`std::chrono::time_point`, just as a time-units `Quantity` makes a very capable replacement for
+`std::chrono::duration`.  However, experience doesn't support this choice.
+
+There's much more to `std::chrono::time_point` than just providing arithmetic operations with point
+semantics.  It also models different kinds of clocks, preventing unintended inter-conversion between
+them.  And it handles real-world clock subtleties, such as modeling whether a clock can ever produce
+an earlier value at a later time (think: daylight saving time).  By contrast, `QuantityPoint` can
+only handle measurement scales that are identical up to a constant offset --- and that offset must
+be known at compile time.
+
+**Bottom line**: when you need to track timestamps, you're better off using a special purpose
+library like `std::chrono`.  But once you subtract two `time_point` instances to get a `duration`,
+it's often useful to convert it to Au's `Quantity` --- whether
+[implicitly](../../reference/corresponding_quantity.md#chrono-duration), or
+[explicitly](../../reference/corresponding_quantity.md#as-quantity) --- so that it can participate
+in equations with other units (such as speeds and distances).
+
 ## Summary
 
 `QuantityPoint` is largely a refinement for C++ units libraries.  Most use cases don't need it, and
 we don't even bother to define it for almost all units.  However, it is useful in a few use cases,
-such as mile markers or atmospheric pressure.  And for some use cases, such as temperatures, it's
-absolutely essential.
+such as mile markers or atmospheric pressure.  And for some use cases, such as temperatures or
+atmospheric pressure, it's absolutely essential.

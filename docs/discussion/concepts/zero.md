@@ -1,12 +1,13 @@
 # Zero
 
 Au contains a special type, `Zero`, which represents the number `0`.  We also provide a built-in
-constant, `ZERO`, which is an instance of that type.
+constant, `ZERO`, which is an instance of that type.  The goal of `ZERO` is to represent a value of
+`0` _for any type where this is unambiguous_ --- and to do so at _compile time_.
 
-But why?  What value does it provide?
-
-To answer that question, we'll walk through a common pain point people encounter when switching to
-units libraries.
+It may seem counterintuitive to create a type which can only ever hold one value, `0`.  However, it
+turns out that it reduces friction in several different use cases, especially initialization and
+sign comparison.  Before we can appreciate these benefits, we'll need to understand where that
+friction comes from in the first place.
 
 ## Motivation
 
@@ -59,13 +60,13 @@ if (v_squared < squared(meters / second)(0.0)) {
 ```
 
 This _works_, but we couldn't really call it satisfying.  Specifying these units adds a lot of
-clutter.  Shouldn't there be a better way?
+clutter.
 
 ### `ZERO` to the rescue
 
-Fortunately, there is!  To see why, notice that `0` is the _one and only number_ where the results
-of this comparison are _completely independent_ of the choice of units.  Simply put, zero of
-anything is just zero!
+Fortunately, there's a better way.  To see why, notice that `0` is the _one and only number_ where
+the results of this comparison are _completely independent_ of the choice of units.  Simply put,
+zero of anything is just zero!
 
 This fact is the key to reducing friction.  We created a type, [`Zero`](../../reference/zero.md),
 which always represents the value `0`.  We also made a built-in constant of that type, `ZERO`, for
@@ -88,8 +89,7 @@ Now we have the best of both worlds!
 
 Use `ZERO` liberally whenever you need a `Quantity` of `0`!  Key use cases include:
 
-- initialization
-- assignment
+- initialization or assignment
 - sign comparison
 
 Here's a code comparison for a couple examples.  (Once you click on a tab below, you can use the
@@ -115,20 +115,20 @@ left and right arrow keys to flip back and forth.)
 
 ### One non-use case
 
-It's tempting to enable `ZERO` to construct `QuantityPoint` too, not just `Quantity`.  Wouldn't it
-be nice to be able to write something like this?
+It's tempting to enable `ZERO` to construct `QuantityPoint` too, not just `Quantity`, enabling us to
+write something like this:
 
 ```cpp
 QuantityPointD<Celsius> freezing_temp = ZERO;
 // Warning: will not compile!
 ```
 
-We forbid this, because it would do more harm than good.  The reason `ZERO` works so well for
-`Quantity` is that its meaning is completely unambiguous, independent of any units.  But [the whole
-point of `QuantityPoint`](./quantity_point.md) is that different scales can apply the label of
-"zero" to different points!  Imagine we refactored our codebase to use `Fahrenheit` or `Kelvins`
-instead of `Celsius`.  It would be easy to miss this line (and many others like it).  If we did, it
-would completely change the meaning of our program!
+However, **we forbid this**, because it would do more harm than good.  The reason `ZERO` works so
+well for `Quantity` is that its meaning is completely unambiguous, independent of any units.  But
+[the whole point of `QuantityPoint`](./quantity_point.md) is that different scales can apply the
+label of "zero" to different points!  Imagine we refactored our codebase to use `Fahrenheit` or
+`Kelvins` instead of `Celsius`.  It would be easy to miss this line (and many others like it).  If
+we did, it would completely change the meaning of our program!
 
 ## Conclusion
 

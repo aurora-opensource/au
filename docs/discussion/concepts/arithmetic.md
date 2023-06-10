@@ -2,12 +2,13 @@
 
 Quantity arithmetic operations fall into two categories.
 
-- **Arbitrary-unit operations** work with any units---even if there are multiple input units with
+- **Arbitrary-unit operations** work with any units --- even if there are multiple input units with
   different dimensions!  Examples include products, quotients, powers, and roots.
 
-- **Common-unit operations** require the inputs to be in the same unit.  (Note that this is only
-  _possible_ if they have the same _dimension_.)  Examples include addition, subtraction, and
-  relational operators.
+- **Common-unit operations** require the inputs to be expressed in the same unit.[^1]  Examples include
+  addition, subtraction, and relational operators.
+
+[^1]: Note that this is only possible in the first place if the units have the same _dimension_.
 
 We'll explain how the library handles each category below.  First, a brief refresher.
 
@@ -86,7 +87,7 @@ _Computationally_, it's a different story: we need to express them in a [**commo
 unit**](./common_unit.md).  Once we do, it's easy to add/subtract/compare the _quantities_: we
 simply add/subtract/compare the _values_.
 
-The "common unit" of two units is the _largest_ unit that _evenly divides both_[^1]---essentially,
+The "common unit" of two units is the _largest_ unit that _evenly divides both_[^2]---essentially,
 the _greatest common divisor_.  This convention has two benefits:
 
 1. Converting each input quantity to the common unit involves _multiplying the value by an integer_.
@@ -144,7 +145,7 @@ them?
     The value of `x` would be `micro(meters)(4'540'000)`.
 
 
-[^1]: Of course, this definition only applies to units which _have_ a common divisor.  This happens
+[^2]: Of course, this definition only applies to units which _have_ a common divisor.  This happens
 whenever their ratio (a dimensionless number) is an exact rational number.  This won't work for unit
 pairs such as `degrees` and `radians`, whose ratio is the irrational number $(\pi / 180)$.  For
 "irrational ratios", no convention can provide the benefits in this section, so we make an arbitrary

@@ -101,7 +101,7 @@ following example.
 
     The final result would be `MyDegrees{90.0f}`, within floating point rounding error.
 
-## `as_quantity()`
+## `as_quantity()` {#as-quantity}
 
 The `as_quantity()` function converts any type to an instance of its corresponding `Quantity`, as
 long as [this direction of conversion](#t-to-quantity) has been set up.  This concise, readable

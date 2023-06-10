@@ -36,7 +36,7 @@ is the key point: _one quantity; many representations_.
 
 ### The need for common units
 
-_Physically_, we can compare any two quantities of the same Dimension.  It doesn't matter if one is
+_Physically_, we can compare any two quantities of the same dimension.  It doesn't matter if one is
 measured in feet, and the other in yards; we can place the physical lengths next to each other, and
 see which one is longer.  _Computationally_, we need to express them in the same unit, so that our
 notion of `<` for _quantities_ can simply "inherit" from our notion of `<` for their _values_.
@@ -50,7 +50,7 @@ notion of `<` for _quantities_ can simply "inherit" from our notion of `<` for t
     the _same_, common denominator (analogous to units).  Once we do, we can simply apply these
     operations directly to the numerators (analogous to values).
 
-In principle, _any_ unit of the same Dimension can serve as the "common unit".  However, just as we
+In principle, _any_ unit of the same dimension can serve as the "common unit".  However, just as we
 tend to prefer the _lowest_ common denominator for fractions, there is also a preferred common unit
 for quantities.  The usual choice is _the largest (i.e., greatest magnitude) unit which evenly
 divides both input units_.  This has some very nice properties.
@@ -108,11 +108,11 @@ There are two main abstractions for common units which users might encounter.
         - In end user code, this should probably _never_ be named.
         - In either case: **never** write `CommonUnit<...>` with _specific_ template arguments!
           Only use it for matching.
-    - So then, how can `CommonUnit<...>` arise?  Only as _the result of some type computation_.
+    - Remember: `CommonUnit<...>` can arise only as _the result of some type computation_.
 - **`CommonUnitT<...>`**.  This _computes_ the common unit of the provided units.
 
 Let's clarify this relationship with an example.  Suppose you're writing a function based on two
-arbitrary (but same-Dimension) units, `U1` and `U2`, and you need their "common unit".
+arbitrary (but same-dimension) units, `U1` and `U2`, and you need their "common unit".
 
 - What you would _write_ is `CommonUnitT<U1, U2>`, **not** `CommonUnit<U1, U2>`.
     - `CommonUnitT<...>` says "_please calculate_ the common unit".
@@ -147,8 +147,9 @@ unspecified.
 
 ## Changes for `QuantityPoint` {#common-quantity-point}
 
-The common unit for `QuantityPoint` operations is different from the common unit for `Quantity`.  To see why
-a single notion of "common unit" isn't enough, consider `Celsius` and `Kelvins`.
+The common unit for [`QuantityPoint`](./quantity_point.md) operations is different from the common
+unit for `Quantity`.  To see why a single notion of "common unit" isn't enough, consider `Celsius`
+and `Kelvins`.
 
 - For a **`Quantity`**, these two units are identical.  The "common unit" will be
   (quantity-)equivalent to both of them.

@@ -21,11 +21,11 @@ prose. It is short, greppable, and reasonably intuitive.  It also lets us enter 
 boundaries in just the same way as for other units: `q = unos(x)` turns a numeric value `x` into
 a Quantity `q`, and `q.in(unos)` retrieves the raw number.
 
-Why would you _want_ to do this?  Mainly, because it makes it easier to work with _non-`unos`_
-dimensionless units.  For example: say we wanted to "express `0.75` as a quantity of `percent`".
-Instead of trying to remember whether to multiply or divide by 100, we can simply write
-`x = unos(0.75).as(percent)`.  And if we have something that's already a `percent`, but we want its
-"true" value, we can simply write `x.in(unos)`.
+This is particularly useful when working with _non-`unos`_ dimensionless units.  For example: say we
+wanted to "express `0.75` as a quantity of `percent`". Instead of trying to remember whether to
+multiply or divide by 100, we can simply write `x = unos(0.75).as(percent)`.  And if we have
+something that's already a `percent`, but we want its "true" value, we can simply write
+`x.in(unos)`.
 
 ## Exact cancellation and types {#exact-cancellation}
 

@@ -1,8 +1,10 @@
 # Generic Concepts
 
-This section discusses concepts about units libraries generally.  These are generally things you
-might not have thought of on your own, but which can be really useful for using the library more
-effectively.
+This section discusses concepts about units libraries generally. Some may be more precise
+formulations of principles that most users know intuitively, such as [Arithmetic
+Operations](./arithmetic.md).  Others may be novel innovations which originated with Au, but would
+enhance _any_ units library, such as [Zero](./zero.md).  From A to Z, all will sharpen your thinking
+and help you use units libraries more effectively.
 
 - **[Arithmetic Operations](./arithmetic.md)**.  Find out about the two kinds of math you can do
   with quantities, and learn a simple rule for reasoning about the results of products and
