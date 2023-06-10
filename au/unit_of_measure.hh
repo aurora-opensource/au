@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include "au/power_aliases.hh"
 #include "au/dimension.hh"
 #include "au/magnitude.hh"
+#include "au/power_aliases.hh"
 #include "au/stdx/type_traits.hh"
 #include "au/utility/string_constant.hh"
 #include "au/zero.hh"
