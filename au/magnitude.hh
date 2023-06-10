@@ -16,6 +16,7 @@
 
 #include <limits>
 
+#include "au/power_aliases.hh"
 #include "au/packs.hh"
 #include "au/stdx/utility.hh"
 #include "au/utility/factoring.hh"

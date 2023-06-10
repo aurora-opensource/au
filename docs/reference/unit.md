@@ -179,20 +179,8 @@ In what follows, we'll use this convention:
 
 ### Helpers for powers and roots
 
-!!! note
-    We plan to make these available for [`Magnitude`](./magnitude.md) and
-    [`Dimension`](./detail/dimension.md) as well.  See
-    [#84](https://github.com/aurora-opensource/au/issues/84) to track progress.
-
-Each of the following helpers are available to operate on a unit instance, `u`:
-
-| Helper | Result |
-|--------|--------|
-| `inverse(u)` | `pow<-1>(u)` |
-| `squared(u)` | `pow<2>(u)` |
-| `cubed(u)` | `pow<3>(u)` |
-| `sqrt(u)` | `root<2>(u)` |
-| `cbrt(u)` | `root<3>(u)` |
+Units support all of the [power helpers](./powers.md#helpers).  So, for example, for a unit instance
+`u`, you can write `sqrt(u)` as a more readable alternative to `root<2>(u)`.
 
 ### Scaling by `Magnitude`
 
