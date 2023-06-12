@@ -23,7 +23,7 @@ using ::testing::StaticAssertTypeEq;
 
 namespace au {
 namespace {
-template <typename T>
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
 constexpr T cubed(T x) {
     return x * x * x;
 }
@@ -66,6 +66,16 @@ TEST(Pi, HasCorrectValue) {
     EXPECT_TRUE(false) << "M_PIl not available on this architecture";
 #endif
 }
+
+TEST(Inverse, RaisesToPowerNegativeOne) { EXPECT_EQ(inverse(mag<8>()), mag<1>() / mag<8>()); }
+
+TEST(Squared, RaisesToPowerTwo) { EXPECT_EQ(squared(mag<7>()), mag<49>()); }
+
+TEST(Cubed, RaisesToPowerThree) { EXPECT_EQ(cubed(mag<5>()), mag<125>()); }
+
+TEST(Sqrt, TakesSecondRoot) { EXPECT_EQ(sqrt(mag<81>()), mag<9>()); }
+
+TEST(Cbrt, TakesThirdRoot) { EXPECT_EQ(cbrt(mag<27>()), mag<3>()); }
 
 TEST(Numerator, IsIdentityForInteger) {
     EXPECT_EQ(numerator(mag<2>()), mag<2>());

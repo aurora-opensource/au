@@ -39,14 +39,46 @@ TEST(Dimension, AllProvidedBaseDimensionsAreCompatible) {
 
 TEST(Dimension, ProductAndQuotientBehaveAsExpected) {
     StaticAssertTypeEq<DimProductT<Speed, Time>, Length>();
+    StaticAssertTypeEq<decltype(Speed{} * Time{}), Length>();
 
     StaticAssertTypeEq<DimQuotientT<DimProductT<Length, Time>, Length>, Time>();
+    StaticAssertTypeEq<decltype(Length{} / Time{}), Speed>();
 }
 
 TEST(Dimension, PowersBehaveAsExpected) {
     StaticAssertTypeEq<DimQuotientT<DimPowerT<Speed, 2>, Length>, Accel>();
 
     StaticAssertTypeEq<DimProductT<Accel, DimPowerT<Time, 2>>, Length>();
+}
+
+TEST(Inverse, RaisesToPowerNegativeOne) {
+    StaticAssertTypeEq<decltype(inverse(Dimension<>{})), Dimension<>>();
+
+    StaticAssertTypeEq<decltype(inverse(Length{} / Time{})), decltype(Time{} / Length{})>();
+}
+
+TEST(Squared, RaisesToPowerTwo) {
+    StaticAssertTypeEq<decltype(squared(Dimension<>{})), Dimension<>>();
+
+    StaticAssertTypeEq<decltype(squared(Length{})), decltype(Length{} * Length{})>();
+}
+
+TEST(Cubed, RaisesToPowerThree) {
+    StaticAssertTypeEq<decltype(cubed(Dimension<>{})), Dimension<>>();
+
+    StaticAssertTypeEq<decltype(cubed(Length{})), decltype(Length{} * Length{} * Length{})>();
+}
+
+TEST(Sqrt, TakesSecondRoot) {
+    StaticAssertTypeEq<decltype(sqrt(Dimension<>{})), Dimension<>>();
+
+    StaticAssertTypeEq<decltype(sqrt(Length{} * Length{})), decltype(Length{})>();
+}
+
+TEST(Cbrt, TakesThirdRoot) {
+    StaticAssertTypeEq<decltype(cbrt(Dimension<>{})), Dimension<>>();
+
+    StaticAssertTypeEq<decltype(cbrt(Length{} * Length{} * Length{})), decltype(Length{})>();
 }
 
 }  // namespace au

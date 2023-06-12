@@ -170,7 +170,10 @@ cc_test(
 cc_library(
     name = "dimension",
     hdrs = ["dimension.hh"],
-    deps = [":packs"],
+    deps = [
+        ":packs",
+        ":power_aliases",
+    ],
 )
 
 cc_test(
@@ -188,6 +191,7 @@ cc_library(
     hdrs = ["magnitude.hh"],
     deps = [
         ":packs",
+        ":power_aliases",
         ":stdx",
         ":utility",
         ":zero",
@@ -241,6 +245,22 @@ cc_test(
     srcs = ["packs_test.cc"],
     deps = [
         ":packs",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "power_aliases",
+    hdrs = ["power_aliases.hh"],
+)
+
+cc_test(
+    name = "power_aliases_test",
+    size = "small",
+    srcs = ["power_aliases_test.cc"],
+    deps = [
+        ":packs",
+        ":power_aliases",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -343,6 +363,7 @@ cc_library(
     deps = [
         ":dimension",
         ":magnitude",
+        ":power_aliases",
         ":stdx",
         ":utility",
         ":zero",
