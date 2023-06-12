@@ -39,7 +39,7 @@ Here are some canonical examples in Au.
 | `Magnitude<Pi>` | `PI` | <ul><li>Equality comparison with other Magnitudes</li><li>`get_value<T>(PI)`</li></ul> |
 | `Radians` (and other units) | `Radians{}` (no special pre-formed instance) | Arithmetic with other units, such as `Radians{} / Meters{}` |
 
-## Switching between types and values
+## Switching between types and values {#switching}
 
 To get the value of a monovalue type `T`, instantiate the type using `T{}`.
 

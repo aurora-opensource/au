@@ -193,6 +193,11 @@ In what follows, we'll use this convention:
 - For an _instance_ `m`, and an integral root `N`:
     - `root<N>(m)`
 
+### Helpers for powers and roots
+
+Magnitudes support all of the [power helpers](./powers.md#helpers).  So, for example, for
+a magnitude instance `m`, you can write `sqrt(m)` as a more readable alternative to `root<2>(m)`.
+
 ## Traits
 
 These traits provide information, at compile time, about the number represented by a `Magnitude`.
