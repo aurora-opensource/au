@@ -12,24 +12,24 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/howto/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/powers/">
       
       
-        <link rel="prev" href="../discussion/implementation/vector_space/">
+        <link rel="prev" href="../magnitude/">
       
       
-        <link rel="next" href="new-units/">
+        <link rel="next" href="../prefix/">
       
-      <link rel="icon" href="../assets/favicon.ico">
+      <link rel="icon" href="../../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
-        <title>How-to guides - The Au units library</title>
+        <title>Powers - The Au units library</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.26e3688c.min.css">
       
       
 
@@ -45,9 +45,9 @@
       
     
     
-      <link rel="stylesheet" href="../tweaks.css">
+      <link rel="stylesheet" href="../../tweaks.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#how-to-guides" class="md-skip">
+        <a href="#powers" class="md-skip">
           Skip to content
         </a>
       
@@ -89,9 +89,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../assets/au-logo.png" alt="logo">
+  <img src="../../assets/au-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              How-to guides
+              Powers
             
           </span>
         </div>
@@ -186,9 +186,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../assets/au-logo.png" alt="logo">
+  <img src="../../assets/au-logo.png" alt="logo">
 
     </a>
     The Au units library
@@ -216,7 +216,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         Au documentation
       </a>
     </li>
@@ -231,7 +231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../develop/" class="md-nav__link">
+      <a href="../../develop/" class="md-nav__link">
         Development Setup
       </a>
     </li>
@@ -246,7 +246,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/" class="md-nav__link">
+      <a href="../../install/" class="md-nav__link">
         Installation
       </a>
     </li>
@@ -261,7 +261,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../troubleshooting/" class="md-nav__link">
+      <a href="../../troubleshooting/" class="md-nav__link">
         Troubleshooting Guide
       </a>
     </li>
@@ -303,7 +303,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../alternatives/" class="md-nav__link">
+      <a href="../../alternatives/" class="md-nav__link">
         Comparison of Alternatives
       </a>
     </li>
@@ -352,7 +352,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/" class="md-nav__link">
+      <a href="../../discussion/" class="md-nav__link">
         Discussion Docs
       </a>
     </li>
@@ -393,7 +393,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/implementation/" class="md-nav__link">
+      <a href="../../discussion/implementation/" class="md-nav__link">
         Implementation Details
       </a>
     </li>
@@ -407,7 +407,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/implementation/vector_space/" class="md-nav__link">
+      <a href="../../discussion/implementation/vector_space/" class="md-nav__link">
         Vector Space Representations
       </a>
     </li>
@@ -434,16 +434,14 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
       
       
       
@@ -452,7 +450,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_7">
           <span class="md-nav__icon md-icon"></span>
           Howto
@@ -463,21 +461,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../howto/" class="md-nav__link">
         How-to guides
       </a>
-      
     </li>
   
 
@@ -489,7 +477,7 @@
   
   
     <li class="md-nav__item">
-      <a href="new-units/" class="md-nav__link">
+      <a href="../../howto/new-units/" class="md-nav__link">
         Defining new units
       </a>
     </li>
@@ -509,14 +497,16 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
       
       
       
@@ -525,7 +515,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
           Reference
@@ -538,7 +528,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         Reference Docs
       </a>
     </li>
@@ -552,7 +542,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/magnitude/" class="md-nav__link">
+      <a href="../magnitude/" class="md-nav__link">
         Magnitude
       </a>
     </li>
@@ -564,11 +554,79 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../reference/powers/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Powers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Powers
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#general-apis" class="md-nav__link">
+    General APIs
+  </a>
+  
+    <nav class="md-nav" aria-label="General APIs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pownx" class="md-nav__link">
+    pow&lt;N&gt;(x)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rootnx" class="md-nav__link">
+    root&lt;N&gt;(x)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#helpers" class="md-nav__link">
+    Helpers (inverse, squared, cubed, sqrt, cbrt)
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -580,7 +638,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/prefix/" class="md-nav__link">
+      <a href="../prefix/" class="md-nav__link">
         Prefix
       </a>
     </li>
@@ -594,7 +652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/quantity/" class="md-nav__link">
+      <a href="../quantity/" class="md-nav__link">
         Quantity
       </a>
     </li>
@@ -608,7 +666,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/quantity_point/" class="md-nav__link">
+      <a href="../quantity_point/" class="md-nav__link">
         QuantityPoint
       </a>
     </li>
@@ -622,7 +680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/unit/" class="md-nav__link">
+      <a href="../unit/" class="md-nav__link">
         Unit
       </a>
     </li>
@@ -663,7 +721,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/detail/" class="md-nav__link">
+      <a href="../detail/" class="md-nav__link">
         Implementation Details
       </a>
     </li>
@@ -677,7 +735,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/detail/dimension/" class="md-nav__link">
+      <a href="../detail/dimension/" class="md-nav__link">
         Dimension
       </a>
     </li>
@@ -691,7 +749,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/detail/monovalue_types/" class="md-nav__link">
+      <a href="../detail/monovalue_types/" class="md-nav__link">
         Monovalue Types
       </a>
     </li>
@@ -705,7 +763,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/detail/packs/" class="md-nav__link">
+      <a href="../detail/packs/" class="md-nav__link">
         Parameter packs
       </a>
     </li>
@@ -761,7 +819,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/" class="md-nav__link">
+      <a href="../../tutorial/" class="md-nav__link">
         Tutorials: home
       </a>
     </li>
@@ -775,7 +833,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/101-quantity-makers/" class="md-nav__link">
+      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
         Au 101: Quantity Makers
       </a>
     </li>
@@ -789,7 +847,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/102-api-types/" class="md-nav__link">
+      <a href="../../tutorial/102-api-types/" class="md-nav__link">
         Au 102: API Types
       </a>
     </li>
@@ -803,7 +861,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/103-unit-conversions/" class="md-nav__link">
+      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
         Au 103: Unit Conversions
       </a>
     </li>
@@ -844,7 +902,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
         Au 101: Quantity Makers Exercise
       </a>
     </li>
@@ -858,7 +916,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/exercise/102-api-types/" class="md-nav__link">
+      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
         Au 102: API Types Exercise
       </a>
     </li>
@@ -872,7 +930,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
         Au 103: Unit Conversions Exercise
       </a>
     </li>
@@ -913,6 +971,48 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#general-apis" class="md-nav__link">
+    General APIs
+  </a>
+  
+    <nav class="md-nav" aria-label="General APIs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pownx" class="md-nav__link">
+    pow&lt;N&gt;(x)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rootnx" class="md-nav__link">
+    root&lt;N&gt;(x)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#helpers" class="md-nav__link">
+    Helpers (inverse, squared, cubed, sqrt, cbrt)
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -929,9 +1029,73 @@
   
 
 
-<h1 id="how-to-guides">How-to guides<a class="headerlink" href="#how-to-guides" title="Permanent link">&para;</a></h1>
-<p>This section provides detailed instructions for various common tasks that come up in the course of
-using the library.  See the navigational menu for a list of the guides.</p>
+<h1 id="powers">Powers<a class="headerlink" href="#powers" title="Permanent link">&para;</a></h1>
+<p>Several of our <a href="../detail/monovalue_types/">monovalue types</a> (such as <a href="../unit/">units</a> and
+<a href="../magnitude/">magnitudes</a>) can be raised to powers. This includes negative exponents (such as the
+inverse), and fractional exponents (such as roots).</p>
+<p>When <a href="../detail/monovalue_types/#switching">expressed as values</a> (as opposed to types), we provide
+the same APIs for each of them.</p>
+<h2 id="general-apis">General APIs<a class="headerlink" href="#general-apis" title="Permanent link">&para;</a></h2>
+<p>In what follows, <code>x</code> stands for an instance of the appropriate monovalue type.  For example, it
+might be <code>Meters{}</code> (a unit), <code>mag&lt;18&gt;()</code> (a magnitude), or some other type.</p>
+<h3 id="pownx"><code>pow&lt;N&gt;(x)</code><a class="headerlink" href="#pownx" title="Permanent link">&para;</a></h3>
+<p>Raise the input <code>x</code> to the <code>N</code>th power.</p>
+<p><strong>Example signature:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// T is an appropriate monovalue type (a unit, a magnitude, ...).</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">intmax_t</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+</code></pre></div>
+<p><strong>Result:</strong> An instance of the Nth power of the type of <code>x</code>.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><code>pow&lt;3&gt;(mag&lt;4&gt;())</code> yields <code>mag&lt;64&gt;()</code>.</p>
+</div>
+<h3 id="rootnx"><code>root&lt;N&gt;(x)</code><a class="headerlink" href="#rootnx" title="Permanent link">&para;</a></h3>
+<p>Take the Nth root of the input.</p>
+<p><strong>Example signature:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// T is an appropriate monovalue type (a unit, a magnitude, ...).</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">intmax_t</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+</code></pre></div>
+<p><strong>Result:</strong> An instance of the Nth root of the type of <code>x</code>.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><code>root&lt;2&gt;(mag&lt;49&gt;())</code> yields <code>mag&lt;7&gt;()</code>.</p>
+</div>
+<h2 id="helpers">Helpers (<code>inverse</code>, <code>squared</code>, <code>cubed</code>, <code>sqrt</code>, <code>cbrt</code>)<a class="headerlink" href="#helpers" title="Permanent link">&para;</a></h2>
+<p>Some powers and roots are very common.  It&rsquo;s useful to have shortcuts for these to make the code
+more readable.  The following helpers are available to operate on an instance, <code>x</code>, of any
+compatible monovalue type (a unit, a magnitude, &hellip;):</p>
+<table>
+<thead>
+<tr>
+<th>Helper</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>inverse(x)</code></td>
+<td><code>pow&lt;-1&gt;(x)</code></td>
+</tr>
+<tr>
+<td><code>squared(x)</code></td>
+<td><code>pow&lt;2&gt;(x)</code></td>
+</tr>
+<tr>
+<td><code>cubed(x)</code></td>
+<td><code>pow&lt;3&gt;(x)</code></td>
+</tr>
+<tr>
+<td><code>sqrt(x)</code></td>
+<td><code>root&lt;2&gt;(x)</code></td>
+</tr>
+<tr>
+<td><code>cbrt(x)</code></td>
+<td><code>root&lt;3&gt;(x)</code></td>
+</tr>
+</tbody>
+</table>
 
 
 
@@ -953,7 +1117,7 @@ using the library.  See the navigational menu for a list of the guides.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../discussion/implementation/vector_space/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Vector Space Representations" rel="prev">
+          <a href="../magnitude/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Magnitude" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -962,20 +1126,20 @@ using the library.  See the navigational menu for a list of the guides.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Vector Space Representations
+                Magnitude
               </div>
             </div>
           </a>
         
         
           
-          <a href="new-units/" class="md-footer__link md-footer__link--next" aria-label="Next: Defining new units" rel="next">
+          <a href="../prefix/" class="md-footer__link md-footer__link--next" aria-label="Next: Prefix" rel="next">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Defining new units
+                Prefix
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1011,10 +1175,10 @@ using the library.  See the navigational menu for a list of the guides.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.b4d07000.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b4d07000.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       

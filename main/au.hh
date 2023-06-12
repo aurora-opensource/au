@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.2-4-gcf05243
+// Version identifier: 0.3.2-5-gade6520
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -373,6 +373,63 @@ constexpr auto parens_if(const StringT &s) {
 }
 
 }  // namespace detail
+}  // namespace au
+
+
+namespace au {
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Generic mathematical convenience functions.
+//
+// The reason these exist is to be able to make unit expressions easier to read in common cases.
+// They also work for dimensions and magnitudes.
+
+//
+// This section works around an error:
+//
+//    warning: use of function template name with no prior declaration in function call with
+//    explicit template arguments is a C++20 extension [-Wc++20-extensions]
+//
+// We work around it by providing declarations, even though those declarations are never used.
+//
+namespace no_prior_declaration_workaround {
+struct Dummy;
+}  // namespace no_prior_declaration_workaround
+template <std::intmax_t N>
+auto root(no_prior_declaration_workaround::Dummy);
+template <std::intmax_t N>
+auto pow(no_prior_declaration_workaround::Dummy);
+
+// Make "inverse" an alias for "pow<-1>" when the latter exists (for anything).
+template <typename T>
+constexpr auto inverse(T x) -> decltype(pow<-1>(x)) {
+    return pow<-1>(x);
+}
+
+// Make "squared" an alias for "pow<2>" when the latter exists (for anything).
+template <typename T>
+constexpr auto squared(T x) -> decltype(pow<2>(x)) {
+    return pow<2>(x);
+}
+
+// Make "cubed" an alias for "pow<3>" when the latter exists (for anything).
+template <typename T>
+constexpr auto cubed(T x) -> decltype(pow<3>(x)) {
+    return pow<3>(x);
+}
+
+// Make "sqrt" an alias for "root<2>" when the latter exists (for anything).
+template <typename T>
+constexpr auto sqrt(T x) -> decltype(root<2>(x)) {
+    return root<2>(x);
+}
+
+// Make "cbrt" an alias for "root<3>" when the latter exists (for anything).
+template <typename T>
+constexpr auto cbrt(T x) -> decltype(root<3>(x)) {
+    return root<3>(x);
+}
+
 }  // namespace au
 
 
@@ -1334,6 +1391,26 @@ using DimQuotientT = PackQuotientT<Dimension, T, U>;
 template <typename T>
 using DimInverseT = PackInverseT<Dimension, T>;
 
+template <typename... BP1s, typename... BP2s>
+constexpr auto operator*(Dimension<BP1s...>, Dimension<BP2s...>) {
+    return DimProductT<Dimension<BP1s...>, Dimension<BP2s...>>{};
+}
+
+template <typename... BP1s, typename... BP2s>
+constexpr auto operator/(Dimension<BP1s...>, Dimension<BP2s...>) {
+    return DimQuotientT<Dimension<BP1s...>, Dimension<BP2s...>>{};
+}
+
+// Roots and powers for Dimension instances.
+template <std::intmax_t N, typename... BPs>
+constexpr DimPowerT<Dimension<BPs...>, N> pow(Dimension<BPs...>) {
+    return {};
+}
+template <std::intmax_t N, typename... BPs>
+constexpr DimPowerT<Dimension<BPs...>, 1, N> root(Dimension<BPs...>) {
+    return {};
+}
+
 template <typename... Dims>
 struct CommonDimension;
 template <typename... Dims>
@@ -2099,41 +2176,6 @@ constexpr UnitPowerT<U, Exp> pow(U) {
 template <std::uintmax_t Deg, typename U, typename = std::enable_if_t<IsUnit<U>::value>>
 constexpr UnitPowerT<U, 1, Deg> root(U) {
     return {};
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Generic mathematical convenience functions.
-//
-// The reason these exist is to be able to make Unit expressions easier to read in common cases.
-
-// Make "squared" an alias for "pow<2>" when the latter exists (for anything).
-template <typename T>
-constexpr auto squared(T x) -> decltype(pow<2>(x)) {
-    return pow<2>(x);
-}
-
-// Make "cubed" an alias for "pow<3>" when the latter exists (for anything).
-template <typename T>
-constexpr auto cubed(T x) -> decltype(pow<3>(x)) {
-    return pow<3>(x);
-}
-
-// Make "sqrt" an alias for "root<2>" when the latter exists (for anything).
-template <typename T>
-constexpr auto sqrt(T x) -> decltype(root<2>(x)) {
-    return root<2>(x);
-}
-
-// Make "cubed" an alias for "root<3>" when the latter exists (for anything).
-template <typename T>
-constexpr auto cbrt(T x) -> decltype(root<3>(x)) {
-    return root<3>(x);
-}
-
-// Make "inverse" an alias for "pow<-1>" when the latter exists (for anything).
-template <typename T>
-constexpr auto inverse(T x) -> decltype(pow<-1>(x)) {
-    return pow<-1>(x);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -556,6 +556,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../powers/" class="md-nav__link">
+        Powers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../prefix/" class="md-nav__link">
         Prefix
       </a>
@@ -850,17 +864,17 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_7" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_8" >
       
       
       
-        <label class="md-nav__link" for="__nav_8_7" id="__nav_8_7_label" tabindex="0">
+        <label class="md-nav__link" for="__nav_8_8" id="__nav_8_8_label" tabindex="0">
           Detail
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_7_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_8_7">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8_8">
           <span class="md-nav__icon md-icon"></span>
           Detail
         </label>
@@ -1539,43 +1553,8 @@ In what follows, we&rsquo;ll use this convention:</p>
 </li>
 </ul>
 <h3 id="helpers-for-powers-and-roots">Helpers for powers and roots<a class="headerlink" href="#helpers-for-powers-and-roots" title="Permanent link">&para;</a></h3>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>We plan to make these available for <a href="../magnitude/"><code>Magnitude</code></a> and
-<a href="../detail/dimension/"><code>Dimension</code></a> as well.  See
-<a href="https://github.com/aurora-opensource/au/issues/84">#84</a> to track progress.</p>
-</div>
-<p>Each of the following helpers are available to operate on a unit instance, <code>u</code>:</p>
-<table>
-<thead>
-<tr>
-<th>Helper</th>
-<th>Result</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>inverse(u)</code></td>
-<td><code>pow&lt;-1&gt;(u)</code></td>
-</tr>
-<tr>
-<td><code>squared(u)</code></td>
-<td><code>pow&lt;2&gt;(u)</code></td>
-</tr>
-<tr>
-<td><code>cubed(u)</code></td>
-<td><code>pow&lt;3&gt;(u)</code></td>
-</tr>
-<tr>
-<td><code>sqrt(u)</code></td>
-<td><code>root&lt;2&gt;(u)</code></td>
-</tr>
-<tr>
-<td><code>cbrt(u)</code></td>
-<td><code>root&lt;3&gt;(u)</code></td>
-</tr>
-</tbody>
-</table>
+<p>Units support all of the <a href="../powers/#helpers">power helpers</a>.  So, for example, for a unit instance
+<code>u</code>, you can write <code>sqrt(u)</code> as a more readable alternative to <code>root&lt;2&gt;(u)</code>.</p>
 <h3 id="scaling-by-magnitude">Scaling by <code>Magnitude</code><a class="headerlink" href="#scaling-by-magnitude" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> A new unit which has been scaled by the given magnitude.  More specifically, for a unit
 <em>instance</em> <code>u</code> and magnitude instance <code>m</code>, this operation:</p>

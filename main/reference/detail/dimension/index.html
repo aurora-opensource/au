@@ -556,6 +556,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../powers/" class="md-nav__link">
+        Powers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../prefix/" class="md-nav__link">
         Prefix
       </a>
@@ -619,17 +633,17 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_7" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_8" checked>
       
       
       
-        <label class="md-nav__link" for="__nav_8_7" id="__nav_8_7_label" tabindex="0">
+        <label class="md-nav__link" for="__nav_8_8" id="__nav_8_8_label" tabindex="0">
           Detail
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_7_label" aria-expanded="true">
-        <label class="md-nav__title" for="__nav_8_7">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_8_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_8_8">
           <span class="md-nav__icon md-icon"></span>
           Detail
         </label>
@@ -687,6 +701,54 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    Operations
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiplication" class="md-nav__link">
+    Multiplication
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#division" class="md-nav__link">
+    Division
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#powers" class="md-nav__link">
+    Powers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roots" class="md-nav__link">
+    Roots
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#helpers-for-powers-and-roots" class="md-nav__link">
+    Helpers for powers and roots
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#included-base-dimensions" class="md-nav__link">
@@ -939,6 +1001,54 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    Operations
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiplication" class="md-nav__link">
+    Multiplication
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#division" class="md-nav__link">
+    Division
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#powers" class="md-nav__link">
+    Powers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roots" class="md-nav__link">
+    Roots
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#helpers-for-powers-and-roots" class="md-nav__link">
+    Helpers for powers and roots
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#included-base-dimensions" class="md-nav__link">
     Included base dimensions
   </a>
@@ -976,6 +1086,63 @@ arithmetic always takes place at compile time.</p>
 and never see them in their compiler errors.  Instead, users will work with <a href="../../unit/"><em>units</em></a>,
 which each carry their own dimension information.  The main situation where an end user would use
 <code>Dimension</code> directly is to define the <em>first</em> unit for a novel <em>base</em> dimension.</p>
+<h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
+<h3 id="multiplication">Multiplication<a class="headerlink" href="#multiplication" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The product of two <code>Dimension</code> values.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>types</em> <code>D1</code> and <code>D2</code>:<ul>
+<li><code>DimProductT&lt;D1, D2&gt;</code></li>
+</ul>
+</li>
+<li>For <em>instances</em> <code>d1</code> and <code>d2</code>:<ul>
+<li><code>d1 * d2</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="division">Division<a class="headerlink" href="#division" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The quotient of two <code>Dimension</code> values.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>types</em> <code>D1</code> and <code>D2</code>:<ul>
+<li><code>DimQuotientT&lt;D1, D2&gt;</code></li>
+</ul>
+</li>
+<li>For <em>instances</em> <code>d1</code> and <code>d2</code>:<ul>
+<li><code>d1 / d2</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="powers">Powers<a class="headerlink" href="#powers" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A <code>Dimension</code> raised to an integral power.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>D</code>, and an integral power <code>N</code>:<ul>
+<li><code>DimPowerT&lt;D, N&gt;</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>d</code>, and an integral power <code>N</code>:<ul>
+<li><code>pow&lt;N&gt;(d)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="roots">Roots<a class="headerlink" href="#roots" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> An integral root of a <code>Dimension</code>.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>D</code>, and an integral root <code>N</code>:<ul>
+<li><code>DimPowerT&lt;D, 1, N&gt;</code> (because the <span class="arithmatex"><span class="MathJax_Preview">N^\text{th}</span><script type="math/tex">N^\text{th}</script></span> root is equivalent to the
+  <span class="arithmatex"><span class="MathJax_Preview">\left(\frac{1}{N}\right)^\text{th}</span><script type="math/tex">\left(\frac{1}{N}\right)^\text{th}</script></span> power)</li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>d</code>, and an integral root <code>N</code>:<ul>
+<li><code>root&lt;N&gt;(d)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="helpers-for-powers-and-roots">Helpers for powers and roots<a class="headerlink" href="#helpers-for-powers-and-roots" title="Permanent link">&para;</a></h3>
+<p>Dimensions support all of the <a href="../../powers/#helpers">power helpers</a>.  So, for example, for
+a dimension instance <code>d</code>, you can write <code>sqrt(d)</code> as a more readable alternative to <code>root&lt;2&gt;(d)</code>.</p>
 <h2 id="included-base-dimensions">Included base dimensions<a class="headerlink" href="#included-base-dimensions" title="Permanent link">&para;</a></h2>
 <p>Au includes the following base dimensions:</p>
 <ul>
