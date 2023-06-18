@@ -119,6 +119,7 @@ TEST(UnpackIfSoloT, ReturnsEnclosedElementIfExactlyOne) {
 }
 
 TEST(PackProductT, UnaryProductIsIdentity) {
+    StaticAssertTypeEq<PackProductT<Pack, Pack<>>, Pack<>>();
     StaticAssertTypeEq<PackProductT<Pack, Pack<B<3>>>, Pack<B<3>>>();
 }
 

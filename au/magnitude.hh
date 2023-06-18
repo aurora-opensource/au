@@ -96,18 +96,26 @@ struct InOrderFor<Magnitude, A, B> : LexicographicTotalOrdering<A, B, detail::Or
 // Type trait based interface for Magnitude.
 
 template <typename MagT>
-struct Numerator : stdx::type_identity<Magnitude<>> {};  // Default, with specializations below.
+struct IntegerPartImpl;
 template <typename MagT>
-using NumeratorT = typename Numerator<MagT>::type;
+using IntegerPartT = typename IntegerPartImpl<MagT>::type;
+
+template <typename MagT>
+struct NumeratorImpl;
+template <typename MagT>
+using NumeratorT = typename NumeratorImpl<MagT>::type;
 
 template <typename MagT>
 using DenominatorT = NumeratorT<MagInverseT<MagT>>;
 
 template <typename MagT>
-struct IsRational : std::is_same<MagT, MagQuotientT<NumeratorT<MagT>, DenominatorT<MagT>>> {};
+struct IsRational
+    : std::is_same<MagT,
+                   MagQuotientT<IntegerPartT<NumeratorT<MagT>>, IntegerPartT<DenominatorT<MagT>>>> {
+};
 
 template <typename MagT>
-struct IsInteger : std::is_same<MagT, NumeratorT<MagT>> {};
+struct IsInteger : std::is_same<MagT, IntegerPartT<MagT>> {};
 
 // The "common magnitude" of two Magnitudes is the largest Magnitude that evenly divides both.
 //
@@ -153,6 +161,11 @@ constexpr auto operator==(Magnitude<BP1s...>, Magnitude<BP2s...>) {
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator!=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
     return !(m1 == m2);
+}
+
+template <typename... BPs>
+constexpr auto integer_part(Magnitude<BPs...>) {
+    return IntegerPartT<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
@@ -226,19 +239,28 @@ constexpr auto mag() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `numerator()` implementation.
+// `integer_part()` implementation.
 
 template <typename B, typename P>
-struct NumeratorImpl : stdx::type_identity<Magnitude<>> {};
+struct IntegerPartOfBasePower : stdx::type_identity<Magnitude<>> {};
 
+// Raise B to the largest natural number power which won't exceed (N/D), or 0 if there isn't one.
 template <std::uintmax_t B, std::intmax_t N, std::intmax_t D>
-struct NumeratorImpl<Prime<B>, std::ratio<N, D>>
-    : std::conditional<(N >= D), Magnitude<Pow<Prime<B>, (N / D)>>, Magnitude<>> {};
+struct IntegerPartOfBasePower<Prime<B>, std::ratio<N, D>>
+    : stdx::type_identity<MagPowerT<Magnitude<Prime<B>>, ((N >= D) ? (N / D) : 0)>> {};
 
-template <typename Head, typename... Tail>
-struct Numerator<Magnitude<Head, Tail...>>
-    : stdx::type_identity<MagProductT<typename NumeratorImpl<BaseT<Head>, ExpT<Head>>::type,
-                                      NumeratorT<Magnitude<Tail...>>>> {};
+template <typename... BPs>
+struct IntegerPartImpl<Magnitude<BPs...>>
+    : stdx::type_identity<
+          MagProductT<typename IntegerPartOfBasePower<BaseT<BPs>, ExpT<BPs>>::type...>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `numerator()` implementation.
+
+template <typename... BPs>
+struct NumeratorImpl<Magnitude<BPs...>>
+    : stdx::type_identity<
+          MagProductT<std::conditional_t<(ExpT<BPs>::num > 0), Magnitude<BPs>, Magnitude<>>...>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `get_value<T>(Magnitude)` implementation.
