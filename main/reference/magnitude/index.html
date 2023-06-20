@@ -687,6 +687,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#integer-part" class="md-nav__link">
+    Integer part
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#numerator-integer-part" class="md-nav__link">
     Numerator (integer part)
   </a>
@@ -1185,6 +1192,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#integer-part" class="md-nav__link">
+    Integer part
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#numerator-integer-part" class="md-nav__link">
     Numerator (integer part)
   </a>
@@ -1466,11 +1480,29 @@ does; <code>false</code> otherwise).</p>
 </ul>
 </li>
 </ul>
+<h3 id="integer-part">Integer part<a class="headerlink" href="#integer-part" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The integer part of a <code>Magnitude</code>, which is another <code>Magnitude</code>.</p>
+<p>For example, the &ldquo;integer part&rdquo; of <span class="arithmatex"><span class="MathJax_Preview">\frac{\sqrt{18}}{5\pi}</span><script type="math/tex">\frac{\sqrt{18}}{5\pi}</script></span> would be <span class="arithmatex"><span class="MathJax_Preview">3</span><script type="math/tex">3</script></span>, because <span class="arithmatex"><span class="MathJax_Preview">\sqrt{27}
+= 3\sqrt{2}</span><script type="math/tex">\sqrt{27}
+= 3\sqrt{2}</script></span>, and <span class="arithmatex"><span class="MathJax_Preview">3</span><script type="math/tex">3</script></span> is the integer part of <span class="arithmatex"><span class="MathJax_Preview">3\sqrt{2}</span><script type="math/tex">3\sqrt{2}</script></span>.</p>
+<p>If the input magnitude is an integer, then this operation is the identity.</p>
+<p>If the input magnitude is <em>not</em> an integer, then this operation produces the largest integer factor
+that can be extracted from the numerator (that is, the base powers with positive exponent).<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li><code>IntegerPartT&lt;M&gt;</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>integer_part(m)</code></li>
+</ul>
+</li>
+</ul>
 <h3 id="numerator-integer-part">Numerator (integer part)<a class="headerlink" href="#numerator-integer-part" title="Permanent link">&para;</a></h3>
-<p><strong>Result:</strong> The integer part of the numerator we would have if a <code>Magnitude</code> were written as
-a fraction.  This result is another <code>Magnitude</code>.</p>
-<p>For example, the &ldquo;numerator&rdquo; of <span class="arithmatex"><span class="MathJax_Preview">\frac{3\sqrt{3}}{5\pi}</span><script type="math/tex">\frac{3\sqrt{3}}{5\pi}</script></span> would be <span class="arithmatex"><span class="MathJax_Preview">3</span><script type="math/tex">3</script></span>, because it is the integer
-part of <span class="arithmatex"><span class="MathJax_Preview">3\sqrt{3}</span><script type="math/tex">3\sqrt{3}</script></span>.</p>
+<p><strong>Result:</strong> The numerator we would have if a <code>Magnitude</code> were written as a fraction.  This result is
+another <code>Magnitude</code>.</p>
+<p>For example, the &ldquo;numerator&rdquo; of <span class="arithmatex"><span class="MathJax_Preview">\frac{3\sqrt{3}}{5\pi}</span><script type="math/tex">\frac{3\sqrt{3}}{5\pi}</script></span> would be <span class="arithmatex"><span class="MathJax_Preview">3\sqrt{3}</span><script type="math/tex">3\sqrt{3}</script></span>.</p>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For a <em>type</em> <code>M</code>:<ul>
@@ -1482,16 +1514,10 @@ part of <span class="arithmatex"><span class="MathJax_Preview">3\sqrt{3}</span><
 </ul>
 </li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This name and/or convention may be subject to change; see
-<a href="https://github.com/aurora-opensource/au/issues/83">#83</a>.</p>
-</div>
 <h3 id="denominator-integer-part">Denominator (integer part)<a class="headerlink" href="#denominator-integer-part" title="Permanent link">&para;</a></h3>
-<p><strong>Result:</strong> The integer part of the denominator we would have if a <code>Magnitude</code> were written as
-a fraction.  This result is another <code>Magnitude</code>.</p>
-<p>For example, the &ldquo;denominator&rdquo; of <span class="arithmatex"><span class="MathJax_Preview">\frac{3\sqrt{3}}{5\pi}</span><script type="math/tex">\frac{3\sqrt{3}}{5\pi}</script></span> would be <span class="arithmatex"><span class="MathJax_Preview">5</span><script type="math/tex">5</script></span>, because it is the integer
-part of <span class="arithmatex"><span class="MathJax_Preview">5\pi</span><script type="math/tex">5\pi</script></span>.</p>
+<p><strong>Result:</strong> The denominator we would have if a <code>Magnitude</code> were written as a fraction.  This result is
+another <code>Magnitude</code>.</p>
+<p>For example, the &ldquo;denominator&rdquo; of <span class="arithmatex"><span class="MathJax_Preview">\frac{3\sqrt{3}}{5\pi}</span><script type="math/tex">\frac{3\sqrt{3}}{5\pi}</script></span> would be <span class="arithmatex"><span class="MathJax_Preview">5\pi</span><script type="math/tex">5\pi</script></span>.</p>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For a <em>type</em> <code>M</code>:<ul>
@@ -1503,10 +1529,18 @@ part of <span class="arithmatex"><span class="MathJax_Preview">5\pi</span><scrip
 </ul>
 </li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This name and/or convention may be subject to change; see
-<a href="https://github.com/aurora-opensource/au/issues/83">#83</a>.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>The concept <code>integer_part()</code> is conceptually ambiguous when applied to non-integers.  So, too,
+for <code>numerator()</code> and <code>denominator()</code> applied to irrational numbers.  These utilities serve two
+purposes.  First, they provide a means for checking whether a given magnitude is a member of the
+unambiguous set &mdash; that is, we can check whether a magnitude is an integer by checking whether it&rsquo;s
+equal to its &ldquo;integer part&rdquo;.  Second, they enable us to automatically construct labels for
+magnitudes, by breaking them into the same kinds of pieces that a human reader would expect.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
 </div>
 
 
