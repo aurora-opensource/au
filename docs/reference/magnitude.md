@@ -193,6 +193,11 @@ In what follows, we'll use this convention:
 - For an _instance_ `m`, and an integral root `N`:
     - `root<N>(m)`
 
+### Helpers for powers and roots
+
+Magnitudes support all of the [power helpers](./powers.md#helpers).  So, for example, for
+a magnitude instance `m`, you can write `sqrt(m)` as a more readable alternative to `root<2>(m)`.
+
 ## Traits
 
 These traits provide information, at compile time, about the number represented by a `Magnitude`.
@@ -221,13 +226,38 @@ does; `false` otherwise).
 - For an _instance_ `m`:
     - `is_rational(m)`
 
+### Integer part
+
+**Result:** The integer part of a `Magnitude`, which is another `Magnitude`.
+
+For example, the "integer part" of $\frac{\sqrt{18}}{5\pi}$ would be $3$, because $\sqrt{27}
+= 3\sqrt{2}$, and $3$ is the integer part of $3\sqrt{2}$.
+
+If the input magnitude is an integer, then this operation is the identity.
+
+If the input magnitude is _not_ an integer, then this operation produces the largest integer factor
+that can be extracted from the numerator (that is, the base powers with positive exponent).[^1]
+
+[^1]: The concept `integer_part()` is conceptually ambiguous when applied to non-integers.  So, too,
+for `numerator()` and `denominator()` applied to irrational numbers.  These utilities serve two
+purposes.  First, they provide a means for checking whether a given magnitude is a member of the
+unambiguous set --- that is, we can check whether a magnitude is an integer by checking whether it's
+equal to its "integer part".  Second, they enable us to automatically construct labels for
+magnitudes, by breaking them into the same kinds of pieces that a human reader would expect.
+
+**Syntax:**
+
+- For a _type_ `M`:
+    - `IntegerPartT<M>`
+- For an _instance_ `m`:
+    - `integer_part(m)`
+
 ### Numerator (integer part)
 
-**Result:** The integer part of the numerator we would have if a `Magnitude` were written as
-a fraction.  This result is another `Magnitude`.
+**Result:** The numerator we would have if a `Magnitude` were written as a fraction.  This result is
+another `Magnitude`.
 
-For example, the "numerator" of $\frac{3\sqrt{3}}{5\pi}$ would be $3$, because it is the integer
-part of $3\sqrt{3}$.
+For example, the "numerator" of $\frac{3\sqrt{3}}{5\pi}$ would be $3\sqrt{3}$.
 
 **Syntax:**
 
@@ -236,17 +266,12 @@ part of $3\sqrt{3}$.
 - For an _instance_ `m`:
     - `numerator(m)`
 
-!!! warning
-    This name and/or convention may be subject to change; see
-    [#83](https://github.com/aurora-opensource/au/issues/83).
-
 ### Denominator (integer part)
 
-**Result:** The integer part of the denominator we would have if a `Magnitude` were written as
-a fraction.  This result is another `Magnitude`.
+**Result:** The denominator we would have if a `Magnitude` were written as a fraction.  This result is
+another `Magnitude`.
 
-For example, the "denominator" of $\frac{3\sqrt{3}}{5\pi}$ would be $5$, because it is the integer
-part of $5\pi$.
+For example, the "denominator" of $\frac{3\sqrt{3}}{5\pi}$ would be $5\pi$.
 
 **Syntax:**
 
@@ -254,7 +279,3 @@ part of $5\pi$.
     - `DenominatorT<M>`
 - For an _instance_ `m`:
     - `denominator(m)`
-
-!!! warning
-    This name and/or convention may be subject to change; see
-    [#83](https://github.com/aurora-opensource/au/issues/83).

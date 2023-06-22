@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/packs.hh"
+#include "au/power_aliases.hh"
 
 namespace au {
 
@@ -42,6 +43,26 @@ template <typename T, typename U>
 using DimQuotientT = PackQuotientT<Dimension, T, U>;
 template <typename T>
 using DimInverseT = PackInverseT<Dimension, T>;
+
+template <typename... BP1s, typename... BP2s>
+constexpr auto operator*(Dimension<BP1s...>, Dimension<BP2s...>) {
+    return DimProductT<Dimension<BP1s...>, Dimension<BP2s...>>{};
+}
+
+template <typename... BP1s, typename... BP2s>
+constexpr auto operator/(Dimension<BP1s...>, Dimension<BP2s...>) {
+    return DimQuotientT<Dimension<BP1s...>, Dimension<BP2s...>>{};
+}
+
+// Roots and powers for Dimension instances.
+template <std::intmax_t N, typename... BPs>
+constexpr DimPowerT<Dimension<BPs...>, N> pow(Dimension<BPs...>) {
+    return {};
+}
+template <std::intmax_t N, typename... BPs>
+constexpr DimPowerT<Dimension<BPs...>, 1, N> root(Dimension<BPs...>) {
+    return {};
+}
 
 template <typename... Dims>
 struct CommonDimension;

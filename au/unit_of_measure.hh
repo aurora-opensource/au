@@ -16,6 +16,7 @@
 
 #include "au/dimension.hh"
 #include "au/magnitude.hh"
+#include "au/power_aliases.hh"
 #include "au/stdx/type_traits.hh"
 #include "au/utility/string_constant.hh"
 #include "au/zero.hh"
@@ -339,41 +340,6 @@ constexpr UnitPowerT<U, Exp> pow(U) {
 template <std::uintmax_t Deg, typename U, typename = std::enable_if_t<IsUnit<U>::value>>
 constexpr UnitPowerT<U, 1, Deg> root(U) {
     return {};
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Generic mathematical convenience functions.
-//
-// The reason these exist is to be able to make Unit expressions easier to read in common cases.
-
-// Make "squared" an alias for "pow<2>" when the latter exists (for anything).
-template <typename T>
-constexpr auto squared(T x) -> decltype(pow<2>(x)) {
-    return pow<2>(x);
-}
-
-// Make "cubed" an alias for "pow<3>" when the latter exists (for anything).
-template <typename T>
-constexpr auto cubed(T x) -> decltype(pow<3>(x)) {
-    return pow<3>(x);
-}
-
-// Make "sqrt" an alias for "root<2>" when the latter exists (for anything).
-template <typename T>
-constexpr auto sqrt(T x) -> decltype(root<2>(x)) {
-    return root<2>(x);
-}
-
-// Make "cubed" an alias for "root<3>" when the latter exists (for anything).
-template <typename T>
-constexpr auto cbrt(T x) -> decltype(root<3>(x)) {
-    return root<3>(x);
-}
-
-// Make "inverse" an alias for "pow<-1>" when the latter exists (for anything).
-template <typename T>
-constexpr auto inverse(T x) -> decltype(pow<-1>(x)) {
-    return pow<-1>(x);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -10,6 +10,7 @@
       "tools/bin/buildifier",
       "tools/bin/clang-format",
       "tools/bin/make-single-file",
+      "tools/bin/mkdocs",
       ".bazelrc",
       ".clang-format",
       ".envrc",

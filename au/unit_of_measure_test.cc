@@ -240,6 +240,26 @@ TEST(Root, FunctionalInterfaceHandlesInstancesCorrectly) {
     EXPECT_TRUE(are_units_quantity_equivalent(cbrt_cubic_inches, Inches{}));
 }
 
+TEST(Inverse, RaisesToPowerNegativeOne) {
+    EXPECT_TRUE(are_units_quantity_equivalent(inverse(Meters{}), pow<-1>(Meters{})));
+}
+
+TEST(Squared, RaisesToPowerTwo) {
+    EXPECT_TRUE(are_units_quantity_equivalent(squared(Meters{}), pow<2>(Meters{})));
+}
+
+TEST(Cubed, RaisesToPowerThree) {
+    EXPECT_TRUE(are_units_quantity_equivalent(cubed(Meters{}), pow<3>(Meters{})));
+}
+
+TEST(Sqrt, TakesSecondRoot) {
+    EXPECT_TRUE(are_units_quantity_equivalent(sqrt(Meters{}), root<2>(Meters{})));
+}
+
+TEST(Cbrt, TakesThirdRoot) {
+    EXPECT_TRUE(are_units_quantity_equivalent(cbrt(Meters{}), root<3>(Meters{})));
+}
+
 TEST(IsDimensionless, PicksOutDimensionlessUnit) {
     EXPECT_FALSE((IsDimensionless<Feet>::value));
 

@@ -17,5 +17,6 @@
 #    bazel run //:requirements.update -- --upgrade
 #
 
+mike
 mkdocs
 mkdocs-material
