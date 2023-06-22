@@ -25,7 +25,7 @@ namespace au {
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/howto/new-units).
 template <typename T>
 struct FahrenheitLabel {
-    static constexpr const char label[] = "F";
+    static constexpr const char label[] = "degF";
 };
 template <typename T>
 constexpr const char FahrenheitLabel<T>::label[];
