@@ -393,9 +393,9 @@ TEST(Quantity, ProductOfInvertingUnitsIsScalar) {
 }
 
 TEST(Quantity, ScalarDivisionWorks) {
-    constexpr auto x = feet(10);
-    EXPECT_EQ(x / 2, feet(5));
-    EXPECT_EQ(pow<-1>(feet)(2), 20 / x);
+    constexpr auto x = feet(10.);
+    EXPECT_EQ(x / 2, feet(5.));
+    EXPECT_EQ(pow<-1>(feet)(2.), 20 / x);
 }
 
 TEST(Quantity, ShortHandAdditionAssignmentWorks) {
