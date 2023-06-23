@@ -296,10 +296,12 @@ class Quantity {
     // Scalar division.
     template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
     friend constexpr auto operator/(Quantity a, T s) {
+        warn_if_integer_division<T>();
         return make_quantity<UnitT>(a.value_ / s);
     }
     template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
     friend constexpr auto operator/(T s, Quantity a) {
+        warn_if_integer_division<T>();
         return make_quantity<decltype(pow<-1>(unit))>(s / a.value_);
     }
 
@@ -313,11 +315,7 @@ class Quantity {
     // Division for dimensioned quantities.
     template <typename OtherUnit, typename OtherRep>
     constexpr auto operator/(Quantity<OtherUnit, OtherRep> q) const {
-        constexpr bool uses_integer_division =
-            (std::is_integral<Rep>::value && std::is_integral<OtherRep>::value);
-        static_assert(!uses_integer_division,
-                      "Integer division forbidden: use integer_quotient() if you really want it");
-
+        warn_if_integer_division<OtherRep>();
         return make_quantity_unless_unitless<UnitQuotientT<Unit, OtherUnit>>(value_ /
                                                                              q.in(OtherUnit{}));
     }
@@ -380,6 +378,14 @@ class Quantity {
     }
 
  private:
+    template <typename OtherRep>
+    static void warn_if_integer_division() {
+        constexpr bool uses_integer_division =
+            (std::is_integral<Rep>::value && std::is_integral<OtherRep>::value);
+        static_assert(!uses_integer_division,
+                      "Integer division forbidden: use integer_quotient() if you really want it");
+    }
+
     constexpr Quantity(Rep value) : value_{value} {}
 
     Rep value_{0};
