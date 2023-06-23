@@ -398,6 +398,11 @@ TEST(Quantity, ScalarDivisionWorks) {
     EXPECT_EQ(pow<-1>(feet)(2.), 20 / x);
 }
 
+TEST(Quantity, ScalarDivisionIsConstexprCompatible) {
+    constexpr auto quotient = feet(10.) / 2;
+    EXPECT_EQ(quotient, feet(5.));
+}
+
 TEST(Quantity, ShortHandAdditionAssignmentWorks) {
     auto d = feet(1.25);
     d += feet(2.75);

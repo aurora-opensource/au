@@ -379,7 +379,7 @@ class Quantity {
 
  private:
     template <typename OtherRep>
-    static void warn_if_integer_division() {
+    static constexpr void warn_if_integer_division() {
         constexpr bool uses_integer_division =
             (std::is_integral<Rep>::value && std::is_integral<OtherRep>::value);
         static_assert(!uses_integer_division,
