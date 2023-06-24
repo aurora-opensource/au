@@ -296,7 +296,6 @@ class Quantity {
     // Scalar division.
     template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
     friend constexpr auto operator/(Quantity a, T s) {
-        warn_if_integer_division<T>();
         return make_quantity<UnitT>(a.value_ / s);
     }
     template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
