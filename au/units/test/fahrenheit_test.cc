@@ -20,7 +20,7 @@
 
 namespace au {
 
-TEST(Fahrenheit, HasExpectedLabel) { expect_label<Fahrenheit>("F"); }
+TEST(Fahrenheit, HasExpectedLabel) { expect_label<Fahrenheit>("degF"); }
 
 TEST(Fahrenheit, HasCorrectQuantityRelationshipWithCelsius) {
     EXPECT_EQ(fahrenheit_qty(9), celsius_qty(5));

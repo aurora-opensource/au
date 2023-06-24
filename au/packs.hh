@@ -426,8 +426,8 @@ template <template <class...> class Pack>
 struct PackProduct<Pack> : stdx::type_identity<Pack<>> {};
 
 // 1-ary case:
-template <template <class...> class Pack, typename T>
-struct PackProduct<Pack, Pack<T>> : stdx::type_identity<Pack<T>> {};
+template <template <class...> class Pack, typename... Ts>
+struct PackProduct<Pack, Pack<Ts...>> : stdx::type_identity<Pack<Ts...>> {};
 
 // 2-ary Base case: two null packs.
 template <template <class...> class Pack>

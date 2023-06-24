@@ -77,6 +77,17 @@ TEST(Sqrt, TakesSecondRoot) { EXPECT_EQ(sqrt(mag<81>()), mag<9>()); }
 
 TEST(Cbrt, TakesThirdRoot) { EXPECT_EQ(cbrt(mag<27>()), mag<3>()); }
 
+TEST(IntegerPart, IdentityForIntegers) {
+    EXPECT_EQ(integer_part(mag<1>()), mag<1>());
+    EXPECT_EQ(integer_part(mag<2>()), mag<2>());
+    EXPECT_EQ(integer_part(mag<2380>()), mag<2380>());
+}
+
+TEST(IntegerPart, PicksOutIntegersFromNumerator) {
+    // sqrt(32) = 4 * sqrt(2)
+    EXPECT_EQ(integer_part(PI * sqrt(mag<32>()) / mag<15>()), mag<4>());
+}
+
 TEST(Numerator, IsIdentityForInteger) {
     EXPECT_EQ(numerator(mag<2>()), mag<2>());
     EXPECT_EQ(numerator(mag<31415>()), mag<31415>());
@@ -86,8 +97,16 @@ TEST(Numerator, PutsFractionInLowestTerms) {
     EXPECT_EQ(numerator(mag<24>() / mag<16>()), mag<3>());
 }
 
+TEST(Numerator, IncludesNonIntegersWithPositiveExponent) {
+    EXPECT_EQ(numerator(PI * sqrt(mag<24>() / mag<16>())), PI * sqrt(mag<3>()));
+}
+
 TEST(Denominator, PutsFractionInLowestTerms) {
     EXPECT_EQ(denominator(mag<24>() / mag<16>()), mag<2>());
+}
+
+TEST(Denominator, IncludesNonIntegersWithNegativeExponent) {
+    EXPECT_EQ(denominator(sqrt(mag<24>() / mag<16>()) / PI), PI * sqrt(mag<2>()));
 }
 
 TEST(IsRational, TrueForRatios) {
