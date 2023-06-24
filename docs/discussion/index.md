@@ -11,5 +11,12 @@ knowledge.
 
 Here's a guide to the main categories.
 
+- **[Au Idioms](./idioms/index.md).**  Usage patterns that are more specific to Au, and can help you
+  get the most out of it.
+
+- **[Generic concepts](./concepts/index.md).**  Ideas that can enhance your effectiveness in working
+  with any units library, or with quantities generally.
+
 - **[Implementation details](./implementation/index.md).**  Concepts and design discussions that
-  help you understand _how_ we made Au.
+  help you understand _how_ we made Au.  These are less likely to directly make you a more effective
+  user, but they may be of interest for the curious.

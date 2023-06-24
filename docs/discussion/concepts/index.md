@@ -1,0 +1,26 @@
+# Generic Concepts
+
+This section discusses concepts about units libraries generally. Some may be more precise
+formulations of principles that most users know intuitively, such as [Arithmetic
+Operations](./arithmetic.md).  Others may be novel innovations which originated with Au, but would
+enhance _any_ units library, such as [Zero](./zero.md).  From A to Z, all will sharpen your thinking
+and help you use units libraries more effectively.
+
+- **[Arithmetic Operations](./arithmetic.md)**.  Find out about the two kinds of math you can do
+  with quantities, and learn a simple rule for reasoning about the results of products and
+  quotients.
+
+- **[Common Units](./common_unit.md)**.  To compare, add, or subtract quantities expressed in
+  different units, the first step is to convert them to the same unit.  But which one?  This page
+  teaches you what choice we make, and what advantages it has.
+
+- **[Dimensionless Units and Quantities](./dimensionless.md)**.  "Dimensionless" isn't the same
+  thing as "unitless"; we support dimensionless units, like `Percent`.  Here we explain how the
+  library handles these situations, and avoids common pitfalls.
+
+- **[Quantity Point](./quantity_point.md)**.  An abstraction for "point types" that have units.
+  Most use cases don't need this, but for a few --- including temperatures --- it's indispensable.
+
+- **[Zero](./zero.md)**.  Switching to a units library can make some easy computations hard.  Learn
+  how we make them easy again with a special constant, `ZERO`, that works with quantities of any
+  units.

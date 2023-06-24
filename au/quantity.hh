@@ -72,7 +72,7 @@ using CorrespondingQuantityT =
 
 // Redirect various cvref-qualified specializations to the "main" specialization.
 //
-// We use this slightly counter-intuitive approach, rather than a more conventional
+// We use this slightly counterintuitive approach, rather than a more conventional
 // `remove_cvref_t`-based approach, because the latter causes an _internal compiler error_ on the
 // ACI QNX build.
 template <typename T>

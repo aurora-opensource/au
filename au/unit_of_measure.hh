@@ -145,17 +145,17 @@ struct AssociatedUnit : stdx::type_identity<U> {};
 template <typename U>
 using AssociatedUnitT = typename AssociatedUnit<U>::type;
 
-// `CommonUnitT`: the largest unit that evenly divides both U1 and U2.
+// `CommonUnitT`: the largest unit that evenly divides all input units.
 //
-// A specialization will only exist if U1 and U2 are both units.
+// A specialization will only exist if all input types are units.
 //
-// If U1 and U2 are both units, but have different Dimensions, then the request is ill-formed and we
-// will produce a hard error.
+// If the inputs are units, but their Dimensions aren't all identical, then the request is
+// ill-formed and we will produce a hard error.
 //
-// It may happen that U1 and U2 have the same Dimension, but there is no unit which evenly divides
-// both (because their quotient is irrational).  In this case, there is no uniquely defined answer,
-// but the program should still produce _some_ answer.  We guarantee that the result is symmetric
-// under interchange of U1 and U2, and also associative when combined with other units.  The
+// It may happen that the input units have the same Dimension, but there is no unit which evenly
+// divides them (because some pair of input units has an irrational quotient).  In this case, there
+// is no uniquely defined answer, but the program should still produce _some_ answer.  We guarantee
+// that the result is associative, and symmetric under any reordering of the input units.  The
 // specific implementation choice will be driven by convenience and simplicity.
 template <typename... Us>
 struct ComputeCommonUnit;
@@ -178,9 +178,9 @@ using CommonUnitT = typename ComputeCommonUnit<Us...>::type;
 // which is consistent with the above policy whenever it's achievable, and produces reasonable
 // results in all other cases.
 //
-// A specialization will only exist if U1 and U2 are both units, and will exist but produce a hard
-// error if they are units of different Dimension.  We also strive to keep the result symmetric
-// under interchange of U1 and U2, and associative when combined with other units.
+// A specialization will only exist if the inputs are all units, and will exist but produce a hard
+// error if any two input units have different Dimensions.  We also strive to keep the result
+// associative, and symmetric under interchange of any inputs.
 template <typename... Us>
 struct ComputeCommonPointUnit;
 template <typename... Us>
