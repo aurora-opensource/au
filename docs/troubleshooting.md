@@ -259,12 +259,10 @@ operation (at least in this format).
 
 ## No type named 'type' in 'std::common_type'
 
-**Meaning:**  You probably tried to perform a "common-unit operation" (addition, subtraction,
-comparison) with two incompatible Quantities.  Typically, this means they have different
-_dimensions_, which makes this an intrinsically meaningless operation.
-
-!!! warning "TODO"
-    Make a page which explains common-unit operations, and link to it.
+**Meaning:**  You probably tried to perform a ["common-unit
+operation"](./discussion/concepts/arithmetic.md#common-unit) (addition, subtraction, comparison)
+with two incompatible Quantities.  Typically, this means they have different _dimensions_, which
+makes this an intrinsically meaningless operation.
 
 **Solution:**  Figure out what dimension you expected them to have, and which value had the wrong
 dimension.  Then, figure out how to fix your expression so it has the right dimension.
@@ -348,7 +346,7 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
     au/error_examples.cc:41:26:   required from here
     ```
 
-## Integer division forbidden
+## Integer division forbidden {#integer-division-forbidden}
 
 **Meaning:**  Although Au generally tries to act just like the underlying raw numeric types, we also
 try to prevent wrong code that _looks_ correct from compiling.  It turns out to be just too easy to

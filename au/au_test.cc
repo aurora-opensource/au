@@ -16,10 +16,13 @@
 
 #include "au/prefix.hh"
 #include "au/testing.hh"
+#include "au/units/celsius.hh"
+#include "au/units/fahrenheit.hh"
 #include "au/units/fathoms.hh"
 #include "au/units/furlongs.hh"
 #include "au/units/hertz.hh"
 #include "au/units/hours.hh"
+#include "au/units/kelvins.hh"
 #include "au/units/knots.hh"
 #include "au/units/meters.hh"
 #include "au/units/miles.hh"
@@ -97,6 +100,10 @@ TEST(RoundAs, ReproducesXkcd2585) {
 
     // Authoritative reference: https://xkcd.com/2585/
     EXPECT_EQ((miles / hour)(45), rounded_speed);
+}
+
+TEST(QuantityPoint, DocumentationExampleIsCorrect) {
+    EXPECT_LT(fahrenheit_pt(-40) + celsius_qty(60), kelvins_pt(300));
 }
 
 }  // namespace au
