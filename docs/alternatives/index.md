@@ -94,6 +94,7 @@ at all, and if so, how hard it will be to obtain.
         <th></th>
         <th>Boost</th>
         <th>nholthaus</th>
+        <th>bernedom/SI</th>
         <th>mp-units</th>
         <th class="highlight">Au</th>
     </tr>
@@ -109,6 +110,7 @@ at all, and if so, how hard it will be to obtain.
             (unclear which, but best in either case)
         </td>
         <td class="good">C++14</td>
+        <td class="fair">C++17</td>
         <td class="poor">C++20</td>
         <td class="good">C++14</td>
     </tr>
@@ -121,7 +123,8 @@ at all, and if so, how hard it will be to obtain.
         </td>
         <td class="fair">Part of boost</td>
         <td class="good">Single, self-contained header</td>
-        <td class="fair">First class conan support; available on vcpkg</td>
+        <td class="fair">Available on conan</td>
+        <td class="fair">Available on conan and vcpkg</td>
         <td class="best">
             <p>Supports single-header delivery, with features:
             <ul>
@@ -159,6 +162,7 @@ These costs can bring significant benefits, but we still want them to be as smal
         <th></th>
         <th>Boost</th>
         <th>nholthaus</th>
+        <th>bernedom/SI</th>
         <th>mp-units</th>
         <th class="highlight">Au</th>
     </tr>
@@ -176,6 +180,7 @@ These costs can bring significant benefits, but we still want them to be as smal
         </td>
         <td class="na"></td>
         <td class="poor">Very slow, but can be <i>greatly</i> improved by removing I/O support and most units</td>
+        <td class="na"></td>
         <td class="na"></td>
         <td class="good">Possibly "best", but will need to assess all libraries on the same code</td>
     </tr>
@@ -200,6 +205,7 @@ These costs can bring significant benefits, but we still want them to be as smal
             </a>
         </td>
         <td class="fair">Positional dimensions</td>
+        <td class="na"></td>
         <td class="good">Pioneered strong typedefs for units</td>
         <td class="best">
             <ul>
@@ -230,6 +236,7 @@ features.
         <th></th>
         <th>Boost</th>
         <th>nholthaus</th>
+        <th>bernedom/SI</th>
         <th>mp-units</th>
         <th class="highlight">Au</th>
     </tr>
@@ -248,6 +255,7 @@ features.
         <td class="fair">
             Integer Reps <a href="https://github.com/nholthaus/units/issues/225">unsafe</a>
         </td>
+        <td class="na"></td>
         <td class="good">
             Policy <a
             href="https://mpusz.github.io/units/framework/conversions_and_casting.html">consistent
@@ -274,6 +282,7 @@ features.
         </td>
         <td class="fair"></td>
         <td class="fair"></td>
+        <td class="na"></td>
         <td class="fair"></td>
         <td class="best">Only contains unit-safe interfaces</td>
     </tr>
@@ -300,6 +309,7 @@ features.
                 </li>
             </ul>
         </td>
+        <td class="na"></td>
         <td class="good"></td>
         <td class="best">
             <ul>
@@ -320,6 +330,7 @@ features.
         </td>
         <td class="fair"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">Prefix only</a></td>
         <td class="poor"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">No</a></td>
+        <td class="na"></td>
         <td class="fair">
             <a
             href="https://mpusz.github.io/units/framework/quantities.html#quantity-references-experimental">Quantity
@@ -336,6 +347,7 @@ features.
         </td>
         <td class="good"></td>
         <td class="fair">Possible, but user-facing types use a global "preferred" Rep.</td>
+        <td class="na"></td>
         <td class="good"></td>
         <td class="good"></td>
     </tr>
@@ -363,6 +375,7 @@ features.
             href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#nic-units.usage.example">Generic
             templates, constrained with traits</a>
         </td>
+        <td class="na"></td>
         <td class="best">Concepts excel here</td>
         <td class="fair">
             Currently clunky.  Could be better by adding concepts in extra
@@ -387,6 +400,7 @@ features.
                 <li class="x"><a href="https://github.com/nholthaus/units/issues/131">Can't add dimensions</a></li>
             </ul>
         </td>
+        <td class="na"></td>
         <td class="best">Can even handle, e.g., systems of "natural" units</td>
         <td class="good">
             Can add <a href="https://aurora-opensource.github.io/au/howto/new-units">new units</a>
@@ -408,6 +422,7 @@ features.
         </td>
         <td class="fair">No interop with other units libraries</td>
         <td class="fair">No interop with other units libraries</td>
+        <td class="na"></td>
         <td class="good">
             <a href="https://mpusz.github.io/units/use_cases/interoperability.html">
                 <code>quantity_like_traits</code>
@@ -435,6 +450,7 @@ features.
             href="https://github.com/nholthaus/units/issues/240">can't distinguish quantity from
             point</a>.
         </td>
+        <td class="na"></td>
         <td class="good"></td>
         <td class="good"></td>
     </tr>
@@ -459,6 +475,7 @@ features.
         <td class="fair">
             Uses ratio plus "pi powers": good angle handling, but vulnerable to overflow
         </td>
+        <td class="na"></td>
         <td class="good">
             Full support for <a
             href="https://mpusz.github.io/units/framework/magnitudes.html">Magnitudes</a>
@@ -488,6 +505,7 @@ features.
         <td class="fair">
             Can trim by excluding <code>&lt;iostream&gt;</code>, but integer-Rep support is poor.
         </td>
+        <td class="na"></td>
         <td class="good">Assumed to be good, based on mixed-Rep support</td>
         <td class="best">
             Best choice of all:
@@ -516,6 +534,7 @@ features.
         </td>
         <td class="poor"></td>
         <td class="good">UDLs</td>
+        <td class="na"></td>
         <td class="best">
             UDLs and <a
             href="https://mpusz.github.io/units/framework/quantities.html#quantity-references-experimental">Quantity
@@ -542,6 +561,7 @@ features.
             Effectively floating-point only (integer types <a
             href="https://github.com/nholthaus/units/issues/225">unsafe</a>)
         </td>
+        <td class="na"></td>
         <td class="best">
             Well defined
             <a href="https://mpusz.github.io/units/reference/core/concepts.html#_CPPv4I0EN5units14RepresentationE">Representation
@@ -573,6 +593,7 @@ features.
             default constructor</a> to construct, but no special facility for comparison
         </td>
         <td class="fair">Supports <code>copysign()</code>, but no special construction or comparison</td>
+        <td class="na"></td>
         <td class="fair">Has <code>q::zero()</code> member, but no special construction or comparison</td>
         <td class="best">Can use <code>ZERO</code> to construct or compare any quantity</td>
     </tr>
@@ -591,6 +612,7 @@ features.
             value </a>
         </td>
         <td class="good"></td>
+        <td class="na"></td>
         <td class="good"></td>
         <td class="good"></td>
     </tr>
@@ -603,6 +625,7 @@ features.
         </td>
         <td class="poor"></td>
         <td class="best"></td>
+        <td class="na"></td>
         <td class="poor"></td>
         <td class="poor">
             Plan to support someday; see
@@ -621,6 +644,7 @@ features.
         </td>
         <td class="na"></td>
         <td class="poor"></td>
+        <td class="na"></td>
         <td class="best"></td>
         <td class="poor">No plans to support.</td>
     </tr>
@@ -636,6 +660,7 @@ features.
         </td>
         <td class="good"></td>
         <td class="poor">Single, implicit global system</td>
+        <td class="na"></td>
         <td class="good"></td>
         <td class="poor">
             Single, implicit global system. (Intentional design tradeoff: reduces learning curve,
@@ -654,6 +679,7 @@ features.
         </td>
         <td class="good"></td>
         <td class="fair">Types exist, but conflated with quantity names</td>
+        <td class="na"></td>
         <td class="good"></td>
         <td class="best">Can form instances and do arithmetic</td>
     </tr>
@@ -668,6 +694,7 @@ features.
         </td>
         <td class="poor">Present in user-facing APIs</td>
         <td class="poor">Present in user-facing APIs</td>
+        <td class="na"></td>
         <td class="good">Confined to outer compatibility layer</td>
         <td class="best">No macros</td>
     </tr>
