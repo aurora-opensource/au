@@ -12,20 +12,20 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/powers/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/corresponding_quantity/">
       
       
-        <link rel="prev" href="../math/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../prefix/">
+        <link rel="next" href="../magnitude/">
       
       <link rel="icon" href="../../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
-        <title>Powers - The Au units library</title>
+        <title>Corresponding Quantity - The Au units library</title>
       
     
     
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#powers" class="md-skip">
+        <a href="#corresponding-quantity" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Powers
+              Corresponding Quantity
             
           </span>
         </div>
@@ -720,11 +720,119 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../corresponding_quantity/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Corresponding Quantity
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Corresponding Quantity
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-specialize" class="md-nav__link">
+    How to specialize
+  </a>
+  
+    <nav class="md-nav" aria-label="How to specialize">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#conversions" class="md-nav__link">
+    Conversions
+  </a>
+  
+    <nav class="md-nav" aria-label="Conversions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-to-quantity" class="md-nav__link">
+    From T to Quantity
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-quantity-to-t" class="md-nav__link">
+    From Quantity to T
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#as-quantity" class="md-nav__link">
+    as_quantity()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#built-in-corresponding-quantities" class="md-nav__link">
+    Built-in corresponding quantities
+  </a>
+  
+    <nav class="md-nav" aria-label="Built-in corresponding quantities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chrono-duration" class="md-nav__link">
+    std::chrono::duration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nholthausunits-library" class="md-nav__link">
+    nholthaus/units library
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -762,79 +870,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Powers
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../powers/" class="md-nav__link">
         Powers
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#general-apis" class="md-nav__link">
-    General APIs
-  </a>
-  
-    <nav class="md-nav" aria-label="General APIs">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pownx" class="md-nav__link">
-    pow&lt;N&gt;(x)
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#rootnx" class="md-nav__link">
-    root&lt;N&gt;(x)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#helpers" class="md-nav__link">
-    Helpers (inverse, squared, cubed, sqrt, cbrt)
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1200,24 +1240,37 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#general-apis" class="md-nav__link">
-    General APIs
+  <a href="#how-to-specialize" class="md-nav__link">
+    How to specialize
   </a>
   
-    <nav class="md-nav" aria-label="General APIs">
+    <nav class="md-nav" aria-label="How to specialize">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#pownx" class="md-nav__link">
-    pow&lt;N&gt;(x)
+  <a href="#conversions" class="md-nav__link">
+    Conversions
+  </a>
+  
+    <nav class="md-nav" aria-label="Conversions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t-to-quantity" class="md-nav__link">
+    From T to Quantity
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#rootnx" class="md-nav__link">
-    root&lt;N&gt;(x)
+  <a href="#from-quantity-to-t" class="md-nav__link">
+    From Quantity to T
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1227,9 +1280,36 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#helpers" class="md-nav__link">
-    Helpers (inverse, squared, cubed, sqrt, cbrt)
+  <a href="#as-quantity" class="md-nav__link">
+    as_quantity()
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#built-in-corresponding-quantities" class="md-nav__link">
+    Built-in corresponding quantities
+  </a>
+  
+    <nav class="md-nav" aria-label="Built-in corresponding quantities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chrono-duration" class="md-nav__link">
+    std::chrono::duration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nholthausunits-library" class="md-nav__link">
+    nholthaus/units library
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1251,73 +1331,168 @@
   
 
 
-<h1 id="powers">Powers<a class="headerlink" href="#powers" title="Permanent link">&para;</a></h1>
-<p>Several of our <a href="../detail/monovalue_types/">monovalue types</a> (such as <a href="../unit/">units</a> and
-<a href="../magnitude/">magnitudes</a>) can be raised to powers. This includes negative exponents (such as the
-inverse), and fractional exponents (such as roots).</p>
-<p>When <a href="../detail/monovalue_types/#switching">expressed as values</a> (as opposed to types), we provide
-the same APIs for each of them.</p>
-<h2 id="general-apis">General APIs<a class="headerlink" href="#general-apis" title="Permanent link">&para;</a></h2>
-<p>In what follows, <code>x</code> stands for an instance of the appropriate monovalue type.  For example, it
-might be <code>Meters{}</code> (a unit), <code>mag&lt;18&gt;()</code> (a magnitude), or some other type.</p>
-<h3 id="pownx"><code>pow&lt;N&gt;(x)</code><a class="headerlink" href="#pownx" title="Permanent link">&para;</a></h3>
-<p>Raise the input <code>x</code> to the <code>N</code>th power.</p>
-<p><strong>Example signature:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// T is an appropriate monovalue type (a unit, a magnitude, ...).</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">intmax_t</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+<h1 id="corresponding-quantity">Corresponding Quantity<a class="headerlink" href="#corresponding-quantity" title="Permanent link">&para;</a></h1>
+<p>Sometimes, a type <code>T</code> may be exactly &ldquo;morally equivalent&rdquo; to a specific <code>Quantity</code> specialization.
+If <code>T</code> stores a value in an underlying type, <code>Rep</code>, and that value represents a quantity whose units
+are <a href="../unit/#quantity-equivalent">quantity-equivalent</a> to <code>Unit</code>, then there&rsquo;s no danger in
+converting between <code>T</code> and <code>Quantity&lt;Unit, Rep&gt;</code>, and it would be convenient to make this as easy as
+possible.</p>
+<p>The <code>CorrespondingQuantity&lt;T&gt;</code> type trait makes this possible.  When this trait is specialized for
+a type <code>T</code>, users can add conversions in either or both directions.  These conversions will allow
+<code>T</code> to participate in the usual <a href="../quantity/#implicit-from-quantity"><code>Quantity</code>-to-<code>Quantity</code> implicit
+conversions</a> <em>as if it were</em> its corresponding quantity type.</p>
+<h2 id="how-to-specialize">How to specialize<a class="headerlink" href="#how-to-specialize" title="Permanent link">&para;</a></h2>
+<p>A valid specialization of <code>CorrespondingQuantity</code> must have two type traits:</p>
+<ul>
+<li><code>Unit</code> is the unit type for the units of <code>T</code>.</li>
+<li><code>Rep</code> is the underlying storage type in <code>T</code>.</li>
+</ul>
+<p>To be useful, it should also have <em>at least</em> one of the conversions defined in the next section.</p>
+<h3 id="conversions">Conversions<a class="headerlink" href="#conversions" title="Permanent link">&para;</a></h3>
+<p>When this relationship exists, it means that <code>T</code> is &ldquo;morally equivalent&rdquo; to its corresponding
+quantity type.  We trust <code>T</code> to hold its information as carefully as our <code>Quantity</code> type does.
+Therefore, we enable implicit conversions.</p>
+<h4 id="t-to-quantity">From <code>T</code> to <code>Quantity</code><a class="headerlink" href="#t-to-quantity" title="Permanent link">&para;</a></h4>
+<p>To enable implicit conversions from <code>T</code> to its corresponding quantity <code>Quantity&lt;Unit, Rep&gt;</code>, define
+a static member function with signature <code>Rep extract_value(T)</code>, as in the following example.</p>
+<details class="example">
+<summary>Example of setting up implicit conversion from <code>T</code> to <code>Quantity</code></summary>
+<p>Suppose we have a type <code>MyMeters</code>, whose member <code>int value</code> represents a length in meters.  We
+could set up implicit conversions from <code>MyMeters</code> to <code>Quantity&lt;Meters, int&gt;</code> like so:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">template</span><span class="o">&lt;&gt;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">CorrespondingQuantity</span><span class="o">&lt;</span><span class="n">MyMeters</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">Unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Meters</span><span class="p">;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">Rep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">int</span><span class="p">;</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">Rep</span><span class="w"> </span><span class="nf">extract_value</span><span class="p">(</span><span class="n">MyMeters</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">value</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">};</span>
 </code></pre></div>
-<p><strong>Result:</strong> An instance of the Nth power of the type of <code>x</code>.</p>
-<div class="admonition example">
-<p class="admonition-title">Example</p>
-<p><code>pow&lt;3&gt;(mag&lt;4&gt;())</code> yields <code>mag&lt;64&gt;()</code>.</p>
-</div>
-<h3 id="rootnx"><code>root&lt;N&gt;(x)</code><a class="headerlink" href="#rootnx" title="Permanent link">&para;</a></h3>
-<p>Take the Nth root of the input.</p>
-<p><strong>Example signature:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// T is an appropriate monovalue type (a unit, a magnitude, ...).</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">intmax_t</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+</details>
+<p>Recall that the custom type <code>T</code> is considered to be fully equivalent to its corresponding quantity
+<code>Q</code>.  This means that it will also automatically convert to <em>any <code>Quantity</code> which <code>Q</code> converts to</em>.
+See the following example.</p>
+<details class="example">
+<summary>Example of &lsquo;two-hop&rsquo; conversion, continued from above</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Milli</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyMeters</span><span class="p">{</span><span class="mi">3</span><span class="p">};</span>
 </code></pre></div>
-<p><strong>Result:</strong> An instance of the Nth root of the type of <code>x</code>.</p>
-<div class="admonition example">
-<p class="admonition-title">Example</p>
-<p><code>root&lt;2&gt;(mag&lt;49&gt;())</code> yields <code>mag&lt;7&gt;()</code>.</p>
+<p>Here we have a &ldquo;two-hop&rdquo; conversion.  <code>MyMeters{3}</code> is treated as equivalent to
+a <code>Quantity&lt;Meters, int&gt;</code> holding a <code>3</code>.  This, in turn, would safely and implicitly convert to
+a <code>QuantityD&lt;Milli&lt;Meters&gt;&gt;</code>.  Therefore, we permit the implicit conversion in a single step,
+directly from <code>MyMeters{3}</code>.</p>
+<p>The final result would be <code>milli(meters)(3000.0)</code>.</p>
+</details>
+<h4 id="from-quantity-to-t">From <code>Quantity</code> to <code>T</code><a class="headerlink" href="#from-quantity-to-t" title="Permanent link">&para;</a></h4>
+<p>To enable implicit conversions from the corresponding quantity <code>Quantity&lt;Unit, Rep&gt;</code> of a type <code>T</code>,
+to <code>T</code> itself, define a static member function with signature <code>T construct_from_value(Rep)</code>, as in
+the following example.</p>
+<details class="example">
+<summary>Example of setting up implicit conversion from <code>Quantity</code> to <code>T</code></summary>
+<p>Suppose we have a type <code>MyDegrees</code>, whose member <code>float value</code> represents an angle in degrees.
+We could set up implicit conversions from <code>MyDegrees</code> to <code>Quantity&lt;Degrees, float&gt;</code> like so:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">template</span><span class="o">&lt;&gt;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">CorrespondingQuantity</span><span class="o">&lt;</span><span class="n">MyDegrees</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">Unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Degrees</span><span class="p">;</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">Rep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">float</span><span class="p">;</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">MyDegrees</span><span class="w"> </span><span class="nf">construct_from_value</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">MyDegrees</span><span class="p">{</span><span class="n">x</span><span class="p">};</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">};</span>
+</code></pre></div>
+</details>
+<p>Recall that the custom type <code>T</code> is considered to be fully equivalent to its corresponding quantity
+<code>Q</code>.  This means that <em>any <code>Quantity</code> which converts to <code>Q</code></em> will also convert to <code>T</code>.  See the
+following example.</p>
+<details class="example">
+<summary>Example of &lsquo;two-hop&rsquo; conversion, continued from above</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">MyDegrees</span><span class="w"> </span><span class="n">angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">radians</span><span class="p">(</span><span class="n">get_value</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">PI</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">()));</span>
+</code></pre></div>
+<p>Here we have a &ldquo;two-hop&rdquo; conversion.  The corresponding quantity for <code>MyDegrees</code> is
+<code>Quantity&lt;Degrees, float&gt;</code>.  This, in turn, would be safely and implicitly constructible from
+a <code>Quantity&lt;Radians, double&gt;</code>.  Therefore, we also permit <code>MyDegrees</code> to be constructed from
+this <code>Quantity&lt;Radians, double&gt;</code>.</p>
+<p>The final result would be <code>MyDegrees{90.0f}</code>, within floating point rounding error.</p>
+</details>
+<h2 id="as-quantity"><code>as_quantity()</code><a class="headerlink" href="#as-quantity" title="Permanent link">&para;</a></h2>
+<p>The <code>as_quantity()</code> function converts any type to an instance of its corresponding <code>Quantity</code>, as
+long as <a href="#t-to-quantity">this direction of conversion</a> has been set up.  This concise, readable
+utility handles any cases where the implicit conversion is not triggered automatically &mdash; for
+example, multiplication.</p>
+<details class="example">
+<summary>Multiplying an Au speed by a <code>chrono</code> duration</summary>
+<p>Imagine we have a third-party API which measures durations, and returns its results using the
+venerable <code>std::chrono</code> library.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">third_party</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">nanoseconds</span><span class="w"> </span><span class="nf">measure_duration</span><span class="p">();</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">}</span>
+</code></pre></div>
+<p>We&rsquo;d like to combine that with an Au speed that we have, so we can measure the distance
+travelled.  Let&rsquo;s compare the naive approach (which won&rsquo;t work) with the <code>as_quantity</code> approach
+that fixes it.  (Once you click on a tab below, you can use the arrow keys to &ldquo;flip&rdquo; back and
+forth.)</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Naive approach (broken)</label><label for="__tabbed_1_2"><code>as_quantity()</code> (fixed)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">speed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">)(</span><span class="mf">65.0</span><span class="p">);</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">const</span><span class="w"> </span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">speed</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">measure_duration</span><span class="p">();</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1">// Compiler error! ------------------^</span>
+</code></pre></div>
+<p>This is broken: there&rsquo;s no overload for <code>operator*(Quantity, std::chrono::duration)</code>.</p>
 </div>
-<h2 id="helpers">Helpers (<code>inverse</code>, <code>squared</code>, <code>cubed</code>, <code>sqrt</code>, <code>cbrt</code>)<a class="headerlink" href="#helpers" title="Permanent link">&para;</a></h2>
-<p>Some powers and roots are very common.  It&rsquo;s useful to have shortcuts for these to make the code
-more readable.  The following helpers are available to operate on an instance, <code>x</code>, of any
-compatible monovalue type (a unit, a magnitude, &hellip;):</p>
-<table>
-<thead>
-<tr>
-<th>Helper</th>
-<th>Result</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>inverse(x)</code></td>
-<td><code>pow&lt;-1&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>squared(x)</code></td>
-<td><code>pow&lt;2&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>cubed(x)</code></td>
-<td><code>pow&lt;3&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>sqrt(x)</code></td>
-<td><code>root&lt;2&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>cbrt(x)</code></td>
-<td><code>root&lt;3&gt;(x)</code></td>
-</tr>
-</tbody>
-</table>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">speed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">)(</span><span class="mf">65.0</span><span class="p">);</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">const</span><span class="w"> </span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">speed</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">as_quantity</span><span class="p">(</span><span class="n">measure_duration</span><span class="p">());</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1">// Fixed: -----------------------------^^^^^^^^^^^</span>
+</code></pre></div>
+<p><code>as_quantity(measure_duration())</code> means &ldquo;take the result of <code>measure_duration()</code>, and
+re-express it as whatever <code>Quantity</code> is most appropriate&rdquo;.  At this point, Au&rsquo;s machinery
+takes over.  We get a result in <span class="arithmatex"><span class="MathJax_Preview">(\text{mi} \cdot \text{ns} / \text{hr})</span><script type="math/tex">(\text{mi} \cdot \text{ns} / \text{hr})</script></span>, and this gets
+automatically converted to <span class="arithmatex"><span class="MathJax_Preview">\text{m}</span><script type="math/tex">\text{m}</script></span> &mdash; using a single multiplicative factor, computed at
+compile time, naturally.</p>
+</div>
+</div>
+</div>
+</details>
+<p><code>as_quantity()</code> is <a href="https://en.cppreference.com/w/cpp/language/sfinae">SFINAE</a>-friendly.  If you
+have a template on a type <code>T</code>, you can use <code>delctype(as_quantity(T{}))</code> in a SFINAE context &mdash; such
+as <a href="https://en.cppreference.com/w/cpp/types/enable_if"><code>std::enable_if_t</code></a>, or a trailing return
+type &mdash; to constrain the template.  If you do, then it will only generate specializations for types
+<code>T</code> which have a corresponding quantity to which they can convert.  There are <a href="https://github.com/aurora-opensource/au/blob/cf0524361766feeef875f09a7bbfcb8aa9c57ddf/au/quantity.hh#L569-L635">some
+examples</a>
+in the library itself.</p>
+<h2 id="built-in-corresponding-quantities">Built-in corresponding quantities<a class="headerlink" href="#built-in-corresponding-quantities" title="Permanent link">&para;</a></h2>
+<p>Au strives to minimize dependencies, but we do depend on C++14.  Therefore, for any C++14 type
+which has a corresponding quantity, we provide the <code>CorrespondingQuantity</code> machinery out of the box.</p>
+<p>Additionally, we may include files in the repository to help interoperate with other third party
+libraries.  Even though these files can&rsquo;t be part of Au proper, their availability can make it easy
+to set up compatibility.</p>
+<p>Here are the various <code>CorrespondingQuantity</code> specializations included in the repository.</p>
+<h3 id="chrono-duration"><code>std::chrono::duration</code><a class="headerlink" href="#chrono-duration" title="Permanent link">&para;</a></h3>
+<p><a href="https://en.cppreference.com/w/cpp/chrono/duration"><code>std::chrono::duration</code></a> has two template
+parameters: <code>Rep</code>, and <code>Period</code>.  When <code>Period</code> is <code>std::ratio&lt;1&gt;</code>, then this duration is equivalent
+to <code>Quantity&lt;Seconds, Rep&gt;</code>.  For any other ratio, it is equivalent to <code>Quantity&lt;X, Rep&gt;</code>, where <code>X</code>
+is <code>Seconds</code> scaled by that ratio.</p>
+<p>We include this correspondence out of the box.  This means that you can pass
+a <code>std::chrono::duration</code> type to an API expecting its corresponding <code>Quantity</code> type (and vice
+versa); add a <code>std::chrono::duration</code> type to a <code>Quantity</code> of any time unit; and so on.</p>
+<h3 id="nholthausunits-library">nholthaus/units library<a class="headerlink" href="#nholthausunits-library" title="Permanent link">&para;</a></h3>
+<p>We include a file that sets up a correspondence between the quantity types in the popular
+<a href="https://github.com/nholthaus/units">nholthaus/units</a> library, and those in Au.</p>
+<p>This file is <strong>not</strong> &ldquo;active&rdquo; by default.  You will need to set it up in your project. Later, we may
+add a how-to guide that explains in detail how to do that.  In the meantime, you can follow the
+instructions in the files themselves.</p>
+<ul>
+<li>
+<p><a href="https://github.com/aurora-opensource/au/blob/main/compatibility/nholthaus_units.hh"><code>compatibility/nholthaus_units.hh</code></a>
+  is the file that <em>defines</em> the <code>CorrespondingQuantity</code> machinery.  It includes <a href="https://github.com/aurora-opensource/au/blob/cf0524361766feeef875f09a7bbfcb8aa9c57ddf/compatibility/nholthaus_units.hh#L17-L33">detailed
+  instructions</a>
+  in a comment at the top.</p>
+</li>
+<li>
+<p><a href="https://github.com/aurora-opensource/au/blob/main/compatibility/nholthaus_units_example_usage.hh"><code>compatibility/nholthaus_units_example_usage.hh</code></a>
+  is a worked example of the kind of &ldquo;interface file&rdquo; you would need to create.  This is the file
+  that end users would include in order to get the <code>CorrespondingQuantity</code> machinery.</p>
+</li>
+</ul>
+<script src="../../assets/hrh4.js" async=false defer=false></script>
 
 
 
@@ -1339,7 +1514,7 @@ compatible monovalue type (a unit, a magnitude, &hellip;):</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../math/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Math functions" rel="prev">
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Reference Docs" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -1348,20 +1523,20 @@ compatible monovalue type (a unit, a magnitude, &hellip;):</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Math functions
+                Reference Docs
               </div>
             </div>
           </a>
         
         
           
-          <a href="../prefix/" class="md-footer__link md-footer__link--next" aria-label="Next: Prefix" rel="next">
+          <a href="../magnitude/" class="md-footer__link md-footer__link--next" aria-label="Next: Magnitude" rel="next">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Prefix
+                Magnitude
               </div>
             </div>
             <div class="md-footer__button md-icon">

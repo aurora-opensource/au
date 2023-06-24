@@ -12,20 +12,20 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/powers/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/zero/">
       
       
-        <link rel="prev" href="../math/">
+        <link rel="prev" href="../unit/">
       
       
-        <link rel="next" href="../prefix/">
+        <link rel="next" href="../detail/">
       
       <link rel="icon" href="../../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
-        <title>Powers - The Au units library</title>
+        <title>Zero - The Au units library</title>
       
     
     
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#powers" class="md-skip">
+        <a href="#zero" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Powers
+              Zero
             
           </span>
         </div>
@@ -762,79 +762,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Powers
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../powers/" class="md-nav__link">
         Powers
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#general-apis" class="md-nav__link">
-    General APIs
-  </a>
-  
-    <nav class="md-nav" aria-label="General APIs">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pownx" class="md-nav__link">
-    pow&lt;N&gt;(x)
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#rootnx" class="md-nav__link">
-    root&lt;N&gt;(x)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#helpers" class="md-nav__link">
-    Helpers (inverse, squared, cubed, sqrt, cbrt)
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -900,11 +832,86 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../zero/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Zero
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Zero
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#conversions" class="md-nav__link">
+    Conversions
+  </a>
+  
+    <nav class="md-nav" aria-label="Conversions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#implicit-conversions" class="md-nav__link">
+    Implicit conversions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantity-constructor" class="md-nav__link">
+    Quantity constructor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantitypoint-constructor" class="md-nav__link">
+    QuantityPoint constructor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#io" class="md-nav__link">
+    I/O
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1200,23 +1207,30 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#general-apis" class="md-nav__link">
-    General APIs
+  <a href="#conversions" class="md-nav__link">
+    Conversions
   </a>
   
-    <nav class="md-nav" aria-label="General APIs">
+    <nav class="md-nav" aria-label="Conversions">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#pownx" class="md-nav__link">
-    pow&lt;N&gt;(x)
+  <a href="#implicit-conversions" class="md-nav__link">
+    Implicit conversions
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#rootnx" class="md-nav__link">
-    root&lt;N&gt;(x)
+  <a href="#quantity-constructor" class="md-nav__link">
+    Quantity constructor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantitypoint-constructor" class="md-nav__link">
+    QuantityPoint constructor
   </a>
   
 </li>
@@ -1227,8 +1241,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#helpers" class="md-nav__link">
-    Helpers (inverse, squared, cubed, sqrt, cbrt)
+  <a href="#io" class="md-nav__link">
+    I/O
   </a>
   
 </li>
@@ -1251,73 +1265,36 @@
   
 
 
-<h1 id="powers">Powers<a class="headerlink" href="#powers" title="Permanent link">&para;</a></h1>
-<p>Several of our <a href="../detail/monovalue_types/">monovalue types</a> (such as <a href="../unit/">units</a> and
-<a href="../magnitude/">magnitudes</a>) can be raised to powers. This includes negative exponents (such as the
-inverse), and fractional exponents (such as roots).</p>
-<p>When <a href="../detail/monovalue_types/#switching">expressed as values</a> (as opposed to types), we provide
-the same APIs for each of them.</p>
-<h2 id="general-apis">General APIs<a class="headerlink" href="#general-apis" title="Permanent link">&para;</a></h2>
-<p>In what follows, <code>x</code> stands for an instance of the appropriate monovalue type.  For example, it
-might be <code>Meters{}</code> (a unit), <code>mag&lt;18&gt;()</code> (a magnitude), or some other type.</p>
-<h3 id="pownx"><code>pow&lt;N&gt;(x)</code><a class="headerlink" href="#pownx" title="Permanent link">&para;</a></h3>
-<p>Raise the input <code>x</code> to the <code>N</code>th power.</p>
-<p><strong>Example signature:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// T is an appropriate monovalue type (a unit, a magnitude, ...).</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">intmax_t</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
-</code></pre></div>
-<p><strong>Result:</strong> An instance of the Nth power of the type of <code>x</code>.</p>
-<div class="admonition example">
-<p class="admonition-title">Example</p>
-<p><code>pow&lt;3&gt;(mag&lt;4&gt;())</code> yields <code>mag&lt;64&gt;()</code>.</p>
-</div>
-<h3 id="rootnx"><code>root&lt;N&gt;(x)</code><a class="headerlink" href="#rootnx" title="Permanent link">&para;</a></h3>
-<p>Take the Nth root of the input.</p>
-<p><strong>Example signature:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// T is an appropriate monovalue type (a unit, a magnitude, ...).</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">intmax_t</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
-</code></pre></div>
-<p><strong>Result:</strong> An instance of the Nth root of the type of <code>x</code>.</p>
-<div class="admonition example">
-<p class="admonition-title">Example</p>
-<p><code>root&lt;2&gt;(mag&lt;49&gt;())</code> yields <code>mag&lt;7&gt;()</code>.</p>
-</div>
-<h2 id="helpers">Helpers (<code>inverse</code>, <code>squared</code>, <code>cubed</code>, <code>sqrt</code>, <code>cbrt</code>)<a class="headerlink" href="#helpers" title="Permanent link">&para;</a></h2>
-<p>Some powers and roots are very common.  It&rsquo;s useful to have shortcuts for these to make the code
-more readable.  The following helpers are available to operate on an instance, <code>x</code>, of any
-compatible monovalue type (a unit, a magnitude, &hellip;):</p>
-<table>
-<thead>
-<tr>
-<th>Helper</th>
-<th>Result</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>inverse(x)</code></td>
-<td><code>pow&lt;-1&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>squared(x)</code></td>
-<td><code>pow&lt;2&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>cubed(x)</code></td>
-<td><code>pow&lt;3&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>sqrt(x)</code></td>
-<td><code>root&lt;2&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>cbrt(x)</code></td>
-<td><code>root&lt;3&gt;(x)</code></td>
-</tr>
-</tbody>
-</table>
+<h1 id="zero">Zero<a class="headerlink" href="#zero" title="Permanent link">&para;</a></h1>
+<p><code>Zero</code> is a type that represents a quantity of &ldquo;0&rdquo; in any units.  See <a href="../../discussion/concepts/zero/">the <code>Zero</code> discussion
+doc</a> for more background motivation and use cases.</p>
+<p><code>Zero</code> is a <a href="../detail/monovalue_types/">monovalue type</a>.  Every instance of <code>Zero</code> is equivalent
+to every other instance.  In practice, it&rsquo;s easiest and most idiomatic to use the predefined
+instance, <code>ZERO</code>.</p>
+<h2 id="conversions">Conversions<a class="headerlink" href="#conversions" title="Permanent link">&para;</a></h2>
+<p>The goal is for <code>ZERO</code> to be implicitly convertible to any type for which the value of &ldquo;0&rdquo; is
+completely unambiguous.  For types in the language or the standard library, which cannot possibly
+know about <code>Zero</code>, we do this via implicit conversions.  For other types, we do this by adding
+a constructor which takes <code>Zero</code>.</p>
+<h3 id="implicit-conversions">Implicit conversions<a class="headerlink" href="#implicit-conversions" title="Permanent link">&para;</a></h3>
+<p>We provide implicit conversions to the following categories of types:</p>
+<ul>
+<li>
+<p>Any arithmetic type (<code>int</code>, <code>double</code>, <code>std::size_t</code>, &hellip;).</p>
+</li>
+<li>
+<p>Any <code>std::chrono::duration</code> type.</p>
+</li>
+</ul>
+<h3 id="quantity-constructor"><code>Quantity</code> constructor<a class="headerlink" href="#quantity-constructor" title="Permanent link">&para;</a></h3>
+<p><code>Quantity</code> is implicitly constructible from <code>Zero</code>.</p>
+<p>This means you can efficiently check the sign of any <code>Quantity</code> by comparing to <code>ZERO</code>.</p>
+<h3 id="quantitypoint-constructor"><code>QuantityPoint</code> constructor<a class="headerlink" href="#quantitypoint-constructor" title="Permanent link">&para;</a></h3>
+<p>This is explicitly deleted.  There is no unambiguous notion of which point is labeled as &ldquo;0&rdquo;; it
+depends on the choice of units.  Therefore, we delete this constructor to prevent users from relying
+on this dubious notion.</p>
+<h2 id="io">I/O<a class="headerlink" href="#io" title="Permanent link">&para;</a></h2>
+<p>If you include I/O support, then <code>Zero</code> will be streamed as <code>"0"</code>.</p>
 
 
 
@@ -1339,7 +1316,7 @@ compatible monovalue type (a unit, a magnitude, &hellip;):</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../math/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Math functions" rel="prev">
+          <a href="../unit/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Unit" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -1348,20 +1325,20 @@ compatible monovalue type (a unit, a magnitude, &hellip;):</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Math functions
+                Unit
               </div>
             </div>
           </a>
         
         
           
-          <a href="../prefix/" class="md-footer__link md-footer__link--next" aria-label="Next: Prefix" rel="next">
+          <a href="../detail/" class="md-footer__link md-footer__link--next" aria-label="Next: Implementation Details" rel="next">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Prefix
+                Implementation Details
               </div>
             </div>
             <div class="md-footer__button md-icon">

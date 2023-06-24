@@ -12,24 +12,24 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/powers/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/concepts/quantity_point/">
       
       
-        <link rel="prev" href="../math/">
+        <link rel="prev" href="../dimensionless/">
       
       
-        <link rel="next" href="../prefix/">
+        <link rel="next" href="../zero/">
       
-      <link rel="icon" href="../../assets/favicon.ico">
+      <link rel="icon" href="../../../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
-        <title>Powers - The Au units library</title>
+        <title>Quantity Point - The Au units library</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.26e3688c.min.css">
       
       
 
@@ -45,9 +45,9 @@
       
     
     
-      <link rel="stylesheet" href="../../tweaks.css">
+      <link rel="stylesheet" href="../../../tweaks.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#powers" class="md-skip">
+        <a href="#quantity-point" class="md-skip">
           Skip to content
         </a>
       
@@ -89,9 +89,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../assets/au-logo.png" alt="logo">
+  <img src="../../../assets/au-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Powers
+              Quantity Point
             
           </span>
         </div>
@@ -186,9 +186,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../assets/au-logo.png" alt="logo">
+  <img src="../../../assets/au-logo.png" alt="logo">
 
     </a>
     The Au units library
@@ -216,7 +216,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         Au documentation
       </a>
     </li>
@@ -231,7 +231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../develop/" class="md-nav__link">
+      <a href="../../../develop/" class="md-nav__link">
         Development Setup
       </a>
     </li>
@@ -246,7 +246,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/" class="md-nav__link">
+      <a href="../../../install/" class="md-nav__link">
         Installation
       </a>
     </li>
@@ -261,7 +261,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../troubleshooting/" class="md-nav__link">
+      <a href="../../../troubleshooting/" class="md-nav__link">
         Troubleshooting Guide
       </a>
     </li>
@@ -303,7 +303,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../alternatives/" class="md-nav__link">
+      <a href="../../../alternatives/" class="md-nav__link">
         Comparison of Alternatives
       </a>
     </li>
@@ -323,14 +323,16 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
       
       
       
@@ -339,7 +341,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_6">
           <span class="md-nav__icon md-icon"></span>
           Discussion
@@ -352,7 +354,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/" class="md-nav__link">
+      <a href="../../" class="md-nav__link">
         Discussion Docs
       </a>
     </li>
@@ -364,14 +366,16 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" checked>
       
       
       
@@ -380,7 +384,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_6_2">
           <span class="md-nav__icon md-icon"></span>
           Concepts
@@ -393,7 +397,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/concepts/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         Generic Concepts
       </a>
     </li>
@@ -407,7 +411,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/concepts/arithmetic/" class="md-nav__link">
+      <a href="../arithmetic/" class="md-nav__link">
         Arithmetic Operations
       </a>
     </li>
@@ -421,7 +425,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/concepts/common_unit/" class="md-nav__link">
+      <a href="../common_unit/" class="md-nav__link">
         Common Units
       </a>
     </li>
@@ -435,7 +439,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/concepts/dimensionless/" class="md-nav__link">
+      <a href="../dimensionless/" class="md-nav__link">
         Dimensionless Units and Quantities
       </a>
     </li>
@@ -447,11 +451,80 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../discussion/concepts/quantity_point/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Quantity Point
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Quantity Point
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#temperatures-are-error-prone" class="md-nav__link">
+    Temperatures are error prone
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mile-marker-math" class="md-nav__link">
+    Mile marker math
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#temperatures-revisited" class="md-nav__link">
+    Temperatures revisited
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quantitypoint-and-stdchronotime_point" class="md-nav__link">
+    QuantityPoint and std::chrono::time_point
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -463,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/concepts/zero/" class="md-nav__link">
+      <a href="../zero/" class="md-nav__link">
         Zero
       </a>
     </li>
@@ -511,7 +584,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/idioms/" class="md-nav__link">
+      <a href="../../idioms/" class="md-nav__link">
         Au Idioms
       </a>
     </li>
@@ -525,7 +598,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/idioms/unit-slots/" class="md-nav__link">
+      <a href="../../idioms/unit-slots/" class="md-nav__link">
         Unit slots
       </a>
     </li>
@@ -573,7 +646,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/implementation/" class="md-nav__link">
+      <a href="../../implementation/" class="md-nav__link">
         Implementation Details
       </a>
     </li>
@@ -587,7 +660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/implementation/vector_space/" class="md-nav__link">
+      <a href="../../implementation/vector_space/" class="md-nav__link">
         Vector Space Representations
       </a>
     </li>
@@ -643,7 +716,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/" class="md-nav__link">
+      <a href="../../../howto/" class="md-nav__link">
         How-to guides
       </a>
     </li>
@@ -657,7 +730,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/new-units/" class="md-nav__link">
+      <a href="../../../howto/new-units/" class="md-nav__link">
         Defining new units
       </a>
     </li>
@@ -677,16 +750,14 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
       
       
       
@@ -695,7 +766,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
           Reference
@@ -708,7 +779,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../../reference/" class="md-nav__link">
         Reference Docs
       </a>
     </li>
@@ -722,7 +793,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../corresponding_quantity/" class="md-nav__link">
+      <a href="../../../reference/corresponding_quantity/" class="md-nav__link">
         Corresponding Quantity
       </a>
     </li>
@@ -736,7 +807,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../magnitude/" class="md-nav__link">
+      <a href="../../../reference/magnitude/" class="md-nav__link">
         Magnitude
       </a>
     </li>
@@ -750,7 +821,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../math/" class="md-nav__link">
+      <a href="../../../reference/math/" class="md-nav__link">
         Math functions
       </a>
     </li>
@@ -762,79 +833,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Powers
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../reference/powers/" class="md-nav__link">
         Powers
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#general-apis" class="md-nav__link">
-    General APIs
-  </a>
-  
-    <nav class="md-nav" aria-label="General APIs">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pownx" class="md-nav__link">
-    pow&lt;N&gt;(x)
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#rootnx" class="md-nav__link">
-    root&lt;N&gt;(x)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#helpers" class="md-nav__link">
-    Helpers (inverse, squared, cubed, sqrt, cbrt)
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -846,7 +849,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prefix/" class="md-nav__link">
+      <a href="../../../reference/prefix/" class="md-nav__link">
         Prefix
       </a>
     </li>
@@ -860,7 +863,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quantity/" class="md-nav__link">
+      <a href="../../../reference/quantity/" class="md-nav__link">
         Quantity
       </a>
     </li>
@@ -874,7 +877,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quantity_point/" class="md-nav__link">
+      <a href="../../../reference/quantity_point/" class="md-nav__link">
         QuantityPoint
       </a>
     </li>
@@ -888,7 +891,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../unit/" class="md-nav__link">
+      <a href="../../../reference/unit/" class="md-nav__link">
         Unit
       </a>
     </li>
@@ -902,7 +905,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../zero/" class="md-nav__link">
+      <a href="../../../reference/zero/" class="md-nav__link">
         Zero
       </a>
     </li>
@@ -943,7 +946,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../detail/" class="md-nav__link">
+      <a href="../../../reference/detail/" class="md-nav__link">
         Implementation Details
       </a>
     </li>
@@ -957,7 +960,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../detail/dimension/" class="md-nav__link">
+      <a href="../../../reference/detail/dimension/" class="md-nav__link">
         Dimension
       </a>
     </li>
@@ -971,7 +974,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../detail/monovalue_types/" class="md-nav__link">
+      <a href="../../../reference/detail/monovalue_types/" class="md-nav__link">
         Monovalue Types
       </a>
     </li>
@@ -985,7 +988,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../detail/packs/" class="md-nav__link">
+      <a href="../../../reference/detail/packs/" class="md-nav__link">
         Parameter packs
       </a>
     </li>
@@ -1041,7 +1044,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/" class="md-nav__link">
+      <a href="../../../tutorial/" class="md-nav__link">
         Tutorials: home
       </a>
     </li>
@@ -1055,7 +1058,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
+      <a href="../../../tutorial/101-quantity-makers/" class="md-nav__link">
         Au 101: Quantity Makers
       </a>
     </li>
@@ -1069,7 +1072,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/102-api-types/" class="md-nav__link">
+      <a href="../../../tutorial/102-api-types/" class="md-nav__link">
         Au 102: API Types
       </a>
     </li>
@@ -1083,7 +1086,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
+      <a href="../../../tutorial/103-unit-conversions/" class="md-nav__link">
         Au 103: Unit Conversions
       </a>
     </li>
@@ -1124,7 +1127,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
         Au 101: Quantity Makers Exercise
       </a>
     </li>
@@ -1138,7 +1141,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/102-api-types/" class="md-nav__link">
         Au 102: API Types Exercise
       </a>
     </li>
@@ -1152,7 +1155,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
         Au 103: Unit Conversions Exercise
       </a>
     </li>
@@ -1200,35 +1203,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#general-apis" class="md-nav__link">
-    General APIs
+  <a href="#temperatures-are-error-prone" class="md-nav__link">
+    Temperatures are error prone
   </a>
-  
-    <nav class="md-nav" aria-label="General APIs">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pownx" class="md-nav__link">
-    pow&lt;N&gt;(x)
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#rootnx" class="md-nav__link">
-    root&lt;N&gt;(x)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#helpers" class="md-nav__link">
-    Helpers (inverse, squared, cubed, sqrt, cbrt)
+  <a href="#mile-marker-math" class="md-nav__link">
+    Mile marker math
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#temperatures-revisited" class="md-nav__link">
+    Temperatures revisited
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quantitypoint-and-stdchronotime_point" class="md-nav__link">
+    QuantityPoint and std::chrono::time_point
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
   </a>
   
 </li>
@@ -1251,73 +1255,176 @@
   
 
 
-<h1 id="powers">Powers<a class="headerlink" href="#powers" title="Permanent link">&para;</a></h1>
-<p>Several of our <a href="../detail/monovalue_types/">monovalue types</a> (such as <a href="../unit/">units</a> and
-<a href="../magnitude/">magnitudes</a>) can be raised to powers. This includes negative exponents (such as the
-inverse), and fractional exponents (such as roots).</p>
-<p>When <a href="../detail/monovalue_types/#switching">expressed as values</a> (as opposed to types), we provide
-the same APIs for each of them.</p>
-<h2 id="general-apis">General APIs<a class="headerlink" href="#general-apis" title="Permanent link">&para;</a></h2>
-<p>In what follows, <code>x</code> stands for an instance of the appropriate monovalue type.  For example, it
-might be <code>Meters{}</code> (a unit), <code>mag&lt;18&gt;()</code> (a magnitude), or some other type.</p>
-<h3 id="pownx"><code>pow&lt;N&gt;(x)</code><a class="headerlink" href="#pownx" title="Permanent link">&para;</a></h3>
-<p>Raise the input <code>x</code> to the <code>N</code>th power.</p>
-<p><strong>Example signature:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// T is an appropriate monovalue type (a unit, a magnitude, ...).</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">intmax_t</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
-</code></pre></div>
-<p><strong>Result:</strong> An instance of the Nth power of the type of <code>x</code>.</p>
-<div class="admonition example">
-<p class="admonition-title">Example</p>
-<p><code>pow&lt;3&gt;(mag&lt;4&gt;())</code> yields <code>mag&lt;64&gt;()</code>.</p>
+<h1 id="quantity-point">Quantity Point<a class="headerlink" href="#quantity-point" title="Permanent link">&para;</a></h1>
+<p>While <code>Quantity</code> works well for most units library operations, there are some situations where it
+struggles.  The most important example is <em>temperature</em>: as we&rsquo;ll soon see in detail, <code>Quantity</code>
+alone could never handle all temperature use cases simultaneously.  The tool that solves this
+problem, <code>QuantityPoint</code>, also helps similar use cases, such as atmospheric pressure.  It even
+improves seemingly unrelated use cases as well, such as along-path positions (&ldquo;mile markers&rdquo;).</p>
+<p>Overall, <code>QuantityPoint</code> is a subtle but critically important tool in a units library toolbox.
+Let&rsquo;s dive into the main motivating problem, and then learn about the properties of its solution.</p>
+<h2 id="temperatures-are-error-prone">Temperatures are error prone<a class="headerlink" href="#temperatures-are-error-prone" title="Permanent link">&para;</a></h2>
+<p>Let&rsquo;s look at a use case where <code>Quantity</code> struggles: <em>temperature</em>.  Consider: is 20 degrees Celsius
+the same as 20 Kelvins?</p>
+<p>Answer: <em>it depends</em>.</p>
+<ul>
+<li>
+<p>If we&rsquo;re talking about a <em>change</em> in temperature, they&rsquo;re completely equivalent.  If the
+  temperature <strong>increased by</strong> 20 degrees Celsius, then it increased by 20 Kelvins.</p>
+</li>
+<li>
+<p>If we&rsquo;re asking what the temperature <em>is</em>, they&rsquo;re very different.  If the temperature <strong>is</strong> 20
+  degrees Celsius, then it&rsquo;s <strong>not</strong> 20 Kelvins &mdash; it&rsquo;s <em>293.15</em> Kelvins!</p>
+</li>
+</ul>
+<p>What&rsquo;s going on is that the Celsius scale has <em>shifted the origin</em>, that is, the temperature which
+we consider to be &ldquo;zero&rdquo;.  This shift helps humans: it labels the temperatures we encounter in the
+environment with numbers that are easier to work with.  That&rsquo;s an important property of
+a well-chosen system of units for a given domain.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note especially that this origin shift is <em>not an option</em> for temperature <em>changes</em>!  There
+could never be a unit that assigns &ldquo;zero&rdquo; to any amount other than &ldquo;no change&rdquo;.</p>
 </div>
-<h3 id="rootnx"><code>root&lt;N&gt;(x)</code><a class="headerlink" href="#rootnx" title="Permanent link">&para;</a></h3>
-<p>Take the Nth root of the input.</p>
-<p><strong>Example signature:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// T is an appropriate monovalue type (a unit, a magnitude, ...).</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">intmax_t</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
-</code></pre></div>
-<p><strong>Result:</strong> An instance of the Nth root of the type of <code>x</code>.</p>
-<div class="admonition example">
-<p class="admonition-title">Example</p>
-<p><code>root&lt;2&gt;(mag&lt;49&gt;())</code> yields <code>mag&lt;7&gt;()</code>.</p>
+<p>Let&rsquo;s ponder the implications for a C++ units library.  Assume that <code>Quantity</code> is all we have, and
+consider: how should this library convert from degrees Celsius, to Kelvins?  We have two choices for
+our policy: we can either take the origin offset into account, or not.  But it&rsquo;s a no-win situation:
+either choice produces wrong answers for perfectly legitimate use cases!  We can&rsquo;t possibly handle
+both temperatures and temperature changes &mdash; at least, not if <code>Quantity</code> is our only tool.</p>
+<h2 id="mile-marker-math">Mile marker math<a class="headerlink" href="#mile-marker-math" title="Permanent link">&para;</a></h2>
+<p>Viewing temperatures as <em>points</em>, rather than &ldquo;amounts&rdquo;, changes the set of operations that make
+sense for them.  To grasp this, let&rsquo;s consider another kind of labeled points: <em>mile markers</em>.
+(These will make it easier to understand, because the terminology is less confusing than for
+temperatures.)</p>
+<p>Mile markers label the points along a linear path using distance units.  The choice of which point
+is &ldquo;mile zero&rdquo; is completely arbitrary, but once we make that choice, the labels for the rest of the
+points are determined.</p>
+<p>Here are some examples showing how &ldquo;mile marker math&rdquo; works.  Let&rsquo;s imagine we have a function,
+<code>mile_marker()</code>.  Say it produces some type that models &ldquo;points&rdquo;, which we&rsquo;ll call <code>QuantityPoint</code>
+(as opposed to the &ldquo;displacements&rdquo; or &ldquo;amounts&rdquo; which <code>Quantity</code> models).  Here are some examples
+showing how we should expect it to behave:</p>
+<details class="example">
+<summary>Example: <code>mile_marker(8) - mile_marker(5)</code></summary>
+<p><strong>Result:</strong> <code>miles(3)</code></p>
+<p><strong>General Principle:</strong> Subtracting two points is <strong>meaningful</strong>, but it produces a <strong>quantity</strong>,
+not a point.</p>
+</details>
+<details class="example">
+<summary>Example: <code>mile_marker(8) + mile_marker(5)</code></summary>
+<p><strong>Result:</strong> <img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /> Nonsense: no result. <img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /></p>
+<p><strong>General Principle:</strong> Adding two points is <strong>meaningless</strong>.</p>
+</details>
+<details class="example">
+<summary>Example: <code>mile_marker(8) + miles(5)</code></summary>
+<ul>
+<li>
+<p><strong>Result:</strong> <code>mile_marker(13)</code></p>
+</li>
+<li>
+<p><strong>General Principle:</strong> Adding a quantity to a point is <strong>meaningful</strong>, and it produces another
+  <strong>point</strong>.</p>
+</li>
+</ul>
+</details>
+<details class="example">
+<summary>Example: <code>mile_marker(8) - miles(5)</code></summary>
+<ul>
+<li>
+<p><strong>Result:</strong> <code>mile_marker(3)</code></p>
+</li>
+<li>
+<p><strong>General Principle:</strong> Subtracting a quantity from a point is <strong>meaningful</strong>, and it produces
+  another <strong>point</strong>.</p>
+</li>
+</ul>
+</details>
+<p>These examples show the symbiotic relationship between <code>Quantity</code> and <code>QuantityPoint</code>.  A <code>Quantity</code>
+is just the displacement between two <code>QuantityPoint</code> instances.  And we can add or subtract such
+a <code>Quantity</code>, to go from one <code>QuantityPoint</code> to another.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The technical term for <code>QuantityPoint</code> is &ldquo;affine space type&rdquo;.  If you&rsquo;re interested to learn
+more, check out <a href="http://videocortex.io/2018/Affine-Space-Types/">this accessible introduction to Affine Space
+Types</a>.</p>
 </div>
-<h2 id="helpers">Helpers (<code>inverse</code>, <code>squared</code>, <code>cubed</code>, <code>sqrt</code>, <code>cbrt</code>)<a class="headerlink" href="#helpers" title="Permanent link">&para;</a></h2>
-<p>Some powers and roots are very common.  It&rsquo;s useful to have shortcuts for these to make the code
-more readable.  The following helpers are available to operate on an instance, <code>x</code>, of any
-compatible monovalue type (a unit, a magnitude, &hellip;):</p>
-<table>
-<thead>
-<tr>
-<th>Helper</th>
-<th>Result</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>inverse(x)</code></td>
-<td><code>pow&lt;-1&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>squared(x)</code></td>
-<td><code>pow&lt;2&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>cubed(x)</code></td>
-<td><code>pow&lt;3&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>sqrt(x)</code></td>
-<td><code>root&lt;2&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>cbrt(x)</code></td>
-<td><code>root&lt;3&gt;(x)</code></td>
-</tr>
-</tbody>
-</table>
+<h2 id="temperatures-revisited">Temperatures revisited<a class="headerlink" href="#temperatures-revisited" title="Permanent link">&para;</a></h2>
+<p>Armed with <code>QuantityPoint</code>, our formerly confusing temperature use cases have become a breeze.  If
+we always use <code>QuantityPoint</code> for temperatures, and <code>Quantity</code> for temperature <em>changes</em>, we can
+express ourselves with effortless clarity.</p>
+<p>In Au, we use the <code>_pt</code> suffix for functions that make <code>QuantityPoint</code>, and the <code>_qty</code> suffix (or,
+more commonly, no suffix<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>) for those that produce <code>Quantity</code>.  Let&rsquo;s rephrase our challenge cases
+using these new tools.</p>
+<ul>
+<li>
+<p>Temperature <em>changes</em>: <code>celsius_qty(20) == kelvins_qty(20)</code>.  (Result: <code>true</code>)</p>
+</li>
+<li>
+<p><em>Temperatures</em>: <code>celsius_pt(20) == kelvins_pt(20)</code>.  (Result: <code>false</code>)</p>
+</li>
+</ul>
+<p>These tools are so clear and reliable that we can even mix and match different temperature scales at
+will!  For example: if we started the day at -40 degrees Fahrenheit, and it warmed up by 60 degrees
+Celsius, would it be hotter than 300 Kelvins?  Doing this by hand, we might make use of a few facts:</p>
+<ul>
+<li>-40 degrees Fahrenheit happens to be the same temperature as -40 degrees Celsius, so the final
+  temperature is equivalent to 20 degrees Celsius.</li>
+<li>The offset between Kelvins and Celsius is 273.15 K, so the final temperature of 20 degrees Celsius
+  is 293.15 K.</li>
+<li>Therefore, the answer is &ldquo;no&rdquo;: it&rsquo;s not hotter than 300 Kelvins.</li>
+</ul>
+<p>Now we can see whether Au comes to the same conclusion.  Note how easy it is to express the question
+with clarity, despite mixing <em>three</em> different temperature scales:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">EXPECT_LT</span><span class="p">(</span><span class="n">fahrenheit_pt</span><span class="p">(</span><span class="mi">-40</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">celsius_qty</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span><span class="w"> </span><span class="n">kelvins_pt</span><span class="p">(</span><span class="mi">300</span><span class="p">));</span>
+</code></pre></div>
+<p>As hoped, this test passes.</p>
+<div class="admonition note">
+<p class="admonition-title">Fun fact</p>
+<p>Au would perform the above calculation <em>without ever leaving the integer domain</em>, even though
+the offset between Kelvins and Fahrenheit (or Celsius) is not an integer!  As an exercise,
+ponder how we might do that.</p>
+</div>
+<h2 id="quantitypoint-and-stdchronotime_point"><code>QuantityPoint</code> and <code>std::chrono::time_point</code><a class="headerlink" href="#quantitypoint-and-stdchronotime_point" title="Permanent link">&para;</a></h2>
+<p>Readers familiar with the <code>std::chrono</code> library may recognize this kind of interface: it&rsquo;s similar
+to <code>std::chrono::time_point</code>.  This class has the same relationship to <code>std::chrono::duration</code> as
+<code>QuantityPoint</code> has to <code>Quantity</code>. In each case, we have a &ldquo;point&rdquo; type and a &ldquo;displacement&rdquo; type.
+And the allowed operations are similar, for example:</p>
+<ul>
+<li>You can subtract two points to get a displacement.</li>
+<li>You can add (or subtract) a displacement to (or from) a point.</li>
+<li>You <strong>can&rsquo;t</strong> add two <strong>points</strong>; that&rsquo;s a meaningless operation.</li>
+</ul>
+<p>These similarities may tempt the reader to reach for a time-units <code>QuantityPoint</code> to replace
+<code>std::chrono::time_point</code>, just as a time-units <code>Quantity</code> makes a very capable replacement for
+<code>std::chrono::duration</code>.  However, experience doesn&rsquo;t support this choice.</p>
+<p>There&rsquo;s much more to <code>std::chrono::time_point</code> than just providing arithmetic operations with point
+semantics.  It also models different kinds of clocks, preventing unintended inter-conversion between
+them.  And it handles real-world clock subtleties, such as modeling whether a clock can ever produce
+an earlier value at a later time (think: daylight saving time).  By contrast, <code>QuantityPoint</code> can
+only handle measurement scales that are identical up to a constant offset &mdash; and that offset must
+be known at compile time.</p>
+<p><strong>Bottom line</strong>: when you need to track timestamps, you&rsquo;re better off using a special purpose
+library like <code>std::chrono</code>.  But once you subtract two <code>time_point</code> instances to get a <code>duration</code>,
+it&rsquo;s often useful to convert it to Au&rsquo;s <code>Quantity</code> &mdash; whether
+<a href="../../../reference/corresponding_quantity/#chrono-duration">implicitly</a>, or
+<a href="../../../reference/corresponding_quantity/#as-quantity">explicitly</a> &mdash; so that it can participate
+in equations with other units (such as speeds and distances).</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p><code>QuantityPoint</code> is largely a refinement for C++ units libraries.  Most use cases don&rsquo;t need it, and
+we don&rsquo;t even bother to define it for almost all units.  However, it is useful in a few use cases,
+such as mile markers or atmospheric pressure.  And for some use cases, such as temperatures or
+atmospheric pressure, it&rsquo;s absolutely essential.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>In practice, <code>Quantity</code> is overwhelmingly more common, so we prefer to omit the suffix: we
+write <code>meters(2)</code> instead of <code>meters_qty(2)</code>, for example.  However, this policy would fail for
+temperatures: if we wrote <code>celsius(20)</code>, should it refer to the <em>temperature</em>, or temperature
+<em>change</em>?  Clearly, this would be far too error prone.  Therefore, for temperatures, we always
+include the <code>_qty</code> suffix for <code>Quantity</code> makers.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
@@ -1339,7 +1446,7 @@ compatible monovalue type (a unit, a magnitude, &hellip;):</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../math/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Math functions" rel="prev">
+          <a href="../dimensionless/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Dimensionless Units and Quantities" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -1348,20 +1455,20 @@ compatible monovalue type (a unit, a magnitude, &hellip;):</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Math functions
+                Dimensionless Units and Quantities
               </div>
             </div>
           </a>
         
         
           
-          <a href="../prefix/" class="md-footer__link md-footer__link--next" aria-label="Next: Prefix" rel="next">
+          <a href="../zero/" class="md-footer__link md-footer__link--next" aria-label="Next: Zero" rel="next">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Prefix
+                Zero
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1397,10 +1504,10 @@ compatible monovalue type (a unit, a magnitude, &hellip;):</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.b4d07000.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.b4d07000.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       

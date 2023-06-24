@@ -12,24 +12,24 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/powers/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/idioms/unit-slots/">
       
       
-        <link rel="prev" href="../math/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../prefix/">
+        <link rel="next" href="../../implementation/">
       
-      <link rel="icon" href="../../assets/favicon.ico">
+      <link rel="icon" href="../../../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
-        <title>Powers - The Au units library</title>
+        <title>Unit slots - The Au units library</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.26e3688c.min.css">
       
       
 
@@ -45,9 +45,9 @@
       
     
     
-      <link rel="stylesheet" href="../../tweaks.css">
+      <link rel="stylesheet" href="../../../tweaks.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#powers" class="md-skip">
+        <a href="#unit-slots" class="md-skip">
           Skip to content
         </a>
       
@@ -89,9 +89,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../assets/au-logo.png" alt="logo">
+  <img src="../../../assets/au-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Powers
+              Unit slots
             
           </span>
         </div>
@@ -186,9 +186,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../assets/au-logo.png" alt="logo">
+  <img src="../../../assets/au-logo.png" alt="logo">
 
     </a>
     The Au units library
@@ -216,7 +216,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         Au documentation
       </a>
     </li>
@@ -231,7 +231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../develop/" class="md-nav__link">
+      <a href="../../../develop/" class="md-nav__link">
         Development Setup
       </a>
     </li>
@@ -246,7 +246,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/" class="md-nav__link">
+      <a href="../../../install/" class="md-nav__link">
         Installation
       </a>
     </li>
@@ -261,7 +261,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../troubleshooting/" class="md-nav__link">
+      <a href="../../../troubleshooting/" class="md-nav__link">
         Troubleshooting Guide
       </a>
     </li>
@@ -303,7 +303,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../alternatives/" class="md-nav__link">
+      <a href="../../../alternatives/" class="md-nav__link">
         Comparison of Alternatives
       </a>
     </li>
@@ -323,14 +323,16 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
       
       
       
@@ -339,7 +341,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_6">
           <span class="md-nav__icon md-icon"></span>
           Discussion
@@ -352,7 +354,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/" class="md-nav__link">
+      <a href="../../" class="md-nav__link">
         Discussion Docs
       </a>
     </li>
@@ -393,7 +395,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/concepts/" class="md-nav__link">
+      <a href="../../concepts/" class="md-nav__link">
         Generic Concepts
       </a>
     </li>
@@ -407,7 +409,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/concepts/arithmetic/" class="md-nav__link">
+      <a href="../../concepts/arithmetic/" class="md-nav__link">
         Arithmetic Operations
       </a>
     </li>
@@ -421,7 +423,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/concepts/common_unit/" class="md-nav__link">
+      <a href="../../concepts/common_unit/" class="md-nav__link">
         Common Units
       </a>
     </li>
@@ -435,7 +437,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/concepts/dimensionless/" class="md-nav__link">
+      <a href="../../concepts/dimensionless/" class="md-nav__link">
         Dimensionless Units and Quantities
       </a>
     </li>
@@ -449,7 +451,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/concepts/quantity_point/" class="md-nav__link">
+      <a href="../../concepts/quantity_point/" class="md-nav__link">
         Quantity Point
       </a>
     </li>
@@ -463,7 +465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/concepts/zero/" class="md-nav__link">
+      <a href="../../concepts/zero/" class="md-nav__link">
         Zero
       </a>
     </li>
@@ -482,14 +484,16 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" checked>
       
       
       
@@ -498,7 +502,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_6_3">
           <span class="md-nav__icon md-icon"></span>
           Idioms
@@ -511,7 +515,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/idioms/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         Au Idioms
       </a>
     </li>
@@ -523,11 +527,113 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../discussion/idioms/unit-slots/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Unit slots
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Unit slots
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-fits-in-a-unit-slot" class="md-nav__link">
+    What "fits" in a unit slot?
+  </a>
+  
+    <nav class="md-nav" aria-label="What "fits" in a unit slot?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unit-expression" class="md-nav__link">
+    Unit expression
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantity-maker-expression" class="md-nav__link">
+    Quantity maker expression
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples-rounding-to-rpm" class="md-nav__link">
+    Examples: rounding to RPM
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples: rounding to RPM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#best-choice-quantity-maker-expression" class="md-nav__link">
+    Best choice: quantity maker expression
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#also-acceptable-unit-expression" class="md-nav__link">
+    Also acceptable: unit expression
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#poor-choice-manually-constructed-quantitymaker" class="md-nav__link">
+    Poor choice: manually constructed QuantityMaker
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -573,7 +679,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/implementation/" class="md-nav__link">
+      <a href="../../implementation/" class="md-nav__link">
         Implementation Details
       </a>
     </li>
@@ -587,7 +693,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../discussion/implementation/vector_space/" class="md-nav__link">
+      <a href="../../implementation/vector_space/" class="md-nav__link">
         Vector Space Representations
       </a>
     </li>
@@ -643,7 +749,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/" class="md-nav__link">
+      <a href="../../../howto/" class="md-nav__link">
         How-to guides
       </a>
     </li>
@@ -657,7 +763,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/new-units/" class="md-nav__link">
+      <a href="../../../howto/new-units/" class="md-nav__link">
         Defining new units
       </a>
     </li>
@@ -677,16 +783,14 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
       
       
       
@@ -695,7 +799,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
           Reference
@@ -708,7 +812,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../../reference/" class="md-nav__link">
         Reference Docs
       </a>
     </li>
@@ -722,7 +826,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../corresponding_quantity/" class="md-nav__link">
+      <a href="../../../reference/corresponding_quantity/" class="md-nav__link">
         Corresponding Quantity
       </a>
     </li>
@@ -736,7 +840,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../magnitude/" class="md-nav__link">
+      <a href="../../../reference/magnitude/" class="md-nav__link">
         Magnitude
       </a>
     </li>
@@ -750,7 +854,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../math/" class="md-nav__link">
+      <a href="../../../reference/math/" class="md-nav__link">
         Math functions
       </a>
     </li>
@@ -762,79 +866,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Powers
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../reference/powers/" class="md-nav__link">
         Powers
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#general-apis" class="md-nav__link">
-    General APIs
-  </a>
-  
-    <nav class="md-nav" aria-label="General APIs">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pownx" class="md-nav__link">
-    pow&lt;N&gt;(x)
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#rootnx" class="md-nav__link">
-    root&lt;N&gt;(x)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#helpers" class="md-nav__link">
-    Helpers (inverse, squared, cubed, sqrt, cbrt)
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -846,7 +882,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prefix/" class="md-nav__link">
+      <a href="../../../reference/prefix/" class="md-nav__link">
         Prefix
       </a>
     </li>
@@ -860,7 +896,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quantity/" class="md-nav__link">
+      <a href="../../../reference/quantity/" class="md-nav__link">
         Quantity
       </a>
     </li>
@@ -874,7 +910,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quantity_point/" class="md-nav__link">
+      <a href="../../../reference/quantity_point/" class="md-nav__link">
         QuantityPoint
       </a>
     </li>
@@ -888,7 +924,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../unit/" class="md-nav__link">
+      <a href="../../../reference/unit/" class="md-nav__link">
         Unit
       </a>
     </li>
@@ -902,7 +938,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../zero/" class="md-nav__link">
+      <a href="../../../reference/zero/" class="md-nav__link">
         Zero
       </a>
     </li>
@@ -943,7 +979,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../detail/" class="md-nav__link">
+      <a href="../../../reference/detail/" class="md-nav__link">
         Implementation Details
       </a>
     </li>
@@ -957,7 +993,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../detail/dimension/" class="md-nav__link">
+      <a href="../../../reference/detail/dimension/" class="md-nav__link">
         Dimension
       </a>
     </li>
@@ -971,7 +1007,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../detail/monovalue_types/" class="md-nav__link">
+      <a href="../../../reference/detail/monovalue_types/" class="md-nav__link">
         Monovalue Types
       </a>
     </li>
@@ -985,7 +1021,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../detail/packs/" class="md-nav__link">
+      <a href="../../../reference/detail/packs/" class="md-nav__link">
         Parameter packs
       </a>
     </li>
@@ -1041,7 +1077,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/" class="md-nav__link">
+      <a href="../../../tutorial/" class="md-nav__link">
         Tutorials: home
       </a>
     </li>
@@ -1055,7 +1091,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
+      <a href="../../../tutorial/101-quantity-makers/" class="md-nav__link">
         Au 101: Quantity Makers
       </a>
     </li>
@@ -1069,7 +1105,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/102-api-types/" class="md-nav__link">
+      <a href="../../../tutorial/102-api-types/" class="md-nav__link">
         Au 102: API Types
       </a>
     </li>
@@ -1083,7 +1119,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
+      <a href="../../../tutorial/103-unit-conversions/" class="md-nav__link">
         Au 103: Unit Conversions
       </a>
     </li>
@@ -1124,7 +1160,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
         Au 101: Quantity Makers Exercise
       </a>
     </li>
@@ -1138,7 +1174,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/102-api-types/" class="md-nav__link">
         Au 102: API Types Exercise
       </a>
     </li>
@@ -1152,7 +1188,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
         Au 103: Unit Conversions Exercise
       </a>
     </li>
@@ -1200,23 +1236,23 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#general-apis" class="md-nav__link">
-    General APIs
+  <a href="#what-fits-in-a-unit-slot" class="md-nav__link">
+    What "fits" in a unit slot?
   </a>
   
-    <nav class="md-nav" aria-label="General APIs">
+    <nav class="md-nav" aria-label="What "fits" in a unit slot?">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#pownx" class="md-nav__link">
-    pow&lt;N&gt;(x)
+  <a href="#unit-expression" class="md-nav__link">
+    Unit expression
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#rootnx" class="md-nav__link">
-    root&lt;N&gt;(x)
+  <a href="#quantity-maker-expression" class="md-nav__link">
+    Quantity maker expression
   </a>
   
 </li>
@@ -1227,8 +1263,42 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#helpers" class="md-nav__link">
-    Helpers (inverse, squared, cubed, sqrt, cbrt)
+  <a href="#examples-rounding-to-rpm" class="md-nav__link">
+    Examples: rounding to RPM
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples: rounding to RPM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#best-choice-quantity-maker-expression" class="md-nav__link">
+    Best choice: quantity maker expression
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#also-acceptable-unit-expression" class="md-nav__link">
+    Also acceptable: unit expression
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#poor-choice-manually-constructed-quantitymaker" class="md-nav__link">
+    Poor choice: manually constructed QuantityMaker
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
   </a>
   
 </li>
@@ -1251,73 +1321,124 @@
   
 
 
-<h1 id="powers">Powers<a class="headerlink" href="#powers" title="Permanent link">&para;</a></h1>
-<p>Several of our <a href="../detail/monovalue_types/">monovalue types</a> (such as <a href="../unit/">units</a> and
-<a href="../magnitude/">magnitudes</a>) can be raised to powers. This includes negative exponents (such as the
-inverse), and fractional exponents (such as roots).</p>
-<p>When <a href="../detail/monovalue_types/#switching">expressed as values</a> (as opposed to types), we provide
-the same APIs for each of them.</p>
-<h2 id="general-apis">General APIs<a class="headerlink" href="#general-apis" title="Permanent link">&para;</a></h2>
-<p>In what follows, <code>x</code> stands for an instance of the appropriate monovalue type.  For example, it
-might be <code>Meters{}</code> (a unit), <code>mag&lt;18&gt;()</code> (a magnitude), or some other type.</p>
-<h3 id="pownx"><code>pow&lt;N&gt;(x)</code><a class="headerlink" href="#pownx" title="Permanent link">&para;</a></h3>
-<p>Raise the input <code>x</code> to the <code>N</code>th power.</p>
-<p><strong>Example signature:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// T is an appropriate monovalue type (a unit, a magnitude, ...).</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">intmax_t</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+<h1 id="unit-slots">Unit slots<a class="headerlink" href="#unit-slots" title="Permanent link">&para;</a></h1>
+<p>Many APIs in the library have a parameter for you to name the desired units.  We call these
+parameters &ldquo;unit slots&rdquo;.</p>
+<p>Let&rsquo;s look at some common examples.  In what follows, assume <code>q</code> is some <code>Quantity</code> type, and <code>T</code> is
+some <a href="https://en.cppreference.com/w/cpp/types/is_arithmetic">arithmetic</a> type.  Then <code>u</code> will be
+what goes in the unit slot:</p>
+<ul>
+<li><code>q.as(u)</code></li>
+<li><code>round_as(u, q)</code></li>
+<li><code>inverse_as(u, q)</code></li>
+<li>&ldquo;Explicit-Rep&rdquo; versions of the above (such as <code>q.as&lt;T&gt;(u)</code>)</li>
+<li>&ldquo;<code>in</code>&rdquo; versions of the above, which exit the library (<code>q.in(u)</code>, <code>round_in(u, q)</code>, etc.)</li>
+</ul>
+<p>This page will explain what kinds of things &ldquo;fit&rdquo; in the slot, and which styles to prefer in
+different situations.</p>
+<h2 id="what-fits-in-a-unit-slot">What &ldquo;fits&rdquo; in a unit slot?<a class="headerlink" href="#what-fits-in-a-unit-slot" title="Permanent link">&para;</a></h2>
+<p>The golden rule &mdash; the reason these slots exist &mdash; is that you should be naming your units at the
+callsite, concisely but explicitly.  This makes the code easier to read and understand at a glance.</p>
+<p>It turns out that there are multiple styles for explicitly naming units.  For example, if our target
+unit is <code>Meters</code>, then we could either pass <code>Meters{}</code> or <code>meters</code> in the unit slot, and get the
+same result.  While they both fulfill the main goal &mdash; namely, they name the unit explicitly &mdash;
+they are two different kinds of objects.</p>
+<ul>
+<li><code>Meters{}</code> is a <em>unit expression</em>.</li>
+<li><code>meters</code> is a <em>quantity maker expression</em>.</li>
+</ul>
+<p>Let&rsquo;s explore these concepts in more detail.</p>
+<h3 id="unit-expression">Unit expression<a class="headerlink" href="#unit-expression" title="Permanent link">&para;</a></h3>
+<p>A unit expression is simply an instance of a <a href="../../../reference/unit/">unit type</a>.  This could be
+something as simple as <code>Meters{}</code>, an instance of the unit type <code>Meters</code>.</p>
+<p>It could also be the result of <em>combining several</em> such instances, via arithmetic.  For example,
+<code>Meters{} / squared(Seconds{})</code> is also a unit expression.  It&rsquo;s an instance of the type
+<code>UnitQuotientT&lt;Meters, UnitPowerT&lt;Seconds, 2&gt;&gt;</code>.  However, the unit expression is much easier to
+write and to read than the <code>UnitQuotientT&lt;...&gt;</code> version!  That&rsquo;s why we recommend using them to
+<a href="../../../howto/new-units/">create new units</a>.</p>
+<h3 id="quantity-maker-expression">Quantity maker expression<a class="headerlink" href="#quantity-maker-expression" title="Permanent link">&para;</a></h3>
+<p>A quantity maker expression is similar to the unit expression defined just above, except that it
+combines instances of <code>QuantityMaker</code> (such as <code>meters</code>) and, optionally, <code>SingularNameFor</code> (such as
+<code>meter</code>).  The result of this expression will be an instance of a <code>QuantityMaker</code>.</p>
+<p>Quantity maker expressions support all of the same arithmetic operations as unit expressions, but
+they have two advantages that make them easier to read:</p>
+<ol>
+<li>
+<p>You don&rsquo;t need to add the <code>{}</code>, since the participating elements are <em>already</em> instances rather
+   than types.</p>
+</li>
+<li>
+<p>You can use grammatically correct names, such as <code>meters / squared(second)</code> (note: <code>second</code> is
+   singular), rather than <code>Meters{} / squared(Seconds{})</code>.</p>
+</li>
+</ol>
+<h2 id="examples-rounding-to-rpm">Examples: rounding to RPM<a class="headerlink" href="#examples-rounding-to-rpm" title="Permanent link">&para;</a></h2>
+<p>Let&rsquo;s look at some examples, using this quantity variable:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">angular_velocity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">radians</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">second</span><span class="p">)(</span><span class="mf">10.0</span><span class="p">);</span>
 </code></pre></div>
-<p><strong>Result:</strong> An instance of the Nth power of the type of <code>x</code>.</p>
-<div class="admonition example">
-<p class="admonition-title">Example</p>
-<p><code>pow&lt;3&gt;(mag&lt;4&gt;())</code> yields <code>mag&lt;64&gt;()</code>.</p>
-</div>
-<h3 id="rootnx"><code>root&lt;N&gt;(x)</code><a class="headerlink" href="#rootnx" title="Permanent link">&para;</a></h3>
-<p>Take the Nth root of the input.</p>
-<p><strong>Example signature:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// T is an appropriate monovalue type (a unit, a magnitude, ...).</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">intmax_t</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+<p>Our goal will be to round it to the nearest value in revolutions per minute (RPM).  Let&rsquo;s look at
+our options for doing that.</p>
+<h3 id="best-choice-quantity-maker-expression">Best choice: quantity maker expression<a class="headerlink" href="#best-choice-quantity-maker-expression" title="Permanent link">&para;</a></h3>
+<p><code>QuantityMaker</code> instances have the <em>name of the unit</em>, so they meet our core criterion (which is,
+again, to name the units explicitly at the callsite).  They also compose just as naturally as unit
+instances.  In fact, they also work nicely with <code>SingularNameFor</code> instances &mdash; such as <code>minute</code>,
+for the unit <code>Minutes</code> &mdash; to further enhance readability.</p>
+<p>Here&rsquo;s how it looks to pass a <code>QuantityMaker</code> &mdash; fluently composed, on the fly &mdash; to this unit
+expression API.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">round_as</span><span class="p">(</span><span class="n">revolutions</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">minute</span><span class="p">,</span><span class="w"> </span><span class="n">angular_velocity</span><span class="p">);</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1">//                            ^^^^^^^^^^^^^^^^^^^^</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">//                          Quantity maker expression</span>
 </code></pre></div>
-<p><strong>Result:</strong> An instance of the Nth root of the type of <code>x</code>.</p>
-<div class="admonition example">
-<p class="admonition-title">Example</p>
-<p><code>root&lt;2&gt;(mag&lt;49&gt;())</code> yields <code>mag&lt;7&gt;()</code>.</p>
-</div>
-<h2 id="helpers">Helpers (<code>inverse</code>, <code>squared</code>, <code>cubed</code>, <code>sqrt</code>, <code>cbrt</code>)<a class="headerlink" href="#helpers" title="Permanent link">&para;</a></h2>
-<p>Some powers and roots are very common.  It&rsquo;s useful to have shortcuts for these to make the code
-more readable.  The following helpers are available to operate on an instance, <code>x</code>, of any
-compatible monovalue type (a unit, a magnitude, &hellip;):</p>
-<table>
-<thead>
-<tr>
-<th>Helper</th>
-<th>Result</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>inverse(x)</code></td>
-<td><code>pow&lt;-1&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>squared(x)</code></td>
-<td><code>pow&lt;2&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>cubed(x)</code></td>
-<td><code>pow&lt;3&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>sqrt(x)</code></td>
-<td><code>root&lt;2&gt;(x)</code></td>
-</tr>
-<tr>
-<td><code>cbrt(x)</code></td>
-<td><code>root&lt;3&gt;(x)</code></td>
-</tr>
-</tbody>
-</table>
+<h3 id="also-acceptable-unit-expression">Also acceptable: unit expression<a class="headerlink" href="#also-acceptable-unit-expression" title="Permanent link">&para;</a></h3>
+<p>We could, of course, also pass a unit expression to the unit expression slot.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// Usual unit-expression approach (doing arithmetic on *instances*):</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">round_as</span><span class="p">(</span><span class="n">Revolutions</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Minutes</span><span class="p">{},</span><span class="w"> </span><span class="n">angular_velocity</span><span class="p">);</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1">//                            ^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1">//                                 unit expression</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1">// Alternative, clunkier unit-expression approach (doing arithmetic on *types*):</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">round_as</span><span class="p">(</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">   </span><span class="n">UnitQuotientT</span><span class="o">&lt;</span><span class="n">Revolutions</span><span class="p">,</span><span class="w"> </span><span class="n">Minutes</span><span class="o">&gt;</span><span class="p">{},</span><span class="w"> </span><span class="n">angular_velocity</span><span class="p">);</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1">// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1">//            unit expression</span>
+</code></pre></div>
+<p>These are OK, but they have a couple of drawbacks compared to the quantity maker approach.</p>
+<ol>
+<li>
+<p>They&rsquo;re grammatically incorrect: &ldquo;revolutions per <em>minutes</em>&rdquo;, instead of &ldquo;revolutions per
+   <em>minute</em>&rdquo;.</p>
+</li>
+<li>
+<p>You need to sprinkle extra <code>{}</code> throughout to turn the unit types into instances.</p>
+</li>
+</ol>
+<p>The main reason to use this method is for <em>generic code</em>.  In these cases, you don&rsquo;t usually <em>have</em>
+a quantity maker handy, but you <em>do</em> know the unit type.</p>
+<h3 id="poor-choice-manually-constructed-quantitymaker">Poor choice: manually constructed <code>QuantityMaker</code><a class="headerlink" href="#poor-choice-manually-constructed-quantitymaker" title="Permanent link">&para;</a></h3>
+<p>This may look counterintuitive, but we mention it because we&rsquo;ve seen a few instances of this
+approach in the wild!  Here is an example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">//</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1">// !!   Do not do this!   !!</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1">//</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">round_as</span><span class="p">(</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">UnitQuotientT</span><span class="o">&lt;</span><span class="n">Revolutions</span><span class="p">,</span><span class="w"> </span><span class="n">Minutes</span><span class="o">&gt;&gt;</span><span class="p">{},</span><span class="w"> </span><span class="n">angular_velocity</span><span class="p">);</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1">//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1">//           manual QuantityMaker instance</span>
+</code></pre></div>
+<p>Presumably, this mistake comes from reading the signatures in the source code
+without understanding their core design goal: namely, to provide a place to specify the units,
+concisely and explicitly, at a callsite.</p>
+<p>This provides no benefit at all.  We could replace the <code>QuantityMaker&lt;UnitQuotientT&lt;Revolutions,
+Minutes&gt;&gt;</code> with its contents (<code>UnitQuotientT&lt;Revolutions, Minutes&gt;</code>) and it would be strictly
+better.</p>
+<p>The reason we endorse the <code>QuantityMaker</code> overloads is because of the convention to provide &ldquo;canned&rdquo;
+<code>QuantityMaker</code> instances which are named after their corresponding units.  If you have to construct
+a new <code>QuantityMaker</code> on the fly, then this benefit vanishes.  (This is why unit expressions are
+preferred for generic code.)</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>Many Au APIs have a &ldquo;unit slot&rdquo;.  These are designed for you to name the units explicitly at the
+callsite.  Pass whatever is the simplest construct that meets that goal &mdash; usually, this will be
+a pre-existing <code>QuantityMaker</code>, or several of them composed together.</p>
 
 
 
@@ -1339,7 +1460,7 @@ compatible monovalue type (a unit, a magnitude, &hellip;):</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../math/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Math functions" rel="prev">
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Au Idioms" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -1348,20 +1469,20 @@ compatible monovalue type (a unit, a magnitude, &hellip;):</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Math functions
+                Au Idioms
               </div>
             </div>
           </a>
         
         
           
-          <a href="../prefix/" class="md-footer__link md-footer__link--next" aria-label="Next: Prefix" rel="next">
+          <a href="../../implementation/" class="md-footer__link md-footer__link--next" aria-label="Next: Implementation Details" rel="next">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Prefix
+                Implementation Details
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1397,10 +1518,10 @@ compatible monovalue type (a unit, a magnitude, &hellip;):</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.b4d07000.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.b4d07000.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       
