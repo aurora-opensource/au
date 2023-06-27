@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.2-9-g2e72f81
+// Version identifier: 0.3.2-10-gefeb15f
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -3085,6 +3085,7 @@ class Quantity {
     }
     template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
     friend constexpr auto operator/(T s, Quantity a) {
+        warn_if_integer_division<T>();
         return make_quantity<decltype(pow<-1>(unit))>(s / a.value_);
     }
 
@@ -3098,11 +3099,7 @@ class Quantity {
     // Division for dimensioned quantities.
     template <typename OtherUnit, typename OtherRep>
     constexpr auto operator/(Quantity<OtherUnit, OtherRep> q) const {
-        constexpr bool uses_integer_division =
-            (std::is_integral<Rep>::value && std::is_integral<OtherRep>::value);
-        static_assert(!uses_integer_division,
-                      "Integer division forbidden: use integer_quotient() if you really want it");
-
+        warn_if_integer_division<OtherRep>();
         return make_quantity_unless_unitless<UnitQuotientT<Unit, OtherUnit>>(value_ /
                                                                              q.in(OtherUnit{}));
     }
@@ -3165,6 +3162,14 @@ class Quantity {
     }
 
  private:
+    template <typename OtherRep>
+    static constexpr void warn_if_integer_division() {
+        constexpr bool uses_integer_division =
+            (std::is_integral<Rep>::value && std::is_integral<OtherRep>::value);
+        static_assert(!uses_integer_division,
+                      "Integer division forbidden: use integer_quotient() if you really want it");
+    }
+
     constexpr Quantity(Rep value) : value_{value} {}
 
     Rep value_{0};
@@ -3176,6 +3181,22 @@ constexpr auto integer_quotient(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     static_assert(std::is_integral<R1>::value && std::is_integral<R2>::value,
                   "integer_quotient() can only be called with integral Rep");
     return make_quantity<UnitQuotientT<U1, U2>>(q1.in(U1{}) / q2.in(U2{}));
+}
+
+// Force integer division beteween an integer Quantity and a raw number.
+template <typename U, typename R, typename T>
+constexpr auto integer_quotient(Quantity<U, R> q, T x) {
+    static_assert(std::is_integral<R>::value && std::is_integral<T>::value,
+                  "integer_quotient() can only be called with integral Rep");
+    return make_quantity<U>(q.in(U{}) / x);
+}
+
+// Force integer division beteween a raw number and an integer Quantity.
+template <typename T, typename U, typename R>
+constexpr auto integer_quotient(T x, Quantity<U, R> q) {
+    static_assert(std::is_integral<T>::value && std::is_integral<R>::value,
+                  "integer_quotient() can only be called with integral Rep");
+    return make_quantity<UnitInverseT<U>>(x / q.in(U{}));
 }
 
 // The modulo operator (i.e., the remainder of an integer division).
