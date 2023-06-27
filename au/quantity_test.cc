@@ -395,7 +395,12 @@ TEST(Quantity, ProductOfInvertingUnitsIsScalar) {
 TEST(Quantity, ScalarDivisionWorks) {
     constexpr auto x = feet(10);
     EXPECT_EQ(x / 2, feet(5));
-    EXPECT_EQ(pow<-1>(feet)(2), 20 / x);
+    EXPECT_EQ(20. / x, inverse(feet)(2.));
+}
+
+TEST(Quantity, ScalarDivisionIsConstexprCompatible) {
+    constexpr auto quotient = feet(10.) / 2;
+    EXPECT_EQ(quotient, feet(5.));
 }
 
 TEST(Quantity, ShortHandAdditionAssignmentWorks) {
@@ -684,6 +689,12 @@ TEST(AreQuantityTypesEquivalent, RequiresSameRepAndEquivalentUnits) {
 TEST(integer_quotient, EnablesIntegerDivision) {
     constexpr auto dt = integer_quotient(meters(60), (miles / hour)(65));
     EXPECT_THAT(dt, QuantityEquivalent((hour * meters / mile)(0)));
+
+    constexpr auto x = integer_quotient(meters(60), 31);
+    EXPECT_THAT(x, SameTypeAndValue(meters(1)));
+
+    constexpr auto freq = integer_quotient(1000, minutes(300));
+    EXPECT_THAT(freq, SameTypeAndValue(inverse(minutes)(3)));
 }
 
 TEST(mod, ComputesRemainderForSameUnits) {
