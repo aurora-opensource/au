@@ -285,7 +285,7 @@ features.
         <td class="fair"></td>
         <td class="fair"></td>
         <td class="fair"></td>
-        <td class="fair"></td>
+        <td class="good">Contains unit-safe interfaces</td>
         <td class="best">Only contains unit-safe interfaces</td>
     </tr>
     <tr>
@@ -320,6 +320,12 @@ features.
         <td class="fair">
             <ul>
                 <li class="check">Implicit conversions with good basic safety</li>
+                <li class="x">
+                    <a
+                    href="https://mpusz.github.io/mp-units/2.0/users_guide/examples/hello_units/">Many
+                    headers</a>; hard to guess
+                </li>
+                <li class="x">Longer and more nested namespaces</li>
             </ul>
         </td>
         <td class="best">
@@ -342,12 +348,8 @@ features.
         <td class="fair"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">Prefix only</a></td>
         <td class="poor"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">No</a></td>
         <td class="poor">No</td>
-        <td class="fair">
-            <a
-            href="https://mpusz.github.io/units/framework/quantities.html#quantity-references-experimental">Quantity
-            References</a> compose; prefixes don't
-        </td>
-        <td class="best">QuantityMaker and PrefixApplier APIs</td>
+        <td class="good">Can compose both units and prefixes</td>
+        <td class="good">QuantityMaker and PrefixApplier APIs</td>
     </tr>
     <tr>
         <td>
@@ -553,7 +555,7 @@ features.
         <td class="good">UDLs</td>
         <td class="good">UDLs</td>
         <td class="best">
-            UDLs and <a
+            <a
             href="https://mpusz.github.io/units/framework/quantities.html#quantity-references-experimental">Quantity
             References</a>
         </td>
