@@ -205,7 +205,7 @@ These costs can bring significant benefits, but we still want them to be as smal
             </a>
         </td>
         <td class="fair">Positional dimensions</td>
-        <td class="na"></td>
+        <td class="fair">Alias for unit template</td>
         <td class="good">Pioneered strong typedefs for units</td>
         <td class="best">
             <ul>
@@ -252,10 +252,12 @@ features.
             </details>
         </td>
         <td class="good"></td>
-        <td class="fair">
+        <td class="poor">
             Integer Reps <a href="https://github.com/nholthaus/units/issues/225">unsafe</a>
         </td>
-        <td class="na"></td>
+        <td class="poor">
+            Integer Reps <a href="https://github.com/bernedom/SI/issues/122">unsafe</a>
+        </td>
         <td class="good">
             Policy <a
             href="https://mpusz.github.io/units/framework/conversions_and_casting.html">consistent
@@ -282,7 +284,7 @@ features.
         </td>
         <td class="fair"></td>
         <td class="fair"></td>
-        <td class="na"></td>
+        <td class="fair"></td>
         <td class="fair"></td>
         <td class="best">Only contains unit-safe interfaces</td>
     </tr>
@@ -309,8 +311,17 @@ features.
                 </li>
             </ul>
         </td>
-        <td class="na"></td>
-        <td class="good"></td>
+        <td class="fair">
+            <ul>
+                <li class="check">Single, short namespace</li>
+                <li class="check">Implicit conversions (which can be turned off)</li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Implicit conversions with good basic safety</li>
+            </ul>
+        </td>
         <td class="best">
             <ul>
                 <li class="check">Namespaces: just one, and it's short</li>
@@ -330,7 +341,7 @@ features.
         </td>
         <td class="fair"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">Prefix only</a></td>
         <td class="poor"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">No</a></td>
-        <td class="na"></td>
+        <td class="poor">No</td>
         <td class="fair">
             <a
             href="https://mpusz.github.io/units/framework/quantities.html#quantity-references-experimental">Quantity
@@ -347,7 +358,7 @@ features.
         </td>
         <td class="good"></td>
         <td class="fair">Possible, but user-facing types use a global "preferred" Rep.</td>
-        <td class="na"></td>
+        <td class="good"></td>
         <td class="good"></td>
         <td class="good"></td>
     </tr>
@@ -375,7 +386,7 @@ features.
             href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#nic-units.usage.example">Generic
             templates, constrained with traits</a>
         </td>
-        <td class="na"></td>
+        <td class="fair">Generic templates, constrained with traits</td>
         <td class="best">Concepts excel here</td>
         <td class="fair">
             Currently clunky.  Could be better by adding concepts in extra
@@ -400,7 +411,7 @@ features.
                 <li class="x"><a href="https://github.com/nholthaus/units/issues/131">Can't add dimensions</a></li>
             </ul>
         </td>
-        <td class="na"></td>
+        <td class="good">Can add new units and dimensions</td>
         <td class="best">Can even handle, e.g., systems of "natural" units</td>
         <td class="good">
             Can add <a href="https://aurora-opensource.github.io/au/howto/new-units">new units</a>
@@ -422,7 +433,7 @@ features.
         </td>
         <td class="fair">No interop with other units libraries</td>
         <td class="fair">No interop with other units libraries</td>
-        <td class="na"></td>
+        <td class="fair">No interop with other units libraries</td>
         <td class="good">
             <a href="https://mpusz.github.io/units/use_cases/interoperability.html">
                 <code>quantity_like_traits</code>
@@ -450,7 +461,7 @@ features.
             href="https://github.com/nholthaus/units/issues/240">can't distinguish quantity from
             point</a>.
         </td>
-        <td class="na"></td>
+        <td class="poor">None; would be hard to add, since units conflated with quantity type</td>
         <td class="good"></td>
         <td class="good"></td>
     </tr>
@@ -475,7 +486,7 @@ features.
         <td class="fair">
             Uses ratio plus "pi powers": good angle handling, but vulnerable to overflow
         </td>
-        <td class="na"></td>
+        <td class="poor">`std::ratio` only, with no solution for pi</td>
         <td class="good">
             Full support for <a
             href="https://mpusz.github.io/units/framework/magnitudes.html">Magnitudes</a>
@@ -497,7 +508,7 @@ features.
                         Flexibility in the Rep (usually a variety of integral types, and perhaps
                         <code>float</code>, but rarely <code>double</code>).
                     </li>
-                    <li>The easy ability to exclude <code>&lt;iostreams&gt;</code>.</li>
+                    <li>The easy ability to exclude <code>&lt;iostream&gt;</code>.</li>
                 </ul>
             </details>
         </td>
@@ -505,7 +516,13 @@ features.
         <td class="fair">
             Can trim by excluding <code>&lt;iostream&gt;</code>, but integer-Rep support is poor.
         </td>
-        <td class="na"></td>
+        <td class="fair">
+            <ul>
+                <li class="check"><code>&lt;iostream&gt;</code> not automatically included</li>
+                <li class="check">Supports integral rep</li>
+                <li class="x">Integral rep conversions unsafe</li>
+            </ul>
+        </td>
         <td class="good">Assumed to be good, based on mixed-Rep support</td>
         <td class="best">
             Best choice of all:
@@ -534,7 +551,7 @@ features.
         </td>
         <td class="poor"></td>
         <td class="good">UDLs</td>
-        <td class="na"></td>
+        <td class="good">UDLs</td>
         <td class="best">
             UDLs and <a
             href="https://mpusz.github.io/units/framework/quantities.html#quantity-references-experimental">Quantity
@@ -561,7 +578,14 @@ features.
             Effectively floating-point only (integer types <a
             href="https://github.com/nholthaus/units/issues/225">unsafe</a>)
         </td>
-        <td class="na"></td>
+        <td class="fair">
+            <ul>
+                <li class="check">No "default" rep</li>
+                <li class="x">
+                    Integer reps <a href="https://github.com/bernedom/SI/issues/122">unsafe</a>
+                </li>
+            </ul>
+        </td>
         <td class="best">
             Well defined
             <a href="https://mpusz.github.io/units/reference/core/concepts.html#_CPPv4I0EN5units14RepresentationE">Representation
@@ -593,9 +617,13 @@ features.
             default constructor</a> to construct, but no special facility for comparison
         </td>
         <td class="fair">Supports <code>copysign()</code>, but no special construction or comparison</td>
-        <td class="na"></td>
+        <td class="poor">No special construction or comparison</td>
         <td class="fair">Has <code>q::zero()</code> member, but no special construction or comparison</td>
-        <td class="best">Can use <code>ZERO</code> to construct or compare any quantity</td>
+        <td class="best">
+            Can use <a
+            href="https://aurora-opensource.github.io/au/main/discussion/concepts/zero/"><code>ZERO</code></a>
+            to construct or compare any quantity
+        </td>
     </tr>
     <tr>
         <td>
@@ -612,7 +640,12 @@ features.
             value </a>
         </td>
         <td class="good"></td>
-        <td class="na"></td>
+        <td class="fair">
+            <ul>
+                <li class="check">Supports degrees and radians</li>
+                <li class="x">pi represented as <code>std::ratio</code></li>
+            </ul>
+        </td>
         <td class="good"></td>
         <td class="good"></td>
     </tr>
@@ -625,7 +658,7 @@ features.
         </td>
         <td class="poor"></td>
         <td class="best"></td>
-        <td class="na"></td>
+        <td class="poor"></td>
         <td class="poor"></td>
         <td class="poor">
             Plan to support someday; see
@@ -644,7 +677,7 @@ features.
         </td>
         <td class="na"></td>
         <td class="poor"></td>
-        <td class="na"></td>
+        <td class="poor"></td>
         <td class="best"></td>
         <td class="poor">No plans to support.</td>
     </tr>
@@ -660,7 +693,7 @@ features.
         </td>
         <td class="good"></td>
         <td class="poor">Single, implicit global system</td>
-        <td class="na"></td>
+        <td class="poor"></td>
         <td class="good"></td>
         <td class="poor">
             Single, implicit global system. (Intentional design tradeoff: reduces learning curve,
@@ -679,7 +712,7 @@ features.
         </td>
         <td class="good"></td>
         <td class="fair">Types exist, but conflated with quantity names</td>
-        <td class="na"></td>
+        <td class="poor">No separate types for units</td>
         <td class="good"></td>
         <td class="best">Can form instances and do arithmetic</td>
     </tr>
@@ -694,7 +727,7 @@ features.
         </td>
         <td class="poor">Present in user-facing APIs</td>
         <td class="poor">Present in user-facing APIs</td>
-        <td class="na"></td>
+        <td class="fair">Very few, and confined to implementation helpers</td>
         <td class="good">Confined to outer compatibility layer</td>
         <td class="best">No macros</td>
     </tr>
