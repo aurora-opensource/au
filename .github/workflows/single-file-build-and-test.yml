@@ -16,6 +16,8 @@ name: single-file-build-and-test
 
 on:
   push:
+    branches:
+      - main
   pull_request:
 
 jobs:
@@ -36,14 +38,6 @@ jobs:
       - name: Build single-file package
         shell: cmd
         run: python tools/bin/make-single-file --units meters seconds --version-id NA > au.hh
-
-      - name: List all files to see what is going on
-        shell: cmd
-        run: dir /s /b /o:gn
-
-      - name: Try dumping generated file to make sure it worked
-        shell: cmd
-        run: type au.hh
 
       - name: Build and run test
         shell: cmd
