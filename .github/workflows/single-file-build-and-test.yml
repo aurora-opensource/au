@@ -48,5 +48,5 @@ jobs:
       - name: Build and run test
         shell: cmd
         run: |
-          cl.exe /std:c++14 single-file-test.cc
+          cl.exe /std:c++17 single-file-test.cc
           single-file-test.exe
