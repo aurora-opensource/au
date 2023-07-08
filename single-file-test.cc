@@ -19,7 +19,7 @@ bool expect_equal(ExpectedT expected, ActualT actual) {
 int main(int argc, char **argv) {
     const std::vector<bool> results{
         {
-            expect_equal((meters / second)(5) * seconds(6), meters(30)),
+            expect_equal((meters / second)(6) * seconds(6), meters(30)),
         },
     };
     return std::all_of(std::begin(results), std::end(results), [](auto x) { return x; }) ? 0 : 1;
