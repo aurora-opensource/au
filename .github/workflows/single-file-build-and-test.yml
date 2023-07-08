@@ -23,6 +23,16 @@ jobs:
     runs-on: windows-2019
 
     steps:
+
       - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
+
+      - name: Set up developer command prompt
+        uses: ilammy/msvc-dev-cmd@cec98b9d092141f74527d0afa6feb2af698cfe89 #v1.12.1
+
       - name: Build single-file package
         run: ./tools/bazel build //:au_hh
+
+      - name: Build and run test
+        run: |
+          cl.exe single-file-test.cc
+          single-file-test.exe
