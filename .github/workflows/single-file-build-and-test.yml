@@ -33,7 +33,7 @@ jobs:
 
       - name: List all files to see what is going on
         shell: cmd
-        run: Get-ChildItem -Recurse
+        run: dir /s /b /o:gn
 
       - name: Build and run test
         shell: cmd
