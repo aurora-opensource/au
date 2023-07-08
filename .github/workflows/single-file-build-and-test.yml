@@ -31,7 +31,12 @@ jobs:
       - name: Build single-file package
         run: ./tools/bazel build //:au_hh
 
+      - name: List all files to see what is going on
+        shell: cmd
+        run: Get-ChildItem -Recurse
+
       - name: Build and run test
+        shell: cmd
         run: |
           cl.exe single-file-test.cc
           single-file-test.exe
