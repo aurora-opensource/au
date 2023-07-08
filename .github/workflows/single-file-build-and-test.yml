@@ -41,6 +41,10 @@ jobs:
         shell: cmd
         run: dir /s /b /o:gn
 
+      - name: Try dumping generated file to make sure it worked
+        shell: cmd
+        run: type au.hh
+
       - name: Build and run test
         shell: cmd
         run: |
