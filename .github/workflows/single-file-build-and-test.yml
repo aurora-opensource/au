@@ -16,6 +16,8 @@ name: single-file-build-and-test
 
 on:
   push:
+    branches:
+      - add-single-file-actions#144
   pull_request:
 
 jobs:
