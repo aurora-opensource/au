@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include "bazel-bin/docs/au.hh"
+#include "au.hh"
 
 using namespace au;
 

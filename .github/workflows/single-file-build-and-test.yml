@@ -28,8 +28,14 @@ jobs:
       - name: Set up developer command prompt
         uses: ilammy/msvc-dev-cmd@cec98b9d092141f74527d0afa6feb2af698cfe89 #v1.12.1
 
+      - name: Set up python
+        uses: actions/setup-python@3542bca2639a428e1796aaa6a2ffef0c0f575566 #v3.1.4
+        with:
+          python-version: '3.10.6'
+
       - name: Build single-file package
-        run: ./tools/bazel build //:au_hh
+        shell: cmd
+        run: python tools/bin/make-single-file --units meters seconds --version-id NA > au.hh
 
       - name: List all files to see what is going on
         shell: cmd
