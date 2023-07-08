@@ -14,10 +14,8 @@
 
 #pragma once
 
-#include <algorithm>
 #include <cmath>
 #include <limits>
-#include <type_traits>
 
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
