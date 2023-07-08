@@ -14,7 +14,6 @@
 
 #pragma once
 
-#include <array>
 #include <cstdint>
 #include <ratio>
 #include <utility>
@@ -519,38 +518,34 @@ struct IsValidPack : stdx::conjunction<detail::IsPackOf<Pack, T>,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `AreElementsInOrder` implementation.
 
-namespace detail {
-
 template <template <class...> class Pack>
-constexpr bool are_consecutive_elements_in_order_for() {
-    return true;
-}
+struct AreElementsInOrder<Pack, Pack<>> : std::true_type {};
 
 template <template <class...> class Pack, typename T>
-constexpr bool are_consecutive_elements_in_order_for() {
-    return true;
-}
+struct AreElementsInOrder<Pack, Pack<T>> : std::true_type {};
 
 template <template <class...> class Pack, typename T1, typename T2, typename... Ts>
-constexpr auto are_consecutive_elements_in_order_for() {
-    return InOrderFor<Pack, T1, T2>::value &&
-           are_consecutive_elements_in_order_for<Pack, T2, Ts...>();
-}
+struct AreElementsInOrder<Pack, Pack<T1, T2, Ts...>>
+    : stdx::conjunction<InOrderFor<Pack, T1, T2>, AreElementsInOrder<Pack, Pack<T2, Ts...>>> {};
 
-template <std::size_t N>
-constexpr bool all_true(const std::array<bool, N> &values) {
-    for (auto i = 0u; i < values.size(); ++i) {
-        if (!values[i]) {
+namespace detail {
+
+constexpr bool all_true() { return true; }
+
+template <typename... Predicates>
+constexpr bool all_true(Predicates &&...values) {
+    // The reason we bother to make an array is so that we can iterate over it.
+    const bool value_array[] = {values...};
+
+    for (auto i = 0u; i < sizeof...(Predicates); ++i) {
+        if (!value_array[i]) {
             return false;
         }
     }
+
     return true;
 }
 }  // namespace detail
-
-template <template <class...> class Pack, typename... Ts>
-struct AreElementsInOrder<Pack, Pack<Ts...>>
-    : stdx::bool_constant<detail::are_consecutive_elements_in_order_for<Pack, Ts...>()> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `AreBasesInOrder` implementation.
@@ -563,8 +558,7 @@ struct AreBasesInOrder<Pack, Pack<Ts...>> : AreElementsInOrder<Pack, Pack<BaseT<
 
 template <template <class...> class Pack, typename... Ts>
 struct AreAllPowersNonzero<Pack, Pack<Ts...>>
-    : stdx::bool_constant<detail::all_true(
-          std::array<bool, sizeof...(Ts)>{(ExpT<Ts>::num != 0)...})> {};
+    : stdx::bool_constant<detail::all_true((ExpT<Ts>::num != 0)...)> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `SimplifyBasePowersT` implementation.
