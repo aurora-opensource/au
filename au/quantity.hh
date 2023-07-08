@@ -143,7 +143,7 @@ class Quantity {
               typename NewUnit,
               typename = std::enable_if_t<IsUnit<NewUnit>::value>>
     constexpr auto as(NewUnit u) const {
-        constexpr auto ratio = unit_ratio(unit, u);
+        constexpr auto ratio = unit_ratio(unit, NewUnit{});
 
         using Common = std::common_type_t<Rep, NewRep>;
         constexpr auto NUM = integer_part(numerator(ratio));
