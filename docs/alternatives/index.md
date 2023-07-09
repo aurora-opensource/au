@@ -105,10 +105,7 @@ at all, and if so, how hard it will be to obtain.
                 <p>The minimum C++ standard required to use the library.</p>
             </details>
         </td>
-        <td class="best">
-            C++98 or C++03<br>
-            (unclear which, but best in either case)
-        </td>
+        <td class="best">C++98</td>
         <td class="good">C++14</td>
         <td class="fair">C++17</td>
         <td class="poor">C++20</td>
@@ -300,7 +297,17 @@ features.
                 </ul>
             </details>
         </td>
-        <td class="fair"></td>
+        <td class="poor">
+            <ul>
+                <li class="x">Generally high learning curve</li>
+                <li class="x">
+                    No (<a
+                    href="https://www.boost.org/doc/libs/1_79_0/doc/html/boost_units/Quantities.html#boost_units.Quantities.Quantity_Construction_and_Conversion">non-trivial</a>)
+                    implicit conversions
+                </li>
+                <li class="x">Many headers; hard to guess</li>
+            </ul>
+        </td>
         <td class="good">
             <ul>
                 <li class="check">Single file is very easy</li>
@@ -314,7 +321,8 @@ features.
         <td class="fair">
             <ul>
                 <li class="check">Single, short namespace</li>
-                <li class="check">Implicit conversions (which can be turned off)</li>
+                <li class="check">Implicit conversions</li>
+                <li>Multiple headers, but easy to guess (one per dimension)</li>
             </ul>
         </td>
         <td class="fair">
