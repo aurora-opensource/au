@@ -738,7 +738,7 @@ features.
         <td class="poor">Present in user-facing APIs</td>
         <td class="poor">Present in user-facing APIs</td>
         <td class="fair">Very few, and confined to implementation helpers</td>
-        <td class="good">Confined to outer compatibility layer</td>
+        <td class="fair">Very few, and confined to implementation helpers</td>
         <td class="best">No macros</td>
     </tr>
 </table>
