@@ -28,9 +28,31 @@ to the mature and widely available C++14 standard. Key features include:
 - Intelligent, unit-aware functions for rounding and computing inverses.
 - Minimal friction by using a single, short namespace: everything's in `au::`.
 
+## Alternatives considered here
+
+We'll consider several of the most prominent alternatives in more detail.  While there are [many
+more libraries](https://github.com/topics/dimensional-analysis?l=c%2B%2B), the ones we consider here
+are included for being especially pioneering or popular (or both).  Here, we list those libraries,
+indicate which version we considered, and say a few words about why we included it in the analysis.
+
+- [**Boost Units**](https://www.boost.org/doc/libs/1_82_0/doc/html/boost_units.html) (version:
+  1.82.0)
+    - One of the longest-standing C++ unit libraries, and the most prominent pre-C++14 option.
+- [**nholthaus/units**](https://github.com/nholthaus/units) (version: 2.3.3)
+    - Kicked off the revolution in modern (that is, post-C++11 watershed) units libraries.
+    - Its laser-sharp focus on accessibility and low friction have made it probably the most widely
+      used C++ units library ever.
+- [**bernedom/SI**](https://github.com/bernedom/SI) (version: 2.5.1)
+    - A newer, C++17-compatible offering with a large number of stars.
+- [**mp-units**](https://github.com/mpusz/mp-units) (version: 2.0.0:testing)
+    - A library designed to take full advantage of ultra-modern (that is, post-C++20 watershed)
+      features, such as concepts and non-template type parameters (NTTPs).
+    - mp-units is leading the efforts towards a standard C++ units library, both by trialling new
+      API designs, and by coordinating with the authors of other leading units libraries.
+
 ## Detailed comparison matrices
 
-Here's a more detailed comparison to the most prominent alternatives.  We'll use the following
+Here's a more detailed comparison to the alternatives listed above.  We'll use the following
 legend[^1]:
 
 [^1]: Users may have expected a "traffic light" style, green/yellow/red color scheme.  However,
@@ -227,6 +249,13 @@ At this point, you've assessed:
 
 Now we're ready to compare the libraries "as units libraries" --- that is, in terms of their core
 features.
+
+!!! note
+    The features are listed, _very_ roughly, in order of importance.  Counting up the colours in
+    each column won't give an accurate picture.  The rows near the top matter more --- sometimes,
+    _much_ more --- than the rows further down.
+
+    Of course, what matters the most for _you_ are _your_ use cases and criteria!
 
 <table>
     <tr>
