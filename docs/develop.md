@@ -107,6 +107,9 @@ copy of the repository.
 
     And so on.
 
+    Additionally, if you use `direnv`, you can run the tools from any folder.  However, if you
+    don't, you can only run them from the project root folder.
+
 The first step to set up `direnv` is to install the tool itself, using [their installation
 instructions](https://direnv.net/docs/installation.html).
 
@@ -121,10 +124,10 @@ Simply do what it says and run `direnv allow`, and you're all set!
 ??? tip "Testing your installation"
     You can test that everything's working by running `bazel --version` inside your Au folder.  You
     should get a result compatible with the current contents of the `.bazelversion` file.  For
-    example, at the time of writing, we're on bazel 5.3.0, so this command produces the output:
+    example, at the time of writing, we're on bazel 6.0.0, so this command produces the output:
 
     ```
-    bazel 5.3.0
+    bazel 6.0.0
     ```
 
 ## Specific workflows
