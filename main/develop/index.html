@@ -1427,6 +1427,8 @@ copy of the repository.</p>
 <li>Replace <code>clang-format</code> with <code>tools/bin/clang-format</code>.</li>
 </ul>
 <p>And so on.</p>
+<p>Additionally, if you use <code>direnv</code>, you can run the tools from any folder.  However, if you
+don&rsquo;t, you can only run them from the project root folder.</p>
 </details>
 <p>The first step to set up <code>direnv</code> is to install the tool itself, using <a href="https://direnv.net/docs/installation.html">their installation
 instructions</a>.</p>
@@ -1438,8 +1440,8 @@ instructions</a>.</p>
 <summary>Testing your installation</summary>
 <p>You can test that everything&rsquo;s working by running <code>bazel --version</code> inside your Au folder.  You
 should get a result compatible with the current contents of the <code>.bazelversion</code> file.  For
-example, at the time of writing, we&rsquo;re on bazel 5.3.0, so this command produces the output:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>bazel 5.3.0
+example, at the time of writing, we&rsquo;re on bazel 6.0.0, so this command produces the output:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>bazel 6.0.0
 </code></pre></div>
 </details>
 <h2 id="specific-workflows">Specific workflows<a class="headerlink" href="#specific-workflows" title="Permanent link">&para;</a></h2>
