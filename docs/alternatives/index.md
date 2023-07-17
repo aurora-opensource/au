@@ -435,7 +435,13 @@ features.
                 <li class="x">No fmtlib support</li>
             </ul>
         </td>
-        <td class="best">Supports <code>&lt;iostream&gt;</code> and <code>std::format</code></td>
+        <td class="best">
+            <ul>
+                <li class="check">Supports <code>&lt;iostream&gt;</code></li>
+                <li class="check">Unit labels available even without <code>&lt;iostream&gt;</code></li>
+                <li class="check">Supports <code>std::format</code></li>
+            </ul>
+        </td>
         <td class="fair">
             <ul>
                 <li class="check">Toggleable <code>&lt;iostream&gt;</code> support</li>
@@ -459,6 +465,22 @@ features.
         <td class="good"></td>
         <td class="good"></td>
         <td class="good"></td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Unit-aware math</summary>
+                <p>
+                    Unit-aware versions of common mathematical functions (`max`, `abs`, `sin`,
+                    `round`, and so on).
+                </p>
+            </details>
+        </td>
+        <td class="na"></td>
+        <td class="na"></td>
+        <td class="na"></td>
+        <td class="na"></td>
+        <td class="na"></td>
     </tr>
     <tr>
         <td>
@@ -813,18 +835,21 @@ features.
         <td>
             <details class="criterion">
                 <summary>"Kind" Types</summary>
-                <p>Support for reasoning about different "kinds" of the same dimension.</p>
-                <ul>
-                    <li>Safeguards for quantities with different "kind", such as height and width</li>
-                    <li>The ability to express a hierarchy of kinds</li>
-                </ul>
+                <p>
+                    Any feature which supports robustly distinguishing between units that have the
+                    same dimension and magnitude.
+                </p>
+                <p>
+                    For example, "hertz" and "becquerel" both have the same dimension and magnitude
+                    as "inverse seconds", but some libraries may prevent users from mixing them.
+                </p>
             </details>
         </td>
         <td class="na"></td>
         <td class="poor"></td>
         <td class="poor"></td>
         <td class="best"></td>
-        <td class="poor">No plans to support.</td>
+        <td class="poor">No plans at present to support.</td>
     </tr>
     <tr>
         <td>
@@ -848,18 +873,38 @@ features.
     <tr>
         <td>
             <details class="criterion">
-                <summary>Units as types</summary>
+                <summary>Units/Dimensions as types</summary>
                 <p>
-                    Types that represent abstract units (clearly distinct from quantities of that
-                    unit).
+                    <li>
+                        Types that represent abstract units (clearly distinct from quantities of
+                        that unit).
+                    </li>
+                    <li>Types that represent abstract dimensions.</li>
+                    <li>The ability to do arithmetic with instances of these types.</li>
                 </p>
             </details>
         </td>
         <td class="good"></td>
         <td class="fair">Types exist, but conflated with quantity names</td>
         <td class="poor">No separate types for units</td>
-        <td class="good">Can form instances and do arithmetic</td>
-        <td class="good">Can form instances and do arithmetic</td>
+        <td class="good">
+            <ul>
+                <li class="check">Types for units</li>
+                <li class="check">Types for dimensions</li>
+                <li class="check">
+                    Can do arithmetic (compound units on the fly; abstract dimensional analysis)
+                </li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Types for units</li>
+                <li class="check">Types for dimensions</li>
+                <li class="check">
+                    Can do arithmetic (compound units on the fly; abstract dimensional analysis)
+                </li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>
