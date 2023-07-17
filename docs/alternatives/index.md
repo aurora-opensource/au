@@ -476,11 +476,42 @@ features.
                 </p>
             </details>
         </td>
-        <td class="na"></td>
-        <td class="na"></td>
-        <td class="na"></td>
-        <td class="na"></td>
-        <td class="na"></td>
+        <td class="fair">
+            <ul>
+                <li class="check">Wide variety of functions</li>
+                <li class="x">
+                    <code>round</code>, <code>ceil</code>, and so on are not unit-safe
+                </li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Wide variety of functions</li>
+                <li class="x">
+                    <code>round</code>, <code>ceil</code>, and so on are not unit-safe
+                </li>
+            </ul>
+        </td>
+        <td class="poor">No</td>
+        <td class="good">
+            <ul>
+                <li class="check">Wide variety of functions</li>
+                <li class="check">
+                    Unit-safe APIs for <code>round</code>, <code>ceil</code>, and so on
+                </li>
+            </ul>
+        </td>
+        <td class="best">
+            <ul>
+                <li class="check">Wide variety of functions</li>
+                <li class="check">
+                    Unit-safe APIs for <code>round</code>, <code>ceil</code>, and so on
+                </li>
+                <li class="check">
+                    Smart, unit-aware inverse functions
+                </li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>
