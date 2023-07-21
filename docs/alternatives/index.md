@@ -41,14 +41,14 @@ indicate which version we considered, and say a few words about why we included 
 - [**nholthaus/units**](https://github.com/nholthaus/units) (version: 2.3.3)
     - Kicked off the revolution in modern (that is, post-C++11 watershed) units libraries.
     - Its laser-sharp focus on accessibility and low friction have made it probably the most widely
-      used C++ units library ever.
+      used C++ units library to date.
 - [**bernedom/SI**](https://github.com/bernedom/SI) (version: 2.5.1)
-    - A newer, C++17-compatible offering with a large number of stars.
+    - A newer, C++17-compatible offering with a large number of GitHub stars.
 - [**mp-units**](https://github.com/mpusz/mp-units) (version: 2.0.0:testing)
     - A library designed to take full advantage of ultra-modern (that is, post-C++20 watershed)
       features, such as concepts and non-template type parameters (NTTPs).
-    - mp-units is leading the efforts towards a standard C++ units library, both by trialling new
-      API designs, and by coordinating with the authors of other leading units libraries.
+    - mp-units is leading the efforts towards a standard C++ units library, both by field testing
+      new API designs, and by coordinating with the authors of other leading units libraries.
 
 ## Detailed comparison matrices
 
@@ -260,9 +260,9 @@ Now we're ready to compare the libraries "as units libraries" --- that is, in te
 features.
 
 !!! note
-    The features are listed, _very_ roughly, in order of importance.  Counting up the colours in
-    each column won't give an accurate picture.  The rows near the top matter more --- sometimes,
-    _much_ more --- than the rows further down.
+    The features are listed, _very_ roughly, in order of importance.  Counting up the colors in each
+    column won't give an accurate picture.  The rows near the top matter more --- sometimes, _much_
+    more --- than the rows further down.
 
     Of course, what matters the most for _you_ are _your_ use cases and criteria!
 
