@@ -28,9 +28,31 @@ to the mature and widely available C++14 standard. Key features include:
 - Intelligent, unit-aware functions for rounding and computing inverses.
 - Minimal friction by using a single, short namespace: everything's in `au::`.
 
+## Alternatives considered here
+
+We'll consider several of the most prominent alternatives in more detail.  While there are [many
+more libraries](https://github.com/topics/dimensional-analysis?l=c%2B%2B), the ones we consider here
+are included for being especially pioneering or popular (or both).  Here, we list those libraries,
+indicate which version we considered, and say a few words about why we included it in the analysis.
+
+- [**Boost Units**](https://www.boost.org/doc/libs/1_82_0/doc/html/boost_units.html) (version:
+  1.82.0)
+    - One of the longest-standing C++ unit libraries, and the most prominent pre-C++14 option.
+- [**nholthaus/units**](https://github.com/nholthaus/units) (version: 2.3.3)
+    - Kicked off the revolution in modern (that is, post-C++11 watershed) units libraries.
+    - Its laser-sharp focus on accessibility and low friction have made it probably the most widely
+      used C++ units library to date.
+- [**bernedom/SI**](https://github.com/bernedom/SI) (version: 2.5.1)
+    - A newer, C++17-compatible offering with a large number of GitHub stars.
+- [**mp-units**](https://github.com/mpusz/mp-units) (version: 2.0.0:testing)
+    - A library designed to take full advantage of ultra-modern (that is, post-C++20 watershed)
+      features, such as concepts and non-template type parameters (NTTPs).
+    - mp-units is leading the efforts towards a standard C++ units library, both by field testing
+      new API designs, and by coordinating with the authors of other leading units libraries.
+
 ## Detailed comparison matrices
 
-Here's a more detailed comparison to the most prominent alternatives.  We'll use the following
+Here's a more detailed comparison to the alternatives listed above.  We'll use the following
 legend[^1]:
 
 [^1]: Users may have expected a "traffic light" style, green/yellow/red color scheme.  However,
@@ -94,6 +116,7 @@ at all, and if so, how hard it will be to obtain.
         <th></th>
         <th>Boost</th>
         <th>nholthaus</th>
+        <th>bernedom/SI</th>
         <th>mp-units</th>
         <th class="highlight">Au</th>
     </tr>
@@ -104,11 +127,9 @@ at all, and if so, how hard it will be to obtain.
                 <p>The minimum C++ standard required to use the library.</p>
             </details>
         </td>
-        <td class="best">
-            C++98 or C++03<br>
-            (unclear which, but best in either case)
-        </td>
+        <td class="best">C++98</td>
         <td class="good">C++14</td>
+        <td class="fair">C++17</td>
         <td class="poor">C++20</td>
         <td class="good">C++14</td>
     </tr>
@@ -121,7 +142,8 @@ at all, and if so, how hard it will be to obtain.
         </td>
         <td class="fair">Part of boost</td>
         <td class="good">Single, self-contained header</td>
-        <td class="fair">First class conan support; available on vcpkg</td>
+        <td class="fair">Available on conan</td>
+        <td class="fair">Available on conan and vcpkg</td>
         <td class="best">
             <p>Supports single-header delivery, with features:
             <ul>
@@ -159,6 +181,7 @@ These costs can bring significant benefits, but we still want them to be as smal
         <th></th>
         <th>Boost</th>
         <th>nholthaus</th>
+        <th>bernedom/SI</th>
         <th>mp-units</th>
         <th class="highlight">Au</th>
     </tr>
@@ -176,6 +199,7 @@ These costs can bring significant benefits, but we still want them to be as smal
         </td>
         <td class="na"></td>
         <td class="poor">Very slow, but can be <i>greatly</i> improved by removing I/O support and most units</td>
+        <td class="na"></td>
         <td class="na"></td>
         <td class="good">Possibly "best", but will need to assess all libraries on the same code</td>
     </tr>
@@ -200,10 +224,20 @@ These costs can bring significant benefits, but we still want them to be as smal
             </a>
         </td>
         <td class="fair">Positional dimensions</td>
-        <td class="good">Pioneered strong typedefs for units</td>
-        <td class="best">
+        <td class="fair">Alias for unit template</td>
+        <td class="good">
             <ul>
-                <li class="check">No dimension in type name leads to shorter types</li>
+                <li class="check">Pioneered strong typedefs for units</li>
+                <li class="check"><a
+                href="https://mpusz.github.io/mp-units/2.0/users_guide/framework_basics/interface_introduction/?h=expression+tem#expression-templates">Expression
+                templates</a> produce very readable errors
+                </li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Strong unit typenames appear in errors</li>
+                <li class="check">Short namespace minimizes clutter</li>
                 <li class="check">
                     Detailed <a
                     href="https://aurora-opensource.github.io/au/troubleshooting">troubleshooting
@@ -225,11 +259,19 @@ At this point, you've assessed:
 Now we're ready to compare the libraries "as units libraries" --- that is, in terms of their core
 features.
 
+!!! note
+    The features are listed, _very_ roughly, in order of importance.  Counting up the colors in each
+    column won't give an accurate picture.  The rows near the top matter more --- sometimes, _much_
+    more --- than the rows further down.
+
+    Of course, what matters the most for _you_ are _your_ use cases and criteria!
+
 <table>
     <tr>
         <th></th>
         <th>Boost</th>
         <th>nholthaus</th>
+        <th>bernedom/SI</th>
         <th>mp-units</th>
         <th class="highlight">Au</th>
     </tr>
@@ -245,8 +287,11 @@ features.
             </details>
         </td>
         <td class="good"></td>
-        <td class="fair">
+        <td class="poor">
             Integer Reps <a href="https://github.com/nholthaus/units/issues/225">unsafe</a>
+        </td>
+        <td class="poor">
+            Integer Reps <a href="https://github.com/bernedom/SI/issues/122">unsafe</a>
         </td>
         <td class="good">
             Policy <a
@@ -275,6 +320,7 @@ features.
         <td class="fair"></td>
         <td class="fair"></td>
         <td class="fair"></td>
+        <td class="good">Contains unit-safe interfaces</td>
         <td class="best">Only contains unit-safe interfaces</td>
     </tr>
     <tr>
@@ -289,7 +335,17 @@ features.
                 </ul>
             </details>
         </td>
-        <td class="fair"></td>
+        <td class="poor">
+            <ul>
+                <li class="x">Generally high learning curve</li>
+                <li class="x">
+                    No (<a
+                    href="https://www.boost.org/doc/libs/1_79_0/doc/html/boost_units/Quantities.html#boost_units.Quantities.Quantity_Construction_and_Conversion">non-trivial</a>)
+                    implicit conversions
+                </li>
+                <li class="x">Many headers; hard to guess</li>
+            </ul>
+        </td>
         <td class="good">
             <ul>
                 <li class="check">Single file is very easy</li>
@@ -300,7 +356,24 @@ features.
                 </li>
             </ul>
         </td>
-        <td class="good"></td>
+        <td class="fair">
+            <ul>
+                <li class="check">Single, short namespace</li>
+                <li class="check">Implicit conversions</li>
+                <li>Multiple headers, but easy to guess (one per dimension)</li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Implicit conversions with good basic safety</li>
+                <li>
+                    <a
+                    href="https://mpusz.github.io/mp-units/2.0/users_guide/examples/hello_units/">Multiple
+                    headers</a>, one per system
+                </li>
+                <li class="x">Longer and more nested namespaces</li>
+            </ul>
+        </td>
         <td class="best">
             <ul>
                 <li class="check">Namespaces: just one, and it's short</li>
@@ -320,12 +393,65 @@ features.
         </td>
         <td class="fair"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">Prefix only</a></td>
         <td class="poor"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">No</a></td>
-        <td class="fair">
-            <a
-            href="https://mpusz.github.io/units/framework/quantities.html#quantity-references-experimental">Quantity
-            References</a> compose; prefixes don't
+        <td class="poor">No</td>
+        <td class="good">Can compose units, prefixes, dimensions, and quantity types</td>
+        <td class="good">QuantityMaker and PrefixApplier APIs</td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Unit-aware I/O</summary>
+                <p>
+                    The ability to print quantities along with information about their units.
+                    Examples:
+                </p>
+                <ul>
+                    <li><code>&lt;iostream&gt;</code>, preferrably toggleable</li>
+                    <li>Unit labels available even without <code>&lt;iostream&gt;</code></li>
+                    <li><code>fmtlb</code> (<code>std::format</code> after C++20)</li>
+                </ul>
+            </details>
         </td>
-        <td class="best">QuantityMaker and PrefixApplier APIs</td>
+        <td class="good">
+            <ul>
+                <li class="check">Toggleable <code>&lt;iostream&gt;</code> support</li>
+                <li class="check">
+                    Impressively configurable output (<code>format_mode</code>,
+                    <code>autoprefix_mode</code>)
+                </li>
+                <li class="x">No fmtlib support</li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Toggleable <code>&lt;iostream&gt;</code> support</li>
+                <li class="x">No fmtlib support</li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Toggleable <code>&lt;iostream&gt;</code> support</li>
+                <li class="check">Unit labels available even without <code>&lt;iostream&gt;</code></li>
+                <li class="x">No fmtlib support</li>
+            </ul>
+        </td>
+        <td class="best">
+            <ul>
+                <li class="check">Supports <code>&lt;iostream&gt;</code></li>
+                <li class="check">Unit labels available even without <code>&lt;iostream&gt;</code></li>
+                <li class="check">Supports <code>std::format</code></li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Toggleable <code>&lt;iostream&gt;</code> support</li>
+                <li class="check">Unit labels available even without <code>&lt;iostream&gt;</code></li>
+                <li class="x">
+                    Plan to add fmtlib support; see <a
+                    href="https://github.com/aurora-opensource/au/issues/149">#149</a>
+                </li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>
@@ -338,6 +464,54 @@ features.
         <td class="fair">Possible, but user-facing types use a global "preferred" Rep.</td>
         <td class="good"></td>
         <td class="good"></td>
+        <td class="good"></td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Unit-aware math</summary>
+                <p>
+                    Unit-aware versions of common mathematical functions (`max`, `abs`, `sin`,
+                    `round`, and so on).
+                </p>
+            </details>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Wide variety of functions</li>
+                <li class="x">
+                    <code>round</code>, <code>ceil</code>, and so on are not unit-safe
+                </li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Wide variety of functions</li>
+                <li class="x">
+                    <code>round</code>, <code>ceil</code>, and so on are not unit-safe
+                </li>
+            </ul>
+        </td>
+        <td class="poor">No</td>
+        <td class="good">
+            <ul>
+                <li class="check">Wide variety of functions</li>
+                <li class="check">
+                    Unit-safe APIs for <code>round</code>, <code>ceil</code>, and so on
+                </li>
+            </ul>
+        </td>
+        <td class="best">
+            <ul>
+                <li class="check">Wide variety of functions</li>
+                <li class="check">
+                    Unit-safe APIs for <code>round</code>, <code>ceil</code>, and so on
+                </li>
+                <li class="check">
+                    Smart, unit-aware inverse functions
+                </li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>
@@ -363,6 +537,7 @@ features.
             href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#nic-units.usage.example">Generic
             templates, constrained with traits</a>
         </td>
+        <td class="fair">Generic templates, constrained with traits</td>
         <td class="best">Concepts excel here</td>
         <td class="fair">
             Currently clunky.  Could be better by adding concepts in extra
@@ -387,6 +562,7 @@ features.
                 <li class="x"><a href="https://github.com/nholthaus/units/issues/131">Can't add dimensions</a></li>
             </ul>
         </td>
+        <td class="good">Can add new units and dimensions</td>
         <td class="best">Can even handle, e.g., systems of "natural" units</td>
         <td class="good">
             Can add <a href="https://aurora-opensource.github.io/au/howto/new-units">new units</a>
@@ -406,6 +582,7 @@ features.
                 </ul>
             </details>
         </td>
+        <td class="fair">No interop with other units libraries</td>
         <td class="fair">No interop with other units libraries</td>
         <td class="fair">No interop with other units libraries</td>
         <td class="good">
@@ -435,6 +612,7 @@ features.
             href="https://github.com/nholthaus/units/issues/240">can't distinguish quantity from
             point</a>.
         </td>
+        <td class="poor">None; would be hard to add, since units conflated with quantity type</td>
         <td class="good"></td>
         <td class="good"></td>
     </tr>
@@ -459,6 +637,7 @@ features.
         <td class="fair">
             Uses ratio plus "pi powers": good angle handling, but vulnerable to overflow
         </td>
+        <td class="poor">`std::ratio` only, with no solution for pi</td>
         <td class="good">
             Full support for <a
             href="https://mpusz.github.io/units/framework/magnitudes.html">Magnitudes</a>
@@ -480,7 +659,7 @@ features.
                         Flexibility in the Rep (usually a variety of integral types, and perhaps
                         <code>float</code>, but rarely <code>double</code>).
                     </li>
-                    <li>The easy ability to exclude <code>&lt;iostreams&gt;</code>.</li>
+                    <li>The easy ability to exclude <code>&lt;iostream&gt;</code>.</li>
                 </ul>
             </details>
         </td>
@@ -488,11 +667,19 @@ features.
         <td class="fair">
             Can trim by excluding <code>&lt;iostream&gt;</code>, but integer-Rep support is poor.
         </td>
+        <td class="fair">
+            <ul>
+                <li class="check"><code>&lt;iostream&gt;</code> not automatically included</li>
+                <li class="check">Supports integral rep</li>
+                <li class="x">Integral rep conversions unsafe</li>
+            </ul>
+        </td>
         <td class="good">Assumed to be good, based on mixed-Rep support</td>
         <td class="best">
             Best choice of all:
             <ul>
                 <li class="check">No "preferred" Rep.</li>
+                <li class="check"><code>sizeof()</code>-friendly unit label representation</li>
                 <li class="check">Safe integer operations.</li>
             </ul>
         </td>
@@ -500,29 +687,52 @@ features.
     <tr>
         <td>
             <details class="criterion">
-                <summary>User-defined literals (UDLs)</summary>
+                <summary>Abbreviated construction</summary>
                 <p>
-                    Concise expressions such as `3_m` for "3 meters", or some comparable
-                    alternative.
+                    The ability to construct a Quantity using the symbol for its unit.
                 </p>
-                <ul>
-                    <li>
-                        Flexibility in the Rep (usually a variety of integral types, and perhaps
-                        <code>float</code>, but rarely <code>double</code>).
-                    </li>
-                    <li>The easy ability to exclude <code>&lt;iostreams&gt;</code>.</li>
-                </ul>
+
+                <p>
+                    This is most commonly done with user-defined literals (UDLs), such as
+                    <code>3_m</code> for "3 meters", but there are other alternatives.
+                </p>
             </details>
         </td>
         <td class="poor"></td>
-        <td class="good">UDLs</td>
+        <td class="good">User-defined literals (UDLs)</td>
+        <td class="good">User-defined literals (UDLs)</td>
         <td class="best">
-            UDLs and <a
+            <a
             href="https://mpusz.github.io/units/framework/quantities.html#quantity-references-experimental">Quantity
             References</a>
         </td>
         <td class="poor">
             Planned to add: <a href="https://github.com/aurora-opensource/au/issues/43">#43</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Linear algebra</summary>
+                <p>
+                    Good interoperability with matrix and vector libraries, such as Eigen
+                </p>
+                <p>
+                    Most libraries can work with Eigen, but only if Eigen is patched: Quantity types
+                    break several of Eigen's deeply embedded assumptions.
+                </p>
+            </details>
+        </td>
+        <td class="fair"></td>
+        <td class="fair"></td>
+        <td class="fair"></td>
+        <td class="best">
+            Experimental support for <a
+            href="https://mpusz.github.io/mp-units/2.0/users_guide/framework_basics/character_of_a_quantity/">Quantity
+            Character</a>; can use matrix types as Rep
+        </td>
+        <td class="fair">
+            Planned to add: <a href="https://github.com/aurora-opensource/au/issues/70">#70</a>
         </td>
     </tr>
     <tr>
@@ -541,6 +751,14 @@ features.
         <td class="poor">
             Effectively floating-point only (integer types <a
             href="https://github.com/nholthaus/units/issues/225">unsafe</a>)
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">No "default" rep</li>
+                <li class="x">
+                    Integer reps <a href="https://github.com/bernedom/SI/issues/122">unsafe</a>
+                </li>
+            </ul>
         </td>
         <td class="best">
             Well defined
@@ -573,8 +791,13 @@ features.
             default constructor</a> to construct, but no special facility for comparison
         </td>
         <td class="fair">Supports <code>copysign()</code>, but no special construction or comparison</td>
+        <td class="poor">No special construction or comparison</td>
         <td class="fair">Has <code>q::zero()</code> member, but no special construction or comparison</td>
-        <td class="best">Can use <code>ZERO</code> to construct or compare any quantity</td>
+        <td class="best">
+            Can use <a
+            href="https://aurora-opensource.github.io/au/main/discussion/concepts/zero/"><code>ZERO</code></a>
+            to construct or compare any quantity
+        </td>
     </tr>
     <tr>
         <td>
@@ -591,8 +814,37 @@ features.
             value </a>
         </td>
         <td class="good"></td>
+        <td class="fair">
+            <ul>
+                <li class="check">Supports degrees and radians</li>
+                <li class="x">pi represented as <code>std::ratio</code></li>
+            </ul>
+        </td>
         <td class="good"></td>
         <td class="good"></td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Physical constants</summary>
+                <ul>
+                    <li>How good is the core library support?</li>
+                    <li>Does the library include built-in constants?</li>
+                </ul>
+            </details>
+        </td>
+        <td class="good">Includes built-in constants as quantities</td>
+        <td class="good">Includes built-in constants as quantities</td>
+        <td class="poor"></td>
+        <td class="best">
+            <a
+            href="https://mpusz.github.io/mp-units/2.0/users_guide/framework_basics/faster_than_lightspeed_constants/">"Faster
+            than lightspeed" constants</a>
+        </td>
+        <td class="poor">
+            Plan to support someday; see
+            <a href="https://github.com/aurora-opensource/au/issues/90">#90</a>.
+        </td>
     </tr>
     <tr>
         <td>
@@ -604,6 +856,7 @@ features.
         <td class="poor"></td>
         <td class="best"></td>
         <td class="poor"></td>
+        <td class="poor"></td>
         <td class="poor">
             Plan to support someday; see
             <a href="https://github.com/aurora-opensource/au/issues/41">#41</a>.
@@ -614,15 +867,20 @@ features.
             <details class="criterion">
                 <summary>"Kind" Types</summary>
                 <p>
-                    Support for distinguishing different "kinds" of the same dimension, such as
-                    a length from a width.
+                    Any feature which supports robustly distinguishing between units that have the
+                    same dimension and magnitude.
+                </p>
+                <p>
+                    For example, "hertz" and "becquerel" both have the same dimension and magnitude
+                    as "inverse seconds", but some libraries may prevent users from mixing them.
                 </p>
             </details>
         </td>
         <td class="na"></td>
         <td class="poor"></td>
+        <td class="poor"></td>
         <td class="best"></td>
-        <td class="poor">No plans to support.</td>
+        <td class="poor">No plans at present to support.</td>
     </tr>
     <tr>
         <td>
@@ -636,6 +894,7 @@ features.
         </td>
         <td class="good"></td>
         <td class="poor">Single, implicit global system</td>
+        <td class="poor"></td>
         <td class="good"></td>
         <td class="poor">
             Single, implicit global system. (Intentional design tradeoff: reduces learning curve,
@@ -645,17 +904,38 @@ features.
     <tr>
         <td>
             <details class="criterion">
-                <summary>Units as types</summary>
+                <summary>Units/Dimensions as types</summary>
                 <p>
-                    Types that represent abstract units (clearly distinct from quantities of that
-                    unit).
+                    <li>
+                        Types that represent abstract units (clearly distinct from quantities of
+                        that unit).
+                    </li>
+                    <li>Types that represent abstract dimensions.</li>
+                    <li>The ability to do arithmetic with instances of these types.</li>
                 </p>
             </details>
         </td>
         <td class="good"></td>
         <td class="fair">Types exist, but conflated with quantity names</td>
-        <td class="good"></td>
-        <td class="best">Can form instances and do arithmetic</td>
+        <td class="poor">No separate types for units</td>
+        <td class="good">
+            <ul>
+                <li class="check">Types for units</li>
+                <li class="check">Types for dimensions</li>
+                <li class="check">
+                    Can do arithmetic (compound units on the fly; abstract dimensional analysis)
+                </li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Types for units</li>
+                <li class="check">Types for dimensions</li>
+                <li class="check">
+                    Can do arithmetic (compound units on the fly; abstract dimensional analysis)
+                </li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>
@@ -668,7 +948,8 @@ features.
         </td>
         <td class="poor">Present in user-facing APIs</td>
         <td class="poor">Present in user-facing APIs</td>
-        <td class="good">Confined to outer compatibility layer</td>
+        <td class="fair">Very few, and confined to implementation helpers</td>
+        <td class="fair">Very few, and confined to implementation helpers</td>
         <td class="best">No macros</td>
     </tr>
 </table>
