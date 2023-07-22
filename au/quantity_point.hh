@@ -308,6 +308,10 @@ using QuantityPointD = QuantityPoint<UnitT, double>;
 template <typename UnitT>
 using QuantityPointF = QuantityPoint<UnitT, float>;
 template <typename UnitT>
+using QuantityPointI = QuantityPoint<UnitT, int>;
+template <typename UnitT>
+using QuantityPointU = QuantityPoint<UnitT, unsigned int>;
+template <typename UnitT>
 using QuantityPointI32 = QuantityPoint<UnitT, int32_t>;
 template <typename UnitT>
 using QuantityPointU32 = QuantityPoint<UnitT, uint32_t>;

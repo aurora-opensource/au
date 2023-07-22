@@ -36,7 +36,7 @@ constexpr bool can_scale_without_overflow(Magnitude<BPs...> m, Rep value) {
 }
 
 namespace detail {
-// Chosen so as to allow populating a `QuantityU32<Hertz>` with an input in MHz.
+// Chosen so as to allow populating a `QuantityI32<Hertz>` with an input in MHz.
 constexpr auto OVERFLOW_THRESHOLD = 2'147;
 
 // This wrapper for `can_scale_without_overflow<...>(..., OVERFLOW_THRESHOLD)` can prevent an

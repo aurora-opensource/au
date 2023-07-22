@@ -456,6 +456,10 @@ using QuantityD = Quantity<UnitT, double>;
 template <typename UnitT>
 using QuantityF = Quantity<UnitT, float>;
 template <typename UnitT>
+using QuantityI = Quantity<UnitT, int>;
+template <typename UnitT>
+using QuantityU = Quantity<UnitT, unsigned int>;
+template <typename UnitT>
 using QuantityI32 = Quantity<UnitT, int32_t>;
 template <typename UnitT>
 using QuantityU32 = Quantity<UnitT, uint32_t>;

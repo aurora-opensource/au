@@ -42,6 +42,17 @@ struct Celsius : Kelvins {
 constexpr QuantityMaker<Celsius> celsius_qty{};
 constexpr QuantityPointMaker<Celsius> celsius_pt{};
 
+TEST(Quantity, HasCorrectRepNamedAliases) {
+    StaticAssertTypeEq<QuantityPointD<Meters>, QuantityPoint<Meters, double>>();
+    StaticAssertTypeEq<QuantityPointF<Meters>, QuantityPoint<Meters, float>>();
+    StaticAssertTypeEq<QuantityPointI<Meters>, QuantityPoint<Meters, int>>();
+    StaticAssertTypeEq<QuantityPointU<Meters>, QuantityPoint<Meters, unsigned int>>();
+    StaticAssertTypeEq<QuantityPointI32<Meters>, QuantityPoint<Meters, int32_t>>();
+    StaticAssertTypeEq<QuantityPointU32<Meters>, QuantityPoint<Meters, uint32_t>>();
+    StaticAssertTypeEq<QuantityPointI64<Meters>, QuantityPoint<Meters, int64_t>>();
+    StaticAssertTypeEq<QuantityPointU64<Meters>, QuantityPoint<Meters, uint64_t>>();
+}
+
 TEST(QuantityPoint, HasExpectedDiffType) {
     StaticAssertTypeEq<QuantityPointI32<Kelvins>::Diff, QuantityI32<Kelvins>>();
     StaticAssertTypeEq<QuantityPointF<Celsius>::Diff, QuantityF<Celsius>>();
