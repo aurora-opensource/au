@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.2-14-g981ad9d
+// Version identifier: 0.3.2-15-ge608c72
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -2731,7 +2731,7 @@ constexpr bool can_scale_without_overflow(Magnitude<BPs...> m, Rep value) {
 }
 
 namespace detail {
-// Chosen so as to allow populating a `QuantityU32<Hertz>` with an input in MHz.
+// Chosen so as to allow populating a `QuantityI32<Hertz>` with an input in MHz.
 constexpr auto OVERFLOW_THRESHOLD = 2'147;
 
 // This wrapper for `can_scale_without_overflow<...>(..., OVERFLOW_THRESHOLD)` can prevent an
@@ -3235,6 +3235,10 @@ template <typename UnitT>
 using QuantityD = Quantity<UnitT, double>;
 template <typename UnitT>
 using QuantityF = Quantity<UnitT, float>;
+template <typename UnitT>
+using QuantityI = Quantity<UnitT, int>;
+template <typename UnitT>
+using QuantityU = Quantity<UnitT, unsigned int>;
 template <typename UnitT>
 using QuantityI32 = Quantity<UnitT, int32_t>;
 template <typename UnitT>
@@ -3905,6 +3909,10 @@ template <typename UnitT>
 using QuantityPointD = QuantityPoint<UnitT, double>;
 template <typename UnitT>
 using QuantityPointF = QuantityPoint<UnitT, float>;
+template <typename UnitT>
+using QuantityPointI = QuantityPoint<UnitT, int>;
+template <typename UnitT>
+using QuantityPointU = QuantityPoint<UnitT, unsigned int>;
 template <typename UnitT>
 using QuantityPointI32 = QuantityPoint<UnitT, int32_t>;
 template <typename UnitT>
