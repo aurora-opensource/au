@@ -142,7 +142,7 @@ class Quantity {
     template <typename NewRep,
               typename NewUnit,
               typename = std::enable_if_t<IsUnit<NewUnit>::value>>
-    constexpr auto as(NewUnit u) const {
+    constexpr auto as(NewUnit) const {
         constexpr auto ratio = unit_ratio(unit, NewUnit{});
 
         using Common = std::common_type_t<Rep, NewRep>;
