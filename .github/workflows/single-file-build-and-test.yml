@@ -1,0 +1,50 @@
+# Copyright 2023 Aurora Operations, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: single-file-build-and-test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        windows: [windows-2019, windows-2022]
+
+    runs-on: ${{ matrix.windows }}
+
+    steps:
+      - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
+
+      - name: Set up developer command prompt
+        uses: ilammy/msvc-dev-cmd@cec98b9d092141f74527d0afa6feb2af698cfe89 #v1.12.1
+
+      - name: Set up python
+        uses: actions/setup-python@3542bca2639a428e1796aaa6a2ffef0c0f575566 #v3.1.4
+        with:
+          python-version: '3.10'
+
+      - name: Build single-file package
+        shell: cmd
+        run: python tools/bin/make-single-file --units meters seconds --version-id NA > au.hh
+
+      - name: Build and run test
+        shell: cmd
+        run: |
+          cl.exe /std:c++14 single-file-test.cc
+          single-file-test.exe
