@@ -19,11 +19,11 @@ on:
   pull_request:
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        windows: ['windows-2019', 'windows-2022']
+  strategy:
+    matrix:
+      windows: ['windows-2019', 'windows-2022']
 
+  build:
     runs-on: ${{ matrix.mindows }}
 
     steps:
