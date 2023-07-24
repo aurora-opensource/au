@@ -16,6 +16,8 @@ name: single-file-build-and-test
 
 on:
   push:
+    branches:
+      - main
   pull_request:
 
 jobs:
