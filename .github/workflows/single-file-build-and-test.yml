@@ -24,7 +24,7 @@ jobs:
       matrix:
         windows: [windows-2019, windows-2022]
 
-    runs-on: ${{ matrix.mindows }}
+    runs-on: ${{ matrix.windows }}
 
     steps:
       - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
