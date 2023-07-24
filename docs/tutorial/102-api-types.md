@@ -54,6 +54,8 @@ a table of the ones we support out of the box:
 |-----|-------|
 | `double` | `QuantityD` |
 | `float` | `QuantityF` |
+| `int` | `QuantityI` |
+| `unsigned int` | `QuantityU` |
 | `int32_t` | `QuantityI32` |
 | `uint32_t` | `QuantityU32` |
 | `int64_t` | `QuantityI64` |

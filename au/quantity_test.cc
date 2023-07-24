@@ -70,6 +70,17 @@ TEST(Quantity, IsItaniumAbiRegisterCompatible) {
     EXPECT_TRUE(std::is_trivially_move_constructible<QuantityD<Feet>>::value);
 }
 
+TEST(Quantity, HasCorrectRepNamedAliases) {
+    StaticAssertTypeEq<QuantityD<Feet>, Quantity<Feet, double>>();
+    StaticAssertTypeEq<QuantityF<Feet>, Quantity<Feet, float>>();
+    StaticAssertTypeEq<QuantityI<Feet>, Quantity<Feet, int>>();
+    StaticAssertTypeEq<QuantityU<Feet>, Quantity<Feet, unsigned int>>();
+    StaticAssertTypeEq<QuantityI32<Feet>, Quantity<Feet, int32_t>>();
+    StaticAssertTypeEq<QuantityU32<Feet>, Quantity<Feet, uint32_t>>();
+    StaticAssertTypeEq<QuantityI64<Feet>, Quantity<Feet, int64_t>>();
+    StaticAssertTypeEq<QuantityU64<Feet>, Quantity<Feet, uint64_t>>();
+}
+
 TEST(Quantity, CanCreateAndReadValuesByNamingUnits) {
     constexpr auto x = feet(3.14);
     constexpr double output_value = x.in(feet);
