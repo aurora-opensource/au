@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.2-13-g5ba2262
+// Version identifier: 0.3.2-14-g981ad9d
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -2921,8 +2921,8 @@ class Quantity {
     template <typename NewRep,
               typename NewUnit,
               typename = std::enable_if_t<IsUnit<NewUnit>::value>>
-    constexpr auto as(NewUnit u) const {
-        constexpr auto ratio = unit_ratio(unit, u);
+    constexpr auto as(NewUnit) const {
+        constexpr auto ratio = unit_ratio(unit, NewUnit{});
 
         using Common = std::common_type_t<Rep, NewRep>;
         constexpr auto NUM = integer_part(numerator(ratio));
@@ -2937,7 +2937,7 @@ class Quantity {
 
     template <typename NewUnit, typename = std::enable_if_t<IsUnit<NewUnit>::value>>
     constexpr auto as(NewUnit u) const {
-        static_assert(implicit_rep_permitted_from_source_to_target<Rep>(unit, u),
+        static_assert(implicit_rep_permitted_from_source_to_target<Rep>(unit, NewUnit{}),
                       "Dangerous conversion: use .as<Rep>(NewUnit) instead");
         return as<Rep>(u);
     }
