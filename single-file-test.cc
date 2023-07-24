@@ -4,8 +4,16 @@
 
 #include "au.hh"
 
+// This file builds all of the code in the single-file package of Au, and runs some basic tests.
+//
+// If we find any failures not covered by this file, we can add more test cases as needed.
+//
+// Note that this file will *not* be built with bazel.  It's therefore important that we avoid all
+// dependencies outside of the C++14 standard library, and the single-file package of Au itself.
+
 using namespace au;
 
+// This ad hoc utility is a stand-in for GTEST, which we can't use here.
 template <typename ExpectedT, typename ActualT>
 bool expect_equal(ExpectedT expected, ActualT actual) {
     if (expected != actual) {
