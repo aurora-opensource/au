@@ -265,7 +265,7 @@ slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `uni
     `int`.
 
     The above example used the quantity maker, `inches`.  One could also use an instance of the unit
-    type `Inches`, writing `length.as(Inches{})`.  The former is generally preferable; the latter is
+    type `Inches`, writing `length.in(Inches{})`.  The former is generally preferable; the latter is
     mainly useful in generic code where the unit type may be all you have.
 
 **Without** a template argument, `.in(unit)` obeys the same safety checks as for the [implicit

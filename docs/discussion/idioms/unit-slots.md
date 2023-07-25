@@ -57,6 +57,16 @@ they have two advantages that make them easier to read:
 2. You can use grammatically correct names, such as `meters / squared(second)` (note: `second` is
    singular), rather than `Meters{} / squared(Seconds{})`.
 
+#### Notes for `QuantityPoint`
+
+`QuantityPoint` doesn't use quantity makers; it uses quantity _point_ makers.  For example, instead
+of the quantity maker `meters`, it uses the quantity point maker `meters_pt`.
+
+The implications are straightforward.  If you have a `QuantityPoint` instead of a `Quantity`, then
+use the quantity _point_ maker instead of the _quantity_ maker.  The library will enforce this
+automatically: for example, you can't pass `meters` to a `QuantityPoint`'s unit slot, and you can't
+pass `meters_pt` to a `Quantity`'s unit slot.
+
 ## Examples: rounding to RPM
 
 Let's look at some examples, using this quantity variable:
