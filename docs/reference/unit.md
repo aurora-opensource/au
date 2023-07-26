@@ -283,7 +283,7 @@ whose _magnitude_ is 1.
 - For _instance_ `u`:
     - `is_unitless_unit(u)`
 
-### Unit ratio
+### Unit ratio {#unit-ratio}
 
 **Result:** The [magnitude](./magnitude.md) representing the ratio of the input units' magnitudes.
 
