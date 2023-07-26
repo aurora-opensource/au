@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: MSVC-x64-19.29.30151
+name: "MSVC x64 19.29"
 
 on:
   push:
