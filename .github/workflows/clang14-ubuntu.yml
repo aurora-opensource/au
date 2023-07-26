@@ -1,4 +1,4 @@
-# Copyright 2022 Aurora Operations, Inc.
+# Copyright 2023 Aurora Operations, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,20 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: build-and-test
+name: clang14-ubuntu
 
 on:
-  workflow_call:
-    inputs:
-      config:
-        required: true
-        type: string
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
-      - name: Build and test (${{ inputs.config }})
-        run: bazel test --copt=-Werror --config=${{ inputs.config }} //...:all
+    uses: ./.github/workflows/build-and-test.yml
+    with:
+      config: clang14
