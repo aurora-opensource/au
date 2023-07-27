@@ -22,7 +22,7 @@ on:
         type: string
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:

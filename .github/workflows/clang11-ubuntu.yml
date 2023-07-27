@@ -21,7 +21,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-and-test-clang11:
     uses: ./.github/workflows/build-and-test.yml
     with:
       config: clang11
