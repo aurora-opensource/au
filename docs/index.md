@@ -15,6 +15,10 @@ These pages will be most useful as you begin your Au journey:
   What else is out there?  This page gives a detailed comparison to some of the most prominent other
   C++ units libraries.
 
+- **[Supported Compilers](./supported-compilers.md).**  Au aims to work with _any_ C++ compiler with full
+  support for C++14 or later.  That said, some platform/compiler combinations have more detailed
+  data.  Learn about our tiers of support, and what it takes to add a specific compiler.
+
 - **[Installation](./install.md).**  Once you're ready to try it out, here's how.  You can be up and
   running in any project within minutes!
 
