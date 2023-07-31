@@ -42,7 +42,7 @@ things, in this order.
 We have included a [self-explaining example
 shim](https://github.com/aurora-opensource/au/blob/3fa22a2212b37322a8243d57db024bb573b68813/compatibility/nholthaus_units_example_usage.hh)
 to illustrate this procedure.  Note that it includes examples of comments to disable and re-enable
-clang-format support, because without them, some projects which use clang-format might automatically
+clang-format support, because without them, some projects that use clang-format might automatically
 reorder the headers.
 
 !!! tip
@@ -51,7 +51,7 @@ reorder the headers.
     renaming your original nholthaus file, and giving this shim its original name!  That way, it
     will be as easy as possible for your nholthaus users to start using the new Au constructs.
 
-## Outcome and Limitations
+## Outcome and limitations
 
 Any user who includes the shim created in Step 2 will have low-friction interoperability between Au
 and the nholthaus library, for a wide variety of units.  Each library's types will safely and
