@@ -5,3 +5,9 @@ using the library.  Here's a summary of what you'll find.
 
 - **[New units](./new-units.md).**  How to add a new unit of measure that the library doesn't
   include.
+
+- **[Inter-library Interoperation](./interop/index.md).**  How to set up automatic correspondence
+  between equivalent types in Au, and any other units library.
+
+    - **[nholthaus/units](./interop/nholthaus.md).**  How to use the ready-made interoperability
+      with the [nholthaus/units](https://github.com/nholthaus/units) library.
