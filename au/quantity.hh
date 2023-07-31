@@ -158,8 +158,17 @@ class Quantity {
 
     template <typename NewUnit, typename = std::enable_if_t<IsUnit<NewUnit>::value>>
     constexpr auto as(NewUnit u) const {
-        static_assert(implicit_rep_permitted_from_source_to_target<Rep>(unit, NewUnit{}),
-                      "Dangerous conversion: use .as<Rep>(NewUnit) instead");
+        constexpr bool IMPLICIT_OK =
+            implicit_rep_permitted_from_source_to_target<Rep>(unit, NewUnit{});
+        constexpr bool INTEGRAL_REP = std::is_integral<Rep>::value;
+        static_assert(
+            IMPLICIT_OK || INTEGRAL_REP,
+            "Should never occur.  In the following static_assert, we assume that IMPLICIT_OK "
+            "can never fail unless INTEGRAL_REP is true.");
+        static_assert(
+            IMPLICIT_OK,
+            "Dangerous conversion for integer Rep!  See: "
+            "https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion");
         return as<Rep>(u);
     }
 
