@@ -1273,52 +1273,52 @@ so safely.</p>
 </div>
 </div>
 <p><strong>Compiler error (clang 14)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>au/error_examples.cc:19:17: error: calling a private constructor of class &#39;au::Quantity&lt;au::Seconds, double&gt;&#39;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>au/error_examples.cc:33:17: error: calling a private constructor of class &#39;au::Quantity&lt;au::Seconds, double&gt;&#39;
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    set_timeout(0.5);
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>                ^
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>./au/quantity.hh:369:15: note: declared private here
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>./au/quantity.hh:397:15: note: declared private here
 <a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    constexpr Quantity(Rep value) : value_{value} {}
 <a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>              ^
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>au/error_examples.cc:22:33: error: calling a private constructor of class &#39;au::Quantity&lt;au::Meters, double&gt;&#39;
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>au/error_examples.cc:36:33: error: calling a private constructor of class &#39;au::Quantity&lt;au::Meters, double&gt;&#39;
 <a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    constexpr QuantityD&lt;Meters&gt; length{5.5};
 <a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>                                ^
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>./au/quantity.hh:369:15: note: declared private here
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>./au/quantity.hh:397:15: note: declared private here
 <a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    constexpr Quantity(Rep value) : value_{value} {}
 <a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>              ^
 </code></pre></div></p>
 <p><strong>Compiler error (clang 11)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>au/error_examples.cc:19:17: error: calling a private constructor of class &#39;au::Quantity&lt;au::Seconds, double&gt;&#39;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>au/error_examples.cc:33:17: error: calling a private constructor of class &#39;au::Quantity&lt;au::Seconds, double&gt;&#39;
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    set_timeout(0.5);
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>                ^
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>./au/quantity.hh:369:15: note: declared private here
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>./au/quantity.hh:397:15: note: declared private here
 <a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    constexpr Quantity(Rep value) : value_{value} {}
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>              ^
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>au/error_examples.cc:22:33: error: calling a private constructor of class &#39;au::Quantity&lt;au::Meters, double&gt;&#39;
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>au/error_examples.cc:36:33: error: calling a private constructor of class &#39;au::Quantity&lt;au::Meters, double&gt;&#39;
 <a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    constexpr QuantityD&lt;Meters&gt; length{5.5};
 <a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>                                ^
-<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>./au/quantity.hh:369:15: note: declared private here
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>./au/quantity.hh:397:15: note: declared private here
 <a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    constexpr Quantity(Rep value) : value_{value} {}
 <a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>              ^
 </code></pre></div></p>
 <p><strong>Compiler error (gcc 10)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>au/error_examples.cc: In function &#39;void au::example_private_constructor()&#39;:
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>au/error_examples.cc:19:20: error: &#39;constexpr au::Quantity&lt;UnitT, RepT&gt;::Quantity(au::Quantity&lt;UnitT, RepT&gt;::Rep) [with UnitT = au::Seconds; RepT = double; au::Quantity&lt;UnitT, RepT&gt;::Rep = double]&#39; is private within this context
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>   19 |     set_timeout(0.5);
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>au/error_examples.cc:33:20: error: &#39;constexpr au::Quantity&lt;UnitT, RepT&gt;::Quantity(au::Quantity&lt;UnitT, RepT&gt;::Rep) [with UnitT = au::Seconds; RepT = double; au::Quantity&lt;UnitT, RepT&gt;::Rep = double]&#39; is private within this context
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>   33 |     set_timeout(0.5);
 <a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>      |                    ^
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>In file included from ./au/math.hh:8,
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>                 from ./au/au.hh:7,
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>                 from au/error_examples.cc:1:
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>./au/quantity.hh:369:15: note: declared private here
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>  369 |     constexpr Quantity(Rep value) : value_{value} {}
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>In file included from ./au/math.hh:22,
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>                 from ./au/au.hh:19,
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>                 from au/error_examples.cc:15:
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>./au/quantity.hh:397:15: note: declared private here
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>  397 |     constexpr Quantity(Rep value) : value_{value} {}
 <a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>      |               ^~~~~~~~
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>au/error_examples.cc:22:43: error: &#39;constexpr au::Quantity&lt;UnitT, RepT&gt;::Quantity(au::Quantity&lt;UnitT, RepT&gt;::Rep) [with UnitT = au::Meters; RepT = double; au::Quantity&lt;UnitT, RepT&gt;::Rep = double]&#39; is private within this context
-<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>   22 |     constexpr QuantityD&lt;Meters&gt; length{5.5};
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>au/error_examples.cc:36:43: error: &#39;constexpr au::Quantity&lt;UnitT, RepT&gt;::Quantity(au::Quantity&lt;UnitT, RepT&gt;::Rep) [with UnitT = au::Meters; RepT = double; au::Quantity&lt;UnitT, RepT&gt;::Rep = double]&#39; is private within this context
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>   36 |     constexpr QuantityD&lt;Meters&gt; length{5.5};
 <a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>      |                                           ^
-<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>In file included from ./au/math.hh:8,
-<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>                 from ./au/au.hh:7,
-<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>                 from au/error_examples.cc:1:
-<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>./au/quantity.hh:369:15: note: declared private here
-<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>  369 |     constexpr Quantity(Rep value) : value_{value} {}
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>In file included from ./au/math.hh:22,
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>                 from ./au/au.hh:19,
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>                 from au/error_examples.cc:15:
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>./au/quantity.hh:397:15: note: declared private here
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>  397 |     constexpr Quantity(Rep value) : value_{value} {}
 <a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>      |               ^~~~~~~~
 </code></pre></div></p>
 </div>
@@ -1389,62 +1389,62 @@ first!</p>
 </div>
 </div>
 <p><strong>Compiler error (clang 14)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>./au/quantity.hh:147:9: error: static_assert failed due to requirement &#39;implicit_rep_permitted_from_source_to_target&lt;int&gt;(unit, u)&#39; &quot;Dangerous conversion: use .as&lt;Rep&gt;(NewUnit) instead&quot;
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>        static_assert(implicit_rep_permitted_from_source_to_target&lt;Rep&gt;(unit, u),
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>./au/quantity.hh:183:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Inches, int&gt;::as&lt;au::Feet, void&gt;&#39; requested here
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>./au/quantity.hh:168:9: error: static_assert failed due to requirement &#39;IMPLICIT_OK&#39; &quot;Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion&quot;
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>        static_assert(
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>        ^
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>./au/quantity.hh:206:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Inches, int&gt;::as&lt;au::Feet, void&gt;&#39; requested here
 <a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>        return as(NewUnit{});
 <a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>               ^
-<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>au/error_examples.cc:30:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Inches, int&gt;::as&lt;au::Feet&gt;&#39; requested here
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>au/error_examples.cc:44:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Inches, int&gt;::as&lt;au::Feet&gt;&#39; requested here
 <a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    inches(24).as(feet);
 <a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>               ^
-<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>In file included from au/error_examples.cc:1:
-<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>In file included from ./au/au.hh:7:
-<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>In file included from ./au/math.hh:8:
-<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>./au/quantity.hh:147:9: error: static_assert failed due to requirement &#39;implicit_rep_permitted_from_source_to_target&lt;int&gt;(unit, u)&#39; &quot;Dangerous conversion: use .as&lt;Rep&gt;(NewUnit) instead&quot;
-<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>        static_assert(implicit_rep_permitted_from_source_to_target&lt;Rep&gt;(unit, u),
-<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>./au/quantity.hh:183:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Giga&lt;au::Hertz&gt;, int&gt;::as&lt;au::Hertz, void&gt;&#39; requested here
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>In file included from au/error_examples.cc:15:
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>In file included from ./au/au.hh:19:
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>In file included from ./au/math.hh:22:
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>./au/quantity.hh:168:9: error: static_assert failed due to requirement &#39;IMPLICIT_OK&#39; &quot;Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion&quot;
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>        static_assert(
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>        ^
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>./au/quantity.hh:206:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Giga&lt;au::Hertz&gt;, int&gt;::as&lt;au::Hertz, void&gt;&#39; requested here
 <a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>        return as(NewUnit{});
 <a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>               ^
-<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>au/error_examples.cc:33:20: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Giga&lt;au::Hertz&gt;, int&gt;::as&lt;au::Hertz&gt;&#39; requested here
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>au/error_examples.cc:47:20: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Giga&lt;au::Hertz&gt;, int&gt;::as&lt;au::Hertz&gt;&#39; requested here
 <a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>    giga(hertz)(1).as(hertz);
 <a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>                   ^
 </code></pre></div></p>
 <p><strong>Compiler error (clang 11)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>./au/quantity.hh:147:9: error: static_assert failed due to requirement &#39;implicit_rep_permitted_from_source_to_target&lt;int&gt;(unit, u)&#39; &quot;Dangerous conversion: use .as&lt;Rep&gt;(NewUnit) instead&quot;
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>        static_assert(implicit_rep_permitted_from_source_to_target&lt;Rep&gt;(unit, u),
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>./au/quantity.hh:183:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Inches, int&gt;::as&lt;au::Feet, void&gt;&#39; requested here
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>./au/quantity.hh:168:9: error: static_assert failed due to requirement &#39;IMPLICIT_OK&#39; &quot;Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion&quot;
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>        static_assert(
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>        ^
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>./au/quantity.hh:206:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Inches, int&gt;::as&lt;au::Feet, void&gt;&#39; requested here
 <a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>        return as(NewUnit{});
 <a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>               ^
-<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>au/error_examples.cc:30:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Inches, int&gt;::as&lt;au::Feet&gt;&#39; requested here
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>au/error_examples.cc:44:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Inches, int&gt;::as&lt;au::Feet&gt;&#39; requested here
 <a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    inches(24).as(feet);
 <a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>               ^
-<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>In file included from au/error_examples.cc:1:
-<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>In file included from ./au/au.hh:7:
-<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>In file included from ./au/math.hh:8:
-<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>./au/quantity.hh:147:9: error: static_assert failed due to requirement &#39;implicit_rep_permitted_from_source_to_target&lt;int&gt;(unit, u)&#39; &quot;Dangerous conversion: use .as&lt;Rep&gt;(NewUnit) instead&quot;
-<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>        static_assert(implicit_rep_permitted_from_source_to_target&lt;Rep&gt;(unit, u),
-<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>./au/quantity.hh:183:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Giga&lt;au::Hertz&gt;, int&gt;::as&lt;au::Hertz, void&gt;&#39; requested here
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>In file included from au/error_examples.cc:15:
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>In file included from ./au/au.hh:19:
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>In file included from ./au/math.hh:22:
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>./au/quantity.hh:168:9: error: static_assert failed due to requirement &#39;IMPLICIT_OK&#39; &quot;Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion&quot;
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>        static_assert(
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>        ^
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>./au/quantity.hh:206:16: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Giga&lt;au::Hertz&gt;, int&gt;::as&lt;au::Hertz, void&gt;&#39; requested here
 <a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>        return as(NewUnit{});
 <a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>               ^
-<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>au/error_examples.cc:33:20: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Giga&lt;au::Hertz&gt;, int&gt;::as&lt;au::Hertz&gt;&#39; requested here
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>au/error_examples.cc:47:20: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Giga&lt;au::Hertz&gt;, int&gt;::as&lt;au::Hertz&gt;&#39; requested here
 <a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>    giga(hertz)(1).as(hertz);
 <a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a>                   ^
 </code></pre></div></p>
 <p><strong>Compiler error (gcc 10)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>./au/quantity.hh: In instantiation of &#39;constexpr auto au::Quantity&lt;UnitT, RepT&gt;::as(NewUnit) const [with NewUnit = au::Feet; &lt;template-parameter-2-2&gt; = void; UnitT = au::Inches; RepT = int]&#39;:
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>./au/quantity.hh:183:18:   required from &#39;constexpr auto au::Quantity&lt;UnitT, RepT&gt;::as(au::QuantityMaker&lt;NewUnit&gt;) const [with NewUnit = au::Feet; UnitT = au::Inches; RepT = int]&#39;
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>au/error_examples.cc:30:23:   required from here
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>./au/quantity.hh:147:72: error: static assertion failed: Dangerous conversion: use .as&lt;Rep&gt;(NewUnit) instead
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>  147 |         static_assert(implicit_rep_permitted_from_source_to_target&lt;Rep&gt;(unit, u),
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>./au/quantity.hh:206:18:   required from &#39;constexpr auto au::Quantity&lt;UnitT, RepT&gt;::as(au::QuantityMaker&lt;NewUnit&gt;) const [with NewUnit = au::Feet; UnitT = au::Inches; RepT = int]&#39;
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>au/error_examples.cc:44:23:   required from here
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>./au/quantity.hh:169:13: error: static assertion failed: Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>  169 |             IMPLICIT_OK,
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>      |             ^~~~~~~~~~~
 <a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>./au/quantity.hh: In instantiation of &#39;constexpr auto au::Quantity&lt;UnitT, RepT&gt;::as(NewUnit) const [with NewUnit = au::Hertz; &lt;template-parameter-2-2&gt; = void; UnitT = au::Giga&lt;au::Hertz&gt;; RepT = int]&#39;:
-<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>./au/quantity.hh:183:18:   required from &#39;constexpr auto au::Quantity&lt;UnitT, RepT&gt;::as(au::QuantityMaker&lt;NewUnit&gt;) const [with NewUnit = au::Hertz; UnitT = au::Giga&lt;au::Hertz&gt;; RepT = int]&#39;
-<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>au/error_examples.cc:33:28:   required from here
-<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>./au/quantity.hh:147:72: error: static assertion failed: Dangerous conversion: use .as&lt;Rep&gt;(NewUnit) instead
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>./au/quantity.hh:206:18:   required from &#39;constexpr auto au::Quantity&lt;UnitT, RepT&gt;::as(au::QuantityMaker&lt;NewUnit&gt;) const [with NewUnit = au::Hertz; UnitT = au::Giga&lt;au::Hertz&gt;; RepT = int]&#39;
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>au/error_examples.cc:47:28:   required from here
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>./au/quantity.hh:169:13: error: static assertion failed: Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion
 </code></pre></div></p>
 </div>
 <h2 id="no-type-named-type-in-stdcommon_type">No type named &lsquo;type&rsquo; in &lsquo;std::common_type&rsquo;<a class="headerlink" href="#no-type-named-type-in-stdcommon_type" title="Permanent link">&para;</a></h2>
@@ -1472,8 +1472,8 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
 </div>
 </div>
 <p><strong>Compiler error (clang 14)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>In file included from au/error_examples.cc:1:
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>In file included from ./au/au.hh:5:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>In file included from au/error_examples.cc:15:
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>In file included from ./au/au.hh:17:
 <a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>In file included from external/llvm_14_toolchain_llvm/bin/../include/c++/v1/chrono:697:
 <a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>In file included from external/llvm_14_toolchain_llvm/bin/../include/c++/v1/__chrono/calendar.h:13:
 <a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>In file included from external/llvm_14_toolchain_llvm/bin/../include/c++/v1/__chrono/duration.h:14:
@@ -1481,51 +1481,51 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
 <a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>external/llvm_14_toolchain_llvm/bin/../include/c++/v1/type_traits:2388:25: error: no type named &#39;type&#39; in &#39;std::common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt;&gt;&#39;
 <a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>template &lt;class ..._Tp&gt; using common_type_t = typename common_type&lt;_Tp...&gt;::type;
 <a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>                        ^~~~~
-<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>./au/quantity.hh:494:20: note: in instantiation of template type alias &#39;common_type_t&#39; requested here
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>./au/quantity.hh:560:20: note: in instantiation of template type alias &#39;common_type_t&#39; requested here
 <a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>    using C = std::common_type_t&lt;T, U&gt;;
 <a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>                   ^
-<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>./au/quantity.hh:532:20: note: in instantiation of function template specialization &#39;au::detail::using_common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt;, au::detail::Plus&gt;&#39; requested here
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>./au/quantity.hh:598:20: note: in instantiation of function template specialization &#39;au::detail::using_common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt;, au::detail::Plus&gt;&#39; requested here
 <a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>    return detail::using_common_type(q1, q2, detail::plus);
 <a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>                   ^
-<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>au/error_examples.cc:41:15: note: in instantiation of function template specialization &#39;au::operator+&lt;au::Meters, au::Seconds, int, int&gt;&#39; requested here
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>au/error_examples.cc:55:15: note: in instantiation of function template specialization &#39;au::operator+&lt;au::Meters, au::Seconds, int, int&gt;&#39; requested here
 <a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>    meters(1) + seconds(1);
 <a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>              ^
 </code></pre></div></p>
 <p><strong>Compiler error (clang 11)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>In file included from au/error_examples.cc:1:
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>In file included from ./au/au.hh:5:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>In file included from au/error_examples.cc:15:
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>In file included from ./au/au.hh:17:
 <a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>In file included from external/llvm_11_toolchain_llvm/bin/../include/c++/v1/chrono:828:
 <a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>external/llvm_11_toolchain_llvm/bin/../include/c++/v1/type_traits:2462:25: error: no type named &#39;type&#39; in &#39;std::__1::common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt;&gt;&#39;
 <a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>template &lt;class ..._Tp&gt; using common_type_t = typename common_type&lt;_Tp...&gt;::type;
 <a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>                        ^~~~~
-<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>./au/quantity.hh:494:20: note: in instantiation of template type alias &#39;common_type_t&#39; requested here
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>./au/quantity.hh:560:20: note: in instantiation of template type alias &#39;common_type_t&#39; requested here
 <a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>    using C = std::common_type_t&lt;T, U&gt;;
 <a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>                   ^
-<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>./au/quantity.hh:532:20: note: in instantiation of function template specialization &#39;au::detail::using_common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt;, au::detail::Plus&gt;&#39; requested here
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>./au/quantity.hh:598:20: note: in instantiation of function template specialization &#39;au::detail::using_common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt;, au::detail::Plus&gt;&#39; requested here
 <a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>    return detail::using_common_type(q1, q2, detail::plus);
 <a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>                   ^
-<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>au/error_examples.cc:41:15: note: in instantiation of function template specialization &#39;au::operator+&lt;au::Meters, au::Seconds, int, int&gt;&#39; requested here
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>au/error_examples.cc:55:15: note: in instantiation of function template specialization &#39;au::operator+&lt;au::Meters, au::Seconds, int, int&gt;&#39; requested here
 <a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>    meters(1) + seconds(1);
 <a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>              ^
 </code></pre></div></p>
 <p><strong>Compiler error (gcc 10)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>In file included from external/sysroot_x86_64//include/c++/10.3.0/ratio:39,
 <a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>                 from external/sysroot_x86_64//include/c++/10.3.0/chrono:39,
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>                 from ./au/au.hh:5,
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>                 from au/error_examples.cc:1:
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>                 from ./au/au.hh:17,
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>                 from au/error_examples.cc:15:
 <a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>external/sysroot_x86_64//include/c++/10.3.0/type_traits: In substitution of &#39;template&lt;class ... _Tp&gt; using common_type_t = typename std::common_type::type [with _Tp = {au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt;}]&#39;:
-<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>./au/quantity.hh:494:11:   required from &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Meters, int&gt;; U = au::Quantity&lt;au::Seconds, int&gt;; Func = au::detail::Plus]&#39;
-<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>./au/quantity.hh:532:37:   required from &#39;constexpr auto au::operator+(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Meters; U2 = au::Seconds; R1 = int; R2 = int]&#39;
-<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>au/error_examples.cc:41:26:   required from here
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>./au/quantity.hh:560:11:   required from &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Meters, int&gt;; U = au::Quantity&lt;au::Seconds, int&gt;; Func = au::detail::Plus]&#39;
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>./au/quantity.hh:598:37:   required from &#39;constexpr auto au::operator+(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Meters; U2 = au::Seconds; R1 = int; R2 = int]&#39;
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>au/error_examples.cc:55:26:   required from here
 <a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>external/sysroot_x86_64//include/c++/10.3.0/type_traits:2562:11: error: no type named &#39;type&#39; in &#39;struct std::common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt; &gt;&#39;
 <a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a> 2562 |     using common_type_t = typename common_type&lt;_Tp...&gt;::type;
 <a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>      |           ^~~~~~~~~~~~~
-<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>In file included from ./au/math.hh:8,
-<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>                 from ./au/au.hh:7,
-<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>                 from au/error_examples.cc:1:
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>In file included from ./au/math.hh:22,
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>                 from ./au/au.hh:19,
+<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>                 from au/error_examples.cc:15:
 <a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>./au/quantity.hh: In instantiation of &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Meters, int&gt;; U = au::Quantity&lt;au::Seconds, int&gt;; Func = au::detail::Plus]&#39;:
-<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>./au/quantity.hh:532:37:   required from &#39;constexpr auto au::operator+(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Meters; U2 = au::Seconds; R1 = int; R2 = int]&#39;
-<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>au/error_examples.cc:41:26:   required from here
+<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>./au/quantity.hh:598:37:   required from &#39;constexpr auto au::operator+(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Meters; U2 = au::Seconds; R1 = int; R2 = int]&#39;
+<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>au/error_examples.cc:55:26:   required from here
 </code></pre></div></p>
 </div>
 <h2 id="integer-division-forbidden">Integer division forbidden<a class="headerlink" href="#integer-division-forbidden" title="Permanent link">&para;</a></h2>
@@ -1559,36 +1559,43 @@ floating point types.</p>
 </div>
 </div>
 <p><strong>Compiler error (clang 14)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>In file included from au/error_examples.cc:1:
-<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>In file included from ./au/au.hh:7:
-<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>In file included from ./au/math.hh:8:
-<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>./au/quantity.hh:304:9: error: static_assert failed due to requirement &#39;!uses_integer_division&#39; &quot;Integer division forbidden: use integer_quotient() if you really want it&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>In file included from au/error_examples.cc:15:
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>In file included from ./au/au.hh:19:
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>In file included from ./au/math.hh:22:
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>./au/quantity.hh:393:9: error: static_assert failed due to requirement &#39;!uses_integer_division&#39; &quot;Integer division forbidden: use integer_quotient() if you really want it&quot;
 <a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>        static_assert(!uses_integer_division,
 <a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>        ^             ~~~~~~~~~~~~~~~~~~~~~~
-<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>au/error_examples.cc:49:39: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Meters, int&gt;::operator/&lt;au::UnitProduct&lt;au::Miles, au::Pow&lt;au::Hours, -1&gt;&gt;, int&gt;&#39; requested here
-<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>    QuantityD&lt;Seconds&gt; t = meters(60) / (miles / hour)(65);
-<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>                                      ^
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>./au/quantity.hh:326:9: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Meters, int&gt;::warn_if_integer_division&lt;int&gt;&#39; requested here
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>        warn_if_integer_division&lt;OtherRep&gt;();
+<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>        ^
+<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a>au/error_examples.cc:63:39: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Meters, int&gt;::operator/&lt;au::UnitProduct&lt;au::Miles, au::Pow&lt;au::Hours, -1&gt;&gt;, int&gt;&#39; requested here
+<a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>    QuantityD&lt;Seconds&gt; t = meters(60) / (miles / hour)(65);
+<a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a>                                      ^
 </code></pre></div></p>
 <p><strong>Compiler error (clang 11)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>In file included from au/error_examples.cc:1:
-<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>In file included from ./au/au.hh:7:
-<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>In file included from ./au/math.hh:8:
-<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>./au/quantity.hh:304:9: error: static_assert failed due to requirement &#39;!uses_integer_division&#39; &quot;Integer division forbidden: use integer_quotient() if you really want it&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>In file included from au/error_examples.cc:15:
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>In file included from ./au/au.hh:19:
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>In file included from ./au/math.hh:22:
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>./au/quantity.hh:393:9: error: static_assert failed due to requirement &#39;!uses_integer_division&#39; &quot;Integer division forbidden: use integer_quotient() if you really want it&quot;
 <a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>        static_assert(!uses_integer_division,
 <a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>        ^             ~~~~~~~~~~~~~~~~~~~~~~
-<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>au/error_examples.cc:49:39: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Meters, int&gt;::operator/&lt;au::UnitProduct&lt;au::Miles, au::Pow&lt;au::Hours, -1&gt;&gt;, int&gt;&#39; requested here
-<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>    QuantityD&lt;Seconds&gt; t = meters(60) / (miles / hour)(65);
-<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>                                      ^
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>./au/quantity.hh:326:9: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Meters, int&gt;::warn_if_integer_division&lt;int&gt;&#39; requested here
+<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>        warn_if_integer_division&lt;OtherRep&gt;();
+<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>        ^
+<a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>au/error_examples.cc:63:39: note: in instantiation of function template specialization &#39;au::Quantity&lt;au::Meters, int&gt;::operator/&lt;au::UnitProduct&lt;au::Miles, au::Pow&lt;au::Hours, -1&gt;&gt;, int&gt;&#39; requested here
+<a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a>    QuantityD&lt;Seconds&gt; t = meters(60) / (miles / hour)(65);
+<a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a>                                      ^
 </code></pre></div></p>
 <p><strong>Compiler error (gcc 10)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>./au/quantity.hh:496:94: error: no type named &#39;type&#39; in &#39;struct std::common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt; &gt;&#39;
-<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>  496 |         std::is_same&lt;typename C::Rep, std::common_type_t&lt;typename T::Rep, typename U::Rep&gt;&gt;::value,
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>./au/quantity.hh:562:94: error: no type named &#39;type&#39; in &#39;struct std::common_type&lt;au::Quantity&lt;au::Meters, int&gt;, au::Quantity&lt;au::Seconds, int&gt; &gt;&#39;
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>  562 |         std::is_same&lt;typename C::Rep, std::common_type_t&lt;typename T::Rep, typename U::Rep&gt;&gt;::value,
 <a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>      |                                                                                              ^~~~~
-<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>./au/quantity.hh: In instantiation of &#39;constexpr auto au::Quantity&lt;UnitT, RepT&gt;::operator/(au::Quantity&lt;OtherUnit, OtherRep&gt;) const [with OtherUnit = au::UnitProduct&lt;au::Miles, au::Pow&lt;au::Hours, -1&gt; &gt;; OtherRep = int; UnitT = au::Meters; RepT = int]&#39;:
-<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>au/error_examples.cc:49:58:   required from here
-<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>./au/quantity.hh:304:23: error: static assertion failed: Integer division forbidden: use integer_quotient() if you really want it
-<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a>  304 |         static_assert(!uses_integer_division,
-<a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a>      |                       ^~~~~~~~~~~~~~~~~~~~~~
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>./au/quantity.hh: In instantiation of &#39;static constexpr void au::Quantity&lt;UnitT, RepT&gt;::warn_if_integer_division() [with OtherRep = int; UnitT = au::Meters; RepT = int]&#39;:
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>./au/quantity.hh:326:43:   required from here
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>au/error_examples.cc:63:58:   in &#39;constexpr&#39; expansion of &#39;au::meters.au::QuantityMaker&lt;au::Meters&gt;::operator()&lt;int&gt;(60).au::Quantity&lt;au::Meters, int&gt;::operator/&lt;au::UnitProduct&lt;au::Miles, au::Pow&lt;au::Hours, -1&gt; &gt;, int&gt;(au::miles.au::QuantityMaker&lt;au::Miles&gt;::operator/&lt;au::Hours&gt;((au::hour, const au::SingularNameFor&lt;au::Hours&gt;())).au::QuantityMaker&lt;au::UnitProduct&lt;au::Miles, au::Pow&lt;au::Hours, -1&gt; &gt; &gt;::operator()&lt;int&gt;(65))&#39;
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a>./au/quantity.hh:393:23: error: static assertion failed: Integer division forbidden: use integer_quotient() if you really want it
+<a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a>  393 |         static_assert(!uses_integer_division,
+<a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a>      |                       ^~~~~~~~~~~~~~~~~~~~~~
 </code></pre></div></p>
 </div>
 <h2 id="dangerous-inversion">Dangerous inversion<a class="headerlink" href="#dangerous-inversion" title="Permanent link">&para;</a></h2>
@@ -1630,41 +1637,41 @@ forcing like a <code>static_cast</code>.  This is rarely the right choice, thoug
 prevent in the first place.</p>
 </div>
 <p><strong>Compiler error (clang 14)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>In file included from au/error_examples.cc:1:
-<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>In file included from ./au/au.hh:7:
-<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>./au/math.hh:205:5: error: static_assert failed due to requirement &#39;make_quantity&lt;au::UnitProduct&lt;&gt;&gt;(int{1}).in(associated_unit(target_units) * au::Hertz{}) &gt;= 1000 || std::is_floating_point&lt;int&gt;::value&#39; &quot;Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>In file included from au/error_examples.cc:15:
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>In file included from ./au/au.hh:19:
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>./au/math.hh:231:5: error: static_assert failed due to requirement &#39;make_quantity&lt;au::UnitProduct&lt;&gt;&gt;(int{1}).in(associated_unit(target_units) * au::Hertz{}) &gt;= threshold || std::is_floating_point&lt;int&gt;::value&#39; &quot;Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired&quot;
 <a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>    static_assert(
 <a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>    ^
-<a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>./au/math.hh:221:56: note: in instantiation of function template specialization &#39;au::inverse_in&lt;au::QuantityMaker&lt;au::Seconds&gt;, au::Hertz, int&gt;&#39; requested here
+<a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>./au/math.hh:247:56: note: in instantiation of function template specialization &#39;au::inverse_in&lt;au::QuantityMaker&lt;au::Seconds&gt;, au::Hertz, int&gt;&#39; requested here
 <a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a>    return make_quantity&lt;AssociatedUnitT&lt;TargetUnits&gt;&gt;(inverse_in(target_units, q));
 <a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a>                                                       ^
-<a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a>au/error_examples.cc:57:5: note: in instantiation of function template specialization &#39;au::inverse_as&lt;au::QuantityMaker&lt;au::Seconds&gt;, au::Hertz, int&gt;&#39; requested here
+<a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a>au/error_examples.cc:71:5: note: in instantiation of function template specialization &#39;au::inverse_as&lt;au::QuantityMaker&lt;au::Seconds&gt;, au::Hertz, int&gt;&#39; requested here
 <a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a>    inverse_as(seconds, hertz(5));
 <a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a>    ^
 </code></pre></div></p>
 <p><strong>Compiler error (clang 11)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>In file included from au/error_examples.cc:1:
-<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>In file included from ./au/au.hh:7:
-<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>./au/math.hh:205:5: error: static_assert failed due to requirement &#39;make_quantity&lt;au::UnitProduct&lt;&gt;&gt;(int{1}).in(associated_unit(target_units) * au::Hertz{}) &gt;= 1000 || std::is_floating_point&lt;int&gt;::value&#39; &quot;Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>In file included from au/error_examples.cc:15:
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>In file included from ./au/au.hh:19:
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>./au/math.hh:231:5: error: static_assert failed due to requirement &#39;make_quantity&lt;au::UnitProduct&lt;&gt;&gt;(int{1}).in(associated_unit(target_units) * au::Hertz{}) &gt;= threshold || std::is_floating_point&lt;int&gt;::value&#39; &quot;Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired&quot;
 <a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>    static_assert(
 <a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>    ^
-<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>./au/math.hh:221:56: note: in instantiation of function template specialization &#39;au::inverse_in&lt;au::QuantityMaker&lt;au::Seconds&gt;, au::Hertz, int&gt;&#39; requested here
+<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>./au/math.hh:247:56: note: in instantiation of function template specialization &#39;au::inverse_in&lt;au::QuantityMaker&lt;au::Seconds&gt;, au::Hertz, int&gt;&#39; requested here
 <a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a>    return make_quantity&lt;AssociatedUnitT&lt;TargetUnits&gt;&gt;(inverse_in(target_units, q));
 <a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a>                                                       ^
-<a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a>au/error_examples.cc:57:5: note: in instantiation of function template specialization &#39;au::inverse_as&lt;au::QuantityMaker&lt;au::Seconds&gt;, au::Hertz, int&gt;&#39; requested here
+<a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a>au/error_examples.cc:71:5: note: in instantiation of function template specialization &#39;au::inverse_as&lt;au::QuantityMaker&lt;au::Seconds&gt;, au::Hertz, int&gt;&#39; requested here
 <a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a>    inverse_as(seconds, hertz(5));
 <a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a>    ^
 </code></pre></div></p>
 <p><strong>Compiler error (gcc 10)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>In file included from ./au/au.hh:7,
-<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>                 from au/error_examples.cc:1:
-<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>./au/math.hh: In instantiation of &#39;constexpr auto au::inverse_in(TargetUnits, au::Quantity&lt;Unit, Rep&gt;) [with TargetUnits = au::QuantityMaker&lt;au::Seconds&gt;; U = au::Hertz; R = int]&#39;:
-<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>./au/math.hh:221:66:   required from &#39;constexpr auto au::inverse_as(TargetUnits, au::Quantity&lt;Unit, Rep&gt;) [with TargetUnits = au::QuantityMaker&lt;au::Seconds&gt;; U = au::Hertz; R = int]&#39;
-<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>au/error_examples.cc:57:33:   required from here
-<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>./au/math.hh:206:93: error: static assertion failed: Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired
-<a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a>  206 |         make_quantity&lt;UnitProductT&lt;&gt;&gt;(R{1}).in(associated_unit(target_units) * U{}) &gt;= 1000 ||
-<a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a>      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
-<a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a>  207 |             std::is_floating_point&lt;R&gt;::value,
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>In file included from ./au/au.hh:19,
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>                 from au/error_examples.cc:15:
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>./au/math.hh: In instantiation of &#39;constexpr auto au::inverse_in(TargetUnits, au::Quantity&lt;U, R&gt;) [with TargetUnits = au::QuantityMaker&lt;au::Seconds&gt;; U = au::Hertz; R = int]&#39;:
+<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>./au/math.hh:247:66:   required from &#39;constexpr auto au::inverse_as(TargetUnits, au::Quantity&lt;U, R&gt;) [with TargetUnits = au::QuantityMaker&lt;au::Seconds&gt;; U = au::Hertz; R = int]&#39;
+<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>au/error_examples.cc:71:33:   required from here
+<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>./au/math.hh:232:98: error: static assertion failed: Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired
+<a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a>  232 |         make_quantity&lt;UnitProductT&lt;&gt;&gt;(R{1}).in(associated_unit(target_units) * U{}) &gt;= threshold ||
+<a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a>      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+<a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a>  233 |             std::is_floating_point&lt;R&gt;::value,
 <a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a>      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 </code></pre></div></p>
 </div>
@@ -1714,21 +1721,21 @@ casting automatically when possible.</p>
 </div>
 </div>
 <p><strong>Compiler error (clang 14)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>au/error_examples.cc:65:34: error: deduced conflicting types (&#39;Quantity&lt;au::QuantityMaker&lt;au::Hertz&gt;::Unit, [...]&gt;&#39; vs &#39;Quantity&lt;au::QuantityMaker&lt;au::Pow&lt;au::Seconds, -1&gt;&gt;::Unit, [...]&gt;&#39;) for initializer list element type
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>au/error_examples.cc:79:34: error: deduced conflicting types (&#39;Quantity&lt;au::QuantityMaker&lt;au::Hertz&gt;::Unit, [...]&gt;&#39; vs &#39;Quantity&lt;au::QuantityMaker&lt;au::Pow&lt;au::Seconds, -1&gt;&gt;::Unit, [...]&gt;&#39;) for initializer list element type
 <a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>    for (const auto &amp;frequency : {
 <a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>                                 ^
 </code></pre></div></p>
 <p><strong>Compiler error (clang 11)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>au/error_examples.cc:65:34: error: deduced conflicting types (&#39;Quantity&lt;au::Hertz, [...]&gt;&#39; vs &#39;Quantity&lt;au::Pow&lt;au::Seconds, -1&gt;, [...]&gt;&#39;) for initializer list element type
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>au/error_examples.cc:79:34: error: deduced conflicting types (&#39;Quantity&lt;au::Hertz, [...]&gt;&#39; vs &#39;Quantity&lt;au::Pow&lt;au::Seconds, -1&gt;, [...]&gt;&#39;) for initializer list element type
 <a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>    for (const auto &amp;frequency : {
 <a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>                                 ^
 </code></pre></div></p>
 <p><strong>Compiler error (gcc 10)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>au/error_examples.cc: In function &#39;void au::example_deduced_conflicting_types()&#39;:
-<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>au/error_examples.cc:68:10: error: unable to deduce &#39;std::initializer_list&lt;auto&gt;&amp;&amp;&#39; from &#39;{au::hertz.au::QuantityMaker&lt;au::Hertz&gt;::operator()&lt;double&gt;(1.0e+0), au::operator/&lt;int&gt;(1, au::seconds.au::QuantityMaker&lt;au::Seconds&gt;::operator()&lt;double&gt;(2.0e+0))}&#39;
-<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>   68 |          }) {
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>au/error_examples.cc:82:10: error: unable to deduce &#39;std::initializer_list&lt;auto&gt;&amp;&amp;&#39; from &#39;{au::hertz.au::QuantityMaker&lt;au::Hertz&gt;::operator()&lt;double&gt;(1.0e+0), au::operator/&lt;int&gt;(1, au::seconds.au::QuantityMaker&lt;au::Seconds&gt;::operator()&lt;double&gt;(2.0e+0))}&#39;
+<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>   82 |          }) {
 <a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a>      |          ^
-<a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a>au/error_examples.cc:68:10: note:   deduced conflicting types for parameter &#39;auto&#39; (&#39;au::Quantity&lt;au::Hertz, double&gt;&#39; and &#39;au::Quantity&lt;au::Pow&lt;au::Seconds, -1&gt;, double&gt;&#39;)
+<a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a>au/error_examples.cc:82:10: note:   deduced conflicting types for parameter &#39;auto&#39; (&#39;au::Quantity&lt;au::Hertz, double&gt;&#39; and &#39;au::Quantity&lt;au::Pow&lt;au::Seconds, -1&gt;, double&gt;&#39;)
 </code></pre></div></p>
 </div>
 <h2 id="broken-strict-total-ordering">Broken strict total ordering<a class="headerlink" href="#broken-strict-total-ordering" title="Permanent link">&para;</a></h2>
@@ -1810,135 +1817,135 @@ is pretty hard to hit in practice.</p>
 </div>
 </div>
 <p><strong>Compiler error (clang 14)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>In file included from au/error_examples.cc:1:
-<a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>In file included from ./au/au.hh:7:
-<a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a>In file included from ./au/math.hh:8:
-<a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a>In file included from ./au/quantity.hh:7:
-<a id="__codelineno-40-5" name="__codelineno-40-5" href="#__codelineno-40-5"></a>In file included from ./au/conversion_policy.hh:7:
-<a id="__codelineno-40-6" name="__codelineno-40-6" href="#__codelineno-40-6"></a>In file included from ./au/magnitude.hh:7:
-<a id="__codelineno-40-7" name="__codelineno-40-7" href="#__codelineno-40-7"></a>./au/packs.hh:276:5: error: static_assert failed due to requirement &#39;std::is_same&lt;au::Quarterfeet, au::Trinches&gt;::value&#39; &quot;Broken strict total ordering: distinct input types compare equal&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>In file included from au/error_examples.cc:15:
+<a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>In file included from ./au/au.hh:19:
+<a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a>In file included from ./au/math.hh:22:
+<a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a>In file included from ./au/quantity.hh:19:
+<a id="__codelineno-40-5" name="__codelineno-40-5" href="#__codelineno-40-5"></a>In file included from ./au/conversion_policy.hh:19:
+<a id="__codelineno-40-6" name="__codelineno-40-6" href="#__codelineno-40-6"></a>In file included from ./au/magnitude.hh:19:
+<a id="__codelineno-40-7" name="__codelineno-40-7" href="#__codelineno-40-7"></a>./au/packs.hh:287:5: error: static_assert failed due to requirement &#39;std::is_same&lt;au::Quarterfeet, au::Trinches&gt;::value&#39; &quot;Broken strict total ordering: distinct input types compare equal&quot;
 <a id="__codelineno-40-8" name="__codelineno-40-8" href="#__codelineno-40-8"></a>    static_assert(std::is_same&lt;A, B&gt;::value,
 <a id="__codelineno-40-9" name="__codelineno-40-9" href="#__codelineno-40-9"></a>    ^             ~~~~~~~~~~~~~~~~~~~~~~~~~
-<a id="__codelineno-40-10" name="__codelineno-40-10" href="#__codelineno-40-10"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches&gt;&#39; requested here
+<a id="__codelineno-40-10" name="__codelineno-40-10" href="#__codelineno-40-10"></a>./au/packs.hh:303:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches&gt;&#39; requested here
 <a id="__codelineno-40-11" name="__codelineno-40-11" href="#__codelineno-40-11"></a>    std::conditional_t&lt;
 <a id="__codelineno-40-12" name="__codelineno-40-12" href="#__codelineno-40-12"></a>    ^
-<a id="__codelineno-40-13" name="__codelineno-40-13" href="#__codelineno-40-13"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderAsUnitProduct&gt;&#39; requested here
-<a id="__codelineno-40-14" name="__codelineno-40-14" href="#__codelineno-40-14"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39; requested here
-<a id="__codelineno-40-15" name="__codelineno-40-15" href="#__codelineno-40-15"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39; requested here
-<a id="__codelineno-40-16" name="__codelineno-40-16" href="#__codelineno-40-16"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39; requested here
-<a id="__codelineno-40-17" name="__codelineno-40-17" href="#__codelineno-40-17"></a>./au/unit_of_measure.hh:868:40: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+<a id="__codelineno-40-13" name="__codelineno-40-13" href="#__codelineno-40-13"></a>./au/packs.hh:303:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-40-14" name="__codelineno-40-14" href="#__codelineno-40-14"></a>./au/packs.hh:303:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-40-15" name="__codelineno-40-15" href="#__codelineno-40-15"></a>./au/packs.hh:303:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-40-16" name="__codelineno-40-16" href="#__codelineno-40-16"></a>./au/packs.hh:303:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-40-17" name="__codelineno-40-17" href="#__codelineno-40-17"></a>./au/unit_of_measure.hh:854:40: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
 <a id="__codelineno-40-18" name="__codelineno-40-18" href="#__codelineno-40-18"></a>struct InOrderFor&lt;UnitProduct, A, B&gt; : LexicographicTotalOrdering&lt;A,
 <a id="__codelineno-40-19" name="__codelineno-40-19" href="#__codelineno-40-19"></a>                                       ^
-<a id="__codelineno-40-20" name="__codelineno-40-20" href="#__codelineno-40-20"></a>./au/quantity.hh:631:7: note: in instantiation of template class &#39;au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;&gt;&#39; requested here
+<a id="__codelineno-40-20" name="__codelineno-40-20" href="#__codelineno-40-20"></a>./au/quantity.hh:697:7: note: in instantiation of template class &#39;au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;&gt;&#39; requested here
 <a id="__codelineno-40-21" name="__codelineno-40-21" href="#__codelineno-40-21"></a>    : au::CommonQuantity&lt;au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;&gt; {};
 <a id="__codelineno-40-22" name="__codelineno-40-22" href="#__codelineno-40-22"></a>      ^
 <a id="__codelineno-40-23" name="__codelineno-40-23" href="#__codelineno-40-23"></a>external/llvm_14_toolchain_llvm/bin/../include/c++/v1/type_traits:2388:25: note: in instantiation of template class &#39;std::common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;&gt;&#39; requested here
 <a id="__codelineno-40-24" name="__codelineno-40-24" href="#__codelineno-40-24"></a>template &lt;class ..._Tp&gt; using common_type_t = typename common_type&lt;_Tp...&gt;::type;
 <a id="__codelineno-40-25" name="__codelineno-40-25" href="#__codelineno-40-25"></a>                        ^
-<a id="__codelineno-40-26" name="__codelineno-40-26" href="#__codelineno-40-26"></a>./au/quantity.hh:494:20: note: in instantiation of template type alias &#39;common_type_t&#39; requested here
+<a id="__codelineno-40-26" name="__codelineno-40-26" href="#__codelineno-40-26"></a>./au/quantity.hh:560:20: note: in instantiation of template type alias &#39;common_type_t&#39; requested here
 <a id="__codelineno-40-27" name="__codelineno-40-27" href="#__codelineno-40-27"></a>    using C = std::common_type_t&lt;T, U&gt;;
 <a id="__codelineno-40-28" name="__codelineno-40-28" href="#__codelineno-40-28"></a>                   ^
-<a id="__codelineno-40-29" name="__codelineno-40-29" href="#__codelineno-40-29"></a>./au/quantity.hh:506:20: note: in instantiation of function template specialization &#39;au::detail::using_common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, au::detail::Equal&gt;&#39; requested here
+<a id="__codelineno-40-29" name="__codelineno-40-29" href="#__codelineno-40-29"></a>./au/quantity.hh:572:20: note: in instantiation of function template specialization &#39;au::detail::using_common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, au::detail::Equal&gt;&#39; requested here
 <a id="__codelineno-40-30" name="__codelineno-40-30" href="#__codelineno-40-30"></a>    return detail::using_common_type(q1, q2, detail::equal);
 <a id="__codelineno-40-31" name="__codelineno-40-31" href="#__codelineno-40-31"></a>                   ^
-<a id="__codelineno-40-32" name="__codelineno-40-32" href="#__codelineno-40-32"></a>au/error_examples.cc:84:25: note: in instantiation of function template specialization &#39;au::operator==&lt;au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
+<a id="__codelineno-40-32" name="__codelineno-40-32" href="#__codelineno-40-32"></a>au/error_examples.cc:98:25: note: in instantiation of function template specialization &#39;au::operator==&lt;au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
 <a id="__codelineno-40-33" name="__codelineno-40-33" href="#__codelineno-40-33"></a>    if (quarterfeet(10) == trinches(10)) {
 <a id="__codelineno-40-34" name="__codelineno-40-34" href="#__codelineno-40-34"></a>                        ^
 </code></pre></div></p>
 <p><strong>Compiler error (clang 11)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>In file included from au/error_examples.cc:1:
-<a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>In file included from ./au/au.hh:7:
-<a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>In file included from ./au/math.hh:8:
-<a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a>In file included from ./au/quantity.hh:7:
-<a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a>In file included from ./au/conversion_policy.hh:7:
-<a id="__codelineno-41-6" name="__codelineno-41-6" href="#__codelineno-41-6"></a>In file included from ./au/magnitude.hh:7:
-<a id="__codelineno-41-7" name="__codelineno-41-7" href="#__codelineno-41-7"></a>./au/packs.hh:276:5: error: static_assert failed due to requirement &#39;std::is_same&lt;au::Quarterfeet, au::Trinches&gt;::value&#39; &quot;Broken strict total ordering: distinct input types compare equal&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>In file included from au/error_examples.cc:15:
+<a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>In file included from ./au/au.hh:19:
+<a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>In file included from ./au/math.hh:22:
+<a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a>In file included from ./au/quantity.hh:19:
+<a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a>In file included from ./au/conversion_policy.hh:19:
+<a id="__codelineno-41-6" name="__codelineno-41-6" href="#__codelineno-41-6"></a>In file included from ./au/magnitude.hh:19:
+<a id="__codelineno-41-7" name="__codelineno-41-7" href="#__codelineno-41-7"></a>./au/packs.hh:287:5: error: static_assert failed due to requirement &#39;std::is_same&lt;au::Quarterfeet, au::Trinches&gt;::value&#39; &quot;Broken strict total ordering: distinct input types compare equal&quot;
 <a id="__codelineno-41-8" name="__codelineno-41-8" href="#__codelineno-41-8"></a>    static_assert(std::is_same&lt;A, B&gt;::value,
 <a id="__codelineno-41-9" name="__codelineno-41-9" href="#__codelineno-41-9"></a>    ^             ~~~~~~~~~~~~~~~~~~~~~~~~~
-<a id="__codelineno-41-10" name="__codelineno-41-10" href="#__codelineno-41-10"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches&gt;&#39; requested here
+<a id="__codelineno-41-10" name="__codelineno-41-10" href="#__codelineno-41-10"></a>./au/packs.hh:303:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches&gt;&#39; requested here
 <a id="__codelineno-41-11" name="__codelineno-41-11" href="#__codelineno-41-11"></a>    std::conditional_t&lt;
 <a id="__codelineno-41-12" name="__codelineno-41-12" href="#__codelineno-41-12"></a>    ^
-<a id="__codelineno-41-13" name="__codelineno-41-13" href="#__codelineno-41-13"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, OrderAsUnitProduct&gt;&#39; requested here
-<a id="__codelineno-41-14" name="__codelineno-41-14" href="#__codelineno-41-14"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, OrderByOrigin, OrderAsUnitProduct&gt;&#39; requested here
-<a id="__codelineno-41-15" name="__codelineno-41-15" href="#__codelineno-41-15"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, OrderByMag, OrderByOrigin, OrderAsUnitProduct&gt;&#39; requested here
-<a id="__codelineno-41-16" name="__codelineno-41-16" href="#__codelineno-41-16"></a>./au/packs.hh:292:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, OrderByDim, OrderByMag, OrderByOrigin, OrderAsUnitProduct&gt;&#39; requested here
-<a id="__codelineno-41-17" name="__codelineno-41-17" href="#__codelineno-41-17"></a>./au/unit_of_measure.hh:868:40: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+<a id="__codelineno-41-13" name="__codelineno-41-13" href="#__codelineno-41-13"></a>./au/packs.hh:303:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-41-14" name="__codelineno-41-14" href="#__codelineno-41-14"></a>./au/packs.hh:303:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, OrderByOrigin, OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-41-15" name="__codelineno-41-15" href="#__codelineno-41-15"></a>./au/packs.hh:303:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, OrderByMag, OrderByOrigin, OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-41-16" name="__codelineno-41-16" href="#__codelineno-41-16"></a>./au/packs.hh:303:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, OrderByDim, OrderByMag, OrderByOrigin, OrderAsUnitProduct&gt;&#39; requested here
+<a id="__codelineno-41-17" name="__codelineno-41-17" href="#__codelineno-41-17"></a>./au/unit_of_measure.hh:854:40: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
 <a id="__codelineno-41-18" name="__codelineno-41-18" href="#__codelineno-41-18"></a>struct InOrderFor&lt;UnitProduct, A, B&gt; : LexicographicTotalOrdering&lt;A,
 <a id="__codelineno-41-19" name="__codelineno-41-19" href="#__codelineno-41-19"></a>                                       ^
-<a id="__codelineno-41-20" name="__codelineno-41-20" href="#__codelineno-41-20"></a>./au/quantity.hh:631:7: note: in instantiation of template class &#39;au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, void&gt;&#39; requested here
+<a id="__codelineno-41-20" name="__codelineno-41-20" href="#__codelineno-41-20"></a>./au/quantity.hh:697:7: note: in instantiation of template class &#39;au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, void&gt;&#39; requested here
 <a id="__codelineno-41-21" name="__codelineno-41-21" href="#__codelineno-41-21"></a>    : au::CommonQuantity&lt;au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;&gt; {};
 <a id="__codelineno-41-22" name="__codelineno-41-22" href="#__codelineno-41-22"></a>      ^
 <a id="__codelineno-41-23" name="__codelineno-41-23" href="#__codelineno-41-23"></a>external/llvm_11_toolchain_llvm/bin/../include/c++/v1/type_traits:2462:25: note: in instantiation of template class &#39;std::__1::common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;&gt;&#39; requested here
 <a id="__codelineno-41-24" name="__codelineno-41-24" href="#__codelineno-41-24"></a>template &lt;class ..._Tp&gt; using common_type_t = typename common_type&lt;_Tp...&gt;::type;
 <a id="__codelineno-41-25" name="__codelineno-41-25" href="#__codelineno-41-25"></a>                        ^
-<a id="__codelineno-41-26" name="__codelineno-41-26" href="#__codelineno-41-26"></a>./au/quantity.hh:494:20: note: in instantiation of template type alias &#39;common_type_t&#39; requested here
+<a id="__codelineno-41-26" name="__codelineno-41-26" href="#__codelineno-41-26"></a>./au/quantity.hh:560:20: note: in instantiation of template type alias &#39;common_type_t&#39; requested here
 <a id="__codelineno-41-27" name="__codelineno-41-27" href="#__codelineno-41-27"></a>    using C = std::common_type_t&lt;T, U&gt;;
 <a id="__codelineno-41-28" name="__codelineno-41-28" href="#__codelineno-41-28"></a>                   ^
-<a id="__codelineno-41-29" name="__codelineno-41-29" href="#__codelineno-41-29"></a>./au/quantity.hh:506:20: note: in instantiation of function template specialization &#39;au::detail::using_common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, au::detail::Equal&gt;&#39; requested here
+<a id="__codelineno-41-29" name="__codelineno-41-29" href="#__codelineno-41-29"></a>./au/quantity.hh:572:20: note: in instantiation of function template specialization &#39;au::detail::using_common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, au::detail::Equal&gt;&#39; requested here
 <a id="__codelineno-41-30" name="__codelineno-41-30" href="#__codelineno-41-30"></a>    return detail::using_common_type(q1, q2, detail::equal);
 <a id="__codelineno-41-31" name="__codelineno-41-31" href="#__codelineno-41-31"></a>                   ^
-<a id="__codelineno-41-32" name="__codelineno-41-32" href="#__codelineno-41-32"></a>au/error_examples.cc:84:25: note: in instantiation of function template specialization &#39;au::operator==&lt;au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
+<a id="__codelineno-41-32" name="__codelineno-41-32" href="#__codelineno-41-32"></a>au/error_examples.cc:98:25: note: in instantiation of function template specialization &#39;au::operator==&lt;au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
 <a id="__codelineno-41-33" name="__codelineno-41-33" href="#__codelineno-41-33"></a>    if (quarterfeet(10) == trinches(10)) {
 <a id="__codelineno-41-34" name="__codelineno-41-34" href="#__codelineno-41-34"></a>                        ^
 </code></pre></div></p>
 <p><strong>Compiler error (gcc 10)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>In file included from ./au/magnitude.hh:7,
-<a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>                 from ./au/conversion_policy.hh:7,
-<a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a>                 from ./au/quantity.hh:7,
-<a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a>                 from ./au/math.hh:8,
-<a id="__codelineno-42-5" name="__codelineno-42-5" href="#__codelineno-42-5"></a>                 from ./au/au.hh:7,
-<a id="__codelineno-42-6" name="__codelineno-42-6" href="#__codelineno-42-6"></a>                 from au/error_examples.cc:1:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>In file included from ./au/magnitude.hh:19,
+<a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>                 from ./au/conversion_policy.hh:19,
+<a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a>                 from ./au/quantity.hh:19,
+<a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a>                 from ./au/math.hh:22,
+<a id="__codelineno-42-5" name="__codelineno-42-5" href="#__codelineno-42-5"></a>                 from ./au/au.hh:19,
+<a id="__codelineno-42-6" name="__codelineno-42-6" href="#__codelineno-42-6"></a>                 from au/error_examples.cc:15:
 <a id="__codelineno-42-7" name="__codelineno-42-7" href="#__codelineno-42-7"></a>./au/packs.hh: In instantiation of &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches&gt;&#39;:
-<a id="__codelineno-42-8" name="__codelineno-42-8" href="#__codelineno-42-8"></a>./au/packs.hh:287:8:   recursively required from &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39;
-<a id="__codelineno-42-9" name="__codelineno-42-9" href="#__codelineno-42-9"></a>./au/packs.hh:287:8:   required from &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByUnitAvoidance, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39;
-<a id="__codelineno-42-10" name="__codelineno-42-10" href="#__codelineno-42-10"></a>./au/unit_of_measure.hh:868:8:   required from &#39;struct au::InOrderFor&lt;au::UnitProduct, au::Quarterfeet, au::Trinches&gt;&#39;
-<a id="__codelineno-42-11" name="__codelineno-42-11" href="#__codelineno-42-11"></a>./au/unit_of_measure.hh:502:8:   required from &#39;struct au::InOrderFor&lt;au::CommonUnit, au::Quarterfeet, au::Trinches&gt;&#39;
-<a id="__codelineno-42-12" name="__codelineno-42-12" href="#__codelineno-42-12"></a>./au/packs.hh:372:8:   required from &#39;struct au::FlatDedupedTypeList&lt;au::CommonUnit, au::CommonUnit&lt;au::Quarterfeet&gt;, au::CommonUnit&lt;au::Trinches&gt; &gt;&#39;
-<a id="__codelineno-42-13" name="__codelineno-42-13" href="#__codelineno-42-13"></a>./au/unit_of_measure.hh:540:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
-<a id="__codelineno-42-14" name="__codelineno-42-14" href="#__codelineno-42-14"></a>./au/quantity.hh:617:8:   required from &#39;struct au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, void&gt;&#39;
-<a id="__codelineno-42-15" name="__codelineno-42-15" href="#__codelineno-42-15"></a>./au/quantity.hh:630:8:   required from &#39;struct std::common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt; &gt;&#39;
+<a id="__codelineno-42-8" name="__codelineno-42-8" href="#__codelineno-42-8"></a>./au/packs.hh:298:8:   recursively required from &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39;
+<a id="__codelineno-42-9" name="__codelineno-42-9" href="#__codelineno-42-9"></a>./au/packs.hh:298:8:   required from &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByUnitAvoidance, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39;
+<a id="__codelineno-42-10" name="__codelineno-42-10" href="#__codelineno-42-10"></a>./au/unit_of_measure.hh:854:8:   required from &#39;struct au::InOrderFor&lt;au::UnitProduct, au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-42-11" name="__codelineno-42-11" href="#__codelineno-42-11"></a>./au/unit_of_measure.hh:488:8:   required from &#39;struct au::InOrderFor&lt;au::CommonUnit, au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-42-12" name="__codelineno-42-12" href="#__codelineno-42-12"></a>./au/packs.hh:383:8:   required from &#39;struct au::FlatDedupedTypeList&lt;au::CommonUnit, au::CommonUnit&lt;au::Quarterfeet&gt;, au::CommonUnit&lt;au::Trinches&gt; &gt;&#39;
+<a id="__codelineno-42-13" name="__codelineno-42-13" href="#__codelineno-42-13"></a>./au/unit_of_measure.hh:526:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-42-14" name="__codelineno-42-14" href="#__codelineno-42-14"></a>./au/quantity.hh:683:8:   required from &#39;struct au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, void&gt;&#39;
+<a id="__codelineno-42-15" name="__codelineno-42-15" href="#__codelineno-42-15"></a>./au/quantity.hh:696:8:   required from &#39;struct std::common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt; &gt;&#39;
 <a id="__codelineno-42-16" name="__codelineno-42-16" href="#__codelineno-42-16"></a>external/sysroot_x86_64//include/c++/10.3.0/type_traits:2562:11:   required by substitution of &#39;template&lt;class ... _Tp&gt; using common_type_t = typename std::common_type::type [with _Tp = {au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;}]&#39;
-<a id="__codelineno-42-17" name="__codelineno-42-17" href="#__codelineno-42-17"></a>./au/quantity.hh:494:11:   required from &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Quarterfeet, int&gt;; U = au::Quantity&lt;au::Trinches, int&gt;; Func = au::detail::Equal]&#39;
-<a id="__codelineno-42-18" name="__codelineno-42-18" href="#__codelineno-42-18"></a>./au/quantity.hh:506:37:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
-<a id="__codelineno-42-19" name="__codelineno-42-19" href="#__codelineno-42-19"></a>au/error_examples.cc:84:39:   required from here
-<a id="__codelineno-42-20" name="__codelineno-42-20" href="#__codelineno-42-20"></a>./au/packs.hh:276:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
-<a id="__codelineno-42-21" name="__codelineno-42-21" href="#__codelineno-42-21"></a>  276 |     static_assert(std::is_same&lt;A, B&gt;::value,
+<a id="__codelineno-42-17" name="__codelineno-42-17" href="#__codelineno-42-17"></a>./au/quantity.hh:560:11:   required from &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Quarterfeet, int&gt;; U = au::Quantity&lt;au::Trinches, int&gt;; Func = au::detail::Equal]&#39;
+<a id="__codelineno-42-18" name="__codelineno-42-18" href="#__codelineno-42-18"></a>./au/quantity.hh:572:37:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
+<a id="__codelineno-42-19" name="__codelineno-42-19" href="#__codelineno-42-19"></a>au/error_examples.cc:98:39:   required from here
+<a id="__codelineno-42-20" name="__codelineno-42-20" href="#__codelineno-42-20"></a>./au/packs.hh:287:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
+<a id="__codelineno-42-21" name="__codelineno-42-21" href="#__codelineno-42-21"></a>  287 |     static_assert(std::is_same&lt;A, B&gt;::value,
 <a id="__codelineno-42-22" name="__codelineno-42-22" href="#__codelineno-42-22"></a>      |                                       ^~~~~
 <a id="__codelineno-42-23" name="__codelineno-42-23" href="#__codelineno-42-23"></a>./au/packs.hh: In instantiation of &#39;struct au::LexicographicTotalOrdering&lt;au::Trinches, au::Quarterfeet&gt;&#39;:
-<a id="__codelineno-42-24" name="__codelineno-42-24" href="#__codelineno-42-24"></a>./au/packs.hh:287:8:   required from &#39;struct au::LexicographicTotalOrdering&lt;au::Trinches, au::Quarterfeet, au::detail::OrderByUnitAvoidance, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39;
-<a id="__codelineno-42-25" name="__codelineno-42-25" href="#__codelineno-42-25"></a>./au/unit_of_measure.hh:868:8:   [ skipping 8 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
-<a id="__codelineno-42-26" name="__codelineno-42-26" href="#__codelineno-42-26"></a>./au/unit_of_measure.hh:452:8:   required from &#39;struct au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;&#39;
-<a id="__codelineno-42-27" name="__codelineno-42-27" href="#__codelineno-42-27"></a>./au/stdx/type_traits.hh:26:61:   required from &#39;struct au::stdx::conjunction&lt;au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;, au::detail::HasSameMagnitude&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt; &gt;&#39;
-<a id="__codelineno-42-28" name="__codelineno-42-28" href="#__codelineno-42-28"></a>./au/unit_of_measure.hh:467:8:   required from &#39;struct au::AreUnitsQuantityEquivalent&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;&#39;
-<a id="__codelineno-42-29" name="__codelineno-42-29" href="#__codelineno-42-29"></a>./au/unit_of_measure.hh:529:8:   required from &#39;struct au::detail::FirstMatchingUnit&lt;au::AreUnitsQuantityEquivalent, au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt; &gt;&#39;
-<a id="__codelineno-42-30" name="__codelineno-42-30" href="#__codelineno-42-30"></a>./au/unit_of_measure.hh:540:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
-<a id="__codelineno-42-31" name="__codelineno-42-31" href="#__codelineno-42-31"></a>./au/quantity.hh:617:8:   required from &#39;struct au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, void&gt;&#39;
-<a id="__codelineno-42-32" name="__codelineno-42-32" href="#__codelineno-42-32"></a>./au/quantity.hh:630:8:   required from &#39;struct std::common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt; &gt;&#39;
+<a id="__codelineno-42-24" name="__codelineno-42-24" href="#__codelineno-42-24"></a>./au/packs.hh:298:8:   required from &#39;struct au::LexicographicTotalOrdering&lt;au::Trinches, au::Quarterfeet, au::detail::OrderByUnitAvoidance, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct&gt;&#39;
+<a id="__codelineno-42-25" name="__codelineno-42-25" href="#__codelineno-42-25"></a>./au/unit_of_measure.hh:854:8:   [ skipping 8 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
+<a id="__codelineno-42-26" name="__codelineno-42-26" href="#__codelineno-42-26"></a>./au/unit_of_measure.hh:438:8:   required from &#39;struct au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;&#39;
+<a id="__codelineno-42-27" name="__codelineno-42-27" href="#__codelineno-42-27"></a>./au/stdx/type_traits.hh:38:61:   required from &#39;struct au::stdx::conjunction&lt;au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;, au::detail::HasSameMagnitude&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt; &gt;&#39;
+<a id="__codelineno-42-28" name="__codelineno-42-28" href="#__codelineno-42-28"></a>./au/unit_of_measure.hh:453:8:   required from &#39;struct au::AreUnitsQuantityEquivalent&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;&#39;
+<a id="__codelineno-42-29" name="__codelineno-42-29" href="#__codelineno-42-29"></a>./au/unit_of_measure.hh:515:8:   required from &#39;struct au::detail::FirstMatchingUnit&lt;au::AreUnitsQuantityEquivalent, au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt; &gt;&#39;
+<a id="__codelineno-42-30" name="__codelineno-42-30" href="#__codelineno-42-30"></a>./au/unit_of_measure.hh:526:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-42-31" name="__codelineno-42-31" href="#__codelineno-42-31"></a>./au/quantity.hh:683:8:   required from &#39;struct au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, void&gt;&#39;
+<a id="__codelineno-42-32" name="__codelineno-42-32" href="#__codelineno-42-32"></a>./au/quantity.hh:696:8:   required from &#39;struct std::common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt; &gt;&#39;
 <a id="__codelineno-42-33" name="__codelineno-42-33" href="#__codelineno-42-33"></a>external/sysroot_x86_64//include/c++/10.3.0/type_traits:2562:11:   required by substitution of &#39;template&lt;class ... _Tp&gt; using common_type_t = typename std::common_type::type [with _Tp = {au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;}]&#39;
-<a id="__codelineno-42-34" name="__codelineno-42-34" href="#__codelineno-42-34"></a>./au/quantity.hh:494:11:   required from &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Quarterfeet, int&gt;; U = au::Quantity&lt;au::Trinches, int&gt;; Func = au::detail::Equal]&#39;
-<a id="__codelineno-42-35" name="__codelineno-42-35" href="#__codelineno-42-35"></a>./au/quantity.hh:506:37:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
-<a id="__codelineno-42-36" name="__codelineno-42-36" href="#__codelineno-42-36"></a>au/error_examples.cc:84:39:   required from here
-<a id="__codelineno-42-37" name="__codelineno-42-37" href="#__codelineno-42-37"></a>./au/packs.hh:276:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
-<a id="__codelineno-42-38" name="__codelineno-42-38" href="#__codelineno-42-38"></a>In file included from ./au/conversion_policy.hh:10,
-<a id="__codelineno-42-39" name="__codelineno-42-39" href="#__codelineno-42-39"></a>                 from ./au/quantity.hh:7,
-<a id="__codelineno-42-40" name="__codelineno-42-40" href="#__codelineno-42-40"></a>                 from ./au/math.hh:8,
-<a id="__codelineno-42-41" name="__codelineno-42-41" href="#__codelineno-42-41"></a>                 from ./au/au.hh:7,
-<a id="__codelineno-42-42" name="__codelineno-42-42" href="#__codelineno-42-42"></a>                 from au/error_examples.cc:1:
+<a id="__codelineno-42-34" name="__codelineno-42-34" href="#__codelineno-42-34"></a>./au/quantity.hh:560:11:   required from &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Quarterfeet, int&gt;; U = au::Quantity&lt;au::Trinches, int&gt;; Func = au::detail::Equal]&#39;
+<a id="__codelineno-42-35" name="__codelineno-42-35" href="#__codelineno-42-35"></a>./au/quantity.hh:572:37:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
+<a id="__codelineno-42-36" name="__codelineno-42-36" href="#__codelineno-42-36"></a>au/error_examples.cc:98:39:   required from here
+<a id="__codelineno-42-37" name="__codelineno-42-37" href="#__codelineno-42-37"></a>./au/packs.hh:287:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
+<a id="__codelineno-42-38" name="__codelineno-42-38" href="#__codelineno-42-38"></a>In file included from ./au/conversion_policy.hh:22,
+<a id="__codelineno-42-39" name="__codelineno-42-39" href="#__codelineno-42-39"></a>                 from ./au/quantity.hh:19,
+<a id="__codelineno-42-40" name="__codelineno-42-40" href="#__codelineno-42-40"></a>                 from ./au/math.hh:22,
+<a id="__codelineno-42-41" name="__codelineno-42-41" href="#__codelineno-42-41"></a>                 from ./au/au.hh:19,
+<a id="__codelineno-42-42" name="__codelineno-42-42" href="#__codelineno-42-42"></a>                 from au/error_examples.cc:15:
 <a id="__codelineno-42-43" name="__codelineno-42-43" href="#__codelineno-42-43"></a>./au/unit_of_measure.hh: In instantiation of &#39;struct au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;&#39;:
-<a id="__codelineno-42-44" name="__codelineno-42-44" href="#__codelineno-42-44"></a>./au/packs.hh:192:7:   required by substitution of &#39;template&lt;class U&gt; using DimMemberT = typename U::Dim [with U = au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;]&#39;
-<a id="__codelineno-42-45" name="__codelineno-42-45" href="#__codelineno-42-45"></a>./au/packs.hh:194:8:   required from &#39;struct au::detail::DimImpl&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt; &gt;&#39;
-<a id="__codelineno-42-46" name="__codelineno-42-46" href="#__codelineno-42-46"></a>./au/unit_of_measure.hh:452:8:   required from &#39;struct au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;&#39;
-<a id="__codelineno-42-47" name="__codelineno-42-47" href="#__codelineno-42-47"></a>./au/stdx/type_traits.hh:26:61:   required from &#39;struct au::stdx::conjunction&lt;au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;, au::detail::HasSameMagnitude&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt; &gt;&#39;
-<a id="__codelineno-42-48" name="__codelineno-42-48" href="#__codelineno-42-48"></a>./au/unit_of_measure.hh:467:8:   [ skipping 2 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
-<a id="__codelineno-42-49" name="__codelineno-42-49" href="#__codelineno-42-49"></a>./au/unit_of_measure.hh:540:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
-<a id="__codelineno-42-50" name="__codelineno-42-50" href="#__codelineno-42-50"></a>./au/quantity.hh:617:8:   required from &#39;struct au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, void&gt;&#39;
-<a id="__codelineno-42-51" name="__codelineno-42-51" href="#__codelineno-42-51"></a>./au/quantity.hh:630:8:   required from &#39;struct std::common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt; &gt;&#39;
+<a id="__codelineno-42-44" name="__codelineno-42-44" href="#__codelineno-42-44"></a>./au/packs.hh:203:7:   required by substitution of &#39;template&lt;class U&gt; using DimMemberT = typename U::Dim [with U = au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;]&#39;
+<a id="__codelineno-42-45" name="__codelineno-42-45" href="#__codelineno-42-45"></a>./au/packs.hh:205:8:   required from &#39;struct au::detail::DimImpl&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt; &gt;&#39;
+<a id="__codelineno-42-46" name="__codelineno-42-46" href="#__codelineno-42-46"></a>./au/unit_of_measure.hh:438:8:   required from &#39;struct au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;&#39;
+<a id="__codelineno-42-47" name="__codelineno-42-47" href="#__codelineno-42-47"></a>./au/stdx/type_traits.hh:38:61:   required from &#39;struct au::stdx::conjunction&lt;au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;, au::detail::HasSameMagnitude&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt; &gt;&#39;
+<a id="__codelineno-42-48" name="__codelineno-42-48" href="#__codelineno-42-48"></a>./au/unit_of_measure.hh:453:8:   [ skipping 2 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
+<a id="__codelineno-42-49" name="__codelineno-42-49" href="#__codelineno-42-49"></a>./au/unit_of_measure.hh:526:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-42-50" name="__codelineno-42-50" href="#__codelineno-42-50"></a>./au/quantity.hh:683:8:   required from &#39;struct au::CommonQuantity&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;, void&gt;&#39;
+<a id="__codelineno-42-51" name="__codelineno-42-51" href="#__codelineno-42-51"></a>./au/quantity.hh:696:8:   required from &#39;struct std::common_type&lt;au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt; &gt;&#39;
 <a id="__codelineno-42-52" name="__codelineno-42-52" href="#__codelineno-42-52"></a>external/sysroot_x86_64//include/c++/10.3.0/type_traits:2562:11:   required by substitution of &#39;template&lt;class ... _Tp&gt; using common_type_t = typename std::common_type::type [with _Tp = {au::Quantity&lt;au::Quarterfeet, int&gt;, au::Quantity&lt;au::Trinches, int&gt;}]&#39;
-<a id="__codelineno-42-53" name="__codelineno-42-53" href="#__codelineno-42-53"></a>./au/quantity.hh:494:11:   required from &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Quarterfeet, int&gt;; U = au::Quantity&lt;au::Trinches, int&gt;; Func = au::detail::Equal]&#39;
-<a id="__codelineno-42-54" name="__codelineno-42-54" href="#__codelineno-42-54"></a>./au/quantity.hh:506:37:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
-<a id="__codelineno-42-55" name="__codelineno-42-55" href="#__codelineno-42-55"></a>au/error_examples.cc:84:39:   required from here
-<a id="__codelineno-42-56" name="__codelineno-42-56" href="#__codelineno-42-56"></a>./au/unit_of_measure.hh:492:70: error: static assertion failed: Elements must be listed in ascending order
-<a id="__codelineno-42-57" name="__codelineno-42-57" href="#__codelineno-42-57"></a>  492 |     static_assert(AreElementsInOrder&lt;CommonUnit, CommonUnit&lt;Us...&gt;&gt;::value,
+<a id="__codelineno-42-53" name="__codelineno-42-53" href="#__codelineno-42-53"></a>./au/quantity.hh:560:11:   required from &#39;constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity&lt;au::Quarterfeet, int&gt;; U = au::Quantity&lt;au::Trinches, int&gt;; Func = au::detail::Equal]&#39;
+<a id="__codelineno-42-54" name="__codelineno-42-54" href="#__codelineno-42-54"></a>./au/quantity.hh:572:37:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
+<a id="__codelineno-42-55" name="__codelineno-42-55" href="#__codelineno-42-55"></a>au/error_examples.cc:98:39:   required from here
+<a id="__codelineno-42-56" name="__codelineno-42-56" href="#__codelineno-42-56"></a>./au/unit_of_measure.hh:478:70: error: static assertion failed: Elements must be listed in ascending order
+<a id="__codelineno-42-57" name="__codelineno-42-57" href="#__codelineno-42-57"></a>  478 |     static_assert(AreElementsInOrder&lt;CommonUnit, CommonUnit&lt;Us...&gt;&gt;::value,
 <a id="__codelineno-42-58" name="__codelineno-42-58" href="#__codelineno-42-58"></a>      |                                                                      ^~~~~
 </code></pre></div></p>
 </div>
