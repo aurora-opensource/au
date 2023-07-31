@@ -31,12 +31,12 @@ Some status changes may be out of our control.  For example, if GitHub actions d
 Windows Server 2019, we won't be able to continue running GitHub workflows for MSVC x64 19.29.  If
 that happened, we would have to move that configuration to the "Assumed Support" tier.
 
-## Tiers: Requirements and Members
+## Tiers: Requirements and members
 
 Now we'll go into more detail about each tier.  We'll explain the requirements which a configuration
 must meet to join that tier, and we'll list the configurations that are currently included.
 
-### Full Support
+### Full support
 
 To add a configuration to the Full Support tier, we must be able to add a hermetic toolchain to our
 bazel workspace. The motivation for this requirement is that we want any developer to be able to
@@ -51,7 +51,7 @@ Here are the configurations that have Full Support status.
 | Ubuntu | clang 14 | [![clang14-ubuntu]( https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml) |
 | Ubuntu | gcc 10 | [![gcc10-ubuntu]( https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml) |
 
-### Best Effort Support
+### Best effort support
 
 To add a configuration to the Best Effort tier, we must be able to set up an automated GitHub
 workflow job which runs tests on that configuration.  This means that any developer will be able to
