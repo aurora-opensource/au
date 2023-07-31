@@ -59,7 +59,7 @@ they have two advantages that make them easier to read:
 
 #### Notes for `QuantityPoint`
 
-`QuantityPoint` doesn't use quantity makers; it uses quantity _point_ makers.  For example, instead
+`QuantityPoint` doesn't use quantity makers: it uses quantity _point_ makers.  For example, instead
 of the quantity maker `meters`, it uses the quantity point maker `meters_pt`.
 
 The implications are straightforward.  If you have a `QuantityPoint` instead of a `Quantity`, then
