@@ -21,7 +21,7 @@
         <link rel="next" href="../../../howto/">
       
       <link rel="icon" href="../../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
+      <meta name="generator" content="mkdocs-1.5.1, mkdocs-material-9.1.21">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.eebd395e.min.css">
       
       
 
@@ -1338,7 +1338,7 @@ can produce the same number<sup id="fnref:1"><a class="footnote-ref" href="#fn:1
 <p>This already lets us represent <em>anything</em> we could get with <code>std::ratio</code>.  And, unlike a
 <code>(num, denom)</code> representation, we&rsquo;re always automatically in lowest terms: any common factors cancel
 out automatically when we represent it via its prime factorization!</p>
-<p>In fact, we have <em>surpassed</em> <code>std::ratio</code>&lsquo;s functionality, too.  We can handle very large numbers
+<p>In fact, we have <em>surpassed</em> <code>std::ratio</code>&rsquo;s functionality, too.  We can handle very large numbers
 with negligible risk of overflow: <code>yotta</code> (<span class="arithmatex"><span class="MathJax_Preview">10^{24}</span><script type="math/tex">10^{24}</script></span>) doesn&rsquo;t even fit in <code>std::intmax_t</code>, but
 <code>pow&lt;24&gt;(mag&lt;10&gt;())</code><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> handles it with ease.  We can even handle radicals: something unthinkable for
 <code>std::ratio</code>, like <span class="arithmatex"><span class="MathJax_Preview">\sqrt{2}</span><script type="math/tex">\sqrt{2}</script></span>, is as easy as <code>root&lt;2&gt;(mag&lt;2&gt;())</code><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>.</p>
@@ -1483,12 +1483,14 @@ Pow&lt;Prime&lt;5&gt;, -1&gt;&gt;</code>.&#160;<a class="footnote-backref" href=
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.b4d07000.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.220ee61c.min.js"></script>
       
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        
       
     
   </body>
