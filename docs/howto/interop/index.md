@@ -24,7 +24,7 @@ Here are the steps involved.
     for you, and included nholthaus-specific migration machinery in the repository.  We have [a
     separate, more specific how-to guide](./nholthaus.md) which shows you how to use it.
 
-## Define the Equivalences
+## Define the equivalences
 
 "Define the equivalences" means to specify which types in the other units library are equivalent to
 which Au quantity types.  To do so, you'll create a new file where these definitions will live. We
@@ -37,7 +37,7 @@ establishing correspondence with another units library is more complicated, beca
 defining equivalencies with a **family of type templates**.  This section explains how to manage
 that complexity effectively.
 
-### Write Tests
+### Write tests
 
 The tests in the test file will be phrased directly in terms of the features we're trying to
 achieve.  In particular, our goal is for all of the following statements to be true:
@@ -112,7 +112,7 @@ example for the `nholthaus/units` library:
 
     Note how the utility makes these very easy to read.
 
-### Implement the Definitions
+### Implement the definitions
 
 The general strategy for writing an implementation that can make these unit tests pass includes
 these steps.
@@ -264,7 +264,7 @@ here's an example using the nholthaus library:
     If this definition is visible, you will be able to pass, say, `units::length::meter_t` instances
     to any API expecting `au::QuantityD<au::Meters>`, and vice versa!
 
-## _(Optional)_ Create a Shim File
+## _(Optional)_ Create a shim file
 
 A migration involves two libraries.  Let's say the "original" library is the one you're migrating
 _from_, and the "target" library is the one you're migrating _to_.  If your _original_ library has
