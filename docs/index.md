@@ -17,7 +17,7 @@ These pages will be most useful as you begin your Au journey:
 
 - **[Supported Compilers](./supported-compilers.md).**  Au aims to work with _any_ C++ compiler with full
   support for C++14 or later.  That said, some platform/compiler combinations have more detailed
-  data.  Learn about our tiers of support, and what it takes to add a specific compiler.
+  data.  Learn about our tiers of support and what it takes to add a specific compiler.
 
 - **[Installation](./install.md).**  Once you're ready to try it out, here's how.  You can be up and
   running in any project within minutes!
@@ -44,7 +44,7 @@ effectively:
 We also have a [GitHub Issues](https://github.com/aurora-opensource/au/issues) page for tracking
 problems and future work.  If you have a bug report or feature request, check the existing issues to
 see if it's been posted, and file a new one if it hasn't.  While we can't promise timely
-_resolution_, we will do our best to respond quickly so you know you've been heard, and where we
+_resolution_, we will do our best to respond quickly so you know both that you've been heard and where we
 stand on the issue.
 
 !!! tip
