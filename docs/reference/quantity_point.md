@@ -50,7 +50,7 @@ class QuantityPoint {
 However, the _preferred_ way to construct a `QuantityPoint` is actually neither of these.  It's the
 _quantity point maker_, which we describe next.
 
-### Quantity Point Maker (preferred)
+### Quantity point maker (preferred)
 
 The preferred way to construct a `QuantityPoint` of a given unit is to use the _quantity point
 maker_ for that unit.  This is a callable whose name is the plural form of that unit, expressed in
@@ -329,7 +329,7 @@ change the rep.
 Given any `QuantityPoint<U, R> p` whose rep is `R`, then `rep_cast<T>(p)` gives a `QuantityPoint<U,
 T>`, whose underlying value is `static_cast<T>(p.in(U{}))`.
 
-## Templates and Traits
+## Templates and traits
 
 ### Matching: `typename U, typename R`
 
