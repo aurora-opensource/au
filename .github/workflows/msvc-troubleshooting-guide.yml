@@ -17,7 +17,7 @@ name: generate-msvc-troubleshooting
 on:
   push:
     branches:
-      msvc-troubleshooting#160
+      msvc-troubleshoot#160
 
 jobs:
   build-and-test:
