@@ -1,4 +1,4 @@
-// Copyright 2022 Aurora Operations, Inc.
+// Copyright 2023 Aurora Operations, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,17 +13,10 @@
 // limitations under the License.
 
 #include "au/au.hh"
-#include "au/units/feet.hh"
-#include "au/units/hertz.hh"
-#include "au/units/hours.hh"
-#include "au/units/inches.hh"
-#include "au/units/meters.hh"
-#include "au/units/miles.hh"
-#include "au/units/seconds.hh"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// NOTE:  Any changes below this line should be applied to ..//error_examples.cc also!
+// NOTE:  Any changes below this line should be applied to au/error_examples.cc also!
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
