@@ -35,6 +35,7 @@ void example_private_constructor() {
     constexpr QuantityD<Meters> length{5.5};
 }
 
+/*
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Dangerous conversion
 
@@ -98,5 +99,6 @@ void example_() {
         // ...
     }
 }
+*/
 
 }  // namespace au
