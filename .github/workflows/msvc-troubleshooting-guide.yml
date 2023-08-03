@@ -27,8 +27,6 @@ jobs:
 
     runs-on: ${{ matrix.windows_version }}
 
-    if: always()
-
     steps:
       - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
 
@@ -46,5 +44,6 @@ jobs:
 
       - name: Build and run test
         shell: cmd
+        continue-on-error: true
         run: |
           cl.exe /std:c++14 error_examples.cc
