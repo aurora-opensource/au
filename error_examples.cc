@@ -63,7 +63,6 @@ void example_integer_division_forbidden() {
     QuantityD<Seconds> t = meters(60) / (miles / hour)(65);
 }
 
-*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Dangerous inversion
 
@@ -75,7 +74,7 @@ void example_dangerous_inversion() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Deduced conflicting types
 
-/*
+*/
 void example_deduced_conflicting_types() {
     // (BROKEN): Initializer list confused by Hz and s^(-1).
     for (const auto &frequency : {
@@ -89,6 +88,7 @@ void example_deduced_conflicting_types() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION:
 
+/*
 struct Quarterfeet : decltype(Feet{} / mag<4>()) {};
 constexpr auto quarterfeet = QuantityMaker<Quarterfeet>{};
 
