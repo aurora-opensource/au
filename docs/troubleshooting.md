@@ -132,6 +132,14 @@ It's the "classic" error the units library aims to prevent.
           |               ^~~~~~~~
     ```
 
+    **Compiler error (MSVC x64 19.29)**
+    ```
+    ```
+
+    **Compiler error (MSVC x64 19.35)**
+    ```
+    ```
+
 ## Dangerous conversion
 
 **Meaning:**  This is a _physically_ meaningful conversion, but we think the risk of a grossly
@@ -257,6 +265,14 @@ operation (at least in this format).
     ./au/quantity.hh:169:13: error: static assertion failed: Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion
     ```
 
+    **Compiler error (MSVC x64 19.29)**
+    ```
+    ```
+
+    **Compiler error (MSVC x64 19.35)**
+    ```
+    ```
+
 ## No type named 'type' in 'std::common_type'
 
 **Meaning:**  You probably tried to perform a ["common-unit
@@ -346,6 +362,14 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
     au/error_examples.cc:55:26:   required from here
     ```
 
+    **Compiler error (MSVC x64 19.29)**
+    ```
+    ```
+
+    **Compiler error (MSVC x64 19.35)**
+    ```
+    ```
+
 ## Integer division forbidden {#integer-division-forbidden}
 
 **Meaning:**  Although Au generally tries to act just like the underlying raw numeric types, we also
@@ -424,6 +448,14 @@ floating point types.
     ./au/quantity.hh:393:23: error: static assertion failed: Integer division forbidden: use integer_quotient() if you really want it
       393 |         static_assert(!uses_integer_division,
           |                       ^~~~~~~~~~~~~~~~~~~~~~
+    ```
+
+    **Compiler error (MSVC x64 19.29)**
+    ```
+    ```
+
+    **Compiler error (MSVC x64 19.35)**
+    ```
     ```
 
 ## Dangerous inversion
@@ -515,6 +547,14 @@ use a smaller target unit.
           |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ```
 
+    **Compiler error (MSVC x64 19.29)**
+    ```
+    ```
+
+    **Compiler error (MSVC x64 19.35)**
+    ```
+    ```
+
 ## Deduced conflicting types
 
 **Meaning:**  In some contexts, it's not enough to have Quantity types that can easily convert to
@@ -585,6 +625,14 @@ casting automatically when possible.
        82 |          }) {
           |          ^
     au/error_examples.cc:82:10: note:   deduced conflicting types for parameter 'auto' ('au::Quantity<au::Hertz, double>' and 'au::Quantity<au::Pow<au::Seconds, -1>, double>')
+    ```
+
+    **Compiler error (MSVC x64 19.29)**
+    ```
+    ```
+
+    **Compiler error (MSVC x64 19.35)**
+    ```
     ```
 
 ## Broken strict total ordering
@@ -809,4 +857,12 @@ pausing to double-check that you're using the library correctly.
     ./au/unit_of_measure.hh:478:70: error: static assertion failed: Elements must be listed in ascending order
       478 |     static_assert(AreElementsInOrder<CommonUnit, CommonUnit<Us...>>::value,
           |                                                                      ^~~~~
+    ```
+
+    **Compiler error (MSVC x64 19.29)**
+    ```
+    ```
+
+    **Compiler error (MSVC x64 19.35)**
+    ```
     ```
