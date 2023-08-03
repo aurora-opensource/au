@@ -54,7 +54,6 @@ void example_no_type_named_type_in_std_common_type() {
     // (BROKEN): different dimensions.
     meters(1) + seconds(1);
 }
-*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Integer division forbidden
@@ -64,10 +63,10 @@ void example_integer_division_forbidden() {
     QuantityD<Seconds> t = meters(60) / (miles / hour)(65);
 }
 
+*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Dangerous inversion
 
-/*
 void example_dangerous_inversion() {
     // (BROKEN): excessive truncation risk.
     inverse_as(seconds, hertz(5));
@@ -76,6 +75,7 @@ void example_dangerous_inversion() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Deduced conflicting types
 
+/*
 void example_deduced_conflicting_types() {
     // (BROKEN): Initializer list confused by Hz and s^(-1).
     for (const auto &frequency : {
