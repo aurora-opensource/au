@@ -74,7 +74,6 @@ void example_dangerous_inversion() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Deduced conflicting types
 
-*/
 void example_deduced_conflicting_types() {
     // (BROKEN): Initializer list confused by Hz and s^(-1).
     for (const auto &frequency : {
@@ -84,11 +83,11 @@ void example_deduced_conflicting_types() {
         // ...
     }
 }
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION:
 
-/*
 struct Quarterfeet : decltype(Feet{} / mag<4>()) {};
 constexpr auto quarterfeet = QuantityMaker<Quarterfeet>{};
 
@@ -101,6 +100,5 @@ void example_() {
         // ...
     }
 }
-*/
 
 }  // namespace au
