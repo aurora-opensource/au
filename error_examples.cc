@@ -35,7 +35,6 @@ void example_private_constructor() {
     // B (BROKEN): calling Quantity constructor directly.
     constexpr QuantityD<Meters> length{5.5};
 }
-*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Dangerous conversion
@@ -47,8 +46,8 @@ void example_dangerous_conversion() {
     // B (BROKEN): overflow risk.
     giga(hertz)(1).as(hertz);
 }
+*/
 
-/*
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: No type named 'type' in 'std::common_type'
 
@@ -56,6 +55,7 @@ void example_no_type_named_type_in_std_common_type() {
     // (BROKEN): different dimensions.
     meters(1) + seconds(1);
 }
+/*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Integer division forbidden
