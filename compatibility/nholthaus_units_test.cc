@@ -96,6 +96,9 @@ TEST(NholthausTypes, MapsDerivedUnitsFoundInCodebaseCorrectly) {
     expect_equivalent<::units::area::square_meter_t>(squared(meters));
 
     expect_equivalent<::units::concentration::percent_t>(percent);
+    expect_equivalent<::units::concentration::ppm_t>(unos / mag<1'000'000>());
+    expect_equivalent<::units::concentration::ppb_t>(unos / mag<1'000'000'000>());
+    expect_equivalent<::units::concentration::ppt_t>(unos / mag<1'000'000'000'000>());
 
     expect_equivalent<::units::data_transfer_rate::bytes_per_second_t>(bytes / second);
     expect_equivalent<::units::data_transfer_rate::megabytes_per_second_t>(mega(bytes) / second);

@@ -15,18 +15,15 @@
 name: single-file-build-and-test
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  workflow_call:
+    inputs:
+      windows_version:
+        required: true
+        type: string
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        windows: [windows-2019, windows-2022]
-
-    runs-on: ${{ matrix.windows }}
+  build-and-test:
+    runs-on: ${{ inputs.windows_version }}
 
     steps:
       - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0

@@ -15,19 +15,17 @@
 name: build-and-test
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  workflow_call:
+    inputs:
+      config:
+        required: true
+        type: string
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        config: ["clang11", "clang14", "gcc10"]
 
     steps:
       - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
-      - name: Build and test (${{ matrix.config }})
-        run: bazel test --copt=-Werror --config=${{ matrix.config }} //...:all
+      - name: Build and test (${{ inputs.config }})
+        run: bazel test --copt=-Werror --config=${{ inputs.config }} //...:all
