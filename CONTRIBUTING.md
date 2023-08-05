@@ -48,3 +48,29 @@ maximize the chance of delivering its value!
 
 See our [development setup guide](https://aurora-opensource.github.io/au/develop/) to get started
 with building and testing the code and documentation!
+
+### Style guide
+
+Au follows the [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html), apart
+from the explicit exceptions we enumerate below.  Please make sure your PR conforms to this modified
+style guide before landing.
+
+Here are the modifications we've made to the Google style guide for Au:
+
+1. The `.clang-format` file in the repository supersedes the Google style guide in all matters of
+   code formatting.
+
+2. Our header files use the `.hh` extension, not
+   [`.h`](https://google.github.io/styleguide/cppguide.html#Header_Files).
+
+3. Use `#pragma once` instead of [`#define`
+   guards](https://google.github.io/styleguide/cppguide.html#The__define_Guard).
+
+4. We permit [implicit
+   conversions](https://google.github.io/styleguide/cppguide.html#Implicit_Conversions) that perform
+   unit conversions we expect to be safe.
+
+5. We do not use the [`kConstantName`
+   convention](https://google.github.io/styleguide/cppguide.html#Constant_Names) for our constants.
+   Instead, we use the `UPPER_SNAKE_CASE` convention.  This also applies to [enumerator
+   names](https://google.github.io/styleguide/cppguide.html#Enumerator_Names).
