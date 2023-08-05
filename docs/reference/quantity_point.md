@@ -31,26 +31,12 @@ aliases", so you can express the rep more precisely, and put the visual focus on
 
 ## Constructing `QuantityPoint` {#constructing}
 
-There are two ways to construct a `QuantityPoint` object.  For concreteness, we'll use this
-skeleton to show the signatures.
+There are three ways to construct a `QuantityPoint` object.
 
-```cpp
-template <typename Unit, typename Rep>
-class QuantityPoint {
+- The **preferred** way, which we'll explain below, is to use a _quantity point maker_.
+- The other two ways are both normal C++ constructors.
 
-   // A) Implicit constructor from another QuantityPoint
-   template <typename OtherUnit, typename OtherRep>
-   QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other);
-
-   // B) Default constructor
-   QuantityPoint();
-};
-```
-
-However, the _preferred_ way to construct a `QuantityPoint` is actually neither of these.  It's the
-_quantity point maker_, which we describe next.
-
-### Quantity point maker (preferred)
+### Quantity point maker (preferred) {#quantity-point-maker}
 
 The preferred way to construct a `QuantityPoint` of a given unit is to use the _quantity point
 maker_ for that unit.  This is a callable whose name is the plural form of that unit, expressed in
@@ -63,16 +49,23 @@ unit it represents, whose rep type is `T`.
 
 ### Implicit constructor from another `QuantityPoint` {#implicit-from-quantity}
 
-This is option `A)` from the [previous section](#constructing).
-
-```cpp
-template <typename OtherUnit, typename OtherRep>
-QuantityPoint<Unit, Rep>(QuantityPoint<OtherUnit, OtherRep> other);
-```
-
 This constructor performs a unit conversion.  The result will represent the _same point_ as the
 input, but expressed in the _units_ of the newly constructed object's type.  It will also convert
 the stored value to the _rep_ of the constructed object, if necessary.
+
+Here is the signature of the constructor, slightly simplified for illustration purposes.  (We've
+enclosed it in the class template definition to be clear about `Unit` and `Rep` in the discussion
+that follows.)
+
+```cpp
+template <typename Unit, typename Rep>
+class QuantityPoint {
+
+    // Implicit constructor signature (for illustration purposes):
+    template <typename OtherUnit, typename OtherRep>
+    QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other);
+};
+```
 
 This constructor only exists when this unit-and-rep conversion is both meaningful and safe.  It can
 fail to exist in several ways.
@@ -121,17 +114,20 @@ be "forced" to do so. See [`.as<T>(unit)`](#as) for more details.
 
 ### Default constructor
 
-This is option `B)` from the [previous section](#constructing).
+Here is the signature of the constructor, enclosed in the class template definition for context.
 
 ```cpp
-QuantityPoint();
+template <typename Unit, typename Rep>
+class QuantityPoint {
+    QuantityPoint();
+};
 ```
 
 A default-constructed `QuantityPoint` is initialized to some value, which helps avoid certain kinds
-of memory safety bugs.  However, the value is contractually unspecified.  You can look up that value
-by reading the source code, but we may change it in the future, and we would not consider this to be
-a breaking change.  The only valid operation on a default-constructed `QuantityPoint` is to assign
-to it later on.
+of memory safety bugs.  However, **the value is contractually unspecified**.  You can of course look
+up that value by reading the source code, but we may change it in the future, and **we would not
+consider this to be a breaking change**.  The only valid operation on a default-constructed
+`QuantityPoint` is to assign to it later on.
 
 ## Extracting the stored value
 
@@ -139,7 +135,7 @@ In order to access the raw numeric value stored inside of `QuantityPoint`, you m
 the unit at the callsite.  There are two functions which can do this, depending on whether you want
 to access by value or by reference.
 
-### `.in(unit)` {#extracting-with-in}
+### By value: `.in(unit)` {#extracting-with-in}
 
 This function returns the underlying stored value, by value.  See the [unit
 slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `unit`.
@@ -154,7 +150,7 @@ slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `uni
     You can retrieve the underlying value by writing either `p.in(meters_pt)` (passing the
     `QuantityPointMaker`), or `p.in(Meters{})` (passing an instance of the unit).
 
-### `.data_in(unit)`
+### By reference: `.data_in(unit)`
 
 This function returns a reference to the underlying stored value.  See the [unit
 slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `unit`.
@@ -206,14 +202,14 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
 
 ??? example "Example: forcing a conversion from centimeters to meters"
     `centi(meters_pt)(200).as(meters_pt)` is not allowed.  This conversion will divide the
-    underlying value, `200`, by `100`.  While this particular value would produce an integer result,
-    most other `int` values would not.  Because our result uses `int` for storage --- same as the
-    input --- we forbid this.
+    underlying value, `200`, by `100`.  Now, it so happens that this _particular_ value _would_
+    produce an integer result. However, the compiler must decide whether to permit this operation
+    _at compile time_, which means we don't yet know the value.  Since most `int` values would _not_
+    produce integer results, we forbid this.
 
     `centi(meters_pt)(200).as<int>(meters_pt)` _is_ allowed.  The "explicit rep" template parameter
-    has "forcing" semantics.  This would produce `meters_pt(2)`.
-
-    However, note that this operation uses integer division, which truncates: so, for example,
+    has "forcing" semantics.  This would produce `meters_pt(2)`. However, note that this operation
+    uses integer division, which truncates: so, for example,
     `centi(meters_pt)(199).as<int>(meters_pt)` would produce `meters_pt(1)`.
 
 !!! tip
@@ -252,15 +248,15 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
 
 ??? example "Example: forcing a conversion from centimeters to meters"
     `centi(meters_pt)(200).in(meters_pt)` is not allowed.  This conversion will divide the
-    underlying value, `200`, by `100`.  While this particular value would produce an integer result,
-    most other `int` values would not.  Because our result uses `int` --- same as the input's rep
-    --- we forbid this.
+    underlying value, `200`, by `100`.  Now, it so happens that this _particular_ value _would_
+    produce an integer result. However, the compiler must decide whether to permit this operation
+    _at compile time_, which means we don't yet know the value.  Since most `int` values would _not_
+    produce integer results, we forbid this.
 
     `centi(meters_pt)(200).in<int>(meters_pt)` _is_ allowed.  The "explicit rep" template parameter
-    has "forcing" semantics.  This would produce `2`.
-
-    However, note that this operation uses integer division, which truncates: so, for example,
-    `centi(meters_pt)(199).in<int>(meters_pt)` would produce `1`.
+    has "forcing" semantics.  This would produce `2`. However, note that this operation uses integer
+    division, which truncates: so, for example, `centi(meters_pt)(199).in<int>(meters_pt)` would
+    produce `1`.
 
 !!! tip
     Prefer to **omit** the template argument if possible, because you will get more safety checks.
