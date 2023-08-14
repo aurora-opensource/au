@@ -21,6 +21,7 @@
 #include "au/units/fahrenheit.hh"
 #include "au/units/hertz.hh"
 #include "au/units/inches.hh"
+#include "au/units/kelvins.hh"
 #include "au/units/meters.hh"
 #include "au/units/ohms.hh"
 #include "au/units/seconds.hh"
@@ -32,6 +33,18 @@ using ::testing::StaticAssertTypeEq;
 namespace au {
 namespace {
 constexpr auto INTEGER_TOO_BIG_FOR_DOUBLE = 9'007'199'254'740'993LL;
+
+// Backport of std::clamp() from C++17 for testing purposes.
+//
+// See for implementation: https://en.cppreference.com/w/cpp/algorithm/clamp
+template <class T, class Compare>
+constexpr const T &std_clamp(const T &v, const T &lo, const T &hi, Compare comp) {
+    return comp(v, lo) ? lo : comp(hi, v) ? hi : v;
+}
+template <class T>
+constexpr const T &std_clamp(const T &v, const T &lo, const T &hi) {
+    return std_clamp(v, lo, hi, std::less<void>{});
+}
 }  // namespace
 
 TEST(abs, AlwaysReturnsNonnegativeVersionOfInput) {
@@ -53,6 +66,71 @@ TEST(abs, SameAsStdAbsForNumericTypes) {
     EXPECT_EQ(abs(-1), 1);
     EXPECT_EQ(abs(0), 0);
     EXPECT_EQ(abs(1), 1);
+}
+
+TEST(clamp, QuantityConsistentWithStdClampWhenTypesAreIdentical) {
+    auto expect_consistent_with_std_clamp = [](auto v, auto lo, auto hi) {
+        const auto expected = ohms(std_clamp(v, lo, hi));
+        const auto actual = clamp(ohms(v), ohms(lo), ohms(hi));
+        EXPECT_THAT(actual, SameTypeAndValue(expected));
+    };
+
+    // Rep: `int`.
+    expect_consistent_with_std_clamp(-1, 0, 1);
+    expect_consistent_with_std_clamp(0, 0, 1);
+    expect_consistent_with_std_clamp(1, 0, 1);
+    expect_consistent_with_std_clamp(2, 0, 1);
+
+    // Rep: `double`.
+    expect_consistent_with_std_clamp(-1.0, 0.0, 1.0);
+    expect_consistent_with_std_clamp(0.0, 0.0, 1.0);
+    expect_consistent_with_std_clamp(1.0, 0.0, 1.0);
+    expect_consistent_with_std_clamp(2.0, 0.0, 1.0);
+}
+
+TEST(clamp, QuantityProducesResultsInCommonUnitOfInputs) {
+    EXPECT_THAT(clamp(kilo(meters)(2), milli(meters)(999), meters(20)),
+                SameTypeAndValue(milli(meters)(20'000)));
+
+    EXPECT_THAT(clamp(kilo(meters)(2), meters(999), meters(2'999)),
+                SameTypeAndValue(meters(2'000)));
+}
+
+TEST(clamp, QuantityPointConsistentWithStdClampWhenTypesAreIdentical) {
+    auto expect_consistent_with_std_clamp = [](auto v, auto lo, auto hi) {
+        const auto expected = meters_pt(std_clamp(v, lo, hi));
+        const auto actual = clamp(meters_pt(v), meters_pt(lo), meters_pt(hi));
+        EXPECT_THAT(actual, SameTypeAndValue(expected));
+    };
+
+    // Rep: `int`.
+    expect_consistent_with_std_clamp(-1, 0, 1);
+    expect_consistent_with_std_clamp(0, 0, 1);
+    expect_consistent_with_std_clamp(1, 0, 1);
+    expect_consistent_with_std_clamp(2, 0, 1);
+
+    // Rep: `double`.
+    expect_consistent_with_std_clamp(-1.0, 0.0, 1.0);
+    expect_consistent_with_std_clamp(0.0, 0.0, 1.0);
+    expect_consistent_with_std_clamp(1.0, 0.0, 1.0);
+    expect_consistent_with_std_clamp(2.0, 0.0, 1.0);
+}
+
+TEST(clamp, QuantityPointProducesResultsInCommonUnitOfInputs) {
+    EXPECT_THAT(clamp(kilo(meters_pt)(2), milli(meters_pt)(999), meters_pt(20)),
+                SameTypeAndValue(milli(meters_pt)(20'000)));
+
+    EXPECT_THAT(clamp(kilo(meters_pt)(2), meters_pt(999), meters_pt(2'999)),
+                SameTypeAndValue(meters_pt(2'000)));
+}
+
+TEST(clamp, QuantityPointTakesOffsetIntoAccount) {
+    // Recall that 0 degrees Celsius is 273.15 Kelvins.  We know that `clamp` must take the origin
+    // into account for this mixed result.  This means whatever unit we return must be at most 1/20
+    // Kelvins, and must evenly divide 1/20 Kelvins.
+    constexpr auto celsius_origin = clamp(celsius_pt(0), kelvins_pt(200), kelvins_pt(300));
+    ASSERT_TRUE(is_integer(unit_ratio(Kelvins{} / mag<20>(), decltype(celsius_origin)::unit)));
+    EXPECT_EQ(celsius_origin, centi(kelvins_pt)(273'15));
 }
 
 TEST(copysign, ReturnsSameTypesAsStdCopysignForSameUnitInputs) {

@@ -110,6 +110,76 @@ disambiguate our `min` or `max` implementations with respect to `std::min` and `
     support combining different units.  This means the return type will generally be different from
     the types of the inputs.
 
+#### `clamp`
+
+"Clamp" the first parameter to the range defined by the second and third.  This is a _unit-aware_
+analogue to [`std::clamp`](https://en.cppreference.com/w/cpp/algorithm/clamp), which was introduced
+in C++17.  However, this version differs in several respects from `std::clamp`, in order to handle
+quantities more effectively.  We'll explain these differences at the end of the `clamp` section.
+
+**Signatures:**
+
+```cpp
+// 1. `Quantity` inputs
+template <typename UV , typename RV ,
+          typename ULo, typename RLo,
+          typename UHi, typename RHi>
+constexpr auto clamp(
+    Quantity<UV , RV > v,
+    Quantity<ULo, RLo> lo,
+    Quantity<UHi, RHi> hi);
+
+// 2. `QuantityPoint` inputs
+template <typename UV , typename RV ,
+          typename ULo, typename RLo,
+          typename UHi, typename RHi>
+constexpr auto clamp(
+    QuantityPoint<UV , RV > v,
+    QuantityPoint<ULo, RLo> lo,
+    QuantityPoint<UHi, RHi> hi);
+```
+
+??? note "A note on custom comparators"
+    [`std::clamp`](https://en.cppreference.com/w/cpp/algorithm/clamp) includes a four-parameter
+    version, where the fourth parameter is a custom comparator.  `std::clamp` provides this because
+    it must support an unknowably wide range of custom types.  However, `au::clamp` only supports
+    `Quantity` and `QuantityPoint` types, whose notions of comparison is unambiguous.  Therefore, we
+    opt to keep the library simple, and omit this four-parameter version.
+
+**Returns:** The closest quantity (or quantity point) to `v` which is between `lo` and `hi`,
+inclusive --- that is, greater than or equal to `lo`, and less than or equal to `hi`.  If `lo > hi`,
+the behaviour is undefined.  The return type will be expressed in the appropriate unit and rep;
+expand the note below for further details.
+
+??? info "Details on the unit and rep for the return type"
+    Comparison is a [common-unit operation](../discussion/concepts/arithmetic.md#common-unit).  We
+    must convert all inputs to their common unit before we compare, and therefore the output must
+    also be expressed in this same common unit.
+
+    The rep of the return type will be the common type of the input reps.  Specifically, given the
+    above signatures, it will be `std::common_type_t<RV, RLo, RHi>`.
+
+    The unit of the return type depends on whether we are working with `Quantity` inputs, or
+    `QuantityPoint`.
+
+    - For `Quantity`, the return type's unit is `CommonUnitT<UV, ULo, UHi>`.
+    - For `QuantityPoint`, the return type's unit is `CommonPointUnitT<UV, ULo, UHi>`: this is the
+      [common point unit](../discussion/concepts/common_unit.md#common-quantity-point), which takes
+      relative origin offsets into account.
+
+??? info "Differences from `std::clamp`"
+    Here are the main changes which stem from handling quantities instead of simple numbers.
+
+    - unlike `std::clamp`, we return by **value**, not by reference.  This is because we support
+      combining different units.  This means the return type will generally be different from the
+      types of the inputs.
+
+    - The return type **can be different from the type of `v`**, because we must express it in the
+      common unit and rep of the input parameter types.
+
+    - We do not currently plan to provide the four-parameter overload, unless we get a compelling
+      use case.
+
 ### Exponentiation
 
 #### `int_pow`
