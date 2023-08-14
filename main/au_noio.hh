@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.2-22-g2bac94e
+// Version identifier: 0.3.2-23-gfc4e90d
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -4446,6 +4446,26 @@ template <typename U1, typename R1, typename U2, typename R2>
 auto arctan2(Quantity<U1, R1> y, Quantity<U2, R2> x) {
     constexpr auto common_unit = CommonUnitT<U1, U2>{};
     return arctan2(y.in(common_unit), x.in(common_unit));
+}
+
+// Clamp the first quantity to within the range of the second two.
+template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
+constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Quantity<UHi, RHi> hi) {
+    using U = CommonUnitT<UV, ULo, UHi>;
+    using R = std::common_type_t<RV, RLo, RHi>;
+    using ResultT = Quantity<U, R>;
+    return (v < lo) ? ResultT{lo} : (hi < v) ? ResultT{hi} : ResultT{v};
+}
+
+// Clamp the first point to within the range of the second two.
+template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
+constexpr auto clamp(QuantityPoint<UV, RV> v,
+                     QuantityPoint<ULo, RLo> lo,
+                     QuantityPoint<UHi, RHi> hi) {
+    using U = CommonPointUnitT<UV, ULo, UHi>;
+    using R = std::common_type_t<RV, RLo, RHi>;
+    using ResultT = QuantityPoint<U, R>;
+    return (v < lo) ? ResultT{lo} : (hi < v) ? ResultT{hi} : ResultT{v};
 }
 
 // Copysign where the magnitude has units.
