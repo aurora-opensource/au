@@ -55,7 +55,7 @@ Au follows the [Google C++ Style Guide](https://google.github.io/styleguide/cppg
 from the explicit exceptions we enumerate below.  Please make sure your PR conforms to this modified
 style guide before landing.
 
-Here are the modifications we've made to the Google style guide for Au:
+Here are the modifications we've made to the Google C++ Style Guide for Au:
 
 1. The `.clang-format` file in the repository supersedes the Google style guide in all matters of
    code formatting.
