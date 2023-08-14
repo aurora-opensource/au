@@ -93,7 +93,7 @@ constexpr std::size_t string_size(int64_t x) {
         return string_size(-x) + 1;
     }
 
-    int digits = 1;
+    std::size_t digits = 1;
     while (x > 9) {
         x /= 10;
         ++digits;
