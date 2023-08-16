@@ -29,3 +29,5 @@ jobs:
       - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
       - name: Build and test (${{ inputs.config }})
         run: bazel test --copt=-Werror --config=${{ inputs.config }} //...:all
+      - name: Build and test -Wconversion (${{ inputs.config }})
+        run: bazel test --copt=-Werror --copt=-Wconversion --config=${{ inputs.config }} '//au/...:all except //au:no_wconversion_test'
