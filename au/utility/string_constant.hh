@@ -215,7 +215,7 @@ struct IToA {
 
         std::size_t i = length - 1;
         do {
-            data[i--] = '0' + (num % 10);
+            data[i--] = '0' + static_cast<char>(num % 10);
             num /= 10;
         } while (num > 0);
 
