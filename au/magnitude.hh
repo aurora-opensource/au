@@ -278,10 +278,10 @@ using Widen = std::conditional_t<
                        std::conditional_t<std::is_signed<T>::value, std::intmax_t, std::uintmax_t>>,
     T>;
 
-template <typename T, int N, typename B>
+template <typename T, std::intmax_t N, typename B>
 constexpr Widen<T> base_power_value(B base) {
     return (N < 0) ? (Widen<T>{1} / base_power_value<T, -N>(base))
-                   : int_pow(static_cast<Widen<T>>(base), N);
+                   : int_pow(static_cast<Widen<T>>(base), static_cast<std::uintmax_t>(N));
 }
 
 template <typename T, std::size_t N>

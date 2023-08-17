@@ -136,7 +136,7 @@ TEST(clamp, QuantityPointTakesOffsetIntoAccount) {
 TEST(copysign, ReturnsSameTypesAsStdCopysignForSameUnitInputs) {
     auto expect_consistent_with_std_copysign = [](auto mag, auto raw_sgn) {
         for (const auto test_sgn : {-1, 0, +1}) {
-            const auto sgn = test_sgn * raw_sgn;
+            const auto sgn = static_cast<decltype(raw_sgn)>(test_sgn) * raw_sgn;
 
             EXPECT_THAT(copysign(mag, sgn), SameTypeAndValue(std::copysign(mag, sgn)));
 
