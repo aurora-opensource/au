@@ -234,19 +234,41 @@ struct CorrespondingQuantity<
 
 // nholthaus handles dimensionless values inconsistently, so we must work around it.  See:
 // https://github.com/nholthaus/units/issues/276
-template <typename R>
-struct CorrespondingQuantity<units::unit_t<units::concentration::percent, R, units::linear_scale>> {
-    using Unit = Percent;
+template <typename R, typename RationalScale>
+struct CorrespondingQuantity<
+    units::unit_t<units::unit<RationalScale, units::base_unit<>, std::ratio<0>, std::ratio<0>>,
+                  R,
+                  units::linear_scale>> {
+    using NholthausType = typename detail::SoleTemplateParameter<CorrespondingQuantity>::type;
+    using NholthausUnit = typename detail::NholthausUnitType<NholthausType>::type;
+    using Mag = detail::NholthausUnitMagT<NholthausUnit>;
+
+    using Unit = UnitImpl<Dimension<>, Mag>;
     using Rep = R;
 
-    using NholthausType = typename detail::SoleTemplateParameter<CorrespondingQuantity>::type;
-
     // This is the workaround: we must manually multiply the value by 100, because the nholthaus
-    // library divides it by 100.  Note the glaring asymmetry between `extract_value()` and
-    // `construct_from_value()`.
-    static constexpr Rep extract_value(NholthausType d) { return 100 * d.template to<Rep>(); }
+    // library divides it by 100.  Note the asymmetry between `extract_value()` and
+    // `construct_from_value()`: we must multiply by `inverse_mag` only in the former.
+    static constexpr Rep extract_value(NholthausType d) {
+        return get_value<Rep>(mag<1>() / Mag{}) * d.template to<Rep>();
+    }
 
     static constexpr NholthausType construct_from_value(Rep x) { return NholthausType{x}; }
 };
+
+// If nholthaus, for whatever reason, defined a unit in terms of a non-`base_unit` specialization,
+// unpack it one more level.  Eventually, we should recursively reach a `base_unit` specialization,
+// and match one of the above `CorrespondingQuantity` specializations.
+template <typename OuterRatio, typename InnerRatio, typename BaseUnit, typename R>
+struct CorrespondingQuantity<units::unit_t<
+    units::unit<OuterRatio, units::unit<InnerRatio, BaseUnit, std::ratio<0>, std::ratio<0>>>,
+    R,
+    units::linear_scale>>
+    : CorrespondingQuantity<units::unit_t<units::unit<std::ratio_multiply<OuterRatio, InnerRatio>,
+                                                      BaseUnit,
+                                                      std::ratio<0>,
+                                                      std::ratio<0>>,
+                                          R,
+                                          units::linear_scale>> {};
 
 }  // namespace au
