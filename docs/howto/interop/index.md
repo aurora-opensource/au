@@ -1,6 +1,6 @@
 # Inter-library Interoperation
 
-This guide explains how use Au's [corresponding quantity
+This guide explains how to use Au's [corresponding quantity
 machinery](../../reference/corresponding_quantity.md) to set up minimum-friction interoperation
 between Au and some other C++ units library.  The main use case is for migrating either to or from
 Au.  Once you set this up, you will be able to pass Au's quantity types to APIs expecting equivalent
@@ -14,9 +14,9 @@ Here are the steps involved.
 2. _(Optional)_ Create a shim file.
 
 !!! warning
-    A common theme in this generic guide is that the details for each step will **strongly** depend
-    on the details of the library you're using.  In each step, we will explain the abstract goals to
-    achieve, and we'll show a concrete example of achieving them with one specific units library.
+    In this generic guide, the details for each step will **strongly** depend on the details of the
+    library you're using.  In each step, we will explain the abstract goals to achieve, and we'll
+    show a concrete example of achieving them with one specific units library.
 
     We chose the nholthaus library for all our examples because it's very popular, and it
     illustrates the concepts nicely.  However, if you're _actually_ using the nholthaus library,
@@ -114,15 +114,14 @@ example for the `nholthaus/units` library:
 
 ### Implement the definitions
 
-The general strategy for writing an implementation that can make these unit tests pass includes
-these steps.
+Generally, writing an implementation that passes these unit tests includes:
 
-1. Figure out which template parameters are most relevant for the other library's types.
+1. Figuring out which template parameters are most relevant for the other library's types.
 
-2. Write helpers that can extract the `Unit` and `Rep` information from these template parameters.
+2. Writing helpers that can extract the `Unit` and `Rep` information from these template parameters.
 
-3. Write a partial specialization of `au::CorrespondingQuantity` using the template parameters from
-   the first step.
+3. Writing a partial specialization of `au::CorrespondingQuantity` using the template parameters
+   from the first step.
 
 Again, the details will depend strongly on the details of the library you're working with, but
 here's an example using the nholthaus library:

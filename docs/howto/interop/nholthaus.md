@@ -39,7 +39,7 @@ things, in this order.
 3. Include your copy of `compatibility/nholthaus_units.hh`, **after** every other file.
     - (The include path comes from Step 1 above.)
 
-We have included a [self-explaining example
+We have provided a [self-explaining example
 shim](https://github.com/aurora-opensource/au/blob/3fa22a2212b37322a8243d57db024bb573b68813/compatibility/nholthaus_units_example_usage.hh)
 to illustrate this procedure.  Note that it includes examples of comments to disable and re-enable
 clang-format support, because without them, some projects that use clang-format might automatically
