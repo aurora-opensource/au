@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.2-23-gfc4e90d
+// Version identifier: 0.3.2-24-ge53d249
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -161,7 +161,7 @@ constexpr std::size_t string_size(int64_t x) {
         return string_size(-x) + 1;
     }
 
-    int digits = 1;
+    std::size_t digits = 1;
     while (x > 9) {
         x /= 10;
         ++digits;
@@ -283,7 +283,7 @@ struct IToA {
 
         std::size_t i = length - 1;
         do {
-            data[i--] = '0' + (num % 10);
+            data[i--] = '0' + static_cast<char>(num % 10);
             num /= 10;
         } while (num > 0);
 
@@ -1719,10 +1719,10 @@ using Widen = std::conditional_t<
                        std::conditional_t<std::is_signed<T>::value, std::intmax_t, std::uintmax_t>>,
     T>;
 
-template <typename T, int N, typename B>
+template <typename T, std::intmax_t N, typename B>
 constexpr Widen<T> base_power_value(B base) {
     return (N < 0) ? (Widen<T>{1} / base_power_value<T, -N>(base))
-                   : int_pow(static_cast<Widen<T>>(base), N);
+                   : int_pow(static_cast<Widen<T>>(base), static_cast<std::uintmax_t>(N));
 }
 
 template <typename T, std::size_t N>
@@ -2956,7 +2956,7 @@ class Quantity {
               typename = std::enable_if_t<IsUnit<NewUnit>::value>>
     constexpr NewRep in(NewUnit u) const {
         if (are_units_quantity_equivalent(unit, u) && std::is_same<Rep, NewRep>::value) {
-            return value_;
+            return static_cast<NewRep>(value_);
         } else {
             return as<NewRep>(u).in(u);
         }
