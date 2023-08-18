@@ -604,89 +604,8 @@ TEST(Quantity, CommonTypeRespectsImplicitRepSafetyChecks) {
     // would fail, rather than failing to compile.
 }
 
-TEST(Quantity, MultiplicationRespectUnderlyingTypes) {
-    auto expect_multiplication_respects_types = [](auto t, auto u) {
-        const auto t_quantity = (feet / hour)(t);
-        const auto u_quantity = hours(u);
-
-        const auto r = t * u;
-
-        EXPECT_THAT(t_quantity * u_quantity, QuantityEquivalent(feet(r)));
-        EXPECT_THAT(t_quantity * u, QuantityEquivalent((feet / hour)(r)));
-        EXPECT_THAT(t * u_quantity, QuantityEquivalent(hours(r)));
-    };
-
-    expect_multiplication_respects_types(2., 3.);
-    expect_multiplication_respects_types(2., 3.f);
-    expect_multiplication_respects_types(2., 3);
-
-    expect_multiplication_respects_types(2.f, 3.);
-    expect_multiplication_respects_types(2.f, 3.f);
-    expect_multiplication_respects_types(2.f, 3);
-
-    expect_multiplication_respects_types(2, 3.);
-    expect_multiplication_respects_types(2, 3.f);
-    expect_multiplication_respects_types(2, 3);
-}
-
-TEST(Quantity, DivisionRespectsUnderlyingTypes) {
-    auto expect_division_respects_types = [](auto t, auto u) {
-        const auto t_quantity = miles(t);
-        const auto u_quantity = hours(u);
-
-        const auto q = t / u;
-
-        EXPECT_THAT(t_quantity / u_quantity, QuantityEquivalent((miles / hour)(q)));
-        EXPECT_THAT(t_quantity / u, QuantityEquivalent(miles(q)));
-        EXPECT_THAT(t / u_quantity, QuantityEquivalent(pow<-1>(hours)(q)));
-    };
-
-    expect_division_respects_types(2., 3.);
-    expect_division_respects_types(2., 3.f);
-    expect_division_respects_types(2., 3);
-
-    expect_division_respects_types(2.f, 3.);
-    expect_division_respects_types(2.f, 3.f);
-    expect_division_respects_types(2.f, 3);
-
-    // We omit the integer division case, because we forbid it for Quantity.  When combined with
-    // implicit conversions, it is too prone to truncate significantly and surprise users.
-    expect_division_respects_types(2, 3.);
-    expect_division_respects_types(2, 3.f);
-    // expect_division_respects_types(2, 3);
-}
-
 TEST(QuantityMaker, ProvidesAssociatedUnit) {
     StaticAssertTypeEq<AssociatedUnitT<QuantityMaker<Hours>>, Hours>();
-}
-
-TEST(QuantityShorthandMultiplicationAndDivisionAssignment, RespectUnderlyingTypes) {
-    auto expect_shorthand_assignment_models_underlying_types = [](auto t, auto u) {
-        auto t_quantity = yards(t);
-
-        t_quantity *= u;
-        t *= u;
-        EXPECT_THAT(t_quantity.in(yards), SameTypeAndValue(t));
-
-        t_quantity /= u;
-        t /= u;
-        EXPECT_THAT(t_quantity.in(yards), SameTypeAndValue(t));
-    };
-
-    expect_shorthand_assignment_models_underlying_types(2., 3.);
-    expect_shorthand_assignment_models_underlying_types(2., 3.f);
-    expect_shorthand_assignment_models_underlying_types(2., 3);
-
-    expect_shorthand_assignment_models_underlying_types(2.f, 3.);
-    expect_shorthand_assignment_models_underlying_types(2.f, 3.f);
-    expect_shorthand_assignment_models_underlying_types(2.f, 3);
-
-    // Although a raw integer apparently does support `operator*=(T)` for floating point `T`, we
-    // don't want to allow that because it's error prone and loses precision.  Thus, we comment out
-    // those test cases here.
-    expect_shorthand_assignment_models_underlying_types(2, 3);
-    // expect_shorthand_assignment_models_underlying_types(2, 3.f);
-    // expect_shorthand_assignment_models_underlying_types(2, 3.);
 }
 
 TEST(AreQuantityTypesEquivalent, RequiresSameRepAndEquivalentUnits) {

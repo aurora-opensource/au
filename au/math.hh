@@ -147,6 +147,26 @@ auto arctan2(Quantity<U1, R1> y, Quantity<U2, R2> x) {
     return arctan2(y.in(common_unit), x.in(common_unit));
 }
 
+// Clamp the first quantity to within the range of the second two.
+template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
+constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Quantity<UHi, RHi> hi) {
+    using U = CommonUnitT<UV, ULo, UHi>;
+    using R = std::common_type_t<RV, RLo, RHi>;
+    using ResultT = Quantity<U, R>;
+    return (v < lo) ? ResultT{lo} : (hi < v) ? ResultT{hi} : ResultT{v};
+}
+
+// Clamp the first point to within the range of the second two.
+template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
+constexpr auto clamp(QuantityPoint<UV, RV> v,
+                     QuantityPoint<ULo, RLo> lo,
+                     QuantityPoint<UHi, RHi> hi) {
+    using U = CommonPointUnitT<UV, ULo, UHi>;
+    using R = std::common_type_t<RV, RLo, RHi>;
+    using ResultT = QuantityPoint<U, R>;
+    return (v < lo) ? ResultT{lo} : (hi < v) ? ResultT{hi} : ResultT{v};
+}
+
 // Copysign where the magnitude has units.
 template <typename U, typename R, typename T>
 constexpr auto copysign(Quantity<U, R> mag, T sgn) {
