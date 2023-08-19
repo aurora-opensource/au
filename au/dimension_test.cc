@@ -14,6 +14,8 @@
 
 #include "au/dimension.hh"
 
+#include "au/testing.hh"
+#include "au/units/inches.hh"
 #include "gtest/gtest.h"
 
 using ::testing::StaticAssertTypeEq;
@@ -22,6 +24,19 @@ namespace au {
 
 using Speed = DimQuotientT<Length, Time>;
 using Accel = DimQuotientT<Speed, Time>;
+
+// Test code for a new user-defined dimension.
+struct PixelBaseDim : base_dim::BaseDimension<1690384951> {};
+struct Pixels : UnitImpl<Dimension<PixelBaseDim>> {
+    static constexpr const char label[] = "px";
+};
+constexpr const char Pixels::label[];
+constexpr auto pixels = QuantityMaker<Pixels>{};
+
+TEST(Dimension, CanDefineNewBaseDimension) {
+    constexpr auto resolution = (pixels / inch)(300);
+    EXPECT_THAT(resolution * inches(6), SameTypeAndValue(pixels(1800)));
+}
 
 TEST(Dimension, AllProvidedBaseDimensionsAreCompatible) {
     // This tests the strict total ordering for all recognized base dimensions.  It makes sure they

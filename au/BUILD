@@ -182,6 +182,8 @@ cc_test(
     srcs = ["dimension_test.cc"],
     deps = [
         ":dimension",
+        ":testing",
+        ":units",
         "@com_google_googletest//:gtest_main",
     ],
 )
