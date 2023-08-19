@@ -12,24 +12,24 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/idioms/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/supported-compilers/">
       
       
-        <link rel="prev" href="../concepts/zero/">
+        <link rel="prev" href="../install/">
       
       
-        <link rel="next" href="unit-slots/">
+        <link rel="next" href="../troubleshooting/">
       
-      <link rel="icon" href="../../assets/favicon.ico">
+      <link rel="icon" href="../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.5.1, mkdocs-material-9.1.21">
     
     
       
-        <title>Au Idioms - The Au units library</title>
+        <title>Supported Compilers - The Au units library</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.eebd395e.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.eebd395e.min.css">
       
       
 
@@ -45,9 +45,9 @@
       
     
     
-      <link rel="stylesheet" href="../../tweaks.css">
+      <link rel="stylesheet" href="../tweaks.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#au-idioms" class="md-skip">
+        <a href="#supported-compilers" class="md-skip">
           Skip to content
         </a>
       
@@ -89,9 +89,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href=".." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../assets/au-logo.png" alt="logo">
+  <img src="../assets/au-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Au Idioms
+              Supported Compilers
             
           </span>
         </div>
@@ -188,9 +188,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href=".." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../assets/au-logo.png" alt="logo">
+  <img src="../assets/au-logo.png" alt="logo">
 
     </a>
     The Au units library
@@ -218,7 +218,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         Au documentation
       </a>
     </li>
@@ -233,7 +233,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../develop/" class="md-nav__link">
+      <a href="../develop/" class="md-nav__link">
         Development Setup
       </a>
     </li>
@@ -248,7 +248,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/" class="md-nav__link">
+      <a href="../install/" class="md-nav__link">
         Installation
       </a>
     </li>
@@ -261,11 +261,79 @@
 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../supported-compilers/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Supported Compilers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Supported Compilers
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#status-changes" class="md-nav__link">
+    Status changes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tiers-requirements-and-members" class="md-nav__link">
+    Tiers: Requirements and members
+  </a>
+  
+    <nav class="md-nav" aria-label="Tiers: Requirements and members">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#full-support" class="md-nav__link">
+    Full support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#best-effort-support" class="md-nav__link">
+    Best effort support
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -278,7 +346,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../troubleshooting/" class="md-nav__link">
+      <a href="../troubleshooting/" class="md-nav__link">
         Troubleshooting Guide
       </a>
     </li>
@@ -320,7 +388,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../alternatives/" class="md-nav__link">
+      <a href="../alternatives/" class="md-nav__link">
         Comparison of Alternatives
       </a>
     </li>
@@ -340,16 +408,14 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
       
       
       
@@ -358,7 +424,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_7">
           <span class="md-nav__icon md-icon"></span>
           Discussion
@@ -371,7 +437,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../discussion/" class="md-nav__link">
         Discussion Docs
       </a>
     </li>
@@ -412,7 +478,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/" class="md-nav__link">
+      <a href="../discussion/concepts/" class="md-nav__link">
         Generic Concepts
       </a>
     </li>
@@ -426,7 +492,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/arithmetic/" class="md-nav__link">
+      <a href="../discussion/concepts/arithmetic/" class="md-nav__link">
         Arithmetic Operations
       </a>
     </li>
@@ -440,7 +506,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/common_unit/" class="md-nav__link">
+      <a href="../discussion/concepts/common_unit/" class="md-nav__link">
         Common Units
       </a>
     </li>
@@ -454,7 +520,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/dimensionless/" class="md-nav__link">
+      <a href="../discussion/concepts/dimensionless/" class="md-nav__link">
         Dimensionless Units and Quantities
       </a>
     </li>
@@ -468,7 +534,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/quantity_point/" class="md-nav__link">
+      <a href="../discussion/concepts/quantity_point/" class="md-nav__link">
         Quantity Point
       </a>
     </li>
@@ -482,7 +548,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/zero/" class="md-nav__link">
+      <a href="../discussion/concepts/zero/" class="md-nav__link">
         Zero
       </a>
     </li>
@@ -501,16 +567,14 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
       
       
       
@@ -519,7 +583,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_7_3">
           <span class="md-nav__icon md-icon"></span>
           Idioms
@@ -530,21 +594,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../discussion/idioms/" class="md-nav__link">
         Au Idioms
       </a>
-      
     </li>
   
 
@@ -556,7 +610,7 @@
   
   
     <li class="md-nav__item">
-      <a href="unit-slots/" class="md-nav__link">
+      <a href="../discussion/idioms/unit-slots/" class="md-nav__link">
         Unit slots
       </a>
     </li>
@@ -604,7 +658,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../implementation/" class="md-nav__link">
+      <a href="../discussion/implementation/" class="md-nav__link">
         Implementation Details
       </a>
     </li>
@@ -618,7 +672,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../implementation/vector_space/" class="md-nav__link">
+      <a href="../discussion/implementation/vector_space/" class="md-nav__link">
         Vector Space Representations
       </a>
     </li>
@@ -674,7 +728,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/" class="md-nav__link">
+      <a href="../howto/" class="md-nav__link">
         How-to guides
       </a>
     </li>
@@ -688,7 +742,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/new-units/" class="md-nav__link">
+      <a href="../howto/new-units/" class="md-nav__link">
         Defining new units
       </a>
     </li>
@@ -737,7 +791,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/" class="md-nav__link">
+      <a href="../reference/" class="md-nav__link">
         Reference Docs
       </a>
     </li>
@@ -751,7 +805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/corresponding_quantity/" class="md-nav__link">
+      <a href="../reference/corresponding_quantity/" class="md-nav__link">
         Corresponding Quantity
       </a>
     </li>
@@ -765,7 +819,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/magnitude/" class="md-nav__link">
+      <a href="../reference/magnitude/" class="md-nav__link">
         Magnitude
       </a>
     </li>
@@ -779,7 +833,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/math/" class="md-nav__link">
+      <a href="../reference/math/" class="md-nav__link">
         Math functions
       </a>
     </li>
@@ -793,7 +847,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/powers/" class="md-nav__link">
+      <a href="../reference/powers/" class="md-nav__link">
         Powers
       </a>
     </li>
@@ -807,7 +861,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/prefix/" class="md-nav__link">
+      <a href="../reference/prefix/" class="md-nav__link">
         Prefix
       </a>
     </li>
@@ -821,7 +875,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/quantity/" class="md-nav__link">
+      <a href="../reference/quantity/" class="md-nav__link">
         Quantity
       </a>
     </li>
@@ -835,7 +889,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/quantity_point/" class="md-nav__link">
+      <a href="../reference/quantity_point/" class="md-nav__link">
         QuantityPoint
       </a>
     </li>
@@ -849,7 +903,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/unit/" class="md-nav__link">
+      <a href="../reference/unit/" class="md-nav__link">
         Unit
       </a>
     </li>
@@ -863,7 +917,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/zero/" class="md-nav__link">
+      <a href="../reference/zero/" class="md-nav__link">
         Zero
       </a>
     </li>
@@ -904,7 +958,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/" class="md-nav__link">
+      <a href="../reference/detail/" class="md-nav__link">
         Implementation Details
       </a>
     </li>
@@ -918,7 +972,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/dimension/" class="md-nav__link">
+      <a href="../reference/detail/dimension/" class="md-nav__link">
         Dimension
       </a>
     </li>
@@ -932,7 +986,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/monovalue_types/" class="md-nav__link">
+      <a href="../reference/detail/monovalue_types/" class="md-nav__link">
         Monovalue Types
       </a>
     </li>
@@ -946,7 +1000,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/packs/" class="md-nav__link">
+      <a href="../reference/detail/packs/" class="md-nav__link">
         Parameter packs
       </a>
     </li>
@@ -1002,7 +1056,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/" class="md-nav__link">
+      <a href="../tutorial/" class="md-nav__link">
         Tutorials: home
       </a>
     </li>
@@ -1016,7 +1070,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
+      <a href="../tutorial/101-quantity-makers/" class="md-nav__link">
         Au 101: Quantity Makers
       </a>
     </li>
@@ -1030,7 +1084,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/102-api-types/" class="md-nav__link">
+      <a href="../tutorial/102-api-types/" class="md-nav__link">
         Au 102: API Types
       </a>
     </li>
@@ -1044,7 +1098,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
+      <a href="../tutorial/103-unit-conversions/" class="md-nav__link">
         Au 103: Unit Conversions
       </a>
     </li>
@@ -1085,7 +1139,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+      <a href="../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
         Au 101: Quantity Makers Exercise
       </a>
     </li>
@@ -1099,7 +1153,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
+      <a href="../tutorial/exercise/102-api-types/" class="md-nav__link">
         Au 102: API Types Exercise
       </a>
     </li>
@@ -1113,7 +1167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+      <a href="../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
         Au 103: Unit Conversions Exercise
       </a>
     </li>
@@ -1152,14 +1206,100 @@
   
 
 
-<h1 id="au-idioms">Au Idioms<a class="headerlink" href="#au-idioms" title="Permanent link">&para;</a></h1>
-<p>This section covers common idioms and usage patterns you&rsquo;ll encounter in using Au.  These concepts
-can make you more effective with this library, but may not help with other units libraries.</p>
-<ul>
-<li><strong><a href="unit-slots/">Unit slots</a></strong>.  Many Au APIs have parameters that accept an explicitly named
-  unit.  We call these paremeters &ldquo;unit slots&rdquo;.  This page will explain what kinds of things can go
-  in that slot, and which ones to prefer in different situations.</li>
-</ul>
+<h1 id="supported-compilers">Supported Compilers<a class="headerlink" href="#supported-compilers" title="Permanent link">&para;</a></h1>
+<p>We&rsquo;ve endeavored to use only standards-compliant C++14 in Au, with the goal of making it work with
+any compiler that fully supports the C++14 standard (or any newer one). Of course, there&rsquo;s no
+substitute for testing!  So we also include certain platform/compiler combinations in our automated
+test suites, which we run on every commit.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We&rsquo;ll use &ldquo;configuration&rdquo; as a shorthand for &ldquo;platform/compiler combination&rdquo; for the rest of
+this doc.</p>
+</div>
+<p>Formally, we have three tiers of support.</p>
+<ol>
+<li><strong>Full Support.</strong>  These configurations must be kept passing on every commit.</li>
+<li><strong>Best Effort Support.</strong>  We measure <em>whether</em> these configurations are passing on every commit,
+   and strive to <em>keep</em> them passing.  However, if we cannot do so, we may let them break.</li>
+<li><strong>Assumed Support.</strong>  These include all other C++14-compatible configurations which we do not
+   measure explicitly.</li>
+</ol>
+<p>Each tier has requirements that must be met for a configuration to be included in it. Any
+configuration that doesn&rsquo;t meet the bar for any higher tier is in the &ldquo;Assumed Support&rdquo; tier.</p>
+<h2 id="status-changes">Status changes<a class="headerlink" href="#status-changes" title="Permanent link">&para;</a></h2>
+<p>We expect most status changes will be user-led.  Users who want a higher tier of support for their
+preferred configuration are welcome to file an issue, especially if they can provide some guidance
+as to how we can help it meet the requirements for that tier (that is, how to set up suitable GitHub
+workflows or bazel toolchains for it).</p>
+<p>Some status changes may be out of our control.  For example, if GitHub actions drops support for
+Windows Server 2019, we won&rsquo;t be able to continue running GitHub workflows for MSVC x64 19.29.  If
+that happened, we would have to move that configuration to the &ldquo;Assumed Support&rdquo; tier.</p>
+<h2 id="tiers-requirements-and-members">Tiers: Requirements and members<a class="headerlink" href="#tiers-requirements-and-members" title="Permanent link">&para;</a></h2>
+<p>Now we&rsquo;ll go into more detail about each tier.  We&rsquo;ll explain the requirements which a configuration
+must meet to join that tier, and we&rsquo;ll list the configurations that are currently included.</p>
+<h3 id="full-support">Full support<a class="headerlink" href="#full-support" title="Permanent link">&para;</a></h3>
+<p>To add a configuration to the Full Support tier, we must be able to add a hermetic toolchain to our
+bazel workspace. The motivation for this requirement is that we want any developer to be able to
+check out the repository, and have a tight iteration cycle with full <em>local</em> reproducibility for any
+CI errors.</p>
+<p>Here are the configurations that have Full Support status.</p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Compiler</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ubuntu</td>
+<td>clang 11</td>
+<td><a href="https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml"><img alt="clang11-ubuntu" src="https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml/badge.svg?branch=main&amp;event=push" /></a></td>
+</tr>
+<tr>
+<td>Ubuntu</td>
+<td>clang 14</td>
+<td><a href="https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml"><img alt="clang14-ubuntu" src="https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml/badge.svg?branch=main&amp;event=push" /></a></td>
+</tr>
+<tr>
+<td>Ubuntu</td>
+<td>gcc 10</td>
+<td><a href="https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml"><img alt="gcc10-ubuntu" src="https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml/badge.svg?branch=main&amp;event=push" /></a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="best-effort-support">Best effort support<a class="headerlink" href="#best-effort-support" title="Permanent link">&para;</a></h3>
+<p>To add a configuration to the Best Effort tier, we must be able to set up an automated GitHub
+workflow job which runs tests on that configuration.  This means that any developer will be able to
+iterate on these configurations, although some may be forced to push commits remotely and trigger CI
+jobs to do so.</p>
+<p>Although we reserve the right to drop support for these configurations, we will strive to avoid
+doing so if at all possible.  We expect to be able to succeed and keep these passing in perpetuity.
+Even in the unlikely event that any of these configurations break, we&rsquo;ll continue to provide
+measurement badges, so that potential users with these configurations are forewarned.</p>
+<p>Here are the configurations that have Best Effort Support status.</p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Compiler</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Windows Server 2019</td>
+<td>MSVC x64 19.29</td>
+<td><a href="https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml"><img alt="MSVC x64 19.29" src="https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml/badge.svg?branch=main&amp;event=push" /></a></td>
+</tr>
+<tr>
+<td>Windows Server 2022</td>
+<td>MSVC x64 19.35</td>
+<td><a href="https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml"><img alt="MSVC x64 19.35" src="https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml/badge.svg?branch=main&amp;event=push" /></a></td>
+</tr>
+</tbody>
+</table>
 
 
 
@@ -1181,7 +1321,7 @@ can make you more effective with this library, but may not help with other units
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../concepts/zero/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Zero" rel="prev">
+          <a href="../install/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Installation" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -1190,20 +1330,20 @@ can make you more effective with this library, but may not help with other units
                 Previous
               </span>
               <div class="md-ellipsis">
-                Zero
+                Installation
               </div>
             </div>
           </a>
         
         
           
-          <a href="unit-slots/" class="md-footer__link md-footer__link--next" aria-label="Next: Unit slots" rel="next">
+          <a href="../troubleshooting/" class="md-footer__link md-footer__link--next" aria-label="Next: Troubleshooting Guide" rel="next">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Unit slots
+                Troubleshooting Guide
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1239,10 +1379,10 @@ can make you more effective with this library, but may not help with other units
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "toc.integrate"], "search": "../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.220ee61c.min.js"></script>
+      <script src="../assets/javascripts/bundle.220ee61c.min.js"></script>
       
         
           <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
