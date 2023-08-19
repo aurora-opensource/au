@@ -91,6 +91,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://aurora-opensource.github.io/au/main/howto/new-dimensions/</loc>
+         <lastmod>2023-08-19</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/new-units/</loc>
          <lastmod>2023-08-19</lastmod>
          <changefreq>daily</changefreq>

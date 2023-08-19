@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.2-26-g5ea956e
+// Version identifier: 0.3.2-27-g02410d9
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -1421,25 +1421,25 @@ struct CommonDimension<Head, Tail...> : CommonDimension<Tail...> {
 
 namespace base_dim {
 
-template <int I>
+template <int64_t I>
 struct BaseDimension {
-    static constexpr int base_dim_index = I;
+    static constexpr int64_t base_dim_index = I;
 };
-template <int I>
-constexpr int BaseDimension<I>::base_dim_index;
+template <int64_t I>
+constexpr int64_t BaseDimension<I>::base_dim_index;
 
 template <typename T, typename U>
 struct OrderByBaseDimIndex : stdx::bool_constant<(T::base_dim_index < U::base_dim_index)> {};
 
-struct Length : BaseDimension<1> {};
-struct Mass : BaseDimension<2> {};
-struct Time : BaseDimension<3> {};
-struct Current : BaseDimension<4> {};
-struct Temperature : BaseDimension<5> {};
-struct Angle : BaseDimension<6> {};
-struct Information : BaseDimension<7> {};
-struct AmountOfSubstance : BaseDimension<8> {};
-struct LuminousIntensity : BaseDimension<9> {};
+struct Length : BaseDimension<-99> {};
+struct Mass : BaseDimension<-98> {};
+struct Time : BaseDimension<-97> {};
+struct Current : BaseDimension<-96> {};
+struct Temperature : BaseDimension<-95> {};
+struct Angle : BaseDimension<-94> {};
+struct Information : BaseDimension<-93> {};
+struct AmountOfSubstance : BaseDimension<-92> {};
+struct LuminousIntensity : BaseDimension<-91> {};
 
 }  // namespace base_dim
 
