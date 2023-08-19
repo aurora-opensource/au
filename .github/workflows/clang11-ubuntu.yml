@@ -1,4 +1,4 @@
-# Copyright 2022 Aurora Operations, Inc.
+# Copyright 2023 Aurora Operations, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: check-license-headers
+name: clang11-ubuntu
 
 on:
   push:
@@ -21,12 +21,7 @@ on:
   pull_request:
 
 jobs:
-  lint-check-license-headers:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
-      - uses: viperproject/check-license-header@971caaf7d1641bb2c6a49acd06b018a5ce51ad6e # v1.0.5
-        with:
-          path: .
-          config: .github/license-check/license-config.json
-          strict: true
+  build-and-test-clang11:
+    uses: ./.github/workflows/build-and-test.yml
+    with:
+      config: clang11

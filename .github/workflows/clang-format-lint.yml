@@ -21,7 +21,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  lint-clang-format:
     runs-on: ubuntu-latest
 
     steps:

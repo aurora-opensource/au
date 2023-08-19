@@ -232,6 +232,18 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "no_wconversion_test",
+    size = "small",
+    srcs = ["no_wconversion_test.cc"],
+    deps = [
+        ":quantity",
+        ":testing",
+        ":units",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
 cc_library(
     name = "packs",
     hdrs = ["packs.hh"],
