@@ -392,6 +392,7 @@ cc_test(
         ":prefix",
         ":testing",
         ":unit_of_measure",
+        ":units",
         "@com_google_googletest//:gtest_main",
     ],
 )

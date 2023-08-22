@@ -195,47 +195,53 @@ constexpr bool is_unit(T) {
     return IsUnit<T>::value;
 }
 
-// Check whether two objects are Unit types of the same Dimension.
+// `fits_in_unit_slot(T)`: check whether this value is valid for a unit slot.
+template <typename T>
+constexpr bool fits_in_unit_slot(T) {
+    return IsUnit<AssociatedUnitT<T>>::value;
+}
+
+// Check whether the units associated with these objects have the same Dimension.
 template <typename... Us>
 constexpr bool has_same_dimension(Us...) {
-    return HasSameDimension<Us...>::value;
+    return HasSameDimension<AssociatedUnitT<Us>...>::value;
 }
 
 // Check whether two Unit types are exactly quantity-equivalent.
 template <typename U1, typename U2>
 constexpr bool are_units_quantity_equivalent(U1, U2) {
-    return AreUnitsQuantityEquivalent<U1, U2>::value;
+    return AreUnitsQuantityEquivalent<AssociatedUnitT<U1>, AssociatedUnitT<U2>>::value;
 }
 
 // Check whether two Unit types are exactly point-equivalent.
 template <typename U1, typename U2>
 constexpr bool are_units_point_equivalent(U1, U2) {
-    return AreUnitsPointEquivalent<U1, U2>::value;
+    return AreUnitsPointEquivalent<AssociatedUnitT<U1>, AssociatedUnitT<U2>>::value;
 }
 
 // Check whether this value is an instance of a dimensionless Unit.
 template <typename U>
 constexpr bool is_dimensionless(U) {
-    return IsDimensionless<U>::value;
+    return IsDimensionless<AssociatedUnitT<U>>::value;
 }
 
 // Type trait to detect whether a Unit is "the unitless unit".
 template <typename U>
 constexpr bool is_unitless_unit(U) {
-    return IsUnitlessUnit<U>::value;
+    return IsUnitlessUnit<AssociatedUnitT<U>>::value;
 }
 
 // A Magnitude representing the ratio of two same-dimensioned units.
 //
 // Useful in doing unit conversions.
 template <typename U1, typename U2>
-constexpr UnitRatioT<U1, U2> unit_ratio(U1, U2) {
+constexpr UnitRatioT<AssociatedUnitT<U1>, AssociatedUnitT<U2>> unit_ratio(U1, U2) {
     return {};
 }
 
 template <typename U1, typename U2>
 constexpr auto origin_displacement(U1, U2) {
-    return OriginDisplacement<U1, U2>::value();
+    return OriginDisplacement<AssociatedUnitT<U1>, AssociatedUnitT<U2>>::value();
 }
 
 template <typename U>
