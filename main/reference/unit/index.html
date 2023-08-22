@@ -1009,6 +1009,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#fits-in-unit-slot" class="md-nav__link">
+    Fits in unit slot?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#has-same-dimension" class="md-nav__link">
     Has same dimension?
   </a>
@@ -1597,6 +1604,19 @@ In what follows, we&rsquo;ll use this convention:</p>
 <li><code>u * m</code></li>
 </ul>
 <h2 id="traits">Traits<a class="headerlink" href="#traits" title="Permanent link">&para;</a></h2>
+<p>Because units are <a href="../detail/monovalue_types/">monovalue types</a>, each trait has two forms: one for
+<em>types</em>, and another for <em>instances</em>.</p>
+<p>Additionally, the parameters in the <em>instance</em> forms will usually act as <a href="../../discussion/idioms/unit-slots/"><em>unit
+slots</em></a>.  This means you can, for example, write
+<code>unit_ratio(feet, meters)</code>, which can be convenient.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The only unit trait whose parameters are <em>not</em> unit slots is <code>is_unit(u)</code>.  This is because of
+its name.  It will return <code>true</code> <em>only</em> if you pass a unit type: passing the unit instance
+<code>Meters{}</code> returns <code>true</code>, but <em>passing the quantity maker <code>meters</code> returns <code>false</code></em>.</p>
+<p>If you want to check whether your instance is compatible with a <a href="../../discussion/idioms/unit-slots/">unit
+slot</a>, use <code>fits_in_unit_slot(u)</code>.</p>
+</div>
 <p>Sections describing <code>bool</code> traits will be indicated with a trailing question mark, <code>"?"</code>.</p>
 <h3 id="is-unit">Is unit?<a class="headerlink" href="#is-unit" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> Indicates whether the argument is a valid unit.</p>
@@ -1618,6 +1638,37 @@ responsible for satisfying the monovalue type requirement.</p>
 </ul>
 </li>
 </ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This will only return true if <code>u</code> is an instance of a unit type, such as <code>Meters{}</code>. It will
+return <code>false</code> for a quantity maker such as <code>meters</code>.</p>
+<p>This is what you want if you are trying to figure out whether the type of your instance would be
+suitable as the first template parameter for <code>Quantity</code> or <code>QuantityPoint</code>.</p>
+<p>If you are trying to figure out whether your instance <code>u</code> is suitable for a <a href="../../discussion/idioms/unit-slots/">unit
+slot</a>, call <a href="#fits-in-unit-slot"><code>fits_in_unit_slot(u)</code></a>
+instead.</p>
+</div>
+<h3 id="fits-in-unit-slot">Fits in unit slot?<a class="headerlink" href="#fits-in-unit-slot" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> Indicates whether the argument can be validly passed to a <a href="../../discussion/idioms/unit-slots/">unit
+slot</a> in an API.</p>
+<p>This trait is <em>instance-only</em>: there is no reason to apply this to types, so we do not provide
+a type-based API.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>instance</em> <code>u</code>:<ul>
+<li><code>fits_in_unit_slot(u)</code></li>
+</ul>
+</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This can return true even if <code>u</code> is <em>not</em> an instance of a unit type.  For example,
+<code>fits_in_unit_slot(meters)</code> returns true, even though the type of <code>meters</code> is
+<code>QuantityMaker&lt;Meters&gt;</code>, and thus, not a unit.</p>
+<p>If you want to stringently check whether <code>u</code> is a <em>unit</em> &mdash; say, to determine whether its type
+is suitable as the first template parameter of <code>Quantity</code> &mdash; then call <a href="#is-unit"><code>is_unit(u)</code></a>
+instead.</p>
+</div>
 <h3 id="has-same-dimension">Has same dimension?<a class="headerlink" href="#has-same-dimension" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> Indicates whether two units have the same dimension.</p>
 <p><strong>Syntax:</strong></p>
