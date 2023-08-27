@@ -96,7 +96,7 @@ fail to exist in several ways.
 
 These last two are examples of conversions that are physically meaningful, but forbidden due to the
 risk of larger-than-usual errors.  The library can still perform these conversions, but not via this
-constructor, and it must be "forced" to do so.  See [`.as<T>(unit)`](#as) for more details.
+constructor, and it must be "forced" to do so.  See [`.coerce_as(unit)`](#coerce) for more details.
 
 ### Constructing from `Zero`
 
@@ -227,6 +227,12 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
 2. The conversion is considered "forcing", and will be permitted in spite of any overflow or
    truncation risk.  The semantics are similar to `static_cast<T>`.
 
+However, note that we may change this second property in the future.  The version with the template
+arguments may be changed later so that it _does_ prevent lossy conversions.  If you want this
+"forcing" semantic, prefer to use [`.coerce_as(unit)`](#coerce), and add the explicit template
+parameter only if you want to change the rep.  See
+[#122](https://github.com/aurora-opensource/au/issues/122) for more details.
+
 ??? example "Example: forcing a conversion from inches to feet"
     `inches(24).as(feet)` is not allowed.  This conversion will divide the underlying value, `24`,
     by `12`.  Now, it so happens that this _particular_ value _would_ produce an integer result.
@@ -272,6 +278,12 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
 2. The conversion is considered "forcing", and will be permitted in spite of any overflow or
    truncation risk.  The semantics are similar to `static_cast<T>`.
 
+However, note that we may change this second property in the future.  The version with the template
+arguments may be changed later so that it _does_ prevent lossy conversions.  If you want this
+"forcing" semantic, prefer to use [`.coerce_in(unit)`](#coerce), and add the explicit template
+parameter only if you want to change the rep.  See
+[#122](https://github.com/aurora-opensource/au/issues/122) for more details.
+
 ??? example "Example: forcing a conversion from inches to feet"
     `inches(24).in(feet)` is not allowed.  This conversion will divide the underlying value, `24`,
     by `12`.  Now, it so happens that this _particular_ value _would_ produce an integer result.
@@ -280,12 +292,37 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
     we forbid this.
 
     `inches(24).in<int>(feet)` _is_ allowed.  The "explicit rep" template parameter has "forcing"
-    semantics.  This would produce `2`.  However, note that this operation uses integer division,
-    which truncates: so, for example, `inches(23).in<int>(feet)` would produce `1`.
+    semantics (at least for now; see [#122](https://github.com/aurora-opensource/au/issues/122)).
+    This would produce `2`.  However, note that this operation uses integer division, which
+    truncates: so, for example, `inches(23).in<int>(feet)` would produce `1`.
 
 !!! tip
     Prefer to **omit** the template argument if possible, because you will get more safety checks.
     The risks which the no-template-argument version warns about are real.
+
+### Forcing lossy conversions: `.coerce_as(unit)`, `.coerce_in(unit)` {#coerce}
+
+This function performs the exact same kind of unit conversion as if the string `coerce_` were
+removed.  However, it will ignore any safety checks for overflow or truncation.
+
+??? example "Example: forcing a conversion from inches to feet"
+    `inches(24).as(feet)` is not allowed.  This conversion will divide the underlying value, `24`,
+    by `12`.  While this particular value would produce an integer result, most other `int` values
+    would not.  Because our result uses `int` for storage --- same as the input --- we forbid this.
+
+    `inches(24).coerce_as(feet)` _is_ allowed.  The `coerce_` prefix has "forcing" semantics.  This
+    would produce `feet(2)`.  However, note that this operation uses integer division, which
+    truncates: so, for example, `inches(23).coerce_as(feet)` would produce `feet(1)`.
+
+These functions also support an explicit template parameter: so, `.coerce_as<T>(unit)` and
+`.coerce_in<T>(unit)`.  If you supply this parameter, it will be the rep of the result.
+
+??? example "Example: simultaneous unit and type conversion"
+    `inches(27.8).coerce_as<int>(feet)` will return `feet(2)`.
+
+!!! tip
+    Prefer **not** to use the "coercing versions" if possible, because you will get more safety
+    checks.  The risks which the "base" versions warn about are real.
 
 ## Operations
 

@@ -110,7 +110,7 @@ https://github.com/mkdocs/mkdocs/issues/1198#issuecomment-1253896100
 Note that every case in the above table is _physically_ meaningful (because the source and target
 have the same dimension), but some conversions are forbidden due to the risk of larger-than-usual
 errors.  The library can still perform these conversions, but not via this constructor, and it must
-be "forced" to do so. See [`.as<T>(unit)`](#as) for more details.
+be "forced" to do so. See [`.coerce_as(unit)`](#coerce) for more details.
 
 ### Default constructor
 
@@ -200,6 +200,12 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
 2. The conversion is considered "forcing", and will be permitted in spite of any overflow or
    truncation risk.  The semantics are similar to `static_cast<T>`.
 
+However, note that we may change this second property in the future.  The version with the template
+arguments may be changed later so that it _does_ prevent lossy conversions.  If you want this
+"forcing" semantic, prefer to use [`.coerce_as(unit)`](#coerce), and add the explicit template
+parameter only if you want to change the rep.  See
+[#122](https://github.com/aurora-opensource/au/issues/122) for more details.
+
 ??? example "Example: forcing a conversion from centimeters to meters"
     `centi(meters_pt)(200).as(meters_pt)` is not allowed.  This conversion will divide the
     underlying value, `200`, by `100`.  Now, it so happens that this _particular_ value _would_
@@ -246,6 +252,12 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
 2. The conversion is considered "forcing", and will be permitted in spite of any overflow or
    truncation risk.  The semantics are similar to `static_cast<T>`.
 
+However, note that we may change this second property in the future.  The version with the template
+arguments may be changed later so that it _does_ prevent lossy conversions.  If you want this
+"forcing" semantic, prefer to use [`.coerce_in(unit)`](#coerce), and add the explicit template
+parameter only if you want to change the rep.  See
+[#122](https://github.com/aurora-opensource/au/issues/122) for more details.
+
 ??? example "Example: forcing a conversion from centimeters to meters"
     `centi(meters_pt)(200).in(meters_pt)` is not allowed.  This conversion will divide the
     underlying value, `200`, by `100`.  Now, it so happens that this _particular_ value _would_
@@ -254,13 +266,41 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
     produce integer results, we forbid this.
 
     `centi(meters_pt)(200).in<int>(meters_pt)` _is_ allowed.  The "explicit rep" template parameter
-    has "forcing" semantics.  This would produce `2`. However, note that this operation uses integer
-    division, which truncates: so, for example, `centi(meters_pt)(199).in<int>(meters_pt)` would
-    produce `1`.
+    has "forcing" semantics (at least for now; see
+    [#122](https://github.com/aurora-opensource/au/issues/122)).  This would produce `2`. However,
+    note that this operation uses integer division, which truncates: so, for example,
+    `centi(meters_pt)(199).in<int>(meters_pt)` would produce `1`.
 
 !!! tip
     Prefer to **omit** the template argument if possible, because you will get more safety checks.
     The risks which the no-template-argument version warns about are real.
+
+### Forcing lossy conversions: `.coerce_as(unit)`, `.coerce_in(unit)` {#coerce}
+
+This function performs the exact same kind of unit conversion as if the string `coerce_` were
+removed.  However, it will ignore any safety checks for overflow or truncation.
+
+??? example "Example: forcing a conversion from centimeters to meters"
+    `centi(meters_pt)(200).in(meters_pt)` is not allowed.  This conversion will divide the
+    underlying value, `200`, by `100`.  Now, it so happens that this _particular_ value _would_
+    produce an integer result. However, the compiler must decide whether to permit this operation
+    _at compile time_, which means we don't yet know the value.  Since most `int` values would _not_
+    produce integer results, we forbid this.
+
+    `centi(meters_pt)(200).coerce_in(meters_pt)` _is_ allowed.  The `coerce_` prefix has "forcing"
+    semantics.  This would produce `2`. However, note that this operation uses integer division,
+    which truncates: so, for example, `centi(meters_pt)(199).coerce_in(meters_pt)` would produce
+    `1`.
+
+These functions also support an explicit template parameter: so, `.coerce_as<T>(unit)` and
+`.coerce_in<T>(unit)`.  If you supply this parameter, it will be the rep of the result.
+
+??? example "Example: simultaneous unit and type conversion"
+    `centi(meters_pt)(271.8).coerce_as<int>(meters_pt)` will return `meters_pt(2)`.
+
+!!! tip
+    Prefer **not** to use the "coercing versions" if possible, because you will get more safety
+    checks.  The risks which the "base" versions warn about are real.
 
 ## Operations
 
