@@ -180,17 +180,7 @@ versa); add a `std::chrono::duration` type to a `Quantity` of any time unit; and
 We include a file that sets up a correspondence between the quantity types in the popular
 [nholthaus/units](https://github.com/nholthaus/units) library, and those in Au.
 
-This file is **not** "active" by default.  You will need to set it up in your project. Later, we may
-add a how-to guide that explains in detail how to do that.  In the meantime, you can follow the
-instructions in the files themselves.
-
-- [`compatibility/nholthaus_units.hh`](https://github.com/aurora-opensource/au/blob/main/compatibility/nholthaus_units.hh)
-  is the file that _defines_ the `CorrespondingQuantity` machinery.  It includes [detailed
-  instructions](https://github.com/aurora-opensource/au/blob/cf0524361766feeef875f09a7bbfcb8aa9c57ddf/compatibility/nholthaus_units.hh#L17-L33)
-  in a comment at the top.
-
-- [`compatibility/nholthaus_units_example_usage.hh`](https://github.com/aurora-opensource/au/blob/main/compatibility/nholthaus_units_example_usage.hh)
-  is a worked example of the kind of "interface file" you would need to create.  This is the file
-  that end users would include in order to get the `CorrespondingQuantity` machinery.
+This file is **not** "active" by default.  You will need to set it up in your project, following our
+[detailed how-to guide](../howto/interop/nholthaus.md).
 
 <script src="../../assets/hrh4.js" async=false defer=false></script>
