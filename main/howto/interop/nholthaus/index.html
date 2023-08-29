@@ -12,24 +12,24 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/howto/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/howto/interop/nholthaus/">
       
       
-        <link rel="prev" href="../discussion/implementation/vector_space/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="new-dimensions/">
+        <link rel="next" href="../../../reference/">
       
-      <link rel="icon" href="../assets/favicon.ico">
+      <link rel="icon" href="../../../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.5.1, mkdocs-material-9.1.21">
     
     
       
-        <title>How-to guides - The Au units library</title>
+        <title>nholthaus/units Interoperation - The Au units library</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.eebd395e.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.eebd395e.min.css">
       
       
 
@@ -45,9 +45,9 @@
       
     
     
-      <link rel="stylesheet" href="../tweaks.css">
+      <link rel="stylesheet" href="../../../tweaks.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#how-to-guides" class="md-skip">
+        <a href="#nholthausunits-interoperation" class="md-skip">
           Skip to content
         </a>
       
@@ -89,9 +89,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../assets/au-logo.png" alt="logo">
+  <img src="../../../assets/au-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              How-to guides
+              nholthaus/units Interoperation
             
           </span>
         </div>
@@ -188,9 +188,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../assets/au-logo.png" alt="logo">
+  <img src="../../../assets/au-logo.png" alt="logo">
 
     </a>
     The Au units library
@@ -218,7 +218,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         Au documentation
       </a>
     </li>
@@ -233,7 +233,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../develop/" class="md-nav__link">
+      <a href="../../../develop/" class="md-nav__link">
         Development Setup
       </a>
     </li>
@@ -248,7 +248,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../install/" class="md-nav__link">
+      <a href="../../../install/" class="md-nav__link">
         Installation
       </a>
     </li>
@@ -263,7 +263,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../supported-compilers/" class="md-nav__link">
+      <a href="../../../supported-compilers/" class="md-nav__link">
         Supported Compilers
       </a>
     </li>
@@ -278,7 +278,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../troubleshooting/" class="md-nav__link">
+      <a href="../../../troubleshooting/" class="md-nav__link">
         Troubleshooting Guide
       </a>
     </li>
@@ -320,7 +320,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../alternatives/" class="md-nav__link">
+      <a href="../../../alternatives/" class="md-nav__link">
         Comparison of Alternatives
       </a>
     </li>
@@ -369,7 +369,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/" class="md-nav__link">
+      <a href="../../../discussion/" class="md-nav__link">
         Discussion Docs
       </a>
     </li>
@@ -410,7 +410,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/concepts/" class="md-nav__link">
+      <a href="../../../discussion/concepts/" class="md-nav__link">
         Generic Concepts
       </a>
     </li>
@@ -424,7 +424,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/concepts/arithmetic/" class="md-nav__link">
+      <a href="../../../discussion/concepts/arithmetic/" class="md-nav__link">
         Arithmetic Operations
       </a>
     </li>
@@ -438,7 +438,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/concepts/common_unit/" class="md-nav__link">
+      <a href="../../../discussion/concepts/common_unit/" class="md-nav__link">
         Common Units
       </a>
     </li>
@@ -452,7 +452,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/concepts/dimensionless/" class="md-nav__link">
+      <a href="../../../discussion/concepts/dimensionless/" class="md-nav__link">
         Dimensionless Units and Quantities
       </a>
     </li>
@@ -466,7 +466,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/concepts/quantity_point/" class="md-nav__link">
+      <a href="../../../discussion/concepts/quantity_point/" class="md-nav__link">
         Quantity Point
       </a>
     </li>
@@ -480,7 +480,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/concepts/zero/" class="md-nav__link">
+      <a href="../../../discussion/concepts/zero/" class="md-nav__link">
         Zero
       </a>
     </li>
@@ -528,7 +528,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/idioms/" class="md-nav__link">
+      <a href="../../../discussion/idioms/" class="md-nav__link">
         Au Idioms
       </a>
     </li>
@@ -542,7 +542,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/idioms/unit-slots/" class="md-nav__link">
+      <a href="../../../discussion/idioms/unit-slots/" class="md-nav__link">
         Unit slots
       </a>
     </li>
@@ -590,7 +590,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/implementation/" class="md-nav__link">
+      <a href="../../../discussion/implementation/" class="md-nav__link">
         Implementation Details
       </a>
     </li>
@@ -604,7 +604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../discussion/implementation/vector_space/" class="md-nav__link">
+      <a href="../../../discussion/implementation/vector_space/" class="md-nav__link">
         Vector Space Representations
       </a>
     </li>
@@ -660,21 +660,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
         How-to guides
       </a>
-      
     </li>
   
 
@@ -686,7 +676,7 @@
   
   
     <li class="md-nav__item">
-      <a href="new-dimensions/" class="md-nav__link">
+      <a href="../../new-dimensions/" class="md-nav__link">
         Defining new dimensions
       </a>
     </li>
@@ -700,7 +690,7 @@
   
   
     <li class="md-nav__item">
-      <a href="new-units/" class="md-nav__link">
+      <a href="../../new-units/" class="md-nav__link">
         Defining new units
       </a>
     </li>
@@ -712,14 +702,16 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" checked>
       
       
       
@@ -728,7 +720,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_8_4">
           <span class="md-nav__icon md-icon"></span>
           Interop
@@ -741,7 +733,7 @@
   
   
     <li class="md-nav__item">
-      <a href="interop/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         Inter-library Interoperation
       </a>
     </li>
@@ -753,11 +745,66 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="interop/nholthaus/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          nholthaus/units Interoperation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         nholthaus/units Interoperation
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-add-the-file-to-your-project" class="md-nav__link">
+    Step 1: Add the file to your project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-create-a-shim" class="md-nav__link">
+    Step 2: Create a shim
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outcome-and-limitations" class="md-nav__link">
+    Outcome and limitations
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -811,7 +858,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/" class="md-nav__link">
+      <a href="../../../reference/" class="md-nav__link">
         Reference Docs
       </a>
     </li>
@@ -825,7 +872,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/corresponding_quantity/" class="md-nav__link">
+      <a href="../../../reference/corresponding_quantity/" class="md-nav__link">
         Corresponding Quantity
       </a>
     </li>
@@ -839,7 +886,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/magnitude/" class="md-nav__link">
+      <a href="../../../reference/magnitude/" class="md-nav__link">
         Magnitude
       </a>
     </li>
@@ -853,7 +900,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/math/" class="md-nav__link">
+      <a href="../../../reference/math/" class="md-nav__link">
         Math functions
       </a>
     </li>
@@ -867,7 +914,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/powers/" class="md-nav__link">
+      <a href="../../../reference/powers/" class="md-nav__link">
         Powers
       </a>
     </li>
@@ -881,7 +928,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/prefix/" class="md-nav__link">
+      <a href="../../../reference/prefix/" class="md-nav__link">
         Prefix
       </a>
     </li>
@@ -895,7 +942,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/quantity/" class="md-nav__link">
+      <a href="../../../reference/quantity/" class="md-nav__link">
         Quantity
       </a>
     </li>
@@ -909,7 +956,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/quantity_point/" class="md-nav__link">
+      <a href="../../../reference/quantity_point/" class="md-nav__link">
         QuantityPoint
       </a>
     </li>
@@ -923,7 +970,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/unit/" class="md-nav__link">
+      <a href="../../../reference/unit/" class="md-nav__link">
         Unit
       </a>
     </li>
@@ -937,7 +984,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/zero/" class="md-nav__link">
+      <a href="../../../reference/zero/" class="md-nav__link">
         Zero
       </a>
     </li>
@@ -978,7 +1025,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/detail/" class="md-nav__link">
+      <a href="../../../reference/detail/" class="md-nav__link">
         Implementation Details
       </a>
     </li>
@@ -992,7 +1039,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/detail/dimension/" class="md-nav__link">
+      <a href="../../../reference/detail/dimension/" class="md-nav__link">
         Dimension
       </a>
     </li>
@@ -1006,7 +1053,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/detail/monovalue_types/" class="md-nav__link">
+      <a href="../../../reference/detail/monovalue_types/" class="md-nav__link">
         Monovalue Types
       </a>
     </li>
@@ -1020,7 +1067,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/detail/packs/" class="md-nav__link">
+      <a href="../../../reference/detail/packs/" class="md-nav__link">
         Parameter packs
       </a>
     </li>
@@ -1076,7 +1123,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/" class="md-nav__link">
+      <a href="../../../tutorial/" class="md-nav__link">
         Tutorials: home
       </a>
     </li>
@@ -1090,7 +1137,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/101-quantity-makers/" class="md-nav__link">
+      <a href="../../../tutorial/101-quantity-makers/" class="md-nav__link">
         Au 101: Quantity Makers
       </a>
     </li>
@@ -1104,7 +1151,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/102-api-types/" class="md-nav__link">
+      <a href="../../../tutorial/102-api-types/" class="md-nav__link">
         Au 102: API Types
       </a>
     </li>
@@ -1118,7 +1165,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/103-unit-conversions/" class="md-nav__link">
+      <a href="../../../tutorial/103-unit-conversions/" class="md-nav__link">
         Au 103: Unit Conversions
       </a>
     </li>
@@ -1159,7 +1206,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
         Au 101: Quantity Makers Exercise
       </a>
     </li>
@@ -1173,7 +1220,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/exercise/102-api-types/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/102-api-types/" class="md-nav__link">
         Au 102: API Types Exercise
       </a>
     </li>
@@ -1187,7 +1234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
         Au 103: Unit Conversions Exercise
       </a>
     </li>
@@ -1226,26 +1273,76 @@
   
 
 
-<h1 id="how-to-guides">How-to guides<a class="headerlink" href="#how-to-guides" title="Permanent link">&para;</a></h1>
-<p>This section provides detailed instructions for various common tasks that come up in the course of
-using the library.  Here&rsquo;s a summary of what you&rsquo;ll find.</p>
+<h1 id="nholthausunits-interoperation"><code>nholthaus/units</code> Interoperation<a class="headerlink" href="#nholthausunits-interoperation" title="Permanent link">&para;</a></h1>
+<p>The Au repository includes ready-made conversion machinery for the
+<a href="https://github.com/nholthaus/units">nholthaus/units</a> library.  If you&rsquo;re migrating to or from this
+library, you don&rsquo;t need to use our <a href="../">more general guide</a>.  Instead, you can follow this
+guide, which is both more specific and less labor-intensive.</p>
+<p>Once you&rsquo;re finished with this guide, you&rsquo;ll be able to pass any nholthaus type to an API expecting
+an equivalent Au quantity type, and vice versa!</p>
+<h2 id="step-1-add-the-file-to-your-project">Step 1: Add the file to your project<a class="headerlink" href="#step-1-add-the-file-to-your-project" title="Permanent link">&para;</a></h2>
+<p>The goal of this step is to make sure the file with the conversion machinery is available in your
+project, and to know its include path.</p>
+<p>This will depend on which <a href="../../../install/">installation method</a> you used: single-file, or full
+install.</p>
 <ul>
 <li>
-<p><strong><a href="new-units/">New units</a>.</strong>  How to add a new unit of measure that the library doesn&rsquo;t
-  include.</p>
+<p><strong>Full Install:</strong>  In this case, the file is already available.  Assuming <code>au/</code> is the root of
+  your Au includes, the include path will be <code>"au/compatibility/nholthaus_units.hh"</code>.</p>
 </li>
 <li>
-<p><strong><a href="new-dimensions/">New dimensions</a>.</strong>  How to add a new, independent base dimension.</p>
+<p><strong>Single-file Install:</strong>  Copy the file <code>compatibility/nholthaus_units.hh</code> from the Au repository
+  into a suitable location in your project.  Make a note of the include path.</p>
+</li>
+</ul>
+<h2 id="step-2-create-a-shim">Step 2: Create a shim<a class="headerlink" href="#step-2-create-a-shim" title="Permanent link">&para;</a></h2>
+<p>The file we provide, <code>compatibility/nholthaus_units.hh</code>, is written in a particular and unusual way:
+it doesn&rsquo;t have any explicit dependencies on either Au or nholthaus units.  This is because we can&rsquo;t
+know how you&rsquo;ve included either library in your project.</p>
+<p>One consequence of this is that <em>include order matters</em>: this file must be included <strong>after</strong> both
+the Au and nholthaus libraries.  In general, include order dependence is very fragile and should be
+avoided.  <em>However</em>, it can be done safely if we confine this dependence to a single file &mdash; the
+<em>shim</em> &mdash; and provide <em>only that file</em> to our end users.  This shim must do the following three
+things, in this order.</p>
+<ol>
+<li>Include the nholthaus-relevant parts of Au (in whatever manner is appropriate for your project).</li>
+<li>Include the nholthaus units library (in whatever manner is appropriate for your project).</li>
+<li>Include your copy of <code>compatibility/nholthaus_units.hh</code>, <strong>after</strong> every other file.<ul>
+<li>(The include path comes from Step 1 above.)</li>
+</ul>
+</li>
+</ol>
+<p>We have provided a <a href="https://github.com/aurora-opensource/au/blob/3fa22a2212b37322a8243d57db024bb573b68813/compatibility/nholthaus_units_example_usage.hh">self-explaining example
+shim</a>
+to illustrate this procedure.  Note that it includes examples of comments to disable and re-enable
+clang-format support, because without them, some projects that use clang-format might automatically
+reorder the headers.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Any users who include this file will get the full nholthaus library for free, along with the
+conversion machinery.  If you&rsquo;re migrating <em>from</em> nholthaus <em>to</em> Au, you may want to consider
+renaming your original nholthaus file, and giving this shim its original name!  That way, it
+will be as easy as possible for your nholthaus users to start using the new Au constructs.</p>
+</div>
+<h2 id="outcome-and-limitations">Outcome and limitations<a class="headerlink" href="#outcome-and-limitations" title="Permanent link">&para;</a></h2>
+<p>Any user who includes the shim created in Step 2 will have low-friction interoperability between Au
+and the nholthaus library, for a wide variety of units.  Each library&rsquo;s types will safely and
+automatically convert to their counterparts in the other library, even across API boundaries!</p>
+<p>Here are the main known limitations.</p>
+<ol>
+<li>
+<p>We don&rsquo;t support automatic conversion with any nholthaus type with a nonzero &ldquo;linear offset&rdquo;.
+   This mainly affects temperatures in Celsius and Fahrenheit.  The reason is that the nholthaus
+   types for these units act like a mosaic of <code>au::Quantity</code> and <code>au::QuantityPoint</code> features, and
+   we can&rsquo;t guess which one we should convert to.  (Even if we could, Au does not currently provide
+   conversion machinery for <code>au::QuantityPoint</code>.)</p>
 </li>
 <li>
-<p><strong><a href="interop/">Inter-library Interoperation</a>.</strong>  How to set up automatic correspondence
-  between equivalent types in Au and any other units library.</p>
-<ul>
-<li><strong><a href="interop/nholthaus/">nholthaus/units</a>.</strong>  How to use the ready-made interoperability
-  with the <a href="https://github.com/nholthaus/units">nholthaus/units</a> library.</li>
-</ul>
+<p>We don&rsquo;t support converting non-linear units, such as decibels, because we haven&rsquo;t yet figured
+   out how to implement them in Au (see <a href="https://github.com/aurora-opensource/au/issues/41">#41</a>).
+   Thus, there&rsquo;s nothing in Au to convert them <em>to</em>.</p>
 </li>
-</ul>
+</ol>
 
 
 
@@ -1267,7 +1364,7 @@ using the library.  Here&rsquo;s a summary of what you&rsquo;ll find.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../discussion/implementation/vector_space/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Vector Space Representations" rel="prev">
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Inter-library Interoperation" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -1276,20 +1373,20 @@ using the library.  Here&rsquo;s a summary of what you&rsquo;ll find.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Vector Space Representations
+                Inter-library Interoperation
               </div>
             </div>
           </a>
         
         
           
-          <a href="new-dimensions/" class="md-footer__link md-footer__link--next" aria-label="Next: Defining new dimensions" rel="next">
+          <a href="../../../reference/" class="md-footer__link md-footer__link--next" aria-label="Next: Reference Docs" rel="next">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Defining new dimensions
+                Reference Docs
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1325,10 +1422,10 @@ using the library.  Here&rsquo;s a summary of what you&rsquo;ll find.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "toc.integrate"], "search": "../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.220ee61c.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.220ee61c.min.js"></script>
       
         
           <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>

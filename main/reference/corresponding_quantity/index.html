@@ -696,6 +696,68 @@
 
             
           
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+          Interop
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8_4">
+          <span class="md-nav__icon md-icon"></span>
+          Interop
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/interop/" class="md-nav__link">
+        Inter-library Interoperation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/interop/nholthaus/" class="md-nav__link">
+        nholthaus/units Interoperation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1407,22 +1469,8 @@ versa); add a <code>std::chrono::duration</code> type to a <code>Quantity</code>
 <h3 id="nholthausunits-library">nholthaus/units library<a class="headerlink" href="#nholthausunits-library" title="Permanent link">&para;</a></h3>
 <p>We include a file that sets up a correspondence between the quantity types in the popular
 <a href="https://github.com/nholthaus/units">nholthaus/units</a> library, and those in Au.</p>
-<p>This file is <strong>not</strong> &ldquo;active&rdquo; by default.  You will need to set it up in your project. Later, we may
-add a how-to guide that explains in detail how to do that.  In the meantime, you can follow the
-instructions in the files themselves.</p>
-<ul>
-<li>
-<p><a href="https://github.com/aurora-opensource/au/blob/main/compatibility/nholthaus_units.hh"><code>compatibility/nholthaus_units.hh</code></a>
-  is the file that <em>defines</em> the <code>CorrespondingQuantity</code> machinery.  It includes <a href="https://github.com/aurora-opensource/au/blob/cf0524361766feeef875f09a7bbfcb8aa9c57ddf/compatibility/nholthaus_units.hh#L17-L33">detailed
-  instructions</a>
-  in a comment at the top.</p>
-</li>
-<li>
-<p><a href="https://github.com/aurora-opensource/au/blob/main/compatibility/nholthaus_units_example_usage.hh"><code>compatibility/nholthaus_units_example_usage.hh</code></a>
-  is a worked example of the kind of &ldquo;interface file&rdquo; you would need to create.  This is the file
-  that end users would include in order to get the <code>CorrespondingQuantity</code> machinery.</p>
-</li>
-</ul>
+<p>This file is <strong>not</strong> &ldquo;active&rdquo; by default.  You will need to set it up in your project, following our
+<a href="../../howto/interop/nholthaus/">detailed how-to guide</a>.</p>
 <script src="../../assets/hrh4.js" async=false defer=false></script>
 
 

@@ -101,6 +101,16 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://aurora-opensource.github.io/au/main/howto/interop/</loc>
+         <lastmod>2023-08-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://aurora-opensource.github.io/au/main/howto/interop/nholthaus/</loc>
+         <lastmod>2023-08-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/</loc>
          <lastmod>2023-08-29</lastmod>
          <changefreq>daily</changefreq>
