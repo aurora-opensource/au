@@ -846,9 +846,231 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          QuantityPoint
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         QuantityPoint
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#naming-quantitypoint-in-code" class="md-nav__link">
+    Naming QuantityPoint in code
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constructing" class="md-nav__link">
+    Constructing QuantityPoint
+  </a>
+  
+    <nav class="md-nav" aria-label="Constructing QuantityPoint">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quantity-point-maker" class="md-nav__link">
+    Quantity point maker (preferred)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implicit-from-quantity" class="md-nav__link">
+    Implicit constructor from another QuantityPoint
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-constructor" class="md-nav__link">
+    Default constructor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extracting-the-stored-value" class="md-nav__link">
+    Extracting the stored value
+  </a>
+  
+    <nav class="md-nav" aria-label="Extracting the stored value">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#extracting-with-in" class="md-nav__link">
+    By value: .in(unit)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#by-reference-data_inunit" class="md-nav__link">
+    By reference: .data_in(unit)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performing-unit-conversions" class="md-nav__link">
+    Performing unit conversions
+  </a>
+  
+    <nav class="md-nav" aria-label="Performing unit conversions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#as" class="md-nav__link">
+    .as(unit), .as&lt;T&gt;(unit)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inunit-intunit" class="md-nav__link">
+    .in(unit), .in&lt;T&gt;(unit)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    Operations
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comparison" class="md-nav__link">
+    Comparison
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#addition" class="md-nav__link">
+    Addition
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subtraction" class="md-nav__link">
+    Subtraction
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shorthand-addition-and-subtraction-" class="md-nav__link">
+    Shorthand addition and subtraction (+=, -=)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rep_cast" class="md-nav__link">
+    rep_cast
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#templates-and-traits" class="md-nav__link">
+    Templates and traits
+  </a>
+  
+    <nav class="md-nav" aria-label="Templates and traits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matching-typename-u-typename-r" class="md-nav__link">
+    Matching: typename U, typename R
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rep" class="md-nav__link">
+    ::Rep
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unit" class="md-nav__link">
+    ::Unit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unit_1" class="md-nav__link">
+    ::unit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-type" class="md-nav__link">
+    std::common_type specialization
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arequantitypointtypesequivalent" class="md-nav__link">
+    AreQuantityPointTypesEquivalent
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1165,46 +1387,429 @@
 
 
 <h1 id="quantitypoint">QuantityPoint<a class="headerlink" href="#quantitypoint" title="Permanent link">&para;</a></h1>
-<p><code>QuantityPoint</code> is our <a href="http://videocortex.io/2018/Affine-Space-Types/">affine space type</a>.  The
-core use cases include:</p>
+<p><code>QuantityPoint</code> is our <a href="http://videocortex.io/2018/Affine-Space-Types/">affine space type</a>.  Common
+example use cases include temperatures and mile markers.  See our <a href="../../discussion/concepts/quantity_point/"><code>QuantityPoint</code>
+discussion</a> for a more detailed understanding.</p>
+<p><code>QuantityPoint</code> is a template, <code>QuantityPoint&lt;U, R&gt;</code>, with two parameters.  Both are typenames.</p>
 <ul>
-<li>
-<p><strong>Temperatures.</strong>  Specifically, when you want to represent &ldquo;what temperature is it?&rdquo; rather than
-  &ldquo;how much did the temperature change?&rdquo;</p>
-</li>
-<li>
-<p><strong>Mile markers.</strong>  That is to say, points along a linear path which are indexed by distances.  It
-  wouldn&rsquo;t make sense to <em>add</em> two mile markers, but you can <em>subtract</em> them and obtain a <em>distance</em>
-  (which is a <a href="../quantity/"><code>Quantity</code></a>, not a <code>QuantityPoint</code>).</p>
-</li>
+<li><code>U</code> is the <em>unit</em>: a type representing the <a href="../unit/">unit of measure</a>.</li>
+<li><code>R</code> is the <em>&ldquo;rep&rdquo;</em>, a term we borrow from the <a href="https://en.cppreference.com/w/cpp/chrono/duration"><code>std::chrono</code>
+  library</a>.  It&rsquo;s the underlying raw numeric type
+  which holds the wrapped value.</li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">TODO: this page is a stub</p>
+<h2 id="naming-quantitypoint-in-code">Naming <code>QuantityPoint</code> in code<a class="headerlink" href="#naming-quantitypoint-in-code" title="Permanent link">&para;</a></h2>
+<p>You can use both template parameters directly (for example, <code>QuantityPoint&lt;Meters, int&gt;</code>).  However,
+multiple template parameters can be awkward to read.  It can also give the parser some trouble when
+you&rsquo;re forced to use macros, as in googletest.  For that reason, we also provide &ldquo;Rep-named
+aliases&rdquo;, so you can express the rep more precisely, and put the visual focus on the unit:</p>
+<table>
+<thead>
+<tr>
+<th>Rep-named alias</th>
+<th>Equivalent to:</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QuantityPointD&lt;U&gt;</code></td>
+<td><code>QuantityPoint&lt;U, double&gt;</code></td>
+</tr>
+<tr>
+<td><code>QuantityPointF&lt;U&gt;</code></td>
+<td><code>QuantityPoint&lt;U, float&gt;</code></td>
+</tr>
+<tr>
+<td><code>QuantityPointI&lt;U&gt;</code></td>
+<td><code>QuantityPoint&lt;U, int&gt;</code></td>
+</tr>
+<tr>
+<td><code>QuantityPointU&lt;U&gt;</code></td>
+<td><code>QuantityPoint&lt;U, unsigned int&gt;</code></td>
+</tr>
+<tr>
+<td><code>QuantityPointI32&lt;U&gt;</code></td>
+<td><code>QuantityPoint&lt;U, int32_t&gt;</code></td>
+</tr>
+<tr>
+<td><code>QuantityPointU32&lt;U&gt;</code></td>
+<td><code>QuantityPoint&lt;U, uint32_t&gt;</code></td>
+</tr>
+<tr>
+<td><code>QuantityPointI64&lt;U&gt;</code></td>
+<td><code>QuantityPoint&lt;U, int64_t&gt;</code></td>
+</tr>
+<tr>
+<td><code>QuantityPointU64&lt;U&gt;</code></td>
+<td><code>QuantityPoint&lt;U, uint64_t&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="constructing">Constructing <code>QuantityPoint</code><a class="headerlink" href="#constructing" title="Permanent link">&para;</a></h2>
+<p>There are three ways to construct a <code>QuantityPoint</code> object.</p>
+<ul>
+<li>The <strong>preferred</strong> way, which we&rsquo;ll explain below, is to use a <em>quantity point maker</em>.</li>
+<li>The other two ways are both normal C++ constructors.</li>
+</ul>
+<h3 id="quantity-point-maker">Quantity point maker (preferred)<a class="headerlink" href="#quantity-point-maker" title="Permanent link">&para;</a></h3>
+<p>The preferred way to construct a <code>QuantityPoint</code> of a given unit is to use the <em>quantity point
+maker</em> for that unit.  This is a callable whose name is the plural form of that unit, expressed in
+&ldquo;snake_case&rdquo;, and suffixed with <code>_pt</code> for &ldquo;point&rdquo;: for example, <code>fahrenheit_pt</code>.  When you pass
+a raw numeric variable of type <code>T</code> to the quantity point maker, it returns a <code>QuantityPoint</code> of the
+unit it represents, whose rep type is <code>T</code>.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><code>fahrenheit_pt(75)</code> returns a <code>QuantityPoint&lt;Fahrenheit, int&gt;</code>.</p>
 </div>
-<p>We will provide a full-fledged reference for quantity points later.  For now, here are the basics.</p>
+<h3 id="implicit-from-quantity">Implicit constructor from another <code>QuantityPoint</code><a class="headerlink" href="#implicit-from-quantity" title="Permanent link">&para;</a></h3>
+<p>This constructor performs a unit conversion.  The result will represent the <em>same point</em> as the
+input, but expressed in the <em>units</em> of the newly constructed object&rsquo;s type.  It will also convert
+the stored value to the <em>rep</em> of the constructed object, if necessary.</p>
+<p>Here is the signature of the constructor, slightly simplified for illustration purposes.  (We&rsquo;ve
+enclosed it in the class template definition to be clear about <code>Unit</code> and <code>Rep</code> in the discussion
+that follows.)</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Unit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Rep</span><span class="o">&gt;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">QuantityPoint</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="c1">// Implicit constructor signature (for illustration purposes):</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">OtherUnit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">OtherRep</span><span class="o">&gt;</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="n">QuantityPoint</span><span class="p">(</span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">OtherUnit</span><span class="p">,</span><span class="w"> </span><span class="n">OtherRep</span><span class="o">&gt;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">};</span>
+</code></pre></div>
+<p>This constructor only exists when this unit-and-rep conversion is both meaningful and safe.  It can
+fail to exist in several ways.</p>
 <ol>
 <li>
-<p><code>QuantityPoint&lt;U, R&gt;</code> stores a value of numeric type <code>R</code> (called the &ldquo;Rep&rdquo;), whose units are the
-   <a href="../unit/">unit type</a> <code>U</code>.</p>
-<ul>
-<li><strong>Example:</strong> <code>QuantityPoint&lt;Meters, double&gt;</code> represents an along-path point, whose distance is
-  measured in <code>Meters</code>, in a <code>double</code> variable.</li>
-</ul>
+<p>If the input quantity has a <strong>different dimension</strong>, then the operation is intrinsically
+   meaningless and we forbid it.</p>
 </li>
 <li>
-<p>We provide &ldquo;Rep-named aliases&rdquo; for better ergonomics.</p>
-<ul>
-<li><strong>Example:</strong> <code>QuantityPointD&lt;Meters&gt;</code> is an alias for <code>QuantityPoint&lt;Meters, double&gt;</code>.</li>
-</ul>
-</li>
-<li>
-<p>You cannot get values into or out of <code>QuantityPoint</code> without <em>explicitly naming the unit, at the
-   callsite</em>.  We do not have tutorials for this yet, but it works the same as <code>Quantity</code>.  In the
-   meantime, you can read <a href="https://github.com/aurora-opensource/au/blob/main/au/quantity_point_test.cc">the <code>QuantityPoint</code> unit
-   tests</a> to see some
-   practical examples.</p>
+<p>If the <em>constructed</em> quantity&rsquo;s rep (that is, <code>Rep</code> in the code snippet above) is <strong>not floating
+   point</strong>, then we forbid any conversion that might produce a non-integer value.  Examples include:</p>
+<p>a. When <code>OtherRep</code> <em>is floating point</em>, we forbid this conversion.</p>
+<p>b. When <code>UnitRatioT&lt;OtherUnit, Unit&gt;</code> is <em>not an integer</em>, we forbid this conversion.</p>
+<p>c. When the origin of <code>OtherUnit</code> is <em>additively offset</em> from the origin of <code>Unit</code> by an amount
+   that can&rsquo;t be represented as an integer in the target units, <code>Unit</code>, we forbid this
+   conversion.</p>
 </li>
 </ol>
+<p>Note that case <code>c</code> doesn&rsquo;t occur for <code>Quantity</code>; it is unique to <code>QuantityPoint</code>.</p>
+<p>We also inherit the &ldquo;overflow safety surface&rdquo; from the <code>Quantity</code> member inside of <code>QuantityPoint</code>
+(discussed as point 3 of the <a href="../quantity/#implicit-from-quantity"><code>Quantity</code> constructor docs</a>).
+This can prevent certain quantity point conversions which have excessive overflow risk.</p>
+<p>Here are several examples to illustrate the conditions under which implicit conversions are allowed.</p>
+<!--
+What's up with the `&#8288 {: style="padding:0"} |` entries in the table below?  See:
+https://github.com/mkdocs/mkdocs/issues/1198#issuecomment-1253896100
+-->
+
+<div class="admonition example">
+<p class="admonition-title">Examples of <code>QuantityPoint</code> to <code>QuantityPoint</code> conversions</p>
+<table>
+<thead>
+<tr>
+<th>Source type</th>
+<th>Target type</th>
+<th>Implicit construction outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QuantityPoint&lt;Meters, double&gt;</code></td>
+<td rowspan="3"><code>QuantityPoint&lt;Meters, int&gt;</code></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/274c.svg" title=":cross_mark:" /> <strong>Forbidden:</strong> <code>double</code> source not guaranteed to hold an integer value</td>
+</tr>
+<tr>
+<td><code>QuantityPoint&lt;Milli&lt;Meters&gt;, int&gt;</code></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/274c.svg" title=":cross_mark:" /> <strong>Forbidden:</strong> point measured in <span class="arithmatex"><span class="MathJax_Preview">\text{mm}</span><script type="math/tex">\text{mm}</script></span> not generally an integer in <span class="arithmatex"><span class="MathJax_Preview">\text{m}</span><script type="math/tex">\text{m}</script></span></td>
+<td style="padding:0">&#8288;</td>
+</tr>
+<tr>
+<td><code>QuantityPoint&lt;Kilo&lt;Meters&gt;, int&gt;</code></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2714.svg" title=":check_mark:" /> <strong>Permitted:</strong> point measured in <span class="arithmatex"><span class="MathJax_Preview">\text{km}</span><script type="math/tex">\text{km}</script></span> guaranteed to be integer in <span class="arithmatex"><span class="MathJax_Preview">\text{m}</span><script type="math/tex">\text{m}</script></span></td>
+<td style="padding:0">&#8288;</td>
+</tr>
+<tr>
+<td rowspan="3"><code>QuantityPoint&lt;Celsius, int&gt;</code></td>
+<td><code>QuantityPoint&lt;Kelvins, int&gt;</code></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/274c.svg" title=":cross_mark:" /> <strong>Forbidden:</strong> Zero point offset from Kelvins to Celsius is <span class="arithmatex"><span class="MathJax_Preview">273.15\,\, \text{K}</span><script type="math/tex">273.15\,\, \text{K}</script></span>, a non-integer number of Kelvins</td>
+</tr>
+<tr>
+<td><code>QuantityPoint&lt;Kelvins, double&gt;</code></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2714.svg" title=":check_mark:" /> <strong>Permitted:</strong> target Rep is floating point, and can represent offset of <span class="arithmatex"><span class="MathJax_Preview">273.15\,\, \text{K}</span><script type="math/tex">273.15\,\, \text{K}</script></span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>QuantityPoint&lt;Milli&lt;Kelvins&gt;, int&gt;</code></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2714.svg" title=":check_mark:" /> <strong>Permitted:</strong> offset in target units is <span class="arithmatex"><span class="MathJax_Preview">273,\!150\,\, \text{mK}</span><script type="math/tex">273,\!150\,\, \text{mK}</script></span>, which is an integer</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Note that every case in the above table is <em>physically</em> meaningful (because the source and target
+have the same dimension), but some conversions are forbidden due to the risk of larger-than-usual
+errors.  The library can still perform these conversions, but not via this constructor, and it must
+be &ldquo;forced&rdquo; to do so. See <a href="#as"><code>.as&lt;T&gt;(unit)</code></a> for more details.</p>
+<h3 id="default-constructor">Default constructor<a class="headerlink" href="#default-constructor" title="Permanent link">&para;</a></h3>
+<p>Here is the signature of the constructor, enclosed in the class template definition for context.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Unit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Rep</span><span class="o">&gt;</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">QuantityPoint</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">QuantityPoint</span><span class="p">();</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">};</span>
+</code></pre></div>
+<p>A default-constructed <code>QuantityPoint</code> is initialized to some value, which helps avoid certain kinds
+of memory safety bugs.  However, <strong>the value is contractually unspecified</strong>.  You can of course look
+up that value by reading the source code, but we may change it in the future, and <strong>we would not
+consider this to be a breaking change</strong>.  The only valid operation on a default-constructed
+<code>QuantityPoint</code> is to assign to it later on.</p>
+<h2 id="extracting-the-stored-value">Extracting the stored value<a class="headerlink" href="#extracting-the-stored-value" title="Permanent link">&para;</a></h2>
+<p>In order to access the raw numeric value stored inside of <code>QuantityPoint</code>, you must explicitly name
+the unit at the callsite.  There are two functions which can do this, depending on whether you want
+to access by value or by reference.</p>
+<h3 id="extracting-with-in">By value: <code>.in(unit)</code><a class="headerlink" href="#extracting-with-in" title="Permanent link">&para;</a></h3>
+<p>This function returns the underlying stored value, by value.  See the <a href="../../discussion/idioms/unit-slots/">unit
+slots</a> discussion for valid choices for <code>unit</code>.</p>
+<details class="example">
+<summary>Example: extracting <code>4.56</code> from <code>meters_pt(4.56)</code></summary>
+<p>Consider this <code>QuantityPoint&lt;Meters, double&gt;</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters_pt</span><span class="p">(</span><span class="mf">4.56</span><span class="p">);</span>
+</code></pre></div>
+<p>You can retrieve the underlying value by writing either <code>p.in(meters_pt)</code> (passing the
+<code>QuantityPointMaker</code>), or <code>p.in(Meters{})</code> (passing an instance of the unit).</p>
+</details>
+<h3 id="by-reference-data_inunit">By reference: <code>.data_in(unit)</code><a class="headerlink" href="#by-reference-data_inunit" title="Permanent link">&para;</a></h3>
+<p>This function returns a reference to the underlying stored value.  See the <a href="../../discussion/idioms/unit-slots/">unit
+slots</a> discussion for valid choices for <code>unit</code>.</p>
+<details class="example">
+<summary>Example: incrementing the underlying stored value</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">celsius_pt</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">temperature</span><span class="p">.</span><span class="n">data_in</span><span class="p">(</span><span class="n">celsius_pt</span><span class="p">)</span><span class="o">++</span><span class="p">;</span>
+</code></pre></div>
+<p>Since <code>temperature</code> is not <code>const</code>, the reference returned by <code>.data_in()</code> will be mutable, and
+we can treat it like any other <code>int</code> lvalue.  The above would result in <code>celsius_pt(21)</code>.</p>
+</details>
+<h2 id="performing-unit-conversions">Performing unit conversions<a class="headerlink" href="#performing-unit-conversions" title="Permanent link">&para;</a></h2>
+<p>We have two methods for performing unit conversions.  They have identical APIs, but their names are
+different.  <code>as</code> returns another <code>QuantityPoint</code>, but <code>in</code> exits the library and returns a raw
+number.</p>
+<h3 id="as"><code>.as(unit)</code>, <code>.as&lt;T&gt;(unit)</code><a class="headerlink" href="#as" title="Permanent link">&para;</a></h3>
+<p>This function produces a new representation of the input <code>QuantityPoint</code>, converted to the new unit.
+See the <a href="../../discussion/idioms/unit-slots/">unit slots</a> discussion for valid choices for <code>unit</code>.</p>
+<details class="example">
+<summary>Example: converting <code>meters_pt(3)</code> to <code>centi(meters_pt)</code></summary>
+<p>Consider this <code>QuantityPoint&lt;Meters, int&gt;</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">point</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters_pt</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+</code></pre></div>
+<p>Then <code>point.as(centi(meters_pt))</code> re-expresses this quantity in units of centimeters.
+Specifically, it returns a <code>QuantityPoint&lt;Centi&lt;Meters&gt;, int&gt;</code>, which is equal to
+<code>centi(meters_pt)(300)</code>.</p>
+<p>The above example used the quantity maker, <code>centi(meters_pt)</code>.  One could also use an instance
+of the unit type <code>Centi&lt;Meters&gt;</code>, writing <code>point.as(Centi&lt;Meters&gt;{})</code>.  The former is generally
+preferable; the latter is mainly useful in generic code where the unit type may be all you have.</p>
+</details>
+<p><strong>Without</strong> a template argument, <code>.as(unit)</code> obeys the same safety checks as for the <a href="#implicit-from-quantity">implicit
+constructors</a>: conversions at high risk for integer overflow or truncation
+are forbidden.  Additionally, the <code>Rep</code> of the output is identical to the <code>Rep</code> of the input.</p>
+<p><strong>With</strong> a template argument, <code>.as&lt;T&gt;(unit)</code> has two differences.</p>
+<ol>
+<li>The output <code>Rep</code> will be <code>T</code>.</li>
+<li>The conversion is considered &ldquo;forcing&rdquo;, and will be permitted in spite of any overflow or
+   truncation risk.  The semantics are similar to <code>static_cast&lt;T&gt;</code>.</li>
+</ol>
+<details class="example">
+<summary>Example: forcing a conversion from centimeters to meters</summary>
+<p><code>centi(meters_pt)(200).as(meters_pt)</code> is not allowed.  This conversion will divide the
+underlying value, <code>200</code>, by <code>100</code>.  Now, it so happens that this <em>particular</em> value <em>would</em>
+produce an integer result. However, the compiler must decide whether to permit this operation
+<em>at compile time</em>, which means we don&rsquo;t yet know the value.  Since most <code>int</code> values would <em>not</em>
+produce integer results, we forbid this.</p>
+<p><code>centi(meters_pt)(200).as&lt;int&gt;(meters_pt)</code> <em>is</em> allowed.  The &ldquo;explicit rep&rdquo; template parameter
+has &ldquo;forcing&rdquo; semantics.  This would produce <code>meters_pt(2)</code>. However, note that this operation
+uses integer division, which truncates: so, for example,
+<code>centi(meters_pt)(199).as&lt;int&gt;(meters_pt)</code> would produce <code>meters_pt(1)</code>.</p>
+</details>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Prefer to <strong>omit</strong> the template argument if possible, because you will get more safety checks.
+The risks which the no-template-argument version warns about are real.</p>
+</div>
+<h3 id="inunit-intunit"><code>.in(unit)</code>, <code>.in&lt;T&gt;(unit)</code><a class="headerlink" href="#inunit-intunit" title="Permanent link">&para;</a></h3>
+<p>This function produces the value of the <code>QuantityPoint</code>, re-expressed in the new unit.  <code>unit</code> can
+be either a <code>QuantityPointMaker</code> for the quantity&rsquo;s unit, or an instance of the unit itself. See the
+<a href="../../discussion/idioms/unit-slots/">unit slots</a> discussion for valid choices for <code>unit</code>.</p>
+<details class="example">
+<summary>Example: getting the value of <code>meters_pt(3)</code> in <code>centi(meters_pt)</code></summary>
+<p>Consider this <code>QuantityPoint&lt;Meters, int&gt;</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">point</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters_pt</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+</code></pre></div>
+<p>Then <code>point.in(centi(meters_pt))</code> converts this quantity to centimeters, and returns the value,
+<code>300</code>, as an <code>int</code>.</p>
+<p>The above example used the quantity maker, <code>centi(meters_pt)</code>.  One could also use an instance
+of the unit type <code>Centi&lt;Meters&gt;</code>, writing <code>point.in(Centi&lt;Meters&gt;{})</code>.  The former is generally
+preferable; the latter is mainly useful in generic code where the unit type may be all you have.</p>
+</details>
+<p><strong>Without</strong> a template argument, <code>.in(unit)</code> obeys the same safety checks as for the <a href="#implicit-from-quantity">implicit
+constructors</a>: conversions at high risk for integer overflow or truncation
+are forbidden.  Additionally, the <code>Rep</code> of the output is identical to the <code>Rep</code> of the input.</p>
+<p><strong>With</strong> a template argument, <code>.in&lt;T&gt;(unit)</code> has two differences.</p>
+<ol>
+<li>The output type will be <code>T</code>.</li>
+<li>The conversion is considered &ldquo;forcing&rdquo;, and will be permitted in spite of any overflow or
+   truncation risk.  The semantics are similar to <code>static_cast&lt;T&gt;</code>.</li>
+</ol>
+<details class="example">
+<summary>Example: forcing a conversion from centimeters to meters</summary>
+<p><code>centi(meters_pt)(200).in(meters_pt)</code> is not allowed.  This conversion will divide the
+underlying value, <code>200</code>, by <code>100</code>.  Now, it so happens that this <em>particular</em> value <em>would</em>
+produce an integer result. However, the compiler must decide whether to permit this operation
+<em>at compile time</em>, which means we don&rsquo;t yet know the value.  Since most <code>int</code> values would <em>not</em>
+produce integer results, we forbid this.</p>
+<p><code>centi(meters_pt)(200).in&lt;int&gt;(meters_pt)</code> <em>is</em> allowed.  The &ldquo;explicit rep&rdquo; template parameter
+has &ldquo;forcing&rdquo; semantics.  This would produce <code>2</code>. However, note that this operation uses integer
+division, which truncates: so, for example, <code>centi(meters_pt)(199).in&lt;int&gt;(meters_pt)</code> would
+produce <code>1</code>.</p>
+</details>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Prefer to <strong>omit</strong> the template argument if possible, because you will get more safety checks.
+The risks which the no-template-argument version warns about are real.</p>
+</div>
+<h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
+<p>Au includes as many common operations as possible.  Our goal is to avoid incentivizing users to
+leave the safety of the library.</p>
+<p>Recall that for <code>Quantity</code>, there are <a href="../../discussion/concepts/arithmetic/">two main categories</a> of
+operation: &ldquo;arbitrary unit&rdquo; operations, and &ldquo;common unit&rdquo; operations.  However, <code>QuantityPoint</code> is
+different.  Since multiplication, division, and powers are generally meaningless, we don&rsquo;t have any
+&ldquo;arbitrary unit&rdquo; operations: every operation is a <a href="../../discussion/concepts/arithmetic/#common-unit">&ldquo;common unit&rdquo;
+operation</a>.</p>
+<h3 id="comparison">Comparison<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h3>
+<p>Comparison is a <a href="../../discussion/concepts/arithmetic/#common-unit">common unit operation</a>.  If the
+input <code>QuantityPoint</code> types are not identical &mdash; same <code>Unit</code> <em>and</em> <code>Rep</code> &mdash; then we first convert
+them to their <a href="#common-type">common type</a>. Then, we perform the comparison by delegating to the
+comparison operator on the underlying values.</p>
+<p>We support the following binary comparison operators:</p>
+<ul>
+<li><code>==</code></li>
+<li><code>!=</code></li>
+<li><code>&gt;</code></li>
+<li><code>&gt;=</code></li>
+<li><code>&lt;</code></li>
+<li><code>&lt;=</code></li>
+</ul>
+<h3 id="addition">Addition<a class="headerlink" href="#addition" title="Permanent link">&para;</a></h3>
+<p>Addition between any two <code>QuantityPoint</code> instances is not defined, because it is not meaningful &mdash;
+this is intrinsic to the <a href="../../discussion/concepts/quantity_point/">core design of quantity point
+types</a>.  Addition is only defined between
+a <code>QuantityPoint</code> and a <code>Quantity</code> of the same dimension.</p>
+<p>Addition is a <a href="../../discussion/concepts/arithmetic/#common-unit">common unit operation</a>. If the
+input <code>Quantity</code> and <code>QuantityPoint</code> types don&rsquo;t have the same <code>Unit</code> <em>and</em> <code>Rep</code>, then we first
+convert them to their <a href="#common-type">common types</a> &mdash; that is, we use the common unit and common
+rep for each.  The result is a <code>QuantityPoint</code> of this common unit and rep, whose value is the sum
+of the input values (after conversions).</p>
+<h3 id="subtraction">Subtraction<a class="headerlink" href="#subtraction" title="Permanent link">&para;</a></h3>
+<p>Subtraction is a <a href="../../discussion/concepts/arithmetic/#common-unit">common unit operation</a>.  If the
+input <code>QuantityPoint</code> types are not identical &mdash; same <code>Unit</code> <em>and</em> <code>Rep</code> &mdash; then we first convert
+them to their <a href="#common-type">common type</a>.  The result is a <code>Quantity</code> &mdash; note: <strong>not</strong>
+a <code>QuantityPoint</code> &mdash; of this common unit and Rep, whose value is the difference of the input values
+(after any common type conversions).</p>
+<h3 id="shorthand-addition-and-subtraction-">Shorthand addition and subtraction (<code>+=</code>, <code>-=</code>)<a class="headerlink" href="#shorthand-addition-and-subtraction-" title="Permanent link">&para;</a></h3>
+<p>The input must be a <code>Quantity</code> which is <a href="../quantity/#implicit-from-quantity">implicitly
+convertible</a> to the <code>Unit</code> and <code>Rep</code> of the target
+<code>QuantityPoint</code> type.  These operations first perform that conversion, and then replace the target
+<code>QuantityPoint</code> with the result of that addition (for <code>+=</code>) or subtraction (for <code>-=</code>).</p>
+<h2 id="rep_cast"><code>rep_cast</code><a class="headerlink" href="#rep_cast" title="Permanent link">&para;</a></h2>
+<p><code>rep_cast</code> performs a <code>static_cast</code> on the underlying value of a <code>QuantityPoint</code>.  It is used to
+change the rep.</p>
+<p>Given any <code>QuantityPoint&lt;U, R&gt; p</code> whose rep is <code>R</code>, then <code>rep_cast&lt;T&gt;(p)</code> gives a <code>QuantityPoint&lt;U,
+T&gt;</code>, whose underlying value is <code>static_cast&lt;T&gt;(p.in(U{}))</code>.</p>
+<h2 id="templates-and-traits">Templates and traits<a class="headerlink" href="#templates-and-traits" title="Permanent link">&para;</a></h2>
+<h3 id="matching-typename-u-typename-r">Matching: <code>typename U, typename R</code><a class="headerlink" href="#matching-typename-u-typename-r" title="Permanent link">&para;</a></h3>
+<p>To specialize a template to match any <code>QuantityPoint</code>, declare two template parameters: one for the
+unit, one for the rep.</p>
+<details class="example">
+<summary>Example: function template</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">refine_scale</span><span class="p">(</span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">U</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">10</span><span class="o">&gt;</span><span class="p">());</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="p">}</span>
+</code></pre></div>
+<p>This function template will match any <code>QuantityPoint</code> specialization, and nothing else.</p>
+</details>
+<details class="example">
+<summary>Example: type template</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// First, we need to declare the generic type template.  It matches a single type, `T`.</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="p">;</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1">// Now we can declare a specialization that matches any `QuantityPoint`, by templating on its</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="c1">// unit and rep.</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="o">&lt;</span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span><span class="c1">// Note: this example uses inline variables, a C++17 feature.  It&#39;s just for illustration.</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">R</span><span class="p">);</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="p">};</span>
+</code></pre></div>
+<p>In this way, <code>Size&lt;T&gt;::value</code> will exist only when <code>T</code> is some <code>QuantityPoint</code> type (unless, of
+course, other specializations get defined elsewhere).</p>
+</details>
+<h3 id="rep"><code>::Rep</code><a class="headerlink" href="#rep" title="Permanent link">&para;</a></h3>
+<p>Every <code>QuantityPoint</code> type has a public static alias, <code>::Rep</code>, which indicates its underlying
+storage type (or, its &ldquo;rep&rdquo;).</p>
+<details class="example">
+<summary>Example</summary>
+<p><code>decltype(meters_pt(5))::Rep</code> is <code>int</code>.</p>
+</details>
+<h3 id="unit"><code>::Unit</code><a class="headerlink" href="#unit" title="Permanent link">&para;</a></h3>
+<p>Every <code>QuantityPoint</code> type has a public static alias, <code>::Unit</code>, which indicates its unit type.</p>
+<details class="example">
+<summary>Example</summary>
+<p><code>decltype(meters_pt(5))::Unit</code> is <code>Meters</code>.</p>
+</details>
+<h3 id="unit_1"><code>::unit</code><a class="headerlink" href="#unit_1" title="Permanent link">&para;</a></h3>
+<p>Every <code>QuantityPoint</code> type has a public static member variable, <code>::unit</code>, which is an instance of its
+unit type.</p>
+<details class="example">
+<summary>Example</summary>
+<p><code>decltype(meters_pt(5))::unit</code> is <code>Meters{}</code>.</p>
+</details>
+<h3 id="common-type"><code>std::common_type</code> specialization<a class="headerlink" href="#common-type" title="Permanent link">&para;</a></h3>
+<p>For two <code>QuantityPoint</code> types, one with unit <code>U1</code> and rep <code>R1</code>, and the other with unit <code>U2</code> and rep
+<code>R2</code>, then <code>std::common_type_t&lt;QuantityPoint&lt;U1, R1&gt;, QuantityPoint&lt;U2, R2&gt;&gt;</code> has the following properties.</p>
+<ol>
+<li>
+<p>It exists if and only if <code>U1</code> and <code>U2</code> have the same dimension.</p>
+</li>
+<li>
+<p>When it exists, it is <code>QuantityPoint&lt;U, R&gt;</code>, where <code>U</code> is the <a href="../../discussion/concepts/common_unit/#common-quantity-point">common
+   point-unit</a> of <code>U1</code> and <code>U2</code>, and
+   <code>R</code> is <code>std::common_type_t&lt;R1, R2&gt;</code>.</p>
+</li>
+</ol>
+<p>As <a href="https://en.cppreference.com/w/cpp/types/common_type">required by the standard</a>, our
+<code>std::common_type</code> specializations are
+<a href="https://en.cppreference.com/w/cpp/language/sfinae">SFINAE</a>-friendly: improper combinations will
+simply not be present, rather than producing a hard error.</p>
+<h3 id="arequantitypointtypesequivalent">AreQuantityPointTypesEquivalent<a class="headerlink" href="#arequantitypointtypesequivalent" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> Indicates whether two <code>QuantityPoint</code> types are equivalent.  Equivalent types may be
+freely converted to each other, and no arithmetic operations will be performed in doing so.</p>
+<p>More precisely, <code>QuantityPoint&lt;U1, R1&gt;</code> and <code>QuantityPoint&lt;U2, R2&gt;</code> are equivalent if and only if
+<strong>both</strong> of the following conditions hold.</p>
+<ol>
+<li>
+<p>The units <code>U1</code> and <code>U2</code> are <a href="../unit/#point-equivalent">point-equivalent</a>.</p>
+</li>
+<li>
+<p>The reps <code>R1</code> and <code>R2</code> are the same type.</p>
+</li>
+</ol>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>types</em> <code>U1</code> and <code>U2</code>:<ul>
+<li><code>AreQuantityPointTypesEquivalent&lt;U1, U2&gt;::value</code></li>
+</ul>
+</li>
+</ul>
 
 
 
