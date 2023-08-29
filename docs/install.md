@@ -94,7 +94,7 @@ BuildSystem -->|other| UseCustom
 
 Here are the instructions for each installation method we support.
 
-### Single file
+### Single file {#single-file}
 
 The Au library can be packaged as a single header file, which you can include in your project just
 like any other header.  This works with any build system!
@@ -183,7 +183,7 @@ Here's how:
 
 Now you have a file, `~/au.hh`, which you can add to your `third_party` folder.
 
-### Full library installation
+### Full library installation {#full}
 
 #### bazel
 
