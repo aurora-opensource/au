@@ -292,7 +292,7 @@ For example, `Meters{} * Hertz{}` is not the _same unit_ as `Meters{} / Seconds{
 - For _instances_ `u1` and `u2`:
     - `are_units_quantity_equivalent(u1, u2)`
 
-### Are units point-equivalent?
+### Are units point-equivalent? {#point-equivalent}
 
 **Result:** Indicates whether two units are point-equivalent.  This means that they have the same
 dimension, same magnitude, _and_ same origin.  `QuantityPoint` instances of point-equivalent units
