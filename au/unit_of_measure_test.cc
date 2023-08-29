@@ -16,6 +16,13 @@
 
 #include "au/prefix.hh"
 #include "au/testing.hh"
+#include "au/units/fahrenheit.hh"
+#include "au/units/feet.hh"
+#include "au/units/inches.hh"
+#include "au/units/kelvins.hh"
+#include "au/units/meters.hh"
+#include "au/units/minutes.hh"
+#include "au/units/yards.hh"
 #include "au/utility/type_traits.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -30,45 +37,13 @@ using ::testing::StrEq;
 
 namespace au {
 
-struct Feet : UnitImpl<Length> {
-    static constexpr const char label[] = "ft";
-};
-constexpr const char Feet::label[];
-
-struct Yards : decltype(Feet{} * mag<3>()) {
-    static constexpr const char label[] = "yd";
-};
-constexpr const char Yards::label[];
-
-struct Inches : decltype(Feet{} / mag<12>()) {
-    static constexpr const char label[] = "in";
-};
-constexpr const char Inches::label[];
-
-struct Meters : decltype(Inches{} * (mag<100>() / mag<254>() * mag<100>())) {
-    static constexpr const char label[] = "m";
-};
-constexpr const char Meters::label[];
-
-struct Minutes : UnitImpl<Time> {
-    static constexpr const char label[] = "min";
-};
-constexpr const char Minutes::label[];
-
-struct Kelvins : UnitImpl<Temperature> {};
-constexpr auto kelvins = QuantityMaker<Kelvins>{};
-
 struct Celsius : Kelvins {
     static constexpr auto origin() { return milli(kelvins)(273'150); }
 };
+constexpr auto celsius = QuantityMaker<Celsius>{};
 
 struct AlternateCelsius : Kelvins {
     static constexpr auto origin() { return micro(kelvins)(273'150'000); }
-};
-
-constexpr auto F_PER_C = mag<5>() / mag<9>();
-struct Fahrenheit : decltype(Kelvins{} * F_PER_C) {
-    static constexpr auto origin() { return milli(kelvins * F_PER_C)(459'670); }
 };
 
 struct One : UnitImpl<Dimension<>> {};
@@ -143,6 +118,15 @@ TEST(IsUnit, TrueForUnrelatedTypeWithDimAndMag) { EXPECT_TRUE(IsUnit<AdHocSpeedU
 TEST(IsUnit, FalseIfDimOrMagHasWrongType) {
     EXPECT_FALSE(is_unit(InvalidWrongDimType{}));
     EXPECT_FALSE(is_unit(InvalidWrongMagType{}));
+}
+
+TEST(IsUnit, FunctionalFormFalseForQuantityMaker) { EXPECT_FALSE(is_unit(meters)); }
+
+TEST(FitsInUnitSlot, TrueForUnitAndQuantityMaker) {
+    EXPECT_TRUE(fits_in_unit_slot(meters));
+    EXPECT_TRUE(fits_in_unit_slot(Meters{}));
+
+    EXPECT_FALSE(fits_in_unit_slot(1.2));
 }
 
 TEST(Product, IsUnitWithProductOfMagnitudesAndDimensions) {
@@ -227,6 +211,13 @@ TEST(AssociatedUnitT, FunctionalInterfaceHandlesInstancesCorrectly) {
                        decltype(Feet{} / Minutes{})>();
 }
 
+TEST(AssociatedUnitT, IsIdentityForTypeWithNoAssociatedUnit) {
+    // We might have returned `void`, but this would require depending on `IsUnit`, which could slow
+    // down `AssociatedUnitT` because it's used so widely.  It's simpler to think of it as a trait
+    // which "redirects" a type only when there is a definite, positive reason to do so.
+    StaticAssertTypeEq<AssociatedUnitT<double>, double>();
+}
+
 TEST(UnitInverseT, CommutesWithProduct) {
     StaticAssertTypeEq<UnitInverseT<UnitProductT<Feet, Minutes>>,
                        UnitProductT<UnitInverseT<Feet>, UnitInverseT<Minutes>>>();
@@ -275,9 +266,19 @@ TEST(IsDimensionless, FunctionalInterfaceHandlesInstancesCorrectly) {
     EXPECT_TRUE(is_dimensionless(AdHocSpeedUnit{} / Feet{} * Minutes{}));
 }
 
+TEST(IsDimensionless, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
+    EXPECT_FALSE(is_dimensionless(feet));
+    EXPECT_TRUE(is_dimensionless(inches / yards));
+}
+
 TEST(IsUnitlessUnit, PicksOutUnitlessUnit) {
     EXPECT_FALSE(is_unitless_unit(Inches{} / Yards{}));
     EXPECT_TRUE(is_unitless_unit(Inches{} / Inches{}));
+}
+
+TEST(IsUnitlessUnit, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
+    EXPECT_FALSE(is_unitless_unit(inches / yards));
+    EXPECT_TRUE(is_unitless_unit(inches / inches));
 }
 
 TEST(HasSameDimension, TrueForAnySingleDimension) {
@@ -302,6 +303,14 @@ TEST(HasSameDimension, FunctionalInterfaceHandlesInstancesCorrectly) {
     EXPECT_FALSE(has_same_dimension(Feet{}, Yards{}, Inches{}, Minutes{}));
 }
 
+TEST(HasSameDimension, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
+    EXPECT_TRUE(has_same_dimension(feet, feet));
+    EXPECT_TRUE(has_same_dimension(feet, yards));
+
+    EXPECT_TRUE(has_same_dimension(feet, yards, inches, yards));
+    EXPECT_FALSE(has_same_dimension(feet, yards, inches, minutes));
+}
+
 TEST(UnitRatio, ComputesRatioForSameDimensionedUnits) {
     StaticAssertTypeEq<UnitRatioT<Yards, Inches>, decltype(mag<36>())>();
     StaticAssertTypeEq<UnitRatioT<Inches, Inches>, decltype(mag<1>())>();
@@ -312,6 +321,10 @@ TEST(UnitRatio, FunctionalInterfaceHandlesInstancesCorrectly) {
     EXPECT_EQ(unit_ratio(Yards{}, Inches{}), mag<36>());
     EXPECT_EQ(unit_ratio(Inches{}, Inches{}), mag<1>());
     EXPECT_EQ(unit_ratio(Inches{}, Yards{}), mag<1>() / mag<36>());
+}
+
+TEST(UnitRatio, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
+    EXPECT_EQ(unit_ratio(yards, inches), mag<36>());
 }
 
 TEST(AreUnitsQuantityEquivalent, UnitIsEquivalentToItself) {
@@ -329,6 +342,14 @@ TEST(AreUnitsQuantityEquivalent, InequivalentUnitCanBeMadeEquivalentByAppropriat
 
 TEST(AreUnitsQuantityEquivalent, DifferentDimensionedUnitsAreNotEquivalent) {
     EXPECT_FALSE((AreUnitsQuantityEquivalent<Feet, Minutes>::value));
+}
+
+TEST(AreUnitsQuantityEquivalent, FunctionalInterfaceHandlesInstancesCorrectly) {
+    EXPECT_FALSE(are_units_quantity_equivalent(Feet{}, Minutes{}));
+}
+
+TEST(AreUnitsQuantityEquivalent, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
+    EXPECT_FALSE(are_units_quantity_equivalent(feet, minutes));
 }
 
 TEST(AreUnitsPointEquivalent, UnitIsEquivalentToItself) {
@@ -353,6 +374,11 @@ TEST(AreUnitsPointEquivalent, UnitsWithDifferentOriginsAreNotPointEquivalent) {
     EXPECT_FALSE(are_units_point_equivalent(Celsius{}, Kelvins{}));
 }
 
+TEST(AreUnitsPointEquivalent, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
+    ASSERT_TRUE(are_units_quantity_equivalent(celsius, kelvins));
+    EXPECT_FALSE(are_units_point_equivalent(celsius, kelvins));
+}
+
 TEST(AreUnitsPointEquivalent, DifferentUnitsWithDifferentButEquivalentOriginsArePointEquivalent) {
     // The origins of these units represent the same conceptual Quantity, although they are
     // represented in quantity-inequivalent units.
@@ -375,6 +401,11 @@ TEST(OriginDisplacement, IdenticallyZeroForOriginsThatCompareEqual) {
 TEST(OriginDisplacement, GivesDisplacementFromFirstToSecond) {
     EXPECT_EQ(origin_displacement(Kelvins{}, Celsius{}), milli(kelvins)(273'150));
     EXPECT_EQ(origin_displacement(Celsius{}, Kelvins{}), milli(kelvins)(-273'150));
+}
+
+TEST(OriginDisplacement, FunctionalInterfaceHandlesInstancesCorrectly) {
+    EXPECT_EQ(origin_displacement(kelvins, celsius), milli(kelvins)(273'150));
+    EXPECT_EQ(origin_displacement(celsius, kelvins), milli(kelvins)(-273'150));
 }
 
 struct OffsetCelsius : Celsius {
@@ -406,7 +437,7 @@ TEST(CommonUnit, PrefersUnitFromListIfAnyIdentical) {
 
 TEST(CommonUnit, DownranksAnonymousScaledUnits) {
     StaticAssertTypeEq<CommonUnitT<Feet, decltype(Feet{} * mag<1>())>, Feet>();
-    StaticAssertTypeEq<CommonUnitT<Feet, UnitImpl<Length>>, Feet>();
+    StaticAssertTypeEq<CommonUnitT<Meters, UnitImpl<Length>>, Meters>();
 
     using OpaqueFeetSquared = decltype(pow<2>(Feet{}) * ONE);
     using OpaqueFeet = UnitProductT<OpaqueFeetSquared, UnitInverseT<Feet>>;
