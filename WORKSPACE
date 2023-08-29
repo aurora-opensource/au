@@ -127,7 +127,7 @@ http_archive(
 http_archive(
     name = "nholthaus_units",
     add_prefix = "nholthaus_units",
-    build_file = "@//third_party/nholthaus_units:BUILD",
+    build_file = "@//third_party/nholthaus_units:BUILD.bazel",
     sha256 = "b1f3c1dd11afa2710a179563845ce79f13ebf0c8c090d6aa68465b18bd8bd5fc",
     strip_prefix = "units-2.3.3/include/",
     url = "https://github.com/nholthaus/units/archive/refs/tags/v2.3.3.tar.gz",
