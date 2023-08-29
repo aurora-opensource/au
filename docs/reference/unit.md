@@ -198,9 +198,24 @@ _instance_ `u` and magnitude instance `m`, this operation:
 
 ## Traits
 
+Because units are [monovalue types](./detail/monovalue_types.md), each trait has two forms: one for
+_types_, and another for _instances_.
+
+Additionally, the parameters in the _instance_ forms will usually act as [_unit
+slots_](../discussion/idioms/unit-slots.md).  This means you can, for example, write
+`unit_ratio(feet, meters)`, which can be convenient.
+
+!!! warning
+    The only unit trait whose parameters are _not_ unit slots is `is_unit(u)`.  This is because of
+    its name.  It will return `true` _only_ if you pass a unit type: passing the unit instance
+    `Meters{}` returns `true`, but _passing the quantity maker `meters` returns `false`_.
+
+    If you want to check whether your instance is compatible with a [unit
+    slot](../discussion/idioms/unit-slots.md), use `fits_in_unit_slot(u)`.
+
 Sections describing `bool` traits will be indicated with a trailing question mark, `"?"`.
 
-### Is unit?
+### Is unit? {#is-unit}
 
 **Result:** Indicates whether the argument is a valid unit.
 
@@ -216,6 +231,39 @@ Sections describing `bool` traits will be indicated with a trailing question mar
     - `IsUnit<U>::value`
 - For _instance_ `u`:
     - `is_unit(u)`
+
+!!! warning
+    This will only return true if `u` is an instance of a unit type, such as `Meters{}`. It will
+    return `false` for a quantity maker such as `meters`.
+
+    This is what you want if you are trying to figure out whether the type of your instance would be
+    suitable as the first template parameter for `Quantity` or `QuantityPoint`.
+
+    If you are trying to figure out whether your instance `u` is suitable for a [unit
+    slot](../discussion/idioms/unit-slots.md), call [`fits_in_unit_slot(u)`](#fits-in-unit-slot)
+    instead.
+
+### Fits in unit slot? {#fits-in-unit-slot}
+
+**Result:** Indicates whether the argument can be validly passed to a [unit
+slot](../discussion/idioms/unit-slots.md) in an API.
+
+This trait is _instance-only_: there is no reason to apply this to types, so we do not provide
+a type-based API.
+
+**Syntax:**
+
+- For _instance_ `u`:
+    - `fits_in_unit_slot(u)`
+
+!!! warning
+    This can return true even if `u` is _not_ an instance of a unit type.  For example,
+    `fits_in_unit_slot(meters)` returns true, even though the type of `meters` is
+    `QuantityMaker<Meters>`, and thus, not a unit.
+
+    If you want to stringently check whether `u` is a _unit_ --- say, to determine whether its type
+    is suitable as the first template parameter of `Quantity` --- then call [`is_unit(u)`](#is-unit)
+    instead.
 
 ### Has same dimension?
 
@@ -283,7 +331,7 @@ whose _magnitude_ is 1.
 - For _instance_ `u`:
     - `is_unitless_unit(u)`
 
-### Unit ratio
+### Unit ratio {#unit-ratio}
 
 **Result:** The [magnitude](./magnitude.md) representing the ratio of the input units' magnitudes.
 

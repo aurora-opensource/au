@@ -177,7 +177,7 @@ class Quantity {
               typename = std::enable_if_t<IsUnit<NewUnit>::value>>
     constexpr NewRep in(NewUnit u) const {
         if (are_units_quantity_equivalent(unit, u) && std::is_same<Rep, NewRep>::value) {
-            return value_;
+            return static_cast<NewRep>(value_);
         } else {
             return as<NewRep>(u).in(u);
         }

@@ -182,6 +182,8 @@ cc_test(
     srcs = ["dimension_test.cc"],
     deps = [
         ":dimension",
+        ":testing",
+        ":units",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -226,6 +228,18 @@ cc_test(
     deps = [
         ":math",
         ":testing",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "no_wconversion_test",
+    size = "small",
+    srcs = ["no_wconversion_test.cc"],
+    deps = [
+        ":quantity",
+        ":testing",
+        ":units",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -378,6 +392,7 @@ cc_test(
         ":prefix",
         ":testing",
         ":unit_of_measure",
+        ":units",
         "@com_google_googletest//:gtest_main",
     ],
 )
