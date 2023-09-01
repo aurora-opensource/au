@@ -865,8 +865,7 @@ casting automatically when possible.
             [
                 B=au::Seconds,
                 T=double
-        ]
-
+            ]
     ```
 
 ## Broken strict total ordering
