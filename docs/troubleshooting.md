@@ -393,12 +393,12 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
                 T=au::Quantity<au::Meters,int>,
                 U=au::Quantity<au::Seconds,int>
             ]
-    D:\a\au\au\au.hh(3337): note: see reference to alias template instantiation 'std::common_type_t<au::Quantity<au::Meters,int>,U>' being compiled
+    D:\a\au\au\au.hh(3365): note: see reference to alias template instantiation 'std::common_type_t<au::Quantity<au::Meters,int>,U>' being compiled
             with
             [
                 U=au::Quantity<au::Seconds,int>
             ]
-    D:\a\au\au\au.hh(3375): note: see reference to function template instantiation 'auto au::detail::using_common_type<au::Quantity<au::Meters,int>,au::Quantity<au::Seconds,int>,au::detail::Plus>(T,U,Func)' being compiled
+    D:\a\au\au\au.hh(3403): note: see reference to function template instantiation 'auto au::detail::using_common_type<au::Quantity<au::Meters,int>,au::Quantity<au::Seconds,int>,au::detail::Plus>(T,U,Func)' being compiled
             with
             [
                 T=au::Quantity<au::Meters,int>,
@@ -406,73 +406,73 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
                 Func=au::detail::Plus
             ]
     error_examples.cc(56): note: see reference to function template instantiation 'auto au::operator +<au::Meters,au::Seconds,int,int>(au::Quantity<au::Meters,int>,au::Quantity<au::Seconds,int>)' being compiled
-    D:\a\au\au\au.hh(3337): error C2938: 'std::common_type_t' : Failed to specialize alias template
-    D:\a\au\au\au.hh(3339): error C2057: expected constant expression
-    D:\a\au\au\au.hh(3224): error C2668: 'au::Quantity<au::Meters,int>::as': ambiguous call to overloaded function
-    D:\a\au\au\au.hh(2937): note: could be 'auto au::Quantity<au::Meters,int>::as<NewRep,enable_if<au::IsUnit<NewUnit>::value,void>::type>(NewUnit) const'
+    D:\a\au\au\au.hh(3365): error C2938: 'std::common_type_t' : Failed to specialize alias template
+    D:\a\au\au\au.hh(3367): error C2057: expected constant expression
+    D:\a\au\au\au.hh(3252): error C2668: 'au::Quantity<au::Meters,int>::as': ambiguous call to overloaded function
+    D:\a\au\au\au.hh(2943): note: could be 'auto au::Quantity<au::Meters,int>::as<NewRep,enable_if<au::IsUnit<NewUnit>::value,void>::type>(NewUnit) const'
             with
             [
                 NewRep=TargetUnit::Rep,
                 NewUnit=TargetUnit::Rep
             ]
-    D:\a\au\au\au.hh(2922): note: or       'auto au::Quantity<au::Meters,int>::as<NewRep,Unit,void>(NewUnit) const'
+    D:\a\au\au\au.hh(2928): note: or       'auto au::Quantity<au::Meters,int>::as<NewRep,Unit,void>(NewUnit) const'
             with
             [
                 NewRep=TargetUnit::Rep,
                 Unit=au::Meters,
                 NewUnit=au::Meters
             ]
-    D:\a\au\au\au.hh(3224): note: while trying to match the argument list '(Unit)'
+    D:\a\au\au\au.hh(3252): note: while trying to match the argument list '(Unit)'
             with
             [
                 Unit=au::Meters
             ]
-    D:\a\au\au\au.hh(3332): note: see reference to function template instantiation 'auto au::rep_cast<TargetUnit::Rep,au::Meters,int>(au::Quantity<au::Meters,int>)' being compiled
-    D:\a\au\au\au.hh(3342): note: see reference to function template instantiation 'auto au::detail::cast_to_common_type<C,au::Meters,int>(au::Quantity<au::Meters,int>)' being compiled
-    D:\a\au\au\au.hh(3224): error C2668: 'au::Quantity<au::Seconds,int>::as': ambiguous call to overloaded function
-    D:\a\au\au\au.hh(2937): note: could be 'auto au::Quantity<au::Seconds,int>::as<NewRep,enable_if<au::IsUnit<NewUnit>::value,void>::type>(NewUnit) const'
+    D:\a\au\au\au.hh(3360): note: see reference to function template instantiation 'auto au::rep_cast<TargetUnit::Rep,au::Meters,int>(au::Quantity<au::Meters,int>)' being compiled
+    D:\a\au\au\au.hh(3370): note: see reference to function template instantiation 'auto au::detail::cast_to_common_type<C,au::Meters,int>(au::Quantity<au::Meters,int>)' being compiled
+    D:\a\au\au\au.hh(3252): error C2668: 'au::Quantity<au::Seconds,int>::as': ambiguous call to overloaded function
+    D:\a\au\au\au.hh(2943): note: could be 'auto au::Quantity<au::Seconds,int>::as<NewRep,enable_if<au::IsUnit<NewUnit>::value,void>::type>(NewUnit) const'
             with
             [
                 NewRep=TargetUnit::Rep,
                 NewUnit=TargetUnit::Rep
             ]
-    D:\a\au\au\au.hh(2922): note: or       'auto au::Quantity<au::Seconds,int>::as<NewRep,Unit,void>(NewUnit) const'
+    D:\a\au\au\au.hh(2928): note: or       'auto au::Quantity<au::Seconds,int>::as<NewRep,Unit,void>(NewUnit) const'
             with
             [
                 NewRep=TargetUnit::Rep,
                 Unit=au::Seconds,
                 NewUnit=au::Seconds
             ]
-    D:\a\au\au\au.hh(3224): note: while trying to match the argument list '(Unit)'
+    D:\a\au\au\au.hh(3252): note: while trying to match the argument list '(Unit)'
             with
             [
                 Unit=au::Seconds
             ]
-    D:\a\au\au\au.hh(3332): note: see reference to function template instantiation 'auto au::rep_cast<TargetUnit::Rep,au::Seconds,int>(au::Quantity<au::Seconds,int>)' being compiled
-    D:\a\au\au\au.hh(3342): note: see reference to function template instantiation 'auto au::detail::cast_to_common_type<C,au::Seconds,int>(au::Quantity<au::Seconds,int>)' being compiled
-    D:\a\au\au\au.hh(3342): error C2672: 'operator __surrogate_func': no matching overloaded function found
-    D:\a\au\au\au.hh(3342): error C2893: Failed to specialize function template 'auto au::detail::Plus::operator ()(const T &,const U &) const'
+    D:\a\au\au\au.hh(3360): note: see reference to function template instantiation 'auto au::rep_cast<TargetUnit::Rep,au::Seconds,int>(au::Quantity<au::Seconds,int>)' being compiled
+    D:\a\au\au\au.hh(3370): note: see reference to function template instantiation 'auto au::detail::cast_to_common_type<C,au::Seconds,int>(au::Quantity<au::Seconds,int>)' being compiled
+    D:\a\au\au\au.hh(3370): error C2672: 'operator __surrogate_func': no matching overloaded function found
+    D:\a\au\au\au.hh(3370): error C2893: Failed to specialize function template 'auto au::detail::Plus::operator ()(const T &,const U &) const'
     D:\a\au\au\au.hh(727): note: see declaration of 'au::detail::Plus::operator ()'
-    D:\a\au\au\au.hh(3342): note: With the following template arguments:
-    D:\a\au\au\au.hh(3342): note: 'T=void'
-    D:\a\au\au\au.hh(3342): note: 'U=void'
+    D:\a\au\au\au.hh(3370): note: With the following template arguments:
+    D:\a\au\au\au.hh(3370): note: 'T=void'
+    D:\a\au\au\au.hh(3370): note: 'U=void'
     ```
 
     **Compiler error (MSVC x64 19.35)**
     ```
-    C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.35.32215\include\type_traits(1215): error C2794: 'type': is not a member of any direct or indirect base class of 'std::common_type<T,U>'
+    C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.36.32532\include\type_traits(1227): error C2794: 'type': is not a member of any direct or indirect base class of 'std::common_type<T,U>'
             with
             [
                 T=au::Quantity<au::Meters,int>,
                 U=au::Quantity<au::Seconds,int>
             ]
-    D:\a\au\au\au.hh(3337): note: see reference to alias template instantiation 'std::common_type_t<T,U>' being compiled
+    D:\a\au\au\au.hh(3365): note: see reference to alias template instantiation 'std::common_type_t<T,U>' being compiled
             with
             [
                 T=au::Quantity<au::Meters,int>,
                 U=au::Quantity<au::Seconds,int>
             ]
-    D:\a\au\au\au.hh(3375): note: see reference to function template instantiation 'auto au::detail::using_common_type<au::Quantity<au::Meters,int>,au::Quantity<au::Seconds,int>,au::detail::Plus>(T,U,Func)' being compiled
+    D:\a\au\au\au.hh(3403): note: see reference to function template instantiation 'auto au::detail::using_common_type<au::Quantity<au::Meters,int>,au::Quantity<au::Seconds,int>,au::detail::Plus>(T,U,Func)' being compiled
             with
             [
                 T=au::Quantity<au::Meters,int>,
@@ -480,56 +480,56 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
                 Func=au::detail::Plus
             ]
     error_examples.cc(56): note: see reference to function template instantiation 'auto au::operator +<au::Meters,au::Seconds,int,int>(au::Quantity<au::Meters,int>,au::Quantity<au::Seconds,int>)' being compiled
-    D:\a\au\au\au.hh(3337): error C2938: 'std::common_type_t' : Failed to specialize alias template
-    D:\a\au\au\au.hh(3339): error C2057: expected constant expression
-    D:\a\au\au\au.hh(3224): error C2668: 'au::Quantity<au::Meters,int>::as': ambiguous call to overloaded function
-    D:\a\au\au\au.hh(2937): note: could be 'auto au::Quantity<au::Meters,int>::as<NewRep,enable_if<au::IsUnit<NewUnit>::value,void>::type>(NewUnit) const'
+    D:\a\au\au\au.hh(3365): error C2938: 'std::common_type_t' : Failed to specialize alias template
+    D:\a\au\au\au.hh(3367): error C2057: expected constant expression
+    D:\a\au\au\au.hh(3252): error C2668: 'au::Quantity<au::Meters,int>::as': ambiguous call to overloaded function
+    D:\a\au\au\au.hh(2943): note: could be 'auto au::Quantity<au::Meters,int>::as<NewRep,enable_if<au::IsUnit<NewUnit>::value,void>::type>(NewUnit) const'
             with
             [
                 NewRep=TargetUnit::Rep,
                 NewUnit=TargetUnit::Rep
             ]
-    D:\a\au\au\au.hh(2922): note: or       'auto au::Quantity<au::Meters,int>::as<NewRep,Unit,void>(NewUnit) const'
+    D:\a\au\au\au.hh(2928): note: or       'auto au::Quantity<au::Meters,int>::as<NewRep,Unit,void>(NewUnit) const'
             with
             [
                 NewRep=TargetUnit::Rep,
                 Unit=au::Meters,
                 NewUnit=au::Meters
             ]
-    D:\a\au\au\au.hh(3224): note: while trying to match the argument list '(Unit)'
+    D:\a\au\au\au.hh(3252): note: while trying to match the argument list '(Unit)'
             with
             [
                 Unit=au::Meters
             ]
-    D:\a\au\au\au.hh(3332): note: see reference to function template instantiation 'auto au::rep_cast<TargetUnit::Rep,au::Meters,int>(au::Quantity<au::Meters,int>)' being compiled
-    D:\a\au\au\au.hh(3342): note: see reference to function template instantiation 'auto au::detail::cast_to_common_type<C,au::Meters,int>(au::Quantity<au::Meters,int>)' being compiled
-    D:\a\au\au\au.hh(3224): error C2668: 'au::Quantity<au::Seconds,int>::as': ambiguous call to overloaded function
-    D:\a\au\au\au.hh(2937): note: could be 'auto au::Quantity<au::Seconds,int>::as<NewRep,enable_if<au::IsUnit<NewUnit>::value,void>::type>(NewUnit) const'
+    D:\a\au\au\au.hh(3360): note: see reference to function template instantiation 'auto au::rep_cast<TargetUnit::Rep,au::Meters,int>(au::Quantity<au::Meters,int>)' being compiled
+    D:\a\au\au\au.hh(3370): note: see reference to function template instantiation 'auto au::detail::cast_to_common_type<C,au::Meters,int>(au::Quantity<au::Meters,int>)' being compiled
+    D:\a\au\au\au.hh(3252): error C2668: 'au::Quantity<au::Seconds,int>::as': ambiguous call to overloaded function
+    D:\a\au\au\au.hh(2943): note: could be 'auto au::Quantity<au::Seconds,int>::as<NewRep,enable_if<au::IsUnit<NewUnit>::value,void>::type>(NewUnit) const'
             with
             [
                 NewRep=TargetUnit::Rep,
                 NewUnit=TargetUnit::Rep
             ]
-    D:\a\au\au\au.hh(2922): note: or       'auto au::Quantity<au::Seconds,int>::as<NewRep,Unit,void>(NewUnit) const'
+    D:\a\au\au\au.hh(2928): note: or       'auto au::Quantity<au::Seconds,int>::as<NewRep,Unit,void>(NewUnit) const'
             with
             [
                 NewRep=TargetUnit::Rep,
                 Unit=au::Seconds,
                 NewUnit=au::Seconds
             ]
-    D:\a\au\au\au.hh(3224): note: while trying to match the argument list '(Unit)'
+    D:\a\au\au\au.hh(3252): note: while trying to match the argument list '(Unit)'
             with
             [
                 Unit=au::Seconds
             ]
-    D:\a\au\au\au.hh(3332): note: see reference to function template instantiation 'auto au::rep_cast<TargetUnit::Rep,au::Seconds,int>(au::Quantity<au::Seconds,int>)' being compiled
-    D:\a\au\au\au.hh(3342): note: see reference to function template instantiation 'auto au::detail::cast_to_common_type<C,au::Seconds,int>(au::Quantity<au::Seconds,int>)' being compiled
-    D:\a\au\au\au.hh(3342): error C3889: call to object of class type 'au::detail::Plus': no matching call operator found
+    D:\a\au\au\au.hh(3360): note: see reference to function template instantiation 'auto au::rep_cast<TargetUnit::Rep,au::Seconds,int>(au::Quantity<au::Seconds,int>)' being compiled
+    D:\a\au\au\au.hh(3370): note: see reference to function template instantiation 'auto au::detail::cast_to_common_type<C,au::Seconds,int>(au::Quantity<au::Seconds,int>)' being compiled
+    D:\a\au\au\au.hh(3370): error C3889: call to object of class type 'au::detail::Plus': no matching call operator found
     D:\a\au\au\au.hh(727): note: could be 'auto au::detail::Plus::operator ()(const T &,const U &) const'
-    D:\a\au\au\au.hh(3342): note: Failed to specialize function template 'auto au::detail::Plus::operator ()(const T &,const U &) const'
-    D:\a\au\au\au.hh(3342): note: With the following template arguments:
-    D:\a\au\au\au.hh(3342): note: 'T=void'
-    D:\a\au\au\au.hh(3342): note: 'U=void'
+    D:\a\au\au\au.hh(3370): note: Failed to specialize function template 'auto au::detail::Plus::operator ()(const T &,const U &) const'
+    D:\a\au\au\au.hh(3370): note: With the following template arguments:
+    D:\a\au\au\au.hh(3370): note: 'T=void'
+    D:\a\au\au\au.hh(3370): note: 'U=void'
     ```
 
 ## Integer division forbidden {#integer-division-forbidden}
