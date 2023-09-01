@@ -82,13 +82,13 @@ It's the "classic" error the units library aims to prevent.
     au/error_examples.cc:33:17: error: calling a private constructor of class 'au::Quantity<au::Seconds, double>'
         set_timeout(0.5);
                     ^
-    ./au/quantity.hh:397:15: note: declared private here
+    ./au/quantity.hh:419:15: note: declared private here
         constexpr Quantity(Rep value) : value_{value} {}
                   ^
     au/error_examples.cc:36:33: error: calling a private constructor of class 'au::Quantity<au::Meters, double>'
         constexpr QuantityD<Meters> length{5.5};
                                     ^
-    ./au/quantity.hh:397:15: note: declared private here
+    ./au/quantity.hh:419:15: note: declared private here
         constexpr Quantity(Rep value) : value_{value} {}
                   ^
     ```
@@ -98,13 +98,13 @@ It's the "classic" error the units library aims to prevent.
     au/error_examples.cc:33:17: error: calling a private constructor of class 'au::Quantity<au::Seconds, double>'
         set_timeout(0.5);
                     ^
-    ./au/quantity.hh:397:15: note: declared private here
+    ./au/quantity.hh:419:15: note: declared private here
         constexpr Quantity(Rep value) : value_{value} {}
                   ^
     au/error_examples.cc:36:33: error: calling a private constructor of class 'au::Quantity<au::Meters, double>'
         constexpr QuantityD<Meters> length{5.5};
                                     ^
-    ./au/quantity.hh:397:15: note: declared private here
+    ./au/quantity.hh:419:15: note: declared private here
         constexpr Quantity(Rep value) : value_{value} {}
                   ^
     ```
@@ -118,8 +118,8 @@ It's the "classic" error the units library aims to prevent.
     In file included from ./au/math.hh:22,
                      from ./au/au.hh:19,
                      from au/error_examples.cc:15:
-    ./au/quantity.hh:397:15: note: declared private here
-      397 |     constexpr Quantity(Rep value) : value_{value} {}
+    ./au/quantity.hh:419:15: note: declared private here
+      419 |     constexpr Quantity(Rep value) : value_{value} {}
           |               ^~~~~~~~
     au/error_examples.cc:36:43: error: 'constexpr au::Quantity<UnitT, RepT>::Quantity(au::Quantity<UnitT, RepT>::Rep) [with UnitT = au::Meters; RepT = double; au::Quantity<UnitT, RepT>::Rep = double]' is private within this context
        36 |     constexpr QuantityD<Meters> length{5.5};
@@ -127,8 +127,8 @@ It's the "classic" error the units library aims to prevent.
     In file included from ./au/math.hh:22,
                      from ./au/au.hh:19,
                      from au/error_examples.cc:15:
-    ./au/quantity.hh:397:15: note: declared private here
-      397 |     constexpr Quantity(Rep value) : value_{value} {}
+    ./au/quantity.hh:419:15: note: declared private here
+      419 |     constexpr Quantity(Rep value) : value_{value} {}
           |               ^~~~~~~~
     ```
 
@@ -334,10 +334,10 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
     external/llvm_14_toolchain_llvm/bin/../include/c++/v1/type_traits:2388:25: error: no type named 'type' in 'std::common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int>>'
     template <class ..._Tp> using common_type_t = typename common_type<_Tp...>::type;
                             ^~~~~
-    ./au/quantity.hh:560:20: note: in instantiation of template type alias 'common_type_t' requested here
+    ./au/quantity.hh:582:20: note: in instantiation of template type alias 'common_type_t' requested here
         using C = std::common_type_t<T, U>;
                        ^
-    ./au/quantity.hh:598:20: note: in instantiation of function template specialization 'au::detail::using_common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int>, au::detail::Plus>' requested here
+    ./au/quantity.hh:620:20: note: in instantiation of function template specialization 'au::detail::using_common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int>, au::detail::Plus>' requested here
         return detail::using_common_type(q1, q2, detail::plus);
                        ^
     au/error_examples.cc:55:15: note: in instantiation of function template specialization 'au::operator+<au::Meters, au::Seconds, int, int>' requested here
@@ -353,10 +353,10 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
     external/llvm_11_toolchain_llvm/bin/../include/c++/v1/type_traits:2462:25: error: no type named 'type' in 'std::__1::common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int>>'
     template <class ..._Tp> using common_type_t = typename common_type<_Tp...>::type;
                             ^~~~~
-    ./au/quantity.hh:560:20: note: in instantiation of template type alias 'common_type_t' requested here
+    ./au/quantity.hh:582:20: note: in instantiation of template type alias 'common_type_t' requested here
         using C = std::common_type_t<T, U>;
                        ^
-    ./au/quantity.hh:598:20: note: in instantiation of function template specialization 'au::detail::using_common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int>, au::detail::Plus>' requested here
+    ./au/quantity.hh:620:20: note: in instantiation of function template specialization 'au::detail::using_common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int>, au::detail::Plus>' requested here
         return detail::using_common_type(q1, q2, detail::plus);
                        ^
     au/error_examples.cc:55:15: note: in instantiation of function template specialization 'au::operator+<au::Meters, au::Seconds, int, int>' requested here
@@ -371,8 +371,8 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
                      from ./au/au.hh:17,
                      from au/error_examples.cc:15:
     external/sysroot_x86_64//include/c++/10.3.0/type_traits: In substitution of 'template<class ... _Tp> using common_type_t = typename std::common_type::type [with _Tp = {au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int>}]':
-    ./au/quantity.hh:560:11:   required from 'constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity<au::Meters, int>; U = au::Quantity<au::Seconds, int>; Func = au::detail::Plus]'
-    ./au/quantity.hh:598:37:   required from 'constexpr auto au::operator+(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Meters; U2 = au::Seconds; R1 = int; R2 = int]'
+    ./au/quantity.hh:582:11:   required from 'constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity<au::Meters, int>; U = au::Quantity<au::Seconds, int>; Func = au::detail::Plus]'
+    ./au/quantity.hh:620:37:   required from 'constexpr auto au::operator+(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Meters; U2 = au::Seconds; R1 = int; R2 = int]'
     au/error_examples.cc:55:26:   required from here
     external/sysroot_x86_64//include/c++/10.3.0/type_traits:2562:11: error: no type named 'type' in 'struct std::common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int> >'
      2562 |     using common_type_t = typename common_type<_Tp...>::type;
@@ -381,8 +381,13 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
                      from ./au/au.hh:19,
                      from au/error_examples.cc:15:
     ./au/quantity.hh: In instantiation of 'constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity<au::Meters, int>; U = au::Quantity<au::Seconds, int>; Func = au::detail::Plus]':
-    ./au/quantity.hh:598:37:   required from 'constexpr auto au::operator+(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Meters; U2 = au::Seconds; R1 = int; R2 = int]'
+    ./au/quantity.hh:620:37:   required from 'constexpr auto au::operator+(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Meters; U2 = au::Seconds; R1 = int; R2 = int]'
     au/error_examples.cc:55:26:   required from here
+    ./au/quantity.hh:584:94: error: no type named 'type' in 'struct std::common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int> >'
+      584 |         std::is_same<typename C::Rep, std::common_type_t<typename T::Rep, typename U::Rep>>::value,
+          |                                                                                              ^~~~~
+    ./au/quantity.hh: In instantiation of 'static constexpr void au::Quantity<UnitT, RepT>::warn_if_integer_division() [with OtherRep = int; UnitT = au::Meters; RepT = int]':
+    ./au/quantity.hh:348:43:   required from here
     ```
 
     **Compiler error (MSVC x64 19.29)**
@@ -572,10 +577,10 @@ floating point types.
     In file included from au/error_examples.cc:15:
     In file included from ./au/au.hh:19:
     In file included from ./au/math.hh:22:
-    ./au/quantity.hh:393:9: error: static_assert failed due to requirement '!uses_integer_division' "Integer division forbidden: use integer_quotient() if you really want it"
+    ./au/quantity.hh:415:9: error: static_assert failed due to requirement '!uses_integer_division' "Integer division forbidden: use integer_quotient() if you really want it"
             static_assert(!uses_integer_division,
             ^             ~~~~~~~~~~~~~~~~~~~~~~
-    ./au/quantity.hh:326:9: note: in instantiation of function template specialization 'au::Quantity<au::Meters, int>::warn_if_integer_division<int>' requested here
+    ./au/quantity.hh:348:9: note: in instantiation of function template specialization 'au::Quantity<au::Meters, int>::warn_if_integer_division<int>' requested here
             warn_if_integer_division<OtherRep>();
             ^
     au/error_examples.cc:63:39: note: in instantiation of function template specialization 'au::Quantity<au::Meters, int>::operator/<au::UnitProduct<au::Miles, au::Pow<au::Hours, -1>>, int>' requested here
@@ -588,10 +593,10 @@ floating point types.
     In file included from au/error_examples.cc:15:
     In file included from ./au/au.hh:19:
     In file included from ./au/math.hh:22:
-    ./au/quantity.hh:393:9: error: static_assert failed due to requirement '!uses_integer_division' "Integer division forbidden: use integer_quotient() if you really want it"
+    ./au/quantity.hh:415:9: error: static_assert failed due to requirement '!uses_integer_division' "Integer division forbidden: use integer_quotient() if you really want it"
             static_assert(!uses_integer_division,
             ^             ~~~~~~~~~~~~~~~~~~~~~~
-    ./au/quantity.hh:326:9: note: in instantiation of function template specialization 'au::Quantity<au::Meters, int>::warn_if_integer_division<int>' requested here
+    ./au/quantity.hh:348:9: note: in instantiation of function template specialization 'au::Quantity<au::Meters, int>::warn_if_integer_division<int>' requested here
             warn_if_integer_division<OtherRep>();
             ^
     au/error_examples.cc:63:39: note: in instantiation of function template specialization 'au::Quantity<au::Meters, int>::operator/<au::UnitProduct<au::Miles, au::Pow<au::Hours, -1>>, int>' requested here
@@ -601,14 +606,9 @@ floating point types.
 
     **Compiler error (gcc 10)**
     ```
-    ./au/quantity.hh:562:94: error: no type named 'type' in 'struct std::common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int> >'
-      562 |         std::is_same<typename C::Rep, std::common_type_t<typename T::Rep, typename U::Rep>>::value,
-          |                                                                                              ^~~~~
-    ./au/quantity.hh: In instantiation of 'static constexpr void au::Quantity<UnitT, RepT>::warn_if_integer_division() [with OtherRep = int; UnitT = au::Meters; RepT = int]':
-    ./au/quantity.hh:326:43:   required from here
     au/error_examples.cc:63:58:   in 'constexpr' expansion of 'au::meters.au::QuantityMaker<au::Meters>::operator()<int>(60).au::Quantity<au::Meters, int>::operator/<au::UnitProduct<au::Miles, au::Pow<au::Hours, -1> >, int>(au::miles.au::QuantityMaker<au::Miles>::operator/<au::Hours>((au::hour, const au::SingularNameFor<au::Hours>())).au::QuantityMaker<au::UnitProduct<au::Miles, au::Pow<au::Hours, -1> > >::operator()<int>(65))'
-    ./au/quantity.hh:393:23: error: static assertion failed: Integer division forbidden: use integer_quotient() if you really want it
-      393 |         static_assert(!uses_integer_division,
+    ./au/quantity.hh:415:23: error: static assertion failed: Integer division forbidden: use integer_quotient() if you really want it
+      415 |         static_assert(!uses_integer_division,
           |                       ^~~~~~~~~~~~~~~~~~~~~~
     ```
 
@@ -703,10 +703,10 @@ use a smaller target unit.
     ```
     In file included from au/error_examples.cc:15:
     In file included from ./au/au.hh:19:
-    ./au/math.hh:231:5: error: static_assert failed due to requirement 'make_quantity<au::UnitProduct<>>(int{1}).in(associated_unit(target_units) * au::Hertz{}) >= threshold || std::is_floating_point<int>::value' "Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired"
+    ./au/math.hh:251:5: error: static_assert failed due to requirement 'make_quantity<au::UnitProduct<>>(int{1}).in(associated_unit(target_units) * au::Hertz{}) >= threshold || std::is_floating_point<int>::value' "Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired"
         static_assert(
         ^
-    ./au/math.hh:247:56: note: in instantiation of function template specialization 'au::inverse_in<au::QuantityMaker<au::Seconds>, au::Hertz, int>' requested here
+    ./au/math.hh:267:56: note: in instantiation of function template specialization 'au::inverse_in<au::QuantityMaker<au::Seconds>, au::Hertz, int>' requested here
         return make_quantity<AssociatedUnitT<TargetUnits>>(inverse_in(target_units, q));
                                                            ^
     au/error_examples.cc:71:5: note: in instantiation of function template specialization 'au::inverse_as<au::QuantityMaker<au::Seconds>, au::Hertz, int>' requested here
@@ -718,10 +718,10 @@ use a smaller target unit.
     ```
     In file included from au/error_examples.cc:15:
     In file included from ./au/au.hh:19:
-    ./au/math.hh:231:5: error: static_assert failed due to requirement 'make_quantity<au::UnitProduct<>>(int{1}).in(associated_unit(target_units) * au::Hertz{}) >= threshold || std::is_floating_point<int>::value' "Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired"
+    ./au/math.hh:251:5: error: static_assert failed due to requirement 'make_quantity<au::UnitProduct<>>(int{1}).in(associated_unit(target_units) * au::Hertz{}) >= threshold || std::is_floating_point<int>::value' "Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired"
         static_assert(
         ^
-    ./au/math.hh:247:56: note: in instantiation of function template specialization 'au::inverse_in<au::QuantityMaker<au::Seconds>, au::Hertz, int>' requested here
+    ./au/math.hh:267:56: note: in instantiation of function template specialization 'au::inverse_in<au::QuantityMaker<au::Seconds>, au::Hertz, int>' requested here
         return make_quantity<AssociatedUnitT<TargetUnits>>(inverse_in(target_units, q));
                                                            ^
     au/error_examples.cc:71:5: note: in instantiation of function template specialization 'au::inverse_as<au::QuantityMaker<au::Seconds>, au::Hertz, int>' requested here
@@ -734,12 +734,12 @@ use a smaller target unit.
     In file included from ./au/au.hh:19,
                      from au/error_examples.cc:15:
     ./au/math.hh: In instantiation of 'constexpr auto au::inverse_in(TargetUnits, au::Quantity<U, R>) [with TargetUnits = au::QuantityMaker<au::Seconds>; U = au::Hertz; R = int]':
-    ./au/math.hh:247:66:   required from 'constexpr auto au::inverse_as(TargetUnits, au::Quantity<U, R>) [with TargetUnits = au::QuantityMaker<au::Seconds>; U = au::Hertz; R = int]'
+    ./au/math.hh:267:66:   required from 'constexpr auto au::inverse_as(TargetUnits, au::Quantity<U, R>) [with TargetUnits = au::QuantityMaker<au::Seconds>; U = au::Hertz; R = int]'
     au/error_examples.cc:71:33:   required from here
-    ./au/math.hh:232:98: error: static assertion failed: Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired
-      232 |         make_quantity<UnitProductT<>>(R{1}).in(associated_unit(target_units) * U{}) >= threshold ||
+    ./au/math.hh:252:98: error: static assertion failed: Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired
+      252 |         make_quantity<UnitProductT<>>(R{1}).in(associated_unit(target_units) * U{}) >= threshold ||
           |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
-      233 |             std::is_floating_point<R>::value,
+      253 |             std::is_floating_point<R>::value,
           |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ```
 
@@ -981,19 +981,19 @@ ordering!
     ./au/packs.hh:303:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct>' requested here
     ./au/packs.hh:303:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct>' requested here
     ./au/packs.hh:303:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct>' requested here
-    ./au/unit_of_measure.hh:854:40: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+    ./au/unit_of_measure.hh:860:40: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
     struct InOrderFor<UnitProduct, A, B> : LexicographicTotalOrdering<A,
                                            ^
-    ./au/quantity.hh:697:7: note: in instantiation of template class 'au::CommonQuantity<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>>' requested here
+    ./au/quantity.hh:719:7: note: in instantiation of template class 'au::CommonQuantity<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>>' requested here
         : au::CommonQuantity<au::Quantity<U1, R1>, au::Quantity<U2, R2>> {};
           ^
     external/llvm_14_toolchain_llvm/bin/../include/c++/v1/type_traits:2388:25: note: in instantiation of template class 'std::common_type<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>>' requested here
     template <class ..._Tp> using common_type_t = typename common_type<_Tp...>::type;
                             ^
-    ./au/quantity.hh:560:20: note: in instantiation of template type alias 'common_type_t' requested here
+    ./au/quantity.hh:582:20: note: in instantiation of template type alias 'common_type_t' requested here
         using C = std::common_type_t<T, U>;
                        ^
-    ./au/quantity.hh:572:20: note: in instantiation of function template specialization 'au::detail::using_common_type<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>, au::detail::Equal>' requested here
+    ./au/quantity.hh:594:20: note: in instantiation of function template specialization 'au::detail::using_common_type<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>, au::detail::Equal>' requested here
         return detail::using_common_type(q1, q2, detail::equal);
                        ^
     au/error_examples.cc:98:25: note: in instantiation of function template specialization 'au::operator==<au::Quarterfeet, au::Trinches, int, int>' requested here
@@ -1019,19 +1019,19 @@ ordering!
     ./au/packs.hh:303:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, OrderByOrigin, OrderAsUnitProduct>' requested here
     ./au/packs.hh:303:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, OrderByMag, OrderByOrigin, OrderAsUnitProduct>' requested here
     ./au/packs.hh:303:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, OrderByDim, OrderByMag, OrderByOrigin, OrderAsUnitProduct>' requested here
-    ./au/unit_of_measure.hh:854:40: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+    ./au/unit_of_measure.hh:860:40: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
     struct InOrderFor<UnitProduct, A, B> : LexicographicTotalOrdering<A,
                                            ^
-    ./au/quantity.hh:697:7: note: in instantiation of template class 'au::CommonQuantity<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>, void>' requested here
+    ./au/quantity.hh:719:7: note: in instantiation of template class 'au::CommonQuantity<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>, void>' requested here
         : au::CommonQuantity<au::Quantity<U1, R1>, au::Quantity<U2, R2>> {};
           ^
     external/llvm_11_toolchain_llvm/bin/../include/c++/v1/type_traits:2462:25: note: in instantiation of template class 'std::__1::common_type<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>>' requested here
     template <class ..._Tp> using common_type_t = typename common_type<_Tp...>::type;
                             ^
-    ./au/quantity.hh:560:20: note: in instantiation of template type alias 'common_type_t' requested here
+    ./au/quantity.hh:582:20: note: in instantiation of template type alias 'common_type_t' requested here
         using C = std::common_type_t<T, U>;
                        ^
-    ./au/quantity.hh:572:20: note: in instantiation of function template specialization 'au::detail::using_common_type<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>, au::detail::Equal>' requested here
+    ./au/quantity.hh:594:20: note: in instantiation of function template specialization 'au::detail::using_common_type<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>, au::detail::Equal>' requested here
         return detail::using_common_type(q1, q2, detail::equal);
                        ^
     au/error_examples.cc:98:25: note: in instantiation of function template specialization 'au::operator==<au::Quarterfeet, au::Trinches, int, int>' requested here
@@ -1050,32 +1050,32 @@ ordering!
     ./au/packs.hh: In instantiation of 'struct au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches>':
     ./au/packs.hh:298:8:   recursively required from 'struct au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct>'
     ./au/packs.hh:298:8:   required from 'struct au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderByUnitAvoidance, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct>'
-    ./au/unit_of_measure.hh:854:8:   required from 'struct au::InOrderFor<au::UnitProduct, au::Quarterfeet, au::Trinches>'
-    ./au/unit_of_measure.hh:488:8:   required from 'struct au::InOrderFor<au::CommonUnit, au::Quarterfeet, au::Trinches>'
+    ./au/unit_of_measure.hh:860:8:   required from 'struct au::InOrderFor<au::UnitProduct, au::Quarterfeet, au::Trinches>'
+    ./au/unit_of_measure.hh:494:8:   required from 'struct au::InOrderFor<au::CommonUnit, au::Quarterfeet, au::Trinches>'
     ./au/packs.hh:383:8:   required from 'struct au::FlatDedupedTypeList<au::CommonUnit, au::CommonUnit<au::Quarterfeet>, au::CommonUnit<au::Trinches> >'
-    ./au/unit_of_measure.hh:526:8:   required from 'struct au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>'
-    ./au/quantity.hh:683:8:   required from 'struct au::CommonQuantity<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>, void>'
-    ./au/quantity.hh:696:8:   required from 'struct std::common_type<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int> >'
+    ./au/unit_of_measure.hh:532:8:   required from 'struct au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>'
+    ./au/quantity.hh:705:8:   required from 'struct au::CommonQuantity<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>, void>'
+    ./au/quantity.hh:718:8:   required from 'struct std::common_type<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int> >'
     external/sysroot_x86_64//include/c++/10.3.0/type_traits:2562:11:   required by substitution of 'template<class ... _Tp> using common_type_t = typename std::common_type::type [with _Tp = {au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>}]'
-    ./au/quantity.hh:560:11:   required from 'constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity<au::Quarterfeet, int>; U = au::Quantity<au::Trinches, int>; Func = au::detail::Equal]'
-    ./au/quantity.hh:572:37:   required from 'constexpr bool au::operator==(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
+    ./au/quantity.hh:582:11:   required from 'constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity<au::Quarterfeet, int>; U = au::Quantity<au::Trinches, int>; Func = au::detail::Equal]'
+    ./au/quantity.hh:594:37:   required from 'constexpr bool au::operator==(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
     au/error_examples.cc:98:39:   required from here
     ./au/packs.hh:287:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
       287 |     static_assert(std::is_same<A, B>::value,
           |                                       ^~~~~
     ./au/packs.hh: In instantiation of 'struct au::LexicographicTotalOrdering<au::Trinches, au::Quarterfeet>':
     ./au/packs.hh:298:8:   required from 'struct au::LexicographicTotalOrdering<au::Trinches, au::Quarterfeet, au::detail::OrderByUnitAvoidance, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct>'
-    ./au/unit_of_measure.hh:854:8:   [ skipping 8 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
-    ./au/unit_of_measure.hh:438:8:   required from 'struct au::HasSameDimension<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches>'
+    ./au/unit_of_measure.hh:860:8:   [ skipping 8 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
+    ./au/unit_of_measure.hh:444:8:   required from 'struct au::HasSameDimension<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches>'
     ./au/stdx/type_traits.hh:38:61:   required from 'struct au::stdx::conjunction<au::HasSameDimension<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches>, au::detail::HasSameMagnitude<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches> >'
-    ./au/unit_of_measure.hh:453:8:   required from 'struct au::AreUnitsQuantityEquivalent<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches>'
-    ./au/unit_of_measure.hh:515:8:   required from 'struct au::detail::FirstMatchingUnit<au::AreUnitsQuantityEquivalent, au::CommonUnit<au::Trinches, au::Quarterfeet>, au::CommonUnit<au::Trinches, au::Quarterfeet> >'
-    ./au/unit_of_measure.hh:526:8:   required from 'struct au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>'
-    ./au/quantity.hh:683:8:   required from 'struct au::CommonQuantity<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>, void>'
-    ./au/quantity.hh:696:8:   required from 'struct std::common_type<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int> >'
+    ./au/unit_of_measure.hh:459:8:   required from 'struct au::AreUnitsQuantityEquivalent<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches>'
+    ./au/unit_of_measure.hh:521:8:   required from 'struct au::detail::FirstMatchingUnit<au::AreUnitsQuantityEquivalent, au::CommonUnit<au::Trinches, au::Quarterfeet>, au::CommonUnit<au::Trinches, au::Quarterfeet> >'
+    ./au/unit_of_measure.hh:532:8:   required from 'struct au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>'
+    ./au/quantity.hh:705:8:   required from 'struct au::CommonQuantity<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>, void>'
+    ./au/quantity.hh:718:8:   required from 'struct std::common_type<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int> >'
     external/sysroot_x86_64//include/c++/10.3.0/type_traits:2562:11:   required by substitution of 'template<class ... _Tp> using common_type_t = typename std::common_type::type [with _Tp = {au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>}]'
-    ./au/quantity.hh:560:11:   required from 'constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity<au::Quarterfeet, int>; U = au::Quantity<au::Trinches, int>; Func = au::detail::Equal]'
-    ./au/quantity.hh:572:37:   required from 'constexpr bool au::operator==(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
+    ./au/quantity.hh:582:11:   required from 'constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity<au::Quarterfeet, int>; U = au::Quantity<au::Trinches, int>; Func = au::detail::Equal]'
+    ./au/quantity.hh:594:37:   required from 'constexpr bool au::operator==(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
     au/error_examples.cc:98:39:   required from here
     ./au/packs.hh:287:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
     In file included from ./au/conversion_policy.hh:22,
@@ -1086,18 +1086,18 @@ ordering!
     ./au/unit_of_measure.hh: In instantiation of 'struct au::CommonUnit<au::Trinches, au::Quarterfeet>':
     ./au/packs.hh:203:7:   required by substitution of 'template<class U> using DimMemberT = typename U::Dim [with U = au::CommonUnit<au::Trinches, au::Quarterfeet>]'
     ./au/packs.hh:205:8:   required from 'struct au::detail::DimImpl<au::CommonUnit<au::Trinches, au::Quarterfeet> >'
-    ./au/unit_of_measure.hh:438:8:   required from 'struct au::HasSameDimension<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches>'
+    ./au/unit_of_measure.hh:444:8:   required from 'struct au::HasSameDimension<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches>'
     ./au/stdx/type_traits.hh:38:61:   required from 'struct au::stdx::conjunction<au::HasSameDimension<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches>, au::detail::HasSameMagnitude<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches> >'
-    ./au/unit_of_measure.hh:453:8:   [ skipping 2 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
-    ./au/unit_of_measure.hh:526:8:   required from 'struct au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>'
-    ./au/quantity.hh:683:8:   required from 'struct au::CommonQuantity<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>, void>'
-    ./au/quantity.hh:696:8:   required from 'struct std::common_type<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int> >'
+    ./au/unit_of_measure.hh:459:8:   [ skipping 2 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
+    ./au/unit_of_measure.hh:532:8:   required from 'struct au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>'
+    ./au/quantity.hh:705:8:   required from 'struct au::CommonQuantity<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>, void>'
+    ./au/quantity.hh:718:8:   required from 'struct std::common_type<au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int> >'
     external/sysroot_x86_64//include/c++/10.3.0/type_traits:2562:11:   required by substitution of 'template<class ... _Tp> using common_type_t = typename std::common_type::type [with _Tp = {au::Quantity<au::Quarterfeet, int>, au::Quantity<au::Trinches, int>}]'
-    ./au/quantity.hh:560:11:   required from 'constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity<au::Quarterfeet, int>; U = au::Quantity<au::Trinches, int>; Func = au::detail::Equal]'
-    ./au/quantity.hh:572:37:   required from 'constexpr bool au::operator==(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
+    ./au/quantity.hh:582:11:   required from 'constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity<au::Quarterfeet, int>; U = au::Quantity<au::Trinches, int>; Func = au::detail::Equal]'
+    ./au/quantity.hh:594:37:   required from 'constexpr bool au::operator==(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
     au/error_examples.cc:98:39:   required from here
-    ./au/unit_of_measure.hh:478:70: error: static assertion failed: Elements must be listed in ascending order
-      478 |     static_assert(AreElementsInOrder<CommonUnit, CommonUnit<Us...>>::value,
+    ./au/unit_of_measure.hh:484:70: error: static assertion failed: Elements must be listed in ascending order
+      484 |     static_assert(AreElementsInOrder<CommonUnit, CommonUnit<Us...>>::value,
           |                                                                      ^~~~~
     ```
 
