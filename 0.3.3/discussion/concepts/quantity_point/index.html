@@ -1,0 +1,1550 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++ units library, by Aurora">
+      
+      
+        <meta name="author" content="Au team">
+      
+      
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/0.3.3/discussion/concepts/quantity_point/">
+      
+      
+        <link rel="prev" href="../dimensionless/">
+      
+      
+        <link rel="next" href="../zero/">
+      
+      <link rel="icon" href="../../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.5.1, mkdocs-material-9.1.21">
+    
+    
+      
+        <title>Quantity Point - The Au units library</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.eebd395e.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../tweaks.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#quantity-point" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../../assets/au-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            The Au units library
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Quantity Point
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../../assets/au-logo.png" alt="logo">
+
+    </a>
+    The Au units library
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Au documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../develop/" class="md-nav__link">
+        Development Setup
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../install/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../supported-compilers/" class="md-nav__link">
+        Supported Compilers
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../troubleshooting/" class="md-nav__link">
+        Troubleshooting Guide
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Alternatives
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Alternatives
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../alternatives/" class="md-nav__link">
+        Comparison of Alternatives
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Discussion
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Discussion
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        Discussion Docs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+          Concepts
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_7_2">
+          <span class="md-nav__icon md-icon"></span>
+          Concepts
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Generic Concepts
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arithmetic/" class="md-nav__link">
+        Arithmetic Operations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../common_unit/" class="md-nav__link">
+        Common Units
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dimensionless/" class="md-nav__link">
+        Dimensionless Units and Quantities
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Quantity Point
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Quantity Point
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#temperatures-are-error-prone" class="md-nav__link">
+    Temperatures are error prone
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mile-marker-math" class="md-nav__link">
+    Mile marker math
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#temperatures-revisited" class="md-nav__link">
+    Temperatures revisited
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quantitypoint-and-stdchronotime_point" class="md-nav__link">
+    QuantityPoint and std::chrono::time_point
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../zero/" class="md-nav__link">
+        Zero
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+          Idioms
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7_3">
+          <span class="md-nav__icon md-icon"></span>
+          Idioms
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../idioms/" class="md-nav__link">
+        Au Idioms
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../idioms/unit-slots/" class="md-nav__link">
+        Unit slots
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+          Implementation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7_4">
+          <span class="md-nav__icon md-icon"></span>
+          Implementation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/" class="md-nav__link">
+        Implementation Details
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/vector_space/" class="md-nav__link">
+        Vector Space Representations
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Howto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Howto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/" class="md-nav__link">
+        How-to guides
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/new-dimensions/" class="md-nav__link">
+        Defining new dimensions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/new-units/" class="md-nav__link">
+        Defining new units
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+          Interop
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8_4">
+          <span class="md-nav__icon md-icon"></span>
+          Interop
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/interop/" class="md-nav__link">
+        Inter-library Interoperation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/interop/nholthaus/" class="md-nav__link">
+        nholthaus/units Interoperation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/" class="md-nav__link">
+        Reference Docs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/corresponding_quantity/" class="md-nav__link">
+        Corresponding Quantity
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/magnitude/" class="md-nav__link">
+        Magnitude
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/math/" class="md-nav__link">
+        Math functions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/powers/" class="md-nav__link">
+        Powers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/prefix/" class="md-nav__link">
+        Prefix
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/quantity/" class="md-nav__link">
+        Quantity
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/quantity_point/" class="md-nav__link">
+        QuantityPoint
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/unit/" class="md-nav__link">
+        Unit
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/zero/" class="md-nav__link">
+        Zero
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9_11" id="__nav_9_11_label" tabindex="0">
+          Detail
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_11_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_9_11">
+          <span class="md-nav__icon md-icon"></span>
+          Detail
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/detail/" class="md-nav__link">
+        Implementation Details
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/detail/dimension/" class="md-nav__link">
+        Dimension
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/detail/monovalue_types/" class="md-nav__link">
+        Monovalue Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/detail/packs/" class="md-nav__link">
+        Parameter packs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+          Tutorial
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_10">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorial
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/" class="md-nav__link">
+        Tutorials: home
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/102-api-types/" class="md-nav__link">
+        Au 102: API Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/103-unit-conversions/" class="md-nav__link">
+        Au 103: Unit Conversions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_5" id="__nav_10_5_label" tabindex="0">
+          Exercise
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_10_5">
+          <span class="md-nav__icon md-icon"></span>
+          Exercise
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        Au 101: Quantity Makers Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/exercise/102-api-types/" class="md-nav__link">
+        Au 102: API Types Exercise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+        Au 103: Unit Conversions Exercise
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="quantity-point">Quantity Point<a class="headerlink" href="#quantity-point" title="Permanent link">&para;</a></h1>
+<p>While <code>Quantity</code> works well for most units library operations, there are some situations where it
+struggles.  The most important example is <em>temperature</em>: as we&rsquo;ll soon see in detail, <code>Quantity</code>
+alone could never handle all temperature use cases simultaneously.  The tool that solves this
+problem, <code>QuantityPoint</code>, also helps similar use cases, such as atmospheric pressure.  It even
+improves seemingly unrelated use cases as well, such as along-path positions (&ldquo;mile markers&rdquo;).</p>
+<p>Overall, <code>QuantityPoint</code> is a subtle but critically important tool in a units library toolbox.
+Let&rsquo;s dive into the main motivating problem, and then learn about the properties of its solution.</p>
+<h2 id="temperatures-are-error-prone">Temperatures are error prone<a class="headerlink" href="#temperatures-are-error-prone" title="Permanent link">&para;</a></h2>
+<p>Let&rsquo;s look at a use case where <code>Quantity</code> struggles: <em>temperature</em>.  Consider: is 20 degrees Celsius
+the same as 20 Kelvins?</p>
+<p>Answer: <em>it depends</em>.</p>
+<ul>
+<li>
+<p>If we&rsquo;re talking about a <em>change</em> in temperature, they&rsquo;re completely equivalent.  If the
+  temperature <strong>increased by</strong> 20 degrees Celsius, then it increased by 20 Kelvins.</p>
+</li>
+<li>
+<p>If we&rsquo;re asking what the temperature <em>is</em>, they&rsquo;re very different.  If the temperature <strong>is</strong> 20
+  degrees Celsius, then it&rsquo;s <strong>not</strong> 20 Kelvins &mdash; it&rsquo;s <em>293.15</em> Kelvins!</p>
+</li>
+</ul>
+<p>What&rsquo;s going on is that the Celsius scale has <em>shifted the origin</em>, that is, the temperature which
+we consider to be &ldquo;zero&rdquo;.  This shift helps humans: it labels the temperatures we encounter in the
+environment with numbers that are easier to work with.  That&rsquo;s an important property of
+a well-chosen system of units for a given domain.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note especially that this origin shift is <em>not an option</em> for temperature <em>changes</em>!  There
+could never be a unit that assigns &ldquo;zero&rdquo; to any amount other than &ldquo;no change&rdquo;.</p>
+</div>
+<p>Let&rsquo;s ponder the implications for a C++ units library.  Assume that <code>Quantity</code> is all we have, and
+consider: how should this library convert from degrees Celsius, to Kelvins?  We have two choices for
+our policy: we can either take the origin offset into account, or not.  But it&rsquo;s a no-win situation:
+either choice produces wrong answers for perfectly legitimate use cases!  We can&rsquo;t possibly handle
+both temperatures and temperature changes &mdash; at least, not if <code>Quantity</code> is our only tool.</p>
+<h2 id="mile-marker-math">Mile marker math<a class="headerlink" href="#mile-marker-math" title="Permanent link">&para;</a></h2>
+<p>Viewing temperatures as <em>points</em>, rather than &ldquo;amounts&rdquo;, changes the set of operations that make
+sense for them.  To grasp this, let&rsquo;s consider another kind of labeled points: <em>mile markers</em>.
+(These will make it easier to understand, because the terminology is less confusing than for
+temperatures.)</p>
+<p>Mile markers label the points along a linear path using distance units.  The choice of which point
+is &ldquo;mile zero&rdquo; is completely arbitrary, but once we make that choice, the labels for the rest of the
+points are determined.</p>
+<p>Here are some examples showing how &ldquo;mile marker math&rdquo; works.  Let&rsquo;s imagine we have a function,
+<code>mile_marker()</code>.  Say it produces some type that models &ldquo;points&rdquo;, which we&rsquo;ll call <code>QuantityPoint</code>
+(as opposed to the &ldquo;displacements&rdquo; or &ldquo;amounts&rdquo; which <code>Quantity</code> models).  Here are some examples
+showing how we should expect it to behave:</p>
+<details class="example">
+<summary>Example: <code>mile_marker(8) - mile_marker(5)</code></summary>
+<p><strong>Result:</strong> <code>miles(3)</code></p>
+<p><strong>General Principle:</strong> Subtracting two points is <strong>meaningful</strong>, but it produces a <strong>quantity</strong>,
+not a point.</p>
+</details>
+<details class="example">
+<summary>Example: <code>mile_marker(8) + mile_marker(5)</code></summary>
+<p><strong>Result:</strong> <img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /> Nonsense: no result. <img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /></p>
+<p><strong>General Principle:</strong> Adding two points is <strong>meaningless</strong>.</p>
+</details>
+<details class="example">
+<summary>Example: <code>mile_marker(8) + miles(5)</code></summary>
+<ul>
+<li>
+<p><strong>Result:</strong> <code>mile_marker(13)</code></p>
+</li>
+<li>
+<p><strong>General Principle:</strong> Adding a quantity to a point is <strong>meaningful</strong>, and it produces another
+  <strong>point</strong>.</p>
+</li>
+</ul>
+</details>
+<details class="example">
+<summary>Example: <code>mile_marker(8) - miles(5)</code></summary>
+<ul>
+<li>
+<p><strong>Result:</strong> <code>mile_marker(3)</code></p>
+</li>
+<li>
+<p><strong>General Principle:</strong> Subtracting a quantity from a point is <strong>meaningful</strong>, and it produces
+  another <strong>point</strong>.</p>
+</li>
+</ul>
+</details>
+<p>These examples show the symbiotic relationship between <code>Quantity</code> and <code>QuantityPoint</code>.  A <code>Quantity</code>
+is just the displacement between two <code>QuantityPoint</code> instances.  And we can add or subtract such
+a <code>Quantity</code>, to go from one <code>QuantityPoint</code> to another.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The technical term for <code>QuantityPoint</code> is &ldquo;affine space type&rdquo;.  If you&rsquo;re interested to learn
+more, check out <a href="http://videocortex.io/2018/Affine-Space-Types/">this accessible introduction to Affine Space
+Types</a>.</p>
+</div>
+<h2 id="temperatures-revisited">Temperatures revisited<a class="headerlink" href="#temperatures-revisited" title="Permanent link">&para;</a></h2>
+<p>Armed with <code>QuantityPoint</code>, our formerly confusing temperature use cases have become a breeze.  If
+we always use <code>QuantityPoint</code> for temperatures, and <code>Quantity</code> for temperature <em>changes</em>, we can
+express ourselves with effortless clarity.</p>
+<p>In Au, we use the <code>_pt</code> suffix for functions that make <code>QuantityPoint</code>, and the <code>_qty</code> suffix (or,
+more commonly, no suffix<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>) for those that produce <code>Quantity</code>.  Let&rsquo;s rephrase our challenge cases
+using these new tools.</p>
+<ul>
+<li>
+<p>Temperature <em>changes</em>: <code>celsius_qty(20) == kelvins_qty(20)</code>.  (Result: <code>true</code>)</p>
+</li>
+<li>
+<p><em>Temperatures</em>: <code>celsius_pt(20) == kelvins_pt(20)</code>.  (Result: <code>false</code>)</p>
+</li>
+</ul>
+<p>These tools are so clear and reliable that we can even mix and match different temperature scales at
+will!  For example: if we started the day at -40 degrees Fahrenheit, and it warmed up by 60 degrees
+Celsius, would it be hotter than 300 Kelvins?  Doing this by hand, we might make use of a few facts:</p>
+<ul>
+<li>-40 degrees Fahrenheit happens to be the same temperature as -40 degrees Celsius, so the final
+  temperature is equivalent to 20 degrees Celsius.</li>
+<li>The offset between Kelvins and Celsius is 273.15 K, so the final temperature of 20 degrees Celsius
+  is 293.15 K.</li>
+<li>Therefore, the answer is &ldquo;no&rdquo;: it&rsquo;s not hotter than 300 Kelvins.</li>
+</ul>
+<p>Now we can see whether Au comes to the same conclusion.  Note how easy it is to express the question
+with clarity, despite mixing <em>three</em> different temperature scales:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">EXPECT_LT</span><span class="p">(</span><span class="n">fahrenheit_pt</span><span class="p">(</span><span class="mi">-40</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">celsius_qty</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span><span class="w"> </span><span class="n">kelvins_pt</span><span class="p">(</span><span class="mi">300</span><span class="p">));</span>
+</code></pre></div>
+<p>As hoped, this test passes.</p>
+<div class="admonition note">
+<p class="admonition-title">Fun fact</p>
+<p>Au would perform the above calculation <em>without ever leaving the integer domain</em>, even though
+the offset between Kelvins and Fahrenheit (or Celsius) is not an integer!  As an exercise,
+ponder how we might do that.</p>
+</div>
+<h2 id="quantitypoint-and-stdchronotime_point"><code>QuantityPoint</code> and <code>std::chrono::time_point</code><a class="headerlink" href="#quantitypoint-and-stdchronotime_point" title="Permanent link">&para;</a></h2>
+<p>Readers familiar with the <code>std::chrono</code> library may recognize this kind of interface: it&rsquo;s similar
+to <code>std::chrono::time_point</code>.  This class has the same relationship to <code>std::chrono::duration</code> as
+<code>QuantityPoint</code> has to <code>Quantity</code>. In each case, we have a &ldquo;point&rdquo; type and a &ldquo;displacement&rdquo; type.
+And the allowed operations are similar, for example:</p>
+<ul>
+<li>You can subtract two points to get a displacement.</li>
+<li>You can add (or subtract) a displacement to (or from) a point.</li>
+<li>You <strong>can&rsquo;t</strong> add two <strong>points</strong>; that&rsquo;s a meaningless operation.</li>
+</ul>
+<p>These similarities may tempt the reader to reach for a time-units <code>QuantityPoint</code> to replace
+<code>std::chrono::time_point</code>, just as a time-units <code>Quantity</code> makes a very capable replacement for
+<code>std::chrono::duration</code>.  However, experience doesn&rsquo;t support this choice.</p>
+<p>There&rsquo;s much more to <code>std::chrono::time_point</code> than just providing arithmetic operations with point
+semantics.  It also models different kinds of clocks, preventing unintended inter-conversion between
+them.  And it handles real-world clock subtleties, such as modeling whether a clock can ever produce
+an earlier value at a later time (think: daylight saving time).  By contrast, <code>QuantityPoint</code> can
+only handle measurement scales that are identical up to a constant offset &mdash; and that offset must
+be known at compile time.</p>
+<p><strong>Bottom line</strong>: when you need to track timestamps, you&rsquo;re better off using a special purpose
+library like <code>std::chrono</code>.  But once you subtract two <code>time_point</code> instances to get a <code>duration</code>,
+it&rsquo;s often useful to convert it to Au&rsquo;s <code>Quantity</code> &mdash; whether
+<a href="../../../reference/corresponding_quantity/#chrono-duration">implicitly</a>, or
+<a href="../../../reference/corresponding_quantity/#as-quantity">explicitly</a> &mdash; so that it can participate
+in equations with other units (such as speeds and distances).</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p><code>QuantityPoint</code> is largely a refinement for C++ units libraries.  Most use cases don&rsquo;t need it, and
+we don&rsquo;t even bother to define it for almost all units.  However, it is useful in a few use cases,
+such as mile markers or atmospheric pressure.  And for some use cases, such as temperatures or
+atmospheric pressure, it&rsquo;s absolutely essential.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>In practice, <code>Quantity</code> is overwhelmingly more common, so we prefer to omit the suffix: we
+write <code>meters(2)</code> instead of <code>meters_qty(2)</code>, for example.  However, this policy would fail for
+temperatures: if we wrote <code>celsius(20)</code>, should it refer to the <em>temperature</em>, or temperature
+<em>change</em>?  Clearly, this would be far too error prone.  Therefore, for temperatures, we always
+include the <code>_qty</code> suffix for <code>Quantity</code> makers.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../dimensionless/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Dimensionless Units and Quantities" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Dimensionless Units and Quantities
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../zero/" class="md-footer__link md-footer__link--next" aria-label="Next: Zero" rel="next">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Zero
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022, Aurora Operations, Inc. All rights reserved
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.220ee61c.min.js"></script>
+      
+        
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        
+      
+    
+  </body>
+</html>
