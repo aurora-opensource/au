@@ -276,8 +276,8 @@ operation (at least in this format).
 
     **Compiler error (MSVC x64 19.29)**
     ```
-    D:\a\au\au\au.hh(2946): error C2338: Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion
-    D:\a\au\au\au.hh(2983): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<NewUnit,void>(NewUnit) const' being compiled
+    D:\a\au\au\au.hh(2952): error C2338: Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion
+    D:\a\au\au\au.hh(2989): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<NewUnit,void>(NewUnit) const' being compiled
             with
             [
                 NewUnit=au::Feet
@@ -287,8 +287,8 @@ operation (at least in this format).
 
     **Compiler error (MSVC x64 19.35)**
     ```
-    D:\a\au\au\au.hh(2946): error C2338: static_assert failed: 'Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion'
-    D:\a\au\au\au.hh(2983): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<NewUnit,void>(NewUnit) const' being compiled
+    D:\a\au\au\au.hh(2952): error C2338: static_assert failed: 'Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion'
+    D:\a\au\au\au.hh(2989): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<NewUnit,void>(NewUnit) const' being compiled
             with
             [
                 NewUnit=au::Feet
