@@ -1022,6 +1022,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#coerce" class="md-nav__link">
+    Forcing lossy conversions: .coerce_as(unit), .coerce_in(unit)
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1611,7 +1618,7 @@ https://github.com/mkdocs/mkdocs/issues/1198#issuecomment-1253896100
 <p>Note that every case in the above table is <em>physically</em> meaningful (because the source and target
 have the same dimension), but some conversions are forbidden due to the risk of larger-than-usual
 errors.  The library can still perform these conversions, but not via this constructor, and it must
-be &ldquo;forced&rdquo; to do so. See <a href="#as"><code>.as&lt;T&gt;(unit)</code></a> for more details.</p>
+be &ldquo;forced&rdquo; to do so. See <a href="#coerce"><code>.coerce_as(unit)</code></a> for more details.</p>
 <h3 id="default-constructor">Default constructor<a class="headerlink" href="#default-constructor" title="Permanent link">&para;</a></h3>
 <p>Here is the signature of the constructor, enclosed in the class template definition for context.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Unit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Rep</span><span class="o">&gt;</span>
@@ -1678,6 +1685,11 @@ are forbidden.  Additionally, the <code>Rep</code> of the output is identical to
 <li>The conversion is considered &ldquo;forcing&rdquo;, and will be permitted in spite of any overflow or
    truncation risk.  The semantics are similar to <code>static_cast&lt;T&gt;</code>.</li>
 </ol>
+<p>However, note that we may change this second property in the future.  The version with the template
+arguments may be changed later so that it <em>does</em> prevent lossy conversions.  If you want this
+&ldquo;forcing&rdquo; semantic, prefer to use <a href="#coerce"><code>.coerce_as(unit)</code></a>, and add the explicit template
+parameter only if you want to change the rep.  See
+<a href="https://github.com/aurora-opensource/au/issues/122">#122</a> for more details.</p>
 <details class="example">
 <summary>Example: forcing a conversion from centimeters to meters</summary>
 <p><code>centi(meters_pt)(200).as(meters_pt)</code> is not allowed.  This conversion will divide the
@@ -1719,6 +1731,11 @@ are forbidden.  Additionally, the <code>Rep</code> of the output is identical to
 <li>The conversion is considered &ldquo;forcing&rdquo;, and will be permitted in spite of any overflow or
    truncation risk.  The semantics are similar to <code>static_cast&lt;T&gt;</code>.</li>
 </ol>
+<p>However, note that we may change this second property in the future.  The version with the template
+arguments may be changed later so that it <em>does</em> prevent lossy conversions.  If you want this
+&ldquo;forcing&rdquo; semantic, prefer to use <a href="#coerce"><code>.coerce_in(unit)</code></a>, and add the explicit template
+parameter only if you want to change the rep.  See
+<a href="https://github.com/aurora-opensource/au/issues/122">#122</a> for more details.</p>
 <details class="example">
 <summary>Example: forcing a conversion from centimeters to meters</summary>
 <p><code>centi(meters_pt)(200).in(meters_pt)</code> is not allowed.  This conversion will divide the
@@ -1727,14 +1744,41 @@ produce an integer result. However, the compiler must decide whether to permit t
 <em>at compile time</em>, which means we don&rsquo;t yet know the value.  Since most <code>int</code> values would <em>not</em>
 produce integer results, we forbid this.</p>
 <p><code>centi(meters_pt)(200).in&lt;int&gt;(meters_pt)</code> <em>is</em> allowed.  The &ldquo;explicit rep&rdquo; template parameter
-has &ldquo;forcing&rdquo; semantics.  This would produce <code>2</code>. However, note that this operation uses integer
-division, which truncates: so, for example, <code>centi(meters_pt)(199).in&lt;int&gt;(meters_pt)</code> would
-produce <code>1</code>.</p>
+has &ldquo;forcing&rdquo; semantics (at least for now; see
+<a href="https://github.com/aurora-opensource/au/issues/122">#122</a>).  This would produce <code>2</code>. However,
+note that this operation uses integer division, which truncates: so, for example,
+<code>centi(meters_pt)(199).in&lt;int&gt;(meters_pt)</code> would produce <code>1</code>.</p>
 </details>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Prefer to <strong>omit</strong> the template argument if possible, because you will get more safety checks.
 The risks which the no-template-argument version warns about are real.</p>
+</div>
+<h3 id="coerce">Forcing lossy conversions: <code>.coerce_as(unit)</code>, <code>.coerce_in(unit)</code><a class="headerlink" href="#coerce" title="Permanent link">&para;</a></h3>
+<p>This function performs the exact same kind of unit conversion as if the string <code>coerce_</code> were
+removed.  However, it will ignore any safety checks for overflow or truncation.</p>
+<details class="example">
+<summary>Example: forcing a conversion from centimeters to meters</summary>
+<p><code>centi(meters_pt)(200).in(meters_pt)</code> is not allowed.  This conversion will divide the
+underlying value, <code>200</code>, by <code>100</code>.  Now, it so happens that this <em>particular</em> value <em>would</em>
+produce an integer result. However, the compiler must decide whether to permit this operation
+<em>at compile time</em>, which means we don&rsquo;t yet know the value.  Since most <code>int</code> values would <em>not</em>
+produce integer results, we forbid this.</p>
+<p><code>centi(meters_pt)(200).coerce_in(meters_pt)</code> <em>is</em> allowed.  The <code>coerce_</code> prefix has &ldquo;forcing&rdquo;
+semantics.  This would produce <code>2</code>. However, note that this operation uses integer division,
+which truncates: so, for example, <code>centi(meters_pt)(199).coerce_in(meters_pt)</code> would produce
+<code>1</code>.</p>
+</details>
+<p>These functions also support an explicit template parameter: so, <code>.coerce_as&lt;T&gt;(unit)</code> and
+<code>.coerce_in&lt;T&gt;(unit)</code>.  If you supply this parameter, it will be the rep of the result.</p>
+<details class="example">
+<summary>Example: simultaneous unit and type conversion</summary>
+<p><code>centi(meters_pt)(271.8).coerce_as&lt;int&gt;(meters_pt)</code> will return <code>meters_pt(2)</code>.</p>
+</details>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Prefer <strong>not</strong> to use the &ldquo;coercing versions&rdquo; if possible, because you will get more safety
+checks.  The risks which the &ldquo;base&rdquo; versions warn about are real.</p>
 </div>
 <h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
 <p>Au includes as many common operations as possible.  Our goal is to avoid incentivizing users to

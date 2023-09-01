@@ -1452,22 +1452,19 @@ operation (at least in this format).</p>
    <code>hertz(1'000'000'000.0)</code>.</p>
 </li>
 <li>
-<p><strong>Use &ldquo;explicit Rep&rdquo; form</strong>.  The &ldquo;Rep&rdquo; is the storage type for the Quantity.  If you pass it as
-   a template parameter, it is &ldquo;morally equivalent&rdquo; to a <code>static_cast</code>, and has the same &ldquo;forcing&rdquo;
-   semantics.  <code>inches(24).as&lt;int&gt;(feet)</code> produces <code>feet(2)</code>.</p>
+<p><strong>Use the &ldquo;coercing&rdquo; version</strong>.  <code>inches(24).coerce_as(feet)</code> produces <code>feet(2)</code>.</p>
 </li>
 </ol>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Stop and think before using the explicit Rep version.  If you&rsquo;re reviewing code that uses it,
-ask about it.  The library is trying to protect you from an error prone operation.  The
-mechanism exists because sometimes you can know that it&rsquo;s OK, but remember to stop and check
-first!</p>
+<p>Stop and think before using the coercing version.  If you&rsquo;re reviewing code that uses it, ask
+about it.  The library is trying to protect you from an error prone operation.  The mechanism
+exists because sometimes you can know that it&rsquo;s OK, but remember to stop and check first!</p>
 </div>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
 <p><strong>Code</strong></p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Broken</label><label for="__tabbed_2_2">Fixed (1. Floating Point)</label><label for="__tabbed_2_3">Fixed (2. Explicit Rep)</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Broken</label><label for="__tabbed_2_2">Fixed (1. Floating Point)</label><label for="__tabbed_2_3">Fixed (2. Coercing version)</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// A (BROKEN): inexact conversion.</span>
@@ -1486,11 +1483,11 @@ first!</p>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// A (FIXED): 2. provide explicit Rep.</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">inches</span><span class="p">(</span><span class="mi">24</span><span class="p">).</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">feet</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// A (FIXED): 2. use coercing version.</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">inches</span><span class="p">(</span><span class="mi">24</span><span class="p">).</span><span class="n">coerce_as</span><span class="p">(</span><span class="n">feet</span><span class="p">);</span>
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1">// B (FIXED): 2. provide explicit Rep.</span>
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="n">giga</span><span class="p">(</span><span class="n">hertz</span><span class="p">)(</span><span class="mi">1</span><span class="p">).</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">hertz</span><span class="p">);</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1">// B (FIXED): 2. use coercing version.</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="n">giga</span><span class="p">(</span><span class="n">hertz</span><span class="p">)(</span><span class="mi">1</span><span class="p">).</span><span class="n">coerce_as</span><span class="p">(</span><span class="n">hertz</span><span class="p">);</span>
 </code></pre></div>
 </div>
 </div>
