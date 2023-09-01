@@ -27,7 +27,6 @@ namespace au {
 
 void set_timeout(QuantityD<Seconds> dt);
 
-/*
 void example_private_constructor() {
     // A (BROKEN): passing raw number where duration expected.
     set_timeout(0.5);
@@ -36,6 +35,7 @@ void example_private_constructor() {
     constexpr QuantityD<Meters> length{5.5};
 }
 
+/*
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Dangerous conversion
 
@@ -83,7 +83,6 @@ void example_deduced_conflicting_types() {
         // ...
     }
 }
-*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION:
@@ -100,5 +99,6 @@ void example_() {
         // ...
     }
 }
+*/
 
 }  // namespace au
