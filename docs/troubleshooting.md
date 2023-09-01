@@ -172,15 +172,12 @@ operation (at least in this format).
    floating point is what you want anyway, just use it.  `giga(hertz)(1.0).as(hertz)` produces
    `hertz(1'000'000'000.0)`.
 
-2. **Use "explicit Rep" form**.  The "Rep" is the storage type for the Quantity.  If you pass it as
-   a template parameter, it is "morally equivalent" to a `static_cast`, and has the same "forcing"
-   semantics.  `inches(24).as<int>(feet)` produces `feet(2)`.
+2. **Use the "coercing" version**.  `inches(24).coerce_as(feet)` produces `feet(2)`.
 
 !!! warning
-    Stop and think before using the explicit Rep version.  If you're reviewing code that uses it,
-    ask about it.  The library is trying to protect you from an error prone operation.  The
-    mechanism exists because sometimes you can know that it's OK, but remember to stop and check
-    first!
+    Stop and think before using the coercing version.  If you're reviewing code that uses it, ask
+    about it.  The library is trying to protect you from an error prone operation.  The mechanism
+    exists because sometimes you can know that it's OK, but remember to stop and check first!
 
 !!! example
     **Code**
@@ -203,13 +200,13 @@ operation (at least in this format).
         giga(hertz)(1.0).as(hertz);
         ```
 
-    === "Fixed (2. Explicit Rep)"
+    === "Fixed (2. Coercing version)"
         ```cpp
-        // A (FIXED): 2. provide explicit Rep.
-        inches(24).as<int>(feet);
+        // A (FIXED): 2. use coercing version.
+        inches(24).coerce_as(feet);
 
-        // B (FIXED): 2. provide explicit Rep.
-        giga(hertz)(1).as<int>(hertz);
+        // B (FIXED): 2. use coercing version.
+        giga(hertz)(1).coerce_as(hertz);
         ```
 
 
