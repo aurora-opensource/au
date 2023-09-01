@@ -614,13 +614,13 @@ floating point types.
 
     **Compiler error (MSVC x64 19.29)**
     ```
-    D:\a\au\au\au.hh(3170): error C2338: Integer division forbidden: use integer_quotient() if you really want it
-    D:\a\au\au\au.hh(3103): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherRep>(void)' being compiled
+    D:\a\au\au\au.hh(3198): error C2338: Integer division forbidden: use integer_quotient() if you really want it
+    D:\a\au\au\au.hh(3131): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherRep>(void)' being compiled
             with
             [
                 OtherRep=int
             ]
-    D:\a\au\au\au.hh(3103): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherRep>(void)' being compiled
+    D:\a\au\au\au.hh(3131): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherRep>(void)' being compiled
             with
             [
                 OtherRep=int
@@ -635,13 +635,8 @@ floating point types.
 
     **Compiler error (MSVC x64 19.35)**
     ```
-    D:\a\au\au\au.hh(3170): error C2338: static_assert failed: 'Integer division forbidden: use integer_quotient() if you really want it'
-    D:\a\au\au\au.hh(3103): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherRep>(void)' being compiled
-            with
-            [
-                OtherRep=int
-            ]
-    D:\a\au\au\au.hh(3103): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherRep>(void)' being compiled
+    D:\a\au\au\au.hh(3198): error C2338: static_assert failed: 'Integer division forbidden: use integer_quotient() if you really want it'
+    D:\a\au\au\au.hh(3131): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherRep>(void)' being compiled
             with
             [
                 OtherRep=int
