@@ -1,5 +1,17 @@
 ![Au library logo](docs/assets/au-logo-color.png)
 
+[![clang14-ubuntu](
+https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml) [![clang11-ubuntu](
+https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml) [![gcc10-ubuntu](
+https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml) [![MSVC x64 19.29](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml) [![MSVC x64 19.35](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml)
+
 # Au: A C++14-compatible units library, by Aurora
 
 Au (pronounced "ay yoo") is a C++ units library, by [Aurora](https://aurora.tech/).  What the

@@ -194,6 +194,48 @@ TEST(Quantity, SupportsDirectConstAccessWithQuantityMakerOfEquivalentUnit) {
     //           static_cast<const void *>(&x));
 }
 
+TEST(Quantity, CoerceAsWillForceLossyConversion) {
+    // Truncation.
+    EXPECT_THAT(inches(30).coerce_as(feet), SameTypeAndValue(feet(2)));
+
+    // Unsigned overflow.
+    ASSERT_EQ(static_cast<uint8_t>(30 * 12), 104);
+    EXPECT_THAT(feet(uint8_t{30}).coerce_as(inches), SameTypeAndValue(inches(uint8_t{104})));
+}
+
+TEST(Quantity, CoerceAsExplicitRepSetsOutputType) {
+    // Coerced truncation.
+    EXPECT_THAT(inches(30).coerce_as<std::size_t>(feet), SameTypeAndValue(feet(std::size_t{2})));
+
+    // Exact answer for floating point destination type.
+    EXPECT_THAT(inches(30).coerce_as<float>(feet), SameTypeAndValue(feet(2.5f)));
+
+    // Coerced unsigned overflow.
+    ASSERT_EQ(static_cast<uint8_t>(30 * 12), 104);
+    EXPECT_THAT(feet(30).coerce_as<uint8_t>(inches), SameTypeAndValue(inches(uint8_t{104})));
+}
+
+TEST(Quantity, CoerceInWillForceLossyConversion) {
+    // Truncation.
+    EXPECT_THAT(inches(30).coerce_in(feet), SameTypeAndValue(2));
+
+    // Unsigned overflow.
+    ASSERT_EQ(static_cast<uint8_t>(30 * 12), 104);
+    EXPECT_THAT(feet(uint8_t{30}).coerce_in(inches), SameTypeAndValue(uint8_t{104}));
+}
+
+TEST(Quantity, CoerceInExplicitRepSetsOutputType) {
+    // Coerced truncation.
+    EXPECT_THAT(inches(30).coerce_in<std::size_t>(feet), SameTypeAndValue(std::size_t{2}));
+
+    // Exact answer for floating point destination type.
+    EXPECT_THAT(inches(30).coerce_in<float>(feet), SameTypeAndValue(2.5f));
+
+    // Coerced unsigned overflow.
+    ASSERT_EQ(static_cast<uint8_t>(30 * 12), 104);
+    EXPECT_THAT(feet(30).coerce_in<uint8_t>(inches), SameTypeAndValue(uint8_t{104}));
+}
+
 TEST(Quantity, CanImplicitlyConvertToDifferentUnitOfSameDimension) {
     constexpr QuantityI32<Inches> x = yards(2);
     EXPECT_EQ(x.in(inches), 72);
@@ -506,20 +548,20 @@ TEST(Quantity, UnitCastRequiresExplicitTypeForDangerousReps) {
 
     // Unsafe instances: small integral types.
     //
-    // To "test" these, try replacing `.as<Rep>(...)` with `.as(...)`.  Make sure it fails with a
+    // To "test" these, try replacing `.coerce_as(...)` with `.as(...)`.  Make sure it fails with a
     // readable `static_assert`.
-    EXPECT_THAT(feet(uint16_t{1}).as<uint16_t /* must include */>(centi(feet)),
+    EXPECT_THAT(feet(uint16_t{1}).coerce_as(centi(feet)),
                 SameTypeAndValue(centi(feet)(uint16_t{100})));
 }
 
 TEST(Quantity, CanCastToDifferentUnit) {
-    EXPECT_THAT(inches(6).as<int>(feet), SameTypeAndValue(feet(0)));
+    EXPECT_THAT(inches(6).coerce_as(feet), SameTypeAndValue(feet(0)));
     EXPECT_THAT(inches(6.).as(feet), SameTypeAndValue(feet(0.5)));
 }
 
 TEST(Quantity, QuantityCastSupportsConstexprAndConst) {
     constexpr auto eighteen_inches_double = inches(18.);
-    constexpr auto one_foot_int = eighteen_inches_double.as<int>(feet);
+    constexpr auto one_foot_int = eighteen_inches_double.coerce_as<int>(feet);
     EXPECT_THAT(one_foot_int, SameTypeAndValue(feet(1)));
 }
 
@@ -544,7 +586,8 @@ TEST(Quantity, QuantityCastAvoidsPreventableOverflowWhenGoingToSmallerType) {
     // Make sure we don't overflow in uint64_t.
     ASSERT_EQ(lots_of_nanoinches.in(nano(inches)), would_overflow_uint32);
 
-    EXPECT_THAT(lots_of_nanoinches.as<uint32_t>(inches), SameTypeAndValue(inches(uint32_t{9})));
+    EXPECT_THAT(lots_of_nanoinches.coerce_as<uint32_t>(inches),
+                SameTypeAndValue(inches(uint32_t{9})));
 }
 
 TEST(Quantity, CommonTypeMagnitudeEvenlyDividesBoth) {
@@ -604,89 +647,8 @@ TEST(Quantity, CommonTypeRespectsImplicitRepSafetyChecks) {
     // would fail, rather than failing to compile.
 }
 
-TEST(Quantity, MultiplicationRespectUnderlyingTypes) {
-    auto expect_multiplication_respects_types = [](auto t, auto u) {
-        const auto t_quantity = (feet / hour)(t);
-        const auto u_quantity = hours(u);
-
-        const auto r = t * u;
-
-        EXPECT_THAT(t_quantity * u_quantity, QuantityEquivalent(feet(r)));
-        EXPECT_THAT(t_quantity * u, QuantityEquivalent((feet / hour)(r)));
-        EXPECT_THAT(t * u_quantity, QuantityEquivalent(hours(r)));
-    };
-
-    expect_multiplication_respects_types(2., 3.);
-    expect_multiplication_respects_types(2., 3.f);
-    expect_multiplication_respects_types(2., 3);
-
-    expect_multiplication_respects_types(2.f, 3.);
-    expect_multiplication_respects_types(2.f, 3.f);
-    expect_multiplication_respects_types(2.f, 3);
-
-    expect_multiplication_respects_types(2, 3.);
-    expect_multiplication_respects_types(2, 3.f);
-    expect_multiplication_respects_types(2, 3);
-}
-
-TEST(Quantity, DivisionRespectsUnderlyingTypes) {
-    auto expect_division_respects_types = [](auto t, auto u) {
-        const auto t_quantity = miles(t);
-        const auto u_quantity = hours(u);
-
-        const auto q = t / u;
-
-        EXPECT_THAT(t_quantity / u_quantity, QuantityEquivalent((miles / hour)(q)));
-        EXPECT_THAT(t_quantity / u, QuantityEquivalent(miles(q)));
-        EXPECT_THAT(t / u_quantity, QuantityEquivalent(pow<-1>(hours)(q)));
-    };
-
-    expect_division_respects_types(2., 3.);
-    expect_division_respects_types(2., 3.f);
-    expect_division_respects_types(2., 3);
-
-    expect_division_respects_types(2.f, 3.);
-    expect_division_respects_types(2.f, 3.f);
-    expect_division_respects_types(2.f, 3);
-
-    // We omit the integer division case, because we forbid it for Quantity.  When combined with
-    // implicit conversions, it is too prone to truncate significantly and surprise users.
-    expect_division_respects_types(2, 3.);
-    expect_division_respects_types(2, 3.f);
-    // expect_division_respects_types(2, 3);
-}
-
 TEST(QuantityMaker, ProvidesAssociatedUnit) {
     StaticAssertTypeEq<AssociatedUnitT<QuantityMaker<Hours>>, Hours>();
-}
-
-TEST(QuantityShorthandMultiplicationAndDivisionAssignment, RespectUnderlyingTypes) {
-    auto expect_shorthand_assignment_models_underlying_types = [](auto t, auto u) {
-        auto t_quantity = yards(t);
-
-        t_quantity *= u;
-        t *= u;
-        EXPECT_THAT(t_quantity.in(yards), SameTypeAndValue(t));
-
-        t_quantity /= u;
-        t /= u;
-        EXPECT_THAT(t_quantity.in(yards), SameTypeAndValue(t));
-    };
-
-    expect_shorthand_assignment_models_underlying_types(2., 3.);
-    expect_shorthand_assignment_models_underlying_types(2., 3.f);
-    expect_shorthand_assignment_models_underlying_types(2., 3);
-
-    expect_shorthand_assignment_models_underlying_types(2.f, 3.);
-    expect_shorthand_assignment_models_underlying_types(2.f, 3.f);
-    expect_shorthand_assignment_models_underlying_types(2.f, 3);
-
-    // Although a raw integer apparently does support `operator*=(T)` for floating point `T`, we
-    // don't want to allow that because it's error prone and loses precision.  Thus, we comment out
-    // those test cases here.
-    expect_shorthand_assignment_models_underlying_types(2, 3);
-    // expect_shorthand_assignment_models_underlying_types(2, 3.f);
-    // expect_shorthand_assignment_models_underlying_types(2, 3.);
 }
 
 TEST(AreQuantityTypesEquivalent, RequiresSameRepAndEquivalentUnits) {

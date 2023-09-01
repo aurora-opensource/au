@@ -5,7 +5,7 @@
       "**/*.py",
       "**/*.sh",
       "**/*.yml",
-      "**/BUILD",
+      "**/BUILD.bazel",
       "tools/bin/au-docs-serve",
       "tools/bin/buildifier",
       "tools/bin/clang-format",
@@ -25,7 +25,7 @@
   },
   {
     "include": [
-      "third_party/bazelisk/BUILD"
+      "third_party/bazelisk/BUILD.bazel"
     ],
     "license": "./.github/license-check/header-apache2-hashtag.txt"
   },

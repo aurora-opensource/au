@@ -41,33 +41,10 @@ For more practice with this, see [Tutorial 102: API Types](../tutorial/102-api-t
 
 ## Constructing `Quantity` {#constructing}
 
-There are several ways to construct a `Quantity` object.  For concreteness, we'll use this skeleton
-to show the signatures.
+There are several ways to construct a `Quantity` object.
 
-```cpp
-template <typename Unit, typename Rep>
-class Quantity {
-
-   // A) Implicit constructor from another Quantity
-   template <typename OtherUnit, typename OtherRep>
-   Quantity(Quantity<OtherUnit, OtherRep> other);
-
-   // B) Construct from `Zero`
-   Quantity(Zero);
-
-   // C) Default constructor
-   Quantity();
-
-   // D) Construct from equivalent type
-   template <typename T>
-   Quantity(T &&x);
-   // NOTE: only exists when `T` is an "exactly-equivalent" type.  One example:
-   // `std::chrono::nanoseconds` can construct an `au::QuantityI64<Nano<Seconds>>`.
-};
-```
-
-However, the _preferred_ way to construct a `Quantity` is actually none of these.  It's the
-_quantity maker_, which we describe next.
+- The **preferred** way, which we'll explain below, is to use a _quantity maker_.
+- The other ways are all normal C++ constructors.
 
 ### Quantity Maker (preferred)
 
@@ -84,16 +61,20 @@ Makers](../tutorial/101-quantity-makers.md).
 
 ### Implicit constructor from another `Quantity` {#implicit-from-quantity}
 
-This is option `A)` from the [previous section](#constructing).
-
-```cpp
-template <typename OtherUnit, typename OtherRep>
-Quantity<Unit, Rep>(Quantity<OtherUnit, OtherRep> other);
-```
-
 This constructor performs a unit conversion.  The result will represent the _same quantity_ as the
 input, but expressed in the _units_ of the newly constructed object's type.  It will also convert
 the stored value to the _rep_ of the constructed object, if necessary.
+
+Here is the signature.  We've simplified it slightly for illustration purposes, and enclosed it
+inside the class definition for context.
+
+```cpp
+template <typename Unit, typename Rep>
+class Quantity {
+    template <typename OtherUnit, typename OtherRep>
+    Quantity(Quantity<OtherUnit, OtherRep> other);
+};
+```
 
 This constructor only exists when this unit-and-rep conversion is both meaningful and safe.  It can
 fail to exist in several ways.
@@ -115,17 +96,20 @@ fail to exist in several ways.
 
 These last two are examples of conversions that are physically meaningful, but forbidden due to the
 risk of larger-than-usual errors.  The library can still perform these conversions, but not via this
-constructor, and it must be "forced" to do so.  See [`.as<T>(unit)`](#as) for more details.
+constructor, and it must be "forced" to do so.  See [`.coerce_as(unit)`](#coerce) for more details.
 
 ### Constructing from `Zero`
 
-This is option `B)` from the [previous section](#constructing).
+This constructs a `Quantity` with a value of 0.
+
+Here is the signature, enclosed in the class definition for context.
 
 ```cpp
-Quantity(Zero);
+template <typename Unit, typename Rep>
+class Quantity {
+    Quantity(Zero);
+};
 ```
-
-This constructs a `Quantity` with a value of 0.
 
 !!! note
     `Zero` is the name of the type.  At the callsite, you would pass an _instance_ of that type,
@@ -135,29 +119,39 @@ This constructs a `Quantity` with a value of 0.
     QuantityD<Meters> height{ZERO};
     ```
 
+For more information on the motivation and use of this type, read [our `Zero`
+discussion](../discussion/concepts/zero.md).
+
 ### Default constructor
 
-This is option `C)` from the [previous section](#constructing).
+Here is the signature of the constructor, enclosed in the class template definition for context.
 
 ```cpp
-Quantity();
+template <typename Unit, typename Rep>
+class Quantity {
+    Quantity();
+};
 ```
 
 A default-constructed `Quantity` is initialized to some value, which helps avoid certain kinds of
-memory safety bugs.  However, the value is contractually unspecified.  You can look up that value by
-reading the source code, but we may change it in the future, and we would not consider this to be
-a breaking change.  The only valid operation on a default-constructed `Quantity` is to assign to it
-later on.
+memory safety bugs.  However, **the value is contractually unspecified**.  You can of course look up
+that value by reading the source code, but we may change it in the future, and **we would not
+consider this to be a breaking change**.  The only valid operation on a default-constructed
+`Quantity` is to assign to it later on.
 
 ### Constructing from corresponding quantity
 
-This is option `D)` from the [previous section](#constructing).
+Here is the signature.  We've simplified it slightly for illustration purposes, and enclosed it
+inside the class definition for context.
 
 ```cpp
-template <typename T>
-Quantity(T &&x);
-// NOTE: only exists when `T` is an "exactly-equivalent" type.  One example:
-// `std::chrono::nanoseconds` can construct an `au::QuantityI64<Nano<Seconds>>`.
+template <typename Unit, typename Rep>
+class Quantity {
+    template <typename T>
+    Quantity(T &&x);
+    // NOTE: only exists when `T` is an "exactly-equivalent" type.  One example:
+    // `std::chrono::nanoseconds` can construct an `au::QuantityI64<Nano<Seconds>>`.
+};
 ```
 
 This constructor will only exist when `T` has a ["corresponding
@@ -170,7 +164,7 @@ In order to access the raw numeric value stored inside of `Quantity`, you must e
 unit at the callsite.  There are two functions which can do this, depending on whether you want to
 access by value or by reference.
 
-### `.in(unit)` {#extracting-with-in}
+### By value: `.in(unit)` {#extracting-with-in}
 
 This function returns the underlying stored value, by value.  See the [unit
 slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `unit`.
@@ -185,7 +179,7 @@ slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `uni
     You can retrieve the underlying value by writing either `t.in(seconds)` (passing the
     `QuantityMaker`), or `t.in(Seconds{})` (passing an instance of the unit).
 
-### `.data_in(unit)`
+### By reference: `.data_in(unit)`
 
 This function returns a reference to the underlying stored value.  See the [unit
 slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `unit`.
@@ -233,16 +227,22 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
 2. The conversion is considered "forcing", and will be permitted in spite of any overflow or
    truncation risk.  The semantics are similar to `static_cast<T>`.
 
+However, note that we may change this second property in the future.  The version with the template
+arguments may be changed later so that it _does_ prevent lossy conversions.  If you want this
+"forcing" semantic, prefer to use [`.coerce_as(unit)`](#coerce), and add the explicit template
+parameter only if you want to change the rep.  See
+[#122](https://github.com/aurora-opensource/au/issues/122) for more details.
+
 ??? example "Example: forcing a conversion from inches to feet"
     `inches(24).as(feet)` is not allowed.  This conversion will divide the underlying value, `24`,
-    by `12`.  While this particular value would produce an integer result, most other `int` values
-    would not.  Because our result uses `int` for storage --- same as the input --- we forbid this.
+    by `12`.  Now, it so happens that this _particular_ value _would_ produce an integer result.
+    However, the compiler must decide whether to permit this operation _at compile time_, which
+    means we don't yet know the value.  Since most `int` values would _not_ produce integer results,
+    we forbid this.
 
     `inches(24).as<int>(feet)` _is_ allowed.  The "explicit rep" template parameter has "forcing"
-    semantics.  This would produce `feet(2)`.
-
-    However, note that this operation uses integer division, which truncates: so, for example,
-    `inches(23).as<int>(feet)` would produce `feet(1)`.
+    semantics.  This would produce `feet(2)`.  However, note that this operation uses integer
+    division, which truncates: so, for example, `inches(23).as<int>(feet)` would produce `feet(1)`.
 
 !!! tip
     Prefer to **omit** the template argument if possible, because you will get more safety checks.
@@ -265,7 +265,7 @@ slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `uni
     `int`.
 
     The above example used the quantity maker, `inches`.  One could also use an instance of the unit
-    type `Inches`, writing `length.as(Inches{})`.  The former is generally preferable; the latter is
+    type `Inches`, writing `length.in(Inches{})`.  The former is generally preferable; the latter is
     mainly useful in generic code where the unit type may be all you have.
 
 **Without** a template argument, `.in(unit)` obeys the same safety checks as for the [implicit
@@ -278,20 +278,51 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
 2. The conversion is considered "forcing", and will be permitted in spite of any overflow or
    truncation risk.  The semantics are similar to `static_cast<T>`.
 
+However, note that we may change this second property in the future.  The version with the template
+arguments may be changed later so that it _does_ prevent lossy conversions.  If you want this
+"forcing" semantic, prefer to use [`.coerce_in(unit)`](#coerce), and add the explicit template
+parameter only if you want to change the rep.  See
+[#122](https://github.com/aurora-opensource/au/issues/122) for more details.
+
 ??? example "Example: forcing a conversion from inches to feet"
     `inches(24).in(feet)` is not allowed.  This conversion will divide the underlying value, `24`,
-    by `12`.  While this particular value would produce an integer result, most other `int` values
-    would not.  Because our result uses `int` --- same as the input's rep --- we forbid this.
+    by `12`.  Now, it so happens that this _particular_ value _would_ produce an integer result.
+    However, the compiler must decide whether to permit this operation _at compile time_, which
+    means we don't yet know the value.  Since most `int` values would _not_ produce integer results,
+    we forbid this.
 
     `inches(24).in<int>(feet)` _is_ allowed.  The "explicit rep" template parameter has "forcing"
-    semantics.  This would produce `2`.
-
-    However, note that this operation uses integer division, which truncates: so, for example,
-    `inches(23).in<int>(feet)` would produce `1`.
+    semantics (at least for now; see [#122](https://github.com/aurora-opensource/au/issues/122)).
+    This would produce `2`.  However, note that this operation uses integer division, which
+    truncates: so, for example, `inches(23).in<int>(feet)` would produce `1`.
 
 !!! tip
     Prefer to **omit** the template argument if possible, because you will get more safety checks.
     The risks which the no-template-argument version warns about are real.
+
+### Forcing lossy conversions: `.coerce_as(unit)`, `.coerce_in(unit)` {#coerce}
+
+This function performs the exact same kind of unit conversion as if the string `coerce_` were
+removed.  However, it will ignore any safety checks for overflow or truncation.
+
+??? example "Example: forcing a conversion from inches to feet"
+    `inches(24).as(feet)` is not allowed.  This conversion will divide the underlying value, `24`,
+    by `12`.  While this particular value would produce an integer result, most other `int` values
+    would not.  Because our result uses `int` for storage --- same as the input --- we forbid this.
+
+    `inches(24).coerce_as(feet)` _is_ allowed.  The `coerce_` prefix has "forcing" semantics.  This
+    would produce `feet(2)`.  However, note that this operation uses integer division, which
+    truncates: so, for example, `inches(23).coerce_as(feet)` would produce `feet(1)`.
+
+These functions also support an explicit template parameter: so, `.coerce_as<T>(unit)` and
+`.coerce_in<T>(unit)`.  If you supply this parameter, it will be the rep of the result.
+
+??? example "Example: simultaneous unit and type conversion"
+    `inches(27.8).coerce_as<int>(feet)` will return `feet(2)`.
+
+!!! tip
+    Prefer **not** to use the "coercing versions" if possible, because you will get more safety
+    checks.  The risks which the "base" versions warn about are real.
 
 ## Operations
 
@@ -554,7 +585,7 @@ As [required by the standard](https://en.cppreference.com/w/cpp/types/common_typ
 [SFINAE](https://en.cppreference.com/w/cpp/language/sfinae)-friendly: improper combinations will
 simply not be present, rather than producing a hard error.
 
-### AreQuantityTypesEquivalent
+### AreQuantityTypesEquivalent {#are-quantity-types-equivalent}
 
 **Result:** Indicates whether two `Quantity` types are equivalent.  Equivalent types may be freely
 converted to each other, and no arithmetic operations will be performed in doing so.

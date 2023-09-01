@@ -188,7 +188,7 @@ numbers at all.
         // inches.  For example, `inches(17)` would be decomposed into `Height{feet(1), inches(5)}`.
         Height decompose_height(QuantityU32<Inches> total_height) {
             Height h;
-            h.feet = total_height.as<uint32_t>(feet);  // NOTE: truncation is intended.
+            h.feet = total_height.coerce_as(feet);  // NOTE: truncation is intended.
             h.inches = total_height - h.feet.as(inches);
             return h;
         }
