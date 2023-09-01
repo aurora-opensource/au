@@ -135,21 +135,21 @@ It's the "classic" error the units library aims to prevent.
     **Compiler error (MSVC x64 19.29)**
     ```
     error_examples.cc(32): error C2248: 'au::Quantity<au::Seconds,double>::Quantity': cannot access private member declared in class 'au::Quantity<au::Seconds,double>'
-    D:\a\au\au\au.hh(3174): note: see declaration of 'au::Quantity<au::Seconds,double>::Quantity'
-    D:\a\au\au\au.hh(3241): note: see declaration of 'au::Quantity<au::Seconds,double>'
+    D:\a\au\au\au.hh(3202): note: see declaration of 'au::Quantity<au::Seconds,double>::Quantity'
+    D:\a\au\au\au.hh(3269): note: see declaration of 'au::Quantity<au::Seconds,double>'
     error_examples.cc(35): error C2248: 'au::Quantity<au::Meters,double>::Quantity': cannot access private member declared in class 'au::Quantity<au::Meters,double>'
-    D:\a\au\au\au.hh(3174): note: see declaration of 'au::Quantity<au::Meters,double>::Quantity'
-    D:\a\au\au\au.hh(3241): note: see declaration of 'au::Quantity<au::Meters,double>'
+    D:\a\au\au\au.hh(3202): note: see declaration of 'au::Quantity<au::Meters,double>::Quantity'
+    D:\a\au\au\au.hh(3269): note: see declaration of 'au::Quantity<au::Meters,double>'
     ```
 
     **Compiler error (MSVC x64 19.35)**
     ```
     error_examples.cc(32): error C2248: 'au::Quantity<au::Seconds,double>::Quantity': cannot access private member declared in class 'au::Quantity<au::Seconds,double>'
-    D:\a\au\au\au.hh(3174): note: see declaration of 'au::Quantity<au::Seconds,double>::Quantity'
-    D:\a\au\au\au.hh(3241): note: see declaration of 'au::Quantity<au::Seconds,double>'
+    D:\a\au\au\au.hh(3202): note: see declaration of 'au::Quantity<au::Seconds,double>::Quantity'
+    D:\a\au\au\au.hh(3269): note: see declaration of 'au::Quantity<au::Seconds,double>'
     error_examples.cc(35): error C2248: 'au::Quantity<au::Meters,double>::Quantity': cannot access private member declared in class 'au::Quantity<au::Meters,double>'
-    D:\a\au\au\au.hh(3174): note: see declaration of 'au::Quantity<au::Meters,double>::Quantity'
-    D:\a\au\au\au.hh(3241): note: see declaration of 'au::Quantity<au::Meters,double>'
+    D:\a\au\au\au.hh(3202): note: see declaration of 'au::Quantity<au::Meters,double>::Quantity'
+    D:\a\au\au\au.hh(3269): note: see declaration of 'au::Quantity<au::Meters,double>'
     ```
 
 ## Dangerous conversion

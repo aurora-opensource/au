@@ -27,6 +27,7 @@ namespace au {
 
 void set_timeout(QuantityD<Seconds> dt);
 
+/*
 void example_private_constructor() {
     // A (BROKEN): passing raw number where duration expected.
     set_timeout(0.5);
@@ -34,8 +35,8 @@ void example_private_constructor() {
     // B (BROKEN): calling Quantity constructor directly.
     constexpr QuantityD<Meters> length{5.5};
 }
+*/
 
-/*
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Dangerous conversion
 
@@ -47,6 +48,7 @@ void example_dangerous_conversion() {
     giga(hertz)(1).as(hertz);
 }
 
+/*
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: No type named 'type' in 'std::common_type'
 
