@@ -429,4 +429,41 @@ struct CommonMagnitude<Zero, M> : stdx::type_identity<M> {};
 template <>
 struct CommonMagnitude<Zero, Zero> : stdx::type_identity<Zero> {};
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `ApplyMagnitude`: Machinery for intelligently applying a Magnitude as a conversion factor.
+
+template <typename MagT, bool IsInt, bool IsRatio>
+struct ApplyMagnitude;
+
+template <typename MagT>
+struct ApplyMagnitude<MagT, true, true> {
+    static_assert(IsInteger<MagT>::value, "Must only be instantiated for integer Magnitude");
+
+    template <typename T>
+    static constexpr auto apply(T x, MagT m = {}) {
+        return x * get_value<T>(m);
+    }
+};
+
+template <typename MagT>
+struct ApplyMagnitude<MagT, false, true> {
+    static_assert(!IsInteger<MagT>::value, "Must not be instantiated for integer Magnitude");
+    static_assert(IsRational<MagT>::value, "Must only be instantiated for rational Magnitude");
+
+    template <typename T>
+    static constexpr auto apply(T x, MagT m = {}) {
+        return x * get_value<T>(numerator(m)) / get_value<T>(denominator(m));
+    }
+};
+
+template <typename MagT>
+struct ApplyMagnitude<MagT, false, false> {
+    static_assert(!IsRational<MagT>::value, "Must not be instantiated for rational Magnitude");
+
+    template <typename T>
+    static constexpr auto apply(T x, MagT m = {}) {
+        return x * get_value<T>(m);
+    }
+};
+
 }  // namespace  au

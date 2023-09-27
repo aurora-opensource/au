@@ -143,17 +143,13 @@ class Quantity {
               typename NewUnit,
               typename = std::enable_if_t<IsUnit<NewUnit>::value>>
     constexpr auto as(NewUnit) const {
-        constexpr auto ratio = unit_ratio(unit, NewUnit{});
-
         using Common = std::common_type_t<Rep, NewRep>;
-        constexpr auto NUM = integer_part(numerator(ratio));
-        constexpr auto DEN = integer_part(denominator(ratio));
-        constexpr auto num = get_value<Common>(NUM);
-        constexpr auto den = get_value<Common>(DEN);
-        constexpr auto irr = get_value<Common>(ratio * DEN / NUM);
+
+        using M = UnitRatioT<Unit, NewUnit>;
+        using MagnitudeApplier = ApplyMagnitude<M, IsInteger<M>::value, IsRational<M>::value>;
 
         return make_quantity<NewUnit>(
-            static_cast<NewRep>(static_cast<Common>(value_) * num / den * irr));
+            static_cast<NewRep>(MagnitudeApplier::apply(static_cast<Common>(value_))));
     }
 
     template <typename NewUnit, typename = std::enable_if_t<IsUnit<NewUnit>::value>>
