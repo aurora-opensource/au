@@ -44,7 +44,7 @@ indicate which version we considered, and say a few words about why we included 
       used C++ units library to date.
 - [**bernedom/SI**](https://github.com/bernedom/SI) (version: 2.5.1)
     - A newer, C++17-compatible offering with a large number of GitHub stars.
-- [**mp-units**](https://github.com/mpusz/mp-units) (version: 2.0.0:testing)
+- [**mp-units**](https://github.com/mpusz/mp-units) (version: 2.0.0)
     - A library designed to take full advantage of ultra-modern (that is, post-C++20 watershed)
       features, such as concepts and non-template type parameters (NTTPs).
     - mp-units is leading the efforts towards a standard C++ units library, both by field testing
@@ -320,8 +320,8 @@ features.
         <td class="fair"></td>
         <td class="fair"></td>
         <td class="fair"></td>
-        <td class="good">Contains unit-safe interfaces</td>
-        <td class="best">Only contains unit-safe interfaces</td>
+        <td class="good">Only contains unit-safe interfaces</td>
+        <td class="good">Only contains unit-safe interfaces</td>
     </tr>
     <tr>
         <td>
@@ -394,8 +394,24 @@ features.
         <td class="fair"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">Prefix only</a></td>
         <td class="poor"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">No</a></td>
         <td class="poor">No</td>
-        <td class="good">Can compose units, prefixes, dimensions, and quantity types</td>
-        <td class="good">QuantityMaker and PrefixApplier APIs</td>
+        <td class="best">
+            <ul>
+                <li class="check">Can compose units, prefixes, dimensions, and quantity types</li>
+                <li class="check">
+                    C++20's Non-type template parameters (NTTPs) enable composable <i>type names</i>
+                </li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">
+                    Can compose units, prefixes, dimensions, and quantity (point) makers
+                </li>
+                <li class="x">
+                    Type names clunky to compose: must write <code>decltype</code> or use traits
+                </li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>
@@ -613,7 +629,9 @@ features.
             point</a>.
         </td>
         <td class="poor">None; would be hard to add, since units conflated with quantity type</td>
-        <td class="good"></td>
+        <td class="best">
+            Custom origins really easy to use and compose
+        </td>
         <td class="good"></td>
     </tr>
     <tr>
@@ -698,7 +716,7 @@ features.
                 </p>
             </details>
         </td>
-        <td class="poor"></td>
+        <td class="na"></td>
         <td class="good">User-defined literals (UDLs)</td>
         <td class="good">User-defined literals (UDLs)</td>
         <td class="best">
@@ -792,7 +810,12 @@ features.
         </td>
         <td class="fair">Supports <code>copysign()</code>, but no special construction or comparison</td>
         <td class="poor">No special construction or comparison</td>
-        <td class="fair">Has <code>q::zero()</code> member, but no special construction or comparison</td>
+        <td class="good">
+            <li class="check">
+                <a href="https://mpusz.github.io/mp-units/2.1/users_guide/framework_basics/quantity_arithmetics/?h=zero#comparison-against-zero">Special comparison functions</a>
+            </li>
+            <li><code>zero()</code> member</li>
+        </td>
         <td class="best">
             Can use <a
             href="https://aurora-opensource.github.io/au/main/discussion/concepts/zero/"><code>ZERO</code></a>
@@ -820,7 +843,7 @@ features.
                 <li class="x">pi represented as <code>std::ratio</code></li>
             </ul>
         </td>
-        <td class="good"></td>
+        <td class="best">Simultaneous support for both strongly-typed and "pure SI" angles</td>
         <td class="good"></td>
     </tr>
     <tr>
@@ -904,7 +927,7 @@ features.
     <tr>
         <td>
             <details class="criterion">
-                <summary>Units/Dimensions as types</summary>
+                <summary>Abstract Units/Dimensions</summary>
                 <p>
                     <li>
                         Types that represent abstract units (clearly distinct from quantities of
