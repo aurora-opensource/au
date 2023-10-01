@@ -75,6 +75,17 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, true> {
     }
 };
 
+// Applying a (non-integer, non-inverse-integer) rational, for any non-integral type T.
+template <typename Mag, typename T>
+struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, false> {
+    static_assert(categorize_magnitude(Mag{}) == ApplyAs::RATIONAL_MULTIPLY,
+                  "Mismatched instantiation (should never be done manually)");
+    static_assert(!std::is_integral<T>::value,
+                  "Mismatched instantiation (should never be done manually)");
+
+    constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+};
+
 template <typename T, typename... BPs>
 constexpr T apply_magnitude(const T &x, Magnitude<BPs...> m) {
     return ApplyMagnitudeImpl<Magnitude<BPs...>,
