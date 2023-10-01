@@ -63,5 +63,19 @@ TEST(ApplyMagnitude, DividesForIntegerDivide) {
     }
 }
 
+TEST(ApplyMagnitude, MultipliesThenDividesForRationalMagnitudeOnInteger) {
+    // Consider applying the magnitude (3/2) to the value 5.  The exact answer is the real number
+    // 7.5, which becomes 7 when translated (via truncation) to the integer domain.
+    //
+    // If we multiply-then-divide, we get (5 * 3) / 2 = 7, which is correct.
+    //
+    // If we divide-then-multiply --- say, because we are trying to avoid overflow --- then we get
+    // (5 / 2) * 3 = 2 * 3 = 6, which is wrong.
+    constexpr auto three_halves = mag<3>() / mag<2>();
+    ASSERT_EQ(categorize_magnitude(three_halves), ApplyAs::RATIONAL_MULTIPLY);
+
+    EXPECT_THAT(apply_magnitude(5, three_halves), SameTypeAndValue(7));
+}
+
 }  // namespace detail
 }  // namespace au
