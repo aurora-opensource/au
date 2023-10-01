@@ -391,7 +391,16 @@ features.
                 </p>
             </details>
         </td>
-        <td class="fair"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">Prefix only</a></td>
+        <td class="good">
+            <ul>
+                <li class="check">
+                    Can compose units, prefixes, dimensions, and quantity (point) makers
+                </li>
+                <li class="x">
+                    Type names clunky to compose: must write <code>decltype</code>
+                </li>
+            </ul>
+        </td>
         <td class="poor"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">No</a></td>
         <td class="poor">No</td>
         <td class="best">
@@ -515,9 +524,12 @@ features.
                 <li class="check">
                     Unit-safe APIs for <code>round</code>, <code>ceil</code>, and so on
                 </li>
+                <li class="check">
+                    Smart, unit-aware inverse functions
+                </li>
             </ul>
         </td>
-        <td class="best">
+        <td class="good">
             <ul>
                 <li class="check">Wide variety of functions</li>
                 <li class="check">
@@ -602,11 +614,31 @@ features.
         <td class="fair">No interop with other units libraries</td>
         <td class="fair">No interop with other units libraries</td>
         <td class="good">
-            <a href="https://mpusz.github.io/units/use_cases/interoperability.html">
-                <code>quantity_like_traits</code>
-            </a>
+            <ul>
+                <li class="check">
+                    <a href="https://mpusz.github.io/mp-units/2.1/users_guide/framework_basics/basic_concepts/#QuantityLike">
+                        <code>QuantityLike&lt;T&gt;</code> supports bidirectional conversions
+                    </a>
+                </li>
+                <li class="check">
+                    Can specify implicit or explicit
+                </li>
+            </ul>
         </td>
-        <td class="best">"Equivalent types" feature gives more API compatibility</td>
+        <td class="good">
+            <ul>
+                <li class="check">
+                    <a href="https://aurora-opensource.github.io/au/main/howto/interop/">
+                        <code>CorrespondingQuantity</code> supports bidirectional implicit conversions
+                    </a>
+                </li>
+                <li class="check">
+                    Supports <a
+                    href="https://aurora-opensource.github.io/au/main/reference/corresponding_quantity/#conversions">"two-hop"
+                    conversions</a>
+                </li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>
@@ -969,10 +1001,15 @@ features.
                 </p>
             </details>
         </td>
-        <td class="poor">Present in user-facing APIs</td>
-        <td class="poor">Present in user-facing APIs</td>
-        <td class="fair">Very few, and confined to implementation helpers</td>
-        <td class="fair">Very few, and confined to implementation helpers</td>
+        <td class="poor">Common in user-facing APIs</td>
+        <td class="poor">Common in user-facing APIs</td>
+        <td class="good">Very few, and confined to implementation helpers</td>
+        <td class="fair">
+            <ul>
+                <li>Very few, mostly implementation helpers</li>
+                <li>Only one user-facing macro for C++20 backwards compatibility</li>
+            </ul>
+        </td>
         <td class="best">No macros</td>
     </tr>
 </table>
