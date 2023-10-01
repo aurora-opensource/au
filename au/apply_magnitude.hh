@@ -41,5 +41,34 @@ constexpr ApplyAs categorize_magnitude(Magnitude<BPs...>) {
                                                 : ApplyAs::IRRATIONAL_MULTIPLY;
 }
 
+template <typename Mag, ApplyAs Category, typename T, bool is_T_integral>
+struct ApplyMagnitudeImpl;
+
+// Multiplying by an integer, for any type T.
+template <typename Mag, typename T, bool is_T_integral>
+struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_MULTIPLY, T, is_T_integral> {
+    static_assert(categorize_magnitude(Mag{}) == ApplyAs::INTEGER_MULTIPLY,
+                  "Mismatched instantiation (should never be done manually)");
+
+    constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+};
+
+// Dividing by an integer, for any type T.
+template <typename Mag, typename T, bool is_T_integral>
+struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_DIVIDE, T, is_T_integral> {
+    static_assert(categorize_magnitude(Mag{}) == ApplyAs::INTEGER_DIVIDE,
+                  "Mismatched instantiation (should never be done manually)");
+
+    constexpr T operator()(const T &x) { return x / get_value<T>(MagInverseT<Mag>{}); }
+};
+
+template <typename T, typename... BPs>
+constexpr T apply_magnitude(const T &x, Magnitude<BPs...> m) {
+    return ApplyMagnitudeImpl<Magnitude<BPs...>,
+                              categorize_magnitude(m),
+                              T,
+                              std::is_integral<T>::value>{}(x);
+}
+
 }  // namespace detail
 }  // namespace au

@@ -14,6 +14,7 @@
 
 #include "au/apply_magnitude.hh"
 
+#include "au/testing.hh"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -40,6 +41,26 @@ TEST(CategorizeMagnitude, FindsRationalMultiplyInstances) {
 TEST(CategorizeMagnitude, FindsIrrationalMultiplyInstances) {
     EXPECT_EQ(categorize_magnitude(sqrt(mag<2>())), ApplyAs::IRRATIONAL_MULTIPLY);
     EXPECT_EQ(categorize_magnitude(PI), ApplyAs::IRRATIONAL_MULTIPLY);
+}
+
+TEST(ApplyMagnitude, MultipliesForIntegerMultiply) {
+    constexpr auto m = mag<25>();
+    ASSERT_EQ(categorize_magnitude(m), ApplyAs::INTEGER_MULTIPLY);
+
+    EXPECT_THAT(apply_magnitude(4, m), SameTypeAndValue(100));
+    EXPECT_THAT(apply_magnitude(4.0f, m), SameTypeAndValue(100.0f));
+}
+
+TEST(ApplyMagnitude, DividesForIntegerDivide) {
+    constexpr auto one_thirteenth = ONE / mag<13>();
+    ASSERT_EQ(categorize_magnitude(one_thirteenth), ApplyAs::INTEGER_DIVIDE);
+
+    // This test would fail if our implementation multiplied by the float representation of (1/13),
+    // instead of dividing by 13, under the hood.
+    for (int i = 1; i < 100; ++i) {
+        EXPECT_THAT(apply_magnitude(static_cast<float>(i * 13), one_thirteenth),
+                    SameTypeAndValue(static_cast<float>(i)));
+    }
 }
 
 }  // namespace detail

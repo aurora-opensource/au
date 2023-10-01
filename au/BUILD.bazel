@@ -118,6 +118,7 @@ cc_test(
     copts = ["-Iexternal/gtest/include"],
     deps = [
         ":apply_magnitude",
+        ":testing",
         "@com_google_googletest//:gtest_main",
     ],
 )
