@@ -322,6 +322,7 @@ cc_library(
     name = "quantity",
     hdrs = ["quantity.hh"],
     deps = [
+        ":apply_magnitude",
         ":conversion_policy",
         ":operators",
         ":unit_of_measure",

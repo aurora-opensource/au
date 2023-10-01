@@ -16,6 +16,7 @@
 
 #include <utility>
 
+#include "au/apply_magnitude.hh"
 #include "au/conversion_policy.hh"
 #include "au/operators.hh"
 #include "au/stdx/functional.hh"
@@ -144,12 +145,10 @@ class Quantity {
               typename = std::enable_if_t<IsUnit<NewUnit>::value>>
     constexpr auto as(NewUnit) const {
         using Common = std::common_type_t<Rep, NewRep>;
-
-        using M = UnitRatioT<Unit, NewUnit>;
-        using MagnitudeApplier = ApplyMagnitude<M, IsInteger<M>::value, IsRational<M>::value>;
+        using Factor = UnitRatioT<Unit, NewUnit>;
 
         return make_quantity<NewUnit>(
-            static_cast<NewRep>(MagnitudeApplier::apply(static_cast<Common>(value_))));
+            static_cast<NewRep>(detail::apply_magnitude(static_cast<Common>(value_), Factor{})));
     }
 
     template <typename NewUnit, typename = std::enable_if_t<IsUnit<NewUnit>::value>>
