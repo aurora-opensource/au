@@ -106,6 +106,23 @@ cc_test(
 # Implementation detail libraries and tests
 
 cc_library(
+    name = "apply_magnitude",
+    hdrs = ["apply_magnitude.hh"],
+    deps = [":magnitude"],
+)
+
+cc_test(
+    name = "apply_magnitude_test",
+    size = "small",
+    srcs = ["apply_magnitude_test.cc"],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        ":apply_magnitude",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "chrono_policy_validation",
     testonly = True,
     hdrs = ["chrono_policy_validation.hh"],
