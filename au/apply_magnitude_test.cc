@@ -123,5 +123,10 @@ TEST(ApplyMagnitude, MultipliesSingleNumberForRationalMagnitudeOnFloatingPoint) 
     EXPECT_THAT(results, Not(ElementsAreArray(if_we_multiply_and_divide)));
 }
 
+TEST(ApplyMagnitude, MultipliesSingleNumberForIrrationalMagnitudeOnFloatingPoint) {
+    ASSERT_EQ(categorize_magnitude(PI), ApplyAs::IRRATIONAL_MULTIPLY);
+    EXPECT_THAT(apply_magnitude(2.0f, PI), SameTypeAndValue(2.0f * static_cast<float>(M_PI)));
+}
+
 }  // namespace detail
 }  // namespace au

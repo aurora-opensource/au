@@ -49,6 +49,8 @@ template <typename Mag, typename T, bool is_T_integral>
 struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_MULTIPLY, T, is_T_integral> {
     static_assert(categorize_magnitude(Mag{}) == ApplyAs::INTEGER_MULTIPLY,
                   "Mismatched instantiation (should never be done manually)");
+    static_assert(is_T_integral == std::is_integral<T>::value,
+                  "Mismatched instantiation (should never be done manually)");
 
     constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
 };
@@ -57,6 +59,8 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_MULTIPLY, T, is_T_integral> {
 template <typename Mag, typename T, bool is_T_integral>
 struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_DIVIDE, T, is_T_integral> {
     static_assert(categorize_magnitude(Mag{}) == ApplyAs::INTEGER_DIVIDE,
+                  "Mismatched instantiation (should never be done manually)");
+    static_assert(is_T_integral == std::is_integral<T>::value,
                   "Mismatched instantiation (should never be done manually)");
 
     constexpr T operator()(const T &x) { return x / get_value<T>(MagInverseT<Mag>{}); }
@@ -81,6 +85,19 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, false> {
     static_assert(categorize_magnitude(Mag{}) == ApplyAs::RATIONAL_MULTIPLY,
                   "Mismatched instantiation (should never be done manually)");
     static_assert(!std::is_integral<T>::value,
+                  "Mismatched instantiation (should never be done manually)");
+
+    constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+};
+
+// Applying an irrational for any type T (although only non-integral T makes sense).
+template <typename Mag, typename T, bool is_T_integral>
+struct ApplyMagnitudeImpl<Mag, ApplyAs::IRRATIONAL_MULTIPLY, T, is_T_integral> {
+    static_assert(!std::is_integral<T>::value, "Cannot apply irrational magnitude to integer type");
+
+    static_assert(categorize_magnitude(Mag{}) == ApplyAs::IRRATIONAL_MULTIPLY,
+                  "Mismatched instantiation (should never be done manually)");
+    static_assert(is_T_integral == std::is_integral<T>::value,
                   "Mismatched instantiation (should never be done manually)");
 
     constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
