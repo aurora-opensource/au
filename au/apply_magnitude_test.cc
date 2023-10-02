@@ -28,7 +28,7 @@ std::vector<T> first_n_positive_values(std::size_t n) {
     std::vector<T> result;
     result.reserve(n);
     for (auto i = 1u; i <= n; ++i) {
-        result.push_back(i);
+        result.push_back(static_cast<T>(i));
     }
     return result;
 }
