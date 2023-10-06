@@ -20,6 +20,28 @@ cc_library(
 )
 
 cc_test(
+    name = "au_all_units_hh_test",
+    size = "small",
+    srcs = ["au_all_units_hh_test.cc"],
+    deps = [
+        ":common_test_cases",
+        "//:au_all_units_hh_lib",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "au_all_units_noio_hh_test",
+    size = "small",
+    srcs = ["au_all_units_noio_hh_test.cc"],
+    deps = [
+        ":common_test_cases",
+        "//:au_all_units_noio_hh_lib",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_test(
     name = "au_hh_test",
     size = "small",
     srcs = ["au_hh_test.cc"],
