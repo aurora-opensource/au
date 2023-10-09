@@ -1,8 +1,9 @@
 # Applying Magnitudes
 
-Every unit conversion factor is a positive real number.  When we apply it to a value, conceptually,
-we're just multiplying the value by that number. However, that doesn't mean that multiplying by
-a number is the best _implementation_!  Consider these examples.
+Every unit conversion factor is a [_magnitude_](../../reference/magnitude.md) --- a positive real
+number.  When we apply it to a value, conceptually, we're just multiplying the value by that number.
+However, that doesn't mean that multiplying by a number is the best _implementation_!  Consider
+these examples.
 
 - **Factor: $\frac{5}{8}$; value: `12` (type: `int`).**
     - Computationally, we don't want to leave the integral domain.  But of course, $\frac{5}{8}$
