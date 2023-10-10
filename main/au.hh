@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-2-g0185918
+// Version identifier: 0.3.3-3-ga575880
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -3093,10 +3093,12 @@ class Quantity {
     friend constexpr bool operator>=(Quantity a, Quantity b) { return a.value_ >= b.value_; }
 
     // Addition and subtraction for like quantities.
-    friend constexpr auto operator+(Quantity a, Quantity b) {
+    friend constexpr Quantity<UnitT, decltype(std::declval<RepT>() + std::declval<RepT>())>
+    operator+(Quantity a, Quantity b) {
         return make_quantity<UnitT>(a.value_ + b.value_);
     }
-    friend constexpr auto operator-(Quantity a, Quantity b) {
+    friend constexpr Quantity<UnitT, decltype(std::declval<RepT>() - std::declval<RepT>())>
+    operator-(Quantity a, Quantity b) {
         return make_quantity<UnitT>(a.value_ - b.value_);
     }
 
