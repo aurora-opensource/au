@@ -1370,7 +1370,7 @@ header file.  For the latter approach, there are two options:</p>
   </tr>
   <tr>
     <td>Unit selection</td>
-    <td class="fair">Base units only</td>
+    <td class="fair">Base units only<br>(or too many units)</td>
     <td class="good">Any units desired</td>
     <td colspan=2 class="best">Any units desired, <i>without</i> needing "reinstall"</td>
   </tr>
@@ -1467,6 +1467,22 @@ the unit symbols will be needlessly complicated.</p>
 <p>Again, we recommend following the directions in the next section to get <em>exactly</em> the units you
 care about.</p>
 </div>
+<details class="warning">
+<summary>Pre-built files with all units</summary>
+<p>We also provide pre-built files with every unit the library knows about.</p>
+<p>We don&rsquo;t advertise this option widely, because the library&rsquo;s compile time slowdown is largely
+proportional to the number of units included in a translation unit.  Thus, not only will this
+configuration be the slowest of all, but <em>it will get increasingly slower as the library gets
+better over time</em> (by supporting more and more units out of the box).</p>
+<p>Therefore, these files are only for use cases where <em>you don&rsquo;t care about compile time</em>.  The
+primary example is <a href="https://godbolt.org/z/687Ef4oqM">the Compiler Explorer (&ldquo;godbolt&rdquo;)</a>.</p>
+<p><strong>If you don&rsquo;t care about compile times</strong>, here are the files:</p>
+<ul>
+<li><a href="../au_all_units.hh"><code>au_all_units.hh</code></a></li>
+<li><a href="../au_all_units_noio.hh"><code>au_all_units_noio.hh</code></a>
+  (Same as above, but with <code>&lt;iostream&gt;</code> support stripped out)</li>
+</ul>
+</details>
 <h4 id="custom-single-file">Custom single file<a class="headerlink" href="#custom-single-file" title="Permanent link">&para;</a></h4>
 <p>It&rsquo;s easy to package the library in a <em>custom</em> single file with <em>exactly</em> the units you need.
 Here&rsquo;s how:</p>
