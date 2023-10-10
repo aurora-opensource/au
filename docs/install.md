@@ -50,7 +50,7 @@ Here's an overview of the tradeoffs involved.
   </tr>
   <tr>
     <td>Unit selection</td>
-    <td class="fair">Base units only</td>
+    <td class="fair">Base units only<br>(or too many units)</td>
     <td class="good">Any units desired</td>
     <td colspan=2 class="best">Any units desired, <i>without</i> needing "reinstall"</td>
   </tr>
@@ -163,6 +163,24 @@ should get you any other unit you're likely to want.  The units we include are:
 
     Again, we recommend following the directions in the next section to get _exactly_ the units you
     care about.
+
+??? warning "Pre-built files with all units"
+    We also provide pre-built files with every unit the library knows about.
+
+    We don't advertise this option widely, because the library's compile time slowdown is largely
+    proportional to the number of units included in a translation unit.  Thus, not only will this
+    configuration be the slowest of all, but _it will get increasingly slower as the library gets
+    better over time_ (by supporting more and more units out of the box).
+
+    Therefore, these files are only for use cases where _you don't care about compile time_.  The
+    primary example is [the Compiler Explorer ("godbolt")](https://godbolt.org/z/687Ef4oqM).
+
+    **If you don't care about compile times**, here are the files:
+
+    - [`au_all_units.hh`](./au_all_units.hh)
+    - [`au_all_units_noio.hh`](./au_all_units_noio.hh)
+      (Same as above, but with `<iostream>` support stripped out)
+
 
 #### Custom single file
 

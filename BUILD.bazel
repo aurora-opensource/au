@@ -29,6 +29,8 @@ py_binary(
     srcs = ["update_docs.py"],
     data = [
         "mkdocs.yml",
+        ":au_all_units_hh",
+        ":au_all_units_noio_hh",
         ":au_hh",
         ":au_noio_hh",
     ] + glob(["docs/**"]),
@@ -43,6 +45,8 @@ py_binary(
     srcs = ["mike_bin.py"],
     data = [
         "mkdocs.yml",
+        ":au_all_units_hh",
+        ":au_all_units_noio_hh",
         ":au_hh",
         ":au_noio_hh",
     ] + glob(["docs/**"]),
@@ -72,7 +76,7 @@ BASE_UNIT_STRING = " ".join(BASE_UNITS)
 
 GIT_ID_CMD = "cat bazel-out/stable-status.txt | grep STABLE_GIT_ID | sed 's/STABLE_GIT_ID \\(.*\\)/\\1/' | tr -d '\\n'"
 
-CMD_ROOT = "$(location tools/bin/make-single-file) {extra_opts} --units {units} --version-id $$({id_cmd}) > $(OUTS)"
+CMD_ROOT = "$(location tools/bin/make-single-file) {extra_opts} {units} --version-id $$({id_cmd}) > $(OUTS)"
 
 ################################################################################
 # Release single-file package `au.hh`
@@ -84,7 +88,7 @@ genrule(
     cmd = CMD_ROOT.format(
         extra_opts = "",
         id_cmd = GIT_ID_CMD,
-        units = BASE_UNIT_STRING,
+        units = "--units " + BASE_UNIT_STRING,
     ),
     stamp = True,
     tools = ["tools/bin/make-single-file"],
@@ -106,7 +110,7 @@ genrule(
     cmd = CMD_ROOT.format(
         extra_opts = "--noio",
         id_cmd = GIT_ID_CMD,
-        units = BASE_UNIT_STRING,
+        units = "--units " + BASE_UNIT_STRING,
     ),
     stamp = True,
     tools = ["tools/bin/make-single-file"],
@@ -116,5 +120,50 @@ genrule(
 cc_library(
     name = "au_noio_hh_lib",
     hdrs = ["docs/au_noio.hh"],
+    visibility = ["//release:__pkg__"],
+)
+
+################################################################################
+# Release single-file package `au_all_units.hh`
+
+genrule(
+    name = "au_all_units_hh",
+    srcs = ["//au:headers"],
+    outs = ["docs/au_all_units.hh"],
+    cmd = CMD_ROOT.format(
+        extra_opts = "",
+        id_cmd = GIT_ID_CMD,
+        units = "--all-units",
+    ),
+    stamp = True,
+    tools = ["tools/bin/make-single-file"],
+)
+
+cc_library(
+    name = "au_all_units_hh_lib",
+    hdrs = ["docs/au_all_units.hh"],
+    visibility = ["//release:__pkg__"],
+)
+
+################################################################################
+# Release single-file package `au_all_units_noio.hh`
+
+genrule(
+    name = "au_all_units_noio_hh",
+    srcs = ["//au:headers"],
+    outs = ["docs/au_all_units_noio.hh"],
+    cmd = CMD_ROOT.format(
+        extra_opts = "--noio",
+        id_cmd = GIT_ID_CMD,
+        units = "--all-units",
+    ),
+    stamp = True,
+    tools = ["tools/bin/make-single-file"],
+    visibility = ["//release:__pkg__"],
+)
+
+cc_library(
+    name = "au_all_units_noio_hh_lib",
+    hdrs = ["docs/au_all_units_noio.hh"],
     visibility = ["//release:__pkg__"],
 )
