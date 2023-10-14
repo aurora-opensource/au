@@ -94,6 +94,14 @@ TEST(MakeQuantity, MakesQuantityInGivenUnit) {
     EXPECT_EQ(make_quantity<Feet>(99), feet(99));
 }
 
+TEST(Quantity, RationalConversionRecoversExactIntegerValues) {
+    // This test would fail if our implementation multiplied by the float
+    // representation of (1/13), instead of dividing by 13, under the hood.
+    for (int i = 1; i < 100; ++i) {
+        EXPECT_EQ(feet(static_cast<float>(i * 13)).in(feet * mag<13>()), i);
+    }
+}
+
 TEST(QuantityMaker, CreatesAppropriateQuantityIfCalled) { EXPECT_EQ(yards(3.14).in(yards), 3.14); }
 
 TEST(QuantityMaker, CanBeMultipliedBySingularUnitToGetMakerOfProductUnit) {
