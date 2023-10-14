@@ -18,7 +18,7 @@
         <link rel="prev" href="../idioms/unit-slots/">
       
       
-        <link rel="next" href="vector_space/">
+        <link rel="next" href="applying_magnitudes/">
       
       <link rel="icon" href="../../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.5.1, mkdocs-material-9.1.21">
@@ -607,6 +607,20 @@
         Implementation Details
       </a>
       
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="applying_magnitudes/" class="md-nav__link">
+        Applying Magnitudes
+      </a>
     </li>
   
 
@@ -1232,9 +1246,17 @@
 <p>This section provides in-depth discussion about core implementation details of Au.  If you want to
 understand <em>how</em> the library works, this is a good place to go.  Here&rsquo;s a rough guide.</p>
 <ul>
-<li><strong><a href="vector_space/">Vector Space Representations</a></strong>.  We&rsquo;re not talking about position vectors
+<li>
+<p><strong><a href="applying_magnitudes/">Applying Magnitudes</a></strong>.  A conversion factor is a <em>magnitude</em>:
+  a positive real number.  The best way to apply it to a value of type <code>T</code> depends on what kind of
+  number it is (integer, rational, and so on), the runtime performance, and whether we can get exact
+  answers.</p>
+</li>
+<li>
+<p><strong><a href="vector_space/">Vector Space Representations</a></strong>.  We&rsquo;re not talking about position vectors
   or velocity vectors!  There&rsquo;s a different kind of vector at the heart of every units library.
-  This is the core foundational concept on which we built Au&rsquo;s implementation.</li>
+  This is the core foundational concept on which we built Au&rsquo;s implementation.</p>
+</li>
 </ul>
 
 
@@ -1273,13 +1295,13 @@ understand <em>how</em> the library works, this is a good place to go.  Here&rsq
         
         
           
-          <a href="vector_space/" class="md-footer__link md-footer__link--next" aria-label="Next: Vector Space Representations" rel="next">
+          <a href="applying_magnitudes/" class="md-footer__link md-footer__link--next" aria-label="Next: Applying Magnitudes" rel="next">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Vector Space Representations
+                Applying Magnitudes
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-3-ga575880
+// Version identifier: 0.3.3-4-g3bde328
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -1875,6 +1875,105 @@ struct CommonMagnitude<Zero, Zero> : stdx::type_identity<Zero> {};
 
 
 namespace au {
+namespace detail {
+
+// The various categories by which a magnitude can be applied to a numeric quantity.
+enum class ApplyAs {
+    INTEGER_MULTIPLY,
+    INTEGER_DIVIDE,
+    RATIONAL_MULTIPLY,
+    IRRATIONAL_MULTIPLY,
+};
+
+template <typename... BPs>
+constexpr ApplyAs categorize_magnitude(Magnitude<BPs...>) {
+    if (IsInteger<Magnitude<BPs...>>::value) {
+        return ApplyAs::INTEGER_MULTIPLY;
+    }
+
+    if (IsInteger<MagInverseT<Magnitude<BPs...>>>::value) {
+        return ApplyAs::INTEGER_DIVIDE;
+    }
+
+    return IsRational<Magnitude<BPs...>>::value ? ApplyAs::RATIONAL_MULTIPLY
+                                                : ApplyAs::IRRATIONAL_MULTIPLY;
+}
+
+template <typename Mag, ApplyAs Category, typename T, bool is_T_integral>
+struct ApplyMagnitudeImpl;
+
+// Multiplying by an integer, for any type T.
+template <typename Mag, typename T, bool is_T_integral>
+struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_MULTIPLY, T, is_T_integral> {
+    static_assert(categorize_magnitude(Mag{}) == ApplyAs::INTEGER_MULTIPLY,
+                  "Mismatched instantiation (should never be done manually)");
+    static_assert(is_T_integral == std::is_integral<T>::value,
+                  "Mismatched instantiation (should never be done manually)");
+
+    constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+};
+
+// Dividing by an integer, for any type T.
+template <typename Mag, typename T, bool is_T_integral>
+struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_DIVIDE, T, is_T_integral> {
+    static_assert(categorize_magnitude(Mag{}) == ApplyAs::INTEGER_DIVIDE,
+                  "Mismatched instantiation (should never be done manually)");
+    static_assert(is_T_integral == std::is_integral<T>::value,
+                  "Mismatched instantiation (should never be done manually)");
+
+    constexpr T operator()(const T &x) { return x / get_value<T>(MagInverseT<Mag>{}); }
+};
+
+// Applying a (non-integer, non-inverse-integer) rational, for any integral type T.
+template <typename Mag, typename T>
+struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, true> {
+    static_assert(categorize_magnitude(Mag{}) == ApplyAs::RATIONAL_MULTIPLY,
+                  "Mismatched instantiation (should never be done manually)");
+    static_assert(std::is_integral<T>::value,
+                  "Mismatched instantiation (should never be done manually)");
+
+    constexpr T operator()(const T &x) {
+        return x * get_value<T>(numerator(Mag{})) / get_value<T>(denominator(Mag{}));
+    }
+};
+
+// Applying a (non-integer, non-inverse-integer) rational, for any non-integral type T.
+template <typename Mag, typename T>
+struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, false> {
+    static_assert(categorize_magnitude(Mag{}) == ApplyAs::RATIONAL_MULTIPLY,
+                  "Mismatched instantiation (should never be done manually)");
+    static_assert(!std::is_integral<T>::value,
+                  "Mismatched instantiation (should never be done manually)");
+
+    constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+};
+
+// Applying an irrational for any type T (although only non-integral T makes sense).
+template <typename Mag, typename T, bool is_T_integral>
+struct ApplyMagnitudeImpl<Mag, ApplyAs::IRRATIONAL_MULTIPLY, T, is_T_integral> {
+    static_assert(!std::is_integral<T>::value, "Cannot apply irrational magnitude to integer type");
+
+    static_assert(categorize_magnitude(Mag{}) == ApplyAs::IRRATIONAL_MULTIPLY,
+                  "Mismatched instantiation (should never be done manually)");
+    static_assert(is_T_integral == std::is_integral<T>::value,
+                  "Mismatched instantiation (should never be done manually)");
+
+    constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+};
+
+template <typename T, typename... BPs>
+constexpr T apply_magnitude(const T &x, Magnitude<BPs...> m) {
+    return ApplyMagnitudeImpl<Magnitude<BPs...>,
+                              categorize_magnitude(m),
+                              T,
+                              std::is_integral<T>::value>{}(x);
+}
+
+}  // namespace detail
+}  // namespace au
+
+
+namespace au {
 
 // A "unit" is any type which has:
 // - a member typedef `Dim`, which is a valid Dimension; and,
@@ -2929,17 +3028,11 @@ class Quantity {
               typename NewUnit,
               typename = std::enable_if_t<IsUnit<NewUnit>::value>>
     constexpr auto as(NewUnit) const {
-        constexpr auto ratio = unit_ratio(unit, NewUnit{});
-
         using Common = std::common_type_t<Rep, NewRep>;
-        constexpr auto NUM = integer_part(numerator(ratio));
-        constexpr auto DEN = integer_part(denominator(ratio));
-        constexpr auto num = get_value<Common>(NUM);
-        constexpr auto den = get_value<Common>(DEN);
-        constexpr auto irr = get_value<Common>(ratio * DEN / NUM);
+        using Factor = UnitRatioT<Unit, NewUnit>;
 
         return make_quantity<NewUnit>(
-            static_cast<NewRep>(static_cast<Common>(value_) * num / den * irr));
+            static_cast<NewRep>(detail::apply_magnitude(static_cast<Common>(value_), Factor{})));
     }
 
     template <typename NewUnit, typename = std::enable_if_t<IsUnit<NewUnit>::value>>
