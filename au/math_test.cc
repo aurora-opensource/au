@@ -19,6 +19,7 @@
 #include "au/units/celsius.hh"
 #include "au/units/degrees.hh"
 #include "au/units/fahrenheit.hh"
+#include "au/units/feet.hh"
 #include "au/units/hertz.hh"
 #include "au/units/inches.hh"
 #include "au/units/kelvins.hh"
@@ -131,6 +132,18 @@ TEST(clamp, QuantityPointTakesOffsetIntoAccount) {
     constexpr auto celsius_origin = clamp(celsius_pt(0), kelvins_pt(200), kelvins_pt(300));
     ASSERT_TRUE(is_integer(unit_ratio(Kelvins{} / mag<20>(), decltype(celsius_origin)::unit)));
     EXPECT_EQ(celsius_origin, centi(kelvins_pt)(273'15));
+}
+
+TEST(clamp, SupportsZeroForLowerBoundaryArgument) {
+    EXPECT_THAT(clamp(feet(-1), ZERO, inches(18)), SameTypeAndValue(inches(0)));
+    EXPECT_THAT(clamp(feet(+1), ZERO, inches(18)), SameTypeAndValue(inches(12)));
+    EXPECT_THAT(clamp(feet(+2), ZERO, inches(18)), SameTypeAndValue(inches(18)));
+}
+
+TEST(clamp, SupportsZeroForUpperBoundaryArgument) {
+    EXPECT_THAT(clamp(feet(-2), inches(-18), ZERO), SameTypeAndValue(inches(-18)));
+    EXPECT_THAT(clamp(feet(-1), inches(-18), ZERO), SameTypeAndValue(inches(-12)));
+    EXPECT_THAT(clamp(feet(+1), inches(-18), ZERO), SameTypeAndValue(inches(0)));
 }
 
 TEST(copysign, ReturnsSameTypesAsStdCopysignForSameUnitInputs) {
@@ -273,6 +286,16 @@ TEST(max, SameAsStdMaxForNumericTypes) {
     EXPECT_EQ(&b, &max_result);
 }
 
+TEST(max, SupportsZeroForFirstArgument) {
+    EXPECT_THAT(max(ZERO, meters(8)), SameTypeAndValue(meters(8)));
+    EXPECT_THAT(max(ZERO, meters(-8)), SameTypeAndValue(meters(0)));
+}
+
+TEST(max, SupportsZeroForSecondArgument) {
+    EXPECT_THAT(max(meters(8), ZERO), SameTypeAndValue(meters(8)));
+    EXPECT_THAT(max(meters(-8), ZERO), SameTypeAndValue(meters(0)));
+}
+
 TEST(min, ReturnsSmaller) { EXPECT_EQ(min(centi(meters)(1), inches(1)), centi(meters)(1)); }
 
 TEST(min, HandlesDifferentOriginQuantityPoints) {
@@ -306,6 +329,16 @@ TEST(min, SameAsStdMinForNumericTypes) {
     const auto &min_result = min(a, b);
 
     EXPECT_EQ(&a, &min_result);
+}
+
+TEST(min, SupportsZeroForFirstArgument) {
+    EXPECT_THAT(min(ZERO, meters(8)), SameTypeAndValue(meters(0)));
+    EXPECT_THAT(min(ZERO, meters(-8)), SameTypeAndValue(meters(-8)));
+}
+
+TEST(min, SupportsZeroForSecondArgument) {
+    EXPECT_THAT(min(meters(8), ZERO), SameTypeAndValue(meters(0)));
+    EXPECT_THAT(min(meters(-8), ZERO), SameTypeAndValue(meters(-8)));
 }
 
 TEST(int_pow, OutputRepMatchesInputRep) {
