@@ -4,6 +4,12 @@
 
 These are the steps to take before you actually cut the release.
 
+### Check all commented-out test cases
+
+These are test cases that we can't test automatically, usually because the intended behavior is
+a compiler error.  Grep the codebase for `uncomment`, and test every such case individually to make
+sure they still display the desired behavior.
+
 ### Check Aurora's code
 
 Create a draft PR which updates Aurora's internal code to the candidate release.  Make sure all of
@@ -15,6 +21,15 @@ of the latest state of `main`.  The `strip_prefix` for this release will typical
 `aurora-opensource-au-XXXXXXX`, where `XXXXXXX` is the first 7 characters of the most recent commit.
 Of course, you can also unpack it (`tar -xvzf`) to obtain the `strip_prefix` authoritatively.
 
+#### Check cumulative compile time impact
+
+Set up a compile time measurement using Aurora's internal code as the client code.  These
+measurements should automatically switch back and forth between the previous and new release, and
+should cover at least a half-dozen Au-dependent targets, ideally diverse ones.
+
+If there is a significant regression, root cause it and see if it can be fixed.  If not, mention it
+in the release notes.
+
 ### Gather information for release notes
 
 First, go to the [latest release](https://github.com/aurora-opensource/au/releases/latest).  Click
@@ -22,6 +37,7 @@ the list of "commits to main since this release", found near the top.  Read thro
 keep track of the main changes as you go.  Use the following categories.
 
 - User-facing library changes
+    - If the compilation speed has been significantly impacted, mention this here.
 - New units
 - Tooling updates
 - Documentation updates
