@@ -156,6 +156,26 @@ constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Quantity<UHi, RH
     return (v < lo) ? ResultT{lo} : (hi < v) ? ResultT{hi} : ResultT{v};
 }
 
+// `clamp` overloads for when either boundary is `Zero`.
+//
+// NOTE: these will not work if _both_ boundaries are `Zero`, or if the quantity being clamped is
+// `Zero`.  We do not think these use cases are very useful, but we're open to revisiting this if we
+// receive a persuasive argument otherwise.
+template <typename UV, typename UHi, typename RV, typename RHi>
+constexpr auto clamp(Quantity<UV, RV> v, Zero z, Quantity<UHi, RHi> hi) {
+    using U = CommonUnitT<UV, UHi>;
+    using R = std::common_type_t<RV, RHi>;
+    using ResultT = Quantity<U, R>;
+    return (v < z) ? ResultT{z} : (hi < v) ? ResultT{hi} : ResultT{v};
+}
+template <typename UV, typename ULo, typename RV, typename RLo>
+constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Zero z) {
+    using U = CommonUnitT<UV, ULo>;
+    using R = std::common_type_t<RV, RLo>;
+    using ResultT = Quantity<U, R>;
+    return (v < lo) ? ResultT{lo} : (z < v) ? ResultT{z} : ResultT{v};
+}
+
 // Clamp the first point to within the range of the second two.
 template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
 constexpr auto clamp(QuantityPoint<UV, RV> v,
@@ -313,6 +333,23 @@ auto max(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
     return std::max(a, b);
 }
 
+// `max` overloads for when Zero is one of the arguments.
+//
+// NOTE: these will not work if _both_ arguments are `Zero`, but we don't plan to support this
+// unless we find a compelling use case.
+template <typename T>
+auto max(Zero z, T x) {
+    static_assert(std::is_convertible<Zero, T>::value,
+                  "Cannot compare type to abstract notion Zero");
+    return std::max(T{z}, x);
+}
+template <typename T>
+auto max(T x, Zero z) {
+    static_assert(std::is_convertible<Zero, T>::value,
+                  "Cannot compare type to abstract notion Zero");
+    return std::max(x, T{z});
+}
+
 // The minimum of two values of the same dimension.
 //
 // Unlike std::min, returns by value rather than by reference, because the types might differ.
@@ -339,6 +376,23 @@ auto min(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
 template <typename U, typename R>
 auto min(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
     return std::min(a, b);
+}
+
+// `min` overloads for when Zero is one of the arguments.
+//
+// NOTE: these will not work if _both_ arguments are `Zero`, but we don't plan to support this
+// unless we find a compelling use case.
+template <typename T>
+auto min(Zero z, T x) {
+    static_assert(std::is_convertible<Zero, T>::value,
+                  "Cannot compare type to abstract notion Zero");
+    return std::min(T{z}, x);
+}
+template <typename T>
+auto min(T x, Zero z) {
+    static_assert(std::is_convertible<Zero, T>::value,
+                  "Cannot compare type to abstract notion Zero");
+    return std::min(x, T{z});
 }
 
 //
