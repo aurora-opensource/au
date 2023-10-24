@@ -1141,6 +1141,19 @@
     Extracting values
   </a>
   
+    <nav class="md-nav" aria-label="Extracting values">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#checking-for-representability" class="md-nav__link">
+    Checking for representability
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1908,6 +1921,32 @@ get the best of both worlds:</p>
 <p>Thus, <code>get_value&lt;float&gt;(pow&lt;3&gt;(PI))</code> will be much more accurate than storing <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> in a <code>float</code>,
 and cubing it &mdash; yet, there will be no loss in performance.</p>
 </details>
+<h3 id="checking-for-representability">Checking for representability<a class="headerlink" href="#checking-for-representability" title="Permanent link">&para;</a></h3>
+<p>If you need to check whether your magnitude <code>m</code> can be represented in a type <code>T</code>, you can call
+<code>representable_in&lt;T&gt;(m)</code>.  This function is <code>constexpr</code> compatible.</p>
+<details class="example">
+<summary>Example: integer and non-integer values</summary>
+<p>Here are some example test cases which will pass.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">EXPECT_TRUE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">()));</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1">// (1 / 2) is not an integer.</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">EXPECT_FALSE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">()));</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">EXPECT_TRUE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">()));</span>
+</code></pre></div>
+</details>
+<details class="example">
+<summary>Example: range of the type</summary>
+<p>Here are some example test cases which will pass.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">EXPECT_TRUE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">4&#39;000&#39;000&#39;000</span><span class="o">&gt;</span><span class="p">()));</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">// 4 billion is larger than the max value representable in `int32_t`.</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">EXPECT_FALSE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">int32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">4&#39;000&#39;000&#39;000</span><span class="o">&gt;</span><span class="p">()));</span>
+</code></pre></div>
+</details>
+<p>Note that this function&rsquo;s return value also depends on <em>whether we can compute</em> the value, not just
+whether it is representable.   For example, <code>representable_in&lt;double&gt;(sqrt(mag&lt;2&gt;()))</code> is currently
+<code>false</code>, because we haven&rsquo;t yet added support for computing rational base powers.</p>
 <h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
 <p>These are the operations which <code>Magnitude</code> supports.  Because it is a <a href="../detail/monovalue_types/">monovalue
 type</a>, the value can take the form of either a <em>type</em> or an <em>instance</em>.

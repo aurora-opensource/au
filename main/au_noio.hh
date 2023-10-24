@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-7-gf98cf4e
+// Version identifier: 0.3.3-8-gbfd4ee7
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -1768,35 +1768,76 @@ constexpr bool safe_to_cast_to(InputT x) {
     return SafeCastingChecker<T>{}(x);
 }
 
-}  // namespace detail
+enum class MagRepresentationOutcome {
+    OK,
+    ERR_NON_INTEGER_IN_INTEGER_TYPE,
+    ERR_RATIONAL_POWERS,
+    ERR_CANNOT_FIT,
+};
+
+template <typename T>
+struct MagRepresentationOrError {
+    MagRepresentationOutcome outcome;
+
+    // Only valid/meaningful if `outcome` is `OK`.
+    T value = {0};
+};
 
 template <typename T, typename... BPs>
-constexpr T get_value(Magnitude<BPs...>) {
-    using namespace detail;
-
+constexpr MagRepresentationOrError<T> get_value_result(Magnitude<BPs...>) {
     // Representing non-integer values in integral types is something we never plan to support.
     constexpr bool REPRESENTING_NON_INTEGER_IN_INTEGRAL_TYPE =
         stdx::conjunction<std::is_integral<T>, stdx::negation<IsInteger<Magnitude<BPs...>>>>::value;
-    static_assert(!REPRESENTING_NON_INTEGER_IN_INTEGRAL_TYPE,
-                  "Cannot represent non-integer in integral destination type");
+    if (REPRESENTING_NON_INTEGER_IN_INTEGRAL_TYPE) {
+        return {MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE};
+    }
 
     // Computing values for rational base powers is something we would _like_ to support, but we
     // need a `constexpr` implementation of `powl()` first.
-    static_assert(all({(ExpT<BPs>::den == 1)...}),
-                  "Computing values for rational powers not yet supported");
+    if (!all({(ExpT<BPs>::den == 1)...})) {
+        return {MagRepresentationOutcome::ERR_RATIONAL_POWERS};
+    }
 
     // Force the expression to be evaluated in a constexpr context.
     constexpr auto widened_result =
         product({base_power_value<T, (ExpT<BPs>::num / ExpT<BPs>::den)>(BaseT<BPs>::value())...});
 
-    static_assert(safe_to_cast_to<T>(widened_result), "Value outside range of destination type");
-    return static_cast<T>(widened_result);
+    if (!safe_to_cast_to<T>(widened_result)) {
+        return {MagRepresentationOutcome::ERR_CANNOT_FIT};
+    }
+
+    return {MagRepresentationOutcome::OK, static_cast<T>(widened_result)};
 }
 
 // This simple overload avoids edge cases with creating and passing zero-sized arrays.
 template <typename T>
-constexpr T get_value(Magnitude<>) {
-    return 1;
+constexpr MagRepresentationOrError<T> get_value_result(Magnitude<>) {
+    return {MagRepresentationOutcome::OK, static_cast<T>(1)};
+}
+}  // namespace detail
+
+template <typename T, typename... BPs>
+constexpr bool representable_in(Magnitude<BPs...> m) {
+    using namespace detail;
+
+    return get_value_result<T>(m).outcome == MagRepresentationOutcome::OK;
+}
+
+template <typename T, typename... BPs>
+constexpr T get_value(Magnitude<BPs...> m) {
+    using namespace detail;
+
+    constexpr auto result = get_value_result<T>(m);
+
+    static_assert(result.outcome != MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE,
+                  "Cannot represent non-integer in integral destination type");
+    static_assert(result.outcome != MagRepresentationOutcome::ERR_RATIONAL_POWERS,
+                  "Computing values for rational powers not yet supported");
+    static_assert(result.outcome != MagRepresentationOutcome::ERR_CANNOT_FIT,
+                  "Value outside range of destination type");
+
+    static_assert(result.outcome == MagRepresentationOutcome::OK, "Unknown error occurred");
+    return result.value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
