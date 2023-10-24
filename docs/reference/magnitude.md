@@ -156,7 +156,7 @@ If you need to check whether your magnitude `m` can be represented in a type `T`
     ```
 
 Note that this function's return value also depends on _whether we can compute_ the value, not just
-whether it is repreesntable.   For example, `representable_in<double>(sqrt(mag<2>()))` is currently
+whether it is representable.   For example, `representable_in<double>(sqrt(mag<2>()))` is currently
 `false`, because we haven't yet added support for computing rational base powers.
 
 ## Operations
