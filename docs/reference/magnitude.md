@@ -127,6 +127,38 @@ To extract the value of a `Magnitude` instance `m` into a given numeric type `T`
     Thus, `get_value<float>(pow<3>(PI))` will be much more accurate than storing $\pi$ in a `float`,
     and cubing it --- yet, there will be no loss in performance.
 
+### Checking for representability
+
+If you need to check whether your magnitude `m` can be represented in a type `T`, you can call
+`representable_in<T>(m)`.  This function is `constexpr` compatible.
+
+??? example "Example: integer and non-integer values"
+
+    Here are some example test cases which will pass.
+
+    ```cpp
+    EXPECT_TRUE(representable_in<int>(mag<1>()));
+
+    // (1 / 2) is not an integer.
+    EXPECT_FALSE(representable_in<int>(mag<1>() / mag<2>()));
+
+    EXPECT_TRUE(representable_in<float>(mag<1>() / mag<2>()));
+    ```
+
+??? example "Example: range of the type"
+    Here are some example test cases which will pass.
+
+    ```cpp
+    EXPECT_TRUE(representable_in<uint32_t>(mag<4'000'000'000>()));
+
+    // 4 billion is larger than the max value representable in `int32_t`.
+    EXPECT_FALSE(representable_in<int32_t>(mag<4'000'000'000>()));
+    ```
+
+Note that this function's return value also depends on _whether we can compute_ the value, not just
+whether it is representable.   For example, `representable_in<double>(sqrt(mag<2>()))` is currently
+`false`, because we haven't yet added support for computing rational base powers.
+
 ## Operations
 
 These are the operations which `Magnitude` supports.  Because it is a [monovalue

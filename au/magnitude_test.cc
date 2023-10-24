@@ -136,6 +136,20 @@ TEST(IsInteger, FalseForInexactFractions) {
 
 TEST(IsInteger, FalseForIrrationalBase) { EXPECT_FALSE(is_integer(PI)); }
 
+TEST(RepresentableIn, DocumentationExamplesAreCorrect) {
+    EXPECT_TRUE(representable_in<int>(mag<1>()));
+
+    // (1 / 2) is not an integer.
+    EXPECT_FALSE(representable_in<int>(mag<1>() / mag<2>()));
+
+    EXPECT_TRUE(representable_in<float>(mag<1>() / mag<2>()));
+
+    EXPECT_TRUE(representable_in<uint32_t>(mag<4'000'000'000>()));
+
+    // 4 billion is larger than the max value representable in `int32_t`.
+    EXPECT_FALSE(representable_in<int32_t>(mag<4'000'000'000>()));
+}
+
 TEST(GetValue, SupportsIntegerOutputForIntegerMagnitude) {
     constexpr auto m = mag<412>();
     EXPECT_THAT(get_value<int>(m), SameTypeAndValue(412));
