@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-9-g385ddb1
+// Version identifier: 0.3.3-10-gea049de
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -4561,6 +4561,7 @@ using std::fmod;
 using std::isnan;
 using std::max;
 using std::min;
+using std::remainder;
 using std::sin;
 using std::sqrt;
 using std::tan;
@@ -4919,6 +4920,14 @@ auto min(T x, Zero z) {
     static_assert(std::is_convertible<Zero, T>::value,
                   "Cannot compare type to abstract notion Zero");
     return std::min(x, T{z});
+}
+
+// The (zero-centered) floating point remainder of two values of the same dimension.
+template <typename U1, typename R1, typename U2, typename R2>
+auto remainder(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+    using U = CommonUnitT<U1, U2>;
+    using R = decltype(std::remainder(R1{}, R2{}));
+    return make_quantity<U>(std::remainder(q1.template in<R>(U{}), q2.template in<R>(U{})));
 }
 
 //

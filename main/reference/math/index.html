@@ -1362,6 +1362,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#remainder" class="md-nav__link">
+    remainder
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2436,12 +2443,24 @@ best way to achieve it!)</p>
 <script src="../../assets/hrh4.js" async=false defer=false></script>
 <h3 id="miscellaneous">Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permanent link">&para;</a></h3>
 <h4 id="fmod"><code>fmod</code><a class="headerlink" href="#fmod" title="Permanent link">&para;</a></h4>
-<p>A unit-aware adaptation of <code>std::fmod</code>, giving the remainder of the division of the two inputs.</p>
+<p>A unit-aware adaptation of <code>std::fmod</code>, giving the positive remainder of the division of the two
+inputs.</p>
 <p>As with the <a href="../quantity/#mod">integer modulus</a>, we first express the inputs in their <a href="../../discussion/concepts/common_unit/">common
 unit</a>.</p>
 <p><strong>Signature:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U2</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R2</span><span class="o">&gt;</span>
 <a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">fmod</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U1</span><span class="p">,</span><span class="w"> </span><span class="n">R1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q1</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U2</span><span class="p">,</span><span class="w"> </span><span class="n">R2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q2</span><span class="p">);</span>
+</code></pre></div>
+<p><strong>Returns:</strong> The remainder of <code>q1 / q2</code>, in the type <code>Quantity&lt;U, R&gt;</code>, where <code>U</code> is the common unit
+of <code>U1</code> and <code>U2</code>, and <code>R</code> is the common type of <code>R1</code> and <code>R2</code>.</p>
+<h4 id="remainder"><code>remainder</code><a class="headerlink" href="#remainder" title="Permanent link">&para;</a></h4>
+<p>A unit-aware adaptation of <code>std::remainder</code>, giving the zero-centered remainder of the division of
+the two inputs.</p>
+<p>As with the <a href="../quantity/#mod">integer modulus</a>, we first express the inputs in their <a href="../../discussion/concepts/common_unit/">common
+unit</a>.</p>
+<p><strong>Signature:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U2</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R2</span><span class="o">&gt;</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">remainder</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U1</span><span class="p">,</span><span class="w"> </span><span class="n">R1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q1</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U2</span><span class="p">,</span><span class="w"> </span><span class="n">R2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q2</span><span class="p">);</span>
 </code></pre></div>
 <p><strong>Returns:</strong> The remainder of <code>q1 / q2</code>, in the type <code>Quantity&lt;U, R&gt;</code>, where <code>U</code> is the common unit
 of <code>U1</code> and <code>U2</code>, and <code>R</code> is the common type of <code>R1</code> and <code>R2</code>.</p>
