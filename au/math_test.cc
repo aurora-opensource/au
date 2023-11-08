@@ -213,10 +213,20 @@ TEST(cos, GivesCorrectAnswersForInputsInDegrees) {
 // If its inputs have the same unit, then there is no conversion, only computation.  In that case,
 // we want to make sure we're doing exactly what std::fmod does w.r.t. input and output types (see:
 // https://en.cppreference.com/w/cpp/numeric/math/fmod).
-template <typename U, typename R1, typename R2>
-void expect_consistent_with_std_fmod(Quantity<U, R1> q1, Quantity<U, R2> q2) {
-    EXPECT_THAT(fmod(q1, q2),
-                QuantityEquivalent(make_quantity<U>(std::fmod(q1.in(U{}), q2.in(U{})))));
+template <typename AuFunc, typename StdFunc>
+struct ExpectConsistentWith {
+    template <typename U, typename R1, typename R2>
+    void operator()(Quantity<U, R1> q1, Quantity<U, R2> q2) const {
+        EXPECT_THAT(au_func(q1, q2),
+                    QuantityEquivalent(make_quantity<U>(std_func(q1.in(U{}), q2.in(U{})))));
+    }
+
+    AuFunc au_func;
+    StdFunc std_func;
+};
+template <typename AuFunc, typename StdFunc>
+auto expect_consistent_with(AuFunc au_func, StdFunc std_func) {
+    return ExpectConsistentWith<AuFunc, StdFunc>{.au_func = au_func, .std_func = std_func};
 }
 
 TEST(fmod, SameAsStdFmodForNumericTypes) {
@@ -227,6 +237,9 @@ TEST(fmod, SameAsStdFmodForNumericTypes) {
 }
 
 TEST(fmod, ReturnsSameTypesAsStdModForSameUnitInputs) {
+    const auto expect_consistent_with_std_fmod = expect_consistent_with(
+        [](auto x, auto y) { return fmod(x, y); }, [](auto x, auto y) { return std::fmod(x, y); });
+
     expect_consistent_with_std_fmod(meters(4), meters(3));
     expect_consistent_with_std_fmod(meters(4.f), meters(3.f));
     expect_consistent_with_std_fmod(meters(4.), meters(3.));
