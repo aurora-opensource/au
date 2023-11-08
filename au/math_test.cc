@@ -25,6 +25,7 @@
 #include "au/units/kelvins.hh"
 #include "au/units/meters.hh"
 #include "au/units/ohms.hh"
+#include "au/units/revolutions.hh"
 #include "au/units/seconds.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -208,15 +209,25 @@ TEST(cos, GivesCorrectAnswersForInputsInDegrees) {
     EXPECT_NEAR(cos(degrees(90)), 0.0, TOL);
 }
 
-// Our fmod overload mixes conversions and computations.
+// Our `fmod` and `remainder` overloads mix conversions and computations.
 //
-// If its inputs have the same unit, then there is no conversion, only computation.  In that case,
-// we want to make sure we're doing exactly what std::fmod does w.r.t. input and output types (see:
-// https://en.cppreference.com/w/cpp/numeric/math/fmod).
-template <typename U, typename R1, typename R2>
-void expect_consistent_with_std_fmod(Quantity<U, R1> q1, Quantity<U, R2> q2) {
-    EXPECT_THAT(fmod(q1, q2),
-                QuantityEquivalent(make_quantity<U>(std::fmod(q1.in(U{}), q2.in(U{})))));
+// If their inputs have the same unit, then there is no conversion, only computation.  In that case,
+// we want to make sure we're doing exactly what their `std` counterparts do w.r.t. input and output
+// types (e.g., for `fmod`, see: https://en.cppreference.com/w/cpp/numeric/math/fmod).
+template <typename AuFunc, typename StdFunc>
+struct ExpectConsistentWith {
+    template <typename U, typename R1, typename R2>
+    void operator()(Quantity<U, R1> q1, Quantity<U, R2> q2) const {
+        EXPECT_THAT(au_func(q1, q2),
+                    QuantityEquivalent(make_quantity<U>(std_func(q1.in(U{}), q2.in(U{})))));
+    }
+
+    AuFunc au_func;
+    StdFunc std_func;
+};
+template <typename AuFunc, typename StdFunc>
+auto expect_consistent_with(AuFunc au_func, StdFunc std_func) {
+    return ExpectConsistentWith<AuFunc, StdFunc>{.au_func = au_func, .std_func = std_func};
 }
 
 TEST(fmod, SameAsStdFmodForNumericTypes) {
@@ -227,6 +238,9 @@ TEST(fmod, SameAsStdFmodForNumericTypes) {
 }
 
 TEST(fmod, ReturnsSameTypesAsStdModForSameUnitInputs) {
+    const auto expect_consistent_with_std_fmod = expect_consistent_with(
+        [](auto x, auto y) { return fmod(x, y); }, [](auto x, auto y) { return std::fmod(x, y); });
+
     expect_consistent_with_std_fmod(meters(4), meters(3));
     expect_consistent_with_std_fmod(meters(4.f), meters(3.f));
     expect_consistent_with_std_fmod(meters(4.), meters(3.));
@@ -246,6 +260,43 @@ TEST(fmod, MixedUnitsSupportedWithCasting) {
 
 TEST(fmod, HandlesIrrationalCommonUnit) {
     EXPECT_THAT(fmod(radians(1), degrees(57)), IsNear(degrees(0.2958), degrees(0.0001)));
+}
+
+TEST(remainder, SameAsStdRemainderForNumericTypes) {
+    EXPECT_EQ(remainder(3.5, 3), std::remainder(3.5, 3));
+    EXPECT_EQ(remainder(2.5, 3), std::remainder(2.5, 3));
+}
+
+TEST(remainder, ReturnsSameTypesAsStdRemainderForSameUnitInputs) {
+    const auto expect_consistent_with_std_remainder =
+        expect_consistent_with([](auto x, auto y) { return remainder(x, y); },
+                               [](auto x, auto y) { return std::remainder(x, y); });
+
+    expect_consistent_with_std_remainder(meters(4), meters(3));
+    expect_consistent_with_std_remainder(meters(4.f), meters(3.f));
+    expect_consistent_with_std_remainder(meters(4.), meters(3.));
+    expect_consistent_with_std_remainder(meters(4.l), meters(3.l));
+    expect_consistent_with_std_remainder(meters(4), meters(3.f));
+    expect_consistent_with_std_remainder(meters(4), meters(3.l));
+    expect_consistent_with_std_remainder(meters(4.), meters(3.l));
+}
+
+TEST(remainder, MixedUnitsSupportedWithCasting) {
+    constexpr auto a = meters(1);
+    constexpr auto b = centi(meters)(11);
+    constexpr auto expected_result = centi(meters)(1);
+
+    EXPECT_THAT(remainder(a, b), IsNear(expected_result, make_quantity<Nano<Meters>>(1)));
+}
+
+TEST(remainder, HandlesIrrationalCommonUnit) {
+    EXPECT_THAT(remainder(radians(1), degrees(57)), IsNear(degrees(+0.2958), degrees(0.0001)));
+    EXPECT_THAT(remainder(radians(1), degrees(58)), IsNear(degrees(-0.7042), degrees(0.0001)));
+}
+
+TEST(remainder, CenteredAroundZero) {
+    EXPECT_THAT(remainder(degrees(90), revolutions(1)), IsNear(degrees(90), degrees(1e-9)));
+    EXPECT_THAT(remainder(degrees(270), revolutions(1)), IsNear(degrees(-90), degrees(1e-9)));
 }
 
 TEST(max, ReturnsLarger) {

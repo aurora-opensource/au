@@ -682,7 +682,8 @@ example, `std::numeric_limits<Quantity<Hours, int>>::max()` is exactly equal to
 
 #### `fmod`
 
-A unit-aware adaptation of `std::fmod`, giving the remainder of the division of the two inputs.
+A unit-aware adaptation of `std::fmod`, giving the positive remainder of the division of the two
+inputs.
 
 As with the [integer modulus](./quantity.md#mod), we first express the inputs in their [common
 unit](../discussion/concepts/common_unit.md).
@@ -692,6 +693,24 @@ unit](../discussion/concepts/common_unit.md).
 ```cpp
 template <typename U1, typename R1, typename U2, typename R2>
 auto fmod(Quantity<U1, R1> q1, Quantity<U2, R2> q2);
+```
+
+**Returns:** The remainder of `q1 / q2`, in the type `Quantity<U, R>`, where `U` is the common unit
+of `U1` and `U2`, and `R` is the common type of `R1` and `R2`.
+
+#### `remainder`
+
+A unit-aware adaptation of `std::remainder`, giving the zero-centered remainder of the division of
+the two inputs.
+
+As with the [integer modulus](./quantity.md#mod), we first express the inputs in their [common
+unit](../discussion/concepts/common_unit.md).
+
+**Signature:**
+
+```cpp
+template <typename U1, typename R1, typename U2, typename R2>
+auto remainder(Quantity<U1, R1> q1, Quantity<U2, R2> q2);
 ```
 
 **Returns:** The remainder of `q1 / q2`, in the type `Quantity<U, R>`, where `U` is the common unit
