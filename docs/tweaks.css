@@ -42,3 +42,7 @@ td.na {
 td.fair pre, td.poor pre, td.good pre, td.best pre {
     display: inline;
 }
+
+a {
+    text-decoration: underline;
+}
