@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-10-gea049de
+// Version identifier: 0.3.3-11-g7cef16c
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
