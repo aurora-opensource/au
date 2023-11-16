@@ -19,7 +19,7 @@
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/howto/new-units).
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
 struct RadiansLabel {
     static constexpr const char label[] = "rad";

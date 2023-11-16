@@ -47,18 +47,18 @@ usability and reliability. This **includes embedded support**: Aurora's embedded
 first class customers since the library's inception.
 
 To learn more about our place in the C++ units library ecosystem, see our [detailed library
-comparison](https://aurora-opensource.github.io/au/alternatives).
+comparison](https://aurora-opensource.github.io/au/main/alternatives/).
 
 ## Getting started
 
-Our [installation instructions](https://aurora-opensource.github.io/au/install) can have you up and
-running in minutes, in any project that supports C++14 or newer.
+Our [installation instructions](https://aurora-opensource.github.io/au/main/install/) can have you
+up and running in minutes, in any project that supports C++14 or newer.
 
 To use the library effectively, we recommend working through the
-[tutorials](https://aurora-opensource.github.io/au/tutorial/), starting with [Au 101: Quantity
-Makers](https://aurora-opensource.github.io/au/tutorial/101-quantity-makers).  To
+[tutorials](https://aurora-opensource.github.io/au/main/tutorial/), starting with [Au 101: Quantity
+Makers](https://aurora-opensource.github.io/au/main/tutorial/101-quantity-makers/).  To
 get set up with the tutorials — or, to contribute to the library — check out our [development
-guide](https://aurora-opensource.github.io/au/develop).
+guide](https://aurora-opensource.github.io/au/main/develop/).
 
 ## As seen at CppCon 2021
 
