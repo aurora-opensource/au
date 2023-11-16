@@ -26,6 +26,8 @@ In short: if your C++ programs handle physical quantities, Au will make you fast
 effective at your job.  You'll find everything you need in our [full documentation
 website](https://aurora-opensource.github.io/au).
 
+> _Try it out on [Compiler Explorer ("godbolt")](https://godbolt.org/z/KrvfhP4M3)!_
+
 ## Why Au?
 
 There are many other C++ units libraries, several quite well established.  Each of them offers
