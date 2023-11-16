@@ -240,7 +240,7 @@ These costs can bring significant benefits, but we still want them to be as smal
                 <li class="check">Short namespace minimizes clutter</li>
                 <li class="check">
                     Detailed <a
-                    href="https://aurora-opensource.github.io/au/troubleshooting">troubleshooting
+                    href="https://aurora-opensource.github.io/au/main/troubleshooting/">troubleshooting
                     guide</a>
                 </li>
             </ul>
@@ -593,7 +593,7 @@ features.
         <td class="good">Can add new units and dimensions</td>
         <td class="best">Can even handle, e.g., systems of "natural" units</td>
         <td class="good">
-            Can add <a href="https://aurora-opensource.github.io/au/howto/new-units">new units</a>
+            Can add <a href="https://aurora-opensource.github.io/au/main/howto/new-units/">new units</a>
             and dimensions
         </td>
     </tr>

@@ -46,8 +46,8 @@ maximize the chance of delivering its value!
 
 - All remote builds must pass before any PR is landed.
 
-See our [development setup guide](https://aurora-opensource.github.io/au/develop/) to get started
-with building and testing the code and documentation!
+See our [development setup guide](https://aurora-opensource.github.io/au/main/develop/) to get
+started with building and testing the code and documentation!
 
 ### Style guide
 
