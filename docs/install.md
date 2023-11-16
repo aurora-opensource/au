@@ -173,7 +173,7 @@ should get you any other unit you're likely to want.  The units we include are:
     better over time_ (by supporting more and more units out of the box).
 
     Therefore, these files are only for use cases where _you don't care about compile time_.  The
-    primary example is [the Compiler Explorer ("godbolt")](https://godbolt.org/z/687Ef4oqM).
+    primary example is [the Compiler Explorer ("godbolt")](https://godbolt.org/z/KrvfhP4M3).
 
     **If you don't care about compile times**, here are the files:
 
