@@ -433,6 +433,27 @@ cc_test(
 )
 
 cc_library(
+    name = "wrapper_operations",
+    hdrs = ["wrapper_operations.hh"],
+    deps = [
+        ":quantity",
+        ":stdx",
+    ],
+)
+
+cc_test(
+    name = "wrapper_operations_test",
+    size = "small",
+    srcs = ["wrapper_operations_test.cc"],
+    deps = [
+        ":testing",
+        ":units",
+        ":wrapper_operations",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "zero",
     hdrs = ["zero.hh"],
 )
