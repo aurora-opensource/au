@@ -77,8 +77,10 @@ struct PermitAsCarveOutForIntegerPromotion
 template <typename Rep, typename ScaleFactor>
 struct ImplicitRepPermitted : detail::CoreImplicitConversionPolicy<Rep, ScaleFactor, Rep> {};
 
-template <typename Rep, typename SourceUnit, typename TargetUnit>
-constexpr bool implicit_rep_permitted_from_source_to_target(SourceUnit, TargetUnit) {
+template <typename Rep, typename SourceUnitSlot, typename TargetUnitSlot>
+constexpr bool implicit_rep_permitted_from_source_to_target(SourceUnitSlot, TargetUnitSlot) {
+    using SourceUnit = AssociatedUnitT<SourceUnitSlot>;
+    using TargetUnit = AssociatedUnitT<TargetUnitSlot>;
     static_assert(HasSameDimension<SourceUnit, TargetUnit>::value,
                   "Can only convert same-dimension units");
 

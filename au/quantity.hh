@@ -142,16 +142,17 @@ class Quantity {
 
     template <typename NewRep,
               typename NewUnit,
-              typename = std::enable_if_t<IsUnit<NewUnit>::value>>
+              typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
     constexpr auto as(NewUnit) const {
         using Common = std::common_type_t<Rep, NewRep>;
-        using Factor = UnitRatioT<Unit, NewUnit>;
+        using Factor = UnitRatioT<AssociatedUnitT<Unit>, AssociatedUnitT<NewUnit>>;
 
-        return make_quantity<NewUnit>(
+        return make_quantity<AssociatedUnitT<NewUnit>>(
             static_cast<NewRep>(detail::apply_magnitude(static_cast<Common>(value_), Factor{})));
     }
 
-    template <typename NewUnit, typename = std::enable_if_t<IsUnit<NewUnit>::value>>
+    template <typename NewUnit,
+              typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
     constexpr auto as(NewUnit u) const {
         constexpr bool IMPLICIT_OK =
             implicit_rep_permitted_from_source_to_target<Rep>(unit, NewUnit{});
@@ -169,7 +170,7 @@ class Quantity {
 
     template <typename NewRep,
               typename NewUnit,
-              typename = std::enable_if_t<IsUnit<NewUnit>::value>>
+              typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
     constexpr NewRep in(NewUnit u) const {
         if (are_units_quantity_equivalent(unit, u) && std::is_same<Rep, NewRep>::value) {
             return static_cast<NewRep>(value_);
@@ -178,7 +179,8 @@ class Quantity {
         }
     }
 
-    template <typename NewUnit, typename = std::enable_if_t<IsUnit<NewUnit>::value>>
+    template <typename NewUnit,
+              typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
     constexpr Rep in(NewUnit u) const {
         if (are_units_quantity_equivalent(unit, u)) {
             return value_;
@@ -186,27 +188,6 @@ class Quantity {
             // Since Rep was requested _implicitly_, delegate to `.as()` for its safety checks.
             return as(u).in(u);
         }
-    }
-
-    // Overloads for passing a QuantityMaker.
-    //
-    // This is the "magic" that lets us write things like `distance.in(meters)`, instead of just
-    // `distance.in(Meters{})`.
-    template <typename NewRep, typename NewUnit>
-    constexpr auto as(QuantityMaker<NewUnit>) const {
-        return as<NewRep>(NewUnit{});
-    }
-    template <typename NewUnit>
-    constexpr auto as(QuantityMaker<NewUnit>) const {
-        return as(NewUnit{});
-    }
-    template <typename NewRep, typename NewUnit>
-    constexpr NewRep in(QuantityMaker<NewUnit>) const {
-        return in<NewRep>(NewUnit{});
-    }
-    template <typename NewUnit>
-    constexpr Rep in(QuantityMaker<NewUnit>) const {
-        return in(NewUnit{});
     }
 
     // "Old-style" overloads with <U, R> template parameters, and no function parameters.
