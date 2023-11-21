@@ -58,6 +58,11 @@ TEST(PrefixApplier, ConvertsSingularNameForToCorrespondingPrefixedType) {
     ::testing::StaticAssertTypeEq<decltype(make_milli(inch)), SingularNameFor<Milli<Inches>>>();
 }
 
+TEST(PrefixApplier, ConvertsSymbolForToCorrespondingPrefixedType) {
+    constexpr auto X = symbol_for(XeroxedBytes{});
+    StaticAssertTypeEq<decltype(kibi(X)), SymbolFor<Kibi<XeroxedBytes>>>();
+}
+
 TEST(SiPrefixes, HaveCorrectAbsoluteValues) {
     EXPECT_EQ(unit_ratio(Yotta<Bytes>{}, Bytes{}), pow<24>(mag<10>()));
     EXPECT_EQ(unit_ratio(Zetta<Bytes>{}, Bytes{}), pow<21>(mag<10>()));

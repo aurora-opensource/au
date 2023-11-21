@@ -132,6 +132,36 @@ There are two ways to create an instance of a unit symbol.
         These are the fastest to compile, although they're a little more verbose, and composition
         uses awkward type traits such as `UnitQuotientT`.
 
+#### Prefixed symbols
+
+To create a symbol for a prefixed unit, both of the ways mentioned above (namely, calling
+`symbol_for()`, and creating a `SymbolFor<>` instance) will still work.  However, there is also
+a third way: you can use the appropriate [prefix applier](./prefix.md#prefix-applier) with an
+existing symbol for the unit to be prefixed.  This can be concise and readable.
+
+??? example "Example: creating a symbol for `Nano<Meters>`"
+
+    Assume we have a unit `Meters`, which has a quantity maker `meters` and a symbol `m`.  Here are
+    your three options for creating a symbol for the prefixed unit `Nano<Meters>`.
+
+    === "Using `symbol_for`"
+
+        ```cpp
+        constexpr auto nm = symbol_for(nano(meters));
+        ```
+
+    === "Using `SymbolFor`"
+
+        ```cpp
+        constexpr auto nm = SymbolFor<Nano<Meters>>{};
+        ```
+
+    === "Using a prefix applier"
+
+        ```cpp
+        constexpr auto nm = nano(m);
+        ```
+
 ### Operations
 
 Each operation with a `SymbolFor` consists in multiplying or dividing with some other family of

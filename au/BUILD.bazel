@@ -305,6 +305,7 @@ cc_library(
         ":quantity",
         ":quantity_point",
         ":unit_of_measure",
+        ":unit_symbol",
     ],
 )
 

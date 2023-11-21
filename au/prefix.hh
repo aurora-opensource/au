@@ -17,6 +17,7 @@
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
 #include "au/unit_of_measure.hh"
+#include "au/unit_symbol.hh"
 
 namespace au {
 
@@ -45,6 +46,13 @@ struct PrefixApplier {
     template <typename U>
     constexpr auto operator()(SingularNameFor<U>) const {
         return SingularNameFor<Prefix<U>>{};
+    }
+
+    // Applying a Prefix to a SymbolFor instance, creates a symbolically-named instance of the
+    // Prefixed unit.
+    template <typename U>
+    constexpr auto operator()(SymbolFor<U>) const {
+        return SymbolFor<Prefix<U>>{};
     }
 };
 
