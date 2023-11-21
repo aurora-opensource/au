@@ -36,4 +36,9 @@ TEST(Ohms, SatisfiesOhmicHeatingEquation) {
     EXPECT_EQ(ohms(10.0), (volts(50.0) * volts(50.0)) / watts(250.0));
 }
 
+TEST(Ohms, HasExpectedSymbol) {
+    using symbols::ohm;
+    EXPECT_THAT(5 * ohm, SameTypeAndValue(ohms(5)));
+}
+
 }  // namespace au

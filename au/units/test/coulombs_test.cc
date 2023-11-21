@@ -27,4 +27,9 @@ TEST(Coulombs, EquivalentToAmpereSeconds) {
     EXPECT_THAT(coulombs(10), QuantityEquivalent(amperes(2) * seconds(5)));
 }
 
+TEST(Coulombs, HasExpectedSymbol) {
+    using symbols::C;
+    EXPECT_THAT(5 * C, SameTypeAndValue(coulombs(5)));
+}
+
 }  // namespace au

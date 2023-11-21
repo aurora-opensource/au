@@ -25,4 +25,9 @@ TEST(Hertz, EquivalentToInverseSeconds) {
     EXPECT_THAT(hertz(5.5), QuantityEquivalent(inverse(seconds)(5.5)));
 }
 
+TEST(Hertz, HasExpectedSymbol) {
+    using symbols::Hz;
+    EXPECT_THAT(5 * Hz, SameTypeAndValue(hertz(5)));
+}
+
 }  // namespace au

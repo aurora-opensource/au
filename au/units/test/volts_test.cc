@@ -25,4 +25,9 @@ TEST(Volts, HasExpectedLabel) { expect_label<Volts>("V"); }
 
 TEST(Volts, SatisfiesOhmsLaw) { EXPECT_THAT(volts(8), QuantityEquivalent(amperes(2) * ohms(4))); }
 
+TEST(Volts, HasExpectedSymbol) {
+    using symbols::V;
+    EXPECT_THAT(5 * V, SameTypeAndValue(volts(5)));
+}
+
 }  // namespace au

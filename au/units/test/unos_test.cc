@@ -29,4 +29,9 @@ TEST(Unos, ImplicitlyConvertToRawNumbers) {
     EXPECT_THAT(x, SameTypeAndValue(1.23));
 }
 
+TEST(Unos, HasExpectedSymbol) {
+    using symbols::U;
+    EXPECT_THAT(5 * U, SameTypeAndValue(unos(5)));
+}
+
 }  // namespace au

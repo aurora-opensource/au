@@ -26,4 +26,9 @@ TEST(Kelvins, QuantityEquivalentToCelsius) {
     EXPECT_THAT(kelvins(10), QuantityEquivalent(celsius_qty(10)));
 }
 
+TEST(Kelvins, HasExpectedSymbol) {
+    using symbols::K;
+    EXPECT_THAT(5 * K, SameTypeAndValue(kelvins(5)));
+}
+
 }  // namespace au

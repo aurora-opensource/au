@@ -23,4 +23,9 @@ TEST(Feet, HasExpectedLabel) { expect_label<Feet>("ft"); }
 
 TEST(Feet, EquivalentTo12Inches) { EXPECT_EQ(feet(1), inches(12)); }
 
+TEST(Feet, HasExpectedSymbol) {
+    using symbols::ft;
+    EXPECT_THAT(5 * ft, SameTypeAndValue(feet(5)));
+}
+
 }  // namespace au

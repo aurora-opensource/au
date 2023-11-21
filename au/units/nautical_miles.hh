@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/meters.hh"
 
 namespace au {
@@ -33,4 +34,7 @@ struct NauticalMiles : decltype(Meters{} * mag<1'852>()), NauticalMilesLabel<voi
 constexpr auto nautical_mile = SingularNameFor<NauticalMiles>{};
 constexpr auto nautical_miles = QuantityMaker<NauticalMiles>{};
 
+namespace symbols {
+constexpr auto nmi = SymbolFor<NauticalMiles>{};
+}
 }  // namespace au

@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/degrees.hh"
 
 namespace au {
@@ -33,4 +34,7 @@ struct Revolutions : decltype(Degrees{} * mag<360>()), RevolutionsLabel<void> {
 constexpr auto revolution = SingularNameFor<Revolutions>{};
 constexpr auto revolutions = QuantityMaker<Revolutions>{};
 
+namespace symbols {
+constexpr auto rev = SymbolFor<Revolutions>{};
+}
 }  // namespace au

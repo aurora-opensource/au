@@ -24,4 +24,9 @@ TEST(Bits, HasExpectedLabel) { expect_label<Bits>("b"); }
 
 TEST(Bits, OneEighthOfAByte) { EXPECT_EQ(bits(1.0), bytes(1.0 / 8.0)); }
 
+TEST(Bits, HasExpectedSymbol) {
+    using symbols::b;
+    EXPECT_THAT(5 * b, SameTypeAndValue(bits(5)));
+}
+
 }  // namespace au

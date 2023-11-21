@@ -28,4 +28,9 @@ TEST(Degrees, RoughlyEquivalentToPiOver180Radians) {
 
 TEST(Degrees, One360thOfARevolution) { EXPECT_EQ(degrees(360), revolutions(1)); }
 
+TEST(Degrees, HasExpectedSymbol) {
+    using symbols::deg;
+    EXPECT_THAT(5 * deg, SameTypeAndValue(degrees(5)));
+}
+
 }  // namespace au

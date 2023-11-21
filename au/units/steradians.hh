@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/radians.hh"
 
 namespace au {
@@ -33,4 +34,7 @@ struct Steradians : decltype(squared(Radians{})), SteradiansLabel<void> {
 constexpr auto steradian = SingularNameFor<Steradians>{};
 constexpr auto steradians = QuantityMaker<Steradians>{};
 
+namespace symbols {
+constexpr auto sr = SymbolFor<Steradians>{};
+}
 }  // namespace au

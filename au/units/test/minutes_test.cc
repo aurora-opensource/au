@@ -23,4 +23,9 @@ TEST(Minutes, HasExpectedLabel) { expect_label<Minutes>("min"); }
 
 TEST(Minutes, EquivalentTo60Seconds) { EXPECT_EQ(minutes(3), seconds(180)); }
 
+TEST(Minutes, HasExpectedSymbol) {
+    using symbols::min;
+    EXPECT_THAT(5 * min, SameTypeAndValue(minutes(5)));
+}
+
 }  // namespace au

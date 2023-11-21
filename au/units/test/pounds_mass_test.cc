@@ -25,4 +25,9 @@ TEST(PoundsMass, EquivalentToAppropriateQuantityOfKilograms) {
     EXPECT_EQ(pounds_mass(100'000'000L), (kilo(grams)(45'359'237L)));
 }
 
+TEST(PoundsMass, HasExpectedSymbol) {
+    using symbols::lb;
+    EXPECT_THAT(5 * lb, SameTypeAndValue(pounds_mass(5)));
+}
+
 }  // namespace au

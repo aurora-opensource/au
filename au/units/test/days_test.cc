@@ -19,6 +19,13 @@
 
 namespace au {
 
+TEST(Days, HasExpectedLabel) { expect_label<Days>("d"); }
+
 TEST(Days, EquivalentTo24Hours) { EXPECT_EQ(days(1), hours(24)); }
+
+TEST(Days, HasExpectedSymbol) {
+    using symbols::d;
+    EXPECT_THAT(5 * d, SameTypeAndValue(days(5)));
+}
 
 }  // namespace au

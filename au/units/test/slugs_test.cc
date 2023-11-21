@@ -36,4 +36,9 @@ TEST(Slugs, ExactDefinitionIsCorrect) {
     EXPECT_THAT(slugs(1.0), IsNear(pounds_mass(32.174), milli(pounds_mass)(1)));
 }
 
+TEST(Slugs, HasExpectedSymbol) {
+    using symbols::slug;
+    EXPECT_THAT(5 * slug, SameTypeAndValue(slugs(5)));
+}
+
 }  // namespace au

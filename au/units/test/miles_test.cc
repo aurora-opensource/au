@@ -23,4 +23,9 @@ TEST(Miles, HasExpectedLabel) { expect_label<Miles>("mi"); }
 
 TEST(Miles, EquivalentTo5280Feet) { EXPECT_EQ(miles(1), feet(5280)); }
 
+TEST(Miles, HasExpectedSymbol) {
+    using symbols::mi;
+    EXPECT_THAT(5 * mi, SameTypeAndValue(miles(5)));
+}
+
 }  // namespace au

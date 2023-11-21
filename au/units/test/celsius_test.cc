@@ -37,4 +37,9 @@ TEST(Celsius, QuantityPointMatchesUpCorrectlyWithFahrenheit) {
     EXPECT_EQ(celsius_pt(100), fahrenheit_pt(212));
 }
 
+TEST(Celsius, HasExpectedSymbol) {
+    using symbols::degC_qty;
+    EXPECT_THAT(5 * degC_qty, SameTypeAndValue(celsius_qty(5)));
+}
+
 }  // namespace au
