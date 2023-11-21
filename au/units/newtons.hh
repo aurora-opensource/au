@@ -16,6 +16,7 @@
 
 #include "au/prefix.hh"
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/grams.hh"
 #include "au/units/meters.hh"
 #include "au/units/seconds.hh"
@@ -36,4 +37,7 @@ struct Newtons : decltype(Kilo<Grams>{} * Meters{} / squared(Seconds{})), Newton
 constexpr auto newton = SingularNameFor<Newtons>{};
 constexpr auto newtons = QuantityMaker<Newtons>{};
 
+namespace symbols {
+constexpr auto N = SymbolFor<Newtons>{};
+}
 }  // namespace au

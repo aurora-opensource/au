@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/joules.hh"
 #include "au/units/seconds.hh"
 
@@ -34,4 +35,7 @@ struct Watts : decltype(Joules{} / Seconds{}), WattsLabel<void> {
 constexpr auto watt = SingularNameFor<Watts>{};
 constexpr auto watts = QuantityMaker<Watts>{};
 
+namespace symbols {
+constexpr auto W = SymbolFor<Watts>{};
+}
 }  // namespace au

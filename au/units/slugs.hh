@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/feet.hh"
 #include "au/units/pounds_force.hh"
 #include "au/units/seconds.hh"
@@ -35,4 +36,7 @@ struct Slugs : decltype(PoundsForce{} * squared(Seconds{}) / Feet{}), SlugsLabel
 constexpr auto slug = SingularNameFor<Slugs>{};
 constexpr auto slugs = QuantityMaker<Slugs>{};
 
+namespace symbols {
+constexpr auto slug = SymbolFor<Slugs>{};
+}
 }  // namespace au

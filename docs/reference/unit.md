@@ -82,6 +82,94 @@ users, so they have the best chance of recognizing the offending unit, and perha
     scaling a unit by a magnitude.  We are tracking this in
     [#85](https://github.com/aurora-opensource/au/issues/85).
 
+## Unit symbols {#symbols}
+
+Unit symbols provide a way to create `Quantity` instances concisely: by simply multiplying or
+dividing a raw number by the symbol.
+
+For example, suppose we create symbols for `Meters` and `Seconds`:
+
+```cpp
+constexpr auto m = symbol_for(meters);
+constexpr auto s = symbol_for(seconds);
+```
+
+Then we can write `3.5f * m / s` instead of `(meters / second)(3.5f)`.
+
+### Creation
+
+There are two ways to create an instance of a unit symbol.
+
+1. Call `symbol_for(your_units)`.
+    - PRO: The argument acts as a [unit slot](../discussion/idioms/unit-slots.md), giving maximum
+      flexibility and composability.
+    - CON: Instantiating the `symbol_for` overload adds to compilation time (although only very
+      slightly).
+
+2. Make an instance of `SymbolFor<YourUnits>`.
+    - PRO: This directly uses the type itself without instantiating anything else, so it should be
+      the fastest to compile.
+    - CON: Since the argument is a type, it's less flexible and more awkward to compose.
+
+??? example "Examples of both methods"
+
+    === "Using `symbol_for`"
+
+        ```cpp
+        constexpr auto m = symbol_for(meters);
+        constexpr auto mps = symbol_for(meters / second);
+        ```
+
+        These are easier to compose, although at the cost of instantiating an extra function.
+
+    === "Using `SymbolFor`"
+
+        ```cpp
+        constexpr auto m = SymbolFor<Meters>{};
+        constexpr auto mps = SymbolFor<UnitQuotientT<Meters, Seconds>>{};
+        ```
+
+        These are the fastest to compile, although they're a little more verbose, and composition
+        uses awkward type traits such as `UnitQuotientT`.
+
+### Operations
+
+Each operation with a `SymbolFor` consists in multiplying or dividing with some other family of
+types.
+
+#### Raw numeric type `T`
+
+Multiplying or dividing `SymbolFor<Unit>` with a raw numeric type `T` produces a `Quantity` whose rep
+is `T`, and whose unit is derived from `Unit`.
+
+| Operation | Resulting Type | Notes |
+|-----------|----------------|-------|
+| `SymbolFor<Unit> * T` | `Quantity<Unit, T>` | |
+| `SymbolFor<Unit> / T` | `Quantity<Unit, T>` | Disallowed for integer `T` |
+| `T * SymbolFor<Unit>` | `Quantity<Unit, T>` | |
+| `T / SymbolFor<Unit>` | `Quantity<UnitInverseT<Unit>, T>` | |
+
+#### `Quantity<U, R>`
+
+Multiplying or dividing `SymbolFor<Unit>` with a `Quantity<U, R>` produces a new `Quantity`.  It has
+the same underlying value and same rep `R`, but its units `U` are scaled appropriately by `Unit`.
+
+| Operation | Resulting Type | Notes |
+|-----------|----------------|-------|
+| `SymbolFor<Unit> * Quantity<U, R>` | `Quantity<UnitProductT<Unit, U>, R>` | |
+| `SymbolFor<Unit> / Quantity<U, R>` | `Quantity<UnitQuotientT<Unit, U>, R>` | Disallowed for integer `R` |
+| `Quantity<U, R> * SymbolFor<Unit>` | `Quantity<UnitProductT<U, Unit>, R>` | |
+| `Quantity<U, R> / SymbolFor<Unit>` | `Quantity<UnitQuotientT<U, Unit>, R>` | |
+
+#### `SymbolFor<OtherUnit>`
+
+Symbols compose: the product or quotient of two `SymbolFor` instances is a new `SymbolFor` instance.
+
+| Operation | Resulting Type |
+|-----------|----------------|
+| `SymbolFor<Unit> * SymbolFor<OtherUnit>` | `SymbolFor<UnitProductT<Unit, OtherUnit>>` |
+| `SymbolFor<Unit> / SymbolFor<OtherUnit>` | `SymbolFor<UnitQuotientT<Unit, OtherUnit>>` |
+
 ## Unit origins {#origins}
 
 The "origin" of a unit is only useful for `QuantityPoint`, our [affine space
@@ -446,3 +534,5 @@ associative, and symmetric under interchange of any inputs.
 
 - For _types_ `Us...`:
     - `CommonPointUnitT<Us...>`
+
+<script src="../assets/hrh4.js" async=false defer=false></script>

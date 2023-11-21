@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/amperes.hh"
 #include "au/units/webers.hh"
 
@@ -34,4 +35,7 @@ struct Henries : decltype(Webers{} / Amperes{}), HenriesLabel<void> {
 constexpr auto henry = SingularNameFor<Henries>{};
 constexpr auto henries = QuantityMaker<Henries>{};
 
+namespace symbols {
+constexpr auto H = SymbolFor<Henries>{};
+}
 }  // namespace au

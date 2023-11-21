@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/feet.hh"
 
 namespace au {
@@ -33,4 +34,7 @@ struct Fathoms : decltype(Feet{} * mag<6>()), FathomsLabel<void> {
 constexpr auto fathom = SingularNameFor<Fathoms>{};
 constexpr auto fathoms = QuantityMaker<Fathoms>{};
 
+namespace symbols {
+constexpr auto ftm = SymbolFor<Fathoms>{};
+}
 }  // namespace au

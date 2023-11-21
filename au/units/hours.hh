@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/minutes.hh"
 
 namespace au {
@@ -33,4 +34,7 @@ struct Hours : decltype(Minutes{} * mag<60>()), HoursLabel<void> {
 constexpr auto hour = SingularNameFor<Hours>{};
 constexpr auto hours = QuantityMaker<Hours>{};
 
+namespace symbols {
+constexpr auto h = SymbolFor<Hours>{};
+}
 }  // namespace au

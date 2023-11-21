@@ -12,30 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#pragma once
-
-#include "au/quantity.hh"
 #include "au/unit_symbol.hh"
+
+#include <type_traits>
+
+#include "au/testing.hh"
+#include "au/units/meters.hh"
 #include "au/units/seconds.hh"
-#include "au/units/volts.hh"
+#include "gtest/gtest.h"
+
+using ::testing::StaticAssertTypeEq;
 
 namespace au {
+namespace {
+constexpr auto m = symbol_for(meters);
+constexpr auto s = symbol_for(seconds);
+}  // namespace
 
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct WebersLabel {
-    static constexpr const char label[] = "Wb";
-};
-template <typename T>
-constexpr const char WebersLabel<T>::label[];
-struct Webers : decltype(Volts{} * Seconds{}), WebersLabel<void> {
-    using WebersLabel<void>::label;
-};
-constexpr auto weber = SingularNameFor<Webers>{};
-constexpr auto webers = QuantityMaker<Webers>{};
-
-namespace symbols {
-constexpr auto Wb = SymbolFor<Webers>{};
+TEST(SymbolFor, TakesUnitSlot) {
+    StaticAssertTypeEq<std::decay_t<decltype(m)>, SymbolFor<Meters>>();
 }
+
+TEST(SymbolFor, CreatesQuantityFromRawNumber) {
+    EXPECT_THAT(3.5f * m, SameTypeAndValue(meters(3.5f)));
+}
+
+TEST(SymbolFor, ScalesUnitsOfExistingQuantity) {
+    EXPECT_THAT(meters(25.4) / s, SameTypeAndValue((meters / second)(25.4)));
+}
+
+TEST(SymbolFor, CompatibleWithUnitSlot) { EXPECT_THAT(meters(35u).in(m), SameTypeAndValue(35u)); }
+
 }  // namespace au
