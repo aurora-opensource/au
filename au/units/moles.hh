@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 
 namespace au {
 
@@ -33,7 +32,4 @@ struct Moles : UnitImpl<AmountOfSubstance>, MolesLabel<void> {
 constexpr auto mole = SingularNameFor<Moles>{};
 constexpr auto moles = QuantityMaker<Moles>{};
 
-namespace symbols {
-constexpr auto mol = SymbolFor<Moles>{};
-}
 }  // namespace au

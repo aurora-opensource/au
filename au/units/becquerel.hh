@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/seconds.hh"
 
 namespace au {
@@ -33,7 +32,4 @@ struct Becquerel : UnitInverseT<Seconds>, BecquerelLabel<void> {
 };
 constexpr auto becquerel = QuantityMaker<Becquerel>{};
 
-namespace symbols {
-constexpr auto Bq = SymbolFor<Becquerel>{};
-}
 }  // namespace au

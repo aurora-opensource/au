@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/seconds.hh"
 
 namespace au {
@@ -33,7 +32,4 @@ struct Hertz : UnitInverseT<Seconds>, HertzLabel<void> {
 };
 constexpr auto hertz = QuantityMaker<Hertz>{};
 
-namespace symbols {
-constexpr auto Hz = SymbolFor<Hertz>{};
-}
 }  // namespace au

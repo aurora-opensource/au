@@ -16,7 +16,6 @@
 
 #include "au/prefix.hh"
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/meters.hh"
 
 namespace au {
@@ -35,7 +34,4 @@ struct Inches : decltype(Centi<Meters>{} * mag<254>() / mag<100>()), InchesLabel
 constexpr auto inch = SingularNameFor<Inches>{};
 constexpr auto inches = QuantityMaker<Inches>{};
 
-namespace symbols {
-constexpr auto in = SymbolFor<Inches>{};
-}
 }  // namespace au

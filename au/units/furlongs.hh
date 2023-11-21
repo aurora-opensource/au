@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/miles.hh"
 
 namespace au {
@@ -34,7 +33,4 @@ struct Furlongs : decltype(Miles{} / mag<8>()), FurlongsLabel<void> {
 constexpr auto furlong = SingularNameFor<Furlongs>{};
 constexpr auto furlongs = QuantityMaker<Furlongs>{};
 
-namespace symbols {
-constexpr auto fur = SymbolFor<Furlongs>{};
-}
 }  // namespace au

@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/meters.hh"
 #include "au/units/newtons.hh"
 
@@ -35,7 +34,4 @@ struct Joules : decltype(Newtons{} * Meters{}), JoulesLabel<void> {
 constexpr auto joule = SingularNameFor<Joules>{};
 constexpr auto joules = QuantityMaker<Joules>{};
 
-namespace symbols {
-constexpr auto J = SymbolFor<Joules>{};
-}
 }  // namespace au

@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 
 namespace au {
 
@@ -33,7 +32,4 @@ struct Seconds : UnitImpl<Time>, SecondsLabel<void> {
 constexpr auto second = SingularNameFor<Seconds>{};
 constexpr auto seconds = QuantityMaker<Seconds>{};
 
-namespace symbols {
-constexpr auto s = SymbolFor<Seconds>{};
-}
 }  // namespace au

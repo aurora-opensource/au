@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/unos.hh"
 
 namespace au {
@@ -33,7 +32,4 @@ struct Percent : decltype(Unos{} / mag<100>()), PercentLabel<void> {
 };
 constexpr auto percent = QuantityMaker<Percent>{};
 
-namespace symbols {
-constexpr auto pct = SymbolFor<Percent>{};
-}
 }  // namespace au

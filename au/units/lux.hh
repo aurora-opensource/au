@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/lumens.hh"
 #include "au/units/meters.hh"
 
@@ -34,7 +33,4 @@ struct Lux : decltype(Lumens{} / squared(Meters{})), LuxLabel<void> {
 };
 constexpr auto lux = QuantityMaker<Lux>{};
 
-namespace symbols {
-constexpr auto lx = SymbolFor<Lux>{};
-}
 }  // namespace au

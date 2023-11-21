@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/moles.hh"
 #include "au/units/seconds.hh"
 
@@ -35,7 +34,4 @@ struct Katals : decltype(Moles{} / Seconds{}), KatalsLabel<void> {
 constexpr auto katal = SingularNameFor<Katals>{};
 constexpr auto katals = QuantityMaker<Katals>{};
 
-namespace symbols {
-constexpr auto kat = SymbolFor<Katals>{};
-}
 }  // namespace au

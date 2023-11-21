@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/coulombs.hh"
 #include "au/units/volts.hh"
 
@@ -35,7 +34,4 @@ struct Farads : decltype(Coulombs{} / Volts{}), FaradsLabel<void> {
 constexpr auto farad = SingularNameFor<Farads>{};
 constexpr auto farads = QuantityMaker<Farads>{};
 
-namespace symbols {
-constexpr auto F = SymbolFor<Farads>{};
-}
 }  // namespace au

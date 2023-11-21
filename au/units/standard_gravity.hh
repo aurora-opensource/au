@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/meters.hh"
 #include "au/units/seconds.hh"
 
@@ -36,7 +35,4 @@ struct StandardGravity
 };
 constexpr auto standard_gravity = QuantityMaker<StandardGravity>{};
 
-namespace symbols {
-constexpr auto g_0 = SymbolFor<StandardGravity>{};
-}
 }  // namespace au

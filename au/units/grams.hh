@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 
 namespace au {
 
@@ -33,7 +32,4 @@ struct Grams : UnitImpl<Mass>, GramsLabel<void> {
 constexpr auto gram = SingularNameFor<Grams>{};
 constexpr auto grams = QuantityMaker<Grams>{};
 
-namespace symbols {
-constexpr auto g = SymbolFor<Grams>{};
-}
 }  // namespace au

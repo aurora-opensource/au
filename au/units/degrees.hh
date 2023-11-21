@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/radians.hh"
 
 namespace au {
@@ -34,7 +33,4 @@ struct Degrees : decltype(Radians{} * PI / mag<180>()), DegreesLabel<void> {
 constexpr auto degree = SingularNameFor<Degrees>{};
 constexpr auto degrees = QuantityMaker<Degrees>{};
 
-namespace symbols {
-constexpr auto deg = SymbolFor<Degrees>{};
-}
 }  // namespace au

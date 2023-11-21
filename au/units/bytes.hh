@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/bits.hh"
 
 namespace au {
@@ -34,7 +33,4 @@ struct Bytes : decltype(Bits{} * mag<8>()), BytesLabel<void> {
 constexpr auto byte = SingularNameFor<Bytes>{};
 constexpr auto bytes = QuantityMaker<Bytes>{};
 
-namespace symbols {
-constexpr auto B = SymbolFor<Bytes>{};
-}
 }  // namespace au

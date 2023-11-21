@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/inches.hh"
 
 namespace au {
@@ -34,7 +33,4 @@ struct Feet : decltype(Inches{} * mag<12>()), FeetLabel<void> {
 constexpr auto foot = SingularNameFor<Feet>{};
 constexpr auto feet = QuantityMaker<Feet>{};
 
-namespace symbols {
-constexpr auto ft = SymbolFor<Feet>{};
-}
 }  // namespace au

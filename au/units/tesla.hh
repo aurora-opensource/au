@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/meters.hh"
 #include "au/units/webers.hh"
 
@@ -34,7 +33,4 @@ struct Tesla : decltype(Webers{} / squared(Meters{})), TeslaLabel<void> {
 };
 constexpr auto tesla = QuantityMaker<Tesla>{};
 
-namespace symbols {
-constexpr auto T = SymbolFor<Tesla>{};
-}
 }  // namespace au

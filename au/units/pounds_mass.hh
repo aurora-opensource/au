@@ -16,7 +16,6 @@
 
 #include "au/prefix.hh"
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/grams.hh"
 
 namespace au {
@@ -35,7 +34,4 @@ struct PoundsMass : decltype(Micro<Grams>{} * mag<453'592'370>()), PoundsMassLab
 constexpr auto pound_mass = SingularNameFor<PoundsMass>{};
 constexpr auto pounds_mass = QuantityMaker<PoundsMass>{};
 
-namespace symbols {
-constexpr auto lb = SymbolFor<PoundsMass>{};
-}
 }  // namespace au

@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 
 namespace au {
 
@@ -32,9 +31,5 @@ struct Amperes : UnitImpl<Current>, AmperesLabel<void> {
 };
 constexpr auto ampere = SingularNameFor<Amperes>{};
 constexpr auto amperes = QuantityMaker<Amperes>{};
-
-namespace symbols {
-constexpr auto A = SymbolFor<Amperes>{};
-}
 
 }  // namespace au

@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/seconds.hh"
 #include "au/units/volts.hh"
 
@@ -35,7 +34,4 @@ struct Webers : decltype(Volts{} * Seconds{}), WebersLabel<void> {
 constexpr auto weber = SingularNameFor<Webers>{};
 constexpr auto webers = QuantityMaker<Webers>{};
 
-namespace symbols {
-constexpr auto Wb = SymbolFor<Webers>{};
-}
 }  // namespace au

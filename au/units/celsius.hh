@@ -17,7 +17,6 @@
 #include "au/prefix.hh"
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/kelvins.hh"
 
 namespace au {
@@ -41,7 +40,4 @@ constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
     "`celsius()` is ambiguous.  Use `celsius_pt()` for _points_, or `celsius_qty()` for "
     "_quantities_")]] constexpr auto celsius = QuantityMaker<Celsius>{};
 
-namespace symbols {
-constexpr auto degC_qty = SymbolFor<Celsius>{};
-}
 }  // namespace au

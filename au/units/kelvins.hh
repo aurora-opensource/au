@@ -16,7 +16,6 @@
 
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
-#include "au/unit_symbol.hh"
 
 namespace au {
 
@@ -35,7 +34,4 @@ constexpr auto kelvin = SingularNameFor<Kelvins>{};
 constexpr auto kelvins = QuantityMaker<Kelvins>{};
 constexpr auto kelvins_pt = QuantityPointMaker<Kelvins>{};
 
-namespace symbols {
-constexpr auto K = SymbolFor<Kelvins>{};
-}
 }  // namespace au

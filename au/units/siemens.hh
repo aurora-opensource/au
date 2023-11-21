@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/ohms.hh"
 
 namespace au {
@@ -34,7 +33,4 @@ struct Siemens : UnitInverseT<Ohms>, SiemensLabel<void> {
 constexpr auto siemen = SingularNameFor<Siemens>{};
 constexpr auto siemens = QuantityMaker<Siemens>{};
 
-namespace symbols {
-constexpr auto S = SymbolFor<Siemens>{};
-}
 }  // namespace au

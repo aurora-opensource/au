@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 
 namespace au {
 
@@ -33,7 +32,4 @@ struct Radians : UnitImpl<Angle>, RadiansLabel<void> {
 constexpr auto radian = SingularNameFor<Radians>{};
 constexpr auto radians = QuantityMaker<Radians>{};
 
-namespace symbols {
-constexpr auto rad = SymbolFor<Radians>{};
-}
 }  // namespace au

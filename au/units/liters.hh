@@ -16,7 +16,6 @@
 
 #include "au/prefix.hh"
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 #include "au/units/meters.hh"
 
 namespace au {
@@ -35,7 +34,4 @@ struct Liters : decltype(cubed(Deci<Meters>{})), LitersLabel<void> {
 constexpr auto liter = SingularNameFor<Liters>{};
 constexpr auto liters = QuantityMaker<Liters>{};
 
-namespace symbols {
-constexpr auto L = SymbolFor<Liters>{};
-}
 }  // namespace au
