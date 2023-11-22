@@ -749,15 +749,15 @@ features.
             </details>
         </td>
         <td class="na"></td>
-        <td class="good">User-defined literals (UDLs)</td>
-        <td class="good">User-defined literals (UDLs)</td>
-        <td class="best">
-            <a
-            href="https://mpusz.github.io/units/framework/quantities.html#quantity-references-experimental">Quantity
-            References</a>
+        <td class="fair">User-defined literals (UDLs)</td>
+        <td class="fair">User-defined literals (UDLs)</td>
+        <td class="good">
+            Unit symbols
         </td>
-        <td class="poor">
-            Planned to add: <a href="https://github.com/aurora-opensource/au/issues/43">#43</a>
+        <td class="good">
+            <a href="https://aurora-opensource.github.io/au/main/reference/unit/#symbols">
+                Unit symbols
+            </a>
         </td>
     </tr>
     <tr>

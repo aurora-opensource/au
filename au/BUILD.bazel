@@ -88,6 +88,7 @@ cc_library(
         ":quantity",
         ":quantity_point",
         ":unit_of_measure",
+        ":unit_symbol",
     ],
 )
 
@@ -304,6 +305,7 @@ cc_library(
         ":quantity",
         ":quantity_point",
         ":unit_of_measure",
+        ":unit_symbol",
     ],
 )
 
@@ -411,6 +413,24 @@ cc_test(
         ":prefix",
         ":testing",
         ":unit_of_measure",
+        ":units",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "unit_symbol",
+    hdrs = ["unit_symbol.hh"],
+    deps = [":wrapper_operations"],
+)
+
+cc_test(
+    name = "unit_symbol_test",
+    size = "small",
+    srcs = ["unit_symbol_test.cc"],
+    deps = [
+        ":testing",
+        ":unit_symbol",
         ":units",
         "@com_google_googletest//:gtest_main",
     ],
