@@ -1683,8 +1683,12 @@ a complete sample definition of a new Unit, with these features annotated and ex
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">fathoms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">          </span><span class="c1">// *[4]</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">fathoms_pt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityPointMaker</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">  </span><span class="c1">//  [5; less common]</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1">// In .cc file:</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">Fathoms</span><span class="o">::</span><span class="n">label</span><span class="p">[];</span><span class="w">                      </span><span class="c1">//  [2b]</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">symbols</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">ftm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolFor</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">                  </span><span class="c1">//  [6]</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="p">}</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="c1">// In .cc file:</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">Fathoms</span><span class="o">::</span><span class="n">label</span><span class="p">[];</span><span class="w">                      </span><span class="c1">//  [2b]</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -1699,6 +1703,10 @@ a complete sample definition of a new Unit, with these features annotated and ex
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">fathom</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">SingularNameFor</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">        </span><span class="c1">//  [3]</span>
 <a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">fathoms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">          </span><span class="c1">// *[4]</span>
 <a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">fathoms_pt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityPointMaker</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">  </span><span class="c1">//  [5; less common]</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">symbols</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">ftm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolFor</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">                  </span><span class="c1">//  [6]</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="p">}</span>
 </code></pre></div>
 </div>
 </div>
@@ -1761,6 +1769,16 @@ definitions as examples to follow.</p>
   can also compose it with prefixes, or scale it with Magnitudes.</li>
 <li><strong>If omitted:</strong> <em>this is usually fine to omit:</em> most Units are only used with <code>Quantity</code>, not
   <code>QuantityPoint</code>.</li>
+</ul>
+</li>
+<li>
+<p><em>Unit symbol</em>.</p>
+<ul>
+<li>This lets you create quantities of this unit by simply multiplying or dividing raw numbers.
+  You can also change the units of existing quantities in the same way.  See the docs for <a href="../../reference/unit/#symbols">unit
+  symbols</a>.</li>
+<li><strong>If omitted:</strong> Users will either need to create their own symbols on the fly, or else spell
+  out the full name of the unit.</li>
 </ul>
 </li>
 </ol>

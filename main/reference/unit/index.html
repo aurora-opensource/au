@@ -1270,6 +1270,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#symbols" class="md-nav__link">
+    Unit symbols
+  </a>
+  
+    <nav class="md-nav" aria-label="Unit symbols">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creation" class="md-nav__link">
+    Creation
+  </a>
+  
+    <nav class="md-nav" aria-label="Creation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prefixed-symbols" class="md-nav__link">
+    Prefixed symbols
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operations_1" class="md-nav__link">
+    Operations
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raw-numeric-type-t" class="md-nav__link">
+    Raw numeric type T
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantityu-r" class="md-nav__link">
+    Quantity&lt;U, R&gt;
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#symbolforotherunit" class="md-nav__link">
+    SymbolFor&lt;OtherUnit&gt;
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#origins" class="md-nav__link">
     Unit origins
   </a>
@@ -1914,6 +1981,172 @@ operation, to produce a meaningfully labeled unit.  Right now, the only missing 
 scaling a unit by a magnitude.  We are tracking this in
 <a href="https://github.com/aurora-opensource/au/issues/85">#85</a>.</p>
 </div>
+<h2 id="symbols">Unit symbols<a class="headerlink" href="#symbols" title="Permanent link">&para;</a></h2>
+<p>Unit symbols provide a way to create <code>Quantity</code> instances concisely: by simply multiplying or
+dividing a raw number by the symbol.</p>
+<p>For example, suppose we create symbols for <code>Meters</code> and <code>Seconds</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbol_for</span><span class="p">(</span><span class="n">meters</span><span class="p">);</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbol_for</span><span class="p">(</span><span class="n">seconds</span><span class="p">);</span>
+</code></pre></div>
+<p>Then we can write <code>3.5f * m / s</code> instead of <code>(meters / second)(3.5f)</code>.</p>
+<h3 id="creation">Creation<a class="headerlink" href="#creation" title="Permanent link">&para;</a></h3>
+<p>There are two ways to create an instance of a unit symbol.</p>
+<ol>
+<li>
+<p>Call <code>symbol_for(your_units)</code>.</p>
+<ul>
+<li>PRO: The argument acts as a <a href="../../discussion/idioms/unit-slots/">unit slot</a>, giving maximum
+  flexibility and composability.</li>
+<li>CON: Instantiating the <code>symbol_for</code> overload adds to compilation time (although only very
+  slightly).</li>
+</ul>
+</li>
+<li>
+<p>Make an instance of <code>SymbolFor&lt;YourUnits&gt;</code>.</p>
+<ul>
+<li>PRO: This directly uses the type itself without instantiating anything else, so it should be
+  the fastest to compile.</li>
+<li>CON: Since the argument is a type, it&rsquo;s less flexible and more awkward to compose.</li>
+</ul>
+</li>
+</ol>
+<details class="example">
+<summary>Examples of both methods</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Using <code>symbol_for</code></label><label for="__tabbed_1_2">Using <code>SymbolFor</code></label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbol_for</span><span class="p">(</span><span class="n">meters</span><span class="p">);</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">mps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbol_for</span><span class="p">(</span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">second</span><span class="p">);</span>
+</code></pre></div>
+<p>These are easier to compose, although at the cost of instantiating an extra function.</p>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolFor</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">{};</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">mps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolFor</span><span class="o">&lt;</span><span class="n">UnitQuotientT</span><span class="o">&lt;</span><span class="n">Meters</span><span class="p">,</span><span class="w"> </span><span class="n">Seconds</span><span class="o">&gt;&gt;</span><span class="p">{};</span>
+</code></pre></div>
+<p>These are the fastest to compile, although they&rsquo;re a little more verbose, and composition
+uses awkward type traits such as <code>UnitQuotientT</code>.</p>
+</div>
+</div>
+</div>
+</details>
+<h4 id="prefixed-symbols">Prefixed symbols<a class="headerlink" href="#prefixed-symbols" title="Permanent link">&para;</a></h4>
+<p>To create a symbol for a prefixed unit, both of the ways mentioned above (namely, calling
+<code>symbol_for()</code>, and creating a <code>SymbolFor&lt;&gt;</code> instance) will still work.  However, there is also
+a third way: you can use the appropriate <a href="../prefix/#prefix-applier">prefix applier</a> with an
+existing symbol for the unit to be prefixed.  This can be concise and readable.</p>
+<details class="example">
+<summary>Example: creating a symbol for <code>Nano&lt;Meters&gt;</code></summary>
+<p>Assume we have a unit <code>Meters</code>, which has a quantity maker <code>meters</code> and a symbol <code>m</code>.  Here are
+your three options for creating a symbol for the prefixed unit <code>Nano&lt;Meters&gt;</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Using <code>symbol_for</code></label><label for="__tabbed_2_2">Using <code>SymbolFor</code></label><label for="__tabbed_2_3">Using a prefix applier</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">nm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbol_for</span><span class="p">(</span><span class="n">nano</span><span class="p">(</span><span class="n">meters</span><span class="p">));</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">nm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolFor</span><span class="o">&lt;</span><span class="n">Nano</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;&gt;</span><span class="p">{};</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">nm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nano</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<h3 id="operations_1">Operations<a class="headerlink" href="#operations_1" title="Permanent link">&para;</a></h3>
+<p>Each operation with a <code>SymbolFor</code> consists in multiplying or dividing with some other family of
+types.</p>
+<h4 id="raw-numeric-type-t">Raw numeric type <code>T</code><a class="headerlink" href="#raw-numeric-type-t" title="Permanent link">&para;</a></h4>
+<p>Multiplying or dividing <code>SymbolFor&lt;Unit&gt;</code> with a raw numeric type <code>T</code> produces a <code>Quantity</code> whose rep
+is <code>T</code>, and whose unit is derived from <code>Unit</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Resulting Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SymbolFor&lt;Unit&gt; * T</code></td>
+<td><code>Quantity&lt;Unit, T&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>SymbolFor&lt;Unit&gt; / T</code></td>
+<td><code>Quantity&lt;Unit, T&gt;</code></td>
+<td>Disallowed for integer <code>T</code></td>
+</tr>
+<tr>
+<td><code>T * SymbolFor&lt;Unit&gt;</code></td>
+<td><code>Quantity&lt;Unit, T&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>T / SymbolFor&lt;Unit&gt;</code></td>
+<td><code>Quantity&lt;UnitInverseT&lt;Unit&gt;, T&gt;</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="quantityu-r"><code>Quantity&lt;U, R&gt;</code><a class="headerlink" href="#quantityu-r" title="Permanent link">&para;</a></h4>
+<p>Multiplying or dividing <code>SymbolFor&lt;Unit&gt;</code> with a <code>Quantity&lt;U, R&gt;</code> produces a new <code>Quantity</code>.  It has
+the same underlying value and same rep <code>R</code>, but its units <code>U</code> are scaled appropriately by <code>Unit</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Resulting Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SymbolFor&lt;Unit&gt; * Quantity&lt;U, R&gt;</code></td>
+<td><code>Quantity&lt;UnitProductT&lt;Unit, U&gt;, R&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>SymbolFor&lt;Unit&gt; / Quantity&lt;U, R&gt;</code></td>
+<td><code>Quantity&lt;UnitQuotientT&lt;Unit, U&gt;, R&gt;</code></td>
+<td>Disallowed for integer <code>R</code></td>
+</tr>
+<tr>
+<td><code>Quantity&lt;U, R&gt; * SymbolFor&lt;Unit&gt;</code></td>
+<td><code>Quantity&lt;UnitProductT&lt;U, Unit&gt;, R&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Quantity&lt;U, R&gt; / SymbolFor&lt;Unit&gt;</code></td>
+<td><code>Quantity&lt;UnitQuotientT&lt;U, Unit&gt;, R&gt;</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="symbolforotherunit"><code>SymbolFor&lt;OtherUnit&gt;</code><a class="headerlink" href="#symbolforotherunit" title="Permanent link">&para;</a></h4>
+<p>Symbols compose: the product or quotient of two <code>SymbolFor</code> instances is a new <code>SymbolFor</code> instance.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Resulting Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SymbolFor&lt;Unit&gt; * SymbolFor&lt;OtherUnit&gt;</code></td>
+<td><code>SymbolFor&lt;UnitProductT&lt;Unit, OtherUnit&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>SymbolFor&lt;Unit&gt; / SymbolFor&lt;OtherUnit&gt;</code></td>
+<td><code>SymbolFor&lt;UnitQuotientT&lt;Unit, OtherUnit&gt;&gt;</code></td>
+</tr>
+</tbody>
+</table>
 <h2 id="origins">Unit origins<a class="headerlink" href="#origins" title="Permanent link">&para;</a></h2>
 <p>The &ldquo;origin&rdquo; of a unit is only useful for <code>QuantityPoint</code>, our <a href="http://videocortex.io/2018/Affine-Space-Types/">affine space
 type</a>.  Even then, the origin by itself is not
@@ -2229,15 +2462,15 @@ that is what this trait produces.</p>
 <p><strong>Result:</strong> The actual unit associated with a &ldquo;unit-alike&rdquo;.</p>
 <p>What&rsquo;s a &ldquo;unit-alike&rdquo;?  It&rsquo;s something that can be passed to an API expecting the name of a unit.
 Here are a few examples.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">round_in</span><span class="p">(</span><span class="n">meters</span><span class="p">,</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">20</span><span class="p">));</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1">//       ^^^^^^</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">round_in</span><span class="p">(</span><span class="n">Meters</span><span class="p">{},</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">20</span><span class="p">));</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1">//       ^^^^^^^^</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">inches</span><span class="p">);</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1">//         ^^^^^^</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">Inches</span><span class="p">{});</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1">//         ^^^^^^^^</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">round_in</span><span class="p">(</span><span class="n">meters</span><span class="p">,</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">20</span><span class="p">));</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1">//       ^^^^^^</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">round_in</span><span class="p">(</span><span class="n">Meters</span><span class="p">{},</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">20</span><span class="p">));</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1">//       ^^^^^^^^</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">inches</span><span class="p">);</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1">//         ^^^^^^</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">Inches</span><span class="p">{});</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="c1">//         ^^^^^^^^</span>
 </code></pre></div>
 <p>The underlined arguments are all unit-alikes.  In practice, a unit-alike either a <code>QuantityMaker</code>
 for some unit, or a unit itself.</p>
@@ -2296,6 +2529,8 @@ associative, and symmetric under interchange of any inputs.</p>
 </ul>
 </li>
 </ul>
+<script src="../assets/hrh4.js" async=false defer=false></script>
+
 <div class="footnote">
 <hr />
 <ol>

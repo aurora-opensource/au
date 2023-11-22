@@ -1177,7 +1177,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#applying-to-instances-the-prefix-applier" class="md-nav__link">
+  <a href="#prefix-applier" class="md-nav__link">
     Applying to instances: the "prefix applier"
   </a>
   
@@ -1698,7 +1698,7 @@ results in a new unit with the following properties:</p>
 <p>Therefore, <code>Centi&lt;Meters&gt;</code> is a unit whose symbol is <code>cm</code>, and whose magnitude is
 <span class="arithmatex"><span class="MathJax_Preview">1/100\,\text{m}</span><script type="math/tex">1/100\,\text{m}</script></span>.</p>
 </div>
-<h2 id="applying-to-instances-the-prefix-applier">Applying to instances: the &ldquo;prefix applier&rdquo;<a class="headerlink" href="#applying-to-instances-the-prefix-applier" title="Permanent link">&para;</a></h2>
+<h2 id="prefix-applier">Applying to instances: the &ldquo;prefix applier&rdquo;<a class="headerlink" href="#prefix-applier" title="Permanent link">&para;</a></h2>
 <p>Au uses many kinds of instances, not just types.  These include <a href="../quantity/">QuantityMaker</a>,
 <a href="../quantity_point/">QuantityPointMaker</a>, <code>SingularNameFor</code>, and even <a href="../detail/monovalue_types/">instances of unit
 types</a>.</p>
@@ -1741,6 +1741,12 @@ applier can be used.</p>
 <td><code>meter</code></td>
 <td><code>centi(meter)</code></td>
 <td><code>curvature.in(radians / centi(meter))</code></td>
+</tr>
+<tr>
+<td><code>SymbolFor</code></td>
+<td><code>m</code></td>
+<td><code>centi(m)</code></td>
+<td><code>constexpr auto cm = centi(m); 170 * cm</code></td>
 </tr>
 </tbody>
 </table>

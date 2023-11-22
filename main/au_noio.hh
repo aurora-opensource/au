@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-15-gc20bf4e
+// Version identifier: 0.3.3-16-g02b7e1a
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -4197,298 +4197,232 @@ constexpr auto meters_pt = QuantityPointMaker<Meters>{};
 }  // namespace au
 
 
+// "Mixin" classes to add operations for a "unit wrapper" --- that is, a template with a _single
+// template parameter_ that is a unit.
+//
+// The operations are multiplication and division.  The mixins will specify what types the wrapper
+// can combine with in this way, and what the resulting type will be.  They also take care of
+// getting the resulting unit correct.  Finally, they handle integer division carefully.
+//
+// Every mixin has at least two template parameters.
+//
+//   1. The unit wrapper (a template template parameter).
+//   2. The specific unit that it's wrapping (for convenience in the implementation).
+//
+// For mixins that compose with something that is _not_ a unit wrapper --- e.g., a raw number, or a
+// magnitude --- this is all they need.  Other mixins compose with _other unit wrappers_, and these
+// take two more template parameters: the wrapper we're composing with, and the resulting wrapper.
+
 namespace au {
+namespace detail {
 
-template <template <class U> class Prefix>
-struct PrefixApplier {
-    // Applying a Prefix to a Unit instance, creates an instance of the Prefixed Unit.
-    template <typename U>
-    constexpr auto operator()(U) const {
-        return Prefix<U>{};
+// A SFINAE helper that is the identity, but only if we think a type is a valid rep.
+//
+// For now, we are restricting this to arithmetic types.  This doesn't mean they're the only reps we
+// support; it just means they're the only reps we can _construct via this method_.  Later on, we
+// would like to have a well-defined concept that defines what is and is not an acceptable rep for
+// our `Quantity`.  Once we have that, we can simply constrain on that concept.  For more on this
+// idea, see: https://github.com/aurora-opensource/au/issues/52
+struct NoTypeMember {};
+template <typename T>
+struct TypeIdentityIfLooksLikeValidRep
+    : std::conditional_t<std::is_arithmetic<T>::value, stdx::type_identity<T>, NoTypeMember> {};
+template <typename T>
+using TypeIdentityIfLooksLikeValidRepT = typename TypeIdentityIfLooksLikeValidRep<T>::type;
+
+//
+// A mixin that enables turning a raw number into a Quantity by multiplying or dividing.
+//
+template <template <typename U> class UnitWrapper, typename Unit>
+struct MakesQuantityFromNumber {
+    // (N * W), for number N and wrapper W.
+    template <typename T>
+    friend constexpr auto operator*(T x, UnitWrapper<Unit>)
+        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
+        return make_quantity<Unit>(x);
     }
 
-    // Applying a Prefix to a QuantityMaker instance, creates a maker for the Prefixed Unit.
-    template <typename U>
-    constexpr auto operator()(QuantityMaker<U>) const {
-        return QuantityMaker<Prefix<U>>{};
+    // (W * N), for number N and wrapper W.
+    template <typename T>
+    friend constexpr auto operator*(UnitWrapper<Unit>, T x)
+        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
+        return make_quantity<Unit>(x);
     }
 
-    // Applying a Prefix to a QuantityPointMaker instance, changes it to make the Prefixed Unit.
-    template <typename U>
-    constexpr auto operator()(QuantityPointMaker<U>) const {
-        return QuantityPointMaker<Prefix<U>>{};
+    // (N / W), for number N and wrapper W.
+    template <typename T>
+    friend constexpr auto operator/(T x, UnitWrapper<Unit>)
+        -> Quantity<UnitInverseT<Unit>, TypeIdentityIfLooksLikeValidRepT<T>> {
+        return make_quantity<UnitInverseT<Unit>>(x);
     }
 
-    // Applying a Prefix to a SingularNameFor instance, creates a singularly-named instance of the
-    // Prefixed Unit.
-    template <typename U>
-    constexpr auto operator()(SingularNameFor<U>) const {
-        return SingularNameFor<Prefix<U>>{};
+    // (W / N), for number N and wrapper W.
+    template <typename T>
+    friend constexpr auto operator/(UnitWrapper<Unit>, T x)
+        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
+        static_assert(!std::is_integral<T>::value,
+                      "Dividing by an integer value disallowed: would almost always produce 0");
+        return make_quantity<Unit>(T{1} / x);
     }
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// SI Prefixes.
+//
+// A mixin that enables scaling the units of a Quantity by multiplying or dividing.
+//
+template <template <typename U> class UnitWrapper, typename Unit>
+struct ScalesQuantity {
+    // (W * Q), for wrapper W and quantity Q.
+    template <typename U, typename R>
+    friend constexpr auto operator*(UnitWrapper<Unit>, Quantity<U, R> q) {
+        return make_quantity<UnitProductT<Unit, U>>(q.in(U{}));
+    }
 
-template <typename U>
-struct Quetta : decltype(U{} * pow<30>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Q", unit_label<U>());
+    // (Q * W), for wrapper W and quantity Q.
+    template <typename U, typename R>
+    friend constexpr auto operator*(Quantity<U, R> q, UnitWrapper<Unit>) {
+        return make_quantity<UnitProductT<U, Unit>>(q.in(U{}));
+    }
+
+    // (Q / W), for wrapper W and quantity Q.
+    template <typename U, typename R>
+    friend constexpr auto operator/(Quantity<U, R> q, UnitWrapper<Unit>) {
+        return make_quantity<UnitQuotientT<U, Unit>>(q.in(U{}));
+    }
+
+    // (W / Q), for wrapper W and quantity Q.
+    template <typename U, typename R>
+    friend constexpr auto operator/(UnitWrapper<Unit>, Quantity<U, R> q) {
+        static_assert(!std::is_integral<R>::value,
+                      "Dividing by an integer value disallowed: would almost always produce 0");
+        return make_quantity<UnitQuotientT<Unit, U>>(R{1} / q.in(U{}));
+    }
 };
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Quetta<U>::label;
-constexpr auto quetta = PrefixApplier<Quetta>{};
 
-template <typename U>
-struct Ronna : decltype(U{} * pow<27>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("R", unit_label<U>());
+// A mixin to compose `op(U, O)` into a new unit wrapper, for "main" wrapper `U` and "other" wrapper
+// `O`.  (Implementation detail helper for `ComposesWith`.)
+template <template <typename U> class UnitWrapper,
+          typename Unit,
+          template <typename U>
+          class OtherWrapper,
+          template <typename U>
+          class ResultWrapper>
+struct PrecomposesWith {
+    // (U * O), for "main" wrapper U and "other" wrapper O.
+    template <typename U>
+    friend constexpr ResultWrapper<UnitProductT<Unit, U>> operator*(UnitWrapper<Unit>,
+                                                                    OtherWrapper<U>) {
+        return {};
+    }
+
+    // (U / O), for "main" wrapper U and "other" wrapper O.
+    template <typename U>
+    friend constexpr ResultWrapper<UnitQuotientT<Unit, U>> operator/(UnitWrapper<Unit>,
+                                                                     OtherWrapper<U>) {
+        return {};
+    }
 };
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Ronna<U>::label;
-constexpr auto ronna = PrefixApplier<Ronna>{};
 
-template <typename U>
-struct Yotta : decltype(U{} * pow<24>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Y", unit_label<U>());
+// A mixin to compose `op(O, U)` into a new unit wrapper, for "main" wrapper `U` and "other" wrapper
+// `O`.  (Implementation detail helper for `ComposesWith`.)
+template <template <typename U> class UnitWrapper,
+          typename Unit,
+          template <typename U>
+          class OtherWrapper,
+          template <typename U>
+          class ResultWrapper>
+struct PostcomposesWith {
+    // (O * U), for "main" wrapper U and "other" wrapper O.
+    template <typename U>
+    friend constexpr ResultWrapper<UnitProductT<U, Unit>> operator*(OtherWrapper<U>,
+                                                                    UnitWrapper<Unit>) {
+        return {};
+    }
+
+    // (O / U), for "main" wrapper U and "other" wrapper O.
+    template <typename U>
+    friend constexpr ResultWrapper<UnitQuotientT<U, Unit>> operator/(OtherWrapper<U>,
+                                                                     UnitWrapper<Unit>) {
+        return {};
+    }
 };
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Yotta<U>::label;
-constexpr auto yotta = PrefixApplier<Yotta>{};
 
-template <typename U>
-struct Zetta : decltype(U{} * pow<21>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Z", unit_label<U>());
+// An empty version of `PostcomposesWith` for when `UnitWrapper` is the same as `OtherWrapper`.
+// In this case, if we left it non-empty, the definitions would be ambiguous/redundant with the ones
+// in `PrecoposesWith`.
+template <template <typename U> class UnitWrapper,
+          typename Unit,
+          template <typename U>
+          class ResultWrapper>
+struct PostcomposesWith<UnitWrapper, Unit, UnitWrapper, ResultWrapper> {};
+
+//
+// A mixin to compose two unit wrappers into a new unit wrapper.
+//
+template <template <typename U> class UnitWrapper,
+          typename Unit,
+          template <typename U>
+          class OtherWrapper,
+          template <typename U>
+          class ResultWrapper>
+struct ComposesWith : PrecomposesWith<UnitWrapper, Unit, OtherWrapper, ResultWrapper>,
+                      PostcomposesWith<UnitWrapper, Unit, OtherWrapper, ResultWrapper> {};
+
+//
+// A mixin to enable scaling a unit wrapper by a magnitude.
+//
+template <template <typename U> class UnitWrapper, typename Unit>
+struct CanScaleByMagnitude {
+    // (M * W), for magnitude M and wrapper W.
+    template <typename... BPs>
+    friend constexpr auto operator*(Magnitude<BPs...> m, UnitWrapper<Unit>) {
+        return UnitWrapper<decltype(Unit{} * m)>{};
+    }
+
+    // (W * M), for magnitude M and wrapper W.
+    template <typename... BPs>
+    friend constexpr auto operator*(UnitWrapper<Unit>, Magnitude<BPs...> m) {
+        return UnitWrapper<decltype(Unit{} * m)>{};
+    }
+
+    // (M / W), for magnitude M and wrapper W.
+    template <typename... BPs>
+    friend constexpr auto operator/(Magnitude<BPs...> m, UnitWrapper<Unit>) {
+        return UnitWrapper<decltype(UnitInverseT<Unit>{} * m)>{};
+    }
+
+    // (W / M), for magnitude M and wrapper W.
+    template <typename... BPs>
+    friend constexpr auto operator/(UnitWrapper<Unit>, Magnitude<BPs...> m) {
+        return UnitWrapper<decltype(Unit{} / m)>{};
+    }
 };
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Zetta<U>::label;
-constexpr auto zetta = PrefixApplier<Zetta>{};
 
-template <typename U>
-struct Exa : decltype(U{} * pow<18>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("E", unit_label<U>());
+//
+// A mixin to explicitly delete operations that we want to forbid.
+//
+template <template <typename U> class UnitWrapper,
+          typename Unit,
+          template <typename... Us>
+          class OtherWrapper>
+struct ForbidsComposingWith {
+    // (W * O), for wrapper W and wrapper O.
+    template <typename... Us>
+    friend constexpr void operator*(UnitWrapper<Unit>, OtherWrapper<Us...>) = delete;
+
+    // (W / O), for wrapper W and wrapper O.
+    template <typename... Us>
+    friend constexpr void operator/(UnitWrapper<Unit>, OtherWrapper<Us...>) = delete;
+
+    // (O * W), for wrapper W and wrapper O.
+    template <typename... Us>
+    friend constexpr void operator*(OtherWrapper<Us...>, UnitWrapper<Unit>) = delete;
+
+    // (O / W), for wrapper W and wrapper O.
+    template <typename... Us>
+    friend constexpr void operator/(OtherWrapper<Us...>, UnitWrapper<Unit>) = delete;
 };
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Exa<U>::label;
-constexpr auto exa = PrefixApplier<Exa>{};
 
-template <typename U>
-struct Peta : decltype(U{} * pow<15>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("P", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Peta<U>::label;
-constexpr auto peta = PrefixApplier<Peta>{};
-
-template <typename U>
-struct Tera : decltype(U{} * pow<12>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("T", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Tera<U>::label;
-constexpr auto tera = PrefixApplier<Tera>{};
-
-template <typename U>
-struct Giga : decltype(U{} * pow<9>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("G", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Giga<U>::label;
-constexpr auto giga = PrefixApplier<Giga>{};
-
-template <typename U>
-struct Mega : decltype(U{} * pow<6>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("M", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Mega<U>::label;
-constexpr auto mega = PrefixApplier<Mega>{};
-
-template <typename U>
-struct Kilo : decltype(U{} * pow<3>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("k", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Kilo<U>::label;
-constexpr auto kilo = PrefixApplier<Kilo>{};
-
-template <typename U>
-struct Hecto : decltype(U{} * pow<2>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("h", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Hecto<U>::label;
-constexpr auto hecto = PrefixApplier<Hecto>{};
-
-template <typename U>
-struct Deka : decltype(U{} * pow<1>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("da", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Deka<U>::label;
-constexpr auto deka = PrefixApplier<Deka>{};
-
-template <typename U>
-struct Deci : decltype(U{} * pow<-1>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("d", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Deci<U>::label;
-constexpr auto deci = PrefixApplier<Deci>{};
-
-template <typename U>
-struct Centi : decltype(U{} * pow<-2>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("c", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Centi<U>::label;
-constexpr auto centi = PrefixApplier<Centi>{};
-
-template <typename U>
-struct Milli : decltype(U{} * pow<-3>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("m", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Milli<U>::label;
-constexpr auto milli = PrefixApplier<Milli>{};
-
-template <typename U>
-struct Micro : decltype(U{} * pow<-6>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("u", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Micro<U>::label;
-constexpr auto micro = PrefixApplier<Micro>{};
-
-template <typename U>
-struct Nano : decltype(U{} * pow<-9>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("n", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Nano<U>::label;
-constexpr auto nano = PrefixApplier<Nano>{};
-
-template <typename U>
-struct Pico : decltype(U{} * pow<-12>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("p", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Pico<U>::label;
-constexpr auto pico = PrefixApplier<Pico>{};
-
-template <typename U>
-struct Femto : decltype(U{} * pow<-15>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("f", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Femto<U>::label;
-constexpr auto femto = PrefixApplier<Femto>{};
-
-template <typename U>
-struct Atto : decltype(U{} * pow<-18>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("a", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Atto<U>::label;
-constexpr auto atto = PrefixApplier<Atto>{};
-
-template <typename U>
-struct Zepto : decltype(U{} * pow<-21>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("z", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Zepto<U>::label;
-constexpr auto zepto = PrefixApplier<Zepto>{};
-
-template <typename U>
-struct Yocto : decltype(U{} * pow<-24>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("y", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Yocto<U>::label;
-constexpr auto yocto = PrefixApplier<Yocto>{};
-
-template <typename U>
-struct Ronto : decltype(U{} * pow<-27>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("r", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Ronto<U>::label;
-constexpr auto ronto = PrefixApplier<Ronto>{};
-
-template <typename U>
-struct Quecto : decltype(U{} * pow<-30>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("q", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Quecto<U>::label;
-constexpr auto quecto = PrefixApplier<Quecto>{};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Binary Prefixes.
-
-template <typename U>
-struct Yobi : decltype(U{} * pow<80>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Yi", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Yobi<U>::label;
-constexpr auto yobi = PrefixApplier<Yobi>{};
-
-template <typename U>
-struct Zebi : decltype(U{} * pow<70>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Zi", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Zebi<U>::label;
-constexpr auto zebi = PrefixApplier<Zebi>{};
-
-template <typename U>
-struct Exbi : decltype(U{} * pow<60>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Ei", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Exbi<U>::label;
-constexpr auto exbi = PrefixApplier<Exbi>{};
-
-template <typename U>
-struct Pebi : decltype(U{} * pow<50>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Pi", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Pebi<U>::label;
-constexpr auto pebi = PrefixApplier<Pebi>{};
-
-template <typename U>
-struct Tebi : decltype(U{} * pow<40>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Ti", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Tebi<U>::label;
-constexpr auto tebi = PrefixApplier<Tebi>{};
-
-template <typename U>
-struct Gibi : decltype(U{} * pow<30>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Gi", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Gibi<U>::label;
-constexpr auto gibi = PrefixApplier<Gibi>{};
-
-template <typename U>
-struct Mebi : decltype(U{} * pow<20>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Mi", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Mebi<U>::label;
-constexpr auto mebi = PrefixApplier<Mebi>{};
-
-template <typename U>
-struct Kibi : decltype(U{} * pow<10>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Ki", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Kibi<U>::label;
-constexpr auto kibi = PrefixApplier<Kibi>{};
-
+}  // namespace detail
 }  // namespace au
 
 
@@ -5211,6 +5145,343 @@ struct Kelvins : UnitImpl<Temperature>, KelvinsLabel<void> {
 constexpr auto kelvin = SingularNameFor<Kelvins>{};
 constexpr auto kelvins = QuantityMaker<Kelvins>{};
 constexpr auto kelvins_pt = QuantityPointMaker<Kelvins>{};
+
+}  // namespace au
+
+
+namespace au {
+
+//
+// A representation of the symbol for a unit.
+//
+// To use, create an instance variable templated on a unit, and make the instance variable's name
+// the symbol to represent.  For example:
+//
+//     constexpr auto m = SymbolFor<Meters>{};
+//
+template <typename Unit>
+struct SymbolFor : detail::MakesQuantityFromNumber<SymbolFor, Unit>,
+                   detail::ScalesQuantity<SymbolFor, Unit>,
+                   detail::ComposesWith<SymbolFor, Unit, SymbolFor, SymbolFor> {};
+
+//
+// Create a unit symbol using the more fluent APIs that unit slots make possible.  For example:
+//
+//     constexpr auto mps = symbol_for(meters / second);
+//
+// This is generally easier to work with and makes code that is easier to read, at the cost of being
+// (very slightly) slower to compile.
+//
+template <typename UnitSlot>
+constexpr auto symbol_for(UnitSlot) {
+    return SymbolFor<AssociatedUnitT<UnitSlot>>{};
+}
+
+// Support using symbols in unit slot APIs (e.g., `v.in(m / s)`).
+template <typename U>
+struct AssociatedUnit<SymbolFor<U>> : stdx::type_identity<U> {};
+
+}  // namespace au
+
+
+namespace au {
+
+template <template <class U> class Prefix>
+struct PrefixApplier {
+    // Applying a Prefix to a Unit instance, creates an instance of the Prefixed Unit.
+    template <typename U>
+    constexpr auto operator()(U) const {
+        return Prefix<U>{};
+    }
+
+    // Applying a Prefix to a QuantityMaker instance, creates a maker for the Prefixed Unit.
+    template <typename U>
+    constexpr auto operator()(QuantityMaker<U>) const {
+        return QuantityMaker<Prefix<U>>{};
+    }
+
+    // Applying a Prefix to a QuantityPointMaker instance, changes it to make the Prefixed Unit.
+    template <typename U>
+    constexpr auto operator()(QuantityPointMaker<U>) const {
+        return QuantityPointMaker<Prefix<U>>{};
+    }
+
+    // Applying a Prefix to a SingularNameFor instance, creates a singularly-named instance of the
+    // Prefixed Unit.
+    template <typename U>
+    constexpr auto operator()(SingularNameFor<U>) const {
+        return SingularNameFor<Prefix<U>>{};
+    }
+
+    // Applying a Prefix to a SymbolFor instance, creates a symbolically-named instance of the
+    // Prefixed unit.
+    template <typename U>
+    constexpr auto operator()(SymbolFor<U>) const {
+        return SymbolFor<Prefix<U>>{};
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SI Prefixes.
+
+template <typename U>
+struct Quetta : decltype(U{} * pow<30>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Q", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Quetta<U>::label;
+constexpr auto quetta = PrefixApplier<Quetta>{};
+
+template <typename U>
+struct Ronna : decltype(U{} * pow<27>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("R", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Ronna<U>::label;
+constexpr auto ronna = PrefixApplier<Ronna>{};
+
+template <typename U>
+struct Yotta : decltype(U{} * pow<24>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Y", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Yotta<U>::label;
+constexpr auto yotta = PrefixApplier<Yotta>{};
+
+template <typename U>
+struct Zetta : decltype(U{} * pow<21>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Z", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Zetta<U>::label;
+constexpr auto zetta = PrefixApplier<Zetta>{};
+
+template <typename U>
+struct Exa : decltype(U{} * pow<18>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("E", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Exa<U>::label;
+constexpr auto exa = PrefixApplier<Exa>{};
+
+template <typename U>
+struct Peta : decltype(U{} * pow<15>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("P", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Peta<U>::label;
+constexpr auto peta = PrefixApplier<Peta>{};
+
+template <typename U>
+struct Tera : decltype(U{} * pow<12>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("T", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Tera<U>::label;
+constexpr auto tera = PrefixApplier<Tera>{};
+
+template <typename U>
+struct Giga : decltype(U{} * pow<9>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("G", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Giga<U>::label;
+constexpr auto giga = PrefixApplier<Giga>{};
+
+template <typename U>
+struct Mega : decltype(U{} * pow<6>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("M", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Mega<U>::label;
+constexpr auto mega = PrefixApplier<Mega>{};
+
+template <typename U>
+struct Kilo : decltype(U{} * pow<3>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("k", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Kilo<U>::label;
+constexpr auto kilo = PrefixApplier<Kilo>{};
+
+template <typename U>
+struct Hecto : decltype(U{} * pow<2>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("h", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Hecto<U>::label;
+constexpr auto hecto = PrefixApplier<Hecto>{};
+
+template <typename U>
+struct Deka : decltype(U{} * pow<1>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("da", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Deka<U>::label;
+constexpr auto deka = PrefixApplier<Deka>{};
+
+template <typename U>
+struct Deci : decltype(U{} * pow<-1>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("d", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Deci<U>::label;
+constexpr auto deci = PrefixApplier<Deci>{};
+
+template <typename U>
+struct Centi : decltype(U{} * pow<-2>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("c", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Centi<U>::label;
+constexpr auto centi = PrefixApplier<Centi>{};
+
+template <typename U>
+struct Milli : decltype(U{} * pow<-3>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("m", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Milli<U>::label;
+constexpr auto milli = PrefixApplier<Milli>{};
+
+template <typename U>
+struct Micro : decltype(U{} * pow<-6>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("u", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Micro<U>::label;
+constexpr auto micro = PrefixApplier<Micro>{};
+
+template <typename U>
+struct Nano : decltype(U{} * pow<-9>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("n", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Nano<U>::label;
+constexpr auto nano = PrefixApplier<Nano>{};
+
+template <typename U>
+struct Pico : decltype(U{} * pow<-12>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("p", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Pico<U>::label;
+constexpr auto pico = PrefixApplier<Pico>{};
+
+template <typename U>
+struct Femto : decltype(U{} * pow<-15>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("f", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Femto<U>::label;
+constexpr auto femto = PrefixApplier<Femto>{};
+
+template <typename U>
+struct Atto : decltype(U{} * pow<-18>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("a", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Atto<U>::label;
+constexpr auto atto = PrefixApplier<Atto>{};
+
+template <typename U>
+struct Zepto : decltype(U{} * pow<-21>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("z", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Zepto<U>::label;
+constexpr auto zepto = PrefixApplier<Zepto>{};
+
+template <typename U>
+struct Yocto : decltype(U{} * pow<-24>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("y", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Yocto<U>::label;
+constexpr auto yocto = PrefixApplier<Yocto>{};
+
+template <typename U>
+struct Ronto : decltype(U{} * pow<-27>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("r", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Ronto<U>::label;
+constexpr auto ronto = PrefixApplier<Ronto>{};
+
+template <typename U>
+struct Quecto : decltype(U{} * pow<-30>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("q", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Quecto<U>::label;
+constexpr auto quecto = PrefixApplier<Quecto>{};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Binary Prefixes.
+
+template <typename U>
+struct Yobi : decltype(U{} * pow<80>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Yi", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Yobi<U>::label;
+constexpr auto yobi = PrefixApplier<Yobi>{};
+
+template <typename U>
+struct Zebi : decltype(U{} * pow<70>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Zi", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Zebi<U>::label;
+constexpr auto zebi = PrefixApplier<Zebi>{};
+
+template <typename U>
+struct Exbi : decltype(U{} * pow<60>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Ei", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Exbi<U>::label;
+constexpr auto exbi = PrefixApplier<Exbi>{};
+
+template <typename U>
+struct Pebi : decltype(U{} * pow<50>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Pi", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Pebi<U>::label;
+constexpr auto pebi = PrefixApplier<Pebi>{};
+
+template <typename U>
+struct Tebi : decltype(U{} * pow<40>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Ti", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Tebi<U>::label;
+constexpr auto tebi = PrefixApplier<Tebi>{};
+
+template <typename U>
+struct Gibi : decltype(U{} * pow<30>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Gi", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Gibi<U>::label;
+constexpr auto gibi = PrefixApplier<Gibi>{};
+
+template <typename U>
+struct Mebi : decltype(U{} * pow<20>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Mi", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Mebi<U>::label;
+constexpr auto mebi = PrefixApplier<Mebi>{};
+
+template <typename U>
+struct Kibi : decltype(U{} * pow<10>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Ki", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Kibi<U>::label;
+constexpr auto kibi = PrefixApplier<Kibi>{};
 
 }  // namespace au
 
