@@ -170,39 +170,8 @@ types.
         ```
 
         Since `long long` is at least 64 bits, we could handle values into the tens of billions of
-        feet before overflowing!
-
-        ??? info "In more detail: the \"Overflow Safety Surface\""
-            Here is how to reason about which integral-Rep conversions the library supports.
-
-            For every conversion operation, there is _some smallest value which would overflow_.
-            This depends on both the size of the conversion factor, and the range of values which
-            the type can hold.  If that smallest value is small enough to be "scary", we forbid the
-            conversion.
-
-            How small is "scary"?  Here are some considerations.
-
-              - Once our values get over 1,000, we can consider switching to a larger SI-prefixed
-                version of the unit.  (For example, lengths over $1000\,\text{m}$ can be
-                approximated in $\text{km}$.)  This means that if a value as small as 1,000 would
-                overflow --- so small that we haven't even _reached_ the next unit --- we should
-                _definitely_ forbid the conversion.
-
-              - On the other hand, we've found it useful to initialize, say, `QuantityI32<Hertz>`
-                variables with something like `mega(hertz)(500)`.  Thus, we'd like this operation
-                to succeed (although it should probably be near the border of what's allowed).
-
-            Putting it all together, we settled on [a value threshold of 2'147][threshold].  If we
-            can convert this value without overflow, then we permit the operation; otherwise, we
-            don't.  We picked this value because it satisfies our above criteria nicely.  It will
-            prevent operations that can't handle values of 1,000, but it still lets us use
-            $\text{MHz}$ freely when storing $\text{Hz}$ quantities in `int32_t`.
-
-            We can picture this relationship in terms of the _biggest allowable conversion factor_,
-            as a function of the _max value of the type_.  This function separates the allowed
-            conversions from the forbidden ones, permitting bigger conversions for bigger types.
-            We call this abstract boundary the **"overflow safety surface"**, and it's the secret
-            ingredient that lets us use a wide variety of integral types with confidence.
+        feet before overflowing!  (For more details on the overflow problem, and Au's strategies for
+        mitigating it, read our [overflow discussion](../discussion/concepts/overflow.md).)
 
         As for the **floating point** value, this is again very safe, so we **allow** it without
         complaint.

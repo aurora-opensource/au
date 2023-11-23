@@ -9,9 +9,9 @@ single value it can represent is fully encoded in its type.  This makes it an ex
 a [monovalue type](./detail/monovalue_types.md).
 
 Because the value is always fully known at compile time, we do not need to use a heuristic like the
-overflow safety surface to determine which conversions are allowed.  Instead, we can achieve
-a perfect conversion policy: we allow converting to any `Quantity` that can represent the value
-exactly, and disallow all other conversions.
+[overflow safety surface](../discussion/concepts/overflow.md) to determine which conversions are
+allowed.  Instead, we can achieve a perfect conversion policy: we allow converting to any `Quantity`
+that can represent the value exactly, and disallow all other conversions.
 
 The main use of `Constant` is to multiply and divide raw numbers or `Quantity` values.  When we do
 this, the constant is applied _symbolically_, and affects the _units_ of the resulting quantity.
@@ -173,7 +173,8 @@ This provides great flexibility and confidence in passing `Constant` values to A
 !!! note
     The fact that `Constant` has a perfect conversion policy means that we can use it with APIs
     where the corresponding `Quantity` would not work, because `Quantity` is forced to use the
-    overflow safety surface, which is a more conservative heuristic.
+    [overflow safety surface](../discussion/concepts/overflow.md), which is a more conservative
+    heuristic.
 
     For example, suppose you have an API accepting `Quantity<UnitQuotientT<Meters, Seconds>, int>`,
     and a constant `c` representing the speed of light.
