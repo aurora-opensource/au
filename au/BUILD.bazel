@@ -240,6 +240,7 @@ cc_library(
     name = "math",
     hdrs = ["math.hh"],
     deps = [
+        ":constant",
         ":quantity",
         ":quantity_point",
         ":units",
