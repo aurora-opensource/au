@@ -133,8 +133,7 @@ TEST(Constant, MakesQuantityWhenDividedByNumericValue) {
     // numerator of `1`, and would therefore always be zero.
     //
     // Uncomment to make sure the compilation fails:
-    // EXPECT_THAT((c / 2).coerce_as(meters / second),
-    //             SameTypeAndValue((meters / second)(get_value<int>(C_MPS / mag<2>()))));
+    // c / 2;
 }
 
 TEST(Constant, AppliesConstantSymbolToUnitLabel) {
