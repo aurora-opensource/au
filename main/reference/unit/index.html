@@ -2062,11 +2062,14 @@ types.</p>
 <h4 id="raw-numeric-type-t">Raw numeric type <code>T</code><a class="headerlink" href="#raw-numeric-type-t" title="Permanent link">&para;</a></h4>
 <p>Multiplying or dividing <code>SymbolFor&lt;Unit&gt;</code> with a raw numeric type <code>T</code> produces a <code>Quantity</code> whose rep
 is <code>T</code>, and whose unit is derived from <code>Unit</code>.</p>
+<p>In the following table, we will use <code>x</code> to represent the value that was stored in the input of type
+<code>T</code>.</p>
 <table>
 <thead>
 <tr>
 <th>Operation</th>
 <th>Resulting Type</th>
+<th>Underlying Value</th>
 <th>Notes</th>
 </tr>
 </thead>
@@ -2074,21 +2077,25 @@ is <code>T</code>, and whose unit is derived from <code>Unit</code>.</p>
 <tr>
 <td><code>SymbolFor&lt;Unit&gt; * T</code></td>
 <td><code>Quantity&lt;Unit, T&gt;</code></td>
+<td><code>x</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>SymbolFor&lt;Unit&gt; / T</code></td>
 <td><code>Quantity&lt;Unit, T&gt;</code></td>
-<td>Disallowed for integer <code>T</code></td>
+<td><code>T{1} / x</code></td>
+<td>Disallowed for integral <code>T</code></td>
 </tr>
 <tr>
 <td><code>T * SymbolFor&lt;Unit&gt;</code></td>
 <td><code>Quantity&lt;Unit, T&gt;</code></td>
+<td><code>x</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>T / SymbolFor&lt;Unit&gt;</code></td>
 <td><code>Quantity&lt;UnitInverseT&lt;Unit&gt;, T&gt;</code></td>
+<td><code>x</code></td>
 <td></td>
 </tr>
 </tbody>
@@ -2096,11 +2103,14 @@ is <code>T</code>, and whose unit is derived from <code>Unit</code>.</p>
 <h4 id="quantityu-r"><code>Quantity&lt;U, R&gt;</code><a class="headerlink" href="#quantityu-r" title="Permanent link">&para;</a></h4>
 <p>Multiplying or dividing <code>SymbolFor&lt;Unit&gt;</code> with a <code>Quantity&lt;U, R&gt;</code> produces a new <code>Quantity</code>.  It has
 the same underlying value and same rep <code>R</code>, but its units <code>U</code> are scaled appropriately by <code>Unit</code>.</p>
+<p>In the following table, we will use <code>x</code> to represent the underlying value of the input quantity &mdash;
+that is, if the input quantity was <code>q</code>, then <code>x</code> is <code>q.in(U{})</code>.</p>
 <table>
 <thead>
 <tr>
 <th>Operation</th>
 <th>Resulting Type</th>
+<th>Underlying Value</th>
 <th>Notes</th>
 </tr>
 </thead>
@@ -2108,21 +2118,25 @@ the same underlying value and same rep <code>R</code>, but its units <code>U</co
 <tr>
 <td><code>SymbolFor&lt;Unit&gt; * Quantity&lt;U, R&gt;</code></td>
 <td><code>Quantity&lt;UnitProductT&lt;Unit, U&gt;, R&gt;</code></td>
+<td><code>x</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>SymbolFor&lt;Unit&gt; / Quantity&lt;U, R&gt;</code></td>
 <td><code>Quantity&lt;UnitQuotientT&lt;Unit, U&gt;, R&gt;</code></td>
-<td>Disallowed for integer <code>R</code></td>
+<td><code>R{1} / x</code></td>
+<td>Disallowed for integral <code>R</code></td>
 </tr>
 <tr>
 <td><code>Quantity&lt;U, R&gt; * SymbolFor&lt;Unit&gt;</code></td>
 <td><code>Quantity&lt;UnitProductT&lt;U, Unit&gt;, R&gt;</code></td>
+<td><code>x</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>Quantity&lt;U, R&gt; / SymbolFor&lt;Unit&gt;</code></td>
 <td><code>Quantity&lt;UnitQuotientT&lt;U, Unit&gt;, R&gt;</code></td>
+<td><code>x</code></td>
 <td></td>
 </tr>
 </tbody>
