@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-17-g81d7d66
+// Version identifier: 0.3.3-18-gec2cb21
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -5500,5 +5500,15 @@ struct CorrespondingQuantity<std::chrono::duration<RepT, Period>> {
     static constexpr Rep extract_value(ChronoDuration d) { return d.count(); }
     static constexpr ChronoDuration construct_from_value(Rep x) { return ChronoDuration{x}; }
 };
+
+// Convert any Au duration quantity to an equivalent `std::chrono::duration`.
+template <typename U, typename R>
+constexpr auto as_chrono_duration(Quantity<U, R> dt) {
+    constexpr auto ratio = unit_ratio(U{}, seconds);
+    static_assert(is_rational(ratio), "Cannot convert to chrono::duration with non-rational ratio");
+    return std::chrono::duration<R,
+                                 std::ratio<get_value<std::intmax_t>(numerator(ratio)),
+                                            get_value<std::intmax_t>(denominator(ratio))>>{dt};
+}
 
 }  // namespace au
