@@ -12,13 +12,13 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/prefix/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/constant/">
       
       
-        <link rel="prev" href="../powers/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../quantity/">
+        <link rel="next" href="../corresponding_quantity/">
       
       
       <link rel="icon" href="../../assets/favicon.ico">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Prefix - The Au units library</title>
+        <title>Constant - The Au units library</title>
       
     
     
@@ -73,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#prefix" class="md-skip">
+        <a href="#constant" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Prefix
+              Constant
             
           </span>
         </div>
@@ -1042,9 +1042,29 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../constant/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Constant
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -1053,6 +1073,177 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#constructing-constant" class="md-nav__link">
+    Constructing Constant
+  </a>
+  
+    <nav class="md-nav" aria-label="Constructing Constant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ad-hoc-constants" class="md-nav__link">
+    Ad hoc constants
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constant-and-unit-slots" class="md-nav__link">
+    Constant and unit slots
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#converting-to-quantity" class="md-nav__link">
+    Converting to Quantity
+  </a>
+  
+    <nav class="md-nav" aria-label="Converting to Quantity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ast" class="md-nav__link">
+    .as&lt;T&gt;()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#as-T-unit" class="md-nav__link">
+    .as&lt;T&gt;(unit)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coerce_astunit" class="md-nav__link">
+    .coerce_as&lt;T&gt;(unit)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-T-unit" class="md-nav__link">
+    .in&lt;T&gt;(unit)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coerce_intunit" class="md-nav__link">
+    .coerce_in&lt;T&gt;(unit)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implicit-quantity-conversion" class="md-nav__link">
+    Implicit Quantity conversion
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    Operations
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raw-numeric-type-t" class="md-nav__link">
+    Raw numeric type T
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantityu-r" class="md-nav__link">
+    Quantity&lt;U, R&gt;
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#constantu" class="md-nav__link">
+    Constant&lt;U&gt;
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantitymakeru" class="md-nav__link">
+    QuantityMaker&lt;U&gt;
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#singularnameforu" class="md-nav__link">
+    SingularNameFor&lt;U&gt;
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#magnitudebps" class="md-nav__link">
+    Magnitude&lt;BPs...&gt;
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantitypointmakeru-deleted" class="md-nav__link">
+    QuantityPointMaker&lt;U&gt; (deleted)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantitypointu-r-deleted" class="md-nav__link">
+    QuantityPoint&lt;U, R&gt; (deleted)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1142,29 +1333,9 @@
                 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Prefix
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../prefix/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1173,67 +1344,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#applying-to-unit-types" class="md-nav__link">
-    Applying to unit types
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#prefix-applier" class="md-nav__link">
-    Applying to instances: the "prefix applier"
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#list-of-supported-prefixes" class="md-nav__link">
-    List of supported prefixes
-  </a>
-  
-    <nav class="md-nav" aria-label="List of supported prefixes">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#si-prefixes" class="md-nav__link">
-    SI prefixes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#binary-prefixes" class="md-nav__link">
-    Binary prefixes
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1695,304 +1805,350 @@
   
 
 
-<h1 id="prefix">Prefix<a class="headerlink" href="#prefix" title="Permanent link">&para;</a></h1>
-<p>A &ldquo;prefix&rdquo; scales a <a href="../unit/">unit</a> by some <a href="../magnitude/">magnitude</a>, and prepends a <em>prefix
-symbol</em> to the unit&rsquo;s label.</p>
-<h2 id="applying-to-unit-types">Applying to unit types<a class="headerlink" href="#applying-to-unit-types" title="Permanent link">&para;</a></h2>
-<p>To apply a prefix to a unit <em>type</em>, pass that unit as a <em>template parameter</em> to the prefix.  This
-results in a new unit with the following properties:</p>
-<ol>
-<li>
-<p>The <strong>label</strong> for the new unit is the label for the input unit, with the <strong>prefix symbol</strong>
-   prepended.</p>
-</li>
-<li>
-<p>The <strong>magnitude</strong> of the new unit is the magnitude of the input unit, scaled by the <strong>scaling
-   factor</strong>.</p>
-</li>
-</ol>
-<div class="admonition example">
-<p class="admonition-title">Example: <code>Centi</code> and <code>Meters</code></p>
-<p><code>Centi</code> is a prefix whose prefix symbol is <code>c</code>, and whose scaling factor is <span class="arithmatex"><span class="MathJax_Preview">1/100</span><script type="math/tex">1/100</script></span>.</p>
-<p><code>Meters</code> is a unit whose symbol is <code>m</code>.</p>
-<p>Therefore, <code>Centi&lt;Meters&gt;</code> is a unit whose symbol is <code>cm</code>, and whose magnitude is
-<span class="arithmatex"><span class="MathJax_Preview">1/100\,\text{m}</span><script type="math/tex">1/100\,\text{m}</script></span>.</p>
+<h1 id="constant">Constant<a class="headerlink" href="#constant" title="Permanent link">&para;</a></h1>
+<p><code>Constant</code> is a family of template types, each of which represents a single specific quantity value.</p>
+<p>Recall that the usual way to represent quantity values is with a <a href="../quantity/"><code>Quantity&lt;Unit, Rep&gt;</code></a>
+type. This holds a numeric variable of type <code>Rep</code> inside, letting it represent
+many possible quantity values. By contrast, <code>Constant</code> is an empty class and has no &ldquo;rep&rdquo;: the
+single value it can represent is fully encoded in its type.  This makes it an example of
+a <a href="../detail/monovalue_types/">monovalue type</a>.</p>
+<p>Because the value is always fully known at compile time, we do not need to use a heuristic like the
+overflow safety surface to determine which conversions are allowed.  Instead, we can achieve
+a perfect conversion policy: we allow converting to any <code>Quantity</code> that can represent the value
+exactly, and disallow all other conversions.</p>
+<p>The main use of <code>Constant</code> is to multiply and divide raw numbers or <code>Quantity</code> values.  When we do
+this, the constant is applied <em>symbolically</em>, and affects the <em>units</em> of the resulting quantity.
+For example, multiplying a duration in seconds by a constant representing the speed of light
+produces a <em>length</em>, measured in units of <em>light-seconds</em>.  Notably, <em>the underlying stored numeric
+value does not change</em>: whether a duration of <code>5</code> seconds, or a length of <code>5</code> light-seconds, we
+still store <code>5</code> under the hood.</p>
+<p>This approach means that if subsequent operations cancel out the constant, this cancellation is both
+<em>exact</em> and has <em>zero runtime cost</em>.</p>
+<h2 id="constructing-constant">Constructing <code>Constant</code><a class="headerlink" href="#constructing-constant" title="Permanent link">&para;</a></h2>
+<p><code>Constant</code> encodes all information about the value in its type.  Moreover, it has only a single
+template parameter, which is a <a href="../unit/">unit</a>.  Therefore, the first step is to encode your
+quantity as a unit &mdash; that is, to define the unit &ldquo;U&rdquo; such that your quantity has a value of
+&ldquo;1 U&rdquo;.</p>
+<p>To do this, follow <a href="../../howto/new-units/">the usual instructions for creating new units</a>.  Note
+that you can use a much simpler definition that omits most of the optional features.  The only
+important ones are those labeled <code>[1]</code> (the strong type definition) and <code>[2]</code> (the unit label).</p>
+<p>Having defined your unit, you can pass an instance to the <code>make_constant</code> function.  If the unit you
+defined above is called <code>YourUnits</code>, and the constant is called <code>YOUR_CONSTANT</code>, then the constant
+definition will look like this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">YOUR_CONSTANT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">YourUnits</span><span class="p">{});</span>
+</code></pre></div>
+<p>Finally, note that the argument to <code>make_constant()</code> is a <a href="../../discussion/idioms/unit-slots/">unit
+slot</a>, so you can pass &ldquo;unit-like&rdquo; alternatives such as
+<code>QuantityMaker</code> or <code>SymbolFor</code> instances as well.</p>
+<details class="example">
+<summary>Full worked example: speed of light</summary>
+<p>Let&rsquo;s look at an example of defining a constant for the speed of light.  Both the name of the
+instance and the label will be <code>c</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++14</label><label for="__tabbed_1_2">C++17 or later</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// In .hh file:</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">SpeedOfLight</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Meters</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Seconds</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">};</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">SpeedOfLight</span><span class="p">{});</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// In .cc file:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">SpeedOfLight</span><span class="o">::</span><span class="n">label</span><span class="p">[];</span>
+</code></pre></div>
 </div>
-<h2 id="prefix-applier">Applying to instances: the &ldquo;prefix applier&rdquo;<a class="headerlink" href="#prefix-applier" title="Permanent link">&para;</a></h2>
-<p>Au uses many kinds of instances, not just types.  These include <a href="../quantity/">QuantityMaker</a>,
-<a href="../quantity_point/">QuantityPointMaker</a>, <code>SingularNameFor</code>, and even <a href="../detail/monovalue_types/">instances of unit
-types</a>.</p>
-<p>Instances are naturally used as <em>function parameters</em>, not template parameters.  Therefore, for each
-prefix, we provide a &ldquo;prefix applier&rdquo; which can be called as a function.  For any of the above kinds
-of inputs, the prefix applier returns the same kind, but in the prefixed unit.</p>
-<p>Let&rsquo;s return to the example of <code>Centi</code> and <code>Meters</code>.  The prefix applier for <code>Centi</code> is spelled
-<code>centi</code>: note that we use snake_case, rather than CamelCase.  Here are the various ways a prefix
-applier can be used.</p>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// In .hh file:</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">SpeedOfLight</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Meters</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Seconds</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">;</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">};</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">SpeedOfLight</span><span class="p">{});</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<h3 id="ad-hoc-constants">Ad hoc constants<a class="headerlink" href="#ad-hoc-constants" title="Permanent link">&para;</a></h3>
+<p>You can obtain many of the benefits of <code>Constant</code> even if you don&rsquo;t formally define a new unit.
+Because <code>make_constant</code> has a unit slot API, you can pass an ad hoc expression to it.  For example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">second</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">());</span>
+</code></pre></div>
+<p>The main advantage of doing this is its conciseness: the constant definition is a single, readable
+line.  The built constant also has all of the multiplication and division operators types that
+<code>Constant</code> supports, as well as its perfect conversion policy to any <code>Quantity</code> type.</p>
+<p>The only disadvantage is the missing label, which will make printed quantities hard to understand
+because the constant will be represented as <code>[UNLABELED_UNIT]</code> in the compound label.</p>
+<p>If the constant is used in multiple translation units, or if it leads to values that are printed
+out, we believe this disadvantage outweighs the benefits, and we recommend a full definition with
+a new unit. Otherwise, the ad hoc constant approach may be called for.</p>
+<h2 id="constant-and-unit-slots"><code>Constant</code> and unit slots<a class="headerlink" href="#constant-and-unit-slots" title="Permanent link">&para;</a></h2>
+<p><code>Constant</code> can be passed to any API that takes a <a href="../../discussion/idioms/unit-slots/">unit slot</a>.</p>
+<h2 id="converting-to-quantity">Converting to <code>Quantity</code><a class="headerlink" href="#converting-to-quantity" title="Permanent link">&para;</a></h2>
+<p><code>Constant</code> can be converted to any <code>Quantity</code> type of the same dimension.</p>
+<p>By default, this conversion policy is <em>perfect</em>.  This means that it permits converting to any
+<code>Quantity</code> that can represent the value exactly, and disallows all other conversions.  Users can
+also override this policy by choosing the &ldquo;coerce&rdquo; variant of any API (say, using <code>.coerce_as()</code>
+instead of <code>.as()</code>).</p>
+<p>Finally, it&rsquo;s important to appreciate that <code>Constant</code> has no rep, no underlying numeric type.
+Therefore, every <code>Quantity</code> conversion API requires an explicit template parameter to specify the
+desired rep.</p>
+<h3 id="ast"><code>.as&lt;T&gt;()</code><a class="headerlink" href="#ast" title="Permanent link">&para;</a></h3>
+<p>This function expresses the constant as a <code>Quantity</code> in &ldquo;units of this constant&rdquo;.  Therefore, the
+underlying stored value will be <code>T{1}</code>, and the rep will be <code>T</code>.</p>
+<h3 id="as-T-unit"><code>.as&lt;T&gt;(unit)</code><a class="headerlink" href="#as-T-unit" title="Permanent link">&para;</a></h3>
+<p>This function expresses the constant as a <code>Quantity</code> in the requested unit, using a rep of <code>T</code>.  It
+has a perfect conversion policy, which means that it compiles if and only if the constant&rsquo;s value in
+the requested unit can be exactly represented in the type <code>T</code>.</p>
+<p>The argument <code>unit</code> is a <a href="../../discussion/idioms/unit-slots/">unit slot</a> API, so it accepts a unit
+instance, quantity maker instance, or any other instance compatible with a unit slot.</p>
+<h3 id="coerce_astunit"><code>.coerce_as&lt;T&gt;(unit)</code><a class="headerlink" href="#coerce_astunit" title="Permanent link">&para;</a></h3>
+<p>This function expresses the constant as a <code>Quantity</code> in the requested unit, using a rep of <code>T</code>.  It
+is similar to <a href="#as-T-unit"><code>.as&lt;T&gt;(unit)</code></a>, except that it will ignore the safety checks that
+prevent truncation and overflow.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Because <code>.as&lt;T&gt;(unit)</code> has a perfect conversion policy, we know that this function either
+produces the exact same result (in which case you could simply <em>call</em> <code>.as&lt;T&gt;(unit)</code>), <em>or</em> it
+produces a result which is <strong>guaranteed to be lossy</strong>.  Therefore, be very judicious in using
+this function.</p>
+</div>
+<h3 id="in-T-unit"><code>.in&lt;T&gt;(unit)</code><a class="headerlink" href="#in-T-unit" title="Permanent link">&para;</a></h3>
+<p>This function produces a raw numeric value, of type <code>T</code>, holding the value of the constant in the
+requested unit.  It has a perfect conversion policy, which means that it compiles if and only if the
+constant&rsquo;s value in the requested unit can be exactly represented in the type <code>T</code>.</p>
+<p>The argument <code>unit</code> is a <a href="../../discussion/idioms/unit-slots/">unit slot</a> API, so it accepts a unit
+instance, quantity maker instance, or any other instance compatible with a unit slot.</p>
+<h3 id="coerce_intunit"><code>.coerce_in&lt;T&gt;(unit)</code><a class="headerlink" href="#coerce_intunit" title="Permanent link">&para;</a></h3>
+<p>This function produces a raw numeric value, of type <code>T</code>, holding the value of the constant in the
+requested unit.  It is similar to <a href="#in-T-unit"><code>.in&lt;T&gt;(unit)</code></a>, except that it will ignore the
+safety checks that prevent truncation and overflow.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Because <code>.in&lt;T&gt;(unit)</code> has a perfect conversion policy, we know that this function either
+produces the exact same result (in which case you could simply <em>call</em> <code>.in&lt;T&gt;(unit)</code>), <em>or</em> it
+produces a result which is <strong>guaranteed to be lossy</strong>.  Therefore, be very judicious in using
+this function.</p>
+</div>
+<h3 id="implicit-quantity-conversion">Implicit <code>Quantity</code> conversion<a class="headerlink" href="#implicit-quantity-conversion" title="Permanent link">&para;</a></h3>
+<p><code>Constant</code> will implicitly convert to any <code>Quantity</code> type which passes the safety checks on
+truncation and overflow.  Essentially: any time <a href="#as-T-unit"><code>.as&lt;T&gt;(unit)</code></a> produces a result, that
+same result can be obtained via implicit conversion.</p>
+<p>This provides great flexibility and confidence in passing <code>Constant</code> values to APIs that take
+<code>Quantity</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The fact that <code>Constant</code> has a perfect conversion policy means that we can use it with APIs
+where the corresponding <code>Quantity</code> would not work, because <code>Quantity</code> is forced to use the
+overflow safety surface, which is a more conservative heuristic.</p>
+<p>For example, suppose you have an API accepting <code>Quantity&lt;UnitQuotientT&lt;Meters, Seconds&gt;, int&gt;</code>,
+and a constant <code>c</code> representing the speed of light.</p>
+<p>You will be able to pass <code>c</code> to this API, because the constant-to-quantity conversion operation
+knows the exact value at compile time, and can verify that it fits in an <code>int</code>.</p>
+<p>By contrast, you would not be able to pass <code>c.as&lt;int&gt;()</code> (which is a <code>Quantity</code>).  Even though
+it would work for <em>this specific value</em> (which is <code>1</code>), this quantity-to-quantity conversion is
+too dangerous for <code>int</code> in general.</p>
+</div>
+<h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
+<p>Each operation with a <code>Constant</code> consists in multiplying or dividing with some other family of
+types.</p>
+<h3 id="raw-numeric-type-t">Raw numeric type <code>T</code><a class="headerlink" href="#raw-numeric-type-t" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a raw numeric type <code>T</code> produces a <code>Quantity</code> whose rep
+is <code>T</code>, and whose unit is derived from <code>Unit</code>.</p>
+<p>In the following table, we will use <code>x</code> to represent the value that was stored in the input of type
+<code>T</code>.</p>
 <table>
 <thead>
 <tr>
-<th>Kind of input</th>
-<th>Example (meters)</th>
-<th>Application</th>
-<th>Example use</th>
+<th>Operation</th>
+<th>Resulting Type</th>
+<th>Underlying Value</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Unit instance</td>
-<td><code>Meters{}</code></td>
-<td><code>centi(Meters{})</code></td>
-<td><code>length.as(Centi&lt;Meters&gt;{})</code></td>
+<td><code>Constant&lt;Unit&gt; * T</code></td>
+<td><code>Quantity&lt;Unit, T&gt;</code></td>
+<td><code>x</code></td>
+<td></td>
 </tr>
 <tr>
-<td><code>QuantityMaker</code></td>
-<td><code>meters</code></td>
-<td><code>centi(meters)</code></td>
-<td><code>centi(meters)(170)</code></td>
+<td><code>Constant&lt;Unit&gt; / T</code></td>
+<td><code>Quantity&lt;Unit, T&gt;</code></td>
+<td><code>T{1} / x</code></td>
+<td>Disallowed for integral <code>T</code></td>
 </tr>
 <tr>
-<td><code>QuantityPointMaker</code></td>
-<td><code>meters_pt</code></td>
-<td><code>centi(meters_pt)</code></td>
-<td><code>centi(meters_pt)(1.5)</code></td>
+<td><code>T * Constant&lt;Unit&gt;</code></td>
+<td><code>Quantity&lt;Unit, T&gt;</code></td>
+<td><code>x</code></td>
+<td></td>
 </tr>
 <tr>
-<td><code>SingularNameFor</code></td>
-<td><code>meter</code></td>
-<td><code>centi(meter)</code></td>
-<td><code>curvature.in(radians / centi(meter))</code></td>
-</tr>
-<tr>
-<td><code>SymbolFor</code></td>
-<td><code>m</code></td>
-<td><code>centi(m)</code></td>
-<td><code>constexpr auto cm = centi(m); 170 * cm</code></td>
+<td><code>T / Constant&lt;Unit&gt;</code></td>
+<td><code>Quantity&lt;UnitInverseT&lt;Unit&gt;, T&gt;</code></td>
+<td><code>x</code></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<p>Note again that every output here is the same kind of thing as the input.  So, <code>centi(meters_pt)</code> is
-a <code>QuantityPointMaker</code>, and <code>centi(meters_pt)(1.5)</code> creates a <code>QuantityPoint</code> of <span class="arithmatex"><span class="MathJax_Preview">1.5\,\text{cm}</span><script type="math/tex">1.5\,\text{cm}</script></span>.</p>
-<h2 id="list-of-supported-prefixes">List of supported prefixes<a class="headerlink" href="#list-of-supported-prefixes" title="Permanent link">&para;</a></h2>
-<p>We support every <a href="https://www.nist.gov/pml/owm/metric-si-prefixes">SI prefix</a> and <a href="https://en.wikipedia.org/wiki/Binary_prefix">binary
-prefix</a>.</p>
-<h3 id="si-prefixes">SI prefixes<a class="headerlink" href="#si-prefixes" title="Permanent link">&para;</a></h3>
+<h3 id="quantityu-r"><code>Quantity&lt;U, R&gt;</code><a class="headerlink" href="#quantityu-r" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>Quantity&lt;U, R&gt;</code> produces a <code>Quantity</code> whose rep is
+<code>R</code>, and whose unit is derived from <code>Unit</code> and <code>U</code>.</p>
+<p>In the following table, we will use <code>x</code> to represent the underlying value in the input quantity &mdash;
+that is, if the input quantity was <code>q</code>, then <code>x</code> is <code>q.in(U{})</code>.</p>
 <table>
 <thead>
 <tr>
-<th>Prefix</th>
-<th>Prefix applier</th>
-<th>Prefix symbol</th>
-<th>Scaling factor</th>
+<th>Operation</th>
+<th>Resulting Type</th>
+<th>Underlying Value</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>Quetta</code></td>
-<td><code>quetta</code></td>
-<td><code>Q</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{30}</span><script type="math/tex">10^{30}</script></span></td>
+<td><code>Constant&lt;Unit&gt; * Quantity&lt;U, R&gt;</code></td>
+<td><code>Quantity&lt;UnitProductT&lt;Unit, U&gt;, R&gt;</code></td>
+<td><code>x</code></td>
+<td></td>
 </tr>
 <tr>
-<td><code>Ronna</code></td>
-<td><code>ronna</code></td>
-<td><code>R</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{27}</span><script type="math/tex">10^{27}</script></span></td>
+<td><code>Constant&lt;Unit&gt; / Quantity&lt;U, R&gt;</code></td>
+<td><code>Quantity&lt;UnitQuotientT&lt;Unit, U&gt;, R&gt;</code></td>
+<td><code>R{1} / x</code></td>
+<td>Disallowed for integral <code>R</code></td>
 </tr>
 <tr>
-<td><code>Yotta</code></td>
-<td><code>yotta</code></td>
-<td><code>Y</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{24}</span><script type="math/tex">10^{24}</script></span></td>
+<td><code>Quantity&lt;U, R&gt; * Constant&lt;Unit&gt;</code></td>
+<td><code>Quantity&lt;UnitProductT&lt;U, Unit&gt;, R&gt;</code></td>
+<td><code>x</code></td>
+<td></td>
 </tr>
 <tr>
-<td><code>Zetta</code></td>
-<td><code>zetta</code></td>
-<td><code>Z</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{21}</span><script type="math/tex">10^{21}</script></span></td>
-</tr>
-<tr>
-<td><code>Exa</code></td>
-<td><code>exa</code></td>
-<td><code>E</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{18}</span><script type="math/tex">10^{18}</script></span></td>
-</tr>
-<tr>
-<td><code>Peta</code></td>
-<td><code>peta</code></td>
-<td><code>P</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{15}</span><script type="math/tex">10^{15}</script></span></td>
-</tr>
-<tr>
-<td><code>Tera</code></td>
-<td><code>tera</code></td>
-<td><code>T</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{12}</span><script type="math/tex">10^{12}</script></span></td>
-</tr>
-<tr>
-<td><code>Giga</code></td>
-<td><code>giga</code></td>
-<td><code>G</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{9}</span><script type="math/tex">10^{9}</script></span></td>
-</tr>
-<tr>
-<td><code>Mega</code></td>
-<td><code>mega</code></td>
-<td><code>M</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{6}</span><script type="math/tex">10^{6}</script></span></td>
-</tr>
-<tr>
-<td><code>Kilo</code></td>
-<td><code>kilo</code></td>
-<td><code>k</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{3}</span><script type="math/tex">10^{3}</script></span></td>
-</tr>
-<tr>
-<td><code>Hecto</code></td>
-<td><code>hecto</code></td>
-<td><code>h</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{2}</span><script type="math/tex">10^{2}</script></span></td>
-</tr>
-<tr>
-<td><code>Deka</code></td>
-<td><code>deka</code></td>
-<td><code>da</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{1}</span><script type="math/tex">10^{1}</script></span></td>
-</tr>
-<tr>
-<td><code>Deci</code></td>
-<td><code>deci</code></td>
-<td><code>d</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-1}</span><script type="math/tex">10^{-1}</script></span></td>
-</tr>
-<tr>
-<td><code>Centi</code></td>
-<td><code>centi</code></td>
-<td><code>c</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-2}</span><script type="math/tex">10^{-2}</script></span></td>
-</tr>
-<tr>
-<td><code>Milli</code></td>
-<td><code>milli</code></td>
-<td><code>m</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-3}</span><script type="math/tex">10^{-3}</script></span></td>
-</tr>
-<tr>
-<td><code>Micro</code></td>
-<td><code>micro</code></td>
-<td><code>u</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-6}</span><script type="math/tex">10^{-6}</script></span></td>
-</tr>
-<tr>
-<td><code>Nano</code></td>
-<td><code>nano</code></td>
-<td><code>n</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-9}</span><script type="math/tex">10^{-9}</script></span></td>
-</tr>
-<tr>
-<td><code>Pico</code></td>
-<td><code>pico</code></td>
-<td><code>p</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-12}</span><script type="math/tex">10^{-12}</script></span></td>
-</tr>
-<tr>
-<td><code>Femto</code></td>
-<td><code>femto</code></td>
-<td><code>f</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-15}</span><script type="math/tex">10^{-15}</script></span></td>
-</tr>
-<tr>
-<td><code>Atto</code></td>
-<td><code>atto</code></td>
-<td><code>a</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-18}</span><script type="math/tex">10^{-18}</script></span></td>
-</tr>
-<tr>
-<td><code>Zepto</code></td>
-<td><code>zepto</code></td>
-<td><code>z</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-21}</span><script type="math/tex">10^{-21}</script></span></td>
-</tr>
-<tr>
-<td><code>Yocto</code></td>
-<td><code>yocto</code></td>
-<td><code>y</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-24}</span><script type="math/tex">10^{-24}</script></span></td>
-</tr>
-<tr>
-<td><code>Ronto</code></td>
-<td><code>ronto</code></td>
-<td><code>r</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-27}</span><script type="math/tex">10^{-27}</script></span></td>
-</tr>
-<tr>
-<td><code>Quecto</code></td>
-<td><code>quecto</code></td>
-<td><code>q</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-30}</span><script type="math/tex">10^{-30}</script></span></td>
+<td><code>Quantity&lt;U, R&gt; / Constant&lt;Unit&gt;</code></td>
+<td><code>Quantity&lt;UnitQuotientT&lt;U, Unit&gt;, R&gt;</code></td>
+<td><code>x</code></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<h3 id="binary-prefixes">Binary prefixes<a class="headerlink" href="#binary-prefixes" title="Permanent link">&para;</a></h3>
+<h3 id="constantu"><code>Constant&lt;U&gt;</code><a class="headerlink" href="#constantu" title="Permanent link">&para;</a></h3>
+<p>Constants compose: the product or quotient of two <code>Constant</code> instances is a new <code>Constant</code> instance.</p>
 <table>
 <thead>
 <tr>
-<th>Prefix</th>
-<th>Prefix applier</th>
-<th>Prefix symbol</th>
-<th>Scaling factor</th>
+<th>Operation</th>
+<th>Resulting Type</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>Yobi</code></td>
-<td><code>yobi</code></td>
-<td><code>Yi</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{80} (\approx 10^{24})</span><script type="math/tex">2^{80} (\approx 10^{24})</script></span></td>
+<td><code>Constant&lt;Unit&gt; * Constant&lt;U&gt;</code></td>
+<td><code>Constant&lt;UnitProductT&lt;Unit, U&gt;&gt;</code></td>
 </tr>
 <tr>
-<td><code>Zebi</code></td>
-<td><code>zebi</code></td>
-<td><code>Zi</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{70} (\approx 10^{21})</span><script type="math/tex">2^{70} (\approx 10^{21})</script></span></td>
-</tr>
-<tr>
-<td><code>Exbi</code></td>
-<td><code>exbi</code></td>
-<td><code>Ei</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{60} (\approx 10^{18})</span><script type="math/tex">2^{60} (\approx 10^{18})</script></span></td>
-</tr>
-<tr>
-<td><code>Pebi</code></td>
-<td><code>pebi</code></td>
-<td><code>Pi</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{50} (\approx 10^{15})</span><script type="math/tex">2^{50} (\approx 10^{15})</script></span></td>
-</tr>
-<tr>
-<td><code>Tebi</code></td>
-<td><code>tebi</code></td>
-<td><code>Ti</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{40} (\approx 10^{12})</span><script type="math/tex">2^{40} (\approx 10^{12})</script></span></td>
-</tr>
-<tr>
-<td><code>Gibi</code></td>
-<td><code>gibi</code></td>
-<td><code>Gi</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{30} (\approx 10^{9})</span><script type="math/tex">2^{30} (\approx 10^{9})</script></span></td>
-</tr>
-<tr>
-<td><code>Mebi</code></td>
-<td><code>mebi</code></td>
-<td><code>Mi</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{20} (\approx 10^{6})</span><script type="math/tex">2^{20} (\approx 10^{6})</script></span></td>
-</tr>
-<tr>
-<td><code>Kibi</code></td>
-<td><code>kibi</code></td>
-<td><code>Ki</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{10} (\approx 10^{3})</span><script type="math/tex">2^{10} (\approx 10^{3})</script></span></td>
+<td><code>Constant&lt;Unit&gt; / Constant&lt;U&gt;</code></td>
+<td><code>Constant&lt;UnitQuotientT&lt;Unit, U&gt;&gt;</code></td>
 </tr>
 </tbody>
 </table>
+<h3 id="quantitymakeru"><code>QuantityMaker&lt;U&gt;</code><a class="headerlink" href="#quantitymakeru" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>QuantityMaker&lt;U&gt;</code> produces a new <code>QuantityMaker</code>
+whose unit is derived from <code>Unit</code> and <code>U</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Resulting Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Constant&lt;Unit&gt; * QuantityMaker&lt;U&gt;</code></td>
+<td><code>QuantityMaker&lt;UnitProductT&lt;Unit, U&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>Constant&lt;Unit&gt; / QuantityMaker&lt;U&gt;</code></td>
+<td><code>QuantityMaker&lt;UnitQuotientT&lt;Unit, U&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>QuantityMaker&lt;U&gt; * Constant&lt;Unit&gt;</code></td>
+<td><code>QuantityMaker&lt;UnitProductT&lt;U, Unit&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>QuantityMaker&lt;U&gt; / Constant&lt;Unit&gt;</code></td>
+<td><code>QuantityMaker&lt;UnitQuotientT&lt;U, Unit&gt;&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="singularnameforu"><code>SingularNameFor&lt;U&gt;</code><a class="headerlink" href="#singularnameforu" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>SingularNameFor&lt;U&gt;</code> produces a new
+<code>SingularNameFor</code> whose unit is derived from <code>Unit</code> and <code>U</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Resulting Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Constant&lt;Unit&gt; * SingularNameFor&lt;U&gt;</code></td>
+<td><code>SingularNameFor&lt;UnitProductT&lt;Unit, U&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>Constant&lt;Unit&gt; / SingularNameFor&lt;U&gt;</code></td>
+<td><code>SingularNameFor&lt;UnitQuotientT&lt;Unit, U&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>SingularNameFor&lt;U&gt; * Constant&lt;Unit&gt;</code></td>
+<td><code>SingularNameFor&lt;UnitProductT&lt;U, Unit&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>SingularNameFor&lt;U&gt; / Constant&lt;Unit&gt;</code></td>
+<td><code>SingularNameFor&lt;UnitQuotientT&lt;U, Unit&gt;&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="magnitudebps"><code>Magnitude&lt;BPs...&gt;</code><a class="headerlink" href="#magnitudebps" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>Magnitude</code> produces a new <code>Constant</code> which is
+scaled by that magnitude.</p>
+<p>In the following table, let <code>m</code> be an instance of <code>Magnitude&lt;BPs...&gt;</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Resulting Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Constant&lt;Unit&gt; * Magnitude&lt;BPs...&gt;</code></td>
+<td><code>Constant&lt;decltype(Unit{} * m)&gt;</code></td>
+</tr>
+<tr>
+<td><code>Constant&lt;Unit&gt; / Magnitude&lt;BPs...&gt;</code></td>
+<td><code>Constant&lt;decltype(Unit{} / m)&gt;</code></td>
+</tr>
+<tr>
+<td><code>Magnitude&lt;BPs...&gt; * Constant&lt;Unit&gt;</code></td>
+<td><code>Constant&lt;decltype(Unit{} * m)&gt;</code></td>
+</tr>
+<tr>
+<td><code>Magnitude&lt;BPs...&gt; / Constant&lt;Unit&gt;</code></td>
+<td><code>Constant&lt;decltype(UnitInverseT&lt;Unit&gt;{} * m)&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="quantitypointmakeru-deleted"><code>QuantityPointMaker&lt;U&gt;</code> (deleted)<a class="headerlink" href="#quantitypointmakeru-deleted" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>QuantityPointMaker&lt;U&gt;</code> is explicitly deleted,
+because quantity points do not support multiplication.</p>
+<h3 id="quantitypointu-r-deleted"><code>QuantityPoint&lt;U, R&gt;</code> (deleted)<a class="headerlink" href="#quantitypointu-r-deleted" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>QuantityPoint&lt;U, R&gt;</code> is explicitly deleted,
+because quantity points do not support multiplication.</p>
 
 
 
@@ -2014,7 +2170,7 @@ prefix</a>.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../powers/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Powers">
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Reference Docs">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -2024,20 +2180,20 @@ prefix</a>.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Powers
+                Reference Docs
               </div>
             </div>
           </a>
         
         
           
-          <a href="../quantity/" class="md-footer__link md-footer__link--next" aria-label="Next: Quantity">
+          <a href="../corresponding_quantity/" class="md-footer__link md-footer__link--next" aria-label="Next: Corresponding Quantity">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Quantity
+                Corresponding Quantity
               </div>
             </div>
             <div class="md-footer__button md-icon">
