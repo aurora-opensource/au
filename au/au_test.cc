@@ -49,6 +49,13 @@ TEST(DurationQuantity, InterconvertsWithIndirectlyEquivalentChronoDuration) {
     EXPECT_THAT(from_chrono, SameTypeAndValue(seconds(1.234)));
 }
 
+TEST(AsChronoDuration, ProducesExpectedResults) {
+    constexpr auto original = milli(seconds)(12.3f);
+    constexpr auto result = as_chrono_duration(original);
+    EXPECT_THAT(result.count(), SameTypeAndValue(12.3f));
+    EXPECT_THAT(as_quantity(result), QuantityEquivalent(original));
+}
+
 TEST(Conversions, SupportIntMHzToU32Hz) {
     constexpr QuantityU32<Hertz> freq = mega(hertz)(40);
     EXPECT_THAT(freq, SameTypeAndValue(hertz(40'000'000u)));

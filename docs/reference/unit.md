@@ -172,24 +172,30 @@ types.
 Multiplying or dividing `SymbolFor<Unit>` with a raw numeric type `T` produces a `Quantity` whose rep
 is `T`, and whose unit is derived from `Unit`.
 
-| Operation | Resulting Type | Notes |
-|-----------|----------------|-------|
-| `SymbolFor<Unit> * T` | `Quantity<Unit, T>` | |
-| `SymbolFor<Unit> / T` | `Quantity<Unit, T>` | Disallowed for integer `T` |
-| `T * SymbolFor<Unit>` | `Quantity<Unit, T>` | |
-| `T / SymbolFor<Unit>` | `Quantity<UnitInverseT<Unit>, T>` | |
+In the following table, we will use `x` to represent the value that was stored in the input of type
+`T`.
+
+| Operation | Resulting Type | Underlying Value | Notes |
+|-----------|----------------|-------------------|-------|
+| `SymbolFor<Unit> * T` | `Quantity<Unit, T>` | `x` | |
+| `SymbolFor<Unit> / T` | `Quantity<Unit, T>` | `T{1} / x` | Disallowed for integral `T` |
+| `T * SymbolFor<Unit>` | `Quantity<Unit, T>` | `x` | |
+| `T / SymbolFor<Unit>` | `Quantity<UnitInverseT<Unit>, T>` | `x` | |
 
 #### `Quantity<U, R>`
 
 Multiplying or dividing `SymbolFor<Unit>` with a `Quantity<U, R>` produces a new `Quantity`.  It has
 the same underlying value and same rep `R`, but its units `U` are scaled appropriately by `Unit`.
 
-| Operation | Resulting Type | Notes |
-|-----------|----------------|-------|
-| `SymbolFor<Unit> * Quantity<U, R>` | `Quantity<UnitProductT<Unit, U>, R>` | |
-| `SymbolFor<Unit> / Quantity<U, R>` | `Quantity<UnitQuotientT<Unit, U>, R>` | Disallowed for integer `R` |
-| `Quantity<U, R> * SymbolFor<Unit>` | `Quantity<UnitProductT<U, Unit>, R>` | |
-| `Quantity<U, R> / SymbolFor<Unit>` | `Quantity<UnitQuotientT<U, Unit>, R>` | |
+In the following table, we will use `x` to represent the underlying value of the input quantity ---
+that is, if the input quantity was `q`, then `x` is `q.in(U{})`.
+
+| Operation | Resulting Type | Underlying Value | Notes |
+|-----------|----------------|-------------------|-------|
+| `SymbolFor<Unit> * Quantity<U, R>` | `Quantity<UnitProductT<Unit, U>, R>` | `x` | |
+| `SymbolFor<Unit> / Quantity<U, R>` | `Quantity<UnitQuotientT<Unit, U>, R>` | `R{1} / x` | Disallowed for integral `R` |
+| `Quantity<U, R> * SymbolFor<Unit>` | `Quantity<UnitProductT<U, Unit>, R>` | `x` | |
+| `Quantity<U, R> / SymbolFor<Unit>` | `Quantity<UnitQuotientT<U, Unit>, R>` | `x` | |
 
 #### `SymbolFor<OtherUnit>`
 
