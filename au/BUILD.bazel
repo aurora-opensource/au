@@ -21,7 +21,11 @@ cc_library(
     name = "au",
     hdrs = ["au.hh"],
     visibility = ["//visibility:public"],
-    deps = [":math"],
+    deps = [
+        ":chrono_interop",
+        ":constant",
+        ":math",
+    ],
 )
 
 cc_test(
@@ -119,6 +123,26 @@ cc_test(
     copts = ["-Iexternal/gtest/include"],
     deps = [
         ":apply_magnitude",
+        ":testing",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "chrono_interop",
+    hdrs = ["chrono_interop.hh"],
+    deps = [
+        ":units",
+    ],
+)
+
+cc_test(
+    name = "chrono_interop_test",
+    size = "small",
+    srcs = ["chrono_interop_test.cc"],
+    deps = [
+        ":chrono_interop",
+        ":prefix",
         ":testing",
         "@com_google_googletest//:gtest_main",
     ],
