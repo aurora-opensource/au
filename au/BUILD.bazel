@@ -23,6 +23,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":chrono_interop",
+        ":constant",
         ":math",
     ],
 )

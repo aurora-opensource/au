@@ -15,5 +15,6 @@
 #pragma once
 
 #include "au/chrono_interop.hh"
+#include "au/constant.hh"
 #include "au/math.hh"
 #include "au/prefix.hh"
