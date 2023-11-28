@@ -16,6 +16,7 @@
 
 #include <chrono>
 
+#include "au/constant.hh"
 #include "au/math.hh"
 #include "au/prefix.hh"
 #include "au/units/seconds.hh"
