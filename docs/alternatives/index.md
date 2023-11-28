@@ -888,17 +888,24 @@ features.
                 </ul>
             </details>
         </td>
-        <td class="good">Includes built-in constants as quantities</td>
-        <td class="good">Includes built-in constants as quantities</td>
+        <td class="fair">Includes built-in constants as quantities</td>
+        <td class="fair">Includes built-in constants as quantities</td>
         <td class="poor"></td>
-        <td class="best">
+        <td class="good">
             <a
             href="https://mpusz.github.io/mp-units/2.0/users_guide/framework_basics/faster_than_lightspeed_constants/">"Faster
             than lightspeed" constants</a>
         </td>
-        <td class="poor">
-            Plan to support someday; see
-            <a href="https://github.com/aurora-opensource/au/issues/90">#90</a>.
+        <td class="good">
+            <ul>
+                <li class="check">Constants as types</li>
+                <li class="check">Perfect conversion policy</li>
+                <li class="check">Implicit Quantity conversion</li>
+                <li class="x">
+                    No built-in values yet (see <a
+                    href="https://github.com/aurora-opensource/au/issues/90">#90</a>)
+                </li>
+            </ul>
         </td>
     </tr>
     <tr>
