@@ -21,7 +21,10 @@ cc_library(
     name = "au",
     hdrs = ["au.hh"],
     visibility = ["//visibility:public"],
-    deps = [":math"],
+    deps = [
+        ":constant",
+        ":math",
+    ],
 )
 
 cc_test(
