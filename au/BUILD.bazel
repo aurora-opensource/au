@@ -21,7 +21,11 @@ cc_library(
     name = "au",
     hdrs = ["au.hh"],
     visibility = ["//visibility:public"],
-    deps = [":math"],
+    deps = [
+        ":chrono_interop",
+        ":constant",
+        ":math",
+    ],
 )
 
 cc_test(
@@ -125,6 +129,26 @@ cc_test(
 )
 
 cc_library(
+    name = "chrono_interop",
+    hdrs = ["chrono_interop.hh"],
+    deps = [
+        ":units",
+    ],
+)
+
+cc_test(
+    name = "chrono_interop_test",
+    size = "small",
+    srcs = ["chrono_interop_test.cc"],
+    deps = [
+        ":chrono_interop",
+        ":prefix",
+        ":testing",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "chrono_policy_validation",
     testonly = True,
     hdrs = ["chrono_policy_validation.hh"],
@@ -150,17 +174,23 @@ cc_test(
 )
 
 cc_library(
-    name = "operators",
-    hdrs = ["operators.hh"],
+    name = "constant",
+    hdrs = ["constant.hh"],
+    deps = [
+        ":quantity",
+        ":unit_of_measure",
+        ":wrapper_operations",
+    ],
 )
 
 cc_test(
-    name = "operators_test",
+    name = "constant_test",
     size = "small",
-    srcs = ["operators_test.cc"],
+    srcs = ["constant_test.cc"],
     deps = [
-        ":operators",
+        ":constant",
         ":testing",
+        ":units",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -234,6 +264,7 @@ cc_library(
     name = "math",
     hdrs = ["math.hh"],
     deps = [
+        ":constant",
         ":quantity",
         ":quantity_point",
         ":units",
@@ -259,6 +290,22 @@ cc_test(
         ":quantity",
         ":testing",
         ":units",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "operators",
+    hdrs = ["operators.hh"],
+)
+
+cc_test(
+    name = "operators_test",
+    size = "small",
+    srcs = ["operators_test.cc"],
+    deps = [
+        ":operators",
+        ":testing",
         "@com_google_googletest//:gtest_main",
     ],
 )
