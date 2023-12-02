@@ -238,8 +238,8 @@ constexpr auto int_pow(Quantity<U, R> q) {
 template <typename TargetRep, typename TargetUnits, typename U, typename R>
 constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     using Rep = std::common_type_t<TargetRep, R>;
-    constexpr auto ONE = make_constant(UnitProductT<>{});
-    return static_cast<TargetRep>(ONE.in<Rep>(associated_unit(target_units) * U{}) / q.in(U{}));
+    constexpr auto UNITY = make_constant(UnitProductT<>{});
+    return static_cast<TargetRep>(UNITY.in<Rep>(associated_unit(target_units) * U{}) / q.in(U{}));
 }
 
 //
@@ -270,10 +270,10 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     // This will fail at compile time for types that can't hold 1'000'000.
     constexpr R threshold = 1'000'000;
 
-    constexpr auto ONE = make_constant(UnitProductT<>{});
+    constexpr auto UNITY = make_constant(UnitProductT<>{});
 
     static_assert(
-        ONE.in<R>(associated_unit(target_units) * U{}) >= threshold ||
+        UNITY.in<R>(associated_unit(target_units) * U{}) >= threshold ||
             std::is_floating_point<R>::value,
         "Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired");
 
