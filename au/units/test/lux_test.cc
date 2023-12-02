@@ -27,4 +27,9 @@ TEST(Lux, ProductWithAreaGivesLumens) {
     EXPECT_THAT(lux(2.0), QuantityEquivalent(lumens(8.0) / squared(meters)(4.0)));
 }
 
+TEST(Lux, HasExpectedSymbol) {
+    using symbols::lx;
+    EXPECT_THAT(5 * lx, SameTypeAndValue(lux(5)));
+}
+
 }  // namespace au

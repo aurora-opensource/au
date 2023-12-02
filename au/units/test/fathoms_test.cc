@@ -24,4 +24,9 @@ TEST(Fathoms, HasExpectedLabel) { expect_label<Fathoms>("ftm"); }
 
 TEST(Fathoms, EquivalentTo6Feet) { EXPECT_EQ(fathoms(1), feet(6)); }
 
+TEST(Fathoms, HasExpectedSymbol) {
+    using symbols::ftm;
+    EXPECT_THAT(5 * ftm, SameTypeAndValue(fathoms(5)));
+}
+
 }  // namespace au

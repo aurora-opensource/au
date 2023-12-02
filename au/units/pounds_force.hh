@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/pounds_mass.hh"
 #include "au/units/standard_gravity.hh"
 
@@ -34,4 +35,7 @@ struct PoundsForce : decltype(PoundsMass{} * StandardGravity{}), PoundsForceLabe
 constexpr auto pound_force = SingularNameFor<PoundsForce>{};
 constexpr auto pounds_force = QuantityMaker<PoundsForce>{};
 
+namespace symbols {
+constexpr auto lbf = SymbolFor<PoundsForce>{};
+}
 }  // namespace au

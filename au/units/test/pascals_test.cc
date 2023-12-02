@@ -25,4 +25,9 @@ TEST(Pascals, EquivalentToForcePerArea) {
     EXPECT_THAT(pascals(12), QuantityEquivalent((newtons / squared(meter))(12)));
 }
 
+TEST(Pascals, HasExpectedSymbol) {
+    using symbols::Pa;
+    EXPECT_THAT(5 * Pa, SameTypeAndValue(pascals(5)));
+}
+
 }  // namespace au

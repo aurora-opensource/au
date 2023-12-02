@@ -16,6 +16,7 @@
 
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/meters.hh"
 #include "au/units/newtons.hh"
 
@@ -36,4 +37,7 @@ constexpr auto pascal = SingularNameFor<Pascals>{};
 constexpr auto pascals = QuantityMaker<Pascals>{};
 constexpr QuantityPointMaker<Pascals> pascals_pt{};
 
+namespace symbols {
+constexpr auto Pa = SymbolFor<Pascals>{};
+}
 }  // namespace au

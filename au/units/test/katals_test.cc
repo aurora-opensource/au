@@ -27,4 +27,9 @@ TEST(Katals, EquivalentToMolesPerSecond) {
     EXPECT_THAT(katals(2.0), QuantityEquivalent(moles(6.0) / seconds(3.0)));
 }
 
+TEST(Katals, HasExpectedSymbol) {
+    using symbols::kat;
+    EXPECT_THAT(5 * kat, SameTypeAndValue(katals(5)));
+}
+
 }  // namespace au

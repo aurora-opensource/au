@@ -27,4 +27,9 @@ TEST(Tesla, EquivalentToWebersPerMeterSquared) {
     EXPECT_THAT(tesla(4.0), QuantityEquivalent(webers(8.0) / squared(meters)(2.0)));
 }
 
+TEST(Tesla, HasExpectedSymbol) {
+    using symbols::T;
+    EXPECT_THAT(5 * T, SameTypeAndValue(tesla(5)));
+}
+
 }  // namespace au

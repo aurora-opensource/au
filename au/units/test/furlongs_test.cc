@@ -24,4 +24,9 @@ TEST(Furlongs, HasExpectedLabel) { expect_label<Furlongs>("fur"); }
 
 TEST(Furlongs, EquivalentToOneEighthMile) { EXPECT_EQ(furlongs(8), miles(1)); }
 
+TEST(Furlongs, HasExpectedSymbol) {
+    using symbols::fur;
+    EXPECT_THAT(5 * fur, SameTypeAndValue(furlongs(5)));
+}
+
 }  // namespace au

@@ -25,4 +25,9 @@ TEST(Meters, HasExpectedLabel) { expect_label<Meters>("m"); }
 
 TEST(Meters, HasExpectedRelationshipsWithInches) { EXPECT_EQ(centi(meters)(254), inches(100)); }
 
+TEST(Meters, HasExpectedSymbol) {
+    using symbols::m;
+    EXPECT_THAT(5 * m, SameTypeAndValue(meters(5)));
+}
+
 }  // namespace au

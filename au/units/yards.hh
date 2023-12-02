@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/feet.hh"
 
 namespace au {
@@ -33,4 +34,7 @@ struct Yards : decltype(Feet{} * mag<3>()), YardsLabel<void> {
 constexpr auto yard = SingularNameFor<Yards>{};
 constexpr auto yards = QuantityMaker<Yards>{};
 
+namespace symbols {
+constexpr auto yd = SymbolFor<Yards>{};
+}
 }  // namespace au

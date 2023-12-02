@@ -25,4 +25,9 @@ TEST(Newtons, EquivalentToKilogramMetersPerSquaredSecond) {
     EXPECT_THAT(newtons(8), QuantityEquivalent((kilo(gram) * meters / squared(second))(8)));
 }
 
+TEST(Newtons, HasExpectedSymbol) {
+    using symbols::N;
+    EXPECT_THAT(5 * N, SameTypeAndValue(newtons(5)));
+}
+
 }  // namespace au

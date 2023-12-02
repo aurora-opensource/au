@@ -28,4 +28,9 @@ TEST(Liters, HasExpectedRelationshipsWithLinearUnits) {
     EXPECT_EQ(milli(liters)(1), cubed(centi(meters))(1));
 }
 
+TEST(Liters, HasExpectedSymbol) {
+    using symbols::L;
+    EXPECT_THAT(5 * L, SameTypeAndValue(liters(5)));
+}
+
 }  // namespace au

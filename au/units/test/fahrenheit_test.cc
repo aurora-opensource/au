@@ -31,4 +31,9 @@ TEST(Fahrenheit, HasCorrectRelationshipsWithCelsius) {
     EXPECT_THAT(fahrenheit_pt(212.0).as(celsius_pt), SameTypeAndValue(celsius_pt(100.0)));
 }
 
+TEST(Fahrenheit, HasExpectedSymbol) {
+    using symbols::degF_qty;
+    EXPECT_THAT(5 * degF_qty, SameTypeAndValue(fahrenheit_qty(5)));
+}
+
 }  // namespace au

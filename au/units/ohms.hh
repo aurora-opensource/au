@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/amperes.hh"
 #include "au/units/volts.hh"
 
@@ -34,4 +35,7 @@ struct Ohms : decltype(Volts{} / Amperes{}), OhmsLabel<void> {
 constexpr auto ohm = SingularNameFor<Ohms>{};
 constexpr auto ohms = QuantityMaker<Ohms>{};
 
+namespace symbols {
+constexpr auto ohm = SymbolFor<Ohms>{};
+}
 }  // namespace au

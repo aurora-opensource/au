@@ -27,4 +27,9 @@ TEST(Lumens, EquivalentToCandelaSteradians) {
     EXPECT_THAT(lumens(6), QuantityEquivalent(candelas(2) * steradians(3)));
 }
 
+TEST(Lumens, HasExpectedSymbol) {
+    using symbols::lm;
+    EXPECT_THAT(5 * lm, SameTypeAndValue(lumens(5)));
+}
+
 }  // namespace au

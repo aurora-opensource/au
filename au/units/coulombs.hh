@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/amperes.hh"
 #include "au/units/seconds.hh"
 
@@ -34,4 +35,7 @@ struct Coulombs : decltype(Amperes{} * Seconds{}), CoulombsLabel<void> {
 constexpr auto coulomb = SingularNameFor<Coulombs>{};
 constexpr auto coulombs = QuantityMaker<Coulombs>{};
 
+namespace symbols {
+constexpr auto C = SymbolFor<Coulombs>{};
+}
 }  // namespace au

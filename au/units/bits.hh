@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 
 namespace au {
 
@@ -32,4 +33,7 @@ struct Bits : UnitImpl<Information>, BitsLabel<void> {
 constexpr auto bit = SingularNameFor<Bits>{};
 constexpr auto bits = QuantityMaker<Bits>{};
 
+namespace symbols {
+constexpr auto b = SymbolFor<Bits>{};
+}
 }  // namespace au

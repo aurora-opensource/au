@@ -24,4 +24,9 @@ TEST(Bytes, HasExpectedLabel) { expect_label<Bytes>("B"); }
 
 TEST(Bytes, EquivalentTo8Bits) { EXPECT_EQ(bytes(1), bits(8)); }
 
+TEST(Bytes, HasExpectedSymbol) {
+    using symbols::B;
+    EXPECT_THAT(5 * B, SameTypeAndValue(bytes(5)));
+}
+
 }  // namespace au

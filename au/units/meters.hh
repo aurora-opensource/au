@@ -16,6 +16,7 @@
 
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
+#include "au/unit_symbol.hh"
 
 namespace au {
 
@@ -34,4 +35,7 @@ constexpr auto meter = SingularNameFor<Meters>{};
 constexpr auto meters = QuantityMaker<Meters>{};
 constexpr auto meters_pt = QuantityPointMaker<Meters>{};
 
+namespace symbols {
+constexpr auto m = SymbolFor<Meters>{};
+}
 }  // namespace au

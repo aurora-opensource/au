@@ -24,4 +24,9 @@ TEST(Bars, HasExpectedLabel) { expect_label<Bars>("bar"); }
 
 TEST(Bars, HasCorrectRelationshipWithPascals) { EXPECT_EQ(bars(1), kilo(pascals)(100)); }
 
+TEST(Bars, HasExpectedSymbol) {
+    using symbols::bar;
+    EXPECT_THAT(5 * bar, SameTypeAndValue(bars(5)));
+}
+
 }  // namespace au

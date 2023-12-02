@@ -38,4 +38,9 @@ TEST(Watts, EquivalentToOhmicHeating) {
     EXPECT_THAT(i * i * r, QuantityEquivalent(p));
 }
 
+TEST(Watts, HasExpectedSymbol) {
+    using symbols::W;
+    EXPECT_THAT(5 * W, SameTypeAndValue(watts(5)));
+}
+
 }  // namespace au

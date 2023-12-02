@@ -26,4 +26,9 @@ TEST(Grams, HasCorrectRelationshipWithPoundsMass) {
     EXPECT_EQ(micro(grams)(453'592'370L), pounds_mass(1L));
 }
 
+TEST(Grams, HasExpectedSymbol) {
+    using symbols::g;
+    EXPECT_THAT(5 * g, SameTypeAndValue(grams(5)));
+}
+
 }  // namespace au

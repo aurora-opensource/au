@@ -23,4 +23,9 @@ TEST(Revolutions, HasExpectedLabel) { expect_label<Revolutions>("rev"); }
 
 TEST(Revolutions, ExactlyEquivalentTo360Degrees) { EXPECT_EQ(revolutions(1), degrees(360)); }
 
+TEST(Revolutions, HasExpectedSymbol) {
+    using symbols::rev;
+    EXPECT_THAT(5 * rev, SameTypeAndValue(revolutions(5)));
+}
+
 }  // namespace au

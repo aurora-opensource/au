@@ -33,4 +33,9 @@ TEST(Webers, EquivalentToHenryAmperes) {
     EXPECT_THAT(webers(8.0), QuantityEquivalent(henries(4.0) * amperes(2.0)));
 }
 
+TEST(Webers, HasExpectedSymbol) {
+    using symbols::Wb;
+    EXPECT_THAT(5 * Wb, SameTypeAndValue(webers(5)));
+}
+
 }  // namespace au
