@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/unit_symbol.hh"
 
 namespace au {
 
@@ -32,7 +31,4 @@ struct Unos : UnitProductT<>, UnosLabel<void> {
 };
 constexpr auto unos = QuantityMaker<Unos>{};
 
-namespace symbols {
-constexpr auto U = SymbolFor<Unos>{};
-}
 }  // namespace au
