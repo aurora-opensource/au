@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-20-g4019870
+// Version identifier: 0.3.3-23-gcd9cccf
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -3901,101 +3901,6 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct MolesLabel {
-    static constexpr const char label[] = "mol";
-};
-template <typename T>
-constexpr const char MolesLabel<T>::label[];
-struct Moles : UnitImpl<AmountOfSubstance>, MolesLabel<void> {
-    using MolesLabel<void>::label;
-};
-constexpr auto mole = SingularNameFor<Moles>{};
-constexpr auto moles = QuantityMaker<Moles>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct SecondsLabel {
-    static constexpr const char label[] = "s";
-};
-template <typename T>
-constexpr const char SecondsLabel<T>::label[];
-struct Seconds : UnitImpl<Time>, SecondsLabel<void> {
-    using SecondsLabel<void>::label;
-};
-constexpr auto second = SingularNameFor<Seconds>{};
-constexpr auto seconds = QuantityMaker<Seconds>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct GramsLabel {
-    static constexpr const char label[] = "g";
-};
-template <typename T>
-constexpr const char GramsLabel<T>::label[];
-struct Grams : UnitImpl<Mass>, GramsLabel<void> {
-    using GramsLabel<void>::label;
-};
-constexpr auto gram = SingularNameFor<Grams>{};
-constexpr auto grams = QuantityMaker<Grams>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct AmperesLabel {
-    static constexpr const char label[] = "A";
-};
-template <typename T>
-constexpr const char AmperesLabel<T>::label[];
-struct Amperes : UnitImpl<Current>, AmperesLabel<void> {
-    using AmperesLabel<void>::label;
-};
-constexpr auto ampere = SingularNameFor<Amperes>{};
-constexpr auto amperes = QuantityMaker<Amperes>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct RadiansLabel {
-    static constexpr const char label[] = "rad";
-};
-template <typename T>
-constexpr const char RadiansLabel<T>::label[];
-struct Radians : UnitImpl<Angle>, RadiansLabel<void> {
-    using RadiansLabel<void>::label;
-};
-constexpr auto radian = SingularNameFor<Radians>{};
-constexpr auto radians = QuantityMaker<Radians>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
 struct UnosLabel {
     static constexpr const char label[] = "U";
 };
@@ -4005,203 +3910,6 @@ struct Unos : UnitProductT<>, UnosLabel<void> {
     using UnosLabel<void>::label;
 };
 constexpr auto unos = QuantityMaker<Unos>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct MinutesLabel {
-    static constexpr const char label[] = "min";
-};
-template <typename T>
-constexpr const char MinutesLabel<T>::label[];
-struct Minutes : decltype(Seconds{} * mag<60>()), MinutesLabel<void> {
-    using MinutesLabel<void>::label;
-};
-constexpr auto minute = SingularNameFor<Minutes>{};
-constexpr auto minutes = QuantityMaker<Minutes>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct DegreesLabel {
-    static constexpr const char label[] = "deg";
-};
-template <typename T>
-constexpr const char DegreesLabel<T>::label[];
-struct Degrees : decltype(Radians{} * PI / mag<180>()), DegreesLabel<void> {
-    using DegreesLabel<void>::label;
-};
-constexpr auto degree = SingularNameFor<Degrees>{};
-constexpr auto degrees = QuantityMaker<Degrees>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct HertzLabel {
-    static constexpr const char label[] = "Hz";
-};
-template <typename T>
-constexpr const char HertzLabel<T>::label[];
-struct Hertz : UnitInverseT<Seconds>, HertzLabel<void> {
-    using HertzLabel<void>::label;
-};
-constexpr auto hertz = QuantityMaker<Hertz>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct CoulombsLabel {
-    static constexpr const char label[] = "C";
-};
-template <typename T>
-constexpr const char CoulombsLabel<T>::label[];
-struct Coulombs : decltype(Amperes{} * Seconds{}), CoulombsLabel<void> {
-    using CoulombsLabel<void>::label;
-};
-constexpr auto coulomb = SingularNameFor<Coulombs>{};
-constexpr auto coulombs = QuantityMaker<Coulombs>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct SteradiansLabel {
-    static constexpr const char label[] = "sr";
-};
-template <typename T>
-constexpr const char SteradiansLabel<T>::label[];
-struct Steradians : decltype(squared(Radians{})), SteradiansLabel<void> {
-    using SteradiansLabel<void>::label;
-};
-constexpr auto steradian = SingularNameFor<Steradians>{};
-constexpr auto steradians = QuantityMaker<Steradians>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct CandelasLabel {
-    static constexpr const char label[] = "cd";
-};
-template <typename T>
-constexpr const char CandelasLabel<T>::label[];
-struct Candelas : UnitImpl<LuminousIntensity>, CandelasLabel<void> {
-    using CandelasLabel<void>::label;
-};
-constexpr auto candela = SingularNameFor<Candelas>{};
-constexpr auto candelas = QuantityMaker<Candelas>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct BitsLabel {
-    static constexpr const char label[] = "b";
-};
-template <typename T>
-constexpr const char BitsLabel<T>::label[];
-struct Bits : UnitImpl<Information>, BitsLabel<void> {
-    using BitsLabel<void>::label;
-};
-constexpr auto bit = SingularNameFor<Bits>{};
-constexpr auto bits = QuantityMaker<Bits>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct BecquerelLabel {
-    static constexpr const char label[] = "Bq";
-};
-template <typename T>
-constexpr const char BecquerelLabel<T>::label[];
-struct Becquerel : UnitInverseT<Seconds>, BecquerelLabel<void> {
-    using BecquerelLabel<void>::label;
-};
-constexpr auto becquerel = QuantityMaker<Becquerel>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct KatalsLabel {
-    static constexpr const char label[] = "kat";
-};
-template <typename T>
-constexpr const char KatalsLabel<T>::label[];
-struct Katals : decltype(Moles{} / Seconds{}), KatalsLabel<void> {
-    using KatalsLabel<void>::label;
-};
-constexpr auto katal = SingularNameFor<Katals>{};
-constexpr auto katals = QuantityMaker<Katals>{};
-
-}  // namespace au
-
-
-
-namespace au {
-
-// Define 1:1 mapping between duration types of chrono library and our library.
-template <typename RepT, typename Period>
-struct CorrespondingQuantity<std::chrono::duration<RepT, Period>> {
-    using Unit = decltype(Seconds{} * (mag<Period::num>() / mag<Period::den>()));
-    using Rep = RepT;
-
-    using ChronoDuration = std::chrono::duration<Rep, Period>;
-
-    static constexpr Rep extract_value(ChronoDuration d) { return d.count(); }
-    static constexpr ChronoDuration construct_from_value(Rep x) { return ChronoDuration{x}; }
-};
-
-// Convert any Au duration quantity to an equivalent `std::chrono::duration`.
-template <typename U, typename R>
-constexpr auto as_chrono_duration(Quantity<U, R> dt) {
-    constexpr auto ratio = unit_ratio(U{}, seconds);
-    static_assert(is_rational(ratio), "Cannot convert to chrono::duration with non-rational ratio");
-    return std::chrono::duration<R,
-                                 std::ratio<get_value<std::intmax_t>(numerator(ratio)),
-                                            get_value<std::intmax_t>(denominator(ratio))>>{dt};
-}
 
 }  // namespace au
 
@@ -4628,26 +4336,6 @@ struct OriginDisplacementFitsIn
 
 namespace au {
 
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct MetersLabel {
-    static constexpr const char label[] = "m";
-};
-template <typename T>
-constexpr const char MetersLabel<T>::label[];
-struct Meters : UnitImpl<Length>, MetersLabel<void> {
-    using MetersLabel<void>::label;
-};
-constexpr auto meter = SingularNameFor<Meters>{};
-constexpr auto meters = QuantityMaker<Meters>{};
-constexpr auto meters_pt = QuantityPointMaker<Meters>{};
-
-}  // namespace au
-
-
-namespace au {
-
 //
 // A representation of the symbol for a unit.
 //
@@ -4683,6 +4371,308 @@ struct AssociatedUnit<SymbolFor<U>> : stdx::type_identity<U> {};
 
 namespace au {
 
+template <template <class U> class Prefix>
+struct PrefixApplier {
+    // Applying a Prefix to a Unit instance, creates an instance of the Prefixed Unit.
+    template <typename U>
+    constexpr auto operator()(U) const {
+        return Prefix<U>{};
+    }
+
+    // Applying a Prefix to a QuantityMaker instance, creates a maker for the Prefixed Unit.
+    template <typename U>
+    constexpr auto operator()(QuantityMaker<U>) const {
+        return QuantityMaker<Prefix<U>>{};
+    }
+
+    // Applying a Prefix to a QuantityPointMaker instance, changes it to make the Prefixed Unit.
+    template <typename U>
+    constexpr auto operator()(QuantityPointMaker<U>) const {
+        return QuantityPointMaker<Prefix<U>>{};
+    }
+
+    // Applying a Prefix to a SingularNameFor instance, creates a singularly-named instance of the
+    // Prefixed Unit.
+    template <typename U>
+    constexpr auto operator()(SingularNameFor<U>) const {
+        return SingularNameFor<Prefix<U>>{};
+    }
+
+    // Applying a Prefix to a SymbolFor instance, creates a symbolically-named instance of the
+    // Prefixed unit.
+    template <typename U>
+    constexpr auto operator()(SymbolFor<U>) const {
+        return SymbolFor<Prefix<U>>{};
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SI Prefixes.
+
+template <typename U>
+struct Quetta : decltype(U{} * pow<30>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Q", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Quetta<U>::label;
+constexpr auto quetta = PrefixApplier<Quetta>{};
+
+template <typename U>
+struct Ronna : decltype(U{} * pow<27>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("R", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Ronna<U>::label;
+constexpr auto ronna = PrefixApplier<Ronna>{};
+
+template <typename U>
+struct Yotta : decltype(U{} * pow<24>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Y", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Yotta<U>::label;
+constexpr auto yotta = PrefixApplier<Yotta>{};
+
+template <typename U>
+struct Zetta : decltype(U{} * pow<21>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Z", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Zetta<U>::label;
+constexpr auto zetta = PrefixApplier<Zetta>{};
+
+template <typename U>
+struct Exa : decltype(U{} * pow<18>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("E", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Exa<U>::label;
+constexpr auto exa = PrefixApplier<Exa>{};
+
+template <typename U>
+struct Peta : decltype(U{} * pow<15>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("P", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Peta<U>::label;
+constexpr auto peta = PrefixApplier<Peta>{};
+
+template <typename U>
+struct Tera : decltype(U{} * pow<12>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("T", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Tera<U>::label;
+constexpr auto tera = PrefixApplier<Tera>{};
+
+template <typename U>
+struct Giga : decltype(U{} * pow<9>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("G", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Giga<U>::label;
+constexpr auto giga = PrefixApplier<Giga>{};
+
+template <typename U>
+struct Mega : decltype(U{} * pow<6>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("M", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Mega<U>::label;
+constexpr auto mega = PrefixApplier<Mega>{};
+
+template <typename U>
+struct Kilo : decltype(U{} * pow<3>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("k", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Kilo<U>::label;
+constexpr auto kilo = PrefixApplier<Kilo>{};
+
+template <typename U>
+struct Hecto : decltype(U{} * pow<2>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("h", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Hecto<U>::label;
+constexpr auto hecto = PrefixApplier<Hecto>{};
+
+template <typename U>
+struct Deka : decltype(U{} * pow<1>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("da", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Deka<U>::label;
+constexpr auto deka = PrefixApplier<Deka>{};
+
+template <typename U>
+struct Deci : decltype(U{} * pow<-1>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("d", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Deci<U>::label;
+constexpr auto deci = PrefixApplier<Deci>{};
+
+template <typename U>
+struct Centi : decltype(U{} * pow<-2>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("c", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Centi<U>::label;
+constexpr auto centi = PrefixApplier<Centi>{};
+
+template <typename U>
+struct Milli : decltype(U{} * pow<-3>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("m", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Milli<U>::label;
+constexpr auto milli = PrefixApplier<Milli>{};
+
+template <typename U>
+struct Micro : decltype(U{} * pow<-6>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("u", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Micro<U>::label;
+constexpr auto micro = PrefixApplier<Micro>{};
+
+template <typename U>
+struct Nano : decltype(U{} * pow<-9>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("n", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Nano<U>::label;
+constexpr auto nano = PrefixApplier<Nano>{};
+
+template <typename U>
+struct Pico : decltype(U{} * pow<-12>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("p", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Pico<U>::label;
+constexpr auto pico = PrefixApplier<Pico>{};
+
+template <typename U>
+struct Femto : decltype(U{} * pow<-15>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("f", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Femto<U>::label;
+constexpr auto femto = PrefixApplier<Femto>{};
+
+template <typename U>
+struct Atto : decltype(U{} * pow<-18>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("a", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Atto<U>::label;
+constexpr auto atto = PrefixApplier<Atto>{};
+
+template <typename U>
+struct Zepto : decltype(U{} * pow<-21>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("z", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Zepto<U>::label;
+constexpr auto zepto = PrefixApplier<Zepto>{};
+
+template <typename U>
+struct Yocto : decltype(U{} * pow<-24>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("y", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Yocto<U>::label;
+constexpr auto yocto = PrefixApplier<Yocto>{};
+
+template <typename U>
+struct Ronto : decltype(U{} * pow<-27>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("r", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Ronto<U>::label;
+constexpr auto ronto = PrefixApplier<Ronto>{};
+
+template <typename U>
+struct Quecto : decltype(U{} * pow<-30>(mag<10>())) {
+    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("q", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<1, U> Quecto<U>::label;
+constexpr auto quecto = PrefixApplier<Quecto>{};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Binary Prefixes.
+
+template <typename U>
+struct Yobi : decltype(U{} * pow<80>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Yi", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Yobi<U>::label;
+constexpr auto yobi = PrefixApplier<Yobi>{};
+
+template <typename U>
+struct Zebi : decltype(U{} * pow<70>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Zi", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Zebi<U>::label;
+constexpr auto zebi = PrefixApplier<Zebi>{};
+
+template <typename U>
+struct Exbi : decltype(U{} * pow<60>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Ei", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Exbi<U>::label;
+constexpr auto exbi = PrefixApplier<Exbi>{};
+
+template <typename U>
+struct Pebi : decltype(U{} * pow<50>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Pi", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Pebi<U>::label;
+constexpr auto pebi = PrefixApplier<Pebi>{};
+
+template <typename U>
+struct Tebi : decltype(U{} * pow<40>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Ti", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Tebi<U>::label;
+constexpr auto tebi = PrefixApplier<Tebi>{};
+
+template <typename U>
+struct Gibi : decltype(U{} * pow<30>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Gi", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Gibi<U>::label;
+constexpr auto gibi = PrefixApplier<Gibi>{};
+
+template <typename U>
+struct Mebi : decltype(U{} * pow<20>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Mi", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Mebi<U>::label;
+constexpr auto mebi = PrefixApplier<Mebi>{};
+
+template <typename U>
+struct Kibi : decltype(U{} * pow<10>(mag<2>())) {
+    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Ki", unit_label<U>());
+};
+template <typename U>
+constexpr detail::ExtendedLabel<2, U> Kibi<U>::label;
+constexpr auto kibi = PrefixApplier<Kibi>{};
+
+}  // namespace au
+
+
+namespace au {
+
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
@@ -4698,6 +4688,120 @@ constexpr auto kelvin = SingularNameFor<Kelvins>{};
 constexpr auto kelvins = QuantityMaker<Kelvins>{};
 constexpr auto kelvins_pt = QuantityPointMaker<Kelvins>{};
 
+namespace symbols {
+constexpr auto K = SymbolFor<Kelvins>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct MolesLabel {
+    static constexpr const char label[] = "mol";
+};
+template <typename T>
+constexpr const char MolesLabel<T>::label[];
+struct Moles : UnitImpl<AmountOfSubstance>, MolesLabel<void> {
+    using MolesLabel<void>::label;
+};
+constexpr auto mole = SingularNameFor<Moles>{};
+constexpr auto moles = QuantityMaker<Moles>{};
+
+namespace symbols {
+constexpr auto mol = SymbolFor<Moles>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct SecondsLabel {
+    static constexpr const char label[] = "s";
+};
+template <typename T>
+constexpr const char SecondsLabel<T>::label[];
+struct Seconds : UnitImpl<Time>, SecondsLabel<void> {
+    using SecondsLabel<void>::label;
+};
+constexpr auto second = SingularNameFor<Seconds>{};
+constexpr auto seconds = QuantityMaker<Seconds>{};
+
+namespace symbols {
+constexpr auto s = SymbolFor<Seconds>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct GramsLabel {
+    static constexpr const char label[] = "g";
+};
+template <typename T>
+constexpr const char GramsLabel<T>::label[];
+struct Grams : UnitImpl<Mass>, GramsLabel<void> {
+    using GramsLabel<void>::label;
+};
+constexpr auto gram = SingularNameFor<Grams>{};
+constexpr auto grams = QuantityMaker<Grams>{};
+
+namespace symbols {
+constexpr auto g = SymbolFor<Grams>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct AmperesLabel {
+    static constexpr const char label[] = "A";
+};
+template <typename T>
+constexpr const char AmperesLabel<T>::label[];
+struct Amperes : UnitImpl<Current>, AmperesLabel<void> {
+    using AmperesLabel<void>::label;
+};
+constexpr auto ampere = SingularNameFor<Amperes>{};
+constexpr auto amperes = QuantityMaker<Amperes>{};
+
+namespace symbols {
+constexpr auto A = SymbolFor<Amperes>{};
+}
+
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct RadiansLabel {
+    static constexpr const char label[] = "rad";
+};
+template <typename T>
+constexpr const char RadiansLabel<T>::label[];
+struct Radians : UnitImpl<Angle>, RadiansLabel<void> {
+    using RadiansLabel<void>::label;
+};
+constexpr auto radian = SingularNameFor<Radians>{};
+constexpr auto radians = QuantityMaker<Radians>{};
+
+namespace symbols {
+constexpr auto rad = SymbolFor<Radians>{};
+}
 }  // namespace au
 
 
@@ -4716,6 +4820,489 @@ struct Percent : decltype(Unos{} / mag<100>()), PercentLabel<void> {
 };
 constexpr auto percent = QuantityMaker<Percent>{};
 
+namespace symbols {
+constexpr auto pct = SymbolFor<Percent>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct MinutesLabel {
+    static constexpr const char label[] = "min";
+};
+template <typename T>
+constexpr const char MinutesLabel<T>::label[];
+struct Minutes : decltype(Seconds{} * mag<60>()), MinutesLabel<void> {
+    using MinutesLabel<void>::label;
+};
+constexpr auto minute = SingularNameFor<Minutes>{};
+constexpr auto minutes = QuantityMaker<Minutes>{};
+
+namespace symbols {
+constexpr auto min = SymbolFor<Minutes>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct DegreesLabel {
+    static constexpr const char label[] = "deg";
+};
+template <typename T>
+constexpr const char DegreesLabel<T>::label[];
+struct Degrees : decltype(Radians{} * PI / mag<180>()), DegreesLabel<void> {
+    using DegreesLabel<void>::label;
+};
+constexpr auto degree = SingularNameFor<Degrees>{};
+constexpr auto degrees = QuantityMaker<Degrees>{};
+
+namespace symbols {
+constexpr auto deg = SymbolFor<Degrees>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct HertzLabel {
+    static constexpr const char label[] = "Hz";
+};
+template <typename T>
+constexpr const char HertzLabel<T>::label[];
+struct Hertz : UnitInverseT<Seconds>, HertzLabel<void> {
+    using HertzLabel<void>::label;
+};
+constexpr auto hertz = QuantityMaker<Hertz>{};
+
+namespace symbols {
+constexpr auto Hz = SymbolFor<Hertz>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct CoulombsLabel {
+    static constexpr const char label[] = "C";
+};
+template <typename T>
+constexpr const char CoulombsLabel<T>::label[];
+struct Coulombs : decltype(Amperes{} * Seconds{}), CoulombsLabel<void> {
+    using CoulombsLabel<void>::label;
+};
+constexpr auto coulomb = SingularNameFor<Coulombs>{};
+constexpr auto coulombs = QuantityMaker<Coulombs>{};
+
+namespace symbols {
+constexpr auto C = SymbolFor<Coulombs>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct CelsiusLabel {
+    static constexpr const char label[] = "degC";
+};
+template <typename T>
+constexpr const char CelsiusLabel<T>::label[];
+struct Celsius : Kelvins, CelsiusLabel<void> {
+    using CelsiusLabel<void>::label;
+    static constexpr auto origin() { return centi(kelvins)(273'15); }
+};
+constexpr auto celsius_qty = QuantityMaker<Celsius>{};
+constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
+
+[[deprecated(
+    "`celsius()` is ambiguous.  Use `celsius_pt()` for _points_, or `celsius_qty()` for "
+    "_quantities_")]] constexpr auto celsius = QuantityMaker<Celsius>{};
+
+namespace symbols {
+constexpr auto degC_qty = SymbolFor<Celsius>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct SteradiansLabel {
+    static constexpr const char label[] = "sr";
+};
+template <typename T>
+constexpr const char SteradiansLabel<T>::label[];
+struct Steradians : decltype(squared(Radians{})), SteradiansLabel<void> {
+    using SteradiansLabel<void>::label;
+};
+constexpr auto steradian = SingularNameFor<Steradians>{};
+constexpr auto steradians = QuantityMaker<Steradians>{};
+
+namespace symbols {
+constexpr auto sr = SymbolFor<Steradians>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct CandelasLabel {
+    static constexpr const char label[] = "cd";
+};
+template <typename T>
+constexpr const char CandelasLabel<T>::label[];
+struct Candelas : UnitImpl<LuminousIntensity>, CandelasLabel<void> {
+    using CandelasLabel<void>::label;
+};
+constexpr auto candela = SingularNameFor<Candelas>{};
+constexpr auto candelas = QuantityMaker<Candelas>{};
+
+namespace symbols {
+constexpr auto cd = SymbolFor<Candelas>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct PoundsMassLabel {
+    static constexpr const char label[] = "lb";
+};
+template <typename T>
+constexpr const char PoundsMassLabel<T>::label[];
+struct PoundsMass : decltype(Micro<Grams>{} * mag<453'592'370>()), PoundsMassLabel<void> {
+    using PoundsMassLabel<void>::label;
+};
+constexpr auto pound_mass = SingularNameFor<PoundsMass>{};
+constexpr auto pounds_mass = QuantityMaker<PoundsMass>{};
+
+namespace symbols {
+constexpr auto lb = SymbolFor<PoundsMass>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct BitsLabel {
+    static constexpr const char label[] = "b";
+};
+template <typename T>
+constexpr const char BitsLabel<T>::label[];
+struct Bits : UnitImpl<Information>, BitsLabel<void> {
+    using BitsLabel<void>::label;
+};
+constexpr auto bit = SingularNameFor<Bits>{};
+constexpr auto bits = QuantityMaker<Bits>{};
+
+namespace symbols {
+constexpr auto b = SymbolFor<Bits>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct BecquerelLabel {
+    static constexpr const char label[] = "Bq";
+};
+template <typename T>
+constexpr const char BecquerelLabel<T>::label[];
+struct Becquerel : UnitInverseT<Seconds>, BecquerelLabel<void> {
+    using BecquerelLabel<void>::label;
+};
+constexpr auto becquerel = QuantityMaker<Becquerel>{};
+
+namespace symbols {
+constexpr auto Bq = SymbolFor<Becquerel>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct KatalsLabel {
+    static constexpr const char label[] = "kat";
+};
+template <typename T>
+constexpr const char KatalsLabel<T>::label[];
+struct Katals : decltype(Moles{} / Seconds{}), KatalsLabel<void> {
+    using KatalsLabel<void>::label;
+};
+constexpr auto katal = SingularNameFor<Katals>{};
+constexpr auto katals = QuantityMaker<Katals>{};
+
+namespace symbols {
+constexpr auto kat = SymbolFor<Katals>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+//
+// A monovalue type to represent a constant value, including its units, if any.
+//
+// Users can multiply or divide `Constant` instances by raw numbers or `Quantity` instances, and it
+// will perform symbolic arithmetic at compile time without affecting the stored numeric value.
+// `Constant` also composes with other constants, and with `QuantityMaker` and other related types.
+//
+// Although `Constant` does not have any specific numeric type associated with it (as opposed to
+// `Quantity`), it can easily convert to any appropriate `Quantity` type, with any rep.  Unlike
+// `Quantity`, these conversions support _exact_ safety checks, so that every conversion producing a
+// correctly representable value will succeed, and every unrepresentable conversion will fail.
+//
+template <typename Unit>
+struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
+                  detail::ScalesQuantity<Constant, Unit>,
+                  detail::ComposesWith<Constant, Unit, Constant, Constant>,
+                  detail::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
+                  detail::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
+                  detail::ForbidsComposingWith<Constant, Unit, QuantityPointMaker>,
+                  detail::ForbidsComposingWith<Constant, Unit, QuantityPoint>,
+                  detail::CanScaleByMagnitude<Constant, Unit> {
+    // Convert this constant to a Quantity of the given rep.
+    template <typename T>
+    constexpr auto as() const {
+        return make_quantity<Unit>(static_cast<T>(1));
+    }
+
+    // Convert this constant to a Quantity of the given unit and rep, ignoring safety checks.
+    template <typename T, typename OtherUnit>
+    constexpr auto coerce_as(OtherUnit u) const {
+        return as<T>().coerce_as(u);
+    }
+
+    // Convert this constant to a Quantity of the given unit and rep.
+    template <typename T, typename OtherUnit>
+    constexpr auto as(OtherUnit u) const {
+        static_assert(can_store_value_in<T>(u), "Cannot represent constant in this unit/rep");
+        return coerce_as<T>(u);
+    }
+
+    // Get the value of this constant in the given unit and rep, ignoring safety checks.
+    template <typename T, typename OtherUnit>
+    constexpr auto coerce_in(OtherUnit u) const {
+        return as<T>().coerce_in(u);
+    }
+
+    // Get the value of this constant in the given unit and rep.
+    template <typename T, typename OtherUnit>
+    constexpr auto in(OtherUnit u) const {
+        static_assert(can_store_value_in<T>(u), "Cannot represent constant in this unit/rep");
+        return coerce_in<T>(u);
+    }
+
+    // Implicitly convert to any quantity type which passes safety checks.
+    template <typename U, typename R>
+    constexpr operator Quantity<U, R>() const {
+        return as<R>(U{});
+    }
+
+    // Static function to check whether this constant can be exactly-represented in the given rep
+    // `T` and unit `OtherUnit`.
+    template <typename T, typename OtherUnit>
+    static constexpr bool can_store_value_in(OtherUnit other) {
+        return representable_in<T>(unit_ratio(Unit{}, other));
+    }
+};
+
+// Make a constant from the given unit.
+//
+// Note that the argument is a _unit slot_, and thus can also accept things like `QuantityMaker` and
+// `SymbolFor` in addition to regular units.
+template <typename UnitSlot>
+constexpr Constant<AssociatedUnitT<UnitSlot>> make_constant(UnitSlot) {
+    return {};
+}
+
+// Support using `Constant` in a unit slot.
+template <typename Unit>
+struct AssociatedUnit<Constant<Unit>> : stdx::type_identity<Unit> {};
+
+}  // namespace au
+
+
+
+namespace au {
+
+// Define 1:1 mapping between duration types of chrono library and our library.
+template <typename RepT, typename Period>
+struct CorrespondingQuantity<std::chrono::duration<RepT, Period>> {
+    using Unit = decltype(Seconds{} * (mag<Period::num>() / mag<Period::den>()));
+    using Rep = RepT;
+
+    using ChronoDuration = std::chrono::duration<Rep, Period>;
+
+    static constexpr Rep extract_value(ChronoDuration d) { return d.count(); }
+    static constexpr ChronoDuration construct_from_value(Rep x) { return ChronoDuration{x}; }
+};
+
+// Convert any Au duration quantity to an equivalent `std::chrono::duration`.
+template <typename U, typename R>
+constexpr auto as_chrono_duration(Quantity<U, R> dt) {
+    constexpr auto ratio = unit_ratio(U{}, seconds);
+    static_assert(is_rational(ratio), "Cannot convert to chrono::duration with non-rational ratio");
+    return std::chrono::duration<R,
+                                 std::ratio<get_value<std::intmax_t>(numerator(ratio)),
+                                            get_value<std::intmax_t>(denominator(ratio))>>{dt};
+}
+
+}  // namespace au
+
+
+
+namespace au {
+
+// Streaming output support for Quantity types.
+template <typename U, typename R>
+std::ostream &operator<<(std::ostream &out, const Quantity<U, R> &q) {
+    out << q.in(U{}) << " " << unit_label(U{});
+    return out;
+}
+
+// Streaming output support for QuantityPoint types.
+template <typename U, typename R>
+std::ostream &operator<<(std::ostream &out, const QuantityPoint<U, R> &p) {
+    out << "@(" << (p - rep_cast<R>(make_quantity_point<U>(0))) << ")";
+    return out;
+}
+
+// Streaming output support for Zero.  (Useful for printing in unit test failures.)
+inline std::ostream &operator<<(std::ostream &out, Zero) {
+    out << "0";
+    return out;
+}
+
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct MetersLabel {
+    static constexpr const char label[] = "m";
+};
+template <typename T>
+constexpr const char MetersLabel<T>::label[];
+struct Meters : UnitImpl<Length>, MetersLabel<void> {
+    using MetersLabel<void>::label;
+};
+constexpr auto meter = SingularNameFor<Meters>{};
+constexpr auto meters = QuantityMaker<Meters>{};
+constexpr auto meters_pt = QuantityPointMaker<Meters>{};
+
+namespace symbols {
+constexpr auto m = SymbolFor<Meters>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct FahrenheitLabel {
+    static constexpr const char label[] = "degF";
+};
+template <typename T>
+constexpr const char FahrenheitLabel<T>::label[];
+struct Rankines : decltype(Kelvins{} * mag<5>() / mag<9>()) {};
+constexpr auto rankines = QuantityMaker<Rankines>{};
+struct Fahrenheit : Rankines, FahrenheitLabel<void> {
+    using FahrenheitLabel<void>::label;
+    static constexpr auto origin() { return centi(rankines)(459'67); }
+};
+constexpr auto fahrenheit_qty = QuantityMaker<Fahrenheit>{};
+constexpr auto fahrenheit_pt = QuantityPointMaker<Fahrenheit>{};
+
+[[deprecated(
+    "`fahrenheit()` is ambiguous.  Use `fahrenheit_pt()` for _points_, or `fahrenheit_qty()` for "
+    "_quantities_")]] constexpr auto fahrenheit = QuantityMaker<Fahrenheit>{};
+
+namespace symbols {
+constexpr auto degF_qty = SymbolFor<Fahrenheit>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct InchesLabel {
+    static constexpr const char label[] = "in";
+};
+template <typename T>
+constexpr const char InchesLabel<T>::label[];
+struct Inches : decltype(Centi<Meters>{} * mag<254>() / mag<100>()), InchesLabel<void> {
+    using InchesLabel<void>::label;
+};
+constexpr auto inch = SingularNameFor<Inches>{};
+constexpr auto inches = QuantityMaker<Inches>{};
+
+namespace symbols {
+constexpr auto in = SymbolFor<Inches>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct NewtonsLabel {
+    static constexpr const char label[] = "N";
+};
+template <typename T>
+constexpr const char NewtonsLabel<T>::label[];
+struct Newtons : decltype(Kilo<Grams>{} * Meters{} / squared(Seconds{})), NewtonsLabel<void> {
+    using NewtonsLabel<void>::label;
+};
+constexpr auto newton = SingularNameFor<Newtons>{};
+constexpr auto newtons = QuantityMaker<Newtons>{};
+
+namespace symbols {
+constexpr auto N = SymbolFor<Newtons>{};
+}
 }  // namespace au
 
 
@@ -4735,6 +5322,9 @@ struct Hours : decltype(Minutes{} * mag<60>()), HoursLabel<void> {
 constexpr auto hour = SingularNameFor<Hours>{};
 constexpr auto hours = QuantityMaker<Hours>{};
 
+namespace symbols {
+constexpr auto h = SymbolFor<Hours>{};
+}
 }  // namespace au
 
 
@@ -4754,6 +5344,9 @@ struct Revolutions : decltype(Degrees{} * mag<360>()), RevolutionsLabel<void> {
 constexpr auto revolution = SingularNameFor<Revolutions>{};
 constexpr auto revolutions = QuantityMaker<Revolutions>{};
 
+namespace symbols {
+constexpr auto rev = SymbolFor<Revolutions>{};
+}
 }  // namespace au
 
 
@@ -4773,6 +5366,9 @@ struct NauticalMiles : decltype(Meters{} * mag<1'852>()), NauticalMilesLabel<voi
 constexpr auto nautical_mile = SingularNameFor<NauticalMiles>{};
 constexpr auto nautical_miles = QuantityMaker<NauticalMiles>{};
 
+namespace symbols {
+constexpr auto nmi = SymbolFor<NauticalMiles>{};
+}
 }  // namespace au
 
 
@@ -4792,6 +5388,9 @@ struct Lumens : decltype(Candelas{} * Steradians{}), LumensLabel<void> {
 constexpr auto lumen = SingularNameFor<Lumens>{};
 constexpr auto lumens = QuantityMaker<Lumens>{};
 
+namespace symbols {
+constexpr auto lm = SymbolFor<Lumens>{};
+}
 }  // namespace au
 
 
@@ -4812,6 +5411,32 @@ struct StandardGravity
 };
 constexpr auto standard_gravity = QuantityMaker<StandardGravity>{};
 
+namespace symbols {
+constexpr auto g_0 = SymbolFor<StandardGravity>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct PascalsLabel {
+    static constexpr const char label[] = "Pa";
+};
+template <typename T>
+constexpr const char PascalsLabel<T>::label[];
+struct Pascals : decltype(Newtons{} / squared(Meters{})), PascalsLabel<void> {
+    using PascalsLabel<void>::label;
+};
+constexpr auto pascal = SingularNameFor<Pascals>{};
+constexpr auto pascals = QuantityMaker<Pascals>{};
+constexpr QuantityPointMaker<Pascals> pascals_pt{};
+
+namespace symbols {
+constexpr auto Pa = SymbolFor<Pascals>{};
+}
 }  // namespace au
 
 
@@ -4831,6 +5456,31 @@ struct Bytes : decltype(Bits{} * mag<8>()), BytesLabel<void> {
 constexpr auto byte = SingularNameFor<Bytes>{};
 constexpr auto bytes = QuantityMaker<Bytes>{};
 
+namespace symbols {
+constexpr auto B = SymbolFor<Bytes>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct BarsLabel {
+    static constexpr const char label[] = "bar";
+};
+template <typename T>
+constexpr const char BarsLabel<T>::label[];
+struct Bars : decltype(Kilo<Pascals>{} * mag<100>()), BarsLabel<void> {
+    using BarsLabel<void>::label;
+};
+constexpr auto bar = SingularNameFor<Bars>{};
+constexpr auto bars = QuantityMaker<Bars>{};
+
+namespace symbols {
+constexpr auto bar = SymbolFor<Bars>{};
+}  // namespace symbols
 }  // namespace au
 
 
@@ -5049,8 +5699,8 @@ constexpr auto int_pow(Quantity<U, R> q) {
 template <typename TargetRep, typename TargetUnits, typename U, typename R>
 constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     using Rep = std::common_type_t<TargetRep, R>;
-    return static_cast<TargetRep>(
-        make_quantity<UnitProductT<>>(Rep{1}).in(associated_unit(target_units) * U{}) / q.in(U{}));
+    constexpr auto ONE = make_constant(UnitProductT<>{});
+    return static_cast<TargetRep>(ONE.in<Rep>(associated_unit(target_units) * U{}) / q.in(U{}));
 }
 
 //
@@ -5081,8 +5731,10 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     // This will fail at compile time for types that can't hold 1'000'000.
     constexpr R threshold = 1'000'000;
 
+    constexpr auto ONE = make_constant(UnitProductT<>{});
+
     static_assert(
-        make_quantity<UnitProductT<>>(R{1}).in(associated_unit(target_units) * U{}) >= threshold ||
+        ONE.in<R>(associated_unit(target_units) * U{}) >= threshold ||
             std::is_floating_point<R>::value,
         "Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired");
 
@@ -5519,537 +6171,6 @@ constexpr bool numeric_limits<au::Quantity<U, R>>::tinyness_before;
 }  // namespace std
 
 
-
-namespace au {
-
-// Streaming output support for Quantity types.
-template <typename U, typename R>
-std::ostream &operator<<(std::ostream &out, const Quantity<U, R> &q) {
-    out << q.in(U{}) << " " << unit_label(U{});
-    return out;
-}
-
-// Streaming output support for QuantityPoint types.
-template <typename U, typename R>
-std::ostream &operator<<(std::ostream &out, const QuantityPoint<U, R> &p) {
-    out << "@(" << (p - rep_cast<R>(make_quantity_point<U>(0))) << ")";
-    return out;
-}
-
-// Streaming output support for Zero.  (Useful for printing in unit test failures.)
-inline std::ostream &operator<<(std::ostream &out, Zero) {
-    out << "0";
-    return out;
-}
-
-}  // namespace au
-
-
-namespace au {
-
-template <template <class U> class Prefix>
-struct PrefixApplier {
-    // Applying a Prefix to a Unit instance, creates an instance of the Prefixed Unit.
-    template <typename U>
-    constexpr auto operator()(U) const {
-        return Prefix<U>{};
-    }
-
-    // Applying a Prefix to a QuantityMaker instance, creates a maker for the Prefixed Unit.
-    template <typename U>
-    constexpr auto operator()(QuantityMaker<U>) const {
-        return QuantityMaker<Prefix<U>>{};
-    }
-
-    // Applying a Prefix to a QuantityPointMaker instance, changes it to make the Prefixed Unit.
-    template <typename U>
-    constexpr auto operator()(QuantityPointMaker<U>) const {
-        return QuantityPointMaker<Prefix<U>>{};
-    }
-
-    // Applying a Prefix to a SingularNameFor instance, creates a singularly-named instance of the
-    // Prefixed Unit.
-    template <typename U>
-    constexpr auto operator()(SingularNameFor<U>) const {
-        return SingularNameFor<Prefix<U>>{};
-    }
-
-    // Applying a Prefix to a SymbolFor instance, creates a symbolically-named instance of the
-    // Prefixed unit.
-    template <typename U>
-    constexpr auto operator()(SymbolFor<U>) const {
-        return SymbolFor<Prefix<U>>{};
-    }
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// SI Prefixes.
-
-template <typename U>
-struct Quetta : decltype(U{} * pow<30>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Q", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Quetta<U>::label;
-constexpr auto quetta = PrefixApplier<Quetta>{};
-
-template <typename U>
-struct Ronna : decltype(U{} * pow<27>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("R", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Ronna<U>::label;
-constexpr auto ronna = PrefixApplier<Ronna>{};
-
-template <typename U>
-struct Yotta : decltype(U{} * pow<24>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Y", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Yotta<U>::label;
-constexpr auto yotta = PrefixApplier<Yotta>{};
-
-template <typename U>
-struct Zetta : decltype(U{} * pow<21>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("Z", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Zetta<U>::label;
-constexpr auto zetta = PrefixApplier<Zetta>{};
-
-template <typename U>
-struct Exa : decltype(U{} * pow<18>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("E", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Exa<U>::label;
-constexpr auto exa = PrefixApplier<Exa>{};
-
-template <typename U>
-struct Peta : decltype(U{} * pow<15>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("P", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Peta<U>::label;
-constexpr auto peta = PrefixApplier<Peta>{};
-
-template <typename U>
-struct Tera : decltype(U{} * pow<12>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("T", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Tera<U>::label;
-constexpr auto tera = PrefixApplier<Tera>{};
-
-template <typename U>
-struct Giga : decltype(U{} * pow<9>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("G", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Giga<U>::label;
-constexpr auto giga = PrefixApplier<Giga>{};
-
-template <typename U>
-struct Mega : decltype(U{} * pow<6>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("M", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Mega<U>::label;
-constexpr auto mega = PrefixApplier<Mega>{};
-
-template <typename U>
-struct Kilo : decltype(U{} * pow<3>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("k", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Kilo<U>::label;
-constexpr auto kilo = PrefixApplier<Kilo>{};
-
-template <typename U>
-struct Hecto : decltype(U{} * pow<2>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("h", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Hecto<U>::label;
-constexpr auto hecto = PrefixApplier<Hecto>{};
-
-template <typename U>
-struct Deka : decltype(U{} * pow<1>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("da", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Deka<U>::label;
-constexpr auto deka = PrefixApplier<Deka>{};
-
-template <typename U>
-struct Deci : decltype(U{} * pow<-1>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("d", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Deci<U>::label;
-constexpr auto deci = PrefixApplier<Deci>{};
-
-template <typename U>
-struct Centi : decltype(U{} * pow<-2>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("c", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Centi<U>::label;
-constexpr auto centi = PrefixApplier<Centi>{};
-
-template <typename U>
-struct Milli : decltype(U{} * pow<-3>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("m", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Milli<U>::label;
-constexpr auto milli = PrefixApplier<Milli>{};
-
-template <typename U>
-struct Micro : decltype(U{} * pow<-6>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("u", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Micro<U>::label;
-constexpr auto micro = PrefixApplier<Micro>{};
-
-template <typename U>
-struct Nano : decltype(U{} * pow<-9>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("n", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Nano<U>::label;
-constexpr auto nano = PrefixApplier<Nano>{};
-
-template <typename U>
-struct Pico : decltype(U{} * pow<-12>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("p", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Pico<U>::label;
-constexpr auto pico = PrefixApplier<Pico>{};
-
-template <typename U>
-struct Femto : decltype(U{} * pow<-15>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("f", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Femto<U>::label;
-constexpr auto femto = PrefixApplier<Femto>{};
-
-template <typename U>
-struct Atto : decltype(U{} * pow<-18>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("a", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Atto<U>::label;
-constexpr auto atto = PrefixApplier<Atto>{};
-
-template <typename U>
-struct Zepto : decltype(U{} * pow<-21>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("z", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Zepto<U>::label;
-constexpr auto zepto = PrefixApplier<Zepto>{};
-
-template <typename U>
-struct Yocto : decltype(U{} * pow<-24>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("y", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Yocto<U>::label;
-constexpr auto yocto = PrefixApplier<Yocto>{};
-
-template <typename U>
-struct Ronto : decltype(U{} * pow<-27>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("r", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Ronto<U>::label;
-constexpr auto ronto = PrefixApplier<Ronto>{};
-
-template <typename U>
-struct Quecto : decltype(U{} * pow<-30>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label = detail::concatenate("q", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<1, U> Quecto<U>::label;
-constexpr auto quecto = PrefixApplier<Quecto>{};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Binary Prefixes.
-
-template <typename U>
-struct Yobi : decltype(U{} * pow<80>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Yi", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Yobi<U>::label;
-constexpr auto yobi = PrefixApplier<Yobi>{};
-
-template <typename U>
-struct Zebi : decltype(U{} * pow<70>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Zi", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Zebi<U>::label;
-constexpr auto zebi = PrefixApplier<Zebi>{};
-
-template <typename U>
-struct Exbi : decltype(U{} * pow<60>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Ei", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Exbi<U>::label;
-constexpr auto exbi = PrefixApplier<Exbi>{};
-
-template <typename U>
-struct Pebi : decltype(U{} * pow<50>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Pi", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Pebi<U>::label;
-constexpr auto pebi = PrefixApplier<Pebi>{};
-
-template <typename U>
-struct Tebi : decltype(U{} * pow<40>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Ti", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Tebi<U>::label;
-constexpr auto tebi = PrefixApplier<Tebi>{};
-
-template <typename U>
-struct Gibi : decltype(U{} * pow<30>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Gi", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Gibi<U>::label;
-constexpr auto gibi = PrefixApplier<Gibi>{};
-
-template <typename U>
-struct Mebi : decltype(U{} * pow<20>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Mi", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Mebi<U>::label;
-constexpr auto mebi = PrefixApplier<Mebi>{};
-
-template <typename U>
-struct Kibi : decltype(U{} * pow<10>(mag<2>())) {
-    static constexpr detail::ExtendedLabel<2, U> label = detail::concatenate("Ki", unit_label<U>());
-};
-template <typename U>
-constexpr detail::ExtendedLabel<2, U> Kibi<U>::label;
-constexpr auto kibi = PrefixApplier<Kibi>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct FahrenheitLabel {
-    static constexpr const char label[] = "degF";
-};
-template <typename T>
-constexpr const char FahrenheitLabel<T>::label[];
-struct Rankines : decltype(Kelvins{} * mag<5>() / mag<9>()) {};
-constexpr auto rankines = QuantityMaker<Rankines>{};
-struct Fahrenheit : Rankines, FahrenheitLabel<void> {
-    using FahrenheitLabel<void>::label;
-    static constexpr auto origin() { return centi(rankines)(459'67); }
-};
-constexpr auto fahrenheit_qty = QuantityMaker<Fahrenheit>{};
-constexpr auto fahrenheit_pt = QuantityPointMaker<Fahrenheit>{};
-
-[[deprecated(
-    "`fahrenheit()` is ambiguous.  Use `fahrenheit_pt()` for _points_, or `fahrenheit_qty()` for "
-    "_quantities_")]] constexpr auto fahrenheit = QuantityMaker<Fahrenheit>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct InchesLabel {
-    static constexpr const char label[] = "in";
-};
-template <typename T>
-constexpr const char InchesLabel<T>::label[];
-struct Inches : decltype(Centi<Meters>{} * mag<254>() / mag<100>()), InchesLabel<void> {
-    using InchesLabel<void>::label;
-};
-constexpr auto inch = SingularNameFor<Inches>{};
-constexpr auto inches = QuantityMaker<Inches>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct NewtonsLabel {
-    static constexpr const char label[] = "N";
-};
-template <typename T>
-constexpr const char NewtonsLabel<T>::label[];
-struct Newtons : decltype(Kilo<Grams>{} * Meters{} / squared(Seconds{})), NewtonsLabel<void> {
-    using NewtonsLabel<void>::label;
-};
-constexpr auto newton = SingularNameFor<Newtons>{};
-constexpr auto newtons = QuantityMaker<Newtons>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct DaysLabel {
-    static constexpr const char label[] = "d";
-};
-template <typename T>
-constexpr const char DaysLabel<T>::label[];
-struct Days : decltype(Hours{} * mag<24>()), DaysLabel<void> {
-    using DaysLabel<void>::label;
-};
-constexpr auto day = SingularNameFor<Days>{};
-constexpr auto days = QuantityMaker<Days>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct KnotsLabel {
-    static constexpr const char label[] = "kn";
-};
-template <typename T>
-constexpr const char KnotsLabel<T>::label[];
-struct Knots : decltype(NauticalMiles{} / Hours{}), KnotsLabel<void> {
-    using KnotsLabel<void>::label;
-};
-constexpr auto knot = SingularNameFor<Knots>{};
-constexpr auto knots = QuantityMaker<Knots>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct CelsiusLabel {
-    static constexpr const char label[] = "degC";
-};
-template <typename T>
-constexpr const char CelsiusLabel<T>::label[];
-struct Celsius : Kelvins, CelsiusLabel<void> {
-    using CelsiusLabel<void>::label;
-    static constexpr auto origin() { return centi(kelvins)(273'15); }
-};
-constexpr auto celsius_qty = QuantityMaker<Celsius>{};
-constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
-
-[[deprecated(
-    "`celsius()` is ambiguous.  Use `celsius_pt()` for _points_, or `celsius_qty()` for "
-    "_quantities_")]] constexpr auto celsius = QuantityMaker<Celsius>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct LuxLabel {
-    static constexpr const char label[] = "lx";
-};
-template <typename T>
-constexpr const char LuxLabel<T>::label[];
-struct Lux : decltype(Lumens{} / squared(Meters{})), LuxLabel<void> {
-    using LuxLabel<void>::label;
-};
-constexpr auto lux = QuantityMaker<Lux>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct PoundsMassLabel {
-    static constexpr const char label[] = "lb";
-};
-template <typename T>
-constexpr const char PoundsMassLabel<T>::label[];
-struct PoundsMass : decltype(Micro<Grams>{} * mag<453'592'370>()), PoundsMassLabel<void> {
-    using PoundsMassLabel<void>::label;
-};
-constexpr auto pound_mass = SingularNameFor<PoundsMass>{};
-constexpr auto pounds_mass = QuantityMaker<PoundsMass>{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct PascalsLabel {
-    static constexpr const char label[] = "Pa";
-};
-template <typename T>
-constexpr const char PascalsLabel<T>::label[];
-struct Pascals : decltype(Newtons{} / squared(Meters{})), PascalsLabel<void> {
-    using PascalsLabel<void>::label;
-};
-constexpr auto pascal = SingularNameFor<Pascals>{};
-constexpr auto pascals = QuantityMaker<Pascals>{};
-constexpr QuantityPointMaker<Pascals> pascals_pt{};
-
-}  // namespace au
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct BarsLabel {
-    static constexpr const char label[] = "bar";
-};
-template <typename T>
-constexpr const char BarsLabel<T>::label[];
-struct Bars : decltype(Kilo<Pascals>{} * mag<100>()), BarsLabel<void> {
-    using BarsLabel<void>::label;
-};
-constexpr auto bar = SingularNameFor<Bars>{};
-constexpr auto bars = QuantityMaker<Bars>{};
-
-}  // namespace au
-
-
-
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
@@ -6066,6 +6187,9 @@ struct Liters : decltype(cubed(Deci<Meters>{})), LitersLabel<void> {
 constexpr auto liter = SingularNameFor<Liters>{};
 constexpr auto liters = QuantityMaker<Liters>{};
 
+namespace symbols {
+constexpr auto L = SymbolFor<Liters>{};
+}
 }  // namespace au
 
 
@@ -6085,6 +6209,9 @@ struct Feet : decltype(Inches{} * mag<12>()), FeetLabel<void> {
 constexpr auto foot = SingularNameFor<Feet>{};
 constexpr auto feet = QuantityMaker<Feet>{};
 
+namespace symbols {
+constexpr auto ft = SymbolFor<Feet>{};
+}
 }  // namespace au
 
 
@@ -6104,6 +6231,74 @@ struct Joules : decltype(Newtons{} * Meters{}), JoulesLabel<void> {
 constexpr auto joule = SingularNameFor<Joules>{};
 constexpr auto joules = QuantityMaker<Joules>{};
 
+namespace symbols {
+constexpr auto J = SymbolFor<Joules>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct DaysLabel {
+    static constexpr const char label[] = "d";
+};
+template <typename T>
+constexpr const char DaysLabel<T>::label[];
+struct Days : decltype(Hours{} * mag<24>()), DaysLabel<void> {
+    using DaysLabel<void>::label;
+};
+constexpr auto day = SingularNameFor<Days>{};
+constexpr auto days = QuantityMaker<Days>{};
+
+namespace symbols {
+constexpr auto d = SymbolFor<Days>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct KnotsLabel {
+    static constexpr const char label[] = "kn";
+};
+template <typename T>
+constexpr const char KnotsLabel<T>::label[];
+struct Knots : decltype(NauticalMiles{} / Hours{}), KnotsLabel<void> {
+    using KnotsLabel<void>::label;
+};
+constexpr auto knot = SingularNameFor<Knots>{};
+constexpr auto knots = QuantityMaker<Knots>{};
+
+namespace symbols {
+constexpr auto kn = SymbolFor<Knots>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct LuxLabel {
+    static constexpr const char label[] = "lx";
+};
+template <typename T>
+constexpr const char LuxLabel<T>::label[];
+struct Lux : decltype(Lumens{} / squared(Meters{})), LuxLabel<void> {
+    using LuxLabel<void>::label;
+};
+constexpr auto lux = QuantityMaker<Lux>{};
+
+namespace symbols {
+constexpr auto lx = SymbolFor<Lux>{};
+}
 }  // namespace au
 
 
@@ -6123,6 +6318,9 @@ struct PoundsForce : decltype(PoundsMass{} * StandardGravity{}), PoundsForceLabe
 constexpr auto pound_force = SingularNameFor<PoundsForce>{};
 constexpr auto pounds_force = QuantityMaker<PoundsForce>{};
 
+namespace symbols {
+constexpr auto lbf = SymbolFor<PoundsForce>{};
+}
 }  // namespace au
 
 
@@ -6142,6 +6340,9 @@ struct Miles : decltype(Feet{} * mag<5'280>()), MilesLabel<void> {
 constexpr auto mile = SingularNameFor<Miles>{};
 constexpr auto miles = QuantityMaker<Miles>{};
 
+namespace symbols {
+constexpr auto mi = SymbolFor<Miles>{};
+}
 }  // namespace au
 
 
@@ -6161,6 +6362,9 @@ struct Grays : decltype(Joules{} / Kilo<Grams>{}), GraysLabel<void> {
 constexpr auto gray = SingularNameFor<Grays>{};
 constexpr auto grays = QuantityMaker<Grays>{};
 
+namespace symbols {
+constexpr auto Gy = SymbolFor<Grays>{};
+}
 }  // namespace au
 
 
@@ -6180,6 +6384,9 @@ struct Yards : decltype(Feet{} * mag<3>()), YardsLabel<void> {
 constexpr auto yard = SingularNameFor<Yards>{};
 constexpr auto yards = QuantityMaker<Yards>{};
 
+namespace symbols {
+constexpr auto yd = SymbolFor<Yards>{};
+}
 }  // namespace au
 
 
@@ -6199,7 +6406,11 @@ struct Slugs : decltype(PoundsForce{} * squared(Seconds{}) / Feet{}), SlugsLabel
 constexpr auto slug = SingularNameFor<Slugs>{};
 constexpr auto slugs = QuantityMaker<Slugs>{};
 
+namespace symbols {
+constexpr auto slug = SymbolFor<Slugs>{};
+}
 }  // namespace au
+
 
 
 namespace au {
@@ -6218,6 +6429,9 @@ struct Fathoms : decltype(Feet{} * mag<6>()), FathomsLabel<void> {
 constexpr auto fathom = SingularNameFor<Fathoms>{};
 constexpr auto fathoms = QuantityMaker<Fathoms>{};
 
+namespace symbols {
+constexpr auto ftm = SymbolFor<Fathoms>{};
+}
 }  // namespace au
 
 
@@ -6237,6 +6451,9 @@ struct Watts : decltype(Joules{} / Seconds{}), WattsLabel<void> {
 constexpr auto watt = SingularNameFor<Watts>{};
 constexpr auto watts = QuantityMaker<Watts>{};
 
+namespace symbols {
+constexpr auto W = SymbolFor<Watts>{};
+}
 }  // namespace au
 
 
@@ -6256,6 +6473,9 @@ struct Furlongs : decltype(Miles{} / mag<8>()), FurlongsLabel<void> {
 constexpr auto furlong = SingularNameFor<Furlongs>{};
 constexpr auto furlongs = QuantityMaker<Furlongs>{};
 
+namespace symbols {
+constexpr auto fur = SymbolFor<Furlongs>{};
+}
 }  // namespace au
 
 
@@ -6275,6 +6495,9 @@ struct Volts : decltype(Watts{} / Amperes{}), VoltsLabel<void> {
 constexpr auto volt = SingularNameFor<Volts>{};
 constexpr auto volts = QuantityMaker<Volts>{};
 
+namespace symbols {
+constexpr auto V = SymbolFor<Volts>{};
+}
 }  // namespace au
 
 
@@ -6294,6 +6517,9 @@ struct Ohms : decltype(Volts{} / Amperes{}), OhmsLabel<void> {
 constexpr auto ohm = SingularNameFor<Ohms>{};
 constexpr auto ohms = QuantityMaker<Ohms>{};
 
+namespace symbols {
+constexpr auto ohm = SymbolFor<Ohms>{};
+}
 }  // namespace au
 
 
@@ -6313,6 +6539,9 @@ struct Farads : decltype(Coulombs{} / Volts{}), FaradsLabel<void> {
 constexpr auto farad = SingularNameFor<Farads>{};
 constexpr auto farads = QuantityMaker<Farads>{};
 
+namespace symbols {
+constexpr auto F = SymbolFor<Farads>{};
+}
 }  // namespace au
 
 
@@ -6332,6 +6561,9 @@ struct Siemens : UnitInverseT<Ohms>, SiemensLabel<void> {
 constexpr auto siemen = SingularNameFor<Siemens>{};
 constexpr auto siemens = QuantityMaker<Siemens>{};
 
+namespace symbols {
+constexpr auto S = SymbolFor<Siemens>{};
+}
 }  // namespace au
 
 
@@ -6351,6 +6583,9 @@ struct Webers : decltype(Volts{} * Seconds{}), WebersLabel<void> {
 constexpr auto weber = SingularNameFor<Webers>{};
 constexpr auto webers = QuantityMaker<Webers>{};
 
+namespace symbols {
+constexpr auto Wb = SymbolFor<Webers>{};
+}
 }  // namespace au
 
 
@@ -6369,6 +6604,9 @@ struct Tesla : decltype(Webers{} / squared(Meters{})), TeslaLabel<void> {
 };
 constexpr auto tesla = QuantityMaker<Tesla>{};
 
+namespace symbols {
+constexpr auto T = SymbolFor<Tesla>{};
+}
 }  // namespace au
 
 
@@ -6388,4 +6626,7 @@ struct Henries : decltype(Webers{} / Amperes{}), HenriesLabel<void> {
 constexpr auto henry = SingularNameFor<Henries>{};
 constexpr auto henries = QuantityMaker<Henries>{};
 
+namespace symbols {
+constexpr auto H = SymbolFor<Henries>{};
+}
 }  // namespace au
