@@ -30,6 +30,7 @@ BASE_CLANG_COPTS = [
     # Diagnostics
     "-fcolor-diagnostics",
     "-Wall",
+    "-Wshadow",
     "-Wthread-safety",
     "-Wself-assign",
 ]
