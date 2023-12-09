@@ -532,6 +532,29 @@ constexpr auto root(QuantityMaker<Unit>) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// Runtime conversion checkers
+
+// Check conversion for overflow (no change of rep).
+template <typename U, typename R, typename TargetUnitSlot>
+constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit) {
+    return detail::ApplyMagnitudeT<R, decltype(unit_ratio(U{}, target_unit))>::would_overflow(
+        q.in(U{}));
+}
+
+// Check conversion for truncation (no change of rep).
+template <typename U, typename R, typename TargetUnitSlot>
+constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit) {
+    return detail::ApplyMagnitudeT<R, decltype(unit_ratio(U{}, target_unit))>::would_truncate(
+        q.in(U{}));
+}
+
+// Check for any lossiness in conversion (no change of rep).
+template <typename U, typename R, typename TargetUnitSlot>
+constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit) {
+    return will_conversion_truncate(q, target_unit) || will_conversion_overflow(q, target_unit);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // Comparing and/or combining Quantities of different types.
 
 namespace detail {

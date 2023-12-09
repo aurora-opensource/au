@@ -659,6 +659,109 @@ TEST(QuantityMaker, ProvidesAssociatedUnit) {
     StaticAssertTypeEq<AssociatedUnitT<QuantityMaker<Hours>>, Hours>();
 }
 
+TEST(WillConversionOverflow, SensitiveToTypeBoundariesForPureIntegerMultiply) {
+    {
+        auto will_m_to_mm_overflow_i32 = [](int32_t x) {
+            return will_conversion_overflow(meters(x), milli(meters));
+        };
+
+        EXPECT_TRUE(will_m_to_mm_overflow_i32(2'147'484));
+        EXPECT_FALSE(will_m_to_mm_overflow_i32(2'147'483));
+
+        EXPECT_FALSE(will_m_to_mm_overflow_i32(-2'147'483));
+        EXPECT_TRUE(will_m_to_mm_overflow_i32(-2'147'484));
+    }
+
+    {
+        auto will_m_to_mm_overflow_u8 = [](uint8_t x) {
+            return will_conversion_overflow(meters(x), milli(meters));
+        };
+
+        EXPECT_TRUE(will_m_to_mm_overflow_u8(255));
+
+        EXPECT_TRUE(will_m_to_mm_overflow_u8(1));
+        EXPECT_FALSE(will_m_to_mm_overflow_u8(0));
+    }
+
+    {
+        auto will_m_to_mm_overflow_f = [](float x) {
+            return will_conversion_overflow(meters(x), milli(meters));
+        };
+
+        EXPECT_TRUE(will_m_to_mm_overflow_f(3.41e+35f));
+        EXPECT_FALSE(will_m_to_mm_overflow_f(3.40e+35f));
+
+        EXPECT_FALSE(will_m_to_mm_overflow_f(-3.40e+35f));
+        EXPECT_TRUE(will_m_to_mm_overflow_f(-3.41e+35f));
+    }
+}
+
+TEST(WillConversionTruncate, UsesModForIntegerTypes) {
+    auto will_in_to_ft_truncate_i32 = [](int32_t x) {
+        return will_conversion_truncate(inches(x), feet);
+    };
+
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(121));
+    EXPECT_FALSE(will_in_to_ft_truncate_i32(120));
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(119));
+
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(13));
+    EXPECT_FALSE(will_in_to_ft_truncate_i32(12));
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(11));
+
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(1));
+    EXPECT_FALSE(will_in_to_ft_truncate_i32(0));
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(-1));
+
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(-11));
+    EXPECT_FALSE(will_in_to_ft_truncate_i32(-12));
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(-13));
+
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(-119));
+    EXPECT_FALSE(will_in_to_ft_truncate_i32(-120));
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(-121));
+}
+
+TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions) {
+    // We will check literally every representable value in the type, and make sure that the result
+    // of `is_conversion_lossy()` matches perfectly with the inability to recover the initial value.
+    auto test_round_trip_for_every_uint8_value = [](auto source, auto target) {
+        auto round_trip = [=](uint8_t x) { return source(x).coerce_as(target).coerce_in(source); };
+
+        for (int i = 0; i <= 255; ++i) {
+            const auto before = static_cast<uint8_t>(i);
+            const auto after = round_trip(before);
+
+            const bool did_value_change = (before != after);
+
+            // Function under test:
+            const bool is_lossy = is_conversion_lossy(source(before), target);
+
+            // In order for the test to be valid, we assume the second "leg" of the round-trip
+            // conversion never introduces any **new** lossiness.  (It's OK for it to be lossy, but
+            // only if the first leg was also lossy.)
+            //
+            // Remember: it's the lossiness of the **first** conversion that we care about --- and,
+            // fundamentally, "lossiness" is all about destroying the information you need to
+            // recover the original value.
+            //
+            // (The reason for all of the `rep_cast` is that `uint8_t` tends to print as a `char` on
+            // at least some platforms, which means a lot of the small numbers correspond to control
+            // characters, and that can be confusing otherwise.)
+            ASSERT_FALSE((!is_conversion_lossy(source(before), target)) &&
+                         is_conversion_lossy(source(before).coerce_as(target), source));
+
+            EXPECT_EQ(is_lossy, did_value_change) << "before: " << before << ", after: " << after;
+        }
+    };
+
+    // Inches-to-feet tests truncation.
+    test_round_trip_for_every_uint8_value(inches, feet);
+
+    // Feet-to-inches tests overflow.
+    test_round_trip_for_every_uint8_value(feet, inches);
+}
+
 TEST(AreQuantityTypesEquivalent, RequiresSameRepAndEquivalentUnits) {
     using IntQFeet = decltype(feet(1));
     using IntQFeetTimesOne = decltype((feet * ONE)(1));
