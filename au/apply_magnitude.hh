@@ -44,6 +44,24 @@ constexpr ApplyAs categorize_magnitude(Magnitude<BPs...>) {
 template <typename Mag, ApplyAs Category, typename T, bool is_T_integral>
 struct ApplyMagnitudeImpl;
 
+template <typename T, bool IsMagnitudeValid>
+struct OverflowChecker {
+    // Default case: `IsMagnitudeValid` is true.
+    static constexpr bool would_product_overflow(T x, T mag_value) {
+        return (x > (std::numeric_limits<T>::max() / mag_value)) ||
+               (x < (std::numeric_limits<T>::lowest() / mag_value));
+    }
+};
+
+template <typename T>
+struct OverflowChecker<T, false> {
+    // Specialization for when `IsMagnitudeValid` is false.
+    //
+    // This means that the magnitude itself could not fit inside of the type; therefore, the only
+    // possible value that would not overflow is zero.
+    static constexpr bool would_product_overflow(T x, T) { return (x != T{0}); }
+};
+
 // Multiplying by an integer, for any type T.
 template <typename Mag, typename T, bool is_T_integral>
 struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_MULTIPLY, T, is_T_integral> {
@@ -53,6 +71,12 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_MULTIPLY, T, is_T_integral> {
                   "Mismatched instantiation (should never be done manually)");
 
     constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+
+    static constexpr bool would_overflow(const T &x) {
+        constexpr auto mag_value_result = get_value_result<T>(Mag{});
+        return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
+            would_product_overflow(x, mag_value_result.value);
+    }
 };
 
 // Dividing by an integer, for any type T.
@@ -64,6 +88,8 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_DIVIDE, T, is_T_integral> {
                   "Mismatched instantiation (should never be done manually)");
 
     constexpr T operator()(const T &x) { return x / get_value<T>(MagInverseT<Mag>{}); }
+
+    static constexpr bool would_overflow(const T &) { return false; }
 };
 
 // Applying a (non-integer, non-inverse-integer) rational, for any integral type T.
@@ -77,6 +103,12 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, true> {
     constexpr T operator()(const T &x) {
         return x * get_value<T>(numerator(Mag{})) / get_value<T>(denominator(Mag{}));
     }
+
+    static constexpr bool would_overflow(const T &x) {
+        constexpr auto mag_value_result = get_value_result<T>(numerator(Mag{}));
+        return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
+            would_product_overflow(x, mag_value_result.value);
+    }
 };
 
 // Applying a (non-integer, non-inverse-integer) rational, for any non-integral type T.
@@ -88,6 +120,12 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, false> {
                   "Mismatched instantiation (should never be done manually)");
 
     constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+
+    static constexpr bool would_overflow(const T &x) {
+        constexpr auto mag_value_result = get_value_result<T>(Mag{});
+        return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
+            would_product_overflow(x, mag_value_result.value);
+    }
 };
 
 // Applying an irrational for any type T (although only non-integral T makes sense).
@@ -101,14 +139,28 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::IRRATIONAL_MULTIPLY, T, is_T_integral> {
                   "Mismatched instantiation (should never be done manually)");
 
     constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+
+    static constexpr bool would_overflow(const T &x) {
+        constexpr auto mag_value_result = get_value_result<T>(Mag{});
+        return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
+            would_product_overflow(x, mag_value_result.value);
+    }
 };
 
+template <typename T, typename MagT>
+struct ApplyMagnitudeType;
+template <typename T, typename MagT>
+using ApplyMagnitudeT = typename ApplyMagnitudeType<T, MagT>::type;
 template <typename T, typename... BPs>
-constexpr T apply_magnitude(const T &x, Magnitude<BPs...> m) {
-    return ApplyMagnitudeImpl<Magnitude<BPs...>,
-                              categorize_magnitude(m),
-                              T,
-                              std::is_integral<T>::value>{}(x);
+struct ApplyMagnitudeType<T, Magnitude<BPs...>>
+    : stdx::type_identity<ApplyMagnitudeImpl<Magnitude<BPs...>,
+                                             categorize_magnitude(Magnitude<BPs...>{}),
+                                             T,
+                                             std::is_integral<T>::value>> {};
+
+template <typename T, typename... BPs>
+constexpr T apply_magnitude(const T &x, Magnitude<BPs...>) {
+    return ApplyMagnitudeT<T, Magnitude<BPs...>>{}(x);
 }
 
 }  // namespace detail

@@ -128,5 +128,151 @@ TEST(ApplyMagnitude, MultipliesSingleNumberForIrrationalMagnitudeOnFloatingPoint
     EXPECT_THAT(apply_magnitude(2.0f, PI), SameTypeAndValue(2.0f * static_cast<float>(M_PI)));
 }
 
+TEST(ApplyMagnitude, DetectsOverflowForIntegerMultiply) {
+    auto ONE_BILLION = pow<9>(mag<10>());
+
+    {
+        using ApplyOneBillionToI32 = ApplyMagnitudeT<int32_t, decltype(ONE_BILLION)>;
+
+        EXPECT_TRUE(ApplyOneBillionToI32::would_overflow(3));
+
+        EXPECT_FALSE(ApplyOneBillionToI32::would_overflow(2));
+        EXPECT_FALSE(ApplyOneBillionToI32::would_overflow(0));
+        EXPECT_FALSE(ApplyOneBillionToI32::would_overflow(-2));
+
+        EXPECT_TRUE(ApplyOneBillionToI32::would_overflow(-3));
+    }
+
+    {
+        using ApplyOneBillionToU8 = ApplyMagnitudeT<uint8_t, decltype(ONE_BILLION)>;
+
+        EXPECT_TRUE(ApplyOneBillionToU8::would_overflow(1));
+
+        EXPECT_FALSE(ApplyOneBillionToU8::would_overflow(0));
+    }
+
+    {
+        using ApplyOneBillionToF = ApplyMagnitudeT<float, decltype(ONE_BILLION)>;
+
+        EXPECT_TRUE(ApplyOneBillionToF::would_overflow(3.403e29f));
+
+        EXPECT_FALSE(ApplyOneBillionToF::would_overflow(3.402e29f));
+        EXPECT_FALSE(ApplyOneBillionToF::would_overflow(-3.402e29f));
+
+        EXPECT_TRUE(ApplyOneBillionToF::would_overflow(-3.403e29f));
+    }
+}
+
+TEST(ApplyMagnitude, AlwaysDetectsNoOverflowForIntegerDivide) {
+    auto ONE_BILLIONTH = ONE / pow<9>(mag<10>());
+
+    {
+        using ApplyOneBillionthToI32 = ApplyMagnitudeT<int32_t, decltype(ONE_BILLIONTH)>;
+
+        EXPECT_FALSE(ApplyOneBillionthToI32::would_overflow(2'147'483'647));
+        EXPECT_FALSE(ApplyOneBillionthToI32::would_overflow(1));
+        EXPECT_FALSE(ApplyOneBillionthToI32::would_overflow(0));
+        EXPECT_FALSE(ApplyOneBillionthToI32::would_overflow(-1));
+        EXPECT_FALSE(ApplyOneBillionthToI32::would_overflow(-2'147'483'648));
+    }
+
+    {
+        using ApplyOneBillionthToU8 = ApplyMagnitudeT<uint8_t, decltype(ONE_BILLIONTH)>;
+
+        EXPECT_FALSE(ApplyOneBillionthToU8::would_overflow(255));
+        EXPECT_FALSE(ApplyOneBillionthToU8::would_overflow(1));
+        EXPECT_FALSE(ApplyOneBillionthToU8::would_overflow(0));
+    }
+
+    {
+        using ApplyOneBillionthToF = ApplyMagnitudeT<float, decltype(ONE_BILLIONTH)>;
+
+        EXPECT_FALSE(ApplyOneBillionthToF::would_overflow(3.402e38f));
+        EXPECT_FALSE(ApplyOneBillionthToF::would_overflow(1.0f));
+        EXPECT_FALSE(ApplyOneBillionthToF::would_overflow(0.0f));
+        EXPECT_FALSE(ApplyOneBillionthToF::would_overflow(-1.0f));
+        EXPECT_FALSE(ApplyOneBillionthToF::would_overflow(-3.402e38f));
+    }
+}
+
+TEST(ApplyMagnitude, ApplyingRationalMagnitudeToIntegerTypeUsesNumeratorToCheckOverflow) {
+    auto TWO_THIRDS = mag<2>() / mag<3>();
+
+    {
+        using ApplyTwoThirdsToI32 = ApplyMagnitudeT<int32_t, decltype(TWO_THIRDS)>;
+
+        EXPECT_TRUE(ApplyTwoThirdsToI32::would_overflow(2'147'483'647));
+        EXPECT_TRUE(ApplyTwoThirdsToI32::would_overflow(1'073'741'824));
+
+        EXPECT_FALSE(ApplyTwoThirdsToI32::would_overflow(1'073'741'823));
+        EXPECT_FALSE(ApplyTwoThirdsToI32::would_overflow(1));
+        EXPECT_FALSE(ApplyTwoThirdsToI32::would_overflow(0));
+        EXPECT_FALSE(ApplyTwoThirdsToI32::would_overflow(-1));
+        EXPECT_FALSE(ApplyTwoThirdsToI32::would_overflow(-1'073'741'824));
+
+        EXPECT_TRUE(ApplyTwoThirdsToI32::would_overflow(-1'073'741'825));
+        EXPECT_TRUE(ApplyTwoThirdsToI32::would_overflow(-2'147'483'648));
+    }
+
+    {
+        using ApplyTwoThirdsToU8 = ApplyMagnitudeT<uint8_t, decltype(TWO_THIRDS)>;
+
+        EXPECT_TRUE(ApplyTwoThirdsToU8::would_overflow(255));
+        EXPECT_TRUE(ApplyTwoThirdsToU8::would_overflow(128));
+
+        EXPECT_FALSE(ApplyTwoThirdsToU8::would_overflow(127));
+        EXPECT_FALSE(ApplyTwoThirdsToU8::would_overflow(1));
+        EXPECT_FALSE(ApplyTwoThirdsToU8::would_overflow(0));
+    }
+}
+
+TEST(ApplyMagnitude, ApplyingRationalMagnitudeToFloatingPointTypeUsesFullNumToCheckOverflow) {
+    {
+        using ApplyThreeHalvesToF = ApplyMagnitudeT<float, decltype(mag<3>() / mag<2>())>;
+
+        EXPECT_TRUE(ApplyThreeHalvesToF::would_overflow(3.402e38f));
+        EXPECT_TRUE(ApplyThreeHalvesToF::would_overflow(2.269e38f));
+
+        EXPECT_FALSE(ApplyThreeHalvesToF::would_overflow(2.268e38f));
+        EXPECT_FALSE(ApplyThreeHalvesToF::would_overflow(1.0f));
+        EXPECT_FALSE(ApplyThreeHalvesToF::would_overflow(0.0f));
+        EXPECT_FALSE(ApplyThreeHalvesToF::would_overflow(-1.0f));
+        EXPECT_FALSE(ApplyThreeHalvesToF::would_overflow(-2.268e38f));
+
+        EXPECT_TRUE(ApplyThreeHalvesToF::would_overflow(-2.269e38f));
+        EXPECT_TRUE(ApplyThreeHalvesToF::would_overflow(-3.402e38f));
+    }
+
+    {
+        using ApplyTwoThirdsToF = ApplyMagnitudeT<float, decltype(mag<2>() / mag<3>())>;
+
+        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(3.402e38f));
+        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(2.268e38f));
+        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(2.267e38f));
+        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(1.0f));
+        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(0.0f));
+        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(-1.0f));
+        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(-2.267e38f));
+        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(-2.268e38f));
+        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(-3.402e38f));
+    }
+}
+
+TEST(ApplyMagnitude, ApplyingIrrationalMagnitudeUsesFullNumToCheckOverflow) {
+    using ApplyPiByTwoToF = ApplyMagnitudeT<float, decltype(PI / mag<2>())>;
+
+    EXPECT_TRUE(ApplyPiByTwoToF::would_overflow(3.402e38f));
+    EXPECT_TRUE(ApplyPiByTwoToF::would_overflow(2.167e38f));
+
+    EXPECT_FALSE(ApplyPiByTwoToF::would_overflow(2.166e38f));
+    EXPECT_FALSE(ApplyPiByTwoToF::would_overflow(1.0f));
+    EXPECT_FALSE(ApplyPiByTwoToF::would_overflow(0.0f));
+    EXPECT_FALSE(ApplyPiByTwoToF::would_overflow(-1.0f));
+    EXPECT_FALSE(ApplyPiByTwoToF::would_overflow(-2.166e38f));
+
+    EXPECT_TRUE(ApplyPiByTwoToF::would_overflow(-2.167e38f));
+    EXPECT_TRUE(ApplyPiByTwoToF::would_overflow(-3.402e38f));
+}
+
 }  // namespace detail
 }  // namespace au
