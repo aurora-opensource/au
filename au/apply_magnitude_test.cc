@@ -128,7 +128,7 @@ TEST(ApplyMagnitude, MultipliesSingleNumberForIrrationalMagnitudeOnFloatingPoint
     EXPECT_THAT(apply_magnitude(2.0f, PI), SameTypeAndValue(2.0f * static_cast<float>(M_PI)));
 }
 
-TEST(ApplyMagnitude, DetectsOverflowForIntegerMultiply) {
+TEST(WouldOverflow, HasCorrectBoundariesForIntegerMultiply) {
     auto ONE_BILLION = pow<9>(mag<10>());
 
     {
@@ -163,7 +163,7 @@ TEST(ApplyMagnitude, DetectsOverflowForIntegerMultiply) {
     }
 }
 
-TEST(ApplyMagnitude, AlwaysDetectsNoOverflowForIntegerDivide) {
+TEST(WouldOverflow, AlwaysFalseForIntegerDivide) {
     auto ONE_BILLIONTH = ONE / pow<9>(mag<10>());
 
     {
@@ -195,7 +195,7 @@ TEST(ApplyMagnitude, AlwaysDetectsNoOverflowForIntegerDivide) {
     }
 }
 
-TEST(ApplyMagnitude, ApplyingRationalMagnitudeToIntegerTypeUsesNumeratorToCheckOverflow) {
+TEST(WouldOverflow, UsesNumeratorWhenApplyingRationalMagnitudeToIntegralType) {
     auto TWO_THIRDS = mag<2>() / mag<3>();
 
     {
@@ -226,7 +226,7 @@ TEST(ApplyMagnitude, ApplyingRationalMagnitudeToIntegerTypeUsesNumeratorToCheckO
     }
 }
 
-TEST(ApplyMagnitude, ApplyingRationalMagnitudeToFloatingPointTypeUsesFullNumToCheckOverflow) {
+TEST(WouldOverflow, UsesFullValueWhenApplyingRationalMagnitudeToFloatingPointType) {
     {
         using ApplyThreeHalvesToF = ApplyMagnitudeT<float, decltype(mag<3>() / mag<2>())>;
 
@@ -258,7 +258,7 @@ TEST(ApplyMagnitude, ApplyingRationalMagnitudeToFloatingPointTypeUsesFullNumToCh
     }
 }
 
-TEST(ApplyMagnitude, ApplyingIrrationalMagnitudeUsesFullNumToCheckOverflow) {
+TEST(WouldOverflow, UsesFullValueWhenApplyingIrrationalMagnitude) {
     using ApplyPiByTwoToF = ApplyMagnitudeT<float, decltype(PI / mag<2>())>;
 
     EXPECT_TRUE(ApplyPiByTwoToF::would_overflow(3.402e38f));
@@ -274,5 +274,160 @@ TEST(ApplyMagnitude, ApplyingIrrationalMagnitudeUsesFullNumToCheckOverflow) {
     EXPECT_TRUE(ApplyPiByTwoToF::would_overflow(-3.402e38f));
 }
 
+TEST(WouldTruncate, AlwaysFalseForIntegerMultiply) {
+    auto ONE_BILLION = pow<9>(mag<10>());
+
+    {
+        using ApplyOneBillionToI32 = ApplyMagnitudeT<int32_t, decltype(ONE_BILLION)>;
+
+        EXPECT_FALSE(ApplyOneBillionToI32::would_truncate(2'147'483'647));
+        EXPECT_FALSE(ApplyOneBillionToI32::would_truncate(1));
+        EXPECT_FALSE(ApplyOneBillionToI32::would_truncate(0));
+        EXPECT_FALSE(ApplyOneBillionToI32::would_truncate(-1));
+        EXPECT_FALSE(ApplyOneBillionToI32::would_truncate(-2'147'483'648));
+    }
+
+    {
+        using ApplyOneBillionToU8 = ApplyMagnitudeT<uint8_t, decltype(ONE_BILLION)>;
+
+        EXPECT_FALSE(ApplyOneBillionToU8::would_truncate(255));
+        EXPECT_FALSE(ApplyOneBillionToU8::would_truncate(1));
+        EXPECT_FALSE(ApplyOneBillionToU8::would_truncate(0));
+    }
+
+    {
+        using ApplyOneBillionToF = ApplyMagnitudeT<float, decltype(ONE_BILLION)>;
+
+        EXPECT_FALSE(ApplyOneBillionToF::would_truncate(3.402e38f));
+        EXPECT_FALSE(ApplyOneBillionToF::would_truncate(1.0f));
+        EXPECT_FALSE(ApplyOneBillionToF::would_truncate(0.0f));
+        EXPECT_FALSE(ApplyOneBillionToF::would_truncate(-1.0f));
+        EXPECT_FALSE(ApplyOneBillionToF::would_truncate(-3.402e38f));
+    }
+}
+
+TEST(WouldTruncate, UsesModWhenDividingIntegralTypeByInteger) {
+    auto ONE_SEVEN_HUNDREDTH = ONE / mag<700>();
+
+    {
+        using ApplyOneSevenHundredthToI32 = ApplyMagnitudeT<int32_t, decltype(ONE_SEVEN_HUNDREDTH)>;
+
+        EXPECT_TRUE(ApplyOneSevenHundredthToI32::would_truncate(701));
+        EXPECT_FALSE(ApplyOneSevenHundredthToI32::would_truncate(700));
+        EXPECT_TRUE(ApplyOneSevenHundredthToI32::would_truncate(699));
+
+        EXPECT_TRUE(ApplyOneSevenHundredthToI32::would_truncate(1));
+        EXPECT_FALSE(ApplyOneSevenHundredthToI32::would_truncate(0));
+        EXPECT_TRUE(ApplyOneSevenHundredthToI32::would_truncate(-1));
+
+        EXPECT_TRUE(ApplyOneSevenHundredthToI32::would_truncate(-699));
+        EXPECT_FALSE(ApplyOneSevenHundredthToI32::would_truncate(-700));
+        EXPECT_TRUE(ApplyOneSevenHundredthToI32::would_truncate(-701));
+    }
+
+    {
+        using ApplyOneSevenHundredthToU8 = ApplyMagnitudeT<uint8_t, decltype(ONE_SEVEN_HUNDREDTH)>;
+
+        EXPECT_TRUE(ApplyOneSevenHundredthToU8::would_truncate(255));
+        EXPECT_TRUE(ApplyOneSevenHundredthToU8::would_truncate(254));
+        EXPECT_TRUE(ApplyOneSevenHundredthToU8::would_truncate(1));
+
+        EXPECT_FALSE(ApplyOneSevenHundredthToU8::would_truncate(0));
+    }
+}
+
+TEST(WouldTruncate, AlwaysFalseWhenDividingFloatingPointTypeByInteger) {
+    using ApplyOneSevenHundredthToF = ApplyMagnitudeT<float, decltype(ONE / mag<700>())>;
+
+    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(3.402e38f));
+
+    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(701.0f));
+    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(700.0f));
+    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(699.0f));
+
+    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(1.0f));
+    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(0.0f));
+    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(-1.0f));
+
+    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(-699.0f));
+    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(-700.0f));
+    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(-701.0f));
+
+    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(-3.402e38f));
+}
+
+TEST(WouldTruncate, UsesDenominatorWhenApplyingRationalMagnitudeToIntegralType) {
+    auto TWO_FIFTHS = mag<2>() / mag<5>();
+
+    {
+        using ApplyTwoFifthsToI32 = ApplyMagnitudeT<int32_t, decltype(TWO_FIFTHS)>;
+
+        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(2'147'483'646));
+        EXPECT_FALSE(ApplyTwoFifthsToI32::would_truncate(2'147'483'645));
+        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(2'147'483'644));
+
+        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(6));
+        EXPECT_FALSE(ApplyTwoFifthsToI32::would_truncate(5));
+        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(4));
+
+        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(1));
+        EXPECT_FALSE(ApplyTwoFifthsToI32::would_truncate(0));
+        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(-1));
+
+        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(-4));
+        EXPECT_FALSE(ApplyTwoFifthsToI32::would_truncate(-5));
+        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(-6));
+
+        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(-2'147'483'644));
+        EXPECT_FALSE(ApplyTwoFifthsToI32::would_truncate(-2'147'483'645));
+        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(-2'147'483'646));
+    }
+
+    {
+        using ApplyTwoFifthsToU8 = ApplyMagnitudeT<uint8_t, decltype(TWO_FIFTHS)>;
+
+        EXPECT_FALSE(ApplyTwoFifthsToU8::would_truncate(255));
+        EXPECT_TRUE(ApplyTwoFifthsToU8::would_truncate(254));
+
+        EXPECT_TRUE(ApplyTwoFifthsToU8::would_truncate(6));
+        EXPECT_FALSE(ApplyTwoFifthsToU8::would_truncate(5));
+        EXPECT_TRUE(ApplyTwoFifthsToU8::would_truncate(4));
+
+        EXPECT_TRUE(ApplyTwoFifthsToU8::would_truncate(1));
+        EXPECT_FALSE(ApplyTwoFifthsToU8::would_truncate(0));
+    }
+}
+
+TEST(WouldTruncate, AlwaysFalseWhenApplyingRationalMagnitudeToFloatingPointType) {
+    using ApplyTwoFifthsToF = ApplyMagnitudeT<float, decltype(mag<2>() / mag<5>())>;
+
+    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(3.402e38f));
+
+    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(6.0f));
+    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(5.0f));
+    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(4.0f));
+
+    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(1.0f));
+    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(0.0f));
+    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(-1.0f));
+
+    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(-4.0f));
+    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(-5.0f));
+    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(-6.0f));
+
+    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(-3.402e38f));
+}
+
+TEST(WouldTruncate, AlwaysFalseWhenApplyingIrrationalMagnitude) {
+    using ApplyPiByTwoToF = ApplyMagnitudeT<float, decltype(PI / mag<2>())>;
+
+    EXPECT_FALSE(ApplyPiByTwoToF::would_truncate(3.402e38f));
+
+    EXPECT_FALSE(ApplyPiByTwoToF::would_truncate(1.0f));
+    EXPECT_FALSE(ApplyPiByTwoToF::would_truncate(0.0f));
+    EXPECT_FALSE(ApplyPiByTwoToF::would_truncate(-1.0f));
+
+    EXPECT_FALSE(ApplyPiByTwoToF::would_truncate(-3.402e38f));
+}
 }  // namespace detail
 }  // namespace au

@@ -62,6 +62,38 @@ struct OverflowChecker<T, false> {
     static constexpr bool would_product_overflow(T x, T) { return (x != T{0}); }
 };
 
+template <typename T, bool IsTIntegral>
+struct TruncationCheckerIfMagnitudeValid {
+    // Default case: T is integral.
+    static_assert(std::is_integral<T>::value && IsTIntegral,
+                  "Mismatched instantiation (should never be done manually)");
+
+    static constexpr bool would_truncate(T x, T mag_value) { return (x % mag_value != T{0}); }
+};
+
+template <typename T>
+struct TruncationCheckerIfMagnitudeValid<T, false> {
+    // Specialization for when T is not integral: by convention, assume no truncation for floats.
+    static_assert(!std::is_integral<T>::value,
+                  "Mismatched instantiation (should never be done manually)");
+    static constexpr bool would_truncate(T, T) { return false; }
+};
+
+template <typename T, bool IsMagnitudeValid>
+// Default case: `IsMagnitudeValid` is true.
+struct TruncationChecker : TruncationCheckerIfMagnitudeValid<T, std::is_integral<T>::value> {
+    static_assert(IsMagnitudeValid, "Mismatched instantiation (should never be done manually)");
+};
+
+template <typename T>
+struct TruncationChecker<T, false> {
+    // Specialization for when `IsMagnitudeValid` is false.
+    //
+    // This means that the magnitude itself could not fit inside of the type; therefore, the only
+    // possible value that would not truncate is zero.
+    static constexpr bool would_truncate(T x, T) { return (x != T{0}); }
+};
+
 // Multiplying by an integer, for any type T.
 template <typename Mag, typename T, bool is_T_integral>
 struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_MULTIPLY, T, is_T_integral> {
@@ -77,6 +109,8 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_MULTIPLY, T, is_T_integral> {
         return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
             would_product_overflow(x, mag_value_result.value);
     }
+
+    static constexpr bool would_truncate(const T &) { return false; }
 };
 
 // Dividing by an integer, for any type T.
@@ -90,6 +124,12 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_DIVIDE, T, is_T_integral> {
     constexpr T operator()(const T &x) { return x / get_value<T>(MagInverseT<Mag>{}); }
 
     static constexpr bool would_overflow(const T &) { return false; }
+
+    static constexpr bool would_truncate(const T &x) {
+        constexpr auto mag_value_result = get_value_result<T>(MagInverseT<Mag>{});
+        return TruncationChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
+            would_truncate(x, mag_value_result.value);
+    }
 };
 
 // Applying a (non-integer, non-inverse-integer) rational, for any integral type T.
@@ -109,6 +149,12 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, true> {
         return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
             would_product_overflow(x, mag_value_result.value);
     }
+
+    static constexpr bool would_truncate(const T &x) {
+        constexpr auto mag_value_result = get_value_result<T>(denominator(Mag{}));
+        return TruncationChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
+            would_truncate(x, mag_value_result.value);
+    }
 };
 
 // Applying a (non-integer, non-inverse-integer) rational, for any non-integral type T.
@@ -126,6 +172,8 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, false> {
         return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
             would_product_overflow(x, mag_value_result.value);
     }
+
+    static constexpr bool would_truncate(const T &) { return false; }
 };
 
 // Applying an irrational for any type T (although only non-integral T makes sense).
@@ -145,6 +193,8 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::IRRATIONAL_MULTIPLY, T, is_T_integral> {
         return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
             would_product_overflow(x, mag_value_result.value);
     }
+
+    static constexpr bool would_truncate(const T &) { return false; }
 };
 
 template <typename T, typename MagT>
