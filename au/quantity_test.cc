@@ -726,8 +726,8 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
     // We will check literally every representable value in the type, and make sure that the result
     // of `is_conversion_lossy()` matches perfectly with the inability to recover the initial value.
     auto test_round_trip_for_every_uint8_value = [](auto source_units, auto target_units) {
-        for (int i = 0; i <= 255; ++i) {
-            const auto original = source_units(static_cast<uint8_t>(i));
+        for (int i = 0; i <= 65535; ++i) {
+            const auto original = source_units(static_cast<uint16_t>(i));
             const auto converted = original.coerce_as(target_units);
             const auto round_trip = converted.coerce_as(source_units);
 
