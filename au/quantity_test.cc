@@ -748,8 +748,7 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
             // (The reason for all of the `rep_cast` is that `uint8_t` tends to print as a `char` on
             // at least some platforms, which means a lot of the small numbers correspond to control
             // characters, and that can be confusing otherwise.)
-            ASSERT_FALSE((!is_conversion_lossy(source(before), target)) &&
-                         is_conversion_lossy(source(before).coerce_as(target), source));
+            ASSERT_TRUE(!is_conversion_lossy(source(before).coerce_as(target), source) || is_lossy);
 
             EXPECT_EQ(is_lossy, did_value_change) << "before: " << before << ", after: " << after;
         }
