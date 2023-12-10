@@ -725,17 +725,16 @@ TEST(WillConversionTruncate, UsesModForIntegerTypes) {
 TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions) {
     // We will check literally every representable value in the type, and make sure that the result
     // of `is_conversion_lossy()` matches perfectly with the inability to recover the initial value.
-    auto test_round_trip_for_every_uint8_value = [](auto source, auto target) {
-        auto round_trip = [=](uint8_t x) { return source(x).coerce_as(target).coerce_in(source); };
-
+    auto test_round_trip_for_every_uint8_value = [](auto source_units, auto target_units) {
         for (int i = 0; i <= 255; ++i) {
-            const auto before = static_cast<uint8_t>(i);
-            const auto after = round_trip(before);
+            const auto original = source_units(static_cast<uint8_t>(i));
+            const auto converted = original.coerce_as(target_units);
+            const auto round_trip = converted.coerce_as(source_units);
 
-            const bool did_value_change = (before != after);
+            const bool did_value_change = (original != round_trip);
 
             // Function under test:
-            const bool is_lossy = is_conversion_lossy(source(before), target);
+            const bool is_lossy = is_conversion_lossy(original, target_units);
 
             // In order for the test to be valid, we assume the second "leg" of the round-trip
             // conversion never introduces any **new** lossiness.  (It's OK for it to be lossy, but
@@ -744,13 +743,12 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
             // Remember: it's the lossiness of the **first** conversion that we care about --- and,
             // fundamentally, "lossiness" is all about destroying the information you need to
             // recover the original value.
-            //
-            // (The reason for all of the `rep_cast` is that `uint8_t` tends to print as a `char` on
-            // at least some platforms, which means a lot of the small numbers correspond to control
-            // characters, and that can be confusing otherwise.)
-            ASSERT_TRUE(!is_conversion_lossy(source(before).coerce_as(target), source) || is_lossy);
+            if (!is_lossy) {
+                const bool is_inverse_lossy = is_conversion_lossy(converted, source_units);
+                ASSERT_FALSE(is_inverse_lossy);
+            }
 
-            EXPECT_EQ(is_lossy, did_value_change) << "before: " << before << ", after: " << after;
+            EXPECT_EQ(is_lossy, did_value_change);
         }
     };
 
