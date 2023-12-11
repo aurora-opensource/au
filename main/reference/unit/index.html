@@ -1982,6 +1982,9 @@ units</a>.</p>
 <li><code>unit_label&lt;U&gt;()</code></li>
 <li><code>unit_label(u)</code></li>
 </ul>
+<p>Note that the <code>u</code> in <code>unit_label(u)</code> is a <a href="../../discussion/idioms/unit-slots/">unit slot</a>, so you
+can pass anything that &ldquo;acts like a unit&rdquo; to it.  For instance, you can say <code>unit_label(meters)</code>;
+you don&rsquo;t need to write <code>unit_label(Meters{})</code>.</p>
 <p>This function returns a reference to the array, which again is a compile time constant.</p>
 <p>Note especially that the type is an <em>array</em> (<code>[]</code>).  A pointer (<code>*</code>) is <em>not</em> acceptable.  This is
 so that we can support <code>sizeof(unit_label(u))</code>.</p>

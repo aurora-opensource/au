@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-24-g013c343
+// Version identifier: 0.3.3-25-g59ad95f
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -2785,7 +2785,7 @@ constexpr
 
 template <typename Unit>
 constexpr const auto &unit_label(Unit) {
-    return detail::as_char_array(UnitLabel<Unit>::value);
+    return detail::as_char_array(UnitLabel<AssociatedUnitT<Unit>>::value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
