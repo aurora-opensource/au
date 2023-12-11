@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-26-gc3061f0
+// Version identifier: 0.3.3-27-g8eaa08f
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -1942,6 +1942,56 @@ constexpr ApplyAs categorize_magnitude(Magnitude<BPs...>) {
 template <typename Mag, ApplyAs Category, typename T, bool is_T_integral>
 struct ApplyMagnitudeImpl;
 
+template <typename T, bool IsMagnitudeValid>
+struct OverflowChecker {
+    // Default case: `IsMagnitudeValid` is true.
+    static constexpr bool would_product_overflow(T x, T mag_value) {
+        return (x > (std::numeric_limits<T>::max() / mag_value)) ||
+               (x < (std::numeric_limits<T>::lowest() / mag_value));
+    }
+};
+
+template <typename T>
+struct OverflowChecker<T, false> {
+    // Specialization for when `IsMagnitudeValid` is false.
+    //
+    // This means that the magnitude itself could not fit inside of the type; therefore, the only
+    // possible value that would not overflow is zero.
+    static constexpr bool would_product_overflow(T x, T) { return (x != T{0}); }
+};
+
+template <typename T, bool IsTIntegral>
+struct TruncationCheckerIfMagnitudeValid {
+    // Default case: T is integral.
+    static_assert(std::is_integral<T>::value && IsTIntegral,
+                  "Mismatched instantiation (should never be done manually)");
+
+    static constexpr bool would_truncate(T x, T mag_value) { return (x % mag_value != T{0}); }
+};
+
+template <typename T>
+struct TruncationCheckerIfMagnitudeValid<T, false> {
+    // Specialization for when T is not integral: by convention, assume no truncation for floats.
+    static_assert(!std::is_integral<T>::value,
+                  "Mismatched instantiation (should never be done manually)");
+    static constexpr bool would_truncate(T, T) { return false; }
+};
+
+template <typename T, bool IsMagnitudeValid>
+// Default case: `IsMagnitudeValid` is true.
+struct TruncationChecker : TruncationCheckerIfMagnitudeValid<T, std::is_integral<T>::value> {
+    static_assert(IsMagnitudeValid, "Mismatched instantiation (should never be done manually)");
+};
+
+template <typename T>
+struct TruncationChecker<T, false> {
+    // Specialization for when `IsMagnitudeValid` is false.
+    //
+    // This means that the magnitude itself could not fit inside of the type; therefore, the only
+    // possible value that would not truncate is zero.
+    static constexpr bool would_truncate(T x, T) { return (x != T{0}); }
+};
+
 // Multiplying by an integer, for any type T.
 template <typename Mag, typename T, bool is_T_integral>
 struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_MULTIPLY, T, is_T_integral> {
@@ -1951,6 +2001,14 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_MULTIPLY, T, is_T_integral> {
                   "Mismatched instantiation (should never be done manually)");
 
     constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+
+    static constexpr bool would_overflow(const T &x) {
+        constexpr auto mag_value_result = get_value_result<T>(Mag{});
+        return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
+            would_product_overflow(x, mag_value_result.value);
+    }
+
+    static constexpr bool would_truncate(const T &) { return false; }
 };
 
 // Dividing by an integer, for any type T.
@@ -1962,6 +2020,14 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_DIVIDE, T, is_T_integral> {
                   "Mismatched instantiation (should never be done manually)");
 
     constexpr T operator()(const T &x) { return x / get_value<T>(MagInverseT<Mag>{}); }
+
+    static constexpr bool would_overflow(const T &) { return false; }
+
+    static constexpr bool would_truncate(const T &x) {
+        constexpr auto mag_value_result = get_value_result<T>(MagInverseT<Mag>{});
+        return TruncationChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
+            would_truncate(x, mag_value_result.value);
+    }
 };
 
 // Applying a (non-integer, non-inverse-integer) rational, for any integral type T.
@@ -1975,6 +2041,18 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, true> {
     constexpr T operator()(const T &x) {
         return x * get_value<T>(numerator(Mag{})) / get_value<T>(denominator(Mag{}));
     }
+
+    static constexpr bool would_overflow(const T &x) {
+        constexpr auto mag_value_result = get_value_result<T>(numerator(Mag{}));
+        return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
+            would_product_overflow(x, mag_value_result.value);
+    }
+
+    static constexpr bool would_truncate(const T &x) {
+        constexpr auto mag_value_result = get_value_result<T>(denominator(Mag{}));
+        return TruncationChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
+            would_truncate(x, mag_value_result.value);
+    }
 };
 
 // Applying a (non-integer, non-inverse-integer) rational, for any non-integral type T.
@@ -1986,6 +2064,14 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, false> {
                   "Mismatched instantiation (should never be done manually)");
 
     constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+
+    static constexpr bool would_overflow(const T &x) {
+        constexpr auto mag_value_result = get_value_result<T>(Mag{});
+        return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
+            would_product_overflow(x, mag_value_result.value);
+    }
+
+    static constexpr bool would_truncate(const T &) { return false; }
 };
 
 // Applying an irrational for any type T (although only non-integral T makes sense).
@@ -1999,14 +2085,30 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::IRRATIONAL_MULTIPLY, T, is_T_integral> {
                   "Mismatched instantiation (should never be done manually)");
 
     constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+
+    static constexpr bool would_overflow(const T &x) {
+        constexpr auto mag_value_result = get_value_result<T>(Mag{});
+        return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
+            would_product_overflow(x, mag_value_result.value);
+    }
+
+    static constexpr bool would_truncate(const T &) { return false; }
 };
 
+template <typename T, typename MagT>
+struct ApplyMagnitudeType;
+template <typename T, typename MagT>
+using ApplyMagnitudeT = typename ApplyMagnitudeType<T, MagT>::type;
 template <typename T, typename... BPs>
-constexpr T apply_magnitude(const T &x, Magnitude<BPs...> m) {
-    return ApplyMagnitudeImpl<Magnitude<BPs...>,
-                              categorize_magnitude(m),
-                              T,
-                              std::is_integral<T>::value>{}(x);
+struct ApplyMagnitudeType<T, Magnitude<BPs...>>
+    : stdx::type_identity<ApplyMagnitudeImpl<Magnitude<BPs...>,
+                                             categorize_magnitude(Magnitude<BPs...>{}),
+                                             T,
+                                             std::is_integral<T>::value>> {};
+
+template <typename T, typename... BPs>
+constexpr T apply_magnitude(const T &x, Magnitude<BPs...>) {
+    return ApplyMagnitudeT<T, Magnitude<BPs...>>{}(x);
 }
 
 }  // namespace detail
@@ -3455,6 +3557,29 @@ constexpr auto pow(QuantityMaker<Unit>) {
 template <int N, typename Unit>
 constexpr auto root(QuantityMaker<Unit>) {
     return QuantityMaker<UnitPowerT<Unit, 1, N>>{};
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Runtime conversion checkers
+
+// Check conversion for overflow (no change of rep).
+template <typename U, typename R, typename TargetUnitSlot>
+constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit) {
+    return detail::ApplyMagnitudeT<R, decltype(unit_ratio(U{}, target_unit))>::would_overflow(
+        q.in(U{}));
+}
+
+// Check conversion for truncation (no change of rep).
+template <typename U, typename R, typename TargetUnitSlot>
+constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit) {
+    return detail::ApplyMagnitudeT<R, decltype(unit_ratio(U{}, target_unit))>::would_truncate(
+        q.in(U{}));
+}
+
+// Check for any lossiness in conversion (no change of rep).
+template <typename U, typename R, typename TargetUnitSlot>
+constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit) {
+    return will_conversion_truncate(q, target_unit) || will_conversion_overflow(q, target_unit);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
