@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-25-g59ad95f
+// Version identifier: 0.3.3-26-gc3061f0
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -4340,6 +4340,16 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     static constexpr bool can_store_value_in(OtherUnit other) {
         return representable_in<T>(unit_ratio(Unit{}, other));
     }
+
+    // Implicitly convert to type with an exactly corresponding quantity that passes safety checks.
+    template <
+        typename T,
+        typename = std::enable_if_t<can_store_value_in<typename CorrespondingQuantity<T>::Rep>(
+            typename CorrespondingQuantity<T>::Unit{})>>
+    constexpr operator T() const {
+        return as<typename CorrespondingQuantity<T>::Rep>(
+            typename CorrespondingQuantity<T>::Unit{});
+    };
 };
 
 // Make a constant from the given unit.
