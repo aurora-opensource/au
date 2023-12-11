@@ -188,6 +188,7 @@ cc_test(
     size = "small",
     srcs = ["constant_test.cc"],
     deps = [
+        ":chrono_interop",
         ":constant",
         ":testing",
         ":units",

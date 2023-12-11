@@ -77,6 +77,12 @@ struct InvalidWrongMagType {
     using Mag = char;
 };
 
+// Useful for testing "unit slot" compatibility in APIs.
+template <typename UnitT>
+struct SomeUnitWrapper {};
+template <typename UnitT>
+struct AssociatedUnit<SomeUnitWrapper<UnitT>> : stdx::type_identity<UnitT> {};
+
 struct UnlabeledUnit : decltype(Feet{} * mag<9>()) {};
 
 MATCHER_P(QuantityEquivalentToUnit, target, "") {
@@ -216,6 +222,10 @@ TEST(AssociatedUnitT, IsIdentityForTypeWithNoAssociatedUnit) {
     // down `AssociatedUnitT` because it's used so widely.  It's simpler to think of it as a trait
     // which "redirects" a type only when there is a definite, positive reason to do so.
     StaticAssertTypeEq<AssociatedUnitT<double>, double>();
+}
+
+TEST(AssociatedUnitT, HandlesWrappersWhichHaveSpecializedAssociatedUnit) {
+    StaticAssertTypeEq<AssociatedUnitT<SomeUnitWrapper<Feet>>, Feet>();
 }
 
 TEST(UnitInverseT, CommutesWithProduct) {
@@ -597,6 +607,8 @@ TEST(UnitLabel, CommonPointUnitLabelWorksWithUnitProduct) {
     EXPECT_THAT(unit_label(U{}),
                 AnyOf(StrEq("COM_PT[m / min, in / min]"), StrEq("COM_PT[in / min, m / min]")));
 }
+
+TEST(UnitLabel, APICompatibleWithUnitSlots) { EXPECT_THAT(unit_label(feet), StrEq("ft")); }
 
 namespace detail {
 
