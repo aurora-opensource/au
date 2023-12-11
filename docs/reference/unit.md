@@ -58,6 +58,10 @@ For a unit type `U`, or instance `u`, we can access the label as follows:
 - `unit_label<U>()`
 - `unit_label(u)`
 
+Note that the `u` in `unit_label(u)` is a [unit slot](../discussion/idioms/unit-slots.md), so you
+can pass anything that "acts like a unit" to it.  For instance, you can say `unit_label(meters)`;
+you don't need to write `unit_label(Meters{})`.
+
 This function returns a reference to the array, which again is a compile time constant.
 
 Note especially that the type is an _array_ (`[]`).  A pointer (`*`) is _not_ acceptable.  This is
