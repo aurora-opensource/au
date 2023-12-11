@@ -793,7 +793,7 @@ constexpr
 
 template <typename Unit>
 constexpr const auto &unit_label(Unit) {
-    return detail::as_char_array(UnitLabel<Unit>::value);
+    return detail::as_char_array(UnitLabel<AssociatedUnitT<Unit>>::value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
