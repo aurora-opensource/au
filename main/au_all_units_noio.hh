@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-27-g8eaa08f
+// Version identifier: 0.3.3-28-g1e84a95
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -264,9 +264,9 @@ constexpr std::size_t string_size(int64_t x) {
 template <std::size_t... Ns>
 constexpr std::size_t sum() {
     std::size_t result{0};
-    std::size_t values[] = {Ns...};
+    std::size_t values[] = {0u, Ns...};  // Dummy `0u` avoids empty array.
     for (std::size_t i = 0; i < sizeof...(Ns); ++i) {
-        result += values[i];
+        result += values[i + 1u];  // "+ 1u" to skip the dummy value.
     }
     return result;
 }
@@ -4534,7 +4534,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     constexpr operator T() const {
         return as<typename CorrespondingQuantity<T>::Rep>(
             typename CorrespondingQuantity<T>::Unit{});
-    };
+    }
 };
 
 // Make a constant from the given unit.
