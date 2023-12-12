@@ -96,7 +96,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     constexpr operator T() const {
         return as<typename CorrespondingQuantity<T>::Rep>(
             typename CorrespondingQuantity<T>::Unit{});
-    };
+    }
 };
 
 // Make a constant from the given unit.
