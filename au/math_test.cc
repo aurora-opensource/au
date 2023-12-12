@@ -227,7 +227,7 @@ struct ExpectConsistentWith {
 };
 template <typename AuFunc, typename StdFunc>
 auto expect_consistent_with(AuFunc au_func, StdFunc std_func) {
-    return ExpectConsistentWith<AuFunc, StdFunc>{.au_func = au_func, .std_func = std_func};
+    return ExpectConsistentWith<AuFunc, StdFunc>{au_func, std_func};
 }
 
 TEST(fmod, SameAsStdFmodForNumericTypes) {

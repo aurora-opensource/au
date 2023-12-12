@@ -105,9 +105,9 @@ constexpr std::size_t string_size(int64_t x) {
 template <std::size_t... Ns>
 constexpr std::size_t sum() {
     std::size_t result{0};
-    std::size_t values[] = {Ns...};
+    std::size_t values[] = {0u, Ns...};  // Dummy `0u` avoids empty array.
     for (std::size_t i = 0; i < sizeof...(Ns); ++i) {
-        result += values[i];
+        result += values[i + 1u];  // "+ 1u" to skip the dummy value.
     }
     return result;
 }
