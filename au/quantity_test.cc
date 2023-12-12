@@ -286,21 +286,21 @@ struct CorrespondingQuantity<MyHours> {
     static constexpr Rep extract_value(MyHours x) { return x.value; }
 
     // Support Quantity conversion to Hours.
-    static constexpr MyHours construct_from_value(Rep x) { return {.value = x}; }
+    static constexpr MyHours construct_from_value(Rep x) { return {x}; }
 };
 
 TEST(Quantity, ImplicitConstructionFromCorrespondingQuantity) {
-    constexpr Quantity<Hours, int> x = MyHours{.value = 3};
+    constexpr Quantity<Hours, int> x = MyHours{3};
     EXPECT_EQ(x, hours(3));
 }
 
 TEST(Quantity, ImplicitConstructionFromTwoHopCorrespondingQuantity) {
-    constexpr Quantity<Minutes, int> x = MyHours{.value = 3};
+    constexpr Quantity<Minutes, int> x = MyHours{3};
     EXPECT_THAT(x, SameTypeAndValue(minutes(180)));
 }
 
 TEST(Quantity, ImplicitConstructionFromLvalueCorrespondingQuantity) {
-    MyHours original{.value = 10};
+    MyHours original{10};
     const Quantity<Hours, int> converted = original;
     EXPECT_EQ(converted, hours(10));
 }
@@ -322,7 +322,7 @@ TEST(Quantity, ImplicitConversionToLvalueCorrespondingQuantity) {
 }
 
 TEST(AsQuantity, DeducesCorrespondingQuantity) {
-    constexpr auto q = as_quantity(MyHours{.value = 8});
+    constexpr auto q = as_quantity(MyHours{8});
     EXPECT_THAT(q, QuantityEquivalent(hours(8)));
 }
 
