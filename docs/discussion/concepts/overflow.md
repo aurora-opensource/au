@@ -39,6 +39,20 @@ Over the decades that people have been writing units libraries, several approach
 dealing with this category of risk.  That said, there isn't a consensus about the best approach to
 take --- in fact, at the time of writing, new strategies are still being developed and tested!
 
+It's also worth noting that this problem mainly applies to integral types.  Floating point types can
+overflow too, but it happens far less often in practice.  Even the smallest, `float`, has a range of
+$10^{38}$, while the diameter of the observable universe measured in atomic diameters is "only"
+about $10^{37}$![^1]
+
+[^1]: Here, we take the radius of the observable universe as 46.6 billion light years, and the
+      diameter of a hydrogen atom as 0.1 nanometers.
+
+Of course, many domains prefer the simplicity and interpretability of integral types.  This avoids
+some of the more counterintuitive aspects of floating point arithmetic --- for example, did you know
+that the difference between consecutive representable `double` values can be greater than
+$10^{292}$?  The price we pay for eschewing these complexities is the need to handle overflow, and
+here are the main strategies we've seen for doing so.
+
 ### Do nothing
 
 This is the simplest approach, and probably also the most popular: make the users responsible for
@@ -119,22 +133,67 @@ permits.  On the latter point, note that adding an intermediate conversion can d
 check: the overflow in `meters(10u).as(nano(meters))` would be caught, but the overflow in
 `meters(10u).as(milli(meters)).as(nano(meters))` would not.
 
-One way to guarantee doing better is to check every conversion at runtime.  Some users may recoil at
-the idea of doing _runtime_ work in a units library, but it's easy to show that _this_ use case is
-innocuous. Consider: it's very hard to imagine a valid use case for performing unit conversions in
-a "hot loop".  Therefore, the extra runtime cost --- merely a few cycles at most --- won't
+One way to _guarantee_ doing better is to check every conversion at runtime.  Some users may recoil
+at the idea of doing _runtime_ work in a units library, but it's easy to show that _this_ use case
+is innocuous. Consider: it's very hard to imagine a valid use case for performing unit conversions
+in a "hot loop".  Therefore, the extra runtime cost --- merely a few cycles at most --- won't
 _meaningfully_ affect the performance of the program: it's a bargain price to pay for the added
 safety.
 
-At the time of writing, we don't know of any units library that checks every conversion at runtime.
-However, we are planning to make it easy for Au users to build their own.  Au can handle the "hard
-part" by generating a `bool` function for every possible unit conversion --- that is, every
-combination of conversion factor and underlying numeric rep.  We can make this function just as
-efficient as any custom implementation which a user might write by hand.  With these functions
-available, it will be easy for users to make their own checked-conversion API, using their favorite
-error handling mechanism (whether exceptions, `std::optional`, or anything else).  This work is
-tracked in [issue #110][#110], and we expect to complete it before our next minor version release of
-Au.
+Of course, in order to check every conversion at runtime, you need to decide what to do when
+a conversion _doesn't_ work.  This is hard in general, because there is no "one true error handling
+strategy".  Exceptions, C++17's `std::optional`, C++23's `std::expected`, and other strategies each
+have their place.  For a library that aims to support a wide variety of projects, it's an impossible
+choice.
+
+Fortunately, the problem decomposes favorably into two steps.
+
+1. Figure out **which specific conversions** are lossy.  This is the hard part, but Au can do it!
+
+2. Write a generic **checked conversion function** using the preferred error handling mechanism.
+   The owners of a project will have to do this, but this is easy if Au provides the first part.
+
+Here's a complete worked example of how you would do this in a codebase using C++17's
+`std::optional`.
+
+```cpp
+template <typename U, typename R, typename TargetUnitSlot>
+constexpr auto try_converting(au::Quantity<U, R> q, TargetUnitSlot target) {
+    return is_conversion_lossy(q, target)
+        ? std::nullopt
+        : std::make_optional(q.coerce_as(target));
+}
+```
+
+The goal of `is_conversion_lossy` is to produce an implementation for each individual conversion
+(both numeric type, and conversion factor) that is as _accurate and efficient_ as an expertly
+hand-written implementation.  If it passes those checks, then it's safe and correct to call
+`.coerce_as` instead of simply `.as`: we can override the _approximate_ safety checks of the latter
+because we've performed an _exact_ safety check.
+
+??? note "An example of the kind of details we take care of"
+    When we say "expertly hand-written", we mean it.  We even handle obscure C++ minutae such as
+    [integer promotion]!
+
+    Consider the conversion from `yards(int16_t{1250})` to `meters`.  Under the hood, this
+    conversion first multiplies by `int16_t{1143}`, and then divides by `int16_t{1250}`.  The
+    multiplication produces 1,428,750 --- but the maximum `int16_t` value is only 32,767.  Looks
+    like a pretty clear case of overflow.
+
+    However, the product of two `int16_t` values is _not_ (usually) an `int16_t` value!  On most
+    architectures, it gets converted to `int32_t`, due to integer promotion.  This intermediate type
+    _can_ hold the result of the multiplication.  What's more, the subsequent division by
+    `int16_t{1250}` brings the final result back into the range of `int16_t`.
+
+    Au's implementation of `is_conversion_lossy` will correctly return `false` on architectures
+    where this promotion happens, and `true` on architectures where it doesn't.  If this sounds like
+    the kind of detail you'd rather not worry about, go ahead and use Au's utilities!
+
+At the time of writing, Au is the only units library we know that provides conversion checkers to do
+this heavy lifting.  We'd like to see other units libraries try it out as well!  Meanwhile, even on
+our end, there's still more work to do --- such as adding "explicit rep" versions of these
+utilities, and supporting `QuantityPoint`.  You can track our progress on this feature in issue
+[#110].
 
 ## Summary
 
@@ -146,3 +205,4 @@ every conversion as it happens, and be prepared for it to fail.
 
 [threshold]: https://github.com/aurora-opensource/au/blob/dbd79b2/au/conversion_policy.hh#L27-L28
 [#110]: https://github.com/aurora-opensource/au/issues/110
+[integer promotion]: https://en.cppreference.com/w/c/language/conversion#Integer_promotions
