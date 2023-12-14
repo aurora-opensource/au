@@ -196,10 +196,8 @@ TEST(WouldOverflow, AlwaysFalseForIntegerDivide) {
 }
 
 TEST(WouldOverflow, UsesNumeratorWhenApplyingRationalMagnitudeToIntegralType) {
-    auto TWO_THIRDS = mag<2>() / mag<3>();
-
     {
-        using ApplyTwoThirdsToI32 = ApplyMagnitudeT<int32_t, decltype(TWO_THIRDS)>;
+        using ApplyTwoThirdsToI32 = ApplyMagnitudeT<int32_t, decltype(mag<2>() / mag<3>())>;
 
         EXPECT_TRUE(ApplyTwoThirdsToI32::would_overflow(2'147'483'647));
         EXPECT_TRUE(ApplyTwoThirdsToI32::would_overflow(1'073'741'824));
@@ -215,14 +213,18 @@ TEST(WouldOverflow, UsesNumeratorWhenApplyingRationalMagnitudeToIntegralType) {
     }
 
     {
-        using ApplyTwoThirdsToU8 = ApplyMagnitudeT<uint8_t, decltype(TWO_THIRDS)>;
+        using ApplyRoughlyOneThirdToU8 =
+            ApplyMagnitudeT<uint8_t, decltype(mag<100'000'000>() / mag<300'000'001>())>;
 
-        EXPECT_TRUE(ApplyTwoThirdsToU8::would_overflow(255));
-        EXPECT_TRUE(ApplyTwoThirdsToU8::would_overflow(128));
+        ASSERT_TRUE((std::is_same<decltype(uint8_t{} * uint8_t{}), int32_t>::value))
+            << "This test fails on architectures where `uint8_t` doesn't get promoted to `int32_t`";
 
-        EXPECT_FALSE(ApplyTwoThirdsToU8::would_overflow(127));
-        EXPECT_FALSE(ApplyTwoThirdsToU8::would_overflow(1));
-        EXPECT_FALSE(ApplyTwoThirdsToU8::would_overflow(0));
+        EXPECT_TRUE(ApplyRoughlyOneThirdToU8::would_overflow(255));
+        EXPECT_TRUE(ApplyRoughlyOneThirdToU8::would_overflow(22));
+
+        EXPECT_FALSE(ApplyRoughlyOneThirdToU8::would_overflow(21));
+        EXPECT_FALSE(ApplyRoughlyOneThirdToU8::would_overflow(1));
+        EXPECT_FALSE(ApplyRoughlyOneThirdToU8::would_overflow(0));
     }
 }
 

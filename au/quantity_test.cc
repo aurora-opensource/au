@@ -750,7 +750,29 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
                 ASSERT_FALSE(is_inverse_lossy);
             }
 
-            EXPECT_EQ(is_lossy, did_value_change);
+            std::string reason{};
+            if (is_lossy) {
+                const bool truncates = will_conversion_truncate(original, target_units);
+                const bool overflows = will_conversion_overflow(original, target_units);
+                ASSERT_TRUE(truncates || overflows);
+                reason = std::string{" ("} + [&] {
+                    if (truncates && overflows) {
+                        return "truncates and overflows";
+                    } else if (truncates) {
+                        return "truncates";
+                    } else if (overflows) {
+                        return "overflows";
+                    } else {
+                        return "";
+                    }
+                }() + ")";
+            }
+
+            EXPECT_EQ(is_lossy, did_value_change)
+                << "Conversion " << (is_lossy ? "is" : "is not") << " lossy" << reason
+                << ", but round-trip conversion " << (did_value_change ? "did" : "did not")
+                << " change the value.  original: " << original << ", converted: " << converted
+                << ", round_trip: " << round_trip;
         }
     };
 
@@ -759,6 +781,10 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
 
     // Feet-to-inches tests overflow.
     test_round_trip_for_every_uint16_value(feet, inches);
+
+    // Yards-to-meters (and vice versa) tests truncation and overflow.
+    test_round_trip_for_every_uint16_value(yards, meters);
+    test_round_trip_for_every_uint16_value(meters, yards);
 }
 
 TEST(AreQuantityTypesEquivalent, RequiresSameRepAndEquivalentUnits) {
