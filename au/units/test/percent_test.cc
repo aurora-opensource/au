@@ -25,4 +25,9 @@ TEST(Percent, HasExpectedLabel) { expect_label<Percent>("%"); }
 
 TEST(Percent, OneHundredthOfUnos) { EXPECT_EQ(percent(75.0), unos(0.75)); }
 
+TEST(Percent, HasExpectedSymbol) {
+    using symbols::pct;
+    EXPECT_THAT(5 * pct, SameTypeAndValue(percent(5)));
+}
+
 }  // namespace au

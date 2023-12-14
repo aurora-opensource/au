@@ -25,4 +25,9 @@ TEST(PoundsForce, EquivalentToStandardGravityActingOnPoundMass) {
     EXPECT_THAT(pounds_force(123), QuantityEquivalent((pound_mass * standard_gravity)(123)));
 }
 
+TEST(PoundsForce, HasExpectedSymbol) {
+    using symbols::lbf;
+    EXPECT_THAT(5 * lbf, SameTypeAndValue(pounds_force(5)));
+}
+
 }  // namespace au

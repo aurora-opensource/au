@@ -26,4 +26,9 @@ TEST(Radians, TwoPiPerRevolution) {
     EXPECT_DOUBLE_EQ(radians(get_value<double>(mag<2>() * PI)).in(revolutions), 1.0);
 }
 
+TEST(Radians, HasExpectedSymbol) {
+    using symbols::rad;
+    EXPECT_THAT(5 * rad, SameTypeAndValue(radians(5)));
+}
+
 }  // namespace au

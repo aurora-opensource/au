@@ -16,6 +16,7 @@
 # -Wall is already set by aspect_gcc_toolchain.
 EXTRA_COPTS = [
     "-Wextra",
+    "-pedantic",
 ]
 
 # Since the clang toolchain we're using doesn't let us extract the default flags, we have to
@@ -30,6 +31,7 @@ BASE_CLANG_COPTS = [
     # Diagnostics
     "-fcolor-diagnostics",
     "-Wall",
+    "-Wshadow",
     "-Wthread-safety",
     "-Wself-assign",
 ]

@@ -26,4 +26,9 @@ TEST(Becquerel, EquivalentToInverseSeconds) {
     EXPECT_THAT(becquerel(4.0), QuantityEquivalent(inverse(seconds)(4.0)));
 }
 
+TEST(Becquerel, HasExpectedSymbol) {
+    using symbols::Bq;
+    EXPECT_THAT(5 * Bq, SameTypeAndValue(becquerel(5)));
+}
+
 }  // namespace au

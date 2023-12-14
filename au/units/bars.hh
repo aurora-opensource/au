@@ -16,6 +16,7 @@
 
 #include "au/prefix.hh"
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/pascals.hh"
 
 namespace au {
@@ -34,4 +35,7 @@ struct Bars : decltype(Kilo<Pascals>{} * mag<100>()), BarsLabel<void> {
 constexpr auto bar = SingularNameFor<Bars>{};
 constexpr auto bars = QuantityMaker<Bars>{};
 
+namespace symbols {
+constexpr auto bar = SymbolFor<Bars>{};
+}  // namespace symbols
 }  // namespace au

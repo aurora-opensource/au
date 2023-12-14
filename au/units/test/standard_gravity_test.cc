@@ -28,4 +28,9 @@ TEST(StandardGravity, HasExpectedValue) {
     EXPECT_EQ(standard_gravity(1L), (micro(meters) / squared(second))(9'806'650L));
 }
 
+TEST(StandardGravity, HasExpectedSymbol) {
+    using symbols::g_0;
+    EXPECT_THAT(5 * g_0, SameTypeAndValue(standard_gravity(5)));
+}
+
 }  // namespace au

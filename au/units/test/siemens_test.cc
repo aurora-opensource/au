@@ -26,4 +26,9 @@ TEST(Siemens, EquivalentToInverseOhms) {
     EXPECT_THAT(siemens(4.0), QuantityEquivalent(1.0 / ohms(0.25)));
 }
 
+TEST(Siemens, HasExpectedSymbol) {
+    using symbols::S;
+    EXPECT_THAT(5 * S, SameTypeAndValue(siemens(5)));
+}
+
 }  // namespace au

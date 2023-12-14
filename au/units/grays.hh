@@ -16,6 +16,7 @@
 
 #include "au/prefix.hh"
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/grams.hh"
 #include "au/units/joules.hh"
 
@@ -35,4 +36,7 @@ struct Grays : decltype(Joules{} / Kilo<Grams>{}), GraysLabel<void> {
 constexpr auto gray = SingularNameFor<Grays>{};
 constexpr auto grays = QuantityMaker<Grays>{};
 
+namespace symbols {
+constexpr auto Gy = SymbolFor<Grays>{};
+}
 }  // namespace au

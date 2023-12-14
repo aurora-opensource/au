@@ -26,4 +26,9 @@ TEST(Knots, HasExpectedLabel) { expect_label<Knots>("kn"); }
 
 TEST(Knots, EquivalentToNauticalMilesPerHour) { EXPECT_EQ(knots(1), (nautical_miles / hour)(1)); }
 
+TEST(Knots, HasExpectedSymbol) {
+    using symbols::kn;
+    EXPECT_THAT(5 * kn, SameTypeAndValue(knots(5)));
+}
+
 }  // namespace au

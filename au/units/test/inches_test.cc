@@ -23,4 +23,9 @@ TEST(Inches, HasExpectedLabel) { expect_label<Inches>("in"); }
 
 TEST(Inches, EquivalentTo2Point54CentiMeters) { EXPECT_EQ(centi(meters)(254), inches(100)); }
 
+TEST(Inches, HasExpectedSymbol) {
+    using symbols::in;
+    EXPECT_THAT(5 * in, SameTypeAndValue(inches(5)));
+}
+
 }  // namespace au

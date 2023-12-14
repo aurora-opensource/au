@@ -44,14 +44,14 @@ bool operator==(const AllComparisons &a, const AllComparisons &b) {
 
 template <typename T, typename U>
 AllComparisons compare(const T &t, const U &u) {
-    return {
-        .eq = (t == u),
-        .ne = (t != u),
-        .lt = (t < u),
-        .le = (t <= u),
-        .gt = (t > u),
-        .ge = (t >= u),
-    };
+    AllComparisons result;
+    result.eq = (t == u);
+    result.ne = (t != u);
+    result.lt = (t < u);
+    result.le = (t <= u);
+    result.gt = (t > u);
+    result.ge = (t >= u);
+    return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

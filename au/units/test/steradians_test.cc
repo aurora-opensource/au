@@ -26,4 +26,9 @@ TEST(Steradians, EquivalentToSquaredRadians) {
     EXPECT_THAT(steradians(6), QuantityEquivalent(radians(2) * radians(3)));
 }
 
+TEST(Steradians, HasExpectedSymbol) {
+    using symbols::sr;
+    EXPECT_THAT(5 * sr, SameTypeAndValue(steradians(5)));
+}
+
 }  // namespace au

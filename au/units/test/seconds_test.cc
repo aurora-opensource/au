@@ -24,4 +24,9 @@ TEST(Seconds, HasExpectedLabel) { expect_label<Seconds>("s"); }
 
 TEST(Seconds, SixtyPerMinute) { EXPECT_EQ(seconds(60), minutes(1)); }
 
+TEST(Seconds, HasExpectedSymbol) {
+    using symbols::s;
+    EXPECT_THAT(5 * s, SameTypeAndValue(seconds(5)));
+}
+
 }  // namespace au

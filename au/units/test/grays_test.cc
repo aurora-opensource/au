@@ -27,4 +27,9 @@ TEST(Grays, EquivalentToJoulesPerKilogram) {
     EXPECT_THAT(grays(4.0), QuantityEquivalent(joules(8.0) / kilo(grams)(2.0)));
 }
 
+TEST(Grays, HasExpectedSymbol) {
+    using symbols::Gy;
+    EXPECT_THAT(5 * Gy, SameTypeAndValue(grays(5)));
+}
+
 }  // namespace au

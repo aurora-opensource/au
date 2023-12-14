@@ -27,4 +27,9 @@ TEST(Farads, EquivalentToCoulombsPerVolt) {
     EXPECT_THAT(farads(4.0), QuantityEquivalent(coulombs(8.0) / volts(2.0)));
 }
 
+TEST(Farads, HasExpectedSymbol) {
+    using symbols::F;
+    EXPECT_THAT(5 * F, SameTypeAndValue(farads(5)));
+}
+
 }  // namespace au

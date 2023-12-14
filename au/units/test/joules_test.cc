@@ -25,4 +25,9 @@ TEST(Joules, HasExpectedLabel) { expect_label<Joules>("J"); }
 
 TEST(Joules, EquivalentToNewtonMeters) { EXPECT_EQ(joules(18), (newton * meters)(18)); }
 
+TEST(Joules, HasExpectedSymbol) {
+    using symbols::J;
+    EXPECT_THAT(5 * J, SameTypeAndValue(joules(5)));
+}
+
 }  // namespace au

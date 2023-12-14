@@ -23,4 +23,9 @@ TEST(Yards, HasExpectedLabel) { expect_label<Yards>("yd"); }
 
 TEST(Yards, EquivalentTo3Feet) { EXPECT_EQ(yards(1), feet(3)); }
 
+TEST(Yards, HasExpectedSymbol) {
+    using symbols::yd;
+    EXPECT_THAT(5 * yd, SameTypeAndValue(yards(5)));
+}
+
 }  // namespace au

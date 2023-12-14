@@ -286,21 +286,21 @@ struct CorrespondingQuantity<MyHours> {
     static constexpr Rep extract_value(MyHours x) { return x.value; }
 
     // Support Quantity conversion to Hours.
-    static constexpr MyHours construct_from_value(Rep x) { return {.value = x}; }
+    static constexpr MyHours construct_from_value(Rep x) { return {x}; }
 };
 
 TEST(Quantity, ImplicitConstructionFromCorrespondingQuantity) {
-    constexpr Quantity<Hours, int> x = MyHours{.value = 3};
+    constexpr Quantity<Hours, int> x = MyHours{3};
     EXPECT_EQ(x, hours(3));
 }
 
 TEST(Quantity, ImplicitConstructionFromTwoHopCorrespondingQuantity) {
-    constexpr Quantity<Minutes, int> x = MyHours{.value = 3};
+    constexpr Quantity<Minutes, int> x = MyHours{3};
     EXPECT_THAT(x, SameTypeAndValue(minutes(180)));
 }
 
 TEST(Quantity, ImplicitConstructionFromLvalueCorrespondingQuantity) {
-    MyHours original{.value = 10};
+    MyHours original{10};
     const Quantity<Hours, int> converted = original;
     EXPECT_EQ(converted, hours(10));
 }
@@ -322,7 +322,7 @@ TEST(Quantity, ImplicitConversionToLvalueCorrespondingQuantity) {
 }
 
 TEST(AsQuantity, DeducesCorrespondingQuantity) {
-    constexpr auto q = as_quantity(MyHours{.value = 8});
+    constexpr auto q = as_quantity(MyHours{8});
     EXPECT_THAT(q, QuantityEquivalent(hours(8)));
 }
 
@@ -657,6 +657,108 @@ TEST(Quantity, CommonTypeRespectsImplicitRepSafetyChecks) {
 
 TEST(QuantityMaker, ProvidesAssociatedUnit) {
     StaticAssertTypeEq<AssociatedUnitT<QuantityMaker<Hours>>, Hours>();
+}
+
+TEST(WillConversionOverflow, SensitiveToTypeBoundariesForPureIntegerMultiply) {
+    {
+        auto will_m_to_mm_overflow_i32 = [](int32_t x) {
+            return will_conversion_overflow(meters(x), milli(meters));
+        };
+
+        EXPECT_TRUE(will_m_to_mm_overflow_i32(2'147'484));
+        EXPECT_FALSE(will_m_to_mm_overflow_i32(2'147'483));
+
+        EXPECT_FALSE(will_m_to_mm_overflow_i32(-2'147'483));
+        EXPECT_TRUE(will_m_to_mm_overflow_i32(-2'147'484));
+    }
+
+    {
+        auto will_m_to_mm_overflow_u8 = [](uint8_t x) {
+            return will_conversion_overflow(meters(x), milli(meters));
+        };
+
+        EXPECT_TRUE(will_m_to_mm_overflow_u8(255));
+
+        EXPECT_TRUE(will_m_to_mm_overflow_u8(1));
+        EXPECT_FALSE(will_m_to_mm_overflow_u8(0));
+    }
+
+    {
+        auto will_m_to_mm_overflow_f = [](float x) {
+            return will_conversion_overflow(meters(x), milli(meters));
+        };
+
+        EXPECT_TRUE(will_m_to_mm_overflow_f(3.41e+35f));
+        EXPECT_FALSE(will_m_to_mm_overflow_f(3.40e+35f));
+
+        EXPECT_FALSE(will_m_to_mm_overflow_f(-3.40e+35f));
+        EXPECT_TRUE(will_m_to_mm_overflow_f(-3.41e+35f));
+    }
+}
+
+TEST(WillConversionTruncate, UsesModForIntegerTypes) {
+    auto will_in_to_ft_truncate_i32 = [](int32_t x) {
+        return will_conversion_truncate(inches(x), feet);
+    };
+
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(121));
+    EXPECT_FALSE(will_in_to_ft_truncate_i32(120));
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(119));
+
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(13));
+    EXPECT_FALSE(will_in_to_ft_truncate_i32(12));
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(11));
+
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(1));
+    EXPECT_FALSE(will_in_to_ft_truncate_i32(0));
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(-1));
+
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(-11));
+    EXPECT_FALSE(will_in_to_ft_truncate_i32(-12));
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(-13));
+
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(-119));
+    EXPECT_FALSE(will_in_to_ft_truncate_i32(-120));
+    EXPECT_TRUE(will_in_to_ft_truncate_i32(-121));
+}
+
+TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions) {
+    // We will check literally every representable value in the type, and make sure that the result
+    // of `is_conversion_lossy()` matches perfectly with the inability to recover the initial value.
+    auto test_round_trip_for_every_uint16_value = [](auto source_units, auto target_units) {
+        for (int i = std::numeric_limits<uint16_t>::lowest();
+             i <= std::numeric_limits<uint16_t>::max();
+             ++i) {
+            const auto original = source_units(static_cast<uint16_t>(i));
+            const auto converted = original.coerce_as(target_units);
+            const auto round_trip = converted.coerce_as(source_units);
+
+            const bool did_value_change = (original != round_trip);
+
+            // Function under test:
+            const bool is_lossy = is_conversion_lossy(original, target_units);
+
+            // In order for the test to be valid, we assume the second "leg" of the round-trip
+            // conversion never introduces any **new** lossiness.  (It's OK for it to be lossy, but
+            // only if the first leg was also lossy.)
+            //
+            // Remember: it's the lossiness of the **first** conversion that we care about --- and,
+            // fundamentally, "lossiness" is all about destroying the information you need to
+            // recover the original value.
+            if (!is_lossy) {
+                const bool is_inverse_lossy = is_conversion_lossy(converted, source_units);
+                ASSERT_FALSE(is_inverse_lossy);
+            }
+
+            EXPECT_EQ(is_lossy, did_value_change);
+        }
+    };
+
+    // Inches-to-feet tests truncation.
+    test_round_trip_for_every_uint16_value(inches, feet);
+
+    // Feet-to-inches tests overflow.
+    test_round_trip_for_every_uint16_value(feet, inches);
 }
 
 TEST(AreQuantityTypesEquivalent, RequiresSameRepAndEquivalentUnits) {

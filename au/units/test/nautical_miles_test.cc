@@ -28,4 +28,9 @@ TEST(NauticalMiles, EquivalentTo1852Meters) { EXPECT_EQ(nautical_miles(1), meter
 
 TEST(NauticalMiles, EquivalentToKnotHours) { EXPECT_EQ(nautical_miles(1), (knot * hours)(1)); }
 
+TEST(NauticalMiles, HasExpectedSymbol) {
+    using symbols::nmi;
+    EXPECT_THAT(5 * nmi, SameTypeAndValue(nautical_miles(5)));
+}
+
 }  // namespace au

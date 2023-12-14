@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/hours.hh"
 #include "au/units/nautical_miles.hh"
 
@@ -34,4 +35,7 @@ struct Knots : decltype(NauticalMiles{} / Hours{}), KnotsLabel<void> {
 constexpr auto knot = SingularNameFor<Knots>{};
 constexpr auto knots = QuantityMaker<Knots>{};
 
+namespace symbols {
+constexpr auto kn = SymbolFor<Knots>{};
+}
 }  // namespace au

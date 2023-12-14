@@ -227,7 +227,7 @@ struct ExpectConsistentWith {
 };
 template <typename AuFunc, typename StdFunc>
 auto expect_consistent_with(AuFunc au_func, StdFunc std_func) {
-    return ExpectConsistentWith<AuFunc, StdFunc>{.au_func = au_func, .std_func = std_func};
+    return ExpectConsistentWith<AuFunc, StdFunc>{au_func, std_func};
 }
 
 TEST(fmod, SameAsStdFmodForNumericTypes) {
@@ -909,5 +909,13 @@ TEST(InverseIn, HasSameValueAsInverseAs) {
 TEST(InverseAs, ProducesCorrectRep) {
     EXPECT_THAT(inverse_as<int64_t>(nano(seconds), hertz(50.0)),
                 SameTypeAndValue(rep_cast<int64_t>(nano(seconds)(20'000'000))));
+}
+
+TEST(InverseAs, HandlesConversionsBetweenOverflowSafetySurfaceAndRepresentableLimits) {
+    EXPECT_THAT(inverse_as(nano(seconds), hertz(10)), SameTypeAndValue(nano(seconds)(100'000'000)));
+
+    // Must not compile.  (Error should likely mention "Cannot represent constant in this unit/rep"
+    // and/or "Value outside range of destination type".)  Uncomment to check:
+    // inverse_as(pico(seconds), hertz(10))
 }
 }  // namespace au

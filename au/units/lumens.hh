@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 #include "au/units/candelas.hh"
 #include "au/units/steradians.hh"
 
@@ -34,4 +35,7 @@ struct Lumens : decltype(Candelas{} * Steradians{}), LumensLabel<void> {
 constexpr auto lumen = SingularNameFor<Lumens>{};
 constexpr auto lumens = QuantityMaker<Lumens>{};
 
+namespace symbols {
+constexpr auto lm = SymbolFor<Lumens>{};
+}
 }  // namespace au

@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 
 namespace au {
 
@@ -32,4 +33,7 @@ struct Candelas : UnitImpl<LuminousIntensity>, CandelasLabel<void> {
 constexpr auto candela = SingularNameFor<Candelas>{};
 constexpr auto candelas = QuantityMaker<Candelas>{};
 
+namespace symbols {
+constexpr auto cd = SymbolFor<Candelas>{};
+}
 }  // namespace au

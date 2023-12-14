@@ -32,4 +32,9 @@ TEST(Amperes, ProductWithVoltsGivesPower) {
     EXPECT_THAT(amperes(2.0), QuantityEquivalent(watts(8.0) / volts(4.0)));
 }
 
+TEST(Amperes, HasExpectedSymbol) {
+    using symbols::A;
+    EXPECT_THAT(5 * A, SameTypeAndValue(amperes(5)));
+}
+
 }  // namespace au

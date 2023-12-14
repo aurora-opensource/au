@@ -23,4 +23,9 @@ TEST(Hours, HasExpectedLabel) { expect_label<Hours>("h"); }
 
 TEST(Hours, EquivalentTo60Minutes) { EXPECT_EQ(hours(3), minutes(180)); }
 
+TEST(Hours, HasExpectedSymbol) {
+    using symbols::h;
+    EXPECT_THAT(5 * h, SameTypeAndValue(hours(5)));
+}
+
 }  // namespace au
