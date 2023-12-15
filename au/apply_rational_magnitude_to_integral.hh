@@ -105,14 +105,13 @@ constexpr bool is_known_to_be_less_than_one(Magnitude<BPs...> m) {
 //
 
 //
-// Branch based on whether the denominator of `MagT` can fit in the promoted type of `T`.
+// Branch based on whether `MagT` is less than 1.
 //
 template <typename T, typename MagT, bool IsMagLessThanOne>
 struct MaxNonOverflowingValueImplWhenNumFits;
 
-// If the denominator of `MagT` is bigger than a known-to-fit numerator --- regardless of whether or
-// not that denominator is representable --- then we only need to check for the limiting value where
-// the _numerator multiplication step alone_ would overflow.
+// If `MagT` is less than 1, then we only need to check for the limiting value where the _numerator
+// multiplication step alone_ would overflow.
 template <typename T, typename MagT>
 struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, true> {
     using P = PromotedType<T>;
@@ -123,9 +122,9 @@ struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, true> {
     }
 };
 
-// If the denominator is smaller than a known-to-fit numerator, then we have two opportunities for
-// overflow: the numerator multiplication step can overflow the promoted type; or, the denominator
-// division step can fail to restore it to the original type's range.
+// If `MagT` is greater than 1, then we have two opportunities for overflow: the numerator
+// multiplication step can overflow the promoted type; or, the denominator division step can fail to
+// restore it to the original type's range.
 template <typename T, typename MagT>
 struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, false> {
     using P = PromotedType<T>;
@@ -185,14 +184,13 @@ struct MaxNonOverflowingValue
 //
 
 //
-// Branch based on whether the denominator of `MagT` can fit in the promoted type of `T`.
+// Branch based on whether `MagT` is less than 1.
 //
 template <typename T, typename MagT, bool IsMagLessThanOne>
 struct MinNonOverflowingValueImplWhenNumFits;
 
-// If the denominator of `MagT` is bigger than a known-to-fit numerator --- regardless of whether or
-// not that denominator is representable --- then we only need to check for the limiting value where
-// the _numerator multiplication step alone_ would overflow.
+// If `MagT` is less than 1, then we only need to check for the limiting value where the _numerator
+// multiplication step alone_ would overflow.
 template <typename T, typename MagT>
 struct MinNonOverflowingValueImplWhenNumFits<T, MagT, true> {
     using P = PromotedType<T>;
@@ -203,9 +201,9 @@ struct MinNonOverflowingValueImplWhenNumFits<T, MagT, true> {
     }
 };
 
-// If the denominator is smaller than a known-to-fit numerator, then we have two opportunities for
-// overflow: the numerator multiplication step can overflow the promoted type; or, the denominator
-// division step can fail to restore it to the original type's range.
+// If `MagT` is greater than 1, then we have two opportunities for overflow: the numerator
+// multiplication step can overflow the promoted type; or, the denominator division step can fail to
+// restore it to the original type's range.
 template <typename T, typename MagT>
 struct MinNonOverflowingValueImplWhenNumFits<T, MagT, false> {
     using P = PromotedType<T>;
