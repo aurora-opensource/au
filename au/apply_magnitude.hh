@@ -164,7 +164,8 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, true> {
                   "Mismatched instantiation (should never be done manually)");
 
     constexpr T operator()(const T &x) {
-        return x * get_value<T>(numerator(Mag{})) / get_value<T>(denominator(Mag{}));
+        return static_cast<T>(x * get_value<T>(numerator(Mag{})) /
+                              get_value<T>(denominator(Mag{})));
     }
 
     static constexpr bool would_overflow(const T &x) {
