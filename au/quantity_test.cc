@@ -33,10 +33,16 @@ constexpr auto miles = QuantityMaker<Miles>{};
 struct Inches : decltype(Feet{} / mag<12>()) {};
 constexpr auto inches = QuantityMaker<Inches>{};
 
-struct Yards : decltype(Feet{} * mag<3>()) {};
+struct Yards : decltype(Feet{} * mag<3>()) {
+    static constexpr const char label[] = "yd";
+};
+constexpr const char Yards::label[];
 constexpr auto yards = QuantityMaker<Yards>{};
 
-struct Meters : decltype(Inches{} * mag<100>() / mag<254>() * mag<100>()) {};
+struct Meters : decltype(Inches{} * mag<100>() / mag<254>() * mag<100>()) {
+    static constexpr const char label[] = "m";
+};
+constexpr const char Meters::label[];
 static constexpr QuantityMaker<Meters> meters{};
 static_assert(are_units_quantity_equivalent(Centi<Meters>{} * mag<254>(), Inches{} * mag<100>()),
               "Double-check this ad hoc definition of meters");
