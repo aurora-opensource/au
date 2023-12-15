@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-28-g1e84a95
+// Version identifier: 0.3.3-29-ga831130
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -1709,6 +1709,21 @@ struct NumeratorImpl<Magnitude<BPs...>>
 
 namespace detail {
 
+enum class MagRepresentationOutcome {
+    OK,
+    ERR_NON_INTEGER_IN_INTEGER_TYPE,
+    ERR_RATIONAL_POWERS,
+    ERR_CANNOT_FIT,
+};
+
+template <typename T>
+struct MagRepresentationOrError {
+    MagRepresentationOutcome outcome;
+
+    // Only valid/meaningful if `outcome` is `OK`.
+    T value = {0};
+};
+
 // The widest arithmetic type in the same category.
 //
 // Used for intermediate computations.
@@ -1720,19 +1735,61 @@ using Widen = std::conditional_t<
                        std::conditional_t<std::is_signed<T>::value, std::intmax_t, std::uintmax_t>>,
     T>;
 
+template <typename T>
+constexpr MagRepresentationOrError<T> checked_int_pow(T base, std::uintmax_t exp) {
+    MagRepresentationOrError<T> result = {MagRepresentationOutcome::OK, T{1}};
+    while (exp > 0u) {
+        if (exp % 2u == 1u) {
+            if (base > std::numeric_limits<T>::max() / result.value) {
+                return MagRepresentationOrError<T>{MagRepresentationOutcome::ERR_CANNOT_FIT};
+            }
+            result.value *= base;
+        }
+
+        exp /= 2u;
+
+        if (base > std::numeric_limits<T>::max() / base) {
+            return (exp == 0u)
+                       ? result
+                       : MagRepresentationOrError<T>{MagRepresentationOutcome::ERR_CANNOT_FIT};
+        }
+        base *= base;
+    }
+    return result;
+}
+
 template <typename T, std::intmax_t N, typename B>
-constexpr Widen<T> base_power_value(B base) {
-    return (N < 0) ? (Widen<T>{1} / base_power_value<T, -N>(base))
-                   : int_pow(static_cast<Widen<T>>(base), static_cast<std::uintmax_t>(N));
+constexpr MagRepresentationOrError<Widen<T>> base_power_value(B base) {
+    if (N < 0) {
+        const auto inverse_result = base_power_value<T, -N>(base);
+        if (inverse_result.outcome != MagRepresentationOutcome::OK) {
+            return inverse_result;
+        }
+        return {
+            MagRepresentationOutcome::OK,
+            Widen<T>{1} / inverse_result.value,
+        };
+    }
+
+    return checked_int_pow(static_cast<Widen<T>>(base), static_cast<std::uintmax_t>(N));
 }
 
 template <typename T, std::size_t N>
-constexpr T product(const T (&values)[N]) {
+constexpr MagRepresentationOrError<T> product(const MagRepresentationOrError<T> (&values)[N]) {
+    for (const auto &x : values) {
+        if (x.outcome != MagRepresentationOutcome::OK) {
+            return x;
+        }
+    }
+
     T result{1};
     for (const auto &x : values) {
-        result *= x;
+        if ((x.value > 1) && (result > std::numeric_limits<T>::max() / x.value)) {
+            return {MagRepresentationOutcome::ERR_CANNOT_FIT};
+        }
+        result *= x.value;
     }
-    return result;
+    return {MagRepresentationOutcome::OK, result};
 }
 
 template <std::size_t N>
@@ -1769,21 +1826,6 @@ constexpr bool safe_to_cast_to(InputT x) {
     return SafeCastingChecker<T>{}(x);
 }
 
-enum class MagRepresentationOutcome {
-    OK,
-    ERR_NON_INTEGER_IN_INTEGER_TYPE,
-    ERR_RATIONAL_POWERS,
-    ERR_CANNOT_FIT,
-};
-
-template <typename T>
-struct MagRepresentationOrError {
-    MagRepresentationOutcome outcome;
-
-    // Only valid/meaningful if `outcome` is `OK`.
-    T value = {0};
-};
-
 template <typename T, typename... BPs>
 constexpr MagRepresentationOrError<T> get_value_result(Magnitude<BPs...>) {
     // Representing non-integer values in integral types is something we never plan to support.
@@ -1803,11 +1845,12 @@ constexpr MagRepresentationOrError<T> get_value_result(Magnitude<BPs...>) {
     constexpr auto widened_result =
         product({base_power_value<T, (ExpT<BPs>::num / ExpT<BPs>::den)>(BaseT<BPs>::value())...});
 
-    if (!safe_to_cast_to<T>(widened_result)) {
+    if ((widened_result.outcome != MagRepresentationOutcome::OK) ||
+        !safe_to_cast_to<T>(widened_result.value)) {
         return {MagRepresentationOutcome::ERR_CANNOT_FIT};
     }
 
-    return {MagRepresentationOutcome::OK, static_cast<T>(widened_result)};
+    return {MagRepresentationOutcome::OK, static_cast<T>(widened_result.value)};
 }
 
 // This simple overload avoids edge cases with creating and passing zero-sized arrays.
