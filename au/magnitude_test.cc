@@ -19,6 +19,7 @@
 #include "au/testing.hh"
 #include "gtest/gtest.h"
 
+using ::testing::DoubleEq;
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
@@ -264,6 +265,42 @@ TEST(CommonMagnitude, ZeroResultIndicatesAllInputsAreZero) {
 }
 
 namespace detail {
+
+MATCHER(CannotFit, "") {
+    return (arg.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT) && (arg.value == 0);
+}
+
+template <typename T, typename ValueMatcher>
+auto FitsAndMatchesValue(ValueMatcher &&matcher) {
+    return ::testing::AllOf(
+        ::testing::Field(&MagRepresentationOrError<T>::outcome,
+                         ::testing::Eq(MagRepresentationOutcome::OK)),
+        ::testing::Field(&MagRepresentationOrError<T>::value, std::forward<ValueMatcher>(matcher)));
+}
+
+template <typename T>
+auto FitsAndProducesValue(T val) {
+    return FitsAndMatchesValue<T>(SameTypeAndValue(val));
+}
+
+TEST(CheckedIntPow, FindsAppropriateLimits) {
+    EXPECT_THAT(checked_int_pow(int16_t{2}, 14), FitsAndProducesValue(int16_t{16384}));
+    EXPECT_THAT(checked_int_pow(int16_t{2}, 15), CannotFit());
+
+    EXPECT_THAT(checked_int_pow(uint16_t{2}, 15), FitsAndProducesValue(uint16_t{32768}));
+    EXPECT_THAT(checked_int_pow(uint16_t{2}, 16), CannotFit());
+
+    EXPECT_THAT(checked_int_pow(uint64_t{2}, 63),
+                FitsAndProducesValue(uint64_t{9'223'372'036'854'775'808u}));
+    EXPECT_THAT(checked_int_pow(uint64_t{2}, 64), CannotFit());
+
+    EXPECT_THAT(checked_int_pow(10.0, 308), FitsAndMatchesValue<double>(DoubleEq(1e308)));
+    EXPECT_THAT(checked_int_pow(10.0, 309), CannotFit());
+}
+
+TEST(GetValueResult, HandlesNumbersTooBigForUintmax) {
+    EXPECT_THAT(get_value_result<std::uintmax_t>(pow<64>(mag<2>())), CannotFit());
+}
 
 TEST(PrimeFactorizationT, NullMagnitudeFor1) {
     StaticAssertTypeEq<PrimeFactorizationT<1u>, Magnitude<>>();
