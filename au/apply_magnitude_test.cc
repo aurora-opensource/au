@@ -90,6 +90,28 @@ TEST(ApplyMagnitude, MultipliesThenDividesForRationalMagnitudeOnInteger) {
     EXPECT_THAT(apply_magnitude(5, three_halves), SameTypeAndValue(7));
 }
 
+TEST(ApplyMagnitude, SupportsNumeratorThatFitsInPromotedTypeButNotOriginalType) {
+    using T = uint16_t;
+    using P = PromotedType<T>;
+    ASSERT_TRUE((std::is_same<P, int32_t>::value))
+        << "This test fails on architectures where `uint16_t` doesn't get promoted to `int32_t`";
+
+    // Choose a magnitude whose effect will basically be to divide by 2.  (We make the denominator
+    // slightly _smaller_ than twice the numerator, rather than slightly _larger_, so that the
+    // division will end up on the "high" side of the target, and truncation will bring it down very
+    // slightly instead of going down a full integer.)
+    auto roughly_one_half = mag<100'000'000>() / mag<199'999'999>();
+
+    // The whole point of this test case is to apply a magnitude whose numerator fits in the
+    // promoted type, but does not fit in the target type itself.
+    ASSERT_EQ(get_value_result<P>(numerator(roughly_one_half)).outcome,
+              MagRepresentationOutcome::OK);
+    ASSERT_EQ(get_value_result<T>(numerator(roughly_one_half)).outcome,
+              MagRepresentationOutcome::ERR_CANNOT_FIT);
+
+    EXPECT_THAT(apply_magnitude(T{18}, roughly_one_half), SameTypeAndValue(T{9}));
+}
+
 TEST(ApplyMagnitude, MultipliesSingleNumberForRationalMagnitudeOnFloatingPoint) {
     // Helper similar to `std::transform`, but with more convenient interfaces.
     auto apply = [](std::vector<float> vals, auto fun) {
