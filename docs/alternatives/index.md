@@ -298,7 +298,14 @@ features.
             href="https://mpusz.github.io/units/framework/conversions_and_casting.html">consistent
             with <code>std::chrono</code> library</a>
         </td>
-        <td class="best">Automatically adapts to level of overflow risk</td>
+        <td class="best">
+            Meets `std::chrono` baseline, plus:
+            <ul>
+                <li class="check">Automatically adapts to level of overflow risk</li>
+                <li class="check">Runtime conversion checkers</li>
+                <li class="check">Constants have perfect conversion policy</li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>
