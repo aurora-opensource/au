@@ -20,6 +20,8 @@
 #include "gtest/gtest.h"
 
 using ::testing::DoubleEq;
+using ::testing::Eq;
+using ::testing::FloatEq;
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
@@ -208,6 +210,11 @@ TEST(GetValue, ImpossibleRequestsArePreventedAtCompileTime) {
     // get_value<int>(sqrt_2);
 }
 
+TEST(GetValue, HandlesRoots) {
+    constexpr auto sqrt_2 = get_value<double>(root<2>(mag<2>()));
+    EXPECT_DOUBLE_EQ(sqrt_2 * sqrt_2, 2.0);
+}
+
 TEST(GetValue, WorksForEmptyPack) {
     constexpr auto one = Magnitude<>{};
     EXPECT_THAT(get_value<int>(one), SameTypeAndValue(1));
@@ -270,6 +277,15 @@ MATCHER(CannotFit, "") {
     return (arg.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT) && (arg.value == 0);
 }
 
+MATCHER(NonIntegerInIntegerType, "") {
+    return (arg.outcome == MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE) &&
+           (arg.value == 0);
+}
+
+MATCHER(InvalidRoot, "") {
+    return (arg.outcome == MagRepresentationOutcome::ERR_INVALID_ROOT) && (arg.value == 0);
+}
+
 template <typename T, typename ValueMatcher>
 auto FitsAndMatchesValue(ValueMatcher &&matcher) {
     return ::testing::AllOf(
@@ -296,6 +312,106 @@ TEST(CheckedIntPow, FindsAppropriateLimits) {
 
     EXPECT_THAT(checked_int_pow(10.0, 308), FitsAndMatchesValue<double>(DoubleEq(1e308)));
     EXPECT_THAT(checked_int_pow(10.0, 309), CannotFit());
+}
+
+TEST(Root, ReturnsErrorForIntegralType) {
+    EXPECT_THAT(root(4, 2), NonIntegerInIntegerType());
+    EXPECT_THAT(root(uint8_t{125}, 3), NonIntegerInIntegerType());
+}
+
+TEST(Root, ReturnsErrorForZerothRoot) {
+    EXPECT_THAT(root(4.0, 0), InvalidRoot());
+    EXPECT_THAT(root(125.0, 0), InvalidRoot());
+}
+
+TEST(Root, NegativeRootsWorkForOddPowersOnly) {
+    EXPECT_THAT(root(-4.0, 2), InvalidRoot());
+    EXPECT_THAT(root(-125.0, 3), FitsAndProducesValue(-5.0));
+    EXPECT_THAT(root(-10000.0, 4), InvalidRoot());
+}
+
+TEST(Root, AnyRootOfOneIsOne) {
+    for (const std::uintmax_t r : {1, 2, 3, 4, 5, 6, 7, 8, 9}) {
+        EXPECT_THAT(root(1.0, r), FitsAndProducesValue(1.0));
+    }
+}
+
+TEST(Root, AnyRootOfZeroIsZero) {
+    for (const std::uintmax_t r : {1, 2, 3, 4, 5, 6, 7, 8, 9}) {
+        EXPECT_THAT(root(0.0, r), FitsAndProducesValue(0.0));
+    }
+}
+
+TEST(Root, OddRootOfNegativeOneIsItself) {
+    EXPECT_THAT(root(-1.0, 1), FitsAndProducesValue(-1.0));
+    EXPECT_THAT(root(-1.0, 2), InvalidRoot());
+    EXPECT_THAT(root(-1.0, 3), FitsAndProducesValue(-1.0));
+    EXPECT_THAT(root(-1.0, 4), InvalidRoot());
+    EXPECT_THAT(root(-1.0, 5), FitsAndProducesValue(-1.0));
+}
+
+TEST(Root, RecoversExactValueWherePossible) {
+    {
+        const auto sqrt_4f = root(4.0f, 2);
+        EXPECT_THAT(sqrt_4f.outcome, Eq(MagRepresentationOutcome::OK));
+        EXPECT_THAT(sqrt_4f.value, SameTypeAndValue(2.0f));
+    }
+
+    {
+        const auto cbrt_125l = root(125.0l, 3);
+        EXPECT_THAT(cbrt_125l.outcome, Eq(MagRepresentationOutcome::OK));
+        EXPECT_THAT(cbrt_125l.value, SameTypeAndValue(5.0l));
+    }
+}
+
+TEST(Root, HandlesArgumentsBetweenOneAndZero) {
+    EXPECT_THAT(root(0.25, 2), FitsAndProducesValue(0.5));
+    EXPECT_THAT(root(0.0001, 4), FitsAndMatchesValue<double>(DoubleEq(0.1)));
+}
+
+TEST(Root, ResultIsVeryCloseToPowlForPureRoots) {
+    for (const double x : {55.5, 123.456, 789.012, 3456.789, 12345.6789, 5.67e25}) {
+        for (const int r : {2, 3, 4, 5, 6, 7, 8, 9}) {
+            const auto double_result = root(x, r);
+            EXPECT_THAT(double_result.outcome, Eq(MagRepresentationOutcome::OK));
+            EXPECT_THAT(double_result.value, DoubleEq(std::powl(x, 1.0l / r)));
+
+            const auto float_result = root(static_cast<float>(x), r);
+            EXPECT_THAT(float_result.outcome, Eq(MagRepresentationOutcome::OK));
+            EXPECT_THAT(float_result.value, FloatEq(std::powl(x, 1.0l / r)));
+        }
+    }
+}
+
+TEST(Root, ResultAtLeastAsGoodAsPowlForRationalPowers) {
+    struct RationalPower {
+        std::uintmax_t num;
+        std::uintmax_t den;
+    };
+
+    auto result_via_root = [](double x, RationalPower power) {
+        return static_cast<double>(
+            root(checked_int_pow(static_cast<long double>(x), power.num).value, power.den).value);
+    };
+
+    auto result_via_powl = [](double x, RationalPower power) {
+        return static_cast<double>(
+            std::powl(static_cast<long double>(x),
+                      static_cast<long double>(power.num) / static_cast<long double>(power.den)));
+    };
+
+    auto round_trip_error = [](double x, RationalPower power, auto func) {
+        const auto round_trip_result = func(func(x, power), {power.den, power.num});
+        return std::abs(round_trip_result - x);
+    };
+
+    for (const auto base : {2.0, 3.1415, 98.6, 1.2e-10, 5.5e15}) {
+        for (const auto power : std::vector<RationalPower>{{5, 2}, {2, 3}, {7, 4}}) {
+            const auto error_from_root = round_trip_error(base, power, result_via_root);
+            const auto error_from_powl = round_trip_error(base, power, result_via_powl);
+            EXPECT_LE(error_from_root, error_from_powl);
+        }
+    }
 }
 
 TEST(GetValueResult, HandlesNumbersTooBigForUintmax) {
