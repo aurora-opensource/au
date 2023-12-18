@@ -90,6 +90,28 @@ TEST(ApplyMagnitude, MultipliesThenDividesForRationalMagnitudeOnInteger) {
     EXPECT_THAT(apply_magnitude(5, three_halves), SameTypeAndValue(7));
 }
 
+TEST(ApplyMagnitude, SupportsNumeratorThatFitsInPromotedTypeButNotOriginalType) {
+    using T = uint16_t;
+    using P = PromotedType<T>;
+    ASSERT_TRUE((std::is_same<P, int32_t>::value))
+        << "This test fails on architectures where `uint16_t` doesn't get promoted to `int32_t`";
+
+    // Choose a magnitude whose effect will basically be to divide by 2.  (We make the denominator
+    // slightly _smaller_ than twice the numerator, rather than slightly _larger_, so that the
+    // division will end up on the "high" side of the target, and truncation will bring it down very
+    // slightly instead of going down a full integer.)
+    auto roughly_one_half = mag<100'000'000>() / mag<199'999'999>();
+
+    // The whole point of this test case is to apply a magnitude whose numerator fits in the
+    // promoted type, but does not fit in the target type itself.
+    ASSERT_EQ(get_value_result<P>(numerator(roughly_one_half)).outcome,
+              MagRepresentationOutcome::OK);
+    ASSERT_EQ(get_value_result<T>(numerator(roughly_one_half)).outcome,
+              MagRepresentationOutcome::ERR_CANNOT_FIT);
+
+    EXPECT_THAT(apply_magnitude(T{18}, roughly_one_half), SameTypeAndValue(T{9}));
+}
+
 TEST(ApplyMagnitude, MultipliesSingleNumberForRationalMagnitudeOnFloatingPoint) {
     // Helper similar to `std::transform`, but with more convenient interfaces.
     auto apply = [](std::vector<float> vals, auto fun) {
@@ -196,10 +218,8 @@ TEST(WouldOverflow, AlwaysFalseForIntegerDivide) {
 }
 
 TEST(WouldOverflow, UsesNumeratorWhenApplyingRationalMagnitudeToIntegralType) {
-    auto TWO_THIRDS = mag<2>() / mag<3>();
-
     {
-        using ApplyTwoThirdsToI32 = ApplyMagnitudeT<int32_t, decltype(TWO_THIRDS)>;
+        using ApplyTwoThirdsToI32 = ApplyMagnitudeT<int32_t, decltype(mag<2>() / mag<3>())>;
 
         EXPECT_TRUE(ApplyTwoThirdsToI32::would_overflow(2'147'483'647));
         EXPECT_TRUE(ApplyTwoThirdsToI32::would_overflow(1'073'741'824));
@@ -215,14 +235,18 @@ TEST(WouldOverflow, UsesNumeratorWhenApplyingRationalMagnitudeToIntegralType) {
     }
 
     {
-        using ApplyTwoThirdsToU8 = ApplyMagnitudeT<uint8_t, decltype(TWO_THIRDS)>;
+        using ApplyRoughlyOneThirdToU8 =
+            ApplyMagnitudeT<uint8_t, decltype(mag<100'000'000>() / mag<300'000'001>())>;
 
-        EXPECT_TRUE(ApplyTwoThirdsToU8::would_overflow(255));
-        EXPECT_TRUE(ApplyTwoThirdsToU8::would_overflow(128));
+        ASSERT_TRUE((std::is_same<decltype(uint8_t{} * uint8_t{}), int32_t>::value))
+            << "This test fails on architectures where `uint8_t` doesn't get promoted to `int32_t`";
 
-        EXPECT_FALSE(ApplyTwoThirdsToU8::would_overflow(127));
-        EXPECT_FALSE(ApplyTwoThirdsToU8::would_overflow(1));
-        EXPECT_FALSE(ApplyTwoThirdsToU8::would_overflow(0));
+        EXPECT_TRUE(ApplyRoughlyOneThirdToU8::would_overflow(255));
+        EXPECT_TRUE(ApplyRoughlyOneThirdToU8::would_overflow(22));
+
+        EXPECT_FALSE(ApplyRoughlyOneThirdToU8::would_overflow(21));
+        EXPECT_FALSE(ApplyRoughlyOneThirdToU8::would_overflow(1));
+        EXPECT_FALSE(ApplyRoughlyOneThirdToU8::would_overflow(0));
     }
 }
 

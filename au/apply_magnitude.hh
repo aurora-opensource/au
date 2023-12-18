@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "au/apply_rational_magnitude_to_integral.hh"
 #include "au/magnitude.hh"
 
 namespace au {
@@ -132,6 +133,28 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_DIVIDE, T, is_T_integral> {
     }
 };
 
+template <typename T, typename Mag, bool is_T_signed>
+struct RationalOverflowChecker;
+template <typename T, typename Mag>
+struct RationalOverflowChecker<T, Mag, true> {
+    static constexpr bool would_overflow(const T &x) {
+        static_assert(std::is_signed<T>::value,
+                      "Mismatched instantiation (should never be done manually)");
+        const bool safe = (x <= MaxNonOverflowingValue<T, Mag>::value()) &&
+                          (x >= MinNonOverflowingValue<T, Mag>::value());
+        return !safe;
+    }
+};
+template <typename T, typename Mag>
+struct RationalOverflowChecker<T, Mag, false> {
+    static constexpr bool would_overflow(const T &x) {
+        static_assert(!std::is_signed<T>::value,
+                      "Mismatched instantiation (should never be done manually)");
+        const bool safe = (x <= MaxNonOverflowingValue<T, Mag>::value());
+        return !safe;
+    }
+};
+
 // Applying a (non-integer, non-inverse-integer) rational, for any integral type T.
 template <typename Mag, typename T>
 struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, true> {
@@ -141,13 +164,13 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, true> {
                   "Mismatched instantiation (should never be done manually)");
 
     constexpr T operator()(const T &x) {
-        return x * get_value<T>(numerator(Mag{})) / get_value<T>(denominator(Mag{}));
+        using P = PromotedType<T>;
+        return static_cast<T>(x * get_value<P>(numerator(Mag{})) /
+                              get_value<P>(denominator(Mag{})));
     }
 
     static constexpr bool would_overflow(const T &x) {
-        constexpr auto mag_value_result = get_value_result<T>(numerator(Mag{}));
-        return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
-            would_product_overflow(x, mag_value_result.value);
+        return RationalOverflowChecker<T, Mag, std::is_signed<T>::value>::would_overflow(x);
     }
 
     static constexpr bool would_truncate(const T &x) {
