@@ -369,21 +369,21 @@ TEST(Root, HandlesArgumentsBetweenOneAndZero) {
     EXPECT_THAT(root(0.0001, 4), FitsAndMatchesValue<double>(DoubleEq(0.1)));
 }
 
-TEST(Root, ResultIsVeryCloseToPowlForPureRoots) {
+TEST(Root, ResultIsVeryCloseToStdPowForPureRoots) {
     for (const double x : {55.5, 123.456, 789.012, 3456.789, 12345.6789, 5.67e25}) {
         for (const int r : {2, 3, 4, 5, 6, 7, 8, 9}) {
             const auto double_result = root(x, r);
             EXPECT_THAT(double_result.outcome, Eq(MagRepresentationOutcome::OK));
-            EXPECT_THAT(double_result.value, DoubleEq(std::powl(x, 1.0l / r)));
+            EXPECT_THAT(double_result.value, DoubleEq(std::pow(x, 1.0l / r)));
 
             const auto float_result = root(static_cast<float>(x), r);
             EXPECT_THAT(float_result.outcome, Eq(MagRepresentationOutcome::OK));
-            EXPECT_THAT(float_result.value, FloatEq(std::powl(x, 1.0l / r)));
+            EXPECT_THAT(float_result.value, FloatEq(std::pow(x, 1.0l / r)));
         }
     }
 }
 
-TEST(Root, ResultAtLeastAsGoodAsPowlForRationalPowers) {
+TEST(Root, ResultAtLeastAsGoodAsStdPowForRationalPowers) {
     struct RationalPower {
         std::uintmax_t num;
         std::uintmax_t den;
@@ -394,10 +394,10 @@ TEST(Root, ResultAtLeastAsGoodAsPowlForRationalPowers) {
             root(checked_int_pow(static_cast<long double>(x), power.num).value, power.den).value);
     };
 
-    auto result_via_powl = [](double x, RationalPower power) {
+    auto result_via_std_pow = [](double x, RationalPower power) {
         return static_cast<double>(
-            std::powl(static_cast<long double>(x),
-                      static_cast<long double>(power.num) / static_cast<long double>(power.den)));
+            std::pow(static_cast<long double>(x),
+                     static_cast<long double>(power.num) / static_cast<long double>(power.den)));
     };
 
     auto round_trip_error = [](double x, RationalPower power, auto func) {
@@ -408,8 +408,8 @@ TEST(Root, ResultAtLeastAsGoodAsPowlForRationalPowers) {
     for (const auto base : {2.0, 3.1415, 98.6, 1.2e-10, 5.5e15}) {
         for (const auto power : std::vector<RationalPower>{{5, 2}, {2, 3}, {7, 4}}) {
             const auto error_from_root = round_trip_error(base, power, result_via_root);
-            const auto error_from_powl = round_trip_error(base, power, result_via_powl);
-            EXPECT_LE(error_from_root, error_from_powl);
+            const auto error_from_std_pow = round_trip_error(base, power, result_via_std_pow);
+            EXPECT_LE(error_from_root, error_from_std_pow);
         }
     }
 }
