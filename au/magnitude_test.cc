@@ -331,13 +331,13 @@ TEST(Root, NegativeRootsWorkForOddPowersOnly) {
 }
 
 TEST(Root, AnyRootOfOneIsOne) {
-    for (const std::uintmax_t r : {1, 2, 3, 4, 5, 6, 7, 8, 9}) {
+    for (const std::uintmax_t r : {1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u}) {
         EXPECT_THAT(root(1.0, r), FitsAndProducesValue(1.0));
     }
 }
 
 TEST(Root, AnyRootOfZeroIsZero) {
-    for (const std::uintmax_t r : {1, 2, 3, 4, 5, 6, 7, 8, 9}) {
+    for (const std::uintmax_t r : {1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u}) {
         EXPECT_THAT(root(0.0, r), FitsAndProducesValue(0.0));
     }
 }
@@ -371,14 +371,14 @@ TEST(Root, HandlesArgumentsBetweenOneAndZero) {
 
 TEST(Root, ResultIsVeryCloseToStdPowForPureRoots) {
     for (const double x : {55.5, 123.456, 789.012, 3456.789, 12345.6789, 5.67e25}) {
-        for (const int r : {2, 3, 4, 5, 6, 7, 8, 9}) {
+        for (const auto r : {2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u}) {
             const auto double_result = root(x, r);
             EXPECT_THAT(double_result.outcome, Eq(MagRepresentationOutcome::OK));
-            EXPECT_THAT(double_result.value, DoubleEq(std::pow(x, 1.0l / r)));
+            EXPECT_THAT(double_result.value, DoubleEq(static_cast<double>(std::pow(x, 1.0l / r))));
 
             const auto float_result = root(static_cast<float>(x), r);
             EXPECT_THAT(float_result.outcome, Eq(MagRepresentationOutcome::OK));
-            EXPECT_THAT(float_result.value, FloatEq(std::pow(x, 1.0l / r)));
+            EXPECT_THAT(float_result.value, FloatEq(static_cast<float>(std::pow(x, 1.0l / r))));
         }
     }
 }
