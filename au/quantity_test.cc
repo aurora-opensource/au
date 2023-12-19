@@ -263,18 +263,20 @@ TEST(Quantity, HandlesBaseDimensionsWithFractionalExponents) {
 }
 
 TEST(Quantity, HandlesMagnitudesWithFractionalExponents) {
-    using RootKiloFeet = decltype(root<2>(Kilo<Feet>{}));
-    constexpr auto x = make_quantity<RootKiloFeet>(3);
+    constexpr auto x = sqrt(kilo(feet))(3.0);
 
     // We can retrieve the value in the same unit (regardless of the scale's fractional powers).
-    EXPECT_EQ(x.in(RootKiloFeet{}), 3);
+    EXPECT_EQ(x.in(sqrt(kilo(feet))), 3.0);
 
     // We can retrieve the value in a *different* unit, which *also* has fractional powers, as long
     // as their *ratio* has no fractional powers.
-    EXPECT_EQ(x.in(root<2>(Milli<Feet>{})), 3'000);
+    EXPECT_EQ(x.in(sqrt(milli(feet))), 3'000.0);
+
+    // We can also retrieve the value in a different unit whose ratio *does* have fractional powers.
+    EXPECT_NEAR(x.in(sqrt(feet)), 94.86833, 1e-5);
 
     // Squaring the fractional base power gives us an exact non-fractional dimension and scale.
-    EXPECT_EQ(x * x, kilo(feet)(9));
+    EXPECT_EQ(x * x, kilo(feet)(9.0));
 }
 
 // A custom "Quantity-equivalent" type, whose interop with Quantity we'll provide below.
