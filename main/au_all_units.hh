@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.3-30-ga771f57
+// Version identifier: 0.3.3-31-g7d8a544
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -1754,7 +1754,7 @@ namespace detail {
 enum class MagRepresentationOutcome {
     OK,
     ERR_NON_INTEGER_IN_INTEGER_TYPE,
-    ERR_RATIONAL_POWERS,
+    ERR_INVALID_ROOT,
     ERR_CANNOT_FIT,
 };
 
@@ -1800,10 +1800,101 @@ constexpr MagRepresentationOrError<T> checked_int_pow(T base, std::uintmax_t exp
     return result;
 }
 
-template <typename T, std::intmax_t N, typename B>
+template <typename T>
+constexpr MagRepresentationOrError<T> root(T x, std::uintmax_t n) {
+    // The "zeroth root" would be mathematically undefined.
+    if (n == 0) {
+        return {MagRepresentationOutcome::ERR_INVALID_ROOT};
+    }
+
+    // The "first root" is trivial.
+    if (n == 1) {
+        return {MagRepresentationOutcome::OK, x};
+    }
+
+    // We only support nontrivial roots of floating point types.
+    if (!std::is_floating_point<T>::value) {
+        return {MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE};
+    }
+
+    // Handle negative numbers: only odd roots are allowed.
+    if (x < 0) {
+        if (n % 2 == 0) {
+            return {MagRepresentationOutcome::ERR_INVALID_ROOT};
+        } else {
+            const auto negative_result = root(-x, n);
+            if (negative_result.outcome != MagRepresentationOutcome::OK) {
+                return {negative_result.outcome};
+            }
+            return {MagRepresentationOutcome::OK, static_cast<T>(-negative_result.value)};
+        }
+    }
+
+    // Handle special cases of zero and one.
+    if (x == 0 || x == 1) {
+        return {MagRepresentationOutcome::OK, x};
+    }
+
+    // Handle numbers bewtween 0 and 1.
+    if (x < 1) {
+        const auto inverse_result = root(T{1} / x, n);
+        if (inverse_result.outcome != MagRepresentationOutcome::OK) {
+            return {inverse_result.outcome};
+        }
+        return {MagRepresentationOutcome::OK, static_cast<T>(T{1} / inverse_result.value)};
+    }
+
+    //
+    // At this point, error conditions are finished, and we can proceed with the "core" algorithm.
+    //
+
+    // Always use `long double` for intermediate computations.  We don't ever expect people to be
+    // calling this at runtime, so we want maximum accuracy.
+    long double lo = 1.0;
+    long double hi = x;
+
+    // Do a binary search to find the closest value such that `checked_int_pow` recovers the input.
+    //
+    // Because we know `n > 1`, and `x > 1`, and x^n is monotonically increasing, we know that
+    // `checked_int_pow(lo, n) < x < checked_int_pow(hi, n)`.  We will preserve this as an
+    // invariant.
+    while (lo < hi) {
+        long double mid = lo + (hi - lo) / 2;
+
+        auto result = checked_int_pow(mid, n);
+
+        if (result.outcome != MagRepresentationOutcome::OK) {
+            return {result.outcome};
+        }
+
+        // Early return if we get lucky with an exact answer.
+        if (result.value == x) {
+            return {MagRepresentationOutcome::OK, static_cast<T>(mid)};
+        }
+
+        // Check for stagnation.
+        if (mid == lo || mid == hi) {
+            break;
+        }
+
+        // Preserve the invariant that `checked_int_pow(lo, n) < x < checked_int_pow(hi, n)`.
+        if (result.value < x) {
+            lo = mid;
+        } else {
+            hi = mid;
+        }
+    }
+
+    // Pick whichever one gets closer to the target.
+    const auto lo_diff = x - checked_int_pow(lo, n).value;
+    const auto hi_diff = checked_int_pow(hi, n).value - x;
+    return {MagRepresentationOutcome::OK, static_cast<T>(lo_diff < hi_diff ? lo : hi)};
+}
+
+template <typename T, std::intmax_t N, std::uintmax_t D, typename B>
 constexpr MagRepresentationOrError<Widen<T>> base_power_value(B base) {
     if (N < 0) {
-        const auto inverse_result = base_power_value<T, -N>(base);
+        const auto inverse_result = base_power_value<T, -N, D>(base);
         if (inverse_result.outcome != MagRepresentationOutcome::OK) {
             return inverse_result;
         }
@@ -1813,7 +1904,12 @@ constexpr MagRepresentationOrError<Widen<T>> base_power_value(B base) {
         };
     }
 
-    return checked_int_pow(static_cast<Widen<T>>(base), static_cast<std::uintmax_t>(N));
+    const auto power_result =
+        checked_int_pow(static_cast<Widen<T>>(base), static_cast<std::uintmax_t>(N));
+    if (power_result.outcome != MagRepresentationOutcome::OK) {
+        return {power_result.outcome};
+    }
+    return (D > 1) ? root(power_result.value, D) : power_result;
 }
 
 template <typename T, std::size_t N>
@@ -1877,15 +1973,10 @@ constexpr MagRepresentationOrError<T> get_value_result(Magnitude<BPs...>) {
         return {MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE};
     }
 
-    // Computing values for rational base powers is something we would _like_ to support, but we
-    // need a `constexpr` implementation of `powl()` first.
-    if (!all({(ExpT<BPs>::den == 1)...})) {
-        return {MagRepresentationOutcome::ERR_RATIONAL_POWERS};
-    }
-
     // Force the expression to be evaluated in a constexpr context.
     constexpr auto widened_result =
-        product({base_power_value<T, (ExpT<BPs>::num / ExpT<BPs>::den)>(BaseT<BPs>::value())...});
+        product({base_power_value<T, ExpT<BPs>::num, static_cast<std::uintmax_t>(ExpT<BPs>::den)>(
+            BaseT<BPs>::value())...});
 
     if ((widened_result.outcome != MagRepresentationOutcome::OK) ||
         !safe_to_cast_to<T>(widened_result.value)) {
@@ -1917,8 +2008,8 @@ constexpr T get_value(Magnitude<BPs...> m) {
 
     static_assert(result.outcome != MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE,
                   "Cannot represent non-integer in integral destination type");
-    static_assert(result.outcome != MagRepresentationOutcome::ERR_RATIONAL_POWERS,
-                  "Computing values for rational powers not yet supported");
+    static_assert(result.outcome != MagRepresentationOutcome::ERR_INVALID_ROOT,
+                  "Could not compute root for rational power of base");
     static_assert(result.outcome != MagRepresentationOutcome::ERR_CANNOT_FIT,
                   "Value outside range of destination type");
 
