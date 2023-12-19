@@ -358,9 +358,9 @@ TEST(Root, RecoversExactValueWherePossible) {
     }
 
     {
-        const auto cbrt_125l = root(125.0l, 3);
-        EXPECT_THAT(cbrt_125l.outcome, Eq(MagRepresentationOutcome::OK));
-        EXPECT_THAT(cbrt_125l.value, SameTypeAndValue(5.0l));
+        const auto cbrt_125L = root(125.0L, 3);
+        EXPECT_THAT(cbrt_125L.outcome, Eq(MagRepresentationOutcome::OK));
+        EXPECT_THAT(cbrt_125L.value, SameTypeAndValue(5.0L));
     }
 }
 
@@ -374,11 +374,11 @@ TEST(Root, ResultIsVeryCloseToStdPowForPureRoots) {
         for (const auto r : {2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u}) {
             const auto double_result = root(x, r);
             EXPECT_THAT(double_result.outcome, Eq(MagRepresentationOutcome::OK));
-            EXPECT_THAT(double_result.value, DoubleEq(static_cast<double>(std::pow(x, 1.0l / r))));
+            EXPECT_THAT(double_result.value, DoubleEq(static_cast<double>(std::pow(x, 1.0L / r))));
 
             const auto float_result = root(static_cast<float>(x), r);
             EXPECT_THAT(float_result.outcome, Eq(MagRepresentationOutcome::OK));
-            EXPECT_THAT(float_result.value, FloatEq(static_cast<float>(std::pow(x, 1.0l / r))));
+            EXPECT_THAT(float_result.value, FloatEq(static_cast<float>(std::pow(x, 1.0L / r))));
         }
     }
 }
