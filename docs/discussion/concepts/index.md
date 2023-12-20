@@ -18,6 +18,11 @@ and help you use units libraries more effectively.
   thing as "unitless"; we support dimensionless units, like `Percent`.  Here we explain how the
   library handles these situations, and avoids common pitfalls.
 
+- **[Overflow](./overflow.md)**.  Unit conversions risk overflow.  The degree of risk depends on
+  both the conversion factor, and the range of values that fit in the destination type.  Learn how
+  different units libraries have approached this problem, including Au's novel contribution, the
+  "overflow safety surface".
+
 - **[Quantity Point](./quantity_point.md)**.  An abstraction for "point types" that have units.
   Most use cases don't need this, but for a few --- including temperatures --- it's indispensable.
 
