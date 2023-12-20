@@ -1,0 +1,2073 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++ units library, by Aurora">
+      
+      
+        <meta name="author" content="Au team">
+      
+      
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/0.3.4/howto/interop/">
+      
+      
+        <link rel="prev" href="../new-units/">
+      
+      
+        <link rel="next" href="nholthaus/">
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
+    
+    
+      
+        <title>Inter-library Interoperation - The Au units library</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.35e1ed30.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../tweaks.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#inter-library-interoperation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../assets/au-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            The Au units library
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Inter-library Interoperation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../assets/au-logo.png" alt="logo">
+
+    </a>
+    The Au units library
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au documentation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../develop/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Development Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../supported-compilers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Supported Compilers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Alternatives
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Alternatives
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alternatives/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Comparison of Alternatives
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Discussion
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Discussion
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Discussion Docs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Generic Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/arithmetic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Arithmetic Operations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/common_unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Common Units
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/dimensionless/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dimensionless Units and Quantities
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/overflow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overflow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/quantity_point/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quantity Point
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/zero/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Zero
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Idioms
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            Idioms
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/idioms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au Idioms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/idioms/unit-slots/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unit slots
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Implementation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            Implementation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Implementation Details
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/applying_magnitudes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Applying Magnitudes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/vector_space/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Vector Space Representations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Howto
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Howto
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How-to guides
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new-dimensions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defining new dimensions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new-units/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defining new units
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Interop
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            Interop
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Inter-library Interoperation
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Inter-library Interoperation
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#define-the-equivalences" class="md-nav__link">
+    Define the equivalences
+  </a>
+  
+    <nav class="md-nav" aria-label="Define the equivalences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#write-tests" class="md-nav__link">
+    Write tests
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implement-the-definitions" class="md-nav__link">
+    Implement the definitions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-create-a-shim-file" class="md-nav__link">
+    (Optional) Create a shim file
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="nholthaus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nholthaus/units Interoperation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reference Docs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/constant/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Constant
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/corresponding_quantity/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Corresponding Quantity
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/magnitude/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Magnitude
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/math/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Math functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/powers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Powers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/prefix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prefix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/quantity/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quantity
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/quantity_point/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    QuantityPoint
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/zero/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Zero
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_9_12" id="__nav_9_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Detail
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_12">
+            <span class="md-nav__icon md-icon"></span>
+            Detail
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/detail/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Implementation Details
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/detail/dimension/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dimension
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/detail/monovalue_types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monovalue Types
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/detail/packs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Parameter packs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tutorial
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorial
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tutorials: home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 101: Quantity Makers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/102-api-types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 102: API Types
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 103: Unit Conversions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_5" id="__nav_10_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Exercise
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_5">
+            <span class="md-nav__icon md-icon"></span>
+            Exercise
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 101: Quantity Makers Exercise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 102: API Types Exercise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 103: Unit Conversions Exercise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="inter-library-interoperation">Inter-library Interoperation<a class="headerlink" href="#inter-library-interoperation" title="Permanent link">&para;</a></h1>
+<p>This guide explains how to use Au&rsquo;s <a href="../../reference/corresponding_quantity/">corresponding quantity
+machinery</a> to set up minimum-friction interoperation
+between Au and some other C++ units library.  The main use case is for migrating either to or from
+Au.  Once you set this up, you will be able to pass Au&rsquo;s quantity types to APIs expecting equivalent
+types from the other library, and vice versa.  This flexibility will make that migration much
+easier, because it will let you migrate individual build targets without forcing you to upgrade all
+of their callers at the same time.</p>
+<p>Here are the steps involved.</p>
+<ol>
+<li>Define the equivalences.</li>
+<li><em>(Optional)</em> Create a shim file.</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In this generic guide, the details for each step will <strong>strongly</strong> depend on the details of the
+library you&rsquo;re using.  In each step, we will explain the abstract goals to achieve, and we&rsquo;ll
+show a concrete example of achieving them with one specific units library.</p>
+<p>We chose the nholthaus library for all our examples because it&rsquo;s very popular, and it
+illustrates the concepts nicely.  However, if you&rsquo;re <em>actually</em> using the nholthaus library,
+<strong>you do not need to follow this guide!</strong>  That&rsquo;s because we already did all of the hard work
+for you, and included nholthaus-specific migration machinery in the repository.  We have <a href="nholthaus/">a
+separate, more specific how-to guide</a> which shows you how to use it.</p>
+</div>
+<h2 id="define-the-equivalences">Define the equivalences<a class="headerlink" href="#define-the-equivalences" title="Permanent link">&para;</a></h2>
+<p>&ldquo;Define the equivalences&rdquo; means to specify which types in the other units library are equivalent to
+which Au quantity types.  To do so, you&rsquo;ll create a new file where these definitions will live. We
+strongly recommend also creating a test file, and we&rsquo;ll assume for the rest of this guide that you
+have done so.</p>
+<p>If you&rsquo;re defining equivalence with an individual concrete type, the <a href="../../reference/corresponding_quantity/">reference
+documentation</a> will likely be sufficient.  However,
+establishing correspondence with another units library is more complicated, because you&rsquo;ll be
+defining equivalencies with a <strong>family of type templates</strong>.  This section explains how to manage
+that complexity effectively.</p>
+<h3 id="write-tests">Write tests<a class="headerlink" href="#write-tests" title="Permanent link">&para;</a></h3>
+<p>The tests in the test file will be phrased directly in terms of the features we&rsquo;re trying to
+achieve.  In particular, our goal is for all of the following statements to be true:</p>
+<ol>
+<li>
+<p>An <a href="../../reference/corresponding_quantity/#as-quantity"><code>as_quantity()</code></a> mapping exists for
+   the other library&rsquo;s type, and it returns the right kind of Au quantity.</p>
+</li>
+<li>
+<p>We can pass the other library&rsquo;s type to an API expecting the corresponding Au type.</p>
+</li>
+<li>
+<p>We can pass the Au type to an API expecting the other library&rsquo;s type.</p>
+<ul>
+<li>If we got the Au type from step 2, then this &ldquo;round trip&rdquo; conversion must be the identity.</li>
+</ul>
+</li>
+</ol>
+<p>You will probably be writing a lot of these test cases, so it&rsquo;s worth making a small utility that
+tests all three.  The precise format will depend on the details of the other library, but here&rsquo;s an
+example for the <code>nholthaus/units</code> library:</p>
+<details class="example">
+<summary>Example: testing nholthaus/units equivalencies</summary>
+<p>The Au repo includes ready-made equivalence definitions for the
+<a href="https://github.com/nholthaus/units">nholthaus/units</a> library, as demonstrated in detail in our
+<a href="nholthaus/">how-to guide for using them</a>.  Those definitions include tests.  Here&rsquo;s how we
+wrote them.</p>
+<p>First, we make a <a href="https://github.com/aurora-opensource/au/blob/3fa22a2/compatibility/nholthaus_units_test.cc#L39-L72">templated
+utility</a>
+that tests all three properties listed above:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">NholthausType</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">AuUnit</span><span class="o">&gt;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kt">void</span><span class="w"> </span><span class="n">expect_equivalent</span><span class="p">(</span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">AuUnit</span><span class="o">&gt;</span><span class="w"> </span><span class="n">expected_au_unit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">original</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NholthausType</span><span class="p">{</span><span class="mf">1.2</span><span class="p">};</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">equivalent_to_expected_au_unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityEquivalent</span><span class="p">(</span><span class="n">expected_au_unit</span><span class="p">(</span><span class="mf">1.2</span><span class="p">));</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="c1">// Check that an `as_quantity` mapping _exists_ for this nholthaus type, and that its result</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="c1">// is quantity-equivalent to the given QuantityMaker applied to the same underlying value.</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">converted_to_quantity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as_quantity</span><span class="p">(</span><span class="n">original</span><span class="p">);</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="n">EXPECT_THAT</span><span class="p">(</span><span class="n">converted_to_quantity</span><span class="p">,</span><span class="w"> </span><span class="n">equivalent_to_expected_au_unit</span><span class="p">);</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="c1">// Check that this nholthaus type is _implicitly_ convertible to its equivalent type, and</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="c1">// that again, the result is quantity-equivalent to the given QuantityMaker applied to the</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="c1">// same underlying value.</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">converted_to_quantity</span><span class="p">)</span><span class="w"> </span><span class="n">implicitly_converted_to_quantity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">original</span><span class="p">;</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="n">EXPECT_THAT</span><span class="p">(</span><span class="n">implicitly_converted_to_quantity</span><span class="p">,</span><span class="w"> </span><span class="n">equivalent_to_expected_au_unit</span><span class="p">);</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">    </span><span class="c1">// Check that the equivalent Quantity type can be _implicitly_ converted back to the</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">    </span><span class="c1">// original nholthaus type, and that this round trip is the identity.</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">NholthausType</span><span class="w"> </span><span class="n">round_trip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">implicitly_converted_to_quantity</span><span class="p">;</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">    </span><span class="n">EXPECT_EQ</span><span class="p">(</span><span class="n">round_trip</span><span class="p">,</span><span class="w"> </span><span class="n">original</span><span class="p">);</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="p">}</span>
+</code></pre></div>
+<p>(In the above, note that <code>QuantityEquivalent</code> is a utility from the Au library.  It&rsquo;s found in
+<code>"au/testing.hh"</code>, which is available in our <a href="../../install/#full">full installation</a> but not
+in our <a href="../../install/#single-file">single-file installation</a>.  This matcher tests an object
+against the value in its constructor (here, <code>expected_au_unit(1.2)</code>).  It makes sure that their
+<em>types</em> are <a href="../../reference/quantity/#are-quantity-types-equivalent">quantity-equivalent</a>,
+and their <em>values</em> are equal.)</p>
+<p>Next, we write test cases which take advantage of this utility, such as <a href="https://github.com/aurora-opensource/au/blob/3fa22a2/compatibility/nholthaus_units_test.cc#L74-L82">this
+group</a>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">TEST</span><span class="p">(</span><span class="n">NholthausTypes</span><span class="p">,</span><span class="w"> </span><span class="n">MapsBaseUnitsOntoCorrectAuQuantityTypes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">expect_equivalent</span><span class="o">&lt;::</span><span class="n">units</span><span class="o">::</span><span class="n">length</span><span class="o">::</span><span class="n">meter_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">meters</span><span class="p">);</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">expect_equivalent</span><span class="o">&lt;::</span><span class="n">units</span><span class="o">::</span><span class="n">mass</span><span class="o">::</span><span class="n">kilogram_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">kilo</span><span class="p">(</span><span class="n">grams</span><span class="p">));</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="n">expect_equivalent</span><span class="o">&lt;::</span><span class="n">units</span><span class="o">::</span><span class="n">time</span><span class="o">::</span><span class="n">second_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">seconds</span><span class="p">);</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="n">expect_equivalent</span><span class="o">&lt;::</span><span class="n">units</span><span class="o">::</span><span class="n">angle</span><span class="o">::</span><span class="n">radian_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">radians</span><span class="p">);</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="n">expect_equivalent</span><span class="o">&lt;::</span><span class="n">units</span><span class="o">::</span><span class="n">current</span><span class="o">::</span><span class="n">ampere_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">amperes</span><span class="p">);</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="n">expect_equivalent</span><span class="o">&lt;::</span><span class="n">units</span><span class="o">::</span><span class="n">temperature</span><span class="o">::</span><span class="n">kelvin_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">kelvins</span><span class="p">);</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="n">expect_equivalent</span><span class="o">&lt;::</span><span class="n">units</span><span class="o">::</span><span class="n">data</span><span class="o">::</span><span class="n">byte_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bytes</span><span class="p">);</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="p">}</span>
+</code></pre></div>
+<p>Note how the utility makes these very easy to read.</p>
+</details>
+<h3 id="implement-the-definitions">Implement the definitions<a class="headerlink" href="#implement-the-definitions" title="Permanent link">&para;</a></h3>
+<p>Generally, writing an implementation that passes these unit tests includes:</p>
+<ol>
+<li>
+<p>Figuring out which template parameters are most relevant for the other library&rsquo;s types.</p>
+</li>
+<li>
+<p>Writing helpers that can extract the <code>Unit</code> and <code>Rep</code> information from these template parameters.</p>
+</li>
+<li>
+<p>Writing a partial specialization of <code>au::CorrespondingQuantity</code> using the template parameters
+   from the first step.</p>
+</li>
+</ol>
+<p>Again, the details will depend strongly on the details of the library you&rsquo;re working with, but
+here&rsquo;s an example using the nholthaus library:</p>
+<details class="example">
+<summary>Step 1: determine template parameters</summary>
+<p>The main user-facing types in the nholthaus library are based on the three-parameter
+<code>units::unit_t&lt;U, R, S&gt;</code> template.</p>
+<ul>
+<li><code>U</code> is the unit, a specialization of <code>units::unit&lt;...&gt;</code> (more on this later).</li>
+<li><code>R</code> is the Rep, just as in Au.</li>
+<li><code>S</code> is the &ldquo;scale&rdquo;.</li>
+</ul>
+<p>The point of <code>S</code> is to support non-linear &ldquo;units&rdquo;, such as decibels.  Since Au doesn&rsquo;t support
+these as of the time of writing this guide (see
+<a href="https://github.com/aurora-opensource/au/issues/41">#41</a>), <em>we don&rsquo;t need to let this vary</em>: we
+can hardcode it as <code>units::linear_scale</code>.</p>
+<p><code>U</code> is based on the four-parameter <code>units::unit&lt;RationalScale, BaseUnit, PiPower, Offset&gt;</code>
+template.</p>
+<ul>
+<li><code>RationalScale</code> is a rational scale factor (say, 1000 for <code>kilometer_t</code>).</li>
+<li><code>BaseUnit</code> is the &ldquo;base unit&rdquo;: it&rsquo;s the coherent (that is, unscaled) unit of the dimension we
+  want to represent.</li>
+<li><code>PiPower</code> is the &ldquo;pi power&rdquo;.  The overall unit is further rescaled by <span class="arithmatex"><span class="MathJax_Preview">\pi^\text{PiPower}</span><script type="math/tex">\pi^\text{PiPower}</script></span> &mdash; an
+  ingenious solution that enables maximally accurate handling of degrees and radians, despite
+  the lack of <a href="../../reference/magnitude/">full-fledged magnitudes</a>.</li>
+<li><code>Offset</code> is the linear offset of this unit, which enables certain <a href="http://videocortex.io/2018/Affine-Space-Types/">affine space
+  type</a> use cases such as temperatures (although
+  with less expressivity than a full <a href="../../discussion/concepts/quantity_point/">quantity point
+  solution</a>).</li>
+</ul>
+<p>If <code>Offset</code> is anything other than zero, there&rsquo;s a good chance our use case needs quantity
+<em>point</em>, not just quantity.  This makes automatic conversions risky, so we&rsquo;ll opt out of them in
+these use cases, by hardcoding the <code>Offset</code> parameter to <code>std::ratio&lt;0&gt;</code> (that is, &ldquo;no offset&rdquo;).</p>
+<p>The other template parameters are all necessary.  <code>RationalScale</code> and <code>PiPower</code> combine together
+to represent the <a href="../../reference/magnitude/">magnitude</a> of the Au unit type.  <code>BaseUnit</code> is
+what tells us which dimension to use, and which unit of that dimension corresponds to a scale
+factor of 1.</p>
+<p>Thus, our final set of template parameters includes <code>R</code>, <code>RationalScale</code>, <code>BaseUnit</code>, and
+<code>PiPower</code>.</p>
+</details>
+<details class="example">
+<summary>Step 2: write utilities to compute <code>Unit</code> and <code>Rep</code></summary>
+<p>The template parameters in the previous section &mdash; namely, <code>R</code>, <code>RationalScale</code>, <code>BaseUnit</code>,
+and <code>PiPower</code> &mdash; will be the <em>inputs</em> for these utilities.  The ultimate <em>outputs</em> will be
+<code>Unit</code> and <code>Rep</code>.  (Of course, we&rsquo;ll often want to write intermediate utilities that facilitate
+these final answers.)</p>
+<p>In our case, <code>Rep</code> is very easy: it&rsquo;s exactly equivalent to <code>R</code>.</p>
+<p><code>Unit</code> is much more involved, but we can break it into two main steps:</p>
+<ol>
+<li>Find the Au unit corresponding to <code>BaseUnit</code>.</li>
+<li>Find the Au magnitude corresponding to <code>RationalScale</code> and <code>PiPower</code>.</li>
+</ol>
+<p>Once we have these, we can simply multiply this Au unit by this Au magnitude.</p>
+<p>Let&rsquo;s call our top-level utility <code>AuUnit</code>.  If <code>NholthausUnit</code> is some specialization of
+<code>units::unit&lt;...&gt;</code>, then our goal is to be able to write:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">using</span><span class="w"> </span><span class="n">Unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">AuUnit</span><span class="o">&lt;</span><span class="n">NholthausUnit</span><span class="o">&gt;::</span><span class="n">type</span><span class="p">;</span>
+</code></pre></div>
+<p>To save space, we&rsquo;ll simply <em>describe</em> any utilities more low-level than <code>AuUnit</code>, omitting
+their implementations.  Of course, full implementations can be found in our <a href="https://github.com/aurora-opensource/au/blob/main/compatibility/nholthaus_units.hh">ready-made
+nholthaus conversion
+file</a>.</p>
+<p>For the <em>base unit</em>, we know that nholthaus represents it as a set of <a href="../../discussion/implementation/vector_space/">rational
+exponents</a> of <em>units of base dimensions</em>.
+These are the seven base SI units &mdash; meters, kilograms, and so on &mdash; plus radians and bytes.
+Therefore, let&rsquo;s assume we have one &ldquo;extractor&rdquo; utility for each of these.  For example,
+<code>MeterExpT&lt;NholthausUnit&gt;</code> gives the exponent (as
+a <a href="https://en.cppreference.com/w/cpp/numeric/ratio/ratio"><code>std::ratio</code></a> specialization) for
+<code>Meters</code> in <code>NholthausUnit</code>.  If we write a similar utility for each base dimension, we can
+fully compute the base unit.</p>
+<p>For the <em>magnitude</em>, we can write a utility, <code>NholthausUnitMag&lt;NholthausUnit&gt;</code>.  This will make
+a separate magnitude for the <code>RationalScale</code> and <code>PiPower</code> that went into <code>NholthausUnit</code>, and
+simply multiply them.</p>
+<p>With these in hand, we can complete our <code>AuUnit</code> definition:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">NholthausUnit</span><span class="o">&gt;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">AuUnit</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">NU</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NholthausUnit</span><span class="p">;</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">        </span><span class="n">UnitPowerT</span><span class="o">&lt;</span><span class="n">Meters</span><span class="p">,</span><span class="w"> </span><span class="n">MeterExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">MeterExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">den</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">        </span><span class="n">UnitPowerT</span><span class="o">&lt;</span><span class="n">Kilo</span><span class="o">&lt;</span><span class="n">Grams</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">KilogramExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">KilogramExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">den</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">        </span><span class="n">UnitPowerT</span><span class="o">&lt;</span><span class="n">Seconds</span><span class="p">,</span><span class="w"> </span><span class="n">SecondExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">SecondExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">den</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">        </span><span class="n">UnitPowerT</span><span class="o">&lt;</span><span class="n">Radians</span><span class="p">,</span><span class="w"> </span><span class="n">RadianExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">RadianExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">den</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">        </span><span class="n">UnitPowerT</span><span class="o">&lt;</span><span class="n">Amperes</span><span class="p">,</span><span class="w"> </span><span class="n">AmpExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">AmpExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">den</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">        </span><span class="n">UnitPowerT</span><span class="o">&lt;</span><span class="n">Kelvins</span><span class="p">,</span><span class="w"> </span><span class="n">KelvinExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">KelvinExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">den</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">        </span><span class="n">UnitPowerT</span><span class="o">&lt;</span><span class="n">Bytes</span><span class="p">,</span><span class="w"> </span><span class="n">ByteExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">ByteExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">den</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">        </span><span class="n">UnitPowerT</span><span class="o">&lt;</span><span class="n">Candelas</span><span class="p">,</span><span class="w"> </span><span class="n">CandelaExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">CandelaExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">den</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">        </span><span class="n">UnitPowerT</span><span class="o">&lt;</span><span class="n">Moles</span><span class="p">,</span><span class="w"> </span><span class="n">MoleExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="n">MoleExpT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;::</span><span class="n">den</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">        </span><span class="n">NholthausUnitMagT</span><span class="o">&lt;</span><span class="n">NU</span><span class="o">&gt;</span><span class="p">{});</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="p">};</span>
+</code></pre></div>
+<p>This will make it very easy to compute <code>Unit</code>, and we&rsquo;re ready to define the equivalences.</p>
+</details>
+<details class="example">
+<summary>Step 3: specialize <code>au::CorrespondingQuantity</code></summary>
+<p>At this point, we are ready to assemble our <code>CorrespondingQuantity</code> specialization.  This is
+what will enable the bidirectional conversions.  Here are the steps.</p>
+<ol>
+<li>Use the same template parameters you determined in step 1.</li>
+<li>Fill in <code>Unit</code> and <code>Rep</code> using the utilities from step 2.</li>
+<li>Define <code>extract_value()</code> and <code>construct_from_value()</code> to enable conversions.</li>
+</ol>
+<p>Here is a fully working version using our nholthaus example.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">au</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">RationalScale</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">BaseUnit</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">PiPower</span><span class="o">&gt;</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="k">struct</span><span class="w"> </span><span class="nc">CorrespondingQuantity</span><span class="o">&lt;</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="n">units</span><span class="o">::</span><span class="n">unit_t</span><span class="o">&lt;</span><span class="n">units</span><span class="o">::</span><span class="n">unit</span><span class="o">&lt;</span><span class="n">RationalScale</span><span class="p">,</span><span class="w"> </span><span class="n">BaseUnit</span><span class="p">,</span><span class="w"> </span><span class="n">PiPower</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ratio</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">                  </span><span class="n">R</span><span class="p">,</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">                  </span><span class="n">units</span><span class="o">::</span><span class="n">linear_scale</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="c1">// NOTE: our &quot;real&quot; implementation has a few utilities to avoid this repetition.</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">NholthausUnit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">units</span><span class="o">::</span><span class="n">unit</span><span class="o">&lt;</span><span class="n">RationalScale</span><span class="p">,</span><span class="w"> </span><span class="n">BaseUnit</span><span class="p">,</span><span class="w"> </span><span class="n">PiPower</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ratio</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">NholthausType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">units</span><span class="o">::</span><span class="n">unit_t</span><span class="o">&lt;</span><span class="n">NholthausUnit</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="n">units</span><span class="o">::</span><span class="n">linear_scale</span><span class="o">&gt;</span><span class="p">;</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">Unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">AuUnit</span><span class="o">&lt;</span><span class="n">NholthausUnit</span><span class="o">&gt;::</span><span class="n">type</span><span class="p">;</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">Rep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">R</span><span class="p">;</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="n">Rep</span><span class="w"> </span><span class="nf">extract_value</span><span class="p">(</span><span class="n">NholthausType</span><span class="w"> </span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="k">template</span><span class="w"> </span><span class="n">to</span><span class="o">&lt;</span><span class="n">Rep</span><span class="o">&gt;</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="n">NholthausType</span><span class="w"> </span><span class="nf">construct_from_value</span><span class="p">(</span><span class="n">Rep</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">NholthausType</span><span class="p">{</span><span class="n">x</span><span class="p">};</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="p">};</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="p">}</span><span class="w">  </span><span class="c1">// namespace au</span>
+</code></pre></div>
+<p>If this definition is visible, you will be able to pass, say, <code>units::length::meter_t</code> instances
+to any API expecting <code>au::QuantityD&lt;au::Meters&gt;</code>, and vice versa!</p>
+</details>
+<h2 id="optional-create-a-shim-file"><em>(Optional)</em> Create a shim file<a class="headerlink" href="#optional-create-a-shim-file" title="Permanent link">&para;</a></h2>
+<p>A migration involves two libraries.  Let&rsquo;s say the &ldquo;original&rdquo; library is the one you&rsquo;re migrating
+<em>from</em>, and the &ldquo;target&rdquo; library is the one you&rsquo;re migrating <em>to</em>.  If your <em>original</em> library has
+a <em>single-file delivery</em>, you can make your migration even easier.  You can make it so that anyone
+who includes the original automatically gets the relevant part of the target library, <em>and</em> all of
+the conversion machinery described on this page!</p>
+<p>Let&rsquo;s suppose that the single file which holds the original library is called
+<code>"third_party/orig/units.hh"</code>.  This is the file that all of your users include.  Let&rsquo;s also suppose
+that your definitions from the previous section live in the file <code>"third_party/orig/au_interop.hh"</code>.
+To give your users automatic access to these interoperability definitions, here are the steps.</p>
+<ol>
+<li>Rename <code>"third_party/orig/units.hh"</code> to <code>"third_party/orig/units_impl.hh"</code>.</li>
+<li>Update the include inside of <code>au_interop.hh</code> to point to <code>units_impl.hh</code>.</li>
+<li>Make a new <code>"third_party/orig/units.hh"</code> file, with the following contents:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="cp">#pragma once</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;third_party/orig/au_interop.hh&quot;</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;third_party/orig/units_impl.hh&quot;</span>
+</code></pre></div>
+<p>If your original library doesn&rsquo;t use single-file delivery, there is no single place to put this
+shim.  In that case, you could consider making an individual shim for every include file, which
+defines only the conversion machinery that&rsquo;s relevant for that file, although this would be labor
+intensive.  The alternative is of course to tell users to include this machinery directly, instead
+of using shims.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../new-units/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Defining new units">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Defining new units
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="nholthaus/" class="md-footer__link md-footer__link--next" aria-label="Next: nholthaus/units Interoperation">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                nholthaus/units Interoperation
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022, Aurora Operations, Inc. All rights reserved
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      
+    
+  </body>
+</html>

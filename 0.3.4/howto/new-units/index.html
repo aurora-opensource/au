@@ -1,0 +1,1997 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++ units library, by Aurora">
+      
+      
+        <meta name="author" content="Au team">
+      
+      
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/0.3.4/howto/new-units/">
+      
+      
+        <link rel="prev" href="../new-dimensions/">
+      
+      
+        <link rel="next" href="../interop/">
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
+    
+    
+      
+        <title>Defining new units - The Au units library</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.35e1ed30.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../tweaks.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#defining-new-units" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../assets/au-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            The Au units library
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Defining new units
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../assets/au-logo.png" alt="logo">
+
+    </a>
+    The Au units library
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au documentation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../develop/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Development Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../supported-compilers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Supported Compilers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Alternatives
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Alternatives
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alternatives/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Comparison of Alternatives
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Discussion
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Discussion
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Discussion Docs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Generic Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/arithmetic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Arithmetic Operations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/common_unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Common Units
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/dimensionless/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dimensionless Units and Quantities
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/overflow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overflow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/quantity_point/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quantity Point
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/zero/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Zero
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Idioms
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            Idioms
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/idioms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au Idioms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/idioms/unit-slots/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unit slots
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Implementation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            Implementation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Implementation Details
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/applying_magnitudes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Applying Magnitudes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/vector_space/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Vector Space Representations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Howto
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Howto
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How-to guides
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new-dimensions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defining new dimensions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Defining new units
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Defining new units
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#definition-features" class="md-nav__link">
+    Definition features
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unit-expressions" class="md-nav__link">
+    Unit expressions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aliases-vs-strong-types-best-practices" class="md-nav__link">
+    Aliases vs. strong types: best practices
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Interop
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            Interop
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interop/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Inter-library Interoperation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interop/nholthaus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nholthaus/units Interoperation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reference Docs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/constant/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Constant
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/corresponding_quantity/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Corresponding Quantity
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/magnitude/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Magnitude
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/math/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Math functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/powers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Powers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/prefix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prefix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/quantity/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quantity
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/quantity_point/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    QuantityPoint
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/zero/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Zero
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_9_12" id="__nav_9_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Detail
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_12">
+            <span class="md-nav__icon md-icon"></span>
+            Detail
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/detail/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Implementation Details
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/detail/dimension/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dimension
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/detail/monovalue_types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monovalue Types
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/detail/packs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Parameter packs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tutorial
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorial
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tutorials: home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 101: Quantity Makers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/102-api-types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 102: API Types
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 103: Unit Conversions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_5" id="__nav_10_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Exercise
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_5">
+            <span class="md-nav__icon md-icon"></span>
+            Exercise
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 101: Quantity Makers Exercise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 102: API Types Exercise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 103: Unit Conversions Exercise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="defining-new-units">Defining new units<a class="headerlink" href="#defining-new-units" title="Permanent link">&para;</a></h1>
+<p>This page explains how to define new units that aren&rsquo;t included in the library.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If it&rsquo;s a common unit&mdash;one which <em>should</em> be in the library, but <em>isn&rsquo;t</em>&mdash;go ahead and
+<a href="https://github.com/aurora-opensource/au/issues">file an issue</a>!  We should be able to turn it
+around pretty quickly (either adding it to the library, or explaining why we won&rsquo;t).</p>
+</div>
+<h2 id="definition-features">Definition features<a class="headerlink" href="#definition-features" title="Permanent link">&para;</a></h2>
+<p>Many libraries provide &ldquo;convenience&rdquo; macros for creating new units, but ours tries to avoid macros
+completely.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>  Instead, you define new units by just writing regular C++ code.</p>
+<p>There are several pieces you can add, each of which provides some particular feature. Here is
+a complete sample definition of a new Unit, with these features annotated and explained.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++14</label><label for="__tabbed_1_2">C++17 or later</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// Example custom unit definition below.</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1">//</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1">// Items labeled with `*` are _required_; everything else is optional.</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1">// In .hh file:</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Fathoms</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Inches</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">72</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">           </span><span class="c1">// *[1]</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ftm&quot;</span><span class="p">;</span><span class="w">            </span><span class="c1">//  [2a]</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">};</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">fathom</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">SingularNameFor</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">        </span><span class="c1">//  [3]</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">fathoms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">          </span><span class="c1">// *[4]</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">fathoms_pt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityPointMaker</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">  </span><span class="c1">//  [5; less common]</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">symbols</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">ftm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolFor</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">                  </span><span class="c1">//  [6]</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="p">}</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="c1">// In .cc file:</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">Fathoms</span><span class="o">::</span><span class="n">label</span><span class="p">[];</span><span class="w">                      </span><span class="c1">//  [2b]</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// Example custom unit definition below.</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1">//</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">// Items labeled with `*` are _required_; everything else is optional.</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1">// In .hh file:</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Fathoms</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Inches</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">72</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">           </span><span class="c1">// *[1]</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ftm&quot;</span><span class="p">;</span><span class="w">     </span><span class="c1">//  [2]</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">};</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">fathom</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">SingularNameFor</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">        </span><span class="c1">//  [3]</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">fathoms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">          </span><span class="c1">// *[4]</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">fathoms_pt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityPointMaker</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">  </span><span class="c1">//  [5; less common]</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">symbols</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">ftm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolFor</span><span class="o">&lt;</span><span class="n">Fathoms</span><span class="o">&gt;</span><span class="p">{};</span><span class="w">                  </span><span class="c1">//  [6]</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you&rsquo;ve seen the unit definitions included in our library, you may notice they look a little
+different from the above.  That&rsquo;s because the library has different goals and constraints than
+end user projects have.</p>
+<p>For example, the library needs to be both C++14-compatible and header-only.  This forces us to
+define our labels in a more complicated way.  By contrast, your project is unlikely to have both
+these constraints.</p>
+<p>Prefer the simpler approach outlined in this page, instead of treating our library&rsquo;s source code
+definitions as examples to follow.</p>
+</div>
+<p>Here are the features.</p>
+<ol>
+<li>
+<p><em>Strong type definition</em>.</p>
+<ul>
+<li><strong>Required.</strong>  Make a <code>struct</code> with the name you want, and inherit from <code>decltype(u)</code>, where
+  <code>u</code> is some <a href="../../discussion/idioms/unit-slots/#unit-expression">unit expression</a> which gives
+  it the right Dimension and Magnitude.  (We&rsquo;ll explain unit expressions in the next section.)</li>
+</ul>
+</li>
+<li>
+<p><em>Label</em>.</p>
+<ul>
+<li>A <code>sizeof()</code>-compatible label which is useful for printing the Unit.</li>
+<li>Note that <em>if</em> your project needs C++14 compatibility, then besides the label itself (<code>[2a]</code>),
+  you&rsquo;ll need to provide a <em>definition</em> (<code>[2b]</code>) in the <code>.cc</code> file.  By contrast, if you use
+  C++17 or later, you can just use an inline variable, and you won&rsquo;t need a <code>.cc</code> file.</li>
+<li><strong>If omitted:</strong>  Everything will still <em>work</em>; your Quantity will just be labeled as
+  <code>[UNLABELED UNIT]</code> in printing contexts.</li>
+</ul>
+</li>
+<li>
+<p><em>Singular name</em>.</p>
+<ul>
+<li>An object whose name is the singular name for your unit.  Useful in certain contexts: for
+  example, the traditional unit for torque is &ldquo;<strong>newton</strong> meters&rdquo;, <em>not</em> &ldquo;<strong>newtons</strong> meters&rdquo;.</li>
+<li><strong>If omitted:</strong> you&rsquo;ll sacrifice some readability flow: the grammar becomes strange.  You&rsquo;ll
+  end up with constructs like <code>speed.in(miles / hours)</code>, rather than <code>speed.in(miles / hour)</code>.</li>
+</ul>
+</li>
+<li>
+<p><em>Quantity maker</em>.</p>
+<ul>
+<li><strong>Required.</strong>  This gives you a <code>snake_case</code> version of your unit which acts like a function.
+  If you call this &ldquo;function&rdquo; and pass it any numeric type, it creates a <code>Quantity</code> of <em>your
+  unit</em>, whose Rep is that type.  Of course, a quantity maker is much more than a function: it
+  composes nicely with prefixes, and with other quantity makers.</li>
+</ul>
+</li>
+<li>
+<p><em>Quantity point maker</em>.</p>
+<ul>
+<li>Just like the quantity maker, but conventionally with a <code>_pt</code> suffix to indicate that it makes
+  <code>QuantityPoint</code> instead.  You can call this like a function on arbitrary numeric types.  You
+  can also compose it with prefixes, or scale it with Magnitudes.</li>
+<li><strong>If omitted:</strong> <em>this is usually fine to omit:</em> most Units are only used with <code>Quantity</code>, not
+  <code>QuantityPoint</code>.</li>
+</ul>
+</li>
+<li>
+<p><em>Unit symbol</em>.</p>
+<ul>
+<li>This lets you create quantities of this unit by simply multiplying or dividing raw numbers.
+  You can also change the units of existing quantities in the same way.  See the docs for <a href="../../reference/unit/#symbols">unit
+  symbols</a>.</li>
+<li><strong>If omitted:</strong> Users will either need to create their own symbols on the fly, or else spell
+  out the full name of the unit.</li>
+</ul>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Not shown here: adding an <code>origin</code> member.  We skipped this because it is very rare.  It only
+has any effect at all for Units you plan to use with <code>QuantityPoint</code>, which is not the usual
+case.  Even among those units, only a small subset have a non-default origin.  The main examples
+are <code>Celsius</code> and <code>Fahrenheit</code>, and the library will provide those out of the box.</p>
+</div>
+<h2 id="unit-expressions">Unit expressions<a class="headerlink" href="#unit-expressions" title="Permanent link">&para;</a></h2>
+<p>Above, we said to inherit your unit&rsquo;s strong type from the <code>decltype</code> of a <a href="../../discussion/idioms/unit-slots/#unit-expression">unit
+expression</a>. Recall the line from above:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Fathoms</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Inches</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">72</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1">//        Unit Expression ^^^^^^^^^^^^^^^^^^^^</span>
+</code></pre></div>
+<p>Some users may be surprised that we recommend using <code>decltype</code> and instances, instead of just naming
+the type directly.  The reason we do is that in C++ code generally, instances are easier to compose
+than types.  This is especially true for units, which support a variety of operations: multiplying
+and dividing by other units, scaling by magnitudes, and even raising to rational powers.</p>
+<p>If we used types directly, users would need to learn obscure new traits, like <code>UnitProductT</code> for
+unit-unit products, and <code>ScaledUnit</code> for unit-magnitude products.  With instances, we can simply
+write <code>*</code> as we would for any other kind of instances &mdash; and this <code>*</code> covers both use cases!
+Wrapping the result in <code>decltype(...)</code> is a small price to pay for this familiarity and flexibility.</p>
+<p>Here are some example unit expressions we might reach for to define various common units:</p>
+<ul>
+<li>Newtons: <code>Kilo&lt;Grams&gt;{} * Meters{} / squared(Seconds{})</code></li>
+<li>Miles: <code>Feet{} * mag&lt;5280&gt;()</code></li>
+<li>Degrees: <code>Radians{} * PI / mag&lt;180&gt;()</code></li>
+</ul>
+<h2 id="aliases-vs-strong-types-best-practices">Aliases vs. strong types: best practices<a class="headerlink" href="#aliases-vs-strong-types-best-practices" title="Permanent link">&para;</a></h2>
+<p>A shorter method of defining units is as <em>aliases</em> for a compound unit.  For example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">using</span><span class="w"> </span><span class="n">MilesPerHour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Miles</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Hours</span><span class="p">{});</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">miles_per_hour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">;</span>
+</code></pre></div>
+<p>We can use the alias, <code>MilesPerHour</code>, anywhere we&rsquo;d use a unit type.  And we can call the
+QuantityMaker, <code>miles_per_hour</code>, just as we would call <code>miles</code>.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>    We even get an automatically
+generated unit label: <code>mi / h</code>.</p>
+<p>Despite this convenience, aliases aren&rsquo;t always the best choice.  Here&rsquo;s the best practices guidance
+to follow.</p>
+<ol>
+<li>
+<p>Use <strong>strong types</strong> for <strong>named</strong> units.</p>
+<ul>
+<li><em>Example:</em> <code>Newtons</code>; <code>Fathoms</code></li>
+<li><em>Rationale:</em> Strong types show up in compiler errors, making them easier to read.<ul>
+<li><em>Counterpoint:</em> as seen below, this will reduce the ability to cancel out units.  For
+  example, <code>Meters{} * Hertz{}</code> will <strong>not</strong> be the same as <code>Meters{} / Seconds{}</code>; instead,
+  it will be a different-but-equivalent Unit.  Given the way we handle quantity-equivalent
+  Units, this will usually not be a problem, and we believe the value of seeing shorter,
+  more familiar names in the compiler errors outweighs this cost.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Use <strong>aliases</strong> for <strong>compound units</strong> with no special name.</p>
+<ul>
+<li><em>Example:</em> <code>NewtonMeters</code>; <code>MilesPerHour</code>.  Both of these are better implemented as <em>aliases</em>
+  rather than <em>strong types</em>.</li>
+<li><em>Rationale:</em> Keeping these as aliases increases support for cancellation: it enables the
+  library to notice that <code>MetersPerSecond{} * Seconds{}</code> is <em>identical</em> to <code>Meters{}</code>, not
+  merely quantity-equivalent.  This doesn&rsquo;t <em>usually</em> matter, but it can reduce exposure to
+  compiler errors in the (rare) situations where exact-type-equality matters (e.g., initializer
+  lists).</li>
+</ul>
+</li>
+</ol>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Macros have long been considered contrary to C++ best practices.  If we&rsquo;re going to use one,
+especially in user-facing code, it needs to meet a very high bar.  Unit definition macros don&rsquo;t meet
+this bar.  They mostly exist to save typing.  But code is read far more often than written, and
+macros actually make the definitions <em>harder</em> to read and understand (because they use <em>positional</em>
+arguments, so the meaning of the parameters is unclear at the callsite).&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Note that we don&rsquo;t &ldquo;need&rdquo; to define this.  We could write <code>(miles / hour)(65)</code>, and get
+exactly the same result as <code>miles_per_hour(65)</code>.  However, some users may prefer the latter syntax.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../new-dimensions/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Defining new dimensions">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Defining new dimensions
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../interop/" class="md-footer__link md-footer__link--next" aria-label="Next: Inter-library Interoperation">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Inter-library Interoperation
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022, Aurora Operations, Inc. All rights reserved
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      
+    
+  </body>
+</html>
