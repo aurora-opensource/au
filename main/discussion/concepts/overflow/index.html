@@ -12,25 +12,25 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/implementation/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/concepts/overflow/">
       
       
-        <link rel="prev" href="../idioms/unit-slots/">
+        <link rel="prev" href="../dimensionless/">
       
       
-        <link rel="next" href="applying_magnitudes/">
+        <link rel="next" href="../quantity_point/">
       
       
-      <link rel="icon" href="../../assets/favicon.ico">
+      <link rel="icon" href="../../../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
     
     
       
-        <title>Implementation Details - The Au units library</title>
+        <title>Overflow - The Au units library</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.35e1ed30.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.35e1ed30.min.css">
       
       
 
@@ -49,9 +49,9 @@
       
     
     
-      <link rel="stylesheet" href="../../tweaks.css">
+      <link rel="stylesheet" href="../../../tweaks.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -73,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#implementation-details" class="md-skip">
+        <a href="#overflow" class="md-skip">
           Skip to content
         </a>
       
@@ -93,9 +93,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../assets/au-logo.png" alt="logo">
+  <img src="../../../assets/au-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Implementation Details
+              Overflow
             
           </span>
         </div>
@@ -198,9 +198,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../assets/au-logo.png" alt="logo">
+  <img src="../../../assets/au-logo.png" alt="logo">
 
     </a>
     The Au units library
@@ -226,7 +226,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -245,7 +245,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../develop/" class="md-nav__link">
+      <a href="../../../develop/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -264,7 +264,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/" class="md-nav__link">
+      <a href="../../../install/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -283,7 +283,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../supported-compilers/" class="md-nav__link">
+      <a href="../../../supported-compilers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -302,7 +302,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../troubleshooting/" class="md-nav__link">
+      <a href="../../../troubleshooting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -357,7 +357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../alternatives/" class="md-nav__link">
+      <a href="../../../alternatives/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -422,7 +422,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -440,18 +440,20 @@
                 
   
   
+    
+  
   
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" checked>
         
           
           <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
@@ -465,7 +467,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7_2">
             <span class="md-nav__icon md-icon"></span>
             Concepts
@@ -478,7 +480,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -498,7 +500,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/arithmetic/" class="md-nav__link">
+      <a href="../arithmetic/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -518,7 +520,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/common_unit/" class="md-nav__link">
+      <a href="../common_unit/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -538,7 +540,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/dimensionless/" class="md-nav__link">
+      <a href="../dimensionless/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -556,9 +558,29 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../concepts/overflow/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Overflow
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -567,6 +589,94 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#hidden-overflow-risks" class="md-nav__link">
+    Hidden overflow risks
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mitigation-strategies" class="md-nav__link">
+    Mitigation Strategies
+  </a>
+  
+    <nav class="md-nav" aria-label="Mitigation Strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#do-nothing" class="md-nav__link">
+    Do nothing
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#curate-user-facing-types" class="md-nav__link">
+    Curate user-facing types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adapt-to-risk" class="md-nav__link">
+    Adapt to risk
+  </a>
+  
+    <nav class="md-nav" aria-label="Adapt to risk">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#plot-the-overflow-safety-surface" class="md-nav__link">
+    Plot: the Overflow Safety Surface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-every-conversion-at-runtime" class="md-nav__link">
+    Check every conversion at runtime
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -578,7 +688,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/quantity_point/" class="md-nav__link">
+      <a href="../quantity_point/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -598,7 +708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/zero/" class="md-nav__link">
+      <a href="../zero/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -662,7 +772,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../idioms/" class="md-nav__link">
+      <a href="../../idioms/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -682,7 +792,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../idioms/unit-slots/" class="md-nav__link">
+      <a href="../../idioms/unit-slots/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -708,20 +818,18 @@
                 
   
   
-    
-  
   
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
         
           
           <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
@@ -735,7 +843,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7_4">
             <span class="md-nav__icon md-icon"></span>
             Implementation
@@ -746,18 +854,9 @@
                 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../implementation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -766,7 +865,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -778,7 +876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="applying_magnitudes/" class="md-nav__link">
+      <a href="../../implementation/applying_magnitudes/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -798,7 +896,7 @@
   
   
     <li class="md-nav__item">
-      <a href="vector_space/" class="md-nav__link">
+      <a href="../../implementation/vector_space/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -869,7 +967,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/" class="md-nav__link">
+      <a href="../../../howto/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -889,7 +987,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/new-dimensions/" class="md-nav__link">
+      <a href="../../../howto/new-dimensions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -909,7 +1007,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/new-units/" class="md-nav__link">
+      <a href="../../../howto/new-units/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -965,7 +1063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/interop/" class="md-nav__link">
+      <a href="../../../howto/interop/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -985,7 +1083,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/interop/nholthaus/" class="md-nav__link">
+      <a href="../../../howto/interop/nholthaus/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1056,7 +1154,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/" class="md-nav__link">
+      <a href="../../../reference/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1076,7 +1174,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/constant/" class="md-nav__link">
+      <a href="../../../reference/constant/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1096,7 +1194,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/corresponding_quantity/" class="md-nav__link">
+      <a href="../../../reference/corresponding_quantity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1116,7 +1214,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/magnitude/" class="md-nav__link">
+      <a href="../../../reference/magnitude/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1136,7 +1234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/math/" class="md-nav__link">
+      <a href="../../../reference/math/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1156,7 +1254,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/powers/" class="md-nav__link">
+      <a href="../../../reference/powers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1176,7 +1274,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/prefix/" class="md-nav__link">
+      <a href="../../../reference/prefix/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1196,7 +1294,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/quantity/" class="md-nav__link">
+      <a href="../../../reference/quantity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1216,7 +1314,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/quantity_point/" class="md-nav__link">
+      <a href="../../../reference/quantity_point/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1236,7 +1334,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/unit/" class="md-nav__link">
+      <a href="../../../reference/unit/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1256,7 +1354,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/zero/" class="md-nav__link">
+      <a href="../../../reference/zero/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1312,7 +1410,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/" class="md-nav__link">
+      <a href="../../../reference/detail/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1332,7 +1430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/dimension/" class="md-nav__link">
+      <a href="../../../reference/detail/dimension/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1352,7 +1450,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/monovalue_types/" class="md-nav__link">
+      <a href="../../../reference/detail/monovalue_types/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1372,7 +1470,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/packs/" class="md-nav__link">
+      <a href="../../../reference/detail/packs/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1443,7 +1541,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/" class="md-nav__link">
+      <a href="../../../tutorial/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1463,7 +1561,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
+      <a href="../../../tutorial/101-quantity-makers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1483,7 +1581,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/102-api-types/" class="md-nav__link">
+      <a href="../../../tutorial/102-api-types/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1503,7 +1601,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
+      <a href="../../../tutorial/103-unit-conversions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1559,7 +1657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1579,7 +1677,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/102-api-types/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1599,7 +1697,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1646,22 +1744,192 @@
   
 
 
-<h1 id="implementation-details">Implementation Details<a class="headerlink" href="#implementation-details" title="Permanent link">&para;</a></h1>
-<p>This section provides in-depth discussion about core implementation details of Au.  If you want to
-understand <em>how</em> the library works, this is a good place to go.  Here&rsquo;s a rough guide.</p>
+<h1 id="overflow">Overflow<a class="headerlink" href="#overflow" title="Permanent link">&para;</a></h1>
+<p>To convert a quantity in a program to different units, we need to multiply or divide by a conversion
+factor.  Sometimes, the result is too big to fit in the type: a problem known as <em>overflow</em>.</p>
+<p>Units libraries generate these conversion factors automatically when the program is built, and apply
+them invisibly.  This amazing convenience comes with a risk: since users don&rsquo;t see the conversion
+factors, it&rsquo;s easy to overlook the multiplication that&rsquo;s taking place under the hood.  This is even
+more true in certain &ldquo;hidden&rdquo; conversions, where most users don&rsquo;t even realize that a conversion is
+taking place!</p>
+<h2 id="hidden-overflow-risks">Hidden overflow risks<a class="headerlink" href="#hidden-overflow-risks" title="Permanent link">&para;</a></h2>
+<p>Consider this comparison:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">meters</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">yards</span><span class="p">(</span><span class="mi">12</span><span class="p">));</span>
+</code></pre></div>
+<p>Even though the quantities have different units, this code compiles and produces a correct result.
+It turns out that <code>meters(11)</code> is roughly 0.2% larger than <code>yards(12)</code>, so <code>result</code> is <code>true</code>.  But
+how exactly do we compute that result from these starting numeric values of <code>11</code> and <code>12</code>?</p>
+<p>The key is to understand that <em>comparison</em> is a <a href="../arithmetic/#common-unit"><em>common unit
+operation</em></a>.  Before we can carry it out, we must convert both inputs
+to their <a href="../common_unit/"><em>common unit</em></a> &mdash; that is, the largest unit that evenly divides both
+<code>meters</code> and <code>yards</code>.  In this case, the size of that unit is 800 micrometers, giving a conversion
+factor of 1250 for <code>meters</code>, and 1143 for <code>yards</code>.  The library multiplies the underlying values 11
+and 12 by these respective factors, and then simply compares the results.</p>
+<p>Now that we have a fuller understanding of what&rsquo;s going on under the hood, let&rsquo;s take another look
+at the code.  When we see something like <code>meters(11) &gt; yards(12)</code>, it&rsquo;s certainly not obvious at
+a glance that this will multiply each underlying value by a factor of over 1,000!  Whatever approach
+we take to mitigating overflow risk, it will need to handle these kinds of &ldquo;hidden&rdquo; cases as well.</p>
+<h2 id="mitigation-strategies">Mitigation Strategies<a class="headerlink" href="#mitigation-strategies" title="Permanent link">&para;</a></h2>
+<p>Over the decades that people have been writing units libraries, several approaches have emerged for
+dealing with this category of risk.  That said, there isn&rsquo;t a consensus about the best approach to
+take &mdash; in fact, at the time of writing, new strategies are still being developed and tested!</p>
+<p>It&rsquo;s also worth noting that this problem mainly applies to integral types.  Floating point types can
+overflow too, but it happens far less often in practice.  Even the smallest, <code>float</code>, has a range of
+<span class="arithmatex"><span class="MathJax_Preview">10^{38}</span><script type="math/tex">10^{38}</script></span>, while the diameter of the observable universe measured in atomic diameters is &ldquo;only&rdquo;
+about <span class="arithmatex"><span class="MathJax_Preview">10^{37}</span><script type="math/tex">10^{37}</script></span>!<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>Of course, many domains prefer the simplicity and interpretability of integral types.  This avoids
+some of the more counterintuitive aspects of floating point arithmetic &mdash; for example, did you know
+that the difference between consecutive representable <code>double</code> values can be greater than
+<span class="arithmatex"><span class="MathJax_Preview">10^{292}</span><script type="math/tex">10^{292}</script></span>?  With integers, we can bypass all this complexity, but the price we pay is the need to
+handle overflow.  Here are the main strategies we&rsquo;ve seen for doing so.</p>
+<h3 id="do-nothing">Do nothing<a class="headerlink" href="#do-nothing" title="Permanent link">&para;</a></h3>
+<p>This is the simplest approach, and probably also the most popular: make the users responsible for
+avoiding overflow.  The documentation may simply warn them to check their values ahead of time, as
+in this <a href="https://github.com/bernedom/SI/blob/main/doc/implementation-details.md#implicit-ratio-conversion--possible-loss-of-precision">example from the bernedom/SI
+library</a>.</p>
+<p>While this approach is perfectly valid, it does put a lot of responsibility onto the end users, many
+of whom may not realize that they have incurred it.  Even for those who do, we&rsquo;ve seen above that
+many unit conversions are hard to spot.  It&rsquo;s reasonable to assume that this approach leads to the
+highest incidence of overflow bugs.</p>
+<h3 id="curate-user-facing-types">Curate user-facing types<a class="headerlink" href="#curate-user-facing-types" title="Permanent link">&para;</a></h3>
+<p>The <a href="https://en.cppreference.com/w/cpp/chrono/duration"><code>std::chrono</code></a> library, a time-only units
+library, takes a different approach.  It uses intimate knowledge of the domain to craft its
+user-facing types such that they all cover the same (very generous) range of values. Specifically,
+every <code>std::chrono::duration</code> type shorter than a day &mdash; everything from <code>std::chrono::hours</code>, all
+the way down to <code>std::chrono::nanoseconds</code> &mdash; is guaranteed to be able to represent <em>at least</em> ±292
+years.</p>
+<p>As long as users&rsquo; durations are within this range &mdash; <em>and</em>, as long as they <em>stick to these primary
+user-facing types</em> &mdash; they can be confident that their values won&rsquo;t overflow.</p>
+<p>This approach works very well in practice for the (great many) users who can meet both of these
+conditions.  However, it doesn&rsquo;t translate well to a <em>multi-dimensional</em> units library: since there
+are many dimensions, and new ones can be created on the fly, it&rsquo;s infeasible to try to define
+a &ldquo;practical range&rdquo; for <em>all</em> of them.  Besides, users can still form arbitrary
+<code>std::chrono::duration</code> types, and they may not realize the safety they have given up in doing so.</p>
+<h3 id="adapt-to-risk">Adapt to risk<a class="headerlink" href="#adapt-to-risk" title="Permanent link">&para;</a></h3>
+<p>Fundamentally, there are two contributions to the level of overflow risk:</p>
+<ol>
+<li>
+<p>The <em>size of the conversion factor</em>: <strong>bigger factors</strong> mean <strong>more risk</strong>.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></p>
+</li>
+<li>
+<p>The <em>largest representable value in the destination type</em>: <strong>larger max values</strong> mean <strong>less
+   risk</strong>.</p>
+</li>
+</ol>
+<p>Therefore, we should be able to create an <em>adaptive policy</em> that takes these factors into account.
+The key concept is the &ldquo;smallest overflowing value&rdquo;.  For every combination of &ldquo;conversion factor&rdquo;
+and &ldquo;type,&rdquo; there is some smallest starting-value that will overflow.  The simplest adaptive policy
+is to forbid conversions when that smallest value is &ldquo;small enough to be scary&rdquo;.</p>
+<p>How small is &ldquo;scary&rdquo;?  Here are some considerations.</p>
 <ul>
 <li>
-<p><strong><a href="applying_magnitudes/">Applying Magnitudes</a></strong>.  A conversion factor is a <em>magnitude</em>:
-  a positive real number.  The best way to apply it to a value of type <code>T</code> depends on what kind of
-  number it is (integer, rational, and so on), the runtime performance, and whether we can get exact
-  answers.</p>
+<p>Once our values get over 1,000, we can consider switching to a larger SI-prefixed version of the
+  unit.  (For example, lengths over <span class="arithmatex"><span class="MathJax_Preview">1000\,\text{m}</span><script type="math/tex">1000\,\text{m}</script></span> can be more concisely expressed in
+  <span class="arithmatex"><span class="MathJax_Preview">\text{km}</span><script type="math/tex">\text{km}</script></span>.)  This means that if a value as small as 1,000 would overflow &mdash; so small that we
+  haven&rsquo;t even <em>reached</em> the next unit &mdash; we should <em>definitely</em> forbid the conversion.</p>
 </li>
 <li>
-<p><strong><a href="vector_space/">Vector Space Representations</a></strong>.  We&rsquo;re not talking about position vectors
-  or velocity vectors!  There&rsquo;s a different kind of vector at the heart of every units library.
-  This is the core foundational concept on which we built Au&rsquo;s implementation.</p>
+<p>On the other hand, we&rsquo;ve found it useful to initialize, say, <code>QuantityI32&lt;Hertz&gt;</code> variables with
+  something like <code>mega(hertz)(500)</code>.  Thus, we&rsquo;d like this operation to succeed (although it should
+  probably be near the border of what&rsquo;s allowed).</p>
 </li>
 </ul>
+<p>Putting it all together, we settled on <a href="https://github.com/aurora-opensource/au/blob/dbd79b2/au/conversion_policy.hh#L27-L28">a value threshold of 2&lsquo;147</a>.  If we can convert
+this value without overflow, then we permit the operation; otherwise, we don&rsquo;t.  We picked this
+value because it satisfies our above criteria nicely.  It will prevent operations that can&rsquo;t handle
+values of 1,000, but it still lets us use <span class="arithmatex"><span class="MathJax_Preview">\text{MHz}</span><script type="math/tex">\text{MHz}</script></span> freely when storing <span class="arithmatex"><span class="MathJax_Preview">\text{Hz}</span><script type="math/tex">\text{Hz}</script></span> quantities in
+<code>int32_t</code>.</p>
+<h4 id="plot-the-overflow-safety-surface">Plot: the Overflow Safety Surface<a class="headerlink" href="#plot-the-overflow-safety-surface" title="Permanent link">&para;</a></h4>
+<p>This policy lends itself well to visualization.  For each integral type, there is some <em>highest
+permitted conversion factor</em> under this policy.  We can plot these factors for each of the common
+integral types (<code>int8_t</code>, <code>uint32_t</code>, and so on).  If we then &ldquo;connect the dots&rdquo;, we get a boundary
+that separates allowed conversions from forbidden ones, permitting bigger conversions for bigger
+types. We call this abstract boundary the <strong>&ldquo;overflow safety surface&rdquo;</strong>, and it&rsquo;s the secret
+ingredient that lets Au users use a wide variety of integral types with confidence.</p>
+<p><img alt="The overflow safety surface" src="../../../assets/overflow-safety-surface.png" /></p>
+<h3 id="check-every-conversion-at-runtime">Check every conversion at runtime<a class="headerlink" href="#check-every-conversion-at-runtime" title="Permanent link">&para;</a></h3>
+<p>While the overflow safety surface is a leap forward in safety and flexibility, it&rsquo;s still only
+a heuristic.  There will always be valid conversions which it forbids, and invalid ones which it
+permits.  On the latter point, note that adding an intermediate conversion can defeat the safety
+check: the overflow in <code>meters(10u).as(nano(meters))</code> would be caught, but the overflow in
+<code>meters(10u).as(milli(meters)).as(nano(meters))</code> would not.</p>
+<p>One way to <em>guarantee</em> doing better is to check every conversion at runtime.  Some users may recoil
+at the idea of doing <em>runtime</em> work in a units library, but it&rsquo;s easy to show that <em>this</em> use case
+is innocuous. Consider: it&rsquo;s very hard to imagine a valid use case for needing to perform unit
+conversions in a &ldquo;hot loop&rdquo;.  Therefore, the extra runtime cost &mdash; merely a few cycles at most &mdash;
+won&rsquo;t <em>meaningfully</em> affect the performance of the program: it&rsquo;s a bargain price to pay for the
+added safety.</p>
+<p>Of course, in order to check every conversion at runtime, you need to decide what to do when
+a conversion <em>doesn&rsquo;t</em> work.  This is hard in general, because there is no &ldquo;one true error handling
+strategy&rdquo;.  Exceptions, C++17&rsquo;s <code>std::optional</code>, C++23&rsquo;s <code>std::expected</code>, and other strategies each
+have their place.  For a library that aims to support a wide variety of projects, it&rsquo;s an impossible
+choice.</p>
+<p>Fortunately, the problem decomposes favorably into two steps.</p>
+<ol>
+<li>
+<p>Figure out <strong>which specific conversions</strong> are lossy.  This is the hard part, but Au can do it!</p>
+</li>
+<li>
+<p>Write a generic <strong>checked conversion function</strong> using the preferred error handling mechanism.
+   The owners of a project will have to do this, but this is easy if Au provides the first part.</p>
+</li>
+</ol>
+<p>Here&rsquo;s a complete worked example of how you would do this in a codebase using C++17&rsquo;s
+<code>std::optional</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">try_converting</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">is_conversion_lossy</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="o">?</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nullopt</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_optional</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">coerce_as</span><span class="p">(</span><span class="n">target</span><span class="p">));</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
+</code></pre></div>
+<p>The goal of <code>is_conversion_lossy</code> is to produce an implementation for each individual conversion
+(based on both the numeric type, and the conversion factor) that is as <em>accurate and efficient</em> as
+an expertly hand-written implementation.  If it passes those checks, then it&rsquo;s safe and correct to
+call <code>.coerce_as</code> instead of simply <code>.as</code>: we can override the <em>approximate</em> safety checks of the
+latter because we&rsquo;ve performed an <em>exact</em> safety check.</p>
+<details class="note">
+<summary>An example of the kind of details we take care of</summary>
+<p>When we say &ldquo;expertly hand-written&rdquo;, we mean it.  We even handle obscure C++ minutae such as
+<a href="https://en.cppreference.com/w/c/language/conversion#Integer_promotions">integer promotion</a>!</p>
+<p>Consider the conversion from <code>yards(int16_t{1250})</code> to <code>meters</code>.  Under the hood, this
+conversion first multiplies by <code>int16_t{1143}</code>, and then divides by <code>int16_t{1250}</code>.  The
+multiplication produces 1,428,750 &mdash; but the maximum <code>int16_t</code> value is only 32,767.  Looks
+like a pretty clear case of overflow.</p>
+<p>However, the product of two <code>int16_t</code> values is <em>not</em> (usually) an <code>int16_t</code> value!  On most
+architectures, it gets converted to <code>int32_t</code>, due to integer promotion.  This intermediate type
+<em>can</em> hold the result of the multiplication.  What&rsquo;s more, the subsequent division by
+<code>int16_t{1250}</code> brings the final result back into the range of <code>int16_t</code>.</p>
+<p>Au&rsquo;s implementation of <code>is_conversion_lossy</code> will correctly return <code>false</code> on architectures
+where this promotion happens, and <code>true</code> on architectures where it doesn&rsquo;t.  If this sounds like
+the kind of detail you&rsquo;d rather not worry about, go ahead and use Au&rsquo;s utilities!</p>
+</details>
+<p>At the time of writing, Au is the only units library we know that provides conversion checkers to do
+this heavy lifting.  We&rsquo;d like to see other units libraries try it out as well!  Meanwhile, even on
+our end, there&rsquo;s still more work to do &mdash; such as adding &ldquo;explicit rep&rdquo; versions of these
+utilities, and supporting <code>QuantityPoint</code>.  You can track our progress on this feature in issue
+<a href="https://github.com/aurora-opensource/au/issues/110">#110</a>.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>The hazard of overflow lurks behind every unit conversion &mdash; even the &ldquo;hidden&rdquo; conversions that are
+hard to spot. To maximize safety, we need a strategy to mitigate this risk.  Au&rsquo;s novel overflow
+safety surface is a big step forward, adapting to the level of risk actually present in each
+specific conversion.  But the most robust solution of all is to make it as easy as possible to check
+every conversion as it happens, and be prepared for it to fail.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Here, we take the radius of the observable universe as 46.6 billion light years, and the
+  diameter of a hydrogen atom as 0.1 nanometers.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Note that we&rsquo;re implicitly assuming that the conversion factor is simply an integer.  This is
+always true for the cases discussed in this section, because we&rsquo;re talking about converting quantity
+types with integral rep.  If the conversion factor were <em>not</em> an integer, then we would already
+forbid this conversion due to <em>truncation</em>, so we wouldn&rsquo;t need to bother considering overflow.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
@@ -1683,7 +1951,7 @@ understand <em>how</em> the library works, this is a good place to go.  Here&rsq
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../idioms/unit-slots/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Unit slots">
+          <a href="../dimensionless/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Dimensionless Units and Quantities">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -1693,20 +1961,20 @@ understand <em>how</em> the library works, this is a good place to go.  Here&rsq
                 Previous
               </span>
               <div class="md-ellipsis">
-                Unit slots
+                Dimensionless Units and Quantities
               </div>
             </div>
           </a>
         
         
           
-          <a href="applying_magnitudes/" class="md-footer__link md-footer__link--next" aria-label="Next: Applying Magnitudes">
+          <a href="../quantity_point/" class="md-footer__link md-footer__link--next" aria-label="Next: Quantity Point">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Applying Magnitudes
+                Quantity Point
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1744,10 +2012,10 @@ understand <em>how</em> the library works, this is a good place to go.  Here&rsq
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.aecac24b.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       

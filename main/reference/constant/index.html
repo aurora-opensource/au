@@ -556,6 +556,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../../discussion/concepts/overflow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overflow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../discussion/concepts/quantity_point/" class="md-nav__link">
         
   
@@ -1813,9 +1833,9 @@ many possible quantity values. By contrast, <code>Constant</code> is an empty cl
 single value it can represent is fully encoded in its type.  This makes it an example of
 a <a href="../detail/monovalue_types/">monovalue type</a>.</p>
 <p>Because the value is always fully known at compile time, we do not need to use a heuristic like the
-overflow safety surface to determine which conversions are allowed.  Instead, we can achieve
-a perfect conversion policy: we allow converting to any <code>Quantity</code> that can represent the value
-exactly, and disallow all other conversions.</p>
+<a href="../../discussion/concepts/overflow/">overflow safety surface</a> to determine which conversions are
+allowed.  Instead, we can achieve a perfect conversion policy: we allow converting to any <code>Quantity</code>
+that can represent the value exactly, and disallow all other conversions.</p>
 <p>The main use of <code>Constant</code> is to multiply and divide raw numbers or <code>Quantity</code> values.  When we do
 this, the constant is applied <em>symbolically</em>, and affects the <em>units</em> of the resulting quantity.
 For example, multiplying a duration in seconds by a constant representing the speed of light
@@ -1941,7 +1961,8 @@ same result can be obtained via implicit conversion.</p>
 <p class="admonition-title">Note</p>
 <p>The fact that <code>Constant</code> has a perfect conversion policy means that we can use it with APIs
 where the corresponding <code>Quantity</code> would not work, because <code>Quantity</code> is forced to use the
-overflow safety surface, which is a more conservative heuristic.</p>
+<a href="../../discussion/concepts/overflow/">overflow safety surface</a>, which is a more conservative
+heuristic.</p>
 <p>For example, suppose you have an API accepting <code>Quantity&lt;UnitQuotientT&lt;Meters, Seconds&gt;, int&gt;</code>,
 and a constant <code>c</code> representing the speed of light.</p>
 <p>You will be able to pass <code>c</code> to this API, because the constant-to-quantity conversion operation
