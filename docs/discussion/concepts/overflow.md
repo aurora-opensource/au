@@ -50,8 +50,8 @@ about $10^{37}$![^1]
 Of course, many domains prefer the simplicity and interpretability of integral types.  This avoids
 some of the more counterintuitive aspects of floating point arithmetic --- for example, did you know
 that the difference between consecutive representable `double` values can be greater than
-$10^{292}$?  The price we pay for eschewing these complexities is the need to handle overflow, and
-here are the main strategies we've seen for doing so.
+$10^{292}$?  With integers, we can bypass all this complexity, but the price we pay is the need to
+handle overflow.  Here are the main strategies we've seen for doing so.
 
 ### Do nothing
 
@@ -87,10 +87,15 @@ a "practical range" for _all_ of them.  Besides, users can still form arbitrary
 
 Fundamentally, there are two contributions to the level of overflow risk:
 
-1. The _size of the conversion factor_: **bigger factors** mean **more risk**.
+1. The _size of the conversion factor_: **bigger factors** mean **more risk**.[^2]
 
 2. The _largest representable value in the destination type_: **larger max values** mean **less
    risk**.
+
+[^2]: Note that we're implicitly assuming that the conversion factor is simply an integer.  This is
+always true for the cases discussed in this section, because we're talking about converting quantity
+types with integral rep.  If the conversion factor were _not_ an integer, then we would already
+forbid this conversion due to _truncation_, so we wouldn't need to bother considering overflow.
 
 Therefore, we should be able to create an _adaptive policy_ that takes these factors into account.
 The key concept is the "smallest overflowing value".  For every combination of "conversion factor"
@@ -100,9 +105,9 @@ is to forbid conversions when that smallest value is "small enough to be scary".
 How small is "scary"?  Here are some considerations.
 
 - Once our values get over 1,000, we can consider switching to a larger SI-prefixed version of the
-  unit.  (For example, lengths over $1000\,\text{m}$ can be approximated in $\text{km}$.)  This
-  means that if a value as small as 1,000 would overflow --- so small that we haven't even _reached_
-  the next unit --- we should _definitely_ forbid the conversion.
+  unit.  (For example, lengths over $1000\,\text{m}$ can be more concisely expressed in
+  $\text{km}$.)  This means that if a value as small as 1,000 would overflow --- so small that we
+  haven't even _reached_ the next unit --- we should _definitely_ forbid the conversion.
 
 - On the other hand, we've found it useful to initialize, say, `QuantityI32<Hertz>` variables with
   something like `mega(hertz)(500)`.  Thus, we'd like this operation to succeed (although it should
@@ -116,8 +121,8 @@ values of 1,000, but it still lets us use $\text{MHz}$ freely when storing $\tex
 
 #### Plot: the Overflow Safety Surface
 
-This policy lends itself well to visualization.  For each integral type, there is some _biggest
-allowable conversion factor_ under this policy.  We can plot these factors for each of the common
+This policy lends itself well to visualization.  For each integral type, there is some _highest
+permitted conversion factor_ under this policy.  We can plot these factors for each of the common
 integral types (`int8_t`, `uint32_t`, and so on).  If we then "connect the dots", we get a boundary
 that separates allowed conversions from forbidden ones, permitting bigger conversions for bigger
 types. We call this abstract boundary the **"overflow safety surface"**, and it's the secret
@@ -135,10 +140,10 @@ check: the overflow in `meters(10u).as(nano(meters))` would be caught, but the o
 
 One way to _guarantee_ doing better is to check every conversion at runtime.  Some users may recoil
 at the idea of doing _runtime_ work in a units library, but it's easy to show that _this_ use case
-is innocuous. Consider: it's very hard to imagine a valid use case for performing unit conversions
-in a "hot loop".  Therefore, the extra runtime cost --- merely a few cycles at most --- won't
-_meaningfully_ affect the performance of the program: it's a bargain price to pay for the added
-safety.
+is innocuous. Consider: it's very hard to imagine a valid use case for needing to perform unit
+conversions in a "hot loop".  Therefore, the extra runtime cost --- merely a few cycles at most ---
+won't _meaningfully_ affect the performance of the program: it's a bargain price to pay for the
+added safety.
 
 Of course, in order to check every conversion at runtime, you need to decide what to do when
 a conversion _doesn't_ work.  This is hard in general, because there is no "one true error handling
@@ -166,10 +171,10 @@ constexpr auto try_converting(au::Quantity<U, R> q, TargetUnitSlot target) {
 ```
 
 The goal of `is_conversion_lossy` is to produce an implementation for each individual conversion
-(both numeric type, and conversion factor) that is as _accurate and efficient_ as an expertly
-hand-written implementation.  If it passes those checks, then it's safe and correct to call
-`.coerce_as` instead of simply `.as`: we can override the _approximate_ safety checks of the latter
-because we've performed an _exact_ safety check.
+(based on both the numeric type, and the conversion factor) that is as _accurate and efficient_ as
+an expertly hand-written implementation.  If it passes those checks, then it's safe and correct to
+call `.coerce_as` instead of simply `.as`: we can override the _approximate_ safety checks of the
+latter because we've performed an _exact_ safety check.
 
 ??? note "An example of the kind of details we take care of"
     When we say "expertly hand-written", we mean it.  We even handle obscure C++ minutae such as
