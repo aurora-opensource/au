@@ -144,12 +144,12 @@ load("@python3_10//:defs.bzl", "interpreter")
 load("@rules_python//python:pip.bzl", "pip_parse")
 
 pip_parse(
-    name = "pip_deps",
+    name = "au_pip_deps",
     python_interpreter_target = interpreter,
     requirements_lock = "@//:requirements_lock.txt",
 )
 
-load("@pip_deps//:requirements.bzl", "install_deps")
+load("@au_pip_deps//:requirements.bzl", "install_deps")
 
 install_deps()
 
