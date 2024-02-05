@@ -25,7 +25,7 @@ namespace au {
 // Streaming output support for Quantity types.
 template <typename U, typename R>
 std::ostream &operator<<(std::ostream &out, const Quantity<U, R> &q) {
-    out << q.in(U{}) << " " << unit_label(U{});
+    out << +q.in(U{}) << " " << unit_label(U{});
     return out;
 }
 

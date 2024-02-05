@@ -61,6 +61,8 @@ TEST(StreamingOutput, PrintsValueAndUnitLabel) {
     EXPECT_EQ(stream_to_string((feet / milli(second))(1.25)), "1.25 ft / ms");
 }
 
+TEST(StreamingOutput, PrintValueRepChar) { EXPECT_EQ(stream_to_string(feet(char{3})), "3 ft"); }
+
 TEST(StreamingOutput, DistinguishesPointFromQuantityByAtSign) {
     EXPECT_EQ(stream_to_string(celsius_qty(20)), "20 deg C");
     EXPECT_EQ(stream_to_string(celsius_pt(20)), "@(20 deg C)");
