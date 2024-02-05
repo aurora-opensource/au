@@ -14,6 +14,8 @@
 
 #include "au/io.hh"
 
+#include <cstdint>
+
 #include "au/prefix.hh"
 #include "au/quantity.hh"
 #include "gtest/gtest.h"
@@ -61,7 +63,13 @@ TEST(StreamingOutput, PrintsValueAndUnitLabel) {
     EXPECT_EQ(stream_to_string((feet / milli(second))(1.25)), "1.25 ft / ms");
 }
 
-TEST(StreamingOutput, PrintValueRepChar) { EXPECT_EQ(stream_to_string(feet(char{3})), "3 ft"); }
+TEST(StreamingOutput, PrintValueRepChar) {
+    // If the Rep resolves to a char, we sill want the number '65' to be output,
+    // not the character literal that corresponds to 65 ('A').
+    static_assert(std::is_same<int8_t, signed char>::value,
+                  "Expected 'int8_t' to resolve to 'char'");
+    EXPECT_EQ(stream_to_string(feet(int8_t{65})), "65 ft");
+}
 
 TEST(StreamingOutput, DistinguishesPointFromQuantityByAtSign) {
     EXPECT_EQ(stream_to_string(celsius_qty(20)), "20 deg C");
