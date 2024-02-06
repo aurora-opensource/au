@@ -25,7 +25,12 @@ namespace au {
 // Streaming output support for Quantity types.
 template <typename U, typename R>
 std::ostream &operator<<(std::ostream &out, const Quantity<U, R> &q) {
-    out << q.in(U{}) << " " << unit_label(U{});
+    // In the case that the Rep is a type that resolves to 'char' (e.g. int8_t),
+    // the << operator will match the implementation that takes a character
+    // literal.  Using the unary + operator will trigger an integer promotion on
+    // the operand, which will then match an appropriate << operator that will
+    // output the integer representation.
+    out << +q.in(U{}) << " " << unit_label(U{});
     return out;
 }
 
