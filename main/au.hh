@@ -1,4 +1,4 @@
-// Copyright 2023 Aurora Operations, Inc.
+// Copyright 2024 Aurora Operations, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.4-1-g4ab84ce
+// Version identifier: 0.3.4-2-g5c65e4f
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -5451,7 +5451,12 @@ namespace au {
 // Streaming output support for Quantity types.
 template <typename U, typename R>
 std::ostream &operator<<(std::ostream &out, const Quantity<U, R> &q) {
-    out << q.in(U{}) << " " << unit_label(U{});
+    // In the case that the Rep is a type that resolves to 'char' (e.g. int8_t),
+    // the << operator will match the implementation that takes a character
+    // literal.  Using the unary + operator will trigger an integer promotion on
+    // the operand, which will then match an appropriate << operator that will
+    // output the integer representation.
+    out << +q.in(U{}) << " " << unit_label(U{});
     return out;
 }
 

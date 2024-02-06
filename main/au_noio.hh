@@ -1,4 +1,4 @@
-// Copyright 2023 Aurora Operations, Inc.
+// Copyright 2024 Aurora Operations, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.4-1-g4ab84ce
+// Version identifier: 0.3.4-2-g5c65e4f
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
