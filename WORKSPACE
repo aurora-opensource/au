@@ -29,16 +29,16 @@ bazel_skylib_workspace()
 
 load("//build:copts.bzl", "BASE_CLANG_COPTS", "EXTRA_COPTS")
 
-BAZEL_TOOLCHAIN_REF = "056aeaa01900f5050a9fed9b11e2d365a684831a"
+BAZEL_TOOLCHAIN_RELEASE = "0.10.3"
 
-BAZEL_TOOLCHAIN_SHA = "93aa940bcaa2bfdd8153d4d029bad1ccc6c0601e29ffff3a23e1d89aba5f61fa"
+BAZEL_TOOLCHAIN_SHA = "b7cd301ef7b0ece28d20d3e778697a5e3b81828393150bed04838c0c52963a01"
 
 http_archive(
     name = "com_grail_bazel_toolchain",
-    canonical_id = BAZEL_TOOLCHAIN_REF,
+    canonical_id = BAZEL_TOOLCHAIN_RELEASE,
     sha256 = BAZEL_TOOLCHAIN_SHA,
-    strip_prefix = "bazel-toolchain-{ref}".format(ref = BAZEL_TOOLCHAIN_REF),
-    url = "https://github.com/grailbio/bazel-toolchain/archive/{ref}.tar.gz".format(ref = BAZEL_TOOLCHAIN_REF),
+    strip_prefix = "toolchains_llvm-{ref}".format(ref = BAZEL_TOOLCHAIN_RELEASE),
+    url = "https://github.com/bazel-contrib/toolchains_llvm/releases/download/{ref}/toolchains_llvm-{ref}.tar.gz".format(ref = BAZEL_TOOLCHAIN_RELEASE),
 )
 
 load("@com_grail_bazel_toolchain//toolchain:deps.bzl", "bazel_toolchain_dependencies")
@@ -89,11 +89,11 @@ http_archive(
     patches = [
         "@//:third_party/aspect_gcc_toolchain/0001-Expose-target_settings-and-set-std-c-14.patch",
     ],
-    sha256 = "e2e12202dd83f67d71101b24554044de25e1625d16b4b56bc453ecaa8f7c6bd0",
-    strip_prefix = "aspect-build-gcc-toolchain-ac745d4",
+    sha256 = "9c075a67d401d1aa8b4935cc520e9926b1926fba72c1ab609400b239c92f5639",
+    strip_prefix = "f0rmiga-gcc-toolchain-ac745d4",
     type = "tar.gz",
     urls = [
-        "https://github.com/aspect-build/gcc-toolchain/tarball/ac745d4685e2095cc4f057862800f3f0a473c201",
+        "https://github.com/f0rmiga/gcc-toolchain/tarball/ac745d4685e2095cc4f057862800f3f0a473c201",
     ],
 )
 
