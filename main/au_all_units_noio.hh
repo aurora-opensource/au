@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.4-3-g8153761
+// Version identifier: 0.3.4-4-g492e5bd
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -4312,7 +4312,8 @@ class QuantityPoint {
               typename NewUnit,
               typename = std::enable_if_t<IsUnit<NewUnit>::value>>
     constexpr NewRep in(NewUnit u) const {
-        return (x_ - OriginDisplacement<Unit, NewUnit>::value()).template in<NewRep>(u);
+        return (rep_cast<NewRep>(x_) - rep_cast<NewRep>(OriginDisplacement<Unit, NewUnit>::value()))
+            .template in<NewRep>(u);
     }
 
     template <typename NewUnit, typename = std::enable_if_t<IsUnit<NewUnit>::value>>
