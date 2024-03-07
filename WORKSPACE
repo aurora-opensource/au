@@ -89,11 +89,11 @@ http_archive(
     patches = [
         "@//:third_party/aspect_gcc_toolchain/0001-Expose-target_settings-and-set-std-c-14.patch",
     ],
-    sha256 = "e2e12202dd83f67d71101b24554044de25e1625d16b4b56bc453ecaa8f7c6bd0",
-    strip_prefix = "aspect-build-gcc-toolchain-ac745d4",
+    sha256 = "9c075a67d401d1aa8b4935cc520e9926b1926fba72c1ab609400b239c92f5639",
+    strip_prefix = "f0rmiga-gcc-toolchain-ac745d4",
     type = "tar.gz",
     urls = [
-        "https://github.com/aspect-build/gcc-toolchain/tarball/ac745d4685e2095cc4f057862800f3f0a473c201",
+        "https://github.com/f0rmiga/gcc-toolchain/tarball/ac745d4685e2095cc4f057862800f3f0a473c201",
     ],
 )
 
