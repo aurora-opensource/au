@@ -132,7 +132,8 @@ class QuantityPoint {
               typename NewUnit,
               typename = std::enable_if_t<IsUnit<NewUnit>::value>>
     constexpr NewRep in(NewUnit u) const {
-        return (x_ - OriginDisplacement<Unit, NewUnit>::value()).template in<NewRep>(u);
+        return (rep_cast<NewRep>(x_) - rep_cast<NewRep>(OriginDisplacement<Unit, NewUnit>::value()))
+            .template in<NewRep>(u);
     }
 
     template <typename NewUnit, typename = std::enable_if_t<IsUnit<NewUnit>::value>>

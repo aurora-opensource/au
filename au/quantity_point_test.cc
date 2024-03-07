@@ -98,6 +98,11 @@ TEST(QuantityPoint, CanGetValueInDifferentUnits) {
     EXPECT_THAT(p.in(centi(meters_pt)), SameTypeAndValue(300));
 }
 
+TEST(QuantityPoint, IntermediateTypeIsSignedIfExplicitRepIsSigned) {
+    EXPECT_THAT(milli(kelvins_pt)(0u).coerce_as<int>(celsius_pt),
+                SameTypeAndValue(celsius_pt(-273)));
+}
+
 TEST(QuantityPoint, SupportsDirectAccessWithSameUnit) {
     auto p = celsius_pt(3);
     ++(p.data_in(Celsius{}));
