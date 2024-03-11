@@ -31,8 +31,6 @@ struct UnitWrapper : MakesQuantityFromNumber<UnitWrapper, Unit>,
                      ScalesQuantity<UnitWrapper, Unit>,
                      ComposesWith<UnitWrapper, Unit, UnitWrapper, UnitWrapper>,
                      ComposesWith<UnitWrapper, Unit, QuantityMaker, QuantityMaker>,
-                     ForbidsComposingWith<UnitWrapper, Unit, QuantityPointMaker>,
-                     ForbidsComposingWith<UnitWrapper, Unit, QuantityPoint>,
                      CanScaleByMagnitude<UnitWrapper, Unit> {};
 
 TEST(MakesQuantityFromNumber, MakesQuantityWhenPostMultiplyingNumericValue) {

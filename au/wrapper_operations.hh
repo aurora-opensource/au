@@ -217,30 +217,5 @@ struct CanScaleByMagnitude {
     }
 };
 
-//
-// A mixin to explicitly delete operations that we want to forbid.
-//
-template <template <typename U> class UnitWrapper,
-          typename Unit,
-          template <typename... Us>
-          class OtherWrapper>
-struct ForbidsComposingWith {
-    // (W * O), for wrapper W and wrapper O.
-    template <typename... Us>
-    friend constexpr void operator*(UnitWrapper<Unit>, OtherWrapper<Us...>) = delete;
-
-    // (W / O), for wrapper W and wrapper O.
-    template <typename... Us>
-    friend constexpr void operator/(UnitWrapper<Unit>, OtherWrapper<Us...>) = delete;
-
-    // (O * W), for wrapper W and wrapper O.
-    template <typename... Us>
-    friend constexpr void operator*(OtherWrapper<Us...>, UnitWrapper<Unit>) = delete;
-
-    // (O / W), for wrapper W and wrapper O.
-    template <typename... Us>
-    friend constexpr void operator/(OtherWrapper<Us...>, UnitWrapper<Unit>) = delete;
-};
-
 }  // namespace detail
 }  // namespace au
