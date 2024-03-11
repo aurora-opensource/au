@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.4-4-g492e5bd
+// Version identifier: 0.3.4-5-gffea274
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -4338,31 +4338,6 @@ struct CanScaleByMagnitude {
     }
 };
 
-//
-// A mixin to explicitly delete operations that we want to forbid.
-//
-template <template <typename U> class UnitWrapper,
-          typename Unit,
-          template <typename... Us>
-          class OtherWrapper>
-struct ForbidsComposingWith {
-    // (W * O), for wrapper W and wrapper O.
-    template <typename... Us>
-    friend constexpr void operator*(UnitWrapper<Unit>, OtherWrapper<Us...>) = delete;
-
-    // (W / O), for wrapper W and wrapper O.
-    template <typename... Us>
-    friend constexpr void operator/(UnitWrapper<Unit>, OtherWrapper<Us...>) = delete;
-
-    // (O * W), for wrapper W and wrapper O.
-    template <typename... Us>
-    friend constexpr void operator*(OtherWrapper<Us...>, UnitWrapper<Unit>) = delete;
-
-    // (O / W), for wrapper W and wrapper O.
-    template <typename... Us>
-    friend constexpr void operator/(OtherWrapper<Us...>, UnitWrapper<Unit>) = delete;
-};
-
 }  // namespace detail
 }  // namespace au
 
@@ -4808,8 +4783,6 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
                   detail::ComposesWith<Constant, Unit, Constant, Constant>,
                   detail::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
                   detail::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
-                  detail::ForbidsComposingWith<Constant, Unit, QuantityPointMaker>,
-                  detail::ForbidsComposingWith<Constant, Unit, QuantityPoint>,
                   detail::CanScaleByMagnitude<Constant, Unit> {
     // Convert this constant to a Quantity of the given rep.
     template <typename T>
