@@ -395,6 +395,7 @@ cc_library(
         ":apply_magnitude",
         ":conversion_policy",
         ":operators",
+        ":rep",
         ":unit_of_measure",
         ":zero",
     ],
@@ -434,6 +435,30 @@ cc_test(
         ":prefix",
         ":quantity_point",
         ":testing",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "rep",
+    hdrs = ["rep.hh"],
+    deps = [":stdx"],
+)
+
+cc_test(
+    name = "rep_test",
+    size = "small",
+    srcs = ["rep_test.cc"],
+    deps = [
+        ":chrono_interop",
+        ":constant",
+        ":magnitude",
+        ":prefix",
+        ":quantity",
+        ":quantity_point",
+        ":rep",
+        ":unit_symbol",
+        ":units",
         "@com_google_googletest//:gtest_main",
     ],
 )
