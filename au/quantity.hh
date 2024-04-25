@@ -19,6 +19,7 @@
 #include "au/apply_magnitude.hh"
 #include "au/conversion_policy.hh"
 #include "au/operators.hh"
+#include "au/rep.hh"
 #include "au/stdx/functional.hh"
 #include "au/unit_of_measure.hh"
 #include "au/zero.hh"
@@ -293,21 +294,21 @@ class Quantity {
     }
 
     // Scalar multiplication.
-    template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+    template <typename T, typename = std::enable_if_t<IsProductValidRep<RepT, T>::value>>
     friend constexpr auto operator*(Quantity a, T s) {
         return make_quantity<UnitT>(a.value_ * s);
     }
-    template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+    template <typename T, typename = std::enable_if_t<IsProductValidRep<T, RepT>::value>>
     friend constexpr auto operator*(T s, Quantity a) {
         return make_quantity<UnitT>(s * a.value_);
     }
 
     // Scalar division.
-    template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+    template <typename T, typename = std::enable_if_t<IsQuotientValidRep<RepT, T>::value>>
     friend constexpr auto operator/(Quantity a, T s) {
         return make_quantity<UnitT>(a.value_ / s);
     }
-    template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+    template <typename T, typename = std::enable_if_t<IsQuotientValidRep<T, RepT>::value>>
     friend constexpr auto operator/(T s, Quantity a) {
         warn_if_integer_division<T>();
         return make_quantity<decltype(pow<-1>(unit))>(s / a.value_);

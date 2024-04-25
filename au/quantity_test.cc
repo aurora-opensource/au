@@ -14,11 +14,14 @@
 
 #include "au/quantity.hh"
 
+#include <complex>
+
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/utility/type_traits.hh"
 #include "gtest/gtest.h"
 
+using ::testing::DoubleEq;
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
@@ -423,6 +426,35 @@ TEST(Quantity, ScalarMultiplicationWorks) {
     constexpr auto d = feet(3);
     EXPECT_EQ(feet(6), 2 * d);
     EXPECT_EQ(feet(9), d * 3);
+}
+
+TEST(Quantity, SupportsMultiplicationForComplexRep) {
+    constexpr auto a = (miles / hour)(std::complex<double>{1.0, -2.0});
+    constexpr auto b = hours(std::complex<double>{-3.0, 4.0});
+    EXPECT_THAT(a * b, SameTypeAndValue(miles(std::complex<double>{5.0, 10.0})));
+}
+
+TEST(Quantity, SupportsMultiplicationOfRealQuantityByComplexCoefficient) {
+    constexpr auto a = miles(10.0);
+    constexpr auto b = std::complex<double>{-3.0, 4.0};
+    EXPECT_THAT(a * b, SameTypeAndValue(miles(std::complex<double>{-30.0, 40.0})));
+    EXPECT_THAT(b * a, SameTypeAndValue(miles(std::complex<double>{-30.0, 40.0})));
+}
+
+TEST(Quantity, SupportsDivisionOfRealQuantityByComplexCoefficient) {
+    constexpr auto a = miles(100.0);
+    constexpr auto b = std::complex<double>{-3.0, 4.0};
+    const auto quotient = (a / b).in(miles);
+    EXPECT_THAT(quotient.real(), DoubleEq(-12.0));
+    EXPECT_THAT(quotient.imag(), DoubleEq(-16.0));
+}
+
+TEST(Quantity, SupportsDivisionOfRealQuantityIntoComplexCoefficient) {
+    constexpr auto a = std::complex<double>{-30.0, 40.0};
+    constexpr auto b = miles(10.0);
+    const auto quotient = (a / b).in(inverse(miles));
+    EXPECT_THAT(quotient.real(), DoubleEq(-3.0));
+    EXPECT_THAT(quotient.imag(), DoubleEq(4.0));
 }
 
 TEST(Quantity, CanDivideArbitraryQuantities) {
