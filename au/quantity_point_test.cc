@@ -195,6 +195,11 @@ TEST(QuantityPoint, CanCastToUnitWithDifferentOrigin) {
     EXPECT_THAT(celsius_pt(10).coerce_as(Kelvins{}), SameTypeAndValue(kelvins_pt(283)));
 }
 
+TEST(QuantityPoint, HandlesConversionWithSignedSourceAndUnsignedDestination) {
+    EXPECT_THAT(celsius_pt(int16_t{-5}).coerce_as<uint16_t>(kelvins_pt),
+                SameTypeAndValue(kelvins_pt(uint16_t{268})));
+}
+
 TEST(QuantityPoint, CoerceAsWillForceLossyConversion) {
     // Truncation.
     EXPECT_THAT(inches_pt(30).coerce_as(feet_pt), SameTypeAndValue(feet_pt(2)));
@@ -238,6 +243,12 @@ TEST(QuantityPoint, CoerceInExplicitRepSetsOutputType) {
     // Coerced unsigned overflow.
     ASSERT_EQ(static_cast<uint8_t>(30 * 12), 104);
     EXPECT_THAT(feet_pt(30).coerce_in<uint8_t>(inches_pt), SameTypeAndValue(uint8_t{104}));
+}
+
+TEST(QuantityPoint, CoerceAsPerformsConversionInWidestType) {
+    constexpr QuantityPointU32<Milli<Kelvins>> temp = milli(kelvins_pt)(313'150u);
+    EXPECT_THAT(temp.coerce_as<uint16_t>(deci(kelvins_pt)),
+                SameTypeAndValue(deci(kelvins_pt)(uint16_t{3131})));
 }
 
 TEST(QuantityPoint, ComparisonsWorkAsExpected) {

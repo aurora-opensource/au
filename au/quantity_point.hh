@@ -52,6 +52,9 @@ struct AreQuantityPointTypesEquivalent;
 namespace detail {
 template <typename TargetRep, typename U1, typename U2>
 struct OriginDisplacementFitsIn;
+
+template <typename FromRep, typename ToRep>
+struct IntermediateRep;
 }  // namespace detail
 
 // QuantityPoint implementation and API elaboration.
@@ -132,7 +135,9 @@ class QuantityPoint {
               typename NewUnit,
               typename = std::enable_if_t<IsUnit<NewUnit>::value>>
     constexpr NewRep in(NewUnit u) const {
-        return (rep_cast<NewRep>(x_) - rep_cast<NewRep>(OriginDisplacement<Unit, NewUnit>::value()))
+        using CalcRep = typename detail::IntermediateRep<Rep, NewRep>::type;
+        return (rep_cast<CalcRep>(x_) -
+                rep_cast<CalcRep>(OriginDisplacement<Unit, NewUnit>::value()))
             .template in<NewRep>(u);
     }
 
@@ -435,5 +440,28 @@ struct OriginDisplacementFitsIn
                          stdx::bool_constant<underlying_value_in_range<TargetRep>(
                              OriginDisplacement<U1, U2>::value())>,
                          std::true_type> {};
+
+// We simply want a version of `std::make_signed_t` that won't choke on non-integral types.
+template <typename T, bool IsInt = std::is_integral<T>::value>
+struct MakeSigned;
+template <typename T>
+struct MakeSigned<T, false> : stdx::type_identity<T> {};
+template <typename T>
+struct MakeSigned<T, true> : stdx::type_identity<std::make_signed_t<T>> {};
+
+// If the destination is a signed integer, we want to ensure we do our
+// computations in a signed type.  Otherwise, just use the common type for our
+// intermediate computations.
+template <typename CommonT, bool IsDestinationSigned>
+struct IntermediateRepImpl
+    : std::conditional_t<stdx::conjunction<std::is_integral<CommonT>,
+                                           stdx::bool_constant<IsDestinationSigned>>::value,
+                         MakeSigned<CommonT>,
+                         stdx::type_identity<CommonT>> {};
+
+template <typename FromRep, typename ToRep>
+struct IntermediateRep
+    : IntermediateRepImpl<std::common_type_t<FromRep, ToRep>, std::is_signed<ToRep>::value> {};
+
 }  // namespace detail
 }  // namespace au
