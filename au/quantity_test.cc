@@ -253,6 +253,12 @@ TEST(Quantity, CoerceInExplicitRepSetsOutputType) {
     EXPECT_THAT(feet(30).coerce_in<uint8_t>(inches), SameTypeAndValue(uint8_t{104}));
 }
 
+TEST(Quantity, CoerceAsPerformsConversionInWidestType) {
+    constexpr QuantityU32<Milli<Meters>> length = milli(meters)(313'150u);
+    EXPECT_THAT(length.coerce_as<uint16_t>(deci(meters)),
+                SameTypeAndValue(deci(meters)(uint16_t{3131})));
+}
+
 TEST(Quantity, CanImplicitlyConvertToDifferentUnitOfSameDimension) {
     constexpr QuantityI32<Inches> x = yards(2);
     EXPECT_EQ(x.in(inches), 72);
