@@ -495,12 +495,10 @@ $273.15 \,\text{K}$.
 - For _instances_ `u1` and `u2`:
     - `origin_displacement(u1, u2)`
 
-### Associated unit
+### Associated unit {#associated-unit}
 
-**Result:** The actual unit associated with a "unit-alike".
-
-What's a "unit-alike"?  It's something that can be passed to an API expecting the name of a unit.
-Here are a few examples.
+**Result:** The actual unit associated with a [unit slot](../discussion/idioms/unit-slots.md) that
+is associated with a `Quantity` type.  Here are a few examples.
 
 ```cpp
 round_in(meters, feet(20));
@@ -508,16 +506,21 @@ round_in(meters, feet(20));
 round_in(Meters{}, feet(20));
 //       ^^^^^^^^
 
+using symbols::m;
+round_in(m, feet(20));
+//       ^
+
 feet(6).in(inches);
 //         ^^^^^^
 feet(6).in(Inches{});
 //         ^^^^^^^^
 ```
 
-The underlined arguments are all unit-alikes.  In practice, a unit-alike either a `QuantityMaker`
-for some unit, or a unit itself.
+The underlined arguments are all unit slots.  The kinds of things that can be passed here include
+a `QuantityMaker` for a unit, a [constant](./constant.md), a [unit symbol](#unit-symbols), or simply
+a unit type itself.
 
-The use case for this trait is to _implement_ a function that takes a unit-alike.
+The use case for this trait is to _implement_ the unit slot argument for a function.
 
 **Syntax:**
 
@@ -525,6 +528,36 @@ The use case for this trait is to _implement_ a function that takes a unit-alike
     - `AssociatedUnitT<U>`
 - For an _instance_ `u`:
     - `associated_unit(u)`
+
+### Associated unit (for points) {#associated-unit-for-points}
+
+**Result:** The actual unit associated with a [unit slot](../discussion/idioms/unit-slots.md) that
+is associated with a quantity point type. Here are a few examples.
+
+```cpp
+round_in(meters_pt, milli(meters_pt)(1200));
+//       ^^^^^^^^^
+round_in(Meters{}, milli(meters_pt)(1200));
+//       ^^^^^^^^
+
+meters_pt(6).in(centi(meters_pt));
+//              ^^^^^^^^^^^^^^^^
+meters_pt(6).in(Centi<Meters>{});
+//              ^^^^^^^^^^^^^^^
+```
+
+The underlined arguments are unit slots for quantity points.  In practice, this will be either
+a `QuantityPointMaker` for some unit, or a unit itself.
+
+The use case for this trait is to _implement_ a function or API that takes a unit slot, and is
+associated with quantity points.
+
+**Syntax:**
+
+- For a _type_ `U`:
+    - `AssociatedUnitForPointsT<U>`
+- For an _instance_ `u`:
+    - `associated_unit_for_points(u)`
 
 ### Common unit
 

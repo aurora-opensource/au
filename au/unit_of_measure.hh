@@ -145,6 +145,11 @@ struct AssociatedUnit : stdx::type_identity<U> {};
 template <typename U>
 using AssociatedUnitT = typename AssociatedUnit<U>::type;
 
+template <typename U>
+struct AssociatedUnitForPoints : stdx::type_identity<U> {};
+template <typename U>
+using AssociatedUnitForPointsT = typename AssociatedUnitForPoints<U>::type;
+
 // `CommonUnitT`: the largest unit that evenly divides all input units.
 //
 // A specialization will only exist if all input types are units.
@@ -247,6 +252,11 @@ constexpr auto origin_displacement(U1, U2) {
 template <typename U>
 constexpr auto associated_unit(U) {
     return AssociatedUnitT<U>{};
+}
+
+template <typename U>
+constexpr auto associated_unit_for_points(U) {
+    return AssociatedUnitForPointsT<U>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
