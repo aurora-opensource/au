@@ -749,7 +749,14 @@
     Quantity maker expression
   </a>
   
-    <nav class="md-nav" aria-label="Quantity maker expression">
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-expressions" class="md-nav__link">
+    Other expressions
+  </a>
+  
+    <nav class="md-nav" aria-label="Other expressions">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1808,6 +1815,38 @@ they have two advantages that make them easier to read:</p>
    singular), rather than <code>Meters{} / squared(Seconds{})</code>.</p>
 </li>
 </ol>
+<h3 id="other-expressions">Other expressions<a class="headerlink" href="#other-expressions" title="Permanent link">&para;</a></h3>
+<p>There are other monovalue types that would feel right at home in a unit slot.  We typically support
+those too!  Key examples include <a href="../../../reference/unit/#unit-symbols">unit symbols</a> and
+<a href="../../../reference/constant/">constants</a>.  Expand the block below to see a worked example.</p>
+<details class="example">
+<summary>Example: using unit symbols and constants in unit slots</summary>
+<p>Suppose we have the following preamble, simply to set everything up.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">SpeedOfLight</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Meters</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Seconds</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">};</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">SpeedOfLight</span><span class="o">::</span><span class="n">label</span><span class="p">[];</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">SpeedOfLight</span><span class="p">{});</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1">// These using declarations should be in a `.cc` file, not `.hh`,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1">// to avoid namespace pollution!</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="k">using</span><span class="w"> </span><span class="n">symbols</span><span class="o">::</span><span class="n">m</span><span class="p">;</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="k">using</span><span class="w"> </span><span class="n">symbols</span><span class="o">::</span><span class="n">s</span><span class="p">;</span>
+</code></pre></div>
+<p>Then we can pass either the unit symbols, or the constants, to our unit slot APIs:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">)(</span><span class="mf">65.0</span><span class="p">);</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">m</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1">//                ^^^^^</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1">// Passing a unit symbol to the unit slot.  Output:</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1">// &quot;29.0576 m / s&quot;</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1">//                ^</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1">// Passing a constant to the unit slot.  Output:</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="c1">// &quot;9.69257e-08 c&quot;</span>
+</code></pre></div>
+</details>
 <h4 id="notes-for-quantitypoint">Notes for <code>QuantityPoint</code><a class="headerlink" href="#notes-for-quantitypoint" title="Permanent link">&para;</a></h4>
 <p><code>QuantityPoint</code> doesn&rsquo;t use quantity makers: it uses quantity <em>point</em> makers.  For example, instead
 of the quantity maker <code>meters</code>, it uses the quantity point maker <code>meters_pt</code>.</p>
@@ -1815,9 +1854,14 @@ of the quantity maker <code>meters</code>, it uses the quantity point maker <cod
 use the quantity <em>point</em> maker instead of the <em>quantity</em> maker.  The library will enforce this
 automatically: for example, you can&rsquo;t pass <code>meters</code> to a <code>QuantityPoint</code>&rsquo;s unit slot, and you can&rsquo;t
 pass <code>meters_pt</code> to a <code>Quantity</code>&rsquo;s unit slot.</p>
+<p>To get the associated unit for a type, use the
+<a href="../../../reference/unit/#associated-unit"><code>AssociatedUnitT</code></a> trait when you&rsquo;re dealing with
+<code>Quantity</code>, and use the
+<a href="../../../reference/unit/#associated-unit-for-points"><code>AssociatedUnitForPointsT</code></a> trait when dealing
+with <code>QuantityPoint</code>.</p>
 <h2 id="examples-rounding-to-rpm">Examples: rounding to RPM<a class="headerlink" href="#examples-rounding-to-rpm" title="Permanent link">&para;</a></h2>
 <p>Let&rsquo;s look at some examples, using this quantity variable:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">angular_velocity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">radians</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">second</span><span class="p">)(</span><span class="mf">10.0</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">angular_velocity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">radians</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">second</span><span class="p">)(</span><span class="mf">10.0</span><span class="p">);</span>
 </code></pre></div>
 <p>Our goal will be to round it to the nearest value in revolutions per minute (RPM).  Let&rsquo;s look at
 our options for doing that.</p>
@@ -1828,22 +1872,22 @@ instances.  In fact, they also work nicely with <code>SingularNameFor</code> ins
 for the unit <code>Minutes</code> &mdash; to further enhance readability.</p>
 <p>Here&rsquo;s how it looks to pass a <code>QuantityMaker</code> &mdash; fluently composed, on the fly &mdash; to this unit
 expression API.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">round_as</span><span class="p">(</span><span class="n">revolutions</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">minute</span><span class="p">,</span><span class="w"> </span><span class="n">angular_velocity</span><span class="p">);</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1">//                            ^^^^^^^^^^^^^^^^^^^^</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">//                          Quantity maker expression</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">round_as</span><span class="p">(</span><span class="n">revolutions</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">minute</span><span class="p">,</span><span class="w"> </span><span class="n">angular_velocity</span><span class="p">);</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1">//                            ^^^^^^^^^^^^^^^^^^^^</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1">//                          Quantity maker expression</span>
 </code></pre></div>
 <h3 id="also-acceptable-unit-expression">Also acceptable: unit expression<a class="headerlink" href="#also-acceptable-unit-expression" title="Permanent link">&para;</a></h3>
 <p>We could, of course, also pass a unit expression to the unit expression slot.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// Usual unit-expression approach (doing arithmetic on *instances*):</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">round_as</span><span class="p">(</span><span class="n">Revolutions</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Minutes</span><span class="p">{},</span><span class="w"> </span><span class="n">angular_velocity</span><span class="p">);</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1">//                            ^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1">//                                 unit expression</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1">// Alternative, clunkier unit-expression approach (doing arithmetic on *types*):</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">round_as</span><span class="p">(</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">   </span><span class="n">UnitQuotientT</span><span class="o">&lt;</span><span class="n">Revolutions</span><span class="p">,</span><span class="w"> </span><span class="n">Minutes</span><span class="o">&gt;</span><span class="p">{},</span><span class="w"> </span><span class="n">angular_velocity</span><span class="p">);</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1">// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1">//            unit expression</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// Usual unit-expression approach (doing arithmetic on *instances*):</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">round_as</span><span class="p">(</span><span class="n">Revolutions</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Minutes</span><span class="p">{},</span><span class="w"> </span><span class="n">angular_velocity</span><span class="p">);</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1">//                            ^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1">//                                 unit expression</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1">// Alternative, clunkier unit-expression approach (doing arithmetic on *types*):</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">round_as</span><span class="p">(</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">   </span><span class="n">UnitQuotientT</span><span class="o">&lt;</span><span class="n">Revolutions</span><span class="p">,</span><span class="w"> </span><span class="n">Minutes</span><span class="o">&gt;</span><span class="p">{},</span><span class="w"> </span><span class="n">angular_velocity</span><span class="p">);</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1">// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1">//            unit expression</span>
 </code></pre></div>
 <p>These are OK, but they have a couple of drawbacks compared to the quantity maker approach.</p>
 <ol>
@@ -1860,13 +1904,13 @@ a quantity maker handy, but you <em>do</em> know the unit type.</p>
 <h3 id="poor-choice-manually-constructed-quantitymaker">Poor choice: manually constructed <code>QuantityMaker</code><a class="headerlink" href="#poor-choice-manually-constructed-quantitymaker" title="Permanent link">&para;</a></h3>
 <p>This may look counterintuitive, but we mention it because we&rsquo;ve seen a few instances of this
 approach in the wild!  Here is an example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">//</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1">// !!   Do not do this!   !!</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1">//</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">round_as</span><span class="p">(</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">UnitQuotientT</span><span class="o">&lt;</span><span class="n">Revolutions</span><span class="p">,</span><span class="w"> </span><span class="n">Minutes</span><span class="o">&gt;&gt;</span><span class="p">{},</span><span class="w"> </span><span class="n">angular_velocity</span><span class="p">);</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1">//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1">//           manual QuantityMaker instance</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">//</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1">// !!   Do not do this!   !!</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1">//</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">round_as</span><span class="p">(</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">UnitQuotientT</span><span class="o">&lt;</span><span class="n">Revolutions</span><span class="p">,</span><span class="w"> </span><span class="n">Minutes</span><span class="o">&gt;&gt;</span><span class="p">{},</span><span class="w"> </span><span class="n">angular_velocity</span><span class="p">);</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1">//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1">//           manual QuantityMaker instance</span>
 </code></pre></div>
 <p>Presumably, this mistake comes from reading the signatures in the source code
 without understanding their core design goal: namely, to provide a place to specify the units,

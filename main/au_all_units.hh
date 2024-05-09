@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.4-7-g30440ed
+// Version identifier: 0.3.4-8-gb9b89f8
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -2578,6 +2578,11 @@ struct AssociatedUnit : stdx::type_identity<U> {};
 template <typename U>
 using AssociatedUnitT = typename AssociatedUnit<U>::type;
 
+template <typename U>
+struct AssociatedUnitForPoints : stdx::type_identity<U> {};
+template <typename U>
+using AssociatedUnitForPointsT = typename AssociatedUnitForPoints<U>::type;
+
 // `CommonUnitT`: the largest unit that evenly divides all input units.
 //
 // A specialization will only exist if all input types are units.
@@ -2680,6 +2685,11 @@ constexpr auto origin_displacement(U1, U2) {
 template <typename U>
 constexpr auto associated_unit(U) {
     return AssociatedUnitT<U>{};
+}
+
+template <typename U>
+constexpr auto associated_unit_for_points(U) {
+    return AssociatedUnitForPointsT<U>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4636,55 +4646,41 @@ class QuantityPoint {
 
     template <typename NewRep,
               typename NewUnit,
-              typename = std::enable_if_t<IsUnit<NewUnit>::value>>
+              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
     constexpr auto as(NewUnit u) const {
-        return make_quantity_point<NewUnit>(this->template in<NewRep>(u));
+        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(this->template in<NewRep>(u));
     }
 
-    template <typename NewUnit, typename = std::enable_if_t<IsUnit<NewUnit>::value>>
+    template <typename NewUnit,
+              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
     constexpr auto as(NewUnit u) const {
-        return make_quantity_point<NewUnit>(in(u));
+        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in(u));
     }
 
     template <typename NewRep,
               typename NewUnit,
-              typename = std::enable_if_t<IsUnit<NewUnit>::value>>
+              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
     constexpr NewRep in(NewUnit u) const {
         using CalcRep = typename detail::IntermediateRep<Rep, NewRep>::type;
         return (rep_cast<CalcRep>(x_) -
-                rep_cast<CalcRep>(OriginDisplacement<Unit, NewUnit>::value()))
-            .template in<NewRep>(u);
+                rep_cast<CalcRep>(
+                    OriginDisplacement<Unit, AssociatedUnitForPointsT<NewUnit>>::value()))
+            .template in<NewRep>(associated_unit_for_points(u));
     }
 
-    template <typename NewUnit, typename = std::enable_if_t<IsUnit<NewUnit>::value>>
+    template <typename NewUnit,
+              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
     constexpr Rep in(NewUnit u) const {
-        static_assert(detail::OriginDisplacementFitsIn<Rep, NewUnit, Unit>::value,
-                      "Cannot represent origin displacement in desired Rep");
+        static_assert(
+            detail::OriginDisplacementFitsIn<Rep, AssociatedUnitForPointsT<NewUnit>, Unit>::value,
+            "Cannot represent origin displacement in desired Rep");
 
         // `rep_cast` is needed because if these are integral types, their difference might become a
         // different type due to integer promotion.
-        return rep_cast<Rep>(x_ + rep_cast<Rep>(OriginDisplacement<NewUnit, Unit>::value())).in(u);
-    }
-
-    // Overloads for passing a QuantityPointMaker.
-    //
-    // This is the "magic" that lets us write things like `position.in(meters_pt)`, instead of just
-    // `position.in(Meters{})`.
-    template <typename NewRep, typename NewUnit>
-    constexpr auto as(QuantityPointMaker<NewUnit>) const {
-        return as<NewRep>(NewUnit{});
-    }
-    template <typename NewUnit>
-    constexpr auto as(QuantityPointMaker<NewUnit>) const {
-        return as(NewUnit{});
-    }
-    template <typename NewRep, typename NewUnit>
-    constexpr NewRep in(QuantityPointMaker<NewUnit>) const {
-        return in<NewRep>(NewUnit{});
-    }
-    template <typename NewUnit>
-    constexpr Rep in(QuantityPointMaker<NewUnit>) const {
-        return in(NewUnit{});
+        return rep_cast<Rep>(
+                   x_ + rep_cast<Rep>(
+                            OriginDisplacement<AssociatedUnitForPointsT<NewUnit>, Unit>::value()))
+            .in(associated_unit_for_points(u));
     }
 
     // "Old-style" overloads with <U, R> template parameters, and no function parameters.
@@ -4826,6 +4822,9 @@ struct QuantityPointMaker {
         return QuantityPointMaker<decltype(unit / m)>{};
     }
 };
+
+template <typename U>
+struct AssociatedUnitForPoints<QuantityPointMaker<U>> : stdx::type_identity<U> {};
 
 // Type trait to detect whether two QuantityPoint types are equivalent.
 //
