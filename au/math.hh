@@ -312,6 +312,12 @@ constexpr bool isnan(Quantity<U, R> q) {
     return std::isnan(q.in(U{}));
 }
 
+// Overload of `isnan` for `QuantityPoint`.
+template <typename U, typename R>
+constexpr bool isnan(QuantityPoint<U, R> p) {
+    return std::isnan(p.in(U{}));
+}
+
 // The maximum of two values of the same dimension.
 //
 // Unlike std::max, returns by value rather than by reference, because the types might differ.
