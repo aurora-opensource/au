@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.4-8-gb9b89f8
+// Version identifier: 0.3.4-9-g5339f61
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -5913,6 +5913,12 @@ constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
 template <typename U, typename R>
 constexpr bool isnan(Quantity<U, R> q) {
     return std::isnan(q.in(U{}));
+}
+
+// Overload of `isnan` for `QuantityPoint`.
+template <typename U, typename R>
+constexpr bool isnan(QuantityPoint<U, R> p) {
+    return std::isnan(p.in(U{}));
 }
 
 // The maximum of two values of the same dimension.
