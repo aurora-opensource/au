@@ -762,8 +762,19 @@ TEST(RoundAs, SameAsStdRoundForSameUnits) {
     EXPECT_THAT(round_as(meters, meters(3.14f)), SameTypeAndValue(meters(std::round(3.14f))));
     EXPECT_THAT(round_as(meters, meters(3.14L)), SameTypeAndValue(meters(std::round(3.14L))));
 
+    EXPECT_THAT(round_as(meters_pt, meters_pt(3)), SameTypeAndValue(meters_pt(std::round(3))));
+    EXPECT_THAT(round_as(meters_pt, meters_pt(3.14)),
+                SameTypeAndValue(meters_pt(std::round(3.14))));
+    EXPECT_THAT(round_as(meters_pt, meters_pt(3.14f)),
+                SameTypeAndValue(meters_pt(std::round(3.14f))));
+    EXPECT_THAT(round_as(meters_pt, meters_pt(3.14L)),
+                SameTypeAndValue(meters_pt(std::round(3.14L))));
+
     EXPECT_THAT(round_as(meters, meters(INTEGER_TOO_BIG_FOR_DOUBLE)),
                 SameTypeAndValue(meters(std::round(INTEGER_TOO_BIG_FOR_DOUBLE))));
+
+    EXPECT_THAT(round_as(meters_pt, meters_pt(INTEGER_TOO_BIG_FOR_DOUBLE)),
+                SameTypeAndValue(meters_pt(std::round(INTEGER_TOO_BIG_FOR_DOUBLE))));
 }
 
 TEST(RoundAs, RoundsAsExpectedForDifferentUnits) {
@@ -771,6 +782,14 @@ TEST(RoundAs, RoundsAsExpectedForDifferentUnits) {
     EXPECT_THAT(round_as(kilo(meters), meters(999.9)), SameTypeAndValue(kilo(meters)(1.0)));
     EXPECT_THAT(round_as(kilo(meters), meters(999.9f)), SameTypeAndValue(kilo(meters)(1.0f)));
     EXPECT_THAT(round_as(kilo(meters), meters(999.9L)), SameTypeAndValue(kilo(meters)(1.0L)));
+
+    EXPECT_THAT(round_as(kilo(meters_pt), meters_pt(999)), SameTypeAndValue(kilo(meters_pt)(1.0)));
+    EXPECT_THAT(round_as(kilo(meters_pt), meters_pt(999.9)),
+                SameTypeAndValue(kilo(meters_pt)(1.0)));
+    EXPECT_THAT(round_as(kilo(meters_pt), meters_pt(999.9f)),
+                SameTypeAndValue(kilo(meters_pt)(1.0f)));
+    EXPECT_THAT(round_as(kilo(meters_pt), meters_pt(999.9L)),
+                SameTypeAndValue(kilo(meters_pt)(1.0L)));
 }
 
 TEST(RoundAs, SupportsDifferentOutputTypes) {
@@ -781,6 +800,30 @@ TEST(RoundAs, SupportsDifferentOutputTypes) {
 
     EXPECT_THAT(round_as<double>(kilo(meters), meters(999.9f)),
                 SameTypeAndValue(kilo(meters)(1.0)));
+
+    EXPECT_THAT(round_as<int>(meters_pt, meters_pt(3)),
+                SameTypeAndValue(meters_pt(static_cast<int>(std::round(3)))));
+    EXPECT_THAT(round_as<int>(meters_pt, meters_pt(3.9)),
+                SameTypeAndValue(meters_pt(static_cast<int>(std::round(3.9)))));
+
+    EXPECT_THAT(round_as<double>(kilo(meters_pt), meters_pt(999.9f)),
+                SameTypeAndValue(kilo(meters_pt)(1.0)));
+}
+
+TEST(RoundAs, SupportsQuantityPointWithNontrivialOffset) {
+    EXPECT_THAT(round_as(kelvins_pt, celsius_pt(20.0f)), SameTypeAndValue(kelvins_pt(293.0f)));
+    EXPECT_THAT(round_as(kelvins_pt, celsius_pt(20.5f)), SameTypeAndValue(kelvins_pt(294.0f)));
+
+    // Each degree Fahrenheit is 5/9 of a degree Celsius.  Thus, moving away from an exact
+    // correspondence by one degree Fahrenheit will be enough to move to the next integer Celsius
+    // when we round, but moving by half a degree will not.
+    EXPECT_THAT(round_as<int>(celsius_pt, fahrenheit_pt(31.0)), SameTypeAndValue(celsius_pt(-1)));
+    EXPECT_THAT(round_as<int>(celsius_pt, fahrenheit_pt(31.5)), SameTypeAndValue(celsius_pt(0)));
+
+    EXPECT_THAT(round_as<int>(celsius_pt, fahrenheit_pt(32.0)), SameTypeAndValue(celsius_pt(0)));
+
+    EXPECT_THAT(round_as<int>(celsius_pt, fahrenheit_pt(32.5)), SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(round_as<int>(celsius_pt, fahrenheit_pt(33.0)), SameTypeAndValue(celsius_pt(1)));
 }
 
 TEST(RoundIn, SameAsRoundAs) {
@@ -788,10 +831,16 @@ TEST(RoundIn, SameAsRoundAs) {
     EXPECT_THAT(round_in(kilo(meters), meters(754.28)), SameTypeAndValue(1.0));
     EXPECT_THAT(round_in(kilo(meters), meters(754.28f)), SameTypeAndValue(1.0f));
     EXPECT_THAT(round_in(kilo(meters), meters(754.28L)), SameTypeAndValue(1.0L));
+
+    EXPECT_THAT(round_in(kilo(meters_pt), meters_pt(754)), SameTypeAndValue(1.0));
+    EXPECT_THAT(round_in(kilo(meters_pt), meters_pt(754.28)), SameTypeAndValue(1.0));
+    EXPECT_THAT(round_in(kilo(meters_pt), meters_pt(754.28f)), SameTypeAndValue(1.0f));
+    EXPECT_THAT(round_in(kilo(meters_pt), meters_pt(754.28L)), SameTypeAndValue(1.0L));
 }
 
 TEST(RoundIn, SupportsDifferentOutputTypes) {
     EXPECT_THAT(round_in<long double>(kilo(meters), meters(754.28f)), SameTypeAndValue(1.0L));
+    EXPECT_THAT(round_in<long double>(kilo(meters_pt), meters_pt(754.28f)), SameTypeAndValue(1.0L));
 }
 
 TEST(FloorAs, SameAsStdFloorForSameUnits) {
@@ -800,8 +849,19 @@ TEST(FloorAs, SameAsStdFloorForSameUnits) {
     EXPECT_THAT(floor_as(meters, meters(3.14f)), SameTypeAndValue(meters(std::floor(3.14f))));
     EXPECT_THAT(floor_as(meters, meters(3.14L)), SameTypeAndValue(meters(std::floor(3.14L))));
 
+    EXPECT_THAT(floor_as(meters_pt, meters_pt(3)), SameTypeAndValue(meters_pt(std::floor(3))));
+    EXPECT_THAT(floor_as(meters_pt, meters_pt(3.14)),
+                SameTypeAndValue(meters_pt(std::floor(3.14))));
+    EXPECT_THAT(floor_as(meters_pt, meters_pt(3.14f)),
+                SameTypeAndValue(meters_pt(std::floor(3.14f))));
+    EXPECT_THAT(floor_as(meters_pt, meters_pt(3.14L)),
+                SameTypeAndValue(meters_pt(std::floor(3.14L))));
+
     EXPECT_THAT(floor_as(meters, meters(INTEGER_TOO_BIG_FOR_DOUBLE)),
                 SameTypeAndValue(meters(std::floor(INTEGER_TOO_BIG_FOR_DOUBLE))));
+
+    EXPECT_THAT(floor_as(meters_pt, meters_pt(INTEGER_TOO_BIG_FOR_DOUBLE)),
+                SameTypeAndValue(meters_pt(std::floor(INTEGER_TOO_BIG_FOR_DOUBLE))));
 }
 
 TEST(FloorAs, RoundsDownAsExpectedForDifferentUnits) {
@@ -810,10 +870,26 @@ TEST(FloorAs, RoundsDownAsExpectedForDifferentUnits) {
     EXPECT_THAT(floor_as(kilo(meters), meters(999.9f)), SameTypeAndValue(kilo(meters)(0.0f)));
     EXPECT_THAT(floor_as(kilo(meters), meters(999.9L)), SameTypeAndValue(kilo(meters)(0.0L)));
 
+    EXPECT_THAT(floor_as(kilo(meters_pt), meters_pt(999)), SameTypeAndValue(kilo(meters_pt)(0.0)));
+    EXPECT_THAT(floor_as(kilo(meters_pt), meters_pt(999.9)),
+                SameTypeAndValue(kilo(meters_pt)(0.0)));
+    EXPECT_THAT(floor_as(kilo(meters_pt), meters_pt(999.9f)),
+                SameTypeAndValue(kilo(meters_pt)(0.0f)));
+    EXPECT_THAT(floor_as(kilo(meters_pt), meters_pt(999.9L)),
+                SameTypeAndValue(kilo(meters_pt)(0.0L)));
+
     EXPECT_THAT(floor_as(kilo(meters), meters(1001)), SameTypeAndValue(kilo(meters)(1.0)));
     EXPECT_THAT(floor_as(kilo(meters), meters(1000.1)), SameTypeAndValue(kilo(meters)(1.0)));
     EXPECT_THAT(floor_as(kilo(meters), meters(1000.1f)), SameTypeAndValue(kilo(meters)(1.0f)));
     EXPECT_THAT(floor_as(kilo(meters), meters(1000.1L)), SameTypeAndValue(kilo(meters)(1.0L)));
+
+    EXPECT_THAT(floor_as(kilo(meters_pt), meters_pt(1001)), SameTypeAndValue(kilo(meters_pt)(1.0)));
+    EXPECT_THAT(floor_as(kilo(meters_pt), meters_pt(1000.1)),
+                SameTypeAndValue(kilo(meters_pt)(1.0)));
+    EXPECT_THAT(floor_as(kilo(meters_pt), meters_pt(1000.1f)),
+                SameTypeAndValue(kilo(meters_pt)(1.0f)));
+    EXPECT_THAT(floor_as(kilo(meters_pt), meters_pt(1000.1L)),
+                SameTypeAndValue(kilo(meters_pt)(1.0L)));
 }
 
 TEST(FloorAs, SupportsDifferentOutputTypes) {
@@ -822,8 +898,32 @@ TEST(FloorAs, SupportsDifferentOutputTypes) {
     EXPECT_THAT(floor_as<int>(meters, meters(3.9)),
                 SameTypeAndValue(meters(static_cast<int>(std::floor(3.9)))));
 
+    EXPECT_THAT(floor_as<int>(meters_pt, meters_pt(3)),
+                SameTypeAndValue(meters_pt(static_cast<int>(std::floor(3)))));
+    EXPECT_THAT(floor_as<int>(meters_pt, meters_pt(3.9)),
+                SameTypeAndValue(meters_pt(static_cast<int>(std::floor(3.9)))));
+
     EXPECT_THAT(floor_as<double>(kilo(meters), meters(1000.1f)),
                 SameTypeAndValue(kilo(meters)(1.0)));
+
+    EXPECT_THAT(floor_as<double>(kilo(meters_pt), meters_pt(1000.1f)),
+                SameTypeAndValue(kilo(meters_pt)(1.0)));
+}
+
+TEST(FloorAs, SupportsQuantityPointWithNontrivialOffset) {
+    EXPECT_THAT(floor_as(kelvins_pt, celsius_pt(20.0f)), SameTypeAndValue(kelvins_pt(293.0f)));
+    EXPECT_THAT(floor_as(kelvins_pt, celsius_pt(20.8f)), SameTypeAndValue(kelvins_pt(293.0f)));
+    EXPECT_THAT(floor_as(kelvins_pt, celsius_pt(20.9f)), SameTypeAndValue(kelvins_pt(294.0f)));
+
+    EXPECT_THAT(floor_as<int>(celsius_pt, fahrenheit_pt(31.0)), SameTypeAndValue(celsius_pt(-1)));
+    EXPECT_THAT(floor_as<int>(celsius_pt, fahrenheit_pt(31.5)), SameTypeAndValue(celsius_pt(-1)));
+
+    EXPECT_THAT(floor_as<int>(celsius_pt, fahrenheit_pt(32.0)), SameTypeAndValue(celsius_pt(0)));
+
+    EXPECT_THAT(floor_as<int>(celsius_pt, fahrenheit_pt(32.5)), SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(floor_as<int>(celsius_pt, fahrenheit_pt(33.0)), SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(floor_as<int>(celsius_pt, fahrenheit_pt(33.5)), SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(floor_as<int>(celsius_pt, fahrenheit_pt(34.0)), SameTypeAndValue(celsius_pt(1)));
 }
 
 TEST(FloorIn, SameAsFloorAs) {
@@ -831,10 +931,17 @@ TEST(FloorIn, SameAsFloorAs) {
     EXPECT_THAT(floor_in(kilo(meters), meters(1154.28)), SameTypeAndValue(1.0));
     EXPECT_THAT(floor_in(kilo(meters), meters(1154.28f)), SameTypeAndValue(1.0f));
     EXPECT_THAT(floor_in(kilo(meters), meters(1154.28L)), SameTypeAndValue(1.0L));
+
+    EXPECT_THAT(floor_in(kilo(meters_pt), meters_pt(1154)), SameTypeAndValue(1.0));
+    EXPECT_THAT(floor_in(kilo(meters_pt), meters_pt(1154.28)), SameTypeAndValue(1.0));
+    EXPECT_THAT(floor_in(kilo(meters_pt), meters_pt(1154.28f)), SameTypeAndValue(1.0f));
+    EXPECT_THAT(floor_in(kilo(meters_pt), meters_pt(1154.28L)), SameTypeAndValue(1.0L));
 }
 
 TEST(FloorIn, SupportsDifferentOutputTypes) {
     EXPECT_THAT(floor_in<long double>(kilo(meters), meters(1154.28f)), SameTypeAndValue(1.0L));
+    EXPECT_THAT(floor_in<long double>(kilo(meters_pt), meters_pt(1154.28f)),
+                SameTypeAndValue(1.0L));
 }
 
 TEST(CeilAs, SameAsStdCeilForSameUnits) {
@@ -843,8 +950,18 @@ TEST(CeilAs, SameAsStdCeilForSameUnits) {
     EXPECT_THAT(ceil_as(meters, meters(3.14f)), SameTypeAndValue(meters(std::ceil(3.14f))));
     EXPECT_THAT(ceil_as(meters, meters(3.14L)), SameTypeAndValue(meters(std::ceil(3.14L))));
 
+    EXPECT_THAT(ceil_as(meters_pt, meters_pt(3)), SameTypeAndValue(meters_pt(std::ceil(3))));
+    EXPECT_THAT(ceil_as(meters_pt, meters_pt(3.14)), SameTypeAndValue(meters_pt(std::ceil(3.14))));
+    EXPECT_THAT(ceil_as(meters_pt, meters_pt(3.14f)),
+                SameTypeAndValue(meters_pt(std::ceil(3.14f))));
+    EXPECT_THAT(ceil_as(meters_pt, meters_pt(3.14L)),
+                SameTypeAndValue(meters_pt(std::ceil(3.14L))));
+
     EXPECT_THAT(ceil_as(meters, meters(INTEGER_TOO_BIG_FOR_DOUBLE)),
                 SameTypeAndValue(meters(std::ceil(INTEGER_TOO_BIG_FOR_DOUBLE))));
+
+    EXPECT_THAT(ceil_as(meters_pt, meters_pt(INTEGER_TOO_BIG_FOR_DOUBLE)),
+                SameTypeAndValue(meters_pt(std::ceil(INTEGER_TOO_BIG_FOR_DOUBLE))));
 }
 
 TEST(CeilAs, RoundsUpAsExpectedForDifferentUnits) {
@@ -853,10 +970,25 @@ TEST(CeilAs, RoundsUpAsExpectedForDifferentUnits) {
     EXPECT_THAT(ceil_as(kilo(meters), meters(999.9f)), SameTypeAndValue(kilo(meters)(1.0f)));
     EXPECT_THAT(ceil_as(kilo(meters), meters(999.9L)), SameTypeAndValue(kilo(meters)(1.0L)));
 
+    EXPECT_THAT(ceil_as(kilo(meters_pt), meters_pt(999)), SameTypeAndValue(kilo(meters_pt)(1.0)));
+    EXPECT_THAT(ceil_as(kilo(meters_pt), meters_pt(999.9)), SameTypeAndValue(kilo(meters_pt)(1.0)));
+    EXPECT_THAT(ceil_as(kilo(meters_pt), meters_pt(999.9f)),
+                SameTypeAndValue(kilo(meters_pt)(1.0f)));
+    EXPECT_THAT(ceil_as(kilo(meters_pt), meters_pt(999.9L)),
+                SameTypeAndValue(kilo(meters_pt)(1.0L)));
+
     EXPECT_THAT(ceil_as(kilo(meters), meters(1001)), SameTypeAndValue(kilo(meters)(2.0)));
     EXPECT_THAT(ceil_as(kilo(meters), meters(1000.1)), SameTypeAndValue(kilo(meters)(2.0)));
     EXPECT_THAT(ceil_as(kilo(meters), meters(1000.1f)), SameTypeAndValue(kilo(meters)(2.0f)));
     EXPECT_THAT(ceil_as(kilo(meters), meters(1000.1L)), SameTypeAndValue(kilo(meters)(2.0L)));
+
+    EXPECT_THAT(ceil_as(kilo(meters_pt), meters_pt(1001)), SameTypeAndValue(kilo(meters_pt)(2.0)));
+    EXPECT_THAT(ceil_as(kilo(meters_pt), meters_pt(1000.1)),
+                SameTypeAndValue(kilo(meters_pt)(2.0)));
+    EXPECT_THAT(ceil_as(kilo(meters_pt), meters_pt(1000.1f)),
+                SameTypeAndValue(kilo(meters_pt)(2.0f)));
+    EXPECT_THAT(ceil_as(kilo(meters_pt), meters_pt(1000.1L)),
+                SameTypeAndValue(kilo(meters_pt)(2.0L)));
 }
 
 TEST(CeilAs, SupportsDifferentOutputTypes) {
@@ -865,8 +997,32 @@ TEST(CeilAs, SupportsDifferentOutputTypes) {
     EXPECT_THAT(ceil_as<int>(meters, meters(3.9)),
                 SameTypeAndValue(meters(static_cast<int>(std::ceil(3.9)))));
 
+    EXPECT_THAT(ceil_as<int>(meters_pt, meters_pt(3)),
+                SameTypeAndValue(meters_pt(static_cast<int>(std::ceil(3)))));
+    EXPECT_THAT(ceil_as<int>(meters_pt, meters_pt(3.9)),
+                SameTypeAndValue(meters_pt(static_cast<int>(std::ceil(3.9)))));
+
     EXPECT_THAT(ceil_as<double>(kilo(meters), meters(1000.1f)),
                 SameTypeAndValue(kilo(meters)(2.0)));
+
+    EXPECT_THAT(ceil_as<double>(kilo(meters_pt), meters_pt(1000.1f)),
+                SameTypeAndValue(kilo(meters_pt)(2.0)));
+}
+
+TEST(CeilAs, SupportsQuantityPointWithNontrivialOffset) {
+    EXPECT_THAT(ceil_as(kelvins_pt, celsius_pt(20.0f)), SameTypeAndValue(kelvins_pt(294.0f)));
+    EXPECT_THAT(ceil_as(kelvins_pt, celsius_pt(20.8f)), SameTypeAndValue(kelvins_pt(294.0f)));
+    EXPECT_THAT(ceil_as(kelvins_pt, celsius_pt(20.9f)), SameTypeAndValue(kelvins_pt(295.0f)));
+
+    EXPECT_THAT(ceil_as<int>(celsius_pt, fahrenheit_pt(30.0)), SameTypeAndValue(celsius_pt(-1)));
+    EXPECT_THAT(ceil_as<int>(celsius_pt, fahrenheit_pt(30.5)), SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(ceil_as<int>(celsius_pt, fahrenheit_pt(31.0)), SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(ceil_as<int>(celsius_pt, fahrenheit_pt(31.5)), SameTypeAndValue(celsius_pt(0)));
+
+    EXPECT_THAT(ceil_as<int>(celsius_pt, fahrenheit_pt(32.0)), SameTypeAndValue(celsius_pt(0)));
+
+    EXPECT_THAT(ceil_as<int>(celsius_pt, fahrenheit_pt(32.5)), SameTypeAndValue(celsius_pt(1)));
+    EXPECT_THAT(ceil_as<int>(celsius_pt, fahrenheit_pt(33.0)), SameTypeAndValue(celsius_pt(1)));
 }
 
 TEST(CeilIn, SameAsCeilAs) {
@@ -874,10 +1030,16 @@ TEST(CeilIn, SameAsCeilAs) {
     EXPECT_THAT(ceil_in(kilo(meters), meters(354.28)), SameTypeAndValue(1.0));
     EXPECT_THAT(ceil_in(kilo(meters), meters(354.28f)), SameTypeAndValue(1.0f));
     EXPECT_THAT(ceil_in(kilo(meters), meters(354.28L)), SameTypeAndValue(1.0L));
+
+    EXPECT_THAT(ceil_in(kilo(meters_pt), meters_pt(354)), SameTypeAndValue(1.0));
+    EXPECT_THAT(ceil_in(kilo(meters_pt), meters_pt(354.28)), SameTypeAndValue(1.0));
+    EXPECT_THAT(ceil_in(kilo(meters_pt), meters_pt(354.28f)), SameTypeAndValue(1.0f));
+    EXPECT_THAT(ceil_in(kilo(meters_pt), meters_pt(354.28L)), SameTypeAndValue(1.0L));
 }
 
 TEST(CeilIn, SupportsDifferentOutputTypes) {
     EXPECT_THAT(ceil_in<long double>(kilo(meters), meters(354.28f)), SameTypeAndValue(1.0L));
+    EXPECT_THAT(ceil_in<long double>(kilo(meters_pt), meters_pt(354.28f)), SameTypeAndValue(1.0L));
 }
 
 TEST(InverseAs, HandlesIntegerRepCorrectly) {
