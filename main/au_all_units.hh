@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.4-9-g5339f61
+// Version identifier: 0.3.4-10-gc08228a
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -6253,6 +6253,9 @@ struct RoundingRep<Quantity<U, R>, RoundingUnits> {
     static_assert(std::is_same<decltype(std::floor(type{})), decltype(std::floor(R{}))>::value, "");
     static_assert(std::is_same<decltype(std::ceil(type{})), decltype(std::ceil(R{}))>::value, "");
 };
+template <typename U, typename R, typename RoundingUnits>
+struct RoundingRep<QuantityPoint<U, R>, RoundingUnits>
+    : RoundingRep<Quantity<U, R>, RoundingUnits> {};
 }  // namespace detail
 
 // The absolute value of a Quantity.
@@ -6557,44 +6560,73 @@ auto remainder(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 }
 
 //
-// Round the value of this Quantity to the nearest integer in the given units.
+// Round the value of this Quantity or QuantityPoint to the nearest integer in the given units.
 //
 // This is the "Unit-only" format (i.e., `round_in(rounding_units, q)`).
 //
+// a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     using OurRoundingRep = detail::RoundingRepT<Quantity<U, R>, RoundingUnits>;
     return std::round(q.template in<OurRoundingRep>(rounding_units));
 }
+// b) Version for QuantityPoint.
+template <typename RoundingUnits, typename U, typename R>
+auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    using OurRoundingRep = detail::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
+    return std::round(p.template in<OurRoundingRep>(rounding_units));
+}
 
 //
-// Round the value of this Quantity to the nearest integer in the given units, returning OutputRep.
+// Round the value of this Quantity or QuantityPoint to the nearest integer in the given units,
+// returning OutputRep.
 //
 // This is the "Explicit-Rep" format (e.g., `round_in<int>(rounding_units, q)`).
 //
+// a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return static_cast<OutputRep>(round_in(rounding_units, q));
 }
+// b) Version for QuantityPoint.
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    return static_cast<OutputRep>(round_in(rounding_units, p));
+}
 
 //
-// The integral-valued Quantity, in this unit, nearest to the input.
+// The integral-valued Quantity or QuantityPoint, in this unit, nearest to the input.
 //
 // This is the "Unit-only" format (i.e., `round_as(rounding_units, q)`).
 //
+// a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return make_quantity<AssociatedUnitT<RoundingUnits>>(round_in(rounding_units, q));
 }
+// b) Version for QuantityPoint.
+template <typename RoundingUnits, typename U, typename R>
+auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
+        round_in(rounding_units, p));
+}
 
 //
-// The integral-valued Quantity, in this unit, nearest to the input, using the specified OutputRep.
+// The integral-valued Quantity or QuantityPoint, in this unit, nearest to the input, using the
+// specified OutputRep.
 //
 // This is the "Explicit-Rep" format (e.g., `round_as<float>(rounding_units, q)`).
 //
+// a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return make_quantity<AssociatedUnitT<RoundingUnits>>(round_in<OutputRep>(rounding_units, q));
+}
+// b) Version for QuantityPoint.
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
+        round_in<OutputRep>(rounding_units, p));
 }
 
 //
@@ -6602,10 +6634,17 @@ auto round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
 //
 // This is the "Unit-only" format (i.e., `floor_in(rounding_units, q)`).
 //
+// a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     using OurRoundingRep = detail::RoundingRepT<Quantity<U, R>, RoundingUnits>;
     return std::floor(q.template in<OurRoundingRep>(rounding_units));
+}
+// b) Version for QuantityPoint.
+template <typename RoundingUnits, typename U, typename R>
+auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    using OurRoundingRep = detail::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
+    return std::floor(p.template in<OurRoundingRep>(rounding_units));
 }
 
 //
@@ -6613,30 +6652,50 @@ auto floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
 //
 // This is the "Explicit-Rep" format (e.g., `floor_in<int>(rounding_units, q)`).
 //
+// a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return static_cast<OutputRep>(floor_in(rounding_units, q));
 }
+// b) Version for QuantityPoint.
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    return static_cast<OutputRep>(floor_in(rounding_units, p));
+}
 
 //
-// The largest integral-valued Quantity, in this unit, not greater than the input.
+// The largest integral-valued Quantity or QuantityPoint, in this unit, not greater than the input.
 //
 // This is the "Unit-only" format (i.e., `floor_as(rounding_units, q)`).
 //
+// a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return make_quantity<AssociatedUnitT<RoundingUnits>>(floor_in(rounding_units, q));
 }
+// b) Version for QuantityPoint.
+template <typename RoundingUnits, typename U, typename R>
+auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
+        floor_in(rounding_units, p));
+}
 
 //
-// The largest integral-valued Quantity, in this unit, not greater than the input, using the
-// specified `OutputRep`.
+// The largest integral-valued Quantity or QuantityPoint, in this unit, not greater than the input,
+// using the specified `OutputRep`.
 //
 // This is the "Explicit-Rep" format (e.g., `floor_as<float>(rounding_units, q)`).
 //
+// a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return make_quantity<AssociatedUnitT<RoundingUnits>>(floor_in<OutputRep>(rounding_units, q));
+}
+// b) Version for QuantityPoint.
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
+        floor_in<OutputRep>(rounding_units, p));
 }
 
 //
@@ -6644,10 +6703,17 @@ auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
 //
 // This is the "Unit-only" format (i.e., `ceil_in(rounding_units, q)`).
 //
+// a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     using OurRoundingRep = detail::RoundingRepT<Quantity<U, R>, RoundingUnits>;
     return std::ceil(q.template in<OurRoundingRep>(rounding_units));
+}
+// b) Version for QuantityPoint.
+template <typename RoundingUnits, typename U, typename R>
+auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    using OurRoundingRep = detail::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
+    return std::ceil(p.template in<OurRoundingRep>(rounding_units));
 }
 
 //
@@ -6655,30 +6721,49 @@ auto ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
 //
 // This is the "Explicit-Rep" format (e.g., `ceil_in<int>(rounding_units, q)`).
 //
+// a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return static_cast<OutputRep>(ceil_in(rounding_units, q));
 }
+// b) Version for QuantityPoint.
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    return static_cast<OutputRep>(ceil_in(rounding_units, p));
+}
 
 //
-// The smallest integral-valued Quantity, in this unit, not less than the input.
+// The smallest integral-valued Quantity or QuantityPoint, in this unit, not less than the input.
 //
 // This is the "Unit-only" format (i.e., `ceil_as(rounding_units, q)`).
 //
+// a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return make_quantity<AssociatedUnitT<RoundingUnits>>(ceil_in(rounding_units, q));
 }
+// b) Version for QuantityPoint.
+template <typename RoundingUnits, typename U, typename R>
+auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(ceil_in(rounding_units, p));
+}
 
 //
-// The smallest integral-valued Quantity, in this unit, not less than the input, using the specified
-// `OutputRep`.
+// The smallest integral-valued Quantity or QuantityPoint, in this unit, not less than the input,
+// using the specified `OutputRep`.
 //
 // This is the "Explicit-Rep" format (e.g., `ceil_as<float>(rounding_units, q)`).
 //
+// a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return make_quantity<AssociatedUnitT<RoundingUnits>>(ceil_in<OutputRep>(rounding_units, q));
+}
+// b) Version for QuantityPoint.
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
+        ceil_in<OutputRep>(rounding_units, p));
 }
 
 // Wrapper for std::sin() which accepts a strongly typed angle quantity.
