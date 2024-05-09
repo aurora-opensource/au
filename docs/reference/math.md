@@ -400,18 +400,30 @@ As with everything else in the library, `"as"` is a word that means "return a `Q
 
 ```cpp
 //
-// round_as(): return a Quantity
+// round_as(): return a Quantity or QuantityPoint (depending on the input type)
 //
 
 // 1. Unit-only version (including safety checks).  Typical callsites look like:
 //    `round_as(units, quantity)`
+
+// a) For `Quantity` inputs
 template <typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, Quantity<U, R> q);
 
+// b) For `QuantityPoint` inputs
+template <typename RoundingUnits, typename U, typename R>
+auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
+
 // 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:
 //    `round_as<Type>(units, quantity)`
+
+// a) For `Quantity` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 
 
 //
@@ -420,17 +432,30 @@ auto round_as(RoundingUnits rounding_units, Quantity<U, R> q);
 
 // 1. Unit-only version (including safety checks).  Typical callsites look like:
 //    `round_in(units, quantity)`
+
+// a) For `Quantity` inputs
 template <typename RoundingUnits, typename U, typename R>
 auto round_in(RoundingUnits rounding_units, Quantity<U, R> q);
 
+// b) For `QuantityPoint` inputs
+template <typename RoundingUnits, typename U, typename R>
+auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> q);
+
 // 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:
 //    `round_in<Type>(units, quantity)`
+
+// a) For `Quantity` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto round_in(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 ```
 
-**Returns:** A `Quantity`, expressed in the requested units, which has an integer value in those
-units.  We return the nearest such quantity to the original input quantity.
+**Returns:** A `Quantity` or `QuantityPoint` (depending on the input type), expressed in the
+requested units, which has an integer value in those units. We return the nearest such quantity to
+the original input quantity.
 
 The policy for the rep is consistent with
 [`std::round`](https://en.cppreference.com/w/cpp/numeric/math/round).  The output rep is the same as
@@ -454,18 +479,30 @@ As with everything else in the library, `"as"` is a word that means "return a `Q
 
 ```cpp
 //
-// ceil_as(): return a Quantity
+// ceil_as(): return a Quantity or QuantityPoint (depending on the input type)
 //
 
 // 1. Unit-only version (including safety checks).  Typical callsites look like:
 //    `ceil_as(units, quantity)`
+
+// a) For `Quantity` inputs
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, Quantity<U, R> q);
 
+// b) For `QuantityPoint` inputs
+template <typename RoundingUnits, typename U, typename R>
+auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
+
 // 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:
 //    `ceil_as<Type>(units, quantity)`
+
+// a) For `Quantity` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 
 
 //
@@ -474,13 +511,25 @@ auto ceil_as(RoundingUnits rounding_units, Quantity<U, R> q);
 
 // 1. Unit-only version (including safety checks).  Typical callsites look like:
 //    `ceil_in(units, quantity)`
+
+// a) For `Quantity` inputs
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_in(RoundingUnits rounding_units, Quantity<U, R> q);
 
+// b) For `QuantityPoint` inputs
+template <typename RoundingUnits, typename U, typename R>
+auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> q);
+
 // 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:
 //    `ceil_in<Type>(units, quantity)`
+
+// a) For `Quantity` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto ceil_in(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 ```
 
 **Returns:** A `Quantity`, expressed in the requested units, which has an integer value in those
@@ -508,18 +557,30 @@ As with everything else in the library, `"as"` is a word that means "return a `Q
 
 ```cpp
 //
-// floor_as(): return a Quantity
+// floor_as(): return a Quantity or QuantityPoint (depending on the input type)
 //
 
 // 1. Unit-only version (including safety checks).  Typical callsites look like:
 //    `floor_as(units, quantity)`
+
+// a) For `Quantity` inputs
 template <typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q);
 
+// b) For `QuantityPoint` inputs
+template <typename RoundingUnits, typename U, typename R>
+auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
+
 // 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:
 //    `floor_as<Type>(units, quantity)`
+
+// a) For `Quantity` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 
 
 //
@@ -528,13 +589,25 @@ auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q);
 
 // 1. Unit-only version (including safety checks).  Typical callsites look like:
 //    `floor_in(units, quantity)`
+
+// a) For `Quantity` inputs
 template <typename RoundingUnits, typename U, typename R>
 auto floor_in(RoundingUnits rounding_units, Quantity<U, R> q);
 
+// b) For `QuantityPoint` inputs
+template <typename RoundingUnits, typename U, typename R>
+auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> q);
+
 // 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:
 //    `floor_in<Type>(units, quantity)`
+
+// a) For `Quantity` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto floor_in(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 ```
 
 **Returns:** A `Quantity`, expressed in the requested units, which has an integer value in those
@@ -640,8 +713,13 @@ Indicates whether the underlying value of a `Quantity` is a NaN ("not-a-number")
 **Signature:**
 
 ```cpp
+// 1. `Quantity` inputs
 template <typename U, typename R>
 constexpr bool isnan(Quantity<U, R> q);
+
+// 2. `QuantityPoint` inputs
+template <typename U, typename R>
+constexpr bool isnan(QuantityPoint<U, R> q);
 ```
 
 **Returns:** `true` if `q` is NaN; `false` otherwise.
@@ -715,4 +793,3 @@ auto remainder(Quantity<U1, R1> q1, Quantity<U2, R2> q2);
 
 **Returns:** The remainder of `q1 / q2`, in the type `Quantity<U, R>`, where `U` is the common unit
 of `U1` and `U2`, and `R` is the common type of `R1` and `R2`.
-
