@@ -601,6 +601,7 @@ TEST(isnan, TransparentlyActsOnSameAsValue) {
 
     for (const double x : values) {
         EXPECT_EQ(isnan(meters(x)), std::isnan(x));
+        EXPECT_EQ(isnan(meters_pt(x)), std::isnan(x));
         EXPECT_EQ(isnan((radians / second)(x)), std::isnan(x));
     }
 }
