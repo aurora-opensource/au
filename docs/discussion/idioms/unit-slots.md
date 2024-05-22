@@ -60,7 +60,7 @@ they have two advantages that make them easier to read:
 ### Other expressions
 
 There are other monovalue types that would feel right at home in a unit slot.  We typically support
-those too!  Key examples include [unit symbols](../../reference/unit.md#unit-symbols) and
+those too!  Key examples include [unit symbols](../../reference/unit.md#symbols) and
 [constants](../../reference/constant.md).  Expand the block below to see a worked example.
 
 ??? example "Example: using unit symbols and constants in unit slots"
