@@ -517,7 +517,7 @@ feet(6).in(Inches{});
 ```
 
 The underlined arguments are all unit slots.  The kinds of things that can be passed here include
-a `QuantityMaker` for a unit, a [constant](./constant.md), a [unit symbol](#unit-symbols), or simply
+a `QuantityMaker` for a unit, a [constant](./constant.md), a [unit symbol](#symbols), or simply
 a unit type itself.
 
 The use case for this trait is to _implement_ the unit slot argument for a function.
