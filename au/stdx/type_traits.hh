@@ -32,18 +32,18 @@ using bool_constant = std::integral_constant<bool, B>;
 // Source: adapted from (https://en.cppreference.com/w/cpp/types/conjunction).
 template <class...>
 struct conjunction : std::true_type {};
-template <class B1>
-struct conjunction<B1> : B1 {};
-template <class B1, class... Bn>
-struct conjunction<B1, Bn...> : std::conditional_t<bool(B1::value), conjunction<Bn...>, B1> {};
+template <class B>
+struct conjunction<B> : B {};
+template <class B, class... Bn>
+struct conjunction<B, Bn...> : std::conditional_t<bool(B::value), conjunction<Bn...>, B> {};
 
 // Source: adapted from (https://en.cppreference.com/w/cpp/types/disjunction).
 template <class...>
 struct disjunction : std::false_type {};
-template <class B1>
-struct disjunction<B1> : B1 {};
-template <class B1, class... Bn>
-struct disjunction<B1, Bn...> : std::conditional_t<bool(B1::value), B1, disjunction<Bn...>> {};
+template <class B>
+struct disjunction<B> : B {};
+template <class B, class... Bn>
+struct disjunction<B, Bn...> : std::conditional_t<bool(B::value), B, disjunction<Bn...>> {};
 
 // Source: adapted from (https://en.cppreference.com/w/cpp/types/negation).
 template <class B>

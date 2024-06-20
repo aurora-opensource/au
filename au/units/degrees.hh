@@ -28,7 +28,7 @@ struct DegreesLabel {
 };
 template <typename T>
 constexpr const char DegreesLabel<T>::label[];
-struct Degrees : decltype(Radians{} * PI / mag<180>()), DegreesLabel<void> {
+struct Degrees : decltype(Radians{} * Magnitude<Pi>{} / mag<180>()), DegreesLabel<void> {
     using DegreesLabel<void>::label;
 };
 constexpr auto degree = SingularNameFor<Degrees>{};
