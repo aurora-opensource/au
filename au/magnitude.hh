@@ -131,7 +131,16 @@ using CommonMagnitudeT = typename CommonMagnitude<Ms...>::type;
 // Value based interface for Magnitude.
 
 static constexpr auto ONE = Magnitude<>{};
+
+#ifndef PI
+// Some users must work with frameworks that define `PI` as a macro.  Having a macro with this
+// easily collidable name is exceedingly unwise.  Nevertheless, that's not the users' fault, so we
+// accommodate those frameworks by omitting the definition of `PI` in this case.
+//
+// If you are stuck with such a framework, you can choose a different name that does not collide,
+// and reproduce the following line in your own system.
 static constexpr auto PI = Magnitude<Pi>{};
+#endif
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator*(Magnitude<BP1s...>, Magnitude<BP2s...>) {
