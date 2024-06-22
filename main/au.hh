@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.4-11-g221d8f4
+// Version identifier: 0.3.4-12-gbd36cc5
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -102,18 +102,18 @@ using bool_constant = std::integral_constant<bool, B>;
 // Source: adapted from (https://en.cppreference.com/w/cpp/types/conjunction).
 template <class...>
 struct conjunction : std::true_type {};
-template <class B1>
-struct conjunction<B1> : B1 {};
-template <class B1, class... Bn>
-struct conjunction<B1, Bn...> : std::conditional_t<bool(B1::value), conjunction<Bn...>, B1> {};
+template <class B>
+struct conjunction<B> : B {};
+template <class B, class... Bn>
+struct conjunction<B, Bn...> : std::conditional_t<bool(B::value), conjunction<Bn...>, B> {};
 
 // Source: adapted from (https://en.cppreference.com/w/cpp/types/disjunction).
 template <class...>
 struct disjunction : std::false_type {};
-template <class B1>
-struct disjunction<B1> : B1 {};
-template <class B1, class... Bn>
-struct disjunction<B1, Bn...> : std::conditional_t<bool(B1::value), B1, disjunction<Bn...>> {};
+template <class B>
+struct disjunction<B> : B {};
+template <class B, class... Bn>
+struct disjunction<B, Bn...> : std::conditional_t<bool(B::value), B, disjunction<Bn...>> {};
 
 // Source: adapted from (https://en.cppreference.com/w/cpp/types/negation).
 template <class B>
@@ -1703,7 +1703,16 @@ using CommonMagnitudeT = typename CommonMagnitude<Ms...>::type;
 // Value based interface for Magnitude.
 
 static constexpr auto ONE = Magnitude<>{};
+
+#ifndef PI
+// Some users must work with frameworks that define `PI` as a macro.  Having a macro with this
+// easily collidable name is exceedingly unwise.  Nevertheless, that's not the users' fault, so we
+// accommodate those frameworks by omitting the definition of `PI` in this case.
+//
+// If you are stuck with such a framework, you can choose a different name that does not collide,
+// and reproduce the following line in your own system.
 static constexpr auto PI = Magnitude<Pi>{};
+#endif
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator*(Magnitude<BP1s...>, Magnitude<BP2s...>) {
