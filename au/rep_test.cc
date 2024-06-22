@@ -78,7 +78,7 @@ TEST(IsValidRep, TrueForStdComplex) {
 
 TEST(IsValidRep, FalseForMagnitude) {
     EXPECT_FALSE(IsValidRep<decltype(mag<84>())>::value);
-    EXPECT_FALSE(IsValidRep<decltype(sqrt(PI))>::value);
+    EXPECT_FALSE(IsValidRep<decltype(sqrt(Magnitude<Pi>{}))>::value);
 }
 
 TEST(IsValidRep, FalseForUnits) {

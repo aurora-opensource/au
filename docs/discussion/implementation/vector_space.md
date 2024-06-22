@@ -147,9 +147,9 @@ representations, though, its difficulty becomes a strength.  We know there is no
 exponents $\{a_i\}$ such that $\pi = \prod\limits_{i=1}^N p_i^{a_i}$, for any collection of primes
 $\{p_i\}$.  This means that $\pi$ is **independent**, and we can add it as a new basis vector.  Then
 the ratio of, say, `Degrees` to `Radians` (i.e., $\pi / 180$) could be expressed as
-`PI / mag<180>()`[^4].
+`Magnitude<Pi>{} / mag<180>()`[^4].
 
-[^4]: `PI / mag<180>()` expands to `Magnitude<Pow<Prime<2>, -2>, Pow<Prime<3>, -2>, Pi,
+[^4]: `Magnitude<Pi>{} / mag<180>()` expands to `Magnitude<Pow<Prime<2>, -2>, Pow<Prime<3>, -2>, Pi,
 Pow<Prime<5>, -1>>`.
 
 ### Units

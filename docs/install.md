@@ -107,8 +107,8 @@ Every single-file package automatically includes the following features:
 
 - Basic "unit container" types: [`Quantity`](./reference/quantity.md),
   [`QuantityPoint`](./reference/quantity_point.md)
-- [Magnitude](./reference/magnitude.md) types and values, including the constant `PI`, and constants
-  for any integer such as `mag<5280>()`.
+- [Magnitude](./reference/magnitude.md) types and values, including constants for any integer such
+  as `mag<5280>()`.
 - All [prefixes](./reference/prefix.md) for SI (`kilo`, `mega`, ...) and informational (`kibi`,
   `mebi`, ...) quantities.
 - [Math functions](./reference/math.md), including unit-aware rounding and inverses, trigonometric
@@ -154,7 +154,7 @@ should get you any other unit you're likely to want.  The units we include are:
     **scale** a unit by multiplying by Magnitude objects.  For example:
 
     ```cpp
-    constexpr auto degrees = radians * PI / mag<180>();
+    constexpr auto degrees = radians * Magnitude<Pi>{} / mag<180>();
     ```
 
     These will "work", in the sense of producing correct results.  But these ad hoc unit definitions

@@ -26,11 +26,12 @@ using ::testing::StaticAssertTypeEq;
 
 namespace au {
 namespace {
+constexpr auto PI = Magnitude<Pi>{};
+
 template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
 constexpr T cubed(T x) {
     return x * x * x;
 }
-}  // namespace
 
 TEST(Magnitude, SupportsEqualityComparison) {
     constexpr auto mag_1 = mag<1>();
@@ -270,6 +271,7 @@ TEST(CommonMagnitude, ZeroResultIndicatesAllInputsAreZero) {
     EXPECT_EQ(common_magnitude(ZERO, ZERO, ZERO), ZERO);
     EXPECT_EQ(common_magnitude(ZERO, ZERO, ZERO, ZERO, ZERO), ZERO);
 }
+}  // namespace
 
 namespace detail {
 

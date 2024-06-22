@@ -23,7 +23,7 @@ namespace au {
 TEST(Radians, HasExpectedLabel) { expect_label<Radians>("rad"); }
 
 TEST(Radians, TwoPiPerRevolution) {
-    EXPECT_DOUBLE_EQ(radians(get_value<double>(mag<2>() * PI)).in(revolutions), 1.0);
+    EXPECT_DOUBLE_EQ(radians(get_value<double>(mag<2>() * Magnitude<Pi>{})).in(revolutions), 1.0);
 }
 
 TEST(Radians, HasExpectedSymbol) {
