@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.4-13-g50de6e9
+// Version identifier: 0.3.4-14-g32ae57d
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -6094,17 +6094,27 @@ constexpr bool isnan(QuantityPoint<U, R> p) {
     return std::isnan(p.in(U{}));
 }
 
+namespace detail {
+// Some compilers do not support lambdas in constexpr contexts, so we make a manual function object.
+struct StdMaxByValue {
+    template <typename T>
+    constexpr auto operator()(T a, T b) const {
+        return std::max(a, b);
+    }
+};
+}  // namespace detail
+
 // The maximum of two values of the same dimension.
 //
 // Unlike std::max, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
-auto max(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, [](auto a, auto b) { return std::max(a, b); });
+constexpr auto max(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+    return detail::using_common_type(q1, q2, detail::StdMaxByValue{});
 }
 
 // Overload to resolve ambiguity with `std::max` for identical `Quantity` types.
 template <typename U, typename R>
-auto max(Quantity<U, R> a, Quantity<U, R> b) {
+constexpr auto max(Quantity<U, R> a, Quantity<U, R> b) {
     return std::max(a, b);
 }
 
@@ -6112,13 +6122,13 @@ auto max(Quantity<U, R> a, Quantity<U, R> b) {
 //
 // Unlike std::max, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
-auto max(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    return detail::using_common_point_unit(p1, p2, [](auto a, auto b) { return std::max(a, b); });
+constexpr auto max(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+    return detail::using_common_point_unit(p1, p2, detail::StdMaxByValue{});
 }
 
 // Overload to resolve ambiguity with `std::max` for identical `QuantityPoint` types.
 template <typename U, typename R>
-auto max(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
+constexpr auto max(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
     return std::max(a, b);
 }
 
@@ -6127,29 +6137,39 @@ auto max(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
 // NOTE: these will not work if _both_ arguments are `Zero`, but we don't plan to support this
 // unless we find a compelling use case.
 template <typename T>
-auto max(Zero z, T x) {
+constexpr auto max(Zero z, T x) {
     static_assert(std::is_convertible<Zero, T>::value,
                   "Cannot compare type to abstract notion Zero");
     return std::max(T{z}, x);
 }
 template <typename T>
-auto max(T x, Zero z) {
+constexpr auto max(T x, Zero z) {
     static_assert(std::is_convertible<Zero, T>::value,
                   "Cannot compare type to abstract notion Zero");
     return std::max(x, T{z});
 }
 
+namespace detail {
+// Some compilers do not support lambdas in constexpr contexts, so we make a manual function object.
+struct StdMinByValue {
+    template <typename T>
+    constexpr auto operator()(T a, T b) const {
+        return std::min(a, b);
+    }
+};
+}  // namespace detail
+
 // The minimum of two values of the same dimension.
 //
 // Unlike std::min, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
-auto min(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, [](auto a, auto b) { return std::min(a, b); });
+constexpr auto min(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+    return detail::using_common_type(q1, q2, detail::StdMinByValue{});
 }
 
 // Overload to resolve ambiguity with `std::min` for identical `Quantity` types.
 template <typename U, typename R>
-auto min(Quantity<U, R> a, Quantity<U, R> b) {
+constexpr auto min(Quantity<U, R> a, Quantity<U, R> b) {
     return std::min(a, b);
 }
 
@@ -6157,13 +6177,13 @@ auto min(Quantity<U, R> a, Quantity<U, R> b) {
 //
 // Unlike std::min, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
-auto min(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    return detail::using_common_point_unit(p1, p2, [](auto a, auto b) { return std::min(a, b); });
+constexpr auto min(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+    return detail::using_common_point_unit(p1, p2, detail::StdMinByValue{});
 }
 
 // Overload to resolve ambiguity with `std::min` for identical `QuantityPoint` types.
 template <typename U, typename R>
-auto min(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
+constexpr auto min(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
     return std::min(a, b);
 }
 
@@ -6172,13 +6192,13 @@ auto min(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
 // NOTE: these will not work if _both_ arguments are `Zero`, but we don't plan to support this
 // unless we find a compelling use case.
 template <typename T>
-auto min(Zero z, T x) {
+constexpr auto min(Zero z, T x) {
     static_assert(std::is_convertible<Zero, T>::value,
                   "Cannot compare type to abstract notion Zero");
     return std::min(T{z}, x);
 }
 template <typename T>
-auto min(T x, Zero z) {
+constexpr auto min(T x, Zero z) {
     static_assert(std::is_convertible<Zero, T>::value,
                   "Cannot compare type to abstract notion Zero");
     return std::min(x, T{z});
