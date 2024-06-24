@@ -33,6 +33,8 @@ using ::testing::StrEq;
 namespace au {
 namespace {
 
+constexpr auto PI = Magnitude<Pi>{};
+
 template <typename U, typename R>
 std::string stream_to_string(Quantity<U, R> q) {
     std::ostringstream oss;
@@ -60,7 +62,6 @@ struct PlancksConstant : decltype(Joules{} * Seconds{} * H_JS) {
 };
 constexpr auto plancks_constant = QuantityMaker<PlancksConstant>{};
 constexpr auto h = make_constant(plancks_constant);
-}  // namespace
 
 TEST(MakeConstant, MakesConstantFromUnit) {
     StaticAssertTypeEq<decltype(make_constant(SpeedOfLight{})), Constant<SpeedOfLight>>();
@@ -282,4 +283,5 @@ TEST(CanStoreValueIn, ChecksRangeOfTypeForIntegers) {
     EXPECT_FALSE(decltype(c)::can_store_value_in<int16_t>(meters / second));
 }
 
+}  // namespace
 }  // namespace au

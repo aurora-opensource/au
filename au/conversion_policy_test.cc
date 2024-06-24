@@ -18,6 +18,9 @@
 #include "gtest/gtest.h"
 
 namespace au {
+namespace {
+
+constexpr auto PI = Magnitude<Pi>{};
 
 struct Grams : UnitImpl<Mass> {};
 struct Kilograms : decltype(Grams{} * pow<3>(mag<10>())) {};
@@ -138,4 +141,5 @@ TEST(ConstructionPolicy, OkForIntegralRepAndEquivalentUnit) {
         (ConstructionPolicy<EquivalentToDegrees, int8_t>::PermitImplicitFrom<Degrees, int>::value));
 }
 
+}  // namespace
 }  // namespace au
