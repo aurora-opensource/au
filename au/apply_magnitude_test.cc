@@ -23,6 +23,8 @@ using ::testing::Not;
 namespace au {
 namespace detail {
 namespace {
+constexpr auto PI = Magnitude<Pi>{};
+
 template <typename T>
 std::vector<T> first_n_positive_values(std::size_t n) {
     std::vector<T> result;

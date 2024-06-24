@@ -23,7 +23,7 @@ namespace au {
 TEST(Degrees, HasExpectedLabel) { expect_label<Degrees>("deg"); }
 
 TEST(Degrees, RoughlyEquivalentToPiOver180Radians) {
-    EXPECT_DOUBLE_EQ(degrees(1.0).in(radians), get_value<double>(PI / mag<180>()));
+    EXPECT_DOUBLE_EQ(degrees(1.0).in(radians), get_value<double>(Magnitude<Pi>{} / mag<180>()));
 }
 
 TEST(Degrees, One360thOfARevolution) { EXPECT_EQ(degrees(360), revolutions(1)); }

@@ -26,6 +26,8 @@ namespace au {
 namespace detail {
 namespace {
 
+constexpr auto PI = Magnitude<Pi>{};
+
 template <typename Unit>
 struct UnitWrapper : MakesQuantityFromNumber<UnitWrapper, Unit>,
                      ScalesQuantity<UnitWrapper, Unit>,

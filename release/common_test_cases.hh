@@ -19,6 +19,8 @@
 // should pass.
 
 namespace au {
+namespace {
+constexpr auto PI = Magnitude<Pi>{};
 
 TEST(CommonSingleFile, HasExpectedUnits) {
     EXPECT_EQ(meters(1.23).in(meters), 1.23);
@@ -48,4 +50,5 @@ TEST(CommonSingleFile, IncludesMathFunctions) {
     EXPECT_DOUBLE_EQ(sin(radians(get_value<double>(PI / mag<2>()))), 1.0);
 }
 
+}  // namespace
 }  // namespace au

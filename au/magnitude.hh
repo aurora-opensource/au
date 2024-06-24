@@ -139,7 +139,9 @@ static constexpr auto ONE = Magnitude<>{};
 //
 // If you are stuck with such a framework, you can choose a different name that does not collide,
 // and reproduce the following line in your own system.
-static constexpr auto PI = Magnitude<Pi>{};
+[[deprecated(
+    "If you need a magnitude instance for pi, define your own as `constexpr auto PI = "
+    "Magnitude<Pi>{};`")]] static constexpr auto PI = Magnitude<Pi>{};
 #endif
 
 template <typename... BP1s, typename... BP2s>
