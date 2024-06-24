@@ -1913,7 +1913,6 @@ a corollary, any unit can be scaled by a <code>Magnitude</code> to make a new un
 <li><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /> Forming products, quotients, powers, and roots of other valid <code>Magnitude</code>
    instances.</li>
 </ol>
-<p>End users can also use pre-formed <code>Magnitude</code> instances from the library, such as <code>PI</code> and <code>ONE</code>.</p>
 <p>The following is a <strong>valid, but dis-preferred way</strong> to form a <code>Magnitude</code>.</p>
 <ul>
 <li><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/26a0.svg" title=":warning:" /> <code>Magnitude&lt;&gt;</code>.<ul>
@@ -1964,10 +1963,10 @@ cases for it.  The current <code>Magnitude</code> implementation already handles
 cases, such as handling <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span>, which most units libraries have traditionally struggled to
 support.</p>
 </details>
-<p>Because of its importance for angular variables, <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> is supported natively in the library &mdash; you
-don&rsquo;t need to define it yourself.  The constant <code>PI</code> is a <code>Magnitude</code> <em>instance</em>.  It&rsquo;s based on the
-(natively included) irrational magnitude base, <code>Pi</code>.  (Concretely: <code>PI</code> is defined as
-<code>Magnitude&lt;Pi&gt;{}</code>, in accordance with option 2 above.)</p>
+<p>Because of its importance for angular variables, <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> is supported natively in the library, via the
+irrational magnitude base, <code>Pi</code>.  To define a magnitude <em>instance</em> for <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span>, you can write:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">PI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Magnitude</span><span class="o">&lt;</span><span class="n">Pi</span><span class="o">&gt;</span><span class="p">{};</span>
+</code></pre></div>
 <p>If you need to represent an irrational number which can&rsquo;t be formed via any product of powers of the
 existing <code>Magnitude</code> types &mdash; namely, integers and <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> &mdash; then you can define a new irrational
 magnitude base.  This is a <code>struct</code> with the following member:</p>
@@ -2029,8 +2028,9 @@ get the best of both worlds:</p>
 <li>The <strong>computation</strong> gets performed <em>at compile time</em> in <code>long double</code>, giving extra precision.</li>
 <li>The <strong>result</strong> gets cast to <code>float</code> and stored as a program constant.</li>
 </ul>
-<p>Thus, <code>get_value&lt;float&gt;(pow&lt;3&gt;(PI))</code> will be much more accurate than storing <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> in a <code>float</code>,
-and cubing it &mdash; yet, there will be no loss in performance.</p>
+<p>Thus, if you have a magnitude instance <code>PI</code>, then <code>get_value&lt;float&gt;(pow&lt;3&gt;(PI))</code> will be much
+more accurate than storing <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> in a <code>float</code>, and cubing it &mdash; yet, there will be no loss in
+runtime performance.</p>
 </details>
 <h3 id="checking-for-representability">Checking for representability<a class="headerlink" href="#checking-for-representability" title="Permanent link">&para;</a></h3>
 <p>If you need to check whether your magnitude <code>m</code> can be represented in a type <code>T</code>, you can call
@@ -2038,21 +2038,21 @@ and cubing it &mdash; yet, there will be no loss in performance.</p>
 <details class="example">
 <summary>Example: integer and non-integer values</summary>
 <p>Here are some example test cases which will pass.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">EXPECT_TRUE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">()));</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1">// (1 / 2) is not an integer.</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">EXPECT_FALSE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">()));</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">EXPECT_TRUE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">()));</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">EXPECT_TRUE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">()));</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">// (1 / 2) is not an integer.</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">EXPECT_FALSE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">()));</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">EXPECT_TRUE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">()));</span>
 </code></pre></div>
 </details>
 <details class="example">
 <summary>Example: range of the type</summary>
 <p>Here are some example test cases which will pass.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">EXPECT_TRUE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">4&#39;000&#39;000&#39;000</span><span class="o">&gt;</span><span class="p">()));</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">// 4 billion is larger than the max value representable in `int32_t`.</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">EXPECT_FALSE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">int32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">4&#39;000&#39;000&#39;000</span><span class="o">&gt;</span><span class="p">()));</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">EXPECT_TRUE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">4&#39;000&#39;000&#39;000</span><span class="o">&gt;</span><span class="p">()));</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1">// 4 billion is larger than the max value representable in `int32_t`.</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">EXPECT_FALSE</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">int32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">4&#39;000&#39;000&#39;000</span><span class="o">&gt;</span><span class="p">()));</span>
 </code></pre></div>
 </details>
 <p>Note that this function&rsquo;s return value also depends on <em>whether we can compute</em> the value, not just

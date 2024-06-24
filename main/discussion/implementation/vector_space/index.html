@@ -1912,7 +1912,7 @@ representations, though, its difficulty becomes a strength.  We know there is no
 exponents <span class="arithmatex"><span class="MathJax_Preview">\{a_i\}</span><script type="math/tex">\{a_i\}</script></span> such that <span class="arithmatex"><span class="MathJax_Preview">\pi = \prod\limits_{i=1}^N p_i^{a_i}</span><script type="math/tex">\pi = \prod\limits_{i=1}^N p_i^{a_i}</script></span>, for any collection of primes
 <span class="arithmatex"><span class="MathJax_Preview">\{p_i\}</span><script type="math/tex">\{p_i\}</script></span>.  This means that <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> is <strong>independent</strong>, and we can add it as a new basis vector.  Then
 the ratio of, say, <code>Degrees</code> to <code>Radians</code> (i.e., <span class="arithmatex"><span class="MathJax_Preview">\pi / 180</span><script type="math/tex">\pi / 180</script></span>) could be expressed as
-<code>PI / mag&lt;180&gt;()</code><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>.</p>
+<code>Magnitude&lt;Pi&gt;{} / mag&lt;180&gt;()</code><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>.</p>
 <h3 id="units">Units<a class="headerlink" href="#units" title="Permanent link">&para;</a></h3>
 <p>If we form a Unit by combining other units&mdash;say, <code>Miles{} / Hours{}</code>&mdash;it&rsquo;s useful to retain the
 identities of the units that went into it.  There are several reasons to prefer this to, say,
@@ -1963,7 +1963,7 @@ currently only targets computers with finite amounts of memory.&#160;<a class="f
 <p><code>root&lt;2&gt;(mag&lt;2&gt;())</code> expands to <code>Magnitude&lt;RatioPow&lt;Prime&lt;2&gt;, 1, 2&gt;&gt;</code>.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
-<p><code>PI / mag&lt;180&gt;()</code> expands to <code>Magnitude&lt;Pow&lt;Prime&lt;2&gt;, -2&gt;, Pow&lt;Prime&lt;3&gt;, -2&gt;, Pi,
+<p><code>Magnitude&lt;Pi&gt;{} / mag&lt;180&gt;()</code> expands to <code>Magnitude&lt;Pow&lt;Prime&lt;2&gt;, -2&gt;, Pow&lt;Prime&lt;3&gt;, -2&gt;, Pi,
 Pow&lt;Prime&lt;5&gt;, -1&gt;&gt;</code>.&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>

@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.4-12-gbd36cc5
+// Version identifier: 0.3.4-13-g50de6e9
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -1752,7 +1752,9 @@ static constexpr auto ONE = Magnitude<>{};
 //
 // If you are stuck with such a framework, you can choose a different name that does not collide,
 // and reproduce the following line in your own system.
-static constexpr auto PI = Magnitude<Pi>{};
+[[deprecated(
+    "If you need a magnitude instance for pi, define your own as `constexpr auto PI = "
+    "Magnitude<Pi>{};`")]] static constexpr auto PI = Magnitude<Pi>{};
 #endif
 
 template <typename... BP1s, typename... BP2s>
