@@ -300,12 +300,13 @@ TEST(remainder, CenteredAroundZero) {
 }
 
 TEST(max, ReturnsLarger) {
-    EXPECT_EQ(max(make_quantity<Centi<Meters>>(1), make_quantity<Inches>(1)),
-              make_quantity<Inches>(1));
+    constexpr auto result = max(centi(meters)(1), inches(1));
+    EXPECT_EQ(result, inches(1));
 }
 
 TEST(max, HandlesDifferentOriginQuantityPoints) {
-    EXPECT_EQ(max(fahrenheit_pt(30), celsius_pt(0)), celsius_pt(0));
+    constexpr auto result = max(fahrenheit_pt(30), celsius_pt(0));
+    EXPECT_EQ(result, celsius_pt(0));
 }
 
 TEST(max, ReturnsByValueForSameExactQuantityType) {
@@ -318,6 +319,11 @@ TEST(max, ReturnsByValueForSameExactQuantityType) {
     EXPECT_NE(&max_a_b, &b);
 }
 
+TEST(max, SupportsConstexprForSameExactQuantityType) {
+    constexpr auto result = max(meters(1), meters(2));
+    EXPECT_EQ(result, meters(2));
+}
+
 TEST(max, ReturnsByValueForSameExactQuantityPointType) {
     // If two QuantityPoint types are EXACTLY the same, we risk ambiguity with `std::max`.
     const auto a = meters_pt(1);
@@ -326,6 +332,11 @@ TEST(max, ReturnsByValueForSameExactQuantityPointType) {
 
     EXPECT_EQ(max_a_b, b);
     EXPECT_NE(&max_a_b, &b);
+}
+
+TEST(max, SupportsConstexprForSameExactQuantityPointType) {
+    constexpr auto result = max(meters_pt(1), meters_pt(2));
+    EXPECT_EQ(result, meters_pt(2));
 }
 
 TEST(max, SameAsStdMaxForNumericTypes) {
@@ -338,19 +349,29 @@ TEST(max, SameAsStdMaxForNumericTypes) {
 }
 
 TEST(max, SupportsZeroForFirstArgument) {
-    EXPECT_THAT(max(ZERO, meters(8)), SameTypeAndValue(meters(8)));
-    EXPECT_THAT(max(ZERO, meters(-8)), SameTypeAndValue(meters(0)));
+    constexpr auto positive_result = max(ZERO, meters(8));
+    EXPECT_THAT(positive_result, SameTypeAndValue(meters(8)));
+
+    constexpr auto negative_result = max(ZERO, meters(-8));
+    EXPECT_THAT(negative_result, SameTypeAndValue(meters(0)));
 }
 
 TEST(max, SupportsZeroForSecondArgument) {
-    EXPECT_THAT(max(meters(8), ZERO), SameTypeAndValue(meters(8)));
-    EXPECT_THAT(max(meters(-8), ZERO), SameTypeAndValue(meters(0)));
+    constexpr auto positive_result = max(meters(8), ZERO);
+    EXPECT_THAT(positive_result, SameTypeAndValue(meters(8)));
+
+    constexpr auto negative_result = max(meters(-8), ZERO);
+    EXPECT_THAT(negative_result, SameTypeAndValue(meters(0)));
 }
 
-TEST(min, ReturnsSmaller) { EXPECT_EQ(min(centi(meters)(1), inches(1)), centi(meters)(1)); }
+TEST(min, ReturnsSmaller) {
+    constexpr auto result = min(centi(meters)(1), inches(1));
+    EXPECT_EQ(result, centi(meters)(1));
+}
 
 TEST(min, HandlesDifferentOriginQuantityPoints) {
-    EXPECT_EQ(min(fahrenheit_pt(30), celsius_pt(0)), fahrenheit_pt(30));
+    constexpr auto result = min(fahrenheit_pt(30), celsius_pt(0));
+    EXPECT_EQ(result, fahrenheit_pt(30));
 }
 
 TEST(min, ReturnsByValueForSameExactQuantityType) {
@@ -363,6 +384,11 @@ TEST(min, ReturnsByValueForSameExactQuantityType) {
     EXPECT_NE(&min_a_b, &a);
 }
 
+TEST(min, SupportsConstexprForSameExactQuantityType) {
+    constexpr auto result = min(meters(1), meters(2));
+    EXPECT_EQ(result, meters(1));
+}
+
 TEST(min, ReturnsByValueForSameExactQuantityPointType) {
     // If two QuantityPoint types are EXACTLY the same, we risk ambiguity with `std::min`.
     const auto a = meters_pt(1);
@@ -371,6 +397,11 @@ TEST(min, ReturnsByValueForSameExactQuantityPointType) {
 
     EXPECT_EQ(min_a_b, a);
     EXPECT_NE(&min_a_b, &a);
+}
+
+TEST(min, SupportsConstexprForSameExactQuantityPointType) {
+    constexpr auto result = min(meters_pt(1), meters_pt(2));
+    EXPECT_EQ(result, meters_pt(1));
 }
 
 TEST(min, SameAsStdMinForNumericTypes) {
@@ -383,13 +414,19 @@ TEST(min, SameAsStdMinForNumericTypes) {
 }
 
 TEST(min, SupportsZeroForFirstArgument) {
-    EXPECT_THAT(min(ZERO, meters(8)), SameTypeAndValue(meters(0)));
-    EXPECT_THAT(min(ZERO, meters(-8)), SameTypeAndValue(meters(-8)));
+    constexpr auto positive_result = min(ZERO, meters(8));
+    EXPECT_THAT(positive_result, SameTypeAndValue(meters(0)));
+
+    constexpr auto negative_result = min(ZERO, meters(-8));
+    EXPECT_THAT(negative_result, SameTypeAndValue(meters(-8)));
 }
 
 TEST(min, SupportsZeroForSecondArgument) {
-    EXPECT_THAT(min(meters(8), ZERO), SameTypeAndValue(meters(0)));
-    EXPECT_THAT(min(meters(-8), ZERO), SameTypeAndValue(meters(-8)));
+    constexpr auto positive_result = min(meters(8), ZERO);
+    EXPECT_THAT(positive_result, SameTypeAndValue(meters(0)));
+
+    constexpr auto negative_result = min(meters(-8), ZERO);
+    EXPECT_THAT(negative_result, SameTypeAndValue(meters(-8)));
 }
 
 TEST(int_pow, OutputRepMatchesInputRep) {
