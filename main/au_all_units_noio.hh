@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.4-14-g32ae57d
+// Version identifier: 0.3.4-15-g46c1cfa
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -6095,7 +6095,7 @@ constexpr bool isnan(QuantityPoint<U, R> p) {
 }
 
 namespace detail {
-// Some compilers do not support lambdas in constexpr contexts, so we make a manual function object.
+// We can't use lambdas in `constexpr` contexts until C++17, so we make a manual function object.
 struct StdMaxByValue {
     template <typename T>
     constexpr auto operator()(T a, T b) const {
@@ -6150,7 +6150,7 @@ constexpr auto max(T x, Zero z) {
 }
 
 namespace detail {
-// Some compilers do not support lambdas in constexpr contexts, so we make a manual function object.
+// We can't use lambdas in `constexpr` contexts until C++17, so we make a manual function object.
 struct StdMinByValue {
     template <typename T>
     constexpr auto operator()(T a, T b) const {
