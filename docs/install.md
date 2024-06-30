@@ -247,6 +247,22 @@ attribute, and include the appropriate files.
 | `@au//au:io` | `"au/io.hh"` | `operator<<` support |
 | `@au//au:testing` | `"au/testing.hh"` | Utilities for testing<br>_Note:_ `testonly = True` |
 
+#### CMake
+
+CMake support is still experimental and in-progress.  We are building it up starting from "root"
+targets (that is, targets without dependencies), and expanding support to the rest of the library.
+
+To build the library using this experimental CMake support, follow these steps:
+
+```sh
+# CMake is a "meta build system", not a build system.
+# This first command generates the actual build files.
+cmake -B cmake/build -S .
+
+# This command builds the library.
+cmake --build cmake/build
+```
+
 #### Other build systems (CMake / conan / vcpkg / ...)
 
 We would like to support all these build and packaging systems, and perhaps others!  But the initial
