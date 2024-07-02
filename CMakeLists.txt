@@ -1,0 +1,30 @@
+# Copyright 2024 Aurora Operations, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# CMake should always be at least as new as your compiler[1].  Clang 14 was released on March 25,
+# 2022, and is our newest officially supported compiler.  The next CMake release was v3.23.0, on
+# March 29, 2022.  Therefore, our minimum version must be at least CMake 3.23.
+#
+# The maximum version should be the latest version we've tested the project with.
+#
+# [1]: https://cliutils.gitlab.io/modern-cmake/chapters/intro/dodonot.html
+cmake_minimum_required(VERSION 3.23...3.29)
+
+project(
+   Au
+   VERSION 0.3.4
+   DESCRIPTION "A C++ quantities and units library, by Aurora Innovation"
+   HOMEPAGE_URL "https://aurora-opensource.github.io/au/0.3.4/"
+   LANGUAGES CXX
+)
