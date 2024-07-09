@@ -113,6 +113,7 @@ gcc_register_toolchain(
 http_archive(
     name = "com_google_googletest",
     sha256 = "24564e3b712d3eb30ac9a85d92f7d720f60cc0173730ac166f27dda7fed76cb2",
+    # NOTE: if updating this version, also update the version numbers in `CMakelists.txt`.
     strip_prefix = "googletest-release-1.12.1",
     urls = ["https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip"],
 )
