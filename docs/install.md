@@ -257,7 +257,7 @@ To build the library using this experimental CMake support, follow these steps:
 ```sh
 # CMake is a "meta build system", not a build system.
 # This first command generates the actual build files.
-cmake -S . -B cmake/build -DCMAKE_VERIFY_INTERFACE_HEADER_SET=TRUE
+cmake -S . -B cmake/build -DCMAKE_VERIFY_INTERFACE_HEADER_SETS=TRUE
 
 # This command builds Au, checks include paths, and runs unit tests.
 cmake \
