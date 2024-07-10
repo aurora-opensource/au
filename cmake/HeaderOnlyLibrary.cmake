@@ -67,7 +67,6 @@ function(header_only_library)
       PRIVATE
       ${ARG_NAME}
       ${ARG_GTEST_EXTRA_DEPS}
-      GTest::gtest_main
       GTest::gmock_main
     )
     gtest_discover_tests("${ARG_NAME}_test")
