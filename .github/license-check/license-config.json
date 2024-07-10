@@ -6,6 +6,7 @@
       "**/*.sh",
       "**/*.yml",
       "**/BUILD.bazel",
+      "**/CMakeLists.txt",
       "tools/bin/au-docs-serve",
       "tools/bin/buildifier",
       "tools/bin/clang-format",
@@ -59,6 +60,9 @@
       "third_party/**/*",
       "tools/bazel",
       "tools/bin/bazel"
+    ],
+    "exclude": [
+      "**/CMakeLists.txt"
     ]
   }
 ]
