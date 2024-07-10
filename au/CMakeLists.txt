@@ -12,32 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_path(GET CMAKE_CURRENT_SOURCE_DIR PARENT_PATH AU_BASE_DIRECTORY)
+include(../cmake/HeaderOnlyLibrary.cmake)
 
 #
 # Private implementation detail targets
 #
 
-add_library(stdx INTERFACE)
-target_sources(stdx
-   INTERFACE
-   FILE_SET HEADERS
-   BASE_DIRS ${AU_BASE_DIRECTORY}
-   FILES
+header_only_library(
+   NAME stdx
+   INTERNAL_ONLY
+   HEADERS
       stdx/experimental/is_detected.hh
       stdx/functional.hh
       stdx/type_traits.hh
       stdx/utility.hh
-)
-
-add_executable(stdx_test)
-target_sources(stdx_test
-   PRIVATE
+   GTEST_SRCS
       stdx/test/utility_test.cc
 )
-target_link_libraries(stdx_test
-   PRIVATE
-      stdx
-      GTest::gtest_main
-)
-gtest_discover_tests(stdx_test)
