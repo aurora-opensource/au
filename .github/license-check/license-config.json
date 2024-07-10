@@ -16,6 +16,7 @@
       ".envrc",
       ".github/**/*.yml",
       "requirements.in",
+      "cmake/*.cmake",
       "WORKSPACE"
     ],
     "exclude": [
