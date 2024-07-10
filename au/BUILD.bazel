@@ -70,6 +70,7 @@ cc_library(
         ":io",
         ":stdx",
         ":unit_of_measure",
+        "@com_google_googletest//:gtest",
     ],
 )
 
@@ -123,7 +124,6 @@ cc_test(
     name = "apply_magnitude_test",
     size = "small",
     srcs = ["apply_magnitude_test.cc"],
-    copts = ["-Iexternal/gtest/include"],
     deps = [
         ":apply_magnitude",
         ":testing",
