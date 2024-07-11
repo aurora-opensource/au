@@ -101,6 +101,8 @@ header_only_library(
     unit_of_measure
     unit_symbol
   GTEST_SRCS
+    prefix_test.cc
+  GTEST_EXTRA_DEPS
     testing
 )
 
