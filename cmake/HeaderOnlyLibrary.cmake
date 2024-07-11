@@ -52,6 +52,11 @@ function(header_only_library)
     target_link_libraries(${ARG_NAME} INTERFACE ${ARG_DEPS})
   endif()
 
+  # Require C++14 support.
+  #
+  # (We can consider adding a parameter to make this customizable later.)
+  target_compile_features(${ARG_NAME} INTERFACE cxx_std_14)
+
   # If it's internal-only, change its export name accordingly.
   # See: https://stackoverflow.com/a/68321274
   if (ARG_INTERNAL_ONLY)
