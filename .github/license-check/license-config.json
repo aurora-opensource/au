@@ -18,6 +18,7 @@
       ".github/**/*.yml",
       "requirements.in",
       "cmake/*.cmake",
+      "cmake/*.cmake.in",
       "WORKSPACE"
     ],
     "exclude": [

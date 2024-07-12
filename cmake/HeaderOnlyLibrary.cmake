@@ -61,7 +61,17 @@ function(header_only_library)
   # See: https://stackoverflow.com/a/68321274
   if (ARG_INTERNAL_ONLY)
     set_target_properties(${ARG_NAME} PROPERTIES EXPORT_NAME "_Au_private_${ARG_NAME}")
+  else()
+    add_library(Au::${ARG_NAME} ALIAS ${ARG_NAME})
   endif()
+
+  # Install the library.  (This is required for other projects to use Au via CMake.)
+  include(GNUInstallDirs)
+  install(
+    TARGETS ${ARG_NAME}
+    EXPORT ${AU_EXPORT_SET_NAME}
+    FILE_SET HEADERS
+  )
 
   # Add the test, if requested.
   if (DEFINED ARG_GTEST_SRCS)
