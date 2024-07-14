@@ -19,7 +19,7 @@
       "requirements.in",
       "cmake/*.cmake",
       "cmake/*.cmake.in",
-      "WORKSPACE"
+      "**/WORKSPACE"
     ],
     "exclude": [
       "third_party/**/*"
