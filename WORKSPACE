@@ -216,3 +216,13 @@ http_archive(
 
 # END SECTION: Install buildifier.
 ################################################################################
+
+local_repository(
+    name = "ignore_cmake",
+    path = "./cmake",
+)
+
+local_repository(
+    name = "ignore_include_symlink",
+    path = "./include",
+)
