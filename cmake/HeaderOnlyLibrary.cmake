@@ -45,7 +45,7 @@ function(header_only_library)
     ${ARG_NAME}
     INTERFACE
     FILE_SET HEADERS
-    BASE_DIRS ${CMAKE_SOURCE_DIR}
+    BASE_DIRS "${PROJECT_SOURCE_DIR}/include"
     FILES ${ARG_HEADERS}
   )
   if (DEFINED ARG_DEPS)
@@ -71,6 +71,7 @@ function(header_only_library)
     TARGETS ${ARG_NAME}
     EXPORT ${AU_EXPORT_SET_NAME}
     FILE_SET HEADERS
+    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
   )
 
   # Add the test, if requested.
