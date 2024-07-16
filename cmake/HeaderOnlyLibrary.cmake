@@ -45,7 +45,7 @@ function(header_only_library)
     ${ARG_NAME}
     INTERFACE
     FILE_SET HEADERS
-    BASE_DIRS "${PROJECT_SOURCE_DIR}/include"
+    BASE_DIRS "${PROJECT_SOURCE_DIR}/cmake/project_symlinks"
     FILES ${ARG_HEADERS}
   )
   if (DEFINED ARG_DEPS)
