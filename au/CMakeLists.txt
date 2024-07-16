@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(../cmake/HeaderOnlyLibrary.cmake)
+include("${PROJECT_SOURCE_DIR}/cmake/HeaderOnlyLibrary.cmake")
 
 #
 # Publicly exported targets

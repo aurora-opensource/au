@@ -18,7 +18,8 @@
       ".github/**/*.yml",
       "requirements.in",
       "cmake/*.cmake",
-      "WORKSPACE"
+      "cmake/*.cmake.in",
+      "**/WORKSPACE"
     ],
     "exclude": [
       "third_party/**/*"
