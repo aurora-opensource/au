@@ -17,7 +17,7 @@
 execute_process(
    COMMAND ${CMAKE_COMMAND}
    -E create_symlink
-   "../../au"
+   ${PROJECT_SOURCE_DIR}/au
    ${PROJECT_SOURCE_DIR}/cmake/project_symlinks/au
 )
 
