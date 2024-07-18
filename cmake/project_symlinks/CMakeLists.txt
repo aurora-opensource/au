@@ -12,4 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# We must create the symlink to `au/` at configure time, because doing it via CMake means that it
+# will work on both linux and windows.
+execute_process(
+   COMMAND ${CMAKE_COMMAND}
+   -E create_symlink
+   "../../au"
+   ${PROJECT_SOURCE_DIR}/cmake/project_symlinks/au
+)
+
+# Having created the symlink, we can now add the subdirectory.
 add_subdirectory(au)

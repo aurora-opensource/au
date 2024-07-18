@@ -1,3 +1,4 @@
 /bazel-*
 cmake/build*
+cmake/project_symlinks/au
 Testing
