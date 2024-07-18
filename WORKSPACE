@@ -216,3 +216,11 @@ http_archive(
 
 # END SECTION: Install buildifier.
 ################################################################################
+
+# This is not a "real" local bazel repository.  We define this in this WORKSPACE
+# file because it will prevent bazel from looking for packages in this folder
+# and its children.
+local_repository(
+    name = "ignore_cmake",
+    path = "./cmake",
+)

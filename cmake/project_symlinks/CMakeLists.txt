@@ -1,4 +1,4 @@
-# Copyright 2023 Aurora Operations, Inc.
+# Copyright 2024 Aurora Operations, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,23 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: clang-format-lint
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-
-jobs:
-  lint-clang-format:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b #v4.1.5
-    - uses: DoozyX/clang-format-lint-action@2ec1a72dfb593e52255693c9039e6d94984187dc #v0.14
-      with:
-        source: './au'
-        extensions: 'hh,cc'
-        clangFormatVersion: 14.0.0
-        style: file
+add_subdirectory(au)

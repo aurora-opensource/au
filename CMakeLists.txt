@@ -32,6 +32,9 @@ project(
    LANGUAGES CXX
 )
 
+# The export set for all of our headers.
+set(AU_EXPORT_SET_NAME AuHeaders)
+
 enable_testing()
 
 # Bring in GoogleTest so we can build and run the tests.
@@ -52,4 +55,36 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 
-add_subdirectory(au)
+add_subdirectory(cmake/project_symlinks)
+
+# Configure how Au will be installed.
+#
+# (This is necessary for it to be usable in other CMake projects.)
+
+set(AU_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/Au)
+
+install(
+   EXPORT ${AU_EXPORT_SET_NAME}
+   DESTINATION ${AU_CMAKE_DIR}
+   NAMESPACE Au::
+   FILE AuHeaders.cmake
+)
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/AuConfig.cmake.in
+   AuConfig.cmake
+   INSTALL_DESTINATION ${AU_CMAKE_DIR}
+)
+
+write_basic_package_version_file(
+   AuConfigVersion.cmake
+   COMPATIBILITY SameMinorVersion
+)
+
+install(
+   FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/AuConfig.cmake
+      ${CMAKE_CURRENT_BINARY_DIR}/AuConfigVersion.cmake
+   DESTINATION ${AU_CMAKE_DIR}
+)
