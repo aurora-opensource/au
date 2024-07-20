@@ -45,8 +45,8 @@ function(header_only_library)
     ${ARG_NAME}
     INTERFACE
     FILE_SET HEADERS
-    BASE_DIRS "${PROJECT_SOURCE_DIR}/cmake/project_symlinks"
-    FILES ${ARG_HEADERS}
+    BASE_DIRS "${PROJECT_SOURCE_DIR}/au/code"
+    FILES "${ARG_HEADERS}"
   )
   if (DEFINED ARG_DEPS)
     target_link_libraries(${ARG_NAME} INTERFACE ${ARG_DEPS})

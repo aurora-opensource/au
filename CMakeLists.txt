@@ -55,7 +55,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 
-add_subdirectory(cmake/project_symlinks)
+add_subdirectory(au)
 
 # Configure how Au will be installed.
 #
