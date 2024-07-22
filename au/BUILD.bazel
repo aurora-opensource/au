@@ -19,7 +19,8 @@ load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 
 cc_library(
     name = "au",
-    hdrs = ["au.hh"],
+    hdrs = ["code/au/au.hh"],
+    includes = ["code"],
     visibility = ["//visibility:public"],
     deps = [
         ":chrono_interop",
@@ -31,7 +32,7 @@ cc_library(
 cc_test(
     name = "au_test",
     size = "small",
-    srcs = ["au_test.cc"],
+    srcs = ["code/au/au_test.cc"],
     deps = [
         ":au",
         ":testing",
@@ -41,7 +42,8 @@ cc_test(
 
 cc_library(
     name = "io",
-    hdrs = ["io.hh"],
+    hdrs = ["code/au/io.hh"],
+    includes = ["code"],
     visibility = ["//visibility:public"],
     deps = [
         ":quantity",
@@ -53,7 +55,7 @@ cc_library(
 cc_test(
     name = "io_test",
     size = "small",
-    srcs = ["io_test.cc"],
+    srcs = ["code/au/io_test.cc"],
     deps = [
         ":io",
         ":prefix",
@@ -64,7 +66,8 @@ cc_test(
 cc_library(
     name = "testing",
     testonly = True,
-    hdrs = ["testing.hh"],
+    hdrs = ["code/au/testing.hh"],
+    includes = ["code"],
     visibility = ["//visibility:public"],
     deps = [
         ":io",
@@ -77,7 +80,7 @@ cc_library(
 cc_test(
     name = "testing_test",
     size = "small",
-    srcs = ["testing_test.cc"],
+    srcs = ["code/au/testing_test.cc"],
     deps = [
         ":testing",
         "@com_google_googletest//:gtest_main",
@@ -86,7 +89,8 @@ cc_test(
 
 cc_library(
     name = "units",
-    hdrs = glob(["units/*.hh"]),
+    hdrs = glob(["code/au/units/*.hh"]),
+    includes = ["code"],
     visibility = ["//visibility:public"],
     deps = [
         ":prefix",
@@ -100,7 +104,7 @@ cc_library(
 cc_test(
     name = "units_test",
     size = "small",
-    srcs = glob(["units/test/*.cc"]),
+    srcs = glob(["code/au/units/test/*.cc"]),
     deps = [
         ":testing",
         ":units",
@@ -113,7 +117,8 @@ cc_test(
 
 cc_library(
     name = "apply_magnitude",
-    hdrs = ["apply_magnitude.hh"],
+    hdrs = ["code/au/apply_magnitude.hh"],
+    includes = ["code"],
     deps = [
         ":apply_rational_magnitude_to_integral",
         ":magnitude",
@@ -123,7 +128,7 @@ cc_library(
 cc_test(
     name = "apply_magnitude_test",
     size = "small",
-    srcs = ["apply_magnitude_test.cc"],
+    srcs = ["code/au/apply_magnitude_test.cc"],
     deps = [
         ":apply_magnitude",
         ":testing",
@@ -133,14 +138,15 @@ cc_test(
 
 cc_library(
     name = "apply_rational_magnitude_to_integral",
-    hdrs = ["apply_rational_magnitude_to_integral.hh"],
+    hdrs = ["code/au/apply_rational_magnitude_to_integral.hh"],
+    includes = ["code"],
     deps = [":magnitude"],
 )
 
 cc_test(
     name = "apply_rational_magnitude_to_integral_test",
     size = "small",
-    srcs = ["apply_rational_magnitude_to_integral_test.cc"],
+    srcs = ["code/au/apply_rational_magnitude_to_integral_test.cc"],
     deps = [
         ":apply_rational_magnitude_to_integral",
         ":testing",
@@ -150,7 +156,8 @@ cc_test(
 
 cc_library(
     name = "chrono_interop",
-    hdrs = ["chrono_interop.hh"],
+    hdrs = ["code/au/chrono_interop.hh"],
+    includes = ["code"],
     deps = [
         ":units",
     ],
@@ -159,7 +166,7 @@ cc_library(
 cc_test(
     name = "chrono_interop_test",
     size = "small",
-    srcs = ["chrono_interop_test.cc"],
+    srcs = ["code/au/chrono_interop_test.cc"],
     deps = [
         ":chrono_interop",
         ":prefix",
@@ -171,7 +178,8 @@ cc_test(
 cc_library(
     name = "chrono_policy_validation",
     testonly = True,
-    hdrs = ["chrono_policy_validation.hh"],
+    hdrs = ["code/au/chrono_policy_validation.hh"],
+    includes = ["code"],
     deps = [
         ":dimension",
         ":quantity",
@@ -184,7 +192,7 @@ cc_library(
 cc_test(
     name = "chrono_policy_validation_test",
     size = "small",
-    srcs = ["chrono_policy_validation_test.cc"],
+    srcs = ["code/au/chrono_policy_validation_test.cc"],
     deps = [
         ":chrono_policy_validation",
         ":prefix",
@@ -195,7 +203,8 @@ cc_test(
 
 cc_library(
     name = "constant",
-    hdrs = ["constant.hh"],
+    hdrs = ["code/au/constant.hh"],
+    includes = ["code"],
     deps = [
         ":quantity",
         ":unit_of_measure",
@@ -206,7 +215,7 @@ cc_library(
 cc_test(
     name = "constant_test",
     size = "small",
-    srcs = ["constant_test.cc"],
+    srcs = ["code/au/constant_test.cc"],
     deps = [
         ":chrono_interop",
         ":constant",
@@ -218,7 +227,8 @@ cc_test(
 
 cc_library(
     name = "conversion_policy",
-    hdrs = ["conversion_policy.hh"],
+    hdrs = ["code/au/conversion_policy.hh"],
+    includes = ["code"],
     deps = [
         ":magnitude",
         ":stdx",
@@ -229,7 +239,7 @@ cc_library(
 cc_test(
     name = "conversion_policy_test",
     size = "small",
-    srcs = ["conversion_policy_test.cc"],
+    srcs = ["code/au/conversion_policy_test.cc"],
     deps = [
         ":conversion_policy",
         ":unit_of_measure",
@@ -239,7 +249,8 @@ cc_test(
 
 cc_library(
     name = "dimension",
-    hdrs = ["dimension.hh"],
+    hdrs = ["code/au/dimension.hh"],
+    includes = ["code"],
     deps = [
         ":packs",
         ":power_aliases",
@@ -249,7 +260,7 @@ cc_library(
 cc_test(
     name = "dimension_test",
     size = "small",
-    srcs = ["dimension_test.cc"],
+    srcs = ["code/au/dimension_test.cc"],
     deps = [
         ":dimension",
         ":testing",
@@ -260,7 +271,8 @@ cc_test(
 
 cc_library(
     name = "magnitude",
-    hdrs = ["magnitude.hh"],
+    hdrs = ["code/au/magnitude.hh"],
+    includes = ["code"],
     deps = [
         ":packs",
         ":power_aliases",
@@ -273,7 +285,7 @@ cc_library(
 cc_test(
     name = "magnitude_test",
     size = "small",
-    srcs = ["magnitude_test.cc"],
+    srcs = ["code/au/magnitude_test.cc"],
     deps = [
         ":magnitude",
         ":testing",
@@ -283,7 +295,8 @@ cc_test(
 
 cc_library(
     name = "math",
-    hdrs = ["math.hh"],
+    hdrs = ["code/au/math.hh"],
+    includes = ["code"],
     deps = [
         ":constant",
         ":quantity",
@@ -295,7 +308,7 @@ cc_library(
 cc_test(
     name = "math_test",
     size = "small",
-    srcs = ["math_test.cc"],
+    srcs = ["code/au/math_test.cc"],
     deps = [
         ":math",
         ":testing",
@@ -306,7 +319,7 @@ cc_test(
 cc_test(
     name = "no_wconversion_test",
     size = "small",
-    srcs = ["no_wconversion_test.cc"],
+    srcs = ["code/au/no_wconversion_test.cc"],
     deps = [
         ":quantity",
         ":testing",
@@ -317,13 +330,14 @@ cc_test(
 
 cc_library(
     name = "operators",
-    hdrs = ["operators.hh"],
+    hdrs = ["code/au/operators.hh"],
+    includes = ["code"],
 )
 
 cc_test(
     name = "operators_test",
     size = "small",
-    srcs = ["operators_test.cc"],
+    srcs = ["code/au/operators_test.cc"],
     deps = [
         ":operators",
         ":testing",
@@ -333,7 +347,8 @@ cc_test(
 
 cc_library(
     name = "packs",
-    hdrs = ["packs.hh"],
+    hdrs = ["code/au/packs.hh"],
+    includes = ["code"],
     deps = [
         ":stdx",
         ":utility",
@@ -343,7 +358,7 @@ cc_library(
 cc_test(
     name = "packs_test",
     size = "small",
-    srcs = ["packs_test.cc"],
+    srcs = ["code/au/packs_test.cc"],
     deps = [
         ":packs",
         "@com_google_googletest//:gtest_main",
@@ -352,13 +367,14 @@ cc_test(
 
 cc_library(
     name = "power_aliases",
-    hdrs = ["power_aliases.hh"],
+    hdrs = ["code/au/power_aliases.hh"],
+    includes = ["code"],
 )
 
 cc_test(
     name = "power_aliases_test",
     size = "small",
-    srcs = ["power_aliases_test.cc"],
+    srcs = ["code/au/power_aliases_test.cc"],
     deps = [
         ":packs",
         ":power_aliases",
@@ -368,7 +384,8 @@ cc_test(
 
 cc_library(
     name = "prefix",
-    hdrs = ["prefix.hh"],
+    hdrs = ["code/au/prefix.hh"],
+    includes = ["code"],
     deps = [
         ":quantity",
         ":quantity_point",
@@ -380,7 +397,7 @@ cc_library(
 cc_test(
     name = "prefix_test",
     size = "small",
-    srcs = ["prefix_test.cc"],
+    srcs = ["code/au/prefix_test.cc"],
     deps = [
         ":prefix",
         ":testing",
@@ -390,7 +407,8 @@ cc_test(
 
 cc_library(
     name = "quantity",
-    hdrs = ["quantity.hh"],
+    hdrs = ["code/au/quantity.hh"],
+    includes = ["code"],
     deps = [
         ":apply_magnitude",
         ":conversion_policy",
@@ -405,8 +423,8 @@ cc_test(
     name = "quantity_test",
     size = "small",
     srcs = [
-        "quantity_chrono_policy_correspondence_test.cc",
-        "quantity_test.cc",
+        "code/au/quantity_chrono_policy_correspondence_test.cc",
+        "code/au/quantity_test.cc",
     ],
     deps = [
         ":chrono_policy_validation",
@@ -419,7 +437,8 @@ cc_test(
 
 cc_library(
     name = "quantity_point",
-    hdrs = ["quantity_point.hh"],
+    hdrs = ["code/au/quantity_point.hh"],
+    includes = ["code"],
     deps = [
         ":quantity",
         ":stdx",
@@ -430,7 +449,7 @@ cc_library(
 cc_test(
     name = "quantity_point_test",
     size = "small",
-    srcs = ["quantity_point_test.cc"],
+    srcs = ["code/au/quantity_point_test.cc"],
     deps = [
         ":prefix",
         ":quantity_point",
@@ -441,14 +460,15 @@ cc_test(
 
 cc_library(
     name = "rep",
-    hdrs = ["rep.hh"],
+    hdrs = ["code/au/rep.hh"],
+    includes = ["code"],
     deps = [":stdx"],
 )
 
 cc_test(
     name = "rep_test",
     size = "small",
-    srcs = ["rep_test.cc"],
+    srcs = ["code/au/rep_test.cc"],
     deps = [
         ":chrono_interop",
         ":constant",
@@ -466,19 +486,20 @@ cc_test(
 cc_library(
     name = "stdx",
     srcs = glob([
-        "stdx/*.cc",
-        "stdx/experimental/*.cc",
+        "code/au/stdx/*.cc",
+        "code/au/stdx/experimental/*.cc",
     ]),
     hdrs = glob([
-        "stdx/*.hh",
-        "stdx/experimental/*.hh",
+        "code/au/stdx/*.hh",
+        "code/au/stdx/experimental/*.hh",
     ]),
+    includes = ["code"],
 )
 
 cc_test(
     name = "stdx_test",
     size = "small",
-    srcs = glob(["stdx/test/*.cc"]),
+    srcs = glob(["code/au/stdx/test/*.cc"]),
     deps = [
         ":stdx",
         "@com_google_googletest//:gtest_main",
@@ -487,7 +508,8 @@ cc_test(
 
 cc_library(
     name = "unit_of_measure",
-    hdrs = ["unit_of_measure.hh"],
+    hdrs = ["code/au/unit_of_measure.hh"],
+    includes = ["code"],
     deps = [
         ":dimension",
         ":magnitude",
@@ -501,7 +523,7 @@ cc_library(
 cc_test(
     name = "unit_of_measure_test",
     size = "small",
-    srcs = ["unit_of_measure_test.cc"],
+    srcs = ["code/au/unit_of_measure_test.cc"],
     deps = [
         ":prefix",
         ":testing",
@@ -513,14 +535,15 @@ cc_test(
 
 cc_library(
     name = "unit_symbol",
-    hdrs = ["unit_symbol.hh"],
+    hdrs = ["code/au/unit_symbol.hh"],
+    includes = ["code"],
     deps = [":wrapper_operations"],
 )
 
 cc_test(
     name = "unit_symbol_test",
     size = "small",
-    srcs = ["unit_symbol_test.cc"],
+    srcs = ["code/au/unit_symbol_test.cc"],
     deps = [
         ":testing",
         ":unit_symbol",
@@ -531,14 +554,15 @@ cc_test(
 
 cc_library(
     name = "utility",
-    hdrs = glob(["utility/*.hh"]),
+    hdrs = glob(["code/au/utility/*.hh"]),
+    includes = ["code"],
     deps = [":stdx"],
 )
 
 cc_test(
     name = "utility_test",
     size = "small",
-    srcs = glob(["utility/test/*.cc"]),
+    srcs = glob(["code/au/utility/test/*.cc"]),
     deps = [
         ":utility",
         "@com_google_googletest//:gtest_main",
@@ -547,7 +571,8 @@ cc_test(
 
 cc_library(
     name = "wrapper_operations",
-    hdrs = ["wrapper_operations.hh"],
+    hdrs = ["code/au/wrapper_operations.hh"],
+    includes = ["code"],
     deps = [
         ":quantity",
         ":stdx",
@@ -557,7 +582,7 @@ cc_library(
 cc_test(
     name = "wrapper_operations_test",
     size = "small",
-    srcs = ["wrapper_operations_test.cc"],
+    srcs = ["code/au/wrapper_operations_test.cc"],
     deps = [
         ":testing",
         ":units",
@@ -568,13 +593,14 @@ cc_test(
 
 cc_library(
     name = "zero",
-    hdrs = ["zero.hh"],
+    hdrs = ["code/au/zero.hh"],
+    includes = ["code"],
 )
 
 cc_test(
     name = "zero_test",
     size = "small",
-    srcs = ["zero_test.cc"],
+    srcs = ["code/au/zero_test.cc"],
     deps = [
         ":zero",
         "@com_google_googletest//:gtest_main",
@@ -586,7 +612,7 @@ cc_test(
 
 filegroup(
     name = "headers",
-    srcs = glob(["**/*.hh"]),
+    srcs = glob(["code/au/**/*.hh"]),
     visibility = ["//:__pkg__"],
 )
 
