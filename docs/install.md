@@ -258,10 +258,10 @@ There are two ways to include the Au library in your CMake project.
 
 2. Install the library to the system, and use `find_package`.
 
-The reason we recommend `FetchContent` is because it makes it easier for each project to get the
-exact version of Au they need.  `FetchContent` also means you don't need to manually clone the Au
-repo, or build and run the tests.  On the other hand, if you want a single global system-wide
-version of Au, then you can install it to the system, and simply use `find_package`.
+We recommend `FetchContent` because each project can get the exact version of Au that they need, and
+can update it independently of other projects.  `FetchContent` also means you don't need to manually
+clone the Au repo, or build and run the tests.  On the other hand, if you want a single global
+system-wide version of Au, then you can install it to the system, and simply use `find_package`.
 
 In either case, here are the main targets and include files provided by the Au library:
 
@@ -270,8 +270,6 @@ In either case, here are the main targets and include files provided by the Au l
 | `Au::au` | `"au/au.hh"`<br>`"au/units/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
 | `Au::io` | `"au/io.hh"` | `operator<<` support |
 | `Au::testing` | `"au/testing.hh"` | Utilities for writing googletest tests |
-
-Now, here are the installation instructions.
 
 !!! note
     These instructions are for adding Au to a _project_ that uses CMake, not building Au itself
