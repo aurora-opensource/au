@@ -109,7 +109,7 @@ def enumerate_units(args):
     with every existing entry, and then delete `--all-units`.
     """
     if args.all_units:
-        args.units = [f[:-3] for f in os.listdir("au/units/") if f.endswith('.hh')]
+        args.units = [f[:-3] for f in os.listdir("au/code/au/units/") if f.endswith(".hh")]
 
     del args.all_units
     return args
@@ -147,7 +147,7 @@ class SourceFile:
         self.lines = []
 
         in_copyright_header = False
-        with open(filename) as f:
+        with open(os.path.join("au/code", filename)) as f:
             was_last_line_blank = False
             for line in f:
                 if line.startswith("#pragma once"):
