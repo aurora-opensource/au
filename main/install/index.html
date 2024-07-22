@@ -392,15 +392,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#other-build-systems-cmake-conan-vcpkg" class="md-nav__link">
-    <span class="md-ellipsis">
-      Other build systems (CMake / conan / vcpkg / &hellip;)
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -1837,17 +1828,19 @@ header file.  For the latter approach, there are two options:</p>
   <tr>
     <th rowspan=2></th>
     <th colspan=2>Single File</th>
-    <th colspan=2>Full Install</th>
+    <th colspan=3>Full Install</th>
   </tr>
   <tr>
     <td>Pre-built</td>
     <td>Custom</td>
     <td>bazel</td>
-    <td>CMake, conan, vcpkg, ...</td>
+    <td>CMake</td>
+    <td>conan, vcpkg, ...</td>
   </tr>
   <tr>
     <td>Setup time</td>
     <td class="best">~1 min</td>
+    <td class="good">~10 min</td>
     <td class="good">~10 min</td>
     <td class="good">~10 min</td>
     <td class="poor">Not <i>yet</i> supported<br>(use <b>single-file</b> instead for now)</td>
@@ -1856,13 +1849,13 @@ header file.  For the latter approach, there are two options:</p>
     <td>Unit selection</td>
     <td class="fair">Base units only<br>(or too many units)</td>
     <td class="good">Any units desired</td>
-    <td colspan=2 class="best">Any units desired, <i>without</i> needing "reinstall"</td>
+    <td colspan=3 class="best">Any units desired, <i>without</i> needing "reinstall"</td>
   </tr>
   <tr>
     <td>Compile time cost</td>
     <td class="good">~10 units</td>
     <td class="good">Very competitive up to a few dozen units</td>
-    <td colspan=2 class="best"><i>Each file</i> only pays for the units it uses</td>
+    <td colspan=3 class="best"><i>Each file</i> only pays for the units it uses</td>
   </tr>
   <tr>
     <td>Flexibility</td>
@@ -1870,7 +1863,7 @@ header file.  For the latter approach, there are two options:</p>
       Awkward: would need to download <pre>io.hh</pre> and/or <pre>testing.hh</pre> separately, and
       modify their includes manually
     </td>
-    <td colspan=2 class="best">
+    <td colspan=3 class="best">
       Include I/O, testing utilities, individual units as desired, on a per-file basis
     </td>
   </tr>
@@ -1889,6 +1882,7 @@ SetupTime --&gt;|No! Just let me start!| UsePreBuilt
 SetupTime --&gt;|Sure| UseCustom
 Usage --&gt;|Ready to use in my project!| BuildSystem
 BuildSystem --&gt;|bazel| UseFullInstall
+BuildSystem --&gt;|CMake| UseFullInstall
 BuildSystem --&gt;|other| UseCustom</code></pre>
 <h2 id="installation-instructions">Installation instructions<a class="headerlink" href="#installation-instructions" title="Permanent link">&para;</a></h2>
 <p>Here are the instructions for each installation method we support.</p>
@@ -2051,7 +2045,7 @@ attribute, and include the appropriate files.</p>
 <tbody>
 <tr>
 <td><code>@au//au</code></td>
-<td><code>"au/au.hh"</code><br><code>"au/units.*.hh"</code></td>
+<td><code>"au/au.hh"</code><br><code>"au/units/*.hh"</code></td>
 <td>Core library functionality.  See <a href="https://github.com/aurora-opensource/au/tree/main/au/units">all available units</a></td>
 </tr>
 <tr>
@@ -2062,32 +2056,111 @@ attribute, and include the appropriate files.</p>
 <tr>
 <td><code>@au//au:testing</code></td>
 <td><code>"au/testing.hh"</code></td>
-<td>Utilities for testing<br><em>Note:</em> <code>testonly = True</code></td>
+<td>Utilities for writing googletest tests<br><em>Note:</em> <code>testonly = True</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="cmake">CMake<a class="headerlink" href="#cmake" title="Permanent link">&para;</a></h4>
-<p>CMake support is still experimental and in-progress.  We are building it up starting from &ldquo;root&rdquo;
-targets (that is, targets without dependencies), and expanding support to the rest of the library.</p>
-<p>To build the library using this experimental CMake support, follow these steps:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># CMake is a &quot;meta build system&quot;, not a build system.</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># This first command generates the actual build files.</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>cmake/build<span class="w"> </span>-DCMAKE_VERIFY_INTERFACE_HEADER_SETS<span class="o">=</span>TRUE
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># This command builds Au, checks include paths, and runs unit tests.</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>cmake<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span>--build<span class="w"> </span>cmake/build<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span>--target<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span>all<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span>all_verify_interface_header_sets<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="nb">test</span>
+<p>There are two ways to include the Au library in your CMake project.</p>
+<ol>
+<li>
+<p><strong>(Recommended)</strong> Use the <code>FetchContent</code> module to download the library directly from GitHub.</p>
+</li>
+<li>
+<p>Install the library to the system, and use <code>find_package</code>.</p>
+</li>
+</ol>
+<p>We recommend <code>FetchContent</code> because each project can get the exact version of Au that they need, and
+can update it independently of other projects.  <code>FetchContent</code> also means you don&rsquo;t need to manually
+clone the Au repo, or build and run the tests.  On the other hand, if you want a single global
+system-wide version of Au, then you can install it to the system, and simply use <code>find_package</code>.</p>
+<p>In either case, here are the main targets and include files provided by the Au library:</p>
+<table>
+<thead>
+<tr>
+<th>Target</th>
+<th>Headers provided</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Au::au</code></td>
+<td><code>"au/au.hh"</code><br><code>"au/units/*.hh"</code></td>
+<td>Core library functionality.  See <a href="https://github.com/aurora-opensource/au/tree/main/au/units">all available units</a></td>
+</tr>
+<tr>
+<td><code>Au::io</code></td>
+<td><code>"au/io.hh"</code></td>
+<td><code>operator&lt;&lt;</code> support</td>
+</tr>
+<tr>
+<td><code>Au::testing</code></td>
+<td><code>"au/testing.hh"</code></td>
+<td>Utilities for writing googletest tests</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These instructions are for adding Au to a <em>project</em> that uses CMake, not building Au itself
+using CMake.</p>
+<p>Au is a bazel-first project, so most Au development would normally be done using bazel.
+However, we do have instructions for doing this with CMake as well: see the <code>find_package</code> tab
+below.</p>
+</div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Using <code>FetchContent</code></label><label for="__tabbed_1_2">Using <code>find_package</code></label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Add the following to your <code>CMakeLists.txt</code> file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">include</span><span class="p">(</span><span class="s">FetchContent</span><span class="p">)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nb">FetchContent_Declare</span><span class="p">(</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="s">Au</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/aurora-opensource/au</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="s">GIT_TAG</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="w">  </span><span class="c"># Or a specific tag.</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="s">EXCLUDE_FROM_ALL</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">)</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">Au</span><span class="p">)</span>
 </code></pre></div>
-<h4 id="other-build-systems-cmake-conan-vcpkg">Other build systems (CMake / conan / vcpkg / &hellip;)<a class="headerlink" href="#other-build-systems-cmake-conan-vcpkg" title="Permanent link">&para;</a></h4>
-<p>We would like to support all these build and packaging systems, and perhaps others!  But the initial
-public release is bazel-only, because bazel is what we use at Aurora, and we don&rsquo;t have experience
-with any of these alternatives.  Thus, we&rsquo;ll need to lean on the community to support them.</p>
-<p>Meanwhile, the library itself is still at least partially available on all build environments, via
-the single-file options explained above.</p>
+<p>You should now be able to depend on Au targets, such as <code>Au::au</code> or <code>Au::io</code>, and include their
+corresponding headers, such as <code>#include "au/au.hh"</code> or <code>#include "au/io.hh"</code>.</p>
+</div>
+<div class="tabbed-block">
+<p>Before you can use <code>find_package</code>, you need to install the library to your system.  This means
+cloning the repo, building the library, running the tests, and installing it.</p>
+<p>First, clone the repository.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/aurora-opensource/au.git
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nb">cd</span><span class="w"> </span>au
+</code></pre></div>
+<p>If you want a specific release, check out the tag you want.  Note that the first version of Au
+that supports CMake will be 0.3.5.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Optional, but recommended:</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>git<span class="w"> </span>checkout<span class="w"> </span><span class="s2">&quot;0.3.5&quot;</span><span class="w">  </span><span class="c1"># Or whichever tag you prefer.</span>
+</code></pre></div>
+<p>Now, build and test the library.  These commands will include both the explicit tests, and also
+several CMake-generated tests to make sure that the includes are set up correctly.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># CMake is a &quot;meta build system&quot;, not a build system.</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1"># This first command generates the actual build files.</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>cmake/build<span class="w"> </span>-DCMAKE_VERIFY_INTERFACE_HEADER_SETS<span class="o">=</span>TRUE
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># This command builds Au, checks include paths, and runs unit tests.</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>cmake<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span>--build<span class="w"> </span>cmake/build<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span>--target<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span>all<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span>all_verify_interface_header_sets<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">    </span><span class="nb">test</span>
+</code></pre></div>
+<p>If the tests pass, you can install the library to your system.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>cmake<span class="w"> </span>--install<span class="w"> </span>cmake/build
+</code></pre></div>
+<p>At this point, the <code>Au</code> CMake library is installed to your system, and can be found via the
+usual <code>find_package</code> mechanism!</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">find_package</span><span class="p">(</span><span class="s">Au</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
 <script src="../assets/hrh4.js" async=false defer=false></script>
 
 
