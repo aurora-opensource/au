@@ -1,0 +1,2345 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++ units library, by Aurora">
+      
+      
+        <meta name="author" content="Au team">
+      
+      
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/0.3.5/reference/constant/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../corresponding_quantity/">
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.24">
+    
+    
+      
+        <title>Constant - The Au units library</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6543a935.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../tweaks.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#constant" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../assets/au-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            The Au units library
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Constant
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../assets/au-logo.png" alt="logo">
+
+    </a>
+    The Au units library
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au documentation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../develop/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Development Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../supported-compilers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Supported Compilers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Alternatives
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Alternatives
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alternatives/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Comparison of Alternatives
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Discussion
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Discussion
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Discussion Docs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Generic Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/arithmetic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Arithmetic Operations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/common_unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Common Units
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/dimensionless/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dimensionless Units and Quantities
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/overflow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overflow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/quantity_point/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quantity Point
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/zero/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Zero
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Idioms
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            Idioms
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/idioms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au Idioms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/idioms/unit-slots/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unit slots
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Implementation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            Implementation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Implementation Details
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/applying_magnitudes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Applying Magnitudes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/vector_space/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Vector Space Representations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Howto
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Howto
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How-to guides
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/new-dimensions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defining new dimensions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/new-units/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defining new units
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Interop
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            Interop
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/interop/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Inter-library Interoperation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/interop/nholthaus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nholthaus/units Interoperation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reference Docs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Constant
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Constant
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#constructing-constant" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constructing Constant
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Constructing Constant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ad-hoc-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ad hoc constants
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constant-and-unit-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constant and unit slots
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#converting-to-quantity" class="md-nav__link">
+    <span class="md-ellipsis">
+      Converting to Quantity
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Converting to Quantity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ast" class="md-nav__link">
+    <span class="md-ellipsis">
+      .as&lt;T&gt;()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#as-T-unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      .as&lt;T&gt;(unit)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coerce_astunit" class="md-nav__link">
+    <span class="md-ellipsis">
+      .coerce_as&lt;T&gt;(unit)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-T-unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      .in&lt;T&gt;(unit)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coerce_intunit" class="md-nav__link">
+    <span class="md-ellipsis">
+      .coerce_in&lt;T&gt;(unit)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implicit-quantity-conversion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implicit Quantity conversion
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raw-numeric-type-t" class="md-nav__link">
+    <span class="md-ellipsis">
+      Raw numeric type T
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantityu-r" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quantity&lt;U, R&gt;
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#constantu" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constant&lt;U&gt;
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantitymakeru" class="md-nav__link">
+    <span class="md-ellipsis">
+      QuantityMaker&lt;U&gt;
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#singularnameforu" class="md-nav__link">
+    <span class="md-ellipsis">
+      SingularNameFor&lt;U&gt;
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#magnitudebps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Magnitude&lt;BPs...&gt;
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantitypointmakeru-deleted" class="md-nav__link">
+    <span class="md-ellipsis">
+      QuantityPointMaker&lt;U&gt; (deleted)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantitypointu-r-deleted" class="md-nav__link">
+    <span class="md-ellipsis">
+      QuantityPoint&lt;U, R&gt; (deleted)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../corresponding_quantity/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Corresponding Quantity
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../magnitude/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Magnitude
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../math/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Math functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../powers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Powers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prefix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prefix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quantity/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quantity
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quantity_point/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    QuantityPoint
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../zero/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Zero
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_9_12" id="__nav_9_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Detail
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_12">
+            <span class="md-nav__icon md-icon"></span>
+            Detail
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Implementation Details
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/dimension/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dimension
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/monovalue_types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monovalue Types
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/packs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Parameter packs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tutorial
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorial
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tutorials: home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 101: Quantity Makers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/102-api-types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 102: API Types
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 103: Unit Conversions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_5" id="__nav_10_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Exercise
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_5">
+            <span class="md-nav__icon md-icon"></span>
+            Exercise
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 101: Quantity Makers Exercise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 102: API Types Exercise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Au 103: Unit Conversions Exercise
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="constant">Constant<a class="headerlink" href="#constant" title="Permanent link">&para;</a></h1>
+<p><code>Constant</code> is a family of template types, each of which represents a single specific quantity value.</p>
+<p>Recall that the usual way to represent quantity values is with a <a href="../quantity/"><code>Quantity&lt;Unit, Rep&gt;</code></a>
+type. This holds a numeric variable of type <code>Rep</code> inside, letting it represent
+many possible quantity values. By contrast, <code>Constant</code> is an empty class and has no &ldquo;rep&rdquo;: the
+single value it can represent is fully encoded in its type.  This makes it an example of
+a <a href="../detail/monovalue_types/">monovalue type</a>.</p>
+<p>Because the value is always fully known at compile time, we do not need to use a heuristic like the
+<a href="../../discussion/concepts/overflow/">overflow safety surface</a> to determine which conversions are
+allowed.  Instead, we can achieve a perfect conversion policy: we allow converting to any <code>Quantity</code>
+that can represent the value exactly, and disallow all other conversions.</p>
+<p>The main use of <code>Constant</code> is to multiply and divide raw numbers or <code>Quantity</code> values.  When we do
+this, the constant is applied <em>symbolically</em>, and affects the <em>units</em> of the resulting quantity.
+For example, multiplying a duration in seconds by a constant representing the speed of light
+produces a <em>length</em>, measured in units of <em>light-seconds</em>.  Notably, <em>the underlying stored numeric
+value does not change</em>: whether a duration of <code>5</code> seconds, or a length of <code>5</code> light-seconds, we
+still store <code>5</code> under the hood.</p>
+<p>This approach means that if subsequent operations cancel out the constant, this cancellation is both
+<em>exact</em> and has <em>zero runtime cost</em>.</p>
+<h2 id="constructing-constant">Constructing <code>Constant</code><a class="headerlink" href="#constructing-constant" title="Permanent link">&para;</a></h2>
+<p><code>Constant</code> encodes all information about the value in its type.  Moreover, it has only a single
+template parameter, which is a <a href="../unit/">unit</a>.  Therefore, the first step is to encode your
+quantity as a unit &mdash; that is, to define the unit &ldquo;U&rdquo; such that your quantity has a value of
+&ldquo;1 U&rdquo;.</p>
+<p>To do this, follow <a href="../../howto/new-units/">the usual instructions for creating new units</a>.  Note
+that you can use a much simpler definition that omits most of the optional features.  The only
+important ones are those labeled <code>[1]</code> (the strong type definition) and <code>[2]</code> (the unit label).</p>
+<p>Having defined your unit, you can pass an instance to the <code>make_constant</code> function.  If the unit you
+defined above is called <code>YourUnits</code>, and the constant is called <code>YOUR_CONSTANT</code>, then the constant
+definition will look like this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">YOUR_CONSTANT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">YourUnits</span><span class="p">{});</span>
+</code></pre></div>
+<p>Finally, note that the argument to <code>make_constant()</code> is a <a href="../../discussion/idioms/unit-slots/">unit
+slot</a>, so you can pass &ldquo;unit-like&rdquo; alternatives such as
+<code>QuantityMaker</code> or <code>SymbolFor</code> instances as well.</p>
+<details class="example">
+<summary>Full worked example: speed of light</summary>
+<p>Let&rsquo;s look at an example of defining a constant for the speed of light.  Both the name of the
+instance and the label will be <code>c</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++14</label><label for="__tabbed_1_2">C++17 or later</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// In .hh file:</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">SpeedOfLight</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Meters</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Seconds</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">};</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">SpeedOfLight</span><span class="p">{});</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// In .cc file:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">SpeedOfLight</span><span class="o">::</span><span class="n">label</span><span class="p">[];</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// In .hh file:</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">SpeedOfLight</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Meters</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Seconds</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">;</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">};</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">SpeedOfLight</span><span class="p">{});</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<h3 id="ad-hoc-constants">Ad hoc constants<a class="headerlink" href="#ad-hoc-constants" title="Permanent link">&para;</a></h3>
+<p>You can obtain many of the benefits of <code>Constant</code> even if you don&rsquo;t formally define a new unit.
+Because <code>make_constant</code> has a unit slot API, you can pass an ad hoc expression to it.  For example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">second</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">());</span>
+</code></pre></div>
+<p>The main advantage of doing this is its conciseness: the constant definition is a single, readable
+line.  The built constant also has all of the multiplication and division operators types that
+<code>Constant</code> supports, as well as its perfect conversion policy to any <code>Quantity</code> type.</p>
+<p>The only disadvantage is the missing label, which will make printed quantities hard to understand
+because the constant will be represented as <code>[UNLABELED_UNIT]</code> in the compound label.</p>
+<p>If the constant is used in multiple translation units, or if it leads to values that are printed
+out, we believe this disadvantage outweighs the benefits, and we recommend a full definition with
+a new unit. Otherwise, the ad hoc constant approach may be called for.</p>
+<h2 id="constant-and-unit-slots"><code>Constant</code> and unit slots<a class="headerlink" href="#constant-and-unit-slots" title="Permanent link">&para;</a></h2>
+<p><code>Constant</code> can be passed to any API that takes a <a href="../../discussion/idioms/unit-slots/">unit slot</a>.</p>
+<h2 id="converting-to-quantity">Converting to <code>Quantity</code><a class="headerlink" href="#converting-to-quantity" title="Permanent link">&para;</a></h2>
+<p><code>Constant</code> can be converted to any <code>Quantity</code> type of the same dimension.</p>
+<p>By default, this conversion policy is <em>perfect</em>.  This means that it permits converting to any
+<code>Quantity</code> that can represent the value exactly, and disallows all other conversions.  Users can
+also override this policy by choosing the &ldquo;coerce&rdquo; variant of any API (say, using <code>.coerce_as()</code>
+instead of <code>.as()</code>).</p>
+<p>Finally, it&rsquo;s important to appreciate that <code>Constant</code> has no rep, no underlying numeric type.
+Therefore, every <code>Quantity</code> conversion API requires an explicit template parameter to specify the
+desired rep.</p>
+<h3 id="ast"><code>.as&lt;T&gt;()</code><a class="headerlink" href="#ast" title="Permanent link">&para;</a></h3>
+<p>This function expresses the constant as a <code>Quantity</code> in &ldquo;units of this constant&rdquo;.  Therefore, the
+underlying stored value will be <code>T{1}</code>, and the rep will be <code>T</code>.</p>
+<h3 id="as-T-unit"><code>.as&lt;T&gt;(unit)</code><a class="headerlink" href="#as-T-unit" title="Permanent link">&para;</a></h3>
+<p>This function expresses the constant as a <code>Quantity</code> in the requested unit, using a rep of <code>T</code>.  It
+has a perfect conversion policy, which means that it compiles if and only if the constant&rsquo;s value in
+the requested unit can be exactly represented in the type <code>T</code>.</p>
+<p>The argument <code>unit</code> is a <a href="../../discussion/idioms/unit-slots/">unit slot</a> API, so it accepts a unit
+instance, quantity maker instance, or any other instance compatible with a unit slot.</p>
+<h3 id="coerce_astunit"><code>.coerce_as&lt;T&gt;(unit)</code><a class="headerlink" href="#coerce_astunit" title="Permanent link">&para;</a></h3>
+<p>This function expresses the constant as a <code>Quantity</code> in the requested unit, using a rep of <code>T</code>.  It
+is similar to <a href="#as-T-unit"><code>.as&lt;T&gt;(unit)</code></a>, except that it will ignore the safety checks that
+prevent truncation and overflow.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Because <code>.as&lt;T&gt;(unit)</code> has a perfect conversion policy, we know that this function either
+produces the exact same result (in which case you could simply <em>call</em> <code>.as&lt;T&gt;(unit)</code>), <em>or</em> it
+produces a result which is <strong>guaranteed to be lossy</strong>.  Therefore, be very judicious in using
+this function.</p>
+</div>
+<h3 id="in-T-unit"><code>.in&lt;T&gt;(unit)</code><a class="headerlink" href="#in-T-unit" title="Permanent link">&para;</a></h3>
+<p>This function produces a raw numeric value, of type <code>T</code>, holding the value of the constant in the
+requested unit.  It has a perfect conversion policy, which means that it compiles if and only if the
+constant&rsquo;s value in the requested unit can be exactly represented in the type <code>T</code>.</p>
+<p>The argument <code>unit</code> is a <a href="../../discussion/idioms/unit-slots/">unit slot</a> API, so it accepts a unit
+instance, quantity maker instance, or any other instance compatible with a unit slot.</p>
+<h3 id="coerce_intunit"><code>.coerce_in&lt;T&gt;(unit)</code><a class="headerlink" href="#coerce_intunit" title="Permanent link">&para;</a></h3>
+<p>This function produces a raw numeric value, of type <code>T</code>, holding the value of the constant in the
+requested unit.  It is similar to <a href="#in-T-unit"><code>.in&lt;T&gt;(unit)</code></a>, except that it will ignore the
+safety checks that prevent truncation and overflow.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Because <code>.in&lt;T&gt;(unit)</code> has a perfect conversion policy, we know that this function either
+produces the exact same result (in which case you could simply <em>call</em> <code>.in&lt;T&gt;(unit)</code>), <em>or</em> it
+produces a result which is <strong>guaranteed to be lossy</strong>.  Therefore, be very judicious in using
+this function.</p>
+</div>
+<h3 id="implicit-quantity-conversion">Implicit <code>Quantity</code> conversion<a class="headerlink" href="#implicit-quantity-conversion" title="Permanent link">&para;</a></h3>
+<p><code>Constant</code> will implicitly convert to any <code>Quantity</code> type which passes the safety checks on
+truncation and overflow.  Essentially: any time <a href="#as-T-unit"><code>.as&lt;T&gt;(unit)</code></a> produces a result, that
+same result can be obtained via implicit conversion.</p>
+<p>This provides great flexibility and confidence in passing <code>Constant</code> values to APIs that take
+<code>Quantity</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The fact that <code>Constant</code> has a perfect conversion policy means that we can use it with APIs
+where the corresponding <code>Quantity</code> would not work, because <code>Quantity</code> is forced to use the
+<a href="../../discussion/concepts/overflow/">overflow safety surface</a>, which is a more conservative
+heuristic.</p>
+<p>For example, suppose you have an API accepting <code>Quantity&lt;UnitQuotientT&lt;Meters, Seconds&gt;, int&gt;</code>,
+and a constant <code>c</code> representing the speed of light.</p>
+<p>You will be able to pass <code>c</code> to this API, because the constant-to-quantity conversion operation
+knows the exact value at compile time, and can verify that it fits in an <code>int</code>.</p>
+<p>By contrast, you would not be able to pass <code>c.as&lt;int&gt;()</code> (which is a <code>Quantity</code>).  Even though
+it would work for <em>this specific value</em> (which is <code>1</code>), this quantity-to-quantity conversion is
+too dangerous for <code>int</code> in general.</p>
+</div>
+<h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
+<p>Each operation with a <code>Constant</code> consists in multiplying or dividing with some other family of
+types.</p>
+<h3 id="raw-numeric-type-t">Raw numeric type <code>T</code><a class="headerlink" href="#raw-numeric-type-t" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a raw numeric type <code>T</code> produces a <code>Quantity</code> whose rep
+is <code>T</code>, and whose unit is derived from <code>Unit</code>.</p>
+<p>In the following table, we will use <code>x</code> to represent the value that was stored in the input of type
+<code>T</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Resulting Type</th>
+<th>Underlying Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Constant&lt;Unit&gt; * T</code></td>
+<td><code>Quantity&lt;Unit, T&gt;</code></td>
+<td><code>x</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Constant&lt;Unit&gt; / T</code></td>
+<td><code>Quantity&lt;Unit, T&gt;</code></td>
+<td><code>T{1} / x</code></td>
+<td>Disallowed for integral <code>T</code></td>
+</tr>
+<tr>
+<td><code>T * Constant&lt;Unit&gt;</code></td>
+<td><code>Quantity&lt;Unit, T&gt;</code></td>
+<td><code>x</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>T / Constant&lt;Unit&gt;</code></td>
+<td><code>Quantity&lt;UnitInverseT&lt;Unit&gt;, T&gt;</code></td>
+<td><code>x</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="quantityu-r"><code>Quantity&lt;U, R&gt;</code><a class="headerlink" href="#quantityu-r" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>Quantity&lt;U, R&gt;</code> produces a <code>Quantity</code> whose rep is
+<code>R</code>, and whose unit is derived from <code>Unit</code> and <code>U</code>.</p>
+<p>In the following table, we will use <code>x</code> to represent the underlying value in the input quantity &mdash;
+that is, if the input quantity was <code>q</code>, then <code>x</code> is <code>q.in(U{})</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Resulting Type</th>
+<th>Underlying Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Constant&lt;Unit&gt; * Quantity&lt;U, R&gt;</code></td>
+<td><code>Quantity&lt;UnitProductT&lt;Unit, U&gt;, R&gt;</code></td>
+<td><code>x</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Constant&lt;Unit&gt; / Quantity&lt;U, R&gt;</code></td>
+<td><code>Quantity&lt;UnitQuotientT&lt;Unit, U&gt;, R&gt;</code></td>
+<td><code>R{1} / x</code></td>
+<td>Disallowed for integral <code>R</code></td>
+</tr>
+<tr>
+<td><code>Quantity&lt;U, R&gt; * Constant&lt;Unit&gt;</code></td>
+<td><code>Quantity&lt;UnitProductT&lt;U, Unit&gt;, R&gt;</code></td>
+<td><code>x</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Quantity&lt;U, R&gt; / Constant&lt;Unit&gt;</code></td>
+<td><code>Quantity&lt;UnitQuotientT&lt;U, Unit&gt;, R&gt;</code></td>
+<td><code>x</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="constantu"><code>Constant&lt;U&gt;</code><a class="headerlink" href="#constantu" title="Permanent link">&para;</a></h3>
+<p>Constants compose: the product or quotient of two <code>Constant</code> instances is a new <code>Constant</code> instance.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Resulting Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Constant&lt;Unit&gt; * Constant&lt;U&gt;</code></td>
+<td><code>Constant&lt;UnitProductT&lt;Unit, U&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>Constant&lt;Unit&gt; / Constant&lt;U&gt;</code></td>
+<td><code>Constant&lt;UnitQuotientT&lt;Unit, U&gt;&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="quantitymakeru"><code>QuantityMaker&lt;U&gt;</code><a class="headerlink" href="#quantitymakeru" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>QuantityMaker&lt;U&gt;</code> produces a new <code>QuantityMaker</code>
+whose unit is derived from <code>Unit</code> and <code>U</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Resulting Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Constant&lt;Unit&gt; * QuantityMaker&lt;U&gt;</code></td>
+<td><code>QuantityMaker&lt;UnitProductT&lt;Unit, U&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>Constant&lt;Unit&gt; / QuantityMaker&lt;U&gt;</code></td>
+<td><code>QuantityMaker&lt;UnitQuotientT&lt;Unit, U&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>QuantityMaker&lt;U&gt; * Constant&lt;Unit&gt;</code></td>
+<td><code>QuantityMaker&lt;UnitProductT&lt;U, Unit&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>QuantityMaker&lt;U&gt; / Constant&lt;Unit&gt;</code></td>
+<td><code>QuantityMaker&lt;UnitQuotientT&lt;U, Unit&gt;&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="singularnameforu"><code>SingularNameFor&lt;U&gt;</code><a class="headerlink" href="#singularnameforu" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>SingularNameFor&lt;U&gt;</code> produces a new
+<code>SingularNameFor</code> whose unit is derived from <code>Unit</code> and <code>U</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Resulting Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Constant&lt;Unit&gt; * SingularNameFor&lt;U&gt;</code></td>
+<td><code>SingularNameFor&lt;UnitProductT&lt;Unit, U&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>Constant&lt;Unit&gt; / SingularNameFor&lt;U&gt;</code></td>
+<td><code>SingularNameFor&lt;UnitQuotientT&lt;Unit, U&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>SingularNameFor&lt;U&gt; * Constant&lt;Unit&gt;</code></td>
+<td><code>SingularNameFor&lt;UnitProductT&lt;U, Unit&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>SingularNameFor&lt;U&gt; / Constant&lt;Unit&gt;</code></td>
+<td><code>SingularNameFor&lt;UnitQuotientT&lt;U, Unit&gt;&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="magnitudebps"><code>Magnitude&lt;BPs...&gt;</code><a class="headerlink" href="#magnitudebps" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>Magnitude</code> produces a new <code>Constant</code> which is
+scaled by that magnitude.</p>
+<p>In the following table, let <code>m</code> be an instance of <code>Magnitude&lt;BPs...&gt;</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Resulting Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Constant&lt;Unit&gt; * Magnitude&lt;BPs...&gt;</code></td>
+<td><code>Constant&lt;decltype(Unit{} * m)&gt;</code></td>
+</tr>
+<tr>
+<td><code>Constant&lt;Unit&gt; / Magnitude&lt;BPs...&gt;</code></td>
+<td><code>Constant&lt;decltype(Unit{} / m)&gt;</code></td>
+</tr>
+<tr>
+<td><code>Magnitude&lt;BPs...&gt; * Constant&lt;Unit&gt;</code></td>
+<td><code>Constant&lt;decltype(Unit{} * m)&gt;</code></td>
+</tr>
+<tr>
+<td><code>Magnitude&lt;BPs...&gt; / Constant&lt;Unit&gt;</code></td>
+<td><code>Constant&lt;decltype(UnitInverseT&lt;Unit&gt;{} * m)&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="quantitypointmakeru-deleted"><code>QuantityPointMaker&lt;U&gt;</code> (deleted)<a class="headerlink" href="#quantitypointmakeru-deleted" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>QuantityPointMaker&lt;U&gt;</code> is explicitly deleted,
+because quantity points do not support multiplication.</p>
+<h3 id="quantitypointu-r-deleted"><code>QuantityPoint&lt;U, R&gt;</code> (deleted)<a class="headerlink" href="#quantitypointu-r-deleted" title="Permanent link">&para;</a></h3>
+<p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>QuantityPoint&lt;U, R&gt;</code> is explicitly deleted,
+because quantity points do not support multiplication.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Reference Docs">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Reference Docs
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../corresponding_quantity/" class="md-footer__link md-footer__link--next" aria-label="Next: Corresponding Quantity">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Corresponding Quantity
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022, Aurora Operations, Inc. All rights reserved
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.081f42fc.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      
+    
+  </body>
+</html>
