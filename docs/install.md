@@ -209,19 +209,19 @@ Now you have a file, `~/au.hh`, which you can add to your `third_party` folder.
 #### bazel
 
 1. **Choose your Au version**.
-    - This can be a tag, or a commit hash.  Let's take `0.2.0` as an example.
+    - This can be a tag, or a commit hash.  Let's take `0.3.4` as an example.
 
 2. **Form the URL to the archive**.
-    - For `0.2.0`, this would be:
+    - For `0.3.4`, this would be:
       ```
-      https://github.com/aurora-opensource/au/archive/0.2.0.tar.gz
-                   NOTE: Your au version ID goes HERE ^^^^^
+      https://github.com/aurora-opensource/au/releases/download/0.3.4/au-0.3.4.tar.gz
+                             NOTE: Your au version ID goes HERE ^^^^^    ^^^^^
       ```
 
 
 3. **Compute your SHA256 hash**.
     1. Follow the URL from the previous step to download the archive.
-    2. Compute the SHA256 hash: `sha256sum au-0.2.0.tar.gz`
+    2. Compute the SHA256 hash: `sha256sum au-0.3.4.tar.gz`
     3. The first token that appears is the hash.  Save it for the next step.
 
 4. **Add `http_archive` rule to `WORKSPACE`**.
@@ -229,14 +229,14 @@ Now you have a file, `~/au.hh`, which you can add to your `third_party` folder.
       ```python
       http_archive(
           name = "au",
-          sha256 = "bdaec065b35f44af2cb22def5b69ac08ca40c47791ea3ed2eb3ebf3e85b3e0b0",
-          strip_prefix = "au-0.2.0",
-          urls = ["https://github.com/aurora-opensource/au/archive/0.2.0.tar.gz"],
+          sha256 = "dd0f97e2720f02e3c5531a912c21b8eb889fcb984bac5f5f8b0f00e16b839216",
+          strip_prefix = "au-0.3.4",
+          urls = ["https://github.com/aurora-opensource/au/releases/download/0.3.4/au-0.3.4.tar.gz"],
       )
       ```
     - In particular, here's how to fill out the fields:
         - `sha256`: Use the SHA256 hash you got from step 3.
-        - `strip_prefix`: write `"au-0.2.0"`, except use your ID from step 1 instead of `0.2.0`.
+        - `strip_prefix`: write `"au-0.3.4"`, except use your ID from step 1 instead of `0.3.4`.
         - `urls`: This should be a list, whose only entry is the URL you formed in step 2.
 
 At this point, the Au library is installed, and you can use it in your project!
@@ -308,7 +308,7 @@ In either case, here are the main targets and include files provided by the Au l
     ```
 
     If you want a specific release, check out the tag you want.  Note that the first version of Au
-    that supports CMake will be 0.3.5.
+    that supports CMake is 0.3.5.
 
     ```sh
     # Optional, but recommended:
