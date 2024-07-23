@@ -1991,15 +1991,15 @@ Here&rsquo;s how:</p>
 <li>
 <p><strong>Choose your Au version</strong>.</p>
 <ul>
-<li>This can be a tag, or a commit hash.  Let&rsquo;s take <code>0.2.0</code> as an example.</li>
+<li>This can be a tag, or a commit hash.  Let&rsquo;s take <code>0.3.4</code> as an example.</li>
 </ul>
 </li>
 <li>
 <p><strong>Form the URL to the archive</strong>.</p>
 <ul>
-<li>For <code>0.2.0</code>, this would be:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>https://github.com/aurora-opensource/au/archive/0.2.0.tar.gz
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>             NOTE: Your au version ID goes HERE ^^^^^
+<li>For <code>0.3.4</code>, this would be:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>https://github.com/aurora-opensource/au/releases/download/0.3.4/au-0.3.4.tar.gz
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>                       NOTE: Your au version ID goes HERE ^^^^^    ^^^^^
 </code></pre></div></li>
 </ul>
 </li>
@@ -2007,7 +2007,7 @@ Here&rsquo;s how:</p>
 <p><strong>Compute your SHA256 hash</strong>.</p>
 <ol>
 <li>Follow the URL from the previous step to download the archive.</li>
-<li>Compute the SHA256 hash: <code>sha256sum au-0.2.0.tar.gz</code></li>
+<li>Compute the SHA256 hash: <code>sha256sum au-0.3.4.tar.gz</code></li>
 <li>The first token that appears is the hash.  Save it for the next step.</li>
 </ol>
 </li>
@@ -2017,14 +2017,14 @@ Here&rsquo;s how:</p>
 <li>Follow this pattern:
   <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">http_archive</span><span class="p">(</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">sha256</span> <span class="o">=</span> <span class="s2">&quot;bdaec065b35f44af2cb22def5b69ac08ca40c47791ea3ed2eb3ebf3e85b3e0b0&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">strip_prefix</span> <span class="o">=</span> <span class="s2">&quot;au-0.2.0&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://github.com/aurora-opensource/au/archive/0.2.0.tar.gz&quot;</span><span class="p">],</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">sha256</span> <span class="o">=</span> <span class="s2">&quot;dd0f97e2720f02e3c5531a912c21b8eb889fcb984bac5f5f8b0f00e16b839216&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">strip_prefix</span> <span class="o">=</span> <span class="s2">&quot;au-0.3.4&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://github.com/aurora-opensource/au/releases/download/0.3.4/au-0.3.4.tar.gz&quot;</span><span class="p">],</span>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">)</span>
 </code></pre></div></li>
 <li>In particular, here&rsquo;s how to fill out the fields:<ul>
 <li><code>sha256</code>: Use the SHA256 hash you got from step 3.</li>
-<li><code>strip_prefix</code>: write <code>"au-0.2.0"</code>, except use your ID from step 1 instead of <code>0.2.0</code>.</li>
+<li><code>strip_prefix</code>: write <code>"au-0.3.4"</code>, except use your ID from step 1 instead of <code>0.3.4</code>.</li>
 <li><code>urls</code>: This should be a list, whose only entry is the URL you formed in step 2.</li>
 </ul>
 </li>
@@ -2133,7 +2133,7 @@ cloning the repo, building the library, running the tests, and installing it.</p
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nb">cd</span><span class="w"> </span>au
 </code></pre></div>
 <p>If you want a specific release, check out the tag you want.  Note that the first version of Au
-that supports CMake will be 0.3.5.</p>
+that supports CMake is 0.3.5.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Optional, but recommended:</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>git<span class="w"> </span>checkout<span class="w"> </span><span class="s2">&quot;0.3.5&quot;</span><span class="w">  </span><span class="c1"># Or whichever tag you prefer.</span>
 </code></pre></div>
