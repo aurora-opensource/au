@@ -33,17 +33,19 @@ Here's an overview of the tradeoffs involved.
   <tr>
     <th rowspan=2></th>
     <th colspan=2>Single File</th>
-    <th colspan=2>Full Install</th>
+    <th colspan=3>Full Install</th>
   </tr>
   <tr>
     <td>Pre-built</td>
     <td>Custom</td>
     <td>bazel</td>
-    <td>CMake, conan, vcpkg, ...</td>
+    <td>CMake</td>
+    <td>conan, vcpkg, ...</td>
   </tr>
   <tr>
     <td>Setup time</td>
     <td class="best">~1 min</td>
+    <td class="good">~10 min</td>
     <td class="good">~10 min</td>
     <td class="good">~10 min</td>
     <td class="poor">Not <i>yet</i> supported<br>(use <b>single-file</b> instead for now)</td>
@@ -52,13 +54,13 @@ Here's an overview of the tradeoffs involved.
     <td>Unit selection</td>
     <td class="fair">Base units only<br>(or too many units)</td>
     <td class="good">Any units desired</td>
-    <td colspan=2 class="best">Any units desired, <i>without</i> needing "reinstall"</td>
+    <td colspan=3 class="best">Any units desired, <i>without</i> needing "reinstall"</td>
   </tr>
   <tr>
     <td>Compile time cost</td>
     <td class="good">~10 units</td>
     <td class="good">Very competitive up to a few dozen units</td>
-    <td colspan=2 class="best"><i>Each file</i> only pays for the units it uses</td>
+    <td colspan=3 class="best"><i>Each file</i> only pays for the units it uses</td>
   </tr>
   <tr>
     <td>Flexibility</td>
@@ -66,7 +68,7 @@ Here's an overview of the tradeoffs involved.
       Awkward: would need to download <pre>io.hh</pre> and/or <pre>testing.hh</pre> separately, and
       modify their includes manually
     </td>
-    <td colspan=2 class="best">
+    <td colspan=3 class="best">
       Include I/O, testing utilities, individual units as desired, on a per-file basis
     </td>
   </tr>
@@ -87,6 +89,7 @@ SetupTime -->|No! Just let me start!| UsePreBuilt
 SetupTime -->|Sure| UseCustom
 Usage -->|Ready to use in my project!| BuildSystem
 BuildSystem -->|bazel| UseFullInstall
+BuildSystem -->|CMake| UseFullInstall
 BuildSystem -->|other| UseCustom
 ```
 
@@ -206,19 +209,19 @@ Now you have a file, `~/au.hh`, which you can add to your `third_party` folder.
 #### bazel
 
 1. **Choose your Au version**.
-    - This can be a tag, or a commit hash.  Let's take `0.2.0` as an example.
+    - This can be a tag, or a commit hash.  Let's take `0.3.4` as an example.
 
 2. **Form the URL to the archive**.
-    - For `0.2.0`, this would be:
+    - For `0.3.4`, this would be:
       ```
-      https://github.com/aurora-opensource/au/archive/0.2.0.tar.gz
-                   NOTE: Your au version ID goes HERE ^^^^^
+      https://github.com/aurora-opensource/au/releases/download/0.3.4/au-0.3.4.tar.gz
+                             NOTE: Your au version ID goes HERE ^^^^^    ^^^^^
       ```
 
 
 3. **Compute your SHA256 hash**.
     1. Follow the URL from the previous step to download the archive.
-    2. Compute the SHA256 hash: `sha256sum au-0.2.0.tar.gz`
+    2. Compute the SHA256 hash: `sha256sum au-0.3.4.tar.gz`
     3. The first token that appears is the hash.  Save it for the next step.
 
 4. **Add `http_archive` rule to `WORKSPACE`**.
@@ -226,14 +229,14 @@ Now you have a file, `~/au.hh`, which you can add to your `third_party` folder.
       ```python
       http_archive(
           name = "au",
-          sha256 = "bdaec065b35f44af2cb22def5b69ac08ca40c47791ea3ed2eb3ebf3e85b3e0b0",
-          strip_prefix = "au-0.2.0",
-          urls = ["https://github.com/aurora-opensource/au/archive/0.2.0.tar.gz"],
+          sha256 = "dd0f97e2720f02e3c5531a912c21b8eb889fcb984bac5f5f8b0f00e16b839216",
+          strip_prefix = "au-0.3.4",
+          urls = ["https://github.com/aurora-opensource/au/releases/download/0.3.4/au-0.3.4.tar.gz"],
       )
       ```
     - In particular, here's how to fill out the fields:
         - `sha256`: Use the SHA256 hash you got from step 3.
-        - `strip_prefix`: write `"au-0.2.0"`, except use your ID from step 1 instead of `0.2.0`.
+        - `strip_prefix`: write `"au-0.3.4"`, except use your ID from step 1 instead of `0.3.4`.
         - `urls`: This should be a list, whose only entry is the URL you formed in step 2.
 
 At this point, the Au library is installed, and you can use it in your project!
@@ -243,38 +246,103 @@ attribute, and include the appropriate files.
 
 | Dependency | Headers provided | Notes |
 |------------|------------------|-------|
-| `@au//au` | `"au/au.hh"`<br>`"au/units.*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
+| `@au//au` | `"au/au.hh"`<br>`"au/units/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
 | `@au//au:io` | `"au/io.hh"` | `operator<<` support |
-| `@au//au:testing` | `"au/testing.hh"` | Utilities for testing<br>_Note:_ `testonly = True` |
+| `@au//au:testing` | `"au/testing.hh"` | Utilities for writing googletest tests<br>_Note:_ `testonly = True` |
 
 #### CMake
 
-CMake support is still experimental and in-progress.  We are building it up starting from "root"
-targets (that is, targets without dependencies), and expanding support to the rest of the library.
+There are two ways to include the Au library in your CMake project.
 
-To build the library using this experimental CMake support, follow these steps:
+1. **(Recommended)** Use the `FetchContent` module to download the library directly from GitHub.
 
-```sh
-# CMake is a "meta build system", not a build system.
-# This first command generates the actual build files.
-cmake -S . -B cmake/build -DCMAKE_VERIFY_INTERFACE_HEADER_SETS=TRUE
+2. Install the library to the system, and use `find_package`.
 
-# This command builds Au, checks include paths, and runs unit tests.
-cmake \
-  --build cmake/build \
-  --target \
-    all \
-    all_verify_interface_header_sets \
-    test
-```
+We recommend `FetchContent` because each project can get the exact version of Au that they need, and
+can update it independently of other projects.  `FetchContent` also means you don't need to manually
+clone the Au repo, or build and run the tests.  On the other hand, if you want a single global
+system-wide version of Au, then you can install it to the system, and simply use `find_package`.
 
-#### Other build systems (CMake / conan / vcpkg / ...)
+In either case, here are the main targets and include files provided by the Au library:
 
-We would like to support all these build and packaging systems, and perhaps others!  But the initial
-public release is bazel-only, because bazel is what we use at Aurora, and we don't have experience
-with any of these alternatives.  Thus, we'll need to lean on the community to support them.
+| Target | Headers provided | Notes |
+|--------|------------------|-------|
+| `Au::au` | `"au/au.hh"`<br>`"au/units/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
+| `Au::io` | `"au/io.hh"` | `operator<<` support |
+| `Au::testing` | `"au/testing.hh"` | Utilities for writing googletest tests |
 
-Meanwhile, the library itself is still at least partially available on all build environments, via
-the single-file options explained above.
+!!! note
+    These instructions are for adding Au to a _project_ that uses CMake, not building Au itself
+    using CMake.
+
+    Au is a bazel-first project, so most Au development would normally be done using bazel.
+    However, we do have instructions for doing this with CMake as well: see the `find_package` tab
+    below.
+
+=== "Using `FetchContent`"
+    Add the following to your `CMakeLists.txt` file:
+
+    ```cmake
+    include(FetchContent)
+    FetchContent_Declare(
+      Au
+      GIT_REPOSITORY https://github.com/aurora-opensource/au
+      GIT_TAG "main"  # Or a specific tag.
+      EXCLUDE_FROM_ALL
+    )
+    FetchContent_MakeAvailable(Au)
+    ```
+
+    You should now be able to depend on Au targets, such as `Au::au` or `Au::io`, and include their
+    corresponding headers, such as `#include "au/au.hh"` or `#include "au/io.hh"`.
+
+=== "Using `find_package`"
+    Before you can use `find_package`, you need to install the library to your system.  This means
+    cloning the repo, building the library, running the tests, and installing it.
+
+    First, clone the repository.
+
+    ```sh
+    git clone https://github.com/aurora-opensource/au.git
+    cd au
+    ```
+
+    If you want a specific release, check out the tag you want.  Note that the first version of Au
+    that supports CMake is 0.3.5.
+
+    ```sh
+    # Optional, but recommended:
+    git checkout "0.3.5"  # Or whichever tag you prefer.
+    ```
+
+    Now, build and test the library.  These commands will include both the explicit tests, and also
+    several CMake-generated tests to make sure that the includes are set up correctly.
+
+    ```sh
+    # CMake is a "meta build system", not a build system.
+    # This first command generates the actual build files.
+    cmake -S . -B cmake/build -DCMAKE_VERIFY_INTERFACE_HEADER_SETS=TRUE
+
+    # This command builds Au, checks include paths, and runs unit tests.
+    cmake \
+      --build cmake/build \
+      --target \
+        all \
+        all_verify_interface_header_sets \
+        test
+    ```
+
+    If the tests pass, you can install the library to your system.
+
+    ```sh
+    sudo cmake --install cmake/build
+    ```
+
+    At this point, the `Au` CMake library is installed to your system, and can be found via the
+    usual `find_package` mechanism!
+
+    ```cmake
+    find_package(Au)
+    ```
 
 <script src="../assets/hrh4.js" async=false defer=false></script>
