@@ -69,9 +69,21 @@ effectively.  Because Au was designed from the ground up with these best practic
 thoroughly exemplifies them.  Check out the video below, and follow along with [the slide
 deck](https://chogg.name/cppcon-2021-units/) if you like.
 
-[![Chip Hogg's CppCon 2021 Aurora units talk](https://user-images.githubusercontent.com/10720055/203602853-9437f26a-9b1f-4b54-8a4d-2fb242ed9953.png)](https://www.youtube.com/watch?v=5dhFtSu3wCo)
+[![Chip Hogg's CppCon 2021 Aurora units talk](https://github.com/user-attachments/assets/ca87d98d-4256-4d10-a112-723d1ee56275)](https://www.youtube.com/watch?v=5dhFtSu3wCo)
 
 > NOTE: This open-source version has been significantly improved from what was presented in the
 talk: both in its user interfaces, _and_ under the hood!  The one downside is that matrix and vector
 support hasn't yet been implemented.  See [#70](https://github.com/aurora-opensource/au/issues/70)
 for more details, and subscribe to that issue to watch for progress.
+
+## ...and, at CppCon 2023
+
+After CppCon 2021, we found that telling people what to look for in a units library wasn't good
+enough, if they couldn't find one that met those criteria.  We saw so many people struggling with
+problems that we had already solved robustly!  So, we set about sharing our work.  With a clean
+slate, we made a new library that was a drop-in replacement for Aurora's internal library, but with
+zero Aurora-internal dependencies, so that we could easily open source it.  The result was Au, and
+we shared it at CppCon 2023.  Check out the video below, and follow along with [the slide
+deck](https://chogg.name/cppcon-2023-au-units) if you like.
+
+[![Chip Hogg's CppCon 2023 Aurora units talk](https://github.com/user-attachments/assets/5f359644-d36c-43f9-8d6f-b49bb1d3cb2e)](https://www.youtube.com/watch?v=o0ck5eqpOLc)
