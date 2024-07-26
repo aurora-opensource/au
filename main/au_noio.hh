@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5
+// Version identifier: 0.3.5-1-gdb50c45
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
