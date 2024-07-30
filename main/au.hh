@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-1-gdb50c45
+// Version identifier: 0.3.5-2-g3c267a3
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -3878,7 +3878,7 @@ class Quantity {
     }
     template <typename T, typename = std::enable_if_t<IsQuotientValidRep<T, RepT>::value>>
     friend constexpr auto operator/(T s, Quantity a) {
-        warn_if_integer_division<T>();
+        warn_if_integer_division<UnitProductT<>, T>();
         return make_quantity<decltype(pow<-1>(unit))>(s / a.value_);
     }
 
@@ -3892,7 +3892,7 @@ class Quantity {
     // Division for dimensioned quantities.
     template <typename OtherUnit, typename OtherRep>
     constexpr auto operator/(Quantity<OtherUnit, OtherRep> q) const {
-        warn_if_integer_division<OtherRep>();
+        warn_if_integer_division<OtherUnit, OtherRep>();
         return make_quantity_unless_unitless<UnitQuotientT<Unit, OtherUnit>>(value_ /
                                                                              q.in(OtherUnit{}));
     }
@@ -3955,11 +3955,13 @@ class Quantity {
     }
 
  private:
-    template <typename OtherRep>
+    template <typename OtherUnit, typename OtherRep>
     static constexpr void warn_if_integer_division() {
         constexpr bool uses_integer_division =
             (std::is_integral<Rep>::value && std::is_integral<OtherRep>::value);
-        static_assert(!uses_integer_division,
+        constexpr bool are_units_quantity_equivalent =
+            AreUnitsQuantityEquivalent<UnitT, OtherUnit>::value;
+        static_assert(are_units_quantity_equivalent || !uses_integer_division,
                       "Integer division forbidden: use integer_quotient() if you really want it");
     }
 
