@@ -852,6 +852,11 @@ TEST(integer_quotient, EnablesIntegerDivision) {
     EXPECT_THAT(freq, SameTypeAndValue(inverse(minutes)(3)));
 }
 
+TEST(Quantity, CanIntegerDivideQuantitiesOfQuantityEquivalentUnits) {
+    constexpr auto ratio = meters(60) / meters(25);
+    EXPECT_EQ(ratio, 2);
+}
+
 TEST(mod, ComputesRemainderForSameUnits) {
     constexpr auto remainder = inches(50) % inches(12);
     EXPECT_THAT(remainder, QuantityEquivalent(inches(2)));
