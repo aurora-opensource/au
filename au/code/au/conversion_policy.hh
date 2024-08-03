@@ -52,7 +52,7 @@ template <typename U1, typename U2>
 struct SameDimension : stdx::bool_constant<U1::dim_ == U2::dim_> {};
 
 template <typename Rep, typename ScaleFactor, typename SourceRep>
-struct CoreImplicitConversionPolicyImpl
+struct CoreImplicitConversionPolicyImplAssumingReal
     : stdx::disjunction<
           std::is_floating_point<Rep>,
           stdx::conjunction<std::is_integral<SourceRep>,
@@ -61,7 +61,24 @@ struct CoreImplicitConversionPolicyImpl
 
 // Always permit the identity scaling.
 template <typename Rep>
-struct CoreImplicitConversionPolicyImpl<Rep, Magnitude<>, Rep> : std::true_type {};
+struct CoreImplicitConversionPolicyImplAssumingReal<Rep, Magnitude<>, Rep> : std::true_type {};
+
+// `SettingPureRealFromMixedReal<A, B>` tests whether `A` is a pure real type, _and_ `B` is a type
+// that has a real _part_, but is not purely real (call it a "mixed-real" type).
+//
+// The point is to guard against situations where we're _implicitly_ converting a "mixed-real" type
+// (i.e., typically a complex number) to a pure real type.
+template <typename Rep, typename SourceRep>
+struct SettingPureRealFromMixedReal
+    : stdx::conjunction<stdx::negation<std::is_same<SourceRep, RealPart<SourceRep>>>,
+                        std::is_same<Rep, RealPart<Rep>>> {};
+
+template <typename Rep, typename ScaleFactor, typename SourceRep>
+struct CoreImplicitConversionPolicyImpl
+    : stdx::conjunction<stdx::negation<SettingPureRealFromMixedReal<Rep, SourceRep>>,
+                        CoreImplicitConversionPolicyImplAssumingReal<RealPart<Rep>,
+                                                                     ScaleFactor,
+                                                                     RealPart<SourceRep>>> {};
 
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 using CoreImplicitConversionPolicy = CoreImplicitConversionPolicyImpl<Rep, ScaleFactor, SourceRep>;

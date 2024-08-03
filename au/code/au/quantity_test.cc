@@ -463,6 +463,18 @@ TEST(Quantity, SupportsDivisionOfRealQuantityIntoComplexCoefficient) {
     EXPECT_THAT(quotient.imag(), DoubleEq(4.0));
 }
 
+TEST(Quantity, SupportsConvertingUnitsForComplexQuantity) {
+    constexpr auto a = meters(std::complex<double>{-3.0, 4.0});
+    const auto b = a.as(centi(meters));
+    EXPECT_THAT(b, SameTypeAndValue(centi(meters)(std::complex<double>{-300.0, 400.0})));
+}
+
+TEST(Quantity, SupportsExplicitRepConversionToComplexRep) {
+    constexpr auto a = feet(15'000.0);
+    const auto b = a.coerce_as<std::complex<int>>(miles);
+    EXPECT_THAT(b, SameTypeAndValue(miles(std::complex<int>{3, 0})));
+}
+
 TEST(Quantity, CanDivideArbitraryQuantities) {
     constexpr auto d = feet(6.);
     constexpr auto t = hours(3.);
