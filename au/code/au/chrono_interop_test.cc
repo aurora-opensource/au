@@ -48,7 +48,7 @@ TEST(DurationQuantity, InterconvertsWithIndirectlyEquivalentChronoDuration) {
 
 TEST(DurationQuantity, EquivalentOfChronoNanosecondsHasNsLabel) {
     constexpr auto from_chrono_ns = as_quantity(std::chrono::nanoseconds{123});
-    EXPECT_EQ(stream_to_string(from_chrono_ns), "123 ns");
+    EXPECT_STREQ(stream_to_string(from_chrono_ns), "123 ns");
 }
 
 TEST(DurationQuantity, EquivalentOfChronoMicrosecondsHasUsLabel) {
