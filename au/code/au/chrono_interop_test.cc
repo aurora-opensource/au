@@ -19,6 +19,9 @@
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
+
+using ::testing::StrEq;
 
 using namespace std::chrono_literals;
 
@@ -48,32 +51,32 @@ TEST(DurationQuantity, InterconvertsWithIndirectlyEquivalentChronoDuration) {
 
 TEST(DurationQuantity, EquivalentOfChronoNanosecondsHasNsLabel) {
     constexpr auto from_chrono_ns = as_quantity(std::chrono::nanoseconds{123});
-    EXPECT_STREQ(stream_to_string(from_chrono_ns), "123 ns");
+    EXPECT_THAT(stream_to_string(from_chrono_ns), StrEq( "123 ns"));
 }
 
 TEST(DurationQuantity, EquivalentOfChronoMicrosecondsHasUsLabel) {
     constexpr auto from_chrono_us = as_quantity(std::chrono::microseconds{123});
-    EXPECT_EQ(stream_to_string(from_chrono_us), "123 us");
+    EXPECT_THAT(stream_to_string(from_chrono_us), StrEq( "123 us"));
 }
 
 TEST(DurationQuantity, EquivalentOfChronoMillisecondsHasMsLabel) {
     constexpr auto from_chrono_ms = as_quantity(std::chrono::milliseconds{123});
-    EXPECT_EQ(stream_to_string(from_chrono_ms), "123 ms");
+    EXPECT_THAT(stream_to_string(from_chrono_ms), StrEq( "123 ms"));
 }
 
 TEST(DurationQuantity, EquivalentOfChronoSecondsHasSLabel) {
     constexpr auto from_chrono_s = as_quantity(std::chrono::seconds{123});
-    EXPECT_EQ(stream_to_string(from_chrono_s), "123 s");
+    EXPECT_THAT(stream_to_string(from_chrono_s), StrEq( "123 s"));
 }
 
 TEST(DurationQuantity, EquivalentOfChronoMinutesHasMinLabel) {
     constexpr auto from_chrono_min = as_quantity(std::chrono::minutes{123});
-    EXPECT_EQ(stream_to_string(from_chrono_min), "123 min");
+    EXPECT_THAT(stream_to_string(from_chrono_min), StrEq( "123 min"));
 }
 
 TEST(DurationQuantity, EquivalentOfChronoHoursHasHLabel) {
     constexpr auto from_chrono_h = as_quantity(std::chrono::hours{123});
-    EXPECT_EQ(stream_to_string(from_chrono_h), "123 h");
+    EXPECT_THAT(stream_to_string(from_chrono_h), StrEq( "123 h"));
 }
 
 TEST(AsChronoDuration, ProducesExpectedResults) {
