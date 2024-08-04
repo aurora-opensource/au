@@ -471,8 +471,8 @@ TEST(Quantity, SupportsConvertingUnitsForComplexQuantity) {
 
 TEST(Quantity, SupportsExplicitRepConversionToComplexRep) {
     constexpr auto a = feet(15'000.0);
-    const auto b = a.coerce_as<std::complex<int>>(miles);
-    EXPECT_THAT(b, SameTypeAndValue(miles(std::complex<int>{3, 0})));
+    const auto b = a.as<std::complex<int>>(miles);
+    EXPECT_THAT(b, SameTypeAndValue(miles(std::complex<int>{2, 0})));
 }
 
 TEST(Quantity, CanDivideArbitraryQuantities) {
