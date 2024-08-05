@@ -37,6 +37,7 @@ header_only_library(
   HEADERS
     chrono_interop.hh
   DEPS
+    prefix
     quantity
     units
   GTEST_SRCS

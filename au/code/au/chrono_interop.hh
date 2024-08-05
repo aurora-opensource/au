@@ -17,7 +17,10 @@
 #include <chrono>
 #include <cstdint>
 
+#include "au/prefix.hh"
 #include "au/quantity.hh"
+#include "au/units/hours.hh"
+#include "au/units/minutes.hh"
 #include "au/units/seconds.hh"
 
 namespace au {
@@ -33,6 +36,40 @@ struct CorrespondingQuantity<std::chrono::duration<RepT, Period>> {
     static constexpr Rep extract_value(ChronoDuration d) { return d.count(); }
     static constexpr ChronoDuration construct_from_value(Rep x) { return ChronoDuration{x}; }
 };
+
+// Define special mappings for widely used chrono types.
+template <typename ChronoType, typename AuUnit>
+struct SpecialCorrespondingQuantity {
+    using Unit = AuUnit;
+    using Rep = decltype(ChronoType{}.count());
+
+    static constexpr Rep extract_value(ChronoType d) { return d.count(); }
+    static constexpr ChronoType construct_from_value(Rep x) { return ChronoType{x}; }
+};
+
+template <>
+struct CorrespondingQuantity<std::chrono::nanoseconds>
+    : SpecialCorrespondingQuantity<std::chrono::nanoseconds, Nano<Seconds>> {};
+
+template <>
+struct CorrespondingQuantity<std::chrono::microseconds>
+    : SpecialCorrespondingQuantity<std::chrono::microseconds, Micro<Seconds>> {};
+
+template <>
+struct CorrespondingQuantity<std::chrono::milliseconds>
+    : SpecialCorrespondingQuantity<std::chrono::milliseconds, Milli<Seconds>> {};
+
+template <>
+struct CorrespondingQuantity<std::chrono::seconds>
+    : SpecialCorrespondingQuantity<std::chrono::seconds, Seconds> {};
+
+template <>
+struct CorrespondingQuantity<std::chrono::minutes>
+    : SpecialCorrespondingQuantity<std::chrono::minutes, Minutes> {};
+
+template <>
+struct CorrespondingQuantity<std::chrono::hours>
+    : SpecialCorrespondingQuantity<std::chrono::hours, Hours> {};
 
 // Convert any Au duration quantity to an equivalent `std::chrono::duration`.
 template <typename U, typename R>
