@@ -14,6 +14,8 @@
 
 #include "au/conversion_policy.hh"
 
+#include <complex>
+
 #include "au/unit_of_measure.hh"
 #include "gtest/gtest.h"
 
@@ -106,6 +108,17 @@ TEST(ImplicitRepPermitted, FunctionalInterfaceWorksAsExpected) {
     EXPECT_TRUE(implicit_rep_permitted_from_source_to_target<float>(Grams{}, Kilograms{}));
 }
 
+TEST(ImplicitRepPermitted, HandlesComplexRep) {
+    // These test cases are the same as the ones in `FunctionalInterfaceWorksAsExpected`, except
+    // that we replace the target type `T` with `std::complex<T>`.
+    EXPECT_TRUE(
+        implicit_rep_permitted_from_source_to_target<std::complex<int>>(Kilograms{}, Grams{}));
+    EXPECT_FALSE(
+        implicit_rep_permitted_from_source_to_target<std::complex<int>>(Grams{}, Kilograms{}));
+    EXPECT_TRUE(
+        implicit_rep_permitted_from_source_to_target<std::complex<float>>(Grams{}, Kilograms{}));
+}
+
 TEST(ConstructionPolicy, PermitImplicitFromWideVarietyOfTypesForFloatingPointTargets) {
     using gigagrams_float_policy = ConstructionPolicy<Gigagrams, float>;
     EXPECT_TRUE((gigagrams_float_policy::PermitImplicitFrom<Grams, int>::value));
@@ -124,6 +137,19 @@ TEST(ConstructionPolicy, PermitsImplicitFromIntegralTypesIffTargetScaleDividesSo
     using grams_int_policy = ConstructionPolicy<Grams, int>;
     EXPECT_TRUE((grams_int_policy::PermitImplicitFrom<Kilograms, int>::value));
     EXPECT_FALSE((grams_int_policy::PermitImplicitFrom<Milligrams, int>::value));
+}
+
+TEST(ConstructionPolicy, ComplexToRealPreventsImplicitConversion) {
+    // `complex<int>` -> `float`: forbid, although `int` -> `float` is allowed.
+    using gigagrams_float_policy = ConstructionPolicy<Gigagrams, float>;
+    ASSERT_TRUE((gigagrams_float_policy::PermitImplicitFrom<Grams, int>::value));
+    EXPECT_FALSE((gigagrams_float_policy::PermitImplicitFrom<Grams, std::complex<int>>::value));
+
+    // (`int` or `complex<int>`) -> `complex<float>`: both allowed.
+    using gigagrams_complex_float_policy = ConstructionPolicy<Gigagrams, std::complex<float>>;
+    EXPECT_TRUE((gigagrams_complex_float_policy::PermitImplicitFrom<Grams, int>::value));
+    EXPECT_TRUE(
+        (gigagrams_complex_float_policy::PermitImplicitFrom<Grams, std::complex<int>>::value));
 }
 
 TEST(ConstructionPolicy, ForbidsImplicitConstructionOfIntegralTypeFromFloatingPtType) {

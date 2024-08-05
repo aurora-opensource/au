@@ -103,7 +103,7 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_MULTIPLY, T, is_T_integral> {
     static_assert(is_T_integral == std::is_integral<T>::value,
                   "Mismatched instantiation (should never be done manually)");
 
-    constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+    constexpr T operator()(const T &x) { return x * get_value<RealPart<T>>(Mag{}); }
 
     static constexpr bool would_overflow(const T &x) {
         constexpr auto mag_value_result = get_value_result<T>(Mag{});
@@ -122,7 +122,7 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_DIVIDE, T, is_T_integral> {
     static_assert(is_T_integral == std::is_integral<T>::value,
                   "Mismatched instantiation (should never be done manually)");
 
-    constexpr T operator()(const T &x) { return x / get_value<T>(MagInverseT<Mag>{}); }
+    constexpr T operator()(const T &x) { return x / get_value<RealPart<T>>(MagInverseT<Mag>{}); }
 
     static constexpr bool would_overflow(const T &) { return false; }
 
@@ -165,8 +165,8 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, true> {
 
     constexpr T operator()(const T &x) {
         using P = PromotedType<T>;
-        return static_cast<T>(x * get_value<P>(numerator(Mag{})) /
-                              get_value<P>(denominator(Mag{})));
+        return static_cast<T>(x * get_value<RealPart<P>>(numerator(Mag{})) /
+                              get_value<RealPart<P>>(denominator(Mag{})));
     }
 
     static constexpr bool would_overflow(const T &x) {
@@ -188,7 +188,7 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, false> {
     static_assert(!std::is_integral<T>::value,
                   "Mismatched instantiation (should never be done manually)");
 
-    constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+    constexpr T operator()(const T &x) { return x * get_value<RealPart<T>>(Mag{}); }
 
     static constexpr bool would_overflow(const T &x) {
         constexpr auto mag_value_result = get_value_result<T>(Mag{});
@@ -209,7 +209,7 @@ struct ApplyMagnitudeImpl<Mag, ApplyAs::IRRATIONAL_MULTIPLY, T, is_T_integral> {
     static_assert(is_T_integral == std::is_integral<T>::value,
                   "Mismatched instantiation (should never be done manually)");
 
-    constexpr T operator()(const T &x) { return x * get_value<T>(Mag{}); }
+    constexpr T operator()(const T &x) { return x * get_value<RealPart<T>>(Mag{}); }
 
     static constexpr bool would_overflow(const T &x) {
         constexpr auto mag_value_result = get_value_result<T>(Mag{});

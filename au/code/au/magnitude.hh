@@ -15,6 +15,7 @@
 #pragma once
 
 #include <limits>
+#include <utility>
 
 #include "au/packs.hh"
 #include "au/power_aliases.hh"
@@ -467,12 +468,26 @@ constexpr bool all(const bool (&values)[N]) {
     return true;
 }
 
+// `RealPart<T>` is `T` itself, unless that type has a `.real()` member.
+template <typename T>
+using TypeOfRealMember = decltype(std::declval<T>().real());
+template <typename T>
+// `RealPartImpl` is basically equivalent to the `detected_or<T, TypeOfRealMember, T>` part at the
+// end.  But we special-case `is_arithmetic` to get a fast short-circuit for the overwhelmingly most
+// common case.
+struct RealPartImpl : std::conditional<std::is_arithmetic<T>::value,
+                                       T,
+                                       stdx::experimental::detected_or_t<T, TypeOfRealMember, T>> {
+};
+template <typename T>
+using RealPart = typename RealPartImpl<T>::type;
+
 template <typename Target, typename Enable = void>
 struct SafeCastingChecker {
     template <typename T>
     constexpr bool operator()(T x) {
-        return stdx::cmp_less_equal(std::numeric_limits<Target>::lowest(), x) &&
-               stdx::cmp_greater_equal(std::numeric_limits<Target>::max(), x);
+        return stdx::cmp_less_equal(std::numeric_limits<RealPart<Target>>::lowest(), x) &&
+               stdx::cmp_greater_equal(std::numeric_limits<RealPart<Target>>::max(), x);
     }
 };
 
@@ -481,8 +496,8 @@ struct SafeCastingChecker<Target, std::enable_if_t<std::is_integral<Target>::val
     template <typename T>
     constexpr bool operator()(T x) {
         return std::is_integral<T>::value &&
-               stdx::cmp_less_equal(std::numeric_limits<Target>::lowest(), x) &&
-               stdx::cmp_greater_equal(std::numeric_limits<Target>::max(), x);
+               stdx::cmp_less_equal(std::numeric_limits<RealPart<Target>>::lowest(), x) &&
+               stdx::cmp_greater_equal(std::numeric_limits<RealPart<Target>>::max(), x);
     }
 };
 
@@ -501,8 +516,8 @@ constexpr MagRepresentationOrError<T> get_value_result(Magnitude<BPs...>) {
     }
 
     // Force the expression to be evaluated in a constexpr context.
-    constexpr auto widened_result =
-        product({base_power_value<T, ExpT<BPs>::num, static_cast<std::uintmax_t>(ExpT<BPs>::den)>(
+    constexpr auto widened_result = product(
+        {base_power_value<RealPart<T>, ExpT<BPs>::num, static_cast<std::uintmax_t>(ExpT<BPs>::den)>(
             BaseT<BPs>::value())...});
 
     if ((widened_result.outcome != MagRepresentationOutcome::OK) ||
