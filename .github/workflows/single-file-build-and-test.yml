@@ -32,7 +32,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 #v1.13.0
 
       - name: Set up python
-        uses: actions/setup-python@3542bca2639a428e1796aaa6a2ffef0c0f575566 #v3.1.4
+        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f #v5.1.1
         with:
           python-version: '3.10'
 
