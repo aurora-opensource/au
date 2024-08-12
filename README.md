@@ -6,9 +6,9 @@ https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml) [!
 https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml/badge.svg?branch=main&event=push)](
 https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml) [![gcc10-ubuntu](
 https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml/badge.svg?branch=main&event=push)](
-https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml) [![MSVC x64 19.29](
+https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml) [![MSVC 2019 x64](
 https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml/badge.svg?branch=main&event=push)](
-https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml) [![MSVC x64 19.35](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml) [![MSVC 2022 x64](
 https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml/badge.svg?branch=main&event=push)](
 https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml)
 

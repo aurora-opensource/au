@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "MSVC x64 19.29"
+name: "MSVC 2019 x64"
 
 on:
   push:
@@ -21,7 +21,7 @@ on:
   pull_request:
 
 jobs:
-  build-and-test-msvc-19-29:
+  build-and-test-msvc-2019:
     uses: ./.github/workflows/single-file-build-and-test.yml
     with:
       windows_version: windows-2019
