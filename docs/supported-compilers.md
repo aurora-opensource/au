@@ -67,5 +67,5 @@ Here are the configurations that have Best Effort Support status.
 
 | Platform | Compiler | Status |
 |----------|----------|--------|
-| Windows Server 2019 | MSVC 2019 x64 | [![MSVC 2019 x64]( https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml) |
-| Windows Server 2022 | MSVC 2022 x64 | [![MSVC 2022 x64]( https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml) |
+| Windows Server 2019 | MSVC 2019 x64 | [![MSVC 2019 x64]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2019-x64.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2019-x64.yml) |
+| Windows Server 2022 | MSVC 2022 x64 | [![MSVC 2022 x64]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml) |

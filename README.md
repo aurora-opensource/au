@@ -7,10 +7,10 @@ https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml/bad
 https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml) [![gcc10-ubuntu](
 https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml/badge.svg?branch=main&event=push)](
 https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml) [![MSVC 2019 x64](
-https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml/badge.svg?branch=main&event=push)](
-https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml) [![MSVC 2022 x64](
-https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml/badge.svg?branch=main&event=push)](
-https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml)
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2019-x64.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2019-x64.yml) [![MSVC 2022 x64](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml)
 
 # Au: A C++14-compatible units library, by Aurora
 
