@@ -477,13 +477,13 @@ TEST(Quantity, SupportsExplicitRepConversionToComplexRep) {
 
 TEST(Quantity, ShorthandMultiplicationAssignmentWorksForComplexRepAndScalar) {
     auto test = meters(std::complex<float>{1.5f, 0.5f});
-    test *= std::complex<int>{2, 1};
+    test *= std::complex<float>{2.0f, 1.0f};
     EXPECT_THAT(test, SameTypeAndValue(meters(std::complex<float>{2.5f, 2.5f})));
 }
 
 TEST(Quantity, ShorthandDivisionAssignmentWorksForComplexRepAndScalar) {
     auto test = meters(std::complex<float>{25.0f, 12.5f});
-    test /= std::complex<int>{3, 4};
+    test /= std::complex<float>{3.0f, 4.0f};
     EXPECT_THAT(test, SameTypeAndValue(meters(std::complex<float>{5.0f, -2.5f})));
 }
 
