@@ -475,6 +475,18 @@ TEST(Quantity, SupportsExplicitRepConversionToComplexRep) {
     EXPECT_THAT(b, SameTypeAndValue(miles(std::complex<int>{2, 0})));
 }
 
+TEST(Quantity, ShorthandMultiplicationAssignmentWorksForComplexRepAndScalar) {
+    auto test = meters(std::complex<float>{1.5f, 0.5f});
+    test *= std::complex<int>{2, 1};
+    EXPECT_THAT(test, SameTypeAndValue(meters(std::complex<float>{2.5f, 2.5f})));
+}
+
+TEST(Quantity, ShorthandDivisionAssignmentWorksForComplexRepAndScalar) {
+    auto test = meters(std::complex<float>{25.0f, 12.5f});
+    test /= std::complex<int>{3, 4};
+    EXPECT_THAT(test, SameTypeAndValue(meters(std::complex<float>{5.0f, -2.5f})));
+}
+
 TEST(Quantity, CanDivideArbitraryQuantities) {
     constexpr auto d = feet(6.);
     constexpr auto t = hours(3.);
