@@ -1885,7 +1885,7 @@ so safely.</p>
 <a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>  419 |     constexpr Quantity(Rep value) : value_{value} {}
 <a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>      |               ^~~~~~~~
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.29)</strong>
+<p><strong>Compiler error (MSVC 2019 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>error_examples.cc(32): error C2248: &#39;au::Quantity&lt;au::Seconds,double&gt;::Quantity&#39;: cannot access private member declared in class &#39;au::Quantity&lt;au::Seconds,double&gt;&#39;
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>D:\a\au\au\au.hh(3202): note: see declaration of &#39;au::Quantity&lt;au::Seconds,double&gt;::Quantity&#39;
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>D:\a\au\au\au.hh(3269): note: see declaration of &#39;au::Quantity&lt;au::Seconds,double&gt;&#39;
@@ -1893,7 +1893,7 @@ so safely.</p>
 <a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>D:\a\au\au\au.hh(3202): note: see declaration of &#39;au::Quantity&lt;au::Meters,double&gt;::Quantity&#39;
 <a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>D:\a\au\au\au.hh(3269): note: see declaration of &#39;au::Quantity&lt;au::Meters,double&gt;&#39;
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.35)</strong>
+<p><strong>Compiler error (MSVC 2022 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>error_examples.cc(32): error C2248: &#39;au::Quantity&lt;au::Seconds,double&gt;::Quantity&#39;: cannot access private member declared in class &#39;au::Quantity&lt;au::Seconds,double&gt;&#39;
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>D:\a\au\au\au.hh(3202): note: see declaration of &#39;au::Quantity&lt;au::Seconds,double&gt;::Quantity&#39;
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>D:\a\au\au\au.hh(3269): note: see declaration of &#39;au::Quantity&lt;au::Seconds,double&gt;&#39;
@@ -2023,7 +2023,7 @@ exists because sometimes you can know that it&rsquo;s OK, but remember to stop a
 <a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>au/error_examples.cc:47:28:   required from here
 <a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>./au/quantity.hh:169:13: error: static assertion failed: Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.29)</strong>
+<p><strong>Compiler error (MSVC 2019 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>D:\a\au\au\au.hh(2952): error C2338: Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion
 <a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>D:\a\au\au\au.hh(2989): note: see reference to function template instantiation &#39;auto au::Quantity&lt;au::Inches,int&gt;::as&lt;NewUnit,void&gt;(NewUnit) const&#39; being compiled
 <a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>        with
@@ -2032,7 +2032,7 @@ exists because sometimes you can know that it&rsquo;s OK, but remember to stop a
 <a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>        ]
 <a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>error_examples.cc(45): note: see reference to function template instantiation &#39;auto au::Quantity&lt;au::Inches,int&gt;::as&lt;au::Feet&gt;(au::QuantityMaker&lt;au::Feet&gt;) const&#39; being compiled
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.35)</strong>
+<p><strong>Compiler error (MSVC 2022 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>D:\a\au\au\au.hh(2952): error C2338: static_assert failed: &#39;Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion&#39;
 <a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>D:\a\au\au\au.hh(2989): note: see reference to function template instantiation &#39;auto au::Quantity&lt;au::Inches,int&gt;::as&lt;NewUnit,void&gt;(NewUnit) const&#39; being compiled
 <a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>        with
@@ -2127,7 +2127,7 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
 <a id="__codelineno-22-21" name="__codelineno-22-21" href="#__codelineno-22-21"></a>./au/quantity.hh: In instantiation of &#39;static constexpr void au::Quantity&lt;UnitT, RepT&gt;::warn_if_integer_division() [with OtherRep = int; UnitT = au::Meters; RepT = int]&#39;:
 <a id="__codelineno-22-22" name="__codelineno-22-22" href="#__codelineno-22-22"></a>./au/quantity.hh:348:43:   required from here
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.29)</strong>
+<p><strong>Compiler error (MSVC 2019 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.29.30133\include\type_traits(1164): error C2794: &#39;type&#39;: is not a member of any direct or indirect base class of &#39;std::common_type&lt;T,U&gt;&#39;
 <a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>        with
 <a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>        [
@@ -2198,7 +2198,7 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
 <a id="__codelineno-23-68" name="__codelineno-23-68" href="#__codelineno-23-68"></a>D:\a\au\au\au.hh(3370): note: &#39;T=void&#39;
 <a id="__codelineno-23-69" name="__codelineno-23-69" href="#__codelineno-23-69"></a>D:\a\au\au\au.hh(3370): note: &#39;U=void&#39;
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.35)</strong>
+<p><strong>Compiler error (MSVC 2022 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.36.32532\include\type_traits(1227): error C2794: &#39;type&#39;: is not a member of any direct or indirect base class of &#39;std::common_type&lt;T,U&gt;&#39;
 <a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>        with
 <a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>        [
@@ -2335,7 +2335,7 @@ floating point types.</p>
 <a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>  415 |         static_assert(!uses_integer_division,
 <a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>      |                       ^~~~~~~~~~~~~~~~~~~~~~
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.29)</strong>
+<p><strong>Compiler error (MSVC 2019 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>D:\a\au\au\au.hh(3198): error C2338: Integer division forbidden: use integer_quotient() if you really want it
 <a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>D:\a\au\au\au.hh(3131): note: see reference to function template instantiation &#39;void au::Quantity&lt;au::Meters,int&gt;::warn_if_integer_division&lt;OtherRep&gt;(void)&#39; being compiled
 <a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>        with
@@ -2354,7 +2354,7 @@ floating point types.</p>
 <a id="__codelineno-31-16" name="__codelineno-31-16" href="#__codelineno-31-16"></a>            B=au::Miles
 <a id="__codelineno-31-17" name="__codelineno-31-17" href="#__codelineno-31-17"></a>        ]
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.35)</strong>
+<p><strong>Compiler error (MSVC 2022 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>D:\a\au\au\au.hh(3198): error C2338: static_assert failed: &#39;Integer division forbidden: use integer_quotient() if you really want it&#39;
 <a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>D:\a\au\au\au.hh(3131): note: see reference to function template instantiation &#39;void au::Quantity&lt;au::Meters,int&gt;::warn_if_integer_division&lt;OtherRep&gt;(void)&#39; being compiled
 <a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>        with
@@ -2445,7 +2445,7 @@ prevent in the first place.</p>
 <a id="__codelineno-39-9" name="__codelineno-39-9" href="#__codelineno-39-9"></a>  253 |             std::is_floating_point&lt;R&gt;::value,
 <a id="__codelineno-39-10" name="__codelineno-39-10" href="#__codelineno-39-10"></a>      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.29)</strong>
+<p><strong>Compiler error (MSVC 2019 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>D:\a\au\au\au.hh(4562): error C2338: Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired
 <a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>D:\a\au\au\au.hh(4577): note: see reference to function template instantiation &#39;auto au::inverse_in&lt;TargetUnits,au::Hertz,int&gt;(TargetUnits,au::Quantity&lt;au::Hertz,int&gt;)&#39; being compiled
 <a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a>        with
@@ -2458,7 +2458,7 @@ prevent in the first place.</p>
 <a id="__codelineno-40-10" name="__codelineno-40-10" href="#__codelineno-40-10"></a>            TargetUnits=au::QuantityMaker&lt;au::Seconds&gt;
 <a id="__codelineno-40-11" name="__codelineno-40-11" href="#__codelineno-40-11"></a>        ]
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.35)</strong>
+<p><strong>Compiler error (MSVC 2022 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>D:\a\au\au\au.hh(4562): error C2338: static_assert failed: &#39;Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired&#39;
 <a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>D:\a\au\au\au.hh(4577): note: see reference to function template instantiation &#39;auto au::inverse_in&lt;TargetUnits,au::Hertz,int&gt;(TargetUnits,au::Quantity&lt;au::Hertz,int&gt;)&#39; being compiled
 <a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>        with
@@ -2534,7 +2534,7 @@ casting automatically when possible.</p>
 <a id="__codelineno-47-4" name="__codelineno-47-4" href="#__codelineno-47-4"></a>      |          ^
 <a id="__codelineno-47-5" name="__codelineno-47-5" href="#__codelineno-47-5"></a>au/error_examples.cc:82:10: note:   deduced conflicting types for parameter &#39;auto&#39; (&#39;au::Quantity&lt;au::Hertz, double&gt;&#39; and &#39;au::Quantity&lt;au::Pow&lt;au::Seconds, -1&gt;, double&gt;&#39;)
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.29)</strong>
+<p><strong>Compiler error (MSVC 2019 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a>error_examples.cc(80): error C3535: cannot deduce type for &#39;auto &amp;&amp;&#39; from &#39;initializer list&#39;
 <a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a>error_examples.cc(80): error C2440: &#39;initializing&#39;: cannot convert from &#39;initializer list&#39; to &#39;std::initializer_list&lt;int&gt; &amp;&amp;&#39;
 <a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a>error_examples.cc(83): note: Reason: cannot convert from &#39;initializer list&#39; to &#39;std::initializer_list&lt;int&gt;&#39;
@@ -2546,7 +2546,7 @@ casting automatically when possible.</p>
 <a id="__codelineno-48-9" name="__codelineno-48-9" href="#__codelineno-48-9"></a>            T=double
 <a id="__codelineno-48-10" name="__codelineno-48-10" href="#__codelineno-48-10"></a>        ]
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.35)</strong>
+<p><strong>Compiler error (MSVC 2022 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a>error_examples.cc(80): error C3535: cannot deduce type for &#39;auto &amp;&amp;&#39; from &#39;initializer list&#39;
 <a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a>error_examples.cc(80): error C2440: &#39;initializing&#39;: cannot convert from &#39;initializer list&#39; to &#39;std::initializer_list&lt;int&gt; &amp;&amp;&#39;
 <a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a>error_examples.cc(80): note: Reason: cannot convert from &#39;initializer list&#39; to &#39;std::initializer_list&lt;int&gt;&#39;
@@ -2772,7 +2772,7 @@ error is pretty hard to hit in practice.</p>
 <a id="__codelineno-54-57" name="__codelineno-54-57" href="#__codelineno-54-57"></a>  484 |     static_assert(AreElementsInOrder&lt;CommonUnit, CommonUnit&lt;Us...&gt;&gt;::value,
 <a id="__codelineno-54-58" name="__codelineno-54-58" href="#__codelineno-54-58"></a>      |                                                                      ^~~~~
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.29)</strong>
+<p><strong>Compiler error (MSVC 2019 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a>D:\a\au\au\au.hh(1037): error C2338: Broken strict total ordering: distinct input types compare equal
 <a id="__codelineno-55-2" name="__codelineno-55-2" href="#__codelineno-55-2"></a>D:\a\au\au\au.hh(1068): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B&gt;&#39; being compiled
 <a id="__codelineno-55-3" name="__codelineno-55-3" href="#__codelineno-55-3"></a>        with
@@ -2859,7 +2859,7 @@ error is pretty hard to hit in practice.</p>
 <a id="__codelineno-55-84" name="__codelineno-55-84" href="#__codelineno-55-84"></a>error_examples.cc(99): note: see reference to function template instantiation &#39;bool au::operator ==&lt;au::Quarterfeet,au::Trinches,int,int&gt;(au::Quantity&lt;au::Quarterfeet,int&gt;,au::Quantity&lt;au::Trinches,int&gt;)&#39; being compiled
 <a id="__codelineno-55-85" name="__codelineno-55-85" href="#__codelineno-55-85"></a>D:\a\au\au\au.hh(2334): error C2338: Elements must be listed in ascending order
 </code></pre></div></p>
-<p><strong>Compiler error (MSVC x64 19.35)</strong>
+<p><strong>Compiler error (MSVC 2022 x64)</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a>D:\a\au\au\au.hh(1037): error C2338: static_assert failed: &#39;Broken strict total ordering: distinct input types compare equal&#39;
 <a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a>D:\a\au\au\au.hh(1053): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B&gt;&#39; being compiled
 <a id="__codelineno-56-3" name="__codelineno-56-3" href="#__codelineno-56-3"></a>        with
