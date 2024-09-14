@@ -44,5 +44,12 @@ TEST(SameTypeIgnoringCvref, CanTakeInstances) {
     EXPECT_FALSE(same_type_ignoring_cvref(1.0, 2.0f));
 }
 
+TEST(AlwaysFalse, IsAlwaysFalse) {
+    EXPECT_FALSE(AlwaysFalse<int>::value);
+    EXPECT_FALSE(AlwaysFalse<void>::value);
+    EXPECT_FALSE(AlwaysFalse<>::value);
+    EXPECT_FALSE((AlwaysFalse<int, char, double>::value));
+}
+
 }  // namespace detail
 }  // namespace au

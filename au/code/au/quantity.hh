@@ -22,6 +22,7 @@
 #include "au/rep.hh"
 #include "au/stdx/functional.hh"
 #include "au/unit_of_measure.hh"
+#include "au/utility/type_traits.hh"
 #include "au/zero.hh"
 
 namespace au {
@@ -114,6 +115,8 @@ class Quantity {
     using Rep = RepT;
     using Unit = UnitT;
     static constexpr auto unit = Unit{};
+
+    static_assert(IsValidRep<Rep>::value, "Rep must meet our requirements for a rep");
 
     // IMPLICIT constructor for another Quantity of the same Dimension.
     template <typename OtherUnit,
@@ -481,6 +484,11 @@ using QuantityI64 = Quantity<UnitT, int64_t>;
 template <typename UnitT>
 using QuantityU64 = Quantity<UnitT, uint64_t>;
 
+// Forward declare `QuantityPoint` here, so that we can give better error messages when uesrs try to
+// make it into a quantity.
+template <typename U, typename R>
+class QuantityPoint;
+
 template <typename UnitT>
 struct QuantityMaker {
     using Unit = UnitT;
@@ -489,6 +497,18 @@ struct QuantityMaker {
     template <typename T>
     constexpr Quantity<Unit, T> operator()(T value) const {
         return {value};
+    }
+
+    template <typename U, typename R>
+    constexpr void operator()(Quantity<U, R>) const {
+        constexpr bool is_not_already_a_quantity = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_already_a_quantity, "Input to QuantityMaker is already a Quantity");
+    }
+
+    template <typename U, typename R>
+    constexpr void operator()(QuantityPoint<U, R>) const {
+        constexpr bool is_not_a_quantity_point = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_a_quantity_point, "Input to QuantityMaker is a QuantityPoint");
     }
 
     template <typename... BPs>
