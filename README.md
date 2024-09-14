@@ -26,7 +26,7 @@ In short: if your C++ programs handle physical quantities, Au will make you fast
 effective at your job.  You'll find everything you need in our [full documentation
 website](https://aurora-opensource.github.io/au).
 
-> _Try it out on [Compiler Explorer ("godbolt")](https://godbolt.org/z/KrvfhP4M3)!_
+> _Try it out on [Compiler Explorer ("godbolt")](https://godbolt.org/z/G6r315G9n)!_
 
 ## Why Au?
 
