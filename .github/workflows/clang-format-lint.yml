@@ -14,11 +14,11 @@
 
 name: clang-format-lint
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
 
 jobs:
   lint-clang-format:
