@@ -340,7 +340,7 @@ class Quantity {
     }
 
     template <typename T>
-    void perform_shorthand_checks() {
+    constexpr void perform_shorthand_checks() {
         static_assert(
             IsValidRep<T>::value,
             "This overload is only for scalar mult/div-assignment with raw numeric types");

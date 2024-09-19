@@ -481,6 +481,16 @@ TEST(Quantity, ShorthandMultiplicationAssignmentWorksForComplexRepAndScalar) {
     EXPECT_THAT(test, SameTypeAndValue(meters(std::complex<float>{2.5f, 2.5f})));
 }
 
+template <typename T>
+constexpr T double_by_shorthand(T x) {
+    return x *= 2.0;
+}
+
+TEST(Quantity, ShorthandMultiplicationSupportsConstexpr) {
+    constexpr auto x = double_by_shorthand(feet(3.0));
+    EXPECT_THAT(x, SameTypeAndValue(feet(6.0)));
+}
+
 TEST(Quantity, ShorthandDivisionAssignmentWorksForComplexRepAndScalar) {
     auto test = meters(std::complex<float>{25.0f, 12.5f});
     test /= std::complex<float>{3.0f, 4.0f};
