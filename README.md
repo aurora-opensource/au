@@ -6,11 +6,11 @@ https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml) [!
 https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml/badge.svg?branch=main&event=push)](
 https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml) [![gcc10-ubuntu](
 https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml/badge.svg?branch=main&event=push)](
-https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml) [![MSVC x64 19.29](
-https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml/badge.svg?branch=main&event=push)](
-https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml) [![MSVC x64 19.35](
-https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml/badge.svg?branch=main&event=push)](
-https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml)
+https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml) [![MSVC 2019 x64](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2019-x64.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2019-x64.yml) [![MSVC 2022 x64](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml)
 
 # Au: A C++14-compatible units library, by Aurora
 
@@ -26,7 +26,7 @@ In short: if your C++ programs handle physical quantities, Au will make you fast
 effective at your job.  You'll find everything you need in our [full documentation
 website](https://aurora-opensource.github.io/au).
 
-> _Try it out on [Compiler Explorer ("godbolt")](https://godbolt.org/z/KrvfhP4M3)!_
+> _Try it out on [Compiler Explorer ("godbolt")](https://godbolt.org/z/G6r315G9n)!_
 
 ## Why Au?
 

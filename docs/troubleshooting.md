@@ -132,7 +132,7 @@ It's the "classic" error the units library aims to prevent.
           |               ^~~~~~~~
     ```
 
-    **Compiler error (MSVC x64 19.29)**
+    **Compiler error (MSVC 2019 x64)**
     ```
     error_examples.cc(32): error C2248: 'au::Quantity<au::Seconds,double>::Quantity': cannot access private member declared in class 'au::Quantity<au::Seconds,double>'
     D:\a\au\au\au.hh(3202): note: see declaration of 'au::Quantity<au::Seconds,double>::Quantity'
@@ -142,7 +142,7 @@ It's the "classic" error the units library aims to prevent.
     D:\a\au\au\au.hh(3269): note: see declaration of 'au::Quantity<au::Meters,double>'
     ```
 
-    **Compiler error (MSVC x64 19.35)**
+    **Compiler error (MSVC 2022 x64)**
     ```
     error_examples.cc(32): error C2248: 'au::Quantity<au::Seconds,double>::Quantity': cannot access private member declared in class 'au::Quantity<au::Seconds,double>'
     D:\a\au\au\au.hh(3202): note: see declaration of 'au::Quantity<au::Seconds,double>::Quantity'
@@ -274,7 +274,7 @@ operation (at least in this format).
     ./au/quantity.hh:169:13: error: static assertion failed: Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion
     ```
 
-    **Compiler error (MSVC x64 19.29)**
+    **Compiler error (MSVC 2019 x64)**
     ```
     D:\a\au\au\au.hh(2952): error C2338: Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion
     D:\a\au\au\au.hh(2989): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<NewUnit,void>(NewUnit) const' being compiled
@@ -285,7 +285,7 @@ operation (at least in this format).
     error_examples.cc(45): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<au::Feet>(au::QuantityMaker<au::Feet>) const' being compiled
     ```
 
-    **Compiler error (MSVC x64 19.35)**
+    **Compiler error (MSVC 2022 x64)**
     ```
     D:\a\au\au\au.hh(2952): error C2338: static_assert failed: 'Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion'
     D:\a\au\au\au.hh(2989): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<NewUnit,void>(NewUnit) const' being compiled
@@ -390,7 +390,7 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
     ./au/quantity.hh:348:43:   required from here
     ```
 
-    **Compiler error (MSVC x64 19.29)**
+    **Compiler error (MSVC 2019 x64)**
     ```
     C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.29.30133\include\type_traits(1164): error C2794: 'type': is not a member of any direct or indirect base class of 'std::common_type<T,U>'
             with
@@ -463,7 +463,7 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
     D:\a\au\au\au.hh(3370): note: 'U=void'
     ```
 
-    **Compiler error (MSVC x64 19.35)**
+    **Compiler error (MSVC 2022 x64)**
     ```
     C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.36.32532\include\type_traits(1227): error C2794: 'type': is not a member of any direct or indirect base class of 'std::common_type<T,U>'
             with
@@ -612,7 +612,7 @@ floating point types.
           |                       ^~~~~~~~~~~~~~~~~~~~~~
     ```
 
-    **Compiler error (MSVC x64 19.29)**
+    **Compiler error (MSVC 2019 x64)**
     ```
     D:\a\au\au\au.hh(3198): error C2338: Integer division forbidden: use integer_quotient() if you really want it
     D:\a\au\au\au.hh(3131): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherRep>(void)' being compiled
@@ -633,7 +633,7 @@ floating point types.
             ]
     ```
 
-    **Compiler error (MSVC x64 19.35)**
+    **Compiler error (MSVC 2022 x64)**
     ```
     D:\a\au\au\au.hh(3198): error C2338: static_assert failed: 'Integer division forbidden: use integer_quotient() if you really want it'
     D:\a\au\au\au.hh(3131): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherRep>(void)' being compiled
@@ -738,7 +738,7 @@ use a smaller target unit.
           |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ```
 
-    **Compiler error (MSVC x64 19.29)**
+    **Compiler error (MSVC 2019 x64)**
     ```
     D:\a\au\au\au.hh(4562): error C2338: Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired
     D:\a\au\au\au.hh(4577): note: see reference to function template instantiation 'auto au::inverse_in<TargetUnits,au::Hertz,int>(TargetUnits,au::Quantity<au::Hertz,int>)' being compiled
@@ -753,7 +753,7 @@ use a smaller target unit.
             ]
     ```
 
-    **Compiler error (MSVC x64 19.35)**
+    **Compiler error (MSVC 2022 x64)**
     ```
     D:\a\au\au\au.hh(4562): error C2338: static_assert failed: 'Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired'
     D:\a\au\au\au.hh(4577): note: see reference to function template instantiation 'auto au::inverse_in<TargetUnits,au::Hertz,int>(TargetUnits,au::Quantity<au::Hertz,int>)' being compiled
@@ -840,7 +840,7 @@ casting automatically when possible.
     au/error_examples.cc:82:10: note:   deduced conflicting types for parameter 'auto' ('au::Quantity<au::Hertz, double>' and 'au::Quantity<au::Pow<au::Seconds, -1>, double>')
     ```
 
-    **Compiler error (MSVC x64 19.29)**
+    **Compiler error (MSVC 2019 x64)**
     ```
     error_examples.cc(80): error C3535: cannot deduce type for 'auto &&' from 'initializer list'
     error_examples.cc(80): error C2440: 'initializing': cannot convert from 'initializer list' to 'std::initializer_list<int> &&'
@@ -854,7 +854,7 @@ casting automatically when possible.
             ]
     ```
 
-    **Compiler error (MSVC x64 19.35)**
+    **Compiler error (MSVC 2022 x64)**
     ```
     error_examples.cc(80): error C3535: cannot deduce type for 'auto &&' from 'initializer list'
     error_examples.cc(80): error C2440: 'initializing': cannot convert from 'initializer list' to 'std::initializer_list<int> &&'
@@ -1095,7 +1095,7 @@ ordering!
           |                                                                      ^~~~~
     ```
 
-    **Compiler error (MSVC x64 19.29)**
+    **Compiler error (MSVC 2019 x64)**
     ```
     D:\a\au\au\au.hh(1037): error C2338: Broken strict total ordering: distinct input types compare equal
     D:\a\au\au\au.hh(1068): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B>' being compiled
@@ -1184,7 +1184,7 @@ ordering!
     D:\a\au\au\au.hh(2334): error C2338: Elements must be listed in ascending order
     ```
 
-    **Compiler error (MSVC x64 19.35)**
+    **Compiler error (MSVC 2022 x64)**
     ```
     D:\a\au\au\au.hh(1037): error C2338: static_assert failed: 'Broken strict total ordering: distinct input types compare equal'
     D:\a\au\au\au.hh(1053): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B>' being compiled
