@@ -339,16 +339,21 @@ class Quantity {
         return *this;
     }
 
+    template <typename T>
+    constexpr void perform_shorthand_checks() {
+        static_assert(
+            IsValidRep<T>::value,
+            "This overload is only for scalar mult/div-assignment with raw numeric types");
+
+        static_assert((!std::is_integral<detail::RealPart<Rep>>::value) ||
+                          std::is_integral<detail::RealPart<T>>::value,
+                      "We don't support compound mult/div of integral types by floating point");
+    }
+
     // Short-hand multiplication assignment.
     template <typename T>
     constexpr Quantity &operator*=(T s) {
-        static_assert(
-            std::is_arithmetic<T>::value,
-            "This overload is only for scalar multiplication-assignment with arithmetic types");
-
-        static_assert(
-            std::is_floating_point<Rep>::value || std::is_integral<T>::value,
-            "We don't support compound multiplication of integral types by floating point");
+        perform_shorthand_checks<T>();
 
         value_ *= s;
         return *this;
@@ -357,11 +362,7 @@ class Quantity {
     // Short-hand division assignment.
     template <typename T>
     constexpr Quantity &operator/=(T s) {
-        static_assert(std::is_arithmetic<T>::value,
-                      "This overload is only for scalar division-assignment with arithmetic types");
-
-        static_assert(std::is_floating_point<Rep>::value || std::is_integral<T>::value,
-                      "We don't support compound division of integral types by floating point");
+        perform_shorthand_checks<T>();
 
         value_ /= s;
         return *this;

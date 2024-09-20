@@ -463,6 +463,40 @@ TEST(Quantity, SupportsDivisionOfRealQuantityIntoComplexCoefficient) {
     EXPECT_THAT(quotient.imag(), DoubleEq(4.0));
 }
 
+TEST(Quantity, SupportsConvertingUnitsForComplexQuantity) {
+    constexpr auto a = meters(std::complex<double>{-3.0, 4.0});
+    const auto b = a.as(centi(meters));
+    EXPECT_THAT(b, SameTypeAndValue(centi(meters)(std::complex<double>{-300.0, 400.0})));
+}
+
+TEST(Quantity, SupportsExplicitRepConversionToComplexRep) {
+    constexpr auto a = feet(15'000.0);
+    const auto b = a.as<std::complex<int>>(miles);
+    EXPECT_THAT(b, SameTypeAndValue(miles(std::complex<int>{2, 0})));
+}
+
+TEST(Quantity, ShorthandMultiplicationAssignmentWorksForComplexRepAndScalar) {
+    auto test = meters(std::complex<float>{1.5f, 0.5f});
+    test *= std::complex<float>{2.0f, 1.0f};
+    EXPECT_THAT(test, SameTypeAndValue(meters(std::complex<float>{2.5f, 2.5f})));
+}
+
+template <typename T>
+constexpr T double_by_shorthand(T x) {
+    return x *= 2.0;
+}
+
+TEST(Quantity, ShorthandMultiplicationSupportsConstexpr) {
+    constexpr auto x = double_by_shorthand(feet(3.0));
+    EXPECT_THAT(x, SameTypeAndValue(feet(6.0)));
+}
+
+TEST(Quantity, ShorthandDivisionAssignmentWorksForComplexRepAndScalar) {
+    auto test = meters(std::complex<float>{25.0f, 12.5f});
+    test /= std::complex<float>{3.0f, 4.0f};
+    EXPECT_THAT(test, SameTypeAndValue(meters(std::complex<float>{5.0f, -2.5f})));
+}
+
 TEST(Quantity, CanDivideArbitraryQuantities) {
     constexpr auto d = feet(6.);
     constexpr auto t = hours(3.);
