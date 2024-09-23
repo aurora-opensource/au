@@ -287,6 +287,19 @@ struct QuantityPointMaker {
         return QuantityPoint<Unit, T>{make_quantity<Unit>(value)};
     }
 
+    template <typename U, typename R>
+    constexpr void operator()(Quantity<U, R>) const {
+        constexpr bool is_not_a_quantity = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_a_quantity, "Input to QuantityPointMaker is a Quantity");
+    }
+
+    template <typename U, typename R>
+    constexpr void operator()(QuantityPoint<U, R>) const {
+        constexpr bool is_not_already_a_quantity_point = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_already_a_quantity_point,
+                      "Input to QuantityPointMaker is already a QuantityPoint");
+    }
+
     template <typename... BPs>
     constexpr auto operator*(Magnitude<BPs...> m) const {
         return QuantityPointMaker<decltype(unit * m)>{};

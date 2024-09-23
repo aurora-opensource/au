@@ -34,6 +34,9 @@ constexpr bool same_type_ignoring_cvref(T, U) {
     return SameTypeIgnoringCvref<T, U>::value;
 }
 
+template <typename... Ts>
+struct AlwaysFalse : std::false_type {};
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation details below.
 

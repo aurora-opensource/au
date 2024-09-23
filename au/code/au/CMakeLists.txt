@@ -117,6 +117,7 @@ header_only_library(
     operators
     rep
     unit_of_measure
+    utility
     zero
   GTEST_SRCS
     quantity_chrono_policy_correspondence_test.cc

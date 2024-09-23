@@ -159,9 +159,9 @@ cc_library(
     hdrs = ["code/au/chrono_interop.hh"],
     includes = ["code"],
     deps = [
-        ":units",
         ":prefix",
         ":quantity",
+        ":units",
     ],
 )
 
@@ -417,6 +417,7 @@ cc_library(
         ":operators",
         ":rep",
         ":unit_of_measure",
+        ":utility",
         ":zero",
     ],
 )
