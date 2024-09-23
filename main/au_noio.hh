@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-14-gb295267
+// Version identifier: 0.3.5-15-g3a4426a
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -82,6 +82,55 @@ inline constexpr bool operator!=(Zero, Zero) { return false; }
 inline constexpr bool operator>(Zero, Zero) { return false; }
 inline constexpr bool operator<(Zero, Zero) { return false; }
 
+}  // namespace au
+
+
+namespace au {
+namespace stdx {
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/types/type_identity).
+template <class T>
+struct type_identity {
+    using type = T;
+};
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/types/integral_constant).
+template <bool B>
+using bool_constant = std::integral_constant<bool, B>;
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/types/conjunction).
+template <class...>
+struct conjunction : std::true_type {};
+template <class B>
+struct conjunction<B> : B {};
+template <class B, class... Bn>
+struct conjunction<B, Bn...> : std::conditional_t<bool(B::value), conjunction<Bn...>, B> {};
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/types/disjunction).
+template <class...>
+struct disjunction : std::false_type {};
+template <class B>
+struct disjunction<B> : B {};
+template <class B, class... Bn>
+struct disjunction<B, Bn...> : std::conditional_t<bool(B::value), B, disjunction<Bn...>> {};
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/types/negation).
+template <class B>
+struct negation : stdx::bool_constant<!static_cast<bool>(B::value)> {};
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/types/remove_cvref).
+template <class T>
+struct remove_cvref {
+    typedef std::remove_cv_t<std::remove_reference_t<T>> type;
+};
+template <class T>
+using remove_cvref_t = typename remove_cvref<T>::type;
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/types/void_t).
+template <class...>
+using void_t = void;
+
+}  // namespace stdx
 }  // namespace au
 
 
@@ -327,55 +376,6 @@ constexpr auto parens_if(const StringT &s) {
 
 
 namespace au {
-namespace stdx {
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/types/type_identity).
-template <class T>
-struct type_identity {
-    using type = T;
-};
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/types/integral_constant).
-template <bool B>
-using bool_constant = std::integral_constant<bool, B>;
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/types/conjunction).
-template <class...>
-struct conjunction : std::true_type {};
-template <class B>
-struct conjunction<B> : B {};
-template <class B, class... Bn>
-struct conjunction<B, Bn...> : std::conditional_t<bool(B::value), conjunction<Bn...>, B> {};
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/types/disjunction).
-template <class...>
-struct disjunction : std::false_type {};
-template <class B>
-struct disjunction<B> : B {};
-template <class B, class... Bn>
-struct disjunction<B, Bn...> : std::conditional_t<bool(B::value), B, disjunction<Bn...>> {};
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/types/negation).
-template <class B>
-struct negation : stdx::bool_constant<!static_cast<bool>(B::value)> {};
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/types/remove_cvref).
-template <class T>
-struct remove_cvref {
-    typedef std::remove_cv_t<std::remove_reference_t<T>> type;
-};
-template <class T>
-using remove_cvref_t = typename remove_cvref<T>::type;
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/types/void_t).
-template <class...>
-using void_t = void;
-
-}  // namespace stdx
-}  // namespace au
-
-
-namespace au {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Generic mathematical convenience functions.
@@ -583,35 +583,6 @@ struct CmpLessImpl<T, U, std::enable_if_t<!std::is_signed<T>::value && std::is_s
 };
 
 }  // namespace stdx
-}  // namespace au
-
-
-
-namespace au {
-namespace detail {
-
-template <typename PackT, typename T>
-struct Prepend;
-template <typename PackT, typename T>
-using PrependT = typename Prepend<PackT, T>::type;
-
-template <typename T, typename U>
-struct SameTypeIgnoringCvref : std::is_same<stdx::remove_cvref_t<T>, stdx::remove_cvref_t<U>> {};
-
-template <typename T, typename U>
-constexpr bool same_type_ignoring_cvref(T, U) {
-    return SameTypeIgnoringCvref<T, U>::value;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Implementation details below.
-
-template <template <typename...> class Pack, typename T, typename... Us>
-struct Prepend<Pack<Us...>, T> {
-    using type = Pack<T, Us...>;
-};
-
-}  // namespace detail
 }  // namespace au
 
 
@@ -898,6 +869,38 @@ struct Minus {
     }
 };
 constexpr auto minus = Minus{};
+
+}  // namespace detail
+}  // namespace au
+
+
+
+namespace au {
+namespace detail {
+
+template <typename PackT, typename T>
+struct Prepend;
+template <typename PackT, typename T>
+using PrependT = typename Prepend<PackT, T>::type;
+
+template <typename T, typename U>
+struct SameTypeIgnoringCvref : std::is_same<stdx::remove_cvref_t<T>, stdx::remove_cvref_t<U>> {};
+
+template <typename T, typename U>
+constexpr bool same_type_ignoring_cvref(T, U) {
+    return SameTypeIgnoringCvref<T, U>::value;
+}
+
+template <typename... Ts>
+struct AlwaysFalse : std::false_type {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Implementation details below.
+
+template <template <typename...> class Pack, typename T, typename... Us>
+struct Prepend<Pack<Us...>, T> {
+    using type = Pack<T, Us...>;
+};
 
 }  // namespace detail
 }  // namespace au
@@ -3713,6 +3716,8 @@ class Quantity {
     using Unit = UnitT;
     static constexpr auto unit = Unit{};
 
+    static_assert(IsValidRep<Rep>::value, "Rep must meet our requirements for a rep");
+
     // IMPLICIT constructor for another Quantity of the same Dimension.
     template <typename OtherUnit,
               typename OtherRep,
@@ -4079,6 +4084,11 @@ using QuantityI64 = Quantity<UnitT, int64_t>;
 template <typename UnitT>
 using QuantityU64 = Quantity<UnitT, uint64_t>;
 
+// Forward declare `QuantityPoint` here, so that we can give better error messages when users try to
+// make it into a quantity.
+template <typename U, typename R>
+class QuantityPoint;
+
 template <typename UnitT>
 struct QuantityMaker {
     using Unit = UnitT;
@@ -4087,6 +4097,18 @@ struct QuantityMaker {
     template <typename T>
     constexpr Quantity<Unit, T> operator()(T value) const {
         return {value};
+    }
+
+    template <typename U, typename R>
+    constexpr void operator()(Quantity<U, R>) const {
+        constexpr bool is_not_already_a_quantity = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_already_a_quantity, "Input to QuantityMaker is already a Quantity");
+    }
+
+    template <typename U, typename R>
+    constexpr void operator()(QuantityPoint<U, R>) const {
+        constexpr bool is_not_a_quantity_point = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_a_quantity_point, "Input to QuantityMaker is a QuantityPoint");
     }
 
     template <typename... BPs>
@@ -4794,6 +4816,19 @@ struct QuantityPointMaker {
     template <typename T>
     constexpr auto operator()(T value) const {
         return QuantityPoint<Unit, T>{make_quantity<Unit>(value)};
+    }
+
+    template <typename U, typename R>
+    constexpr void operator()(Quantity<U, R>) const {
+        constexpr bool is_not_a_quantity = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_a_quantity, "Input to QuantityPointMaker is a Quantity");
+    }
+
+    template <typename U, typename R>
+    constexpr void operator()(QuantityPoint<U, R>) const {
+        constexpr bool is_not_already_a_quantity_point = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_already_a_quantity_point,
+                      "Input to QuantityPointMaker is already a QuantityPoint");
     }
 
     template <typename... BPs>

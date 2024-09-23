@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-14-gb295267
+// Version identifier: 0.3.5-15-g3a4426a
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -891,6 +891,9 @@ template <typename T, typename U>
 constexpr bool same_type_ignoring_cvref(T, U) {
     return SameTypeIgnoringCvref<T, U>::value;
 }
+
+template <typename... Ts>
+struct AlwaysFalse : std::false_type {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation details below.
@@ -3714,6 +3717,8 @@ class Quantity {
     using Unit = UnitT;
     static constexpr auto unit = Unit{};
 
+    static_assert(IsValidRep<Rep>::value, "Rep must meet our requirements for a rep");
+
     // IMPLICIT constructor for another Quantity of the same Dimension.
     template <typename OtherUnit,
               typename OtherRep,
@@ -4080,6 +4085,11 @@ using QuantityI64 = Quantity<UnitT, int64_t>;
 template <typename UnitT>
 using QuantityU64 = Quantity<UnitT, uint64_t>;
 
+// Forward declare `QuantityPoint` here, so that we can give better error messages when users try to
+// make it into a quantity.
+template <typename U, typename R>
+class QuantityPoint;
+
 template <typename UnitT>
 struct QuantityMaker {
     using Unit = UnitT;
@@ -4088,6 +4098,18 @@ struct QuantityMaker {
     template <typename T>
     constexpr Quantity<Unit, T> operator()(T value) const {
         return {value};
+    }
+
+    template <typename U, typename R>
+    constexpr void operator()(Quantity<U, R>) const {
+        constexpr bool is_not_already_a_quantity = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_already_a_quantity, "Input to QuantityMaker is already a Quantity");
+    }
+
+    template <typename U, typename R>
+    constexpr void operator()(QuantityPoint<U, R>) const {
+        constexpr bool is_not_a_quantity_point = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_a_quantity_point, "Input to QuantityMaker is a QuantityPoint");
     }
 
     template <typename... BPs>
@@ -4813,6 +4835,19 @@ struct QuantityPointMaker {
     template <typename T>
     constexpr auto operator()(T value) const {
         return QuantityPoint<Unit, T>{make_quantity<Unit>(value)};
+    }
+
+    template <typename U, typename R>
+    constexpr void operator()(Quantity<U, R>) const {
+        constexpr bool is_not_a_quantity = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_a_quantity, "Input to QuantityPointMaker is a Quantity");
+    }
+
+    template <typename U, typename R>
+    constexpr void operator()(QuantityPoint<U, R>) const {
+        constexpr bool is_not_already_a_quantity_point = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_already_a_quantity_point,
+                      "Input to QuantityPointMaker is already a QuantityPoint");
     }
 
     template <typename... BPs>
