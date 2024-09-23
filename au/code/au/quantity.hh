@@ -484,7 +484,7 @@ using QuantityI64 = Quantity<UnitT, int64_t>;
 template <typename UnitT>
 using QuantityU64 = Quantity<UnitT, uint64_t>;
 
-// Forward declare `QuantityPoint` here, so that we can give better error messages when uesrs try to
+// Forward declare `QuantityPoint` here, so that we can give better error messages when users try to
 // make it into a quantity.
 template <typename U, typename R>
 class QuantityPoint;
