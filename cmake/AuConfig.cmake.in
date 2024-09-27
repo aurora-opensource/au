@@ -15,7 +15,7 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
-find_dependency(googletest 1.12.1)
+@AU_CONFIG_FIND_GTEST_LINE@
 
 include(${CMAKE_CURRENT_LIST_DIR}/AuHeaders.cmake)
 

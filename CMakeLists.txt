@@ -58,6 +58,8 @@ if(ENABLE_TESTING)
 
    FetchContent_MakeAvailable(googletest)
    include(GoogleTest)
+
+   set(AU_CONFIG_FIND_GTEST_LINE "find_dependency(googletest 1.12.1)")
 else()
    message(STATUS "Unit tests disabled")
 endif()
