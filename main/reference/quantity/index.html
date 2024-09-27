@@ -2194,11 +2194,17 @@ discussion</a>.</p>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">Quantity</span><span class="p">();</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">};</span>
 </code></pre></div>
-<p>A default-constructed <code>Quantity</code> is initialized to some value, which helps avoid certain kinds of
-memory safety bugs.  However, <strong>the value is contractually unspecified</strong>.  You can of course look up
-that value by reading the source code, but we may change it in the future, and <strong>we would not
-consider this to be a breaking change</strong>.  The only valid operation on a default-constructed
-<code>Quantity</code> is to assign to it later on.</p>
+<p>A default-constructed <code>Quantity</code> is always initialized (which helps avoid certain kinds of memory
+safety bugs).  It will contain a default-constructed instance of the rep type.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Avoid relying on the <em>specific value</em> of a default-constructed <code>Quantity</code>, because it poorly
+communicates intent.  The only logically valid operation on a default-constructed <code>Quantity</code> is
+to assign to it later on.</p>
+<p>The default value for many rep types, including all fundamental arithmetic types, is <code>0</code>.
+Instead of relying on this behaviour, initialize your <code>Quantity</code> with <a href="../zero/"><code>au::ZERO</code></a> to
+better communicate your intent.</p>
+</div>
 <h3 id="constructing-from-corresponding-quantity">Constructing from corresponding quantity<a class="headerlink" href="#constructing-from-corresponding-quantity" title="Permanent link">&para;</a></h3>
 <p>Here is the signature.  We&rsquo;ve simplified it slightly for illustration purposes, and enclosed it
 inside the class definition for context.</p>
