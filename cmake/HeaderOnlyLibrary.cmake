@@ -75,7 +75,7 @@ function(header_only_library)
   )
 
   # Add the test, if requested.
-  if (DEFINED ARG_GTEST_SRCS)
+  if (DEFINED ARG_GTEST_SRCS AND ENABLE_TESTING)
     add_executable("${ARG_NAME}_test")
     target_sources("${ARG_NAME}_test" PRIVATE ${ARG_GTEST_SRCS})
     target_link_libraries(
