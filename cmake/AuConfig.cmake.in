@@ -12,11 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-@PACKAGE_INIT@
-
-include(CMakeFindDependencyMacro)
-find_dependency(googletest 1.12.1)
-
-include(${CMAKE_CURRENT_LIST_DIR}/AuHeaders.cmake)
-
-check_required_components(Au)
+include(${CMAKE_CURRENT_LIST_DIR}/AuTargets.cmake)

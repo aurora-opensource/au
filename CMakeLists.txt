@@ -32,59 +32,48 @@ project(
    LANGUAGES CXX
 )
 
-# The export set for all of our headers.
-set(AU_EXPORT_SET_NAME AuHeaders)
+option(AU_BUILD_TESTS "Build Tests" ON)
+option(AU_USE_VENDORED_GTEST "Build GTest from sources" ON)
 
-enable_testing()
+add_library(au INTERFACE)
+add_library(Au::au ALIAS au)
 
-# Bring in GoogleTest so we can build and run the tests.
-include(FetchContent)
-FetchContent_Declare(
-   googletest
-   GIT_REPOSITORY https://github.com/google/googletest.git
-   GIT_TAG 58d77fa8070e8cec2dc1ed015d66b454c8d78850 # Release 1.12.1
-   FIND_PACKAGE_ARGS
-      1.12.1
-      NAMES GTest
+target_include_directories(au INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
 )
 
-# https://google.github.io/googletest/quickstart-cmake.html
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+if(AU_BUILD_TESTS)
+   enable_testing()
+   add_subdirectory(tests)
+endif()
 
-FetchContent_MakeAvailable(googletest)
-include(GoogleTest)
-
-add_subdirectory(au)
-
-# Configure how Au will be installed.
-#
-# (This is necessary for it to be usable in other CMake projects.)
-
-set(AU_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/Au)
+include( GNUInstallDirs )
+include( CMakePackageConfigHelpers )
 
 install(
-   EXPORT ${AU_EXPORT_SET_NAME}
-   DESTINATION ${AU_CMAKE_DIR}
+   DIRECTORY include/
+   DESTINATION include
+)
+
+install(
+   TARGETS au
+   EXPORT AuTargets
+)
+
+install(
+   EXPORT AuTargets
    NAMESPACE Au::
-   FILE AuHeaders.cmake
+   DESTINATION lib/cmake/Au
 )
 
-include(CMakePackageConfigHelpers)
-configure_package_config_file(
-   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/AuConfig.cmake.in
+configure_file(
+   cmake/AuConfig.cmake.in
    AuConfig.cmake
-   INSTALL_DESTINATION ${AU_CMAKE_DIR}
-)
-
-write_basic_package_version_file(
-   AuConfigVersion.cmake
-   COMPATIBILITY SameMinorVersion
+   COPYONLY
 )
 
 install(
-   FILES
-      ${CMAKE_CURRENT_BINARY_DIR}/AuConfig.cmake
-      ${CMAKE_CURRENT_BINARY_DIR}/AuConfigVersion.cmake
-   DESTINATION ${AU_CMAKE_DIR}
+   FILES ${CMAKE_BINARY_DIR}/AuConfig.cmake
+   DESTINATION lib/cmake/Au
 )
