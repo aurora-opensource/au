@@ -20,7 +20,87 @@ include("${PROJECT_SOURCE_DIR}/cmake/HeaderOnlyLibrary.cmake")
 
 header_only_library(
   NAME au
-  HEADERS apply_magnitude.hh apply_rational_magnitude_to_integral.hh au.hh chrono_interop.hh constant.hh conversion_policy.hh dimension.hh io.hh magnitude.hh math.hh operators.hh packs.hh power_aliases.hh prefix.hh quantity.hh quantity_point.hh rep.hh unit_of_measure.hh unit_symbol.hh wrapper_operations.hh zero.hh stdx/experimental/is_detected.hh stdx/functional.hh stdx/type_traits.hh stdx/utility.hh units/amperes.hh units/bars.hh units/becquerel.hh units/bits.hh units/bytes.hh units/candelas.hh units/celsius.hh units/coulombs.hh units/days.hh units/degrees.hh units/fahrenheit.hh units/farads.hh units/fathoms.hh units/feet.hh units/furlongs.hh units/grams.hh units/grays.hh units/henries.hh units/hertz.hh units/hours.hh units/inches.hh units/joules.hh units/katals.hh units/kelvins.hh units/knots.hh units/liters.hh units/lumens.hh units/lux.hh units/meters.hh units/miles.hh units/minutes.hh units/moles.hh units/nautical_miles.hh units/newtons.hh units/ohms.hh units/pascals.hh units/percent.hh units/pounds_force.hh units/pounds_mass.hh units/radians.hh units/revolutions.hh units/seconds.hh units/siemens.hh units/slugs.hh units/standard_gravity.hh units/steradians.hh units/tesla.hh units/unos.hh units/volts.hh units/watts.hh units/webers.hh units/yards.hh utility/factoring.hh utility/string_constant.hh utility/type_traits.hh
+  HEADERS
+    apply_magnitude.hh
+    apply_rational_magnitude_to_integral.hh
+    au.hh
+    chrono_interop.hh
+    constant.hh
+    conversion_policy.hh
+    dimension.hh
+    io.hh
+    magnitude.hh
+    math.hh
+    operators.hh
+    packs.hh
+    power_aliases.hh
+    prefix.hh
+    quantity.hh
+    quantity_point.hh
+    rep.hh
+    unit_of_measure.hh
+    unit_symbol.hh
+    wrapper_operations.hh
+    zero.hh
+    stdx/experimental/is_detected.hh
+    stdx/functional.hh
+    stdx/type_traits.hh
+    stdx/utility.hh
+    units/amperes.hh
+    units/bars.hh
+    units/becquerel.hh
+    units/bits.hh
+    units/bytes.hh
+    units/candelas.hh
+    units/celsius.hh
+    units/coulombs.hh
+    units/days.hh
+    units/degrees.hh
+    units/fahrenheit.hh
+    units/farads.hh
+    units/fathoms.hh
+    units/feet.hh
+    units/furlongs.hh
+    units/grams.hh
+    units/grays.hh
+    units/henries.hh
+    units/hertz.hh
+    units/hours.hh
+    units/inches.hh
+    units/joules.hh
+    units/katals.hh
+    units/kelvins.hh
+    units/knots.hh
+    units/liters.hh
+    units/lumens.hh
+    units/lux.hh
+    units/meters.hh
+    units/miles.hh
+    units/minutes.hh
+    units/moles.hh
+    units/nautical_miles.hh
+    units/newtons.hh
+    units/ohms.hh
+    units/pascals.hh
+    units/percent.hh
+    units/pounds_force.hh
+    units/pounds_mass.hh
+    units/radians.hh
+    units/revolutions.hh
+    units/seconds.hh
+    units/siemens.hh
+    units/slugs.hh
+    units/standard_gravity.hh
+    units/steradians.hh
+    units/tesla.hh
+    units/unos.hh
+    units/volts.hh
+    units/watts.hh
+    units/webers.hh
+    units/yards.hh
+    utility/factoring.hh
+    utility/string_constant.hh
+    utility/type_traits.hh
 )
 
 header_only_library(
@@ -50,7 +130,7 @@ header_only_library(
 
 gtest_based_test(
   NAME au_test
-  GTEST_SRCS
+  SRCS
     au_test.cc
   DEPS
     au
@@ -59,7 +139,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME chrono_interop_test
-  GTEST_SRCS
+  SRCS
     chrono_interop_test.cc
   DEPS
     au
@@ -68,7 +148,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME constant_test
-  GTEST_SRCS
+  SRCS
     constant_test.cc
   DEPS
     au
@@ -77,7 +157,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME io_test
-  GTEST_SRCS
+  SRCS
     io_test.cc
   DEPS
     au
@@ -85,7 +165,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME math_test
-  GTEST_SRCS
+  SRCS
     math_test.cc
   DEPS
     au
@@ -94,7 +174,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME prefix_test
-  GTEST_SRCS
+  SRCS
     prefix_test.cc
   DEPS
     au
@@ -103,7 +183,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME quantity_test
-  GTEST_SRCS
+  SRCS
     quantity_chrono_policy_correspondence_test.cc
     quantity_test.cc
   DEPS
@@ -114,7 +194,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME quantity_point_test
-  GTEST_SRCS
+  SRCS
     quantity_point_test.cc
   DEPS
     au
@@ -123,7 +203,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME testing_test
-  GTEST_SRCS
+  SRCS
     testing_test.cc
   DEPS
     au
@@ -132,7 +212,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME units_test
-  GTEST_SRCS
+  SRCS
     units/test/amperes_test.cc
     units/test/bars_test.cc
     units/test/becquerel_test.cc
@@ -192,7 +272,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME unit_symbol_test
-  GTEST_SRCS
+  SRCS
     unit_symbol_test.cc
   DEPS
     au
@@ -205,7 +285,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME apply_magnitude_test
-  GTEST_SRCS
+  SRCS
     apply_magnitude_test.cc
   DEPS
     au
@@ -214,7 +294,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME apply_rational_magnitude_to_integral_test
-  GTEST_SRCS
+  SRCS
     apply_rational_magnitude_to_integral_test.cc
   DEPS
     au
@@ -223,7 +303,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME chrono_policy_validation_test
-  GTEST_SRCS
+  SRCS
     chrono_policy_validation_test.cc
   DEPS
     au
@@ -234,7 +314,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME conversion_policy_test
-  GTEST_SRCS
+  SRCS
     conversion_policy_test.cc
   DEPS
     au
@@ -243,7 +323,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME dimension_test
-  GTEST_SRCS
+  SRCS
     dimension_test.cc
   DEPS
     au
@@ -252,7 +332,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME magnitude_test
-  GTEST_SRCS
+  SRCS
     magnitude_test.cc
   DEPS
     au
@@ -261,7 +341,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME operators_test
-  GTEST_SRCS
+  SRCS
     operators_test.cc
   DEPS
     testing
@@ -269,7 +349,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME packs_test
-  GTEST_SRCS
+  SRCS
     packs_test.cc
   DEPS
     au
@@ -277,7 +357,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME power_aliases_test
-  GTEST_SRCS
+  SRCS
     power_aliases_test.cc
   DEPS
     au
@@ -285,7 +365,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME rep_test
-  GTEST_SRCS
+  SRCS
     rep_test.cc
   DEPS
     au
@@ -293,7 +373,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME stdx_test
-  GTEST_SRCS
+  SRCS
     stdx/test/utility_test.cc
   DEPS
     au
@@ -301,7 +381,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME unit_of_measure_test
-  GTEST_SRCS
+  SRCS
     unit_of_measure_test.cc
   DEPS
     au
@@ -310,7 +390,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME utility_test
-  GTEST_SRCS
+  SRCS
     utility/test/factoring_test.cc
     utility/test/string_constant_test.cc
     utility/test/type_traits_test.cc
@@ -321,7 +401,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME wrapper_operations_test
-  GTEST_SRCS
+  SRCS
     wrapper_operations_test.cc
   DEPS
     au
@@ -330,7 +410,7 @@ gtest_based_test(
 
 gtest_based_test(
   NAME zero_test
-  GTEST_SRCS
+  SRCS
     zero_test.cc
   DEPS
     au

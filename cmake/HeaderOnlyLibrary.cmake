@@ -81,7 +81,7 @@ function(gtest_based_test)
   set(prefix ARG)
   set(singleValueVars NAME)
   set(multiValueVars
-    GTEST_SRCS
+    SRCS
     DEPS
   )
 
