@@ -99,7 +99,7 @@ function(gtest_based_test)
 
   # Add the test.
   add_executable(${ARG_NAME})
-  target_sources(${ARG_NAME} PRIVATE ${ARG_GTEST_SRCS})
+  target_sources(${ARG_NAME} PRIVATE ${ARG_SRCS})
   target_link_libraries(
     ${ARG_NAME}
     PRIVATE
