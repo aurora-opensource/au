@@ -23,8 +23,6 @@ function(header_only_library)
   set(multiValueVars
     HEADERS
     DEPS
-    GTEST_SRCS
-    GTEST_EXTRA_DEPS
   )
 
   cmake_parse_arguments(
@@ -73,18 +71,40 @@ function(header_only_library)
     FILE_SET HEADERS
     INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
   )
+endfunction()
 
-  # Add the test, if requested.
-  if (DEFINED ARG_GTEST_SRCS)
-    add_executable("${ARG_NAME}_test")
-    target_sources("${ARG_NAME}_test" PRIVATE ${ARG_GTEST_SRCS})
-    target_link_libraries(
-      "${ARG_NAME}_test"
-      PRIVATE
-      ${ARG_NAME}
-      ${ARG_GTEST_EXTRA_DEPS}
-      GTest::gmock_main
-    )
-    gtest_discover_tests("${ARG_NAME}_test")
-  endif()
+function(gtest_based_test)
+  #
+  # Handle argument parsing
+  #
+
+  set(prefix ARG)
+  set(singleValueVars NAME)
+  set(multiValueVars
+    GTEST_SRCS
+    DEPS
+  )
+
+  cmake_parse_arguments(
+    PARSE_ARGV 0
+    "${prefix}"
+    "${noValueVars}"
+    "${singleValueVars}"
+    "${multiValueVars}"
+  )
+
+  #
+  # Function body
+  #
+
+  # Add the test.
+  add_executable(${ARG_NAME})
+  target_sources(${ARG_NAME} PRIVATE ${ARG_GTEST_SRCS})
+  target_link_libraries(
+    ${ARG_NAME}
+    PRIVATE
+    ${ARG_DEPS}
+    GTest::gmock_main
+  )
+  gtest_discover_tests(${ARG_NAME})
 endfunction()
