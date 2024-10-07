@@ -267,8 +267,7 @@ In either case, here are the main targets and include files provided by the Au l
 
 | Target | Headers provided | Notes |
 |--------|------------------|-------|
-| `Au::au` | `"au/au.hh"`<br>`"au/units/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
-| `Au::io` | `"au/io.hh"` | `operator<<` support |
+| `Au::au` | `"au/au.hh"`<br>`"au/io.hh"`<br>`"au/units/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
 | `Au::testing` | `"au/testing.hh"` | Utilities for writing googletest tests |
 
 !!! note
@@ -293,8 +292,8 @@ In either case, here are the main targets and include files provided by the Au l
     FetchContent_MakeAvailable(Au)
     ```
 
-    You should now be able to depend on Au targets, such as `Au::au` or `Au::io`, and include their
-    corresponding headers, such as `#include "au/au.hh"` or `#include "au/io.hh"`.
+    You should now be able to depend on Au targets, such as `Au::au` or `Au::testing`, and include
+    headers from them, such as `#include "au/au.hh"` or `#include "au/testing.hh"`.
 
 === "Using `find_package`"
     Before you can use `find_package`, you need to install the library to your system.  This means
