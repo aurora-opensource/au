@@ -2086,13 +2086,8 @@ system-wide version of Au, then you can install it to the system, and simply use
 <tbody>
 <tr>
 <td><code>Au::au</code></td>
-<td><code>"au/au.hh"</code><br><code>"au/units/*.hh"</code></td>
+<td><code>"au/au.hh"</code><br><code>"au/io.hh"</code><br><code>"au/units/*.hh"</code></td>
 <td>Core library functionality.  See <a href="https://github.com/aurora-opensource/au/tree/main/au/units">all available units</a></td>
-</tr>
-<tr>
-<td><code>Au::io</code></td>
-<td><code>"au/io.hh"</code></td>
-<td><code>operator&lt;&lt;</code> support</td>
 </tr>
 <tr>
 <td><code>Au::testing</code></td>
@@ -2122,8 +2117,8 @@ below.</p>
 <a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">)</span>
 <a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">Au</span><span class="p">)</span>
 </code></pre></div>
-<p>You should now be able to depend on Au targets, such as <code>Au::au</code> or <code>Au::io</code>, and include their
-corresponding headers, such as <code>#include "au/au.hh"</code> or <code>#include "au/io.hh"</code>.</p>
+<p>You should now be able to depend on Au targets, such as <code>Au::au</code> or <code>Au::testing</code>, and include
+headers from them, such as <code>#include "au/au.hh"</code> or <code>#include "au/testing.hh"</code>.</p>
 </div>
 <div class="tabbed-block">
 <p>Before you can use <code>find_package</code>, you need to install the library to your system.  This means
