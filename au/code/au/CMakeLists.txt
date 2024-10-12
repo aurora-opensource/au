@@ -21,144 +21,31 @@ include("${PROJECT_SOURCE_DIR}/cmake/HeaderOnlyLibrary.cmake")
 header_only_library(
   NAME au
   HEADERS
+    apply_magnitude.hh
+    apply_rational_magnitude_to_integral.hh
     au.hh
-  DEPS
-    chrono_interop
-    constant
-    math
-  GTEST_SRCS
-    au_test.cc
-  GTEST_EXTRA_DEPS
-    testing
-)
-
-header_only_library(
-  NAME chrono_interop
-  HEADERS
     chrono_interop.hh
-  DEPS
-    prefix
-    quantity
-    units
-  GTEST_SRCS
-    chrono_interop_test.cc
-  GTEST_EXTRA_DEPS
-    prefix
-    testing
-)
-
-header_only_library(
-  NAME constant
-  HEADERS
     constant.hh
-  DEPS
-    quantity
-    unit_of_measure
-    wrapper_operations
-  GTEST_SRCS
-    constant_test.cc
-  GTEST_EXTRA_DEPS
-    chrono_interop
-    testing
-    units
-)
-
-header_only_library(
-  NAME io
-  HEADERS
+    conversion_policy.hh
+    dimension.hh
     io.hh
-  DEPS
-    quantity
-    quantity_point
-    zero
-  GTEST_SRCS
-    io_test.cc
-  GTEST_EXTRA_DEPS
-    prefix
-)
-
-header_only_library(
-  NAME math
-  HEADERS
+    magnitude.hh
     math.hh
-  DEPS
-    constant
-    quantity
-    quantity_point
-    units
-  GTEST_SRCS
-    math_test.cc
-  GTEST_EXTRA_DEPS
-    testing
-)
-
-header_only_library(
-  NAME prefix
-  HEADERS
+    operators.hh
+    packs.hh
+    power_aliases.hh
     prefix.hh
-  DEPS
-    quantity
-    quantity_point
-    unit_of_measure
-    unit_symbol
-  GTEST_SRCS
-    prefix_test.cc
-  GTEST_EXTRA_DEPS
-    testing
-)
-
-header_only_library(
-  NAME quantity
-  HEADERS
     quantity.hh
-  DEPS
-    apply_magnitude
-    conversion_policy
-    operators
-    rep
-    unit_of_measure
-    utility
-    zero
-  GTEST_SRCS
-    quantity_chrono_policy_correspondence_test.cc
-    quantity_test.cc
-  GTEST_EXTRA_DEPS
-    chrono_policy_validation
-    prefix
-    testing
-)
-
-header_only_library(
-  NAME quantity_point
-  HEADERS
     quantity_point.hh
-  DEPS
-    quantity
-    stdx
-    utility
-  GTEST_SRCS
-    quantity_point_test.cc
-  GTEST_EXTRA_DEPS
-    prefix
-    testing
-)
-
-header_only_library(
-  NAME testing
-  HEADERS
-    testing.hh
-  DEPS
-    io
-    stdx
-    unit_of_measure
-    GTest::gmock
-  GTEST_SRCS
-    testing_test.cc
-)
-
-header_only_library(
-  NAME units
-  HEADERS
+    rep.hh
+    unit_of_measure.hh
+    unit_symbol.hh
+    wrapper_operations.hh
+    zero.hh
+    stdx/experimental/is_detected.hh
+    stdx/functional.hh
+    stdx/type_traits.hh
+    stdx/utility.hh
     units/amperes.hh
     units/bars.hh
     units/becquerel.hh
@@ -211,13 +98,121 @@ header_only_library(
     units/watts.hh
     units/webers.hh
     units/yards.hh
+    utility/factoring.hh
+    utility/string_constant.hh
+    utility/type_traits.hh
+)
+
+header_only_library(
+  NAME testing
+  HEADERS testing.hh
   DEPS
-    prefix
-    quantity
-    quantity_point
-    unit_of_measure
-    unit_symbol
-  GTEST_SRCS
+    au
+    GTest::gmock
+)
+
+#
+# Private implementation detail targets
+#
+
+header_only_library(
+  NAME chrono_policy_validation
+  INTERNAL_ONLY
+  HEADERS chrono_policy_validation.hh
+  DEPS
+    au
+    GTest::gtest
+)
+
+#
+# Tests
+#
+
+gtest_based_test(
+  NAME au_test
+  SRCS
+    au_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
+  NAME chrono_interop_test
+  SRCS
+    chrono_interop_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
+  NAME constant_test
+  SRCS
+    constant_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
+  NAME io_test
+  SRCS
+    io_test.cc
+  DEPS
+    au
+)
+
+gtest_based_test(
+  NAME math_test
+  SRCS
+    math_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
+  NAME prefix_test
+  SRCS
+    prefix_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
+  NAME quantity_test
+  SRCS
+    quantity_chrono_policy_correspondence_test.cc
+    quantity_test.cc
+  DEPS
+    au
+    chrono_policy_validation
+    testing
+)
+
+gtest_based_test(
+  NAME quantity_point_test
+  SRCS
+    quantity_point_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
+  NAME testing_test
+  SRCS
+    testing_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
+  NAME units_test
+  SRCS
     units/test/amperes_test.cc
     units/test/bars_test.cc
     units/test/becquerel_test.cc
@@ -270,238 +265,153 @@ header_only_library(
     units/test/watts_test.cc
     units/test/webers_test.cc
     units/test/yards_test.cc
-  GTEST_EXTRA_DEPS
+  DEPS
+    au
     testing
 )
 
-header_only_library(
-  NAME unit_symbol
-  HEADERS
-    unit_symbol.hh
-  DEPS
-    wrapper_operations
-  GTEST_SRCS
+gtest_based_test(
+  NAME unit_symbol_test
+  SRCS
     unit_symbol_test.cc
-  GTEST_EXTRA_DEPS
+  DEPS
+    au
     testing
-    units
 )
 
 #
 # Private implementation detail targets
 #
 
-header_only_library(
-  NAME apply_magnitude
-  INTERNAL_ONLY
-  HEADERS
-    apply_magnitude.hh
-  DEPS
-    apply_rational_magnitude_to_integral
-  GTEST_SRCS
+gtest_based_test(
+  NAME apply_magnitude_test
+  SRCS
     apply_magnitude_test.cc
-  GTEST_EXTRA_DEPS
+  DEPS
+    au
     testing
 )
 
-header_only_library(
-  NAME apply_rational_magnitude_to_integral
-  INTERNAL_ONLY
-  HEADERS
-    apply_rational_magnitude_to_integral.hh
-  DEPS
-    magnitude
-  GTEST_SRCS
+gtest_based_test(
+  NAME apply_rational_magnitude_to_integral_test
+  SRCS
     apply_rational_magnitude_to_integral_test.cc
-  GTEST_EXTRA_DEPS
+  DEPS
+    au
     testing
 )
 
-header_only_library(
-  NAME chrono_policy_validation
-  INTERNAL_ONLY
-  HEADERS
-    chrono_policy_validation.hh
-  DEPS
-    dimension
-    quantity
-    stdx
-    unit_of_measure
-    GTest::gtest
-  GTEST_SRCS
+gtest_based_test(
+  NAME chrono_policy_validation_test
+  SRCS
     chrono_policy_validation_test.cc
-  GTEST_EXTRA_DEPS
-    prefix
+  DEPS
+    au
+    chrono_policy_validation
     testing
 )
 
 
-header_only_library(
-  NAME conversion_policy
-  INTERNAL_ONLY
-  HEADERS
-    conversion_policy.hh
-  DEPS
-    magnitude
-    stdx
-    unit_of_measure
-  GTEST_SRCS
+gtest_based_test(
+  NAME conversion_policy_test
+  SRCS
     conversion_policy_test.cc
+  DEPS
+    au
+    testing
 )
 
-header_only_library(
-  NAME dimension
-  INTERNAL_ONLY
-  HEADERS
-    dimension.hh
-  DEPS
-    packs
-    power_aliases
-  GTEST_SRCS
+gtest_based_test(
+  NAME dimension_test
+  SRCS
     dimension_test.cc
-  GTEST_EXTRA_DEPS
+  DEPS
+    au
     testing
-    units
 )
 
-header_only_library(
-  NAME magnitude
-  INTERNAL_ONLY
-  HEADERS
-    magnitude.hh
-  DEPS
-    packs
-    power_aliases
-    stdx
-    utility
-    zero
-  GTEST_SRCS
+gtest_based_test(
+  NAME magnitude_test
+  SRCS
     magnitude_test.cc
-  GTEST_EXTRA_DEPS
+  DEPS
+    au
     testing
 )
 
-header_only_library(
-  NAME operators
-  INTERNAL_ONLY
-  HEADERS
-    operators.hh
-  GTEST_SRCS
+gtest_based_test(
+  NAME operators_test
+  SRCS
     operators_test.cc
-  GTEST_EXTRA_DEPS
+  DEPS
     testing
 )
 
-header_only_library(
-  NAME packs
-  INTERNAL_ONLY
-  HEADERS
-    packs.hh
-  DEPS
-    stdx
-    utility
-  GTEST_SRCS
+gtest_based_test(
+  NAME packs_test
+  SRCS
     packs_test.cc
+  DEPS
+    au
 )
 
-header_only_library(
-  NAME power_aliases
-  INTERNAL_ONLY
-  HEADERS
-    power_aliases.hh
-  GTEST_SRCS
+gtest_based_test(
+  NAME power_aliases_test
+  SRCS
     power_aliases_test.cc
-  GTEST_EXTRA_DEPS
-    packs
+  DEPS
+    au
 )
 
-header_only_library(
-  NAME rep
-  INTERNAL_ONLY
-  HEADERS
-    rep.hh
-  DEPS
-    stdx
-  GTEST_SRCS
+gtest_based_test(
+  NAME rep_test
+  SRCS
     rep_test.cc
-  GTEST_EXTRA_DEPS
-    chrono_interop
-    constant
-    magnitude
-    prefix
-    quantity
-    quantity_point
-    unit_symbol
-    units
+  DEPS
+    au
 )
 
-header_only_library(
-  NAME stdx
-  INTERNAL_ONLY
-  HEADERS
-    stdx/experimental/is_detected.hh
-    stdx/functional.hh
-    stdx/type_traits.hh
-    stdx/utility.hh
-  GTEST_SRCS
+gtest_based_test(
+  NAME stdx_test
+  SRCS
     stdx/test/utility_test.cc
+  DEPS
+    au
 )
 
-header_only_library(
-  NAME unit_of_measure
-  INTERNAL_ONLY
-  HEADERS
-    unit_of_measure.hh
-  DEPS
-    dimension
-    magnitude
-    power_aliases
-    stdx
-    utility
-    zero
-  GTEST_SRCS
+gtest_based_test(
+  NAME unit_of_measure_test
+  SRCS
     unit_of_measure_test.cc
-  GTEST_EXTRA_DEPS
-    prefix
+  DEPS
+    au
     testing
-    units
 )
 
-header_only_library(
-  NAME utility
-  INTERNAL_ONLY
-  HEADERS
-    utility/factoring.hh
-    utility/string_constant.hh
-    utility/type_traits.hh
-  DEPS
-    stdx
-  GTEST_SRCS
+gtest_based_test(
+  NAME utility_test
+  SRCS
     utility/test/factoring_test.cc
     utility/test/string_constant_test.cc
     utility/test/type_traits_test.cc
-)
-
-header_only_library(
-  NAME wrapper_operations
-  INTERNAL_ONLY
-  HEADERS
-    wrapper_operations.hh
   DEPS
-    quantity
-    stdx
-  GTEST_SRCS
-    wrapper_operations_test.cc
-  GTEST_EXTRA_DEPS
+    au
     testing
-    units
 )
 
-header_only_library(
-  NAME zero
-  INTERNAL_ONLY
-  HEADERS
-    zero.hh
-  GTEST_SRCS
+gtest_based_test(
+  NAME wrapper_operations_test
+  SRCS
+    wrapper_operations_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
+  NAME zero_test
+  SRCS
     zero_test.cc
+  DEPS
+    au
 )

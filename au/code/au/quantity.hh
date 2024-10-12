@@ -403,7 +403,7 @@ class Quantity {
 
     constexpr Quantity(Rep value) : value_{value} {}
 
-    Rep value_{0};
+    Rep value_{};
 };
 
 // Force integer division beteween two integer Quantities, in a callsite-obvious way.
