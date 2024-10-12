@@ -32,12 +32,12 @@ project(
    LANGUAGES CXX
 )
 
-option(ENABLE_TESTING "Build Unit Tests" ON)
+option(AU_ENABLE_TESTING "Build Unit Tests" ON)
 
 # The export set for all of our headers.
 set(AU_EXPORT_SET_NAME AuHeaders)
 
-if(ENABLE_TESTING)
+if(AU_ENABLE_TESTING)
    message(STATUS "Unit tests enabled")
    enable_testing()
 

@@ -74,7 +74,7 @@ function(header_only_library)
 endfunction()
 
 function(gtest_based_test)
-  if (NOT ENABLE_TESTING)
+  if (NOT AU_ENABLE_TESTING)
     message(VERBOSE "AU_ENABLE_TESTING not defined; will not create test target.")
     return()
   endif()
