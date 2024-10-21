@@ -232,7 +232,7 @@ methods have "community support", which means:
 Each package manager contains setup instructions on its page for Au.  Here are the packages:
 
 - **Conan:** [au](https://conan.io/center/recipes/au)
-- **vcpkg:** [aurora-au](https://vcpkg.link/ports/aurora-au)
+- **vcpkg:** [aurora-au](https://vcpkg.io/en/package/aurora-au)
 
 ### Single file {#single-file}
 
