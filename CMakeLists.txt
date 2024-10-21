@@ -32,10 +32,17 @@ project(
    LANGUAGES CXX
 )
 
+option(AU_ENABLE_TESTING "Build Unit Tests" ON)
+
 # The export set for all of our headers.
 set(AU_EXPORT_SET_NAME AuHeaders)
 
-enable_testing()
+if(AU_ENABLE_TESTING)
+   message(STATUS "Unit tests enabled")
+   enable_testing()
+else()
+   message(STATUS "Unit tests disabled")
+endif()
 
 # Bring in GoogleTest so we can build and run the tests.
 include(FetchContent)
@@ -54,6 +61,8 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
+
+set(AU_CONFIG_FIND_GTEST_LINE "find_dependency(googletest 1.12.1)")
 
 add_subdirectory(au)
 
