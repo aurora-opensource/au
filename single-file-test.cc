@@ -38,7 +38,7 @@ bool expect_equal(ExpectedT expected, ActualT actual) {
     return true;
 }
 
-int main(int argc, char **argv) {
+int main(int, char **) {
     const std::vector<bool> results{
         {
             expect_equal((meters / second)(5) * seconds(6), meters(30)),
