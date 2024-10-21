@@ -332,39 +332,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#single-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Single file
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Single file">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pre-built-single-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Pre-built single file
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#custom-single-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Custom single file
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#full" class="md-nav__link">
     <span class="md-ellipsis">
       Full library installation
@@ -387,6 +354,48 @@
   <a href="#cmake" class="md-nav__link">
     <span class="md-ellipsis">
       CMake
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#package-managers-conan-vcpkg" class="md-nav__link">
+    <span class="md-ellipsis">
+      Package managers (conan, vcpkg)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Single file
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Single file">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-built-single-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-built single file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-single-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom single file
     </span>
   </a>
   
@@ -1807,12 +1816,12 @@ header file.  For the latter approach, there are two options:</p>
 <li>Custom versions with exactly the units you choose.</li>
 </ul>
 <h2 id="choosing-a-method">Choosing a method<a class="headerlink" href="#choosing-a-method" title="Permanent link">&para;</a></h2>
-<p>You should consider several factors before you decide how to install the Au library, such as:</p>
-<ul>
-<li>Tradeoffs in setup time, unit selection, and flexibility.</li>
-<li>Whether you&rsquo;re installing for production, or just trying it out.</li>
-<li>Your build system.</li>
-</ul>
+<p>These days, Au supports both bazel and CMake build systems natively.  We also have community support
+for the most popular C++ package managers, conan and vcpkg.  Setup via any of these methods is
+pretty quick, so <strong>just doing a full install is usually best</strong>.</p>
+<p>The main reason to consider a single-file approach is if you&rsquo;re not using any of these build
+systems: clearly, a single file works with any build system imaginable.  The <em>pre-built</em> single file
+packages are also the quickest way to start playing with the library.</p>
 <p>Here&rsquo;s an overview of the tradeoffs involved.</p>
 <table>
   <tr>
@@ -1827,179 +1836,63 @@ header file.  For the latter approach, there are two options:</p>
 <table>
   <tr>
     <th rowspan=2></th>
+    <th colspan=2>Full Install</th>
     <th colspan=2>Single File</th>
-    <th colspan=3>Full Install</th>
   </tr>
   <tr>
+    <td>bazel, CMake, conan, vcpkg</td>
+    <td>Other build systems</td>
     <td>Pre-built</td>
     <td>Custom</td>
-    <td>bazel</td>
-    <td>CMake</td>
-    <td>conan, vcpkg, ...</td>
   </tr>
   <tr>
     <td>Setup time</td>
-    <td class="best">~1 min</td>
-    <td class="good">~10 min</td>
-    <td class="good">~10 min</td>
-    <td class="good">~10 min</td>
-    <td class="poor">Not <i>yet</i> supported<br>(use <b>single-file</b> instead for now)</td>
+    <td class="good">Fast (a few minutes)</td>
+    <td rowspan="4" class="poor">Full Install unsupported (use single-file instead)</td>
+    <td class="best">Instant</td>
+    <td class="good">Fast (a few minutes)</td>
   </tr>
   <tr>
     <td>Unit selection</td>
+    <td class="best">Any units desired, <i>without</i> needing "reinstall"</td>
     <td class="fair">Base units only<br>(or too many units)</td>
     <td class="good">Any units desired</td>
-    <td colspan=3 class="best">Any units desired, <i>without</i> needing "reinstall"</td>
   </tr>
   <tr>
     <td>Compile time cost</td>
-    <td class="good">~10 units</td>
+    <td class="best"><i>Each file</i> only pays for the units it uses</td>
+    <td class="good">Cost of core, plus ~10 units</td>
     <td class="good">Very competitive up to a few dozen units</td>
-    <td colspan=3 class="best"><i>Each file</i> only pays for the units it uses</td>
   </tr>
   <tr>
     <td>Flexibility</td>
+    <td class="best">
+      Include I/O, testing utilities, individual units as desired, on a per-file basis
+    </td>
     <td colspan=2 class="fair">
       Awkward: would need to download <pre>io.hh</pre> and/or <pre>testing.hh</pre> separately, and
       modify their includes manually
     </td>
-    <td colspan=3 class="best">
-      Include I/O, testing utilities, individual units as desired, on a per-file basis
-    </td>
   </tr>
 </table>
 
-<p>So, which should <em>you</em> use?</p>
-<pre class="mermaid"><code>graph TD
-Usage[What's your use case?]
-SetupTime[Got 10 minutes for setup?]
-BuildSystem[What's your build system?]
-UsePreBuilt[Use pre-built single file]
-UseCustom[Use custom single file]
-UseFullInstall[Use full install]
-Usage --&gt;|Just playing around with Au| SetupTime
-SetupTime --&gt;|No! Just let me start!| UsePreBuilt
-SetupTime --&gt;|Sure| UseCustom
-Usage --&gt;|Ready to use in my project!| BuildSystem
-BuildSystem --&gt;|bazel| UseFullInstall
-BuildSystem --&gt;|CMake| UseFullInstall
-BuildSystem --&gt;|other| UseCustom</code></pre>
 <h2 id="installation-instructions">Installation instructions<a class="headerlink" href="#installation-instructions" title="Permanent link">&para;</a></h2>
 <p>Here are the instructions for each installation method we support.</p>
-<h3 id="single-file">Single file<a class="headerlink" href="#single-file" title="Permanent link">&para;</a></h3>
-<p>The Au library can be packaged as a single header file, which you can include in your project just
-like any other header.  This works with any build system!</p>
-<p>To take this approach, obtain the single file by one of the methods described below.  Then, put it
-inside a <code>third_party</code> folder (for example, as <code>third_party/au.hh</code>).  Now you&rsquo;re up and running with
-Au!</p>
-<p>Every single-file package automatically includes the following features:</p>
-<ul>
-<li>Basic &ldquo;unit container&rdquo; types: <a href="../reference/quantity/"><code>Quantity</code></a>,
-  <a href="../reference/quantity_point/"><code>QuantityPoint</code></a></li>
-<li><a href="../reference/magnitude/">Magnitude</a> types and values, including constants for any integer such
-  as <code>mag&lt;5280&gt;()</code>.</li>
-<li>All <a href="../reference/prefix/">prefixes</a> for SI (<code>kilo</code>, <code>mega</code>, &hellip;) and informational (<code>kibi</code>,
-  <code>mebi</code>, &hellip;) quantities.</li>
-<li><a href="../reference/math/">Math functions</a>, including unit-aware rounding and inverses, trigonometric
-  functions, square roots, and so on.</li>
-<li><em>Bidirectional implicit conversion</em> between <code>Quantity</code> types and any <a href="../reference/corresponding_quantity/#chrono-duration">equivalent counterparts in the
-  <code>std::chrono</code> library</a>.</li>
-</ul>
-<p>Here are the two ways to get a single-file packaging of the library.</p>
-<h4 id="pre-built-single-file">Pre-built single file<a class="headerlink" href="#pre-built-single-file" title="Permanent link">&para;</a></h4>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>This approach is mainly for <em>playing</em> with the library.  It&rsquo;s very fast to get up and running,
-but it&rsquo;s not the best choice as the &ldquo;production&rdquo; installation of your library.</p>
-<p>For a single-file approach, most users will be much better served by the next section, which
-explains how to customize it to get exactly the units you want.</p>
-</div>
-<p>We provide pre-generated single-file versions of the library, automatically generated from the
-latest commit in the repo:</p>
-<ul>
-<li><a href="../au.hh"><code>au.hh</code></a></li>
-<li><a href="../au_noio.hh"><code>au_noio.hh</code></a>
-  (Same as above, but with <code>&lt;iostream&gt;</code> support stripped out)</li>
-</ul>
-<p>These include very few units (to keep compile times short).  However, <em>combinations</em> of these units
-should get you any other unit you&rsquo;re likely to want.  The units we include are:</p>
-<ul>
-<li>Every SI base unit (<code>seconds</code>, <code>meters</code>, <code>kilo(grams)</code>, <code>amperes</code>, <code>kelvins</code>, <code>moles</code>, <code>candelas</code>)</li>
-<li>Base units for angles and information (<code>radians</code>, <code>bits</code>)</li>
-<li>A base dimensionless unit (<code>unos</code>)</li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><em>How</em> do you go about constructing other units from these?  By <strong>composing</strong> them.  For example,
-you can make <a href="https://www.nist.gov/pml/owm/metric-si/si-units">other coherent SI units</a> like
-this:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">newtons</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kilo</span><span class="p">(</span><span class="n">gram</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">squared</span><span class="p">(</span><span class="n">second</span><span class="p">);</span>
-</code></pre></div>
-<p>Now you can call, say, <code>newtons(10)</code> and get a quantity equivalent to 10 Newtons.  You can also
-<strong>scale</strong> a unit by multiplying by Magnitude objects.  For example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">degrees</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">radians</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Magnitude</span><span class="o">&lt;</span><span class="n">Pi</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">180</span><span class="o">&gt;</span><span class="p">();</span>
-</code></pre></div>
-<p>These will &ldquo;work&rdquo;, in the sense of producing correct results.  But these ad hoc unit definitions
-are far less usable than <a href="../howto/new-units/">fully defined units</a>.  Both the type names and
-the unit symbols will be needlessly complicated.</p>
-<p>Again, we recommend following the directions in the next section to get <em>exactly</em> the units you
-care about.</p>
-</div>
-<details class="warning">
-<summary>Pre-built files with all units</summary>
-<p>We also provide pre-built files with every unit the library knows about.</p>
-<p>We don&rsquo;t advertise this option widely, because the library&rsquo;s compile time slowdown is largely
-proportional to the number of units included in a translation unit.  Thus, not only will this
-configuration be the slowest of all, but <em>it will get increasingly slower as the library gets
-better over time</em> (by supporting more and more units out of the box).</p>
-<p>Therefore, these files are only for use cases where <em>you don&rsquo;t care about compile time</em>.  The
-primary example is <a href="https://godbolt.org/z/KrvfhP4M3">the Compiler Explorer (&ldquo;godbolt&rdquo;)</a>.</p>
-<p><strong>If you don&rsquo;t care about compile times</strong>, here are the files:</p>
-<ul>
-<li><a href="../au_all_units.hh"><code>au_all_units.hh</code></a></li>
-<li><a href="../au_all_units_noio.hh"><code>au_all_units_noio.hh</code></a>
-  (Same as above, but with <code>&lt;iostream&gt;</code> support stripped out)</li>
-</ul>
-</details>
-<h4 id="custom-single-file">Custom single file<a class="headerlink" href="#custom-single-file" title="Permanent link">&para;</a></h4>
-<p>It&rsquo;s easy to package the library in a <em>custom</em> single file with <em>exactly</em> the units you need.
-Here&rsquo;s how:</p>
-<ol>
-<li>
-<p><strong>Clone the repo</strong>.  Go to the <a href="https://github.com/aurora-opensource/au">aurora-opensource/au</a>
-   repo, and follow the typical instructions.</p>
-<ul>
-<li>If you&rsquo;re just a <em>user</em> of Au, not a <em>contributor</em>, this should be:<br>
-  <code>git clone https://github.com/aurora-opensource/au.git</code></li>
-</ul>
-</li>
-<li>
-<p><strong>Run the script</strong>.  <code>tools/bin/make-single-file --units meters seconds newtons &gt; ~/au.hh</code>
-   creates a file, <code>~/au.hh</code>, which packages the entire library in a single file with these three
-   units.</p>
-<ul>
-<li>To see the full list of available units, search the <code>.hh</code> files in the <code>au/units/</code> folder. For
-  example, <code>meters</code> will include the contents of <code>au/units/meters.hh</code>.</li>
-<li>Provide the <code>--noio</code> flag if you prefer to avoid the expense of the <code>&lt;iostream&gt;</code> library.</li>
-</ul>
-</li>
-</ol>
-<p>Now you have a file, <code>~/au.hh</code>, which you can add to your <code>third_party</code> folder.</p>
 <h3 id="full">Full library installation<a class="headerlink" href="#full" title="Permanent link">&para;</a></h3>
 <h4 id="bazel">bazel<a class="headerlink" href="#bazel" title="Permanent link">&para;</a></h4>
 <ol>
 <li>
 <p><strong>Choose your Au version</strong>.</p>
 <ul>
-<li>This can be a tag, or a commit hash.  Let&rsquo;s take <code>0.3.4</code> as an example.</li>
+<li>This can be a tag, or a commit hash.  Let&rsquo;s take <code>0.3.5</code> as an example.</li>
 </ul>
 </li>
 <li>
 <p><strong>Form the URL to the archive</strong>.</p>
 <ul>
-<li>For <code>0.3.4</code>, this would be:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>https://github.com/aurora-opensource/au/releases/download/0.3.4/au-0.3.4.tar.gz
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>                       NOTE: Your au version ID goes HERE ^^^^^    ^^^^^
+<li>For <code>0.3.5</code>, this would be:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>https://github.com/aurora-opensource/au/releases/download/0.3.5/au-0.3.5.tar.gz
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                       NOTE: Your au version ID goes HERE ^^^^^    ^^^^^
 </code></pre></div></li>
 </ul>
 </li>
@@ -2007,7 +1900,7 @@ Here&rsquo;s how:</p>
 <p><strong>Compute your SHA256 hash</strong>.</p>
 <ol>
 <li>Follow the URL from the previous step to download the archive.</li>
-<li>Compute the SHA256 hash: <code>sha256sum au-0.3.4.tar.gz</code></li>
+<li>Compute the SHA256 hash: <code>sha256sum au-0.3.5.tar.gz</code></li>
 <li>The first token that appears is the hash.  Save it for the next step.</li>
 </ol>
 </li>
@@ -2015,16 +1908,16 @@ Here&rsquo;s how:</p>
 <p><strong>Add <code>http_archive</code> rule to <code>WORKSPACE</code></strong>.</p>
 <ul>
 <li>Follow this pattern:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">http_archive</span><span class="p">(</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">sha256</span> <span class="o">=</span> <span class="s2">&quot;dd0f97e2720f02e3c5531a912c21b8eb889fcb984bac5f5f8b0f00e16b839216&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">strip_prefix</span> <span class="o">=</span> <span class="s2">&quot;au-0.3.4&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://github.com/aurora-opensource/au/releases/download/0.3.4/au-0.3.4.tar.gz&quot;</span><span class="p">],</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">)</span>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">http_archive</span><span class="p">(</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">sha256</span> <span class="o">=</span> <span class="s2">&quot;7ec826dc42968dc1633de56e4f9d06e70de73e820d2ac4788e8453343a622c9b&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">strip_prefix</span> <span class="o">=</span> <span class="s2">&quot;au-0.3.5&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://github.com/aurora-opensource/au/releases/download/0.3.5/au-0.3.5.tar.gz&quot;</span><span class="p">],</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">)</span>
 </code></pre></div></li>
 <li>In particular, here&rsquo;s how to fill out the fields:<ul>
 <li><code>sha256</code>: Use the SHA256 hash you got from step 3.</li>
-<li><code>strip_prefix</code>: write <code>"au-0.3.4"</code>, except use your ID from step 1 instead of <code>0.3.4</code>.</li>
+<li><code>strip_prefix</code>: write <code>"au-0.3.5"</code>, except use your ID from step 1 instead of <code>0.3.5</code>.</li>
 <li><code>urls</code>: This should be a list, whose only entry is the URL you formed in step 2.</li>
 </ul>
 </li>
@@ -2032,8 +1925,8 @@ Here&rsquo;s how:</p>
 </li>
 </ol>
 <p>At this point, the Au library is installed, and you can use it in your project!</p>
-<p>Here are the headers provided by each Au target.  To use, add the &ldquo;Dependency&rdquo; to your <code>deps</code>
-attribute, and include the appropriate files.</p>
+<p>Here are the headers provided by each Au target.  To use, add the entry from the &ldquo;Dependency&rdquo; column
+to your <code>deps</code> attribute, and include the appropriate files.</p>
 <table>
 <thead>
 <tr>
@@ -2108,14 +2001,14 @@ below.</p>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Add the following to your <code>CMakeLists.txt</code> file:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">include</span><span class="p">(</span><span class="s">FetchContent</span><span class="p">)</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nb">FetchContent_Declare</span><span class="p">(</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="s">Au</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/aurora-opensource/au</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="s">GIT_TAG</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="w">  </span><span class="c"># Or a specific tag.</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="s">EXCLUDE_FROM_ALL</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">)</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">Au</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">include</span><span class="p">(</span><span class="s">FetchContent</span><span class="p">)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">FetchContent_Declare</span><span class="p">(</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="s">Au</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/aurora-opensource/au</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="s">GIT_TAG</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="w">  </span><span class="c"># Or a specific tag.</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="s">EXCLUDE_FROM_ALL</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">)</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">Au</span><span class="p">)</span>
 </code></pre></div>
 <p>You should now be able to depend on Au targets, such as <code>Au::au</code> or <code>Au::testing</code>, and include
 headers from them, such as <code>#include "au/au.hh"</code> or <code>#include "au/testing.hh"</code>.</p>
@@ -2124,39 +2017,152 @@ headers from them, such as <code>#include "au/au.hh"</code> or <code>#include "a
 <p>Before you can use <code>find_package</code>, you need to install the library to your system.  This means
 cloning the repo, building the library, running the tests, and installing it.</p>
 <p>First, clone the repository.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/aurora-opensource/au.git
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nb">cd</span><span class="w"> </span>au
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/aurora-opensource/au.git
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">cd</span><span class="w"> </span>au
 </code></pre></div>
 <p>If you want a specific release, check out the tag you want.  Note that the first version of Au
 that supports CMake is 0.3.5.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Optional, but recommended:</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>git<span class="w"> </span>checkout<span class="w"> </span><span class="s2">&quot;0.3.5&quot;</span><span class="w">  </span><span class="c1"># Or whichever tag you prefer.</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Optional, but recommended:</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>git<span class="w"> </span>checkout<span class="w"> </span><span class="s2">&quot;0.3.5&quot;</span><span class="w">  </span><span class="c1"># Or whichever tag you prefer.</span>
 </code></pre></div>
 <p>Now, build and test the library.  These commands will include both the explicit tests, and also
 several CMake-generated tests to make sure that the includes are set up correctly.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># CMake is a &quot;meta build system&quot;, not a build system.</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1"># This first command generates the actual build files.</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>cmake/build<span class="w"> </span>-DCMAKE_VERIFY_INTERFACE_HEADER_SETS<span class="o">=</span>TRUE
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># This command builds Au, checks include paths, and runs unit tests.</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>cmake<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span>--build<span class="w"> </span>cmake/build<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span>--target<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span>all<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span>all_verify_interface_header_sets<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">    </span><span class="nb">test</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># CMake is a &quot;meta build system&quot;, not a build system.</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># This first command generates the actual build files.</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>cmake/build<span class="w"> </span>-DCMAKE_VERIFY_INTERFACE_HEADER_SETS<span class="o">=</span>TRUE
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># This command builds Au, checks include paths, and runs unit tests.</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>cmake<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span>--build<span class="w"> </span>cmake/build<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">  </span>--target<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">    </span>all<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span>all_verify_interface_header_sets<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">    </span><span class="nb">test</span>
 </code></pre></div>
 <p>If the tests pass, you can install the library to your system.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>cmake<span class="w"> </span>--install<span class="w"> </span>cmake/build
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>cmake<span class="w"> </span>--install<span class="w"> </span>cmake/build
 </code></pre></div>
 <p>At this point, the <code>Au</code> CMake library is installed to your system, and can be found via the
 usual <code>find_package</code> mechanism!</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">find_package</span><span class="p">(</span><span class="s">Au</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">find_package</span><span class="p">(</span><span class="s">Au</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <script src="../assets/hrh4.js" async=false defer=false></script>
+
+<h4 id="package-managers-conan-vcpkg">Package managers (conan, vcpkg)<a class="headerlink" href="#package-managers-conan-vcpkg" title="Permanent link">&para;</a></h4>
+<p>If you&rsquo;re using these in your project, we assume you already know how to add new libraries.  These
+methods have &ldquo;community support&rdquo;, which means:</p>
+<ul>
+<li>The recipes are added and maintained by external users</li>
+<li>Au&rsquo;s maintainers will provide our <em>best effort</em> to respond to issues, but we&rsquo;ll need to rely on
+  users of these package managers to help us reproduce and understand them</li>
+</ul>
+<p>Each package manager contains setup instructions on its page for Au.  Here are the packages:</p>
+<ul>
+<li><strong>Conan:</strong> <a href="https://conan.io/center/recipes/au">au</a></li>
+<li><strong>vcpkg:</strong> <a href="https://vcpkg.link/ports/aurora-au">aurora-au</a></li>
+</ul>
+<h3 id="single-file">Single file<a class="headerlink" href="#single-file" title="Permanent link">&para;</a></h3>
+<p>The Au library can be packaged as a single header file, which you can include in your project just
+like any other header.  This works with any build system!</p>
+<p>To take this approach, obtain the single file by one of the methods described below.  Then, put it
+inside a <code>third_party</code> folder (for example, as <code>third_party/au.hh</code>).  Now you&rsquo;re up and running with
+Au!</p>
+<p>Every single-file package automatically includes the following features:</p>
+<ul>
+<li>Basic &ldquo;unit container&rdquo; types: <a href="../reference/quantity/"><code>Quantity</code></a>,
+  <a href="../reference/quantity_point/"><code>QuantityPoint</code></a></li>
+<li><a href="../reference/magnitude/">Magnitude</a> types and values, including constants for any integer such
+  as <code>mag&lt;5280&gt;()</code>.</li>
+<li>All <a href="../reference/prefix/">prefixes</a> for SI (<code>kilo</code>, <code>mega</code>, &hellip;) and informational (<code>kibi</code>,
+  <code>mebi</code>, &hellip;) quantities.</li>
+<li><a href="../reference/math/">Math functions</a>, including unit-aware rounding and inverses, trigonometric
+  functions, square roots, and so on.</li>
+<li><em>Bidirectional implicit conversion</em> between <code>Quantity</code> types and any <a href="../reference/corresponding_quantity/#chrono-duration">equivalent counterparts in the
+  <code>std::chrono</code> library</a>.</li>
+</ul>
+<p>Here are the two ways to get a single-file packaging of the library.</p>
+<h4 id="pre-built-single-file">Pre-built single file<a class="headerlink" href="#pre-built-single-file" title="Permanent link">&para;</a></h4>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This approach is mainly for <em>playing</em> with the library.  It&rsquo;s very fast to get up and running,
+but it&rsquo;s not the best choice as the &ldquo;production&rdquo; installation of your library.</p>
+<p>For a single-file approach, most users will be much better served by the next section, which
+explains how to customize it to get exactly the units you want.</p>
+</div>
+<p>We provide pre-generated single-file versions of the library, automatically generated from the
+latest commit in the repo:</p>
+<ul>
+<li><a href="../au.hh"><code>au.hh</code></a></li>
+<li><a href="../au_noio.hh"><code>au_noio.hh</code></a>
+  (Same as above, but with <code>&lt;iostream&gt;</code> support stripped out)</li>
+</ul>
+<p>These include very few units (to keep compile times short).  However, <em>combinations</em> of these units
+should get you any other unit you&rsquo;re likely to want.  The units we include are:</p>
+<ul>
+<li>Every SI base unit (<code>seconds</code>, <code>meters</code>, <code>kilo(grams)</code>, <code>amperes</code>, <code>kelvins</code>, <code>moles</code>, <code>candelas</code>)</li>
+<li>Base units for angles and information (<code>radians</code>, <code>bits</code>)</li>
+<li>A base dimensionless unit (<code>unos</code>)</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>How</em> do you go about constructing other units from these?  By <strong>composing</strong> them.  For example,
+you can make <a href="https://www.nist.gov/pml/owm/metric-si/si-units">other coherent SI units</a> like
+this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">newtons</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kilo</span><span class="p">(</span><span class="n">gram</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">squared</span><span class="p">(</span><span class="n">second</span><span class="p">);</span>
+</code></pre></div>
+<p>Now you can call, say, <code>newtons(10)</code> and get a quantity equivalent to 10 Newtons.  You can also
+<strong>scale</strong> a unit by multiplying by Magnitude objects.  For example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">degrees</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">radians</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Magnitude</span><span class="o">&lt;</span><span class="n">Pi</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">180</span><span class="o">&gt;</span><span class="p">();</span>
+</code></pre></div>
+<p>These will &ldquo;work&rdquo;, in the sense of producing correct results.  But these ad hoc unit definitions
+are far less usable than <a href="../howto/new-units/">fully defined units</a>.  Both the type names and
+the unit symbols will be needlessly complicated.</p>
+<p>Again, we recommend following the directions in the next section to get <em>exactly</em> the units you
+care about.</p>
+</div>
+<details class="warning">
+<summary>Pre-built files with all units</summary>
+<p>We also provide pre-built files with every unit the library knows about.</p>
+<p>We don&rsquo;t advertise this option widely, because the library&rsquo;s compile time slowdown is largely
+proportional to the number of units included in a translation unit.  Thus, not only will this
+configuration be the slowest of all, but <em>it will get increasingly slower as the library gets
+better over time</em> (by supporting more and more units out of the box).</p>
+<p>Therefore, these files are only for use cases where <em>you don&rsquo;t care about compile time</em>.  The
+primary example is <a href="https://godbolt.org/z/KrvfhP4M3">the Compiler Explorer (&ldquo;godbolt&rdquo;)</a>.</p>
+<p><strong>If you don&rsquo;t care about compile times</strong>, here are the files:</p>
+<ul>
+<li><a href="../au_all_units.hh"><code>au_all_units.hh</code></a></li>
+<li><a href="../au_all_units_noio.hh"><code>au_all_units_noio.hh</code></a>
+  (Same as above, but with <code>&lt;iostream&gt;</code> support stripped out)</li>
+</ul>
+</details>
+<h4 id="custom-single-file">Custom single file<a class="headerlink" href="#custom-single-file" title="Permanent link">&para;</a></h4>
+<p>It&rsquo;s easy to package the library in a <em>custom</em> single file with <em>exactly</em> the units you need.
+Here&rsquo;s how:</p>
+<ol>
+<li>
+<p><strong>Clone the repo</strong>.  Go to the <a href="https://github.com/aurora-opensource/au">aurora-opensource/au</a>
+   repo, and follow the typical instructions.</p>
+<ul>
+<li>If you&rsquo;re just a <em>user</em> of Au, not a <em>contributor</em>, this should be:<br>
+  <code>git clone https://github.com/aurora-opensource/au.git</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Run the script</strong>.  <code>tools/bin/make-single-file --units meters seconds newtons &gt; ~/au.hh</code>
+   creates a file, <code>~/au.hh</code>, which packages the entire library in a single file with these three
+   units.</p>
+<ul>
+<li>To see the full list of available units, search the <code>.hh</code> files in the <code>au/units/</code> folder. For
+  example, <code>meters</code> will include the contents of <code>au/units/meters.hh</code>.</li>
+<li>Provide the <code>--noio</code> flag if you prefer to avoid the expense of the <code>&lt;iostream&gt;</code> library.</li>
+</ul>
+</li>
+</ol>
+<p>Now you have a file, <code>~/au.hh</code>, which you can add to your <code>third_party</code> folder.</p>
 
 
 
