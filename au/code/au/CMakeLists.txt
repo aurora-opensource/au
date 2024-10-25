@@ -94,6 +94,9 @@ header_only_library(
     units/steradians.hh
     units/tesla.hh
     units/unos.hh
+    units/us_gallons.hh
+    units/us_pints.hh
+    units/us_quarts.hh
     units/volts.hh
     units/watts.hh
     units/webers.hh
@@ -261,6 +264,9 @@ gtest_based_test(
     units/test/steradians_test.cc
     units/test/tesla_test.cc
     units/test/unos_test.cc
+    units/test/us_gallons_test.cc
+    units/test/us_pints_test.cc
+    units/test/us_quarts_test.cc
     units/test/volts_test.cc
     units/test/watts_test.cc
     units/test/webers_test.cc
