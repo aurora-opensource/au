@@ -2124,6 +2124,44 @@ aliases&rdquo;, so you can express the rep more precisely, and put the visual fo
 <li>The <strong>preferred</strong> way, which we&rsquo;ll explain below, is to use a <em>quantity maker</em>.</li>
 <li>The other ways are all normal C++ constructors.</li>
 </ul>
+<p>One way you <em>cannot</em> construct a <code>Quantity</code> is via a constructor that takes a single raw number.
+Many users find this surprising at first, but it&rsquo;s important for safety and usability.  To learn
+more about this policy, expand the box below.</p>
+<details class="note">
+<summary>The "missing" raw number constructor</summary>
+<p>New users often expect <code>Quantity&lt;U, R&gt;</code> to be constructible from a raw value of type <code>R</code>.  For
+example, they expect to be able to write something like:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">Meters</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">height</span><span class="p">{</span><span class="mf">3.0</span><span class="p">};</span><span class="w">  </span><span class="c1">// Does NOT work in Au</span>
+</code></pre></div>
+<p>This example looks innocuous, but enabling it would have other ill effects, and would be a net
+negative overall.</p>
+<p>First, we want to support a wide variety of reasonable usage patterns, <em>safely</em>.  One approach
+people sometimes take is to use <em>dimension-named aliases</em> throughout the codebase, making the
+actual underlying unit an encapsulated implementation detail.  Here&rsquo;s an example of what this
+looks like, which shows why we must forbid the default constructor:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// Store all lengths in meters using `double`, but as an implementation detail.</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1">// End users will simply call their type `Length`.</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">using</span><span class="w"> </span><span class="n">Length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1">// In some other file...</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">Length</span><span class="w"> </span><span class="n">l1</span><span class="p">{</span><span class="mf">3.0</span><span class="p">};</span><span class="w">          </span><span class="c1">// Does NOT work in Au --- good!</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">Length</span><span class="w"> </span><span class="n">l2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="mf">3.0</span><span class="p">);</span><span class="w"> </span><span class="c1">// Works; unambiguous.</span>
+</code></pre></div>
+<p>We hope the danger is clear: there&rsquo;s no such concept as a &ldquo;length of 3&rdquo;.  For safety and
+clarity, the user must always name the unit at the callsite.</p>
+<p>The second reason is elaborated in the section, &ldquo;<a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3045r0.html#explicit-is-not-explicit-enough"><code>explicit</code> is not explicit
+enough</a>&rdquo;,
+from the standard units library proposal paper P3045R0.  Even if you don&rsquo;t use aliases for your
+quantities, you might sometimes have a <em>vector</em> of them.  If you do, the <code>.emplace_back()</code>
+function accepts a raw number.  Not only is this unclear at the callsite, but it can cause
+long-range (and silent!) errors if you later refactor the vector to hold a different type. By
+contrast, omitting this constructor forces the user to name the unit explicitly at the callsite,
+every time.  This keeps callsites unambiguous, minimizes cognitive load for the reader, and
+enables safe refactoring.</p>
+<p>Overall, despite the initial surprise of the &ldquo;missing&rdquo; raw number constructor, experience shows
+that it&rsquo;s a net benefit.  Not only does its absence enhance safety, but thanks to the other
+construction methods, it also doesn&rsquo;t sacrifice usability!</p>
+</details>
 <h3 id="quantity-maker-preferred">Quantity Maker (preferred)<a class="headerlink" href="#quantity-maker-preferred" title="Permanent link">&para;</a></h3>
 <p>The preferred way to construct a <code>Quantity</code> of a given unit is to use the <em>quantity maker</em> for that
 unit.  This is a callable whose name is the plural form of that unit, expressed in &ldquo;snake_case&rdquo;: for
@@ -2141,11 +2179,11 @@ input, but expressed in the <em>units</em> of the newly constructed object&rsquo
 the stored value to the <em>rep</em> of the constructed object, if necessary.</p>
 <p>Here is the signature.  We&rsquo;ve simplified it slightly for illustration purposes, and enclosed it
 inside the class definition for context.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Unit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Rep</span><span class="o">&gt;</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Quantity</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">OtherUnit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">OtherRep</span><span class="o">&gt;</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="n">Quantity</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">OtherUnit</span><span class="p">,</span><span class="w"> </span><span class="n">OtherRep</span><span class="o">&gt;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">};</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Unit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Rep</span><span class="o">&gt;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Quantity</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">OtherUnit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">OtherRep</span><span class="o">&gt;</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">Quantity</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">OtherUnit</span><span class="p">,</span><span class="w"> </span><span class="n">OtherRep</span><span class="o">&gt;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">};</span>
 </code></pre></div>
 <p>This constructor only exists when this unit-and-rep conversion is both meaningful and safe.  It can
 fail to exist in several ways.</p>
@@ -2173,26 +2211,26 @@ constructor, and it must be &ldquo;forced&rdquo; to do so.  See <a href="#coerce
 <h3 id="constructing-from-zero">Constructing from <code>Zero</code><a class="headerlink" href="#constructing-from-zero" title="Permanent link">&para;</a></h3>
 <p>This constructs a <code>Quantity</code> with a value of 0.</p>
 <p>Here is the signature, enclosed in the class definition for context.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Unit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Rep</span><span class="o">&gt;</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Quantity</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">Quantity</span><span class="p">(</span><span class="n">Zero</span><span class="p">);</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">};</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Unit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Rep</span><span class="o">&gt;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Quantity</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">Quantity</span><span class="p">(</span><span class="n">Zero</span><span class="p">);</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">};</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><code>Zero</code> is the name of the type.  At the callsite, you would pass an <em>instance</em> of that type,
 such as the constant <code>ZERO</code>.  For example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">height</span><span class="p">{</span><span class="n">ZERO</span><span class="p">};</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">height</span><span class="p">{</span><span class="n">ZERO</span><span class="p">};</span>
 </code></pre></div>
 </div>
 <p>For more information on the motivation and use of this type, read <a href="../../discussion/concepts/zero/">our <code>Zero</code>
 discussion</a>.</p>
 <h3 id="default-constructor">Default constructor<a class="headerlink" href="#default-constructor" title="Permanent link">&para;</a></h3>
 <p>Here is the signature of the constructor, enclosed in the class template definition for context.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Unit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Rep</span><span class="o">&gt;</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Quantity</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">Quantity</span><span class="p">();</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">};</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Unit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Rep</span><span class="o">&gt;</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Quantity</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="n">Quantity</span><span class="p">();</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="p">};</span>
 </code></pre></div>
 <p>A default-constructed <code>Quantity</code> is always initialized (which helps avoid certain kinds of memory
 safety bugs).  It will contain a default-constructed instance of the rep type.</p>
@@ -2208,13 +2246,13 @@ better communicate your intent.</p>
 <h3 id="constructing-from-corresponding-quantity">Constructing from corresponding quantity<a class="headerlink" href="#constructing-from-corresponding-quantity" title="Permanent link">&para;</a></h3>
 <p>Here is the signature.  We&rsquo;ve simplified it slightly for illustration purposes, and enclosed it
 inside the class definition for context.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Unit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Rep</span><span class="o">&gt;</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Quantity</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="n">Quantity</span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">x</span><span class="p">);</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="c1">// NOTE: only exists when `T` is an &quot;exactly-equivalent&quot; type.  One example:</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="c1">// `std::chrono::nanoseconds` can construct an `au::QuantityI64&lt;Nano&lt;Seconds&gt;&gt;`.</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">};</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Unit</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Rep</span><span class="o">&gt;</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Quantity</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="n">Quantity</span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">x</span><span class="p">);</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="c1">// NOTE: only exists when `T` is an &quot;exactly-equivalent&quot; type.  One example:</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="c1">// `std::chrono::nanoseconds` can construct an `au::QuantityI64&lt;Nano&lt;Seconds&gt;&gt;`.</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="p">};</span>
 </code></pre></div>
 <p>This constructor will only exist when <code>T</code> has a <a href="../corresponding_quantity/">&ldquo;corresponding
 quantity&rdquo;</a>, and this <code>Quantity</code> type is <em>implicitly constructible</em> from
@@ -2229,7 +2267,7 @@ slots</a> discussion for valid choices for <code>unit</code>.</p>
 <details class="example">
 <summary>Example: extracting <code>4.56</code> from <code>seconds(4.56)</code></summary>
 <p>Consider this <code>Quantity&lt;Seconds, double&gt;</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mf">4.56</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mf">4.56</span><span class="p">);</span>
 </code></pre></div>
 <p>You can retrieve the underlying value by writing either <code>t.in(seconds)</code> (passing the
 <code>QuantityMaker</code>), or <code>t.in(Seconds{})</code> (passing an instance of the unit).</p>
@@ -2239,8 +2277,8 @@ slots</a> discussion for valid choices for <code>unit</code>.</p>
 slots</a> discussion for valid choices for <code>unit</code>.</p>
 <details class="example">
 <summary>Example: incrementing the underlying stored value</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inches</span><span class="p">(</span><span class="mi">60</span><span class="p">);</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">length</span><span class="p">.</span><span class="n">data_in</span><span class="p">(</span><span class="n">inches</span><span class="p">)</span><span class="o">++</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inches</span><span class="p">(</span><span class="mi">60</span><span class="p">);</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">length</span><span class="p">.</span><span class="n">data_in</span><span class="p">(</span><span class="n">inches</span><span class="p">)</span><span class="o">++</span><span class="p">;</span>
 </code></pre></div>
 <p>Since <code>length</code> is not <code>const</code>, the reference returned by <code>.data_in()</code> will be mutable, and we
 can treat it like any other <code>int</code> lvalue.  The above would result in <code>inches(61)</code>.</p>
@@ -2254,7 +2292,7 @@ the <a href="../../discussion/idioms/unit-slots/">unit slots</a> discussion for 
 <details class="example">
 <summary>Example: converting <code>feet(3)</code> to <code>inches</code></summary>
 <p>Consider this <code>Quantity&lt;Feet, int&gt;</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
 </code></pre></div>
 <p>Then <code>length.as(inches)</code> re-expresses this quantity in units of inches.  Specifically, it
 returns a <code>Quantity&lt;Inches, int&gt;</code>, which is equal to <code>inches(36)</code>.</p>
@@ -2299,7 +2337,7 @@ slots</a> discussion for valid choices for <code>unit</code>.</p>
 <details class="example">
 <summary>Example: getting the value of <code>feet(3)</code> in <code>inches</code></summary>
 <p>Consider this <code>Quantity&lt;Feet, int&gt;</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
 </code></pre></div>
 <p>Then <code>length.in(inches)</code> converts this quantity to inches, and returns the value, <code>36</code>, as an
 <code>int</code>.</p>
@@ -2378,7 +2416,7 @@ were</em> its corresponding quantity.</p>
 <summary>Example of corresponding quantity comparison</summary>
 <p>We provide built-in <a href="../corresponding_quantity/#chrono-duration">equivalence with <code>std::chrono::duration</code>
 types</a>.  Therefore, this comparison will work:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">greater</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">duration</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">{</span><span class="mf">1.0</span><span class="p">}</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">milli</span><span class="p">(</span><span class="n">seconds</span><span class="p">)(</span><span class="mf">999.9f</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">greater</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">duration</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">{</span><span class="mf">1.0</span><span class="p">}</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">milli</span><span class="p">(</span><span class="n">seconds</span><span class="p">)(</span><span class="mf">999.9f</span><span class="p">);</span>
 </code></pre></div>
 <p>Here, the <code>std::chrono::duration</code> variable will be treated identically to <code>seconds(1.0)</code>. The
 comparison will take place in units of <code>milli(seconds)</code> (since that is the common unit), and
@@ -2451,11 +2489,11 @@ function.</p>
 <details class="example">
 <summary>Using <code>integer_quotient()</code> to explicitly opt in to integer division</summary>
 <p>This will not work:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">miles</span><span class="p">(</span><span class="mi">125</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1">//        ^--- Forbidden!  Compiler error.</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">miles</span><span class="p">(</span><span class="mi">125</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c1">//        ^--- Forbidden!  Compiler error.</span>
 </code></pre></div>
 <p>However, this will work just fine:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">integer_quotient</span><span class="p">(</span><span class="n">miles</span><span class="p">(</span><span class="mi">125</span><span class="p">),</span><span class="w"> </span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">integer_quotient</span><span class="p">(</span><span class="n">miles</span><span class="p">(</span><span class="mi">125</span><span class="p">),</span><span class="w"> </span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
 </code></pre></div>
 <p>It produces <code>(miles / hour)(62)</code>.</p>
 </details>
@@ -2513,27 +2551,27 @@ underlying value is <code>static_cast&lt;T&gt;(q.in(U{}))</code>.</p>
 one for the rep.</p>
 <details class="example">
 <summary>Example: function template</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">negate</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">q</span><span class="p">;</span>
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">negate</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">q</span><span class="p">;</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="p">}</span>
 </code></pre></div>
 <p>This function template will match any <code>Quantity</code> specialization, and nothing else.</p>
 </details>
 <details class="example">
 <summary>Example: type template</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1">// First, we need to declare the generic type template.  It matches a single type, `T`.</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="p">;</span>
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="c1">// Now we can declare a specialization that matches any `Quantity`, by templating on its unit</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="c1">// and rep.</span>
-<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="o">&lt;</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>
-<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">    </span><span class="c1">// Note: this example uses inline variables, a C++17 feature.  It&#39;s just for illustration.</span>
-<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">R</span><span class="p">);</span>
-<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="p">};</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1">// First, we need to declare the generic type template.  It matches a single type, `T`.</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="p">;</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="c1">// Now we can declare a specialization that matches any `Quantity`, by templating on its unit</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="c1">// and rep.</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="o">&lt;</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="w">    </span><span class="c1">// Note: this example uses inline variables, a C++17 feature.  It&#39;s just for illustration.</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">R</span><span class="p">);</span>
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="p">};</span>
 </code></pre></div>
 <p>In this way, <code>Size&lt;T&gt;::value</code> will exist only when <code>T</code> is some <code>Quantity</code> type (unless, of
 course, other specializations get defined elsewhere).</p>
