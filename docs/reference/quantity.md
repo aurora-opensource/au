@@ -46,6 +46,53 @@ There are several ways to construct a `Quantity` object.
 - The **preferred** way, which we'll explain below, is to use a _quantity maker_.
 - The other ways are all normal C++ constructors.
 
+One way you _cannot_ construct a `Quantity` is via a constructor that takes a single raw number.
+Many users find this surprising at first, but it's important for safety and usability.  To learn
+more about this policy, expand the box below.
+
+??? note "The \"missing\" raw number constructor"
+    New users often expect `Quantity<U, R>` to be constructible from a raw value of type `R`.  For
+    example, they expect to be able to write something like:
+
+    ```cpp
+    Quantity<Meters, double> height{3.0};  // Does NOT work in Au
+    ```
+
+    This example looks innocuous, but enabling it would have other ill effects, and would be a net
+    negative overall.
+
+    First, we want to support a wide variety of reasonable usage patterns, _safely_.  One approach
+    people sometimes take is to use _dimension-named aliases_ throughout the codebase, making the
+    actual underlying unit an encapsulated implementation detail.  Here's an example of what this
+    looks like, which shows why we must forbid the default constructor:
+
+    ```cpp
+    // Store all lengths in meters using `double`, but as an implementation detail.
+    // End users will simply call their type `Length`.
+    using Length = QuantityD<Meters>;
+
+    // In some other file...
+    Length l1{3.0};          // Does NOT work in Au --- good!
+    Length l2 = meters(3.0); // Works; unambiguous.
+    ```
+
+    We hope the danger is clear: there's no such concept as a "length of 3".  For safety and
+    clarity, the user must always name the unit at the callsite.
+
+    The second reason is elaborated in the section, "[`explicit` is not explicit
+    enough](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3045r0.html#explicit-is-not-explicit-enough)",
+    from the standard units library proposal paper P3045R0.  Even if you don't use aliases for your
+    quantities, you might sometimes have a _vector_ of them.  If you do, the `.emplace_back()`
+    function accepts a raw number.  Not only is this unclear at the callsite, but it can cause
+    long-range (and silent!) errors if you later refactor the vector to hold a different type. By
+    contrast, omitting this constructor forces the user to name the unit explicitly at the callsite,
+    every time.  This keeps callsites unambiguous, minimizes cognitive load for the reader, and
+    enables safe refactoring.
+
+    Overall, despite the initial surprise of the "missing" raw number constructor, experience shows
+    that it's a net benefit.  Not only does its absence enhance safety, but thanks to the other
+    construction methods, it also doesn't sacrifice usability!
+
 ### Quantity Maker (preferred)
 
 The preferred way to construct a `Quantity` of a given unit is to use the _quantity maker_ for that
