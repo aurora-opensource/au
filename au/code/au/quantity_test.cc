@@ -22,6 +22,8 @@
 #include "gtest/gtest.h"
 
 using ::testing::DoubleEq;
+using ::testing::Each;
+using ::testing::Eq;
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
@@ -29,7 +31,10 @@ namespace au {
 struct Feet : UnitImpl<Length> {};
 constexpr auto feet = QuantityMaker<Feet>{};
 
-struct Miles : decltype(Feet{} * mag<5'280>()) {};
+struct Miles : decltype(Feet{} * mag<5'280>()) {
+    static constexpr const char label[] = "mi";
+};
+constexpr const char Miles::label[];
 constexpr auto mile = SingularNameFor<Miles>{};
 constexpr auto miles = QuantityMaker<Miles>{};
 
@@ -715,6 +720,32 @@ TEST(Quantity, MixedTypeAdditionUsesCommonRepType) {
 
 TEST(Quantity, MixedTypeSubtractionUsesCommonRepType) {
     EXPECT_THAT(feet(2.f) - feet(1.5), QuantityEquivalent(feet(0.5)));
+}
+
+TEST(Quantity, CommonUnitAlwaysCompletelyIndependentOfOrder) {
+    auto check_units = [](auto unit_a, auto unit_b, auto unit_c) {
+        const auto a = unit_a(1LL);
+        const auto b = unit_b(1LL);
+        const auto c = unit_c(1LL);
+        auto stream_to_string = [](auto x) {
+            std::ostringstream oss;
+            oss << x;
+            return oss.str();
+        };
+        std::vector<std::string> results = {
+            stream_to_string(a + b + c),
+            stream_to_string(a + c + b),
+            stream_to_string(b + a + c),
+            stream_to_string(b + c + a),
+            stream_to_string(c + a + b),
+            stream_to_string(c + b + a),
+        };
+        EXPECT_THAT(results, Each(Eq(results[0])))
+            << "Inconsistency found for (" << a << ", " << b << ", " << c << ")";
+    };
+
+    check_units(centi(meters), miles, meters);
+    check_units(kilo(meters), miles, milli(meters));
 }
 
 TEST(Quantity, CommonTypeRespectsImplicitRepSafetyChecks) {
