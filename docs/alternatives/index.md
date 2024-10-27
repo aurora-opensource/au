@@ -201,7 +201,12 @@ These costs can bring significant benefits, but we still want them to be as smal
         <td class="poor">Very slow, but can be <i>greatly</i> improved by removing I/O support and most units</td>
         <td class="na"></td>
         <td class="na"></td>
-        <td class="good">Possibly "best", but will need to assess all libraries on the same code</td>
+        <td class="good">
+            <ul>
+                <li class="check">Includes `fwd.hh` headers</li>
+                <li>Possibly "best" overall, but will need to assess all libraries on the same code</li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>

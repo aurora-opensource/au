@@ -120,7 +120,7 @@ to your `deps` attribute, and include the appropriate files.
 
 | Dependency | Headers provided | Notes |
 |------------|------------------|-------|
-| `@au//au` | `"au/au.hh"`<br>`"au/units/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
+| `@au//au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
 | `@au//au:io` | `"au/io.hh"` | `operator<<` support |
 | `@au//au:testing` | `"au/testing.hh"` | Utilities for writing googletest tests<br>_Note:_ `testonly = True` |
 
@@ -141,7 +141,7 @@ In either case, here are the main targets and include files provided by the Au l
 
 | Target | Headers provided | Notes |
 |--------|------------------|-------|
-| `Au::au` | `"au/au.hh"`<br>`"au/io.hh"`<br>`"au/units/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
+| `Au::au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/io.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
 | `Au::testing` | `"au/testing.hh"` | Utilities for writing googletest tests |
 
 !!! note
