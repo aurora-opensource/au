@@ -14,6 +14,9 @@
 
 #pragma once
 
+#include "au/units/inches_fwd.hh"
+// Keep corresponding `_fwd.hh` file on top.
+
 #include "au/prefix.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
