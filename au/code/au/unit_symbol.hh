@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "au/fwd.hh"
 #include "au/wrapper_operations.hh"
 
 namespace au {

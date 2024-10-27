@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "au/fwd.hh"
 #include "au/quantity.hh"
 #include "au/stdx/type_traits.hh"
 #include "au/utility/type_traits.hh"
@@ -33,11 +34,6 @@ namespace au {
 // _absolute temperature measurements_ (e.g., `QuantityPoint<Celsius, T>`).  This type is also
 // analogous to `std::chrono::time_point`, in the same way that `Quantity` is analogous to
 // `std::chrono::duration`.
-template <typename UnitT, typename RepT>
-class QuantityPoint;
-
-template <typename UnitT>
-struct QuantityPointMaker;
 
 // Make a Quantity of the given Unit, which has this value as measured in the Unit.
 template <typename UnitT, typename T>
@@ -327,28 +323,6 @@ template <typename NewRep, typename Unit, typename Rep>
 constexpr auto rep_cast(QuantityPoint<Unit, Rep> q) {
     return q.template as<NewRep>(Unit{});
 }
-
-//
-// QuantityPoint aliases to set a particular Rep.
-//
-// This presents a less cumbersome interface for end users.
-//
-template <typename UnitT>
-using QuantityPointD = QuantityPoint<UnitT, double>;
-template <typename UnitT>
-using QuantityPointF = QuantityPoint<UnitT, float>;
-template <typename UnitT>
-using QuantityPointI = QuantityPoint<UnitT, int>;
-template <typename UnitT>
-using QuantityPointU = QuantityPoint<UnitT, unsigned int>;
-template <typename UnitT>
-using QuantityPointI32 = QuantityPoint<UnitT, int32_t>;
-template <typename UnitT>
-using QuantityPointU32 = QuantityPoint<UnitT, uint32_t>;
-template <typename UnitT>
-using QuantityPointI64 = QuantityPoint<UnitT, int64_t>;
-template <typename UnitT>
-using QuantityPointU64 = QuantityPoint<UnitT, uint64_t>;
 
 namespace detail {
 template <typename X, typename Y, typename Func>

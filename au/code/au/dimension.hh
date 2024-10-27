@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "au/fwd.hh"
 #include "au/packs.hh"
 #include "au/power_aliases.hh"
 
