@@ -47,6 +47,23 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+cc_test(
+    name = "fwd_test",
+    size = "small",
+    srcs = [
+        "code/au/fwd_test.cc",
+        "code/au/fwd_test_lib.cc",
+        "code/au/fwd_test_lib.hh",
+    ],
+    deps = [
+        ":fwd",
+        ":io",
+        ":quantity",
+        ":units",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
 cc_library(
     name = "io",
     hdrs = ["code/au/io.hh"],
