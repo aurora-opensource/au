@@ -32,7 +32,20 @@ project(
    LANGUAGES CXX
 )
 
-option(AU_ENABLE_TESTING "Build Unit Tests" ON)
+include(CMakeDependentOption)
+
+option(
+   AU_EXCLUDE_GTEST_DEPENDENCY
+   "Avoid taking any dependency on googletest. This option implies that tests will be skipped"
+   OFF
+)
+cmake_dependent_option(
+   AU_ENABLE_TESTING
+   "Build Unit Tests"
+   ON
+   "NOT AU_EXCLUDE_GTEST_DEPENDENCY"
+   OFF
+)
 
 # The export set for all of our headers.
 set(AU_EXPORT_SET_NAME AuHeaders)
@@ -46,23 +59,25 @@ endif()
 
 # Bring in GoogleTest so we can build and run the tests.
 include(FetchContent)
-FetchContent_Declare(
-   googletest
-   GIT_REPOSITORY https://github.com/google/googletest.git
-   GIT_TAG 58d77fa8070e8cec2dc1ed015d66b454c8d78850 # Release 1.12.1
-   FIND_PACKAGE_ARGS
-      1.12.1
-      NAMES GTest
-)
+if (NOT AU_EXCLUDE_GTEST_DEPENDENCY)
+   FetchContent_Declare(
+      googletest
+      GIT_REPOSITORY https://github.com/google/googletest.git
+      GIT_TAG 58d77fa8070e8cec2dc1ed015d66b454c8d78850 # Release 1.12.1
+      FIND_PACKAGE_ARGS
+         1.12.1
+         NAMES GTest
+   )
 
-# https://google.github.io/googletest/quickstart-cmake.html
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+   # https://google.github.io/googletest/quickstart-cmake.html
+   # For Windows: Prevent overriding the parent project's compiler/linker settings
+   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(googletest)
-include(GoogleTest)
+   FetchContent_MakeAvailable(googletest)
+   include(GoogleTest)
 
-set(AU_CONFIG_FIND_GTEST_LINE "find_dependency(googletest 1.12.1)")
+   set(AU_CONFIG_FIND_GTEST_LINE "find_dependency(googletest 1.12.1)")
+endif()
 
 add_subdirectory(au)
 
