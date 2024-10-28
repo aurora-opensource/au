@@ -107,26 +107,30 @@ header_only_library(
     utility/type_traits.hh
 )
 
-header_only_library(
-  NAME testing
-  HEADERS testing.hh
-  DEPS
-    au
-    GTest::gmock
-)
+if (NOT AU_EXCLUDE_GTEST_DEPENDENCY)
+  header_only_library(
+    NAME testing
+    HEADERS testing.hh
+    DEPS
+      au
+      GTest::gmock
+  )
+endif()
 
 #
 # Private implementation detail targets
 #
 
-header_only_library(
-  NAME chrono_policy_validation
-  INTERNAL_ONLY
-  HEADERS chrono_policy_validation.hh
-  DEPS
-    au
-    GTest::gtest
-)
+if (NOT AU_EXCLUDE_GTEST_DEPENDENCY)
+  header_only_library(
+    NAME chrono_policy_validation
+    INTERNAL_ONLY
+    HEADERS chrono_policy_validation.hh
+    DEPS
+      au
+      GTest::gtest
+  )
+endif()
 
 #
 # Tests
