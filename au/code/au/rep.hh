@@ -16,6 +16,7 @@
 
 #include <type_traits>
 
+#include "au/fwd.hh"
 #include "au/stdx/experimental/is_detected.hh"
 #include "au/stdx/type_traits.hh"
 
@@ -47,14 +48,6 @@ struct IsQuotientValidRep;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation details below.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Forward declarations for main Au container types.
-template <typename U, typename R>
-class Quantity;
-template <typename U, typename R>
-class QuantityPoint;
-template <typename T>
-struct CorrespondingQuantity;
 
 namespace detail {
 template <typename T>

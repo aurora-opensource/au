@@ -17,6 +17,8 @@
 #include <chrono>
 #include <type_traits>
 
+#include "au/fwd.hh"
+
 namespace au {
 
 // A type representing a quantity of "zero" in any units.

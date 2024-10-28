@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "au/fwd.hh"
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
 #include "au/unit_of_measure.hh"
