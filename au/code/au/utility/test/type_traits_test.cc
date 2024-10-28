@@ -22,11 +22,11 @@ namespace au {
 namespace detail {
 
 template <typename... Ts>
-struct TestingPack;
+struct Pack;
 
 TEST(Prepend, PrependsToPack) {
-    StaticAssertTypeEq<PrependT<TestingPack<>, int>, TestingPack<int>>();
-    StaticAssertTypeEq<PrependT<TestingPack<double, char>, int>, TestingPack<int, double, char>>();
+    StaticAssertTypeEq<PrependT<Pack<>, int>, Pack<int>>();
+    StaticAssertTypeEq<PrependT<Pack<double, char>, int>, Pack<int, double, char>>();
 }
 
 TEST(SameTypeIgnoringCvref, IgnoresCvrefQualifiers) {
@@ -49,6 +49,20 @@ TEST(AlwaysFalse, IsAlwaysFalse) {
     EXPECT_FALSE(AlwaysFalse<void>::value);
     EXPECT_FALSE(AlwaysFalse<>::value);
     EXPECT_FALSE((AlwaysFalse<int, char, double>::value));
+}
+
+TEST(DropAll, IdentityWhenTargetAbsent) {
+    StaticAssertTypeEq<DropAll<void, Pack<>>, Pack<>>();
+    StaticAssertTypeEq<DropAll<void, Pack<int>>, Pack<int>>();
+    StaticAssertTypeEq<DropAll<void, Pack<int, char, double>>, Pack<int, char, double>>();
+}
+
+TEST(DropAll, DropsAllInstancesOfTarget) {
+    StaticAssertTypeEq<DropAll<int, Pack<int>>, Pack<>>();
+    StaticAssertTypeEq<DropAll<int, Pack<int, int>>, Pack<>>();
+    StaticAssertTypeEq<DropAll<int, Pack<int, char, int>>, Pack<char>>();
+    StaticAssertTypeEq<DropAll<int, Pack<char, int, char>>, Pack<char, char>>();
+    StaticAssertTypeEq<DropAll<int, Pack<int, char, int, double>>, Pack<char, double>>();
 }
 
 }  // namespace detail
