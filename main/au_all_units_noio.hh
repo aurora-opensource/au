@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-23-g0d8b244
+// Version identifier: 0.3.5-24-g5f79db3
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -188,6 +188,11 @@ struct Prepend;
 template <typename PackT, typename T>
 using PrependT = typename Prepend<PackT, T>::type;
 
+template <typename T, typename Pack>
+struct DropAllImpl;
+template <typename T, typename Pack>
+using DropAll = typename DropAllImpl<T, Pack>::type;
+
 template <typename T, typename U>
 struct SameTypeIgnoringCvref : std::is_same<stdx::remove_cvref_t<T>, stdx::remove_cvref_t<U>> {};
 
@@ -201,11 +206,29 @@ struct AlwaysFalse : std::false_type {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation details below.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `Prepend` implementation.
 
 template <template <typename...> class Pack, typename T, typename... Us>
 struct Prepend<Pack<Us...>, T> {
     using type = Pack<T, Us...>;
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `DropAll` implementation.
+
+// Base case.
+template <typename T, template <class...> class Pack>
+struct DropAllImpl<T, Pack<>> : stdx::type_identity<Pack<>> {};
+
+// Recursive case:
+template <typename T, template <class...> class Pack, typename H, typename... Ts>
+struct DropAllImpl<T, Pack<H, Ts...>>
+    : std::conditional<std::is_same<T, H>::value,
+                       DropAll<T, Pack<Ts...>>,
+                       detail::PrependT<DropAll<T, Pack<Ts...>>, H>> {};
 
 }  // namespace detail
 }  // namespace au
@@ -2996,10 +3019,59 @@ struct FirstMatchingUnit<Matcher, TargetUnit, List<H, Ts...>>
                          stdx::type_identity<H>,
                          FirstMatchingUnit<Matcher, TargetUnit, List<Ts...>>> {};
 
+// A "redundant" unit, among a list of units, is one that is an exact integer multiple of another.
+//
+// If two units are identical, then each is redundant with the other.
+//
+// If two units are distinct, but quantity-equivalent, then the unit that comes later in the
+// standard unit ordering (i.e., `InOrderFor<Pack, ...>`) is the redundant one.
+template <typename Pack>
+struct EliminateRedundantUnitsImpl;
+template <typename Pack>
+using EliminateRedundantUnits = typename EliminateRedundantUnitsImpl<Pack>::type;
+
+// Base case: no units to eliminate.
+template <template <class...> class Pack>
+struct EliminateRedundantUnitsImpl<Pack<>> : stdx::type_identity<Pack<>> {};
+
+// Helper for recursive case.
+template <template <class...> class Pack, typename U1, typename U2>
+struct IsFirstUnitRedundant
+    : std::conditional_t<std::is_same<U1, U2>::value,
+                         std::true_type,
+                         std::conditional_t<AreUnitsQuantityEquivalent<U1, U2>::value,
+                                            InOrderFor<Pack, U2, U1>,
+                                            IsInteger<UnitRatioT<U1, U2>>>> {};
+
+// Recursive case: eliminate first unit if it is redundant; else, keep it and eliminate any later
+// units that are redundant with it.
+template <template <class...> class Pack, typename H, typename... Ts>
+struct EliminateRedundantUnitsImpl<Pack<H, Ts...>>
+    : std::conditional<
+
+          // If `H` is redundant with _any later unit_, simply omit it.
+          stdx::disjunction<IsFirstUnitRedundant<Pack, H, Ts>...>::value,
+          EliminateRedundantUnits<Pack<Ts...>>,
+
+          // Otherwise, we know we'll need to keep `H`, so we prepend it to the remaining result.
+          //
+          // To get that result, we first replace any units _that `H` makes redundant_ with `void`.
+          // Then, we drop all `void`, before finally recursively eliminating any units that are
+          // redundant among those that remain.
+          PrependT<
+              EliminateRedundantUnits<DropAll<
+                  void,
+
+                  // `Pack<Ts...>`, but with redundant-with-`H` units replaced by `void`:
+                  Pack<std::conditional_t<IsFirstUnitRedundant<Pack, Ts, H>::value, void, Ts>...>>>,
+
+              H>> {};
+
 }  // namespace detail
 
 template <typename... Us>
-using ComputeCommonUnitImpl = FlatDedupedTypeListT<CommonUnit, Us...>;
+using ComputeCommonUnitImpl =
+    detail::EliminateRedundantUnits<FlatDedupedTypeListT<CommonUnit, Us...>>;
 
 template <typename... Us>
 struct ComputeCommonUnit
