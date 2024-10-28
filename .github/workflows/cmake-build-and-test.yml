@@ -26,8 +26,8 @@ jobs:
       matrix:
         options: [
           { extra_cmake_args: '', extra_targets: 'test' },
-          { extra_cmake_args: ' -DAU_ENABLE_TESTING=FALSE', extra_targets: 'test' },
-          { extra_cmake_args: ' -DAU_EXCLUDE_GTEST_DEPENDENCY=TRUE', extra_targets: 'test' }
+          { extra_cmake_args: ' -DAU_ENABLE_TESTING=FALSE', extra_targets: '' },
+          { extra_cmake_args: ' -DAU_EXCLUDE_GTEST_DEPENDENCY=TRUE', extra_targets: '' }
         ]
     runs-on: ubuntu-latest
 
