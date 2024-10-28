@@ -83,6 +83,12 @@ struct SomeUnitWrapper {};
 template <typename UnitT>
 struct AssociatedUnit<SomeUnitWrapper<UnitT>> : stdx::type_identity<UnitT> {};
 
+// Useful for testing parameter pack logic.
+template <typename... Units>
+struct SomePack {};
+template <typename A, typename B>
+struct InOrderFor<SomePack, A, B> : InOrderFor<CommonUnit, A, B> {};
+
 struct UnlabeledUnit : decltype(Feet{} * mag<9>()) {};
 
 MATCHER_P(QuantityEquivalentToUnit, target, "") {
@@ -635,6 +641,26 @@ TEST(CommonOrigin, SymmetricUnderReordering) {
     constexpr auto common_origin_value = CommonOrigin<Celsius, AlternateCelsius>::value();
     EXPECT_THAT(common_origin_value, SameTypeAndValue(Celsius::origin()));
     EXPECT_THAT(common_origin_value, Not(SameTypeAndValue(AlternateCelsius::origin())));
+}
+
+TEST(EliminateRedundantUnits, IdentityForEmptySet) {
+    StaticAssertTypeEq<EliminateRedundantUnits<SomePack<>>, SomePack<>>();
+}
+
+TEST(EliminateRedundantUnits, IdentityForSingleUnit) {
+    StaticAssertTypeEq<EliminateRedundantUnits<SomePack<Feet>>, SomePack<Feet>>();
+}
+
+TEST(EliminateRedundantUnits, RemovesRepeatedUnit) {
+    StaticAssertTypeEq<EliminateRedundantUnits<SomePack<Feet, Feet>>, SomePack<Feet>>();
+    StaticAssertTypeEq<EliminateRedundantUnits<SomePack<Feet, Meters, Feet>>,
+                       SomePack<Meters, Feet>>();
+}
+
+TEST(EliminateRedundantUnits, AlwaysRemovesSameUnitAmongQuantityEquivalentChoices) {
+    using Twelvinch = decltype(Inches{} * mag<12>());
+    StaticAssertTypeEq<EliminateRedundantUnits<SomePack<Feet, Twelvinch>>,
+                       EliminateRedundantUnits<SomePack<Twelvinch, Feet>>>();
 }
 
 }  // namespace detail
