@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-26-g654f1d9
+// Version identifier: 0.3.5-27-g99c02d6
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -969,6 +969,78 @@ struct Minus {
 constexpr auto minus = Minus{};
 
 }  // namespace detail
+}  // namespace au
+
+namespace au {
+
+struct Unos;
+
+}  // namespace au
+
+namespace au {
+
+struct Bits;
+
+}  // namespace au
+
+namespace au {
+
+struct Radians;
+
+}  // namespace au
+
+namespace au {
+
+struct Candelas;
+
+}  // namespace au
+
+namespace au {
+
+struct Moles;
+
+}  // namespace au
+
+namespace au {
+
+struct Amperes;
+
+}  // namespace au
+
+namespace au {
+
+struct Kelvins;
+
+}  // namespace au
+
+namespace au {
+
+struct Grams;
+
+}  // namespace au
+
+namespace au {
+
+struct Seconds;
+
+}  // namespace au
+
+namespace au {
+
+struct Meters;
+
+}  // namespace au
+
+namespace au {
+
+struct Minutes;
+
+}  // namespace au
+
+namespace au {
+
+struct Hours;
+
 }  // namespace au
 
 
@@ -4529,6 +4601,8 @@ struct common_type<au::Quantity<U1, R1>, au::Quantity<U2, R2>>
     : au::CommonQuantity<au::Quantity<U1, R1>, au::Quantity<U2, R2>> {};
 }  // namespace std
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5210,6 +5284,8 @@ struct AssociatedUnit<SymbolFor<U>> : stdx::type_identity<U> {};
 
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5231,6 +5307,8 @@ namespace symbols {
 constexpr auto rad = SymbolFor<Radians>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -5254,6 +5332,8 @@ constexpr auto cd = SymbolFor<Candelas>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5275,6 +5355,8 @@ namespace symbols {
 constexpr auto mol = SymbolFor<Moles>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -5299,6 +5381,8 @@ constexpr auto A = SymbolFor<Amperes>{};
 
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5322,6 +5406,8 @@ constexpr auto K = SymbolFor<Kelvins>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5344,6 +5430,8 @@ constexpr auto g = SymbolFor<Grams>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5365,6 +5453,8 @@ namespace symbols {
 constexpr auto s = SymbolFor<Seconds>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -5784,6 +5874,8 @@ struct AssociatedUnit<Constant<Unit>> : stdx::type_identity<Unit> {};
 
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5805,6 +5897,8 @@ namespace symbols {
 constexpr auto min = SymbolFor<Minutes>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -5858,6 +5952,8 @@ inline std::ostream &operator<<(std::ostream &out, Zero) {
 }
 
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {

@@ -24,64 +24,119 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-26-g654f1d9
+// Version identifier: 0.3.5-27-g99c02d6
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
+//   amperes_fwd
 //   bars
+//   bars_fwd
 //   becquerel
+//   becquerel_fwd
 //   bits
+//   bits_fwd
 //   bytes
+//   bytes_fwd
 //   candelas
+//   candelas_fwd
 //   celsius
+//   celsius_fwd
 //   coulombs
+//   coulombs_fwd
 //   days
+//   days_fwd
 //   degrees
+//   degrees_fwd
 //   fahrenheit
+//   fahrenheit_fwd
 //   farads
+//   farads_fwd
 //   fathoms
+//   fathoms_fwd
 //   feet
+//   feet_fwd
 //   furlongs
+//   furlongs_fwd
 //   grams
+//   grams_fwd
 //   grays
+//   grays_fwd
 //   henries
+//   henries_fwd
 //   hertz
+//   hertz_fwd
 //   hours
+//   hours_fwd
 //   inches
+//   inches_fwd
 //   joules
+//   joules_fwd
 //   katals
+//   katals_fwd
 //   kelvins
+//   kelvins_fwd
 //   knots
+//   knots_fwd
 //   liters
+//   liters_fwd
 //   lumens
+//   lumens_fwd
 //   lux
+//   lux_fwd
 //   meters
+//   meters_fwd
 //   miles
+//   miles_fwd
 //   minutes
+//   minutes_fwd
 //   moles
+//   moles_fwd
 //   nautical_miles
+//   nautical_miles_fwd
 //   newtons
+//   newtons_fwd
 //   ohms
+//   ohms_fwd
 //   pascals
+//   pascals_fwd
 //   percent
+//   percent_fwd
 //   pounds_force
+//   pounds_force_fwd
 //   pounds_mass
+//   pounds_mass_fwd
 //   radians
+//   radians_fwd
 //   revolutions
+//   revolutions_fwd
 //   seconds
+//   seconds_fwd
 //   siemens
+//   siemens_fwd
 //   slugs
+//   slugs_fwd
 //   standard_gravity
+//   standard_gravity_fwd
 //   steradians
+//   steradians_fwd
 //   tesla
+//   tesla_fwd
 //   unos
+//   unos_fwd
 //   us_gallons
+//   us_gallons_fwd
 //   us_pints
+//   us_pints_fwd
 //   us_quarts
+//   us_quarts_fwd
 //   volts
+//   volts_fwd
 //   watts
+//   watts_fwd
 //   webers
+//   webers_fwd
 //   yards
+//   yards_fwd
 
 
 namespace au {
@@ -1014,6 +1069,336 @@ struct Minus {
 constexpr auto minus = Minus{};
 
 }  // namespace detail
+}  // namespace au
+
+namespace au {
+
+struct PoundsForce;
+
+}  // namespace au
+
+namespace au {
+
+struct Unos;
+
+}  // namespace au
+
+namespace au {
+
+struct Candelas;
+
+}  // namespace au
+
+namespace au {
+
+struct Seconds;
+
+}  // namespace au
+
+namespace au {
+
+struct Minutes;
+
+}  // namespace au
+
+namespace au {
+
+struct Hours;
+
+}  // namespace au
+
+namespace au {
+
+struct Feet;
+
+}  // namespace au
+
+namespace au {
+
+struct Joules;
+
+}  // namespace au
+
+namespace au {
+
+struct Degrees;
+
+}  // namespace au
+
+namespace au {
+
+struct Meters;
+
+}  // namespace au
+
+namespace au {
+
+struct Inches;
+
+}  // namespace au
+
+namespace au {
+
+struct Fathoms;
+
+}  // namespace au
+
+namespace au {
+
+struct Newtons;
+
+}  // namespace au
+
+namespace au {
+
+struct Kelvins;
+
+}  // namespace au
+
+namespace au {
+
+struct Fahrenheit;
+
+}  // namespace au
+
+namespace au {
+
+struct Lux;
+
+}  // namespace au
+
+namespace au {
+
+struct Moles;
+
+}  // namespace au
+
+namespace au {
+
+struct Grams;
+
+}  // namespace au
+
+namespace au {
+
+struct Watts;
+
+}  // namespace au
+
+namespace au {
+
+struct Amperes;
+
+}  // namespace au
+
+namespace au {
+
+struct Volts;
+
+}  // namespace au
+
+namespace au {
+
+struct Webers;
+
+}  // namespace au
+
+namespace au {
+
+struct Henries;
+
+}  // namespace au
+
+namespace au {
+
+struct USPints;
+
+}  // namespace au
+
+namespace au {
+
+struct USQuarts;
+
+}  // namespace au
+
+namespace au {
+
+struct Radians;
+
+}  // namespace au
+
+namespace au {
+
+struct Hertz;
+
+}  // namespace au
+
+namespace au {
+
+struct Bits;
+
+}  // namespace au
+
+namespace au {
+
+struct Celsius;
+
+}  // namespace au
+
+namespace au {
+
+struct Yards;
+
+}  // namespace au
+
+namespace au {
+
+struct NauticalMiles;
+
+}  // namespace au
+
+namespace au {
+
+struct Slugs;
+
+}  // namespace au
+
+namespace au {
+
+struct Becquerel;
+
+}  // namespace au
+
+namespace au {
+
+struct Miles;
+
+}  // namespace au
+
+namespace au {
+
+struct Knots;
+
+}  // namespace au
+
+namespace au {
+
+struct Liters;
+
+}  // namespace au
+
+namespace au {
+
+struct Katals;
+
+}  // namespace au
+
+namespace au {
+
+struct Siemens;
+
+}  // namespace au
+
+namespace au {
+
+struct Steradians;
+
+}  // namespace au
+
+namespace au {
+
+struct StandardGravity;
+
+}  // namespace au
+
+namespace au {
+
+struct Tesla;
+
+}  // namespace au
+
+namespace au {
+
+struct Ohms;
+
+}  // namespace au
+
+namespace au {
+
+struct PoundsMass;
+
+}  // namespace au
+
+namespace au {
+
+struct Furlongs;
+
+}  // namespace au
+
+namespace au {
+
+struct Coulombs;
+
+}  // namespace au
+
+namespace au {
+
+struct USGallons;
+
+}  // namespace au
+
+namespace au {
+
+struct Bytes;
+
+}  // namespace au
+
+namespace au {
+
+struct Percent;
+
+}  // namespace au
+
+namespace au {
+
+struct Pascals;
+
+}  // namespace au
+
+namespace au {
+
+struct Bars;
+
+}  // namespace au
+
+namespace au {
+
+struct Days;
+
+}  // namespace au
+
+namespace au {
+
+struct Revolutions;
+
+}  // namespace au
+
+namespace au {
+
+struct Grays;
+
+}  // namespace au
+
+namespace au {
+
+struct Lumens;
+
+}  // namespace au
+
+namespace au {
+
+struct Farads;
+
 }  // namespace au
 
 
@@ -4778,6 +5163,8 @@ struct CanScaleByMagnitude {
 }  // namespace detail
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5255,6 +5642,8 @@ struct AssociatedUnit<SymbolFor<U>> : stdx::type_identity<U> {};
 
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5580,6 +5969,8 @@ constexpr auto kibi = PrefixApplier<Kibi>{};
 
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5603,6 +5994,8 @@ constexpr auto K = SymbolFor<Kelvins>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5624,6 +6017,8 @@ namespace symbols {
 constexpr auto g = SymbolFor<Grams>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -5648,6 +6043,8 @@ constexpr auto A = SymbolFor<Amperes>{};
 
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5669,6 +6066,8 @@ namespace symbols {
 constexpr auto rad = SymbolFor<Radians>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -5692,6 +6091,8 @@ constexpr auto b = SymbolFor<Bits>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5713,6 +6114,8 @@ namespace symbols {
 constexpr auto nmi = SymbolFor<NauticalMiles>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -5736,6 +6139,8 @@ constexpr auto mol = SymbolFor<Moles>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5757,6 +6162,8 @@ namespace symbols {
 constexpr auto sr = SymbolFor<Steradians>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -5780,6 +6187,8 @@ constexpr auto lb = SymbolFor<PoundsMass>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5801,6 +6210,8 @@ namespace symbols {
 constexpr auto L = SymbolFor<Liters>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -5829,6 +6240,8 @@ constexpr auto degC_qty = SymbolFor<Celsius>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5850,6 +6263,8 @@ namespace symbols {
 constexpr auto B = SymbolFor<Bytes>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -5873,6 +6288,8 @@ constexpr auto deg = SymbolFor<Degrees>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5895,6 +6312,8 @@ constexpr auto cd = SymbolFor<Candelas>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -5916,6 +6335,8 @@ namespace symbols {
 constexpr auto rev = SymbolFor<Revolutions>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -6062,6 +6483,8 @@ inline std::ostream &operator<<(std::ostream &out, Zero) {
 
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -6084,6 +6507,8 @@ constexpr auto s = SymbolFor<Seconds>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -6105,6 +6530,8 @@ namespace symbols {
 constexpr auto in = SymbolFor<Inches>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -6135,6 +6562,8 @@ constexpr auto degF_qty = SymbolFor<Fahrenheit>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -6156,6 +6585,8 @@ namespace symbols {
 constexpr auto N = SymbolFor<Newtons>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -6180,6 +6611,8 @@ constexpr auto US_qt = SymbolFor<USQuarts>{};
 
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -6200,6 +6633,8 @@ namespace symbols {
 constexpr auto Bq = SymbolFor<Becquerel>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -6224,6 +6659,8 @@ constexpr auto US_pt = SymbolFor<USPints>{};
 
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -6244,6 +6681,8 @@ namespace symbols {
 constexpr auto Hz = SymbolFor<Hertz>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -6266,6 +6705,8 @@ namespace symbols {
 constexpr auto kat = SymbolFor<Katals>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -6290,6 +6731,8 @@ constexpr auto g_0 = SymbolFor<StandardGravity>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -6311,6 +6754,8 @@ namespace symbols {
 constexpr auto lbf = SymbolFor<PoundsForce>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -6334,6 +6779,8 @@ constexpr auto US_gal = SymbolFor<USGallons>{};
 }
 
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -6364,6 +6811,8 @@ constexpr auto Pa = SymbolFor<Pascals>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -6385,6 +6834,8 @@ namespace symbols {
 constexpr auto bar = SymbolFor<Bars>{};
 }  // namespace symbols
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -6408,6 +6859,8 @@ constexpr auto lm = SymbolFor<Lumens>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -6429,6 +6882,8 @@ namespace symbols {
 constexpr auto C = SymbolFor<Coulombs>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -7249,6 +7704,8 @@ constexpr bool numeric_limits<au::Quantity<U, R>>::tinyness_before;
 
 }  // namespace std
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -7270,6 +7727,8 @@ namespace symbols {
 constexpr auto min = SymbolFor<Minutes>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -7293,6 +7752,8 @@ constexpr auto ft = SymbolFor<Feet>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -7314,6 +7775,8 @@ namespace symbols {
 constexpr auto J = SymbolFor<Joules>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -7337,6 +7800,8 @@ constexpr auto mi = SymbolFor<Miles>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -7358,6 +7823,8 @@ namespace symbols {
 constexpr auto yd = SymbolFor<Yards>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -7381,6 +7848,8 @@ constexpr auto slug = SymbolFor<Slugs>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -7402,6 +7871,8 @@ namespace symbols {
 constexpr auto Gy = SymbolFor<Grays>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -7425,6 +7896,8 @@ constexpr auto h = SymbolFor<Hours>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -7446,6 +7919,8 @@ namespace symbols {
 constexpr auto ftm = SymbolFor<Fathoms>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -7469,6 +7944,8 @@ constexpr auto W = SymbolFor<Watts>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -7491,6 +7968,8 @@ constexpr auto kn = SymbolFor<Knots>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -7512,6 +7991,8 @@ namespace symbols {
 constexpr auto fur = SymbolFor<Furlongs>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -7597,6 +8078,8 @@ constexpr auto as_chrono_duration(Quantity<U, R> dt) {
 
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -7619,6 +8102,8 @@ constexpr auto V = SymbolFor<Volts>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -7640,6 +8125,8 @@ namespace symbols {
 constexpr auto ohm = SymbolFor<Ohms>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -7664,6 +8151,8 @@ constexpr auto F = SymbolFor<Farads>{};
 }  // namespace au
 
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -7686,6 +8175,8 @@ constexpr auto Wb = SymbolFor<Webers>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
 
 namespace au {
 
@@ -7706,6 +8197,8 @@ namespace symbols {
 constexpr auto T = SymbolFor<Tesla>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
@@ -7728,6 +8221,8 @@ namespace symbols {
 constexpr auto S = SymbolFor<Siemens>{};
 }
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
 
 
 namespace au {
