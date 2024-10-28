@@ -14,6 +14,9 @@
 
 #pragma once
 
+#include "au/units/unos_fwd.hh"
+// Keep corresponding `_fwd.hh` file on top.
+
 #include "au/quantity.hh"
 
 namespace au {
