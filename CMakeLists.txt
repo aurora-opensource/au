@@ -36,7 +36,7 @@ include(CMakeDependentOption)
 
 option(
    AU_EXCLUDE_GTEST_DEPENDENCY
-   "Avoid taking any dependency on googletest (and, implicitly, do not build tests)"
+   "Avoid taking any dependency on googletest. This option implies that tests will be skipped"
    OFF
 )
 cmake_dependent_option(
