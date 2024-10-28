@@ -18,6 +18,7 @@
 
 #include "au/apply_magnitude.hh"
 #include "au/conversion_policy.hh"
+#include "au/fwd.hh"
 #include "au/operators.hh"
 #include "au/rep.hh"
 #include "au/stdx/functional.hh"
@@ -26,12 +27,6 @@
 #include "au/zero.hh"
 
 namespace au {
-
-template <typename UnitT>
-struct QuantityMaker;
-
-template <typename UnitT, typename RepT>
-class Quantity;
 
 //
 // Make a Quantity of the given Unit, which has this value as measured in the Unit.
@@ -461,33 +456,6 @@ template <typename NewRep>
 constexpr auto rep_cast(Zero z) {
     return z;
 }
-
-//
-// Quantity aliases to set a particular Rep.
-//
-// This presents a less cumbersome interface for end users.
-//
-template <typename UnitT>
-using QuantityD = Quantity<UnitT, double>;
-template <typename UnitT>
-using QuantityF = Quantity<UnitT, float>;
-template <typename UnitT>
-using QuantityI = Quantity<UnitT, int>;
-template <typename UnitT>
-using QuantityU = Quantity<UnitT, unsigned int>;
-template <typename UnitT>
-using QuantityI32 = Quantity<UnitT, int32_t>;
-template <typename UnitT>
-using QuantityU32 = Quantity<UnitT, uint32_t>;
-template <typename UnitT>
-using QuantityI64 = Quantity<UnitT, int64_t>;
-template <typename UnitT>
-using QuantityU64 = Quantity<UnitT, uint64_t>;
-
-// Forward declare `QuantityPoint` here, so that we can give better error messages when users try to
-// make it into a quantity.
-template <typename U, typename R>
-class QuantityPoint;
 
 template <typename UnitT>
 struct QuantityMaker {

@@ -41,6 +41,13 @@ cc_test(
 )
 
 cc_library(
+    name = "fwd",
+    hdrs = ["code/au/fwd.hh"],
+    includes = ["code"],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "io",
     hdrs = ["code/au/io.hh"],
     includes = ["code"],
@@ -208,6 +215,7 @@ cc_library(
     hdrs = ["code/au/constant.hh"],
     includes = ["code"],
     deps = [
+        ":fwd",
         ":quantity",
         ":unit_of_measure",
         ":wrapper_operations",
@@ -254,6 +262,7 @@ cc_library(
     hdrs = ["code/au/dimension.hh"],
     includes = ["code"],
     deps = [
+        ":fwd",
         ":packs",
         ":power_aliases",
     ],
@@ -276,6 +285,7 @@ cc_library(
     hdrs = ["code/au/magnitude.hh"],
     includes = ["code"],
     deps = [
+        ":fwd",
         ":packs",
         ":power_aliases",
         ":stdx",
@@ -389,6 +399,7 @@ cc_library(
     hdrs = ["code/au/prefix.hh"],
     includes = ["code"],
     deps = [
+        ":fwd",
         ":quantity",
         ":quantity_point",
         ":unit_of_measure",
@@ -414,6 +425,7 @@ cc_library(
     deps = [
         ":apply_magnitude",
         ":conversion_policy",
+        ":fwd",
         ":operators",
         ":rep",
         ":unit_of_measure",
@@ -443,6 +455,7 @@ cc_library(
     hdrs = ["code/au/quantity_point.hh"],
     includes = ["code"],
     deps = [
+        ":fwd",
         ":quantity",
         ":stdx",
         ":utility",
@@ -465,7 +478,10 @@ cc_library(
     name = "rep",
     hdrs = ["code/au/rep.hh"],
     includes = ["code"],
-    deps = [":stdx"],
+    deps = [
+        ":fwd",
+        ":stdx",
+    ],
 )
 
 cc_test(
@@ -540,7 +556,10 @@ cc_library(
     name = "unit_symbol",
     hdrs = ["code/au/unit_symbol.hh"],
     includes = ["code"],
-    deps = [":wrapper_operations"],
+    deps = [
+        ":fwd",
+        ":wrapper_operations",
+    ],
 )
 
 cc_test(
@@ -598,6 +617,7 @@ cc_library(
     name = "zero",
     hdrs = ["code/au/zero.hh"],
     includes = ["code"],
+    deps = [":fwd"],
 )
 
 cc_test(

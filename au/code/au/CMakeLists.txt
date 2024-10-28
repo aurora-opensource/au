@@ -28,6 +28,7 @@ header_only_library(
     constant.hh
     conversion_policy.hh
     dimension.hh
+    fwd.hh
     io.hh
     magnitude.hh
     math.hh
