@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-25-ge5b506c
+// Version identifier: 0.3.5-26-g654f1d9
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -40,47 +40,152 @@
 
 namespace au {
 
-// A type representing a quantity of "zero" in any units.
-//
-// Zero is special: it's the only number that we can meaningfully compare or assign to a Quantity of
-// _any_ dimension.  Giving it a special type (and a predefined constant of that type, `ZERO`,
-// defined below) lets our code be both concise and readable.
-//
-// For example, we can zero-initialize any arbitrary Quantity, even if it doesn't have a
-// user-defined literal, and even if it's in a header file so we couldn't use the literals anyway:
-//
-//   struct PathPoint {
-//       QuantityD<RadiansPerMeter> curvature = ZERO;
-//   };
-struct Zero {
-    // Implicit conversion to arithmetic types.
-    template <typename T, typename Enable = std::enable_if_t<std::is_arithmetic<T>::value>>
-    constexpr operator T() const {
-        return 0;
-    }
+struct Zero;
 
-    // Implicit conversion to chrono durations.
-    template <typename Rep, typename Period>
-    constexpr operator std::chrono::duration<Rep, Period>() const {
-        return std::chrono::duration<Rep, Period>{0};
-    }
-};
+template <typename... BPs>
+struct Dimension;
 
-// A value of Zero.
+template <typename... BPs>
+struct Magnitude;
+
+template <typename UnitT>
+struct QuantityMaker;
+
+template <typename Unit>
+struct SingularNameFor;
+
+template <typename UnitT>
+struct QuantityPointMaker;
+
+template <typename UnitT, typename RepT>
+class Quantity;
+
 //
-// This exists purely for convenience, so people don't have to call the initializer.  i.e., it lets
-// us write `ZERO` instead of `Zero{}`.
-static constexpr auto ZERO = Zero{};
+// Quantity aliases to set a particular Rep.
+//
+// This presents a less cumbersome interface for end users.
+//
+template <typename UnitT>
+using QuantityD = Quantity<UnitT, double>;
+template <typename UnitT>
+using QuantityF = Quantity<UnitT, float>;
+template <typename UnitT>
+using QuantityI = Quantity<UnitT, int>;
+template <typename UnitT>
+using QuantityU = Quantity<UnitT, unsigned int>;
+template <typename UnitT>
+using QuantityI32 = Quantity<UnitT, int32_t>;
+template <typename UnitT>
+using QuantityU32 = Quantity<UnitT, uint32_t>;
+template <typename UnitT>
+using QuantityI64 = Quantity<UnitT, int64_t>;
+template <typename UnitT>
+using QuantityU64 = Quantity<UnitT, uint64_t>;
 
-// Addition, subtraction, and comparison of Zero are well defined.
-inline constexpr Zero operator+(Zero, Zero) { return ZERO; }
-inline constexpr Zero operator-(Zero, Zero) { return ZERO; }
-inline constexpr bool operator==(Zero, Zero) { return true; }
-inline constexpr bool operator>=(Zero, Zero) { return true; }
-inline constexpr bool operator<=(Zero, Zero) { return true; }
-inline constexpr bool operator!=(Zero, Zero) { return false; }
-inline constexpr bool operator>(Zero, Zero) { return false; }
-inline constexpr bool operator<(Zero, Zero) { return false; }
+template <typename T>
+struct CorrespondingQuantity;
+
+template <typename UnitT, typename RepT>
+class QuantityPoint;
+
+//
+// QuantityPoint aliases to set a particular Rep.
+//
+// This presents a less cumbersome interface for end users.
+//
+template <typename UnitT>
+using QuantityPointD = QuantityPoint<UnitT, double>;
+template <typename UnitT>
+using QuantityPointF = QuantityPoint<UnitT, float>;
+template <typename UnitT>
+using QuantityPointI = QuantityPoint<UnitT, int>;
+template <typename UnitT>
+using QuantityPointU = QuantityPoint<UnitT, unsigned int>;
+template <typename UnitT>
+using QuantityPointI32 = QuantityPoint<UnitT, int32_t>;
+template <typename UnitT>
+using QuantityPointU32 = QuantityPoint<UnitT, uint32_t>;
+template <typename UnitT>
+using QuantityPointI64 = QuantityPoint<UnitT, int64_t>;
+template <typename UnitT>
+using QuantityPointU64 = QuantityPoint<UnitT, uint64_t>;
+
+template <typename Unit>
+struct Constant;
+
+template <typename Unit>
+struct SymbolFor;
+
+template <template <class U> class Prefix>
+struct PrefixApplier;
+
+// SI Prefixes.
+template <typename U>
+struct Quetta;
+template <typename U>
+struct Ronna;
+template <typename U>
+struct Yotta;
+template <typename U>
+struct Zetta;
+template <typename U>
+struct Exa;
+template <typename U>
+struct Peta;
+template <typename U>
+struct Tera;
+template <typename U>
+struct Giga;
+template <typename U>
+struct Mega;
+template <typename U>
+struct Kilo;
+template <typename U>
+struct Hecto;
+template <typename U>
+struct Deka;
+template <typename U>
+struct Deci;
+template <typename U>
+struct Centi;
+template <typename U>
+struct Milli;
+template <typename U>
+struct Micro;
+template <typename U>
+struct Nano;
+template <typename U>
+struct Pico;
+template <typename U>
+struct Femto;
+template <typename U>
+struct Atto;
+template <typename U>
+struct Zepto;
+template <typename U>
+struct Yocto;
+template <typename U>
+struct Ronto;
+template <typename U>
+struct Quecto;
+
+// Binary Prefixes.
+template <typename U>
+struct Yobi;
+template <typename U>
+struct Zebi;
+template <typename U>
+struct Exbi;
+template <typename U>
+struct Pebi;
+template <typename U>
+struct Tebi;
+template <typename U>
+struct Gibi;
+template <typename U>
+struct Mebi;
+template <typename U>
+struct Kibi;
 
 }  // namespace au
 
@@ -681,14 +786,6 @@ struct IsQuotientValidRep;
 // Implementation details below.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Forward declarations for main Au container types.
-template <typename U, typename R>
-class Quantity;
-template <typename U, typename R>
-class QuantityPoint;
-template <typename T>
-struct CorrespondingQuantity;
-
 namespace detail {
 template <typename T>
 struct IsAuType : std::false_type {};
@@ -871,6 +968,54 @@ struct Minus {
 constexpr auto minus = Minus{};
 
 }  // namespace detail
+}  // namespace au
+
+
+
+namespace au {
+
+// A type representing a quantity of "zero" in any units.
+//
+// Zero is special: it's the only number that we can meaningfully compare or assign to a Quantity of
+// _any_ dimension.  Giving it a special type (and a predefined constant of that type, `ZERO`,
+// defined below) lets our code be both concise and readable.
+//
+// For example, we can zero-initialize any arbitrary Quantity, even if it doesn't have a
+// user-defined literal, and even if it's in a header file so we couldn't use the literals anyway:
+//
+//   struct PathPoint {
+//       QuantityD<RadiansPerMeter> curvature = ZERO;
+//   };
+struct Zero {
+    // Implicit conversion to arithmetic types.
+    template <typename T, typename Enable = std::enable_if_t<std::is_arithmetic<T>::value>>
+    constexpr operator T() const {
+        return 0;
+    }
+
+    // Implicit conversion to chrono durations.
+    template <typename Rep, typename Period>
+    constexpr operator std::chrono::duration<Rep, Period>() const {
+        return std::chrono::duration<Rep, Period>{0};
+    }
+};
+
+// A value of Zero.
+//
+// This exists purely for convenience, so people don't have to call the initializer.  i.e., it lets
+// us write `ZERO` instead of `Zero{}`.
+static constexpr auto ZERO = Zero{};
+
+// Addition, subtraction, and comparison of Zero are well defined.
+inline constexpr Zero operator+(Zero, Zero) { return ZERO; }
+inline constexpr Zero operator-(Zero, Zero) { return ZERO; }
+inline constexpr bool operator==(Zero, Zero) { return true; }
+inline constexpr bool operator>=(Zero, Zero) { return true; }
+inline constexpr bool operator<=(Zero, Zero) { return true; }
+inline constexpr bool operator!=(Zero, Zero) { return false; }
+inline constexpr bool operator>(Zero, Zero) { return false; }
+inline constexpr bool operator<(Zero, Zero) { return false; }
+
 }  // namespace au
 
 
@@ -3699,12 +3844,6 @@ constexpr T apply_magnitude(const T &x, Magnitude<BPs...>) {
 
 namespace au {
 
-template <typename UnitT>
-struct QuantityMaker;
-
-template <typename UnitT, typename RepT>
-class Quantity;
-
 //
 // Make a Quantity of the given Unit, which has this value as measured in the Unit.
 //
@@ -4133,33 +4272,6 @@ template <typename NewRep>
 constexpr auto rep_cast(Zero z) {
     return z;
 }
-
-//
-// Quantity aliases to set a particular Rep.
-//
-// This presents a less cumbersome interface for end users.
-//
-template <typename UnitT>
-using QuantityD = Quantity<UnitT, double>;
-template <typename UnitT>
-using QuantityF = Quantity<UnitT, float>;
-template <typename UnitT>
-using QuantityI = Quantity<UnitT, int>;
-template <typename UnitT>
-using QuantityU = Quantity<UnitT, unsigned int>;
-template <typename UnitT>
-using QuantityI32 = Quantity<UnitT, int32_t>;
-template <typename UnitT>
-using QuantityU32 = Quantity<UnitT, uint32_t>;
-template <typename UnitT>
-using QuantityI64 = Quantity<UnitT, int64_t>;
-template <typename UnitT>
-using QuantityU64 = Quantity<UnitT, uint64_t>;
-
-// Forward declare `QuantityPoint` here, so that we can give better error messages when users try to
-// make it into a quantity.
-template <typename U, typename R>
-class QuantityPoint;
 
 template <typename UnitT>
 struct QuantityMaker {
@@ -4636,11 +4748,6 @@ namespace au {
 // _absolute temperature measurements_ (e.g., `QuantityPoint<Celsius, T>`).  This type is also
 // analogous to `std::chrono::time_point`, in the same way that `Quantity` is analogous to
 // `std::chrono::duration`.
-template <typename UnitT, typename RepT>
-class QuantityPoint;
-
-template <typename UnitT>
-struct QuantityPointMaker;
 
 // Make a Quantity of the given Unit, which has this value as measured in the Unit.
 template <typename UnitT, typename T>
@@ -4930,28 +5037,6 @@ template <typename NewRep, typename Unit, typename Rep>
 constexpr auto rep_cast(QuantityPoint<Unit, Rep> q) {
     return q.template as<NewRep>(Unit{});
 }
-
-//
-// QuantityPoint aliases to set a particular Rep.
-//
-// This presents a less cumbersome interface for end users.
-//
-template <typename UnitT>
-using QuantityPointD = QuantityPoint<UnitT, double>;
-template <typename UnitT>
-using QuantityPointF = QuantityPoint<UnitT, float>;
-template <typename UnitT>
-using QuantityPointI = QuantityPoint<UnitT, int>;
-template <typename UnitT>
-using QuantityPointU = QuantityPoint<UnitT, unsigned int>;
-template <typename UnitT>
-using QuantityPointI32 = QuantityPoint<UnitT, int32_t>;
-template <typename UnitT>
-using QuantityPointU32 = QuantityPoint<UnitT, uint32_t>;
-template <typename UnitT>
-using QuantityPointI64 = QuantityPoint<UnitT, int64_t>;
-template <typename UnitT>
-using QuantityPointU64 = QuantityPoint<UnitT, uint64_t>;
 
 namespace detail {
 template <typename X, typename Y, typename Func>
