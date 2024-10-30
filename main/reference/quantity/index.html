@@ -1454,9 +1454,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#integer_quotient" class="md-nav__link">
+  <a href="#unblock_int_div" class="md-nav__link">
     <span class="md-ellipsis">
-      integer_quotient()
+      unblock_int_div()
     </span>
   </a>
   
@@ -2479,21 +2479,21 @@ out (returning <a href="../unit/#unitless-unit">a unitless unit</a>).  If they d
 number</a>.</p>
 <p>If either <em>input</em> is a raw number, then it only affects the value, not the unit.  It&rsquo;s equivalent to
 a <code>Quantity</code> whose unit is <a href="../unit/#unitless-unit">a unitless unit</a>.</p>
-<h4 id="integer_quotient"><code>integer_quotient()</code><a class="headerlink" href="#integer_quotient" title="Permanent link">&para;</a></h4>
+<h4 id="unblock_int_div"><code>unblock_int_div()</code><a class="headerlink" href="#unblock_int_div" title="Permanent link">&para;</a></h4>
 <p>Experience has shown that raw integer division can be dangerous in a units library context.  It
 conflicts with intuitions, and can produce code that is silently and grossly incorrect: see the
 <a href="../../troubleshooting/#integer-division-forbidden">integer division section</a> of the troubleshooting
 guide for an example.</p>
-<p>To use integer division, you must ask for it explicitly by name, with the <code>integer_quotient()</code>
-function.</p>
+<p>To use integer division, you must ask for it explicitly by name, by calling <code>unblock_int_div()</code> on
+the denominator.</p>
 <details class="example">
-<summary>Using <code>integer_quotient()</code> to explicitly opt in to integer division</summary>
+<summary>Using <code>unblock_int_div()</code> to explicitly opt in to integer division</summary>
 <p>This will not work:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">miles</span><span class="p">(</span><span class="mi">125</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c1">//        ^--- Forbidden!  Compiler error.</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c1">//         ^--- Forbidden!  Compiler error.</span>
 </code></pre></div>
 <p>However, this will work just fine:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">integer_quotient</span><span class="p">(</span><span class="n">miles</span><span class="p">(</span><span class="mi">125</span><span class="p">),</span><span class="w"> </span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">miles</span><span class="p">(</span><span class="mi">125</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">unblock_int_div</span><span class="p">(</span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
 </code></pre></div>
 <p>It produces <code>(miles / hour)(62)</code>.</p>
 </details>
