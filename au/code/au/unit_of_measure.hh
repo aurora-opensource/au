@@ -80,8 +80,20 @@ namespace detail {
 // While clunky, this approach is at least robust against errors.  If the user supplies the wrong
 // prefix length, it will fail to compile, because there is no assignment operator between
 // `StringConstant` instances of different lengths.
+template <typename Unit>
+struct UnitLabelSize
+    : std::integral_constant<std::size_t, as_string_constant(UnitLabel<Unit>::value).size()> {};
+template <typename... Us>
+constexpr std::size_t total_label_size(Us...) {
+    std::size_t vals[] = {UnitLabelSize<Us>::value...};
+    std::size_t total = 0;
+    for (auto i = 0u; i < sizeof...(Us); ++i) {
+        total += vals[i];
+    }
+    return total;
+}
 template <std::size_t ExtensionStrlen, typename... Us>
-using ExtendedLabel = StringConstant<concatenate(unit_label<Us>()...).size() + ExtensionStrlen>;
+using ExtendedLabel = StringConstant<(ExtensionStrlen + total_label_size(Us{}...))>;
 }  // namespace detail
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

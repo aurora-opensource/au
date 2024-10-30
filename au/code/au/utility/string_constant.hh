@@ -191,6 +191,17 @@ class StringConstant {
 template <std::size_t Strlen>
 constexpr std::size_t StringConstant<Strlen>::length;
 
+template <typename T>
+struct StringLength;
+template <std::size_t N>
+struct StringLength<StringConstant<N>> : std::integral_constant<std::size_t, N> {};
+template <std::size_t N>
+struct StringLength<const char (&)[N]> : std::integral_constant<std::size_t, N - 1u> {};
+template <std::size_t N>
+struct StringLength<char[N]> : std::integral_constant<std::size_t, N - 1u> {};
+template <typename... Ts>
+struct TotalStrLen : std::integral_constant<std::size_t, sum<StringLength<Ts>::value...>()> {};
+
 template <typename... Ts>
 constexpr auto concatenate(const Ts &...ts) {
     return join_by("", ts...);
@@ -199,6 +210,11 @@ constexpr auto concatenate(const Ts &...ts) {
 template <typename SepT, typename... StringTs>
 constexpr auto join_by(const SepT &sep, const StringTs &...ts) {
     return as_string_constant(sep).join(as_string_constant(ts)...);
+}
+
+template <typename... Ts>
+constexpr StringConstant<TotalStrLen<Ts...>::value> corncatenate(const Ts &...ts) {
+    return join_by("", ts...);
 }
 
 template <int64_t N>

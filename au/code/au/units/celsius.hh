@@ -35,7 +35,7 @@ template <typename T>
 constexpr const char CelsiusLabel<T>::label[];
 struct Celsius : Kelvins, CelsiusLabel<void> {
     using CelsiusLabel<void>::label;
-    static constexpr auto origin() { return centi(kelvins)(273'15); }
+    static constexpr auto origin() { return 273'15 * SymbolFor<Centi<Kelvins>>{}; }
 };
 constexpr auto celsius_qty = QuantityMaker<Celsius>{};
 constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
