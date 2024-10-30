@@ -385,6 +385,34 @@ class Quantity {
             CorrespondingQuantityT<T>{*this}.in(typename CorrespondingQuantity<T>::Unit{}));
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Pre-C++20 Non-Type Template Parameter (NTTP) functionality.
+    //
+    // If `Rep` is a built in integral type, then `Quantity::NTTP` can be used as a template
+    // parameter.
+
+    enum class NTTP : std::conditional_t<std::is_integral<Rep>::value, Rep, bool> {
+        ENUM_VALUES_ARE_UNUSED
+    };
+
+    constexpr Quantity(NTTP val) : value_{static_cast<Rep>(val)} {
+        static_assert(std::is_integral<Rep>::value,
+                      "NTTP functionality only works when rep is built-in integral type");
+    }
+
+    constexpr operator NTTP() const {
+        static_assert(std::is_integral<Rep>::value,
+                      "NTTP functionality only works when rep is built-in integral type");
+        return static_cast<NTTP>(value_);
+    }
+
+    template <typename C, C x = C::ENUM_VALUES_ARE_UNUSED>
+    constexpr operator C() const = delete;
+    // If you got here ^^^, then you need to do your unit conversion **manually**.  Check the type
+    // of the template parameter, and convert it to that same unit and rep.
+
+    friend constexpr Quantity from_nttp(NTTP val) { return val; }
+
  private:
     template <typename OtherUnit, typename OtherRep>
     static constexpr void warn_if_integer_division() {
