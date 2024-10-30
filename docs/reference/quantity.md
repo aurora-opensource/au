@@ -473,29 +473,29 @@ number](../discussion/concepts/dimensionless.md#exact-cancellation).
 If either _input_ is a raw number, then it only affects the value, not the unit.  It's equivalent to
 a `Quantity` whose unit is [a unitless unit](./unit.md#unitless-unit).
 
-#### `integer_quotient()`
+#### `unblock_int_div()`
 
 Experience has shown that raw integer division can be dangerous in a units library context.  It
 conflicts with intuitions, and can produce code that is silently and grossly incorrect: see the
 [integer division section](../troubleshooting.md#integer-division-forbidden) of the troubleshooting
 guide for an example.
 
-To use integer division, you must ask for it explicitly by name, with the `integer_quotient()`
-function.
+To use integer division, you must ask for it explicitly by name, by calling `unblock_int_div()` on
+the denominator.
 
-??? example "Using `integer_quotient()` to explicitly opt in to integer division"
+??? example "Using `unblock_int_div()` to explicitly opt in to integer division"
 
     This will not work:
 
     ```cpp
     miles(125) / hours(2);
-    //        ^--- Forbidden!  Compiler error.
+    //         ^--- Forbidden!  Compiler error.
     ```
 
     However, this will work just fine:
 
     ```cpp
-    integer_quotient(miles(125), hours(2));
+    miles(125) / unblock_int_div(hours(2));
     ```
 
     It produces `(miles / hour)(62)`.
