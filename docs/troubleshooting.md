@@ -784,13 +784,13 @@ use a smaller target unit.
 
     **Compiler error (MSVC 2019 x64)**
     ```
-    D:\a\au\au\au.hh(4562): error C2338: Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired
-    D:\a\au\au\au.hh(4577): note: see reference to function template instantiation 'auto au::inverse_in<TargetUnits,au::Hertz,int>(TargetUnits,au::Quantity<au::Hertz,int>)' being compiled
+    D:\a\au\au\au.hh(6120): error C2338: Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired
+    D:\a\au\au\au.hh(6135): note: see reference to function template instantiation 'auto au::inverse_in<TargetUnits,au::Hertz,int>(TargetUnits,au::Quantity<au::Hertz,int>)' being compiled
             with
             [
                 TargetUnits=au::QuantityMaker<au::Seconds>
             ]
-    error_examples.cc(72): note: see reference to function template instantiation 'auto au::inverse_as<au::QuantityMaker<au::Seconds>,au::Hertz,int>(TargetUnits,au::Quantity<au::Hertz,int>)' being compiled
+    error_examples.cc(86): note: see reference to function template instantiation 'auto au::inverse_as<au::QuantityMaker<au::Seconds>,au::Hertz,int>(TargetUnits,au::Quantity<au::Hertz,int>)' being compiled
             with
             [
                 TargetUnits=au::QuantityMaker<au::Seconds>
@@ -799,13 +799,14 @@ use a smaller target unit.
 
     **Compiler error (MSVC 2022 x64)**
     ```
-    D:\a\au\au\au.hh(4562): error C2338: static_assert failed: 'Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired'
-    D:\a\au\au\au.hh(4577): note: see reference to function template instantiation 'auto au::inverse_in<TargetUnits,au::Hertz,int>(TargetUnits,au::Quantity<au::Hertz,int>)' being compiled
+    D:\a\au\au\au.hh(6120): error C2338: static_assert failed: 'Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired'
+    D:\a\au\au\au.hh(6120): note: the template instantiation context (the oldest one first) is
+    error_examples.cc(86): note: see reference to function template instantiation 'auto au::inverse_as<au::QuantityMaker<au::Seconds>,au::Hertz,int>(TargetUnits,au::Quantity<au::Hertz,int>)' being compiled
             with
             [
                 TargetUnits=au::QuantityMaker<au::Seconds>
             ]
-    error_examples.cc(72): note: see reference to function template instantiation 'auto au::inverse_as<au::QuantityMaker<au::Seconds>,au::Hertz,int>(TargetUnits,au::Quantity<au::Hertz,int>)' being compiled
+    D:\a\au\au\au.hh(6135): note: see reference to function template instantiation 'auto au::inverse_in<TargetUnits,au::Hertz,int>(TargetUnits,au::Quantity<au::Hertz,int>)' being compiled
             with
             [
                 TargetUnits=au::QuantityMaker<au::Seconds>

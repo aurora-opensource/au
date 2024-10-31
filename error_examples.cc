@@ -76,7 +76,6 @@ void example_integer_division_forbidden() {
     // (BROKEN): gives (60 / 65) == 0 before conversion!
     QuantityD<Seconds> t = meters(60) / (miles / hour)(65);
 }
-*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Dangerous inversion
@@ -85,8 +84,8 @@ void example_dangerous_inversion() {
     // (BROKEN): excessive truncation risk.
     inverse_as(seconds, hertz(5));
 }
+*/
 
-/*
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Deduced conflicting types
 
@@ -99,6 +98,7 @@ void example_deduced_conflicting_types() {
         // ...
     }
 }
+/*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION:
