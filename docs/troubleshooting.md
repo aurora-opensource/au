@@ -1142,195 +1142,267 @@ ordering!
 
     **Compiler error (MSVC 2019 x64)**
     ```
-    D:\a\au\au\au.hh(1037): error C2338: Broken strict total ordering: distinct input types compare equal
-    D:\a\au\au\au.hh(1068): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B>' being compiled
+    D:\a\au\au\au.hh(1392): error C2338: Broken strict total ordering: distinct input types compare equal
+    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(1068): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderAsUnitProduct>' being compiled
+    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderAsUnitProduct>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(1068): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
+    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(1068): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
+    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(1068): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
+    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(2716): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByUnitAvoidance,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
+    D:\a\au\au\au.hh(3563): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByUnitAvoidance,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(2344): note: see reference to class template instantiation 'au::InOrderFor<au::UnitProduct,A,B>' being compiled
+    D:\a\au\au\au.hh(3142): note: see reference to class template instantiation 'au::InOrderFor<au::UnitProduct,A,B>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(1147): note: see reference to class template instantiation 'au::InOrderFor<List,T,H>' being compiled
+    D:\a\au\au\au.hh(1502): note: see reference to class template instantiation 'au::InOrderFor<List,T,H>' being compiled
             with
             [
                 List=au::CommonUnit,
                 T=au::Quarterfeet,
                 H=au::Trinches
             ]
-    D:\a\au\au\au.hh(2379): note: see reference to class template instantiation 'au::FlatDedupedTypeList<au::CommonUnit,au::CommonUnit<T>,au::CommonUnit<au::Trinches>>' being compiled
+    D:\a\au\au\au.hh(3226): note: see reference to class template instantiation 'au::FlatDedupedTypeList<au::CommonUnit,au::CommonUnit<T>,au::CommonUnit<au::Trinches>>' being compiled
             with
             [
                 T=au::Quarterfeet
             ]
-    D:\a\au\au\au.hh(2379): note: see reference to alias template instantiation 'au::FlatDedupedTypeListT<au::CommonUnit,au::Quarterfeet,au::Trinches>' being compiled
-    D:\a\au\au\au.hh(2383): note: see reference to alias template instantiation 'au::ComputeCommonUnitImpl<au::Quarterfeet,au::Trinches>' being compiled
-    D:\a\au\au\au.hh(3491): note: see reference to class template instantiation 'au::ComputeCommonUnit<U1,U2>' being compiled
+    D:\a\au\au\au.hh(3226): note: see reference to alias template instantiation 'au::FlatDedupedTypeListT<au::CommonUnit,au::Quarterfeet,au::Trinches>' being compiled
+    D:\a\au\au\au.hh(3230): note: see reference to alias template instantiation 'au::ComputeCommonUnitImpl<au::Quarterfeet,au::Trinches>' being compiled
+    D:\a\au\au\au.hh(4619): note: see reference to class template instantiation 'au::ComputeCommonUnit<U1,U2>' being compiled
             with
             [
                 U1=au::Quarterfeet,
                 U2=au::Trinches
             ]
-    D:\a\au\au\au.hh(3491): note: see reference to alias template instantiation 'au::CommonUnitT<au::Quarterfeet,au::Trinches>' being compiled
-    D:\a\au\au\au.hh(3502): note: see reference to class template instantiation 'au::CommonQuantity<au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>,void>' being compiled
-    D:\a\au\au\au.hh(3365): note: see reference to class template instantiation 'std::common_type<T,U>' being compiled
+    D:\a\au\au\au.hh(4619): note: see reference to alias template instantiation 'au::CommonUnitT<au::Quarterfeet,au::Trinches>' being compiled
+    D:\a\au\au\au.hh(4630): note: see reference to class template instantiation 'au::CommonQuantity<au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>,void>' being compiled
+    D:\a\au\au\au.hh(4493): note: see reference to class template instantiation 'std::common_type<T,U>' being compiled
             with
             [
                 T=au::Quantity<au::Quarterfeet,int>,
                 U=au::Quantity<au::Trinches,int>
             ]
-    D:\a\au\au\au.hh(3365): note: see reference to alias template instantiation 'std::common_type_t<au::Quantity<au::Quarterfeet,int>,U>' being compiled
+    D:\a\au\au\au.hh(4493): note: see reference to alias template instantiation 'std::common_type_t<au::Quantity<au::Quarterfeet,int>,U>' being compiled
             with
             [
                 U=au::Quantity<au::Trinches,int>
             ]
-    D:\a\au\au\au.hh(3377): note: see reference to function template instantiation 'auto au::detail::using_common_type<au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>,au::detail::Equal>(T,U,Func)' being compiled
+    D:\a\au\au\au.hh(4505): note: see reference to function template instantiation 'auto au::detail::using_common_type<au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>,au::detail::Equal>(T,U,Func)' being compiled
             with
             [
                 T=au::Quantity<au::Quarterfeet,int>,
                 U=au::Quantity<au::Trinches,int>,
                 Func=au::detail::Equal
             ]
-    error_examples.cc(99): note: see reference to function template instantiation 'bool au::operator ==<au::Quarterfeet,au::Trinches,int,int>(au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>)' being compiled
-    D:\a\au\au\au.hh(2334): error C2338: Elements must be listed in ascending order
+    error_examples.cc(113): note: see reference to function template instantiation 'bool au::operator ==<au::Quarterfeet,au::Trinches,int,int>(au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>)' being compiled
+    D:\a\au\au\au.hh(3132): error C2338: Elements must be listed in ascending order
+    D:\a\au\au\au.hh(1310): note: see reference to class template instantiation 'au::CommonUnit<T,au::Quarterfeet>' being compiled
+            with
+            [
+                T=au::Trinches
+            ]
+    D:\a\au\au\au.hh(3133): note: see reference to alias template instantiation 'au::detail::DimMemberT<au::CommonUnit<T,au::Quarterfeet>>' being compiled
+            with
+            [
+                T=au::Trinches
+            ]
+    D:\a\au\au\au.hh(3094): note: see reference to class template instantiation 'au::detail::DimImpl<U1>' being compiled
+            with
+            [
+                U1=au::CommonUnit<au::Trinches,au::Quarterfeet>
+            ]
+    D:\a\au\au\au.hh(3093): note: see reference to alias template instantiation 'au::detail::DimT<au::CommonUnit<T,au::Quarterfeet>>' being compiled
+            with
+            [
+                T=au::Trinches
+            ]
+    D:\a\au\au\au.hh(210): note: see reference to class template instantiation 'au::HasSameDimension<U1,U2>' being compiled
+            with
+            [
+                U1=au::CommonUnit<au::Trinches,au::Quarterfeet>,
+                U2=au::Trinches
+            ]
+    D:\a\au\au\au.hh(3108): note: see reference to class template instantiation 'au::stdx::conjunction<au::HasSameDimension<U1,U2>,au::detail::HasSameMagnitude<U1,U2>>' being compiled
+            with
+            [
+                U1=au::CommonUnit<au::Trinches,au::Quarterfeet>,
+                U2=au::Trinches
+            ]
+    D:\a\au\au\au.hh(3172): note: see reference to class template instantiation 'au::AreUnitsQuantityEquivalent<TargetUnit,H>' being compiled
+            with
+            [
+                TargetUnit=au::CommonUnit<au::Trinches,au::Quarterfeet>,
+                H=au::Trinches
+            ]
+    D:\a\au\au\au.hh(3230): note: see reference to class template instantiation 'au::detail::FirstMatchingUnit<au::AreUnitsQuantityEquivalent,au::CommonUnit<T,au::Quarterfeet>,TargetUnit>' being compiled
+            with
+            [
+                T=au::Trinches,
+                TargetUnit=au::CommonUnit<au::Trinches,au::Quarterfeet>
+            ]
     ```
 
     **Compiler error (MSVC 2022 x64)**
     ```
-    D:\a\au\au\au.hh(1037): error C2338: static_assert failed: 'Broken strict total ordering: distinct input types compare equal'
-    D:\a\au\au\au.hh(1053): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B>' being compiled
+    D:\a\au\au\au.hh(1392): error C2338: Broken strict total ordering: distinct input types compare equal
+    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(1053): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderAsUnitProduct>' being compiled
+    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderAsUnitProduct>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(1053): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
+    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(1053): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
+    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(1053): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
+    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(2710): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByUnitAvoidance,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
+    D:\a\au\au\au.hh(3563): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByUnitAvoidance,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(2344): note: see reference to class template instantiation 'au::InOrderFor<au::UnitProduct,A,B>' being compiled
+    D:\a\au\au\au.hh(3142): note: see reference to class template instantiation 'au::InOrderFor<au::UnitProduct,A,B>' being compiled
             with
             [
                 A=au::Quarterfeet,
                 B=au::Trinches
             ]
-    D:\a\au\au\au.hh(1147): note: see reference to class template instantiation 'au::InOrderFor<List,T,H>' being compiled
+    D:\a\au\au\au.hh(1502): note: see reference to class template instantiation 'au::InOrderFor<List,T,H>' being compiled
             with
             [
                 List=au::CommonUnit,
                 T=au::Quarterfeet,
                 H=au::Trinches
             ]
-    D:\a\au\au\au.hh(2379): note: see reference to class template instantiation 'au::FlatDedupedTypeList<au::CommonUnit,au::CommonUnit<T>,au::CommonUnit<au::Trinches>>' being compiled
+    D:\a\au\au\au.hh(3226): note: see reference to class template instantiation 'au::FlatDedupedTypeList<au::CommonUnit,au::CommonUnit<T>,au::CommonUnit<au::Trinches>>' being compiled
             with
             [
                 T=au::Quarterfeet
             ]
-    D:\a\au\au\au.hh(2379): note: see reference to alias template instantiation 'au::FlatDedupedTypeListT<au::CommonUnit,U1,U2>' being compiled
+    D:\a\au\au\au.hh(3226): note: see reference to alias template instantiation 'au::FlatDedupedTypeListT<au::CommonUnit,au::Quarterfeet,au::Trinches>' being compiled
+    D:\a\au\au\au.hh(3230): note: see reference to alias template instantiation 'au::ComputeCommonUnitImpl<au::Quarterfeet,au::Trinches>' being compiled
+    D:\a\au\au\au.hh(4619): note: see reference to class template instantiation 'au::ComputeCommonUnit<U1,U2>' being compiled
             with
             [
                 U1=au::Quarterfeet,
                 U2=au::Trinches
             ]
-    D:\a\au\au\au.hh(2383): note: see reference to alias template instantiation 'au::ComputeCommonUnitImpl<U1,U2>' being compiled
-            with
-            [
-                U1=au::Quarterfeet,
-                U2=au::Trinches
-            ]
-    D:\a\au\au\au.hh(3491): note: see reference to class template instantiation 'au::ComputeCommonUnit<U1,U2>' being compiled
-            with
-            [
-                U1=au::Quarterfeet,
-                U2=au::Trinches
-            ]
-    D:\a\au\au\au.hh(3491): note: see reference to alias template instantiation 'au::CommonUnitT<U1,U2>' being compiled
-            with
-            [
-                U1=au::Quarterfeet,
-                U2=au::Trinches
-            ]
-    D:\a\au\au\au.hh(3502): note: see reference to class template instantiation 'au::CommonQuantity<au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>,void>' being compiled
-    D:\a\au\au\au.hh(3365): note: see reference to class template instantiation 'std::common_type<T,U>' being compiled
+    D:\a\au\au\au.hh(4619): note: see reference to alias template instantiation 'au::CommonUnitT<au::Quarterfeet,au::Trinches>' being compiled
+    D:\a\au\au\au.hh(4630): note: see reference to class template instantiation 'au::CommonQuantity<au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>,void>' being compiled
+    D:\a\au\au\au.hh(4493): note: see reference to class template instantiation 'std::common_type<T,U>' being compiled
             with
             [
                 T=au::Quantity<au::Quarterfeet,int>,
                 U=au::Quantity<au::Trinches,int>
             ]
-    D:\a\au\au\au.hh(3365): note: see reference to alias template instantiation 'std::common_type_t<T,U>' being compiled
+    D:\a\au\au\au.hh(4493): note: see reference to alias template instantiation 'std::common_type_t<au::Quantity<au::Quarterfeet,int>,U>' being compiled
             with
             [
-                T=au::Quantity<au::Quarterfeet,int>,
                 U=au::Quantity<au::Trinches,int>
             ]
-    D:\a\au\au\au.hh(3377): note: see reference to function template instantiation 'auto au::detail::using_common_type<au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>,au::detail::Equal>(T,U,Func)' being compiled
+    D:\a\au\au\au.hh(4505): note: see reference to function template instantiation 'auto au::detail::using_common_type<au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>,au::detail::Equal>(T,U,Func)' being compiled
             with
             [
                 T=au::Quantity<au::Quarterfeet,int>,
                 U=au::Quantity<au::Trinches,int>,
                 Func=au::detail::Equal
             ]
-    error_examples.cc(99): note: see reference to function template instantiation 'bool au::operator ==<au::Quarterfeet,au::Trinches,int,int>(au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>)' being compiled
-    D:\a\au\au\au.hh(2334): error C2338: static_assert failed: 'Elements must be listed in ascending order'
+    error_examples.cc(113): note: see reference to function template instantiation 'bool au::operator ==<au::Quarterfeet,au::Trinches,int,int>(au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>)' being compiled
+    D:\a\au\au\au.hh(3132): error C2338: Elements must be listed in ascending order
+    D:\a\au\au\au.hh(1310): note: see reference to class template instantiation 'au::CommonUnit<T,au::Quarterfeet>' being compiled
+            with
+            [
+                T=au::Trinches
+            ]
+    D:\a\au\au\au.hh(3133): note: see reference to alias template instantiation 'au::detail::DimMemberT<au::CommonUnit<T,au::Quarterfeet>>' being compiled
+            with
+            [
+                T=au::Trinches
+            ]
+    D:\a\au\au\au.hh(3094): note: see reference to class template instantiation 'au::detail::DimImpl<U1>' being compiled
+            with
+            [
+                U1=au::CommonUnit<au::Trinches,au::Quarterfeet>
+            ]
+    D:\a\au\au\au.hh(3093): note: see reference to alias template instantiation 'au::detail::DimT<au::CommonUnit<T,au::Quarterfeet>>' being compiled
+            with
+            [
+                T=au::Trinches
+            ]
+    D:\a\au\au\au.hh(210): note: see reference to class template instantiation 'au::HasSameDimension<U1,U2>' being compiled
+            with
+            [
+                U1=au::CommonUnit<au::Trinches,au::Quarterfeet>,
+                U2=au::Trinches
+            ]
+    D:\a\au\au\au.hh(3108): note: see reference to class template instantiation 'au::stdx::conjunction<au::HasSameDimension<U1,U2>,au::detail::HasSameMagnitude<U1,U2>>' being compiled
+            with
+            [
+                U1=au::CommonUnit<au::Trinches,au::Quarterfeet>,
+                U2=au::Trinches
+            ]
+    D:\a\au\au\au.hh(3172): note: see reference to class template instantiation 'au::AreUnitsQuantityEquivalent<TargetUnit,H>' being compiled
+            with
+            [
+                TargetUnit=au::CommonUnit<au::Trinches,au::Quarterfeet>,
+                H=au::Trinches
+            ]
+    D:\a\au\au\au.hh(3230): note: see reference to class template instantiation 'au::detail::FirstMatchingUnit<au::AreUnitsQuantityEquivalent,au::CommonUnit<T,au::Quarterfeet>,TargetUnit>' being compiled
+            with
+            [
+                T=au::Trinches,
+                TargetUnit=au::CommonUnit<au::Trinches,au::Quarterfeet>
+            ]
     ```
 
