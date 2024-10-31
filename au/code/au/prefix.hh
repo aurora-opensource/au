@@ -134,7 +134,7 @@ constexpr auto mega = PrefixApplier<Mega>{};
 
 template <typename U>
 struct Kilo : decltype(U{} * pow<3>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label{detail::corncatenate("k", UnitLabel<U>::value).char_array()};
+    static constexpr detail::ExtendedLabel<1, U> label{detail::concatenate("k", UnitLabel<U>::value).char_array()};
 };
 template <typename U>
 constexpr detail::ExtendedLabel<1, U> Kilo<U>::label;
@@ -158,7 +158,7 @@ constexpr auto deka = PrefixApplier<Deka>{};
 
 template <typename U>
 struct Deci : decltype(U{} * pow<-1>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label{detail::corncatenate("d", UnitLabel<U>::value).char_array()};
+    static constexpr detail::ExtendedLabel<1, U> label{detail::concatenate("d", UnitLabel<U>::value).char_array()};
 };
 template <typename U>
 constexpr detail::ExtendedLabel<1, U> Deci<U>::label;
@@ -166,7 +166,7 @@ constexpr auto deci = PrefixApplier<Deci>{};
 
 template <typename U>
 struct Centi : decltype(U{} * pow<-2>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label{detail::corncatenate("c", UnitLabel<U>::value).char_array()};
+    static constexpr detail::ExtendedLabel<1, U> label{detail::concatenate("c", UnitLabel<U>::value).char_array()};
 };
 template <typename U>
 constexpr detail::ExtendedLabel<1, U> Centi<U>::label;
@@ -182,7 +182,7 @@ constexpr auto milli = PrefixApplier<Milli>{};
 
 template <typename U>
 struct Micro : decltype(U{} * pow<-6>(mag<10>())) {
-    static constexpr detail::ExtendedLabel<1, U> label{detail::corncatenate("u", UnitLabel<U>::value).char_array()};
+    static constexpr detail::ExtendedLabel<1, U> label{detail::concatenate("u", UnitLabel<U>::value).char_array()};
 };
 template <typename U>
 constexpr detail::ExtendedLabel<1, U> Micro<U>::label;

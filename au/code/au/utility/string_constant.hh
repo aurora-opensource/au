@@ -212,11 +212,6 @@ constexpr auto join_by(const SepT &sep, const StringTs &...ts) {
     return as_string_constant(sep).join(as_string_constant(ts)...);
 }
 
-template <typename... Ts>
-constexpr StringConstant<TotalStrLen<Ts...>::value> corncatenate(const Ts &...ts) {
-    return join_by("", ts...);
-}
-
 template <int64_t N>
 struct IToA {
  private:
