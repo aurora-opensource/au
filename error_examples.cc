@@ -60,7 +60,6 @@ void example_dangerous_conversion() {
     // B (BROKEN): overflow risk.
     giga(hertz)(1).as(hertz);
 }
-*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: No type named 'type' in 'std::common_type'
@@ -69,8 +68,8 @@ void example_no_type_named_type_in_std_common_type() {
     // (BROKEN): different dimensions.
     meters(1) + seconds(1);
 }
+*/
 
-/*
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Integer division forbidden
 
@@ -78,6 +77,7 @@ void example_integer_division_forbidden() {
     // (BROKEN): gives (60 / 65) == 0 before conversion!
     QuantityD<Seconds> t = meters(60) / (miles / hour)(65);
 }
+/*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Dangerous inversion
