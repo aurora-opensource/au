@@ -313,24 +313,23 @@ operation (at least in this format).
 
     **Compiler error (MSVC 2019 x64)**
     ```
-    D:\a\au\au\au.hh(2952): error C2338: Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion
-    D:\a\au\au\au.hh(2989): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<NewUnit,void>(NewUnit) const' being compiled
+    D:\a\au\au\au.hh(4032): error C2338: Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion
+    error_examples.cc(59): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<au::QuantityMaker<au::Feet>,void>(NewUnit) const' being compiled
             with
             [
-                NewUnit=au::Feet
+                NewUnit=au::QuantityMaker<au::Feet>
             ]
-    error_examples.cc(45): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<au::Feet>(au::QuantityMaker<au::Feet>) const' being compiled
     ```
 
     **Compiler error (MSVC 2022 x64)**
     ```
-    D:\a\au\au\au.hh(2952): error C2338: static_assert failed: 'Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion'
-    D:\a\au\au\au.hh(2989): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<NewUnit,void>(NewUnit) const' being compiled
+    D:\a\au\au\au.hh(4032): error C2338: static_assert failed: 'Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion'
+    D:\a\au\au\au.hh(4032): note: the template instantiation context (the oldest one first) is
+    error_examples.cc(59): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<au::QuantityMaker<au::Feet>,void>(NewUnit) const' being compiled
             with
             [
-                NewUnit=au::Feet
+                NewUnit=au::QuantityMaker<au::Feet>
             ]
-    error_examples.cc(45): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<au::Feet>(au::QuantityMaker<au::Feet>) const' being compiled
     ```
 
 ## No type named 'type' in 'std::common_type'
