@@ -748,6 +748,22 @@ TEST(Quantity, CommonUnitAlwaysCompletelyIndependentOfOrder) {
     check_units(kilo(meters), miles, milli(meters));
 }
 
+template <QuantityI<Meters>::NTTP Length>
+struct TemplateOnLength {
+    QuantityI<Meters> value = Length;
+};
+
+TEST(QuantityNTTP, SupportsPreCpp20NttpTypes) {
+    constexpr auto length = TemplateOnLength<meters(18)>{}.value;
+    EXPECT_THAT(length, SameTypeAndValue(meters(18)));
+}
+
+TEST(QuantityNTTP, CanConvertFromNttpToAnyCompatibleQuantityType) {
+    constexpr QuantityI<Meters>::NTTP LengthNTTP = meters(18);
+    constexpr QuantityI<Milli<Meters>> length = from_nttp(LengthNTTP);
+    EXPECT_THAT(length, SameTypeAndValue(milli(meters)(18'000)));
+}
+
 TEST(Quantity, CommonTypeRespectsImplicitRepSafetyChecks) {
     // The following test should fail to compile.  Uncomment both lines to check.
     // constexpr auto feeters = QuantityMaker<CommonUnitT<Meters, Feet>>{};
