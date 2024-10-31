@@ -37,6 +37,20 @@ void example_private_constructor() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// SECTION: ...
+
+void example_input_to_maker() {
+    constexpr auto x = meters(1);
+    constexpr auto x_pt = meters_pt(1);
+
+    // A (BROKEN): passing something that is already a quantity to a quantity maker.
+    meters(x);
+
+    // B (BROKEN): same as above, but with quantity _points_.
+    meters_pt(x_pt);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Dangerous conversion
 
 void example_dangerous_conversion() {
