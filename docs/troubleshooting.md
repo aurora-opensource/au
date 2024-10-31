@@ -654,18 +654,20 @@ floating point types.
 
     **Compiler error (MSVC 2019 x64)**
     ```
-    D:\a\au\au\au.hh(3198): error C2338: Integer division forbidden: use integer_quotient() if you really want it
-    D:\a\au\au\au.hh(3131): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherRep>(void)' being compiled
+    D:\a\au\au\au.hh(4263): error C2338: Integer division forbidden: wrap denominator in `unblock_int_div()` if you really want it
+    D:\a\au\au\au.hh(4193): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherUnit,OtherRep>(void)' being compiled
             with
             [
+                OtherUnit=au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,
                 OtherRep=int
             ]
-    D:\a\au\au\au.hh(3131): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherRep>(void)' being compiled
+    D:\a\au\au\au.hh(4193): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherUnit,OtherRep>(void)' being compiled
             with
             [
+                OtherUnit=au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,
                 OtherRep=int
             ]
-    error_examples.cc(64): note: see reference to function template instantiation 'au::Quantity<au::UnitProduct<T,au::Pow<B,-1>,au::Hours>,int> au::Quantity<au::Meters,int>::operator /<au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,int>(au::Quantity<au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,int>) const' being compiled
+    error_examples.cc(78): note: see reference to function template instantiation 'au::Quantity<au::UnitProduct<T,au::Pow<B,-1>,au::Hours>,int> au::Quantity<au::Meters,int>::operator /<au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,int>(au::Quantity<au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,int>) const' being compiled
             with
             [
                 T=au::Meters,
@@ -675,17 +677,19 @@ floating point types.
 
     **Compiler error (MSVC 2022 x64)**
     ```
-    D:\a\au\au\au.hh(3198): error C2338: static_assert failed: 'Integer division forbidden: use integer_quotient() if you really want it'
-    D:\a\au\au\au.hh(3131): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherRep>(void)' being compiled
-            with
-            [
-                OtherRep=int
-            ]
-    error_examples.cc(64): note: see reference to function template instantiation 'au::Quantity<au::UnitProduct<T,au::Pow<B,-1>,au::Hours>,int> au::Quantity<au::Meters,int>::operator /<au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,int>(au::Quantity<au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,int>) const' being compiled
+    D:\a\au\au\au.hh(4263): error C2338: static_assert failed: 'Integer division forbidden: wrap denominator in `unblock_int_div()` if you really want it'
+    D:\a\au\au\au.hh(4263): note: the template instantiation context (the oldest one first) is
+    error_examples.cc(78): note: see reference to function template instantiation 'au::Quantity<au::UnitProduct<T,au::Pow<B,-1>,au::Hours>,int> au::Quantity<au::Meters,int>::operator /<au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,int>(au::Quantity<au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,int>) const' being compiled
             with
             [
                 T=au::Meters,
                 B=au::Miles
+            ]
+    D:\a\au\au\au.hh(4193): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherUnit,OtherRep>(void)' being compiled
+            with
+            [
+                OtherUnit=au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,
+                OtherRep=int
             ]
     ```
 
