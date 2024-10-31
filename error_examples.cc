@@ -27,13 +27,27 @@ namespace au {
 
 void set_timeout(QuantityD<Seconds> dt);
 
-/*
 void example_private_constructor() {
     // A (BROKEN): passing raw number where duration expected.
     set_timeout(0.5);
 
     // B (BROKEN): calling Quantity constructor directly.
     constexpr QuantityD<Meters> length{5.5};
+}
+
+/*
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SECTION: ...
+
+void example_input_to_maker() {
+    constexpr auto x = meters(1);
+    constexpr auto x_pt = meters_pt(1);
+
+    // A (BROKEN): passing something that is already a quantity to a quantity maker.
+    meters(x);
+
+    // B (BROKEN): same as above, but with quantity _points_.
+    meters_pt(x_pt);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +97,6 @@ void example_deduced_conflicting_types() {
         // ...
     }
 }
-*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION:
@@ -100,5 +113,6 @@ void example_() {
         // ...
     }
 }
+*/
 
 }  // namespace au
