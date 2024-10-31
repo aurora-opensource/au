@@ -16,6 +16,43 @@ Each section below lists one category of compiler error you might encounter when
 It explains what it means and how to solve it, and gives specific snippets of erroneous code, along
 with the compiler errors that each would yield.
 
+## New one
+
+```
+D:\a\au\au\au.hh(4391): error C2338: Input to QuantityMaker is already a Quantity
+error_examples.cc(48): note: see reference to function template instantiation 'void au::QuantityMaker<au::Meters>::operator ()<au::Meters,int>(au::Quantity<au::Meters,int>) const' being compiled
+error_examples.cc(48): note: see reference to function template instantiation 'void au::QuantityMaker<au::Meters>::operator ()<au::Meters,int>(au::Quantity<au::Meters,int>) const' being compiled
+D:\a\au\au\au.hh(5111): error C2338: Input to QuantityPointMaker is already a QuantityPoint
+error_examples.cc(51): note: see reference to function template instantiation 'void au::QuantityPointMaker<au::Meters>::operator ()<Unit,T>(au::QuantityPoint<Unit,T>) const' being compiled
+        with
+        [
+            Unit=au::Meters,
+            T=int
+        ]
+error_examples.cc(51): note: see reference to function template instantiation 'void au::QuantityPointMaker<au::Meters>::operator ()<Unit,T>(au::QuantityPoint<Unit,T>) const' being compiled
+        with
+        [
+            Unit=au::Meters,
+            T=int
+        ]
+```
+
+```
+D:\a\au\au\au.hh(4391): error C2338: static_assert failed: 'Input to QuantityMaker is already a Quantity'
+D:\a\au\au\au.hh(4391): note: the template instantiation context (the oldest one first) is
+error_examples.cc(48): note: see reference to function template instantiation 'void au::QuantityMaker<au::Meters>::operator ()<au::Meters,int>(au::Quantity<au::Meters,int>) const' being compiled
+error_examples.cc(48): note: see the first reference to 'au::QuantityMaker<au::Meters>::operator ()' in 'au::example_input_to_maker'
+D:\a\au\au\au.hh(5111): error C2338: static_assert failed: 'Input to QuantityPointMaker is already a QuantityPoint'
+D:\a\au\au\au.hh(5111): note: the template instantiation context (the oldest one first) is
+error_examples.cc(51): note: see reference to function template instantiation 'void au::QuantityPointMaker<au::Meters>::operator ()<Unit,T>(au::QuantityPoint<Unit,T>) const' being compiled
+        with
+        [
+            Unit=au::Meters,
+            T=int
+        ]
+error_examples.cc(51): note: see the first reference to 'au::QuantityPointMaker<au::Meters>::operator ()' in 'au::example_input_to_maker'
+```
+
 ## Private constructor
 
 **Meaning:**  This means you passed a raw numeric value to an interface that expected a Quantity.
