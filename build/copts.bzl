@@ -16,11 +16,12 @@
 # -Wall is already set by aspect_gcc_toolchain.
 EXTRA_COPTS = [
     "-Wextra",
+    "-pedantic",
 ]
 
 # Since the clang toolchain we're using doesn't let us extract the default flags, we have to
 # manually specify the default flags here. These are copied from:
-# https://github.com/grailbio/bazel-toolchain/blob/069ee4e20ec605a6c76c1798658e17175b2eb35e/toolchain/cc_toolchain_config.bzl#L118
+# https://github.com/bazel-contrib/toolchains_llvm/blob/069ee4e20ec605a6c76c1798658e17175b2eb35e/toolchain/cc_toolchain_config.bzl#L118
 BASE_CLANG_COPTS = [
     "--target=x86_64-unknown-linux-gnu",
     # Security
@@ -30,6 +31,7 @@ BASE_CLANG_COPTS = [
     # Diagnostics
     "-fcolor-diagnostics",
     "-Wall",
+    "-Wshadow",
     "-Wthread-safety",
     "-Wself-assign",
 ]

@@ -20,8 +20,6 @@ There are 3 **valid** ways for end users to form a `Magnitude` instance.
 3. :heavy_check_mark: Forming products, quotients, powers, and roots of other valid `Magnitude`
    instances.
 
-End users can also use pre-formed `Magnitude` instances from the library, such as `PI` and `ONE`.
-
 The following is a **valid, but dis-preferred way** to form a `Magnitude`.
 
 - :warning: `Magnitude<>`.
@@ -71,10 +69,12 @@ also automatically support related values such as $\pi^2$, $\frac{1}{\sqrt{2\pi}
     cases, such as handling $\pi$, which most units libraries have traditionally struggled to
     support.
 
-Because of its importance for angular variables, $\pi$ is supported natively in the library --- you
-don't need to define it yourself.  The constant `PI` is a `Magnitude` _instance_.  It's based on the
-(natively included) irrational magnitude base, `Pi`.  (Concretely: `PI` is defined as
-`Magnitude<Pi>{}`, in accordance with option 2 above.)
+Because of its importance for angular variables, $\pi$ is supported natively in the library, via the
+irrational magnitude base, `Pi`.  To define a magnitude _instance_ for $\pi$, you can write:
+
+```cpp
+constexpr auto PI = Magnitude<Pi>{};
+```
 
 If you need to represent an irrational number which can't be formed via any product of powers of the
 existing `Magnitude` types --- namely, integers and $\pi$ --- then you can define a new irrational
@@ -124,8 +124,41 @@ To extract the value of a `Magnitude` instance `m` into a given numeric type `T`
     - The **computation** gets performed _at compile time_ in `long double`, giving extra precision.
     - The **result** gets cast to `float` and stored as a program constant.
 
-    Thus, `get_value<float>(pow<3>(PI))` will be much more accurate than storing $\pi$ in a `float`,
-    and cubing it --- yet, there will be no loss in performance.
+    Thus, if you have a magnitude instance `PI`, then `get_value<float>(pow<3>(PI))` will be much
+    more accurate than storing $\pi$ in a `float`, and cubing it --- yet, there will be no loss in
+    runtime performance.
+
+### Checking for representability
+
+If you need to check whether your magnitude `m` can be represented in a type `T`, you can call
+`representable_in<T>(m)`.  This function is `constexpr` compatible.
+
+??? example "Example: integer and non-integer values"
+
+    Here are some example test cases which will pass.
+
+    ```cpp
+    EXPECT_TRUE(representable_in<int>(mag<1>()));
+
+    // (1 / 2) is not an integer.
+    EXPECT_FALSE(representable_in<int>(mag<1>() / mag<2>()));
+
+    EXPECT_TRUE(representable_in<float>(mag<1>() / mag<2>()));
+    ```
+
+??? example "Example: range of the type"
+    Here are some example test cases which will pass.
+
+    ```cpp
+    EXPECT_TRUE(representable_in<uint32_t>(mag<4'000'000'000>()));
+
+    // 4 billion is larger than the max value representable in `int32_t`.
+    EXPECT_FALSE(representable_in<int32_t>(mag<4'000'000'000>()));
+    ```
+
+Note that this function's return value also depends on _whether we can compute_ the value, not just
+whether it is representable.   For example, `representable_in<double>(sqrt(mag<2>()))` is currently
+`false`, because we haven't yet added support for computing rational base powers.
 
 ## Operations
 

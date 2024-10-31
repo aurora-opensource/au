@@ -6,11 +6,11 @@ https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml) [!
 https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml/badge.svg?branch=main&event=push)](
 https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml) [![gcc10-ubuntu](
 https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml/badge.svg?branch=main&event=push)](
-https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml) [![MSVC x64 19.29](
-https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml/badge.svg?branch=main&event=push)](
-https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-29-30151.yml) [![MSVC x64 19.35](
-https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml/badge.svg?branch=main&event=push)](
-https://github.com/aurora-opensource/au/actions/workflows/msvc-x64-19-35-32217-1.yml)
+https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml) [![MSVC 2019 x64](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2019-x64.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2019-x64.yml) [![MSVC 2022 x64](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml)
 
 # Au: A C++14-compatible units library, by Aurora
 
@@ -25,6 +25,8 @@ voltages, and so on). Namely:
 In short: if your C++ programs handle physical quantities, Au will make you faster and more
 effective at your job.  You'll find everything you need in our [full documentation
 website](https://aurora-opensource.github.io/au).
+
+> _Try it out on [Compiler Explorer ("godbolt")](https://godbolt.org/z/G6r315G9n)!_
 
 ## Why Au?
 
@@ -45,18 +47,18 @@ usability and reliability. This **includes embedded support**: Aurora's embedded
 first class customers since the library's inception.
 
 To learn more about our place in the C++ units library ecosystem, see our [detailed library
-comparison](https://aurora-opensource.github.io/au/alternatives).
+comparison](https://aurora-opensource.github.io/au/main/alternatives/).
 
 ## Getting started
 
-Our [installation instructions](https://aurora-opensource.github.io/au/install) can have you up and
-running in minutes, in any project that supports C++14 or newer.
+Our [installation instructions](https://aurora-opensource.github.io/au/main/install/) can have you
+up and running in minutes, in any project that supports C++14 or newer.
 
 To use the library effectively, we recommend working through the
-[tutorials](https://aurora-opensource.github.io/au/tutorial/), starting with [Au 101: Quantity
-Makers](https://aurora-opensource.github.io/au/tutorial/101-quantity-makers).  To
+[tutorials](https://aurora-opensource.github.io/au/main/tutorial/), starting with [Au 101: Quantity
+Makers](https://aurora-opensource.github.io/au/main/tutorial/101-quantity-makers/).  To
 get set up with the tutorials — or, to contribute to the library — check out our [development
-guide](https://aurora-opensource.github.io/au/develop).
+guide](https://aurora-opensource.github.io/au/main/develop/).
 
 ## As seen at CppCon 2021
 
@@ -67,9 +69,21 @@ effectively.  Because Au was designed from the ground up with these best practic
 thoroughly exemplifies them.  Check out the video below, and follow along with [the slide
 deck](https://chogg.name/cppcon-2021-units/) if you like.
 
-[![Chip Hogg's CppCon 2021 Aurora units talk](https://user-images.githubusercontent.com/10720055/203602853-9437f26a-9b1f-4b54-8a4d-2fb242ed9953.png)](https://www.youtube.com/watch?v=5dhFtSu3wCo)
+[![Chip Hogg's CppCon 2021 Aurora units talk](https://github.com/user-attachments/assets/ca87d98d-4256-4d10-a112-723d1ee56275)](https://www.youtube.com/watch?v=5dhFtSu3wCo)
 
 > NOTE: This open-source version has been significantly improved from what was presented in the
 talk: both in its user interfaces, _and_ under the hood!  The one downside is that matrix and vector
 support hasn't yet been implemented.  See [#70](https://github.com/aurora-opensource/au/issues/70)
 for more details, and subscribe to that issue to watch for progress.
+
+## ...and, at CppCon 2023
+
+After CppCon 2021, we found that telling people what to look for in a units library wasn't good
+enough, if they couldn't find one that met those criteria.  We saw so many people struggling with
+problems that we had already solved robustly!  So, we set about sharing our work.  With a clean
+slate, we made a new library that was a drop-in replacement for Aurora's internal library, but with
+zero Aurora-internal dependencies, so that we could easily open source it.  The result was Au, and
+we shared it at CppCon 2023.  Check out the video below, and follow along with [the slide
+deck](https://chogg.name/cppcon-2023-au-units) if you like.
+
+[![Chip Hogg's CppCon 2023 Aurora units talk](https://github.com/user-attachments/assets/5f359644-d36c-43f9-8d6f-b49bb1d3cb2e)](https://www.youtube.com/watch?v=o0ck5eqpOLc)

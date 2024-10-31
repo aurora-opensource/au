@@ -91,7 +91,7 @@ following example.
 ??? example "Example of 'two-hop' conversion, continued from above"
 
     ```cpp
-    MyDegrees angle = radians(get_value<double>(PI / mag<2>()));
+    MyDegrees angle = radians(get_value<double>(Magnitude<Pi>{} / mag<2>()));
     ```
 
     Here we have a "two-hop" conversion.  The corresponding quantity for `MyDegrees` is

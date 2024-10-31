@@ -6,6 +6,7 @@
       "**/*.sh",
       "**/*.yml",
       "**/BUILD.bazel",
+      "**/CMakeLists.txt",
       "tools/bin/au-docs-serve",
       "tools/bin/buildifier",
       "tools/bin/clang-format",
@@ -16,7 +17,9 @@
       ".envrc",
       ".github/**/*.yml",
       "requirements.in",
-      "WORKSPACE"
+      "cmake/*.cmake",
+      "cmake/*.cmake.in",
+      "**/WORKSPACE"
     ],
     "exclude": [
       "third_party/**/*"
@@ -58,6 +61,9 @@
       "third_party/**/*",
       "tools/bazel",
       "tools/bin/bazel"
+    ],
+    "exclude": [
+      "**/CMakeLists.txt"
     ]
   }
 ]

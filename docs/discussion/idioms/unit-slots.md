@@ -57,6 +57,44 @@ they have two advantages that make them easier to read:
 2. You can use grammatically correct names, such as `meters / squared(second)` (note: `second` is
    singular), rather than `Meters{} / squared(Seconds{})`.
 
+### Other expressions
+
+There are other monovalue types that would feel right at home in a unit slot.  We typically support
+those too!  Key examples include [unit symbols](../../reference/unit.md#symbols) and
+[constants](../../reference/constant.md).  Expand the block below to see a worked example.
+
+??? example "Example: using unit symbols and constants in unit slots"
+    Suppose we have the following preamble, simply to set everything up.
+
+    ```cpp
+    struct SpeedOfLight : decltype(Meters{} / Seconds{} * mag<299'792'458>()) {
+        static constexpr const char label[] = "c";
+    };
+    constexpr const char SpeedOfLight::label[];
+    constexpr auto c = make_constant(SpeedOfLight{});
+
+    // These using declarations should be in a `.cc` file, not `.hh`,
+    // to avoid namespace pollution!
+    using symbols::m;
+    using symbols::s;
+    ```
+
+    Then we can pass either the unit symbols, or the constants, to our unit slot APIs:
+
+    ```cpp
+    constexpr auto v = (miles / hour)(65.0);
+
+    std::cout << v.as(m / s) << std::endl;
+    //                ^^^^^
+    // Passing a unit symbol to the unit slot.  Output:
+    // "29.0576 m / s"
+
+    std::cout << v.as(c) << std::endl;
+    //                ^
+    // Passing a constant to the unit slot.  Output:
+    // "9.69257e-08 c"
+    ```
+
 #### Notes for `QuantityPoint`
 
 `QuantityPoint` doesn't use quantity makers: it uses quantity _point_ makers.  For example, instead
@@ -66,6 +104,12 @@ The implications are straightforward.  If you have a `QuantityPoint` instead of 
 use the quantity _point_ maker instead of the _quantity_ maker.  The library will enforce this
 automatically: for example, you can't pass `meters` to a `QuantityPoint`'s unit slot, and you can't
 pass `meters_pt` to a `Quantity`'s unit slot.
+
+To get the associated unit for a type, use the
+[`AssociatedUnitT`](../../reference/unit.md#associated-unit) trait when you're dealing with
+`Quantity`, and use the
+[`AssociatedUnitForPointsT`](../../reference/unit.md#associated-unit-for-points) trait when dealing
+with `QuantityPoint`.
 
 ## Examples: rounding to RPM
 

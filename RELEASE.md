@@ -4,6 +4,12 @@
 
 These are the steps to take before you actually cut the release.
 
+### Check all commented-out test cases
+
+These are test cases that we can't test automatically, usually because the intended behavior is
+a compiler error.  Grep the codebase for `uncomment`, and test every such case individually to make
+sure they still display the desired behavior.
+
 ### Check Aurora's code
 
 Create a draft PR which updates Aurora's internal code to the candidate release.  Make sure all of
@@ -15,6 +21,15 @@ of the latest state of `main`.  The `strip_prefix` for this release will typical
 `aurora-opensource-au-XXXXXXX`, where `XXXXXXX` is the first 7 characters of the most recent commit.
 Of course, you can also unpack it (`tar -xvzf`) to obtain the `strip_prefix` authoritatively.
 
+#### Check cumulative compile time impact
+
+Set up a compile time measurement using Aurora's internal code as the client code.  These
+measurements should automatically switch back and forth between the previous and new release, and
+should cover at least a half-dozen Au-dependent targets, ideally diverse ones.
+
+If there is a significant regression, root cause it and see if it can be fixed.  If not, mention it
+in the release notes.
+
 ### Gather information for release notes
 
 First, go to the [latest release](https://github.com/aurora-opensource/au/releases/latest).  Click
@@ -22,6 +37,7 @@ the list of "commits to main since this release", found near the top.  Read thro
 keep track of the main changes as you go.  Use the following categories.
 
 - User-facing library changes
+    - If the compilation speed has been significantly impacted, mention this here.
 - New units
 - Tooling updates
 - Documentation updates
@@ -35,6 +51,17 @@ Any empty section can be omitted.
 
 We try to follow [semantic versioning](https://semver.org/).  Since we are currently in major
 version zero (0.y.z), incompatible changes don't force a major version upgrade.
+
+### Update the CMake version number
+
+Edit the `CMakeLists.txt` file in the root folder, updating the version number in the `project`
+command to the number chosen above.
+
+Also update the version number in the `HOMEPAGE_URL` parameter, because we link to the docs for the
+latest release in our CMake project definition.  (True, this URL won't exist until you complete the
+remaining steps in this guide, but the danger of getting it wrong is pretty small.)
+
+Make a PR with these changes and land it before creating the tag.
 
 ### Fill out release notes template
 
@@ -86,7 +113,9 @@ Issues!  Alphabetically:
 
 ### Create the tag
 
-Use the command below, replacing `0.3.1` with the version to create.
+First, make sure the "final commit" (which updates the CMake variables) has already landed.
+
+Then, use the command below, replacing `0.3.1` with the version to create.
 
 ```sh
 # Remember to update the tag number!

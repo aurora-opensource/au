@@ -29,16 +29,16 @@ bazel_skylib_workspace()
 
 load("//build:copts.bzl", "BASE_CLANG_COPTS", "EXTRA_COPTS")
 
-BAZEL_TOOLCHAIN_REF = "056aeaa01900f5050a9fed9b11e2d365a684831a"
+BAZEL_TOOLCHAIN_RELEASE = "0.10.3"
 
-BAZEL_TOOLCHAIN_SHA = "93aa940bcaa2bfdd8153d4d029bad1ccc6c0601e29ffff3a23e1d89aba5f61fa"
+BAZEL_TOOLCHAIN_SHA = "b7cd301ef7b0ece28d20d3e778697a5e3b81828393150bed04838c0c52963a01"
 
 http_archive(
     name = "com_grail_bazel_toolchain",
-    canonical_id = BAZEL_TOOLCHAIN_REF,
+    canonical_id = BAZEL_TOOLCHAIN_RELEASE,
     sha256 = BAZEL_TOOLCHAIN_SHA,
-    strip_prefix = "bazel-toolchain-{ref}".format(ref = BAZEL_TOOLCHAIN_REF),
-    url = "https://github.com/grailbio/bazel-toolchain/archive/{ref}.tar.gz".format(ref = BAZEL_TOOLCHAIN_REF),
+    strip_prefix = "toolchains_llvm-{ref}".format(ref = BAZEL_TOOLCHAIN_RELEASE),
+    url = "https://github.com/bazel-contrib/toolchains_llvm/releases/download/{ref}/toolchains_llvm-{ref}.tar.gz".format(ref = BAZEL_TOOLCHAIN_RELEASE),
 )
 
 load("@com_grail_bazel_toolchain//toolchain:deps.bzl", "bazel_toolchain_dependencies")
@@ -89,11 +89,11 @@ http_archive(
     patches = [
         "@//:third_party/aspect_gcc_toolchain/0001-Expose-target_settings-and-set-std-c-14.patch",
     ],
-    sha256 = "e2e12202dd83f67d71101b24554044de25e1625d16b4b56bc453ecaa8f7c6bd0",
-    strip_prefix = "aspect-build-gcc-toolchain-ac745d4",
+    sha256 = "0651c0d595417b71fdbd903bf852c59a4a576a82e15651bd9672416b64019530",
+    strip_prefix = "gcc-toolchain-ac745d4685e2095cc4f057862800f3f0a473c201",
     type = "tar.gz",
     urls = [
-        "https://github.com/aspect-build/gcc-toolchain/tarball/ac745d4685e2095cc4f057862800f3f0a473c201",
+        "https://github.com/f0rmiga/gcc-toolchain/archive/ac745d4685e2095cc4f057862800f3f0a473c201.tar.gz",
     ],
 )
 
@@ -113,6 +113,7 @@ gcc_register_toolchain(
 http_archive(
     name = "com_google_googletest",
     sha256 = "24564e3b712d3eb30ac9a85d92f7d720f60cc0173730ac166f27dda7fed76cb2",
+    # NOTE: if updating this version, also update the version numbers in `CMakelists.txt`.
     strip_prefix = "googletest-release-1.12.1",
     urls = ["https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip"],
 )
@@ -144,12 +145,12 @@ load("@python3_10//:defs.bzl", "interpreter")
 load("@rules_python//python:pip.bzl", "pip_parse")
 
 pip_parse(
-    name = "pip_deps",
+    name = "au_pip_deps",
     python_interpreter_target = interpreter,
     requirements_lock = "@//:requirements_lock.txt",
 )
 
-load("@pip_deps//:requirements.bzl", "install_deps")
+load("@au_pip_deps//:requirements.bzl", "install_deps")
 
 install_deps()
 
@@ -215,3 +216,11 @@ http_archive(
 
 # END SECTION: Install buildifier.
 ################################################################################
+
+# This is not a "real" local bazel repository.  We define this in this WORKSPACE
+# file because it will prevent bazel from looking for packages in this folder
+# and its children.
+local_repository(
+    name = "ignore_cmake",
+    path = "./cmake",
+)

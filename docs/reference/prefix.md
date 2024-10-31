@@ -22,7 +22,7 @@ results in a new unit with the following properties:
     Therefore, `Centi<Meters>` is a unit whose symbol is `cm`, and whose magnitude is
     $1/100\,\text{m}$.
 
-## Applying to instances: the "prefix applier"
+## Applying to instances: the "prefix applier" {#prefix-applier}
 
 Au uses many kinds of instances, not just types.  These include [QuantityMaker](./quantity.md),
 [QuantityPointMaker](./quantity_point.md), `SingularNameFor`, and even [instances of unit
@@ -42,6 +42,7 @@ applier can be used.
 | `QuantityMaker` | `meters` | `centi(meters)` | `centi(meters)(170)` |
 | `QuantityPointMaker` | `meters_pt` | `centi(meters_pt)` | `centi(meters_pt)(1.5)` |
 | `SingularNameFor` | `meter` | `centi(meter)` | `curvature.in(radians / centi(meter))` |
+| `SymbolFor` | `m` | `centi(m)` | `constexpr auto cm = centi(m); 170 * cm` |
 
 Note again that every output here is the same kind of thing as the input.  So, `centi(meters_pt)` is
 a `QuantityPointMaker`, and `centi(meters_pt)(1.5)` creates a `QuantityPoint` of $1.5\,\text{cm}$.

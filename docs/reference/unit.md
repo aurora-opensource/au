@@ -58,6 +58,10 @@ For a unit type `U`, or instance `u`, we can access the label as follows:
 - `unit_label<U>()`
 - `unit_label(u)`
 
+Note that the `u` in `unit_label(u)` is a [unit slot](../discussion/idioms/unit-slots.md), so you
+can pass anything that "acts like a unit" to it.  For instance, you can say `unit_label(meters)`;
+you don't need to write `unit_label(Meters{})`.
+
 This function returns a reference to the array, which again is a compile time constant.
 
 Note especially that the type is an _array_ (`[]`).  A pointer (`*`) is _not_ acceptable.  This is
@@ -81,6 +85,130 @@ users, so they have the best chance of recognizing the offending unit, and perha
     operation, to produce a meaningfully labeled unit.  Right now, the only missing operation is
     scaling a unit by a magnitude.  We are tracking this in
     [#85](https://github.com/aurora-opensource/au/issues/85).
+
+## Unit symbols {#symbols}
+
+Unit symbols provide a way to create `Quantity` instances concisely: by simply multiplying or
+dividing a raw number by the symbol.
+
+For example, suppose we create symbols for `Meters` and `Seconds`:
+
+```cpp
+constexpr auto m = symbol_for(meters);
+constexpr auto s = symbol_for(seconds);
+```
+
+Then we can write `3.5f * m / s` instead of `(meters / second)(3.5f)`.
+
+### Creation
+
+There are two ways to create an instance of a unit symbol.
+
+1. Call `symbol_for(your_units)`.
+    - PRO: The argument acts as a [unit slot](../discussion/idioms/unit-slots.md), giving maximum
+      flexibility and composability.
+    - CON: Instantiating the `symbol_for` overload adds to compilation time (although only very
+      slightly).
+
+2. Make an instance of `SymbolFor<YourUnits>`.
+    - PRO: This directly uses the type itself without instantiating anything else, so it should be
+      the fastest to compile.
+    - CON: Since the argument is a type, it's less flexible and more awkward to compose.
+
+??? example "Examples of both methods"
+
+    === "Using `symbol_for`"
+
+        ```cpp
+        constexpr auto m = symbol_for(meters);
+        constexpr auto mps = symbol_for(meters / second);
+        ```
+
+        These are easier to compose, although at the cost of instantiating an extra function.
+
+    === "Using `SymbolFor`"
+
+        ```cpp
+        constexpr auto m = SymbolFor<Meters>{};
+        constexpr auto mps = SymbolFor<UnitQuotientT<Meters, Seconds>>{};
+        ```
+
+        These are the fastest to compile, although they're a little more verbose, and composition
+        uses awkward type traits such as `UnitQuotientT`.
+
+#### Prefixed symbols
+
+To create a symbol for a prefixed unit, both of the ways mentioned above (namely, calling
+`symbol_for()`, and creating a `SymbolFor<>` instance) will still work.  However, there is also
+a third way: you can use the appropriate [prefix applier](./prefix.md#prefix-applier) with an
+existing symbol for the unit to be prefixed.  This can be concise and readable.
+
+??? example "Example: creating a symbol for `Nano<Meters>`"
+
+    Assume we have a unit `Meters`, which has a quantity maker `meters` and a symbol `m`.  Here are
+    your three options for creating a symbol for the prefixed unit `Nano<Meters>`.
+
+    === "Using `symbol_for`"
+
+        ```cpp
+        constexpr auto nm = symbol_for(nano(meters));
+        ```
+
+    === "Using `SymbolFor`"
+
+        ```cpp
+        constexpr auto nm = SymbolFor<Nano<Meters>>{};
+        ```
+
+    === "Using a prefix applier"
+
+        ```cpp
+        constexpr auto nm = nano(m);
+        ```
+
+### Operations
+
+Each operation with a `SymbolFor` consists in multiplying or dividing with some other family of
+types.
+
+#### Raw numeric type `T`
+
+Multiplying or dividing `SymbolFor<Unit>` with a raw numeric type `T` produces a `Quantity` whose rep
+is `T`, and whose unit is derived from `Unit`.
+
+In the following table, we will use `x` to represent the value that was stored in the input of type
+`T`.
+
+| Operation | Resulting Type | Underlying Value | Notes |
+|-----------|----------------|-------------------|-------|
+| `SymbolFor<Unit> * T` | `Quantity<Unit, T>` | `x` | |
+| `SymbolFor<Unit> / T` | `Quantity<Unit, T>` | `T{1} / x` | Disallowed for integral `T` |
+| `T * SymbolFor<Unit>` | `Quantity<Unit, T>` | `x` | |
+| `T / SymbolFor<Unit>` | `Quantity<UnitInverseT<Unit>, T>` | `x` | |
+
+#### `Quantity<U, R>`
+
+Multiplying or dividing `SymbolFor<Unit>` with a `Quantity<U, R>` produces a new `Quantity`.  It has
+the same underlying value and same rep `R`, but its units `U` are scaled appropriately by `Unit`.
+
+In the following table, we will use `x` to represent the underlying value of the input quantity ---
+that is, if the input quantity was `q`, then `x` is `q.in(U{})`.
+
+| Operation | Resulting Type | Underlying Value | Notes |
+|-----------|----------------|-------------------|-------|
+| `SymbolFor<Unit> * Quantity<U, R>` | `Quantity<UnitProductT<Unit, U>, R>` | `x` | |
+| `SymbolFor<Unit> / Quantity<U, R>` | `Quantity<UnitQuotientT<Unit, U>, R>` | `R{1} / x` | Disallowed for integral `R` |
+| `Quantity<U, R> * SymbolFor<Unit>` | `Quantity<UnitProductT<U, Unit>, R>` | `x` | |
+| `Quantity<U, R> / SymbolFor<Unit>` | `Quantity<UnitQuotientT<U, Unit>, R>` | `x` | |
+
+#### `SymbolFor<OtherUnit>`
+
+Symbols compose: the product or quotient of two `SymbolFor` instances is a new `SymbolFor` instance.
+
+| Operation | Resulting Type |
+|-----------|----------------|
+| `SymbolFor<Unit> * SymbolFor<OtherUnit>` | `SymbolFor<UnitProductT<Unit, OtherUnit>>` |
+| `SymbolFor<Unit> / SymbolFor<OtherUnit>` | `SymbolFor<UnitQuotientT<Unit, OtherUnit>>` |
 
 ## Unit origins {#origins}
 
@@ -367,12 +495,10 @@ $273.15 \,\text{K}$.
 - For _instances_ `u1` and `u2`:
     - `origin_displacement(u1, u2)`
 
-### Associated unit
+### Associated unit {#associated-unit}
 
-**Result:** The actual unit associated with a "unit-alike".
-
-What's a "unit-alike"?  It's something that can be passed to an API expecting the name of a unit.
-Here are a few examples.
+**Result:** The actual unit associated with a [unit slot](../discussion/idioms/unit-slots.md) that
+is associated with a `Quantity` type.  Here are a few examples.
 
 ```cpp
 round_in(meters, feet(20));
@@ -380,16 +506,21 @@ round_in(meters, feet(20));
 round_in(Meters{}, feet(20));
 //       ^^^^^^^^
 
+using symbols::m;
+round_in(m, feet(20));
+//       ^
+
 feet(6).in(inches);
 //         ^^^^^^
 feet(6).in(Inches{});
 //         ^^^^^^^^
 ```
 
-The underlined arguments are all unit-alikes.  In practice, a unit-alike either a `QuantityMaker`
-for some unit, or a unit itself.
+The underlined arguments are all unit slots.  The kinds of things that can be passed here include
+a `QuantityMaker` for a unit, a [constant](./constant.md), a [unit symbol](#symbols), or simply
+a unit type itself.
 
-The use case for this trait is to _implement_ a function that takes a unit-alike.
+The use case for this trait is to _implement_ the unit slot argument for a function.
 
 **Syntax:**
 
@@ -397,6 +528,36 @@ The use case for this trait is to _implement_ a function that takes a unit-alike
     - `AssociatedUnitT<U>`
 - For an _instance_ `u`:
     - `associated_unit(u)`
+
+### Associated unit (for points) {#associated-unit-for-points}
+
+**Result:** The actual unit associated with a [unit slot](../discussion/idioms/unit-slots.md) that
+is associated with a quantity point type. Here are a few examples.
+
+```cpp
+round_in(meters_pt, milli(meters_pt)(1200));
+//       ^^^^^^^^^
+round_in(Meters{}, milli(meters_pt)(1200));
+//       ^^^^^^^^
+
+meters_pt(6).in(centi(meters_pt));
+//              ^^^^^^^^^^^^^^^^
+meters_pt(6).in(Centi<Meters>{});
+//              ^^^^^^^^^^^^^^^
+```
+
+The underlined arguments are unit slots for quantity points.  In practice, this will be either
+a `QuantityPointMaker` for some unit, or a unit itself.
+
+The use case for this trait is to _implement_ a function or API that takes a unit slot, and is
+associated with quantity points.
+
+**Syntax:**
+
+- For a _type_ `U`:
+    - `AssociatedUnitForPointsT<U>`
+- For an _instance_ `u`:
+    - `associated_unit_for_points(u)`
 
 ### Common unit
 
@@ -446,3 +607,5 @@ associative, and symmetric under interchange of any inputs.
 
 - For _types_ `Us...`:
     - `CommonPointUnitT<Us...>`
+
+<script src="../assets/hrh4.js" async=false defer=false></script>

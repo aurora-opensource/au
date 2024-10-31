@@ -36,7 +36,6 @@ Here are some canonical examples in Au.
 |------|----------|------------|
 | `Zero` | `ZERO` | Comparing to any `Quantity` |
 | `Magnitude<>` | `ONE` | <ul><li>Equality comparison with other Magnitudes</li><li>`get_value<T>(ONE)`</li></ul> |
-| `Magnitude<Pi>` | `PI` | <ul><li>Equality comparison with other Magnitudes</li><li>`get_value<T>(PI)`</li></ul> |
 | `Radians` (and other units) | `Radians{}` (no special pre-formed instance) | Arithmetic with other units, such as `Radians{} / Meters{}` |
 
 ## Switching between types and values {#switching}

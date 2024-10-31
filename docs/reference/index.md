@@ -16,6 +16,10 @@ Here's a guide to the main reference pages.
       a _displacement_).  Practically speaking, this is **essential for dealing with temperatures**,
       and useful for a couple other dimensions such as pressures and distances.
 
+- **[`Constant`](./constant.md).**  A constant quantity which is known at compile time, and
+  represented by a symbol.  Supports exact symbolic arithmetic at compile time, and a perfect
+  conversion policy to `Quantity` types.
+
 - **[`Unit`](./unit.md).**  A type which represents a _unit of measure_.
 
 - **[`Magnitude`](./magnitude.md).**  A special kind of compile-time number, which we use to

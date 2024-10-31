@@ -1,1 +1,3 @@
 /bazel-*
+cmake/build*
+Testing

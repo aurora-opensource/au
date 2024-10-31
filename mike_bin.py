@@ -30,41 +30,42 @@ from mike.mkdocs_utils import docs_version_var
 
 def override_version():
     """Override mike's native logic for retrieving the version."""
+    # Original code:
+    #    output = subprocess.run(
+    #        ['mkdocs', '--version'],
+    #        check=True, stdout=subprocess.PIPE, universal_newlines=True
+    #    ).stdout.rstrip()
+    #    m = re.search('^mkdocs, version (\\S*)', output)
+    #    return m.group(1)
+    # Changed version (reformatted with Black):
     output = subprocess.run(
         ["update_docs", "--version"],
         check=True,
         stdout=subprocess.PIPE,
         universal_newlines=True,
     ).stdout.rstrip()
-
-    # Original line:
-    #
-    #    m = re.search('^mkdocs, version (\\S*)', output)
-    #
-    # Changed version:
     m = re.search("^\\S+, version (\\S*)", output)
-
     return m.group(1)
 
 
-def override_build(config_file, version, verbose=True):
+def override_build(config_file, version, *, quiet=False, output=None):
     """Override mike's native logic for building the docs."""
     # Original line:
-    #
-    #     command = (
-    #         ['mkdocs', 'build', '--clean'] +
-    #         (['--config-file', config_file] if config_file else [])
-    #     )
-    #
+    #    command = (
+    #        ['mkdocs'] + (['--quiet'] if quiet else []) + ['build', '--clean'] +
+    #        (['--config-file', config_file] if config_file else [])
+    #    )
     # Changed version (reformatted with Black):
-    command = ["update_docs", "build", "--clean"] + (
-        ["--config-file", config_file] if config_file else []
+    command = (
+        ["update_docs"]
+        + (["--quiet"] if quiet else [])
+        + ["build", "--clean"]
+        + (["--config-file", config_file] if config_file else [])
     )
 
     env = os.environ.copy()
     env[docs_version_var] = version
 
-    output = None if verbose else subprocess.DEVNULL
     subprocess.run(command, check=True, env=env, stdout=output, stderr=output)
 
 

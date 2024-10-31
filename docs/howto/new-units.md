@@ -36,6 +36,10 @@ a complete sample definition of a new Unit, with these features annotated and ex
     constexpr auto fathoms = QuantityMaker<Fathoms>{};          // *[4]
     constexpr auto fathoms_pt = QuantityPointMaker<Fathoms>{};  //  [5; less common]
 
+    namespace symbols {
+    constexpr auto ftm = SymbolFor<Fathoms>{};                  //  [6]
+    }
+
     // In .cc file:
     constexpr const char Fathoms::label[];                      //  [2b]
     ```
@@ -54,6 +58,10 @@ a complete sample definition of a new Unit, with these features annotated and ex
     constexpr auto fathom  = SingularNameFor<Fathoms>{};        //  [3]
     constexpr auto fathoms = QuantityMaker<Fathoms>{};          // *[4]
     constexpr auto fathoms_pt = QuantityPointMaker<Fathoms>{};  //  [5; less common]
+
+    namespace symbols {
+    constexpr auto ftm = SymbolFor<Fathoms>{};                  //  [6]
+    }
     ```
 
 !!! note
@@ -102,6 +110,13 @@ Here are the features.
     - **If omitted:** _this is usually fine to omit:_ most Units are only used with `Quantity`, not
       `QuantityPoint`.
 
+6. _Unit symbol_.
+    - This lets you create quantities of this unit by simply multiplying or dividing raw numbers.
+      You can also change the units of existing quantities in the same way.  See the docs for [unit
+      symbols](../reference/unit.md#symbols).
+    - **If omitted:** Users will either need to create their own symbols on the fly, or else spell
+      out the full name of the unit.
+
 !!! note
     Not shown here: adding an `origin` member.  We skipped this because it is very rare.  It only
     has any effect at all for Units you plan to use with `QuantityPoint`, which is not the usual
@@ -132,7 +147,7 @@ Here are some example unit expressions we might reach for to define various comm
 
 - Newtons: `Kilo<Grams>{} * Meters{} / squared(Seconds{})`
 - Miles: `Feet{} * mag<5280>()`
-- Degrees: `Radians{} * PI / mag<180>()`
+- Degrees: `Radians{} * Magnitude<Pi>{} / mag<180>()`
 
 ## Aliases vs. strong types: best practices
 

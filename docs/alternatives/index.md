@@ -44,7 +44,7 @@ indicate which version we considered, and say a few words about why we included 
       used C++ units library to date.
 - [**bernedom/SI**](https://github.com/bernedom/SI) (version: 2.5.1)
     - A newer, C++17-compatible offering with a large number of GitHub stars.
-- [**mp-units**](https://github.com/mpusz/mp-units) (version: 2.0.0:testing)
+- [**mp-units**](https://github.com/mpusz/mp-units) (version: 2.0.0)
     - A library designed to take full advantage of ultra-modern (that is, post-C++20 watershed)
       features, such as concepts and non-template type parameters (NTTPs).
     - mp-units is leading the efforts towards a standard C++ units library, both by field testing
@@ -201,7 +201,12 @@ These costs can bring significant benefits, but we still want them to be as smal
         <td class="poor">Very slow, but can be <i>greatly</i> improved by removing I/O support and most units</td>
         <td class="na"></td>
         <td class="na"></td>
-        <td class="good">Possibly "best", but will need to assess all libraries on the same code</td>
+        <td class="good">
+            <ul>
+                <li class="check">Includes `fwd.hh` headers</li>
+                <li>Possibly "best" overall, but will need to assess all libraries on the same code</li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>
@@ -240,7 +245,7 @@ These costs can bring significant benefits, but we still want them to be as smal
                 <li class="check">Short namespace minimizes clutter</li>
                 <li class="check">
                     Detailed <a
-                    href="https://aurora-opensource.github.io/au/troubleshooting">troubleshooting
+                    href="https://aurora-opensource.github.io/au/main/troubleshooting/">troubleshooting
                     guide</a>
                 </li>
             </ul>
@@ -298,7 +303,14 @@ features.
             href="https://mpusz.github.io/units/framework/conversions_and_casting.html">consistent
             with <code>std::chrono</code> library</a>
         </td>
-        <td class="best">Automatically adapts to level of overflow risk</td>
+        <td class="best">
+            Meets `std::chrono` baseline, plus:
+            <ul>
+                <li class="check">Automatically adapts to level of overflow risk</li>
+                <li class="check">Runtime conversion checkers</li>
+                <li class="check">Constants have perfect conversion policy</li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>
@@ -320,8 +332,8 @@ features.
         <td class="fair"></td>
         <td class="fair"></td>
         <td class="fair"></td>
-        <td class="good">Contains unit-safe interfaces</td>
-        <td class="best">Only contains unit-safe interfaces</td>
+        <td class="good">Only contains unit-safe interfaces</td>
+        <td class="good">Only contains unit-safe interfaces</td>
     </tr>
     <tr>
         <td>
@@ -391,11 +403,36 @@ features.
                 </p>
             </details>
         </td>
-        <td class="fair"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">Prefix only</a></td>
+        <td class="good">
+            <ul>
+                <li class="check">
+                    Can compose units, prefixes, dimensions, and quantity (point) makers
+                </li>
+                <li class="x">
+                    Type names clunky to compose: must write <code>decltype</code>
+                </li>
+            </ul>
+        </td>
         <td class="poor"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">No</a></td>
         <td class="poor">No</td>
-        <td class="good">Can compose units, prefixes, dimensions, and quantity types</td>
-        <td class="good">QuantityMaker and PrefixApplier APIs</td>
+        <td class="best">
+            <ul>
+                <li class="check">Can compose units, prefixes, dimensions, and quantity types</li>
+                <li class="check">
+                    C++20's Non-type template parameters (NTTPs) enable composable <i>type names</i>
+                </li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">
+                    Can compose units, prefixes, dimensions, and quantity (point) makers
+                </li>
+                <li class="x">
+                    Type names clunky to compose: must write <code>decltype</code> or use traits
+                </li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>
@@ -499,9 +536,12 @@ features.
                 <li class="check">
                     Unit-safe APIs for <code>round</code>, <code>ceil</code>, and so on
                 </li>
+                <li class="check">
+                    Smart, unit-aware inverse functions
+                </li>
             </ul>
         </td>
-        <td class="best">
+        <td class="good">
             <ul>
                 <li class="check">Wide variety of functions</li>
                 <li class="check">
@@ -565,7 +605,7 @@ features.
         <td class="good">Can add new units and dimensions</td>
         <td class="best">Can even handle, e.g., systems of "natural" units</td>
         <td class="good">
-            Can add <a href="https://aurora-opensource.github.io/au/howto/new-units">new units</a>
+            Can add <a href="https://aurora-opensource.github.io/au/main/howto/new-units/">new units</a>
             and dimensions
         </td>
     </tr>
@@ -586,11 +626,31 @@ features.
         <td class="fair">No interop with other units libraries</td>
         <td class="fair">No interop with other units libraries</td>
         <td class="good">
-            <a href="https://mpusz.github.io/units/use_cases/interoperability.html">
-                <code>quantity_like_traits</code>
-            </a>
+            <ul>
+                <li class="check">
+                    <a href="https://mpusz.github.io/mp-units/2.1/users_guide/framework_basics/basic_concepts/#QuantityLike">
+                        <code>QuantityLike&lt;T&gt;</code> supports bidirectional conversions
+                    </a>
+                </li>
+                <li class="check">
+                    Can specify implicit or explicit
+                </li>
+            </ul>
         </td>
-        <td class="best">"Equivalent types" feature gives more API compatibility</td>
+        <td class="good">
+            <ul>
+                <li class="check">
+                    <a href="https://aurora-opensource.github.io/au/main/howto/interop/">
+                        <code>CorrespondingQuantity</code> supports bidirectional implicit conversions
+                    </a>
+                </li>
+                <li class="check">
+                    Supports <a
+                    href="https://aurora-opensource.github.io/au/main/reference/corresponding_quantity/#conversions">"two-hop"
+                    conversions</a>
+                </li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>
@@ -613,7 +673,9 @@ features.
             point</a>.
         </td>
         <td class="poor">None; would be hard to add, since units conflated with quantity type</td>
-        <td class="good"></td>
+        <td class="best">
+            Custom origins really easy to use and compose
+        </td>
         <td class="good"></td>
     </tr>
     <tr>
@@ -698,16 +760,16 @@ features.
                 </p>
             </details>
         </td>
-        <td class="poor"></td>
-        <td class="good">User-defined literals (UDLs)</td>
-        <td class="good">User-defined literals (UDLs)</td>
-        <td class="best">
-            <a
-            href="https://mpusz.github.io/units/framework/quantities.html#quantity-references-experimental">Quantity
-            References</a>
+        <td class="na"></td>
+        <td class="fair">User-defined literals (UDLs)</td>
+        <td class="fair">User-defined literals (UDLs)</td>
+        <td class="good">
+            Unit symbols
         </td>
-        <td class="poor">
-            Planned to add: <a href="https://github.com/aurora-opensource/au/issues/43">#43</a>
+        <td class="good">
+            <a href="https://aurora-opensource.github.io/au/main/reference/unit/#symbols">
+                Unit symbols
+            </a>
         </td>
     </tr>
     <tr>
@@ -792,7 +854,12 @@ features.
         </td>
         <td class="fair">Supports <code>copysign()</code>, but no special construction or comparison</td>
         <td class="poor">No special construction or comparison</td>
-        <td class="fair">Has <code>q::zero()</code> member, but no special construction or comparison</td>
+        <td class="good">
+            <li class="check">
+                <a href="https://mpusz.github.io/mp-units/2.1/users_guide/framework_basics/quantity_arithmetics/?h=zero#comparison-against-zero">Special comparison functions</a>
+            </li>
+            <li><code>zero()</code> member</li>
+        </td>
         <td class="best">
             Can use <a
             href="https://aurora-opensource.github.io/au/main/discussion/concepts/zero/"><code>ZERO</code></a>
@@ -820,7 +887,7 @@ features.
                 <li class="x">pi represented as <code>std::ratio</code></li>
             </ul>
         </td>
-        <td class="good"></td>
+        <td class="best">Simultaneous support for both strongly-typed and "pure SI" angles</td>
         <td class="good"></td>
     </tr>
     <tr>
@@ -833,17 +900,24 @@ features.
                 </ul>
             </details>
         </td>
-        <td class="good">Includes built-in constants as quantities</td>
-        <td class="good">Includes built-in constants as quantities</td>
+        <td class="fair">Includes built-in constants as quantities</td>
+        <td class="fair">Includes built-in constants as quantities</td>
         <td class="poor"></td>
-        <td class="best">
+        <td class="good">
             <a
             href="https://mpusz.github.io/mp-units/2.0/users_guide/framework_basics/faster_than_lightspeed_constants/">"Faster
             than lightspeed" constants</a>
         </td>
-        <td class="poor">
-            Plan to support someday; see
-            <a href="https://github.com/aurora-opensource/au/issues/90">#90</a>.
+        <td class="good">
+            <ul>
+                <li class="check">Constants as types</li>
+                <li class="check">Perfect conversion policy</li>
+                <li class="check">Implicit Quantity conversion</li>
+                <li class="x">
+                    No built-in values yet (see <a
+                    href="https://github.com/aurora-opensource/au/issues/90">#90</a>)
+                </li>
+            </ul>
         </td>
     </tr>
     <tr>
@@ -904,7 +978,7 @@ features.
     <tr>
         <td>
             <details class="criterion">
-                <summary>Units/Dimensions as types</summary>
+                <summary>Abstract Units/Dimensions</summary>
                 <p>
                     <li>
                         Types that represent abstract units (clearly distinct from quantities of
@@ -946,10 +1020,15 @@ features.
                 </p>
             </details>
         </td>
-        <td class="poor">Present in user-facing APIs</td>
-        <td class="poor">Present in user-facing APIs</td>
-        <td class="fair">Very few, and confined to implementation helpers</td>
-        <td class="fair">Very few, and confined to implementation helpers</td>
+        <td class="poor">Common in user-facing APIs</td>
+        <td class="poor">Common in user-facing APIs</td>
+        <td class="good">Very few, and confined to implementation helpers</td>
+        <td class="fair">
+            <ul>
+                <li>Very few, mostly implementation helpers</li>
+                <li>Only one user-facing macro for C++20 backwards compatibility</li>
+            </ul>
+        </td>
         <td class="best">No macros</td>
     </tr>
 </table>
