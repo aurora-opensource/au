@@ -14,6 +14,9 @@
 
 #pragma once
 
+#include "au/units/celsius_fwd.hh"
+// Keep corresponding `_fwd.hh` file on top.
+
 #include "au/prefix.hh"
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"

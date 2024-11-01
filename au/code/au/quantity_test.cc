@@ -748,6 +748,22 @@ TEST(Quantity, CommonUnitAlwaysCompletelyIndependentOfOrder) {
     check_units(kilo(meters), miles, milli(meters));
 }
 
+template <QuantityI<Meters>::NTTP Length>
+struct TemplateOnLength {
+    QuantityI<Meters> value = Length;
+};
+
+TEST(QuantityNTTP, SupportsPreCpp20NttpTypes) {
+    constexpr auto length = TemplateOnLength<meters(18)>{}.value;
+    EXPECT_THAT(length, SameTypeAndValue(meters(18)));
+}
+
+TEST(QuantityNTTP, CanConvertFromNttpToAnyCompatibleQuantityType) {
+    constexpr QuantityI<Meters>::NTTP LengthNTTP = meters(18);
+    constexpr QuantityI<Milli<Meters>> length = from_nttp(LengthNTTP);
+    EXPECT_THAT(length, SameTypeAndValue(milli(meters)(18'000)));
+}
+
 TEST(Quantity, CommonTypeRespectsImplicitRepSafetyChecks) {
     // The following test should fail to compile.  Uncomment both lines to check.
     // constexpr auto feeters = QuantityMaker<CommonUnitT<Meters, Feet>>{};
@@ -906,15 +922,27 @@ TEST(AreQuantityTypesEquivalent, RequiresSameRepAndEquivalentUnits) {
     EXPECT_TRUE((AreQuantityTypesEquivalent<IntQFeet, IntQFeetTimesOne>::value));
 }
 
-TEST(integer_quotient, EnablesIntegerDivision) {
-    constexpr auto dt = integer_quotient(meters(60), (miles / hour)(65));
+TEST(UnblockIntDiv, EnablesTruncatingIntegerDivisionIntoQuantity) {
+    constexpr auto dt = meters(60) / unblock_int_div((miles / hour)(65));
     EXPECT_THAT(dt, QuantityEquivalent((hour * meters / mile)(0)));
+}
 
-    constexpr auto x = integer_quotient(meters(60), 31);
+TEST(UnblockIntDiv, EnablesDividingByRawInteger) {
+    constexpr auto x = meters(60) / unblock_int_div(31);
     EXPECT_THAT(x, SameTypeAndValue(meters(1)));
+}
 
-    constexpr auto freq = integer_quotient(1000, minutes(300));
+TEST(UnblockIntDiv, EnablesTruncatingIntegerDivisionIntoRawInteger) {
+    constexpr auto freq = 1000 / unblock_int_div(minutes(300));
     EXPECT_THAT(freq, SameTypeAndValue(inverse(minutes)(3)));
+}
+
+TEST(UnblockIntDiv, IsNoOpForDivisionThatWouldBeAllowedAnyway) {
+    auto expect_unblock_int_div_is_no_op = [](auto n, auto d) {
+        EXPECT_THAT(n / unblock_int_div(d), SameTypeAndValue(n / d));
+    };
+    expect_unblock_int_div_is_no_op(meters(60), (miles / hour)(65.0));
+    expect_unblock_int_div_is_no_op(1.23, minutes(4.56));
 }
 
 TEST(Quantity, CanIntegerDivideQuantitiesOfQuantityEquivalentUnits) {

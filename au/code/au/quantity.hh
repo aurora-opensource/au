@@ -385,6 +385,34 @@ class Quantity {
             CorrespondingQuantityT<T>{*this}.in(typename CorrespondingQuantity<T>::Unit{}));
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Pre-C++20 Non-Type Template Parameter (NTTP) functionality.
+    //
+    // If `Rep` is a built in integral type, then `Quantity::NTTP` can be used as a template
+    // parameter.
+
+    enum class NTTP : std::conditional_t<std::is_integral<Rep>::value, Rep, bool> {
+        ENUM_VALUES_ARE_UNUSED
+    };
+
+    constexpr Quantity(NTTP val) : value_{static_cast<Rep>(val)} {
+        static_assert(std::is_integral<Rep>::value,
+                      "NTTP functionality only works when rep is built-in integral type");
+    }
+
+    constexpr operator NTTP() const {
+        static_assert(std::is_integral<Rep>::value,
+                      "NTTP functionality only works when rep is built-in integral type");
+        return static_cast<NTTP>(value_);
+    }
+
+    template <typename C, C x = C::ENUM_VALUES_ARE_UNUSED>
+    constexpr operator C() const = delete;
+    // If you got here ^^^, then you need to do your unit conversion **manually**.  Check the type
+    // of the template parameter, and convert it to that same unit and rep.
+
+    friend constexpr Quantity from_nttp(NTTP val) { return val; }
+
  private:
     template <typename OtherUnit, typename OtherRep>
     static constexpr void warn_if_integer_division() {
@@ -393,7 +421,8 @@ class Quantity {
         constexpr bool are_units_quantity_equivalent =
             AreUnitsQuantityEquivalent<UnitT, OtherUnit>::value;
         static_assert(are_units_quantity_equivalent || !uses_integer_division,
-                      "Integer division forbidden: use integer_quotient() if you really want it");
+                      "Integer division forbidden: wrap denominator in `unblock_int_div()` if you "
+                      "really want it");
     }
 
     constexpr Quantity(Rep value) : value_{value} {}
@@ -401,9 +430,56 @@ class Quantity {
     Rep value_{};
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Machinery to explicitly unblock integer division.
+//
+// Dividing by `unblock_int_div(x)` will allow integer division for any `x`.  If the division would
+// have been allowed anyway, then `unblock_int_div` is a no-op: this enables us to write templated
+// code to handle template parameters that may or may not be integral.
+
+template <typename U, typename R>
+class AlwaysDivisibleQuantity;
+
+// Unblock integer divisoin for a `Quantity`.
+template <typename U, typename R>
+constexpr AlwaysDivisibleQuantity<U, R> unblock_int_div(Quantity<U, R> q) {
+    return AlwaysDivisibleQuantity<U, R>{q};
+}
+
+// Unblock integer division for any non-`Quantity` type.
+template <typename R>
+constexpr AlwaysDivisibleQuantity<UnitProductT<>, R> unblock_int_div(R x) {
+    return AlwaysDivisibleQuantity<UnitProductT<>, R>{make_quantity<UnitProductT<>>(x)};
+}
+
+template <typename U, typename R>
+class AlwaysDivisibleQuantity {
+ public:
+    // Divide a `Quantity` by this always-divisible quantity type.
+    template <typename U2, typename R2>
+    friend constexpr auto operator/(Quantity<U2, R2> q2, AlwaysDivisibleQuantity q) {
+        return make_quantity<UnitQuotientT<U2, U>>(q2.in(U2{}) / q.q_.in(U{}));
+    }
+
+    // Divide any non-`Quantity` by this always-divisible quantity type.
+    template <typename T>
+    friend constexpr auto operator/(T x, AlwaysDivisibleQuantity q) {
+        return make_quantity<UnitInverseT<U>>(x / q.q_.in(U{}));
+    }
+
+    friend constexpr AlwaysDivisibleQuantity<U, R> unblock_int_div<U, R>(Quantity<U, R> q);
+    friend constexpr AlwaysDivisibleQuantity<UnitProductT<>, R> unblock_int_div<R>(R x);
+
+ private:
+    constexpr AlwaysDivisibleQuantity(Quantity<U, R> q) : q_{q} {}
+
+    Quantity<U, R> q_;
+};
+
 // Force integer division beteween two integer Quantities, in a callsite-obvious way.
 template <typename U1, typename R1, typename U2, typename R2>
-constexpr auto integer_quotient(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+[[deprecated("Replace `integer_quotient(a, b)` with `a / unblock_int_div(b)`")]] constexpr auto
+integer_quotient(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     static_assert(std::is_integral<R1>::value && std::is_integral<R2>::value,
                   "integer_quotient() can only be called with integral Rep");
     return make_quantity<UnitQuotientT<U1, U2>>(q1.in(U1{}) / q2.in(U2{}));
@@ -411,7 +487,8 @@ constexpr auto integer_quotient(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 
 // Force integer division beteween an integer Quantity and a raw number.
 template <typename U, typename R, typename T>
-constexpr auto integer_quotient(Quantity<U, R> q, T x) {
+[[deprecated("Replace `integer_quotient(a, b)` with `a / unblock_int_div(b)`")]] constexpr auto
+integer_quotient(Quantity<U, R> q, T x) {
     static_assert(std::is_integral<R>::value && std::is_integral<T>::value,
                   "integer_quotient() can only be called with integral Rep");
     return make_quantity<U>(q.in(U{}) / x);
@@ -419,7 +496,8 @@ constexpr auto integer_quotient(Quantity<U, R> q, T x) {
 
 // Force integer division beteween a raw number and an integer Quantity.
 template <typename T, typename U, typename R>
-constexpr auto integer_quotient(T x, Quantity<U, R> q) {
+[[deprecated("Replace `integer_quotient(a, b)` with `a / unblock_int_div(b)`")]] constexpr auto
+integer_quotient(T x, Quantity<U, R> q) {
     static_assert(std::is_integral<T>::value && std::is_integral<R>::value,
                   "integer_quotient() can only be called with integral Rep");
     return make_quantity<UnitInverseT<U>>(x / q.in(U{}));

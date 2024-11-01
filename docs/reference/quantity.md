@@ -377,6 +377,50 @@ These functions also support an explicit template parameter: so, `.coerce_as<T>(
     Prefer **not** to use the "coercing versions" if possible, because you will get more safety
     checks.  The risks which the "base" versions warn about are real.
 
+## Non-Type Template Parameters (NTTPs) {#nttp}
+
+A _non-type template parameter_ (NTTP) is a template parameter that is not a _type_, but rather some
+kind of _value_.  Common examples include `template<int N>`, or `template<bool B>`.  Before C++20,
+only a small number of types could be used as NTTPs: very roughly, these were _integral_ types,
+_pointer_ types, and _enumerations_.
+
+Au provides a workaround for pre-C++20 users that lets you _effectively_ encode any `Quantity<U, R>`
+as an NTTP, _as long as_ its rep `R` is an **integral** type.  To do this, use the
+`Quantity<U, R>::NTTP` type as the template parameter.  You will be able to assign between
+`Quantity<U, R>` and `Quantity<U, R>::NTTP`, _in either direction_, but only in the case of exact
+match of both `U` and `R`.  For all other cases, you'll need to perform a conversion (using the
+usual mechanisms for `Quantity` described elsewhere on this page).
+
+!!! warning
+    It is undefined behavior to invoke `Quantity<U, R>::NTTP` whenever `std::is_integral<R>::value`
+    is `false`.
+
+    We cannot strictly prevent users from doing this.  However, in practice, it is very unlikely for
+    this to happen by accident.  Both conversion operators between `Quantity<U, R>` and
+    `Quantity<U, R>::NTTP` would fail with a hard compiler error, based on a `static_assert` that
+    explains this situation.  So users can name this type, but they cannot assign to it or from it
+    without prohibitive difficulty.
+
+??? example "Example: defining and using a template with a `Quantity` NTTP"
+    ```cpp
+    template <QuantityI<Hertz>::NTTP Frequency>
+    struct TemplatedOnFrequency {
+        QuantityI<Hertz> value = Frequency;      // Assigning `Quantity` from NTTP
+    };
+
+    using T = TemplatedOnFrequency<hertz(440)>;  // Setting template parameter from `Quantity`
+    ```
+
+### `from_nttp(Quantity<U, R>::NTTP)`
+
+Calling `from_nttp` on a `Quantity<U, R>::NTTP` will convert it back into the corresponding
+`Quantity<U, R>` that was encoded in the template parameter.  This lets it automatically participate
+in all of the usual `Quantity` operations and conversions.
+
+!!! note
+    If you are simply _assigning_ a `Quantity<U, R>::NTTP` to a `Quantity<U, R>`, where `U` and `R`
+    are identical, you do not need to call `from_nttp`.  We support implcit conversion in that case.
+
 ## Operations
 
 Au includes as many common operations as possible.  Our goal is to avoid incentivizing users to
@@ -473,29 +517,29 @@ number](../discussion/concepts/dimensionless.md#exact-cancellation).
 If either _input_ is a raw number, then it only affects the value, not the unit.  It's equivalent to
 a `Quantity` whose unit is [a unitless unit](./unit.md#unitless-unit).
 
-#### `integer_quotient()`
+#### `unblock_int_div()`
 
 Experience has shown that raw integer division can be dangerous in a units library context.  It
 conflicts with intuitions, and can produce code that is silently and grossly incorrect: see the
 [integer division section](../troubleshooting.md#integer-division-forbidden) of the troubleshooting
 guide for an example.
 
-To use integer division, you must ask for it explicitly by name, with the `integer_quotient()`
-function.
+To use integer division, you must ask for it explicitly by name, by calling `unblock_int_div()` on
+the denominator.
 
-??? example "Using `integer_quotient()` to explicitly opt in to integer division"
+??? example "Using `unblock_int_div()` to explicitly opt in to integer division"
 
     This will not work:
 
     ```cpp
     miles(125) / hours(2);
-    //        ^--- Forbidden!  Compiler error.
+    //         ^--- Forbidden!  Compiler error.
     ```
 
     However, this will work just fine:
 
     ```cpp
-    integer_quotient(miles(125), hours(2));
+    miles(125) / unblock_int_div(hours(2));
     ```
 
     It produces `(miles / hour)(62)`.

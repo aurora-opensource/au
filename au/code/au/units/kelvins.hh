@@ -14,6 +14,9 @@
 
 #pragma once
 
+#include "au/units/kelvins_fwd.hh"
+// Keep corresponding `_fwd.hh` file on top.
+
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
 #include "au/unit_symbol.hh"

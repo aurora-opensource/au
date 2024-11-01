@@ -48,60 +48,115 @@ header_only_library(
     stdx/type_traits.hh
     stdx/utility.hh
     units/amperes.hh
+    units/amperes_fwd.hh
     units/bars.hh
+    units/bars_fwd.hh
     units/becquerel.hh
+    units/becquerel_fwd.hh
     units/bits.hh
+    units/bits_fwd.hh
     units/bytes.hh
+    units/bytes_fwd.hh
     units/candelas.hh
+    units/candelas_fwd.hh
     units/celsius.hh
+    units/celsius_fwd.hh
     units/coulombs.hh
+    units/coulombs_fwd.hh
     units/days.hh
+    units/days_fwd.hh
     units/degrees.hh
+    units/degrees_fwd.hh
     units/fahrenheit.hh
+    units/fahrenheit_fwd.hh
     units/farads.hh
+    units/farads_fwd.hh
     units/fathoms.hh
+    units/fathoms_fwd.hh
     units/feet.hh
+    units/feet_fwd.hh
     units/furlongs.hh
+    units/furlongs_fwd.hh
     units/grams.hh
+    units/grams_fwd.hh
     units/grays.hh
+    units/grays_fwd.hh
     units/henries.hh
+    units/henries_fwd.hh
     units/hertz.hh
+    units/hertz_fwd.hh
     units/hours.hh
+    units/hours_fwd.hh
     units/inches.hh
+    units/inches_fwd.hh
     units/joules.hh
+    units/joules_fwd.hh
     units/katals.hh
+    units/katals_fwd.hh
     units/kelvins.hh
+    units/kelvins_fwd.hh
     units/knots.hh
+    units/knots_fwd.hh
     units/liters.hh
+    units/liters_fwd.hh
     units/lumens.hh
+    units/lumens_fwd.hh
     units/lux.hh
+    units/lux_fwd.hh
     units/meters.hh
+    units/meters_fwd.hh
     units/miles.hh
+    units/miles_fwd.hh
     units/minutes.hh
+    units/minutes_fwd.hh
     units/moles.hh
+    units/moles_fwd.hh
     units/nautical_miles.hh
+    units/nautical_miles_fwd.hh
     units/newtons.hh
+    units/newtons_fwd.hh
     units/ohms.hh
+    units/ohms_fwd.hh
     units/pascals.hh
+    units/pascals_fwd.hh
     units/percent.hh
+    units/percent_fwd.hh
     units/pounds_force.hh
+    units/pounds_force_fwd.hh
     units/pounds_mass.hh
+    units/pounds_mass_fwd.hh
     units/radians.hh
+    units/radians_fwd.hh
     units/revolutions.hh
+    units/revolutions_fwd.hh
     units/seconds.hh
+    units/seconds_fwd.hh
     units/siemens.hh
+    units/siemens_fwd.hh
     units/slugs.hh
+    units/slugs_fwd.hh
     units/standard_gravity.hh
+    units/standard_gravity_fwd.hh
     units/steradians.hh
+    units/steradians_fwd.hh
     units/tesla.hh
+    units/tesla_fwd.hh
     units/unos.hh
+    units/unos_fwd.hh
     units/us_gallons.hh
+    units/us_gallons_fwd.hh
     units/us_pints.hh
+    units/us_pints_fwd.hh
     units/us_quarts.hh
+    units/us_quarts_fwd.hh
     units/volts.hh
+    units/volts_fwd.hh
     units/watts.hh
+    units/watts_fwd.hh
     units/webers.hh
+    units/webers_fwd.hh
     units/yards.hh
+    units/yards_fwd.hh
     utility/factoring.hh
     utility/string_constant.hh
     utility/type_traits.hh

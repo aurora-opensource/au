@@ -14,6 +14,9 @@
 
 #pragma once
 
+#include "au/units/us_pints_fwd.hh"
+// Keep corresponding `_fwd.hh` file on top.
+
 #include "au/units/inches.hh"
 
 namespace au {
