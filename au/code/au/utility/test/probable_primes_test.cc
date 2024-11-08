@@ -200,6 +200,110 @@ TEST(MillerRabin, SupportsConstexpr) {
     static_assert(result == PrimeResult::PROBABLY_PRIME, "997 is prime");
 }
 
+TEST(IsPerfectSquare, ProducesCorrectAnswers) {
+    auto next_sqrt = 0u;
+    for (auto n = 0u; n < 400'000u; ++n) {
+        const auto next_square = next_sqrt * next_sqrt;
+
+        const auto is_square = (n == next_square);
+        if (is_square) {
+            ++next_sqrt;
+        }
+
+        EXPECT_EQ(is_perfect_square(n), is_square) << "n = " << n;
+    }
+}
+
+std::vector<uint64_t> strong_lucas_pseudoprimes() {
+    // https://oeis.org/A217255
+    return {5459u,   5777u,   10877u,  16109u,  18971u,  22499u,  24569u,  25199u,  40309u,
+            58519u,  75077u,  97439u,  100127u, 113573u, 115639u, 130139u, 155819u, 158399u,
+            161027u, 162133u, 176399u, 176471u, 189419u, 192509u, 197801u, 224369u, 230691u,
+            231703u, 243629u, 253259u, 268349u, 288919u, 313499u, 324899u};
+}
+
+TEST(StrongLucas, AllPrimeNumbersAreProbablyPrime) {
+    const auto primes = first_n_primes<3'000u>();
+    for (const auto &p : primes) {
+        if (p > 2u) {
+            EXPECT_THAT(strong_lucas(p), Eq(PrimeResult::PROBABLY_PRIME)) << p;
+        }
+    }
+}
+
+TEST(StrongLucas, GetsFooledByKnownPseudoprimes) {
+    for (const auto &p : strong_lucas_pseudoprimes()) {
+        ASSERT_EQ(miller_rabin(2u, p), PrimeResult::COMPOSITE) << p;
+        EXPECT_THAT(strong_lucas(p), Eq(PrimeResult::PROBABLY_PRIME)) << p;
+    }
+}
+
+TEST(StrongLucas, OddNumberIsProbablyPrimeIffPrimeOrPseudoprime) {
+    const auto primes = first_n_primes<3'000u>();
+    const auto pseudoprimes = strong_lucas_pseudoprimes();
+
+    // Make sure that we are both _into the regime_ of the pseudoprimes, and that we aren't off the
+    // end of it.
+    ASSERT_THAT(primes.back(), AllOf(Gt(pseudoprimes.front()), Lt(pseudoprimes.back())));
+
+    std::size_t i_prime = 1u;  // Skip 2; we're only checking odd numbers.
+    std::size_t i_pseudoprime = 0u;
+    for (uint64_t n = primes[i_prime]; i_prime < primes.size(); n += 2u) {
+        const auto is_prime = (n == primes[i_prime]);
+        if (is_prime) {
+            ++i_prime;
+        }
+
+        const auto is_pseudoprime = (n == pseudoprimes[i_pseudoprime]);
+        if (is_pseudoprime) {
+            ++i_pseudoprime;
+        }
+
+        const auto expected =
+            (is_prime || is_pseudoprime) ? PrimeResult::PROBABLY_PRIME : PrimeResult::COMPOSITE;
+        EXPECT_THAT(strong_lucas(n), Eq(expected)) << "n = " << n;
+    }
+}
+
+TEST(BailliePSW, BadInputForLessThanTwo) {
+    EXPECT_THAT(baillie_psw(0u), Eq(PrimeResult::BAD_INPUT));
+    EXPECT_THAT(baillie_psw(1u), Eq(PrimeResult::BAD_INPUT));
+}
+
+TEST(BailliePSW, TwoIsPrime) { EXPECT_THAT(baillie_psw(2u), Eq(PrimeResult::PROBABLY_PRIME)); }
+
+TEST(BailliePSW, CorrectlyIdentifiesAllOddNumbersUpToTheFirstThousandPrimes) {
+    const auto first_10k_primes = first_n_primes<10'000u>();
+
+    std::size_t i_prime = 1u;  // Skip "prime 0" (a.k.a. "2").
+    for (uint64_t i = 3u; i_prime < first_10k_primes.size(); i += 2u) {
+        const bool is_prime = (i == first_10k_primes[i_prime]);
+        if (is_prime) {
+            ++i_prime;
+        }
+        const auto expected = is_prime ? PrimeResult::PROBABLY_PRIME : PrimeResult::COMPOSITE;
+        EXPECT_THAT(baillie_psw(i), Eq(expected)) << "i = " << i;
+    }
+}
+
+TEST(BailliePSW, IdentifiesPerfectSquareAsComposite) {
+    // (1093 ^ 2 = 1,194,649) is the smallest strong pseudoprime to base 2 that is a perfect square.
+    constexpr auto n = 1093u * 1093u;
+    ASSERT_THAT(miller_rabin(2u, n), Eq(PrimeResult::PROBABLY_PRIME));
+    EXPECT_THAT(baillie_psw(n), Eq(PrimeResult::COMPOSITE));
+}
+
+TEST(BailliePSW, HandlesVeryLargePrimes) {
+    for (const auto &p : {
+             225'653'407'801ull,
+             334'524'384'739ull,
+             9'007'199'254'740'881ull,
+             18'446'744'073'709'551'557ull,
+         }) {
+        EXPECT_THAT(baillie_psw(p), Eq(PrimeResult::PROBABLY_PRIME)) << p;
+    }
+}
+
 TEST(Gcd, ResultIsAlwaysAFactorAndGCDFindsNoLargerFactor) {
     for (auto i = 0u; i < 500u; ++i) {
         for (auto j = 1u; j < i; ++j) {
