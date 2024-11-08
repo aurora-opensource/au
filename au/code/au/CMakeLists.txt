@@ -159,6 +159,7 @@ header_only_library(
     units/yards_fwd.hh
     utility/factoring.hh
     utility/mod.hh
+    utility/probable_primes.hh
     utility/string_constant.hh
     utility/type_traits.hh
 )
@@ -460,6 +461,7 @@ gtest_based_test(
   SRCS
     utility/test/factoring_test.cc
     utility/test/mod_test.cc
+    utility/test/probable_primes_test.cc
     utility/test/string_constant_test.cc
     utility/test/type_traits_test.cc
   DEPS
