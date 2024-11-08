@@ -73,6 +73,10 @@ constexpr uint64_t mul_mod(uint64_t a, uint64_t b, uint64_t n) {
 //
 // Precondition: (a < n).
 // Precondition: (n is odd).
+//
+// If `a` is even, this is of course simply `a / 2` (because `(a < n)` as a precondition).
+// Otherwise, we give the result one would obtain by first adding `n` (guaranteeing an even number,
+// since `n` is also odd as a precondition), and _then_ dividing by `2`.
 constexpr uint64_t half_mod_odd(uint64_t a, uint64_t n) {
     return (a / 2u) + ((a % 2u == 0u) ? 0u : (n / 2u + 1u));
 }
