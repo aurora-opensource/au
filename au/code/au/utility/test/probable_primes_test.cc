@@ -200,6 +200,51 @@ TEST(MillerRabin, SupportsConstexpr) {
     static_assert(result == PrimeResult::PROBABLY_PRIME, "997 is prime");
 }
 
+TEST(Gcd, ResultIsAlwaysAFactorAndGCDFindsNoLargerFactor) {
+    for (auto i = 0u; i < 500u; ++i) {
+        for (auto j = 1u; j < i; ++j) {
+            const auto g = gcd(i, j);
+            EXPECT_EQ(i % g, 0u);
+            EXPECT_EQ(j % g, 0u);
+
+            // Brute force: no larger factors.
+            for (auto k = g + 1u; k < j / 2u; ++k) {
+                EXPECT_FALSE((i % k == 0u) && (j % k == 0u));
+            }
+        }
+    }
+}
+
+TEST(Gcd, HandlesZeroCorrectly) {
+    // The usual convention: if one argument is 0, return the other argument.
+    EXPECT_EQ(gcd(0u, 0u), 0u);
+    EXPECT_EQ(gcd(10u, 0u), 10u);
+    EXPECT_EQ(gcd(0u, 10u), 10u);
+}
+
+TEST(JacobiSymbol, ZeroWhenCommonFactorExists) {
+    for (int i = -20; i <= 20; ++i) {
+        for (int j = 1; j <= 19; j += 2) {
+            for (int factor = 3; factor < 200; factor += 2) {
+                // Make sure that `j * factor` is odd, or else the result is undefined.
+                EXPECT_EQ(jacobi_symbol(i * factor, j * factor), 0)
+                    << "jacobi(" << i * factor << ", " << j * factor << ") should be 0";
+            }
+        }
+    }
+}
+
+TEST(JacobiSymbol, AlwaysOneWhenFirstInputIsOne) {
+    for (auto i = 3u; i < 99u; i += 2u) {
+        EXPECT_EQ(jacobi_symbol(1, i), 1) << "jacobi(1, " << i << ") should be 1";
+    }
+}
+
+TEST(BoolSign, ReturnsCorrectValues) {
+    EXPECT_EQ(bool_sign(true), 1);
+    EXPECT_EQ(bool_sign(false), -1);
+}
+
 }  // namespace
 }  // namespace detail
 }  // namespace au
