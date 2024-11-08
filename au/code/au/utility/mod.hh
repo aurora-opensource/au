@@ -74,7 +74,7 @@ constexpr uint64_t mul_mod(uint64_t a, uint64_t b, uint64_t n) {
 // Precondition: (a < n).
 // Precondition: (n is odd).
 constexpr uint64_t half_mod_odd(uint64_t a, uint64_t n) {
-    return (a / 2u) + ((a % 2u == 0u) ? 0u : (n + 1u) / 2u);
+    return (a / 2u) + ((a % 2u == 0u) ? 0u : (n / 2u + 1u));
 }
 
 // (base ^ exp) % n

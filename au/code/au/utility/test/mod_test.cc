@@ -64,6 +64,28 @@ TEST(HalfModOdd, HalvesSumWithNForOddNumbers) {
     EXPECT_EQ(half_mod_odd(9u, 11u), 10u);
 }
 
+TEST(HalfModOdd, SameAsMultiplyingByCeilOfNOver2WhenNIsOdd) {
+    // An interesting test case, which helps us make sense of the operation of "dividing by 2" in
+    // modular arithmetic.  When `n` is odd, `2` has a multiplicative inverse, so we can understand
+    // "dividing by two" in terms of multiplying by this inverse.
+    //
+    // This fails when `n` is even, but so does dividing by 2 generally.
+    //
+    // In principle, we could replace our `half_mod_odd` implementation with this, and it would have
+    // the same preconditions, but there's a chance it would be less efficient (because `mul_mod`
+    // may recurse multiple times).  Also, keeping them separate lets us use this test case as an
+    // independent check.
+    std::vector<uint64_t> n_values{9u, 11u, 8723493u, MAX};
+    for (const auto &n : n_values) {
+        const auto half_n = n / 2u + 1u;
+
+        std::vector<uint64_t> x_values{0u, 1u, 2u, (n / 2u), (n / 2u + 1u), (n - 2u), (n - 1u)};
+        for (const auto &x : x_values) {
+            EXPECT_EQ(half_mod_odd(x, n), mul_mod(x, half_n, n));
+        }
+    }
+}
+
 TEST(PowMod, HandlesSimpleCases) {
     auto to_the_eighth = [](uint64_t x) {
         x *= x;
