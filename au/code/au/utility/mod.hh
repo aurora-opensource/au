@@ -20,7 +20,7 @@
 namespace au {
 namespace detail {
 
-// (a * b) % n
+// (a + b) % n
 //
 // Precondition: (a < n).
 // Precondition: (b < n).
@@ -33,6 +33,7 @@ constexpr uint64_t add_mod(uint64_t a, uint64_t b, uint64_t n) {
 }
 
 // (a - b) % n
+//
 // Precondition: (a < n).
 // Precondition: (b < n).
 constexpr uint64_t sub_mod(uint64_t a, uint64_t b, uint64_t n) {
@@ -44,6 +45,7 @@ constexpr uint64_t sub_mod(uint64_t a, uint64_t b, uint64_t n) {
 }
 
 // (a * b) % n
+//
 // Precondition: (a < n).
 // Precondition: (b < n).
 constexpr uint64_t mul_mod(uint64_t a, uint64_t b, uint64_t n) {
@@ -68,6 +70,7 @@ constexpr uint64_t mul_mod(uint64_t a, uint64_t b, uint64_t n) {
 }
 
 // (a / 2) % n
+//
 // Precondition: (a < n).
 // Precondition: (n is odd).
 constexpr uint64_t half_mod_odd(uint64_t a, uint64_t n) {
