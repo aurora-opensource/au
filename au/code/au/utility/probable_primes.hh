@@ -179,7 +179,7 @@ constexpr int jacobi_symbol(int64_t raw_a, uint64_t n) {
     // Starting conditions: transform `a` to strictly non-negative values, setting `result` to the
     // sign we pick up from this operation (if any).
     int result = bool_sign((raw_a >= 0) || (n % 4u == 1u));
-    auto a = static_cast<uint64_t>(std::abs(raw_a)) % n;
+    auto a = static_cast<uint64_t>(raw_a * bool_sign(raw_a >= 0)) % n;
 
     // Delegate to an implementation which can only handle positive numbers.
     return jacobi_symbol_positive_numerator(a, n, result);

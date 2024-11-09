@@ -22,6 +22,20 @@ namespace {
 std::uintmax_t cube(std::uintmax_t n) { return n * n * n; }
 }  // namespace
 
+TEST(FirstPrimes, HasOnlyPrimesInOrderAndDoesntSkipAny) {
+    const auto &first_primes = FirstPrimes::values;
+    const auto &n_primes = FirstPrimes::N;
+    auto i_prime = 0u;
+    for (auto i = 2u; i_prime < n_primes; ++i) {
+        if (i == first_primes[i_prime]) {
+            EXPECT_TRUE(is_prime(i)) << i;
+            ++i_prime;
+        } else {
+            EXPECT_FALSE(is_prime(i)) << i;
+        }
+    }
+}
+
 TEST(FindFirstFactor, ReturnsInputForPrimes) {
     EXPECT_EQ(find_first_factor(2u), 2u);
     EXPECT_EQ(find_first_factor(3u), 3u);
@@ -58,6 +72,17 @@ TEST(IsPrime, FindsPrimes) {
     EXPECT_FALSE(is_prime(196960u));
     EXPECT_TRUE(is_prime(196961u));
     EXPECT_FALSE(is_prime(196962u));
+}
+
+TEST(IsPrime, CanHandleVeryLargePrimes) {
+    for (const auto &p : {
+             225'653'407'801ull,
+             334'524'384'739ull,
+             9'007'199'254'740'881ull,
+             18'446'744'073'709'551'557ull,
+         }) {
+        EXPECT_TRUE(is_prime(p)) << p;
+    }
 }
 
 TEST(Multiplicity, CountsFactors) {
