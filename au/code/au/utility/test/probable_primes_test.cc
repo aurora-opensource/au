@@ -159,7 +159,7 @@ TEST(MillerRabin, OddNumberIsProbablyPrimeIffPrimeOrPseudoprime) {
 
     std::size_t i_prime = 2u;  // Skip 2 and 3; they're too small for Miller-Rabin.
     std::size_t i_pseudoprime = 0u;
-    for (uint64_t n = primes[i_prime]; i_prime < primes.size(); n += 2u) {
+    for (uint64_t n = primes[i_prime]; n <= primes.back(); n += 2u) {
         const auto is_prime = (n == primes[i_prime]);
         if (is_prime) {
             ++i_prime;
