@@ -224,11 +224,12 @@ TEST(Gcd, HandlesZeroCorrectly) {
 
 TEST(JacobiSymbol, ZeroWhenCommonFactorExists) {
     for (int i = -20; i <= 20; ++i) {
-        for (int j = 1; j <= 19; j += 2) {
-            for (int factor = 3; factor < 200; factor += 2) {
+        for (auto j = 1u; j <= 19u; j += 2u) {
+            for (auto factor = 3u; factor < 200u; factor += 2u) {
                 // Make sure that `j * factor` is odd, or else the result is undefined.
-                EXPECT_EQ(jacobi_symbol(i * factor, j * factor), 0)
-                    << "jacobi(" << i * factor << ", " << j * factor << ") should be 0";
+                EXPECT_EQ(jacobi_symbol(i * static_cast<int>(factor), j * factor), 0)
+                    << "jacobi(" << i * static_cast<int>(factor) << ", " << j * factor
+                    << ") should be 0";
             }
         }
     }
