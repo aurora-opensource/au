@@ -222,6 +222,11 @@ std::vector<uint64_t> strong_lucas_pseudoprimes() {
             231703u, 243629u, 253259u, 268349u, 288919u, 313499u, 324899u};
 }
 
+TEST(LucasDParameter, CanConvertToInt) {
+    EXPECT_EQ(as_int(LucasDParameter{5u, false}), 5);
+    EXPECT_EQ(as_int(LucasDParameter{7u, true}), -7);
+}
+
 TEST(StrongLucas, AllPrimeNumbersAreProbablyPrime) {
     const auto primes = first_n_primes<3'000u>();
     for (const auto &p : primes) {

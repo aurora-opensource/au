@@ -189,7 +189,9 @@ struct LucasDParameter {
     uint64_t mag = 5u;
     bool is_neg = false;
 
-    friend constexpr int as_int(const LucasDParameter &D) { return D.is_neg ? -D.mag : D.mag; }
+    friend constexpr int as_int(const LucasDParameter &D) {
+        return bool_sign(!D.is_neg) * static_cast<int>(D.mag);
+    }
     friend constexpr void increment(LucasDParameter &D) {
         D.mag += 2u;
         D.is_neg = !D.is_neg;
