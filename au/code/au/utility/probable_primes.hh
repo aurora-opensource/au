@@ -185,16 +185,20 @@ constexpr int jacobi_symbol(int64_t raw_a, uint64_t n) {
     return jacobi_symbol_positive_numerator(a, n, result);
 }
 
+// The "D" parameter in the Strong Lucas probable prime test.
+//
+// Default construction produces the first value to try according to Selfridge's parameter
+// selection.  Calling `increment()` on this will successively produce the next parameter to try.
 struct LucasDParameter {
     uint64_t mag = 5u;
-    bool is_neg = false;
+    bool is_positive = true;
 
     friend constexpr int as_int(const LucasDParameter &D) {
-        return bool_sign(!D.is_neg) * static_cast<int>(D.mag);
+        return bool_sign(D.is_positive) * static_cast<int>(D.mag);
     }
     friend constexpr void increment(LucasDParameter &D) {
         D.mag += 2u;
-        D.is_neg = !D.is_neg;
+        D.is_positive = !D.is_positive;
     }
 };
 
@@ -205,7 +209,7 @@ struct LucasDParameter {
 // Requires that `n` is *not* a perfect square.
 //
 constexpr LucasDParameter find_first_D_with_jacobi_symbol_neg_one(uint64_t n) {
-    LucasDParameter D{5u, false};
+    LucasDParameter D{};
     while (jacobi_symbol(as_int(D), n) != -1) {
         increment(D);
     }
@@ -232,7 +236,7 @@ constexpr LucasSequenceElement double_strong_lucas_index(const LucasSequenceElem
     uint64_t V_squared = mul_mod(V, V, n);
     uint64_t D_U_squared = mul_mod(D.mag, mul_mod(U, U, n), n);
     uint64_t V2 =
-        D.is_neg ? sub_mod(V_squared, D_U_squared, n) : add_mod(V_squared, D_U_squared, n);
+        D.is_positive ? add_mod(V_squared, D_U_squared, n) : sub_mod(V_squared, D_U_squared, n);
     V2 = half_mod_odd(V2, n);
 
     return LucasSequenceElement{
@@ -251,7 +255,7 @@ constexpr LucasSequenceElement increment_strong_lucas_index(const LucasSequenceE
     auto U2 = half_mod_odd(add_mod(U, V, n), n);
 
     const auto D_U = mul_mod(D.mag, U, n);
-    auto V2 = D.is_neg ? sub_mod(V, D_U, n) : add_mod(V, D_U, n);
+    auto V2 = D.is_positive ? add_mod(V, D_U, n) : sub_mod(V, D_U, n);
     V2 = half_mod_odd(V2, n);
 
     return LucasSequenceElement{U2, V2};

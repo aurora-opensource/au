@@ -223,8 +223,8 @@ std::vector<uint64_t> strong_lucas_pseudoprimes() {
 }
 
 TEST(LucasDParameter, CanConvertToInt) {
-    EXPECT_EQ(as_int(LucasDParameter{5u, false}), 5);
-    EXPECT_EQ(as_int(LucasDParameter{7u, true}), -7);
+    EXPECT_EQ(as_int(LucasDParameter{5u, true}), 5);
+    EXPECT_EQ(as_int(LucasDParameter{7u, false}), -7);
 }
 
 TEST(StrongLucas, AllPrimeNumbersAreProbablyPrime) {
