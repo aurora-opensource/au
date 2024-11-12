@@ -37,8 +37,9 @@ struct NumberDecomposition {
 };
 
 //
-// Express any odd `n` as `(2^s + d) + 1`, where `d` is odd.
+// Express any positive `n` as `(2^s * d)`, where `d` is odd.
 //
+// Preconditions: `n` is positive.
 constexpr NumberDecomposition decompose(uint64_t n) {
     NumberDecomposition result{0u, n};
     while (result.odd_remainder % 2u == 0u) {
