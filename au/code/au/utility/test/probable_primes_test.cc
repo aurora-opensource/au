@@ -241,6 +241,16 @@ TEST(JacobiSymbol, AlwaysOneWhenFirstInputIsOne) {
     }
 }
 
+TEST(JacobiSymbol, ReproducesExamplesFromWikipedia) {
+    // https://en.wikipedia.org/wiki/Jacobi_symbol#Example_of_calculations
+    EXPECT_EQ(jacobi_symbol(1001, 9907), -1);
+
+    // https://en.wikipedia.org/wiki/Jacobi_symbol#Primality_testing
+    EXPECT_EQ(jacobi_symbol(19, 45), 1);
+    EXPECT_EQ(jacobi_symbol(8, 21), -1);
+    EXPECT_EQ(jacobi_symbol(5, 21), 1);
+}
+
 TEST(BoolSign, ReturnsCorrectValues) {
     EXPECT_EQ(bool_sign(true), 1);
     EXPECT_EQ(bool_sign(false), -1);

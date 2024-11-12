@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <cmath>
+
 #include "au/utility/mod.hh"
 
 namespace au {
@@ -91,9 +93,10 @@ constexpr uint64_t gcd(uint64_t a, uint64_t b) {
     return a;
 }
 
-// The conversions `true` -> `1` and `false` -> `0` are guaranteed by the standard.
+// Map `true` onto `1`, and `false` onto `0`.
 //
-// This is a branchless implementation, which should generally be faster.
+// The conversions `true` -> `1` and `false` -> `0` are guaranteed by the standard.  This is a
+// branchless implementation, which should generally be faster.
 constexpr int bool_sign(bool x) { return x - (!x); }
 
 //
@@ -113,7 +116,7 @@ constexpr int bool_sign(bool x) { return x - (!x); }
 //     either a or n is congruent to 1 (mod 4), and 1 otherwise.
 //
 constexpr int jacobi_symbol_positive_numerator(uint64_t a, uint64_t n, int start) {
-    int &result = start;
+    int result = start;
 
     while (a != 0u) {
         // Handle even numbers in the "numerator".
@@ -155,7 +158,7 @@ constexpr int jacobi_symbol(int64_t raw_a, uint64_t n) {
     // Starting conditions: transform `a` to strictly non-negative values, setting `result` to the
     // sign we pick up from this operation (if any).
     int result = bool_sign((raw_a >= 0) || (n % 4u == 1u));
-    auto a = static_cast<uint64_t>(raw_a * bool_sign(raw_a >= 0)) % n;
+    auto a = static_cast<uint64_t>(std::abs(raw_a)) % n;
 
     // Delegate to an implementation which can only handle positive numbers.
     return jacobi_symbol_positive_numerator(a, n, result);
