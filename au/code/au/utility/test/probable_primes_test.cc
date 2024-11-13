@@ -300,10 +300,10 @@ TEST(BailliePSW, IdentifiesPerfectSquareAsComposite) {
 
 TEST(BailliePSW, HandlesVeryLargePrimes) {
     for (const auto &p : {
-             uint64_t{225'653'407'801},
-             uint64_t{334'524'384'739},
-             uint64_t{9'007'199'254'740'881},
-             uint64_t{18'446'744'073'709'551'557},
+             uint64_t{225'653'407'801u},
+             uint64_t{334'524'384'739u},
+             uint64_t{9'007'199'254'740'881u},
+             uint64_t{18'446'744'073'709'551'557u},
          }) {
         EXPECT_THAT(baillie_psw(p), Eq(PrimeResult::PROBABLY_PRIME)) << p;
     }
