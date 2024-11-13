@@ -270,8 +270,8 @@ constexpr LucasSequenceElement find_strong_lucas_element(uint64_t i,
     bool bits[64] = {};
     std::size_t n_bits = 0u;
     while (i > 1u) {
-        bits[n_bits++] = (i % 2u == 1u);
-        i /= 2u;
+        bits[n_bits++] = (i & 1u);
+        i >>= 1;
     }
 
     for (std::size_t j = n_bits; j > 0u; --j) {
