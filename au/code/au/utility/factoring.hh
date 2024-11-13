@@ -16,18 +16,61 @@
 
 #include <cstdint>
 
+#include "au/utility/probable_primes.hh"
+
 namespace au {
 namespace detail {
+
+// Check whether a number is prime.
+constexpr bool is_prime(std::uintmax_t n) {
+    static_assert(sizeof(std::uintmax_t) <= sizeof(std::uint64_t),
+                  "Baillie-PSW only strictly guaranteed for 64-bit numbers");
+
+    return baillie_psw(n) == PrimeResult::PROBABLY_PRIME;
+}
+
+template <typename T = void>
+struct FirstPrimesImpl {
+    static constexpr uint16_t values[] = {
+        2,   3,   5,   7,   11,  13,  17,  19,  23,  29,  31,  37,  41,  43,  47,  53,  59,
+        61,  67,  71,  73,  79,  83,  89,  97,  101, 103, 107, 109, 113, 127, 131, 137, 139,
+        149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233,
+        239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337,
+        347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439,
+        443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541};
+    static constexpr std::size_t N = sizeof(values) / sizeof(values[0]);
+};
+template <typename T>
+constexpr uint16_t FirstPrimesImpl<T>::values[];
+template <typename T>
+constexpr std::size_t FirstPrimesImpl<T>::N;
+using FirstPrimes = FirstPrimesImpl<>;
 
 // Find the smallest factor which divides n.
 //
 // Undefined unless (n > 1).
 constexpr std::uintmax_t find_first_factor(std::uintmax_t n) {
-    if (n % 2u == 0u) {
-        return 2u;
+    const auto &first_primes = FirstPrimes::values;
+    const auto &n_primes = FirstPrimes::N;
+
+    // First, do trial division against the first N primes.
+    for (const auto &p : first_primes) {
+        if (n % p == 0u) {
+            return p;
+        }
+
+        if (p * p > n) {
+            return n;
+        }
     }
 
-    std::uintmax_t factor = 3u;
+    // If we got this far, and haven't found a factor nor terminated, do a fast primality check.
+    if (is_prime(n)) {
+        return n;
+    }
+
+    // If we're here, we know `n` is composite, so continue with trial division for all odd numbers.
+    std::uintmax_t factor = first_primes[n_primes - 1u] + 2u;
     while (factor * factor <= n) {
         if (n % factor == 0u) {
             return factor;
@@ -37,9 +80,6 @@ constexpr std::uintmax_t find_first_factor(std::uintmax_t n) {
 
     return n;
 }
-
-// Check whether a number is prime.
-constexpr bool is_prime(std::uintmax_t n) { return (n > 1) && (find_first_factor(n) == n); }
 
 // Find the largest power of `factor` which divides `n`.
 //

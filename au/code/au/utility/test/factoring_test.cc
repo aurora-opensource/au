@@ -14,13 +14,31 @@
 
 #include "au/utility/factoring.hh"
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
+
+using ::testing::Gt;
+using ::testing::Le;
 
 namespace au {
 namespace detail {
 namespace {
 std::uintmax_t cube(std::uintmax_t n) { return n * n * n; }
 }  // namespace
+
+TEST(FirstPrimes, HasOnlyPrimesInOrderAndDoesntSkipAny) {
+    const auto &first_primes = FirstPrimes::values;
+    const auto &n_primes = FirstPrimes::N;
+    auto i_prime = 0u;
+    for (auto i = 2u; i <= first_primes[n_primes - 1u]; ++i) {
+        if (i == first_primes[i_prime]) {
+            EXPECT_TRUE(is_prime(i)) << i;
+            ++i_prime;
+        } else {
+            EXPECT_FALSE(is_prime(i)) << i;
+        }
+    }
+}
 
 TEST(FindFirstFactor, ReturnsInputForPrimes) {
     EXPECT_EQ(find_first_factor(2u), 2u);
@@ -35,6 +53,22 @@ TEST(FindFirstFactor, ReturnsInputForPrimes) {
 TEST(FindFirstFactor, FindsFirstFactor) {
     EXPECT_EQ(find_first_factor(7u * 11u * 13u), 7u);
     EXPECT_EQ(find_first_factor(cube(196961u)), 196961u);
+}
+
+TEST(FindFirstFactor, CanFactorNumbersWithLargePrimeFactor) {
+    // Small prime factors.
+    EXPECT_EQ(find_first_factor(2u * 9'007'199'254'740'881u), 2u);
+    EXPECT_EQ(find_first_factor(3u * 9'007'199'254'740'881u), 3u);
+
+    constexpr auto LAST_TRIAL_PRIME = FirstPrimes::values[FirstPrimes::N - 1u];
+
+    // Large prime factor from trial division.
+    ASSERT_THAT(541u, Le(LAST_TRIAL_PRIME));
+    EXPECT_EQ(find_first_factor(541u * 9'007'199'254'740'881u), 541u);
+
+    // Large prime factor higher than what we use for trial division.
+    ASSERT_THAT(1999u, Gt(LAST_TRIAL_PRIME));
+    EXPECT_EQ(find_first_factor(1999u * 9'007'199'254'740'881u), 1999u);
 }
 
 TEST(IsPrime, FalseForLessThan2) {
@@ -58,6 +92,17 @@ TEST(IsPrime, FindsPrimes) {
     EXPECT_FALSE(is_prime(196960u));
     EXPECT_TRUE(is_prime(196961u));
     EXPECT_FALSE(is_prime(196962u));
+}
+
+TEST(IsPrime, CanHandleVeryLargePrimes) {
+    for (const auto &p : {
+             uint64_t{225'653'407'801u},
+             uint64_t{334'524'384'739u},
+             uint64_t{9'007'199'254'740'881u},
+             uint64_t{18'446'744'073'709'551'557u},
+         }) {
+        EXPECT_TRUE(is_prime(p)) << p;
+    }
 }
 
 TEST(Multiplicity, CountsFactors) {
