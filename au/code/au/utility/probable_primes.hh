@@ -84,6 +84,27 @@ constexpr PrimeResult miller_rabin(std::size_t a, uint64_t n) {
     return PrimeResult::COMPOSITE;
 }
 
+//
+// Test whether the number is a perfect square.
+//
+constexpr bool is_perfect_square(uint64_t n) {
+    if (n < 2u) {
+        return true;
+    }
+
+    uint64_t prev = n / 2u;
+    while (true) {
+        const uint64_t curr = (prev + n / prev) / 2u;
+        if (curr * curr == n) {
+            return true;
+        }
+        if (curr >= prev) {
+            return false;
+        }
+        prev = curr;
+    }
+}
+
 constexpr uint64_t gcd(uint64_t a, uint64_t b) {
     while (b != 0u) {
         const auto remainder = a % b;
@@ -162,6 +183,167 @@ constexpr int jacobi_symbol(int64_t raw_a, uint64_t n) {
 
     // Delegate to an implementation which can only handle positive numbers.
     return jacobi_symbol_positive_numerator(a, n, result);
+}
+
+// The "D" parameter in the Strong Lucas probable prime test.
+//
+// Default construction produces the first value to try according to Selfridge's parameter
+// selection.  Calling `increment()` on this will successively produce the next parameter to try.
+struct LucasDParameter {
+    uint64_t mag = 5u;
+    bool is_positive = true;
+
+    friend constexpr int as_int(const LucasDParameter &D) {
+        return bool_sign(D.is_positive) * static_cast<int>(D.mag);
+    }
+    friend constexpr void increment(LucasDParameter &D) {
+        D.mag += 2u;
+        D.is_positive = !D.is_positive;
+    }
+};
+
+//
+// The first `D` in the infinite sequence {5, -7, 9, -11, ...} whose Jacobi symbol is (-1) is the
+// `D` we want to use for the Strong Lucas Probable Prime test.
+//
+// Requires that `n` is *not* a perfect square.
+//
+constexpr LucasDParameter find_first_D_with_jacobi_symbol_neg_one(uint64_t n) {
+    LucasDParameter D{};
+    while (jacobi_symbol(as_int(D), n) != -1) {
+        increment(D);
+    }
+    return D;
+}
+
+//
+// Elements of the Lucas sequence.
+//
+// The default values give the first element (i.e., k=1) of the sequence.
+//
+struct LucasSequenceElement {
+    uint64_t U = 1u;
+    uint64_t V = 1u;
+};
+
+// Produce the Lucas element whose index is twice the input element's index.
+constexpr LucasSequenceElement double_strong_lucas_index(const LucasSequenceElement &element,
+                                                         uint64_t n,
+                                                         LucasDParameter D) {
+    const auto &U = element.U;
+    const auto &V = element.V;
+
+    uint64_t V_squared = mul_mod(V, V, n);
+    uint64_t D_U_squared = mul_mod(D.mag, mul_mod(U, U, n), n);
+    uint64_t V2 =
+        D.is_positive ? add_mod(V_squared, D_U_squared, n) : sub_mod(V_squared, D_U_squared, n);
+    V2 = half_mod_odd(V2, n);
+
+    return LucasSequenceElement{
+        mul_mod(U, V, n),
+        V2,
+    };
+}
+
+// Find the next element in the Lucas sequence, using parameters for strong Lucas probable primes.
+constexpr LucasSequenceElement increment_strong_lucas_index(const LucasSequenceElement &element,
+                                                            uint64_t n,
+                                                            LucasDParameter D) {
+    const auto &U = element.U;
+    const auto &V = element.V;
+
+    auto U2 = half_mod_odd(add_mod(U, V, n), n);
+
+    const auto D_U = mul_mod(D.mag, U, n);
+    auto V2 = D.is_positive ? add_mod(V, D_U, n) : sub_mod(V, D_U, n);
+    V2 = half_mod_odd(V2, n);
+
+    return LucasSequenceElement{U2, V2};
+}
+
+// Compute the strong Lucas sequence element at index `i`.
+constexpr LucasSequenceElement find_strong_lucas_element(uint64_t i,
+                                                         uint64_t n,
+                                                         LucasDParameter D) {
+    LucasSequenceElement element{};
+
+    bool bits[64] = {};
+    std::size_t n_bits = 0u;
+    while (i > 1u) {
+        bits[n_bits++] = (i & 1u);
+        i >>= 1;
+    }
+
+    for (std::size_t j = n_bits; j > 0u; --j) {
+        element = double_strong_lucas_index(element, n, D);
+        if (bits[j - 1u]) {
+            element = increment_strong_lucas_index(element, n, D);
+        }
+    }
+
+    return element;
+}
+
+//
+// Perform a strong Lucas primality test on `n`.
+//
+constexpr PrimeResult strong_lucas(uint64_t n) {
+    if (n < 2u || n % 2u == 0u) {
+        return PrimeResult::BAD_INPUT;
+    }
+
+    if (is_perfect_square(n)) {
+        return PrimeResult::COMPOSITE;
+    }
+
+    const auto D = find_first_D_with_jacobi_symbol_neg_one(n);
+
+    const auto params = decompose(n + 1u);
+    const auto &s = params.power_of_two;
+    const auto &d = params.odd_remainder;
+
+    auto element = find_strong_lucas_element(d, n, D);
+    if (element.U == 0u) {
+        return PrimeResult::PROBABLY_PRIME;
+    }
+
+    for (std::size_t i = 0u; i < s; ++i) {
+        if (element.V == 0u) {
+            return PrimeResult::PROBABLY_PRIME;
+        }
+        element = double_strong_lucas_index(element, n, D);
+    }
+
+    return PrimeResult::COMPOSITE;
+}
+
+//
+// Perform the Baillie-PSW test for primality.
+//
+// Returns `BAD_INPUT` for any number less than 2, `COMPOSITE` for any larger number that is _known_
+// to be prime, and `PROBABLY_PRIME` for any larger number that is deemed "probably prime", which
+// includes all prime numbers.
+//
+// Actually, the Baillie-PSW test is known to be completely accurate for all 64-bit numbers;
+// therefore, since our input type is `uint64_t`, the output will be `PROBABLY_PRIME` if and only if
+// the input is prime.
+//
+constexpr PrimeResult baillie_psw(uint64_t n) {
+    if (n < 2u) {
+        return PrimeResult::BAD_INPUT;
+    }
+    if (n < 4u) {
+        return PrimeResult::PROBABLY_PRIME;
+    }
+    if (n % 2u == 0u) {
+        return PrimeResult::COMPOSITE;
+    }
+
+    if (miller_rabin(2u, n) == PrimeResult::COMPOSITE) {
+        return PrimeResult::COMPOSITE;
+    }
+
+    return strong_lucas(n);
 }
 
 }  // namespace detail
