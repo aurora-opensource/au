@@ -210,7 +210,7 @@ TEST(IsPerfectSquare, ProducesCorrectAnswers) {
             ++next_sqrt;
         }
 
-        EXPECT_EQ(is_perfect_square(n), is_square) << "n = " << n;
+        EXPECT_THAT(is_perfect_square(n), Eq(is_square)) << "n = " << n;
     }
 }
 
@@ -223,8 +223,8 @@ std::vector<uint64_t> strong_lucas_pseudoprimes() {
 }
 
 TEST(LucasDParameter, CanConvertToInt) {
-    EXPECT_EQ(as_int(LucasDParameter{5u, true}), 5);
-    EXPECT_EQ(as_int(LucasDParameter{7u, false}), -7);
+    EXPECT_THAT(as_int(LucasDParameter{5u, true}), Eq(5));
+    EXPECT_THAT(as_int(LucasDParameter{7u, false}), Eq(-7));
 }
 
 TEST(StrongLucas, AllPrimeNumbersAreProbablyPrime) {
@@ -238,7 +238,7 @@ TEST(StrongLucas, AllPrimeNumbersAreProbablyPrime) {
 
 TEST(StrongLucas, GetsFooledByKnownPseudoprimes) {
     for (const auto &p : strong_lucas_pseudoprimes()) {
-        ASSERT_EQ(miller_rabin(2u, p), PrimeResult::COMPOSITE) << p;
+        ASSERT_THAT(miller_rabin(2u, p), Eq(PrimeResult::COMPOSITE)) << p;
         EXPECT_THAT(strong_lucas(p), Eq(PrimeResult::PROBABLY_PRIME)) << p;
     }
 }
@@ -300,10 +300,10 @@ TEST(BailliePSW, IdentifiesPerfectSquareAsComposite) {
 
 TEST(BailliePSW, HandlesVeryLargePrimes) {
     for (const auto &p : {
-             225'653'407'801ull,
-             334'524'384'739ull,
-             9'007'199'254'740'881ull,
-             18'446'744'073'709'551'557ull,
+             uint64_t{225'653'407'801},
+             uint64_t{334'524'384'739},
+             uint64_t{9'007'199'254'740'881},
+             uint64_t{18'446'744'073'709'551'557},
          }) {
         EXPECT_THAT(baillie_psw(p), Eq(PrimeResult::PROBABLY_PRIME)) << p;
     }
