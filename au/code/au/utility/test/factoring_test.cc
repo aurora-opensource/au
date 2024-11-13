@@ -26,7 +26,7 @@ TEST(FirstPrimes, HasOnlyPrimesInOrderAndDoesntSkipAny) {
     const auto &first_primes = FirstPrimes::values;
     const auto &n_primes = FirstPrimes::N;
     auto i_prime = 0u;
-    for (auto i = 2u; i_prime < n_primes; ++i) {
+    for (auto i = 2u; i <= first_primes[n_primes - 1u]; ++i) {
         if (i == first_primes[i_prime]) {
             EXPECT_TRUE(is_prime(i)) << i;
             ++i_prime;
