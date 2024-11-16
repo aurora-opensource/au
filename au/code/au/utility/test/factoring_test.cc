@@ -17,6 +17,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+using ::testing::AnyOf;
+using ::testing::Eq;
 using ::testing::Gt;
 using ::testing::Le;
 
@@ -40,35 +42,39 @@ TEST(FirstPrimes, HasOnlyPrimesInOrderAndDoesntSkipAny) {
     }
 }
 
-TEST(FindFirstFactor, ReturnsInputForPrimes) {
-    EXPECT_EQ(find_first_factor(2u), 2u);
-    EXPECT_EQ(find_first_factor(3u), 3u);
-    EXPECT_EQ(find_first_factor(5u), 5u);
-    EXPECT_EQ(find_first_factor(7u), 7u);
-    EXPECT_EQ(find_first_factor(11u), 11u);
+TEST(FindFactor, ReturnsInputForPrimes) {
+    EXPECT_EQ(find_prime_factor(2u), 2u);
+    EXPECT_EQ(find_prime_factor(3u), 3u);
+    EXPECT_EQ(find_prime_factor(5u), 5u);
+    EXPECT_EQ(find_prime_factor(7u), 7u);
+    EXPECT_EQ(find_prime_factor(11u), 11u);
 
-    EXPECT_EQ(find_first_factor(196961u), 196961u);
+    EXPECT_EQ(find_prime_factor(196961u), 196961u);
 }
 
-TEST(FindFirstFactor, FindsFirstFactor) {
-    EXPECT_EQ(find_first_factor(7u * 11u * 13u), 7u);
-    EXPECT_EQ(find_first_factor(cube(196961u)), 196961u);
+TEST(FindFactor, FindsFirstFactorWhenFirstFactorIsSmall) {
+    EXPECT_EQ(find_prime_factor(7u * 11u * 13u), 7u);
+    EXPECT_EQ(find_prime_factor(cube(196961u)), 196961u);
 }
 
-TEST(FindFirstFactor, CanFactorNumbersWithLargePrimeFactor) {
+TEST(FindFactor, CanFactorNumbersWithLargePrimeFactor) {
     // Small prime factors.
-    EXPECT_EQ(find_first_factor(2u * 9'007'199'254'740'881u), 2u);
-    EXPECT_EQ(find_first_factor(3u * 9'007'199'254'740'881u), 3u);
+    EXPECT_EQ(find_prime_factor(2u * 9'007'199'254'740'881u), 2u);
+    EXPECT_EQ(find_prime_factor(3u * 9'007'199'254'740'881u), 3u);
 
     constexpr auto LAST_TRIAL_PRIME = FirstPrimes::values[FirstPrimes::N - 1u];
 
-    // Large prime factor from trial division.
+    // Large prime factor, with a number that trial division would find.
     ASSERT_THAT(541u, Le(LAST_TRIAL_PRIME));
-    EXPECT_EQ(find_first_factor(541u * 9'007'199'254'740'881u), 541u);
+    EXPECT_EQ(find_prime_factor(541u * 9'007'199'254'740'881u), 541u);
 
     // Large prime factor higher than what we use for trial division.
+    //
+    // Finding the first factor is overwhelmingly more likely than the second, but just to be safe,
+    // we would accept either as a correct answer.
     ASSERT_THAT(1999u, Gt(LAST_TRIAL_PRIME));
-    EXPECT_EQ(find_first_factor(1999u * 9'007'199'254'740'881u), 1999u);
+    EXPECT_THAT(find_prime_factor(1999u * 9'007'199'254'740'881u),
+                AnyOf(Eq(1999u), Eq(9'007'199'254'740'881u)));
 }
 
 TEST(IsPrime, FalseForLessThan2) {
