@@ -29,6 +29,50 @@ constexpr bool is_prime(std::uintmax_t n) {
     return baillie_psw(n) == PrimeResult::PROBABLY_PRIME;
 }
 
+// Compute the next step for Pollard's rho algorithm factoring `n`, with parameter `t`.
+constexpr std::uintmax_t x_squared_plus_t_mod_n(std::uintmax_t x,
+                                                std::uintmax_t t,
+                                                std::uintmax_t n) {
+    return add_mod(mul_mod(x, x, n), t, n);
+}
+
+constexpr std::uintmax_t absolute_diff(std::uintmax_t a, std::uintmax_t b) {
+    return a > b ? a - b : b - a;
+}
+
+// Pollard's rho algorithm, using Brent's cycle detection method.
+//
+// Precondition: `n` is known to be composite.
+constexpr std::uintmax_t find_pollard_rho_factor(std::uintmax_t n) {
+    // The outer loop tries separate _parameterizations_ of Pollard's rho.  We try a finite number
+    // of them just to guarantee that we terminate.  But in practice, the vast overwhelming majority
+    // will succeed on the first iteration, and we don't expect that any will _ever_ come anywhere
+    // _near_ to hitting this limit.
+    for (std::uintmax_t t = 1u; t < n / 2u; ++t) {
+        std::size_t max_cycle_length = 1u;
+        std::size_t cycle_length = 1u;
+        std::uintmax_t tortoise = 2u;
+        std::uintmax_t hare = x_squared_plus_t_mod_n(tortoise, t, n);
+
+        std::uintmax_t factor = gcd(n, absolute_diff(tortoise, hare));
+        while (factor == 1u) {
+            if (max_cycle_length == cycle_length) {
+                tortoise = hare;
+                max_cycle_length *= 2u;
+                cycle_length = 0u;
+            }
+            hare = x_squared_plus_t_mod_n(hare, t, n);
+            ++cycle_length;
+            factor = gcd(n, absolute_diff(tortoise, hare));
+        }
+        if (factor > 1u && factor < n) {
+            return factor;
+        }
+    }
+    // Failure case: we think this should be unreachable (in practice) with any composite `n`.
+    return n;
+}
+
 template <typename T = void>
 struct FirstPrimesImpl {
     static constexpr uint16_t values[] = {
@@ -51,7 +95,6 @@ using FirstPrimes = FirstPrimesImpl<>;
 // Undefined unless (n > 1).
 constexpr std::uintmax_t find_prime_factor(std::uintmax_t n) {
     const auto &first_primes = FirstPrimes::values;
-    const auto &n_primes = FirstPrimes::N;
 
     // First, do trial division against the first N primes.
     for (const auto &p : first_primes) {
@@ -69,16 +112,7 @@ constexpr std::uintmax_t find_prime_factor(std::uintmax_t n) {
         return n;
     }
 
-    // If we're here, we know `n` is composite, so continue with trial division for all odd numbers.
-    std::uintmax_t factor = first_primes[n_primes - 1u] + 2u;
-    while (factor * factor <= n) {
-        if (n % factor == 0u) {
-            return factor;
-        }
-        factor += 2u;
-    }
-
-    return n;
+    return find_pollard_rho_factor(n);
 }
 
 // Find the largest power of `factor` which divides `n`.
