@@ -77,6 +77,21 @@ TEST(FindFactor, CanFactorNumbersWithLargePrimeFactor) {
                 AnyOf(Eq(1999u), Eq(9'007'199'254'740'881u)));
 }
 
+TEST(FindFactor, CanFactorChallengingCompositeNumbers) {
+    // For ideas, see numbers in the "best solution" column in the various tables in
+    // <https://miller-rabin.appspot.com/>.
+    {
+        // Also passes for trial division.
+        constexpr auto factor = find_prime_factor(7'999'252'175'582'851u);
+        EXPECT_THAT(factor, AnyOf(Eq(9'227u), Eq(894'923u), Eq(968'731u)));
+    }
+    {
+        // Fails for trial division: requires Pollard's rho.
+        constexpr auto factor = find_prime_factor(55'245'642'489'451u);
+        EXPECT_THAT(factor, AnyOf(Eq(3'716'371u), Eq(14'865'481u)));
+    }
+}
+
 TEST(IsPrime, FalseForLessThan2) {
     EXPECT_FALSE(is_prime(0u));
     EXPECT_FALSE(is_prime(1u));
