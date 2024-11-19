@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-36-g7938695
+// Version identifier: 0.3.5-37-g3b6e979
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -2581,7 +2581,7 @@ using FirstPrimes = FirstPrimesImpl<>;
 // Find the smallest factor which divides n.
 //
 // Undefined unless (n > 1).
-constexpr std::uintmax_t find_first_factor(std::uintmax_t n) {
+constexpr std::uintmax_t find_prime_factor(std::uintmax_t n) {
     const auto &first_primes = FirstPrimes::values;
     const auto &n_primes = FirstPrimes::N;
 
@@ -2863,12 +2863,11 @@ template <std::uintmax_t N>
 struct PrimeFactorization {
     static_assert(N > 0, "Can only factor positive integers");
 
-    static constexpr std::uintmax_t first_base = find_first_factor(N);
-    static constexpr std::uintmax_t first_power = multiplicity(first_base, N);
-    static constexpr std::uintmax_t remainder = N / int_pow(first_base, first_power);
+    static constexpr std::uintmax_t base = find_prime_factor(N);
+    static constexpr std::uintmax_t power = multiplicity(base, N);
+    static constexpr std::uintmax_t remainder = N / int_pow(base, power);
 
-    using type =
-        MagProductT<Magnitude<Pow<Prime<first_base>, first_power>>, PrimeFactorizationT<remainder>>;
+    using type = MagProductT<Magnitude<Pow<Prime<base>, power>>, PrimeFactorizationT<remainder>>;
 };
 
 }  // namespace detail
