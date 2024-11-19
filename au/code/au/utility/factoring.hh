@@ -65,7 +65,7 @@ constexpr std::uintmax_t find_pollard_rho_factor(std::uintmax_t n) {
             ++cycle_length;
             factor = gcd(n, absolute_diff(tortoise, hare));
         }
-        if (factor > 1u && factor < n) {
+        if (factor < n) {
             return factor;
         }
     }
@@ -112,7 +112,11 @@ constexpr std::uintmax_t find_prime_factor(std::uintmax_t n) {
         return n;
     }
 
-    return find_pollard_rho_factor(n);
+    auto factor = find_pollard_rho_factor(n);
+    while (!is_prime(factor)) {
+        factor = find_pollard_rho_factor(factor);
+    }
+    return factor;
 }
 
 // Find the largest power of `factor` which divides `n`.
