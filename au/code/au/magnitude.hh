@@ -236,12 +236,11 @@ template <std::uintmax_t N>
 struct PrimeFactorization {
     static_assert(N > 0, "Can only factor positive integers");
 
-    static constexpr std::uintmax_t first_base = find_first_factor(N);
-    static constexpr std::uintmax_t first_power = multiplicity(first_base, N);
-    static constexpr std::uintmax_t remainder = N / int_pow(first_base, first_power);
+    static constexpr std::uintmax_t base = find_prime_factor(N);
+    static constexpr std::uintmax_t power = multiplicity(base, N);
+    static constexpr std::uintmax_t remainder = N / int_pow(base, power);
 
-    using type =
-        MagProductT<Magnitude<Pow<Prime<first_base>, first_power>>, PrimeFactorizationT<remainder>>;
+    using type = MagProductT<Magnitude<Pow<Prime<base>, power>>, PrimeFactorizationT<remainder>>;
 };
 
 }  // namespace detail

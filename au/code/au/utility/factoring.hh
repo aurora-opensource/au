@@ -49,7 +49,7 @@ using FirstPrimes = FirstPrimesImpl<>;
 // Find the smallest factor which divides n.
 //
 // Undefined unless (n > 1).
-constexpr std::uintmax_t find_first_factor(std::uintmax_t n) {
+constexpr std::uintmax_t find_prime_factor(std::uintmax_t n) {
     const auto &first_primes = FirstPrimes::values;
     const auto &n_primes = FirstPrimes::N;
 
