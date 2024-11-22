@@ -366,6 +366,9 @@ class Quantity {
         return *this;
     }
 
+    // Modulo operator (defined only for integral rep).
+    friend constexpr Quantity operator%(Quantity a, Quantity b) { return {a.value_ % b.value_}; }
+
     // Unary plus and minus.
     constexpr Quantity operator+() const { return {+value_}; }
     constexpr Quantity operator-() const { return {-value_}; }
@@ -412,6 +415,24 @@ class Quantity {
     // of the template parameter, and convert it to that same unit and rep.
 
     friend constexpr Quantity from_nttp(NTTP val) { return val; }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Hidden friends for select math functions.
+    //
+    // Moving the implementation here lets us effortlessly support callsites where any number of
+    // arguments are "shapeshifter" types that are compatible with this Quantity (such as `ZERO`, or
+    // various physical constant).
+    //
+    // Note that the min/max implementations return by _value_, for consistency with other Quantity
+    // implementations (because in the general case, the return type can differ from the inputs).
+    // Note, too, that we use the Walter Brown implementation for min/max, where min prefers `a`,
+    // max prefers `b`, and they never return the same input (although this matters less when we're
+    // returning by value).
+    friend constexpr Quantity min(Quantity a, Quantity b) { return b < a ? b : a; }
+    friend constexpr Quantity max(Quantity a, Quantity b) { return b < a ? a : b; }
+    friend constexpr Quantity clamp(Quantity v, Quantity lo, Quantity hi) {
+        return (v < lo) ? lo : ((hi < v) ? hi : v);
+    }
 
  private:
     template <typename OtherUnit, typename OtherRep>
