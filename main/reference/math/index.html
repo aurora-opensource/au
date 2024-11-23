@@ -2026,6 +2026,11 @@ and you want the &ldquo;max&rdquo;, just write plain <code>max(...)</code>.</p>
 <li>Don&rsquo;t write <code>std::max(...)</code>, because that would give the wrong function.</li>
 <li>Don&rsquo;t write <code>au::max(...)</code>, because that&rsquo;s neither necessary nor idiomatic.</li>
 </ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>For some functions, including <code>min</code>, <code>max</code>, and <code>clamp</code>, this advice is <em>mandatory</em> in many
+cases, such as when the arguments have the same type.</p>
+</div>
 <h2 id="function-categories">Function categories<a class="headerlink" href="#function-categories" title="Permanent link">&para;</a></h2>
 <p>Here are the functions we provide, grouped roughly into related categories.</p>
 <h3 id="sign-based-functions">Sign-based functions:<a class="headerlink" href="#sign-based-functions" title="Permanent link">&para;</a></h3>
@@ -2096,6 +2101,12 @@ support both <code>Quantity</code> and <code>QuantityPoint</code> inputs.</p>
 <p>unlike <code>std::min</code> and <code>std::max</code>, we return by <strong>value</strong>, not by reference.  This is because we
 support combining different units.  This means the return type will generally be different from
 the types of the inputs.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You <em>must</em> use <em>unqualified</em> calls to <code>min</code> and <code>max</code> in many cases, including the common case
+where the arguments have the same type.  Write <code>min(a, b)</code>, not <code>au::min(a, b)</code>: the latter will
+frequently result in the right overload not being found.</p>
 </div>
 <h4 id="clamp"><code>clamp</code><a class="headerlink" href="#clamp" title="Permanent link">&para;</a></h4>
 <p>&ldquo;Clamp&rdquo; the first parameter to the range defined by the second and third.  This is a <em>unit-aware</em>
@@ -2168,6 +2179,12 @@ above signatures, it will be <code>std::common_type_t&lt;RV, RLo, RHi&gt;</code>
 </li>
 </ul>
 </details>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You <em>must</em> use <em>unqualified</em> calls to <code>clamp</code> in many cases, including the common case where the
+arguments have the same type.  Write <code>clamp(a, b, c)</code>, not <code>au::clamp(a, b, c)</code>: the latter will
+frequently result in the right overload not being found.</p>
+</div>
 <h3 id="exponentiation">Exponentiation<a class="headerlink" href="#exponentiation" title="Permanent link">&para;</a></h3>
 <h4 id="int_pow"><code>int_pow</code><a class="headerlink" href="#int_pow" title="Permanent link">&para;</a></h4>
 <p>Raise a <code>Quantity</code> to an integer power.  Since this is an <a href="../../discussion/concepts/arithmetic/#arbitrary-unit">arbitrary-unit

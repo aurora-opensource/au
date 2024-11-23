@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-39-ga1a451c
+// Version identifier: 0.3.5-40-g7791a9a
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -4748,6 +4748,9 @@ class Quantity {
         return *this;
     }
 
+    // Modulo operator (defined only for integral rep).
+    friend constexpr Quantity operator%(Quantity a, Quantity b) { return {a.value_ % b.value_}; }
+
     // Unary plus and minus.
     constexpr Quantity operator+() const { return {+value_}; }
     constexpr Quantity operator-() const { return {-value_}; }
@@ -4794,6 +4797,24 @@ class Quantity {
     // of the template parameter, and convert it to that same unit and rep.
 
     friend constexpr Quantity from_nttp(NTTP val) { return val; }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Hidden friends for select math functions.
+    //
+    // Moving the implementation here lets us effortlessly support callsites where any number of
+    // arguments are "shapeshifter" types that are compatible with this Quantity (such as `ZERO`, or
+    // various physical constant).
+    //
+    // Note that the min/max implementations return by _value_, for consistency with other Quantity
+    // implementations (because in the general case, the return type can differ from the inputs).
+    // Note, too, that we use the Walter Brown implementation for min/max, where min prefers `a`,
+    // max prefers `b`, and they never return the same input (although this matters less when we're
+    // returning by value).
+    friend constexpr Quantity min(Quantity a, Quantity b) { return b < a ? b : a; }
+    friend constexpr Quantity max(Quantity a, Quantity b) { return b < a ? a : b; }
+    friend constexpr Quantity clamp(Quantity v, Quantity lo, Quantity hi) {
+        return (v < lo) ? lo : ((hi < v) ? hi : v);
+    }
 
  private:
     template <typename OtherUnit, typename OtherRep>
@@ -6584,26 +6605,6 @@ constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Quantity<UHi, RH
     return (v < lo) ? ResultT{lo} : (hi < v) ? ResultT{hi} : ResultT{v};
 }
 
-// `clamp` overloads for when either boundary is `Zero`.
-//
-// NOTE: these will not work if _both_ boundaries are `Zero`, or if the quantity being clamped is
-// `Zero`.  We do not think these use cases are very useful, but we're open to revisiting this if we
-// receive a persuasive argument otherwise.
-template <typename UV, typename UHi, typename RV, typename RHi>
-constexpr auto clamp(Quantity<UV, RV> v, Zero z, Quantity<UHi, RHi> hi) {
-    using U = CommonUnitT<UV, UHi>;
-    using R = std::common_type_t<RV, RHi>;
-    using ResultT = Quantity<U, R>;
-    return (v < z) ? ResultT{z} : (hi < v) ? ResultT{hi} : ResultT{v};
-}
-template <typename UV, typename ULo, typename RV, typename RLo>
-constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Zero z) {
-    using U = CommonUnitT<UV, ULo>;
-    using R = std::common_type_t<RV, RLo>;
-    using ResultT = Quantity<U, R>;
-    return (v < lo) ? ResultT{lo} : (z < v) ? ResultT{z} : ResultT{v};
-}
-
 // Clamp the first point to within the range of the second two.
 template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
 constexpr auto clamp(QuantityPoint<UV, RV> v,
@@ -6759,12 +6760,6 @@ constexpr auto max(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::using_common_type(q1, q2, detail::StdMaxByValue{});
 }
 
-// Overload to resolve ambiguity with `std::max` for identical `Quantity` types.
-template <typename U, typename R>
-constexpr auto max(Quantity<U, R> a, Quantity<U, R> b) {
-    return std::max(a, b);
-}
-
 // The maximum of two point values of the same dimension.
 //
 // Unlike std::max, returns by value rather than by reference, because the types might differ.
@@ -6777,23 +6772,6 @@ constexpr auto max(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
 template <typename U, typename R>
 constexpr auto max(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
     return std::max(a, b);
-}
-
-// `max` overloads for when Zero is one of the arguments.
-//
-// NOTE: these will not work if _both_ arguments are `Zero`, but we don't plan to support this
-// unless we find a compelling use case.
-template <typename T>
-constexpr auto max(Zero z, T x) {
-    static_assert(std::is_convertible<Zero, T>::value,
-                  "Cannot compare type to abstract notion Zero");
-    return std::max(T{z}, x);
-}
-template <typename T>
-constexpr auto max(T x, Zero z) {
-    static_assert(std::is_convertible<Zero, T>::value,
-                  "Cannot compare type to abstract notion Zero");
-    return std::max(x, T{z});
 }
 
 namespace detail {
@@ -6814,12 +6792,6 @@ constexpr auto min(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::using_common_type(q1, q2, detail::StdMinByValue{});
 }
 
-// Overload to resolve ambiguity with `std::min` for identical `Quantity` types.
-template <typename U, typename R>
-constexpr auto min(Quantity<U, R> a, Quantity<U, R> b) {
-    return std::min(a, b);
-}
-
 // The minimum of two point values of the same dimension.
 //
 // Unlike std::min, returns by value rather than by reference, because the types might differ.
@@ -6832,23 +6804,6 @@ constexpr auto min(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
 template <typename U, typename R>
 constexpr auto min(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
     return std::min(a, b);
-}
-
-// `min` overloads for when Zero is one of the arguments.
-//
-// NOTE: these will not work if _both_ arguments are `Zero`, but we don't plan to support this
-// unless we find a compelling use case.
-template <typename T>
-constexpr auto min(Zero z, T x) {
-    static_assert(std::is_convertible<Zero, T>::value,
-                  "Cannot compare type to abstract notion Zero");
-    return std::min(T{z}, x);
-}
-template <typename T>
-constexpr auto min(T x, Zero z) {
-    static_assert(std::is_convertible<Zero, T>::value,
-                  "Cannot compare type to abstract notion Zero");
-    return std::min(x, T{z});
 }
 
 // The (zero-centered) floating point remainder of two values of the same dimension.
