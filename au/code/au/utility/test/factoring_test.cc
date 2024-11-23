@@ -30,9 +30,8 @@ std::uintmax_t cube(std::uintmax_t n) { return n * n * n; }
 
 TEST(FirstPrimes, HasOnlyPrimesInOrderAndDoesntSkipAny) {
     const auto &first_primes = FirstPrimes::values;
-    const auto &n_primes = FirstPrimes::N;
     auto i_prime = 0u;
-    for (auto i = 2u; i <= first_primes[n_primes - 1u]; ++i) {
+    for (auto i = 2u; i <= first_primes.back(); ++i) {
         if (i == first_primes[i_prime]) {
             EXPECT_TRUE(is_prime(i)) << i;
             ++i_prime;
@@ -64,7 +63,7 @@ TEST(FindFactor, CanFactorNumbersWithLargePrimeFactor) {
     EXPECT_THAT(find_prime_factor(3u * 9'007'199'254'740'881u),
                 AnyOf(Eq(3u), Eq(9'007'199'254'740'881u)));
 
-    constexpr auto LAST_TRIAL_PRIME = FirstPrimes::values[FirstPrimes::N - 1u];
+    constexpr auto LAST_TRIAL_PRIME = FirstPrimes::values.back();
 
     // Large prime factor, with a number that trial division would find.
     ASSERT_THAT(541u, Le(LAST_TRIAL_PRIME));
