@@ -18,10 +18,12 @@
 
 #include "au/chrono_interop.hh"
 #include "au/testing.hh"
+#include "au/units/degrees.hh"
 #include "au/units/joules.hh"
 #include "au/units/meters.hh"
 #include "au/units/newtons.hh"
 #include "au/units/radians.hh"
+#include "au/units/revolutions.hh"
 #include "au/units/seconds.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -276,6 +278,29 @@ TEST(Constant, ImplicitlyConvertsToNonAuTypesWithAppropriateCorrespondingQuantit
 TEST(Constant, SupportsUnitSlotAPIs) {
     constexpr auto three_c_mps = (3.f * c).as(meters / second);
     EXPECT_THAT(three_c_mps.in(c), SameTypeAndValue(3.f));
+}
+
+TEST(Constant, SupportsMinWithQuantity) {
+    EXPECT_THAT(min(c, (meters / second)(100)), SameTypeAndValue((meters / second)(100)));
+    EXPECT_THAT(min((meters / second)(1'000'000'000), c),
+                SameTypeAndValue((meters / second)(299'792'458)));
+}
+
+TEST(Constant, SupportsMaxWithQuantity) {
+    EXPECT_THAT(max(c, (meters / second)(100)), SameTypeAndValue((meters / second)(299'792'458)));
+    EXPECT_THAT(max((meters / second)(1'000'000'000), c),
+                SameTypeAndValue((meters / second)(1'000'000'000)));
+}
+
+TEST(Constant, SupportsClampWithQuantity) {
+    EXPECT_THAT(clamp((meters / second)(100), c / mag<2>(), c),
+                SameTypeAndValue((meters / second)(149'896'229)));
+}
+
+TEST(Constant, SupportsModWithQuantity) {
+    constexpr auto half_rev = make_constant(revolutions / mag<2>());
+    EXPECT_THAT(half_rev % degrees(100), SameTypeAndValue(degrees(80)));
+    EXPECT_THAT(degrees(300) % half_rev, SameTypeAndValue(degrees(120)));
 }
 
 TEST(CanStoreValueIn, ChecksRangeOfTypeForIntegers) {
