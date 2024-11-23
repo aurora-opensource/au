@@ -15,6 +15,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <cmath>
 #include <cstdint>
@@ -23,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-38-g122af52
+// Version identifier: 0.3.5-39-ga1a451c
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -2249,29 +2250,28 @@ constexpr std::uintmax_t find_pollard_rho_factor(std::uintmax_t n) {
 
 template <typename T = void>
 struct FirstPrimesImpl {
-    static constexpr uint16_t values[] = {
+    static constexpr std::array<uint16_t, 100u> values = {
         2,   3,   5,   7,   11,  13,  17,  19,  23,  29,  31,  37,  41,  43,  47,  53,  59,
         61,  67,  71,  73,  79,  83,  89,  97,  101, 103, 107, 109, 113, 127, 131, 137, 139,
         149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233,
         239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337,
         347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439,
         443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541};
-    static constexpr std::size_t N = sizeof(values) / sizeof(values[0]);
 };
 template <typename T>
-constexpr uint16_t FirstPrimesImpl<T>::values[];
-template <typename T>
-constexpr std::size_t FirstPrimesImpl<T>::N;
+constexpr std::array<uint16_t, 100u> FirstPrimesImpl<T>::values;
 using FirstPrimes = FirstPrimesImpl<>;
 
 // Find the smallest factor which divides n.
 //
 // Undefined unless (n > 1).
 constexpr std::uintmax_t find_prime_factor(std::uintmax_t n) {
-    const auto &first_primes = FirstPrimes::values;
-
     // First, do trial division against the first N primes.
-    for (const auto &p : first_primes) {
+    //
+    // Note that range-for isn't supported until C++17, so we need to use an index.
+    for (auto i = 0u; i < FirstPrimes::values.size(); ++i) {
+        const auto &p = FirstPrimes::values[i];
+
         if (n % p == 0u) {
             return p;
         }
