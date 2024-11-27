@@ -594,7 +594,28 @@ struct EliminateRedundantUnitsImpl<Pack<H, Ts...>>
 
               H>> {};
 
+template <typename U, typename... Us>
+struct AllUnitsQuantityEquivalent : stdx::conjunction<AreUnitsQuantityEquivalent<U, Us>...> {};
+
+template <typename... Us>
+struct CommonUnitLabelImpl {
+    static_assert(sizeof...(Us) > 0u, "Common unit label requires units");
+    static_assert(AllUnitsQuantityEquivalent<Us...>::value,
+                  "Must pre-reduce units before constructing common-unit label");
+
+    using LabelT = ExtendedLabel<7u + 2u * (sizeof...(Us) - 1u), Us...>;
+    static constexpr LabelT value = concatenate("EQUIV{", join_by(", ", unit_label<Us>()...), "}");
+};
+template <typename... Us>
+constexpr typename CommonUnitLabelImpl<Us...>::LabelT CommonUnitLabelImpl<Us...>::value;
+
 }  // namespace detail
+
+template <typename A, typename B>
+struct InOrderFor<detail::CommonUnitLabelImpl, A, B> : InOrderFor<UnitProduct, A, B> {};
+
+template <typename... Us>
+using CommonUnitLabel = FlatDedupedTypeListT<detail::CommonUnitLabelImpl, Us...>;
 
 template <typename... Us>
 using ComputeCommonUnitImpl =
@@ -849,15 +870,11 @@ struct UnitLabel<ScaledUnit<U, M>> {
 template <typename U, typename M>
 constexpr typename UnitLabel<ScaledUnit<U, M>>::LabelT UnitLabel<ScaledUnit<U, M>>::value;
 
-// Implementation for CommonUnit: unite constituent labels.
+// Implementation for CommonUnit: give size in terms of each constituent unit.
 template <typename... Us>
-struct UnitLabel<CommonUnit<Us...>> {
-    using LabelT = detail::ExtendedLabel<5 + 2 * (sizeof...(Us) - 1), Us...>;
-    static constexpr LabelT value =
-        detail::concatenate("COM[", detail::join_by(", ", unit_label(Us{})...), "]");
-};
-template <typename... Us>
-constexpr typename UnitLabel<CommonUnit<Us...>>::LabelT UnitLabel<CommonUnit<Us...>>::value;
+struct UnitLabel<CommonUnit<Us...>>
+    : CommonUnitLabel<decltype(Us{} *
+                               (detail::MagT<CommonUnit<Us...>>{} / detail::MagT<Us>{}))...> {};
 
 // Implementation for CommonPointUnit: unite constituent labels.
 template <typename... Us>

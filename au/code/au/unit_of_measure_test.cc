@@ -36,6 +36,12 @@ using ::testing::StaticAssertTypeEq;
 using ::testing::StrEq;
 
 namespace au {
+namespace {
+template <typename... Us>
+constexpr auto common_unit(Us...) {
+    return CommonUnitT<Us...>{};
+}
+}  // namespace
 
 struct Celsius : Kelvins {
     static constexpr auto origin() { return milli(kelvins)(273'150); }
@@ -611,13 +617,28 @@ TEST(UnitLabel, PowersAndProductsComposeNicely) {
 
 TEST(UnitLabel, LabelsCommonUnitCorrectly) {
     using U = CommonUnitT<Inches, Meters>;
-    EXPECT_THAT(unit_label(U{}), AnyOf(StrEq("COM[in, m]"), StrEq("COM[m, in]")));
+    EXPECT_THAT(unit_label(U{}),
+                AnyOf(StrEq("EQUIV{[(1 / 127) in], [(1 / 5000) m]}"),
+                      StrEq("EQUIV{[(1 / 5000) m], [(1 / 127) in]}")));
 }
 
 TEST(UnitLabel, CommonUnitLabelWorksWithUnitProduct) {
     using U = CommonUnitT<UnitQuotientT<Meters, Minutes>, UnitQuotientT<Inches, Minutes>>;
     EXPECT_THAT(unit_label(U{}),
-                AnyOf(StrEq("COM[m / min, in / min]"), StrEq("COM[in / min, m / min]")));
+                AnyOf(StrEq("EQUIV{[(1 / 127) in / min], [(1 / 5000) m / min]}"),
+                      StrEq("EQUIV{[(1 / 5000) m / min], [(1 / 127) in / min]}")));
+}
+
+TEST(UnitLabel, RemovesDuplicatesFromCommonUnitLabel) {
+    // A likely failure mode for this test would be `"EQUIV{[24 in], [2 ft], [2 ft]}"`.
+    EXPECT_THAT(
+        unit_label(common_unit(Feet{} * mag<6>(), Feet{} * mag<10>(), Inches{} * mag<48>())),
+        AnyOf(StrEq("EQUIV{[2 ft], [24 in]}"), StrEq("EQUIV{[24 in], [2 ft]}")));
+}
+
+TEST(UnitLabel, ReducesToSingleUnitLabelIfAllUnitsAreTheSame) {
+    // A likely failure mode for this test would be `"EQUIV{[2 ft], [2 ft]}"`.
+    EXPECT_THAT(unit_label(common_unit(Feet{} * mag<6>(), Feet{} * mag<10>())), StrEq("[2 ft]"));
 }
 
 TEST(UnitLabel, LabelsCommonPointUnitCorrectly) {
