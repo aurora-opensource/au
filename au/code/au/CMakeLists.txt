@@ -43,6 +43,13 @@ header_only_library(
     unit_symbol.hh
     wrapper_operations.hh
     zero.hh
+    constants/avogadro_constant.hh
+    constants/boltzmann_constant.hh
+    constants/cesium_hyperfine_transition_frequency.hh
+    constants/elementary_charge.hh
+    constants/luminous_efficacy_540_terahertz.hh
+    constants/planck_constant.hh
+    constants/reduced_planck_constant.hh
     constants/speed_of_light.hh
     stdx/experimental/is_detected.hh
     stdx/functional.hh
@@ -224,6 +231,13 @@ gtest_based_test(
 gtest_based_test(
   NAME constants_test
   SRCS
+    constants/test/avogadro_constant_test.cc
+    constants/test/boltzmann_constant_test.cc
+    constants/test/cesium_hyperfine_transition_frequency_test.cc
+    constants/test/elementary_charge_test.cc
+    constants/test/luminous_efficacy_540_terahertz_test.cc
+    constants/test/planck_constant_test.cc
+    constants/test/reduced_planck_constant_test.cc
     constants/test/speed_of_light_test.cc
   DEPS
     au
