@@ -912,16 +912,12 @@ struct UnitLabel<CommonUnit<Us...>>
     : CommonUnitLabel<decltype(Us{} *
                                (detail::MagT<CommonUnit<Us...>>{} / detail::MagT<Us>{}))...> {};
 
-// Implementation for CommonPointUnit: unite constituent labels.
+// Implementation for CommonPointUnit: give size in terms of each constituent unit, taking any
+// origin displacements into account.
 template <typename... Us>
-struct UnitLabel<CommonPointUnit<Us...>> {
-    using LabelT = detail::ExtendedLabel<8 + 2 * (sizeof...(Us) - 1), Us...>;
-    static constexpr LabelT value =
-        detail::concatenate("COM_PT[", detail::join_by(", ", unit_label(Us{})...), "]");
-};
-template <typename... Us>
-constexpr
-    typename UnitLabel<CommonPointUnit<Us...>>::LabelT UnitLabel<CommonPointUnit<Us...>>::value;
+struct UnitLabel<CommonPointUnit<Us...>>
+    : CommonUnitLabel<decltype(
+          Us{} * (detail::MagT<CommonPointUnit<Us...>>{} / detail::MagT<Us>{}))...> {};
 
 template <typename Unit>
 constexpr const auto &unit_label(Unit) {
