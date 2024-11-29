@@ -1,4 +1,4 @@
-// Copyright 2022 Aurora Operations, Inc.
+// Copyright 2024 Aurora Operations, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#pragma once
-
-#include "au/units/standard_gravity_fwd.hh"
-// Keep corresponding `_fwd.hh` file on top.
-
-#include "au/quantity.hh"
-#include "au/unit_symbol.hh"
+#include "au/constant.hh"
 #include "au/units/meters.hh"
 #include "au/units/seconds.hh"
 
 namespace au {
 
+namespace detail {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
@@ -32,17 +27,13 @@ struct StandardGravityLabel {
 };
 template <typename T>
 constexpr const char StandardGravityLabel<T>::label[];
-
-struct [[deprecated(
-    "Use the `STANDARD_GRAVITY` constant instead (see: "
-    "https://aurora-opensource.github.io/au/main/reference/constant/#built-in)")]] StandardGravity
-    : decltype((Meters{} / squared(Seconds{})) * (mag<980'665>() / mag<100'000>())),
+struct StandardGravityUnit
+    : decltype(Meters{} / squared(Seconds{}) * mag<980'665>() / pow<5>(mag<10>())),
       StandardGravityLabel<void> {
     using StandardGravityLabel<void>::label;
 };
-constexpr auto standard_gravity = QuantityMaker<StandardGravity>{};
+}  // namespace detail
 
-namespace symbols {
-constexpr auto g_0 = SymbolFor<StandardGravity>{};
-}
+constexpr auto STANDARD_GRAVITY = make_constant(detail::StandardGravityUnit{});
+
 }  // namespace au

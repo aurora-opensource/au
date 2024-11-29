@@ -51,6 +51,7 @@ header_only_library(
     constants/planck_constant.hh
     constants/reduced_planck_constant.hh
     constants/speed_of_light.hh
+    constants/standard_gravity.hh
     stdx/experimental/is_detected.hh
     stdx/functional.hh
     stdx/type_traits.hh
@@ -239,6 +240,7 @@ gtest_based_test(
     constants/test/planck_constant_test.cc
     constants/test/reduced_planck_constant_test.cc
     constants/test/speed_of_light_test.cc
+    constants/test/standard_gravity_test.cc
   DEPS
     au
     testing
