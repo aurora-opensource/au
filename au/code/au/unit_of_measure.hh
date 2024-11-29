@@ -707,15 +707,6 @@ struct ComputeCommonPointUnit
 // `UnitLabel` implementation.
 
 namespace detail {
-template <std::size_t N>
-constexpr auto as_char_array(const char (&x)[N]) -> const char (&)[N] {
-    return x;
-}
-
-template <std::size_t N>
-constexpr auto as_char_array(const StringConstant<N> &x) -> const char (&)[N + 1] {
-    return x.char_array();
-}
 
 template <typename Unit>
 using HasLabel = decltype(Unit::label);
