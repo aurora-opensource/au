@@ -23,6 +23,45 @@ still store `5` under the hood.
 This approach means that if subsequent operations cancel out the constant, this cancellation is both
 _exact_ and has _zero runtime cost_.
 
+## Built-in constants included with Au {#built-in}
+
+Au includes a number of built-in constants.  Each constant is in its own include file, in the folder
+`"au/constant"` --- for example, `"au/constant/speed_of_light.hh"`.
+
+The constant object itself is in the top-level `au::` namespace, and uses an UPPERCASE naming
+convention, as with all other constants in the library --- for example, `au::SPEED_OF_LIGHT`.
+
+We spell out the constant name in full to avoid ambiguity.  However, this can be overly verbose.  We
+encourage users to define their own copy of each constant, with a more usable name --- for example:
+
+```cpp
+constexpr auto c = au::SPEED_OF_LIGHT;
+```
+
+This "copy" is essentially free, because the constant is a [monovalue
+type](./detail/monovalue_types.md), and therefore empty.
+
+Here are the constants that we include with Au:
+
+| Name | Symbol | Value | Include (under `"au/constants/"`) | Object name (under `au::` namespace) |
+| ---- | ------ | ----- | ------- | ----------- |
+| Avogadro constant | $N_A$ | $6.022\,140\,76 \times 10^{23}\,\, \text{mol}^{-1}$ | `avogadro_constant.hh` | `AVOGADRO_CONSTANT` |
+| Boltzmann constant | $k_B$ | $1.380\,649 \times 10^{-23}\,\, \text{J} / \text{K}$ | `boltzmann_constant.hh` | `BOLTZMANN_CONSTANT` |
+| Cesium hyperfine transition frequency | $\Delta \nu_{Cs}$ | $9\,192\,631\,770\,\, \text{Hz}$ | `cesium_hyperfine_transition_frequency.hh` | `CESIUM_HYPERFINE_TRANSITION_FREQUENCY` |
+| Elementary charge | $e$ | $1.602\,176\,634 \times 10^{-19}\,\, \text{C}$ | `elementary_charge.hh` | `ELEMENTARY_CHARGE` |
+| Luminous efficacy of light at $540\,\, \text{THz}$ | $K_{cd}$ | $683\,\, \text{lm} / \text{W}$ | `luminous_efficacy_540_terahertz.hh` | `LUMINOUS_EFFICACY_540_TERAHERTZ` |
+| Planck constant | $h$ | $6.626\,070\,15 \times 10^{-34}\,\, \text{J} \cdot \text{s}$ | `planck_constant.hh` | `PLANCK_CONSTANT` |
+| Reduced Planck constant | $\hbar$ | $1.054\,571\,817 \times 10^{-34}\,\, \text{J} \cdot \text{s}$ | `reduced_planck_constant.hh` | `REDUCED_PLANCK_CONSTANT` |
+| Speed of light | $c$ | $299\,792\,458\,\, \text{m} / \text{s}$ | `speed_of_light.hh` | `SPEED_OF_LIGHT` |
+
+Our policy is to include only exactly defined constants with the library.  This rules out many
+useful constants, such as the universal gravitational constant $G$, the _new_ (post-2019) permeability
+of free space $\mu_0$, and so on.  For these, we can't reasonably provide values that will satisfy
+all users at all times.  However, defining custom constants for your own project is straightforward,
+as we explain in the next section, and in our [how-to guide for custom
+constants](../howto/new-constants.md).
+
+
 ## Constructing `Constant`
 
 `Constant` encodes all information about the value in its type.  Moreover, it has only a single

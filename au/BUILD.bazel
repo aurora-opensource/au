@@ -25,7 +25,9 @@ cc_library(
     deps = [
         ":chrono_interop",
         ":constant",
+        ":constants",
         ":math",
+        ":units",
     ],
 )
 
