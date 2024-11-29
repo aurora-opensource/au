@@ -55,6 +55,12 @@ static constexpr QuantityMaker<Meters> meters{};
 static_assert(are_units_quantity_equivalent(Centi<Meters>{} * mag<254>(), Inches{} * mag<100>()),
               "Double-check this ad hoc definition of meters");
 
+struct Unos : decltype(UnitProductT<>{}) {};
+constexpr auto unos = QuantityMaker<Unos>{};
+
+struct Percent : decltype(Unos{} / mag<100>()) {};
+constexpr auto percent = QuantityMaker<Percent>{};
+
 struct Hours : UnitImpl<Time> {};
 constexpr auto hour = SingularNameFor<Hours>{};
 constexpr auto hours = QuantityMaker<Hours>{};
@@ -62,6 +68,12 @@ constexpr auto hours = QuantityMaker<Hours>{};
 struct Minutes : decltype(Hours{} / mag<60>()) {};
 constexpr auto minute = SingularNameFor<Minutes>{};
 constexpr auto minutes = QuantityMaker<Minutes>{};
+
+struct Seconds : decltype(Minutes{} / mag<60>()) {};
+constexpr auto seconds = QuantityMaker<Seconds>{};
+
+struct Hertz : decltype(inverse(Seconds{})) {};
+constexpr auto hertz = QuantityMaker<Hertz>{};
 
 struct Days : decltype(Hours{} * mag<24>()) {};
 constexpr auto days = QuantityMaker<Days>{};
@@ -784,6 +796,23 @@ TEST(Quantity, CommonTypeRespectsImplicitRepSafetyChecks) {
 
 TEST(QuantityMaker, ProvidesAssociatedUnit) {
     StaticAssertTypeEq<AssociatedUnitT<QuantityMaker<Hours>>, Hours>();
+}
+
+TEST(AsRawNumber, ExtractsRawNumberForUnitlessQuantity) {
+    EXPECT_THAT(as_raw_number(unos(3)), SameTypeAndValue(3));
+    EXPECT_THAT(as_raw_number(unos(3.1415f)), SameTypeAndValue(3.1415f));
+}
+
+TEST(AsRawNumber, PerformsConversionsWherePermissible) {
+    EXPECT_THAT(as_raw_number(percent(75.0)), SameTypeAndValue(0.75));
+    EXPECT_THAT(as_raw_number(kilo(hertz)(7) * seconds(3)), SameTypeAndValue(21'000));
+}
+
+TEST(AsRawNumber, IdentityForBuiltInNumericTypes) {
+    EXPECT_THAT(as_raw_number(3), SameTypeAndValue(3));
+    EXPECT_THAT(as_raw_number(3u), SameTypeAndValue(3u));
+    EXPECT_THAT(as_raw_number(3.1415), SameTypeAndValue(3.1415));
+    EXPECT_THAT(as_raw_number(3.1415f), SameTypeAndValue(3.1415f));
 }
 
 TEST(WillConversionOverflow, SensitiveToTypeBoundariesForPureIntegerMultiply) {

@@ -534,6 +534,20 @@ constexpr auto operator%(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return make_quantity<U>(q1.in(U{}) % q2.in(U{}));
 }
 
+// Callsite-readable way to convert a `Quantity` to a raw number.
+//
+// Only works for dimensionless `Quantities`; will return a compile-time error otherwise.
+//
+// Identity for non-`Quantity` types.
+template <typename U, typename R>
+constexpr R as_raw_number(Quantity<U, R> q) {
+    return q.as(UnitProductT<>{});
+}
+template <typename T>
+constexpr T as_raw_number(T x) {
+    return x;
+}
+
 // Type trait to detect whether two Quantity types are equivalent.
 //
 // In this library, Quantity types are "equivalent" exactly when they use the same Rep, and are
