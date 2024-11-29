@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-40-g7791a9a
+// Version identifier: 0.3.5-41-g28a7d8c
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -475,6 +475,16 @@ struct ParensIf<false> {
 template <bool Enable, typename StringT>
 constexpr auto parens_if(const StringT &s) {
     return concatenate(ParensIf<Enable>::open(), s, ParensIf<Enable>::close());
+}
+
+template <std::size_t N>
+constexpr auto as_char_array(const char (&x)[N]) -> const char (&)[N] {
+    return x;
+}
+
+template <std::size_t N>
+constexpr auto as_char_array(const StringConstant<N> &x) -> const char (&)[N + 1] {
+    return x.char_array();
 }
 
 }  // namespace detail
@@ -2367,6 +2377,14 @@ using MagQuotientT = PackQuotientT<Magnitude, T, U>;
 template <typename T>
 using MagInverseT = PackInverseT<Magnitude, T>;
 
+// A printable label to indicate the Magnitude for human readers.
+template <typename MagT>
+struct MagnitudeLabel;
+
+// A sizeof()-compatible API to get the label for a Magnitude.
+template <typename MagT>
+constexpr const auto &mag_label(MagT = MagT{});
+
 // A helper function to create a Magnitude from an integer constant.
 template <std::size_t N>
 constexpr auto mag();
@@ -2864,6 +2882,83 @@ constexpr T get_value(Magnitude<BPs...> m) {
 
     static_assert(result.outcome == MagRepresentationOutcome::OK, "Unknown error occurred");
     return result.value;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `MagnitudeLabel` implementation.
+
+namespace detail {
+enum class MagLabelCategory {
+    INTEGER,
+    RATIONAL,
+    UNSUPPORTED,
+};
+
+template <typename... BPs>
+constexpr MagLabelCategory categorize_mag_label(Magnitude<BPs...> m) {
+    if (IsInteger<Magnitude<BPs...>>::value) {
+        return get_value_result<std::uintmax_t>(m).outcome == MagRepresentationOutcome::OK
+                   ? MagLabelCategory::INTEGER
+                   : MagLabelCategory::UNSUPPORTED;
+    }
+    if (IsRational<Magnitude<BPs...>>::value) {
+        return MagLabelCategory::RATIONAL;
+    }
+    return MagLabelCategory::UNSUPPORTED;
+}
+
+template <typename MagT, MagLabelCategory Category>
+struct MagnitudeLabelImplementation {
+    static constexpr const char value[] = "(UNLABELED SCALE FACTOR)";
+
+    static constexpr const bool has_exposed_slash = false;
+};
+template <typename MagT, MagLabelCategory Category>
+constexpr const char MagnitudeLabelImplementation<MagT, Category>::value[];
+template <typename MagT, MagLabelCategory Category>
+constexpr const bool MagnitudeLabelImplementation<MagT, Category>::has_exposed_slash;
+
+template <typename MagT>
+struct MagnitudeLabelImplementation<MagT, MagLabelCategory::INTEGER>
+    : detail::IToA<get_value<std::uintmax_t>(MagT{})> {
+    static constexpr const bool has_exposed_slash = false;
+};
+template <typename MagT>
+constexpr const bool
+    MagnitudeLabelImplementation<MagT, MagLabelCategory::INTEGER>::has_exposed_slash;
+
+// Analogous to `detail::ExtendedLabel`, but for magnitudes.
+//
+// This makes it easier to name the exact type for compound labels.
+template <std::size_t ExtensionStrlen, typename... Mags>
+using ExtendedMagLabel =
+    StringConstant<concatenate(MagnitudeLabel<Mags>::value...).size() + ExtensionStrlen>;
+
+template <typename MagT>
+struct MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL> {
+    using LabelT = ExtendedMagLabel<3u, NumeratorT<MagT>, DenominatorT<MagT>>;
+    static constexpr LabelT value = join_by(
+        " / ", MagnitudeLabel<NumeratorT<MagT>>::value, MagnitudeLabel<DenominatorT<MagT>>::value);
+
+    static constexpr const bool has_exposed_slash = true;
+};
+template <typename MagT>
+constexpr typename MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL>::LabelT
+    MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL>::value;
+template <typename MagT>
+constexpr const bool
+    MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL>::has_exposed_slash;
+
+}  // namespace detail
+
+template <typename... BPs>
+struct MagnitudeLabel<Magnitude<BPs...>>
+    : detail::MagnitudeLabelImplementation<Magnitude<BPs...>,
+                                           detail::categorize_mag_label(Magnitude<BPs...>{})> {};
+
+template <typename MagT>
+constexpr const auto &mag_label(MagT) {
+    return detail::as_char_array(MagnitudeLabel<MagT>::value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3858,15 +3953,6 @@ struct ComputeCommonPointUnit
 // `UnitLabel` implementation.
 
 namespace detail {
-template <std::size_t N>
-constexpr auto as_char_array(const char (&x)[N]) -> const char (&)[N] {
-    return x;
-}
-
-template <std::size_t N>
-constexpr auto as_char_array(const StringConstant<N> &x) -> const char (&)[N + 1] {
-    return x.char_array();
-}
 
 template <typename Unit>
 using HasLabel = decltype(Unit::label);
