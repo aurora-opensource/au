@@ -493,6 +493,18 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "quantity_runtime_conversion_checkers_test",
+    size = "small",
+    srcs = ["code/au/quantity_runtime_conversion_checkers_test.cc"],
+    deps = [
+        ":quantity",
+        ":testing",
+        ":units",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
 cc_library(
     name = "quantity_point",
     hdrs = ["code/au/quantity_point.hh"],
