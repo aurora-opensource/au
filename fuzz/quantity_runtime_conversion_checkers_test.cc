@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <random>
+#include "fuzz/quantity_runtime_conversion_checkers.hh"
+
 #include <tuple>
 #include <type_traits>
 
@@ -28,55 +29,6 @@ namespace au {
 namespace {
 
 using ::testing::StaticAssertTypeEq;
-
-template <typename T>
-class RandomValueGenerator {
- public:
-    RandomValueGenerator(std::uint64_t seed) : engine_{seed} {}
-
-    T next_value() {
-        static std::uniform_int_distribution<std::uint64_t> uniform{};
-        return static_cast<T>(uniform(engine_));
-    }
-
- private:
-    std::mt19937_64 engine_;
-};
-
-template <template <class...> class Tuple, typename... Packs>
-struct CartesianProductImpl;
-template <template <class...> class Tuple, typename... Packs>
-using CartesianProduct = typename CartesianProductImpl<Tuple, Packs...>::type;
-template <template <class...> class Tuple, template <class...> class Pack, typename... Ts>
-struct CartesianProductImpl<Tuple, Pack<Ts...>> : stdx::type_identity<Pack<Tuple<Ts>...>> {};
-
-template <typename... Packs>
-struct FlattenImpl;
-template <typename... Packs>
-using Flatten = typename FlattenImpl<Packs...>::type;
-template <template <class...> class Pack, typename... Ts>
-struct FlattenImpl<Pack<Ts...>> : stdx::type_identity<Pack<Ts...>> {};
-template <template <class...> class Pack, typename... Ts, typename... Us, typename... Packs>
-struct FlattenImpl<Pack<Ts...>, Pack<Us...>, Packs...>
-    : stdx::type_identity<Flatten<Pack<Ts..., Us...>, Packs...>> {};
-
-template <typename T, typename... Packs>
-struct PrependToEachImpl;
-template <typename T, typename... Packs>
-using PrependToEach = typename PrependToEachImpl<T, Packs...>::type;
-template <template <class...> class Pack, typename T, typename... Ts>
-struct PrependToEachImpl<T, Pack<Ts...>> {
-    using type = Pack<detail::PrependT<Ts, T>...>;
-};
-
-template <template <class...> class Tuple,
-          template <class...>
-          class Pack,
-          typename... Ts,
-          typename... Packs>
-struct CartesianProductImpl<Tuple, Pack<Ts...>, Packs...> {
-    using type = Flatten<PrependToEach<Ts, CartesianProduct<Tuple, Packs...>>...>;
-};
 
 TEST(PrependToEach, PrependsElementToEachPack) {
     StaticAssertTypeEq<PrependToEach<int, ::testing::Types<>>, ::testing::Types<>>();
