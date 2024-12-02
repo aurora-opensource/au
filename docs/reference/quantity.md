@@ -377,6 +377,32 @@ These functions also support an explicit template parameter: so, `.coerce_as<T>(
     Prefer **not** to use the "coercing versions" if possible, because you will get more safety
     checks.  The risks which the "base" versions warn about are real.
 
+### Special case: dimensionless and unitless results {#as-raw-number}
+
+Users may expect that the product of quantities such as `seconds` and `hertz` would completely
+cancel out, and produce a raw, simple C++ numeric type.  Currently, this is indeed the case, but we
+have also found that it makes the library harder to reason about.  Instead, we hope in the future to
+return a `Quantity` type _consistently_ from arithmetical operations on `Quantity` inputs (see
+[#185]).
+
+In order to obtain that raw number robustly, both now and in the future, you can use the
+`as_raw_number` function, a callsite-readable way to "exit" the library.  This will also opt into
+all mechanisms and safety features of the library.  In particular:
+
+- We will automatically perform all necessary conversions.
+- This will not compile unless the input is _dimensionless_.
+- If the conversion is dangerous (say, from `Quantity<Percent, int>`, which cannot in general be
+  represented exactly as a raw `int`, we will also fail to compile.
+
+Users should get in the habit of using `as_raw_number` whenever they really want a raw number.  This
+communicates intent, and also works both before and after [#185] is implemented.
+
+!!! example
+    ```cpp
+    constexpr auto num_beats = as_raw_number(kilo(hertz)(7) * seconds(3));
+    // Result: 21'000 (of type `int`)
+    ```
+
 ## Non-Type Template Parameters (NTTPs) {#nttp}
 
 A _non-type template parameter_ (NTTP) is a template parameter that is not a _type_, but rather some
@@ -698,3 +724,5 @@ the following conditions hold.
 
 - For _types_ `U1` and `U2`:
     - `AreQuantityTypesEquivalent<U1, U2>::value`
+
+[#185]: https://github.com/aurora-opensource/au/issues/185
