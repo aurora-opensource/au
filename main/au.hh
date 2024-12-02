@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-46-gc966684
+// Version identifier: 0.3.5-47-g827edd8
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -3789,6 +3789,11 @@ struct CommonUnit {
 template <typename A, typename B>
 struct InOrderFor<CommonUnit, A, B> : InOrderFor<UnitProduct, A, B> {};
 
+template <typename... Us>
+struct UnitList {};
+template <typename A, typename B>
+struct InOrderFor<UnitList, A, B> : InOrderFor<UnitProduct, A, B> {};
+
 namespace detail {
 // This machinery searches a unit list for one that "matches" a target unit.
 //
@@ -3797,7 +3802,7 @@ namespace detail {
 // Generic template.
 template <template <class, class> class Matcher,
           typename TargetUnit,
-          typename UnitList = TargetUnit>
+          typename UnitListT = TargetUnit>
 struct FirstMatchingUnit;
 
 // Base case for an empty list: the target unit is the best match.
@@ -3885,6 +3890,32 @@ constexpr typename CommonUnitLabelImpl<Us...>::LabelT CommonUnitLabelImpl<Us...>
 template <typename U>
 struct CommonUnitLabelImpl<U> : UnitLabel<U> {};
 
+template <typename U>
+struct UnscaledUnitImpl : stdx::type_identity<U> {};
+template <typename U, typename M>
+struct UnscaledUnitImpl<ScaledUnit<U, M>> : stdx::type_identity<U> {};
+template <typename U>
+using UnscaledUnit = typename UnscaledUnitImpl<U>::type;
+
+template <typename U>
+struct DistinctUnscaledUnitsImpl : stdx::type_identity<UnitList<UnscaledUnit<U>>> {};
+template <typename U>
+using DistinctUnscaledUnits = typename DistinctUnscaledUnitsImpl<U>::type;
+template <typename... Us>
+struct DistinctUnscaledUnitsImpl<CommonUnit<Us...>>
+    : stdx::type_identity<FlatDedupedTypeListT<UnitList, UnscaledUnit<Us>...>> {};
+
+template <typename U, typename DistinctUnits>
+struct SimplifyIfOnlyOneUnscaledUnitImpl;
+template <typename U>
+using SimplifyIfOnlyOneUnscaledUnit =
+    typename SimplifyIfOnlyOneUnscaledUnitImpl<U, DistinctUnscaledUnits<U>>::type;
+template <typename U, typename SoleUnscaledUnit>
+struct SimplifyIfOnlyOneUnscaledUnitImpl<U, UnitList<SoleUnscaledUnit>>
+    : stdx::type_identity<decltype(SoleUnscaledUnit{} * UnitRatioT<U, SoleUnscaledUnit>{})> {};
+template <typename U, typename... Us>
+struct SimplifyIfOnlyOneUnscaledUnitImpl<U, UnitList<Us...>> : stdx::type_identity<U> {};
+
 }  // namespace detail
 
 template <typename A, typename B>
@@ -3899,7 +3930,9 @@ using ComputeCommonUnitImpl =
 
 template <typename... Us>
 struct ComputeCommonUnit
-    : detail::FirstMatchingUnit<AreUnitsQuantityEquivalent, ComputeCommonUnitImpl<Us...>> {};
+    : stdx::type_identity<detail::SimplifyIfOnlyOneUnscaledUnit<
+          typename detail::FirstMatchingUnit<AreUnitsQuantityEquivalent,
+                                             ComputeCommonUnitImpl<Us...>>::type>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `CommonPointUnitT` helper implementation.
