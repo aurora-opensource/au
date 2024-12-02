@@ -852,6 +852,14 @@ TEST(WillConversionOverflow, SensitiveToTypeBoundariesForPureIntegerMultiply) {
     }
 }
 
+TEST(WillConversionOverflow, AlwaysFalseForQuantityEquivalentUnits) {
+    auto will_m_to_m_overflow = [](auto x) { return will_conversion_overflow(meters(x), meters); };
+
+    EXPECT_FALSE(will_m_to_m_overflow(2'147'483));
+    EXPECT_FALSE(will_m_to_m_overflow(-2'147'483));
+    EXPECT_FALSE(will_m_to_m_overflow(uint8_t{255}));
+}
+
 TEST(WillConversionTruncate, UsesModForIntegerTypes) {
     auto will_in_to_ft_truncate_i32 = [](int32_t x) {
         return will_conversion_truncate(inches(x), feet);
@@ -876,6 +884,16 @@ TEST(WillConversionTruncate, UsesModForIntegerTypes) {
     EXPECT_TRUE(will_in_to_ft_truncate_i32(-119));
     EXPECT_FALSE(will_in_to_ft_truncate_i32(-120));
     EXPECT_TRUE(will_in_to_ft_truncate_i32(-121));
+}
+
+TEST(WillConversionTruncate, AlwaysFalseForQuantityEquivalentUnits) {
+    auto will_in_to_in_truncate = [](auto x) {
+        return will_conversion_truncate(inches(x), inches);
+    };
+
+    EXPECT_FALSE(will_in_to_in_truncate(uint8_t{124}));
+    EXPECT_FALSE(will_in_to_in_truncate(0));
+    EXPECT_FALSE(will_in_to_in_truncate(-120));
 }
 
 TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions) {

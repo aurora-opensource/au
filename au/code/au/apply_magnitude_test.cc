@@ -152,6 +152,36 @@ TEST(ApplyMagnitude, MultipliesSingleNumberForIrrationalMagnitudeOnFloatingPoint
     EXPECT_THAT(apply_magnitude(2.0f, PI), SameTypeAndValue(2.0f * static_cast<float>(M_PI)));
 }
 
+TEST(WouldOverflow, AlwaysFalseForConversionFactorOfOne) {
+    {
+        using ApplyOneToI32 = ApplyMagnitudeT<int32_t, Magnitude<>>;
+
+        EXPECT_FALSE(ApplyOneToI32::would_overflow(2'147'483'647));
+        EXPECT_FALSE(ApplyOneToI32::would_overflow(1));
+        EXPECT_FALSE(ApplyOneToI32::would_overflow(0));
+        EXPECT_FALSE(ApplyOneToI32::would_overflow(-1));
+        EXPECT_FALSE(ApplyOneToI32::would_overflow(-2'147'483'648));
+    }
+
+    {
+        using ApplyOneToU8 = ApplyMagnitudeT<uint8_t, Magnitude<>>;
+
+        EXPECT_FALSE(ApplyOneToU8::would_overflow(255));
+        EXPECT_FALSE(ApplyOneToU8::would_overflow(1));
+        EXPECT_FALSE(ApplyOneToU8::would_overflow(0));
+    }
+
+    {
+        using ApplyOneToF = ApplyMagnitudeT<float, Magnitude<>>;
+
+        EXPECT_FALSE(ApplyOneToF::would_overflow(3.402e38f));
+        EXPECT_FALSE(ApplyOneToF::would_overflow(1.0f));
+        EXPECT_FALSE(ApplyOneToF::would_overflow(0.0f));
+        EXPECT_FALSE(ApplyOneToF::would_overflow(-1.0f));
+        EXPECT_FALSE(ApplyOneToF::would_overflow(-3.402e38f));
+    }
+}
+
 TEST(WouldOverflow, HasCorrectBoundariesForIntegerMultiply) {
     auto ONE_BILLION = pow<9>(mag<10>());
 
