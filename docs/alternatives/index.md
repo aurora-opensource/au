@@ -908,15 +908,12 @@ features.
             href="https://mpusz.github.io/mp-units/2.0/users_guide/framework_basics/faster_than_lightspeed_constants/">"Faster
             than lightspeed" constants</a>
         </td>
-        <td class="good">
+        <td class="best">
             <ul>
                 <li class="check">Constants as types</li>
                 <li class="check">Perfect conversion policy</li>
                 <li class="check">Implicit Quantity conversion</li>
-                <li class="x">
-                    No built-in values yet (see <a
-                    href="https://github.com/aurora-opensource/au/issues/90">#90</a>)
-                </li>
+                <li class="check"><a href="https://aurora-opensource.github.io/au/main/reference/constant/#built-in">Includes</a> exact constants from SI 2019</li>
             </ul>
         </td>
     </tr>

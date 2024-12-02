@@ -120,7 +120,7 @@ to your `deps` attribute, and include the appropriate files.
 
 | Dependency | Headers provided | Notes |
 |------------|------------------|-------|
-| `@au//au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
+| `@au//au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) and [constants](./reference/constant.md#built-in) |
 | `@au//au:io` | `"au/io.hh"` | `operator<<` support |
 | `@au//au:testing` | `"au/testing.hh"` | Utilities for writing googletest tests<br>_Note:_ `testonly = True` |
 
@@ -141,7 +141,7 @@ In either case, here are the main targets and include files provided by the Au l
 
 | Target | Headers provided | Notes |
 |--------|------------------|-------|
-| `Au::au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/io.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
+| `Au::au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/io.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
 | `Au::testing` | `"au/testing.hh"` | Utilities for writing googletest tests |
 
 !!! note
@@ -336,7 +336,10 @@ Here's how:
    creates a file, `~/au.hh`, which packages the entire library in a single file with these three
    units.
     - To see the full list of available units, search the `.hh` files in the `au/units/` folder. For
-      example, `meters` will include the contents of `au/units/meters.hh`.
+      example, `meters` will include the contents of `"au/units/meters.hh"`.
+    - Similarly, to see the full list of available constants, search the `.hh` files in the
+      `au/constants/` folder.  For example, `speed_of_light` will include the contents of
+      `"au/constants/speed_of_light.hh"`, which provides the constant `au::SPEED_OF_LIGHT`.
     - Provide the `--noio` flag if you prefer to avoid the expense of the `<iostream>` library.
 
 Now you have a file, `~/au.hh`, which you can add to your `third_party` folder.
