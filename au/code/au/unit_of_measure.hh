@@ -599,7 +599,7 @@ struct AllUnitsQuantityEquivalent : stdx::conjunction<AreUnitsQuantityEquivalent
 
 template <typename... Us>
 struct CommonUnitLabelImpl {
-    static_assert(sizeof...(Us) > 0u, "Common unit label requires units");
+    static_assert(sizeof...(Us) > 1u, "Common unit label only makes sense for multiple units");
     static_assert(AllUnitsQuantityEquivalent<Us...>::value,
                   "Must pre-reduce units before constructing common-unit label");
 
@@ -608,6 +608,9 @@ struct CommonUnitLabelImpl {
 };
 template <typename... Us>
 constexpr typename CommonUnitLabelImpl<Us...>::LabelT CommonUnitLabelImpl<Us...>::value;
+
+template <typename U>
+struct CommonUnitLabelImpl<U> : UnitLabel<U> {};
 
 }  // namespace detail
 
