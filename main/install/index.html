@@ -1029,6 +1029,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../howto/new-constants/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defining new constants
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../howto/new-dimensions/" class="md-nav__link">
         
   
@@ -1078,10 +1099,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_5" >
         
           
-          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8_5" id="__nav_8_5_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1092,8 +1113,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8_4">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_5">
             <span class="md-nav__icon md-icon"></span>
             Interop
           </label>
@@ -1938,8 +1959,8 @@ to your <code>deps</code> attribute, and include the appropriate files.</p>
 <tbody>
 <tr>
 <td><code>@au//au</code></td>
-<td><code>"au/au.hh"</code><br><code>"au/fwd.hh"</code><br><code>"au/units/*.hh"</code><br><code>"au/units/*_fwd.hh"</code></td>
-<td>Core library functionality.  See <a href="https://github.com/aurora-opensource/au/tree/main/au/units">all available units</a></td>
+<td><code>"au/au.hh"</code><br><code>"au/fwd.hh"</code><br><code>"au/units/*.hh"</code><br><code>"au/units/*_fwd.hh"</code><br><code>"au/constants/*.hh"</code></td>
+<td>Core library functionality.  See <a href="https://github.com/aurora-opensource/au/tree/main/au/units">all available units</a> and <a href="../reference/constant/#built-in">constants</a></td>
 </tr>
 <tr>
 <td><code>@au//au:io</code></td>
@@ -1979,7 +2000,7 @@ system-wide version of Au, then you can install it to the system, and simply use
 <tbody>
 <tr>
 <td><code>Au::au</code></td>
-<td><code>"au/au.hh"</code><br><code>"au/fwd.hh"</code><br><code>"au/io.hh"</code><br><code>"au/units/*.hh"</code><br><code>"au/units/*_fwd.hh"</code></td>
+<td><code>"au/au.hh"</code><br><code>"au/fwd.hh"</code><br><code>"au/io.hh"</code><br><code>"au/units/*.hh"</code><br><code>"au/units/*_fwd.hh"</code><br><code>"au/constants/*.hh"</code></td>
 <td>Core library functionality.  See <a href="https://github.com/aurora-opensource/au/tree/main/au/units">all available units</a></td>
 </tr>
 <tr>
@@ -2157,7 +2178,10 @@ Here&rsquo;s how:</p>
    units.</p>
 <ul>
 <li>To see the full list of available units, search the <code>.hh</code> files in the <code>au/units/</code> folder. For
-  example, <code>meters</code> will include the contents of <code>au/units/meters.hh</code>.</li>
+  example, <code>meters</code> will include the contents of <code>"au/units/meters.hh"</code>.</li>
+<li>Similarly, to see the full list of available constants, search the <code>.hh</code> files in the
+  <code>au/constants/</code> folder.  For example, <code>speed_of_light</code> will include the contents of
+  <code>"au/constants/speed_of_light.hh"</code>, which provides the constant <code>au::SPEED_OF_LIGHT</code>.</li>
 <li>Provide the <code>--noio</code> flag if you prefer to avoid the expense of the <code>&lt;iostream&gt;</code> library.</li>
 </ul>
 </li>

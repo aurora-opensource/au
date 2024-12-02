@@ -890,6 +890,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../howto/new-constants/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defining new constants
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../howto/new-dimensions/" class="md-nav__link">
         
   
@@ -939,10 +960,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_5" >
         
           
-          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8_5" id="__nav_8_5_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -953,8 +974,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8_4">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_5">
             <span class="md-nav__icon md-icon"></span>
             Interop
           </label>
@@ -1786,6 +1807,11 @@ representations.  This is a core feature of monovalue types.</p>
 <td><code>Radians</code> (and other units)</td>
 <td><code>Radians{}</code> (no special pre-formed instance)</td>
 <td>Arithmetic with other units, such as <code>Radians{} / Meters{}</code></td>
+</tr>
+<tr>
+<td><code>Constant&lt;...&gt;</code></td>
+<td><code>SPEED_OF_LIGHT</code></td>
+<td><ul><li>Comparing to any same-dimension <code>Quantity</code></li><li><code>Quantity</code> construction with exact conversion policy</li><li>zero-cost multiplying to change units/dimensions of numbers and <code>Quantity</code> instances</li></ul></td>
 </tr>
 </tbody>
 </table>

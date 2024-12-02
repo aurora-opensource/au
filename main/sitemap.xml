@@ -101,6 +101,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://aurora-opensource.github.io/au/main/howto/new-constants/</loc>
+         <lastmod>2024-12-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/new-dimensions/</loc>
          <lastmod>2024-12-02</lastmod>
          <changefreq>daily</changefreq>

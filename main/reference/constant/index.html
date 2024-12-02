@@ -890,6 +890,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../../howto/new-constants/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defining new constants
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../howto/new-dimensions/" class="md-nav__link">
         
   
@@ -939,10 +960,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_5" >
         
           
-          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8_5" id="__nav_8_5_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -953,8 +974,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8_4">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_5">
             <span class="md-nav__icon md-icon"></span>
             Interop
           </label>
@@ -1126,6 +1147,15 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#built-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      Built-in constants included with Au
+    </span>
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#constructing-constant" class="md-nav__link">
@@ -1917,6 +1947,93 @@ value does not change</em>: whether a duration of <code>5</code> seconds, or a l
 still store <code>5</code> under the hood.</p>
 <p>This approach means that if subsequent operations cancel out the constant, this cancellation is both
 <em>exact</em> and has <em>zero runtime cost</em>.</p>
+<h2 id="built-in">Built-in constants included with Au<a class="headerlink" href="#built-in" title="Permanent link">&para;</a></h2>
+<p>Au includes a number of built-in constants.  Each constant is in its own include file, in the folder
+<code>"au/constant"</code> &mdash; for example, <code>"au/constant/speed_of_light.hh"</code>.</p>
+<p>The constant object itself is in the top-level <code>au::</code> namespace, and uses an UPPERCASE naming
+convention, as with all other constants in the library &mdash; for example, <code>au::SPEED_OF_LIGHT</code>.</p>
+<p>We spell out the constant name in full to avoid ambiguity.  However, this can be overly verbose.  We
+encourage users to define their own copy of each constant, with a more usable name &mdash; for example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">SPEED_OF_LIGHT</span><span class="p">;</span>
+</code></pre></div>
+<p>This &ldquo;copy&rdquo; is essentially free, because the constant is a <a href="../detail/monovalue_types/">monovalue
+type</a>, and therefore empty.</p>
+<p>Here are the constants that we include with Au:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Symbol</th>
+<th>Value</th>
+<th>Include (under <code>"au/constants/"</code>)</th>
+<th>Object name (under <code>au::</code> namespace)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Avogadro constant</td>
+<td><span class="arithmatex"><span class="MathJax_Preview">N_A</span><script type="math/tex">N_A</script></span></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">6.022\,140\,76 \times 10^{23}\,\, \text{mol}^{-1}</span><script type="math/tex">6.022\,140\,76 \times 10^{23}\,\, \text{mol}^{-1}</script></span></td>
+<td><code>avogadro_constant.hh</code></td>
+<td><code>AVOGADRO_CONSTANT</code></td>
+</tr>
+<tr>
+<td>Boltzmann constant</td>
+<td><span class="arithmatex"><span class="MathJax_Preview">k_B</span><script type="math/tex">k_B</script></span></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">1.380\,649 \times 10^{-23}\,\, \text{J} / \text{K}</span><script type="math/tex">1.380\,649 \times 10^{-23}\,\, \text{J} / \text{K}</script></span></td>
+<td><code>boltzmann_constant.hh</code></td>
+<td><code>BOLTZMANN_CONSTANT</code></td>
+</tr>
+<tr>
+<td>Cesium hyperfine transition frequency</td>
+<td><span class="arithmatex"><span class="MathJax_Preview">\Delta \nu_{Cs}</span><script type="math/tex">\Delta \nu_{Cs}</script></span></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">9\,192\,631\,770\,\, \text{Hz}</span><script type="math/tex">9\,192\,631\,770\,\, \text{Hz}</script></span></td>
+<td><code>cesium_hyperfine_transition_frequency.hh</code></td>
+<td><code>CESIUM_HYPERFINE_TRANSITION_FREQUENCY</code></td>
+</tr>
+<tr>
+<td>Elementary charge</td>
+<td><span class="arithmatex"><span class="MathJax_Preview">e</span><script type="math/tex">e</script></span></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">1.602\,176\,634 \times 10^{-19}\,\, \text{C}</span><script type="math/tex">1.602\,176\,634 \times 10^{-19}\,\, \text{C}</script></span></td>
+<td><code>elementary_charge.hh</code></td>
+<td><code>ELEMENTARY_CHARGE</code></td>
+</tr>
+<tr>
+<td>Luminous efficacy of light at <span class="arithmatex"><span class="MathJax_Preview">540\,\, \text{THz}</span><script type="math/tex">540\,\, \text{THz}</script></span></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">K_{cd}</span><script type="math/tex">K_{cd}</script></span></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">683\,\, \text{lm} / \text{W}</span><script type="math/tex">683\,\, \text{lm} / \text{W}</script></span></td>
+<td><code>luminous_efficacy_540_terahertz.hh</code></td>
+<td><code>LUMINOUS_EFFICACY_540_TERAHERTZ</code></td>
+</tr>
+<tr>
+<td>Planck constant</td>
+<td><span class="arithmatex"><span class="MathJax_Preview">h</span><script type="math/tex">h</script></span></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">6.626\,070\,15 \times 10^{-34}\,\, \text{J} \cdot \text{s}</span><script type="math/tex">6.626\,070\,15 \times 10^{-34}\,\, \text{J} \cdot \text{s}</script></span></td>
+<td><code>planck_constant.hh</code></td>
+<td><code>PLANCK_CONSTANT</code></td>
+</tr>
+<tr>
+<td>Reduced Planck constant</td>
+<td><span class="arithmatex"><span class="MathJax_Preview">\hbar</span><script type="math/tex">\hbar</script></span></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">1.054\,571\,817 \times 10^{-34}\,\, \text{J} \cdot \text{s}</span><script type="math/tex">1.054\,571\,817 \times 10^{-34}\,\, \text{J} \cdot \text{s}</script></span></td>
+<td><code>reduced_planck_constant.hh</code></td>
+<td><code>REDUCED_PLANCK_CONSTANT</code></td>
+</tr>
+<tr>
+<td>Speed of light</td>
+<td><span class="arithmatex"><span class="MathJax_Preview">c</span><script type="math/tex">c</script></span></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">299\,792\,458\,\, \text{m} / \text{s}</span><script type="math/tex">299\,792\,458\,\, \text{m} / \text{s}</script></span></td>
+<td><code>speed_of_light.hh</code></td>
+<td><code>SPEED_OF_LIGHT</code></td>
+</tr>
+</tbody>
+</table>
+<p>Our policy is to include only exactly defined constants with the library.  This rules out many
+useful constants, such as the universal gravitational constant <span class="arithmatex"><span class="MathJax_Preview">G</span><script type="math/tex">G</script></span>, the <em>new</em> (post-2019) permeability
+of free space <span class="arithmatex"><span class="MathJax_Preview">\mu_0</span><script type="math/tex">\mu_0</script></span>, and so on.  For these, we can&rsquo;t reasonably provide values that will satisfy
+all users at all times.  However, defining custom constants for your own project is straightforward,
+as we explain in the next section, and in our <a href="../../howto/new-constants/">how-to guide for custom
+constants</a>.</p>
 <h2 id="constructing-constant">Constructing <code>Constant</code><a class="headerlink" href="#constructing-constant" title="Permanent link">&para;</a></h2>
 <p><code>Constant</code> encodes all information about the value in its type.  Moreover, it has only a single
 template parameter, which is a <a href="../unit/">unit</a>.  Therefore, the first step is to encode your
@@ -1928,7 +2045,7 @@ important ones are those labeled <code>[1]</code> (the strong type definition) a
 <p>Having defined your unit, you can pass an instance to the <code>make_constant</code> function.  If the unit you
 defined above is called <code>YourUnits</code>, and the constant is called <code>YOUR_CONSTANT</code>, then the constant
 definition will look like this:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">YOUR_CONSTANT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">YourUnits</span><span class="p">{});</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">YOUR_CONSTANT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">YourUnits</span><span class="p">{});</span>
 </code></pre></div>
 <p>Finally, note that the argument to <code>make_constant()</code> is a <a href="../../discussion/idioms/unit-slots/">unit
 slot</a>, so you can pass &ldquo;unit-like&rdquo; alternatives such as
@@ -1940,24 +2057,24 @@ instance and the label will be <code>c</code>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++14</label><label for="__tabbed_1_2">C++17 or later</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// In .hh file:</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">SpeedOfLight</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Meters</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Seconds</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">;</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">};</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">SpeedOfLight</span><span class="p">{});</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// In .hh file:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">SpeedOfLight</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Meters</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Seconds</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">;</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">};</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">SpeedOfLight</span><span class="p">{});</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// In .cc file:</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">SpeedOfLight</span><span class="o">::</span><span class="n">label</span><span class="p">[];</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// In .cc file:</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">SpeedOfLight</span><span class="o">::</span><span class="n">label</span><span class="p">[];</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// In .hh file:</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">SpeedOfLight</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Meters</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Seconds</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">;</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">};</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">SpeedOfLight</span><span class="p">{});</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// In .hh file:</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">SpeedOfLight</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Meters</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Seconds</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">;</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">};</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">SpeedOfLight</span><span class="p">{});</span>
 </code></pre></div>
 </div>
 </div>
@@ -1966,7 +2083,7 @@ instance and the label will be <code>c</code>.</p>
 <h3 id="ad-hoc-constants">Ad hoc constants<a class="headerlink" href="#ad-hoc-constants" title="Permanent link">&para;</a></h3>
 <p>You can obtain many of the benefits of <code>Constant</code> even if you don&rsquo;t formally define a new unit.
 Because <code>make_constant</code> has a unit slot API, you can pass an ad hoc expression to it.  For example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">second</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">());</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">second</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">());</span>
 </code></pre></div>
 <p>The main advantage of doing this is its conciseness: the constant definition is a single, readable
 line.  The built constant also has all of the multiplication and division operators types that

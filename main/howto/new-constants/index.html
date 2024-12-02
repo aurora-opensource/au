@@ -12,13 +12,13 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/prefix/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/howto/new-constants/">
       
       
-        <link rel="prev" href="../powers/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../quantity/">
+        <link rel="next" href="../new-dimensions/">
       
       
       <link rel="icon" href="../../assets/favicon.ico">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Prefix - The Au units library</title>
+        <title>Defining new constants - The Au units library</title>
       
     
     
@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#prefix" class="md-skip">
+        <a href="#defining-new-constants" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Prefix
+              Defining new constants
             
           </span>
         </div>
@@ -831,17 +831,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
@@ -855,7 +857,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             Howto
@@ -869,7 +871,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -887,10 +889,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../howto/new-constants/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Defining new constants
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -899,6 +921,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#methods-of-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      Methods of definition
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods of definition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ad-hoc-no-special-label" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ad hoc (no special label)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-unit-definition-includes-custom-label" class="md-nav__link">
+    <span class="md-ellipsis">
+      Full unit definition (includes custom label)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -911,7 +986,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/new-dimensions/" class="md-nav__link">
+      <a href="../new-dimensions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -932,7 +1007,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/new-units/" class="md-nav__link">
+      <a href="../new-units/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -988,7 +1063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/interop/" class="md-nav__link">
+      <a href="../interop/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1009,7 +1084,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/interop/nholthaus/" class="md-nav__link">
+      <a href="../interop/nholthaus/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1042,19 +1117,17 @@
       
   
   
-    
   
   
-  
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
@@ -1068,7 +1141,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Reference
@@ -1082,7 +1155,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../reference/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1103,7 +1176,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../constant/" class="md-nav__link">
+      <a href="../../reference/constant/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1124,7 +1197,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../corresponding_quantity/" class="md-nav__link">
+      <a href="../../reference/corresponding_quantity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1145,7 +1218,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../magnitude/" class="md-nav__link">
+      <a href="../../reference/magnitude/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1166,7 +1239,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../math/" class="md-nav__link">
+      <a href="../../reference/math/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1187,7 +1260,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../powers/" class="md-nav__link">
+      <a href="../../reference/powers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1205,30 +1278,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Prefix
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../reference/prefix/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1237,77 +1290,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#applying-to-unit-types" class="md-nav__link">
-    <span class="md-ellipsis">
-      Applying to unit types
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#prefix-applier" class="md-nav__link">
-    <span class="md-ellipsis">
-      Applying to instances: the &ldquo;prefix applier&rdquo;
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#list-of-supported-prefixes" class="md-nav__link">
-    <span class="md-ellipsis">
-      List of supported prefixes
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="List of supported prefixes">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#si-prefixes" class="md-nav__link">
-    <span class="md-ellipsis">
-      SI prefixes
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#binary-prefixes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Binary prefixes
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1320,7 +1302,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quantity/" class="md-nav__link">
+      <a href="../../reference/quantity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1341,7 +1323,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quantity_point/" class="md-nav__link">
+      <a href="../../reference/quantity_point/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1362,7 +1344,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../unit/" class="md-nav__link">
+      <a href="../../reference/unit/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1383,7 +1365,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../zero/" class="md-nav__link">
+      <a href="../../reference/zero/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1439,7 +1421,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../detail/" class="md-nav__link">
+      <a href="../../reference/detail/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1460,7 +1442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../detail/dimension/" class="md-nav__link">
+      <a href="../../reference/detail/dimension/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1481,7 +1463,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../detail/monovalue_types/" class="md-nav__link">
+      <a href="../../reference/detail/monovalue_types/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1502,7 +1484,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../detail/packs/" class="md-nav__link">
+      <a href="../../reference/detail/packs/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1781,304 +1763,74 @@
   
 
 
-<h1 id="prefix">Prefix<a class="headerlink" href="#prefix" title="Permanent link">&para;</a></h1>
-<p>A &ldquo;prefix&rdquo; scales a <a href="../unit/">unit</a> by some <a href="../magnitude/">magnitude</a>, and prepends a <em>prefix
-symbol</em> to the unit&rsquo;s label.</p>
-<h2 id="applying-to-unit-types">Applying to unit types<a class="headerlink" href="#applying-to-unit-types" title="Permanent link">&para;</a></h2>
-<p>To apply a prefix to a unit <em>type</em>, pass that unit as a <em>template parameter</em> to the prefix.  This
-results in a new unit with the following properties:</p>
-<ol>
-<li>
-<p>The <strong>label</strong> for the new unit is the label for the input unit, with the <strong>prefix symbol</strong>
-   prepended.</p>
-</li>
-<li>
-<p>The <strong>magnitude</strong> of the new unit is the magnitude of the input unit, scaled by the <strong>scaling
-   factor</strong>.</p>
-</li>
-</ol>
-<div class="admonition example">
-<p class="admonition-title">Example: <code>Centi</code> and <code>Meters</code></p>
-<p><code>Centi</code> is a prefix whose prefix symbol is <code>c</code>, and whose scaling factor is <span class="arithmatex"><span class="MathJax_Preview">1/100</span><script type="math/tex">1/100</script></span>.</p>
-<p><code>Meters</code> is a unit whose symbol is <code>m</code>.</p>
-<p>Therefore, <code>Centi&lt;Meters&gt;</code> is a unit whose symbol is <code>cm</code>, and whose magnitude is
-<span class="arithmatex"><span class="MathJax_Preview">1/100\,\text{m}</span><script type="math/tex">1/100\,\text{m}</script></span>.</p>
+<h1 id="defining-new-constants">Defining new constants<a class="headerlink" href="#defining-new-constants" title="Permanent link">&para;</a></h1>
+<p>This page explains how to define new constants that aren&rsquo;t <a href="../../reference/constant/#built-in">included in the
+library</a>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you think it <em>should</em> be included in the library, feel free to <a href="https://github.com/aurora-opensource/au/issues">file an
+issue</a>: there&rsquo;s no harm in asking.</p>
+<p>In order for us to consider it, it should be relatively widely used.  It also needs to have an
+<em>exact</em> value: we don&rsquo;t have a great way to deal with values that can change over time.</p>
+<p>If these conditions don&rsquo;t apply, then follow the directions in this guide to define a <em>custom</em>
+constant for your project.</p>
 </div>
-<h2 id="prefix-applier">Applying to instances: the &ldquo;prefix applier&rdquo;<a class="headerlink" href="#prefix-applier" title="Permanent link">&para;</a></h2>
-<p>Au uses many kinds of instances, not just types.  These include <a href="../quantity/">QuantityMaker</a>,
-<a href="../quantity_point/">QuantityPointMaker</a>, <code>SingularNameFor</code>, and even <a href="../detail/monovalue_types/">instances of unit
-types</a>.</p>
-<p>Instances are naturally used as <em>function parameters</em>, not template parameters.  Therefore, for each
-prefix, we provide a &ldquo;prefix applier&rdquo; which can be called as a function.  For any of the above kinds
-of inputs, the prefix applier returns the same kind, but in the prefixed unit.</p>
-<p>Let&rsquo;s return to the example of <code>Centi</code> and <code>Meters</code>.  The prefix applier for <code>Centi</code> is spelled
-<code>centi</code>: note that we use snake_case, rather than CamelCase.  Here are the various ways a prefix
-applier can be used.</p>
-<table>
-<thead>
-<tr>
-<th>Kind of input</th>
-<th>Example (meters)</th>
-<th>Application</th>
-<th>Example use</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Unit instance</td>
-<td><code>Meters{}</code></td>
-<td><code>centi(Meters{})</code></td>
-<td><code>length.as(Centi&lt;Meters&gt;{})</code></td>
-</tr>
-<tr>
-<td><code>QuantityMaker</code></td>
-<td><code>meters</code></td>
-<td><code>centi(meters)</code></td>
-<td><code>centi(meters)(170)</code></td>
-</tr>
-<tr>
-<td><code>QuantityPointMaker</code></td>
-<td><code>meters_pt</code></td>
-<td><code>centi(meters_pt)</code></td>
-<td><code>centi(meters_pt)(1.5)</code></td>
-</tr>
-<tr>
-<td><code>SingularNameFor</code></td>
-<td><code>meter</code></td>
-<td><code>centi(meter)</code></td>
-<td><code>curvature.in(radians / centi(meter))</code></td>
-</tr>
-<tr>
-<td><code>SymbolFor</code></td>
-<td><code>m</code></td>
-<td><code>centi(m)</code></td>
-<td><code>constexpr auto cm = centi(m); 170 * cm</code></td>
-</tr>
-</tbody>
-</table>
-<p>Note again that every output here is the same kind of thing as the input.  So, <code>centi(meters_pt)</code> is
-a <code>QuantityPointMaker</code>, and <code>centi(meters_pt)(1.5)</code> creates a <code>QuantityPoint</code> of <span class="arithmatex"><span class="MathJax_Preview">1.5\,\text{cm}</span><script type="math/tex">1.5\,\text{cm}</script></span>.</p>
-<h2 id="list-of-supported-prefixes">List of supported prefixes<a class="headerlink" href="#list-of-supported-prefixes" title="Permanent link">&para;</a></h2>
-<p>We support every <a href="https://www.nist.gov/pml/owm/metric-si-prefixes">SI prefix</a> and <a href="https://en.wikipedia.org/wiki/Binary_prefix">binary
-prefix</a>.</p>
-<h3 id="si-prefixes">SI prefixes<a class="headerlink" href="#si-prefixes" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Prefix</th>
-<th>Prefix applier</th>
-<th>Prefix symbol</th>
-<th>Scaling factor</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>Quetta</code></td>
-<td><code>quetta</code></td>
-<td><code>Q</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{30}</span><script type="math/tex">10^{30}</script></span></td>
-</tr>
-<tr>
-<td><code>Ronna</code></td>
-<td><code>ronna</code></td>
-<td><code>R</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{27}</span><script type="math/tex">10^{27}</script></span></td>
-</tr>
-<tr>
-<td><code>Yotta</code></td>
-<td><code>yotta</code></td>
-<td><code>Y</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{24}</span><script type="math/tex">10^{24}</script></span></td>
-</tr>
-<tr>
-<td><code>Zetta</code></td>
-<td><code>zetta</code></td>
-<td><code>Z</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{21}</span><script type="math/tex">10^{21}</script></span></td>
-</tr>
-<tr>
-<td><code>Exa</code></td>
-<td><code>exa</code></td>
-<td><code>E</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{18}</span><script type="math/tex">10^{18}</script></span></td>
-</tr>
-<tr>
-<td><code>Peta</code></td>
-<td><code>peta</code></td>
-<td><code>P</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{15}</span><script type="math/tex">10^{15}</script></span></td>
-</tr>
-<tr>
-<td><code>Tera</code></td>
-<td><code>tera</code></td>
-<td><code>T</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{12}</span><script type="math/tex">10^{12}</script></span></td>
-</tr>
-<tr>
-<td><code>Giga</code></td>
-<td><code>giga</code></td>
-<td><code>G</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{9}</span><script type="math/tex">10^{9}</script></span></td>
-</tr>
-<tr>
-<td><code>Mega</code></td>
-<td><code>mega</code></td>
-<td><code>M</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{6}</span><script type="math/tex">10^{6}</script></span></td>
-</tr>
-<tr>
-<td><code>Kilo</code></td>
-<td><code>kilo</code></td>
-<td><code>k</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{3}</span><script type="math/tex">10^{3}</script></span></td>
-</tr>
-<tr>
-<td><code>Hecto</code></td>
-<td><code>hecto</code></td>
-<td><code>h</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{2}</span><script type="math/tex">10^{2}</script></span></td>
-</tr>
-<tr>
-<td><code>Deka</code></td>
-<td><code>deka</code></td>
-<td><code>da</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{1}</span><script type="math/tex">10^{1}</script></span></td>
-</tr>
-<tr>
-<td><code>Deci</code></td>
-<td><code>deci</code></td>
-<td><code>d</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-1}</span><script type="math/tex">10^{-1}</script></span></td>
-</tr>
-<tr>
-<td><code>Centi</code></td>
-<td><code>centi</code></td>
-<td><code>c</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-2}</span><script type="math/tex">10^{-2}</script></span></td>
-</tr>
-<tr>
-<td><code>Milli</code></td>
-<td><code>milli</code></td>
-<td><code>m</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-3}</span><script type="math/tex">10^{-3}</script></span></td>
-</tr>
-<tr>
-<td><code>Micro</code></td>
-<td><code>micro</code></td>
-<td><code>u</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-6}</span><script type="math/tex">10^{-6}</script></span></td>
-</tr>
-<tr>
-<td><code>Nano</code></td>
-<td><code>nano</code></td>
-<td><code>n</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-9}</span><script type="math/tex">10^{-9}</script></span></td>
-</tr>
-<tr>
-<td><code>Pico</code></td>
-<td><code>pico</code></td>
-<td><code>p</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-12}</span><script type="math/tex">10^{-12}</script></span></td>
-</tr>
-<tr>
-<td><code>Femto</code></td>
-<td><code>femto</code></td>
-<td><code>f</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-15}</span><script type="math/tex">10^{-15}</script></span></td>
-</tr>
-<tr>
-<td><code>Atto</code></td>
-<td><code>atto</code></td>
-<td><code>a</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-18}</span><script type="math/tex">10^{-18}</script></span></td>
-</tr>
-<tr>
-<td><code>Zepto</code></td>
-<td><code>zepto</code></td>
-<td><code>z</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-21}</span><script type="math/tex">10^{-21}</script></span></td>
-</tr>
-<tr>
-<td><code>Yocto</code></td>
-<td><code>yocto</code></td>
-<td><code>y</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-24}</span><script type="math/tex">10^{-24}</script></span></td>
-</tr>
-<tr>
-<td><code>Ronto</code></td>
-<td><code>ronto</code></td>
-<td><code>r</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-27}</span><script type="math/tex">10^{-27}</script></span></td>
-</tr>
-<tr>
-<td><code>Quecto</code></td>
-<td><code>quecto</code></td>
-<td><code>q</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">10^{-30}</span><script type="math/tex">10^{-30}</script></span></td>
-</tr>
-</tbody>
-</table>
-<h3 id="binary-prefixes">Binary prefixes<a class="headerlink" href="#binary-prefixes" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Prefix</th>
-<th>Prefix applier</th>
-<th>Prefix symbol</th>
-<th>Scaling factor</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>Yobi</code></td>
-<td><code>yobi</code></td>
-<td><code>Yi</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{80} (\approx 10^{24})</span><script type="math/tex">2^{80} (\approx 10^{24})</script></span></td>
-</tr>
-<tr>
-<td><code>Zebi</code></td>
-<td><code>zebi</code></td>
-<td><code>Zi</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{70} (\approx 10^{21})</span><script type="math/tex">2^{70} (\approx 10^{21})</script></span></td>
-</tr>
-<tr>
-<td><code>Exbi</code></td>
-<td><code>exbi</code></td>
-<td><code>Ei</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{60} (\approx 10^{18})</span><script type="math/tex">2^{60} (\approx 10^{18})</script></span></td>
-</tr>
-<tr>
-<td><code>Pebi</code></td>
-<td><code>pebi</code></td>
-<td><code>Pi</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{50} (\approx 10^{15})</span><script type="math/tex">2^{50} (\approx 10^{15})</script></span></td>
-</tr>
-<tr>
-<td><code>Tebi</code></td>
-<td><code>tebi</code></td>
-<td><code>Ti</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{40} (\approx 10^{12})</span><script type="math/tex">2^{40} (\approx 10^{12})</script></span></td>
-</tr>
-<tr>
-<td><code>Gibi</code></td>
-<td><code>gibi</code></td>
-<td><code>Gi</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{30} (\approx 10^{9})</span><script type="math/tex">2^{30} (\approx 10^{9})</script></span></td>
-</tr>
-<tr>
-<td><code>Mebi</code></td>
-<td><code>mebi</code></td>
-<td><code>Mi</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{20} (\approx 10^{6})</span><script type="math/tex">2^{20} (\approx 10^{6})</script></span></td>
-</tr>
-<tr>
-<td><code>Kibi</code></td>
-<td><code>kibi</code></td>
-<td><code>Ki</code></td>
-<td><span class="arithmatex"><span class="MathJax_Preview">2^{10} (\approx 10^{3})</span><script type="math/tex">2^{10} (\approx 10^{3})</script></span></td>
-</tr>
-</tbody>
-</table>
+<h2 id="methods-of-definition">Methods of definition<a class="headerlink" href="#methods-of-definition" title="Permanent link">&para;</a></h2>
+<p>There are two ways to define a new constant.  The only difference is <em>whether you need a label</em> for
+your constant.  In either case, you create a constant by calling <code>make_constant(...)</code>.  The argument
+is a <a href="../../discussion/idioms/unit-slots/">unit slot</a>, so you can pass it anything that goes into
+a unit slot.</p>
+<h3 id="ad-hoc-no-special-label">Ad hoc (no special label)<a class="headerlink" href="#ad-hoc-no-special-label" title="Permanent link">&para;</a></h3>
+<p>Pass any ad hoc unit expression to the unit slot.  The constant will produce correct results in
+code, in every situation.  It will even have <em>a</em> label, which will identify it exactly.  The label
+will simply be cumbersome.</p>
+<div class="admonition example">
+<p class="admonition-title">Example: speed of light in an ad hoc manner</p>
+<p>Here&rsquo;s how to create a constant for the speed of light, without giving it a special symbol.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">second</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">());</span>
+</code></pre></div>
+<p>Here&rsquo;s an example use case, in user code:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="mf">0.8</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</code></pre></div>
+<p>The above prints <code>"0.8 [299792458 m/s]"</code>.  Notice how the unit label, <code>"[299792458 m/s]"</code>, is
+<em>correct</em>, but <em>cumbersome</em>.</p>
+</div>
+<h3 id="full-unit-definition-includes-custom-label">Full unit definition (includes custom label)<a class="headerlink" href="#full-unit-definition-includes-custom-label" title="Permanent link">&para;</a></h3>
+<p>First, follow a stripped down version of the <a href="../new-units/">new unit instructions</a> to define
+a <em>unit</em> for the constant.  The only thing you need to give it is a <em>label</em>; you can omit the
+instructions for quantity makers and so on.</p>
+<p>Next, pass an instance of this custom unit to <code>make_constant</code>.</p>
+<div class="admonition example">
+<p class="admonition-title">Example: speed of light with full unit definition</p>
+<p>Here&rsquo;s how to create a constant for the speed of light using a full custom unit, with label.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++14</label><label for="__tabbed_1_2">C++17</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// In `.hh` file:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">SpeedOfLightUnit</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Meters</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Seconds</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">;</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">};</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">SpeedOfLightUnit</span><span class="p">{});</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1">// In `.cc` file:</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">SpeedOfLightUnit</span><span class="o">::</span><span class="n">label</span><span class="p">[];</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// In `.hh` file:</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">SpeedOfLightUnit</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Meters</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Seconds</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">;</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">};</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">SpeedOfLightUnit</span><span class="p">{});</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Here&rsquo;s an example use case, in user code:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="mf">0.8</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</code></pre></div>
+<p>The above prints <code>"0.8 c"</code>.</p>
+</div>
 
 
 
@@ -2108,7 +1860,7 @@ prefix</a>.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../powers/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Powers">
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: How-to guides">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -2118,20 +1870,20 @@ prefix</a>.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Powers
+                How-to guides
               </div>
             </div>
           </a>
         
         
           
-          <a href="../quantity/" class="md-footer__link md-footer__link--next" aria-label="Next: Quantity">
+          <a href="../new-dimensions/" class="md-footer__link md-footer__link--next" aria-label="Next: Defining new dimensions">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Quantity
+                Defining new dimensions
               </div>
             </div>
             <div class="md-footer__button md-icon">
