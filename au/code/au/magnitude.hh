@@ -604,7 +604,7 @@ constexpr const bool MagnitudeLabelImplementation<MagT, Category>::has_exposed_s
 
 template <typename MagT>
 struct MagnitudeLabelImplementation<MagT, MagLabelCategory::INTEGER>
-    : detail::IToA<get_value<std::uintmax_t>(MagT{})> {
+    : detail::UIToA<get_value<std::uintmax_t>(MagT{})> {
     static constexpr const bool has_exposed_slash = false;
 };
 template <typename MagT>

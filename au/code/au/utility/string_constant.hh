@@ -87,18 +87,24 @@ struct IToA;
 // Implementation details below.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// The string-length needed to hold a representation of this integer.
-constexpr std::size_t string_size(int64_t x) {
-    if (x < 0) {
-        return string_size(-x) + 1;
-    }
-
+// The string-length needed to hold a representation of this unsigned integer.
+constexpr std::size_t string_size_unsigned(uint64_t x) {
     std::size_t digits = 1;
     while (x > 9) {
         x /= 10;
         ++digits;
     }
     return digits;
+}
+
+// The string-length needed to hold a representation of this integer.
+constexpr std::size_t string_size(int64_t x) {
+    std::size_t sign_length = 0u;
+    if (x < 0) {
+        x = -x;
+        ++sign_length;
+    }
+    return string_size_unsigned(static_cast<uint64_t>(x)) + sign_length;
 }
 
 // The sum of the template parameters.
@@ -201,31 +207,50 @@ constexpr auto join_by(const SepT &sep, const StringTs &...ts) {
     return as_string_constant(sep).join(as_string_constant(ts)...);
 }
 
-template <int64_t N>
-struct IToA {
+template <uint64_t N>
+struct UIToA {
  private:
     static constexpr auto print_to_array() {
-        char data[length + 1] = {'\0'};
+        char data[length + 1u] = {'\0'};
 
-        int num = N;
-        if (num < 0) {
-            data[0] = '-';
-            num = -num;
-        }
-
+        uint64_t num = N;
         std::size_t i = length - 1;
         do {
-            data[i--] = '0' + static_cast<char>(num % 10);
-            num /= 10;
-        } while (num > 0);
+            data[i--] = '0' + static_cast<char>(num % 10u);
+            num /= 10u;
+        } while (num > 0u);
 
         return StringConstant<length>{data};
     }
 
  public:
-    static constexpr std::size_t length = string_size(N);
+    static constexpr std::size_t length = string_size_unsigned(N);
 
     static constexpr StringConstant<length> value = print_to_array();
+};
+
+// Definitions for UIToA<N>::value.  (Needed to prevent linker errors.)
+template <uint64_t N>
+constexpr std::size_t UIToA<N>::length;
+template <uint64_t N>
+constexpr StringConstant<UIToA<N>::length> UIToA<N>::value;
+
+template <bool IsPositive>
+struct SignIfPositiveIs {
+    static constexpr StringConstant<0> value() { return ""; }
+};
+template <>
+struct SignIfPositiveIs<false> {
+    static constexpr StringConstant<1> value() { return "-"; }
+};
+
+template <int64_t N>
+struct IToA {
+    static constexpr std::size_t length = string_size(N);
+
+    static constexpr StringConstant<length> value =
+        concatenate(SignIfPositiveIs<(N >= 0)>::value(),
+                    UIToA<static_cast<uint64_t>((N) >= 0) ? N : -N>::value);
 };
 
 // Definitions for IToA<N>::value.  (Needed to prevent linker errors.)

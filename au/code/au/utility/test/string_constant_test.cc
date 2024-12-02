@@ -66,6 +66,10 @@ TEST(IToA, HasLengthMember) {
     EXPECT_EQ(IToA<-12345>::length, 6);
 }
 
+TEST(UIToA, CanHandleNumbersBiggerThanIntmaxButWithinUintmax) {
+    EXPECT_STREQ(UIToA<10000000000000000000u>::value.c_str(), "10000000000000000000");
+}
+
 TEST(join, EmptyStringForNoArguments) {
     constexpr auto x = as_string_constant("sep").join();
     EXPECT_STREQ(x.c_str(), "");
