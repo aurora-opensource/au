@@ -38,7 +38,7 @@ keep track of the main changes as you go.  Use the following categories.
 
 - User-facing library changes
     - If the compilation speed has been significantly impacted, mention this here.
-- New units
+- New units and constants
 - Tooling updates
 - Documentation updates
 - Repo updates
@@ -78,8 +78,8 @@ Release Notes
 User-facing library changes
 ---------------------------
 
-New units
----------
+New units and constants
+-----------------------
 
 Tooling updates
 ---------------

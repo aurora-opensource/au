@@ -41,6 +41,29 @@ cc_test(
 )
 
 cc_library(
+    name = "constants",
+    hdrs = glob(["code/au/constants/*.hh"]),
+    includes = ["code"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":constant",
+        ":units",
+    ],
+)
+
+cc_test(
+    name = "constants_test",
+    size = "small",
+    srcs = glob(["code/au/constants/test/*.cc"]),
+    deps = [
+        ":constants",
+        ":testing",
+        ":units",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "fwd",
     hdrs = ["code/au/fwd.hh"],
     includes = ["code"],

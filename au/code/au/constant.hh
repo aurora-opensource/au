@@ -16,7 +16,6 @@
 
 #include "au/fwd.hh"
 #include "au/quantity.hh"
-#include "au/quantity_point.hh"
 #include "au/stdx/type_traits.hh"
 #include "au/unit_of_measure.hh"
 #include "au/wrapper_operations.hh"
