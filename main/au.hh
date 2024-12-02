@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-49-gbb7911f
+// Version identifier: 0.3.5-50-g72c2d06
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -6167,7 +6167,8 @@ namespace au {
 template <typename Unit>
 struct SymbolFor : detail::MakesQuantityFromNumber<SymbolFor, Unit>,
                    detail::ScalesQuantity<SymbolFor, Unit>,
-                   detail::ComposesWith<SymbolFor, Unit, SymbolFor, SymbolFor> {};
+                   detail::ComposesWith<SymbolFor, Unit, SymbolFor, SymbolFor>,
+                   detail::CanScaleByMagnitude<SymbolFor, Unit> {};
 
 //
 // Create a unit symbol using the more fluent APIs that unit slots make possible.  For example:
