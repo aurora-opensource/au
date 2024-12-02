@@ -21,8 +21,17 @@
 
 using ::testing::Not;
 using ::testing::StaticAssertTypeEq;
+using ::testing::StrEq;
 
 namespace au {
+namespace {
+template <typename T>
+std::string stream_to_string(const T &t) {
+    std::ostringstream oss;
+    oss << t;
+    return oss.str();
+}
+}  // namespace
 
 struct Meters : UnitImpl<Length> {};
 constexpr QuantityMaker<Meters> meters{};
@@ -34,7 +43,10 @@ constexpr auto inches_pt = QuantityPointMaker<Inches>{};
 struct Feet : decltype(Inches{} * mag<12>()) {};
 constexpr auto feet_pt = QuantityPointMaker<Feet>{};
 
-struct Kelvins : UnitImpl<Temperature> {};
+struct Kelvins : UnitImpl<Temperature> {
+    static constexpr const char label[] = "K";
+};
+constexpr const char Kelvins::label[];
 constexpr QuantityMaker<Kelvins> kelvins{};
 constexpr QuantityPointMaker<Kelvins> kelvins_pt{};
 
@@ -44,7 +56,10 @@ struct Celsius : Kelvins {
     // little as possible (while still keeping the value an integer), because that will make the
     // conversion factor as small as possible in converting to the common-point-unit.
     static constexpr auto origin() { return (kelvins / mag<20>())(273'15 / 5); }
+
+    static constexpr const char label[] = "degC";
 };
+constexpr const char Celsius::label[];
 constexpr QuantityMaker<Celsius> celsius_qty{};
 constexpr QuantityPointMaker<Celsius> celsius_pt{};
 
@@ -343,6 +358,12 @@ TEST(QuantityPoint, MixedUnitAndRepDifferenceUsesCommonPointType) {
     constexpr auto unit_wins = meters_pt(400);
 
     EXPECT_THAT(rep_wins - unit_wins, QuantityEquivalent(meters(100.0)));
+}
+
+TEST(QuantityPoint, CommonPointUnitLabel) {
+    EXPECT_THAT(stream_to_string(celsius_pt(0) - kelvins_pt(0)),
+                AnyOf(StrEq("5463 EQUIV{[(1 / 20) K], [(1 / 20) degC]}"),
+                      StrEq("5463 EQUIV{[(1 / 20) degC], [(1 / 20) K]}")));
 }
 
 TEST(QuantityPoint, CanCompareUnitsWithDifferentOrigins) {

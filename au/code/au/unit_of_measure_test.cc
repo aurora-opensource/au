@@ -45,7 +45,9 @@ constexpr auto common_unit(Us...) {
 
 struct Celsius : Kelvins {
     static constexpr auto origin() { return milli(kelvins)(273'150); }
+    static constexpr const char label[] = "deg_C";
 };
+constexpr const char Celsius::label[];
 constexpr auto celsius = QuantityMaker<Celsius>{};
 
 struct AlternateCelsius : Kelvins {
@@ -437,7 +439,9 @@ TEST(OriginDisplacement, FunctionalInterfaceHandlesInstancesCorrectly) {
 
 struct OffsetCelsius : Celsius {
     static constexpr auto origin() { return detail::OriginOf<Celsius>::value() + kelvins(10); }
+    static constexpr const char label[] = "offset_deg_C";
 };
+constexpr const char OffsetCelsius::label[];
 
 TEST(DisplaceOrigin, DisplacesOrigin) {
     EXPECT_EQ(origin_displacement(Celsius{}, OffsetCelsius{}), kelvins(10));
@@ -460,6 +464,11 @@ TEST(CommonUnit, IndependentOfOrderingAndRepetitions) {
 TEST(CommonUnit, PrefersUnitFromListIfAnyIdentical) {
     StaticAssertTypeEq<CommonUnitT<Feet, Feet>, Feet>();
     StaticAssertTypeEq<CommonUnitT<Feet, Inches, Yards>, Inches>();
+}
+
+TEST(CommonUnit, DedupesUnitsMadeIdenticalAfterUnscalingSameScaledUnit) {
+    StaticAssertTypeEq<CommonUnitT<decltype(Feet{} * mag<3>()), decltype(Feet{} * mag<5>())>,
+                       Feet>();
 }
 
 TEST(CommonUnit, DownranksAnonymousScaledUnits) {
@@ -648,13 +657,30 @@ TEST(UnitLabel, ReducesToSingleUnitLabelIfAllUnitsAreTheSame) {
 
 TEST(UnitLabel, LabelsCommonPointUnitCorrectly) {
     using U = CommonPointUnitT<Inches, Meters>;
-    EXPECT_THAT(unit_label(U{}), AnyOf(StrEq("COM_PT[in, m]"), StrEq("COM_PT[m, in]")));
+    EXPECT_THAT(unit_label(U{}),
+                AnyOf(StrEq("EQUIV{[(1 / 127) in], [(1 / 5000) m]}"),
+                      StrEq("EQUIV{[(1 / 5000) m], [(1 / 127) in]}")));
 }
 
 TEST(UnitLabel, CommonPointUnitLabelWorksWithUnitProduct) {
     using U = CommonPointUnitT<UnitQuotientT<Meters, Minutes>, UnitQuotientT<Inches, Minutes>>;
     EXPECT_THAT(unit_label(U{}),
-                AnyOf(StrEq("COM_PT[m / min, in / min]"), StrEq("COM_PT[in / min, m / min]")));
+                AnyOf(StrEq("EQUIV{[(1 / 127) in / min], [(1 / 5000) m / min]}"),
+                      StrEq("EQUIV{[(1 / 5000) m / min], [(1 / 127) in / min]}")));
+}
+
+TEST(UnitLabel, CommonPointUnitLabelTakesOriginOffsetIntoAccount) {
+    // NOTE: the (1 / 1000) scaling comes about because we're still using `Quantity` to define our
+    // origins.  We may be able to do better, and re-found them on `Constant`, at least once we add
+    // some kind of subtraction that works at least some of the time.  The ideal end point would be
+    // that the common point unit for `Celsius` and `OffsetCelsius` would be simply `Celsius`
+    // (because `OffsetCelsius` is just `Celsius` with a _higher_ origin).  At that point, we'll
+    // need to construct a more complicated example here that will force us to use
+    // `CommonPointUnit<...>`, because it will be meaningfully different from all of its parameters.
+    using U = CommonPointUnitT<Celsius, OffsetCelsius>;
+    EXPECT_THAT(unit_label(U{}),
+                AnyOf(StrEq("EQUIV{[(1 / 1000) deg_C], [(1 / 1000) offset_deg_C]}"),
+                      StrEq("EQUIV{[(1 / 1000) offset_deg_C], [(1 / 1000) deg_C]}")));
 }
 
 TEST(UnitLabel, APICompatibleWithUnitSlots) { EXPECT_THAT(unit_label(feet), StrEq("ft")); }
