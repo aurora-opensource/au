@@ -466,6 +466,11 @@ TEST(CommonUnit, DownranksAnonymousScaledUnits) {
     StaticAssertTypeEq<CommonUnitT<Yards, decltype(Feet{} * mag<3>())>, Yards>();
 }
 
+TEST(CommonUnit, WhenCommonUnitLabelWouldBeIdenticalToSomeUnitJustUsesThatUnit) {
+    StaticAssertTypeEq<CommonUnitT<decltype(Feet{} * mag<6>()), decltype(Feet{} * mag<10>())>,
+                       decltype(Feet{} * mag<2>())>();
+}
+
 // Four coprime units of the same dimension.
 struct W : decltype(Inches{} * mag<2>()) {};
 struct X : decltype(Inches{} * mag<3>()) {};
