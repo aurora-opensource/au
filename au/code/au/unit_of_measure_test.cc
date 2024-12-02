@@ -89,7 +89,7 @@ struct SomePack {};
 template <typename A, typename B>
 struct InOrderFor<SomePack, A, B> : InOrderFor<CommonUnit, A, B> {};
 
-struct UnlabeledUnit : decltype(Feet{} * mag<9>()) {};
+struct UnlabeledUnit : UnitImpl<Length> {};
 
 MATCHER_P(QuantityEquivalentToUnit, target, "") {
     return are_units_quantity_equivalent(arg, target);
@@ -109,6 +109,11 @@ TEST(Unit, OriginRetainedForProductWithMagnitudeButNotWithUnit) {
     constexpr auto scaled_by_unit = UnitWithOrigin{} * One{};
     EXPECT_FALSE(
         (stdx::experimental::is_detected<detail::OriginMemberType, decltype(scaled_by_unit)>{}));
+}
+
+TEST(ScaledUnit, IsTypeIdentityWhenScalingByOne) {
+    StaticAssertTypeEq<decltype(Feet{} * mag<1>()), Feet>();
+    StaticAssertTypeEq<decltype((Feet{} * mag<3>()) / mag<3>()), Feet>();
 }
 
 TEST(IsUnit, TrueForUnitImpl) { EXPECT_TRUE(IsUnit<UnitImpl<Length>>::value); }
@@ -452,15 +457,7 @@ TEST(CommonUnit, PrefersUnitFromListIfAnyIdentical) {
 }
 
 TEST(CommonUnit, DownranksAnonymousScaledUnits) {
-    StaticAssertTypeEq<CommonUnitT<Feet, decltype(Feet{} * mag<1>())>, Feet>();
-    StaticAssertTypeEq<CommonUnitT<Meters, UnitImpl<Length>>, Meters>();
-
-    using OpaqueFeetSquared = decltype(pow<2>(Feet{}) * ONE);
-    using OpaqueFeet = UnitProductT<OpaqueFeetSquared, UnitInverseT<Feet>>;
-    ASSERT_FALSE((std::is_same<OpaqueFeet, Feet>::value));
-    ASSERT_TRUE((AreUnitsQuantityEquivalent<OpaqueFeet, Feet>::value));
-    ASSERT_TRUE((InOrderFor<CommonUnit, Feet, OpaqueFeet>::value));
-    StaticAssertTypeEq<CommonUnitT<Feet, OpaqueFeet>, Feet>();
+    StaticAssertTypeEq<CommonUnitT<Yards, decltype(Feet{} * mag<3>())>, Yards>();
 }
 
 // Four coprime units of the same dimension.
@@ -481,6 +478,10 @@ TEST(CommonUnit, UnpacksTypesInNestedCommonUnit) {
 
     // Check that `c(c(w, x), c(y, z))` is the same as `c(w, x, y, z)`.
     StaticAssertTypeEq<Common, CommonUnitT<W, X, Y, Z>>();
+}
+
+TEST(CommonUnit, CanCombineUnitsThatWouldBothBeAnonymousScaledUnits) {
+    EXPECT_EQ((feet / mag<3>())(1), (inches * mag<4>())(1));
 }
 
 TEST(CommonPointUnit, FindsCommonMagnitude) {
@@ -542,6 +543,22 @@ TEST(UnitLabel, DefaultsToUnlabeledUnit) {
 TEST(UnitLabel, PicksUpLabelForLabeledUnit) {
     EXPECT_THAT(unit_label<Feet>(), StrEq("ft"));
     EXPECT_EQ(sizeof(unit_label<Feet>()), 3);
+}
+
+TEST(UnitLabel, PrependsScaleFactorToLabelForScaledUnit) {
+    EXPECT_THAT(unit_label<decltype(Feet{} * mag<3>())>(), StrEq("[3 ft]"));
+    EXPECT_THAT(unit_label<decltype(Feet{} / mag<12>())>(), StrEq("[(1 / 12) ft]"));
+}
+
+TEST(UnitLabel, ApplyingMultipleScaleFactorsComposesToOneSingleScaleFactor) {
+    EXPECT_THAT(unit_label<decltype(Feet{} * mag<7>() / mag<12>())>(), StrEq("[(7 / 12) ft]"));
+    EXPECT_THAT(unit_label<decltype(Feet{} * mag<2>() / mag<3>() * mag<5>() / mag<7>())>(),
+                StrEq("[(10 / 21) ft]"));
+}
+
+TEST(UnitLabel, OmitsTrivialScaleFactor) {
+    EXPECT_THAT(unit_label<decltype(Feet{} * mag<1>())>(), StrEq("ft"));
+    EXPECT_THAT(unit_label<decltype((Feet{} * mag<3>()) / mag<3>())>(), StrEq("ft"));
 }
 
 TEST(UnitLabel, PrintsExponentForUnitPower) {

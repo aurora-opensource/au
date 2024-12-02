@@ -945,10 +945,10 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
 
 TEST(AreQuantityTypesEquivalent, RequiresSameRepAndEquivalentUnits) {
     using IntQFeet = decltype(feet(1));
-    using IntQFeetTimesOne = decltype((feet * ONE)(1));
+    using IntQTwelveInches = decltype((inches * mag<12>())(1));
 
-    ASSERT_FALSE((std::is_same<IntQFeet, IntQFeetTimesOne>::value));
-    EXPECT_TRUE((AreQuantityTypesEquivalent<IntQFeet, IntQFeetTimesOne>::value));
+    ASSERT_FALSE((std::is_same<IntQFeet, IntQTwelveInches>::value));
+    EXPECT_TRUE((AreQuantityTypesEquivalent<IntQFeet, IntQTwelveInches>::value));
 }
 
 TEST(UnblockIntDiv, EnablesTruncatingIntegerDivisionIntoQuantity) {
