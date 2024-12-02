@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-43-gd450960
+// Version identifier: 0.3.5-44-g9b2f9a7
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -37,6 +37,7 @@
 //   radians
 //   seconds
 //   unos
+// List of included constants:
 
 
 namespace au {

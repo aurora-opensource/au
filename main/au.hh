@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-43-gd450960
+// Version identifier: 0.3.5-44-g9b2f9a7
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -38,6 +38,7 @@
 //   radians
 //   seconds
 //   unos
+// List of included constants:
 
 
 namespace au {
@@ -5564,6 +5565,99 @@ struct CanScaleByMagnitude {
 
 namespace au {
 
+//
+// A monovalue type to represent a constant value, including its units, if any.
+//
+// Users can multiply or divide `Constant` instances by raw numbers or `Quantity` instances, and it
+// will perform symbolic arithmetic at compile time without affecting the stored numeric value.
+// `Constant` also composes with other constants, and with `QuantityMaker` and other related types.
+//
+// Although `Constant` does not have any specific numeric type associated with it (as opposed to
+// `Quantity`), it can easily convert to any appropriate `Quantity` type, with any rep.  Unlike
+// `Quantity`, these conversions support _exact_ safety checks, so that every conversion producing a
+// correctly representable value will succeed, and every unrepresentable conversion will fail.
+//
+template <typename Unit>
+struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
+                  detail::ScalesQuantity<Constant, Unit>,
+                  detail::ComposesWith<Constant, Unit, Constant, Constant>,
+                  detail::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
+                  detail::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
+                  detail::CanScaleByMagnitude<Constant, Unit> {
+    // Convert this constant to a Quantity of the given rep.
+    template <typename T>
+    constexpr auto as() const {
+        return make_quantity<Unit>(static_cast<T>(1));
+    }
+
+    // Convert this constant to a Quantity of the given unit and rep, ignoring safety checks.
+    template <typename T, typename OtherUnit>
+    constexpr auto coerce_as(OtherUnit u) const {
+        return as<T>().coerce_as(u);
+    }
+
+    // Convert this constant to a Quantity of the given unit and rep.
+    template <typename T, typename OtherUnit>
+    constexpr auto as(OtherUnit u) const {
+        static_assert(can_store_value_in<T>(u), "Cannot represent constant in this unit/rep");
+        return coerce_as<T>(u);
+    }
+
+    // Get the value of this constant in the given unit and rep, ignoring safety checks.
+    template <typename T, typename OtherUnit>
+    constexpr auto coerce_in(OtherUnit u) const {
+        return as<T>().coerce_in(u);
+    }
+
+    // Get the value of this constant in the given unit and rep.
+    template <typename T, typename OtherUnit>
+    constexpr auto in(OtherUnit u) const {
+        static_assert(can_store_value_in<T>(u), "Cannot represent constant in this unit/rep");
+        return coerce_in<T>(u);
+    }
+
+    // Implicitly convert to any quantity type which passes safety checks.
+    template <typename U, typename R>
+    constexpr operator Quantity<U, R>() const {
+        return as<R>(U{});
+    }
+
+    // Static function to check whether this constant can be exactly-represented in the given rep
+    // `T` and unit `OtherUnit`.
+    template <typename T, typename OtherUnit>
+    static constexpr bool can_store_value_in(OtherUnit other) {
+        return representable_in<T>(unit_ratio(Unit{}, other));
+    }
+
+    // Implicitly convert to type with an exactly corresponding quantity that passes safety checks.
+    template <
+        typename T,
+        typename = std::enable_if_t<can_store_value_in<typename CorrespondingQuantity<T>::Rep>(
+            typename CorrespondingQuantity<T>::Unit{})>>
+    constexpr operator T() const {
+        return as<typename CorrespondingQuantity<T>::Rep>(
+            typename CorrespondingQuantity<T>::Unit{});
+    }
+};
+
+// Make a constant from the given unit.
+//
+// Note that the argument is a _unit slot_, and thus can also accept things like `QuantityMaker` and
+// `SymbolFor` in addition to regular units.
+template <typename UnitSlot>
+constexpr Constant<AssociatedUnitT<UnitSlot>> make_constant(UnitSlot) {
+    return {};
+}
+
+// Support using `Constant` in a unit slot.
+template <typename Unit>
+struct AssociatedUnit<Constant<Unit>> : stdx::type_identity<Unit> {};
+
+}  // namespace au
+
+
+namespace au {
+
 // `QuantityPoint`: an _affine space type_ modeling points on a line.
 //
 // For a quick primer on affine space types, see: http://videocortex.io/2018/Affine-Space-Types/
@@ -6518,202 +6612,6 @@ constexpr auto kibi = PrefixApplier<Kibi>{};
 }  // namespace au
 
 
-namespace au {
-
-//
-// A monovalue type to represent a constant value, including its units, if any.
-//
-// Users can multiply or divide `Constant` instances by raw numbers or `Quantity` instances, and it
-// will perform symbolic arithmetic at compile time without affecting the stored numeric value.
-// `Constant` also composes with other constants, and with `QuantityMaker` and other related types.
-//
-// Although `Constant` does not have any specific numeric type associated with it (as opposed to
-// `Quantity`), it can easily convert to any appropriate `Quantity` type, with any rep.  Unlike
-// `Quantity`, these conversions support _exact_ safety checks, so that every conversion producing a
-// correctly representable value will succeed, and every unrepresentable conversion will fail.
-//
-template <typename Unit>
-struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
-                  detail::ScalesQuantity<Constant, Unit>,
-                  detail::ComposesWith<Constant, Unit, Constant, Constant>,
-                  detail::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
-                  detail::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
-                  detail::CanScaleByMagnitude<Constant, Unit> {
-    // Convert this constant to a Quantity of the given rep.
-    template <typename T>
-    constexpr auto as() const {
-        return make_quantity<Unit>(static_cast<T>(1));
-    }
-
-    // Convert this constant to a Quantity of the given unit and rep, ignoring safety checks.
-    template <typename T, typename OtherUnit>
-    constexpr auto coerce_as(OtherUnit u) const {
-        return as<T>().coerce_as(u);
-    }
-
-    // Convert this constant to a Quantity of the given unit and rep.
-    template <typename T, typename OtherUnit>
-    constexpr auto as(OtherUnit u) const {
-        static_assert(can_store_value_in<T>(u), "Cannot represent constant in this unit/rep");
-        return coerce_as<T>(u);
-    }
-
-    // Get the value of this constant in the given unit and rep, ignoring safety checks.
-    template <typename T, typename OtherUnit>
-    constexpr auto coerce_in(OtherUnit u) const {
-        return as<T>().coerce_in(u);
-    }
-
-    // Get the value of this constant in the given unit and rep.
-    template <typename T, typename OtherUnit>
-    constexpr auto in(OtherUnit u) const {
-        static_assert(can_store_value_in<T>(u), "Cannot represent constant in this unit/rep");
-        return coerce_in<T>(u);
-    }
-
-    // Implicitly convert to any quantity type which passes safety checks.
-    template <typename U, typename R>
-    constexpr operator Quantity<U, R>() const {
-        return as<R>(U{});
-    }
-
-    // Static function to check whether this constant can be exactly-represented in the given rep
-    // `T` and unit `OtherUnit`.
-    template <typename T, typename OtherUnit>
-    static constexpr bool can_store_value_in(OtherUnit other) {
-        return representable_in<T>(unit_ratio(Unit{}, other));
-    }
-
-    // Implicitly convert to type with an exactly corresponding quantity that passes safety checks.
-    template <
-        typename T,
-        typename = std::enable_if_t<can_store_value_in<typename CorrespondingQuantity<T>::Rep>(
-            typename CorrespondingQuantity<T>::Unit{})>>
-    constexpr operator T() const {
-        return as<typename CorrespondingQuantity<T>::Rep>(
-            typename CorrespondingQuantity<T>::Unit{});
-    }
-};
-
-// Make a constant from the given unit.
-//
-// Note that the argument is a _unit slot_, and thus can also accept things like `QuantityMaker` and
-// `SymbolFor` in addition to regular units.
-template <typename UnitSlot>
-constexpr Constant<AssociatedUnitT<UnitSlot>> make_constant(UnitSlot) {
-    return {};
-}
-
-// Support using `Constant` in a unit slot.
-template <typename Unit>
-struct AssociatedUnit<Constant<Unit>> : stdx::type_identity<Unit> {};
-
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct MinutesLabel {
-    static constexpr const char label[] = "min";
-};
-template <typename T>
-constexpr const char MinutesLabel<T>::label[];
-struct Minutes : decltype(Seconds{} * mag<60>()), MinutesLabel<void> {
-    using MinutesLabel<void>::label;
-};
-constexpr auto minute = SingularNameFor<Minutes>{};
-constexpr auto minutes = QuantityMaker<Minutes>{};
-
-namespace symbols {
-constexpr auto min = SymbolFor<Minutes>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct HoursLabel {
-    static constexpr const char label[] = "h";
-};
-template <typename T>
-constexpr const char HoursLabel<T>::label[];
-struct Hours : decltype(Minutes{} * mag<60>()), HoursLabel<void> {
-    using HoursLabel<void>::label;
-};
-constexpr auto hour = SingularNameFor<Hours>{};
-constexpr auto hours = QuantityMaker<Hours>{};
-
-namespace symbols {
-constexpr auto h = SymbolFor<Hours>{};
-}
-}  // namespace au
-
-
-
-namespace au {
-
-// Streaming output support for Quantity types.
-template <typename U, typename R>
-std::ostream &operator<<(std::ostream &out, const Quantity<U, R> &q) {
-    // In the case that the Rep is a type that resolves to 'char' (e.g. int8_t),
-    // the << operator will match the implementation that takes a character
-    // literal.  Using the unary + operator will trigger an integer promotion on
-    // the operand, which will then match an appropriate << operator that will
-    // output the integer representation.
-    out << +q.in(U{}) << " " << unit_label(U{});
-    return out;
-}
-
-// Streaming output support for QuantityPoint types.
-template <typename U, typename R>
-std::ostream &operator<<(std::ostream &out, const QuantityPoint<U, R> &p) {
-    out << "@(" << (p - rep_cast<R>(make_quantity_point<U>(0))) << ")";
-    return out;
-}
-
-// Streaming output support for Zero.  (Useful for printing in unit test failures.)
-inline std::ostream &operator<<(std::ostream &out, Zero) {
-    out << "0";
-    return out;
-}
-
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct BitsLabel {
-    static constexpr const char label[] = "b";
-};
-template <typename T>
-constexpr const char BitsLabel<T>::label[];
-struct Bits : UnitImpl<Information>, BitsLabel<void> {
-    using BitsLabel<void>::label;
-};
-constexpr auto bit = SingularNameFor<Bits>{};
-constexpr auto bits = QuantityMaker<Bits>{};
-
-namespace symbols {
-constexpr auto b = SymbolFor<Bits>{};
-}
-}  // namespace au
-
-
 
 namespace au {
 
@@ -7444,6 +7342,109 @@ template <typename U, typename R>
 constexpr bool numeric_limits<au::Quantity<U, R>>::tinyness_before;
 
 }  // namespace std
+
+// Keep corresponding `_fwd.hh` file on top.
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct MinutesLabel {
+    static constexpr const char label[] = "min";
+};
+template <typename T>
+constexpr const char MinutesLabel<T>::label[];
+struct Minutes : decltype(Seconds{} * mag<60>()), MinutesLabel<void> {
+    using MinutesLabel<void>::label;
+};
+constexpr auto minute = SingularNameFor<Minutes>{};
+constexpr auto minutes = QuantityMaker<Minutes>{};
+
+namespace symbols {
+constexpr auto min = SymbolFor<Minutes>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct HoursLabel {
+    static constexpr const char label[] = "h";
+};
+template <typename T>
+constexpr const char HoursLabel<T>::label[];
+struct Hours : decltype(Minutes{} * mag<60>()), HoursLabel<void> {
+    using HoursLabel<void>::label;
+};
+constexpr auto hour = SingularNameFor<Hours>{};
+constexpr auto hours = QuantityMaker<Hours>{};
+
+namespace symbols {
+constexpr auto h = SymbolFor<Hours>{};
+}
+}  // namespace au
+
+
+
+namespace au {
+
+// Streaming output support for Quantity types.
+template <typename U, typename R>
+std::ostream &operator<<(std::ostream &out, const Quantity<U, R> &q) {
+    // In the case that the Rep is a type that resolves to 'char' (e.g. int8_t),
+    // the << operator will match the implementation that takes a character
+    // literal.  Using the unary + operator will trigger an integer promotion on
+    // the operand, which will then match an appropriate << operator that will
+    // output the integer representation.
+    out << +q.in(U{}) << " " << unit_label(U{});
+    return out;
+}
+
+// Streaming output support for QuantityPoint types.
+template <typename U, typename R>
+std::ostream &operator<<(std::ostream &out, const QuantityPoint<U, R> &p) {
+    out << "@(" << (p - rep_cast<R>(make_quantity_point<U>(0))) << ")";
+    return out;
+}
+
+// Streaming output support for Zero.  (Useful for printing in unit test failures.)
+inline std::ostream &operator<<(std::ostream &out, Zero) {
+    out << "0";
+    return out;
+}
+
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct BitsLabel {
+    static constexpr const char label[] = "b";
+};
+template <typename T>
+constexpr const char BitsLabel<T>::label[];
+struct Bits : UnitImpl<Information>, BitsLabel<void> {
+    using BitsLabel<void>::label;
+};
+constexpr auto bit = SingularNameFor<Bits>{};
+constexpr auto bits = QuantityMaker<Bits>{};
+
+namespace symbols {
+constexpr auto b = SymbolFor<Bits>{};
+}
+}  // namespace au
 
 
 
