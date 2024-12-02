@@ -30,7 +30,8 @@ namespace au {
 template <typename Unit>
 struct SymbolFor : detail::MakesQuantityFromNumber<SymbolFor, Unit>,
                    detail::ScalesQuantity<SymbolFor, Unit>,
-                   detail::ComposesWith<SymbolFor, Unit, SymbolFor, SymbolFor> {};
+                   detail::ComposesWith<SymbolFor, Unit, SymbolFor, SymbolFor>,
+                   detail::CanScaleByMagnitude<SymbolFor, Unit> {};
 
 //
 // Create a unit symbol using the more fluent APIs that unit slots make possible.  For example:

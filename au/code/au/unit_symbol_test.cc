@@ -43,4 +43,12 @@ TEST(SymbolFor, ScalesUnitsOfExistingQuantity) {
 
 TEST(SymbolFor, CompatibleWithUnitSlot) { EXPECT_THAT(meters(35u).in(m), SameTypeAndValue(35u)); }
 
+TEST(SymbolFor, CanScaleByMagnitude) {
+    // Yes, the identifier name is a little awkward for these symbols for anonymous scaled units.
+    // But it's still important to have this functionality.
+    constexpr auto u100_m = mag<100>() * m;
+
+    EXPECT_THAT(3.5f / u100_m, SameTypeAndValue(inverse(meters * mag<100>())(3.5f)));
+}
+
 }  // namespace au
