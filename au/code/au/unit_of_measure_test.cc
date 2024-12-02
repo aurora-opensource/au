@@ -466,6 +466,11 @@ TEST(CommonUnit, DownranksAnonymousScaledUnits) {
     StaticAssertTypeEq<CommonUnitT<Yards, decltype(Feet{} * mag<3>())>, Yards>();
 }
 
+TEST(CommonUnit, WhenCommonUnitLabelWouldBeIdenticalToSomeUnitJustUsesThatUnit) {
+    StaticAssertTypeEq<CommonUnitT<decltype(Feet{} * mag<6>()), decltype(Feet{} * mag<10>())>,
+                       decltype(Feet{} * mag<2>())>();
+}
+
 // Four coprime units of the same dimension.
 struct W : decltype(Inches{} * mag<2>()) {};
 struct X : decltype(Inches{} * mag<3>()) {};
@@ -699,6 +704,36 @@ TEST(EliminateRedundantUnits, AlwaysRemovesSameUnitAmongQuantityEquivalentChoice
     using Twelvinch = decltype(Inches{} * mag<12>());
     StaticAssertTypeEq<EliminateRedundantUnits<SomePack<Feet, Twelvinch>>,
                        EliminateRedundantUnits<SomePack<Twelvinch, Feet>>>();
+}
+
+TEST(UnscaledUnit, IdentityForGeneralUnits) {
+    StaticAssertTypeEq<UnscaledUnit<Feet>, Feet>();
+    StaticAssertTypeEq<UnscaledUnit<Celsius>, Celsius>();
+}
+
+TEST(UnscaledUnit, RemovesScaleFactorFromScaledUnit) {
+    StaticAssertTypeEq<UnscaledUnit<decltype(Feet{} * mag<3>())>, Feet>();
+    StaticAssertTypeEq<UnscaledUnit<decltype(Celsius{} / mag<2>())>, Celsius>();
+}
+
+TEST(DistinctUnscaledUnits, UnitListOfOneElementForNonCommonUnit) {
+    StaticAssertTypeEq<DistinctUnscaledUnits<Feet>, UnitList<Feet>>();
+    StaticAssertTypeEq<DistinctUnscaledUnits<decltype(Feet{} / mag<12>())>, UnitList<Feet>>();
+}
+
+TEST(DistinctUnscaledUnits, RemovesDupesFromCommonUnit) {
+    StaticAssertTypeEq<
+        DistinctUnscaledUnits<decltype(common_unit(Feet{} * mag<3>(), Feet{} / mag<12>()))>,
+        UnitList<Feet>>();
+    StaticAssertTypeEq<DistinctUnscaledUnits<decltype(common_unit(
+                           Feet{} * mag<3>(), Inches{} * mag<48>(), Feet{} * mag<5>()))>,
+                       UnitList<Inches, Feet>>();
+}
+
+TEST(SimplifyIfOnlyOneUnscaledUnit, IdentityForNonCommonUnit) {
+    StaticAssertTypeEq<SimplifyIfOnlyOneUnscaledUnit<Feet>, Feet>();
+    StaticAssertTypeEq<SimplifyIfOnlyOneUnscaledUnit<decltype(Feet{} * mag<3>())>,
+                       decltype(Feet{} * mag<3>())>();
 }
 
 }  // namespace detail
