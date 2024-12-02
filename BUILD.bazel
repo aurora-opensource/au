@@ -76,7 +76,7 @@ BASE_UNIT_STRING = " ".join(BASE_UNITS)
 
 GIT_ID_CMD = "cat bazel-out/stable-status.txt | grep STABLE_GIT_ID | sed 's/STABLE_GIT_ID \\(.*\\)/\\1/' | tr -d '\\n'"
 
-CMD_ROOT = "$(location tools/bin/make-single-file) {extra_opts} {units} --version-id $$({id_cmd}) > $(OUTS)"
+CMD_ROOT = "$(location tools/bin/make-single-file) {extra_opts} {units} {all_constants} --version-id $$({id_cmd}) > $(OUTS)"
 
 ################################################################################
 # Release single-file package `au.hh`
@@ -86,6 +86,7 @@ genrule(
     srcs = ["//au:headers"],
     outs = ["docs/au.hh"],
     cmd = CMD_ROOT.format(
+        all_constants = "",
         extra_opts = "",
         id_cmd = GIT_ID_CMD,
         units = "--units " + BASE_UNIT_STRING,
@@ -108,6 +109,7 @@ genrule(
     srcs = ["//au:headers"],
     outs = ["docs/au_noio.hh"],
     cmd = CMD_ROOT.format(
+        all_constants = "",
         extra_opts = "--noio",
         id_cmd = GIT_ID_CMD,
         units = "--units " + BASE_UNIT_STRING,
@@ -131,6 +133,7 @@ genrule(
     srcs = ["//au:headers"],
     outs = ["docs/au_all_units.hh"],
     cmd = CMD_ROOT.format(
+        all_constants = "--all-constants",
         extra_opts = "",
         id_cmd = GIT_ID_CMD,
         units = "--all-units",
@@ -153,6 +156,7 @@ genrule(
     srcs = ["//au:headers"],
     outs = ["docs/au_all_units_noio.hh"],
     cmd = CMD_ROOT.format(
+        all_constants = "--all-constants",
         extra_opts = "--noio",
         id_cmd = GIT_ID_CMD,
         units = "--all-units",
