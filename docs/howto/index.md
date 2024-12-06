@@ -3,6 +3,10 @@
 This section provides detailed instructions for various common tasks that come up in the course of
 using the library.  Here's a summary of what you'll find.
 
+- **[Quantity template parameters](./quantity-template-parameters.md).**  How to use a `Quantity`
+  _value_ as a template parameter, emulating C++20's expanded support for new kinds of "non-type
+  template parameters" (NTTPs).
+
 - **[New units](./new-units.md).**  How to add a new unit of measure that the library doesn't
   include.
 
