@@ -404,6 +404,7 @@ cc_library(
     hdrs = ["code/au/packs.hh"],
     includes = ["code"],
     deps = [
+        ":fwd",
         ":stdx",
         ":utility",
     ],
