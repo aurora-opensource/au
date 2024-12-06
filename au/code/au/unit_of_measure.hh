@@ -328,6 +328,18 @@ using UnitInverseT = UnitPowerT<U, -1>;
 template <typename U1, typename U2>
 using UnitQuotientT = UnitProductT<U1, UnitInverseT<U2>>;
 
+template <typename... Us>
+constexpr bool is_forward_declared_unit_valid(ForwardDeclareUnitProduct<Us...>) {
+    return std::is_same<typename ForwardDeclareUnitProduct<Us...>::unit_type,
+                        UnitProductT<Us...>>::value;
+}
+
+template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen>
+constexpr bool is_forward_declared_unit_valid(ForwardDeclareUnitPow<U, ExpNum, ExpDen>) {
+    return std::is_same<typename ForwardDeclareUnitPow<U, ExpNum, ExpDen>::unit_type,
+                        UnitPowerT<U, ExpNum, ExpDen>>::value;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Unit arithmetic on _instances_ of Units and/or Magnitudes.
 

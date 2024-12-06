@@ -20,13 +20,17 @@
 #include "au/io.hh"
 #include "au/quantity.hh"
 #include "au/units/meters.hh"
+#include "au/units/seconds.hh"
 
-namespace au {
+namespace xyz {
 
-std::string print_to_string(const QuantityI<Meters> &q) {
+static_assert(is_forward_declared_unit_valid(InverseSecondsFwd{}), "");
+static_assert(is_forward_declared_unit_valid(MetersPerSecondFwd{}), "");
+
+std::string print_to_string(const au::QuantityI<MetersPerSecond> &q) {
     std::ostringstream oss;
     oss << q;
     return oss.str();
 }
 
-}  // namespace au
+}  // namespace xyz

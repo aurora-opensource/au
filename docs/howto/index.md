@@ -10,6 +10,9 @@ using the library.  Here's a summary of what you'll find.
 
 - **[New dimensions](./new-dimensions.md).**  How to add a new, independent base dimension.
 
+- **[Forward declarations](./forward-declarations.md).**  How to use the forward declarations
+  provided by the library.
+
 - **[Inter-library Interoperation](./interop/index.md).**  How to set up automatic correspondence
   between equivalent types in Au and any other units library.
 
