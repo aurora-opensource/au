@@ -60,6 +60,20 @@ case, rather than a strong type (for example, `UnitQuotientT<Meters, Seconds>`).
 cannot be computed without the full machinery of the library, which can cost tens of milliseconds.
 This may not sound like much, but it's far too slow for a forward declaration file.
 
+??? note "How slow is \"too slow\"?"
+    Time measurements will of course vary based on the hardware and toolchain, but here are some
+    numbers from one modern development machine.
+
+    We found that the cost to include `"au/fwd.hh"` was about 5 ms.  The vast majority of this was
+    the cost of including `<cstdint>`.  If your file already includes `<cstdint>` by some other
+    pathway --- which is extremely common --- then there is no additional cost to include it
+    a second time via `"au/fwd.hh"`.  In this case, the remaining cost was about 1 ms.  This is the
+    target that we aim for.
+
+    For calibration purposes, the cost of including `<vector>` on this same configuration was about
+    100 ms.  And the cost of including `"au/au.hh"` --- essentially, "the whole library" (without
+    individual units) --- was around 500 ms.
+
 We resolve this with a "warrant and check" approach, explained in the next section.
 
 ### Compound units
