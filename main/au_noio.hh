@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-51-gd5bbc6f
+// Version identifier: 0.3.5-52-g4c66b86
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -44,6 +44,12 @@ namespace au {
 
 struct Zero;
 
+template <typename B, std::intmax_t N>
+struct Pow;
+
+template <typename B, std::intmax_t N, std::intmax_t D>
+struct RatioPow;
+
 template <typename... BPs>
 struct Dimension;
 
@@ -61,6 +67,36 @@ struct QuantityPointMaker;
 
 template <typename UnitT, typename RepT>
 class Quantity;
+
+//
+// Machinery for forward-declaring a unit product.
+//
+// To use, make an alias with the correct unit powers in the correct order, in the `_fwd.hh` file.
+// In the `.hh` file, call `is_forward_declared_unit_valid(...)` (defined in `unit_of_measure.hh`)
+// on an instance of that alias.
+//
+template <typename... UnitPowers>
+struct UnitProduct;
+template <typename... UnitPowers>
+struct ForwardDeclareUnitProduct {
+    using unit_type = UnitProduct<UnitPowers...>;
+};
+
+//
+// Machinery for forward-declaring a unit power.
+//
+// To use, make an alias with the same unit and power(s) that `UnitPowerT` would produce, in the
+// `_fwd.hh` file.  In the `.hh` file, call `is_forward_declared_unit_valid(...)` (defined in
+// `unit_of_measure.hh`) on that alias.
+//
+template <typename U, std::intmax_t N, std::intmax_t D = 1>
+struct ForwardDeclareUnitPow {
+    using unit_type = RatioPow<U, N, D>;
+};
+template <typename U, std::intmax_t N>
+struct ForwardDeclareUnitPow<U, N, 1> {
+    using unit_type = Pow<U, N>;
+};
 
 //
 // Quantity aliases to set a particular Rep.
@@ -3599,6 +3635,18 @@ using UnitInverseT = UnitPowerT<U, -1>;
 // Compute the quotient of two units.
 template <typename U1, typename U2>
 using UnitQuotientT = UnitProductT<U1, UnitInverseT<U2>>;
+
+template <typename... Us>
+constexpr bool is_forward_declared_unit_valid(ForwardDeclareUnitProduct<Us...>) {
+    return std::is_same<typename ForwardDeclareUnitProduct<Us...>::unit_type,
+                        UnitProductT<Us...>>::value;
+}
+
+template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen>
+constexpr bool is_forward_declared_unit_valid(ForwardDeclareUnitPow<U, ExpNum, ExpDen>) {
+    return std::is_same<typename ForwardDeclareUnitPow<U, ExpNum, ExpDen>::unit_type,
+                        UnitPowerT<U, ExpNum, ExpDen>>::value;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Unit arithmetic on _instances_ of Units and/or Magnitudes.
