@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <cmath>
 #include <exception>
 #include <limits>
 #include <type_traits>
@@ -51,6 +52,7 @@ enum class OverflowSituation {
     UNSIGNED_TO_INTEGRAL,
     SIGNED_TO_UNSIGNED,
     SIGNED_TO_SIGNED,
+    FLOAT_TO_INTEGRAL,
     UNEXPLORED,
 };
 
@@ -87,6 +89,10 @@ constexpr OverflowSituation categorize_overflow_situation() {
                                              : OverflowSituation::SIGNED_TO_SIGNED;
     }
 
+    if (std::is_floating_point<Source>::value && std::is_integral<Dest>::value) {
+        return OverflowSituation::FLOAT_TO_INTEGRAL;
+    }
+
     return OverflowSituation::UNEXPLORED;
 }
 
@@ -120,6 +126,14 @@ struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::SIGNED_TO_SIGNED>
 };
 
 template <typename Source, typename Dest>
+struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::FLOAT_TO_INTEGRAL> {
+    static constexpr bool will_static_cast_overflow(Source x) {
+        return (x < static_cast<Source>(std::numeric_limits<Dest>::lowest())) ||
+               (x > static_cast<Source>(std::numeric_limits<Dest>::max()));
+    }
+};
+
+template <typename Source, typename Dest>
 struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS> {
     static constexpr bool will_static_cast_overflow(Source x) { return false; }
 };
@@ -131,6 +145,7 @@ enum class TruncationSituation {
     CANNOT_TRUNCATE,
     UNSIGNED_TO_FLOAT,
     SIGNED_TO_FLOAT,
+    FLOAT_TO_INTEGRAL,
     UNEXPLORED,
 };
 
@@ -154,6 +169,12 @@ constexpr TruncationSituation categorize_truncation_situation() {
                    ? TruncationSituation::CANNOT_TRUNCATE
                    : (std::is_unsigned<Source>::value ? TruncationSituation::UNSIGNED_TO_FLOAT
                                                       : TruncationSituation::SIGNED_TO_FLOAT);
+    }
+
+    if (std::is_floating_point<Source>::value) {
+        if (std::is_integral<Dest>::value) {
+            return TruncationSituation::FLOAT_TO_INTEGRAL;
+        }
     }
 
     return TruncationSituation::UNEXPLORED;
@@ -187,6 +208,11 @@ struct StaticCastTruncateImpl<Source, Dest, TruncationSituation::SIGNED_TO_FLOAT
         return (x >= MIN_POS_NON_REPRESENTABLE_VAL || x <= MAX_NEG_NON_REPRESENTABLE_VAL) &&
                (static_cast<Source>(static_cast<Dest>(x)) != x);
     }
+};
+
+template <typename Source, typename Dest>
+struct StaticCastTruncateImpl<Source, Dest, TruncationSituation::FLOAT_TO_INTEGRAL> {
+    static constexpr bool will_static_cast_truncate(Source x) { return std::trunc(x) != x; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -131,6 +131,8 @@ void explore_conversion(Quantity<U, R> q, TargetUnitSlot) {
     std::terminate();
 }
 
+TEST(a, b) { explore_conversion<float>(meters(int8_t{-26}), yards); }
+
 template <typename T>
 class QuantityRuntimeConversionChecker : public ::testing::Test {};
 

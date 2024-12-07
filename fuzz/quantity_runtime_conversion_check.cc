@@ -27,6 +27,18 @@
 namespace au {
 namespace detail {
 
+template <typename U, typename R>
+Quantity<U, R> next_higher_quantity(Quantity<U, R> q) {
+    static_assert(std::is_floating_point<R>::value, "");
+    return make_quantity<U>(std::nextafter(q.in(U{}), std::numeric_limits<R>::infinity()));
+}
+
+template <typename U, typename R>
+Quantity<U, R> next_lower_quantity(Quantity<U, R> q) {
+    static_assert(std::is_floating_point<R>::value, "");
+    return make_quantity<U>(std::nextafter(q.in(U{}), -std::numeric_limits<R>::infinity()));
+}
+
 template <typename T>
 struct Tag {};
 
@@ -219,15 +231,47 @@ struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::INTEGRAL_TO_F
             return {false};
         }
 
-        const auto next_destination = make_quantity<DestUnitT>(
-            std::nextafter(destination.in(DestUnitT{}), std::numeric_limits<DestRepT>::infinity()));
-        if (next_destination.template coerce_as<RepT>(UnitT{}) == value) {
+        for (const auto &q :
+             {next_lower_quantity(destination), next_higher_quantity(destination)}) {
+            if (q.template coerce_as<RepT>(UnitT{}) == value) {
+                return {false, "Within expected floating point error"};
+            }
+        }
+
+        return {true};
+    }
+};
+
+template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
+struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_INTEGRAL> {
+    static LossCheck check_for_loss(const Quantity<UnitT, RepT> &value,
+                                    const Quantity<DestUnitT, DestRepT> &,
+                                    const Quantity<UnitT, RepT> &round_trip) {
+        if (round_trip == value) {
+            return {false};
+        }
+
+        if (next_higher_quantity(round_trip) == value || next_lower_quantity(round_trip) == value) {
             return {false, "Within expected floating point error"};
         }
 
         return {true};
     }
 };
+
+template <typename T>
+struct RepForImpl : stdx::type_identity<T> {};
+template <typename T>
+using RepFor = typename RepForImpl<T>::type;
+template <typename U, typename R>
+struct RepForImpl<Quantity<U, R>> : stdx::type_identity<R> {};
+
+template <typename T>
+std::string print_to_string(const T &value) {
+    std::ostringstream oss;
+    oss << std::setprecision(std::numeric_limits<RepFor<T>>::digits10 + 1u) << value;
+    return oss.str();
+}
 
 template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT, TestCategory Cat>
 struct NominalTestBodyImpl : LossChecker<RepT, UnitT, DestRepT, DestUnitT, Cat> {
@@ -246,8 +290,8 @@ struct NominalTestBodyImpl : LossChecker<RepT, UnitT, DestRepT, DestUnitT, Cat> 
             std::cout << "Error found for <" << type_name<RepT>() << ">(" << unit_label(UnitT{})
                       << ") -> <" << type_name<DestRepT>() << ">(" << unit_label(DestUnitT{})
                       << ")! " << std::endl
-                      << "Initial value: " << value << std::endl
-                      << "Round trip:    " << round_trip << std::endl
+                      << "Initial value: " << print_to_string(value) << std::endl
+                      << "Round trip:    " << print_to_string(round_trip) << std::endl
                       << "Expect loss: " << (expect_loss ? "true" : "false") << std::endl
                       << "Actual loss: " << (actual_loss ? "true" : "false") << std::endl
                       << "Extra comments: " << loss_check.comment << std::endl;

@@ -43,6 +43,16 @@ TEST(WillStaticCastOverflow, FalseWhenDestBoundsContainsSourceBounds) {
     EXPECT_FALSE(will_static_cast_overflow<float>(std::numeric_limits<uint64_t>::max()));
 }
 
+TEST(WillStaticCastOverflow, DependsOnTypeLimitsForFloatToInt) {
+    EXPECT_TRUE(will_static_cast_overflow<uint8_t>(-0.0001));
+    EXPECT_FALSE(will_static_cast_overflow<uint8_t>(0.0000));
+    EXPECT_FALSE(will_static_cast_overflow<uint8_t>(0.0001));
+
+    EXPECT_FALSE(will_static_cast_overflow<uint8_t>(254.9999));
+    EXPECT_FALSE(will_static_cast_overflow<uint8_t>(255.0000));
+    EXPECT_TRUE(will_static_cast_overflow<uint8_t>(255.0001));
+}
+
 TEST(WillStaticCastTruncate, IntToFloatFalseForIntTypeThatCanFitInFloat) {
     EXPECT_FALSE(will_static_cast_truncate<float>(uint8_t{124}));
     EXPECT_FALSE(will_static_cast_truncate<double>(124));
@@ -72,6 +82,30 @@ TEST(WillStaticCastTruncate, AutomaticallyFalseForIntegralToIntegral) {
     EXPECT_FALSE(will_static_cast_truncate<int8_t>(uint8_t{128}));
     EXPECT_FALSE(will_static_cast_truncate<int8_t>(128));
     EXPECT_FALSE(will_static_cast_truncate<int8_t>(uint64_t{9876543210u}));
+}
+
+TEST(WillStaticCastTruncate, TrueForFloatToIntIffInputHasAFractionalPart) {
+    EXPECT_TRUE(will_static_cast_truncate<uint8_t>(-0.1));
+    EXPECT_FALSE(will_static_cast_truncate<uint8_t>(0.0));
+    EXPECT_TRUE(will_static_cast_truncate<uint8_t>(0.1));
+
+    EXPECT_TRUE(will_static_cast_truncate<uint8_t>(254.9));
+    EXPECT_FALSE(will_static_cast_truncate<uint8_t>(255.0));
+    EXPECT_TRUE(will_static_cast_truncate<uint8_t>(255.1));
+}
+
+TEST(a, b) {
+    using Source = uint8_t;
+    using Dest = float;
+    using Common = std::common_type_t<Source, Dest>;
+
+    constexpr auto val = Source{124};
+    EXPECT_FALSE(will_static_cast_overflow<Common>(val));
+    EXPECT_FALSE(will_static_cast_truncate<Common>(val));
+
+    constexpr auto intermediate = static_cast<Common>(val);
+    EXPECT_FALSE(will_static_cast_overflow<Dest>(intermediate));
+    EXPECT_FALSE(will_static_cast_truncate<Dest>(intermediate));
 }
 
 }  // namespace detail
