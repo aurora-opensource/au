@@ -22,14 +22,56 @@
 
 namespace au {
 
+enum class GeneratorStrategy {
+    INTEGRAL,
+    FLOAT,
+    UNSUPPORTED,
+};
+
+template <typename T>
+constexpr GeneratorStrategy get_generator_strategy() {
+    if (std::is_integral<T>::value) {
+        return GeneratorStrategy::INTEGRAL;
+    }
+    if (std::is_floating_point<T>::value) {
+        return GeneratorStrategy::FLOAT;
+    }
+    return GeneratorStrategy::UNSUPPORTED;
+}
+
+template <typename T, GeneratorStrategy Strategy>
+struct RandomValueGeneratorImpl;
+
+template <typename T>
+struct RandomValueGeneratorImpl<T, GeneratorStrategy::INTEGRAL> {
+    T next_value(std::mt19937_64 &engine) {
+        static std::uniform_int_distribution<std::uint64_t> uniform{};
+        return static_cast<T>(uniform(engine));
+    }
+};
+
+template <typename T>
+struct RandomValueGeneratorImpl<T, GeneratorStrategy::FLOAT> {
+    T next_value(std::mt19937_64 &engine) {
+        static std::uniform_int_distribution<std::uint8_t> uniform{};
+        std::uint8_t bytes[sizeof(T)];
+        for (auto i = 0u; i < sizeof(T); ++i) {
+            bytes[i] = uniform(engine);
+        }
+
+        T result{};
+        memcpy(&result, bytes, sizeof(T));
+        return result;
+    }
+};
+
 template <typename T>
 class RandomValueGenerator {
  public:
     RandomValueGenerator(std::uint64_t seed) : engine_{seed} {}
 
     T next_value() {
-        static std::uniform_int_distribution<std::uint64_t> uniform{};
-        return static_cast<T>(uniform(engine_));
+        return RandomValueGeneratorImpl<T, get_generator_strategy<T>()>{}.next_value(engine_);
     }
 
  private:
