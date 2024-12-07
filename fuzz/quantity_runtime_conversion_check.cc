@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <cxxabi.h>
-
+#include <cmath>
+#include <limits>
 #include <string>
 
 #include "au/testing.hh"
@@ -26,11 +26,6 @@
 
 namespace au {
 namespace detail {
-
-template <typename T>
-std::string type_name() {
-    return abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, nullptr);
-}
 
 template <typename T>
 struct Tag {};
@@ -212,6 +207,25 @@ struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_FLOA
 
         const bool actual_loss = (round_trip < min_ok) || (round_trip > max_ok);
         return {actual_loss};
+    }
+};
+
+template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
+struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::INTEGRAL_TO_FLOAT> {
+    static LossCheck check_for_loss(const Quantity<UnitT, RepT> &value,
+                                    const Quantity<DestUnitT, DestRepT> &destination,
+                                    const Quantity<UnitT, RepT> &round_trip) {
+        if (round_trip == value) {
+            return {false};
+        }
+
+        const auto next_destination = make_quantity<DestUnitT>(
+            std::nextafter(destination.in(DestUnitT{}), std::numeric_limits<DestRepT>::infinity()));
+        if (next_destination.template coerce_as<RepT>(UnitT{}) == value) {
+            return {false, "Within expected floating point error"};
+        }
+
+        return {true};
     }
 };
 

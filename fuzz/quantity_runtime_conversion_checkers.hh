@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <cxxabi.h>
+
 #include <cstdint>
 #include <random>
 
@@ -21,6 +23,11 @@
 #include "au/utility/type_traits.hh"
 
 namespace au {
+
+template <typename T>
+std::string type_name() {
+    return abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, nullptr);
+}
 
 enum class GeneratorStrategy {
     INTEGRAL,

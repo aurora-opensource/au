@@ -39,6 +39,34 @@ TEST(WillStaticCastOverflow, TrueForNegativeInputAndUnsignedDestination) {
     EXPECT_TRUE(will_static_cast_overflow<unsigned int>(int8_t{-1}));
 }
 
+TEST(WillStaticCastOverflow, FalseWhenDestBoundsContainsSourceBounds) {
+    EXPECT_FALSE(will_static_cast_overflow<float>(std::numeric_limits<uint64_t>::max()));
+}
+
+TEST(WillStaticCastTruncate, IntToFloatFalseForIntTypeThatCanFitInFloat) {
+    EXPECT_FALSE(will_static_cast_truncate<float>(uint8_t{124}));
+    EXPECT_FALSE(will_static_cast_truncate<double>(124));
+
+    static_assert(std::numeric_limits<double>::digits >= std::numeric_limits<int32_t>::digits, "");
+    EXPECT_FALSE(will_static_cast_truncate<double>(std::numeric_limits<int32_t>::max()));
+    EXPECT_FALSE(will_static_cast_truncate<double>(std::numeric_limits<int32_t>::max() - 1));
+
+    static_assert(std::numeric_limits<double>::digits >= std::numeric_limits<uint32_t>::digits, "");
+    EXPECT_FALSE(will_static_cast_truncate<double>(std::numeric_limits<uint32_t>::max()));
+    EXPECT_FALSE(will_static_cast_truncate<double>(std::numeric_limits<uint32_t>::max() - 1));
+}
+
+TEST(WillStaticCastTruncate, IntToFloatDependsOnValueInGeneral) {
+    static_assert(std::numeric_limits<float>::radix == 2, "Test assumes binary");
+
+    constexpr auto first_unrepresentable = (1 << std::numeric_limits<float>::digits) + 1;
+    EXPECT_FALSE(will_static_cast_truncate<float>(first_unrepresentable - 2));
+    EXPECT_FALSE(will_static_cast_truncate<float>(first_unrepresentable - 1));
+    EXPECT_TRUE(will_static_cast_truncate<float>(first_unrepresentable + 0));
+    EXPECT_FALSE(will_static_cast_truncate<float>(first_unrepresentable + 1));
+    EXPECT_TRUE(will_static_cast_truncate<float>(first_unrepresentable + 2));
+}
+
 TEST(WillStaticCastTruncate, AutomaticallyFalseForIntegralToIntegral) {
     EXPECT_FALSE(will_static_cast_truncate<int8_t>(uint8_t{127}));
     EXPECT_FALSE(will_static_cast_truncate<int8_t>(uint8_t{128}));

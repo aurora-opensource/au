@@ -82,6 +82,55 @@ TEST(CartesianProduct, CanHandleMultipleLayers) {
                                         std::tuple<A_2, B_2, C_2>>>();
 }
 
+template <typename T, typename U, typename R>
+std::string will_truncate(Quantity<U, R> q) {
+    return detail::will_static_cast_truncate<T>(q.in(U{})) ? "true" : "false";
+}
+
+template <typename T, typename U, typename R>
+std::string will_overflow(Quantity<U, R> q) {
+    return detail::will_static_cast_overflow<T>(q.in(U{})) ? "true" : "false";
+}
+
+template <typename TargetR, typename U, typename R, typename TargetUnitSlot>
+void explore_conversion(Quantity<U, R> q, TargetUnitSlot) {
+    // Set max floating point precision.
+    std::cout.precision(std::numeric_limits<long double>::digits10);
+
+    using TargetUnit = AssociatedUnitT<TargetUnitSlot>;
+    using Common = std::common_type_t<R, TargetR>;
+    std::cout << "Initial value:  " << q << " (rep: " << type_name<R>() << ")\n";
+    std::cout << "Common type:    " << type_name<Common>() << "\n";
+    std::cout << "  expect trunc: " << will_truncate<Common>(q) << "\n";
+    std::cout << "  expect overf: " << will_overflow<Common>(q) << "\n";
+    std::cout << "Val as common:  " << static_cast<Common>(q.in(U{})) << " (" << type_name<Common>()
+              << ")\n";
+
+    const auto intermediate = q.template as<Common>(TargetUnit{});
+
+    std::cout << "\nConvert to target" << std::endl;
+    std::cout << "As common rep : " << intermediate << "\n";
+
+    const auto destination = q.template as<TargetR>(TargetUnit{});
+    std::cout << "As target rep : " << destination << "\n";
+    std::cout << "  expect trunc: " << will_truncate<Common>(destination) << "\n";
+    std::cout << "  expect overf: " << will_overflow<Common>(destination) << "\n";
+
+    std::cout << "Back to common: " << static_cast<Common>(destination.in(TargetUnit{})) << " ("
+              << type_name<Common>() << ")\n";
+
+    const auto intermediate_back = destination.template as<Common>(U{});
+
+    std::cout << "\nConvert back to initial unit" << std::endl;
+    std::cout << "As common rep : " << intermediate_back << "\n";
+
+    const auto round_trip = destination.template as<R>(U{});
+    std::cout << "As initial rep: " << round_trip << "\n";
+
+    std::cout.flush();
+    std::terminate();
+}
+
 template <typename T>
 class QuantityRuntimeConversionChecker : public ::testing::Test {};
 

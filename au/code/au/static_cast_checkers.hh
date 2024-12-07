@@ -47,7 +47,7 @@ constexpr bool will_static_cast_truncate(Source x) {
 // We should categorize the situation as the FIRST match: each category's implementation may assume
 // that no higher category is a match.
 enum class OverflowSituation {
-    DEST_IS_STRICT_SUPERSET,
+    DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS,
     UNSIGNED_TO_INTEGRAL,
     SIGNED_TO_UNSIGNED,
     SIGNED_TO_SIGNED,
@@ -56,14 +56,27 @@ enum class OverflowSituation {
 
 template <typename Source, typename Dest>
 constexpr OverflowSituation categorize_overflow_situation() {
+    static_assert(std::is_arithmetic<Source>::value && std::is_arithmetic<Dest>::value,
+                  "Only arithmetic types are supported so far.");
+
     if (std::is_same<Source, Dest>::value) {
-        return OverflowSituation::DEST_IS_STRICT_SUPERSET;
+        return OverflowSituation::DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS;
+    }
+
+    if (std::is_integral<Source>::value && std::is_floating_point<Dest>::value) {
+        // Dest should always fully contain Source, but we'll double check to make sure.
+        return ((static_cast<long double>(std::numeric_limits<Dest>::max()) >=
+                 static_cast<long double>(std::numeric_limits<Source>::max())) &&
+                static_cast<long double>(std::numeric_limits<Dest>::lowest()) <=
+                    static_cast<long double>(std::numeric_limits<Source>::lowest()))
+                   ? OverflowSituation::DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS
+                   : OverflowSituation::UNEXPLORED;
     }
 
     if (std::is_integral<Source>::value && std::is_integral<Dest>::value) {
         if ((std::is_signed<Source>::value == std::is_signed<Dest>::value) &&
             (sizeof(Source) < sizeof(Dest))) {
-            return OverflowSituation::DEST_IS_STRICT_SUPERSET;
+            return OverflowSituation::DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS;
         }
 
         if (std::is_unsigned<Source>::value) {
@@ -107,7 +120,7 @@ struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::SIGNED_TO_SIGNED>
 };
 
 template <typename Source, typename Dest>
-struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::DEST_IS_STRICT_SUPERSET> {
+struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS> {
     static constexpr bool will_static_cast_overflow(Source x) { return false; }
 };
 
@@ -115,14 +128,32 @@ struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::DEST_IS_STRICT_SU
 // Truncation checking:
 
 enum class TruncationSituation {
-    INTEGRAL_TO_INTEGRAL,
+    CANNOT_TRUNCATE,
+    UNSIGNED_TO_FLOAT,
+    SIGNED_TO_FLOAT,
     UNEXPLORED,
 };
 
 template <typename Source, typename Dest>
 constexpr TruncationSituation categorize_truncation_situation() {
-    if (std::is_integral<Source>::value && std::is_integral<Dest>::value) {
-        return TruncationSituation::INTEGRAL_TO_INTEGRAL;
+    static_assert(std::is_arithmetic<Source>::value && std::is_arithmetic<Dest>::value,
+                  "Only arithmetic types are supported so far.");
+
+    if (std::is_same<Source, Dest>::value) {
+        return TruncationSituation::CANNOT_TRUNCATE;
+    }
+
+    if (std::is_integral<Source>::value) {
+        if (std::is_integral<Dest>::value) {
+            return TruncationSituation::CANNOT_TRUNCATE;
+        }
+
+        static_assert(std::numeric_limits<Dest>::radix == std::numeric_limits<Source>::radix,
+                      "No attempt yet to support mixed-radix");
+        return (std::numeric_limits<Dest>::digits >= std::numeric_limits<Source>::digits)
+                   ? TruncationSituation::CANNOT_TRUNCATE
+                   : (std::is_unsigned<Source>::value ? TruncationSituation::UNSIGNED_TO_FLOAT
+                                                      : TruncationSituation::SIGNED_TO_FLOAT);
     }
 
     return TruncationSituation::UNEXPLORED;
@@ -134,8 +165,28 @@ struct StaticCastTruncateImpl {
 };
 
 template <typename Source, typename Dest>
-struct StaticCastTruncateImpl<Source, Dest, TruncationSituation::INTEGRAL_TO_INTEGRAL> {
+struct StaticCastTruncateImpl<Source, Dest, TruncationSituation::CANNOT_TRUNCATE> {
     static constexpr bool will_static_cast_truncate(Source) { return false; }
+};
+
+template <typename Source, typename Dest>
+struct StaticCastTruncateImpl<Source, Dest, TruncationSituation::UNSIGNED_TO_FLOAT> {
+    static constexpr bool will_static_cast_truncate(Source x) {
+        constexpr auto MIN_NON_REPRESENTABLE_VAL =
+            (Source{1u} << std::numeric_limits<Dest>::digits) + 1u;
+        return (x >= MIN_NON_REPRESENTABLE_VAL) && (static_cast<Source>(static_cast<Dest>(x)) != x);
+    }
+};
+
+template <typename Source, typename Dest>
+struct StaticCastTruncateImpl<Source, Dest, TruncationSituation::SIGNED_TO_FLOAT> {
+    static constexpr bool will_static_cast_truncate(Source x) {
+        constexpr auto MIN_POS_NON_REPRESENTABLE_VAL =
+            (Source{1} << (std::numeric_limits<Dest>::digits - 1)) + 1;
+        constexpr auto MAX_NEG_NON_REPRESENTABLE_VAL = -MIN_POS_NON_REPRESENTABLE_VAL;
+        return (x >= MIN_POS_NON_REPRESENTABLE_VAL || x <= MAX_NEG_NON_REPRESENTABLE_VAL) &&
+               (static_cast<Source>(static_cast<Dest>(x)) != x);
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
