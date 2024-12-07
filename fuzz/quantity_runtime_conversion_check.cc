@@ -27,16 +27,32 @@
 namespace au {
 namespace detail {
 
-template <typename U, typename R>
-Quantity<U, R> next_higher_quantity(Quantity<U, R> q) {
-    static_assert(std::is_floating_point<R>::value, "");
-    return make_quantity<U>(std::nextafter(q.in(U{}), std::numeric_limits<R>::infinity()));
+template <typename T>
+T next_higher(T x, std::size_t n = 1u) {
+    static_assert(std::is_floating_point<T>::value, "");
+    while (n-- > 0u) {
+        x = std::nextafter(x, std::numeric_limits<T>::infinity());
+    }
+    return x;
+}
+
+template <typename T>
+T next_lower(T x, std::size_t n = 1u) {
+    static_assert(std::is_floating_point<T>::value, "");
+    while (n-- > 0u) {
+        x = std::nextafter(x, -std::numeric_limits<T>::infinity());
+    }
+    return x;
 }
 
 template <typename U, typename R>
-Quantity<U, R> next_lower_quantity(Quantity<U, R> q) {
-    static_assert(std::is_floating_point<R>::value, "");
-    return make_quantity<U>(std::nextafter(q.in(U{}), -std::numeric_limits<R>::infinity()));
+Quantity<U, R> next_higher_quantity(Quantity<U, R> q, std::size_t n = 1u) {
+    return make_quantity<U>(next_higher(q.in(U{}), n));
+}
+
+template <typename U, typename R>
+Quantity<U, R> next_lower_quantity(Quantity<U, R> q, std::size_t n = 1u) {
+    return make_quantity<U>(next_lower(q.in(U{}), n));
 }
 
 template <typename T>
@@ -203,22 +219,42 @@ struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::INTEGRAL_TO_I
     }
 };
 
+// This is very lazy.  The actual epsilon depends on the _size of the conversion factor_.
+//
+// However, we're using a small and fixed number of conversion factors.  This is good enough to get
+// us started.  Later on, we can explore the effects of more extreme conversion factors, and see
+// whether they introduce any categorically new cases.
+template <typename T>
+struct FloatingPointRoundTripEpsilon;
+template <>
+struct FloatingPointRoundTripEpsilon<float> {
+    // Adjust value as needed when we encounter failures that we don't think are failures.
+    static constexpr float value() { return 2.0e-4f; }
+};
+template <>
+struct FloatingPointRoundTripEpsilon<double> {
+    static constexpr double value() { return 1.0e-10; }
+};
+
 template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
 struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_FLOAT> {
     static LossCheck check_for_loss(const Quantity<UnitT, RepT> &value,
                                     const Quantity<DestUnitT, DestRepT> &,
                                     const Quantity<UnitT, RepT> &round_trip) {
-        using src_lim = std::numeric_limits<RepT>;
-        using dest_lim = std::numeric_limits<DestRepT>;
+        const auto sign = value < ZERO ? -1 : 1;
+        const auto min_ok = value * (1 - sign * FloatingPointRoundTripEpsilon<RepT>::value());
+        const auto max_ok = value * (1 + sign * FloatingPointRoundTripEpsilon<RepT>::value());
 
-        const RepT val_as_dest = static_cast<DestRepT>(value.in(UnitT{}));
-        const auto min_ok = make_quantity<UnitT>(std::nextafter(
-            static_cast<RepT>(std::nextafter(val_as_dest, dest_lim::lowest())), src_lim::lowest()));
-        const auto max_ok = make_quantity<UnitT>(std::nextafter(
-            static_cast<RepT>(std::nextafter(val_as_dest, dest_lim::max())), src_lim::max()));
+        std::ostringstream oss;
+        oss << "Breakdown:" << std::setprecision(std::numeric_limits<RepT>::digits10 + 1u)
+            << std::endl
+            << "  Initial:    " << value << std::endl
+            << "  Min OK:     " << min_ok << std::endl
+            << "  Round trip: " << round_trip << std::endl
+            << "  Max OK:     " << max_ok << std::endl;
 
         const bool actual_loss = (round_trip < min_ok) || (round_trip > max_ok);
-        return {actual_loss};
+        return {actual_loss, oss.str()};
     }
 };
 
@@ -231,8 +267,12 @@ struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::INTEGRAL_TO_F
             return {false};
         }
 
-        for (const auto &q :
-             {next_lower_quantity(destination), next_higher_quantity(destination)}) {
+        for (const auto &q : {
+                 next_lower_quantity(destination, 2u),
+                 next_lower_quantity(destination),
+                 next_higher_quantity(destination),
+                 next_higher_quantity(destination, 2u),
+             }) {
             if (q.template coerce_as<RepT>(UnitT{}) == value) {
                 return {false, "Within expected floating point error"};
             }

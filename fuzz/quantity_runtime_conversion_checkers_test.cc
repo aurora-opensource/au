@@ -111,6 +111,9 @@ void explore_conversion(Quantity<U, R> q, TargetUnitSlot) {
     std::cout << "\nConvert to target" << std::endl;
     std::cout << "As common rep : " << intermediate << "\n";
 
+    std::cout << "\nConversion factor" << std::endl;
+    std::cout << "Exact value:    " << mag_label(unit_ratio(U{}, TargetUnit{})) << "\n";
+
     const auto destination = q.template as<TargetR>(TargetUnit{});
     std::cout << "As target rep : " << destination << "\n";
     std::cout << "  expect trunc: " << will_truncate<Common>(destination) << "\n";
@@ -127,11 +130,28 @@ void explore_conversion(Quantity<U, R> q, TargetUnitSlot) {
     const auto round_trip = destination.template as<R>(U{});
     std::cout << "As initial rep: " << round_trip << "\n";
 
+    if (std::is_floating_point<R>::value) {
+        std::size_t dist = 0u;
+        auto x = round_trip.in(U{});
+        bool got_right_answer = true;
+        while (x != q.in(U{})) {
+            x = std::nextafter(x, q.in(U{}));
+            ++dist;
+            if (dist > 1000u) {
+                got_right_answer = false;
+                break;
+            }
+        }
+        std::cout << "Difference is " << dist << (got_right_answer ? "" : " (truncated)")
+                  << " ULPs\n";
+        std::cout << "Relative error is " << as_raw_number((round_trip - q) / q) << "\n";
+    }
+
     std::cout.flush();
     std::terminate();
 }
 
-TEST(a, b) { explore_conversion<float>(meters(int8_t{-26}), yards); }
+TEST(a, b) { explore_conversion<float>(meters(-13441457), miles); }
 
 template <typename T>
 class QuantityRuntimeConversionChecker : public ::testing::Test {};
