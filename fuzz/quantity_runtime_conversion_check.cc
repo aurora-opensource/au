@@ -84,7 +84,7 @@ struct ForEach<std::tuple<T, Ts...>> {
     }
 };
 
-enum class TestingScenarioCategory {
+enum class TestCategory {
     INTEGRAL_TO_INTEGRAL,
     INTEGRAL_TO_FLOAT,
     FLOAT_TO_INTEGRAL,
@@ -95,9 +95,9 @@ enum class TestingScenarioCategory {
 };
 
 template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
-constexpr TestingScenarioCategory categorize_testing_scenario() {
+constexpr TestCategory categorize_testing_scenario() {
     if (std::is_same<RepT, DestRepT>::value && std::is_same<UnitT, DestUnitT>::value) {
-        return TestingScenarioCategory::TRIVIAL;
+        return TestCategory::TRIVIAL;
     }
 
     using Common = std::common_type_t<RepT, DestRepT>;
@@ -105,33 +105,33 @@ constexpr TestingScenarioCategory categorize_testing_scenario() {
 
     if (is_integer(conversion_factor) &&
         (get_value_result<Common>(conversion_factor).outcome != MagRepresentationOutcome::OK)) {
-        return TestingScenarioCategory::IMPOSSIBLE;
+        return TestCategory::IMPOSSIBLE;
     }
 
     if (is_integer(mag<1>() / conversion_factor) &&
         (get_value_result<Common>(mag<1>() / conversion_factor).outcome !=
          MagRepresentationOutcome::OK)) {
-        return TestingScenarioCategory::IMPOSSIBLE;
+        return TestCategory::IMPOSSIBLE;
     }
 
     static_assert(std::is_integral<RepT>::value || std::is_floating_point<RepT>::value, "");
     static_assert(std::is_integral<DestRepT>::value || std::is_floating_point<DestRepT>::value, "");
     if (std::is_integral<RepT>::value) {
-        return std::is_integral<DestRepT>::value ? TestingScenarioCategory::INTEGRAL_TO_INTEGRAL
-                                                 : TestingScenarioCategory::INTEGRAL_TO_FLOAT;
+        return std::is_integral<DestRepT>::value ? TestCategory::INTEGRAL_TO_INTEGRAL
+                                                 : TestCategory::INTEGRAL_TO_FLOAT;
     } else {
-        return std::is_integral<DestRepT>::value ? TestingScenarioCategory::FLOAT_TO_INTEGRAL
-                                                 : TestingScenarioCategory::FLOAT_TO_FLOAT;
+        return std::is_integral<DestRepT>::value ? TestCategory::FLOAT_TO_INTEGRAL
+                                                 : TestCategory::FLOAT_TO_FLOAT;
     }
 
-    return TestingScenarioCategory::UNSUPPORTED;
+    return TestCategory::UNSUPPORTED;
 }
 
 template <typename RepT,
           typename UnitT,
           typename DestRepT,
           typename DestUnitT,
-          TestingScenarioCategory Category>
+          TestCategory Category>
 struct TestBodyImpl;
 
 template <bool R1Unsigned, bool R2Unsigned>
@@ -169,73 +169,65 @@ constexpr bool sign_flip(const Quantity<U1, R1> &a, const Quantity<U2, R2> &b) {
     return SignFlipImpl<std::is_unsigned<R1>::value, std::is_unsigned<R2>::value>::assess(a, b);
 }
 
-template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
-struct TestBodyImpl<RepT,
-                    UnitT,
-                    DestRepT,
-                    DestUnitT,
-                    TestingScenarioCategory::INTEGRAL_TO_INTEGRAL> {
-    static constexpr void test(const Quantity<UnitT, RepT> &value) {
-        const bool expect_loss = is_conversion_lossy<DestRepT>(value, DestUnitT{});
+struct LossCheck {
+    bool is_lossy;
+    std::string comment = "";
+};
 
-        const auto destination = value.template coerce_as<DestRepT>(DestUnitT{});
-        const auto round_trip = destination.template coerce_as<RepT>(UnitT{});
+template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT, TestCategory Cat>
+struct LossChecker {
+    static LossCheck check_for_loss(const Quantity<UnitT, RepT> &value,
+                                    const Quantity<DestUnitT, DestRepT> &,
+                                    const Quantity<UnitT, RepT> &round_trip) {
+        // Default implementation.
+        const bool actual_loss = (value != round_trip);
+        return {actual_loss};
+    }
+};
+
+template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
+struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::INTEGRAL_TO_INTEGRAL> {
+    static LossCheck check_for_loss(const Quantity<UnitT, RepT> &value,
+                                    const Quantity<DestUnitT, DestRepT> &destination,
+                                    const Quantity<UnitT, RepT> &round_trip) {
         const bool flipped = sign_flip(value, destination);
         const bool actual_loss = (value != round_trip) || flipped;
-
-        if (expect_loss != actual_loss) {
-            std::cout << "Error found for <" << type_name<RepT>() << ">(" << unit_label(UnitT{})
-                      << ") -> <" << type_name<DestRepT>() << ">(" << unit_label(DestUnitT{})
-                      << ")! " << std::endl
-                      << "Initial value: " << value << std::endl
-                      << "Round trip:    " << round_trip << std::endl
-                      << "Expect loss: " << (expect_loss ? "true" : "false") << std::endl
-                      << "Actual loss: " << (actual_loss ? "true" : "false")
-                      << (((round_trip == value) && flipped) ? " (sign flipped)" : "") << std::endl;
-            std::terminate();
-        }
+        return {actual_loss, flipped ? "Sign flipped" : ""};
     }
 };
 
 template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
-struct TestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestingScenarioCategory::INTEGRAL_TO_FLOAT> {
-    static constexpr void test(const Quantity<UnitT, RepT> &value) {
-        const bool expect_loss = is_conversion_lossy<DestRepT>(value, DestUnitT{});
-
-        const auto destination = value.template coerce_as<DestRepT>(DestUnitT{});
-        const auto round_trip = destination.template coerce_as<RepT>(UnitT{});
-
-        const bool actual_loss = (value != round_trip);
-        if (expect_loss != actual_loss) {
-            std::cout << "Error found for <" << type_name<RepT>() << ">(" << unit_label(UnitT{})
-                      << ") -> <" << type_name<DestRepT>() << ">(" << unit_label(DestUnitT{})
-                      << ")! " << std::endl
-                      << "Initial value: " << value << std::endl
-                      << "Round trip:    " << round_trip << std::endl
-                      << "Expect loss: " << (expect_loss ? "true" : "false") << std::endl
-                      << "Actual loss: " << (actual_loss ? "true" : "false") << std::endl;
-            std::terminate();
-        }
-    }
-};
-
-template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
-struct TestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestingScenarioCategory::FLOAT_TO_FLOAT> {
-    static constexpr void test(const Quantity<UnitT, RepT> &value) {
-        const bool expect_loss = is_conversion_lossy<DestRepT>(value, DestUnitT{});
-
-        const auto destination = value.template coerce_as<DestRepT>(DestUnitT{});
-        const auto round_trip = destination.template coerce_as<RepT>(UnitT{});
-
-        const RepT val_as_dest = static_cast<DestRepT>(value.in(UnitT{}));
+struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_FLOAT> {
+    static LossCheck check_for_loss(const Quantity<UnitT, RepT> &value,
+                                    const Quantity<DestUnitT, DestRepT> &,
+                                    const Quantity<UnitT, RepT> &round_trip) {
         using src_lim = std::numeric_limits<RepT>;
         using dest_lim = std::numeric_limits<DestRepT>;
+
+        const RepT val_as_dest = static_cast<DestRepT>(value.in(UnitT{}));
         const auto min_ok = make_quantity<UnitT>(std::nextafter(
             static_cast<RepT>(std::nextafter(val_as_dest, dest_lim::lowest())), src_lim::lowest()));
         const auto max_ok = make_quantity<UnitT>(std::nextafter(
             static_cast<RepT>(std::nextafter(val_as_dest, dest_lim::max())), src_lim::max()));
 
         const bool actual_loss = (round_trip < min_ok) || (round_trip > max_ok);
+        return {actual_loss};
+    }
+};
+
+template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT, TestCategory Cat>
+struct NominalTestBodyImpl : LossChecker<RepT, UnitT, DestRepT, DestUnitT, Cat> {
+    using LossChecker<RepT, UnitT, DestRepT, DestUnitT, Cat>::check_for_loss;
+
+    static void test(const Quantity<UnitT, RepT> &value) {
+        const bool expect_loss = is_conversion_lossy<DestRepT>(value, DestUnitT{});
+
+        const auto destination = value.template coerce_as<DestRepT>(DestUnitT{});
+        const auto round_trip = destination.template coerce_as<RepT>(UnitT{});
+
+        const auto loss_check = check_for_loss(value, destination, round_trip);
+        const bool actual_loss = loss_check.is_lossy;
+
         if (expect_loss != actual_loss) {
             std::cout << "Error found for <" << type_name<RepT>() << ">(" << unit_label(UnitT{})
                       << ") -> <" << type_name<DestRepT>() << ">(" << unit_label(DestUnitT{})
@@ -244,44 +236,40 @@ struct TestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestingScenarioCategory::F
                       << "Round trip:    " << round_trip << std::endl
                       << "Expect loss: " << (expect_loss ? "true" : "false") << std::endl
                       << "Actual loss: " << (actual_loss ? "true" : "false") << std::endl
-                      << "Min OK: " << min_ok << std::endl
-                      << "Max OK: " << max_ok << std::endl;
+                      << "Extra comments: " << loss_check.comment << std::endl;
             std::terminate();
         }
     }
 };
 
-template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
-struct TestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestingScenarioCategory::FLOAT_TO_INTEGRAL> {
-    static constexpr void test(const Quantity<UnitT, RepT> &value) {
-        const bool expect_loss = is_conversion_lossy<DestRepT>(value, DestUnitT{});
-
-        const auto destination = value.template coerce_as<DestRepT>(DestUnitT{});
-        const auto round_trip = destination.template coerce_as<RepT>(UnitT{});
-
-        const bool actual_loss = (value != round_trip);
-        if (expect_loss != actual_loss) {
-            std::cout << "Error found for <" << type_name<RepT>() << ">(" << unit_label(UnitT{})
-                      << ") -> <" << type_name<DestRepT>() << ">(" << unit_label(DestUnitT{})
-                      << ")! " << std::endl
-                      << "Initial value: " << value << std::endl
-                      << "Round trip:    " << round_trip << std::endl
-                      << "Expect loss: " << (expect_loss ? "true" : "false") << std::endl
-                      << "Actual loss: " << (actual_loss ? "true" : "false") << std::endl;
-            std::terminate();
-        }
-    }
+template <typename U, typename R>
+struct NoOpTestImpl {
+    static void test(const Quantity<U, R> &) {}
 };
 
 template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
-struct TestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestingScenarioCategory::TRIVIAL> {
-    static constexpr void test(const Quantity<UnitT, RepT> &) {}
-};
+struct TestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestCategory::INTEGRAL_TO_INTEGRAL>
+    : NominalTestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestCategory::INTEGRAL_TO_INTEGRAL> {};
 
 template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
-struct TestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestingScenarioCategory::IMPOSSIBLE> {
-    static constexpr void test(const Quantity<UnitT, RepT> &) {}
-};
+struct TestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestCategory::INTEGRAL_TO_FLOAT>
+    : NominalTestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestCategory::INTEGRAL_TO_FLOAT> {};
+
+template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
+struct TestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_FLOAT>
+    : NominalTestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_FLOAT> {};
+
+template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
+struct TestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_INTEGRAL>
+    : NominalTestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_INTEGRAL> {};
+
+template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
+struct TestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestCategory::TRIVIAL>
+    : NoOpTestImpl<UnitT, RepT> {};
+
+template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
+struct TestBodyImpl<RepT, UnitT, DestRepT, DestUnitT, TestCategory::IMPOSSIBLE>
+    : NoOpTestImpl<UnitT, RepT> {};
 
 template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT>
 struct TestBody : TestBodyImpl<RepT,
