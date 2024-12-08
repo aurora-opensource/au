@@ -852,6 +852,44 @@ TEST(WillConversionOverflow, SensitiveToTypeBoundariesForPureIntegerMultiply) {
     }
 }
 
+TEST(WillConversionOverflow, AlwaysFalseForQuantityEquivalentUnits) {
+    auto will_m_to_m_overflow = [](auto x) { return will_conversion_overflow(meters(x), meters); };
+
+    EXPECT_FALSE(will_m_to_m_overflow(2'147'483));
+    EXPECT_FALSE(will_m_to_m_overflow(-2'147'483));
+    EXPECT_FALSE(will_m_to_m_overflow(uint8_t{255}));
+}
+
+TEST(WillConversionOverflow, UnsignedToIntegralDependsOnBoundaryOfIntegral) {
+    EXPECT_FALSE(will_conversion_overflow<int16_t>(feet(uint16_t{65'535}), yards));
+
+    EXPECT_FALSE(will_conversion_overflow<int16_t>(feet(uint16_t{2'700}), inches));
+    EXPECT_TRUE(will_conversion_overflow<int16_t>(feet(uint16_t{2'800}), inches));
+}
+
+TEST(WillConversionOverflow, NegativeValuesAlwaysOverflowUnsignedDestination) {
+    EXPECT_TRUE(will_conversion_overflow<uint64_t>(feet(-1), inches));
+    EXPECT_TRUE(will_conversion_overflow<uint64_t>(feet(int8_t{-100}), yards));
+}
+
+TEST(WillConversionOverflow, SignedToUnsignedDependsOnBoundaryOfDestination) {
+    EXPECT_FALSE(will_conversion_overflow<uint8_t>(feet(21), inches));
+    EXPECT_TRUE(will_conversion_overflow<uint8_t>(feet(22), inches));
+}
+
+TEST(WillConversionOverflow, SignedToSignedHandlesNegativeAndPositiveLimits) {
+    EXPECT_TRUE(will_conversion_overflow<int8_t>(feet(-11), inches));
+    EXPECT_FALSE(will_conversion_overflow<int8_t>(feet(-10), inches));
+
+    EXPECT_FALSE(will_conversion_overflow<int8_t>(feet(10), inches));
+    EXPECT_TRUE(will_conversion_overflow<int8_t>(feet(11), inches));
+}
+
+TEST(WillConversionOverflow, FloatToIntHandlesLimitsOfDestType) {
+    EXPECT_FALSE(will_conversion_overflow<uint8_t>(feet(21.0), inches));
+    EXPECT_TRUE(will_conversion_overflow<uint8_t>(feet(22.0), inches));
+}
+
 TEST(WillConversionTruncate, UsesModForIntegerTypes) {
     auto will_in_to_ft_truncate_i32 = [](int32_t x) {
         return will_conversion_truncate(inches(x), feet);
@@ -876,6 +914,25 @@ TEST(WillConversionTruncate, UsesModForIntegerTypes) {
     EXPECT_TRUE(will_in_to_ft_truncate_i32(-119));
     EXPECT_FALSE(will_in_to_ft_truncate_i32(-120));
     EXPECT_TRUE(will_in_to_ft_truncate_i32(-121));
+}
+
+TEST(WillConversionTruncate, AlwaysFalseForQuantityEquivalentUnits) {
+    auto will_in_to_in_truncate = [](auto x) {
+        return will_conversion_truncate(inches(x), inches);
+    };
+
+    EXPECT_FALSE(will_in_to_in_truncate(uint8_t{124}));
+    EXPECT_FALSE(will_in_to_in_truncate(0));
+    EXPECT_FALSE(will_in_to_in_truncate(-120));
+}
+
+TEST(WillConversionTruncate, AlwaysFalseByConventionForFloatingPointDestination) {
+    EXPECT_FALSE(will_conversion_truncate<float>(miles(18'000'000'000'000'000'000u), inches));
+}
+
+TEST(WillConversionTruncate, FloatToIntHandlesFractionalParts) {
+    EXPECT_TRUE(will_conversion_truncate<uint8_t>(feet(0.1), inches));
+    EXPECT_FALSE(will_conversion_truncate<uint8_t>(feet(1.0), inches));
 }
 
 TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions) {
@@ -941,6 +998,16 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
     // Yards-to-meters (and vice versa) tests truncation and overflow.
     test_round_trip_for_every_uint16_value(yards, meters);
     test_round_trip_for_every_uint16_value(meters, yards);
+}
+
+TEST(IsConversionLossy, FloatToIntHandlesFractionalParts) {
+    EXPECT_TRUE(is_conversion_lossy<uint8_t>(feet(0.1), inches));
+    EXPECT_FALSE(is_conversion_lossy<uint8_t>(feet(1.0), inches));
+}
+
+TEST(IsConversionLossy, FloatToIntHandlesLimitsOfDestType) {
+    EXPECT_FALSE(is_conversion_lossy<uint8_t>(feet(21.0), inches));
+    EXPECT_TRUE(is_conversion_lossy<uint8_t>(feet(22.0), inches));
 }
 
 TEST(AreQuantityTypesEquivalent, RequiresSameRepAndEquivalentUnits) {

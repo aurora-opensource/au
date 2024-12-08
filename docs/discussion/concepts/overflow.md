@@ -130,7 +130,7 @@ ingredient that lets Au users use a wide variety of integral types with confiden
 
 ![The overflow safety surface](../../assets/overflow-safety-surface.png)
 
-### Check every conversion at runtime
+### Check every conversion at runtime {#check-at-runtime}
 
 While the overflow safety surface is a leap forward in safety and flexibility, it's still only
 a heuristic.  There will always be valid conversions which it forbids, and invalid ones which it
