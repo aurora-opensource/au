@@ -1,4 +1,4 @@
-// Copyright 2022 Aurora Operations, Inc.
+// Copyright 2024 Aurora Operations, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "au/constant.hh"
 #include "au/units/standard_gravity.hh"
-
-#include "au/prefix.hh"
-#include "au/testing.hh"
-#include "au/units/meters.hh"
-#include "au/units/seconds.hh"
-#include "gtest/gtest.h"
 
 namespace au {
 
-// We deleted all tests for this deprecated item to avoid deprecation warnings.
-//
-// We will remove this in Au 0.5.0.
+constexpr auto STANDARD_GRAVITY = make_constant(StandardGravity{});
 
 }  // namespace au

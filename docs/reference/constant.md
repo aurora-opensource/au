@@ -53,6 +53,7 @@ Here are the constants that we include with Au:
 | Planck constant | $h$ | $6.626\,070\,15 \times 10^{-34}\,\, \text{J} \cdot \text{s}$ | `planck_constant.hh` | `PLANCK_CONSTANT` |
 | Reduced Planck constant | $\hbar$ | $1.054\,571\,817 \times 10^{-34}\,\, \text{J} \cdot \text{s}$ | `reduced_planck_constant.hh` | `REDUCED_PLANCK_CONSTANT` |
 | Speed of light | $c$ | $299\,792\,458\,\, \text{m} / \text{s}$ | `speed_of_light.hh` | `SPEED_OF_LIGHT` |
+| Standard Gravity | $g_0$ | $9.806\,65\,\, \text{m} / \text{s}^2$ | `standard_gravity.hh` | `STANDARD_GRAVITY` |
 
 Our policy is to include only exactly defined constants with the library.  This rules out many
 useful constants, such as the universal gravitational constant $G$, the _new_ (post-2019) permeability
