@@ -155,6 +155,7 @@ cc_test(
     size = "small",
     srcs = glob(["code/au/units/test/*.cc"]),
     deps = [
+        ":constants",
         ":testing",
         ":units",
         "@com_google_googletest//:gtest_main",

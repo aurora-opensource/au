@@ -33,14 +33,16 @@ struct StandardGravityLabel {
 template <typename T>
 constexpr const char StandardGravityLabel<T>::label[];
 
-struct [[deprecated(
-    "Use the `STANDARD_GRAVITY` constant instead (see: "
-    "https://aurora-opensource.github.io/au/main/reference/constant/#built-in)")]] StandardGravity
+struct StandardGravity
     : decltype((Meters{} / squared(Seconds{})) * (mag<980'665>() / mag<100'000>())),
       StandardGravityLabel<void> {
     using StandardGravityLabel<void>::label;
 };
-constexpr auto standard_gravity = QuantityMaker<StandardGravity>{};
+
+[[deprecated(
+    "Use the `STANDARD_GRAVITY` constant instead (see: "
+    "https://aurora-opensource.github.io/au/main/reference/constant/#built-in)")]] constexpr auto
+    standard_gravity = QuantityMaker<StandardGravity>{};
 
 namespace symbols {
 constexpr auto g_0 = SymbolFor<StandardGravity>{};

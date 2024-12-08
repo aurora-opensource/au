@@ -14,15 +14,18 @@
 
 #include "au/units/pounds_force.hh"
 
+#include "au/constants/standard_gravity.hh"
 #include "au/testing.hh"
 #include "gtest/gtest.h"
 
 namespace au {
 
+constexpr auto g0 = STANDARD_GRAVITY;
+
 TEST(PoundsForce, HasExpectedLabel) { expect_label<PoundsForce>("lbf"); }
 
 TEST(PoundsForce, EquivalentToStandardGravityActingOnPoundMass) {
-    EXPECT_THAT(pounds_force(123), QuantityEquivalent((pound_mass * standard_gravity)(123)));
+    EXPECT_THAT(pounds_force(123), QuantityEquivalent(pounds_mass(123) * g0));
 }
 
 TEST(PoundsForce, HasExpectedSymbol) {

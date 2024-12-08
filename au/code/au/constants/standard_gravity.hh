@@ -13,27 +13,10 @@
 // limitations under the License.
 
 #include "au/constant.hh"
-#include "au/units/meters.hh"
-#include "au/units/seconds.hh"
+#include "au/units/standard_gravity.hh"
 
 namespace au {
 
-namespace detail {
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct StandardGravityLabel {
-    static constexpr const char label[] = "g_0";
-};
-template <typename T>
-constexpr const char StandardGravityLabel<T>::label[];
-struct StandardGravityUnit
-    : decltype(Meters{} / squared(Seconds{}) * mag<980'665>() / pow<5>(mag<10>())),
-      StandardGravityLabel<void> {
-    using StandardGravityLabel<void>::label;
-};
-}  // namespace detail
-
-constexpr auto STANDARD_GRAVITY = make_constant(detail::StandardGravityUnit{});
+constexpr auto STANDARD_GRAVITY = make_constant(StandardGravity{});
 
 }  // namespace au
