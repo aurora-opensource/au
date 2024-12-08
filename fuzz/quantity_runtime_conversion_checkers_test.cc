@@ -122,10 +122,17 @@ void explore_conversion(Quantity<U, R> q, TargetUnitSlot) {
     std::cout << "Back to common: " << static_cast<Common>(destination.in(TargetUnit{})) << " ("
               << type_name<Common>() << ")\n";
 
+    std::cout << "  Will conv trunc? " << will_conversion_truncate(destination, U{}) << "\n";
+    std::cout << "  Will conv overf? " << will_conversion_overflow(destination, U{}) << "\n";
+
     const auto intermediate_back = destination.template as<Common>(U{});
 
     std::cout << "\nConvert back to initial unit" << std::endl;
     std::cout << "As common rep : " << intermediate_back << "\n";
+
+    std::cout << "\nStatic cast back to initial rep" << std::endl;
+    std::cout << "  expect trunc: " << will_truncate<R>(intermediate_back) << "\n";
+    std::cout << "  expect overf: " << will_overflow<R>(intermediate_back) << "\n";
 
     const auto round_trip = destination.template as<R>(U{});
     std::cout << "As initial rep: " << round_trip << "\n";
@@ -151,7 +158,7 @@ void explore_conversion(Quantity<U, R> q, TargetUnitSlot) {
     std::terminate();
 }
 
-TEST(a, b) { explore_conversion<float>(meters(-13441457), miles); }
+TEST(a, b) { explore_conversion<int>(miles(-114.269012f), inches); }
 
 template <typename T>
 class QuantityRuntimeConversionChecker : public ::testing::Test {};

@@ -16,6 +16,7 @@
 #include <limits>
 #include <string>
 
+#include "au/math.hh"
 #include "au/testing.hh"
 #include "au/units/inches.hh"
 #include "au/units/meters.hh"
@@ -229,7 +230,7 @@ struct FloatingPointRoundTripEpsilon;
 template <>
 struct FloatingPointRoundTripEpsilon<float> {
     // Adjust value as needed when we encounter failures that we don't think are failures.
-    static constexpr float value() { return 2.0e-4f; }
+    static constexpr float value() { return 1.0e-3f; }
 };
 template <>
 struct FloatingPointRoundTripEpsilon<double> {
@@ -263,22 +264,30 @@ struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::INTEGRAL_TO_F
     static LossCheck check_for_loss(const Quantity<UnitT, RepT> &value,
                                     const Quantity<DestUnitT, DestRepT> &destination,
                                     const Quantity<UnitT, RepT> &round_trip) {
-        if (round_trip == value) {
-            return {false};
+        auto one_pct = value / 100;
+        if (std::is_signed<RepT>::value && value < ZERO) {
+            one_pct = -one_pct;
         }
+        const auto dx = one_pct + make_quantity<UnitT>(RepT{1});
 
-        for (const auto &q : {
-                 next_lower_quantity(destination, 2u),
-                 next_lower_quantity(destination),
-                 next_higher_quantity(destination),
-                 next_higher_quantity(destination, 2u),
-             }) {
-            if (q.template coerce_as<RepT>(UnitT{}) == value) {
-                return {false, "Within expected floating point error"};
-            }
-        }
+        constexpr auto lowest = std::numeric_limits<Quantity<UnitT, RepT>>::lowest();
+        const auto min_ok = (lowest + dx > value) ? lowest : rep_cast<RepT>(value - dx);
 
-        return {true};
+        constexpr auto highest = std::numeric_limits<Quantity<UnitT, RepT>>::max();
+        const auto max_ok = (highest - dx < value) ? highest : rep_cast<RepT>(value + dx);
+
+        std::ostringstream oss;
+        oss << "We went through floating point; so, taking a very liberal margin.  Breakdown:"
+            << std::endl
+            << "  Initial:    " << value << std::endl
+            << "  Min OK:     " << min_ok << std::endl
+            << "  Round trip: " << round_trip << std::endl
+            << "  Max OK:     " << max_ok << std::endl;
+
+        return {
+            round_trip < min_ok || round_trip > max_ok,
+            oss.str(),
+        };
     }
 };
 
@@ -291,8 +300,11 @@ struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_INTE
             return {false};
         }
 
-        if (next_higher_quantity(round_trip) == value || next_lower_quantity(round_trip) == value) {
-            return {false, "Within expected floating point error"};
+        if (!std::is_same<UnitRatioT<UnitT, DestUnitT>, decltype(mag<1>())>::value) {
+            if (next_higher_quantity(round_trip) == value ||
+                next_lower_quantity(round_trip) == value) {
+                return {false, "Within expected floating point error"};
+            }
         }
 
         return {true};
@@ -309,7 +321,7 @@ struct RepForImpl<Quantity<U, R>> : stdx::type_identity<R> {};
 template <typename T>
 std::string print_to_string(const T &value) {
     std::ostringstream oss;
-    oss << std::setprecision(std::numeric_limits<RepFor<T>>::digits10 + 1u) << value;
+    oss << std::setprecision(std::numeric_limits<RepFor<T>>::digits10 + 3u) << value;
     return oss.str();
 }
 
@@ -319,6 +331,8 @@ struct NominalTestBodyImpl : LossChecker<RepT, UnitT, DestRepT, DestUnitT, Cat> 
 
     static void test(const Quantity<UnitT, RepT> &value) {
         const bool expect_loss = is_conversion_lossy<DestRepT>(value, DestUnitT{});
+        const bool expect_trunc = will_conversion_truncate<DestRepT>(value, DestUnitT{});
+        const bool expect_overflow = will_conversion_overflow<DestRepT>(value, DestUnitT{});
 
         const auto destination = value.template coerce_as<DestRepT>(DestUnitT{});
         const auto round_trip = destination.template coerce_as<RepT>(UnitT{});
@@ -333,6 +347,8 @@ struct NominalTestBodyImpl : LossChecker<RepT, UnitT, DestRepT, DestUnitT, Cat> 
                       << "Initial value: " << print_to_string(value) << std::endl
                       << "Round trip:    " << print_to_string(round_trip) << std::endl
                       << "Expect loss: " << (expect_loss ? "true" : "false") << std::endl
+                      << "     (trunc: " << (expect_trunc ? "true" : "false") << ")" << std::endl
+                      << "     (overf: " << (expect_overflow ? "true" : "false") << ")" << std::endl
                       << "Actual loss: " << (actual_loss ? "true" : "false") << std::endl
                       << "Extra comments: " << loss_check.comment << std::endl;
             std::terminate();

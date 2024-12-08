@@ -143,8 +143,6 @@ struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::DEST_BOUNDS_CONTA
 
 enum class TruncationSituation {
     CANNOT_TRUNCATE,
-    UNSIGNED_TO_FLOAT,
-    SIGNED_TO_FLOAT,
     FLOAT_TO_INTEGRAL,
     UNEXPLORED,
 };
@@ -159,16 +157,7 @@ constexpr TruncationSituation categorize_truncation_situation() {
     }
 
     if (std::is_integral<Source>::value) {
-        if (std::is_integral<Dest>::value) {
-            return TruncationSituation::CANNOT_TRUNCATE;
-        }
-
-        static_assert(std::numeric_limits<Dest>::radix == std::numeric_limits<Source>::radix,
-                      "No attempt yet to support mixed-radix");
-        return (std::numeric_limits<Dest>::digits >= std::numeric_limits<Source>::digits)
-                   ? TruncationSituation::CANNOT_TRUNCATE
-                   : (std::is_unsigned<Source>::value ? TruncationSituation::UNSIGNED_TO_FLOAT
-                                                      : TruncationSituation::SIGNED_TO_FLOAT);
+        return TruncationSituation::CANNOT_TRUNCATE;
     }
 
     if (std::is_floating_point<Source>::value) {
@@ -188,26 +177,6 @@ struct StaticCastTruncateImpl {
 template <typename Source, typename Dest>
 struct StaticCastTruncateImpl<Source, Dest, TruncationSituation::CANNOT_TRUNCATE> {
     static constexpr bool will_static_cast_truncate(Source) { return false; }
-};
-
-template <typename Source, typename Dest>
-struct StaticCastTruncateImpl<Source, Dest, TruncationSituation::UNSIGNED_TO_FLOAT> {
-    static constexpr bool will_static_cast_truncate(Source x) {
-        constexpr auto MIN_NON_REPRESENTABLE_VAL =
-            (Source{1u} << std::numeric_limits<Dest>::digits) + 1u;
-        return (x >= MIN_NON_REPRESENTABLE_VAL) && (static_cast<Source>(static_cast<Dest>(x)) != x);
-    }
-};
-
-template <typename Source, typename Dest>
-struct StaticCastTruncateImpl<Source, Dest, TruncationSituation::SIGNED_TO_FLOAT> {
-    static constexpr bool will_static_cast_truncate(Source x) {
-        constexpr auto MIN_POS_NON_REPRESENTABLE_VAL =
-            (Source{1} << (std::numeric_limits<Dest>::digits - 1)) + 1;
-        constexpr auto MAX_NEG_NON_REPRESENTABLE_VAL = -MIN_POS_NON_REPRESENTABLE_VAL;
-        return (x >= MIN_POS_NON_REPRESENTABLE_VAL || x <= MAX_NEG_NON_REPRESENTABLE_VAL) &&
-               (static_cast<Source>(static_cast<Dest>(x)) != x);
-    }
 };
 
 template <typename Source, typename Dest>

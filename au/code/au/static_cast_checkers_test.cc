@@ -66,15 +66,15 @@ TEST(WillStaticCastTruncate, IntToFloatFalseForIntTypeThatCanFitInFloat) {
     EXPECT_FALSE(will_static_cast_truncate<double>(std::numeric_limits<uint32_t>::max() - 1));
 }
 
-TEST(WillStaticCastTruncate, IntToFloatDependsOnValueInGeneral) {
+TEST(WillStaticCastTruncate, IntToFloatFalseByConvention) {
     static_assert(std::numeric_limits<float>::radix == 2, "Test assumes binary");
 
     constexpr auto first_unrepresentable = (1 << std::numeric_limits<float>::digits) + 1;
     EXPECT_FALSE(will_static_cast_truncate<float>(first_unrepresentable - 2));
     EXPECT_FALSE(will_static_cast_truncate<float>(first_unrepresentable - 1));
-    EXPECT_TRUE(will_static_cast_truncate<float>(first_unrepresentable + 0));
+    EXPECT_FALSE(will_static_cast_truncate<float>(first_unrepresentable + 0));  // Nonrepresentable.
     EXPECT_FALSE(will_static_cast_truncate<float>(first_unrepresentable + 1));
-    EXPECT_TRUE(will_static_cast_truncate<float>(first_unrepresentable + 2));
+    EXPECT_FALSE(will_static_cast_truncate<float>(first_unrepresentable + 2));  // Nonrepresentable.
 }
 
 TEST(WillStaticCastTruncate, AutomaticallyFalseForIntegralToIntegral) {
