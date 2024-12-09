@@ -400,7 +400,8 @@ cost usually doesn't matter.
     preferred error handling mechanism (exceptions, optional, return codes, and so on).  See our
     [overflow guide](../discussion/concepts/overflow.md#check-at-runtime) for more details.
 
-We provide one checkers for overflow, truncation, and general lossiness (which combines both).
+We provide individual checkers for overflow and truncation, as well as a checker for general
+lossiness (which combines both).
 
 #### `will_conversion_overflow`
 
@@ -434,9 +435,9 @@ Here are the usage patterns, and their corresponding signatures.
 #### `will_conversion_truncate`
 
 `will_conversion_truncate` takes a `Quantity` value and a target unit, and returns whether the
-conversion will truncate.  For example, if the target unit is `feet`, then `inches(61)` _would_
-truncate, but `inches(60)` would _not_ truncate.  Users can also provide an "explicit rep" template
-parameter to check the corresponding explicit-rep conversion.
+conversion will truncate.  For example, if the target unit is `feet`, then `inches(13)` and
+`inches(11)` _would_ truncate, but `inches(12)` would _not_ truncate. Users can also provide an
+"explicit rep" template parameter to check the corresponding explicit-rep conversion.
 
 !!! warning "Warning: floating point destination types are treated as non-truncating"
     Consistent with the rest of the library, and with the convention established by the
