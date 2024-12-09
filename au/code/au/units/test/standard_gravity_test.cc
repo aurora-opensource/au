@@ -25,12 +25,12 @@ namespace au {
 TEST(StandardGravity, HasExpectedLabel) { expect_label<StandardGravity>("g_0"); }
 
 TEST(StandardGravity, HasExpectedValue) {
-    EXPECT_EQ(make_quantity<StandardGravity>(1L), (micro(meters) / squared(second))(9'806'650L));
+    EXPECT_EQ(standard_gravity(1L), (micro(meters) / squared(second))(9'806'650L));
 }
 
 TEST(StandardGravity, HasExpectedSymbol) {
     using symbols::g_0;
-    EXPECT_THAT(5 * g_0, SameTypeAndValue(make_quantity<StandardGravity>(5)));
+    EXPECT_THAT(5 * g_0, SameTypeAndValue(standard_gravity(5)));
 }
 
 }  // namespace au
