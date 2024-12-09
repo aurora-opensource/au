@@ -19,13 +19,14 @@
 #include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <exception>
 #include <limits>
 #include <ostream>
 #include <ratio>
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-54-gc3480e8
+// Version identifier: 0.3.5-55-g9aaeb79
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -903,6 +904,195 @@ struct identity {
 };
 
 }  // namespace stdx
+}  // namespace au
+
+
+namespace au {
+namespace detail {
+
+template <typename Source, typename Dest>
+struct StaticCastChecker;
+
+template <typename Dest, typename Source>
+constexpr bool will_static_cast_overflow(Source x) {
+    return StaticCastChecker<Source, Dest>::will_static_cast_overflow(x);
+}
+
+template <typename Dest, typename Source>
+constexpr bool will_static_cast_truncate(Source x) {
+    return StaticCastChecker<Source, Dest>::will_static_cast_truncate(x);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Implementation details below.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Overflow checking:
+
+// Earlier enum values have higher priority than later ones.
+enum class OverflowSituation {
+    DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS,
+    UNSIGNED_TO_INTEGRAL,
+    SIGNED_TO_UNSIGNED,
+    SIGNED_TO_SIGNED,
+    FLOAT_TO_ANYTHING,
+
+    // If we categorize as this "catch-all" category, then we've hit a case that we haven't yet
+    // handled.  This will result in a compiler error.  We can decide how to handle it at that time.
+    UNEXPLORED,
+};
+
+template <typename Source, typename Dest>
+constexpr OverflowSituation categorize_overflow_situation() {
+    static_assert(std::is_arithmetic<Source>::value && std::is_arithmetic<Dest>::value,
+                  "Only arithmetic types are supported so far.");
+
+    if (std::is_integral<Source>::value && std::is_integral<Dest>::value) {
+        if ((std::is_signed<Source>::value == std::is_signed<Dest>::value) &&
+            (sizeof(Source) <= sizeof(Dest))) {
+            return OverflowSituation::DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS;
+        }
+
+        if (std::is_unsigned<Source>::value) {
+            return OverflowSituation::UNSIGNED_TO_INTEGRAL;
+        }
+
+        return std::is_unsigned<Dest>::value ? OverflowSituation::SIGNED_TO_UNSIGNED
+                                             : OverflowSituation::SIGNED_TO_SIGNED;
+    }
+
+    if (std::is_integral<Source>::value && std::is_floating_point<Dest>::value) {
+        // For any integral-to-floating-point situation, `Dest` should always fully contain
+        // `Source`.  This code simply double checks our assumption.
+        return ((static_cast<long double>(std::numeric_limits<Dest>::max()) >=
+                 static_cast<long double>(std::numeric_limits<Source>::max())) &&
+                (static_cast<long double>(std::numeric_limits<Dest>::lowest()) <=
+                 static_cast<long double>(std::numeric_limits<Source>::lowest())))
+                   ? OverflowSituation::DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS
+                   : OverflowSituation::UNEXPLORED;
+    }
+
+    if (std::is_floating_point<Source>::value && std::is_integral<Dest>::value) {
+        return OverflowSituation::FLOAT_TO_ANYTHING;
+    }
+
+    if (std::is_floating_point<Source>::value && std::is_floating_point<Dest>::value) {
+        return (sizeof(Source) <= sizeof(Dest))
+                   ? OverflowSituation::DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS
+                   : OverflowSituation::FLOAT_TO_ANYTHING;
+    }
+
+    return OverflowSituation::UNEXPLORED;
+}
+
+template <typename Source, typename Dest, OverflowSituation Cat>
+struct StaticCastOverflowImpl;
+
+template <typename Source, typename Dest>
+struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS> {
+    static constexpr bool will_static_cast_overflow(Source) { return false; }
+};
+
+template <typename Source, typename Dest>
+struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::UNSIGNED_TO_INTEGRAL> {
+    static constexpr bool will_static_cast_overflow(Source x) {
+        // Note that we know that the max value of `Dest` can fit into `Source`, because otherwise,
+        // this would have been categorized as `DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS` rather than
+        // `UNSIGNED_TO_INTEGRAL`.
+        return x > static_cast<Source>(std::numeric_limits<Dest>::max());
+    }
+};
+
+template <typename Source, typename Dest>
+struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::SIGNED_TO_UNSIGNED> {
+    static constexpr bool will_static_cast_overflow(Source x) {
+        return (x < 0) ||
+               (static_cast<std::make_unsigned_t<Source>>(x) >
+                static_cast<std::make_unsigned_t<Source>>(std::numeric_limits<Dest>::max()));
+    }
+};
+
+template <typename Source, typename Dest>
+struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::SIGNED_TO_SIGNED> {
+    static constexpr bool will_static_cast_overflow(Source x) {
+        return (x < static_cast<Source>(std::numeric_limits<Dest>::lowest())) ||
+               (x > static_cast<Source>(std::numeric_limits<Dest>::max()));
+    }
+};
+
+template <typename Source, typename Dest>
+struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::FLOAT_TO_ANYTHING> {
+    static constexpr bool will_static_cast_overflow(Source x) {
+        // It's pretty safe to assume that `Source` can hold the limits of `Dest`, because otherwise
+        // this would have been categorized as `DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS` rather than
+        // `FLOAT_TO_ANYTHING`.
+        return (x < static_cast<Source>(std::numeric_limits<Dest>::lowest())) ||
+               (x > static_cast<Source>(std::numeric_limits<Dest>::max()));
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Truncation checking:
+
+enum class TruncationSituation {
+    CANNOT_TRUNCATE,
+    FLOAT_TO_INTEGRAL,
+
+    // If we categorize as this "catch-all" category, then we've hit a case that we haven't yet
+    // handled.  This will result in a compiler error.  We can decide how to handle it at that time.
+    UNEXPLORED,
+};
+
+template <typename Source, typename Dest>
+constexpr TruncationSituation categorize_truncation_situation() {
+    static_assert(std::is_arithmetic<Source>::value && std::is_arithmetic<Dest>::value,
+                  "Only arithmetic types are supported so far.");
+
+    if (std::is_same<Source, Dest>::value) {
+        return TruncationSituation::CANNOT_TRUNCATE;
+    }
+
+    if (std::is_floating_point<Dest>::value) {
+        // We explicitly treat floating point destinations as value-preserving, as does the rest of
+        // the library.  This isn't strictly true, but if a user is going into the floating point
+        // domain, we assume they are OK with the usual floating point errors.
+        return TruncationSituation::CANNOT_TRUNCATE;
+    }
+
+    if (std::is_integral<Source>::value) {
+        return TruncationSituation::CANNOT_TRUNCATE;
+    }
+
+    if (std::is_floating_point<Source>::value && std::is_integral<Dest>::value) {
+        return TruncationSituation::FLOAT_TO_INTEGRAL;
+    }
+
+    return TruncationSituation::UNEXPLORED;
+}
+
+template <typename Source, typename Dest, TruncationSituation Cat>
+struct StaticCastTruncateImpl;
+
+template <typename Source, typename Dest>
+struct StaticCastTruncateImpl<Source, Dest, TruncationSituation::CANNOT_TRUNCATE> {
+    static constexpr bool will_static_cast_truncate(Source) { return false; }
+};
+
+template <typename Source, typename Dest>
+struct StaticCastTruncateImpl<Source, Dest, TruncationSituation::FLOAT_TO_INTEGRAL> {
+    static constexpr bool will_static_cast_truncate(Source x) { return std::trunc(x) != x; }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Main implementation:
+
+template <typename Source, typename Dest>
+struct StaticCastChecker
+    : StaticCastOverflowImpl<Source, Dest, categorize_overflow_situation<Source, Dest>()>,
+      StaticCastTruncateImpl<Source, Dest, categorize_truncation_situation<Source, Dest>()> {};
+
+}  // namespace detail
 }  // namespace au
 
 
@@ -5592,6 +5782,26 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_
         q.in(U{}));
 }
 
+// Check conversion for overflow (new rep).
+template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
+constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit) {
+    // TODO(#349): Someday, we would like a more efficient implementation --- one that simply
+    // computes, at compile time, the smallest value that would overflow, and then compares against
+    // that.  This version will at least let us get off the ground for now.
+    using Common = std::common_type_t<R, TargetRep>;
+    if (detail::will_static_cast_overflow<Common>(q.in(U{}))) {
+        return true;
+    }
+
+    const auto to_common = rep_cast<Common>(q);
+    if (will_conversion_overflow(to_common, target_unit)) {
+        return true;
+    }
+
+    const auto converted_but_not_narrowed = to_common.coerce_in(target_unit);
+    return detail::will_static_cast_overflow<TargetRep>(converted_but_not_narrowed);
+}
+
 // Check conversion for truncation (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit) {
@@ -5599,10 +5809,34 @@ constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_
         q.in(U{}));
 }
 
+// Check conversion for truncation (new rep).
+template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
+constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit) {
+    using Common = std::common_type_t<R, TargetRep>;
+    if (detail::will_static_cast_truncate<Common>(q.in(U{}))) {
+        return true;
+    }
+
+    const auto to_common = rep_cast<Common>(q);
+    if (will_conversion_truncate(to_common, target_unit)) {
+        return true;
+    }
+
+    const auto converted_but_not_narrowed = to_common.coerce_in(target_unit);
+    return detail::will_static_cast_truncate<TargetRep>(converted_but_not_narrowed);
+}
+
 // Check for any lossiness in conversion (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit) {
     return will_conversion_truncate(q, target_unit) || will_conversion_overflow(q, target_unit);
+}
+
+// Check for any lossiness in conversion (new rep).
+template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
+constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit) {
+    return will_conversion_truncate<TargetRep>(q, target_unit) ||
+           will_conversion_overflow<TargetRep>(q, target_unit);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

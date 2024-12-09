@@ -1456,6 +1456,48 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#runtime-conversion-checkers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Runtime conversion checkers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Runtime conversion checkers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#will_conversion_overflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      will_conversion_overflow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#will_conversion_truncate" class="md-nav__link">
+    <span class="md-ellipsis">
+      will_conversion_truncate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is_conversion_lossy" class="md-nav__link">
+    <span class="md-ellipsis">
+      is_conversion_lossy
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#as-raw-number" class="md-nav__link">
     <span class="md-ellipsis">
       Special case: dimensionless and unitless results
@@ -2492,9 +2534,122 @@ truncates: so, for example, <code>inches(23).coerce_as(feet)</code> would produc
 </details>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Prefer <strong>not</strong> to use the &ldquo;coercing versions&rdquo; if possible, because you will get more safety
-checks.  The risks which the &ldquo;base&rdquo; versions warn about are real.</p>
+<p>In most cases, prefer <strong>not</strong> to use the &ldquo;coercing versions&rdquo; if possible, because you will get
+more safety checks.  The risks which the &ldquo;base&rdquo; versions warn about are real.</p>
+<p>However, one place where it&rsquo;s <em>very safe</em> to use the &ldquo;coercing versions&rdquo; is right after running
+a <em>runtime conversion checker</em>.  These provde <em>exact</em> conversion checks, even more accurate than
+the default compile-time safety surface (although at the cost of runtime operations).  See the
+next section for more details.</p>
 </div>
+<h3 id="runtime-conversion-checkers">Runtime conversion checkers<a class="headerlink" href="#runtime-conversion-checkers" title="Permanent link">&para;</a></h3>
+<p>Au&rsquo;s default, compile-time conversion checks are only heuristics, based on the <em>general</em> risk of
+overflow or truncation.  They operate on the conversion as a whole, not on specific values.  This
+means that some input values for forbidden conversions would actually be just fine, while some input
+values for permitted conversions would be lossy.</p>
+<p>This section documents a more exact alternative: the <em>runtime conversion checkers</em>, which can detect
+overflow or truncation for specific runtime values.  The downside is that you will pay a runtime
+penalty for these checks, as opposed to the compile-time checks which are basically free.  However,
+unit conversions very rarely occur in the &ldquo;hot loops&rdquo; of well designed programs, so this performance
+cost usually doesn&rsquo;t matter.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>A great way to use these functions is to write your own conversion utilities, using your
+preferred error handling mechanism (exceptions, optional, return codes, and so on).  See our
+<a href="../../discussion/concepts/overflow/#check-at-runtime">overflow guide</a> for more details.</p>
+</div>
+<p>We provide one checkers for overflow, truncation, and general lossiness (which combines both).</p>
+<h4 id="will_conversion_overflow"><code>will_conversion_overflow</code><a class="headerlink" href="#will_conversion_overflow" title="Permanent link">&para;</a></h4>
+<p><code>will_conversion_overflow</code> takes a <code>Quantity</code> value and a target unit, and returns whether the
+conversion will overflow.  Users can also provide an &ldquo;explicit rep&rdquo; template parameter to check the
+corresponding explicit-rep conversion.</p>
+<p>We define &ldquo;overflow&rdquo; as a value that would either be lower than the lowest representable number in
+the target type, or higher than the highest representable number.  The precise implementation will
+depend on the types involved.  For example, if the input is an unsigned integral type, we won&rsquo;t
+emit a runtime instruction to check the lower bound of the target.</p>
+<p>Here are the usage patterns, and their corresponding signatures.</p>
+<ul>
+<li>
+<p><code>will_conversion_overflow(q, target_unit)</code> returns whether <code>q.as(target_unit)</code>, or
+  <code>q.in(target_unit)</code>, would overflow.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">will_conversion_overflow</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
+</code></pre></div>
+</li>
+<li>
+<p><code>will_conversion_overflow&lt;T&gt;(q, target_unit)</code> returns whether <code>q.as&lt;T&gt;(target_unit)</code>, or
+  <code>q.in&lt;T&gt;(target_unit)</code>, would overflow.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetRep</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">will_conversion_overflow</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
+</code></pre></div>
+</li>
+</ul>
+<h4 id="will_conversion_truncate"><code>will_conversion_truncate</code><a class="headerlink" href="#will_conversion_truncate" title="Permanent link">&para;</a></h4>
+<p><code>will_conversion_truncate</code> takes a <code>Quantity</code> value and a target unit, and returns whether the
+conversion will truncate.  For example, if the target unit is <code>feet</code>, then <code>inches(61)</code> <em>would</em>
+truncate, but <code>inches(60)</code> would <em>not</em> truncate.  Users can also provide an &ldquo;explicit rep&rdquo; template
+parameter to check the corresponding explicit-rep conversion.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning: floating point destination types are treated as non-truncating</p>
+<p>Consistent with the rest of the library, and with the convention established by the
+<code>std::chrono</code> library, we treat floating point types as value preserving.  This is not always
+strictly true &mdash; for example, there are many large integers which cannot be represented in
+floating point, and converting these integers to floating point is really a form of truncation.</p>
+<p>However, there are two compelling reasons for upholding this convenient fiction in this
+function&rsquo;s policy.  First, it keeps these functions consistent with the rest of the library.
+Second, if a user willingly enters the floating point domain, we may assume they accept the
+kinds of precision losses that have always come along with it (often called the &ldquo;usual floating
+point error&rdquo;).</p>
+<p>Designing APIs that wrestle in detail with the implications of floating point error &mdash; not to
+mention other numeric types, such as fixed point &mdash; would be an interesting and worthwhile
+endeavor, but also a very subtle and challenging one.  We hope to see that work take place
+someday, whether in this library or another.</p>
+</div>
+<p>Here are the usage patterns, and their corresponding signatures.</p>
+<ul>
+<li>
+<p><code>will_conversion_truncate(q, target_unit)</code> returns whether <code>q.as(target_unit)</code>, or
+  <code>q.in(target_unit)</code>, would truncate.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">will_conversion_truncate</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
+</code></pre></div>
+</li>
+<li>
+<p><code>will_conversion_truncate&lt;T&gt;(q, target_unit)</code> returns whether <code>q.as&lt;T&gt;(target_unit)</code>, or
+  <code>q.in&lt;T&gt;(target_unit)</code>, would truncate.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetRep</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">will_conversion_truncate</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
+</code></pre></div>
+</li>
+</ul>
+<h4 id="is_conversion_lossy"><code>is_conversion_lossy</code><a class="headerlink" href="#is_conversion_lossy" title="Permanent link">&para;</a></h4>
+<p><code>is_conversion_lossy</code> combines both of the previous two checks: it returns <code>true</code> whenever <em>either
+or both</em> of <code>will_conversion_overflow</code> or <code>will_conversion_truncate</code> would return <code>true</code>.  Like
+these functions, it takes a <code>Quantity</code> value and a target unit.  Users can also provide an &ldquo;explicit
+rep&rdquo; template parameter to check the corresponding explicit-rep conversion.</p>
+<p>The reason the other two functions are publicly available (rather than only this one) is that often,
+users may only care about either of overflow or truncation, not both.  For example, working with
+integral quantities in the embedded domain, users may wish to decompose a nanosecond duration
+quantity into separate parts for &ldquo;seconds&rdquo; and &ldquo;nanoseconds&rdquo;, where the &ldquo;seconds&rdquo; part uses
+a smaller integer type, and the leftover &ldquo;nanoseconds&rdquo; part amounts to less than one second.  In
+this case, truncating the initial quantity when converting to &ldquo;seconds&rdquo; is explicitly desired, but
+we still want to check for overflow.</p>
+<p>Here are the usage patterns, and their corresponding signatures.</p>
+<ul>
+<li>
+<p><code>is_conversion_lossy(q, target_unit)</code> returns whether <code>q.as(target_unit)</code>, or <code>q.in(target_unit)</code>,
+  would either overflow or truncate.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_conversion_lossy</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
+</code></pre></div>
+</li>
+<li>
+<p><code>is_conversion_lossy&lt;T&gt;(q, target_unit)</code> returns whether <code>q.as&lt;T&gt;(target_unit)</code>, or
+  <code>q.in&lt;T&gt;(target_unit)</code>, would either overflow or truncate.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetRep</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_conversion_lossy</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
+</code></pre></div>
+</li>
+</ul>
 <h3 id="as-raw-number">Special case: dimensionless and unitless results<a class="headerlink" href="#as-raw-number" title="Permanent link">&para;</a></h3>
 <p>Users may expect that the product of quantities such as <code>seconds</code> and <code>hertz</code> would completely
 cancel out, and produce a raw, simple C++ numeric type.  Currently, this is indeed the case, but we
@@ -2514,8 +2669,8 @@ all mechanisms and safety features of the library.  In particular:</p>
 communicates intent, and also works both before and after <a href="https://github.com/aurora-opensource/au/issues/185">#185</a> is implemented.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">num_beats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as_raw_number</span><span class="p">(</span><span class="n">kilo</span><span class="p">(</span><span class="n">hertz</span><span class="p">)(</span><span class="mi">7</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c1">// Result: 21&#39;000 (of type `int`)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">num_beats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as_raw_number</span><span class="p">(</span><span class="n">kilo</span><span class="p">(</span><span class="n">hertz</span><span class="p">)(</span><span class="mi">7</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="c1">// Result: 21&#39;000 (of type `int`)</span>
 </code></pre></div>
 </div>
 <h2 id="nttp">Non-Type Template Parameters (NTTPs)<a class="headerlink" href="#nttp" title="Permanent link">&para;</a></h2>
@@ -2541,12 +2696,12 @@ without prohibitive difficulty.</p>
 </div>
 <details class="example">
 <summary>Example: defining and using a template with a <code>Quantity</code> NTTP</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="n">QuantityI</span><span class="o">&lt;</span><span class="n">Hertz</span><span class="o">&gt;::</span><span class="n">NTTP</span><span class="w"> </span><span class="n">Frequency</span><span class="o">&gt;</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">TemplatedOnFrequency</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="n">QuantityI</span><span class="o">&lt;</span><span class="n">Hertz</span><span class="o">&gt;</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Frequency</span><span class="p">;</span><span class="w">      </span><span class="c1">// Assigning `Quantity` from NTTP</span>
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="p">};</span>
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
-<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="k">using</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TemplatedOnFrequency</span><span class="o">&lt;</span><span class="n">hertz</span><span class="p">(</span><span class="mi">440</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span><span class="w">  </span><span class="c1">// Setting template parameter from `Quantity`</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="n">QuantityI</span><span class="o">&lt;</span><span class="n">Hertz</span><span class="o">&gt;::</span><span class="n">NTTP</span><span class="w"> </span><span class="n">Frequency</span><span class="o">&gt;</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">TemplatedOnFrequency</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">    </span><span class="n">QuantityI</span><span class="o">&lt;</span><span class="n">Hertz</span><span class="o">&gt;</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Frequency</span><span class="p">;</span><span class="w">      </span><span class="c1">// Assigning `Quantity` from NTTP</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="p">};</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="k">using</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TemplatedOnFrequency</span><span class="o">&lt;</span><span class="n">hertz</span><span class="p">(</span><span class="mi">440</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span><span class="w">  </span><span class="c1">// Setting template parameter from `Quantity`</span>
 </code></pre></div>
 </details>
 <h3 id="from_nttpquantityu-rnttp"><code>from_nttp(Quantity&lt;U, R&gt;::NTTP)</code><a class="headerlink" href="#from_nttpquantityu-rnttp" title="Permanent link">&para;</a></h3>
@@ -2575,7 +2730,7 @@ were</em> its corresponding quantity.</p>
 <summary>Example of corresponding quantity comparison</summary>
 <p>We provide built-in <a href="../corresponding_quantity/#chrono-duration">equivalence with <code>std::chrono::duration</code>
 types</a>.  Therefore, this comparison will work:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">greater</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">duration</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">{</span><span class="mf">1.0</span><span class="p">}</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">milli</span><span class="p">(</span><span class="n">seconds</span><span class="p">)(</span><span class="mf">999.9f</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">greater</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">duration</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">{</span><span class="mf">1.0</span><span class="p">}</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">milli</span><span class="p">(</span><span class="n">seconds</span><span class="p">)(</span><span class="mf">999.9f</span><span class="p">);</span>
 </code></pre></div>
 <p>Here, the <code>std::chrono::duration</code> variable will be treated identically to <code>seconds(1.0)</code>. The
 comparison will take place in units of <code>milli(seconds)</code> (since that is the common unit), and
@@ -2648,11 +2803,11 @@ the denominator.</p>
 <details class="example">
 <summary>Using <code>unblock_int_div()</code> to explicitly opt in to integer division</summary>
 <p>This will not work:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">miles</span><span class="p">(</span><span class="mi">125</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="c1">//         ^--- Forbidden!  Compiler error.</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">miles</span><span class="p">(</span><span class="mi">125</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="c1">//         ^--- Forbidden!  Compiler error.</span>
 </code></pre></div>
 <p>However, this will work just fine:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">miles</span><span class="p">(</span><span class="mi">125</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">unblock_int_div</span><span class="p">(</span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">miles</span><span class="p">(</span><span class="mi">125</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">unblock_int_div</span><span class="p">(</span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
 </code></pre></div>
 <p>It produces <code>(miles / hour)(62)</code>.</p>
 </details>
@@ -2710,27 +2865,27 @@ underlying value is <code>static_cast&lt;T&gt;(q.in(U{}))</code>.</p>
 one for the rep.</p>
 <details class="example">
 <summary>Example: function template</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">negate</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">q</span><span class="p">;</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">negate</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">q</span><span class="p">;</span>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="p">}</span>
 </code></pre></div>
 <p>This function template will match any <code>Quantity</code> specialization, and nothing else.</p>
 </details>
 <details class="example">
 <summary>Example: type template</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1">// First, we need to declare the generic type template.  It matches a single type, `T`.</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="p">;</span>
-<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
-<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="c1">// Now we can declare a specialization that matches any `Quantity`, by templating on its unit</span>
-<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="c1">// and rep.</span>
-<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="o">&lt;</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>
-<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="w">    </span><span class="c1">// Note: this example uses inline variables, a C++17 feature.  It&#39;s just for illustration.</span>
-<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">R</span><span class="p">);</span>
-<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="p">};</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1">// First, we need to declare the generic type template.  It matches a single type, `T`.</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="p">;</span>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="c1">// Now we can declare a specialization that matches any `Quantity`, by templating on its unit</span>
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="c1">// and rep.</span>
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="o">&lt;</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>
+<a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a><span class="w">    </span><span class="c1">// Note: this example uses inline variables, a C++17 feature.  It&#39;s just for illustration.</span>
+<a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">R</span><span class="p">);</span>
+<a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a><span class="p">};</span>
 </code></pre></div>
 <p>In this way, <code>Size&lt;T&gt;::value</code> will exist only when <code>T</code> is some <code>Quantity</code> type (unless, of
 course, other specializations get defined elsewhere).</p>

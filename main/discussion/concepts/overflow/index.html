@@ -676,7 +676,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#check-every-conversion-at-runtime" class="md-nav__link">
+  <a href="#check-at-runtime" class="md-nav__link">
     <span class="md-ellipsis">
       Check every conversion at runtime
     </span>
@@ -1961,7 +1961,7 @@ that separates allowed conversions from forbidden ones, permitting bigger conver
 types. We call this abstract boundary the <strong>&ldquo;overflow safety surface&rdquo;</strong>, and it&rsquo;s the secret
 ingredient that lets Au users use a wide variety of integral types with confidence.</p>
 <p><img alt="The overflow safety surface" src="../../../assets/overflow-safety-surface.png" /></p>
-<h3 id="check-every-conversion-at-runtime">Check every conversion at runtime<a class="headerlink" href="#check-every-conversion-at-runtime" title="Permanent link">&para;</a></h3>
+<h3 id="check-at-runtime">Check every conversion at runtime<a class="headerlink" href="#check-at-runtime" title="Permanent link">&para;</a></h3>
 <p>While the overflow safety surface is a leap forward in safety and flexibility, it&rsquo;s still only
 a heuristic.  There will always be valid conversions which it forbids, and invalid ones which it
 permits.  On the latter point, note that adding an intermediate conversion can defeat the safety
