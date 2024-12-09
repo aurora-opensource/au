@@ -22,8 +22,15 @@
 
 namespace au {
 
-// We deleted all tests for this deprecated item to avoid deprecation warnings.
-//
-// We will remove this in Au 0.5.0.
+TEST(StandardGravity, HasExpectedLabel) { expect_label<StandardGravity>("g_0"); }
+
+TEST(StandardGravity, HasExpectedValue) {
+    EXPECT_EQ(make_quantity<StandardGravity>(1L), (micro(meters) / squared(second))(9'806'650L));
+}
+
+TEST(StandardGravity, HasExpectedSymbol) {
+    using symbols::g_0;
+    EXPECT_THAT(5 * g_0, SameTypeAndValue(make_quantity<StandardGravity>(5)));
+}
 
 }  // namespace au
