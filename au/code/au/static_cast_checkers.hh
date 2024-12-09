@@ -49,6 +49,9 @@ enum class OverflowSituation {
     SIGNED_TO_UNSIGNED,
     SIGNED_TO_SIGNED,
     FLOAT_TO_ANYTHING,
+
+    // If we categorize as this "catch-all" category, then we've hit a case that we haven't yet
+    // handled.  This will result in a compiler error.  We can decide how to handle it at that time.
     UNEXPLORED,
 };
 
@@ -147,6 +150,9 @@ struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::FLOAT_TO_ANYTHING
 enum class TruncationSituation {
     CANNOT_TRUNCATE,
     FLOAT_TO_INTEGRAL,
+
+    // If we categorize as this "catch-all" category, then we've hit a case that we haven't yet
+    // handled.  This will result in a compiler error.  We can decide how to handle it at that time.
     UNEXPLORED,
 };
 

@@ -650,10 +650,9 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_
 // Check conversion for overflow (new rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit) {
-    // Someday, we would like a more efficient implementation --- one that simply computes, at
-    // compile time, the smallest value that would overflow, and then compares against that.
-    //
-    // This will at least let us get off the ground for now.
+    // TODO(#349): Someday, we would like a more efficient implementation --- one that simply
+    // computes, at compile time, the smallest value that would overflow, and then compares against
+    // that.  This version will at least let us get off the ground for now.
     using Common = std::common_type_t<R, TargetRep>;
     if (detail::will_static_cast_overflow<Common>(q.in(U{}))) {
         return true;
