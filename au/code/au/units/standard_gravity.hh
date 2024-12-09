@@ -39,10 +39,7 @@ struct StandardGravity
     using StandardGravityLabel<void>::label;
 };
 
-[[deprecated(
-    "Use the `STANDARD_GRAVITY` constant instead (see: "
-    "https://aurora-opensource.github.io/au/main/reference/constant/#built-in)")]] constexpr auto
-    standard_gravity = QuantityMaker<StandardGravity>{};
+constexpr auto standard_gravity = QuantityMaker<StandardGravity>{};
 
 namespace symbols {
 constexpr auto g_0 = SymbolFor<StandardGravity>{};
