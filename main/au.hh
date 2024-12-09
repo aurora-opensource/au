@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-55-g9aaeb79
+// Version identifier: 0.3.5-56-g4553839
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -5014,34 +5014,6 @@ class Quantity {
         }
     }
 
-    // "Old-style" overloads with <U, R> template parameters, and no function parameters.
-    //
-    // Matches the syntax from the CppCon 2021 talk, and legacy Aurora usage.
-    template <typename U>
-    [[deprecated(
-        "Do not write `.as<YourUnits>()`; write `.as(your_units)` instead.")]] constexpr auto
-    as() const -> decltype(as(U{})) {
-        return as(U{});
-    }
-    template <typename U, typename R, typename = std::enable_if_t<IsUnit<U>::value>>
-    [[deprecated(
-        "Do not write `.as<YourUnits, T>()`; write `.as<T>(your_units)` instead.")]] constexpr auto
-    as() const {
-        return as<R>(U{});
-    }
-    template <typename U>
-    [[deprecated(
-        "Do not write `.in<YourUnits>()`; write `.in(your_units)` instead.")]] constexpr auto
-    in() const -> decltype(in(U{})) {
-        return in(U{});
-    }
-    template <typename U, typename R, typename = std::enable_if_t<IsUnit<U>::value>>
-    [[deprecated(
-        "Do not write `.in<YourUnits, T>()`; write `.in<T>(your_units)` instead.")]] constexpr auto
-    in() const {
-        return in<R>(U{});
-    }
-
     // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
     template <typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
@@ -6145,34 +6117,6 @@ class QuantityPoint {
                    x_ + rep_cast<Rep>(
                             OriginDisplacement<AssociatedUnitForPointsT<NewUnit>, Unit>::value()))
             .in(associated_unit_for_points(u));
-    }
-
-    // "Old-style" overloads with <U, R> template parameters, and no function parameters.
-    //
-    // Matches the syntax from the CppCon 2021 talk, and legacy Aurora usage.
-    template <typename U>
-    [[deprecated(
-        "Do not write `.as<YourUnits>()`; write `.as(your_units)` instead.")]] constexpr auto
-    as() const -> decltype(as(U{})) {
-        return as(U{});
-    }
-    template <typename U, typename R, typename = std::enable_if_t<IsUnit<U>::value>>
-    [[deprecated(
-        "Do not write `.as<YourUnits, T>()`; write `.as<T>(your_units)` instead.")]] constexpr auto
-    as() const {
-        return as<R>(U{});
-    }
-    template <typename U>
-    [[deprecated(
-        "Do not write `.in<YourUnits>()`; write `.in(your_units)` instead.")]] constexpr auto
-    in() const -> decltype(in(U{})) {
-        return in(U{});
-    }
-    template <typename U, typename R, typename = std::enable_if_t<IsUnit<U>::value>>
-    [[deprecated(
-        "Do not write `.in<YourUnits, T>()`; write `.in<T>(your_units)` instead.")]] constexpr auto
-    in() const {
-        return in<R>(U{});
     }
 
     // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
