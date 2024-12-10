@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <compare>
+
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
 #include "au/testing.hh"
