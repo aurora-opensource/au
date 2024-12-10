@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-57-g07a7f4c
+// Version identifier: 0.3.5-58-g1b72b87
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -93,6 +93,7 @@
 //   PLANCK_CONSTANT
 //   REDUCED_PLANCK_CONSTANT
 //   SPEED_OF_LIGHT
+//   STANDARD_GRAVITY
 
 
 namespace au {
@@ -1342,6 +1343,12 @@ struct Joules;
 
 namespace au {
 
+struct StandardGravity;
+
+}  // namespace au
+
+namespace au {
+
 struct Moles;
 
 }  // namespace au
@@ -1439,12 +1446,6 @@ struct USPints;
 namespace au {
 
 struct Feet;
-
-}  // namespace au
-
-namespace au {
-
-struct StandardGravity;
 
 }  // namespace au
 
@@ -8407,6 +8408,31 @@ constexpr auto N = SymbolFor<Newtons>{};
 }
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct StandardGravityLabel {
+    static constexpr const char label[] = "g_0";
+};
+template <typename T>
+constexpr const char StandardGravityLabel<T>::label[];
+struct StandardGravity
+    : decltype((Meters{} / squared(Seconds{})) * (mag<980'665>() / mag<100'000>())),
+      StandardGravityLabel<void> {
+    using StandardGravityLabel<void>::label;
+};
+constexpr auto standard_gravity = QuantityMaker<StandardGravity>{};
+
+namespace symbols {
+constexpr auto g_0 = SymbolFor<StandardGravity>{};
+}
+}  // namespace au
+
 
 namespace au {
 
@@ -8545,31 +8571,6 @@ namespace symbols {
 constexpr auto US_pt = SymbolFor<USPints>{};
 }
 
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct StandardGravityLabel {
-    static constexpr const char label[] = "g_0";
-};
-template <typename T>
-constexpr const char StandardGravityLabel<T>::label[];
-struct StandardGravity
-    : decltype((Meters{} / squared(Seconds{})) * (mag<980'665>() / mag<100'000>())),
-      StandardGravityLabel<void> {
-    using StandardGravityLabel<void>::label;
-};
-constexpr auto standard_gravity = QuantityMaker<StandardGravity>{};
-
-namespace symbols {
-constexpr auto g_0 = SymbolFor<StandardGravity>{};
-}
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
@@ -8902,6 +8903,13 @@ constexpr auto joules = QuantityMaker<Joules>{};
 namespace symbols {
 constexpr auto J = SymbolFor<Joules>{};
 }
+}  // namespace au
+
+
+namespace au {
+
+constexpr auto STANDARD_GRAVITY = make_constant(StandardGravity{});
+
 }  // namespace au
 
 
