@@ -815,6 +815,15 @@ constexpr auto operator>=(QLike q1, Quantity<U, R> q2) -> decltype(as_quantity(q
     return as_quantity(q1) >= q2;
 }
 
+// Spaceship operator provides C++20 compatibility.
+#if __cplusplus >= 202002L
+template <typename U1, typename R1, typename U2, typename R2>
+constexpr auto operator<=>(const Quantity<U1, R1> &lhs, const Quantity<U2, R2> &rhs) {
+    using U = CommonUnitT<U1, U2>;
+    return lhs.in(U{}) <=> rhs.in(U{});
+}
+#endif
+
 // Helper to compute the `std::common_type_t` of two `Quantity` types.
 //
 // `std::common_type` requires its specializations to be SFINAE-friendly, meaning that the `type`
