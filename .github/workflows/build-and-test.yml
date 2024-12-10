@@ -30,6 +30,6 @@ jobs:
       - name: Build and test (${{ inputs.config }})
         run: bazel test --copt=-Werror --config=${{ inputs.config }} //...:all
       - name: Build and test with -Wconversion (${{ inputs.config }})
-        run: bazel test --copt=-Werror --copt=-Wconversion --config=${{ inputs.config }} `bazel query 'kind(".*_test", //au/...:all except //au:no_wconversion_test)'`
+        run: bazel test --copt=-Werror --copt=-Wconversion --config=${{ inputs.config }} --test_tag_filters=-no_wconversion --build_tag_filters=-no_wconversion //au/...:all
       - name: Build and test in C++20 mode (${{ inputs.config }})
         run: bazel test --copt=-Werror --copt=-std=c++20 --config=${{ inputs.config }} //...:all //au:cpp20_test

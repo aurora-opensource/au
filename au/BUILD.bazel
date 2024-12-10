@@ -387,6 +387,7 @@ cc_test(
     name = "no_wconversion_test",
     size = "small",
     srcs = ["code/au/no_wconversion_test.cc"],
+    tags = ["no_wconversion"],
     deps = [
         ":quantity",
         ":testing",
