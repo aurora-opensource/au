@@ -13,10 +13,11 @@ a [workaround](../reference/quantity.md#nttp).  This page explains how to use it
     The way it works is that every `Quantity<U, R>` type defines its own custom enumeration type,
     which is associated only with that `Quantity` type: we call it `Quantity<U, R>::NTTP`. The type
     system preserves the association between the two, so we don't get mixed up with the `NTTP` type
-    for any other `Quantity`. This lets us safely provide implicit conversion back and forth between
-    the `Quantity` type and its `NTTP` type. What's more, it's legal C++ to `static_cast` between an
-    enumeration and its underlying type, even for values that aren't part of the enumeration ---
-    therefore, we're able to hold any value that the `Quantity` type can.
+    for any other `Quantity`. This lets us safely convert back and forth between the `Quantity` type
+    and its `NTTP` type, using the `to_nttp(Quantity)` and `from_nttp(Quantity::NTTP)` utilities.
+    What's more, it's legal C++ to `static_cast` between an enumeration and its underlying type,
+    even for values that aren't part of the enumeration --- therefore, we're able to hold any value
+    that the `Quantity` type can.
 
     So, even though we can't _exactly_ use a `Quantity` _value_ as a template parameter, what we
     _can_ do is use a special type that has _low-friction conversion_ to and from that `Quantity`,
@@ -30,14 +31,13 @@ feature.)  Here's how to use this type as a template parameter:
 
 1. Use `Quantity<U, R>::NTTP` as the _type_ of the template parameter.
 
-2. When instantiating the template, pass any instance of `Quantity<U, R>`.
+2. When instantiating the template, pass any instance of `Quantity<U, R>` after calling
+   `to_nttp(...)` on it.
 
-    - Note that you can pass the quantity itself, not `Quantity<U, R>::NTTP`!  Implicit conversion
-      makes this possible.
-    - Note also that the value (call it `q`) must be **exactly** an instance of `Quantity<U, R>`,
-      and not any other `Quantity` type.  If it's not, you'll get a compiler error.  You can fix
-      this by converting to `Quantity<U, R>` via the usual library mechanisms --- namely, something
-      like `q.as<R>(U{})`.
+    - Note that the value (call it `q`) must be **exactly** an instance of `Quantity<U, R>`, and not
+      any other `Quantity` type.  If it's not, you'll get a compiler error.  You can fix this by
+      converting to `Quantity<U, R>` via the usual library mechanisms --- namely, something like
+      `q.as<R>(U{})`.
 
 3. To use the value of the template parameter _as a `Quantity`_ in your code, you have two options.
 
@@ -77,8 +77,8 @@ class Processor {
 And here's how we'd use it.
 
 ```cpp
-// Step (2): when instantiating, convert to the exact right `Quantity` type.
-using Proc = Processor<mega(hertz)(1'200).as<uint64_t>(hertz)>;
+// Step (2): when instantiating, convert to the exact right `Quantity` type, using `to_nttp`.
+using Proc = Processor<to_nttp(mega(hertz)(1'200).as<uint64_t>(hertz))>;
 
 std::cout << Proc::clock_freq() << std::endl;
 ```

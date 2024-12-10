@@ -766,12 +766,12 @@ struct TemplateOnLength {
 };
 
 TEST(QuantityNTTP, SupportsPreCpp20NttpTypes) {
-    constexpr auto length = TemplateOnLength<meters(18)>{}.value;
+    constexpr auto length = TemplateOnLength<to_nttp(meters(18))>{}.value;
     EXPECT_THAT(length, SameTypeAndValue(meters(18)));
 }
 
 TEST(QuantityNTTP, CanConvertFromNttpToAnyCompatibleQuantityType) {
-    constexpr QuantityI<Meters>::NTTP LengthNTTP = meters(18);
+    constexpr QuantityI<Meters>::NTTP LengthNTTP = to_nttp(meters(18));
     constexpr QuantityI<Milli<Meters>> length = from_nttp(LengthNTTP);
     EXPECT_THAT(length, SameTypeAndValue(milli(meters)(18'000)));
 }

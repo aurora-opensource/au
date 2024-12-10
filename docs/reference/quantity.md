@@ -542,10 +542,15 @@ _pointer_ types, and _enumerations_.
 
 Au provides a workaround for pre-C++20 users that lets you _effectively_ encode any `Quantity<U, R>`
 as an NTTP, _as long as_ its rep `R` is an **integral** type.  To do this, use the
-`Quantity<U, R>::NTTP` type as the template parameter.  You will be able to assign between
-`Quantity<U, R>` and `Quantity<U, R>::NTTP`, _in either direction_, but only in the case of exact
-match of both `U` and `R`.  For all other cases, you'll need to perform a conversion (using the
-usual mechanisms for `Quantity` described elsewhere on this page).
+`Quantity<U, R>::NTTP` type as the template parameter.  Here are the available conversions:
+
+- Quantity-to-NTTP:
+    - Call `to_nttp(Quantity<U, R>)`.  (Note that this requires **exact match** for both `U` and
+      `R`; use the usual `Quantity` conversion methods if this is not the case.)
+- NTTP-to-Quantity:
+    - call `from_nttp(Quantity<U, R>::NTTP)`.
+    - Assign `Quantity<U, R>::NTTP` directly to `Quantity<U, R>`.  In this case, we support implicit
+      conversion (again, only if there is an exact match for both `U` and `R`).
 
 !!! warning
     It is undefined behavior to invoke `Quantity<U, R>::NTTP` whenever `std::is_integral<R>::value`
@@ -561,11 +566,18 @@ usual mechanisms for `Quantity` described elsewhere on this page).
     ```cpp
     template <QuantityI<Hertz>::NTTP Frequency>
     struct TemplatedOnFrequency {
-        QuantityI<Hertz> value = Frequency;      // Assigning `Quantity` from NTTP
+        // Assigning `Quantity` from NTTP:
+        QuantityI<Hertz> value = Frequency;
     };
 
-    using T = TemplatedOnFrequency<hertz(440)>;  // Setting template parameter from `Quantity`
+    // Setting template parameter from `Quantity`:
+    using T = TemplatedOnFrequency<to_nttp(hertz(440))>;
     ```
+
+### `to_nttp(Quantity<U, R>)`
+
+Calling `to_nttp` on a `Quantity<U, R>` will convert it to an instance of the corresponding
+`Quantity<U, R>::NTTP` type, effectively "encoding" it for use as a template parameter.
 
 ### `from_nttp(Quantity<U, R>::NTTP)`
 

@@ -376,16 +376,11 @@ class Quantity {
                       "NTTP functionality only works when rep is built-in integral type");
     }
 
-    constexpr operator NTTP() const {
+    friend constexpr NTTP to_nttp(const Quantity &q) {
         static_assert(std::is_integral<Rep>::value,
                       "NTTP functionality only works when rep is built-in integral type");
-        return static_cast<NTTP>(value_);
+        return static_cast<NTTP>(q.value_);
     }
-
-    template <typename C, C x = C::ENUM_VALUES_ARE_UNUSED>
-    constexpr operator C() const = delete;
-    // If you got here ^^^, then you need to do your unit conversion **manually**.  Check the type
-    // of the template parameter, and convert it to that same unit and rep.
 
     friend constexpr Quantity from_nttp(NTTP val) { return val; }
 
