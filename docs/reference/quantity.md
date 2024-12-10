@@ -374,8 +374,137 @@ These functions also support an explicit template parameter: so, `.coerce_as<T>(
     `inches(27.8).coerce_as<int>(feet)` will return `feet(2)`.
 
 !!! tip
-    Prefer **not** to use the "coercing versions" if possible, because you will get more safety
-    checks.  The risks which the "base" versions warn about are real.
+    In most cases, prefer **not** to use the "coercing versions" if possible, because you will get
+    more safety checks.  The risks which the "base" versions warn about are real.
+
+    However, one place where it's _very safe_ to use the "coercing versions" is right after running
+    a _runtime conversion checker_.  These provde _exact_ conversion checks, even more accurate than
+    the default compile-time safety surface (although at the cost of runtime operations).  See the
+    next section for more details.
+
+### Runtime conversion checkers {#runtime-conversion-checkers}
+
+Au's default, compile-time conversion checks are only heuristics, based on the _general_ risk of
+overflow or truncation.  They operate on the conversion as a whole, not on specific values.  This
+means that some input values for forbidden conversions would actually be just fine, while some input
+values for permitted conversions would be lossy.
+
+This section documents a more exact alternative: the _runtime conversion checkers_, which can detect
+overflow or truncation for specific runtime values.  The downside is that you will pay a runtime
+penalty for these checks, as opposed to the compile-time checks which are basically free.  However,
+unit conversions very rarely occur in the "hot loops" of well designed programs, so this performance
+cost usually doesn't matter.
+
+!!! tip
+    A great way to use these functions is to write your own conversion utilities, using your
+    preferred error handling mechanism (exceptions, optional, return codes, and so on).  See our
+    [overflow guide](../discussion/concepts/overflow.md#check-at-runtime) for more details.
+
+We provide one checkers for overflow, truncation, and general lossiness (which combines both).
+
+#### `will_conversion_overflow`
+
+`will_conversion_overflow` takes a `Quantity` value and a target unit, and returns whether the
+conversion will overflow.  Users can also provide an "explicit rep" template parameter to check the
+corresponding explicit-rep conversion.
+
+We define "overflow" as a value that would either be lower than the lowest representable number in
+the target type, or higher than the highest representable number.  The precise implementation will
+depend on the types involved.  For example, if the input is an unsigned integral type, we won't
+emit a runtime instruction to check the lower bound of the target.
+
+Here are the usage patterns, and their corresponding signatures.
+
+- `will_conversion_overflow(q, target_unit)` returns whether `q.as(target_unit)`, or
+  `q.in(target_unit)`, would overflow.
+
+    ```cpp
+    template <typename U, typename R, typename TargetUnitSlot>
+    constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit);
+    ```
+
+- `will_conversion_overflow<T>(q, target_unit)` returns whether `q.as<T>(target_unit)`, or
+  `q.in<T>(target_unit)`, would overflow.
+
+    ```cpp
+    template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
+    constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit);
+    ```
+
+#### `will_conversion_truncate`
+
+`will_conversion_truncate` takes a `Quantity` value and a target unit, and returns whether the
+conversion will truncate.  For example, if the target unit is `feet`, then `inches(61)` _would_
+truncate, but `inches(60)` would _not_ truncate.  Users can also provide an "explicit rep" template
+parameter to check the corresponding explicit-rep conversion.
+
+!!! warning "Warning: floating point destination types are treated as non-truncating"
+    Consistent with the rest of the library, and with the convention established by the
+    `std::chrono` library, we treat floating point types as value preserving.  This is not always
+    strictly true --- for example, there are many large integers which cannot be represented in
+    floating point, and converting these integers to floating point is really a form of truncation.
+
+    However, there are two compelling reasons for upholding this convenient fiction in this
+    function's policy.  First, it keeps these functions consistent with the rest of the library.
+    Second, if a user willingly enters the floating point domain, we may assume they accept the
+    kinds of precision losses that have always come along with it (often called the "usual floating
+    point error").
+
+    Designing APIs that wrestle in detail with the implications of floating point error --- not to
+    mention other numeric types, such as fixed point --- would be an interesting and worthwhile
+    endeavor, but also a very subtle and challenging one.  We hope to see that work take place
+    someday, whether in this library or another.
+
+Here are the usage patterns, and their corresponding signatures.
+
+- `will_conversion_truncate(q, target_unit)` returns whether `q.as(target_unit)`, or
+  `q.in(target_unit)`, would truncate.
+
+    ```cpp
+    template <typename U, typename R, typename TargetUnitSlot>
+    constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit);
+    ```
+
+- `will_conversion_truncate<T>(q, target_unit)` returns whether `q.as<T>(target_unit)`, or
+  `q.in<T>(target_unit)`, would truncate.
+
+    ```cpp
+    template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
+    constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit);
+    ```
+
+#### `is_conversion_lossy`
+
+`is_conversion_lossy` combines both of the previous two checks: it returns `true` whenever _either
+or both_ of `will_conversion_overflow` or `will_conversion_truncate` would return `true`.  Like
+these functions, it takes a `Quantity` value and a target unit.  Users can also provide an "explicit
+rep" template parameter to check the corresponding explicit-rep conversion.
+
+The reason the other two functions are publicly available (rather than only this one) is that often,
+users may only care about either of overflow or truncation, not both.  For example, working with
+integral quantities in the embedded domain, users may wish to decompose a nanosecond duration
+quantity into separate parts for "seconds" and "nanoseconds", where the "seconds" part uses
+a smaller integer type, and the leftover "nanoseconds" part amounts to less than one second.  In
+this case, truncating the initial quantity when converting to "seconds" is explicitly desired, but
+we still want to check for overflow.
+
+Here are the usage patterns, and their corresponding signatures.
+
+- `is_conversion_lossy(q, target_unit)` returns whether `q.as(target_unit)`, or `q.in(target_unit)`,
+  would either overflow or truncate.
+
+    ```cpp
+    template <typename U, typename R, typename TargetUnitSlot>
+    constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit);
+    ```
+
+- `is_conversion_lossy<T>(q, target_unit)` returns whether `q.as<T>(target_unit)`, or
+  `q.in<T>(target_unit)`, would either overflow or truncate.
+
+    ```cpp
+    template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
+    constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit);
+    ```
 
 ### Special case: dimensionless and unitless results {#as-raw-number}
 

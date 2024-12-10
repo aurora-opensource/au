@@ -21,6 +21,7 @@
 #include "au/fwd.hh"
 #include "au/operators.hh"
 #include "au/rep.hh"
+#include "au/static_cast_checkers.hh"
 #include "au/stdx/functional.hh"
 #include "au/unit_of_measure.hh"
 #include "au/utility/type_traits.hh"
@@ -187,34 +188,6 @@ class Quantity {
             // Since Rep was requested _implicitly_, delegate to `.as()` for its safety checks.
             return as(u).in(u);
         }
-    }
-
-    // "Old-style" overloads with <U, R> template parameters, and no function parameters.
-    //
-    // Matches the syntax from the CppCon 2021 talk, and legacy Aurora usage.
-    template <typename U>
-    [[deprecated(
-        "Do not write `.as<YourUnits>()`; write `.as(your_units)` instead.")]] constexpr auto
-    as() const -> decltype(as(U{})) {
-        return as(U{});
-    }
-    template <typename U, typename R, typename = std::enable_if_t<IsUnit<U>::value>>
-    [[deprecated(
-        "Do not write `.as<YourUnits, T>()`; write `.as<T>(your_units)` instead.")]] constexpr auto
-    as() const {
-        return as<R>(U{});
-    }
-    template <typename U>
-    [[deprecated(
-        "Do not write `.in<YourUnits>()`; write `.in(your_units)` instead.")]] constexpr auto
-    in() const -> decltype(in(U{})) {
-        return in(U{});
-    }
-    template <typename U, typename R, typename = std::enable_if_t<IsUnit<U>::value>>
-    [[deprecated(
-        "Do not write `.in<YourUnits, T>()`; write `.in<T>(your_units)` instead.")]] constexpr auto
-    in() const {
-        return in<R>(U{});
     }
 
     // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
@@ -646,6 +619,26 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_
         q.in(U{}));
 }
 
+// Check conversion for overflow (new rep).
+template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
+constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit) {
+    // TODO(#349): Someday, we would like a more efficient implementation --- one that simply
+    // computes, at compile time, the smallest value that would overflow, and then compares against
+    // that.  This version will at least let us get off the ground for now.
+    using Common = std::common_type_t<R, TargetRep>;
+    if (detail::will_static_cast_overflow<Common>(q.in(U{}))) {
+        return true;
+    }
+
+    const auto to_common = rep_cast<Common>(q);
+    if (will_conversion_overflow(to_common, target_unit)) {
+        return true;
+    }
+
+    const auto converted_but_not_narrowed = to_common.coerce_in(target_unit);
+    return detail::will_static_cast_overflow<TargetRep>(converted_but_not_narrowed);
+}
+
 // Check conversion for truncation (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit) {
@@ -653,10 +646,34 @@ constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_
         q.in(U{}));
 }
 
+// Check conversion for truncation (new rep).
+template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
+constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit) {
+    using Common = std::common_type_t<R, TargetRep>;
+    if (detail::will_static_cast_truncate<Common>(q.in(U{}))) {
+        return true;
+    }
+
+    const auto to_common = rep_cast<Common>(q);
+    if (will_conversion_truncate(to_common, target_unit)) {
+        return true;
+    }
+
+    const auto converted_but_not_narrowed = to_common.coerce_in(target_unit);
+    return detail::will_static_cast_truncate<TargetRep>(converted_but_not_narrowed);
+}
+
 // Check for any lossiness in conversion (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit) {
     return will_conversion_truncate(q, target_unit) || will_conversion_overflow(q, target_unit);
+}
+
+// Check for any lossiness in conversion (new rep).
+template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
+constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit) {
+    return will_conversion_truncate<TargetRep>(q, target_unit) ||
+           will_conversion_overflow<TargetRep>(q, target_unit);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
