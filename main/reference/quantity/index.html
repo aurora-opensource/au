@@ -2557,7 +2557,8 @@ cost usually doesn&rsquo;t matter.</p>
 preferred error handling mechanism (exceptions, optional, return codes, and so on).  See our
 <a href="../../discussion/concepts/overflow/#check-at-runtime">overflow guide</a> for more details.</p>
 </div>
-<p>We provide one checkers for overflow, truncation, and general lossiness (which combines both).</p>
+<p>We provide individual checkers for overflow and truncation, as well as a checker for general
+lossiness (which combines both).</p>
 <h4 id="will_conversion_overflow"><code>will_conversion_overflow</code><a class="headerlink" href="#will_conversion_overflow" title="Permanent link">&para;</a></h4>
 <p><code>will_conversion_overflow</code> takes a <code>Quantity</code> value and a target unit, and returns whether the
 conversion will overflow.  Users can also provide an &ldquo;explicit rep&rdquo; template parameter to check the
@@ -2585,9 +2586,9 @@ emit a runtime instruction to check the lower bound of the target.</p>
 </ul>
 <h4 id="will_conversion_truncate"><code>will_conversion_truncate</code><a class="headerlink" href="#will_conversion_truncate" title="Permanent link">&para;</a></h4>
 <p><code>will_conversion_truncate</code> takes a <code>Quantity</code> value and a target unit, and returns whether the
-conversion will truncate.  For example, if the target unit is <code>feet</code>, then <code>inches(61)</code> <em>would</em>
-truncate, but <code>inches(60)</code> would <em>not</em> truncate.  Users can also provide an &ldquo;explicit rep&rdquo; template
-parameter to check the corresponding explicit-rep conversion.</p>
+conversion will truncate.  For example, if the target unit is <code>feet</code>, then <code>inches(13)</code> and
+<code>inches(11)</code> <em>would</em> truncate, but <code>inches(12)</code> would <em>not</em> truncate. Users can also provide an
+&ldquo;explicit rep&rdquo; template parameter to check the corresponding explicit-rep conversion.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning: floating point destination types are treated as non-truncating</p>
 <p>Consistent with the rest of the library, and with the convention established by the
