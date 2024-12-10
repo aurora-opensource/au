@@ -72,6 +72,7 @@ cc_test(
     tags = ["manual"],
     deps = [
         ":quantity",
+        ":quantity_point",
         ":testing",
         ":units",
         "@com_google_googletest//:gtest_main",

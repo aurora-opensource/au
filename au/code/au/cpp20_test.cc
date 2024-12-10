@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "au/quantity.hh"
+#include "au/quantity_point.hh"
 #include "au/testing.hh"
 #include "au/units/meters.hh"
 
@@ -26,6 +27,14 @@ struct Foo {
     QuantityD<Meters> thickness;
 };
 
+struct FooPt {
+    auto operator<=>(const FooPt &) const = default;
+
+    QuantityPointD<Meters> position;
+};
+
 TEST(Quantity, SupportsSpaceship) { EXPECT_LT(Foo{5 * m}, Foo{6 * m}); }
+
+TEST(QuantityPoint, SupportsSpaceship) { EXPECT_LT(FooPt{meters_pt(5)}, FooPt{meters_pt(6)}); }
 
 }  // namespace au
