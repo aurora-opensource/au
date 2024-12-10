@@ -1026,6 +1026,6 @@ features.
                 <li>Only one user-facing macro for C++20 backwards compatibility</li>
             </ul>
         </td>
-        <td class="best">No macros</td>
+        <td class="best">Zero user-facing macros; only two internal macros</td>
     </tr>
 </table>

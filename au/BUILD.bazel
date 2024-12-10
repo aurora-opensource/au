@@ -65,6 +65,20 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "cpp20_test",
+    size = "small",
+    srcs = ["code/au/cpp20_test.cc"],
+    tags = ["manual"],
+    deps = [
+        ":quantity",
+        ":quantity_point",
+        ":testing",
+        ":units",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
 cc_library(
     name = "fwd",
     hdrs = ["code/au/fwd.hh"],
@@ -374,6 +388,7 @@ cc_test(
     name = "no_wconversion_test",
     size = "small",
     srcs = ["code/au/no_wconversion_test.cc"],
+    tags = ["no_wconversion"],
     deps = [
         ":quantity",
         ":testing",
