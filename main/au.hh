@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.3.5-58-g1b72b87
+// Version identifier: 0.3.5-59-g8cd092c
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -5639,6 +5639,15 @@ constexpr auto operator>=(QLike q1, Quantity<U, R> q2) -> decltype(as_quantity(q
     return as_quantity(q1) >= q2;
 }
 
+// Spaceship operator provides C++20 compatibility.
+#if __cplusplus >= 202002L
+template <typename U1, typename R1, typename U2, typename R2>
+constexpr auto operator<=>(const Quantity<U1, R1> &lhs, const Quantity<U2, R2> &rhs) {
+    using U = CommonUnitT<U1, U2>;
+    return lhs.in(U{}) <=> rhs.in(U{});
+}
+#endif
+
 // Helper to compute the `std::common_type_t` of two `Quantity` types.
 //
 // `std::common_type` requires its specializations to be SFINAE-friendly, meaning that the `type`
@@ -6334,6 +6343,15 @@ template <typename U1, typename U2, typename R1, typename R2>
 constexpr auto operator-(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::using_common_point_unit(p1, p2, detail::minus);
 }
+
+// Spaceship operator provides C++20 compatibility.
+#if __cplusplus >= 202002L
+template <typename U1, typename R1, typename U2, typename R2>
+constexpr auto operator<=>(const QuantityPoint<U1, R1> &lhs, const QuantityPoint<U2, R2> &rhs) {
+    using U = CommonPointUnitT<U1, U2>;
+    return lhs.in(U{}) <=> rhs.in(U{});
+}
+#endif
 
 namespace detail {
 
