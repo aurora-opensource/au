@@ -185,7 +185,7 @@ In either case, here are the main targets and include files provided by the Au l
 
     ```sh
     # Optional, but recommended:
-    git checkout "0.3.5"  # Or whichever tag you prefer.
+    git checkout "0.4.0"  # Or whichever tag you prefer.
     ```
 
     Now, build and test the library.  These commands will include both the explicit tests, and also
