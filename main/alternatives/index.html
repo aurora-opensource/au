@@ -2757,6 +2757,34 @@ more &mdash; than the rows further down.</p>
     <tr>
         <td>
             <details class="criterion">
+                <summary>Quantity template parameters</summary>
+                <p>
+                    The ability to use quantity <i>values</i> as template parameters.
+                </p>
+            </details>
+        </td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="best">
+            <ul>
+                <li class="check">Supports all quantities</li>
+                <li class="check">Supports automatic conversions</li>
+                <li class="check">Supports quantity families via concepts</li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Supports integral rep</li>
+                <li class="check">Only library with pre-C++20 support</li>
+                <li class="x">User must provide exact unit and rep</li>
+                <li class="x">No floating point support</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
                 <summary>"Kind" Types</summary>
                 <p>
                     Any feature which supports robustly distinguishing between units that have the
