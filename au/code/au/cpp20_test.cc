@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if __cplusplus >= 202002L
-
 #include <compare>
 
 #include "au/quantity.hh"
@@ -42,5 +40,3 @@ TEST(Quantity, SupportsSpaceship) { EXPECT_LT(Foo{5 * m}, Foo{6 * m}); }
 TEST(QuantityPoint, SupportsSpaceship) { EXPECT_LT(FooPt{meters_pt(5)}, FooPt{meters_pt(6)}); }
 
 }  // namespace au
-
-#endif
