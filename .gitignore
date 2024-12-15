@@ -1,3 +1,5 @@
 /bazel-*
 cmake/build*
+cmake/install*
+test_package/build*
 Testing
