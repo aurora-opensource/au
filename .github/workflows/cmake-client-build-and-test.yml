@@ -36,11 +36,12 @@ jobs:
         run: cmake --build cmake/build --target all all_verify_interface_header_sets
       - name: Install Au
         run: cmake --install cmake/build --prefix "$PWD/cmake/install"
-      - name: Change to folder for client package
-        run: cd test_package
       - name: Generate build files for client
         run: cmake -S . -B build -DCMAKE_PREFIX_PATH="$PWD/../cmake/install"
+        working-directory: test_package
       - name: Build client
         run: cmake --build build --target all
+        working-directory: test_package
       - name: Run executable
         run: ./build/test_au_client
+        working-directory: test_package
