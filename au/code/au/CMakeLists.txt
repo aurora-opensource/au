@@ -39,6 +39,7 @@ header_only_library(
     quantity.hh
     quantity_point.hh
     rep.hh
+    static_cast_checkers.hh
     unit_of_measure.hh
     unit_symbol.hh
     wrapper_operations.hh
@@ -461,6 +462,14 @@ gtest_based_test(
   NAME rep_test
   SRCS
     rep_test.cc
+  DEPS
+    au
+)
+
+gtest_based_test(
+  NAME static_cast_checkers_test
+  SRCS
+    static_cast_checkers_test.cc
   DEPS
     au
 )
