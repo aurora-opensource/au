@@ -260,6 +260,26 @@ constexpr auto associated_unit_for_points(U) {
     return AssociatedUnitForPointsT<U>{};
 }
 
+template <typename... Us>
+constexpr auto common_unit(Us...) {
+    return CommonUnitT<AssociatedUnitT<Us>...>{};
+}
+
+template <typename... Us>
+constexpr auto common_point_unit(Us...) {
+    return CommonPointUnitT<AssociatedUnitForPointsT<Us>...>{};
+}
+
+template <template <class> class Utility, typename... Us>
+constexpr auto make_common(Utility<Us>...) {
+    return Utility<CommonUnitT<AssociatedUnitT<Us>...>>{};
+}
+
+template <template <class> class Utility, typename... Us>
+constexpr auto make_common_point(Utility<Us>...) {
+    return Utility<CommonPointUnitT<AssociatedUnitForPointsT<Us>...>>{};
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Unit arithmetic traits: products, powers, and derived operations.
 

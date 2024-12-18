@@ -36,12 +36,6 @@ using ::testing::StaticAssertTypeEq;
 using ::testing::StrEq;
 
 namespace au {
-namespace {
-template <typename... Us>
-constexpr auto common_unit(Us...) {
-    return CommonUnitT<Us...>{};
-}
-}  // namespace
 
 struct Celsius : Kelvins {
     static constexpr auto origin() { return milli(kelvins)(273'150); }
@@ -49,6 +43,7 @@ struct Celsius : Kelvins {
 };
 constexpr const char Celsius::label[];
 constexpr auto celsius = QuantityMaker<Celsius>{};
+constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
 
 struct AlternateCelsius : Kelvins {
     static constexpr auto origin() { return micro(kelvins)(273'150'000); }
@@ -504,6 +499,10 @@ TEST(CommonUnit, CanCombineUnitsThatWouldBothBeAnonymousScaledUnits) {
     EXPECT_EQ((feet / mag<3>())(1), (inches * mag<4>())(1));
 }
 
+TEST(CommonUnit, SupportsUnitSlots) {
+    StaticAssertTypeEq<decltype(common_unit(feet, meters)), CommonUnitT<Feet, Meters>>();
+}
+
 TEST(CommonPointUnit, FindsCommonMagnitude) {
     EXPECT_THAT((CommonPointUnitT<Feet, Feet>{}), PointEquivalentToUnit(Feet{}));
     EXPECT_THAT((CommonPointUnitT<Feet, Inches>{}), PointEquivalentToUnit(Inches{}));
@@ -553,6 +552,40 @@ TEST(CommonPointUnit, UnpacksTypesInNestedCommonUnit) {
 
     // Check that `c(c(w, x), c(y, z))` is the same as `c(w, x, y, z)`.
     StaticAssertTypeEq<Common, CommonPointUnitT<W, X, Y, Z>>();
+}
+
+TEST(CommonPointUnit, SupportsUnitSlots) {
+    StaticAssertTypeEq<decltype(common_point_unit(kelvins_pt, celsius_pt)),
+                       CommonPointUnitT<Kelvins, Celsius>>();
+}
+
+TEST(MakeCommon, PreservesCategory) {
+    constexpr auto feeters = make_common(feet, meters);
+    EXPECT_EQ(feet(1u) % feeters(1u), ZERO);
+    EXPECT_EQ(meters(1u) % feeters(1u), ZERO);
+    EXPECT_EQ(detail::gcd(feet(1u).in(feeters), meters(1u).in(feeters)), 1u);
+
+    using symbols::ft;
+    using symbols::m;
+    EXPECT_THAT(123 * make_common(m, ft), SameTypeAndValue(feeters(123)));
+}
+
+TEST(MakeCommonPoint, PreservesCategory) {
+    constexpr auto celsenheit_pt = make_common_point(celsius_pt, fahrenheit_pt);
+
+    // The origin of the common point unit is the lowest origin among all input units.
+    EXPECT_EQ(celsenheit_pt(0), fahrenheit_pt(0));
+    EXPECT_LT(celsenheit_pt(0), celsius_pt(0));
+
+    // The common point unit should evenly divide both input units.
+    //
+    // (We can't necessarily say that it is the _largest_ such unit, as we could for the common
+    // unit, because we also have to accomodate the unit for the _difference of the origins_.)
+    constexpr auto one_f = fahrenheit_pt(1) - fahrenheit_pt(0);
+    constexpr auto one_c = celsius_pt(1) - celsius_pt(0);
+    constexpr auto one_ch = celsenheit_pt(1) - celsenheit_pt(0);
+    EXPECT_EQ(one_f % one_ch, ZERO);
+    EXPECT_EQ(one_c % one_ch, ZERO);
 }
 
 TEST(UnitLabel, DefaultsToUnlabeledUnit) {
