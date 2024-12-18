@@ -26,6 +26,8 @@
 // dependencies outside of the C++14 standard library, and the single-file package of Au itself.
 
 using namespace au;
+using ::au::symbols::m;
+using ::au::symbols::s;
 
 // This ad hoc utility is a stand-in for GTEST, which we can't use here.
 template <typename ExpectedT, typename ActualT>
@@ -42,6 +44,7 @@ int main(int argc, char **argv) {
     const std::vector<bool> results{
         {
             expect_equal((meters / second)(5) * seconds(6), meters(30)),
+            expect_equal(SPEED_OF_LIGHT.as<int>(m / s), 299'792'458 * m / s),
         },
     };
     return std::all_of(std::begin(results), std::end(results), [](auto x) { return x; }) ? 0 : 1;
