@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.0-4-g3074486
+// Version identifier: 0.4.0-5-g8165cb6
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -3657,9 +3657,9 @@ constexpr T clamp_to_range_of(U x) {
 //
 
 template <typename... BPs>
-constexpr bool is_known_to_be_less_than_one(Magnitude<BPs...> m) {
+constexpr bool is_known_to_be_less_than_one(Magnitude<BPs...>) {
     using MagT = Magnitude<BPs...>;
-    static_assert(is_rational(m), "Magnitude must be rational");
+    static_assert(is_rational(MagT{}), "Magnitude must be rational");
 
     constexpr auto num_result = get_value_result<std::uintmax_t>(numerator(MagT{}));
     static_assert(num_result.outcome == MagRepresentationOutcome::OK,
@@ -7869,7 +7869,7 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     constexpr auto UNITY = make_constant(UnitProductT<>{});
 
     static_assert(
-        UNITY.in<R>(associated_unit(target_units) * U{}) >= threshold ||
+        UNITY.in<R>(associated_unit(TargetUnits{}) * U{}) >= threshold ||
             std::is_floating_point<R>::value,
         "Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired");
 
