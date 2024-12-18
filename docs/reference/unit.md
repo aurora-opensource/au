@@ -678,8 +678,14 @@ concept of [common units](../discussion/concepts/common_unit.md).)
 
 ??? example "Examples"
     ```cpp
+    // `meters` and `feet` are quantity makers: pass them a number, they make a quantity.
+    //
+    // `make_common(meters, feet)` is also a quantity maker, so we can pass it `18`.
     constexpr auto x = make_common(meters, feet)(18);
 
+    // `m` and `ft` are unit symbols: multiply a number by them to make a quantity.
+    //
+    // `make_common(meters, feet)` is also a unit symbol, so we can multiply `9.5f` by it.
     using symbols::m;
     using symbols::ft;
     constexpr auto y = 9.5f * make_common(m, ft);
@@ -687,9 +693,11 @@ concept of [common units](../discussion/concepts/common_unit.md).)
 
 ### Making common point units {#make-common-point}
 
-**Result:** A new unit: the largest-magnitude, highest-origin unit which is "common" to the input
-units.  (Read more about the concept of [common units for
-`QuantityPoint`](../discussion/concepts/common_unit.md#common-quantity-point).)
+**Result:** A new unit, which is "common for points" (see [background
+info](../discussion/concepts/common_unit.md#common-quantity-point)) with respect to all input units.
+This means that its magnitude will be the largest-magnitude unit which evenly divides _both_ the
+input units _and_ the units for any differences-of-origin.  And its origin will be the lowest of all
+input origins.
 
 **Syntax:**
 
@@ -697,6 +705,9 @@ units.  (Read more about the concept of [common units for
 
 ??? example "Example"
     ```cpp
+    // `meters_pt` and `feet_pt` are quantity point makers: pass them a number, they make a quantity point.
+    //
+    // `make_common_point(meters_pt, feet_pt)` is also a quantity point maker, so we can pass it `10`.
     constexpr auto temp = make_common_point(celsius_pt, fahrenheit_pt)(10);
     ```
 
