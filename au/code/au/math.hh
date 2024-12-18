@@ -256,7 +256,7 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     constexpr auto UNITY = make_constant(UnitProductT<>{});
 
     static_assert(
-        UNITY.in<R>(associated_unit(target_units) * U{}) >= threshold ||
+        UNITY.in<R>(associated_unit(TargetUnits{}) * U{}) >= threshold ||
             std::is_floating_point<R>::value,
         "Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired");
 
