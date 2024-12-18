@@ -45,6 +45,7 @@ int main(int argc, char **argv) {
         {
             expect_equal((meters / second)(5) * seconds(6), meters(30)),
             expect_equal(SPEED_OF_LIGHT.as<int>(m / s), 299'792'458 * m / s),
+            expect_equal((10 * m).coerce_in(m * mag<5>() / mag<7>()), 14),
         },
     };
     return std::all_of(std::begin(results), std::end(results), [](auto x) { return x; }) ? 0 : 1;
