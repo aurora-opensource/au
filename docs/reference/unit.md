@@ -324,7 +324,7 @@ _instance_ `u` and magnitude instance `m`, this operation:
 
 - `u * m`
 
-## Traits
+## Traits {#traits}
 
 Because units are [monovalue types](./detail/monovalue_types.md), each trait has two forms: one for
 _types_, and another for _instances_.
@@ -575,10 +575,26 @@ no uniquely defined answer, but the program should still produce _some_ answer. 
 the result is associative, and symmetric under any reordering of the input units.  The specific
 implementation choice will be driven by convenience and simplicity.
 
+??? note "A note on inputs vs. outputs for the `common_unit(us...)` form"
+    The return value of the instance version is a _unit_, while the input parameters are
+    [unit _slots_](../discussion/idioms/unit-slots.md).  This means that the return value will often
+    be a different _category of thing_ (i.e., always consistently a unit) than the inputs (which may
+    be quantity makers, unit symbols, or so on).
+
+    For example, consider `common_unit(meters, feet)`.  Recall that the type of `meters` is
+    `QuantityMaker<Meters>`, and that of `feet` is `QuantityMaker<Feet>`.  In this case, the return
+    value is an instance of `CommonUnitT<Meters, Feet>`, _not_
+    `QuantityMaker<CommonUnitT<Meters, Feet>>`.
+
+    If you want something that still computes the common unit, but preserves the _category_ of the
+    inputs, see [`make_common(us...)`](#make-common).
+
 **Syntax:**
 
 - For _types_ `Us...`:
     - `CommonUnitT<Us...>`
+- For _instances_ `us...`:
+    - `common_unit(us...)`
 
 ### Common point unit
 
@@ -603,9 +619,96 @@ A specialization will only exist if the inputs are all units, and will exist but
 error if any two input units have different Dimensions.  We also strive to keep the result
 associative, and symmetric under interchange of any inputs.
 
+??? note "A note on inputs vs. outputs for the `common_point_unit(us...)` form"
+    The return value of the instance version is a _unit_, while the input parameters are
+    [unit _slots_](../discussion/idioms/unit-slots.md).  This means that the return value will often
+    be a different _category of thing_ (i.e., always consistently a unit) than the inputs (which may
+    be quantity point makers, unit symbols, or so on).
+
+    For example, consider `common_unit(meters, feet)`.  Recall that the type of `meters` is
+    `QuantityMaker<Meters>`, and that of `feet` is `QuantityMaker<Feet>`.  In this case, the return
+    value is an instance of `CommonUnitT<Meters, Feet>`, _not_
+    `QuantityMaker<CommonUnitT<Meters, Feet>>`.
+
+    If you want something that still computes the common unit, but preserves the _category_ of the
+    inputs, see [`make_common_point(us...)`](#make-common-point).
+
 **Syntax:**
 
 - For _types_ `Us...`:
     - `CommonPointUnitT<Us...>`
+- For _instances_ `us...`:
+    - `common_point_unit(us...)`
+
+## Category-preserving unit slot operations
+
+A [unit slot](../discussion/idioms/unit-slots.md) API can take a variety of "categories" of input.
+Prominent examples include:
+
+- Simple unit types (`Meters{}`, ...)
+- Quantity makers (`meters`, ...)
+- Unit symbols (`symbols::m`, ...)
+- Constants (`SPEED_OF_LIGHT`, ...)
+
+The [previous section](#traits) demonstrated various traits that can be applied to units.  Some of
+these traits (such as `common_unit(...)`) produce a new unit as their output type.  This will always
+be a _simple_ unit, even though the inputs are unit _slots_: that is, these traits change the
+_category_ of the output.
+
+This section describes a few special operations that _preserve_ that category.  So for example,
+suppose we had an operation `op` of this type.  Let's call the result of `op(Meters{}, Seconds{})`
+as `U{}`.  Then we have:
+
+- `op(meters, seconds)` produces `QuantityMaker<U>`, because its inputs are `QuantityMaker<Meters>`
+  and `QuantityMaker<Seconds>`.
+- `op(m, s)` produces `UnitSymbol<U>`, because its inputs are `UnitSymbol<Meters>` and
+  `UnitSymbol<Seconds>`.
+- ... and so on.
+
+Here are the category-preserving operations we provide.
+
+### Making common units {#make-common}
+
+**Result:** A new unit: the largest unit that evenly divides its input units.  (Read more about the
+concept of [common units](../discussion/concepts/common_unit.md).)
+
+**Syntax:**
+
+- `make_common(us...)`
+
+??? example "Examples"
+    ```cpp
+    // `meters` and `feet` are quantity makers: pass them a number, they make a quantity.
+    //
+    // `make_common(meters, feet)` is also a quantity maker, so we can pass it `18`.
+    constexpr auto x = make_common(meters, feet)(18);
+
+    // `m` and `ft` are unit symbols: multiply a number by them to make a quantity.
+    //
+    // `make_common(meters, feet)` is also a unit symbol, so we can multiply `9.5f` by it.
+    using symbols::m;
+    using symbols::ft;
+    constexpr auto y = 9.5f * make_common(m, ft);
+    ```
+
+### Making common point units {#make-common-point}
+
+**Result:** A new unit, which is "common for points" (see [background
+info](../discussion/concepts/common_unit.md#common-quantity-point)) with respect to all input units.
+This means that its magnitude will be the largest-magnitude unit which evenly divides _both_ the
+input units _and_ the units for any differences-of-origin.  And its origin will be the lowest of all
+input origins.
+
+**Syntax:**
+
+- `make_common_point(us...)`
+
+??? example "Example"
+    ```cpp
+    // `meters_pt` and `feet_pt` are quantity point makers: pass them a number, they make a quantity point.
+    //
+    // `make_common_point(meters_pt, feet_pt)` is also a quantity point maker, so we can pass it `10`.
+    constexpr auto temp = make_common_point(celsius_pt, fahrenheit_pt)(10);
+    ```
 
 <script src="../assets/hrh4.js" async=false defer=false></script>
