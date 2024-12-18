@@ -56,7 +56,8 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // Convert this constant to a Quantity of the given unit and rep.
     template <typename T, typename OtherUnit>
     constexpr auto as(OtherUnit u) const {
-        static_assert(can_store_value_in<T>(u), "Cannot represent constant in this unit/rep");
+        static_assert(can_store_value_in<T>(OtherUnit{}),
+                      "Cannot represent constant in this unit/rep");
         return coerce_as<T>(u);
     }
 
@@ -69,7 +70,8 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // Get the value of this constant in the given unit and rep.
     template <typename T, typename OtherUnit>
     constexpr auto in(OtherUnit u) const {
-        static_assert(can_store_value_in<T>(u), "Cannot represent constant in this unit/rep");
+        static_assert(can_store_value_in<T>(OtherUnit{}),
+                      "Cannot represent constant in this unit/rep");
         return coerce_in<T>(u);
     }
 
