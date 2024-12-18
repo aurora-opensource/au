@@ -561,9 +561,9 @@ TEST(CommonPointUnit, SupportsUnitSlots) {
 
 TEST(MakeCommon, PreservesCategory) {
     constexpr auto feeters = make_common(feet, meters);
-    EXPECT_EQ(feet(1u) % feeters(1u), ZERO);
-    EXPECT_EQ(meters(1u) % feeters(1u), ZERO);
-    EXPECT_EQ(detail::gcd(feet(1u).in(feeters), meters(1u).in(feeters)), 1u);
+    EXPECT_THAT(feet(1u) % feeters(1u), Eq(ZERO));
+    EXPECT_THAT(meters(1u) % feeters(1u), Eq(ZERO));
+    EXPECT_THAT(detail::gcd(feet(1u).in(feeters), meters(1u).in(feeters)), Eq(1u));
 
     using symbols::ft;
     using symbols::m;
