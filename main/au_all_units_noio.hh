@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.0-3-g30e0b27
+// Version identifier: 0.4.0-4-g3074486
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -4068,6 +4068,26 @@ constexpr auto associated_unit(U) {
 template <typename U>
 constexpr auto associated_unit_for_points(U) {
     return AssociatedUnitForPointsT<U>{};
+}
+
+template <typename... Us>
+constexpr auto common_unit(Us...) {
+    return CommonUnitT<AssociatedUnitT<Us>...>{};
+}
+
+template <typename... Us>
+constexpr auto common_point_unit(Us...) {
+    return CommonPointUnitT<AssociatedUnitForPointsT<Us>...>{};
+}
+
+template <template <class> class Utility, typename... Us>
+constexpr auto make_common(Utility<Us>...) {
+    return Utility<CommonUnitT<AssociatedUnitT<Us>...>>{};
+}
+
+template <template <class> class Utility, typename... Us>
+constexpr auto make_common_point(Utility<Us>...) {
+    return Utility<CommonPointUnitT<AssociatedUnitForPointsT<Us>...>>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1706,6 +1706,39 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#category-preserving-unit-slot-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Category-preserving unit slot operations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Category-preserving unit slot operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#make-common" class="md-nav__link">
+    <span class="md-ellipsis">
+      Making common units
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#make-common-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      Making common point units
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2759,10 +2792,27 @@ divides them (because some pair of input units has an irrational quotient).  In 
 no uniquely defined answer, but the program should still produce <em>some</em> answer.  We guarantee that
 the result is associative, and symmetric under any reordering of the input units.  The specific
 implementation choice will be driven by convenience and simplicity.</p>
+<details class="note">
+<summary>A note on inputs vs. outputs for the <code>common_unit(us...)</code> form</summary>
+<p>The return value of the instance version is a <em>unit</em>, while the input parameters are
+<a href="../../discussion/idioms/unit-slots/">unit <em>slots</em></a>.  This means that the return value will often
+be a different <em>category of thing</em> (i.e., always consistently a unit) than the inputs (which may
+be quantity makers, unit symbols, or so on).</p>
+<p>For example, consider <code>common_unit(meters, feet)</code>.  Recall that the type of <code>meters</code> is
+<code>QuantityMaker&lt;Meters&gt;</code>, and that of <code>feet</code> is <code>QuantityMaker&lt;Feet&gt;</code>.  In this case, the return
+value is an instance of <code>CommonUnitT&lt;Meters, Feet&gt;</code>, <em>not</em>
+<code>QuantityMaker&lt;CommonUnitT&lt;Meters, Feet&gt;&gt;</code>.</p>
+<p>If you want something that still computes the common unit, but preserves the <em>category</em> of the
+inputs, see <a href="#make-common"><code>make_common(us...)</code></a>.</p>
+</details>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For <em>types</em> <code>Us...</code>:<ul>
 <li><code>CommonUnitT&lt;Us...&gt;</code></li>
+</ul>
+</li>
+<li>For <em>instances</em> <code>us...</code>:<ul>
+<li><code>common_unit(us...)</code></li>
 </ul>
 </li>
 </ul>
@@ -2784,13 +2834,94 @@ in all other cases.</p>
 <p>A specialization will only exist if the inputs are all units, and will exist but produce a hard
 error if any two input units have different Dimensions.  We also strive to keep the result
 associative, and symmetric under interchange of any inputs.</p>
+<details class="note">
+<summary>A note on inputs vs. outputs for the <code>common_point_unit(us...)</code> form</summary>
+<p>The return value of the instance version is a <em>unit</em>, while the input parameters are
+<a href="../../discussion/idioms/unit-slots/">unit <em>slots</em></a>.  This means that the return value will often
+be a different <em>category of thing</em> (i.e., always consistently a unit) than the inputs (which may
+be quantity point makers, unit symbols, or so on).</p>
+<p>For example, consider <code>common_unit(meters, feet)</code>.  Recall that the type of <code>meters</code> is
+<code>QuantityMaker&lt;Meters&gt;</code>, and that of <code>feet</code> is <code>QuantityMaker&lt;Feet&gt;</code>.  In this case, the return
+value is an instance of <code>CommonUnitT&lt;Meters, Feet&gt;</code>, <em>not</em>
+<code>QuantityMaker&lt;CommonUnitT&lt;Meters, Feet&gt;&gt;</code>.</p>
+<p>If you want something that still computes the common unit, but preserves the <em>category</em> of the
+inputs, see <a href="#make-common-point"><code>make_common_point(us...)</code></a>.</p>
+</details>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For <em>types</em> <code>Us...</code>:<ul>
 <li><code>CommonPointUnitT&lt;Us...&gt;</code></li>
 </ul>
 </li>
+<li>For <em>instances</em> <code>us...</code>:<ul>
+<li><code>common_point_unit(us...)</code></li>
 </ul>
+</li>
+</ul>
+<h2 id="category-preserving-unit-slot-operations">Category-preserving unit slot operations<a class="headerlink" href="#category-preserving-unit-slot-operations" title="Permanent link">&para;</a></h2>
+<p>A <a href="../../discussion/idioms/unit-slots/">unit slot</a> API can take a variety of &ldquo;categories&rdquo; of input.
+Prominent examples include:</p>
+<ul>
+<li>Simple unit types (<code>Meters{}</code>, &hellip;)</li>
+<li>Quantity makers (<code>meters</code>, &hellip;)</li>
+<li>Unit symbols (<code>symbols::m</code>, &hellip;)</li>
+<li>Constants (<code>SPEED_OF_LIGHT</code>, &hellip;)</li>
+</ul>
+<p>The <a href="#traits">previous section</a> demonstrated various traits that can be applied to units.  Some of
+these traits (such as <code>common_unit(...)</code>) produce a new unit as their output type.  This will always
+be a <em>simple</em> unit, even though the inputs are unit <em>slots</em>: that is, these traits change the
+<em>category</em> of the output.</p>
+<p>This section describes a few special operations that <em>preserve</em> that category.  So for example,
+suppose we had an operation <code>op</code> of this type.  Let&rsquo;s call the result of <code>op(Meters{}, Seconds{})</code>
+as <code>U{}</code>.  Then we have:</p>
+<ul>
+<li><code>op(meters, seconds)</code> produces <code>QuantityMaker&lt;U&gt;</code>, because its inputs are <code>QuantityMaker&lt;Meters&gt;</code>
+  and <code>QuantityMaker&lt;Seconds&gt;</code>.</li>
+<li><code>op(m, s)</code> produces <code>UnitSymbol&lt;U&gt;</code>, because its inputs are <code>UnitSymbol&lt;Meters&gt;</code> and
+  <code>UnitSymbol&lt;Seconds&gt;</code>.</li>
+<li>&hellip; and so on.</li>
+</ul>
+<p>Here are the category-preserving operations we provide.</p>
+<h3 id="make-common">Making common units<a class="headerlink" href="#make-common" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A new unit: the largest unit that evenly divides its input units.  (Read more about the
+concept of <a href="../../discussion/concepts/common_unit/">common units</a>.)</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li><code>make_common(us...)</code></li>
+</ul>
+<details class="example">
+<summary>Examples</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// `meters` and `feet` are quantity makers: pass them a number, they make a quantity.</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1">//</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1">// `make_common(meters, feet)` is also a quantity maker, so we can pass it `18`.</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_common</span><span class="p">(</span><span class="n">meters</span><span class="p">,</span><span class="w"> </span><span class="n">feet</span><span class="p">)(</span><span class="mi">18</span><span class="p">);</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="c1">// `m` and `ft` are unit symbols: multiply a number by them to make a quantity.</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1">//</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="c1">// `make_common(meters, feet)` is also a unit symbol, so we can multiply `9.5f` by it.</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="k">using</span><span class="w"> </span><span class="n">symbols</span><span class="o">::</span><span class="n">m</span><span class="p">;</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="k">using</span><span class="w"> </span><span class="n">symbols</span><span class="o">::</span><span class="n">ft</span><span class="p">;</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">9.5f</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">make_common</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">ft</span><span class="p">);</span>
+</code></pre></div>
+</details>
+<h3 id="make-common-point">Making common point units<a class="headerlink" href="#make-common-point" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A new unit, which is &ldquo;common for points&rdquo; (see <a href="../../discussion/concepts/common_unit/#common-quantity-point">background
+info</a>) with respect to all input units.
+This means that its magnitude will be the largest-magnitude unit which evenly divides <em>both</em> the
+input units <em>and</em> the units for any differences-of-origin.  And its origin will be the lowest of all
+input origins.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li><code>make_common_point(us...)</code></li>
+</ul>
+<details class="example">
+<summary>Example</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// `meters_pt` and `feet_pt` are quantity point makers: pass them a number, they make a quantity point.</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="c1">//</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1">// `make_common_point(meters_pt, feet_pt)` is also a quantity point maker, so we can pass it `10`.</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_common_point</span><span class="p">(</span><span class="n">celsius_pt</span><span class="p">,</span><span class="w"> </span><span class="n">fahrenheit_pt</span><span class="p">)(</span><span class="mi">10</span><span class="p">);</span>
+</code></pre></div>
+</details>
 <script src="../assets/hrh4.js" async=false defer=false></script>
 
 <div class="footnote">
