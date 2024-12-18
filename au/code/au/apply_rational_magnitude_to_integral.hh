@@ -75,9 +75,9 @@ constexpr T clamp_to_range_of(U x) {
 //
 
 template <typename... BPs>
-constexpr bool is_known_to_be_less_than_one(Magnitude<BPs...> m) {
+constexpr bool is_known_to_be_less_than_one(Magnitude<BPs...>) {
     using MagT = Magnitude<BPs...>;
-    static_assert(is_rational(m), "Magnitude must be rational");
+    static_assert(is_rational(MagT{}), "Magnitude must be rational");
 
     constexpr auto num_result = get_value_result<std::uintmax_t>(numerator(MagT{}));
     static_assert(num_result.outcome == MagRepresentationOutcome::OK,
