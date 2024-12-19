@@ -687,7 +687,7 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
 - "Can't pass `Quantity` to a unit slot for points"
 - "Can't pass `QuantityPoint` to a unit slot for points"
 
-**Meaning:**  A [unit slot](./discussion/concepts/unit-slot.md) is an API that takes _any unit-named
+**Meaning:**  A [unit slot](./discussion/idioms/unit-slots.md) is an API that takes _any unit-named
 type in the library_, and treats it as the associated unit.  Besides simple unit types themselves,
 these can include quantity makers (such as `meters`), unit symbols (such as `symbols::m`), constants
 (such as `SPEED_OF_LIGHT`), and so on.
