@@ -374,8 +374,208 @@ These functions also support an explicit template parameter: so, `.coerce_as<T>(
     `inches(27.8).coerce_as<int>(feet)` will return `feet(2)`.
 
 !!! tip
-    Prefer **not** to use the "coercing versions" if possible, because you will get more safety
-    checks.  The risks which the "base" versions warn about are real.
+    In most cases, prefer **not** to use the "coercing versions" if possible, because you will get
+    more safety checks.  The risks which the "base" versions warn about are real.
+
+    However, one place where it's _very safe_ to use the "coercing versions" is right after running
+    a _runtime conversion checker_.  These provde _exact_ conversion checks, even more accurate than
+    the default compile-time safety surface (although at the cost of runtime operations).  See the
+    next section for more details.
+
+### Runtime conversion checkers {#runtime-conversion-checkers}
+
+Au's default, compile-time conversion checks are only heuristics, based on the _general_ risk of
+overflow or truncation.  They operate on the conversion as a whole, not on specific values.  This
+means that some input values for forbidden conversions would actually be just fine, while some input
+values for permitted conversions would be lossy.
+
+This section documents a more exact alternative: the _runtime conversion checkers_, which can detect
+overflow or truncation for specific runtime values.  The downside is that you will pay a runtime
+penalty for these checks, as opposed to the compile-time checks which are basically free.  However,
+unit conversions very rarely occur in the "hot loops" of well designed programs, so this performance
+cost usually doesn't matter.
+
+!!! tip
+    A great way to use these functions is to write your own conversion utilities, using your
+    preferred error handling mechanism (exceptions, optional, return codes, and so on).  See our
+    [overflow guide](../discussion/concepts/overflow.md#check-at-runtime) for more details.
+
+We provide individual checkers for overflow and truncation, as well as a checker for general
+lossiness (which combines both).
+
+#### `will_conversion_overflow`
+
+`will_conversion_overflow` takes a `Quantity` value and a target unit, and returns whether the
+conversion will overflow.  Users can also provide an "explicit rep" template parameter to check the
+corresponding explicit-rep conversion.
+
+We define "overflow" as a value that would either be lower than the lowest representable number in
+the target type, or higher than the highest representable number.  The precise implementation will
+depend on the types involved.  For example, if the input is an unsigned integral type, we won't
+emit a runtime instruction to check the lower bound of the target.
+
+Here are the usage patterns, and their corresponding signatures.
+
+- `will_conversion_overflow(q, target_unit)` returns whether `q.as(target_unit)`, or
+  `q.in(target_unit)`, would overflow.
+
+    ```cpp
+    template <typename U, typename R, typename TargetUnitSlot>
+    constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit);
+    ```
+
+- `will_conversion_overflow<T>(q, target_unit)` returns whether `q.as<T>(target_unit)`, or
+  `q.in<T>(target_unit)`, would overflow.
+
+    ```cpp
+    template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
+    constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit);
+    ```
+
+#### `will_conversion_truncate`
+
+`will_conversion_truncate` takes a `Quantity` value and a target unit, and returns whether the
+conversion will truncate.  For example, if the target unit is `feet`, then `inches(13)` and
+`inches(11)` _would_ truncate, but `inches(12)` would _not_ truncate. Users can also provide an
+"explicit rep" template parameter to check the corresponding explicit-rep conversion.
+
+!!! warning "Warning: floating point destination types are treated as non-truncating"
+    Consistent with the rest of the library, and with the convention established by the
+    `std::chrono` library, we treat floating point types as value preserving.  This is not always
+    strictly true --- for example, there are many large integers which cannot be represented in
+    floating point, and converting these integers to floating point is really a form of truncation.
+
+    However, there are two compelling reasons for upholding this convenient fiction in this
+    function's policy.  First, it keeps these functions consistent with the rest of the library.
+    Second, if a user willingly enters the floating point domain, we may assume they accept the
+    kinds of precision losses that have always come along with it (often called the "usual floating
+    point error").
+
+    Designing APIs that wrestle in detail with the implications of floating point error --- not to
+    mention other numeric types, such as fixed point --- would be an interesting and worthwhile
+    endeavor, but also a very subtle and challenging one.  We hope to see that work take place
+    someday, whether in this library or another.
+
+Here are the usage patterns, and their corresponding signatures.
+
+- `will_conversion_truncate(q, target_unit)` returns whether `q.as(target_unit)`, or
+  `q.in(target_unit)`, would truncate.
+
+    ```cpp
+    template <typename U, typename R, typename TargetUnitSlot>
+    constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit);
+    ```
+
+- `will_conversion_truncate<T>(q, target_unit)` returns whether `q.as<T>(target_unit)`, or
+  `q.in<T>(target_unit)`, would truncate.
+
+    ```cpp
+    template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
+    constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit);
+    ```
+
+#### `is_conversion_lossy`
+
+`is_conversion_lossy` combines both of the previous two checks: it returns `true` whenever _either
+or both_ of `will_conversion_overflow` or `will_conversion_truncate` would return `true`.  Like
+these functions, it takes a `Quantity` value and a target unit.  Users can also provide an "explicit
+rep" template parameter to check the corresponding explicit-rep conversion.
+
+The reason the other two functions are publicly available (rather than only this one) is that often,
+users may only care about either of overflow or truncation, not both.  For example, working with
+integral quantities in the embedded domain, users may wish to decompose a nanosecond duration
+quantity into separate parts for "seconds" and "nanoseconds", where the "seconds" part uses
+a smaller integer type, and the leftover "nanoseconds" part amounts to less than one second.  In
+this case, truncating the initial quantity when converting to "seconds" is explicitly desired, but
+we still want to check for overflow.
+
+Here are the usage patterns, and their corresponding signatures.
+
+- `is_conversion_lossy(q, target_unit)` returns whether `q.as(target_unit)`, or `q.in(target_unit)`,
+  would either overflow or truncate.
+
+    ```cpp
+    template <typename U, typename R, typename TargetUnitSlot>
+    constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit);
+    ```
+
+- `is_conversion_lossy<T>(q, target_unit)` returns whether `q.as<T>(target_unit)`, or
+  `q.in<T>(target_unit)`, would either overflow or truncate.
+
+    ```cpp
+    template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
+    constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit);
+    ```
+
+### Special case: dimensionless and unitless results {#as-raw-number}
+
+Users may expect that the product of quantities such as `seconds` and `hertz` would completely
+cancel out, and produce a raw, simple C++ numeric type.  Currently, this is indeed the case, but we
+have also found that it makes the library harder to reason about.  Instead, we hope in the future to
+return a `Quantity` type _consistently_ from arithmetical operations on `Quantity` inputs (see
+[#185]).
+
+In order to obtain that raw number robustly, both now and in the future, you can use the
+`as_raw_number` function, a callsite-readable way to "exit" the library.  This will also opt into
+all mechanisms and safety features of the library.  In particular:
+
+- We will automatically perform all necessary conversions.
+- This will not compile unless the input is _dimensionless_.
+- If the conversion is dangerous (say, from `Quantity<Percent, int>`, which cannot in general be
+  represented exactly as a raw `int`, we will also fail to compile.
+
+Users should get in the habit of using `as_raw_number` whenever they really want a raw number.  This
+communicates intent, and also works both before and after [#185] is implemented.
+
+!!! example
+    ```cpp
+    constexpr auto num_beats = as_raw_number(kilo(hertz)(7) * seconds(3));
+    // Result: 21'000 (of type `int`)
+    ```
+
+## Non-Type Template Parameters (NTTPs) {#nttp}
+
+A _non-type template parameter_ (NTTP) is a template parameter that is not a _type_, but rather some
+kind of _value_.  Common examples include `template<int N>`, or `template<bool B>`.  Before C++20,
+only a small number of types could be used as NTTPs: very roughly, these were _integral_ types,
+_pointer_ types, and _enumerations_.
+
+Au provides a workaround for pre-C++20 users that lets you _effectively_ encode any `Quantity<U, R>`
+as an NTTP, _as long as_ its rep `R` is an **integral** type.  To do this, use the
+`Quantity<U, R>::NTTP` type as the template parameter.  You will be able to assign between
+`Quantity<U, R>` and `Quantity<U, R>::NTTP`, _in either direction_, but only in the case of exact
+match of both `U` and `R`.  For all other cases, you'll need to perform a conversion (using the
+usual mechanisms for `Quantity` described elsewhere on this page).
+
+!!! warning
+    It is undefined behavior to invoke `Quantity<U, R>::NTTP` whenever `std::is_integral<R>::value`
+    is `false`.
+
+    We cannot strictly prevent users from doing this.  However, in practice, it is very unlikely for
+    this to happen by accident.  Both conversion operators between `Quantity<U, R>` and
+    `Quantity<U, R>::NTTP` would fail with a hard compiler error, based on a `static_assert` that
+    explains this situation.  So users can name this type, but they cannot assign to it or from it
+    without prohibitive difficulty.
+
+??? example "Example: defining and using a template with a `Quantity` NTTP"
+    ```cpp
+    template <QuantityI<Hertz>::NTTP Frequency>
+    struct TemplatedOnFrequency {
+        QuantityI<Hertz> value = Frequency;      // Assigning `Quantity` from NTTP
+    };
+
+    using T = TemplatedOnFrequency<hertz(440)>;  // Setting template parameter from `Quantity`
+    ```
+
+### `from_nttp(Quantity<U, R>::NTTP)`
+
+Calling `from_nttp` on a `Quantity<U, R>::NTTP` will convert it back into the corresponding
+`Quantity<U, R>` that was encoded in the template parameter.  This lets it automatically participate
+in all of the usual `Quantity` operations and conversions.
+
+!!! note
+    If you are simply _assigning_ a `Quantity<U, R>::NTTP` to a `Quantity<U, R>`, where `U` and `R`
+    are identical, you do not need to call `from_nttp`.  We support implcit conversion in that case.
 
 ## Operations
 
@@ -654,3 +854,5 @@ the following conditions hold.
 
 - For _types_ `U1` and `U2`:
     - `AreQuantityTypesEquivalent<U1, U2>::value`
+
+[#185]: https://github.com/aurora-opensource/au/issues/185

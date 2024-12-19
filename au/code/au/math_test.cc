@@ -147,6 +147,18 @@ TEST(clamp, SupportsZeroForUpperBoundaryArgument) {
     EXPECT_THAT(clamp(feet(+1), inches(-18), ZERO), SameTypeAndValue(inches(0)));
 }
 
+TEST(clamp, SupportsZeroForValueArgument) {
+    EXPECT_THAT(clamp(ZERO, inches(-18), inches(18)), SameTypeAndValue(inches(0)));
+    EXPECT_THAT(clamp(ZERO, inches(24), inches(60)), SameTypeAndValue(inches(24)));
+    EXPECT_THAT(clamp(ZERO, feet(2), inches(60)), SameTypeAndValue(inches(24)));
+}
+
+TEST(clamp, SupportsZeroForMultipleArguments) {
+    EXPECT_THAT(clamp(ZERO, inches(-8), ZERO), SameTypeAndValue(inches(0)));
+    EXPECT_THAT(clamp(ZERO, ZERO, feet(2)), SameTypeAndValue(feet(0)));
+    EXPECT_THAT(clamp(feet(6), ZERO, ZERO), SameTypeAndValue(feet(0)));
+}
+
 TEST(copysign, ReturnsSameTypesAsStdCopysignForSameUnitInputs) {
     auto expect_consistent_with_std_copysign = [](auto mag, auto raw_sgn) {
         for (const auto test_sgn : {-1, 0, +1}) {

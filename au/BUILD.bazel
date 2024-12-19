@@ -25,7 +25,9 @@ cc_library(
     deps = [
         ":chrono_interop",
         ":constant",
+        ":constants",
         ":math",
+        ":units",
     ],
 )
 
@@ -36,6 +38,43 @@ cc_test(
     deps = [
         ":au",
         ":testing",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "constants",
+    hdrs = glob(["code/au/constants/*.hh"]),
+    includes = ["code"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":constant",
+        ":units",
+    ],
+)
+
+cc_test(
+    name = "constants_test",
+    size = "small",
+    srcs = glob(["code/au/constants/test/*.cc"]),
+    deps = [
+        ":constants",
+        ":testing",
+        ":units",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "cpp20_test",
+    size = "small",
+    srcs = ["code/au/cpp20_test.cc"],
+    tags = ["manual"],
+    deps = [
+        ":quantity",
+        ":quantity_point",
+        ":testing",
+        ":units",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -349,6 +388,7 @@ cc_test(
     name = "no_wconversion_test",
     size = "small",
     srcs = ["code/au/no_wconversion_test.cc"],
+    tags = ["no_wconversion"],
     deps = [
         ":quantity",
         ":testing",
@@ -379,6 +419,7 @@ cc_library(
     hdrs = ["code/au/packs.hh"],
     includes = ["code"],
     deps = [
+        ":fwd",
         ":stdx",
         ":utility",
     ],
@@ -445,6 +486,7 @@ cc_library(
         ":fwd",
         ":operators",
         ":rep",
+        ":static_cast_checkers",
         ":unit_of_measure",
         ":utility",
         ":zero",
@@ -515,6 +557,22 @@ cc_test(
         ":rep",
         ":unit_symbol",
         ":units",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "static_cast_checkers",
+    hdrs = ["code/au/static_cast_checkers.hh"],
+    includes = ["code"],
+)
+
+cc_test(
+    name = "static_cast_checkers_test",
+    size = "small",
+    srcs = ["code/au/static_cast_checkers_test.cc"],
+    deps = [
+        ":static_cast_checkers",
         "@com_google_googletest//:gtest_main",
     ],
 )

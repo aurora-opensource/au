@@ -55,6 +55,12 @@ static constexpr QuantityMaker<Meters> meters{};
 static_assert(are_units_quantity_equivalent(Centi<Meters>{} * mag<254>(), Inches{} * mag<100>()),
               "Double-check this ad hoc definition of meters");
 
+struct Unos : decltype(UnitProductT<>{}) {};
+constexpr auto unos = QuantityMaker<Unos>{};
+
+struct Percent : decltype(Unos{} / mag<100>()) {};
+constexpr auto percent = QuantityMaker<Percent>{};
+
 struct Hours : UnitImpl<Time> {};
 constexpr auto hour = SingularNameFor<Hours>{};
 constexpr auto hours = QuantityMaker<Hours>{};
@@ -62,6 +68,12 @@ constexpr auto hours = QuantityMaker<Hours>{};
 struct Minutes : decltype(Hours{} / mag<60>()) {};
 constexpr auto minute = SingularNameFor<Minutes>{};
 constexpr auto minutes = QuantityMaker<Minutes>{};
+
+struct Seconds : decltype(Minutes{} / mag<60>()) {};
+constexpr auto seconds = QuantityMaker<Seconds>{};
+
+struct Hertz : decltype(inverse(Seconds{})) {};
+constexpr auto hertz = QuantityMaker<Hertz>{};
 
 struct Days : decltype(Hours{} * mag<24>()) {};
 constexpr auto days = QuantityMaker<Days>{};
@@ -748,6 +760,22 @@ TEST(Quantity, CommonUnitAlwaysCompletelyIndependentOfOrder) {
     check_units(kilo(meters), miles, milli(meters));
 }
 
+template <QuantityI<Meters>::NTTP Length>
+struct TemplateOnLength {
+    QuantityI<Meters> value = Length;
+};
+
+TEST(QuantityNTTP, SupportsPreCpp20NttpTypes) {
+    constexpr auto length = TemplateOnLength<meters(18)>{}.value;
+    EXPECT_THAT(length, SameTypeAndValue(meters(18)));
+}
+
+TEST(QuantityNTTP, CanConvertFromNttpToAnyCompatibleQuantityType) {
+    constexpr QuantityI<Meters>::NTTP LengthNTTP = meters(18);
+    constexpr QuantityI<Milli<Meters>> length = from_nttp(LengthNTTP);
+    EXPECT_THAT(length, SameTypeAndValue(milli(meters)(18'000)));
+}
+
 TEST(Quantity, CommonTypeRespectsImplicitRepSafetyChecks) {
     // The following test should fail to compile.  Uncomment both lines to check.
     // constexpr auto feeters = QuantityMaker<CommonUnitT<Meters, Feet>>{};
@@ -768,6 +796,23 @@ TEST(Quantity, CommonTypeRespectsImplicitRepSafetyChecks) {
 
 TEST(QuantityMaker, ProvidesAssociatedUnit) {
     StaticAssertTypeEq<AssociatedUnitT<QuantityMaker<Hours>>, Hours>();
+}
+
+TEST(AsRawNumber, ExtractsRawNumberForUnitlessQuantity) {
+    EXPECT_THAT(as_raw_number(unos(3)), SameTypeAndValue(3));
+    EXPECT_THAT(as_raw_number(unos(3.1415f)), SameTypeAndValue(3.1415f));
+}
+
+TEST(AsRawNumber, PerformsConversionsWherePermissible) {
+    EXPECT_THAT(as_raw_number(percent(75.0)), SameTypeAndValue(0.75));
+    EXPECT_THAT(as_raw_number(kilo(hertz)(7) * seconds(3)), SameTypeAndValue(21'000));
+}
+
+TEST(AsRawNumber, IdentityForBuiltInNumericTypes) {
+    EXPECT_THAT(as_raw_number(3), SameTypeAndValue(3));
+    EXPECT_THAT(as_raw_number(3u), SameTypeAndValue(3u));
+    EXPECT_THAT(as_raw_number(3.1415), SameTypeAndValue(3.1415));
+    EXPECT_THAT(as_raw_number(3.1415f), SameTypeAndValue(3.1415f));
 }
 
 TEST(WillConversionOverflow, SensitiveToTypeBoundariesForPureIntegerMultiply) {
@@ -807,6 +852,44 @@ TEST(WillConversionOverflow, SensitiveToTypeBoundariesForPureIntegerMultiply) {
     }
 }
 
+TEST(WillConversionOverflow, AlwaysFalseForQuantityEquivalentUnits) {
+    auto will_m_to_m_overflow = [](auto x) { return will_conversion_overflow(meters(x), meters); };
+
+    EXPECT_FALSE(will_m_to_m_overflow(2'147'483));
+    EXPECT_FALSE(will_m_to_m_overflow(-2'147'483));
+    EXPECT_FALSE(will_m_to_m_overflow(uint8_t{255}));
+}
+
+TEST(WillConversionOverflow, UnsignedToIntegralDependsOnBoundaryOfIntegral) {
+    EXPECT_FALSE(will_conversion_overflow<int16_t>(feet(uint16_t{65'535}), yards));
+
+    EXPECT_FALSE(will_conversion_overflow<int16_t>(feet(uint16_t{2'700}), inches));
+    EXPECT_TRUE(will_conversion_overflow<int16_t>(feet(uint16_t{2'800}), inches));
+}
+
+TEST(WillConversionOverflow, NegativeValuesAlwaysOverflowUnsignedDestination) {
+    EXPECT_TRUE(will_conversion_overflow<uint64_t>(feet(-1), inches));
+    EXPECT_TRUE(will_conversion_overflow<uint64_t>(feet(int8_t{-100}), yards));
+}
+
+TEST(WillConversionOverflow, SignedToUnsignedDependsOnBoundaryOfDestination) {
+    EXPECT_FALSE(will_conversion_overflow<uint8_t>(feet(21), inches));
+    EXPECT_TRUE(will_conversion_overflow<uint8_t>(feet(22), inches));
+}
+
+TEST(WillConversionOverflow, SignedToSignedHandlesNegativeAndPositiveLimits) {
+    EXPECT_TRUE(will_conversion_overflow<int8_t>(feet(-11), inches));
+    EXPECT_FALSE(will_conversion_overflow<int8_t>(feet(-10), inches));
+
+    EXPECT_FALSE(will_conversion_overflow<int8_t>(feet(10), inches));
+    EXPECT_TRUE(will_conversion_overflow<int8_t>(feet(11), inches));
+}
+
+TEST(WillConversionOverflow, FloatToIntHandlesLimitsOfDestType) {
+    EXPECT_FALSE(will_conversion_overflow<uint8_t>(feet(21.0), inches));
+    EXPECT_TRUE(will_conversion_overflow<uint8_t>(feet(22.0), inches));
+}
+
 TEST(WillConversionTruncate, UsesModForIntegerTypes) {
     auto will_in_to_ft_truncate_i32 = [](int32_t x) {
         return will_conversion_truncate(inches(x), feet);
@@ -831,6 +914,25 @@ TEST(WillConversionTruncate, UsesModForIntegerTypes) {
     EXPECT_TRUE(will_in_to_ft_truncate_i32(-119));
     EXPECT_FALSE(will_in_to_ft_truncate_i32(-120));
     EXPECT_TRUE(will_in_to_ft_truncate_i32(-121));
+}
+
+TEST(WillConversionTruncate, AlwaysFalseForQuantityEquivalentUnits) {
+    auto will_in_to_in_truncate = [](auto x) {
+        return will_conversion_truncate(inches(x), inches);
+    };
+
+    EXPECT_FALSE(will_in_to_in_truncate(uint8_t{124}));
+    EXPECT_FALSE(will_in_to_in_truncate(0));
+    EXPECT_FALSE(will_in_to_in_truncate(-120));
+}
+
+TEST(WillConversionTruncate, AlwaysFalseByConventionForFloatingPointDestination) {
+    EXPECT_FALSE(will_conversion_truncate<float>(miles(18'000'000'000'000'000'000u), inches));
+}
+
+TEST(WillConversionTruncate, FloatToIntHandlesFractionalParts) {
+    EXPECT_TRUE(will_conversion_truncate<uint8_t>(feet(0.1), inches));
+    EXPECT_FALSE(will_conversion_truncate<uint8_t>(feet(1.0), inches));
 }
 
 TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions) {
@@ -898,12 +1000,22 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
     test_round_trip_for_every_uint16_value(meters, yards);
 }
 
+TEST(IsConversionLossy, FloatToIntHandlesFractionalParts) {
+    EXPECT_TRUE(is_conversion_lossy<uint8_t>(feet(0.1), inches));
+    EXPECT_FALSE(is_conversion_lossy<uint8_t>(feet(1.0), inches));
+}
+
+TEST(IsConversionLossy, FloatToIntHandlesLimitsOfDestType) {
+    EXPECT_FALSE(is_conversion_lossy<uint8_t>(feet(21.0), inches));
+    EXPECT_TRUE(is_conversion_lossy<uint8_t>(feet(22.0), inches));
+}
+
 TEST(AreQuantityTypesEquivalent, RequiresSameRepAndEquivalentUnits) {
     using IntQFeet = decltype(feet(1));
-    using IntQFeetTimesOne = decltype((feet * ONE)(1));
+    using IntQTwelveInches = decltype((inches * mag<12>())(1));
 
-    ASSERT_FALSE((std::is_same<IntQFeet, IntQFeetTimesOne>::value));
-    EXPECT_TRUE((AreQuantityTypesEquivalent<IntQFeet, IntQFeetTimesOne>::value));
+    ASSERT_FALSE((std::is_same<IntQFeet, IntQTwelveInches>::value));
+    EXPECT_TRUE((AreQuantityTypesEquivalent<IntQFeet, IntQTwelveInches>::value));
 }
 
 TEST(UnblockIntDiv, EnablesTruncatingIntegerDivisionIntoQuantity) {

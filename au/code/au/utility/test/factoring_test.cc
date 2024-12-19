@@ -14,7 +14,13 @@
 
 #include "au/utility/factoring.hh"
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
+
+using ::testing::AnyOf;
+using ::testing::Eq;
+using ::testing::Gt;
+using ::testing::Le;
 
 namespace au {
 namespace detail {
@@ -22,19 +28,67 @@ namespace {
 std::uintmax_t cube(std::uintmax_t n) { return n * n * n; }
 }  // namespace
 
-TEST(FindFirstFactor, ReturnsInputForPrimes) {
-    EXPECT_EQ(find_first_factor(2u), 2u);
-    EXPECT_EQ(find_first_factor(3u), 3u);
-    EXPECT_EQ(find_first_factor(5u), 5u);
-    EXPECT_EQ(find_first_factor(7u), 7u);
-    EXPECT_EQ(find_first_factor(11u), 11u);
-
-    EXPECT_EQ(find_first_factor(196961u), 196961u);
+TEST(FirstPrimes, HasOnlyPrimesInOrderAndDoesntSkipAny) {
+    const auto &first_primes = FirstPrimes::values;
+    auto i_prime = 0u;
+    for (auto i = 2u; i <= first_primes.back(); ++i) {
+        if (i == first_primes[i_prime]) {
+            EXPECT_TRUE(is_prime(i)) << i;
+            ++i_prime;
+        } else {
+            EXPECT_FALSE(is_prime(i)) << i;
+        }
+    }
 }
 
-TEST(FindFirstFactor, FindsFirstFactor) {
-    EXPECT_EQ(find_first_factor(7u * 11u * 13u), 7u);
-    EXPECT_EQ(find_first_factor(cube(196961u)), 196961u);
+TEST(FindFactor, ReturnsInputForPrimes) {
+    EXPECT_EQ(find_prime_factor(2u), 2u);
+    EXPECT_EQ(find_prime_factor(3u), 3u);
+    EXPECT_EQ(find_prime_factor(5u), 5u);
+    EXPECT_EQ(find_prime_factor(7u), 7u);
+    EXPECT_EQ(find_prime_factor(11u), 11u);
+
+    EXPECT_EQ(find_prime_factor(196961u), 196961u);
+}
+
+TEST(FindFactor, FindsFactorWhenFirstFactorIsSmall) {
+    EXPECT_THAT(find_prime_factor(7u * 11u * 13u), AnyOf(Eq(7u), Eq(11u), Eq(13u)));
+    EXPECT_THAT(find_prime_factor(cube(196961u)), 196961u);
+}
+
+TEST(FindFactor, CanFactorNumbersWithLargePrimeFactor) {
+    // Small prime factors.
+    EXPECT_THAT(find_prime_factor(2u * 9'007'199'254'740'881u),
+                AnyOf(Eq(2u), Eq(9'007'199'254'740'881u)));
+    EXPECT_THAT(find_prime_factor(3u * 9'007'199'254'740'881u),
+                AnyOf(Eq(3u), Eq(9'007'199'254'740'881u)));
+
+    constexpr auto LAST_TRIAL_PRIME = FirstPrimes::values.back();
+
+    // Large prime factor, with a number that trial division would find.
+    ASSERT_THAT(541u, Le(LAST_TRIAL_PRIME));
+    EXPECT_THAT(find_prime_factor(541u * 9'007'199'254'740'881u),
+                AnyOf(Eq(541u), Eq(9'007'199'254'740'881u)));
+
+    // Large prime factor higher than what we use for trial division.
+    ASSERT_THAT(1999u, Gt(LAST_TRIAL_PRIME));
+    EXPECT_THAT(find_prime_factor(1999u * 9'007'199'254'740'881u),
+                AnyOf(Eq(1999u), Eq(9'007'199'254'740'881u)));
+}
+
+TEST(FindFactor, CanFactorChallengingCompositeNumbers) {
+    // For ideas, see numbers in the "best solution" column in the various tables in
+    // <https://miller-rabin.appspot.com/>.
+    {
+        // Also passes for trial division.
+        constexpr auto factor = find_prime_factor(7'999'252'175'582'851u);
+        EXPECT_THAT(factor, AnyOf(Eq(9'227u), Eq(894'923u), Eq(968'731u)));
+    }
+    {
+        // Fails for trial division: requires Pollard's rho.
+        constexpr auto factor = find_prime_factor(55'245'642'489'451u);
+        EXPECT_THAT(factor, AnyOf(Eq(3'716'371u), Eq(14'865'481u)));
+    }
 }
 
 TEST(IsPrime, FalseForLessThan2) {
@@ -58,6 +112,17 @@ TEST(IsPrime, FindsPrimes) {
     EXPECT_FALSE(is_prime(196960u));
     EXPECT_TRUE(is_prime(196961u));
     EXPECT_FALSE(is_prime(196962u));
+}
+
+TEST(IsPrime, CanHandleVeryLargePrimes) {
+    for (const auto &p : {
+             uint64_t{225'653'407'801u},
+             uint64_t{334'524'384'739u},
+             uint64_t{9'007'199'254'740'881u},
+             uint64_t{18'446'744'073'709'551'557u},
+         }) {
+        EXPECT_TRUE(is_prime(p)) << p;
+    }
 }
 
 TEST(Multiplicity, CountsFactors) {

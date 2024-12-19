@@ -39,10 +39,20 @@ header_only_library(
     quantity.hh
     quantity_point.hh
     rep.hh
+    static_cast_checkers.hh
     unit_of_measure.hh
     unit_symbol.hh
     wrapper_operations.hh
     zero.hh
+    constants/avogadro_constant.hh
+    constants/boltzmann_constant.hh
+    constants/cesium_hyperfine_transition_frequency.hh
+    constants/elementary_charge.hh
+    constants/luminous_efficacy_540_terahertz.hh
+    constants/planck_constant.hh
+    constants/reduced_planck_constant.hh
+    constants/speed_of_light.hh
+    constants/standard_gravity.hh
     stdx/experimental/is_detected.hh
     stdx/functional.hh
     stdx/type_traits.hh
@@ -158,6 +168,8 @@ header_only_library(
     units/yards.hh
     units/yards_fwd.hh
     utility/factoring.hh
+    utility/mod.hh
+    utility/probable_primes.hh
     utility/string_constant.hh
     utility/type_traits.hh
 )
@@ -213,6 +225,23 @@ gtest_based_test(
   NAME constant_test
   SRCS
     constant_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
+  NAME constants_test
+  SRCS
+    constants/test/avogadro_constant_test.cc
+    constants/test/boltzmann_constant_test.cc
+    constants/test/cesium_hyperfine_transition_frequency_test.cc
+    constants/test/elementary_charge_test.cc
+    constants/test/luminous_efficacy_540_terahertz_test.cc
+    constants/test/planck_constant_test.cc
+    constants/test/reduced_planck_constant_test.cc
+    constants/test/speed_of_light_test.cc
+    constants/test/standard_gravity_test.cc
   DEPS
     au
     testing
@@ -438,6 +467,14 @@ gtest_based_test(
 )
 
 gtest_based_test(
+  NAME static_cast_checkers_test
+  SRCS
+    static_cast_checkers_test.cc
+  DEPS
+    au
+)
+
+gtest_based_test(
   NAME stdx_test
   SRCS
     stdx/test/utility_test.cc
@@ -458,6 +495,8 @@ gtest_based_test(
   NAME utility_test
   SRCS
     utility/test/factoring_test.cc
+    utility/test/mod_test.cc
+    utility/test/probable_primes_test.cc
     utility/test/string_constant_test.cc
     utility/test/type_traits_test.cc
   DEPS

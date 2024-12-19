@@ -15,6 +15,7 @@
 #include "au/fwd_test_lib.hh"
 #include "au/quantity.hh"
 #include "au/units/meters.hh"
+#include "au/units/seconds.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -23,7 +24,7 @@ using ::testing::StrEq;
 namespace au {
 
 TEST(Fwd, CanCallFunctionDeclaredWithOnlyFwdFiles) {
-    EXPECT_THAT(print_to_string(meters(1)), StrEq("1 m"));
+    EXPECT_THAT(xyz::print_to_string((meters / second)(1)), StrEq("1 m / s"));
 }
 
 }  // namespace au

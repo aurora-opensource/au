@@ -908,15 +908,12 @@ features.
             href="https://mpusz.github.io/mp-units/2.0/users_guide/framework_basics/faster_than_lightspeed_constants/">"Faster
             than lightspeed" constants</a>
         </td>
-        <td class="good">
+        <td class="best">
             <ul>
                 <li class="check">Constants as types</li>
                 <li class="check">Perfect conversion policy</li>
                 <li class="check">Implicit Quantity conversion</li>
-                <li class="x">
-                    No built-in values yet (see <a
-                    href="https://github.com/aurora-opensource/au/issues/90">#90</a>)
-                </li>
+                <li class="check"><a href="https://aurora-opensource.github.io/au/main/reference/constant/#built-in">Includes</a> exact constants from SI 2019</li>
             </ul>
         </td>
     </tr>
@@ -934,6 +931,34 @@ features.
         <td class="poor">
             Plan to support someday; see
             <a href="https://github.com/aurora-opensource/au/issues/41">#41</a>.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Quantity template parameters</summary>
+                <p>
+                    The ability to use quantity <i>values</i> as template parameters.
+                </p>
+            </details>
+        </td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="best">
+            <ul>
+                <li class="check">Supports all quantities</li>
+                <li class="check">Supports automatic conversions</li>
+                <li class="check">Supports quantity families via concepts</li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Supports integral rep</li>
+                <li class="check">Only library with pre-C++20 support</li>
+                <li class="x">User must provide exact unit and rep</li>
+                <li class="x">No floating point support</li>
+            </ul>
         </td>
     </tr>
     <tr>
@@ -1029,6 +1054,6 @@ features.
                 <li>Only one user-facing macro for C++20 backwards compatibility</li>
             </ul>
         </td>
-        <td class="best">No macros</td>
+        <td class="best">Zero user-facing macros; only two internal macros</td>
     </tr>
 </table>

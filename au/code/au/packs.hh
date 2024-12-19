@@ -18,6 +18,7 @@
 #include <ratio>
 #include <utility>
 
+#include "au/fwd.hh"
 #include "au/stdx/experimental/is_detected.hh"
 #include "au/stdx/type_traits.hh"
 #include "au/utility/type_traits.hh"

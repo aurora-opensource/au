@@ -18,9 +18,16 @@
 
 #include "au/fwd.hh"
 #include "au/units/meters_fwd.hh"
+#include "au/units/seconds_fwd.hh"
 
-namespace au {
+namespace xyz {
 
-std::string print_to_string(const QuantityI<Meters> &q);
+using InverseSecondsFwd = au::ForwardDeclareUnitPow<au::Seconds, -1>;
+using InverseSeconds = typename InverseSecondsFwd::unit_type;
 
-}  // namespace au
+using MetersPerSecondFwd = au::ForwardDeclareUnitProduct<au::Meters, InverseSeconds>;
+using MetersPerSecond = typename MetersPerSecondFwd::unit_type;
+
+std::string print_to_string(const au::QuantityI<MetersPerSecond> &q);
+
+}  // namespace xyz

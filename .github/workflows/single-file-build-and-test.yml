@@ -38,7 +38,7 @@ jobs:
 
       - name: Build single-file package
         shell: cmd
-        run: python tools/bin/make-single-file --units meters seconds --version-id NA > au.hh
+        run: python tools/bin/make-single-file --units meters seconds --constants speed_of_light --version-id NA > au.hh
 
       - name: Build and run test
         shell: cmd

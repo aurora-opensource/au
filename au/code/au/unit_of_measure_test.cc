@@ -39,8 +39,11 @@ namespace au {
 
 struct Celsius : Kelvins {
     static constexpr auto origin() { return milli(kelvins)(273'150); }
+    static constexpr const char label[] = "deg_C";
 };
+constexpr const char Celsius::label[];
 constexpr auto celsius = QuantityMaker<Celsius>{};
+constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
 
 struct AlternateCelsius : Kelvins {
     static constexpr auto origin() { return micro(kelvins)(273'150'000); }
@@ -89,7 +92,7 @@ struct SomePack {};
 template <typename A, typename B>
 struct InOrderFor<SomePack, A, B> : InOrderFor<CommonUnit, A, B> {};
 
-struct UnlabeledUnit : decltype(Feet{} * mag<9>()) {};
+struct UnlabeledUnit : UnitImpl<Length> {};
 
 MATCHER_P(QuantityEquivalentToUnit, target, "") {
     return are_units_quantity_equivalent(arg, target);
@@ -109,6 +112,11 @@ TEST(Unit, OriginRetainedForProductWithMagnitudeButNotWithUnit) {
     constexpr auto scaled_by_unit = UnitWithOrigin{} * One{};
     EXPECT_FALSE(
         (stdx::experimental::is_detected<detail::OriginMemberType, decltype(scaled_by_unit)>{}));
+}
+
+TEST(ScaledUnit, IsTypeIdentityWhenScalingByOne) {
+    StaticAssertTypeEq<decltype(Feet{} * mag<1>()), Feet>();
+    StaticAssertTypeEq<decltype((Feet{} * mag<3>()) / mag<3>()), Feet>();
 }
 
 TEST(IsUnit, TrueForUnitImpl) { EXPECT_TRUE(IsUnit<UnitImpl<Length>>::value); }
@@ -426,7 +434,9 @@ TEST(OriginDisplacement, FunctionalInterfaceHandlesInstancesCorrectly) {
 
 struct OffsetCelsius : Celsius {
     static constexpr auto origin() { return detail::OriginOf<Celsius>::value() + kelvins(10); }
+    static constexpr const char label[] = "offset_deg_C";
 };
+constexpr const char OffsetCelsius::label[];
 
 TEST(DisplaceOrigin, DisplacesOrigin) {
     EXPECT_EQ(origin_displacement(Celsius{}, OffsetCelsius{}), kelvins(10));
@@ -451,16 +461,18 @@ TEST(CommonUnit, PrefersUnitFromListIfAnyIdentical) {
     StaticAssertTypeEq<CommonUnitT<Feet, Inches, Yards>, Inches>();
 }
 
-TEST(CommonUnit, DownranksAnonymousScaledUnits) {
-    StaticAssertTypeEq<CommonUnitT<Feet, decltype(Feet{} * mag<1>())>, Feet>();
-    StaticAssertTypeEq<CommonUnitT<Meters, UnitImpl<Length>>, Meters>();
+TEST(CommonUnit, DedupesUnitsMadeIdenticalAfterUnscalingSameScaledUnit) {
+    StaticAssertTypeEq<CommonUnitT<decltype(Feet{} * mag<3>()), decltype(Feet{} * mag<5>())>,
+                       Feet>();
+}
 
-    using OpaqueFeetSquared = decltype(pow<2>(Feet{}) * ONE);
-    using OpaqueFeet = UnitProductT<OpaqueFeetSquared, UnitInverseT<Feet>>;
-    ASSERT_FALSE((std::is_same<OpaqueFeet, Feet>::value));
-    ASSERT_TRUE((AreUnitsQuantityEquivalent<OpaqueFeet, Feet>::value));
-    ASSERT_TRUE((InOrderFor<CommonUnit, Feet, OpaqueFeet>::value));
-    StaticAssertTypeEq<CommonUnitT<Feet, OpaqueFeet>, Feet>();
+TEST(CommonUnit, DownranksAnonymousScaledUnits) {
+    StaticAssertTypeEq<CommonUnitT<Yards, decltype(Feet{} * mag<3>())>, Yards>();
+}
+
+TEST(CommonUnit, WhenCommonUnitLabelWouldBeIdenticalToSomeUnitJustUsesThatUnit) {
+    StaticAssertTypeEq<CommonUnitT<decltype(Feet{} * mag<6>()), decltype(Feet{} * mag<10>())>,
+                       decltype(Feet{} * mag<2>())>();
 }
 
 // Four coprime units of the same dimension.
@@ -481,6 +493,14 @@ TEST(CommonUnit, UnpacksTypesInNestedCommonUnit) {
 
     // Check that `c(c(w, x), c(y, z))` is the same as `c(w, x, y, z)`.
     StaticAssertTypeEq<Common, CommonUnitT<W, X, Y, Z>>();
+}
+
+TEST(CommonUnit, CanCombineUnitsThatWouldBothBeAnonymousScaledUnits) {
+    EXPECT_EQ((feet / mag<3>())(1), (inches * mag<4>())(1));
+}
+
+TEST(CommonUnit, SupportsUnitSlots) {
+    StaticAssertTypeEq<decltype(common_unit(feet, meters)), CommonUnitT<Feet, Meters>>();
 }
 
 TEST(CommonPointUnit, FindsCommonMagnitude) {
@@ -534,6 +554,40 @@ TEST(CommonPointUnit, UnpacksTypesInNestedCommonUnit) {
     StaticAssertTypeEq<Common, CommonPointUnitT<W, X, Y, Z>>();
 }
 
+TEST(CommonPointUnit, SupportsUnitSlots) {
+    StaticAssertTypeEq<decltype(common_point_unit(kelvins_pt, celsius_pt)),
+                       CommonPointUnitT<Kelvins, Celsius>>();
+}
+
+TEST(MakeCommon, PreservesCategory) {
+    constexpr auto feeters = make_common(feet, meters);
+    EXPECT_THAT(feet(1u) % feeters(1u), Eq(ZERO));
+    EXPECT_THAT(meters(1u) % feeters(1u), Eq(ZERO));
+    EXPECT_THAT(detail::gcd(feet(1u).in(feeters), meters(1u).in(feeters)), Eq(1u));
+
+    using symbols::ft;
+    using symbols::m;
+    EXPECT_THAT(123 * make_common(m, ft), SameTypeAndValue(feeters(123)));
+}
+
+TEST(MakeCommonPoint, PreservesCategory) {
+    constexpr auto celsenheit_pt = make_common_point(celsius_pt, fahrenheit_pt);
+
+    // The origin of the common point unit is the lowest origin among all input units.
+    EXPECT_EQ(celsenheit_pt(0), fahrenheit_pt(0));
+    EXPECT_LT(celsenheit_pt(0), celsius_pt(0));
+
+    // The common point unit should evenly divide both input units.
+    //
+    // (We can't necessarily say that it is the _largest_ such unit, as we could for the common
+    // unit, because we also have to accomodate the unit for the _difference of the origins_.)
+    constexpr auto one_f = fahrenheit_pt(1) - fahrenheit_pt(0);
+    constexpr auto one_c = celsius_pt(1) - celsius_pt(0);
+    constexpr auto one_ch = celsenheit_pt(1) - celsenheit_pt(0);
+    EXPECT_EQ(one_f % one_ch, ZERO);
+    EXPECT_EQ(one_c % one_ch, ZERO);
+}
+
 TEST(UnitLabel, DefaultsToUnlabeledUnit) {
     EXPECT_THAT(unit_label<UnlabeledUnit>(), StrEq("[UNLABELED UNIT]"));
     EXPECT_EQ(sizeof(unit_label<UnlabeledUnit>()), 17);
@@ -542,6 +596,22 @@ TEST(UnitLabel, DefaultsToUnlabeledUnit) {
 TEST(UnitLabel, PicksUpLabelForLabeledUnit) {
     EXPECT_THAT(unit_label<Feet>(), StrEq("ft"));
     EXPECT_EQ(sizeof(unit_label<Feet>()), 3);
+}
+
+TEST(UnitLabel, PrependsScaleFactorToLabelForScaledUnit) {
+    EXPECT_THAT(unit_label<decltype(Feet{} * mag<3>())>(), StrEq("[3 ft]"));
+    EXPECT_THAT(unit_label<decltype(Feet{} / mag<12>())>(), StrEq("[(1 / 12) ft]"));
+}
+
+TEST(UnitLabel, ApplyingMultipleScaleFactorsComposesToOneSingleScaleFactor) {
+    EXPECT_THAT(unit_label<decltype(Feet{} * mag<7>() / mag<12>())>(), StrEq("[(7 / 12) ft]"));
+    EXPECT_THAT(unit_label<decltype(Feet{} * mag<2>() / mag<3>() * mag<5>() / mag<7>())>(),
+                StrEq("[(10 / 21) ft]"));
+}
+
+TEST(UnitLabel, OmitsTrivialScaleFactor) {
+    EXPECT_THAT(unit_label<decltype(Feet{} * mag<1>())>(), StrEq("ft"));
+    EXPECT_THAT(unit_label<decltype((Feet{} * mag<3>()) / mag<3>())>(), StrEq("ft"));
 }
 
 TEST(UnitLabel, PrintsExponentForUnitPower) {
@@ -594,24 +664,56 @@ TEST(UnitLabel, PowersAndProductsComposeNicely) {
 
 TEST(UnitLabel, LabelsCommonUnitCorrectly) {
     using U = CommonUnitT<Inches, Meters>;
-    EXPECT_THAT(unit_label(U{}), AnyOf(StrEq("COM[in, m]"), StrEq("COM[m, in]")));
+    EXPECT_THAT(unit_label(U{}),
+                AnyOf(StrEq("EQUIV{[(1 / 127) in], [(1 / 5000) m]}"),
+                      StrEq("EQUIV{[(1 / 5000) m], [(1 / 127) in]}")));
 }
 
 TEST(UnitLabel, CommonUnitLabelWorksWithUnitProduct) {
     using U = CommonUnitT<UnitQuotientT<Meters, Minutes>, UnitQuotientT<Inches, Minutes>>;
     EXPECT_THAT(unit_label(U{}),
-                AnyOf(StrEq("COM[m / min, in / min]"), StrEq("COM[in / min, m / min]")));
+                AnyOf(StrEq("EQUIV{[(1 / 127) in / min], [(1 / 5000) m / min]}"),
+                      StrEq("EQUIV{[(1 / 5000) m / min], [(1 / 127) in / min]}")));
+}
+
+TEST(UnitLabel, RemovesDuplicatesFromCommonUnitLabel) {
+    // A likely failure mode for this test would be `"EQUIV{[24 in], [2 ft], [2 ft]}"`.
+    EXPECT_THAT(
+        unit_label(common_unit(Feet{} * mag<6>(), Feet{} * mag<10>(), Inches{} * mag<48>())),
+        AnyOf(StrEq("EQUIV{[2 ft], [24 in]}"), StrEq("EQUIV{[24 in], [2 ft]}")));
+}
+
+TEST(UnitLabel, ReducesToSingleUnitLabelIfAllUnitsAreTheSame) {
+    // A likely failure mode for this test would be `"EQUIV{[2 ft], [2 ft]}"`.
+    EXPECT_THAT(unit_label(common_unit(Feet{} * mag<6>(), Feet{} * mag<10>())), StrEq("[2 ft]"));
 }
 
 TEST(UnitLabel, LabelsCommonPointUnitCorrectly) {
     using U = CommonPointUnitT<Inches, Meters>;
-    EXPECT_THAT(unit_label(U{}), AnyOf(StrEq("COM_PT[in, m]"), StrEq("COM_PT[m, in]")));
+    EXPECT_THAT(unit_label(U{}),
+                AnyOf(StrEq("EQUIV{[(1 / 127) in], [(1 / 5000) m]}"),
+                      StrEq("EQUIV{[(1 / 5000) m], [(1 / 127) in]}")));
 }
 
 TEST(UnitLabel, CommonPointUnitLabelWorksWithUnitProduct) {
     using U = CommonPointUnitT<UnitQuotientT<Meters, Minutes>, UnitQuotientT<Inches, Minutes>>;
     EXPECT_THAT(unit_label(U{}),
-                AnyOf(StrEq("COM_PT[m / min, in / min]"), StrEq("COM_PT[in / min, m / min]")));
+                AnyOf(StrEq("EQUIV{[(1 / 127) in / min], [(1 / 5000) m / min]}"),
+                      StrEq("EQUIV{[(1 / 5000) m / min], [(1 / 127) in / min]}")));
+}
+
+TEST(UnitLabel, CommonPointUnitLabelTakesOriginOffsetIntoAccount) {
+    // NOTE: the (1 / 1000) scaling comes about because we're still using `Quantity` to define our
+    // origins.  We may be able to do better, and re-found them on `Constant`, at least once we add
+    // some kind of subtraction that works at least some of the time.  The ideal end point would be
+    // that the common point unit for `Celsius` and `OffsetCelsius` would be simply `Celsius`
+    // (because `OffsetCelsius` is just `Celsius` with a _higher_ origin).  At that point, we'll
+    // need to construct a more complicated example here that will force us to use
+    // `CommonPointUnit<...>`, because it will be meaningfully different from all of its parameters.
+    using U = CommonPointUnitT<Celsius, OffsetCelsius>;
+    EXPECT_THAT(unit_label(U{}),
+                AnyOf(StrEq("EQUIV{[(1 / 1000) deg_C], [(1 / 1000) offset_deg_C]}"),
+                      StrEq("EQUIV{[(1 / 1000) offset_deg_C], [(1 / 1000) deg_C]}")));
 }
 
 TEST(UnitLabel, APICompatibleWithUnitSlots) { EXPECT_THAT(unit_label(feet), StrEq("ft")); }
@@ -661,6 +763,36 @@ TEST(EliminateRedundantUnits, AlwaysRemovesSameUnitAmongQuantityEquivalentChoice
     using Twelvinch = decltype(Inches{} * mag<12>());
     StaticAssertTypeEq<EliminateRedundantUnits<SomePack<Feet, Twelvinch>>,
                        EliminateRedundantUnits<SomePack<Twelvinch, Feet>>>();
+}
+
+TEST(UnscaledUnit, IdentityForGeneralUnits) {
+    StaticAssertTypeEq<UnscaledUnit<Feet>, Feet>();
+    StaticAssertTypeEq<UnscaledUnit<Celsius>, Celsius>();
+}
+
+TEST(UnscaledUnit, RemovesScaleFactorFromScaledUnit) {
+    StaticAssertTypeEq<UnscaledUnit<decltype(Feet{} * mag<3>())>, Feet>();
+    StaticAssertTypeEq<UnscaledUnit<decltype(Celsius{} / mag<2>())>, Celsius>();
+}
+
+TEST(DistinctUnscaledUnits, UnitListOfOneElementForNonCommonUnit) {
+    StaticAssertTypeEq<DistinctUnscaledUnits<Feet>, UnitList<Feet>>();
+    StaticAssertTypeEq<DistinctUnscaledUnits<decltype(Feet{} / mag<12>())>, UnitList<Feet>>();
+}
+
+TEST(DistinctUnscaledUnits, RemovesDupesFromCommonUnit) {
+    StaticAssertTypeEq<
+        DistinctUnscaledUnits<decltype(common_unit(Feet{} * mag<3>(), Feet{} / mag<12>()))>,
+        UnitList<Feet>>();
+    StaticAssertTypeEq<DistinctUnscaledUnits<decltype(common_unit(
+                           Feet{} * mag<3>(), Inches{} * mag<48>(), Feet{} * mag<5>()))>,
+                       UnitList<Inches, Feet>>();
+}
+
+TEST(SimplifyIfOnlyOneUnscaledUnit, IdentityForNonCommonUnit) {
+    StaticAssertTypeEq<SimplifyIfOnlyOneUnscaledUnit<Feet>, Feet>();
+    StaticAssertTypeEq<SimplifyIfOnlyOneUnscaledUnit<decltype(Feet{} * mag<3>())>,
+                       decltype(Feet{} * mag<3>())>();
 }
 
 }  // namespace detail

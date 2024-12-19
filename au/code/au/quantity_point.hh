@@ -154,34 +154,6 @@ class QuantityPoint {
             .in(associated_unit_for_points(u));
     }
 
-    // "Old-style" overloads with <U, R> template parameters, and no function parameters.
-    //
-    // Matches the syntax from the CppCon 2021 talk, and legacy Aurora usage.
-    template <typename U>
-    [[deprecated(
-        "Do not write `.as<YourUnits>()`; write `.as(your_units)` instead.")]] constexpr auto
-    as() const -> decltype(as(U{})) {
-        return as(U{});
-    }
-    template <typename U, typename R, typename = std::enable_if_t<IsUnit<U>::value>>
-    [[deprecated(
-        "Do not write `.as<YourUnits, T>()`; write `.as<T>(your_units)` instead.")]] constexpr auto
-    as() const {
-        return as<R>(U{});
-    }
-    template <typename U>
-    [[deprecated(
-        "Do not write `.in<YourUnits>()`; write `.in(your_units)` instead.")]] constexpr auto
-    in() const -> decltype(in(U{})) {
-        return in(U{});
-    }
-    template <typename U, typename R, typename = std::enable_if_t<IsUnit<U>::value>>
-    [[deprecated(
-        "Do not write `.in<YourUnits, T>()`; write `.in<T>(your_units)` instead.")]] constexpr auto
-    in() const {
-        return in<R>(U{});
-    }
-
     // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
     template <typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
@@ -310,6 +282,22 @@ struct QuantityPointMaker {
 template <typename U>
 struct AssociatedUnitForPoints<QuantityPointMaker<U>> : stdx::type_identity<U> {};
 
+// Provide nicer error messages when users try passing a `QuantityPoint` to a unit slot.
+template <typename U, typename R>
+struct AssociatedUnit<QuantityPoint<U, R>> {
+    static_assert(
+        detail::AlwaysFalse<U, R>::value,
+        "Cannot pass QuantityPoint to a unit slot (see: "
+        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+};
+template <typename U, typename R>
+struct AssociatedUnitForPoints<QuantityPoint<U, R>> {
+    static_assert(
+        detail::AlwaysFalse<U, R>::value,
+        "Cannot pass QuantityPoint to a unit slot (see: "
+        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+};
+
 // Type trait to detect whether two QuantityPoint types are equivalent.
 //
 // In this library, QuantityPoint types are "equivalent" exactly when they use the same Rep, and are
@@ -397,6 +385,14 @@ template <typename U1, typename U2, typename R1, typename R2>
 constexpr auto operator-(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::using_common_point_unit(p1, p2, detail::minus);
 }
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+template <typename U1, typename R1, typename U2, typename R2>
+constexpr auto operator<=>(const QuantityPoint<U1, R1> &lhs, const QuantityPoint<U2, R2> &rhs) {
+    using U = CommonPointUnitT<U1, U2>;
+    return lhs.in(U{}) <=> rhs.in(U{});
+}
+#endif
 
 namespace detail {
 
