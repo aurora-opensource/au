@@ -841,6 +841,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#what-doesnt-fit-in-a-unit-slot" class="md-nav__link">
+    <span class="md-ellipsis">
+      What doesn&rsquo;t fit in a unit slot?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#summary" class="md-nav__link">
     <span class="md-ellipsis">
       Summary
@@ -2040,6 +2049,13 @@ better.</p>
 <code>QuantityMaker</code> instances which are named after their corresponding units.  If you have to construct
 a new <code>QuantityMaker</code> on the fly, then this benefit vanishes.  (This is why unit expressions are
 preferred for generic code.)</p>
+<h2 id="what-doesnt-fit-in-a-unit-slot">What <em>doesn&rsquo;t</em> fit in a unit slot?<a class="headerlink" href="#what-doesnt-fit-in-a-unit-slot" title="Permanent link">&para;</a></h2>
+<p>A <code>Quantity</code>!  It can certainly be tempting, as in some ways a <code>Quantity</code> can &ldquo;feel like&rdquo; a unit.
+However, the <code>Quantity</code> also has a <em>runtime value</em> attached.  By contrast, unit slots can only take
+things that have a single, unambiguous value, known <em>at compile time</em>.</p>
+<p>Fortunately, if you make this mistake, you&rsquo;ll get a readable compiler error that directs you to <a href="../../../troubleshooting/#quantity-to-unit-slot">our
+troubleshooting page</a>, so you can learn more about
+why this isn&rsquo;t allowed, and what you can do to fix it.</p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <p>Many Au APIs have a &ldquo;unit slot&rdquo;.  These are designed for you to name the units explicitly at the
 callsite.  Pass whatever is the simplest construct that meets that goal &mdash; usually, this will be

@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.0-5-g8165cb6
+// Version identifier: 0.4.0-6-ga3fad06
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -5267,6 +5267,22 @@ class Quantity {
     Rep value_{};
 };
 
+// Give more readable error messages when passing `Quantity` to a unit slot.
+template <typename U, typename R>
+struct AssociatedUnit<Quantity<U, R>> {
+    static_assert(
+        detail::AlwaysFalse<U, R>::value,
+        "Can't pass `Quantity` to a unit slot (see: "
+        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+};
+template <typename U, typename R>
+struct AssociatedUnitForPoints<Quantity<U, R>> {
+    static_assert(
+        detail::AlwaysFalse<U, R>::value,
+        "Can't pass `Quantity` to a unit slot for points (see: "
+        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+};
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Machinery to explicitly unblock integer division.
 //
@@ -6160,6 +6176,22 @@ struct QuantityPointMaker {
 
 template <typename U>
 struct AssociatedUnitForPoints<QuantityPointMaker<U>> : stdx::type_identity<U> {};
+
+// Provide nicer error messages when users try passing a `QuantityPoint` to a unit slot.
+template <typename U, typename R>
+struct AssociatedUnit<QuantityPoint<U, R>> {
+    static_assert(
+        detail::AlwaysFalse<U, R>::value,
+        "Cannot pass QuantityPoint to a unit slot (see: "
+        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+};
+template <typename U, typename R>
+struct AssociatedUnitForPoints<QuantityPoint<U, R>> {
+    static_assert(
+        detail::AlwaysFalse<U, R>::value,
+        "Cannot pass QuantityPoint to a unit slot (see: "
+        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+};
 
 // Type trait to detect whether two QuantityPoint types are equivalent.
 //
