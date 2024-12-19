@@ -679,6 +679,283 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
     D:\a\au\au\au.hh(4498): note: you cannot create a reference to 'void'
     ```
 
+## Can't pass `Quantity` to a unit slot {#quantity-to-unit-slot}
+
+**Other variants:**
+
+- "Can't pass `QuantityPoint` to a unit slot"
+- "Can't pass `Quantity` to a unit slot for points"
+- "Can't pass `QuantityPoint` to a unit slot for points"
+
+**Meaning:**  A [unit slot](./discussion/concepts/unit-slot.md) is an API that takes _any unit-named
+type in the library_, and treats it as the associated unit.  Besides simple unit types themselves,
+these can include quantity makers (such as `meters`), unit symbols (such as `symbols::m`), constants
+(such as `SPEED_OF_LIGHT`), and so on.
+
+Notably, what it _cannot_ include is a `Quantity` or `QuantityPoint`.  Notice that all of the types
+we mentioned above have a _completely unambiguous value_, known at compile time from the _type
+alone_.  This is not the case for something like `Quantity`, which holds an underlying runtime
+numeric value, to represent the quantity in its specific unit.
+
+**Solution:**  If you're attempting to use the `Quantity` as an ad hoc unit, simply replace it with
+a unit that you scale by a magnitude, `mag<N>()`.
+
+!!! example
+
+    **Code**
+
+    Let's try to round a quantity of bytes to the nearest 10-byte amount.
+
+    === "Broken"
+        ```cpp
+        // (BROKEN): can't pass Quantity to unit slot.
+        auto size = bytes(1234);
+        size = round_as<int>(bytes(10), size);
+        //         unit slot ^^^^^^^^^ passing Quantity: no good.
+        ```
+
+    === "Fixed"
+        ```cpp
+        // (FIXED): use an ad hoc scaled unit.
+        auto size = bytes(1234);
+        size = round_as<int>(bytes * mag<10>(), size);
+        //         unit slot ^^^^^^^^^^^^^^^^^ passing scaled unit: good!
+        ```
+
+    **Compiler error (clang 14)**
+
+    ```
+    In file included from au/error_examples.cc:15:
+    In file included from au/code/au/au.hh:17:
+    In file included from au/code/au/chrono_interop.hh:20:
+    In file included from au/code/au/prefix.hh:18:
+    au/code/au/quantity.hh:430:5: error: static_assert failed due to requirement 'detail::AlwaysFalse<au::Bytes, int>::value' "Can't pass `Quantity` to a unit slot"
+        static_assert(detail::AlwaysFalse<U, R>::value, "Can't pass `Quantity` to a unit slot");
+        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    au/code/au/unit_of_measure.hh:147:1: note: in instantiation of template class 'au::AssociatedUnit<au::Quantity<au::Bytes, int>>' requested here
+    using AssociatedUnitT = typename AssociatedUnit<U>::type;
+    ^
+    au/code/au/math.hh:434:26: note: in instantiation of template type alias 'AssociatedUnitT' requested here
+        return make_quantity<AssociatedUnitT<RoundingUnits>>(round_in<OutputRep>(rounding_units, q));
+                             ^
+    au/error_examples.cc:78:12: note: in instantiation of function template specialization 'au::round_as<int, au::Quantity<au::Bytes, int>, au::Bytes, int>' requested here
+        size = round_as<int>(bytes(10), size);
+               ^
+    ```
+
+    **Compiler error (clang 11)**
+
+    ```
+    In file included from au/error_examples.cc:15:
+    In file included from au/code/au/au.hh:17:
+    In file included from au/code/au/chrono_interop.hh:20:
+    In file included from au/code/au/prefix.hh:18:
+    au/code/au/quantity.hh:430:5: error: static_assert failed due to requirement 'detail::AlwaysFalse<au::Bytes, int>::value' "Can't pass `Quantity` to a unit slot"
+        static_assert(detail::AlwaysFalse<U, R>::value, "Can't pass `Quantity` to a unit slot");
+        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    au/code/au/unit_of_measure.hh:147:1: note: in instantiation of template class 'au::AssociatedUnit<au::Quantity<au::Bytes, int>>' requested here
+    using AssociatedUnitT = typename AssociatedUnit<U>::type;
+    ^
+    au/code/au/math.hh:434:26: note: in instantiation of template type alias 'AssociatedUnitT' requested here
+        return make_quantity<AssociatedUnitT<RoundingUnits>>(round_in<OutputRep>(rounding_units, q));
+                             ^
+    au/error_examples.cc:78:12: note: in instantiation of function template specialization 'au::round_as<int, au::Quantity<au::Bytes, int>, au::Bytes, int>' requested here
+        size = round_as<int>(bytes(10), size);
+               ^
+    ```
+
+    **Compiler error (gcc 10)**
+
+    ```
+    au/code/au/quantity.hh: In instantiation of 'struct au::AssociatedUnit<au::Quantity<au::Bytes, int> >':
+    au/code/au/unit_of_measure.hh:147:7:   required by substitution of 'template<class U> using AssociatedUnitT = typename au::AssociatedUnit::type [with U = au::Quantity<au::Bytes, int>]'
+    au/code/au/math.hh:434:12:   required from 'auto au::round_as(RoundingUnits, au::Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = au::Quantity<au::Bytes, int>; U = au::Bytes; R = int]'
+    au/error_examples.cc:78:41:   required from here
+    au/code/au/quantity.hh:430:46: error: static assertion failed: Can't pass `Quantity` to a unit slot
+      430 |     static_assert(detail::AlwaysFalse<U, R>::value, "Can't pass `Quantity` to a unit slot");
+          |                                              ^~~~~
+    In file included from au/code/au/conversion_policy.hh:22,
+                     from au/code/au/quantity.hh:20,
+                     from au/code/au/prefix.hh:18,
+                     from au/code/au/chrono_interop.hh:20,
+                     from au/code/au/au.hh:17,
+                     from au/error_examples.cc:15:
+    au/code/au/unit_of_measure.hh: In substitution of 'template<class U> using AssociatedUnitT = typename au::AssociatedUnit::type [with U = au::Quantity<au::Bytes, int>]':
+    au/code/au/math.hh:434:12:   required from 'auto au::round_as(RoundingUnits, au::Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = au::Quantity<au::Bytes, int>; U = au::Bytes; R = int]'
+    au/error_examples.cc:78:41:   required from here
+    au/code/au/unit_of_measure.hh:147:7: error: no type named 'type' in 'struct au::AssociatedUnit<au::Quantity<au::Bytes, int> >'
+      147 | using AssociatedUnitT = typename AssociatedUnit<U>::type;
+          |       ^~~~~~~~~~~~~~~
+    In file included from au/code/au/au.hh:19,
+                     from au/error_examples.cc:15:
+    au/code/au/math.hh: In instantiation of 'auto au::round_in(RoundingUnits, au::Quantity<U, R>) [with RoundingUnits = au::Quantity<au::Bytes, int>; U = au::Bytes; R = int]':
+    au/code/au/math.hh:400:43:   required from 'auto au::round_in(RoundingUnits, au::Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = au::Quantity<au::Bytes, int>; U = au::Bytes; R = int]'
+    au/code/au/math.hh:434:77:   required from 'auto au::round_as(RoundingUnits, au::Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = au::Quantity<au::Bytes, int>; U = au::Bytes; R = int]'
+    au/error_examples.cc:78:41:   required from here
+    au/code/au/math.hh:382:52: error: no matching function for call to 'au::Quantity<au::Bytes, int>::in<OurRoundingRep>(au::Quantity<au::Bytes, int>&)'
+      382 |     return std::round(q.template in<OurRoundingRep>(rounding_units));
+          |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+    In file included from au/code/au/prefix.hh:18,
+                     from au/code/au/chrono_interop.hh:20,
+                     from au/code/au/au.hh:17,
+                     from au/error_examples.cc:15:
+    au/code/au/quantity.hh:174:22: note: candidate: 'template<class NewRep, class NewUnit, class> constexpr NewRep au::Quantity<UnitT, RepT>::in(NewUnit) const [with NewRep = NewRep; NewUnit = NewUnit; <template-parameter-2-3> = <template-parameter-1-3>; UnitT = au::Bytes; RepT = int]'
+      174 |     constexpr NewRep in(NewUnit u) const {
+          |                      ^~
+    au/code/au/quantity.hh:174:22: note:   template argument deduction/substitution failed:
+    au/code/au/quantity.hh:173:15: error: no type named 'type' in 'struct au::AssociatedUnit<au::Quantity<au::Bytes, int> >'
+      173 |               typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
+          |               ^~~~~~~~
+    au/code/au/quantity.hh:184:19: note: candidate: 'template<class NewUnit, class> constexpr au::Quantity<UnitT, RepT>::Rep au::Quantity<UnitT, RepT>::in(NewUnit) const [with NewUnit = NewUnit; <template-parameter-2-2> = <template-parameter-1-2>; UnitT = au::Bytes; RepT = int]'
+      184 |     constexpr Rep in(NewUnit u) const {
+          |                   ^~
+    au/code/au/quantity.hh:184:19: note:   template argument deduction/substitution failed:
+    In file included from external/sysroot_x86_64//include/c++/10.3.0/ratio:39,
+                     from external/sysroot_x86_64//include/c++/10.3.0/chrono:39,
+                     from au/code/au/chrono_interop.hh:17,
+                     from au/code/au/au.hh:17,
+                     from au/error_examples.cc:15:
+    external/sysroot_x86_64//include/c++/10.3.0/type_traits: In substitution of 'template<bool _Cond, class _Tp> using enable_if_t = typename std::enable_if::type [with bool _Cond = false; _Tp = void]':
+    au/code/au/quantity.hh:183:15:   required from 'auto au::round_in(RoundingUnits, au::Quantity<U, R>) [with RoundingUnits = au::Quantity<au::Bytes, int>; U = au::Bytes; R = int]'
+    au/code/au/math.hh:400:43:   required from 'auto au::round_in(RoundingUnits, au::Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = au::Quantity<au::Bytes, int>; U = au::Bytes; R = int]'
+    au/code/au/math.hh:434:77:   required from 'auto au::round_as(RoundingUnits, au::Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = au::Quantity<au::Bytes, int>; U = au::Bytes; R = int]'
+    au/error_examples.cc:78:41:   required from here
+    external/sysroot_x86_64//include/c++/10.3.0/type_traits:2554:11: error: no type named 'type' in 'struct std::enable_if<false, void>'
+     2554 |     using enable_if_t = typename enable_if<_Cond, _Tp>::type;
+          |           ^~~~~~~~~~~
+    In file included from au/code/au/prefix.hh:18,
+                     from au/code/au/chrono_interop.hh:20,
+                     from au/code/au/au.hh:17,
+                     from au/error_examples.cc:15:
+    ```
+
+    **Compiler error (MSVC 2019 x64)**
+
+    ```
+    D:\a\au\au\au.hh(5267): error C2338: Can't pass `Quantity` to a unit slot (see: https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)
+    D:\a\au\au\au.hh(7394): note: see reference to class template instantiation 'au::AssociatedUnit<RoundingUnits>' being compiled
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(7394): note: see reference to alias template instantiation 'au::AssociatedUnitT<au::Quantity<au::Bytes,int>>' being compiled
+    error_examples.cc(79): note: see reference to function template instantiation 'auto au::round_as<int,au::Quantity<au::Bytes,int>,au::Bytes,int>(RoundingUnits,au::Quantity<au::Bytes,int>)' being compiled
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(3638): error C2794: 'type': is not a member of any direct or indirect base class of 'au::AssociatedUnit<RoundingUnits>'
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(7394): error C2938: 'au::AssociatedUnitT' : Failed to specialize alias template
+    D:\a\au\au\au.hh(7342): error C2672: 'au::Quantity<au::Bytes,int>::in': no matching overloaded function found
+    D:\a\au\au\au.hh(7360): note: see reference to function template instantiation 'auto au::round_in<RoundingUnits,au::Bytes,int>(RoundingUnits,au::Quantity<au::Bytes,int>)' being compiled
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(7394): note: see reference to function template instantiation 'auto au::round_in<OutputRep,RoundingUnits,au::Bytes,int>(RoundingUnits,au::Quantity<au::Bytes,int>)' being compiled
+            with
+            [
+                OutputRep=int,
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(7342): error C2783: 'NewRep au::Quantity<au::Bytes,int>::in(NewUnit) const': could not deduce template argument for '<unnamed-symbol>'
+    D:\a\au\au\au.hh(5010): note: see declaration of 'au::Quantity<au::Bytes,int>::in'
+    D:\a\au\au\au.hh(7360): error C2440: 'static_cast': cannot convert from 'void' to 'OutputRep'
+            with
+            [
+                OutputRep=int
+            ]
+    D:\a\au\au\au.hh(7360): note: Expressions of type void cannot be converted to other types
+    D:\a\au\au\au.hh(7394): error C2672: 'au::make_quantity': no matching overloaded function found
+    D:\a\au\au\au.hh(7394): error C2893: Failed to specialize function template 'auto au::make_quantity(T)'
+    D:\a\au\au\au.hh(4872): note: see declaration of 'au::make_quantity'
+    D:\a\au\au\au.hh(7394): note: With the following template arguments:
+    D:\a\au\au\au.hh(7394): note: 'UnitT=unknown-type'
+    D:\a\au\au\au.hh(7394): note: 'T=void'
+    error_examples.cc(79): error C2679: binary '=': no operator found which takes a right-hand operand of type 'void' (or there is no acceptable conversion)
+    D:\a\au\au\au.hh(5261): note: could be 'au::Quantity<au::Bytes,int> &au::Quantity<au::Bytes,int>::operator =(au::Quantity<au::Bytes,int> &&)'
+    D:\a\au\au\au.hh(5261): note: or       'au::Quantity<au::Bytes,int> &au::Quantity<au::Bytes,int>::operator =(const au::Quantity<au::Bytes,int> &)'
+    error_examples.cc(79): note: while trying to match the argument list '(au::Quantity<au::Bytes,int>, void)'
+    ```
+
+    **Compiler error (MSVC 2022 x64)**
+
+    ```
+    D:\a\au\au\au.hh(5267): error C2338: static_assert failed: 'Can't pass `Quantity` to a unit slot (see: https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)'
+    D:\a\au\au\au.hh(5267): note: the template instantiation context (the oldest one first) is
+    error_examples.cc(79): note: see reference to function template instantiation 'auto au::round_as<int,au::Quantity<au::Bytes,int>,au::Bytes,int>(RoundingUnits,au::Quantity<au::Bytes,int>)' being compiled
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(7394): note: see reference to alias template instantiation 'au::AssociatedUnitT<RoundingUnits>' being compiled
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(3638): note: see reference to class template instantiation 'au::AssociatedUnit<RoundingUnits>' being compiled
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(3638): error C2794: 'type': is not a member of any direct or indirect base class of 'au::AssociatedUnit<RoundingUnits>'
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(7394): error C2938: 'au::AssociatedUnitT' : Failed to specialize alias template
+    D:\a\au\au\au.hh(7342): error C2672: 'au::Quantity<au::Bytes,int>::in': no matching overloaded function found
+    D:\a\au\au\au.hh(5020): note: could be 'int au::Quantity<au::Bytes,int>::in(NewUnit) const'
+    D:\a\au\au\au.hh(7342): note: 'int au::Quantity<au::Bytes,int>::in(NewUnit) const': could not deduce template argument for '<unnamed-symbol>'
+    D:\a\au\au\au.hh(5019): note: 'std::enable_if_t<false,void>' : Failed to specialize alias template
+    D:\a\au\au\au.hh(5010): note: or       'NewRep au::Quantity<au::Bytes,int>::in(NewUnit) const'
+    D:\a\au\au\au.hh(7342): note: 'NewRep au::Quantity<au::Bytes,int>::in(NewUnit) const': could not deduce template argument for '<unnamed-symbol>'
+    D:\a\au\au\au.hh(5009): note: 'au::AssociatedUnitT' : Failed to specialize alias template
+    D:\a\au\au\au.hh(3638): note: 'type': is not a member of any direct or indirect base class of 'au::AssociatedUnit<RoundingUnits>'
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(5009): note: syntax error: missing '>' before identifier '<missingId>'
+    D:\a\au\au\au.hh(7342): note: the template instantiation context (the oldest one first) is
+    D:\a\au\au\au.hh(7394): note: see reference to function template instantiation 'auto au::round_in<OutputRep,RoundingUnits,au::Bytes,int>(RoundingUnits,au::Quantity<au::Bytes,int>)' being compiled
+            with
+            [
+                OutputRep=int,
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(7360): note: see reference to function template instantiation 'auto au::round_in<RoundingUnits,au::Bytes,int>(RoundingUnits,au::Quantity<au::Bytes,int>)' being compiled
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(7360): error C2440: 'static_cast': cannot convert from 'void' to 'OutputRep'
+            with
+            [
+                OutputRep=int
+            ]
+    D:\a\au\au\au.hh(7360): note: Expressions of type void cannot be converted to other types
+    D:\a\au\au\au.hh(7394): error C2672: 'au::make_quantity': no matching overloaded function found
+    D:\a\au\au\au.hh(4872): note: could be 'auto au::make_quantity(T)'
+    D:\a\au\au\au.hh(7394): note: Failed to specialize function template 'auto au::make_quantity(T)'
+    D:\a\au\au\au.hh(7394): note: With the following template arguments:
+    D:\a\au\au\au.hh(7394): note: 'UnitT=unknown-type'
+    D:\a\au\au\au.hh(7394): note: 'T=void'
+    D:\a\au\au\au.hh(7394): note: 'void' cannot be used as a function parameter except for '(void)'
+    error_examples.cc(79): error C2679: binary '=': no operator found which takes a right-hand operand of type 'void' (or there is no acceptable conversion)
+    D:\a\au\au\au.hh(5261): note: could be 'au::Quantity<au::Bytes,int> &au::Quantity<au::Bytes,int>::operator =(au::Quantity<au::Bytes,int> &&)'
+    error_examples.cc(79): note: 'au::Quantity<au::Bytes,int> &au::Quantity<au::Bytes,int>::operator =(au::Quantity<au::Bytes,int> &&)': cannot convert argument 2 from 'void' to 'au::Quantity<au::Bytes,int> &&'
+    error_examples.cc(79): note: Expressions of type void cannot be converted to other types
+    D:\a\au\au\au.hh(5261): note: or       'au::Quantity<au::Bytes,int> &au::Quantity<au::Bytes,int>::operator =(const au::Quantity<au::Bytes,int> &)'
+    error_examples.cc(79): note: 'au::Quantity<au::Bytes,int> &au::Quantity<au::Bytes,int>::operator =(const au::Quantity<au::Bytes,int> &)': cannot convert argument 2 from 'void' to 'const au::Quantity<au::Bytes,int> &'
+    error_examples.cc(79): note: Expressions of type void cannot be converted to other types
+    error_examples.cc(79): note: while trying to match the argument list '(au::Quantity<au::Bytes,int>, void)'
+    ```
+
 ## Integer division forbidden {#integer-division-forbidden}
 
 **Meaning:**  Although Au generally tries to act just like the underlying raw numeric types, we also

@@ -282,6 +282,22 @@ struct QuantityPointMaker {
 template <typename U>
 struct AssociatedUnitForPoints<QuantityPointMaker<U>> : stdx::type_identity<U> {};
 
+// Provide nicer error messages when users try passing a `QuantityPoint` to a unit slot.
+template <typename U, typename R>
+struct AssociatedUnit<QuantityPoint<U, R>> {
+    static_assert(
+        detail::AlwaysFalse<U, R>::value,
+        "Cannot pass QuantityPoint to a unit slot (see: "
+        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+};
+template <typename U, typename R>
+struct AssociatedUnitForPoints<QuantityPoint<U, R>> {
+    static_assert(
+        detail::AlwaysFalse<U, R>::value,
+        "Cannot pass QuantityPoint to a unit slot (see: "
+        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+};
+
 // Type trait to detect whether two QuantityPoint types are equivalent.
 //
 // In this library, QuantityPoint types are "equivalent" exactly when they use the same Rep, and are
