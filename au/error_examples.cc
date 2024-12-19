@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "au/au.hh"
+#include "au/units/bytes.hh"
 #include "au/units/feet.hh"
 #include "au/units/hertz.hh"
 #include "au/units/hours.hh"
@@ -67,6 +68,14 @@ void example_dangerous_conversion() {
 void example_no_type_named_type_in_std_common_type() {
     // (BROKEN): different dimensions.
     meters(1) + seconds(1);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SECTION: Can't pass `Quantity` to a unit slot
+
+void example_cant_pass_quantity_to_unit_slot() {
+    auto size = bytes(1234);
+    size = round_as<int>(bytes(10), size);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
