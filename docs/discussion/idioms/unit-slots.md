@@ -193,6 +193,16 @@ The reason we endorse the `QuantityMaker` overloads is because of the convention
 a new `QuantityMaker` on the fly, then this benefit vanishes.  (This is why unit expressions are
 preferred for generic code.)
 
+## What _doesn't_ fit in a unit slot?
+
+A `Quantity`!  It can certainly be tempting, as in some ways a `Quantity` can "feel like" a unit.
+However, the `Quantity` also has a _runtime value_ attached.  By contrast, unit slots can only take
+things that have a single, unambiguous value, known _at compile time_.
+
+Fortunately, if you make this mistake, you'll get a readable compiler error that directs you to [our
+troubleshooting page](../../troubleshooting.md#quantity-to-unit-slot), so you can learn more about
+why this isn't allowed, and what you can do to fix it.
+
 ## Summary
 
 Many Au APIs have a "unit slot".  These are designed for you to name the units explicitly at the

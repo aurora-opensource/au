@@ -424,6 +424,22 @@ class Quantity {
     Rep value_{};
 };
 
+// Give more readable error messages when passing `Quantity` to a unit slot.
+template <typename U, typename R>
+struct AssociatedUnit<Quantity<U, R>> {
+    static_assert(
+        detail::AlwaysFalse<U, R>::value,
+        "Can't pass `Quantity` to a unit slot (see: "
+        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+};
+template <typename U, typename R>
+struct AssociatedUnitForPoints<Quantity<U, R>> {
+    static_assert(
+        detail::AlwaysFalse<U, R>::value,
+        "Can't pass `Quantity` to a unit slot for points (see: "
+        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+};
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Machinery to explicitly unblock integer division.
 //
