@@ -69,6 +69,18 @@ void example_no_type_named_type_in_std_common_type() {
     meters(1) + seconds(1);
 }
 
+*/
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SECTION: Can't pass `Quantity` to a unit slot
+
+void example_cant_pass_quantity_to_unit_slot() {
+    auto size = bytes(1234);
+    size = round_as<int>(bytes(10), size);
+}
+
+/*
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Integer division forbidden
 
@@ -97,7 +109,6 @@ void example_deduced_conflicting_types() {
         // ...
     }
 }
-*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION:
@@ -114,5 +125,6 @@ void example_() {
         // ...
     }
 }
+*/
 
 }  // namespace au
