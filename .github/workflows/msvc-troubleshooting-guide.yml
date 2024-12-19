@@ -40,7 +40,7 @@ jobs:
 
       - name: Build single-file package
         shell: cmd
-        run: python tools/bin/make-single-file --units feet hertz hours inches meters miles seconds --version-id NA > au.hh
+        run: python tools/bin/make-single-file --units feet hertz bytes hours inches meters miles seconds --version-id NA > au.hh
 
       - name: Build and run test
         shell: cmd
