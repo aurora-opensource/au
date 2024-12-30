@@ -67,11 +67,8 @@ those too!  Key examples include [unit symbols](../../reference/unit.md#symbols)
     Suppose we have the following preamble, simply to set everything up.
 
     ```cpp
-    struct SpeedOfLight : decltype(Meters{} / Seconds{} * mag<299'792'458>()) {
-        static constexpr const char label[] = "c";
-    };
-    constexpr const char SpeedOfLight::label[];
-    constexpr auto c = make_constant(SpeedOfLight{});
+    // Found in `"au/constants/speed_of_light.hh"`:
+    constexpr auto c = SPEED_OF_LIGHT;
 
     // These using declarations should be in a `.cc` file, not `.hh`,
     // to avoid namespace pollution!
