@@ -130,12 +130,23 @@ The main advantage of doing this is its conciseness: the constant definition is 
 line.  The built constant also has all of the multiplication and division operators types that
 `Constant` supports, as well as its perfect conversion policy to any `Quantity` type.
 
-The only disadvantage is the missing label, which will make printed quantities hard to understand
-because the constant will be represented as `[UNLABELED_UNIT]` in the compound label.
+The only disadvantage is the unit label for an ad hoc `Constant` will not be specific to that
+`Constant`.
 
-If the constant is used in multiple translation units, or if it leads to values that are printed
-out, we believe this disadvantage outweighs the benefits, and we recommend a full definition with
-a new unit. Otherwise, the ad hoc constant approach may be called for.
+```cpp
+    constexpr auto c = make_constant(meters / second * mag<299'792'458>());
+
+    constexpr auto v = (miles / hour)(65.0);
+
+    std::cout << v.as(c) << std::endl;
+    // Output:
+    // "9.69257e-08 [299792458 m / s]"
+
+    // Found in `"au/constants/speed_of_light.hh"`:
+    std::cout << v.as(SPEED_OF_LIGHT) << std::endl;
+    // Output:
+    // "9.69257e-08 c"
+```
 
 ## `Constant` and unit slots
 
