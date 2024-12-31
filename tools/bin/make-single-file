@@ -46,10 +46,13 @@ def main(argv=None):
     transitively included files which are within the project, but we leave other
     `#include` directives (such as standard library headers) untouched.
     """
-    args = enumerate_units(parse_command_line_args(argv))
+    args = enumerate_units_and_constants(parse_command_line_args(argv))
     files = parse_files(
         filenames=filenames(
-            main_files=args.main_files, units=args.units, include_io=args.include_io
+            main_files=args.main_files,
+            units=args.units,
+            constants=args.constants,
+            include_io=args.include_io,
         )
     )
     print_unified_file(files, args=args)
@@ -57,13 +60,18 @@ def main(argv=None):
     return 0
 
 
-def filenames(main_files, units, include_io):
+def filenames(main_files, units, constants, include_io):
     """Construct the list of project filenames to include.
 
     The script will be sure to include all of these, and will also include any
     transitive dependencies from within the project.
     """
-    names = ["au/au.hh"] + [f"au/units/{unit}.hh" for unit in units] + main_files
+    names = (
+        ["au/au.hh"]
+        + [f"au/units/{u}.hh" for u in units]
+        + [f"au/constants/{c.lower()}.hh" for c in constants]
+        + main_files
+    )
     if include_io:
         names.append("au/io.hh")
     return names
@@ -85,6 +93,16 @@ def parse_command_line_args(argv):
         help="Include all units (may slow compilation!)",
     )
 
+    constant_group = parser.add_mutually_exclusive_group(required=False)
+    constant_group.add_argument(
+        "--constants", nargs="*", default=[], help="The constants to include"
+    )
+    constant_group.add_argument(
+        "--all-constants",
+        action="store_true",
+        help="Include all constants (may slow compilation!)",
+    )
+
     parser.add_argument(
         "--version-id",
         default=git_id_description(),
@@ -101,17 +119,30 @@ def parse_command_line_args(argv):
     return parser.parse_args()
 
 
-def enumerate_units(args):
+def enumerate_units_and_constants(args):
     """
-    Massage args object so that it's "as if" user had specified all units manually.
+    Massage args object so that it's "as if" user had specified all units/constants manually.
 
-    This means that if `--all-units` is specified, we populate the `units` list
-    with every existing entry, and then delete `--all-units`.
+    This means that if `--all-units` is specified, we populate the `units` list with every existing
+    entry, and then delete `--all-units`, and similarly for `--all-constants`.
     """
+    def looks_like_header(f):
+        return f.endswith(".hh") and not f.endswith("_fwd.hh")
+
     if args.all_units:
-        args.units = [f[:-3] for f in os.listdir("au/units/") if f.endswith('.hh')]
-
+        args.units = [
+            f[:-3] for f in os.listdir("au/code/au/units/") if looks_like_header(f)
+        ]
     del args.all_units
+
+    if args.all_constants:
+        args.constants = [
+            f[:-3].upper()
+            for f in os.listdir("au/code/au/constants/")
+            if looks_like_header(f)
+        ]
+    del args.all_constants
+
     return args
 
 
@@ -147,7 +178,7 @@ class SourceFile:
         self.lines = []
 
         in_copyright_header = False
-        with open(filename) as f:
+        with open(os.path.join("au/code", filename)) as f:
             was_last_line_blank = False
             for line in f:
                 if line.startswith("#pragma once"):
@@ -247,11 +278,16 @@ def manifest(args):
     """A sequence of lines describing the options that generated this file."""
     args = CheckArgs(args)
 
-    lines = [
-        f"Version identifier: {args.version_id}",
-        f'<iostream> support: {"INCLUDED" if args.include_io else "EXCLUDED"}',
-        "List of included units:",
-    ] + [f"  {u}" for u in sorted(args.units)]
+    lines = (
+        [
+            f"Version identifier: {args.version_id}",
+            f'<iostream> support: {"INCLUDED" if args.include_io else "EXCLUDED"}',
+            "List of included units:",
+        ]
+        + [f"  {u}" for u in sorted(args.units)]
+        + ["List of included constants:"]
+        + [f"  {c}" for c in sorted(args.constants)]
+    )
 
     if args.main_files:
         lines.append("Extra files included:")

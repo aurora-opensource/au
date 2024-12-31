@@ -89,11 +89,11 @@ http_archive(
     patches = [
         "@//:third_party/aspect_gcc_toolchain/0001-Expose-target_settings-and-set-std-c-14.patch",
     ],
-    sha256 = "9c075a67d401d1aa8b4935cc520e9926b1926fba72c1ab609400b239c92f5639",
-    strip_prefix = "f0rmiga-gcc-toolchain-ac745d4",
+    sha256 = "0651c0d595417b71fdbd903bf852c59a4a576a82e15651bd9672416b64019530",
+    strip_prefix = "gcc-toolchain-ac745d4685e2095cc4f057862800f3f0a473c201",
     type = "tar.gz",
     urls = [
-        "https://github.com/f0rmiga/gcc-toolchain/tarball/ac745d4685e2095cc4f057862800f3f0a473c201",
+        "https://github.com/f0rmiga/gcc-toolchain/archive/ac745d4685e2095cc4f057862800f3f0a473c201.tar.gz",
     ],
 )
 
@@ -113,6 +113,7 @@ gcc_register_toolchain(
 http_archive(
     name = "com_google_googletest",
     sha256 = "24564e3b712d3eb30ac9a85d92f7d720f60cc0173730ac166f27dda7fed76cb2",
+    # NOTE: if updating this version, also update the version numbers in `CMakelists.txt`.
     strip_prefix = "googletest-release-1.12.1",
     urls = ["https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip"],
 )
@@ -215,3 +216,11 @@ http_archive(
 
 # END SECTION: Install buildifier.
 ################################################################################
+
+# This is not a "real" local bazel repository.  We define this in this WORKSPACE
+# file because it will prevent bazel from looking for packages in this folder
+# and its children.
+local_repository(
+    name = "ignore_cmake",
+    path = "./cmake",
+)

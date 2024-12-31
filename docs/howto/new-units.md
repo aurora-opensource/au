@@ -147,9 +147,9 @@ Here are some example unit expressions we might reach for to define various comm
 
 - Newtons: `Kilo<Grams>{} * Meters{} / squared(Seconds{})`
 - Miles: `Feet{} * mag<5280>()`
-- Degrees: `Radians{} * PI / mag<180>()`
+- Degrees: `Radians{} * Magnitude<Pi>{} / mag<180>()`
 
-## Aliases vs. strong types: best practices
+## Aliases vs. strong types: best practices {#alias-vs-strong}
 
 A shorter method of defining units is as _aliases_ for a compound unit.  For example:
 

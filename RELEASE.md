@@ -38,7 +38,7 @@ keep track of the main changes as you go.  Use the following categories.
 
 - User-facing library changes
     - If the compilation speed has been significantly impacted, mention this here.
-- New units
+- New units and constants
 - Tooling updates
 - Documentation updates
 - Repo updates
@@ -51,6 +51,17 @@ Any empty section can be omitted.
 
 We try to follow [semantic versioning](https://semver.org/).  Since we are currently in major
 version zero (0.y.z), incompatible changes don't force a major version upgrade.
+
+### Update the CMake version number
+
+Edit the `CMakeLists.txt` file in the root folder, updating the version number in the `project`
+command to the number chosen above.
+
+Also update the version number in the `HOMEPAGE_URL` parameter, because we link to the docs for the
+latest release in our CMake project definition.  (True, this URL won't exist until you complete the
+remaining steps in this guide, but the danger of getting it wrong is pretty small.)
+
+Make a PR with these changes and land it before creating the tag.
 
 ### Fill out release notes template
 
@@ -67,8 +78,8 @@ Release Notes
 User-facing library changes
 ---------------------------
 
-New units
----------
+New units and constants
+-----------------------
 
 Tooling updates
 ---------------
@@ -102,7 +113,9 @@ Issues!  Alphabetically:
 
 ### Create the tag
 
-Use the command below, replacing `0.3.1` with the version to create.
+First, make sure the "final commit" (which updates the CMake variables) has already landed.
+
+Then, use the command below, replacing `0.3.1` with the version to create.
 
 ```sh
 # Remember to update the tag number!

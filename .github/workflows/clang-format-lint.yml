@@ -25,8 +25,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
-    - uses: DoozyX/clang-format-lint-action@2ec1a72dfb593e52255693c9039e6d94984187dc #v0.14
+    - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b #v4.1.5
+    - uses: DoozyX/clang-format-lint-action@c71d0bf4e21876ebec3e5647491186f8797fde31 #v0.18.2
       with:
         source: './au'
         extensions: 'hh,cc'

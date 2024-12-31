@@ -12,6 +12,10 @@ and you want the "max", just write plain `max(...)`.
 - Don't write `std::max(...)`, because that would give the wrong function.
 - Don't write `au::max(...)`, because that's neither necessary nor idiomatic.
 
+!!! warning
+    For some functions, including `min`, `max`, and `clamp`, this advice is _mandatory_ in many
+    cases, such as when the arguments have the same type.
+
 ## Function categories
 
 Here are the functions we provide, grouped roughly into related categories.
@@ -110,6 +114,11 @@ disambiguate our `min` or `max` implementations with respect to `std::min` and `
     support combining different units.  This means the return type will generally be different from
     the types of the inputs.
 
+!!! warning
+    You _must_ use _unqualified_ calls to `min` and `max` in many cases, including the common case
+    where the arguments have the same type.  Write `min(a, b)`, not `au::min(a, b)`: the latter will
+    frequently result in the right overload not being found.
+
 #### `clamp`
 
 "Clamp" the first parameter to the range defined by the second and third.  This is a _unit-aware_
@@ -179,6 +188,11 @@ expand the note below for further details.
 
     - We do not currently plan to provide the four-parameter overload, unless we get a compelling
       use case.
+
+!!! warning
+    You _must_ use _unqualified_ calls to `clamp` in many cases, including the common case where the
+    arguments have the same type.  Write `clamp(a, b, c)`, not `au::clamp(a, b, c)`: the latter will
+    frequently result in the right overload not being found.
 
 ### Exponentiation
 

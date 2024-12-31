@@ -1,0 +1,43 @@
+# Copyright 2024 Aurora Operations, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: cmake-build-and-test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  cmake-build-and-test:
+    strategy:
+      matrix:
+        options: [
+          { extra_cmake_args: '', extra_targets: 'test' },
+          { extra_cmake_args: ' -DAU_ENABLE_TESTING=FALSE', extra_targets: '' },
+          { extra_cmake_args: ' -DAU_EXCLUDE_GTEST_DEPENDENCY=TRUE', extra_targets: '' }
+        ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b #v4.1.5
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be #v2.0.2
+        with:
+          cmake-version: '3.29.x'
+      - name: Generate
+        run: cmake -S . -B cmake/build -DCMAKE_VERIFY_INTERFACE_HEADER_SETS=TRUE ${{ matrix.options.extra_cmake_args }}
+      - name: Build and test
+        run: cmake --build cmake/build --target all all_verify_interface_header_sets ${{ matrix.options.extra_targets }}

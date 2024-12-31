@@ -26,19 +26,19 @@ jobs:
     runs-on: ${{ inputs.windows_version }}
 
     steps:
-      - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 #v2.6.0
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b #v4.1.5
 
       - name: Set up developer command prompt
-        uses: ilammy/msvc-dev-cmd@cec98b9d092141f74527d0afa6feb2af698cfe89 #v1.12.1
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 #v1.13.0
 
       - name: Set up python
-        uses: actions/setup-python@3542bca2639a428e1796aaa6a2ffef0c0f575566 #v3.1.4
+        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f #v5.1.1
         with:
           python-version: '3.10'
 
       - name: Build single-file package
         shell: cmd
-        run: python tools/bin/make-single-file --units meters seconds --version-id NA > au.hh
+        run: python tools/bin/make-single-file --units meters seconds --constants speed_of_light --version-id NA > au.hh
 
       - name: Build and run test
         shell: cmd
