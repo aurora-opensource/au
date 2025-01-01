@@ -2137,11 +2137,32 @@ Because <code>make_constant</code> has a unit slot API, you can pass an ad hoc e
 <p>The main advantage of doing this is its conciseness: the constant definition is a single, readable
 line.  The built constant also has all of the multiplication and division operators types that
 <code>Constant</code> supports, as well as its perfect conversion policy to any <code>Quantity</code> type.</p>
-<p>The only disadvantage is the missing label, which will make printed quantities hard to understand
-because the constant will be represented as <code>[UNLABELED_UNIT]</code> in the compound label.</p>
-<p>If the constant is used in multiple translation units, or if it leads to values that are printed
-out, we believe this disadvantage outweighs the benefits, and we recommend a full definition with
-a new unit. Otherwise, the ad hoc constant approach may be called for.</p>
+<p>The only disadvantage is that an ad hoc <code>Constant</code> gets an ad hoc unit symbol, instead of a simple,
+concise symbol.  The example below demonstrates the difference.</p>
+<details class="example">
+<summary>Example: ad hoc constants get ad hoc labels</summary>
+<p>Let&rsquo;s take the following speed, and express it in terms of the speed of light, using a constant:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">)(</span><span class="mf">65.0</span><span class="p">);</span>
+</code></pre></div>
+<p>First, an ad hoc constant:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">second</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">());</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1">// Output:</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1">// &quot;9.69257e-08 [299792458 m / s]&quot;</span>
+</code></pre></div>
+<p>Note how the program is correct, and the label is accurate, but clunky: it prints
+<code>[299792458 m / s]</code> instead of a concise label such as <code>c</code>.</p>
+<p>By contrast, we can use a fully defined constant.  This is generally a little more effort, but
+some constants, such as <code>SPEED_OF_LIGHT</code>, are included out of the box:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// Found in `&quot;au/constants/speed_of_light.hh&quot;`:</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">SPEED_OF_LIGHT</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1">// Output:</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1">// &quot;9.69257e-08 c&quot;</span>
+</code></pre></div>
+<p>There&rsquo;s no difference in the program that gets executed, but the printed label is a lot easier
+to understand.</p>
+</details>
 <h2 id="constant-and-unit-slots"><code>Constant</code> and unit slots<a class="headerlink" href="#constant-and-unit-slots" title="Permanent link">&para;</a></h2>
 <p><code>Constant</code> can be passed to any API that takes a <a href="../../discussion/idioms/unit-slots/">unit slot</a>.</p>
 <h2 id="converting-to-quantity">Converting to <code>Quantity</code><a class="headerlink" href="#converting-to-quantity" title="Permanent link">&para;</a></h2>
