@@ -130,23 +130,41 @@ The main advantage of doing this is its conciseness: the constant definition is 
 line.  The built constant also has all of the multiplication and division operators types that
 `Constant` supports, as well as its perfect conversion policy to any `Quantity` type.
 
-The only disadvantage is the unit label for an ad hoc `Constant` will not be specific to that
-`Constant`.
+The only disadvantage is that an ad hoc `Constant` gets an ad hoc unit symbol, instead of a simple,
+concise symbol.  The example below demonstrates the difference.
 
-```cpp
-    constexpr auto c = make_constant(meters / second * mag<299'792'458>());
+??? example "Example: ad hoc constants get ad hoc labels"
+    Let's take the following speed, and express it in terms of the speed of light, using a constant:
 
+    ```cpp
     constexpr auto v = (miles / hour)(65.0);
+    ```
+
+    First, an ad hoc constant:
+
+    ```cpp
+    constexpr auto c = make_constant(meters / second * mag<299'792'458>());
 
     std::cout << v.as(c) << std::endl;
     // Output:
     // "9.69257e-08 [299792458 m / s]"
+    ```
 
+    Note how the program is correct, and the label is accurate, but clunky: it prints
+    `[299792458 m / s]` instead of a concise label such as `c`.
+
+    By contrast, we can use a fully defined constant.  This is generally a little more effort, but
+    some constants, such as `SPEED_OF_LIGHT`, are included out of the box:
+
+    ```cpp
     // Found in `"au/constants/speed_of_light.hh"`:
     std::cout << v.as(SPEED_OF_LIGHT) << std::endl;
     // Output:
     // "9.69257e-08 c"
-```
+    ```
+
+    There's no difference in the program that gets executed, but the printed label is a lot easier
+    to understand.
 
 ## `Constant` and unit slots
 
