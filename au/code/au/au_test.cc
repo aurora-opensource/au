@@ -102,7 +102,8 @@ TEST(Xkcd, Xkcd3038GivesReasonableSpeedLimit) {
     constexpr auto c = SPEED_OF_LIGHT;
     constexpr auto SPEED_LIMIT = make_constant(c * squared(arcminutes) / steradian);
 
-    EXPECT_THAT(SPEED_LIMIT, IsBetween(25.0 * mi / h, 75.0 * mi / h));
+    EXPECT_THAT(SPEED_LIMIT, IsBetween(25.0 * mi / h, 75.0 * mi / h))
+        << SPEED_LIMIT.as<double>(mi / h);
 }
 
 TEST(QuantityPoint, DocumentationExampleIsCorrect) {
