@@ -228,6 +228,8 @@ TEST(Constant, SupportsMultiplyingConstantByItself) {
     StaticAssertTypeEq<decltype(c * c), Constant<decltype(squared(SpeedOfLight{}))>>();
 }
 
+TEST(Constant, CanTakePowers) { StaticAssertTypeEq<decltype(squared(c)), decltype(c * c)>(); }
+
 TEST(Constant, ComposesViaDivision) {
     StaticAssertTypeEq<decltype(c / h), Constant<decltype(SpeedOfLight{} / PlancksConstant{})>>();
 }

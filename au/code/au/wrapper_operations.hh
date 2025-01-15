@@ -217,5 +217,23 @@ struct CanScaleByMagnitude {
     }
 };
 
+//
+// A mixin to enable raising a unit wrapper to a rational power.
+//
+template <template <typename U> class UnitWrapper, typename Unit>
+struct SupportsRationalPowers {
+    // (W^N), for wrapper W and integer N.
+    template <std::intmax_t N>
+    friend constexpr auto pow(UnitWrapper<Unit>) {
+        return UnitWrapper<UnitPowerT<Unit, N>>{};
+    }
+
+    // (W^(1/N)), for wrapper W and integer N.
+    template <std::intmax_t N>
+    friend constexpr auto root(UnitWrapper<Unit>) {
+        return UnitWrapper<UnitPowerT<Unit, 1, N>>{};
+    }
+};
+
 }  // namespace detail
 }  // namespace au

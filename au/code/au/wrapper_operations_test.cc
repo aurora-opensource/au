@@ -33,6 +33,7 @@ struct UnitWrapper : MakesQuantityFromNumber<UnitWrapper, Unit>,
                      ScalesQuantity<UnitWrapper, Unit>,
                      ComposesWith<UnitWrapper, Unit, UnitWrapper, UnitWrapper>,
                      ComposesWith<UnitWrapper, Unit, QuantityMaker, QuantityMaker>,
+                     SupportsRationalPowers<UnitWrapper, Unit>,
                      CanScaleByMagnitude<UnitWrapper, Unit> {};
 
 TEST(MakesQuantityFromNumber, MakesQuantityWhenPostMultiplyingNumericValue) {
@@ -144,18 +145,22 @@ TEST(CanScaleByMagnitude, MakesScaledWrapperWhenDividingByMagnitude) {
     StaticAssertTypeEq<decltype(mol / PI), UnitWrapper<decltype(Moles{} / PI)>>();
 }
 
-TEST(ForbidsComposingWith, FailsToCompileWhenMultiplyingOrDividingWithForbiddenWrapper) {
-    // Uncomment each line below individually to verify.
+TEST(SupportsRationalPowers, RaisesUnitToGivenPower) {
+    constexpr auto mol = UnitWrapper<Moles>{};
+    StaticAssertTypeEq<decltype(pow<3>(mol)), UnitWrapper<decltype(pow<3>(Moles{}))>>();
+}
 
-    // UnitWrapper<Meters>{} * meters_pt;
-    // UnitWrapper<Meters>{} / meters_pt;
-    // meters_pt *UnitWrapper<Meters>{};
-    // meters_pt / UnitWrapper<Meters>{};
+TEST(SupportsRationalPowers, EnablesTakingRoots) {
+    constexpr auto mol = UnitWrapper<Moles>{};
+    StaticAssertTypeEq<decltype(root<8>(mol)), UnitWrapper<decltype(root<8>(Moles{}))>>();
+}
 
-    // UnitWrapper<Meters>{} * meters_pt(1);
-    // UnitWrapper<Meters>{} / meters_pt(1);
-    // meters_pt(1) * UnitWrapper<Meters>{};
-    // meters_pt(1) / UnitWrapper<Meters>{};
+TEST(SupportsRationalPowers, UnlocksNamedPowerHelpers) {
+    constexpr auto mol = UnitWrapper<Moles>{};
+
+    StaticAssertTypeEq<decltype(cubed(mol)), decltype(pow<3>(mol))>();
+    StaticAssertTypeEq<decltype(squared(mol)), decltype(pow<2>(mol))>();
+    StaticAssertTypeEq<decltype(sqrt(mol)), decltype(root<2>(mol))>();
 }
 
 }  // namespace
