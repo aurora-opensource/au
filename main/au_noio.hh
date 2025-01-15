@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-2-g74ebfc0
+// Version identifier: 0.4.1-3-g930394d
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -3927,6 +3927,10 @@ struct SingularNameFor {
         return SingularNameFor<UnitProductT<Unit, OtherUnit>>{};
     }
 };
+
+// Support `SingularNameFor` in (quantity) unit slots.
+template <typename U>
+struct AssociatedUnit<SingularNameFor<U>> : stdx::type_identity<U> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(SingularNameFor<Unit>) {
