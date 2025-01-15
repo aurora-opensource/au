@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-3-g930394d
+// Version identifier: 0.4.1-4-g6d0f7c0
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -5935,6 +5935,24 @@ struct CanScaleByMagnitude {
     }
 };
 
+//
+// A mixin to enable raising a unit wrapper to a rational power.
+//
+template <template <typename U> class UnitWrapper, typename Unit>
+struct SupportsRationalPowers {
+    // (W^N), for wrapper W and integer N.
+    template <std::intmax_t N>
+    friend constexpr auto pow(UnitWrapper<Unit>) {
+        return UnitWrapper<UnitPowerT<Unit, N>>{};
+    }
+
+    // (W^(1/N)), for wrapper W and integer N.
+    template <std::intmax_t N>
+    friend constexpr auto root(UnitWrapper<Unit>) {
+        return UnitWrapper<UnitPowerT<Unit, 1, N>>{};
+    }
+};
+
 }  // namespace detail
 }  // namespace au
 
@@ -5959,6 +5977,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
                   detail::ComposesWith<Constant, Unit, Constant, Constant>,
                   detail::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
                   detail::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
+                  detail::SupportsRationalPowers<Constant, Unit>,
                   detail::CanScaleByMagnitude<Constant, Unit> {
     // Convert this constant to a Quantity of the given rep.
     template <typename T>
@@ -6468,6 +6487,7 @@ template <typename Unit>
 struct SymbolFor : detail::MakesQuantityFromNumber<SymbolFor, Unit>,
                    detail::ScalesQuantity<SymbolFor, Unit>,
                    detail::ComposesWith<SymbolFor, Unit, SymbolFor, SymbolFor>,
+                   detail::SupportsRationalPowers<SymbolFor, Unit>,
                    detail::CanScaleByMagnitude<SymbolFor, Unit> {};
 
 //
