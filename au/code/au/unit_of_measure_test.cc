@@ -142,8 +142,9 @@ TEST(IsUnit, FalseIfDimOrMagHasWrongType) {
 
 TEST(IsUnit, FunctionalFormFalseForQuantityMaker) { EXPECT_FALSE(is_unit(meters)); }
 
-TEST(FitsInUnitSlot, TrueForUnitAndQuantityMaker) {
+TEST(FitsInUnitSlot, TrueForUnitAndQuantityMakerAndSingularNameFor) {
     EXPECT_TRUE(fits_in_unit_slot(meters));
+    EXPECT_TRUE(fits_in_unit_slot(meter));
     EXPECT_TRUE(fits_in_unit_slot(Meters{}));
 
     EXPECT_FALSE(fits_in_unit_slot(1.2));
@@ -240,6 +241,10 @@ TEST(AssociatedUnitT, IsIdentityForTypeWithNoAssociatedUnit) {
 
 TEST(AssociatedUnitT, HandlesWrappersWhichHaveSpecializedAssociatedUnit) {
     StaticAssertTypeEq<AssociatedUnitT<SomeUnitWrapper<Feet>>, Feet>();
+}
+
+TEST(AssociatedUnitT, SupportsSingularNameFor) {
+    StaticAssertTypeEq<AssociatedUnitT<SingularNameFor<Feet>>, Feet>();
 }
 
 TEST(UnitInverseT, CommutesWithProduct) {
