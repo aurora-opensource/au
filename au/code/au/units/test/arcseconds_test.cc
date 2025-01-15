@@ -20,11 +20,11 @@
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Arcseconds, HasExpectedLabel) { expect_label<Arcseconds>("\""); }
 
-TEST(Arcseconds, RelatesCorrectlyToDegrees) {
-    EXPECT_THAT(arcseconds(7200.0), QuantityEquivalent(degrees(2.0)));
-}
+TEST(Arcseconds, RelatesCorrectlyToDegrees) { EXPECT_THAT(arcseconds(7200.0), Eq(degrees(2.0))); }
 
 TEST(Arcseconds, HasExpectedSymbol) {
     using symbols::as;

@@ -20,13 +20,13 @@
 
 namespace au {
 
-TEST(Arcseconds, HasExpectedLabel) { expect_label<Arcseconds>("'"); }
+using ::testing::Eq;
 
-TEST(Arcseconds, RelatesCorrectlyToDegrees) {
-    EXPECT_THAT(arcseconds(120.0), QuantityEquivalent(degrees(2.0)));
-}
+TEST(Arcminutes, HasExpectedLabel) { expect_label<Arcminutes>("'"); }
 
-TEST(Arcseconds, HasExpectedSymbol) {
+TEST(Arcminutes, RelatesCorrectlyToDegrees) { EXPECT_THAT(arcminutes(120.0), Eq(degrees(2.0))); }
+
+TEST(Arcminutes, HasExpectedSymbol) {
     using symbols::am;
     EXPECT_THAT(5.f * am, SameTypeAndValue(arcminutes(5.f)));
 }
