@@ -430,6 +430,10 @@ struct SingularNameFor {
     }
 };
 
+// Support `SingularNameFor` in (quantity) unit slots.
+template <typename U>
+struct AssociatedUnit<SingularNameFor<U>> : stdx::type_identity<U> {};
+
 template <int Exp, typename Unit>
 constexpr auto pow(SingularNameFor<Unit>) {
     return SingularNameFor<UnitPowerT<Unit, Exp>>{};
