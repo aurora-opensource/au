@@ -163,6 +163,20 @@ TEST(SupportsRationalPowers, UnlocksNamedPowerHelpers) {
     StaticAssertTypeEq<decltype(sqrt(mol)), decltype(root<2>(mol))>();
 }
 
+TEST(ForbidsComposingWith, FailsToCompileWhenMultiplyingOrDividingWithForbiddenWrapper) {
+    // Uncomment each line below individually to verify.
+
+    // UnitWrapper<Meters>{} * meters_pt;
+    // UnitWrapper<Meters>{} / meters_pt;
+    // meters_pt *UnitWrapper<Meters>{};
+    // meters_pt / UnitWrapper<Meters>{};
+
+    // UnitWrapper<Meters>{} * meters_pt(1);
+    // UnitWrapper<Meters>{} / meters_pt(1);
+    // meters_pt(1) * UnitWrapper<Meters>{};
+    // meters_pt(1) / UnitWrapper<Meters>{};
+}
+
 }  // namespace
 }  // namespace detail
 }  // namespace au
