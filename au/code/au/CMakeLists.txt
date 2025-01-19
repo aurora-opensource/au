@@ -23,7 +23,7 @@ header_only_library(
   HEADERS
     apply_magnitude.hh
     apply_rational_magnitude_to_integral.hh
-    audio.hh
+    au.hh
     chrono_interop.hh
     constant.hh
     conversion_policy.hh
