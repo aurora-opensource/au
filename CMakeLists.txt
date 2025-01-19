@@ -112,3 +112,12 @@ install(
       ${CMAKE_CURRENT_BINARY_DIR}/AuConfigVersion.cmake
    DESTINATION ${AU_CMAKE_DIR}
 )
+
+# Enable listing all headers in au, so that we can test that CMake has identical headers to bazel.
+get_target_property(AU_ALL_HEADERS au HEADER_SET)
+add_custom_target(
+   print_au_files
+   COMMAND
+      echo "PRESERVE: ${AU_ALL_HEADERS}"
+   COMMAND_EXPAND_LISTS
+)
