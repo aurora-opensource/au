@@ -28,7 +28,8 @@ def main(argv=None):
 
 
 def _get_cmake_headers():
-    # Ensure that CMake has been set up appropriately.
+    # Ensure that CMake has been set up appropriately.  Command taken from:
+    # <https://aurora-opensource.github.io/au/main/install/#__tabbed_1_2>
     subprocess.run(
         [
             "cmake",
