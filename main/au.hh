@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-5-g598de94
+// Version identifier: 0.4.1-6-g417dc07
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -276,6 +276,61 @@ template <class...>
 using void_t = void;
 
 }  // namespace stdx
+}  // namespace au
+
+
+
+namespace au {
+namespace detail {
+
+template <typename PackT, typename T>
+struct Prepend;
+template <typename PackT, typename T>
+using PrependT = typename Prepend<PackT, T>::type;
+
+template <typename T, typename Pack>
+struct DropAllImpl;
+template <typename T, typename Pack>
+using DropAll = typename DropAllImpl<T, Pack>::type;
+
+template <typename T, typename U>
+struct SameTypeIgnoringCvref : std::is_same<stdx::remove_cvref_t<T>, stdx::remove_cvref_t<U>> {};
+
+template <typename T, typename U>
+constexpr bool same_type_ignoring_cvref(T, U) {
+    return SameTypeIgnoringCvref<T, U>::value;
+}
+
+template <typename... Ts>
+struct AlwaysFalse : std::false_type {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Implementation details below.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `Prepend` implementation.
+
+template <template <typename...> class Pack, typename T, typename... Us>
+struct Prepend<Pack<Us...>, T> {
+    using type = Pack<T, Us...>;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `DropAll` implementation.
+
+// Base case.
+template <typename T, template <class...> class Pack>
+struct DropAllImpl<T, Pack<>> : stdx::type_identity<Pack<>> {};
+
+// Recursive case:
+template <typename T, template <class...> class Pack, typename H, typename... Ts>
+struct DropAllImpl<T, Pack<H, Ts...>>
+    : std::conditional<std::is_same<T, H>::value,
+                       DropAll<T, Pack<Ts...>>,
+                       detail::PrependT<DropAll<T, Pack<Ts...>>, H>> {};
+
+}  // namespace detail
 }  // namespace au
 
 
@@ -1375,61 +1430,6 @@ inline constexpr bool operator!=(Zero, Zero) { return false; }
 inline constexpr bool operator>(Zero, Zero) { return false; }
 inline constexpr bool operator<(Zero, Zero) { return false; }
 
-}  // namespace au
-
-
-
-namespace au {
-namespace detail {
-
-template <typename PackT, typename T>
-struct Prepend;
-template <typename PackT, typename T>
-using PrependT = typename Prepend<PackT, T>::type;
-
-template <typename T, typename Pack>
-struct DropAllImpl;
-template <typename T, typename Pack>
-using DropAll = typename DropAllImpl<T, Pack>::type;
-
-template <typename T, typename U>
-struct SameTypeIgnoringCvref : std::is_same<stdx::remove_cvref_t<T>, stdx::remove_cvref_t<U>> {};
-
-template <typename T, typename U>
-constexpr bool same_type_ignoring_cvref(T, U) {
-    return SameTypeIgnoringCvref<T, U>::value;
-}
-
-template <typename... Ts>
-struct AlwaysFalse : std::false_type {};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Implementation details below.
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// `Prepend` implementation.
-
-template <template <typename...> class Pack, typename T, typename... Us>
-struct Prepend<Pack<Us...>, T> {
-    using type = Pack<T, Us...>;
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// `DropAll` implementation.
-
-// Base case.
-template <typename T, template <class...> class Pack>
-struct DropAllImpl<T, Pack<>> : stdx::type_identity<Pack<>> {};
-
-// Recursive case:
-template <typename T, template <class...> class Pack, typename H, typename... Ts>
-struct DropAllImpl<T, Pack<H, Ts...>>
-    : std::conditional<std::is_same<T, H>::value,
-                       DropAll<T, Pack<Ts...>>,
-                       detail::PrependT<DropAll<T, Pack<Ts...>>, H>> {};
-
-}  // namespace detail
 }  // namespace au
 
 
@@ -5714,344 +5714,6 @@ struct common_type<au::Quantity<U1, R1>, au::Quantity<U2, R2>>
     : au::CommonQuantity<au::Quantity<U1, R1>, au::Quantity<U2, R2>> {};
 }  // namespace std
 
-// Keep corresponding `_fwd.hh` file on top.
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct UnosLabel {
-    static constexpr const char label[] = "U";
-};
-template <typename T>
-constexpr const char UnosLabel<T>::label[];
-struct Unos : UnitProductT<>, UnosLabel<void> {
-    using UnosLabel<void>::label;
-};
-constexpr auto unos = QuantityMaker<Unos>{};
-
-}  // namespace au
-
-
-// "Mixin" classes to add operations for a "unit wrapper" --- that is, a template with a _single
-// template parameter_ that is a unit.
-//
-// The operations are multiplication and division.  The mixins will specify what types the wrapper
-// can combine with in this way, and what the resulting type will be.  They also take care of
-// getting the resulting unit correct.  Finally, they handle integer division carefully.
-//
-// Every mixin has at least two template parameters.
-//
-//   1. The unit wrapper (a template template parameter).
-//   2. The specific unit that it's wrapping (for convenience in the implementation).
-//
-// For mixins that compose with something that is _not_ a unit wrapper --- e.g., a raw number, or a
-// magnitude --- this is all they need.  Other mixins compose with _other unit wrappers_, and these
-// take two more template parameters: the wrapper we're composing with, and the resulting wrapper.
-
-namespace au {
-namespace detail {
-
-// A SFINAE helper that is the identity, but only if we think a type is a valid rep.
-//
-// For now, we are restricting this to arithmetic types.  This doesn't mean they're the only reps we
-// support; it just means they're the only reps we can _construct via this method_.  Later on, we
-// would like to have a well-defined concept that defines what is and is not an acceptable rep for
-// our `Quantity`.  Once we have that, we can simply constrain on that concept.  For more on this
-// idea, see: https://github.com/aurora-opensource/au/issues/52
-struct NoTypeMember {};
-template <typename T>
-struct TypeIdentityIfLooksLikeValidRep
-    : std::conditional_t<std::is_arithmetic<T>::value, stdx::type_identity<T>, NoTypeMember> {};
-template <typename T>
-using TypeIdentityIfLooksLikeValidRepT = typename TypeIdentityIfLooksLikeValidRep<T>::type;
-
-//
-// A mixin that enables turning a raw number into a Quantity by multiplying or dividing.
-//
-template <template <typename U> class UnitWrapper, typename Unit>
-struct MakesQuantityFromNumber {
-    // (N * W), for number N and wrapper W.
-    template <typename T>
-    friend constexpr auto operator*(T x, UnitWrapper<Unit>)
-        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
-        return make_quantity<Unit>(x);
-    }
-
-    // (W * N), for number N and wrapper W.
-    template <typename T>
-    friend constexpr auto operator*(UnitWrapper<Unit>, T x)
-        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
-        return make_quantity<Unit>(x);
-    }
-
-    // (N / W), for number N and wrapper W.
-    template <typename T>
-    friend constexpr auto operator/(T x, UnitWrapper<Unit>)
-        -> Quantity<UnitInverseT<Unit>, TypeIdentityIfLooksLikeValidRepT<T>> {
-        return make_quantity<UnitInverseT<Unit>>(x);
-    }
-
-    // (W / N), for number N and wrapper W.
-    template <typename T>
-    friend constexpr auto operator/(UnitWrapper<Unit>, T x)
-        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
-        static_assert(!std::is_integral<T>::value,
-                      "Dividing by an integer value disallowed: would almost always produce 0");
-        return make_quantity<Unit>(T{1} / x);
-    }
-};
-
-//
-// A mixin that enables scaling the units of a Quantity by multiplying or dividing.
-//
-template <template <typename U> class UnitWrapper, typename Unit>
-struct ScalesQuantity {
-    // (W * Q), for wrapper W and quantity Q.
-    template <typename U, typename R>
-    friend constexpr auto operator*(UnitWrapper<Unit>, Quantity<U, R> q) {
-        return make_quantity<UnitProductT<Unit, U>>(q.in(U{}));
-    }
-
-    // (Q * W), for wrapper W and quantity Q.
-    template <typename U, typename R>
-    friend constexpr auto operator*(Quantity<U, R> q, UnitWrapper<Unit>) {
-        return make_quantity<UnitProductT<U, Unit>>(q.in(U{}));
-    }
-
-    // (Q / W), for wrapper W and quantity Q.
-    template <typename U, typename R>
-    friend constexpr auto operator/(Quantity<U, R> q, UnitWrapper<Unit>) {
-        return make_quantity<UnitQuotientT<U, Unit>>(q.in(U{}));
-    }
-
-    // (W / Q), for wrapper W and quantity Q.
-    template <typename U, typename R>
-    friend constexpr auto operator/(UnitWrapper<Unit>, Quantity<U, R> q) {
-        static_assert(!std::is_integral<R>::value,
-                      "Dividing by an integer value disallowed: would almost always produce 0");
-        return make_quantity<UnitQuotientT<Unit, U>>(R{1} / q.in(U{}));
-    }
-};
-
-// A mixin to compose `op(U, O)` into a new unit wrapper, for "main" wrapper `U` and "other" wrapper
-// `O`.  (Implementation detail helper for `ComposesWith`.)
-template <template <typename U> class UnitWrapper,
-          typename Unit,
-          template <typename U>
-          class OtherWrapper,
-          template <typename U>
-          class ResultWrapper>
-struct PrecomposesWith {
-    // (U * O), for "main" wrapper U and "other" wrapper O.
-    template <typename U>
-    friend constexpr ResultWrapper<UnitProductT<Unit, U>> operator*(UnitWrapper<Unit>,
-                                                                    OtherWrapper<U>) {
-        return {};
-    }
-
-    // (U / O), for "main" wrapper U and "other" wrapper O.
-    template <typename U>
-    friend constexpr ResultWrapper<UnitQuotientT<Unit, U>> operator/(UnitWrapper<Unit>,
-                                                                     OtherWrapper<U>) {
-        return {};
-    }
-};
-
-// A mixin to compose `op(O, U)` into a new unit wrapper, for "main" wrapper `U` and "other" wrapper
-// `O`.  (Implementation detail helper for `ComposesWith`.)
-template <template <typename U> class UnitWrapper,
-          typename Unit,
-          template <typename U>
-          class OtherWrapper,
-          template <typename U>
-          class ResultWrapper>
-struct PostcomposesWith {
-    // (O * U), for "main" wrapper U and "other" wrapper O.
-    template <typename U>
-    friend constexpr ResultWrapper<UnitProductT<U, Unit>> operator*(OtherWrapper<U>,
-                                                                    UnitWrapper<Unit>) {
-        return {};
-    }
-
-    // (O / U), for "main" wrapper U and "other" wrapper O.
-    template <typename U>
-    friend constexpr ResultWrapper<UnitQuotientT<U, Unit>> operator/(OtherWrapper<U>,
-                                                                     UnitWrapper<Unit>) {
-        return {};
-    }
-};
-
-// An empty version of `PostcomposesWith` for when `UnitWrapper` is the same as `OtherWrapper`.
-// In this case, if we left it non-empty, the definitions would be ambiguous/redundant with the ones
-// in `PrecoposesWith`.
-template <template <typename U> class UnitWrapper,
-          typename Unit,
-          template <typename U>
-          class ResultWrapper>
-struct PostcomposesWith<UnitWrapper, Unit, UnitWrapper, ResultWrapper> {};
-
-//
-// A mixin to compose two unit wrappers into a new unit wrapper.
-//
-template <template <typename U> class UnitWrapper,
-          typename Unit,
-          template <typename U>
-          class OtherWrapper,
-          template <typename U>
-          class ResultWrapper>
-struct ComposesWith : PrecomposesWith<UnitWrapper, Unit, OtherWrapper, ResultWrapper>,
-                      PostcomposesWith<UnitWrapper, Unit, OtherWrapper, ResultWrapper> {};
-
-//
-// A mixin to enable scaling a unit wrapper by a magnitude.
-//
-template <template <typename U> class UnitWrapper, typename Unit>
-struct CanScaleByMagnitude {
-    // (M * W), for magnitude M and wrapper W.
-    template <typename... BPs>
-    friend constexpr auto operator*(Magnitude<BPs...> m, UnitWrapper<Unit>) {
-        return UnitWrapper<decltype(Unit{} * m)>{};
-    }
-
-    // (W * M), for magnitude M and wrapper W.
-    template <typename... BPs>
-    friend constexpr auto operator*(UnitWrapper<Unit>, Magnitude<BPs...> m) {
-        return UnitWrapper<decltype(Unit{} * m)>{};
-    }
-
-    // (M / W), for magnitude M and wrapper W.
-    template <typename... BPs>
-    friend constexpr auto operator/(Magnitude<BPs...> m, UnitWrapper<Unit>) {
-        return UnitWrapper<decltype(UnitInverseT<Unit>{} * m)>{};
-    }
-
-    // (W / M), for magnitude M and wrapper W.
-    template <typename... BPs>
-    friend constexpr auto operator/(UnitWrapper<Unit>, Magnitude<BPs...> m) {
-        return UnitWrapper<decltype(Unit{} / m)>{};
-    }
-};
-
-//
-// A mixin to enable raising a unit wrapper to a rational power.
-//
-template <template <typename U> class UnitWrapper, typename Unit>
-struct SupportsRationalPowers {
-    // (W^N), for wrapper W and integer N.
-    template <std::intmax_t N>
-    friend constexpr auto pow(UnitWrapper<Unit>) {
-        return UnitWrapper<UnitPowerT<Unit, N>>{};
-    }
-
-    // (W^(1/N)), for wrapper W and integer N.
-    template <std::intmax_t N>
-    friend constexpr auto root(UnitWrapper<Unit>) {
-        return UnitWrapper<UnitPowerT<Unit, 1, N>>{};
-    }
-};
-
-}  // namespace detail
-}  // namespace au
-
-
-namespace au {
-
-//
-// A monovalue type to represent a constant value, including its units, if any.
-//
-// Users can multiply or divide `Constant` instances by raw numbers or `Quantity` instances, and it
-// will perform symbolic arithmetic at compile time without affecting the stored numeric value.
-// `Constant` also composes with other constants, and with `QuantityMaker` and other related types.
-//
-// Although `Constant` does not have any specific numeric type associated with it (as opposed to
-// `Quantity`), it can easily convert to any appropriate `Quantity` type, with any rep.  Unlike
-// `Quantity`, these conversions support _exact_ safety checks, so that every conversion producing a
-// correctly representable value will succeed, and every unrepresentable conversion will fail.
-//
-template <typename Unit>
-struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
-                  detail::ScalesQuantity<Constant, Unit>,
-                  detail::ComposesWith<Constant, Unit, Constant, Constant>,
-                  detail::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
-                  detail::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
-                  detail::SupportsRationalPowers<Constant, Unit>,
-                  detail::CanScaleByMagnitude<Constant, Unit> {
-    // Convert this constant to a Quantity of the given rep.
-    template <typename T>
-    constexpr auto as() const {
-        return make_quantity<Unit>(static_cast<T>(1));
-    }
-
-    // Convert this constant to a Quantity of the given unit and rep, ignoring safety checks.
-    template <typename T, typename OtherUnit>
-    constexpr auto coerce_as(OtherUnit u) const {
-        return as<T>().coerce_as(u);
-    }
-
-    // Convert this constant to a Quantity of the given unit and rep.
-    template <typename T, typename OtherUnit>
-    constexpr auto as(OtherUnit u) const {
-        static_assert(can_store_value_in<T>(OtherUnit{}),
-                      "Cannot represent constant in this unit/rep");
-        return coerce_as<T>(u);
-    }
-
-    // Get the value of this constant in the given unit and rep, ignoring safety checks.
-    template <typename T, typename OtherUnit>
-    constexpr auto coerce_in(OtherUnit u) const {
-        return as<T>().coerce_in(u);
-    }
-
-    // Get the value of this constant in the given unit and rep.
-    template <typename T, typename OtherUnit>
-    constexpr auto in(OtherUnit u) const {
-        static_assert(can_store_value_in<T>(OtherUnit{}),
-                      "Cannot represent constant in this unit/rep");
-        return coerce_in<T>(u);
-    }
-
-    // Implicitly convert to any quantity type which passes safety checks.
-    template <typename U, typename R>
-    constexpr operator Quantity<U, R>() const {
-        return as<R>(U{});
-    }
-
-    // Static function to check whether this constant can be exactly-represented in the given rep
-    // `T` and unit `OtherUnit`.
-    template <typename T, typename OtherUnit>
-    static constexpr bool can_store_value_in(OtherUnit other) {
-        return representable_in<T>(unit_ratio(Unit{}, other));
-    }
-
-    // Implicitly convert to type with an exactly corresponding quantity that passes safety checks.
-    template <
-        typename T,
-        typename = std::enable_if_t<can_store_value_in<typename CorrespondingQuantity<T>::Rep>(
-            typename CorrespondingQuantity<T>::Unit{})>>
-    constexpr operator T() const {
-        return as<typename CorrespondingQuantity<T>::Rep>(
-            typename CorrespondingQuantity<T>::Unit{});
-    }
-};
-
-// Make a constant from the given unit.
-//
-// Note that the argument is a _unit slot_, and thus can also accept things like `QuantityMaker` and
-// `SymbolFor` in addition to regular units.
-template <typename UnitSlot>
-constexpr Constant<AssociatedUnitT<UnitSlot>> make_constant(UnitSlot) {
-    return {};
-}
-
-// Support using `Constant` in a unit slot.
-template <typename Unit>
-struct AssociatedUnit<Constant<Unit>> : stdx::type_identity<Unit> {};
-
-}  // namespace au
-
 
 namespace au {
 
@@ -6472,6 +6134,344 @@ struct IntermediateRep
 }  // namespace detail
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct UnosLabel {
+    static constexpr const char label[] = "U";
+};
+template <typename T>
+constexpr const char UnosLabel<T>::label[];
+struct Unos : UnitProductT<>, UnosLabel<void> {
+    using UnosLabel<void>::label;
+};
+constexpr auto unos = QuantityMaker<Unos>{};
+
+}  // namespace au
+
+
+// "Mixin" classes to add operations for a "unit wrapper" --- that is, a template with a _single
+// template parameter_ that is a unit.
+//
+// The operations are multiplication and division.  The mixins will specify what types the wrapper
+// can combine with in this way, and what the resulting type will be.  They also take care of
+// getting the resulting unit correct.  Finally, they handle integer division carefully.
+//
+// Every mixin has at least two template parameters.
+//
+//   1. The unit wrapper (a template template parameter).
+//   2. The specific unit that it's wrapping (for convenience in the implementation).
+//
+// For mixins that compose with something that is _not_ a unit wrapper --- e.g., a raw number, or a
+// magnitude --- this is all they need.  Other mixins compose with _other unit wrappers_, and these
+// take two more template parameters: the wrapper we're composing with, and the resulting wrapper.
+
+namespace au {
+namespace detail {
+
+// A SFINAE helper that is the identity, but only if we think a type is a valid rep.
+//
+// For now, we are restricting this to arithmetic types.  This doesn't mean they're the only reps we
+// support; it just means they're the only reps we can _construct via this method_.  Later on, we
+// would like to have a well-defined concept that defines what is and is not an acceptable rep for
+// our `Quantity`.  Once we have that, we can simply constrain on that concept.  For more on this
+// idea, see: https://github.com/aurora-opensource/au/issues/52
+struct NoTypeMember {};
+template <typename T>
+struct TypeIdentityIfLooksLikeValidRep
+    : std::conditional_t<std::is_arithmetic<T>::value, stdx::type_identity<T>, NoTypeMember> {};
+template <typename T>
+using TypeIdentityIfLooksLikeValidRepT = typename TypeIdentityIfLooksLikeValidRep<T>::type;
+
+//
+// A mixin that enables turning a raw number into a Quantity by multiplying or dividing.
+//
+template <template <typename U> class UnitWrapper, typename Unit>
+struct MakesQuantityFromNumber {
+    // (N * W), for number N and wrapper W.
+    template <typename T>
+    friend constexpr auto operator*(T x, UnitWrapper<Unit>)
+        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
+        return make_quantity<Unit>(x);
+    }
+
+    // (W * N), for number N and wrapper W.
+    template <typename T>
+    friend constexpr auto operator*(UnitWrapper<Unit>, T x)
+        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
+        return make_quantity<Unit>(x);
+    }
+
+    // (N / W), for number N and wrapper W.
+    template <typename T>
+    friend constexpr auto operator/(T x, UnitWrapper<Unit>)
+        -> Quantity<UnitInverseT<Unit>, TypeIdentityIfLooksLikeValidRepT<T>> {
+        return make_quantity<UnitInverseT<Unit>>(x);
+    }
+
+    // (W / N), for number N and wrapper W.
+    template <typename T>
+    friend constexpr auto operator/(UnitWrapper<Unit>, T x)
+        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
+        static_assert(!std::is_integral<T>::value,
+                      "Dividing by an integer value disallowed: would almost always produce 0");
+        return make_quantity<Unit>(T{1} / x);
+    }
+};
+
+//
+// A mixin that enables scaling the units of a Quantity by multiplying or dividing.
+//
+template <template <typename U> class UnitWrapper, typename Unit>
+struct ScalesQuantity {
+    // (W * Q), for wrapper W and quantity Q.
+    template <typename U, typename R>
+    friend constexpr auto operator*(UnitWrapper<Unit>, Quantity<U, R> q) {
+        return make_quantity<UnitProductT<Unit, U>>(q.in(U{}));
+    }
+
+    // (Q * W), for wrapper W and quantity Q.
+    template <typename U, typename R>
+    friend constexpr auto operator*(Quantity<U, R> q, UnitWrapper<Unit>) {
+        return make_quantity<UnitProductT<U, Unit>>(q.in(U{}));
+    }
+
+    // (Q / W), for wrapper W and quantity Q.
+    template <typename U, typename R>
+    friend constexpr auto operator/(Quantity<U, R> q, UnitWrapper<Unit>) {
+        return make_quantity<UnitQuotientT<U, Unit>>(q.in(U{}));
+    }
+
+    // (W / Q), for wrapper W and quantity Q.
+    template <typename U, typename R>
+    friend constexpr auto operator/(UnitWrapper<Unit>, Quantity<U, R> q) {
+        static_assert(!std::is_integral<R>::value,
+                      "Dividing by an integer value disallowed: would almost always produce 0");
+        return make_quantity<UnitQuotientT<Unit, U>>(R{1} / q.in(U{}));
+    }
+};
+
+// A mixin to compose `op(U, O)` into a new unit wrapper, for "main" wrapper `U` and "other" wrapper
+// `O`.  (Implementation detail helper for `ComposesWith`.)
+template <template <typename U> class UnitWrapper,
+          typename Unit,
+          template <typename U>
+          class OtherWrapper,
+          template <typename U>
+          class ResultWrapper>
+struct PrecomposesWith {
+    // (U * O), for "main" wrapper U and "other" wrapper O.
+    template <typename U>
+    friend constexpr ResultWrapper<UnitProductT<Unit, U>> operator*(UnitWrapper<Unit>,
+                                                                    OtherWrapper<U>) {
+        return {};
+    }
+
+    // (U / O), for "main" wrapper U and "other" wrapper O.
+    template <typename U>
+    friend constexpr ResultWrapper<UnitQuotientT<Unit, U>> operator/(UnitWrapper<Unit>,
+                                                                     OtherWrapper<U>) {
+        return {};
+    }
+};
+
+// A mixin to compose `op(O, U)` into a new unit wrapper, for "main" wrapper `U` and "other" wrapper
+// `O`.  (Implementation detail helper for `ComposesWith`.)
+template <template <typename U> class UnitWrapper,
+          typename Unit,
+          template <typename U>
+          class OtherWrapper,
+          template <typename U>
+          class ResultWrapper>
+struct PostcomposesWith {
+    // (O * U), for "main" wrapper U and "other" wrapper O.
+    template <typename U>
+    friend constexpr ResultWrapper<UnitProductT<U, Unit>> operator*(OtherWrapper<U>,
+                                                                    UnitWrapper<Unit>) {
+        return {};
+    }
+
+    // (O / U), for "main" wrapper U and "other" wrapper O.
+    template <typename U>
+    friend constexpr ResultWrapper<UnitQuotientT<U, Unit>> operator/(OtherWrapper<U>,
+                                                                     UnitWrapper<Unit>) {
+        return {};
+    }
+};
+
+// An empty version of `PostcomposesWith` for when `UnitWrapper` is the same as `OtherWrapper`.
+// In this case, if we left it non-empty, the definitions would be ambiguous/redundant with the ones
+// in `PrecoposesWith`.
+template <template <typename U> class UnitWrapper,
+          typename Unit,
+          template <typename U>
+          class ResultWrapper>
+struct PostcomposesWith<UnitWrapper, Unit, UnitWrapper, ResultWrapper> {};
+
+//
+// A mixin to compose two unit wrappers into a new unit wrapper.
+//
+template <template <typename U> class UnitWrapper,
+          typename Unit,
+          template <typename U>
+          class OtherWrapper,
+          template <typename U>
+          class ResultWrapper>
+struct ComposesWith : PrecomposesWith<UnitWrapper, Unit, OtherWrapper, ResultWrapper>,
+                      PostcomposesWith<UnitWrapper, Unit, OtherWrapper, ResultWrapper> {};
+
+//
+// A mixin to enable scaling a unit wrapper by a magnitude.
+//
+template <template <typename U> class UnitWrapper, typename Unit>
+struct CanScaleByMagnitude {
+    // (M * W), for magnitude M and wrapper W.
+    template <typename... BPs>
+    friend constexpr auto operator*(Magnitude<BPs...> m, UnitWrapper<Unit>) {
+        return UnitWrapper<decltype(Unit{} * m)>{};
+    }
+
+    // (W * M), for magnitude M and wrapper W.
+    template <typename... BPs>
+    friend constexpr auto operator*(UnitWrapper<Unit>, Magnitude<BPs...> m) {
+        return UnitWrapper<decltype(Unit{} * m)>{};
+    }
+
+    // (M / W), for magnitude M and wrapper W.
+    template <typename... BPs>
+    friend constexpr auto operator/(Magnitude<BPs...> m, UnitWrapper<Unit>) {
+        return UnitWrapper<decltype(UnitInverseT<Unit>{} * m)>{};
+    }
+
+    // (W / M), for magnitude M and wrapper W.
+    template <typename... BPs>
+    friend constexpr auto operator/(UnitWrapper<Unit>, Magnitude<BPs...> m) {
+        return UnitWrapper<decltype(Unit{} / m)>{};
+    }
+};
+
+//
+// A mixin to enable raising a unit wrapper to a rational power.
+//
+template <template <typename U> class UnitWrapper, typename Unit>
+struct SupportsRationalPowers {
+    // (W^N), for wrapper W and integer N.
+    template <std::intmax_t N>
+    friend constexpr auto pow(UnitWrapper<Unit>) {
+        return UnitWrapper<UnitPowerT<Unit, N>>{};
+    }
+
+    // (W^(1/N)), for wrapper W and integer N.
+    template <std::intmax_t N>
+    friend constexpr auto root(UnitWrapper<Unit>) {
+        return UnitWrapper<UnitPowerT<Unit, 1, N>>{};
+    }
+};
+
+}  // namespace detail
+}  // namespace au
+
+
+namespace au {
+
+//
+// A monovalue type to represent a constant value, including its units, if any.
+//
+// Users can multiply or divide `Constant` instances by raw numbers or `Quantity` instances, and it
+// will perform symbolic arithmetic at compile time without affecting the stored numeric value.
+// `Constant` also composes with other constants, and with `QuantityMaker` and other related types.
+//
+// Although `Constant` does not have any specific numeric type associated with it (as opposed to
+// `Quantity`), it can easily convert to any appropriate `Quantity` type, with any rep.  Unlike
+// `Quantity`, these conversions support _exact_ safety checks, so that every conversion producing a
+// correctly representable value will succeed, and every unrepresentable conversion will fail.
+//
+template <typename Unit>
+struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
+                  detail::ScalesQuantity<Constant, Unit>,
+                  detail::ComposesWith<Constant, Unit, Constant, Constant>,
+                  detail::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
+                  detail::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
+                  detail::SupportsRationalPowers<Constant, Unit>,
+                  detail::CanScaleByMagnitude<Constant, Unit> {
+    // Convert this constant to a Quantity of the given rep.
+    template <typename T>
+    constexpr auto as() const {
+        return make_quantity<Unit>(static_cast<T>(1));
+    }
+
+    // Convert this constant to a Quantity of the given unit and rep, ignoring safety checks.
+    template <typename T, typename OtherUnit>
+    constexpr auto coerce_as(OtherUnit u) const {
+        return as<T>().coerce_as(u);
+    }
+
+    // Convert this constant to a Quantity of the given unit and rep.
+    template <typename T, typename OtherUnit>
+    constexpr auto as(OtherUnit u) const {
+        static_assert(can_store_value_in<T>(OtherUnit{}),
+                      "Cannot represent constant in this unit/rep");
+        return coerce_as<T>(u);
+    }
+
+    // Get the value of this constant in the given unit and rep, ignoring safety checks.
+    template <typename T, typename OtherUnit>
+    constexpr auto coerce_in(OtherUnit u) const {
+        return as<T>().coerce_in(u);
+    }
+
+    // Get the value of this constant in the given unit and rep.
+    template <typename T, typename OtherUnit>
+    constexpr auto in(OtherUnit u) const {
+        static_assert(can_store_value_in<T>(OtherUnit{}),
+                      "Cannot represent constant in this unit/rep");
+        return coerce_in<T>(u);
+    }
+
+    // Implicitly convert to any quantity type which passes safety checks.
+    template <typename U, typename R>
+    constexpr operator Quantity<U, R>() const {
+        return as<R>(U{});
+    }
+
+    // Static function to check whether this constant can be exactly-represented in the given rep
+    // `T` and unit `OtherUnit`.
+    template <typename T, typename OtherUnit>
+    static constexpr bool can_store_value_in(OtherUnit other) {
+        return representable_in<T>(unit_ratio(Unit{}, other));
+    }
+
+    // Implicitly convert to type with an exactly corresponding quantity that passes safety checks.
+    template <
+        typename T,
+        typename = std::enable_if_t<can_store_value_in<typename CorrespondingQuantity<T>::Rep>(
+            typename CorrespondingQuantity<T>::Unit{})>>
+    constexpr operator T() const {
+        return as<typename CorrespondingQuantity<T>::Rep>(
+            typename CorrespondingQuantity<T>::Unit{});
+    }
+};
+
+// Make a constant from the given unit.
+//
+// Note that the argument is a _unit slot_, and thus can also accept things like `QuantityMaker` and
+// `SymbolFor` in addition to regular units.
+template <typename UnitSlot>
+constexpr Constant<AssociatedUnitT<UnitSlot>> make_constant(UnitSlot) {
+    return {};
+}
+
+// Support using `Constant` in a unit slot.
+template <typename Unit>
+struct AssociatedUnit<Constant<Unit>> : stdx::type_identity<Unit> {};
+
+}  // namespace au
+
 
 namespace au {
 
@@ -6507,6 +6507,30 @@ constexpr auto symbol_for(UnitSlot) {
 template <typename U>
 struct AssociatedUnit<SymbolFor<U>> : stdx::type_identity<U> {};
 
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct BitsLabel {
+    static constexpr const char label[] = "b";
+};
+template <typename T>
+constexpr const char BitsLabel<T>::label[];
+struct Bits : UnitImpl<Information>, BitsLabel<void> {
+    using BitsLabel<void>::label;
+};
+constexpr auto bit = SingularNameFor<Bits>{};
+constexpr auto bits = QuantityMaker<Bits>{};
+
+namespace symbols {
+constexpr auto b = SymbolFor<Bits>{};
+}
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
@@ -7815,30 +7839,24 @@ inline std::ostream &operator<<(std::ostream &out, Zero) {
     return out;
 }
 
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct BitsLabel {
-    static constexpr const char label[] = "b";
-};
-template <typename T>
-constexpr const char BitsLabel<T>::label[];
-struct Bits : UnitImpl<Information>, BitsLabel<void> {
-    using BitsLabel<void>::label;
-};
-constexpr auto bit = SingularNameFor<Bits>{};
-constexpr auto bits = QuantityMaker<Bits>{};
-
-namespace symbols {
-constexpr auto b = SymbolFor<Bits>{};
+// Streaming support for Magnitude: print the magnitude label.
+template <typename... BPs>
+std::ostream &operator<<(std::ostream &out, Magnitude<BPs...> m) {
+    return (out << mag_label(m));
 }
+
+// Streaming support for Constant: print the unit label.
+template <typename U>
+std::ostream &operator<<(std::ostream &out, Constant<U>) {
+    return (out << unit_label(U{}));
+}
+
+// Streaming support for unit symbols: print the unit label.
+template <typename U>
+std::ostream &operator<<(std::ostream &out, SymbolFor<U>) {
+    return (out << unit_label(U{}));
+}
+
 }  // namespace au
 
 
