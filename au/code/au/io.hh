@@ -16,8 +16,11 @@
 
 #include <ostream>
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
+#include "au/unit_symbol.hh"
 #include "au/zero.hh"
 
 namespace au {
@@ -45,6 +48,24 @@ std::ostream &operator<<(std::ostream &out, const QuantityPoint<U, R> &p) {
 inline std::ostream &operator<<(std::ostream &out, Zero) {
     out << "0";
     return out;
+}
+
+// Streaming support for Magnitude: print the magnitude label.
+template <typename... BPs>
+std::ostream &operator<<(std::ostream &out, Magnitude<BPs...> m) {
+    return (out << mag_label(m));
+}
+
+// Streaming support for Constant: print the unit label.
+template <typename U>
+std::ostream &operator<<(std::ostream &out, Constant<U>) {
+    return (out << unit_label(U{}));
+}
+
+// Streaming support for unit symbols: print the unit label.
+template <typename U>
+std::ostream &operator<<(std::ostream &out, SymbolFor<U>) {
+    return (out << unit_label(U{}));
 }
 
 }  // namespace au

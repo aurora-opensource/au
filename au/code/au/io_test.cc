@@ -16,9 +16,13 @@
 
 #include <cstdint>
 
+#include "au/constants/speed_of_light.hh"
 #include "au/prefix.hh"
 #include "au/quantity.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
+
+using ::testing::StrEq;
 
 namespace au {
 namespace {
@@ -34,12 +38,6 @@ struct Feet : UnitImpl<Length> {
 };
 constexpr const char Feet::label[];
 constexpr auto feet = QuantityMaker<Feet>{};
-
-struct Seconds : UnitImpl<Time> {
-    static constexpr const char label[] = "s";
-};
-constexpr const char Seconds::label[];
-constexpr auto second = SingularNameFor<Seconds>{};
 
 struct Kelvins : UnitImpl<Temperature> {
     static constexpr const char label[] = "K";
@@ -80,5 +78,23 @@ TEST(StreamingOutput, DistinguishesPointFromQuantityByAtSign) {
 }
 
 TEST(StreamingOutput, PrintsZero) { EXPECT_EQ(stream_to_string(ZERO), "0"); }
+
+TEST(StreamingOutput, PrintsMagnitude) {
+    EXPECT_THAT(stream_to_string(mag<289374>()), StrEq("289374"));
+    EXPECT_THAT(stream_to_string(mag<22>() / mag<7>()), StrEq("22 / 7"));
+}
+
+TEST(StreamingOutput, PrintsDefaultLabelForMagnitudeWeCantLabelYet) {
+    EXPECT_THAT(stream_to_string(cbrt(Magnitude<Pi>{})), StrEq("(UNLABELED SCALE FACTOR)"));
+}
+
+TEST(StreamingOutput, PrintsUnitLabelForConstant) {
+    EXPECT_THAT(stream_to_string(SPEED_OF_LIGHT), StrEq("c"));
+    EXPECT_THAT(stream_to_string(SPEED_OF_LIGHT * mag<3>() / mag<4>()), StrEq("[(3 / 4) c]"));
+}
+
+TEST(StreamingOutput, PrintsUnitLabelForSymbol) {
+    EXPECT_THAT(stream_to_string(symbol_for(feet)), StrEq("ft"));
+}
 
 }  // namespace au
