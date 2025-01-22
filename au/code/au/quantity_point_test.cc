@@ -391,6 +391,11 @@ TEST(QuantityPoint, ComparisonsWithNegativeUnitHaveAppropriatelyReversedResults)
     EXPECT_THAT(neg_celsius_pt(1), ConsistentlyEqualTo(milli(neg_kelvins_pt)(-272'150)));
 }
 
+TEST(QuantityPoint, AddingPosUnitQuantityToNegUnitPointGivesPosUnitPoint) {
+    constexpr auto neg_celsius_pt = celsius_pt * (-mag<1>());
+    EXPECT_THAT(neg_celsius_pt(40) + celsius_qty(15), PointEquivalent(celsius_pt(-25)));
+}
+
 TEST(QuantityPoint, CanSubtractIntegralInputsWithNonintegralOriginDifference) {
     EXPECT_EQ(celsius_pt(0) - kelvins_pt(273), centi(kelvins)(15));
 }
