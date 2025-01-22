@@ -764,7 +764,7 @@ struct PrependIfExpNegative<BP, Magnitude<Ts...>>
 
 // If M is (N/D), DenominatorPartT<M> is D; we want 1/D.
 template <typename M>
-using NegativePowers = MagInverseT<DenominatorPartT<M>>;
+using NegativePowers = MagQuotientT<M, NumeratorPartT<M>>;
 }  // namespace detail
 
 // 1-ary case: identity.

@@ -123,7 +123,10 @@ TEST(Pi, HasCorrectValue) {
 #endif
 }
 
-TEST(Inverse, RaisesToPowerNegativeOne) { EXPECT_EQ(inverse(mag<8>()), mag<1>() / mag<8>()); }
+TEST(Inverse, RaisesToPowerNegativeOne) {
+    EXPECT_EQ(inverse(mag<8>()), mag<1>() / mag<8>());
+    EXPECT_EQ(inverse(-mag<2>()), -mag<1>() / mag<2>());
+}
 
 TEST(Squared, RaisesToPowerTwo) { EXPECT_EQ(squared(mag<7>()), mag<49>()); }
 
@@ -385,6 +388,8 @@ TEST(CommonMagnitude, CommonMagOfPosAndNegIsPos) {
 
     EXPECT_EQ(common_magnitude(mag<12>(), -mag<15>(), -mag<27>()), mag<3>());
     EXPECT_EQ(common_magnitude(-mag<9>(), mag<12>(), -mag<15>(), -mag<27>()), mag<3>());
+
+    EXPECT_EQ(common_magnitude(mag<1>(), -mag<1>() / mag<5>()), mag<1>() / mag<5>());
 }
 
 TEST(CommonMagnitude, CommonMagOfNegAndNegIsNeg) {
