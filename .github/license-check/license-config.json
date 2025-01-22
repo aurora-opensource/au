@@ -9,6 +9,7 @@
       "**/CMakeLists.txt",
       "tools/bin/au-docs-serve",
       "tools/bin/buildifier",
+      "tools/bin/check-cmake-headers",
       "tools/bin/clang-format",
       "tools/bin/make-single-file",
       "tools/bin/mkdocs",

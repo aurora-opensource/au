@@ -14,8 +14,10 @@
 
 #include "au/au.hh"
 
+#include "au/constants/speed_of_light.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
+#include "au/units/arcminutes.hh"
 #include "au/units/celsius.hh"
 #include "au/units/fahrenheit.hh"
 #include "au/units/fathoms.hh"
@@ -26,12 +28,19 @@
 #include "au/units/knots.hh"
 #include "au/units/meters.hh"
 #include "au/units/miles.hh"
+#include "au/units/steradians.hh"
 #include "au/units/yards.hh"
 #include "gtest/gtest.h"
 
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
+namespace {
+template <typename T, typename U>
+auto IsBetween(T lower, U upper) {
+    return ::testing::AllOf(::testing::Ge(lower), ::testing::Le(upper));
+}
+}  // namespace
 
 TEST(Conversions, SupportIntMHzToU32Hz) {
     constexpr QuantityU32<Hertz> freq = mega(hertz)(40);
@@ -54,7 +63,7 @@ constexpr auto round_sequentially(Quantity<U, R> q, FirstUnit first_unit, NextUn
     return round_sequentially(round_as(first_unit, q), next_units...);
 }
 
-TEST(RoundAs, ReproducesXkcd2585) {
+TEST(Xkcd, RoundAsReproducesXkcd2585) {
     constexpr auto true_speed = (miles / hour)(17);
 
     const auto rounded_speed = round_sequentially(true_speed,
@@ -84,6 +93,17 @@ TEST(RoundAs, ReproducesXkcd2585) {
 
     // Authoritative reference: https://xkcd.com/2585/
     EXPECT_EQ((miles / hour)(45), rounded_speed);
+}
+
+TEST(Xkcd, Xkcd3038GivesReasonableSpeedLimit) {
+    using symbols::h;
+    using symbols::mi;
+
+    constexpr auto c = SPEED_OF_LIGHT;
+    constexpr auto SPEED_LIMIT = make_constant(c * squared(arcminutes) / steradian);
+
+    EXPECT_THAT(SPEED_LIMIT, IsBetween(25.0 * mi / h, 75.0 * mi / h))
+        << SPEED_LIMIT.as<double>(mi / h);
 }
 
 TEST(QuantityPoint, DocumentationExampleIsCorrect) {

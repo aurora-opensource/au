@@ -31,6 +31,7 @@ template <typename Unit>
 struct SymbolFor : detail::MakesQuantityFromNumber<SymbolFor, Unit>,
                    detail::ScalesQuantity<SymbolFor, Unit>,
                    detail::ComposesWith<SymbolFor, Unit, SymbolFor, SymbolFor>,
+                   detail::SupportsRationalPowers<SymbolFor, Unit>,
                    detail::CanScaleByMagnitude<SymbolFor, Unit> {};
 
 //

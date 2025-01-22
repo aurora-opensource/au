@@ -59,6 +59,10 @@ header_only_library(
     stdx/utility.hh
     units/amperes.hh
     units/amperes_fwd.hh
+    units/arcminutes.hh
+    units/arcminutes_fwd.hh
+    units/arcseconds.hh
+    units/arcseconds_fwd.hh
     units/bars.hh
     units/bars_fwd.hh
     units/becquerel.hh
@@ -306,6 +310,8 @@ gtest_based_test(
   NAME units_test
   SRCS
     units/test/amperes_test.cc
+    units/test/arcminutes_test.cc
+    units/test/arcseconds_test.cc
     units/test/bars_test.cc
     units/test/becquerel_test.cc
     units/test/bits_test.cc

@@ -51,4 +51,8 @@ TEST(SymbolFor, CanScaleByMagnitude) {
     EXPECT_THAT(3.5f / u100_m, SameTypeAndValue(inverse(meters * mag<100>())(3.5f)));
 }
 
+TEST(SymbolFor, CanApplyNamedPowerFunctions) {
+    StaticAssertTypeEq<decltype(squared(m)), decltype(m * m)>();
+}
+
 }  // namespace au

@@ -109,8 +109,11 @@ cc_library(
     includes = ["code"],
     visibility = ["//visibility:public"],
     deps = [
+        ":constant",
+        ":magnitude",
         ":quantity",
         ":quantity_point",
+        ":unit_symbol",
         ":zero",
     ],
 )
@@ -120,6 +123,7 @@ cc_test(
     size = "small",
     srcs = ["code/au/io_test.cc"],
     deps = [
+        ":constants",
         ":io",
         ":prefix",
         "@com_google_googletest//:gtest_main",
