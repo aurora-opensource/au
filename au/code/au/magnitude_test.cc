@@ -570,5 +570,9 @@ TEST(PrimeFactorizationT, FactorsInputs) {
     StaticAssertTypeEq<PrimeFactorizationT<12u>, Magnitude<Pow<Prime<2u>, 2u>, Prime<3u>>>();
 }
 
+TEST(DenominatorPart, OmitsSignForNegativeNumbers) {
+    StaticAssertTypeEq<DenominatorPartT<decltype(-mag<3>() / mag<7>())>, decltype(mag<7>())>();
+}
+
 }  // namespace detail
 }  // namespace au
