@@ -709,6 +709,11 @@ struct SimplifyIfOnlyOneUnscaledUnitImpl<U, UnitList<Us...>> : stdx::type_identi
 template <>
 struct FirstMatchingUnit<AreUnitsQuantityEquivalent, Zero, Zero> : stdx::type_identity<Zero> {};
 
+template <typename U>
+struct ReplaceCommonPointUnitWithCommonUnitImpl : stdx::type_identity<U> {};
+template <typename U>
+using ReplaceCommonPointUnitWithCommonUnit =
+    typename ReplaceCommonPointUnitWithCommonUnitImpl<U>::type;
 }  // namespace detail
 
 template <typename A, typename B>
@@ -719,8 +724,9 @@ using CommonUnitLabel = FlatDedupedTypeListT<detail::CommonUnitLabelImpl, Us...>
 
 template <typename... Us>
 struct ComputeCommonUnitImpl
-    : stdx::type_identity<
-          detail::EliminateRedundantUnits<FlatDedupedTypeListT<CommonUnit, Us...>>> {};
+    : stdx::type_identity<detail::EliminateRedundantUnits<
+          FlatDedupedTypeListT<CommonUnit, detail::ReplaceCommonPointUnitWithCommonUnit<Us>...>>> {
+};
 template <>
 struct ComputeCommonUnitImpl<> : stdx::type_identity<Zero> {};
 
@@ -870,6 +876,12 @@ struct CommonPointUnit : CommonAmongUnitsAndOriginDisplacements<Us...> {
 
     static constexpr auto origin() { return detail::CommonOrigin<Us...>::value(); }
 };
+
+namespace detail {
+template <typename... Us>
+struct ReplaceCommonPointUnitWithCommonUnitImpl<CommonPointUnit<Us...>>
+    : stdx::type_identity<CommonAmongUnitsAndOriginDisplacements<Us...>> {};
+}  // namespace detail
 
 template <typename A, typename B>
 struct InOrderFor<CommonPointUnit, A, B> : InOrderFor<UnitProduct, A, B> {};
