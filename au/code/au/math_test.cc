@@ -184,6 +184,8 @@ TEST(hypot, QuantityConsistentWithStdHypotWhenTypesAreIdentical) {
 TEST(hypot, QuantityProducesResultsInCommonUnitOfInputs) {
     EXPECT_THAT(hypot(centi(meters)(30), milli(meters)(400)),
                 SameTypeAndValue(milli(meters)(500.0)));
+
+    EXPECT_THAT(hypot(inches(5.f), feet(1.f)), SameTypeAndValue(inches(13.f)));
 }
 
 TEST(hypot, QuantityPointConsistentWithStdHypotWhenTypesAreIdentical) {
