@@ -159,6 +159,60 @@ TEST(clamp, SupportsZeroForMultipleArguments) {
     EXPECT_THAT(clamp(feet(6), ZERO, ZERO), SameTypeAndValue(feet(0)));
 }
 
+TEST(hypot, QuantityConsistentWithStdHypotWhenTypesAreIdentical) {
+    auto expect_consistent_with_std_hypot = [](auto u, auto v) {
+        const auto expected = ohms(std::hypot(u, v));
+        const auto actual = hypot(ohms(u), ohms(v));
+        EXPECT_THAT(actual, SameTypeAndValue(expected));
+    };
+
+    // Rep: `int`.
+    expect_consistent_with_std_hypot(-1, 0);
+    expect_consistent_with_std_hypot(0, 0);
+    expect_consistent_with_std_hypot(1, 0);
+    expect_consistent_with_std_hypot(2, 0);
+    expect_consistent_with_std_hypot(4, 2);
+
+    // Rep: `double`.
+    expect_consistent_with_std_hypot(-1.0, 0.0);
+    expect_consistent_with_std_hypot(0.0, 0.0);
+    expect_consistent_with_std_hypot(1.0, 0.0);
+    expect_consistent_with_std_hypot(2.0, 0.0);
+    expect_consistent_with_std_hypot(4.0, 2.0);
+}
+
+TEST(hypot, QuantityProducesResultsInCommonUnitOfInputs) {
+    EXPECT_THAT(hypot(centi(meters)(30), milli(meters)(400)),
+                SameTypeAndValue(milli(meters)(500.0)));
+}
+
+TEST(hypot, QuantityPointConsistentWithStdHypotWhenTypesAreIdentical) {
+    auto expect_consistent_with_std_hypot = [](auto u, auto v) {
+        const auto expected = meters_pt(std::hypot(u, v));
+        const auto actual = hypot(meters_pt(u), meters_pt(v));
+        EXPECT_THAT(actual, SameTypeAndValue(expected));
+    };
+
+    // Rep: `int`.
+    expect_consistent_with_std_hypot(-1, 0);
+    expect_consistent_with_std_hypot(0, 0);
+    expect_consistent_with_std_hypot(1, 0);
+    expect_consistent_with_std_hypot(2, 0);
+    expect_consistent_with_std_hypot(4, 2);
+
+    // Rep: `double`.
+    expect_consistent_with_std_hypot(-1.0, 0.0);
+    expect_consistent_with_std_hypot(0.0, 0.0);
+    expect_consistent_with_std_hypot(1.0, 0.0);
+    expect_consistent_with_std_hypot(2.0, 0.0);
+    expect_consistent_with_std_hypot(4.0, 2.0);
+}
+
+TEST(hypot, QuantityPointProducesResultsInCommonUnitOfInputs) {
+    EXPECT_THAT(hypot(centi(meters_pt)(30), milli(meters_pt)(400)),
+                SameTypeAndValue(milli(meters_pt)(500.0)));
+}
+
 TEST(copysign, ReturnsSameTypesAsStdCopysignForSameUnitInputs) {
     auto expect_consistent_with_std_copysign = [](auto mag, auto raw_sgn) {
         for (const auto test_sgn : {-1, 0, +1}) {
