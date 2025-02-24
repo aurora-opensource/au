@@ -182,15 +182,6 @@ auto hypot(Quantity<U1, R1> x, Quantity<U2, R2> y)
     return make_quantity<U>(std::hypot(x.in(U{}), y.in(U{})));
 }
 
-template <typename U1, typename R1, typename U2, typename R2>
-auto hypot(QuantityPoint<U1, R1> x, QuantityPoint<U2, R2> y)
-{
-    using U = CommonPointUnitT<U1, U2>;
-    using R = std::common_type_t<R1, R2>;
-    using ResultT = QuantityPoint<U, R>;
-    return make_quantity_point<U>(std::hypot(x.in(U{}), y.in(U{})));
-}
-
 // Copysign where the magnitude has units.
 template <typename U, typename R, typename T>
 constexpr auto copysign(Quantity<U, R> mag, T sgn) {
