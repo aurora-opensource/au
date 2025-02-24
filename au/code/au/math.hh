@@ -174,8 +174,7 @@ constexpr auto clamp(QuantityPoint<UV, RV> v,
 }
 
 template <typename U1, typename R1, typename U2, typename R2>
-auto hypot(Quantity<U1, R1> x, Quantity<U2, R2> y)
-{
+auto hypot(Quantity<U1, R1> x, Quantity<U2, R2> y) {
     using U = CommonUnitT<U1, U2>;
     return make_quantity<U>(std::hypot(x.in(U{}), y.in(U{})));
 }
