@@ -177,8 +177,6 @@ template <typename U1, typename R1, typename U2, typename R2>
 auto hypot(Quantity<U1, R1> x, Quantity<U2, R2> y)
 {
     using U = CommonUnitT<U1, U2>;
-    using R = std::common_type_t<R1, R2>;
-    using ResultT = Quantity<U, R>;
     return make_quantity<U>(std::hypot(x.in(U{}), y.in(U{})));
 }
 
