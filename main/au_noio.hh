@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-8-g4543859
+// Version identifier: 0.4.1-9-g11fe374
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -7016,6 +7016,7 @@ using std::abs;
 using std::copysign;
 using std::cos;
 using std::fmod;
+using std::hypot;
 using std::isnan;
 using std::max;
 using std::min;
@@ -7153,6 +7154,12 @@ constexpr auto clamp(QuantityPoint<UV, RV> v,
     using R = std::common_type_t<RV, RLo, RHi>;
     using ResultT = QuantityPoint<U, R>;
     return (v < lo) ? ResultT{lo} : (hi < v) ? ResultT{hi} : ResultT{v};
+}
+
+template <typename U1, typename R1, typename U2, typename R2>
+auto hypot(Quantity<U1, R1> x, Quantity<U2, R2> y) {
+    using U = CommonUnitT<U1, U2>;
+    return make_quantity<U>(std::hypot(x.in(U{}), y.in(U{})));
 }
 
 // Copysign where the magnitude has units.
