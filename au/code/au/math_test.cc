@@ -27,9 +27,12 @@
 #include "au/units/ohms.hh"
 #include "au/units/revolutions.hh"
 #include "au/units/seconds.hh"
+#include "au/units/yards.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+using ::testing::DoubleNear;
+using ::testing::Eq;
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
@@ -68,6 +71,36 @@ TEST(abs, SameAsStdAbsForNumericTypes) {
     EXPECT_EQ(abs(-1), 1);
     EXPECT_EQ(abs(0), 0);
     EXPECT_EQ(abs(1), 1);
+}
+
+TEST(cbrt, OutputRepDependsOnInputRep) {
+    EXPECT_THAT(cbrt(cubed(meters)(8)), QuantityEquivalent(meters(2.)));
+    EXPECT_THAT(cbrt(cubed(meters)(8.)), QuantityEquivalent(meters(2.)));
+    EXPECT_THAT(cbrt(cubed(meters)(8.f)), QuantityEquivalent(meters(2.f)));
+    EXPECT_THAT(cbrt(cubed(meters)(8.L)), QuantityEquivalent(meters(2.L)));
+}
+
+TEST(cbrt, SameAsStdCbrtForNumericTypes) {
+    EXPECT_THAT(cbrt(1), Eq(std::cbrt(1)));
+    EXPECT_THAT(cbrt(1.), Eq(std::cbrt(1.)));
+    EXPECT_THAT(cbrt(1.f), Eq(std::cbrt(1.f)));
+    EXPECT_THAT(cbrt(1.L), Eq(std::cbrt(1.L)));
+}
+
+TEST(cbrt, CanConvertIfConversionFactorRational) {
+    const auto geo_mean_length = cbrt(inches(1) * meters(1) * yards(1));
+
+    // Using Quantity-equivalent Unit just retrieves the value stored in `geo_mean_length`.
+    const auto retrieved_value = geo_mean_length.in(cbrt(inch * meter * yards));
+    EXPECT_THAT(retrieved_value, SameTypeAndValue(1.0));
+
+    // This conversion factor is another "easy" case because it doesn't have any rational powers.
+    const auto rationally_converted_value = geo_mean_length.in(cbrt(inch * milli(meter) * yards));
+    EXPECT_THAT(rationally_converted_value, SameTypeAndValue(10.0));
+
+    // This test case is "hard": we need to compute radical conversion factors at compile time.
+    const auto radically_converted_value = geo_mean_length.in(inches);
+    EXPECT_THAT(radically_converted_value, DoubleNear(11.232841, 0.000001));
 }
 
 TEST(clamp, QuantityConsistentWithStdClampWhenTypesAreIdentical) {
@@ -546,18 +579,17 @@ TEST(sqrt, SameAsStdSqrtForNumericTypes) {
 TEST(sqrt, CanConvertIfConversionFactorRational) {
     const auto geo_mean_length = sqrt(inches(1) * meters(1));
 
-    // Using Quantity-equivalent Unit just retrieves the stored value.
-    // This _always_ works.
+    // Using Quantity-equivalent Unit just retrieves the value stored in `geo_mean_length`.
     const auto retrieved_value = geo_mean_length.in(sqrt(inch * meters));
     EXPECT_THAT(retrieved_value, SameTypeAndValue(1.0));
 
-    // This conversion is OK, because the conversion factor doesn't have any rational powers.
+    // This conversion is "easy", because the conversion factor doesn't have any rational powers.
     const auto rationally_converted_value = geo_mean_length.in(sqrt(inch * centi(meters)));
     EXPECT_THAT(rationally_converted_value, SameTypeAndValue(10.0));
 
-    // This test case won't work until we can compute radical conversion factors at compile time.
-    // const auto radically_converted_value = geo_mean_length.in(inches);
-    // EXPECT_NEAR(radically_converted_value, 6.274558, 0.000001);
+    // This test case is "hard": we need to compute radical conversion factors at compile time.
+    const auto radically_converted_value = geo_mean_length.in(inches);
+    EXPECT_THAT(radically_converted_value, DoubleNear(6.274558, 0.000001));
 }
 
 TEST(tan, TypeDependsOnInputType) {
