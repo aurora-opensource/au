@@ -31,6 +31,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+using ::testing::DoubleNear;
+using ::testing::Eq;
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
