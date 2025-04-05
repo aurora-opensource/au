@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-9-g11fe374
+// Version identifier: 0.4.1-10-gc06058e
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -7013,6 +7013,7 @@ namespace au {
 // Lookup will stop once it hits `::au::sin()`, hiding the `::sin()` overload in the global
 // namespace.  To learn more about Name Lookup, see this article (https://abseil.io/tips/49).
 using std::abs;
+using std::cbrt;
 using std::copysign;
 using std::cos;
 using std::fmod;
@@ -7134,6 +7135,12 @@ template <typename U1, typename R1, typename U2, typename R2>
 auto arctan2(Quantity<U1, R1> y, Quantity<U2, R2> x) {
     constexpr auto common_unit = CommonUnitT<U1, U2>{};
     return arctan2(y.in(common_unit), x.in(common_unit));
+}
+
+// Wrapper for std::cbrt() which handles Quantity types.
+template <typename U, typename R>
+auto cbrt(Quantity<U, R> q) {
+    return make_quantity<UnitPowerT<U, 1, 3>>(std::cbrt(q.in(U{})));
 }
 
 // Clamp the first quantity to within the range of the second two.
