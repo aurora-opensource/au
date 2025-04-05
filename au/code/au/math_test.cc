@@ -27,6 +27,7 @@
 #include "au/units/ohms.hh"
 #include "au/units/revolutions.hh"
 #include "au/units/seconds.hh"
+#include "au/units/yards.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -68,6 +69,44 @@ TEST(abs, SameAsStdAbsForNumericTypes) {
     EXPECT_EQ(abs(-1), 1);
     EXPECT_EQ(abs(0), 0);
     EXPECT_EQ(abs(1), 1);
+}
+
+TEST(cbrt, OutputRepDependsOnInputRep) {
+    EXPECT_THAT(cbrt(cubed(meters)(8)), QuantityEquivalent(meters(2.)));
+    EXPECT_THAT(cbrt(cubed(meters)(8.)), QuantityEquivalent(meters(2.)));
+    EXPECT_THAT(cbrt(cubed(meters)(8.f)), QuantityEquivalent(meters(2.f)));
+    EXPECT_THAT(cbrt(cubed(meters)(8.L)), QuantityEquivalent(meters(2.L)));
+}
+
+TEST(cbrt, MixedUnitsSupportedWithCasting) {
+    constexpr auto x_in = inches(1);
+    constexpr auto y_cm = centi(meters)(2.54);
+    constexpr auto z_mm = milli(meters)(25.4);
+
+    EXPECT_THAT(cbrt(x_in * y_cm.as(inches) * z_mm.as(inches)), IsNear(x_in, nano(meters)(1)));
+}
+
+TEST(cbrt, SameAsStdCbrtForNumericTypes) {
+    EXPECT_EQ(cbrt(1), std::cbrt(1));
+    EXPECT_EQ(cbrt(1.), std::cbrt(1.));
+    EXPECT_EQ(cbrt(1.f), std::cbrt(1.f));
+    EXPECT_EQ(cbrt(1.L), std::cbrt(1.L));
+}
+
+TEST(cbrt, CanConvertIfConversionFactorRational) {
+    const auto geo_mean_length = cbrt(inches(1) * meters(1) * yards(1));
+
+    // Using Quantity-equivalent Unit just retrieves the stored value.
+    const auto retrieved_value = geo_mean_length.in(cbrt(inch * meter * yards));
+    EXPECT_THAT(retrieved_value, SameTypeAndValue(1.0));
+
+    // This conversion factor is another "easy" case because it doesn't have any rational powers.
+    const auto rationally_converted_value = geo_mean_length.in(cbrt(inch * milli(meter) * yards));
+    EXPECT_THAT(rationally_converted_value, SameTypeAndValue(10.0));
+
+    // This test case won't work until we can compute radical conversion factors at compile time.
+    const auto radically_converted_value = geo_mean_length.in(inches);
+    EXPECT_NEAR(radically_converted_value, 11.232841, 0.000001);
 }
 
 TEST(clamp, QuantityConsistentWithStdClampWhenTypesAreIdentical) {
@@ -555,9 +594,9 @@ TEST(sqrt, CanConvertIfConversionFactorRational) {
     const auto rationally_converted_value = geo_mean_length.in(sqrt(inch * centi(meters)));
     EXPECT_THAT(rationally_converted_value, SameTypeAndValue(10.0));
 
-    // This test case won't work until we can compute radical conversion factors at compile time.
-    // const auto radically_converted_value = geo_mean_length.in(inches);
-    // EXPECT_NEAR(radically_converted_value, 6.274558, 0.000001);
+    // This test case is "hard": we need to compute radical conversion factors at compile time.
+    const auto radically_converted_value = geo_mean_length.in(inches);
+    EXPECT_NEAR(radically_converted_value, 6.274558, 0.000001);
 }
 
 TEST(tan, TypeDependsOnInputType) {
