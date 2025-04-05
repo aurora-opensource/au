@@ -79,10 +79,10 @@ TEST(cbrt, OutputRepDependsOnInputRep) {
 }
 
 TEST(cbrt, SameAsStdCbrtForNumericTypes) {
-    EXPECT_EQ(cbrt(1), std::cbrt(1));
-    EXPECT_EQ(cbrt(1.), std::cbrt(1.));
-    EXPECT_EQ(cbrt(1.f), std::cbrt(1.f));
-    EXPECT_EQ(cbrt(1.L), std::cbrt(1.L));
+    EXPECT_THAT(cbrt(1), Eq(std::cbrt(1)));
+    EXPECT_THAT(cbrt(1.), Eq(std::cbrt(1.)));
+    EXPECT_THAT(cbrt(1.f), Eq(std::cbrt(1.f)));
+    EXPECT_THAT(cbrt(1.L), Eq(std::cbrt(1.L)));
 }
 
 TEST(cbrt, CanConvertIfConversionFactorRational) {
@@ -98,7 +98,7 @@ TEST(cbrt, CanConvertIfConversionFactorRational) {
 
     // This test case is "hard": we need to compute radical conversion factors at compile time.
     const auto radically_converted_value = geo_mean_length.in(inches);
-    EXPECT_NEAR(radically_converted_value, 11.232841, 0.000001);
+    EXPECT_THAT(radically_converted_value, DoubleNear(11.232841, 0.000001));
 }
 
 TEST(clamp, QuantityConsistentWithStdClampWhenTypesAreIdentical) {
@@ -588,7 +588,7 @@ TEST(sqrt, CanConvertIfConversionFactorRational) {
 
     // This test case is "hard": we need to compute radical conversion factors at compile time.
     const auto radically_converted_value = geo_mean_length.in(inches);
-    EXPECT_NEAR(radically_converted_value, 6.274558, 0.000001);
+    EXPECT_THAT(radically_converted_value, DoubleNear(6.274558, 0.000001));
 }
 
 TEST(tan, TypeDependsOnInputType) {
