@@ -90,7 +90,7 @@ TEST(cbrt, SameAsStdCbrtForNumericTypes) {
 TEST(cbrt, CanConvertIfConversionFactorRational) {
     const auto geo_mean_length = cbrt(inches(1) * meters(1) * yards(1));
 
-    // Using Quantity-equivalent Unit just retrieves the stored value.
+    // Using Quantity-equivalent Unit just retrieves the value stored in `geo_mean_length`.
     const auto retrieved_value = geo_mean_length.in(cbrt(inch * meter * yards));
     EXPECT_THAT(retrieved_value, SameTypeAndValue(1.0));
 
@@ -579,12 +579,11 @@ TEST(sqrt, SameAsStdSqrtForNumericTypes) {
 TEST(sqrt, CanConvertIfConversionFactorRational) {
     const auto geo_mean_length = sqrt(inches(1) * meters(1));
 
-    // Using Quantity-equivalent Unit just retrieves the stored value.
-    // This _always_ works.
+    // Using Quantity-equivalent Unit just retrieves the value stored in `geo_mean_length`.
     const auto retrieved_value = geo_mean_length.in(sqrt(inch * meters));
     EXPECT_THAT(retrieved_value, SameTypeAndValue(1.0));
 
-    // This conversion is OK, because the conversion factor doesn't have any rational powers.
+    // This conversion is "easy", because the conversion factor doesn't have any rational powers.
     const auto rationally_converted_value = geo_mean_length.in(sqrt(inch * centi(meters)));
     EXPECT_THAT(rationally_converted_value, SameTypeAndValue(10.0));
 
