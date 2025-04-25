@@ -665,6 +665,7 @@ cc_test(
     size = "small",
     srcs = glob(["code/au/utility/test/*.cc"]),
     deps = [
+        ":testing",
         ":utility",
         "@com_google_googletest//:gtest_main",
     ],
