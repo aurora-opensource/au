@@ -70,7 +70,7 @@ TEST(IToA, ValueHoldsStringVersionOfTemplateParameter) {
     // `int64_t` --- even though `-9'223'372'036'854'775'808` can!  So instead, we negate the
     // largest literal, and then subtract one to get the lowest literal.
     constexpr int64_t min = -9'223'372'036'854'775'807 - 1;
-    EXPECT_STREQ(IToA<min>::value.c_str(), "-9223372036854775808");
+    EXPECT_THAT(IToA<min>::value, StrEq("-9223372036854775808"));
 }
 
 TEST(IToA, HasLengthMember) {
