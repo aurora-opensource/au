@@ -21,6 +21,8 @@
 namespace au {
 namespace detail {
 
+using ::testing::StrEq;
+
 TEST(StringConstant, CanCreateFromStringLiteral) {
     constexpr StringConstant<5> x{"hello"};
     EXPECT_STREQ(x.c_str(), "hello");
@@ -54,16 +56,16 @@ TEST(AbsAsUnsigned, NegatesNegativeNumbers) {
 }
 
 TEST(IToA, ValueHoldsStringVersionOfTemplateParameter) {
-    EXPECT_STREQ(IToA<0>::value.c_str(), "0");
+    EXPECT_THAT(IToA<0>::value.c_str(), StrEq("0"));
 
-    EXPECT_STREQ(IToA<1>::value.c_str(), "1");
-    EXPECT_STREQ(IToA<9>::value.c_str(), "9");
-    EXPECT_STREQ(IToA<10>::value.c_str(), "10");
-    EXPECT_STREQ(IToA<91>::value.c_str(), "91");
-    EXPECT_STREQ(IToA<312839>::value.c_str(), "312839");
+    EXPECT_THAT(IToA<1>::value.c_str(), StrEq("1"));
+    EXPECT_THAT(IToA<9>::value.c_str(), StrEq("9"));
+    EXPECT_THAT(IToA<10>::value.c_str(), StrEq("10"));
+    EXPECT_THAT(IToA<91>::value.c_str(), StrEq("91"));
+    EXPECT_THAT(IToA<312839>::value.c_str(), StrEq("312839"));
 
-    EXPECT_STREQ(IToA<-1>::value.c_str(), "-1");
-    EXPECT_STREQ(IToA<-83294>::value.c_str(), "-83294");
+    EXPECT_THAT(IToA<-1>::value.c_str(), StrEq("-1"));
+    EXPECT_THAT(IToA<-83294>::value.c_str(), StrEq("-83294"));
 
     // This funny way of writing it is because `-9'223'372'036'854'775'808` isn't a literal.  The
     // actual literal is `9'223'372'036'854'775'808`, which is too big (by one) to fit into
