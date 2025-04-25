@@ -398,7 +398,7 @@ constexpr UnitPowerT<U, Exp> pow(U) {
 }
 
 // Take the Root (of some integral degree) of a Unit.
-template <std::uintmax_t Deg, typename U, typename = std::enable_if_t<IsUnit<U>::value>>
+template <std::intmax_t Deg, typename U, typename = std::enable_if_t<IsUnit<U>::value>>
 constexpr UnitPowerT<U, 1, Deg> root(U) {
     return {};
 }

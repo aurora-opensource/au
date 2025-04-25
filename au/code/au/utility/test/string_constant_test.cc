@@ -14,10 +14,14 @@
 
 #include "au/utility/string_constant.hh"
 
+#include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 namespace detail {
+
+using ::testing::StrEq;
 
 TEST(StringConstant, CanCreateFromStringLiteral) {
     constexpr StringConstant<5> x{"hello"};
@@ -39,17 +43,36 @@ TEST(AsStringConstant, PassingStringConstantIsIdentity) {
     EXPECT_STREQ(x.c_str(), "goodbye");
 }
 
+TEST(AbsAsUnsigned, IdentityForPositiveNumbers) {
+    EXPECT_THAT(abs_as_unsigned(int8_t{0}), SameTypeAndValue(uint8_t{0}));
+    EXPECT_THAT(abs_as_unsigned(int8_t{1}), SameTypeAndValue(uint8_t{1}));
+    EXPECT_THAT(abs_as_unsigned(int8_t{127}), SameTypeAndValue(uint8_t{127}));
+}
+
+TEST(AbsAsUnsigned, NegatesNegativeNumbers) {
+    EXPECT_THAT(abs_as_unsigned(int8_t{-1}), SameTypeAndValue(uint8_t{1}));
+    EXPECT_THAT(abs_as_unsigned(int8_t{-127}), SameTypeAndValue(uint8_t{127}));
+    EXPECT_THAT(abs_as_unsigned(int8_t{-128}), SameTypeAndValue(uint8_t{128}));
+}
+
 TEST(IToA, ValueHoldsStringVersionOfTemplateParameter) {
-    EXPECT_STREQ(IToA<0>::value.c_str(), "0");
+    EXPECT_THAT(IToA<0>::value.c_str(), StrEq("0"));
 
-    EXPECT_STREQ(IToA<1>::value.c_str(), "1");
-    EXPECT_STREQ(IToA<9>::value.c_str(), "9");
-    EXPECT_STREQ(IToA<10>::value.c_str(), "10");
-    EXPECT_STREQ(IToA<91>::value.c_str(), "91");
-    EXPECT_STREQ(IToA<312839>::value.c_str(), "312839");
+    EXPECT_THAT(IToA<1>::value.c_str(), StrEq("1"));
+    EXPECT_THAT(IToA<9>::value.c_str(), StrEq("9"));
+    EXPECT_THAT(IToA<10>::value.c_str(), StrEq("10"));
+    EXPECT_THAT(IToA<91>::value.c_str(), StrEq("91"));
+    EXPECT_THAT(IToA<312839>::value.c_str(), StrEq("312839"));
 
-    EXPECT_STREQ(IToA<-1>::value.c_str(), "-1");
-    EXPECT_STREQ(IToA<-83294>::value.c_str(), "-83294");
+    EXPECT_THAT(IToA<-1>::value.c_str(), StrEq("-1"));
+    EXPECT_THAT(IToA<-83294>::value.c_str(), StrEq("-83294"));
+
+    // This funny way of writing it is because `-9'223'372'036'854'775'808` isn't a literal.  The
+    // actual literal is `9'223'372'036'854'775'808`, which is too big (by one) to fit into
+    // `int64_t` --- even though `-9'223'372'036'854'775'808` can!  So instead, we negate the
+    // largest literal, and then subtract one to get the lowest literal.
+    constexpr int64_t min = -9'223'372'036'854'775'807 - 1;
+    EXPECT_THAT(IToA<min>::value, StrEq("-9223372036854775808"));
 }
 
 TEST(IToA, HasLengthMember) {
