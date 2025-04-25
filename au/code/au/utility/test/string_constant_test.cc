@@ -14,6 +14,8 @@
 
 #include "au/utility/string_constant.hh"
 
+#include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -39,6 +41,18 @@ TEST(AsStringConstant, PassingStringConstantIsIdentity) {
     EXPECT_STREQ(x.c_str(), "goodbye");
 }
 
+TEST(AbsAsUnsigned, IdentityForPositiveNumbers) {
+    EXPECT_THAT(abs_as_unsigned(int8_t{0}), SameTypeAndValue(uint8_t{0}));
+    EXPECT_THAT(abs_as_unsigned(int8_t{1}), SameTypeAndValue(uint8_t{1}));
+    EXPECT_THAT(abs_as_unsigned(int8_t{127}), SameTypeAndValue(uint8_t{127}));
+}
+
+TEST(AbsAsUnsigned, NegatesNegativeNumbers) {
+    EXPECT_THAT(abs_as_unsigned(int8_t{-1}), SameTypeAndValue(uint8_t{1}));
+    EXPECT_THAT(abs_as_unsigned(int8_t{-127}), SameTypeAndValue(uint8_t{127}));
+    EXPECT_THAT(abs_as_unsigned(int8_t{-128}), SameTypeAndValue(uint8_t{128}));
+}
+
 TEST(IToA, ValueHoldsStringVersionOfTemplateParameter) {
     EXPECT_STREQ(IToA<0>::value.c_str(), "0");
 
@@ -50,6 +64,13 @@ TEST(IToA, ValueHoldsStringVersionOfTemplateParameter) {
 
     EXPECT_STREQ(IToA<-1>::value.c_str(), "-1");
     EXPECT_STREQ(IToA<-83294>::value.c_str(), "-83294");
+
+    // This funny way of writing it is because `-9'223'372'036'854'775'808` isn't a literal.  The
+    // actual literal is `9'223'372'036'854'775'808`, which is too big (by one) to fit into
+    // `int64_t` --- even though `-9'223'372'036'854'775'808` can!  So instead, we negate the
+    // largest literal, and then subtract one to get the lowest literal.
+    constexpr int64_t min = -9'223'372'036'854'775'807 - 1;
+    EXPECT_STREQ(IToA<min>::value.c_str(), "-9223372036854775808");
 }
 
 TEST(IToA, HasLengthMember) {

@@ -249,7 +249,8 @@ struct PrimeFactorization {
     static constexpr std::uintmax_t power = multiplicity(base, N);
     static constexpr std::uintmax_t remainder = N / int_pow(base, power);
 
-    using type = MagProductT<Magnitude<Pow<Prime<base>, power>>, PrimeFactorizationT<remainder>>;
+    using type = MagProductT<Magnitude<Pow<Prime<base>, static_cast<std::intmax_t>(power)>>,
+                             PrimeFactorizationT<remainder>>;
 };
 
 }  // namespace detail

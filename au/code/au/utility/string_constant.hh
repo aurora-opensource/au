@@ -15,7 +15,10 @@
 #pragma once
 
 #include <cstdint>
+#include <limits>
 #include <utility>
+
+#include "au/stdx/type_traits.hh"
 
 namespace au {
 namespace detail {
@@ -87,6 +90,22 @@ struct IToA;
 // Implementation details below.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// The absolute value of a signed integer, as an unsigned integer.
+//
+// This handles the special case where the lowest `int64_t` cannot be directly negated: it would be
+// too big to fit into `int64_t`.
+template <typename S>
+constexpr std::make_unsigned_t<S> abs_as_unsigned(S x) {
+    static_assert(stdx::conjunction<std::is_integral<S>, std::is_signed<S>>::value,
+                  "Only designed for signed integral types");
+    using U = std::make_unsigned_t<S>;
+    constexpr auto SMAX = static_cast<U>(std::numeric_limits<S>::max());
+    constexpr auto UMAX = std::numeric_limits<U>::max();
+
+    auto result = static_cast<U>(x);
+    return (result > SMAX) ? (UMAX - result + 1u) : result;
+}
+
 // The string-length needed to hold a representation of this unsigned integer.
 constexpr std::size_t string_size_unsigned(uint64_t x) {
     std::size_t digits = 1;
@@ -101,10 +120,9 @@ constexpr std::size_t string_size_unsigned(uint64_t x) {
 constexpr std::size_t string_size(int64_t x) {
     std::size_t sign_length = 0u;
     if (x < 0) {
-        x = -x;
         ++sign_length;
     }
-    return string_size_unsigned(static_cast<uint64_t>(x)) + sign_length;
+    return string_size_unsigned(abs_as_unsigned(x)) + sign_length;
 }
 
 // The sum of the template parameters.
@@ -249,8 +267,7 @@ struct IToA {
     static constexpr std::size_t length = string_size(N);
 
     static constexpr StringConstant<length> value =
-        concatenate(SignIfPositiveIs<(N >= 0)>::value(),
-                    UIToA<static_cast<uint64_t>((N) >= 0) ? N : -N>::value);
+        concatenate(SignIfPositiveIs<(N >= 0)>::value(), UIToA<abs_as_unsigned(N)>::value);
 };
 
 // Definitions for IToA<N>::value.  (Needed to prevent linker errors.)
