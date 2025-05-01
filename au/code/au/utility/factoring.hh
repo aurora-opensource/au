@@ -96,7 +96,7 @@ constexpr std::uintmax_t find_prime_factor(std::uintmax_t n) {
     //
     // Note that range-for isn't supported until C++17, so we need to use an index.
     for (auto i = 0u; i < FirstPrimes::values.size(); ++i) {
-        const auto &p = FirstPrimes::values[i];
+        const std::uintmax_t p = FirstPrimes::values[i];
 
         if (n % p == 0u) {
             return p;
