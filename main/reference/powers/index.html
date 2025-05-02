@@ -1314,6 +1314,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Helpers (inverse, squared, cubed, sqrt, cbrt)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-based" class="md-nav__link">
+    <span class="md-ellipsis">
+      Type-based versions (Inverse, Squared, Cubed, Sqrt, Cbrt)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1878,6 +1893,40 @@ compatible monovalue type (a unit, a magnitude, &hellip;):</p>
 <tr>
 <td><code>cbrt(x)</code></td>
 <td><code>root&lt;3&gt;(x)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="type-based">Type-based versions (<code>Inverse</code>, <code>Squared</code>, <code>Cubed</code>, <code>Sqrt</code>, <code>Cbrt</code>)<a class="headerlink" href="#type-based" title="Permanent link">&para;</a></h3>
+<p>We provide type-based versions of the above helpers, to make it easier to concisely form readable
+type names.  Here are the following helpers as applied to a unit <code>U</code>, and the equivalent result as
+expressed using more general unit power APIs.</p>
+<table>
+<thead>
+<tr>
+<th>Helper</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Inverse&lt;U&gt;</code></td>
+<td><code>UnitPowerT&lt;U, -1&gt;</code></td>
+</tr>
+<tr>
+<td><code>Squared&lt;U&gt;</code></td>
+<td><code>UnitPowerT&lt;U, 2&gt;</code></td>
+</tr>
+<tr>
+<td><code>Cubed&lt;U&gt;</code></td>
+<td><code>UnitPowerT&lt;U, 3&gt;</code></td>
+</tr>
+<tr>
+<td><code>Sqrt&lt;U&gt;</code></td>
+<td><code>UnitPowerT&lt;U, 1, 2&gt;</code></td>
+</tr>
+<tr>
+<td><code>Cbrt&lt;U&gt;</code></td>
+<td><code>UnitPowerT&lt;U, 1, 3&gt;</code></td>
 </tr>
 </tbody>
 </table>
