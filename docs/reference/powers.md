@@ -59,3 +59,17 @@ compatible monovalue type (a unit, a magnitude, ...):
 | `cubed(x)` | `pow<3>(x)` |
 | `sqrt(x)` | `root<2>(x)` |
 | `cbrt(x)` | `root<3>(x)` |
+
+### Type-based versions (`Inverse`, `Squared`, `Cubed`, `Sqrt`, `Cbrt`) {#type-based}
+
+We provide type-based versions of the above helpers, to make it easier to concisely form readable
+type names.  Here are the following helpers as applied to a unit `U`, and the equivalent result as
+expressed using more general unit power APIs.
+
+| Helper | Result |
+|--------|--------|
+| `Inverse<U>` | `UnitPowerT<U, -1>` |
+| `Squared<U>` | `UnitPowerT<U, 2>` |
+| `Cubed<U>` | `UnitPowerT<U, 3>` |
+| `Sqrt<U>` | `UnitPowerT<U, 1, 2>` |
+| `Cbrt<U>` | `UnitPowerT<U, 1, 3>` |
