@@ -32,10 +32,11 @@ TEST(FootballFields, HasCorrectQuantityRelationshipWithYards) {
 }
 
 TEST(FootballFields, FourFootballFieldsIsLessThanKnownFirstlightLidarRange) {
-    // Sources:
     // https://blog.aurora.tech/progress/firstlight-lidar-on-a-chip
+    constexpr auto lidar_range_minimum = meters(400);
+
     // https://ir.aurora.tech/news-events/press-releases/detail/119/aurora-begins-commercial-driverless-trucking-in-texas
-    EXPECT_THAT(football_fields(4), Lt(meters(400)));
+    EXPECT_THAT(lidar_range_minimum, Gt(football_fields(4));
 }
 
 TEST(FootballFields, HasExpectedSymbol) {
