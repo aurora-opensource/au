@@ -15,6 +15,7 @@
 #pragma once
 
 #include <cstdint>
+#include <utility>
 
 namespace au {
 
@@ -45,29 +46,39 @@ template <typename T>
 constexpr auto inverse(T x) -> decltype(pow<-1>(x)) {
     return pow<-1>(x);
 }
+template <typename T>
+using Inverse = decltype(inverse(std::declval<T>()));
 
 // Make "squared" an alias for "pow<2>" when the latter exists (for anything).
 template <typename T>
 constexpr auto squared(T x) -> decltype(pow<2>(x)) {
     return pow<2>(x);
 }
+template <typename T>
+using Squared = decltype(squared(std::declval<T>()));
 
 // Make "cubed" an alias for "pow<3>" when the latter exists (for anything).
 template <typename T>
 constexpr auto cubed(T x) -> decltype(pow<3>(x)) {
     return pow<3>(x);
 }
+template <typename T>
+using Cubed = decltype(cubed(std::declval<T>()));
 
 // Make "sqrt" an alias for "root<2>" when the latter exists (for anything).
 template <typename T>
 constexpr auto sqrt(T x) -> decltype(root<2>(x)) {
     return root<2>(x);
 }
+template <typename T>
+using Sqrt = decltype(sqrt(std::declval<T>()));
 
 // Make "cbrt" an alias for "root<3>" when the latter exists (for anything).
 template <typename T>
 constexpr auto cbrt(T x) -> decltype(root<3>(x)) {
     return root<3>(x);
 }
+template <typename T>
+using Cbrt = decltype(cbrt(std::declval<T>()));
 
 }  // namespace au
