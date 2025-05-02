@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-14-g9d22630
+// Version identifier: 0.4.1-15-g88052ae
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -45,6 +45,7 @@
 //   farads
 //   fathoms
 //   feet
+//   football_fields
 //   furlongs
 //   grams
 //   grays
@@ -1625,13 +1626,19 @@ struct Farads;
 
 namespace au {
 
-struct Henries;
+struct Yards;
 
 }  // namespace au
 
 namespace au {
 
-struct Yards;
+struct FootballFields;
+
+}  // namespace au
+
+namespace au {
+
+struct Henries;
 
 }  // namespace au
 
@@ -9397,6 +9404,30 @@ constexpr auto farads = QuantityMaker<Farads>{};
 
 namespace symbols {
 constexpr auto F = SymbolFor<Farads>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct FootballFieldsLabel {
+    static constexpr const char label[] = "ftbl_fld";
+};
+template <typename T>
+constexpr const char FootballFieldsLabel<T>::label[];
+struct FootballFields : decltype(Yards{} * mag<100>()), FootballFieldsLabel<void> {
+    using FootballFieldsLabel<void>::label;
+};
+constexpr auto football_field = SingularNameFor<FootballFields>{};
+constexpr auto football_fields = QuantityMaker<FootballFields>{};
+
+namespace symbols {
+constexpr auto ftbl_fld = SymbolFor<FootballFields>{};
 }
 }  // namespace au
 
