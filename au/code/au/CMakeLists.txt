@@ -89,6 +89,8 @@ header_only_library(
     units/fathoms_fwd.hh
     units/feet.hh
     units/feet_fwd.hh
+    units/football_fields.hh
+    units/football_fields_fwd.hh
     units/furlongs.hh
     units/furlongs_fwd.hh
     units/grams.hh
@@ -325,6 +327,7 @@ gtest_based_test(
     units/test/farads_test.cc
     units/test/fathoms_test.cc
     units/test/feet_test.cc
+    units/test/football_fields_test.cc
     units/test/furlongs_test.cc
     units/test/grams_test.cc
     units/test/grays_test.cc
