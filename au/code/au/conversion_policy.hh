@@ -27,11 +27,11 @@ namespace au {
 template <typename Rep, typename... BPs>
 constexpr bool can_scale_without_overflow(Magnitude<BPs...> m, Rep value) {
     // Scales that shrink don't cause overflow.
-    if (get_value<double>(m) <= 1.0) {
+    if (get_value<double>(abs(m)) <= 1.0) {
         (void)value;
         return true;
     } else {
-        return std::numeric_limits<Rep>::max() / get_value<Rep>(m) >= value;
+        return std::numeric_limits<Rep>::max() / get_value<Rep>(abs(m)) >= value;
     }
 }
 
@@ -73,9 +73,19 @@ struct SettingPureRealFromMixedReal
     : stdx::conjunction<stdx::negation<std::is_same<SourceRep, RealPart<SourceRep>>>,
                         std::is_same<Rep, RealPart<Rep>>> {};
 
+// `SettingUnsignedFromNegativeScaleFactor<Rep, ScaleFactor>` makes sure we're not applying a
+// negative scale factor and then storing the result in an unsigned type.  This would only be OK if
+// the stored value itself were also negative, which is either never true (unsigned source) or true
+// only about half the time (signed source) --- in either case, not good enough for _implicit_
+// conversion.
+template <typename Rep, typename ScaleFactor>
+struct SettingUnsignedFromNegativeScaleFactor
+    : stdx::conjunction<std::is_unsigned<Rep>, stdx::negation<IsPositive<ScaleFactor>>> {};
+
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct CoreImplicitConversionPolicyImpl
     : stdx::conjunction<stdx::negation<SettingPureRealFromMixedReal<Rep, SourceRep>>,
+                        stdx::negation<SettingUnsignedFromNegativeScaleFactor<Rep, ScaleFactor>>,
                         CoreImplicitConversionPolicyImplAssumingReal<RealPart<Rep>,
                                                                      ScaleFactor,
                                                                      RealPart<SourceRep>>> {};
@@ -85,14 +95,20 @@ using CoreImplicitConversionPolicy = CoreImplicitConversionPolicyImpl<Rep, Scale
 
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion
-    : stdx::conjunction<std::is_same<ScaleFactor, Magnitude<>>,
+    : stdx::conjunction<std::is_same<Abs<ScaleFactor>, Magnitude<>>,
+                        stdx::disjunction<IsPositive<ScaleFactor>, std::is_signed<Rep>>,
                         std::is_integral<Rep>,
                         std::is_integral<SourceRep>,
                         std::is_assignable<Rep &, SourceRep>> {};
+
+template <typename Rep, typename ScaleFactor, typename SourceRep>
+using ImplicitConversionPolicy =
+    stdx::disjunction<CoreImplicitConversionPolicy<Rep, ScaleFactor, SourceRep>,
+                      PermitAsCarveOutForIntegerPromotion<Rep, ScaleFactor, SourceRep>>;
 }  // namespace detail
 
 template <typename Rep, typename ScaleFactor>
-struct ImplicitRepPermitted : detail::CoreImplicitConversionPolicy<Rep, ScaleFactor, Rep> {};
+struct ImplicitRepPermitted : detail::ImplicitConversionPolicy<Rep, ScaleFactor, Rep> {};
 
 template <typename Rep, typename SourceUnitSlot, typename TargetUnitSlot>
 constexpr bool implicit_rep_permitted_from_source_to_target(SourceUnitSlot, TargetUnitSlot) {
@@ -117,9 +133,7 @@ struct ConstructionPolicy {
     template <typename SourceUnit, typename SourceRep>
     using PermitImplicitFrom = stdx::conjunction<
         HasSameDimension<Unit, SourceUnit>,
-        stdx::disjunction<
-            detail::CoreImplicitConversionPolicy<Rep, ScaleFactor<SourceUnit>, SourceRep>,
-            detail::PermitAsCarveOutForIntegerPromotion<Rep, ScaleFactor<SourceUnit>, SourceRep>>>;
+        detail::ImplicitConversionPolicy<Rep, ScaleFactor<SourceUnit>, SourceRep>>;
 };
 
 }  // namespace au

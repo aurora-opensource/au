@@ -50,9 +50,16 @@ TEST(PromotedType, PromotesUint8TIntoLargerType) {
     EXPECT_GT(sizeof(PromotedU8), sizeof(uint8_t));
 }
 
-TEST(IsKnownToBeLessThanOne, ProducesExpectedResultsForMagnitudesThatCanFitInUintmax) {
-    EXPECT_TRUE(is_known_to_be_less_than_one(mag<1>() / mag<2>()));
-    EXPECT_TRUE(is_known_to_be_less_than_one(mag<999'999>() / mag<1'000'000>()));
+TEST(IsAbsKnownToBeLessThanOne, ProducesExpectedResultsForMagnitudesThatCanFitInUintmax) {
+    EXPECT_TRUE(is_abs_known_to_be_less_than_one(mag<1>() / mag<2>()));
+    EXPECT_TRUE(is_abs_known_to_be_less_than_one(mag<999'999>() / mag<1'000'000>()));
+    EXPECT_FALSE(is_abs_known_to_be_less_than_one(mag<1'000'000>() / mag<999'999>()));
+}
+
+TEST(IsAbsKnownToBeLessThanOne, IgnoresSign) {
+    EXPECT_TRUE(is_abs_known_to_be_less_than_one(-mag<1>() / mag<2>()));
+    EXPECT_TRUE(is_abs_known_to_be_less_than_one(-mag<999'999>() / mag<1'000'000>()));
+    EXPECT_FALSE(is_abs_known_to_be_less_than_one(-mag<1'000'000>() / mag<999'999>()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,6 +146,45 @@ TEST(MaxNonOverflowingValue, AlwaysZeroIfNumCannotFitInPromotedType) {
             huge,
             max_u16);
         EXPECT_EQ(max_u16, 0);
+    }
+}
+
+TEST(MaxNonOverflowingValue, ZeroIfFactorIsNegativeAndTypeIsUnsigned) {
+    // Alternative region of Case "1" above.
+
+    constexpr auto ratio = -mag<2>() / mag<3>();
+
+    {
+        uint64_t max_u64 = 123u;
+        populate_max_non_overflowing_value(
+            {IsPromotable::NO, NumFitsInPromotedType::NO, DenFitsInPromotedType::YES},
+            ratio,
+            max_u64);
+        EXPECT_EQ(max_u64, 0u);
+    }
+    {
+        uint32_t max_u32 = 123u;
+        populate_max_non_overflowing_value(
+            {IsPromotable::NO, NumFitsInPromotedType::NO, DenFitsInPromotedType::YES},
+            ratio,
+            max_u32);
+        EXPECT_EQ(max_u32, 0u);
+    }
+    {
+        uint16_t max_u16 = 123u;
+        populate_max_non_overflowing_value(
+            {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::YES},
+            ratio,
+            max_u16);
+        EXPECT_EQ(max_u16, 0u);
+    }
+    {
+        uint8_t max_u8 = 123u;
+        populate_max_non_overflowing_value(
+            {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::YES},
+            ratio,
+            max_u8);
+        EXPECT_EQ(max_u8, 0u);
     }
 }
 

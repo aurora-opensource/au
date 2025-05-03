@@ -480,6 +480,18 @@ TEST(CommonUnit, WhenCommonUnitLabelWouldBeIdenticalToSomeUnitJustUsesThatUnit) 
                        decltype(Feet{} * mag<2>())>();
 }
 
+TEST(CommonUnit, AlwaysPositiveUnlessAllInputsAreNegative) {
+    constexpr auto NEG = -mag<1>();
+
+    // If any unit is positive, so is the common unit.
+    EXPECT_THAT(common_unit(feet, inches), QuantityEquivalentToUnit(inches));
+    EXPECT_THAT(common_unit(feet * NEG, inches), QuantityEquivalentToUnit(inches));
+    EXPECT_THAT(common_unit(feet, inches * NEG), QuantityEquivalentToUnit(inches));
+
+    // The common unit of all negative units is negative.
+    EXPECT_THAT(common_unit(feet * NEG, inches * NEG), QuantityEquivalentToUnit(inches * NEG));
+}
+
 // Four coprime units of the same dimension.
 struct W : decltype(Inches{} * mag<2>()) {};
 struct X : decltype(Inches{} * mag<3>()) {};
