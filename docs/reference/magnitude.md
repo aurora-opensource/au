@@ -1,6 +1,6 @@
 # Magnitude
 
-`Magnitude` is a family of [monovalue types](./detail/monovalue_types.md) representing positive real
+`Magnitude` is a family of [monovalue types](./detail/monovalue_types.md) representing nonzero real
 numbers.  These values can be multiplied, divided, and raised to (rational) powers, and this
 arithmetic always takes place at compile time.  Values can also be converted to more standard
 numeric types, such as `double` and `int`, as long as the receiving type can represent the
@@ -203,6 +203,18 @@ In what follows, we'll use this convention:
 - For _instances_ `m1` and `m2`:
     - `m1 / m2`
 
+### Negation
+
+**Result:** The negative of a `Magnitude`.
+
+**Syntax:**
+
+- For a _type_ `M`:
+    - No special support, but you can form the product with `Magnitude<Negative>`, which represents
+      `-1`.
+- For an _instance_ `m`:
+    - `-m`
+
 ### Powers
 
 **Result:** A `Magnitude` raised to an integral power.
@@ -225,6 +237,10 @@ In what follows, we'll use this convention:
       $\left(\frac{1}{N}\right)^\text{th}$ power)
 - For an _instance_ `m`, and an integral root `N`:
     - `root<N>(m)`
+
+!!! note
+    If `m` is negative, and `N` is even, then `root<N>(m)` produces a hard compiler error, because
+    the result cannot be represented as a `Magnitude`.
 
 ### Helpers for powers and roots
 
