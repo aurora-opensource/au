@@ -61,24 +61,55 @@ TEST(Magnitude, PowersBehaveCorrectly) {
 
 TEST(Magnitude, RootsBehaveCorrectly) { EXPECT_EQ(root<3>(mag<8>()), mag<2>()); }
 
+TEST(Magnitude, CanNegate) {
+    EXPECT_THAT(-mag<5>(), Eq(MagProductT<Magnitude<Negative>, decltype(mag<5>())>{}));
+}
+
+TEST(Magnitude, NegativeCancelsOutWhenRepeated) {
+    StaticAssertTypeEq<decltype((-mag<5>()) * (-mag<5>())), decltype(mag<25>())>();
+    StaticAssertTypeEq<decltype(mag<5>() * (-mag<5>())), decltype(-mag<25>())>();
+    StaticAssertTypeEq<decltype((-mag<5>()) * mag<5>()), decltype(-mag<25>())>();
+
+    StaticAssertTypeEq<decltype((-mag<5>()) / (-mag<5>())), decltype(mag<1>())>();
+    StaticAssertTypeEq<decltype(mag<5>() / (-mag<5>())), decltype(-mag<1>())>();
+    StaticAssertTypeEq<decltype((-mag<5>()) / mag<5>()), decltype(-mag<1>())>();
+
+    StaticAssertTypeEq<decltype(squared(-mag<5>())), decltype(mag<25>())>();
+    StaticAssertTypeEq<decltype(cubed(-mag<5>())), decltype(-mag<125>())>();
+
+    StaticAssertTypeEq<decltype(root<3>(-mag<125>())), decltype(-mag<5>())>();
+    // Uncomment to test ("Cannot take even root of negative magnitude"):
+    // StaticAssertTypeEq<decltype(root<2>(-mag<25>())), void>();
+}
+
 TEST(MagnitudeLabel, HandlesIntegers) {
     EXPECT_THAT(mag_label(mag<1>()), StrEq("1"));
     EXPECT_THAT(mag_label(mag<287'987>()), StrEq("287987"));
 }
 
+TEST(MagnitudeLabel, HandlesNegativeIntegers) {
+    EXPECT_THAT(mag_label(-mag<1>()), StrEq("-1"));
+    EXPECT_THAT(mag_label(-mag<287'987>()), StrEq("-287987"));
+}
+
 TEST(MagnitudeLabel, HandlesRationals) {
     EXPECT_THAT(mag_label(mag<1>() / mag<2>()), StrEq("1 / 2"));
     EXPECT_THAT(mag_label(mag<541>() / mag<123456789>()), StrEq("541 / 123456789"));
+    EXPECT_THAT(mag_label(-mag<541>() / mag<123456789>()), StrEq("-541 / 123456789"));
 }
 
 TEST(MagnitudeLabel, DefaultsToUnlabeledForFactorTooBig) {
     // Someday, we'll find a better way to handle this; this just unblocks the first implementation.
     EXPECT_THAT(mag_label(pow<24>(mag<10>())), StrEq("(UNLABELED SCALE FACTOR)"));
+
+    // However, we do want to reliably indicate the presence/absence of a sign.
+    EXPECT_THAT(mag_label(-pow<24>(mag<10>())), StrEq("-(UNLABELED SCALE FACTOR)"));
 }
 
 TEST(MagnitudeLabel, IndicatesPresenceOfExposedSlash) {
     EXPECT_FALSE(MagnitudeLabel<decltype(mag<287'987>())>::has_exposed_slash);
     EXPECT_TRUE(MagnitudeLabel<decltype(mag<1>() / mag<2>())>::has_exposed_slash);
+    EXPECT_TRUE(MagnitudeLabel<decltype(-mag<1>() / mag<2>())>::has_exposed_slash);
 }
 
 TEST(Pi, HasCorrectValue) {
@@ -92,7 +123,10 @@ TEST(Pi, HasCorrectValue) {
 #endif
 }
 
-TEST(Inverse, RaisesToPowerNegativeOne) { EXPECT_EQ(inverse(mag<8>()), mag<1>() / mag<8>()); }
+TEST(Inverse, RaisesToPowerNegativeOne) {
+    EXPECT_EQ(inverse(mag<8>()), mag<1>() / mag<8>());
+    EXPECT_EQ(inverse(-mag<2>()), -mag<1>() / mag<2>());
+}
 
 TEST(Squared, RaisesToPowerTwo) { EXPECT_EQ(squared(mag<7>()), mag<49>()); }
 
@@ -113,6 +147,11 @@ TEST(IntegerPart, PicksOutIntegersFromNumerator) {
     EXPECT_EQ(integer_part(PI * sqrt(mag<32>()) / mag<15>()), mag<4>());
 }
 
+TEST(IntegerPart, PreservesSign) {
+    EXPECT_EQ(integer_part(-mag<1>()), -mag<1>());
+    EXPECT_EQ(integer_part(-mag<8765>()), -mag<8765>());
+}
+
 TEST(Numerator, IsIdentityForInteger) {
     EXPECT_EQ(numerator(mag<2>()), mag<2>());
     EXPECT_EQ(numerator(mag<31415>()), mag<31415>());
@@ -120,6 +159,12 @@ TEST(Numerator, IsIdentityForInteger) {
 
 TEST(Numerator, PutsFractionInLowestTerms) {
     EXPECT_EQ(numerator(mag<24>() / mag<16>()), mag<3>());
+}
+
+TEST(Numerator, NegativeForNegativeNumber) {
+    EXPECT_EQ(numerator(-mag<2>()), -mag<2>());
+    EXPECT_EQ(numerator(-mag<31415>()), -mag<31415>());
+    EXPECT_EQ(numerator(-mag<5>() / mag<7>()), -mag<5>());
 }
 
 TEST(Numerator, IncludesNonIntegersWithPositiveExponent) {
@@ -134,11 +179,49 @@ TEST(Denominator, IncludesNonIntegersWithNegativeExponent) {
     EXPECT_EQ(denominator(sqrt(mag<24>() / mag<16>()) / PI), PI * sqrt(mag<2>()));
 }
 
+TEST(Denominator, PositiveForNegativeNumber) {
+    EXPECT_EQ(denominator(-mag<5>() / mag<7>()), mag<7>());
+    EXPECT_EQ(denominator(mag<5>() / (-mag<7>())), mag<7>());
+}
+
+TEST(Abs, IdentityForPositive) {
+    EXPECT_EQ(abs(mag<1>()), mag<1>());
+    EXPECT_EQ(abs(mag<2>()), mag<2>());
+    EXPECT_EQ(abs(mag<5>() / mag<7>()), mag<5>() / mag<7>());
+}
+
+TEST(Abs, FlipsSignForNegative) {
+    EXPECT_EQ(abs(-mag<1>()), mag<1>());
+    EXPECT_EQ(abs(-mag<5>() / mag<7>()), mag<5>() / mag<7>());
+    EXPECT_EQ(abs(-mag<2>() / PI), mag<2>() / PI);
+}
+
+TEST(Abs, IdentityForZero) { EXPECT_EQ(abs(ZERO), ZERO); }
+
+TEST(IsPositive, TrueForPositive) {
+    EXPECT_TRUE(is_positive(mag<1>()));
+    EXPECT_TRUE(is_positive(mag<2>()));
+    EXPECT_TRUE(is_positive(mag<5>() / mag<7>()));
+}
+
+TEST(IsPositive, FalseForNegative) {
+    EXPECT_FALSE(is_positive(-mag<1>()));
+    EXPECT_FALSE(is_positive(-mag<5>() / mag<7>()));
+    EXPECT_FALSE(is_positive(-mag<2>() / PI));
+}
+
 TEST(IsRational, TrueForRatios) {
     EXPECT_TRUE(is_rational(mag<1>()));
     EXPECT_TRUE(is_rational(mag<9>()));
     EXPECT_TRUE(is_rational(mag<1>() / mag<10>()));
     EXPECT_TRUE(is_rational(mag<9>() / mag<10>()));
+}
+
+TEST(IsRational, TrueForNegativeRatios) {
+    EXPECT_TRUE(is_rational(-mag<1>()));
+    EXPECT_TRUE(is_rational(-mag<9>()));
+    EXPECT_TRUE(is_rational(-mag<1>() / mag<10>()));
+    EXPECT_TRUE(is_rational(-mag<9>() / mag<10>()));
 }
 
 TEST(IsRational, FalseForInexactRoots) {
@@ -243,6 +326,12 @@ TEST(GetValue, WorksForEmptyPack) {
     EXPECT_THAT(get_value<float>(one), SameTypeAndValue(1.f));
 }
 
+TEST(GetValue, WorksForNegativeNumber) {
+    constexpr auto neg_5 = -mag<5>();
+    EXPECT_THAT(get_value<int>(neg_5), SameTypeAndValue(-5));
+    EXPECT_THAT(get_value<float>(neg_5), SameTypeAndValue(-5.f));
+}
+
 TEST(CommonMagnitude, ReturnsCommonMagnitudeWhenBothAreIdentical) {
     EXPECT_EQ(common_magnitude(mag<1>(), mag<1>()), mag<1>());
     EXPECT_EQ(common_magnitude(PI, PI), PI);
@@ -292,12 +381,33 @@ TEST(CommonMagnitude, ZeroResultIndicatesAllInputsAreZero) {
     EXPECT_EQ(common_magnitude(ZERO, ZERO, ZERO), ZERO);
     EXPECT_EQ(common_magnitude(ZERO, ZERO, ZERO, ZERO, ZERO), ZERO);
 }
+
+TEST(CommonMagnitude, CommonMagOfPosAndNegIsPos) {
+    EXPECT_EQ(common_magnitude(mag<12>(), -mag<15>()), mag<3>());
+    EXPECT_EQ(common_magnitude(-mag<12>(), mag<15>()), mag<3>());
+
+    EXPECT_EQ(common_magnitude(mag<12>(), -mag<15>(), -mag<27>()), mag<3>());
+    EXPECT_EQ(common_magnitude(-mag<9>(), mag<12>(), -mag<15>(), -mag<27>()), mag<3>());
+
+    EXPECT_EQ(common_magnitude(mag<1>(), -mag<1>() / mag<5>()), mag<1>() / mag<5>());
+}
+
+TEST(CommonMagnitude, CommonMagOfNegAndNegIsNeg) {
+    EXPECT_EQ(common_magnitude(-mag<12>(), -mag<15>()), -mag<3>());
+    EXPECT_EQ(common_magnitude(-mag<12>(), -mag<15>(), -mag<27>()), -mag<3>());
+    EXPECT_EQ(common_magnitude(-mag<9>(), -mag<12>(), -mag<15>(), -mag<27>()), -mag<3>());
+}
 }  // namespace
 
 namespace detail {
 
 MATCHER(CannotFit, "") {
     return (arg.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT) && (arg.value == 0);
+}
+
+MATCHER(NegativeNumberInUnsignedType, "") {
+    return (arg.outcome == MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE) &&
+           (arg.value == 0);
 }
 
 MATCHER(NonIntegerInIntegerType, "") {
@@ -441,6 +551,11 @@ TEST(GetValueResult, HandlesNumbersTooBigForUintmax) {
     EXPECT_THAT(get_value_result<std::uintmax_t>(pow<64>(mag<2>())), CannotFit());
 }
 
+TEST(GetValueResult, GivesAppropriateErrorForNegativeNumberInUnsignedType) {
+    constexpr auto neg_5 = -mag<5>();
+    EXPECT_THAT(get_value_result<uint64_t>(neg_5), NegativeNumberInUnsignedType());
+}
+
 TEST(PrimeFactorizationT, NullMagnitudeFor1) {
     StaticAssertTypeEq<PrimeFactorizationT<1u>, Magnitude<>>();
 }
@@ -453,6 +568,10 @@ TEST(PrimeFactorizationT, FactorsInputs) {
     StaticAssertTypeEq<PrimeFactorizationT<6u>, Magnitude<Prime<2u>, Prime<3u>>>();
 
     StaticAssertTypeEq<PrimeFactorizationT<12u>, Magnitude<Pow<Prime<2u>, 2u>, Prime<3u>>>();
+}
+
+TEST(DenominatorPart, OmitsSignForNegativeNumbers) {
+    StaticAssertTypeEq<DenominatorPartT<decltype(-mag<3>() / mag<7>())>, decltype(mag<7>())>();
 }
 
 }  // namespace detail

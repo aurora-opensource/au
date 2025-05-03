@@ -32,6 +32,8 @@ struct Dimension;
 template <typename... BPs>
 struct Magnitude;
 
+struct Negative;
+
 template <typename UnitT>
 struct QuantityMaker;
 

@@ -605,7 +605,9 @@ TEST(UnitLabel, PicksUpLabelForLabeledUnit) {
 
 TEST(UnitLabel, PrependsScaleFactorToLabelForScaledUnit) {
     EXPECT_THAT(unit_label<decltype(Feet{} * mag<3>())>(), StrEq("[3 ft]"));
+    EXPECT_THAT(unit_label<decltype(Feet{} * (-mag<3>()))>(), StrEq("[-3 ft]"));
     EXPECT_THAT(unit_label<decltype(Feet{} / mag<12>())>(), StrEq("[(1 / 12) ft]"));
+    EXPECT_THAT(unit_label<decltype(Feet{} / (-mag<12>()))>(), StrEq("[(-1 / 12) ft]"));
 }
 
 TEST(UnitLabel, ApplyingMultipleScaleFactorsComposesToOneSingleScaleFactor) {
