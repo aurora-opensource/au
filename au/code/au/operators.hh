@@ -84,6 +84,16 @@ struct LessEqual {
 };
 constexpr auto less_equal = LessEqual{};
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+struct ThreeWayCompare {
+    template <typename T>
+    constexpr auto operator()(const T &a, const T &b) const {
+        return a <=> b;
+    }
+};
+constexpr auto three_way_compare = ThreeWayCompare{};
+#endif
+
 //
 // Arithmetic operators.
 //

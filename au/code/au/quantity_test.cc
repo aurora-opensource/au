@@ -24,11 +24,16 @@
 using ::testing::DoubleEq;
 using ::testing::Each;
 using ::testing::Eq;
+using ::testing::Gt;
+using ::testing::Lt;
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
 
-struct Feet : UnitImpl<Length> {};
+struct Feet : UnitImpl<Length> {
+    static constexpr const char label[] = "ft";
+};
+constexpr const char Feet::label[];
 constexpr auto feet = QuantityMaker<Feet>{};
 
 struct Miles : decltype(Feet{} * mag<5'280>()) {
@@ -38,7 +43,10 @@ constexpr const char Miles::label[];
 constexpr auto mile = SingularNameFor<Miles>{};
 constexpr auto miles = QuantityMaker<Miles>{};
 
-struct Inches : decltype(Feet{} / mag<12>()) {};
+struct Inches : decltype(Feet{} / mag<12>()) {
+    static constexpr const char label[] = "in";
+};
+constexpr const char Inches::label[];
 constexpr auto inches = QuantityMaker<Inches>{};
 
 struct Yards : decltype(Feet{} * mag<3>()) {
@@ -491,6 +499,12 @@ TEST(Quantity, ConvertingByNegativeOneCanBeDoneImplicitly) {
     constexpr auto neginches = inches * (-mag<1>());
     constexpr auto q = inches(int8_t{-10});
     EXPECT_THAT(q.as(neginches), SameTypeAndValue(neginches(int8_t{10})));
+}
+
+TEST(Quantity, ComparisonsAreReversedForNegativeUnits) {
+    constexpr auto neginches = inches * (-mag<1>());
+    EXPECT_THAT(neginches(10), Gt(neginches(20)));
+    EXPECT_THAT(neginches(10u), Lt(neginches(5u)));
 }
 
 TEST(Quantity, AddingNegativeAndPositiveUnitsGivesPositiveUnit) {
