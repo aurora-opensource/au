@@ -215,6 +215,10 @@ struct CanScaleByMagnitude {
     friend constexpr auto operator/(UnitWrapper<Unit>, Magnitude<BPs...> m) {
         return UnitWrapper<decltype(Unit{} / m)>{};
     }
+
+    friend constexpr auto operator-(UnitWrapper<Unit>) {
+        return UnitWrapper<decltype(Unit{} * (-mag<1>()))>{};
+    }
 };
 
 //

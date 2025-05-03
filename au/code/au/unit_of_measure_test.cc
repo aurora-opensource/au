@@ -628,6 +628,10 @@ TEST(UnitLabel, ApplyingMultipleScaleFactorsComposesToOneSingleScaleFactor) {
                 StrEq("[(10 / 21) ft]"));
 }
 
+TEST(UnitLabel, NegatedUnitOmitsNumerals) {
+    EXPECT_THAT(unit_label<decltype(Feet{} * (-mag<1>()))>(), StrEq("[-ft]"));
+}
+
 TEST(UnitLabel, OmitsTrivialScaleFactor) {
     EXPECT_THAT(unit_label<decltype(Feet{} * mag<1>())>(), StrEq("ft"));
     EXPECT_THAT(unit_label<decltype((Feet{} * mag<3>()) / mag<3>())>(), StrEq("ft"));

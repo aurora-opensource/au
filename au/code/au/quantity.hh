@@ -658,8 +658,10 @@ constexpr auto root(QuantityMaker<Unit>) {
 // Check conversion for overflow (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit) {
-    return detail::ApplyMagnitudeT<R, decltype(unit_ratio(U{}, target_unit))>::would_overflow(
-        q.in(U{}));
+    using Ratio = decltype(unit_ratio(U{}, target_unit));
+    static_assert(IsPositive<Ratio>::value,
+                  "Runtime conversion checkers don't yet support negative units");
+    return detail::ApplyMagnitudeT<R, Ratio>::would_overflow(q.in(U{}));
 }
 
 // Check conversion for overflow (new rep).
@@ -685,8 +687,10 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_
 // Check conversion for truncation (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit) {
-    return detail::ApplyMagnitudeT<R, decltype(unit_ratio(U{}, target_unit))>::would_truncate(
-        q.in(U{}));
+    using Ratio = decltype(unit_ratio(U{}, target_unit));
+    static_assert(IsPositive<Ratio>::value,
+                  "Runtime conversion checkers don't yet support negative units");
+    return detail::ApplyMagnitudeT<R, Ratio>::would_truncate(q.in(U{}));
 }
 
 // Check conversion for truncation (new rep).
