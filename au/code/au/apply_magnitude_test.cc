@@ -18,6 +18,9 @@
 #include "gtest/gtest.h"
 
 using ::testing::ElementsAreArray;
+using ::testing::Eq;
+using ::testing::IsFalse;
+using ::testing::IsTrue;
 using ::testing::Not;
 
 namespace au {
@@ -37,42 +40,42 @@ std::vector<T> first_n_positive_values(std::size_t n) {
 }  // namespace
 
 TEST(CategorizeMagnitude, FindsIntegerMultiplyInstances) {
-    EXPECT_EQ(categorize_magnitude(mag<2>()), ApplyAs::INTEGER_MULTIPLY);
-    EXPECT_EQ(categorize_magnitude(mag<35>()), ApplyAs::INTEGER_MULTIPLY);
+    EXPECT_THAT(categorize_magnitude(mag<2>()), Eq(ApplyAs::INTEGER_MULTIPLY));
+    EXPECT_THAT(categorize_magnitude(mag<35>()), Eq(ApplyAs::INTEGER_MULTIPLY));
 
-    EXPECT_EQ(categorize_magnitude(-mag<35>()), ApplyAs::INTEGER_MULTIPLY);
+    EXPECT_THAT(categorize_magnitude(-mag<35>()), Eq(ApplyAs::INTEGER_MULTIPLY));
 
-    EXPECT_EQ(categorize_magnitude(mag<35>() / mag<7>()), ApplyAs::INTEGER_MULTIPLY);
+    EXPECT_THAT(categorize_magnitude(mag<35>() / mag<7>()), Eq(ApplyAs::INTEGER_MULTIPLY));
 }
 
 TEST(CategorizeMagnitude, FindsIntegerDivideInstances) {
-    EXPECT_EQ(categorize_magnitude(ONE / mag<2>()), ApplyAs::INTEGER_DIVIDE);
-    EXPECT_EQ(categorize_magnitude(ONE / mag<35>()), ApplyAs::INTEGER_DIVIDE);
+    EXPECT_THAT(categorize_magnitude(ONE / mag<2>()), Eq(ApplyAs::INTEGER_DIVIDE));
+    EXPECT_THAT(categorize_magnitude(ONE / mag<35>()), Eq(ApplyAs::INTEGER_DIVIDE));
 
-    EXPECT_EQ(categorize_magnitude(-ONE / mag<35>()), ApplyAs::INTEGER_DIVIDE);
+    EXPECT_THAT(categorize_magnitude(-ONE / mag<35>()), Eq(ApplyAs::INTEGER_DIVIDE));
 
-    EXPECT_EQ(categorize_magnitude(mag<7>() / mag<35>()), ApplyAs::INTEGER_DIVIDE);
+    EXPECT_THAT(categorize_magnitude(mag<7>() / mag<35>()), Eq(ApplyAs::INTEGER_DIVIDE));
 }
 
 TEST(CategorizeMagnitude, FindsRationalMultiplyInstances) {
-    EXPECT_EQ(categorize_magnitude(mag<5>() / mag<2>()), ApplyAs::RATIONAL_MULTIPLY);
-    EXPECT_EQ(categorize_magnitude(mag<2>() / mag<5>()), ApplyAs::RATIONAL_MULTIPLY);
+    EXPECT_THAT(categorize_magnitude(mag<5>() / mag<2>()), Eq(ApplyAs::RATIONAL_MULTIPLY));
+    EXPECT_THAT(categorize_magnitude(mag<2>() / mag<5>()), Eq(ApplyAs::RATIONAL_MULTIPLY));
 
-    EXPECT_EQ(categorize_magnitude(-mag<5>() / mag<2>()), ApplyAs::RATIONAL_MULTIPLY);
-    EXPECT_EQ(categorize_magnitude(-mag<2>() / mag<5>()), ApplyAs::RATIONAL_MULTIPLY);
+    EXPECT_THAT(categorize_magnitude(-mag<5>() / mag<2>()), Eq(ApplyAs::RATIONAL_MULTIPLY));
+    EXPECT_THAT(categorize_magnitude(-mag<2>() / mag<5>()), Eq(ApplyAs::RATIONAL_MULTIPLY));
 }
 
 TEST(CategorizeMagnitude, FindsIrrationalMultiplyInstances) {
-    EXPECT_EQ(categorize_magnitude(sqrt(mag<2>())), ApplyAs::IRRATIONAL_MULTIPLY);
-    EXPECT_EQ(categorize_magnitude(-sqrt(mag<2>())), ApplyAs::IRRATIONAL_MULTIPLY);
+    EXPECT_THAT(categorize_magnitude(sqrt(mag<2>())), Eq(ApplyAs::IRRATIONAL_MULTIPLY));
+    EXPECT_THAT(categorize_magnitude(-sqrt(mag<2>())), Eq(ApplyAs::IRRATIONAL_MULTIPLY));
 
-    EXPECT_EQ(categorize_magnitude(PI), ApplyAs::IRRATIONAL_MULTIPLY);
-    EXPECT_EQ(categorize_magnitude(-PI), ApplyAs::IRRATIONAL_MULTIPLY);
+    EXPECT_THAT(categorize_magnitude(PI), Eq(ApplyAs::IRRATIONAL_MULTIPLY));
+    EXPECT_THAT(categorize_magnitude(-PI), Eq(ApplyAs::IRRATIONAL_MULTIPLY));
 }
 
 TEST(ApplyMagnitude, MultipliesForIntegerMultiply) {
     constexpr auto m = mag<25>();
-    ASSERT_EQ(categorize_magnitude(m), ApplyAs::INTEGER_MULTIPLY);
+    ASSERT_THAT(categorize_magnitude(m), Eq(ApplyAs::INTEGER_MULTIPLY));
 
     EXPECT_THAT(apply_magnitude(4, m), SameTypeAndValue(100));
     EXPECT_THAT(apply_magnitude(4.0f, m), SameTypeAndValue(100.0f));
@@ -80,7 +83,7 @@ TEST(ApplyMagnitude, MultipliesForIntegerMultiply) {
 
 TEST(ApplyMagnitude, MultipliesForNegativeIntegerMultiply) {
     constexpr auto m = -mag<20>();
-    ASSERT_EQ(categorize_magnitude(m), ApplyAs::INTEGER_MULTIPLY);
+    ASSERT_THAT(categorize_magnitude(m), Eq(ApplyAs::INTEGER_MULTIPLY));
 
     EXPECT_THAT(apply_magnitude(4, m), SameTypeAndValue(-80));
     EXPECT_THAT(apply_magnitude(4.0f, m), SameTypeAndValue(-80.0f));
@@ -88,7 +91,7 @@ TEST(ApplyMagnitude, MultipliesForNegativeIntegerMultiply) {
 
 TEST(ApplyMagnitude, DividesForIntegerDivide) {
     constexpr auto one_thirteenth = ONE / mag<13>();
-    ASSERT_EQ(categorize_magnitude(one_thirteenth), ApplyAs::INTEGER_DIVIDE);
+    ASSERT_THAT(categorize_magnitude(one_thirteenth), Eq(ApplyAs::INTEGER_DIVIDE));
 
     // This test would fail if our implementation multiplied by the float representation of (1/13),
     // instead of dividing by 13, under the hood.
@@ -99,7 +102,7 @@ TEST(ApplyMagnitude, DividesForIntegerDivide) {
 
 TEST(ApplyMagnitude, DividesForNegativeIntegerDivide) {
     constexpr auto minus_one_thirteenth = -ONE / mag<13>();
-    ASSERT_EQ(categorize_magnitude(minus_one_thirteenth), ApplyAs::INTEGER_DIVIDE);
+    ASSERT_THAT(categorize_magnitude(minus_one_thirteenth), Eq(ApplyAs::INTEGER_DIVIDE));
 
     // This test would fail if our implementation multiplied by the float representation of (-1/13),
     // instead of dividing by -13, under the hood.  (We'll use this `bool` variable to make sure
@@ -115,7 +118,7 @@ TEST(ApplyMagnitude, DividesForNegativeIntegerDivide) {
         }
         EXPECT_THAT(apply_magnitude(x, minus_one_thirteenth), SameTypeAndValue(i));
     }
-    EXPECT_TRUE(any_round_trip_failures);
+    EXPECT_THAT(any_round_trip_failures, IsTrue());
 }
 
 TEST(ApplyMagnitude, MultipliesThenDividesForRationalMagnitudeOnInteger) {
@@ -127,7 +130,7 @@ TEST(ApplyMagnitude, MultipliesThenDividesForRationalMagnitudeOnInteger) {
     // If we divide-then-multiply --- say, because we are trying to avoid overflow --- then we get
     // (5 / 2) * 3 = 2 * 3 = 6, which is wrong.
     constexpr auto three_halves = mag<3>() / mag<2>();
-    ASSERT_EQ(categorize_magnitude(three_halves), ApplyAs::RATIONAL_MULTIPLY);
+    ASSERT_THAT(categorize_magnitude(three_halves), Eq(ApplyAs::RATIONAL_MULTIPLY));
 
     EXPECT_THAT(apply_magnitude(5, three_halves), SameTypeAndValue(7));
 }
@@ -135,7 +138,7 @@ TEST(ApplyMagnitude, MultipliesThenDividesForRationalMagnitudeOnInteger) {
 TEST(ApplyMagnitude, MultipliesThenDividesForNegativeRationalMagnitudeOnInteger) {
     // Similar to the above test case, but with a negative number.
     constexpr auto minus_three_halves = -mag<3>() / mag<2>();
-    ASSERT_EQ(categorize_magnitude(minus_three_halves), ApplyAs::RATIONAL_MULTIPLY);
+    ASSERT_THAT(categorize_magnitude(minus_three_halves), Eq(ApplyAs::RATIONAL_MULTIPLY));
 
     EXPECT_THAT(apply_magnitude(5, minus_three_halves), SameTypeAndValue(-7));
 }
@@ -143,7 +146,7 @@ TEST(ApplyMagnitude, MultipliesThenDividesForNegativeRationalMagnitudeOnInteger)
 TEST(ApplyMagnitude, SupportsNumeratorThatFitsInPromotedTypeButNotOriginalType) {
     using T = uint16_t;
     using P = PromotedType<T>;
-    ASSERT_TRUE((std::is_same<P, int32_t>::value))
+    ASSERT_THAT((std::is_same<P, int32_t>::value), IsTrue())
         << "This test fails on architectures where `uint16_t` doesn't get promoted to `int32_t`";
 
     // Choose a magnitude whose effect will basically be to divide by 2.  (We make the denominator
@@ -154,10 +157,10 @@ TEST(ApplyMagnitude, SupportsNumeratorThatFitsInPromotedTypeButNotOriginalType) 
 
     // The whole point of this test case is to apply a magnitude whose numerator fits in the
     // promoted type, but does not fit in the target type itself.
-    ASSERT_EQ(get_value_result<P>(numerator(roughly_one_half)).outcome,
-              MagRepresentationOutcome::OK);
-    ASSERT_EQ(get_value_result<T>(numerator(roughly_one_half)).outcome,
-              MagRepresentationOutcome::ERR_CANNOT_FIT);
+    ASSERT_THAT(get_value_result<P>(numerator(roughly_one_half)).outcome,
+                Eq(MagRepresentationOutcome::OK));
+    ASSERT_THAT(get_value_result<T>(numerator(roughly_one_half)).outcome,
+                Eq(MagRepresentationOutcome::ERR_CANNOT_FIT));
 
     EXPECT_THAT(apply_magnitude(T{18}, roughly_one_half), SameTypeAndValue(T{9}));
 }
@@ -173,7 +176,7 @@ TEST(ApplyMagnitude, MultipliesSingleNumberForRationalMagnitudeOnFloatingPoint) 
 
     // Create our rational magnitude, (2 / 13).
     constexpr auto two_thirteenths = mag<2>() / mag<13>();
-    ASSERT_EQ(categorize_magnitude(two_thirteenths), ApplyAs::RATIONAL_MULTIPLY);
+    ASSERT_THAT(categorize_magnitude(two_thirteenths), Eq(ApplyAs::RATIONAL_MULTIPLY));
 
     // Test a bunch of values.  We are hoping that the two different strategies will yield different
     // results for at least some of these strategies (and we'll check that this is the case).
@@ -196,7 +199,7 @@ TEST(ApplyMagnitude, MultipliesSingleNumberForRationalMagnitudeOnFloatingPoint) 
 }
 
 TEST(ApplyMagnitude, MultipliesSingleNumberForIrrationalMagnitudeOnFloatingPoint) {
-    ASSERT_EQ(categorize_magnitude(PI), ApplyAs::IRRATIONAL_MULTIPLY);
+    ASSERT_THAT(categorize_magnitude(PI), Eq(ApplyAs::IRRATIONAL_MULTIPLY));
     EXPECT_THAT(apply_magnitude(2.0f, PI), SameTypeAndValue(2.0f * static_cast<float>(M_PI)));
 }
 
@@ -206,32 +209,32 @@ TEST(WouldOverflow, HasCorrectBoundariesForIntegerMultiply) {
     {
         using ApplyOneBillionToI32 = ApplyMagnitudeT<int32_t, decltype(ONE_BILLION)>;
 
-        EXPECT_TRUE(ApplyOneBillionToI32::would_overflow(3));
+        EXPECT_THAT(ApplyOneBillionToI32::would_overflow(3), IsTrue());
 
-        EXPECT_FALSE(ApplyOneBillionToI32::would_overflow(2));
-        EXPECT_FALSE(ApplyOneBillionToI32::would_overflow(0));
-        EXPECT_FALSE(ApplyOneBillionToI32::would_overflow(-2));
+        EXPECT_THAT(ApplyOneBillionToI32::would_overflow(2), IsFalse());
+        EXPECT_THAT(ApplyOneBillionToI32::would_overflow(0), IsFalse());
+        EXPECT_THAT(ApplyOneBillionToI32::would_overflow(-2), IsFalse());
 
-        EXPECT_TRUE(ApplyOneBillionToI32::would_overflow(-3));
+        EXPECT_THAT(ApplyOneBillionToI32::would_overflow(-3), IsTrue());
     }
 
     {
         using ApplyOneBillionToU8 = ApplyMagnitudeT<uint8_t, decltype(ONE_BILLION)>;
 
-        EXPECT_TRUE(ApplyOneBillionToU8::would_overflow(1));
+        EXPECT_THAT(ApplyOneBillionToU8::would_overflow(1), IsTrue());
 
-        EXPECT_FALSE(ApplyOneBillionToU8::would_overflow(0));
+        EXPECT_THAT(ApplyOneBillionToU8::would_overflow(0), IsFalse());
     }
 
     {
         using ApplyOneBillionToF = ApplyMagnitudeT<float, decltype(ONE_BILLION)>;
 
-        EXPECT_TRUE(ApplyOneBillionToF::would_overflow(3.403e29f));
+        EXPECT_THAT(ApplyOneBillionToF::would_overflow(3.403e29f), IsTrue());
 
-        EXPECT_FALSE(ApplyOneBillionToF::would_overflow(3.402e29f));
-        EXPECT_FALSE(ApplyOneBillionToF::would_overflow(-3.402e29f));
+        EXPECT_THAT(ApplyOneBillionToF::would_overflow(3.402e29f), IsFalse());
+        EXPECT_THAT(ApplyOneBillionToF::would_overflow(-3.402e29f), IsFalse());
 
-        EXPECT_TRUE(ApplyOneBillionToF::would_overflow(-3.403e29f));
+        EXPECT_THAT(ApplyOneBillionToF::would_overflow(-3.403e29f), IsTrue());
     }
 }
 
@@ -241,29 +244,29 @@ TEST(WouldOverflow, AlwaysFalseForIntegerDivide) {
     {
         using ApplyOneBillionthToI32 = ApplyMagnitudeT<int32_t, decltype(ONE_BILLIONTH)>;
 
-        EXPECT_FALSE(ApplyOneBillionthToI32::would_overflow(2'147'483'647));
-        EXPECT_FALSE(ApplyOneBillionthToI32::would_overflow(1));
-        EXPECT_FALSE(ApplyOneBillionthToI32::would_overflow(0));
-        EXPECT_FALSE(ApplyOneBillionthToI32::would_overflow(-1));
-        EXPECT_FALSE(ApplyOneBillionthToI32::would_overflow(-2'147'483'648));
+        EXPECT_THAT(ApplyOneBillionthToI32::would_overflow(2'147'483'647), IsFalse());
+        EXPECT_THAT(ApplyOneBillionthToI32::would_overflow(1), IsFalse());
+        EXPECT_THAT(ApplyOneBillionthToI32::would_overflow(0), IsFalse());
+        EXPECT_THAT(ApplyOneBillionthToI32::would_overflow(-1), IsFalse());
+        EXPECT_THAT(ApplyOneBillionthToI32::would_overflow(-2'147'483'648), IsFalse());
     }
 
     {
         using ApplyOneBillionthToU8 = ApplyMagnitudeT<uint8_t, decltype(ONE_BILLIONTH)>;
 
-        EXPECT_FALSE(ApplyOneBillionthToU8::would_overflow(255));
-        EXPECT_FALSE(ApplyOneBillionthToU8::would_overflow(1));
-        EXPECT_FALSE(ApplyOneBillionthToU8::would_overflow(0));
+        EXPECT_THAT(ApplyOneBillionthToU8::would_overflow(255), IsFalse());
+        EXPECT_THAT(ApplyOneBillionthToU8::would_overflow(1), IsFalse());
+        EXPECT_THAT(ApplyOneBillionthToU8::would_overflow(0), IsFalse());
     }
 
     {
         using ApplyOneBillionthToF = ApplyMagnitudeT<float, decltype(ONE_BILLIONTH)>;
 
-        EXPECT_FALSE(ApplyOneBillionthToF::would_overflow(3.402e38f));
-        EXPECT_FALSE(ApplyOneBillionthToF::would_overflow(1.0f));
-        EXPECT_FALSE(ApplyOneBillionthToF::would_overflow(0.0f));
-        EXPECT_FALSE(ApplyOneBillionthToF::would_overflow(-1.0f));
-        EXPECT_FALSE(ApplyOneBillionthToF::would_overflow(-3.402e38f));
+        EXPECT_THAT(ApplyOneBillionthToF::would_overflow(3.402e38f), IsFalse());
+        EXPECT_THAT(ApplyOneBillionthToF::would_overflow(1.0f), IsFalse());
+        EXPECT_THAT(ApplyOneBillionthToF::would_overflow(0.0f), IsFalse());
+        EXPECT_THAT(ApplyOneBillionthToF::would_overflow(-1.0f), IsFalse());
+        EXPECT_THAT(ApplyOneBillionthToF::would_overflow(-3.402e38f), IsFalse());
     }
 }
 
@@ -271,32 +274,32 @@ TEST(WouldOverflow, UsesNumeratorWhenApplyingRationalMagnitudeToIntegralType) {
     {
         using ApplyTwoThirdsToI32 = ApplyMagnitudeT<int32_t, decltype(mag<2>() / mag<3>())>;
 
-        EXPECT_TRUE(ApplyTwoThirdsToI32::would_overflow(2'147'483'647));
-        EXPECT_TRUE(ApplyTwoThirdsToI32::would_overflow(1'073'741'824));
+        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(2'147'483'647), IsTrue());
+        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(1'073'741'824), IsTrue());
 
-        EXPECT_FALSE(ApplyTwoThirdsToI32::would_overflow(1'073'741'823));
-        EXPECT_FALSE(ApplyTwoThirdsToI32::would_overflow(1));
-        EXPECT_FALSE(ApplyTwoThirdsToI32::would_overflow(0));
-        EXPECT_FALSE(ApplyTwoThirdsToI32::would_overflow(-1));
-        EXPECT_FALSE(ApplyTwoThirdsToI32::would_overflow(-1'073'741'824));
+        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(1'073'741'823), IsFalse());
+        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(1), IsFalse());
+        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(0), IsFalse());
+        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(-1), IsFalse());
+        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(-1'073'741'824), IsFalse());
 
-        EXPECT_TRUE(ApplyTwoThirdsToI32::would_overflow(-1'073'741'825));
-        EXPECT_TRUE(ApplyTwoThirdsToI32::would_overflow(-2'147'483'648));
+        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(-1'073'741'825), IsTrue());
+        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(-2'147'483'648), IsTrue());
     }
 
     {
         using ApplyRoughlyOneThirdToU8 =
             ApplyMagnitudeT<uint8_t, decltype(mag<100'000'000>() / mag<300'000'001>())>;
 
-        ASSERT_TRUE((std::is_same<decltype(uint8_t{} * uint8_t{}), int32_t>::value))
+        ASSERT_THAT((std::is_same<decltype(uint8_t{} * uint8_t{}), int32_t>::value), IsTrue())
             << "This test fails on architectures where `uint8_t` doesn't get promoted to `int32_t`";
 
-        EXPECT_TRUE(ApplyRoughlyOneThirdToU8::would_overflow(255));
-        EXPECT_TRUE(ApplyRoughlyOneThirdToU8::would_overflow(22));
+        EXPECT_THAT(ApplyRoughlyOneThirdToU8::would_overflow(255), IsTrue());
+        EXPECT_THAT(ApplyRoughlyOneThirdToU8::would_overflow(22), IsTrue());
 
-        EXPECT_FALSE(ApplyRoughlyOneThirdToU8::would_overflow(21));
-        EXPECT_FALSE(ApplyRoughlyOneThirdToU8::would_overflow(1));
-        EXPECT_FALSE(ApplyRoughlyOneThirdToU8::would_overflow(0));
+        EXPECT_THAT(ApplyRoughlyOneThirdToU8::would_overflow(21), IsFalse());
+        EXPECT_THAT(ApplyRoughlyOneThirdToU8::would_overflow(1), IsFalse());
+        EXPECT_THAT(ApplyRoughlyOneThirdToU8::would_overflow(0), IsFalse());
     }
 }
 
@@ -304,48 +307,48 @@ TEST(WouldOverflow, UsesFullValueWhenApplyingRationalMagnitudeToFloatingPointTyp
     {
         using ApplyThreeHalvesToF = ApplyMagnitudeT<float, decltype(mag<3>() / mag<2>())>;
 
-        EXPECT_TRUE(ApplyThreeHalvesToF::would_overflow(3.402e38f));
-        EXPECT_TRUE(ApplyThreeHalvesToF::would_overflow(2.269e38f));
+        EXPECT_THAT(ApplyThreeHalvesToF::would_overflow(3.402e38f), IsTrue());
+        EXPECT_THAT(ApplyThreeHalvesToF::would_overflow(2.269e38f), IsTrue());
 
-        EXPECT_FALSE(ApplyThreeHalvesToF::would_overflow(2.268e38f));
-        EXPECT_FALSE(ApplyThreeHalvesToF::would_overflow(1.0f));
-        EXPECT_FALSE(ApplyThreeHalvesToF::would_overflow(0.0f));
-        EXPECT_FALSE(ApplyThreeHalvesToF::would_overflow(-1.0f));
-        EXPECT_FALSE(ApplyThreeHalvesToF::would_overflow(-2.268e38f));
+        EXPECT_THAT(ApplyThreeHalvesToF::would_overflow(2.268e38f), IsFalse());
+        EXPECT_THAT(ApplyThreeHalvesToF::would_overflow(1.0f), IsFalse());
+        EXPECT_THAT(ApplyThreeHalvesToF::would_overflow(0.0f), IsFalse());
+        EXPECT_THAT(ApplyThreeHalvesToF::would_overflow(-1.0f), IsFalse());
+        EXPECT_THAT(ApplyThreeHalvesToF::would_overflow(-2.268e38f), IsFalse());
 
-        EXPECT_TRUE(ApplyThreeHalvesToF::would_overflow(-2.269e38f));
-        EXPECT_TRUE(ApplyThreeHalvesToF::would_overflow(-3.402e38f));
+        EXPECT_THAT(ApplyThreeHalvesToF::would_overflow(-2.269e38f), IsTrue());
+        EXPECT_THAT(ApplyThreeHalvesToF::would_overflow(-3.402e38f), IsTrue());
     }
 
     {
         using ApplyTwoThirdsToF = ApplyMagnitudeT<float, decltype(mag<2>() / mag<3>())>;
 
-        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(3.402e38f));
-        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(2.268e38f));
-        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(2.267e38f));
-        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(1.0f));
-        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(0.0f));
-        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(-1.0f));
-        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(-2.267e38f));
-        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(-2.268e38f));
-        EXPECT_FALSE(ApplyTwoThirdsToF::would_overflow(-3.402e38f));
+        EXPECT_THAT(ApplyTwoThirdsToF::would_overflow(3.402e38f), IsFalse());
+        EXPECT_THAT(ApplyTwoThirdsToF::would_overflow(2.268e38f), IsFalse());
+        EXPECT_THAT(ApplyTwoThirdsToF::would_overflow(2.267e38f), IsFalse());
+        EXPECT_THAT(ApplyTwoThirdsToF::would_overflow(1.0f), IsFalse());
+        EXPECT_THAT(ApplyTwoThirdsToF::would_overflow(0.0f), IsFalse());
+        EXPECT_THAT(ApplyTwoThirdsToF::would_overflow(-1.0f), IsFalse());
+        EXPECT_THAT(ApplyTwoThirdsToF::would_overflow(-2.267e38f), IsFalse());
+        EXPECT_THAT(ApplyTwoThirdsToF::would_overflow(-2.268e38f), IsFalse());
+        EXPECT_THAT(ApplyTwoThirdsToF::would_overflow(-3.402e38f), IsFalse());
     }
 }
 
 TEST(WouldOverflow, UsesFullValueWhenApplyingIrrationalMagnitude) {
     using ApplyPiByTwoToF = ApplyMagnitudeT<float, decltype(PI / mag<2>())>;
 
-    EXPECT_TRUE(ApplyPiByTwoToF::would_overflow(3.402e38f));
-    EXPECT_TRUE(ApplyPiByTwoToF::would_overflow(2.167e38f));
+    EXPECT_THAT(ApplyPiByTwoToF::would_overflow(3.402e38f), IsTrue());
+    EXPECT_THAT(ApplyPiByTwoToF::would_overflow(2.167e38f), IsTrue());
 
-    EXPECT_FALSE(ApplyPiByTwoToF::would_overflow(2.166e38f));
-    EXPECT_FALSE(ApplyPiByTwoToF::would_overflow(1.0f));
-    EXPECT_FALSE(ApplyPiByTwoToF::would_overflow(0.0f));
-    EXPECT_FALSE(ApplyPiByTwoToF::would_overflow(-1.0f));
-    EXPECT_FALSE(ApplyPiByTwoToF::would_overflow(-2.166e38f));
+    EXPECT_THAT(ApplyPiByTwoToF::would_overflow(2.166e38f), IsFalse());
+    EXPECT_THAT(ApplyPiByTwoToF::would_overflow(1.0f), IsFalse());
+    EXPECT_THAT(ApplyPiByTwoToF::would_overflow(0.0f), IsFalse());
+    EXPECT_THAT(ApplyPiByTwoToF::would_overflow(-1.0f), IsFalse());
+    EXPECT_THAT(ApplyPiByTwoToF::would_overflow(-2.166e38f), IsFalse());
 
-    EXPECT_TRUE(ApplyPiByTwoToF::would_overflow(-2.167e38f));
-    EXPECT_TRUE(ApplyPiByTwoToF::would_overflow(-3.402e38f));
+    EXPECT_THAT(ApplyPiByTwoToF::would_overflow(-2.167e38f), IsTrue());
+    EXPECT_THAT(ApplyPiByTwoToF::would_overflow(-3.402e38f), IsTrue());
 }
 
 TEST(WouldTruncate, AlwaysFalseForIntegerMultiply) {
@@ -354,29 +357,29 @@ TEST(WouldTruncate, AlwaysFalseForIntegerMultiply) {
     {
         using ApplyOneBillionToI32 = ApplyMagnitudeT<int32_t, decltype(ONE_BILLION)>;
 
-        EXPECT_FALSE(ApplyOneBillionToI32::would_truncate(2'147'483'647));
-        EXPECT_FALSE(ApplyOneBillionToI32::would_truncate(1));
-        EXPECT_FALSE(ApplyOneBillionToI32::would_truncate(0));
-        EXPECT_FALSE(ApplyOneBillionToI32::would_truncate(-1));
-        EXPECT_FALSE(ApplyOneBillionToI32::would_truncate(-2'147'483'648));
+        EXPECT_THAT(ApplyOneBillionToI32::would_truncate(2'147'483'647), IsFalse());
+        EXPECT_THAT(ApplyOneBillionToI32::would_truncate(1), IsFalse());
+        EXPECT_THAT(ApplyOneBillionToI32::would_truncate(0), IsFalse());
+        EXPECT_THAT(ApplyOneBillionToI32::would_truncate(-1), IsFalse());
+        EXPECT_THAT(ApplyOneBillionToI32::would_truncate(-2'147'483'648), IsFalse());
     }
 
     {
         using ApplyOneBillionToU8 = ApplyMagnitudeT<uint8_t, decltype(ONE_BILLION)>;
 
-        EXPECT_FALSE(ApplyOneBillionToU8::would_truncate(255));
-        EXPECT_FALSE(ApplyOneBillionToU8::would_truncate(1));
-        EXPECT_FALSE(ApplyOneBillionToU8::would_truncate(0));
+        EXPECT_THAT(ApplyOneBillionToU8::would_truncate(255), IsFalse());
+        EXPECT_THAT(ApplyOneBillionToU8::would_truncate(1), IsFalse());
+        EXPECT_THAT(ApplyOneBillionToU8::would_truncate(0), IsFalse());
     }
 
     {
         using ApplyOneBillionToF = ApplyMagnitudeT<float, decltype(ONE_BILLION)>;
 
-        EXPECT_FALSE(ApplyOneBillionToF::would_truncate(3.402e38f));
-        EXPECT_FALSE(ApplyOneBillionToF::would_truncate(1.0f));
-        EXPECT_FALSE(ApplyOneBillionToF::would_truncate(0.0f));
-        EXPECT_FALSE(ApplyOneBillionToF::would_truncate(-1.0f));
-        EXPECT_FALSE(ApplyOneBillionToF::would_truncate(-3.402e38f));
+        EXPECT_THAT(ApplyOneBillionToF::would_truncate(3.402e38f), IsFalse());
+        EXPECT_THAT(ApplyOneBillionToF::would_truncate(1.0f), IsFalse());
+        EXPECT_THAT(ApplyOneBillionToF::would_truncate(0.0f), IsFalse());
+        EXPECT_THAT(ApplyOneBillionToF::would_truncate(-1.0f), IsFalse());
+        EXPECT_THAT(ApplyOneBillionToF::would_truncate(-3.402e38f), IsFalse());
     }
 }
 
@@ -386,48 +389,48 @@ TEST(WouldTruncate, UsesModWhenDividingIntegralTypeByInteger) {
     {
         using ApplyOneSevenHundredthToI32 = ApplyMagnitudeT<int32_t, decltype(ONE_SEVEN_HUNDREDTH)>;
 
-        EXPECT_TRUE(ApplyOneSevenHundredthToI32::would_truncate(701));
-        EXPECT_FALSE(ApplyOneSevenHundredthToI32::would_truncate(700));
-        EXPECT_TRUE(ApplyOneSevenHundredthToI32::would_truncate(699));
+        EXPECT_THAT(ApplyOneSevenHundredthToI32::would_truncate(701), IsTrue());
+        EXPECT_THAT(ApplyOneSevenHundredthToI32::would_truncate(700), IsFalse());
+        EXPECT_THAT(ApplyOneSevenHundredthToI32::would_truncate(699), IsTrue());
 
-        EXPECT_TRUE(ApplyOneSevenHundredthToI32::would_truncate(1));
-        EXPECT_FALSE(ApplyOneSevenHundredthToI32::would_truncate(0));
-        EXPECT_TRUE(ApplyOneSevenHundredthToI32::would_truncate(-1));
+        EXPECT_THAT(ApplyOneSevenHundredthToI32::would_truncate(1), IsTrue());
+        EXPECT_THAT(ApplyOneSevenHundredthToI32::would_truncate(0), IsFalse());
+        EXPECT_THAT(ApplyOneSevenHundredthToI32::would_truncate(-1), IsTrue());
 
-        EXPECT_TRUE(ApplyOneSevenHundredthToI32::would_truncate(-699));
-        EXPECT_FALSE(ApplyOneSevenHundredthToI32::would_truncate(-700));
-        EXPECT_TRUE(ApplyOneSevenHundredthToI32::would_truncate(-701));
+        EXPECT_THAT(ApplyOneSevenHundredthToI32::would_truncate(-699), IsTrue());
+        EXPECT_THAT(ApplyOneSevenHundredthToI32::would_truncate(-700), IsFalse());
+        EXPECT_THAT(ApplyOneSevenHundredthToI32::would_truncate(-701), IsTrue());
     }
 
     {
         using ApplyOneSevenHundredthToU8 = ApplyMagnitudeT<uint8_t, decltype(ONE_SEVEN_HUNDREDTH)>;
 
-        EXPECT_TRUE(ApplyOneSevenHundredthToU8::would_truncate(255));
-        EXPECT_TRUE(ApplyOneSevenHundredthToU8::would_truncate(254));
-        EXPECT_TRUE(ApplyOneSevenHundredthToU8::would_truncate(1));
+        EXPECT_THAT(ApplyOneSevenHundredthToU8::would_truncate(255), IsTrue());
+        EXPECT_THAT(ApplyOneSevenHundredthToU8::would_truncate(254), IsTrue());
+        EXPECT_THAT(ApplyOneSevenHundredthToU8::would_truncate(1), IsTrue());
 
-        EXPECT_FALSE(ApplyOneSevenHundredthToU8::would_truncate(0));
+        EXPECT_THAT(ApplyOneSevenHundredthToU8::would_truncate(0), IsFalse());
     }
 }
 
 TEST(WouldTruncate, AlwaysFalseWhenDividingFloatingPointTypeByInteger) {
     using ApplyOneSevenHundredthToF = ApplyMagnitudeT<float, decltype(ONE / mag<700>())>;
 
-    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(3.402e38f));
+    EXPECT_THAT(ApplyOneSevenHundredthToF::would_truncate(3.402e38f), IsFalse());
 
-    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(701.0f));
-    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(700.0f));
-    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(699.0f));
+    EXPECT_THAT(ApplyOneSevenHundredthToF::would_truncate(701.0f), IsFalse());
+    EXPECT_THAT(ApplyOneSevenHundredthToF::would_truncate(700.0f), IsFalse());
+    EXPECT_THAT(ApplyOneSevenHundredthToF::would_truncate(699.0f), IsFalse());
 
-    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(1.0f));
-    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(0.0f));
-    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(-1.0f));
+    EXPECT_THAT(ApplyOneSevenHundredthToF::would_truncate(1.0f), IsFalse());
+    EXPECT_THAT(ApplyOneSevenHundredthToF::would_truncate(0.0f), IsFalse());
+    EXPECT_THAT(ApplyOneSevenHundredthToF::would_truncate(-1.0f), IsFalse());
 
-    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(-699.0f));
-    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(-700.0f));
-    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(-701.0f));
+    EXPECT_THAT(ApplyOneSevenHundredthToF::would_truncate(-699.0f), IsFalse());
+    EXPECT_THAT(ApplyOneSevenHundredthToF::would_truncate(-700.0f), IsFalse());
+    EXPECT_THAT(ApplyOneSevenHundredthToF::would_truncate(-701.0f), IsFalse());
 
-    EXPECT_FALSE(ApplyOneSevenHundredthToF::would_truncate(-3.402e38f));
+    EXPECT_THAT(ApplyOneSevenHundredthToF::would_truncate(-3.402e38f), IsFalse());
 }
 
 TEST(WouldTruncate, UsesDenominatorWhenApplyingRationalMagnitudeToIntegralType) {
@@ -436,72 +439,72 @@ TEST(WouldTruncate, UsesDenominatorWhenApplyingRationalMagnitudeToIntegralType) 
     {
         using ApplyTwoFifthsToI32 = ApplyMagnitudeT<int32_t, decltype(TWO_FIFTHS)>;
 
-        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(2'147'483'646));
-        EXPECT_FALSE(ApplyTwoFifthsToI32::would_truncate(2'147'483'645));
-        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(2'147'483'644));
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(2'147'483'646), IsTrue());
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(2'147'483'645), IsFalse());
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(2'147'483'644), IsTrue());
 
-        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(6));
-        EXPECT_FALSE(ApplyTwoFifthsToI32::would_truncate(5));
-        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(4));
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(6), IsTrue());
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(5), IsFalse());
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(4), IsTrue());
 
-        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(1));
-        EXPECT_FALSE(ApplyTwoFifthsToI32::would_truncate(0));
-        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(-1));
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(1), IsTrue());
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(0), IsFalse());
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(-1), IsTrue());
 
-        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(-4));
-        EXPECT_FALSE(ApplyTwoFifthsToI32::would_truncate(-5));
-        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(-6));
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(-4), IsTrue());
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(-5), IsFalse());
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(-6), IsTrue());
 
-        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(-2'147'483'644));
-        EXPECT_FALSE(ApplyTwoFifthsToI32::would_truncate(-2'147'483'645));
-        EXPECT_TRUE(ApplyTwoFifthsToI32::would_truncate(-2'147'483'646));
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(-2'147'483'644), IsTrue());
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(-2'147'483'645), IsFalse());
+        EXPECT_THAT(ApplyTwoFifthsToI32::would_truncate(-2'147'483'646), IsTrue());
     }
 
     {
         using ApplyTwoFifthsToU8 = ApplyMagnitudeT<uint8_t, decltype(TWO_FIFTHS)>;
 
-        EXPECT_FALSE(ApplyTwoFifthsToU8::would_truncate(255));
-        EXPECT_TRUE(ApplyTwoFifthsToU8::would_truncate(254));
+        EXPECT_THAT(ApplyTwoFifthsToU8::would_truncate(255), IsFalse());
+        EXPECT_THAT(ApplyTwoFifthsToU8::would_truncate(254), IsTrue());
 
-        EXPECT_TRUE(ApplyTwoFifthsToU8::would_truncate(6));
-        EXPECT_FALSE(ApplyTwoFifthsToU8::would_truncate(5));
-        EXPECT_TRUE(ApplyTwoFifthsToU8::would_truncate(4));
+        EXPECT_THAT(ApplyTwoFifthsToU8::would_truncate(6), IsTrue());
+        EXPECT_THAT(ApplyTwoFifthsToU8::would_truncate(5), IsFalse());
+        EXPECT_THAT(ApplyTwoFifthsToU8::would_truncate(4), IsTrue());
 
-        EXPECT_TRUE(ApplyTwoFifthsToU8::would_truncate(1));
-        EXPECT_FALSE(ApplyTwoFifthsToU8::would_truncate(0));
+        EXPECT_THAT(ApplyTwoFifthsToU8::would_truncate(1), IsTrue());
+        EXPECT_THAT(ApplyTwoFifthsToU8::would_truncate(0), IsFalse());
     }
 }
 
 TEST(WouldTruncate, AlwaysFalseWhenApplyingRationalMagnitudeToFloatingPointType) {
     using ApplyTwoFifthsToF = ApplyMagnitudeT<float, decltype(mag<2>() / mag<5>())>;
 
-    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(3.402e38f));
+    EXPECT_THAT(ApplyTwoFifthsToF::would_truncate(3.402e38f), IsFalse());
 
-    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(6.0f));
-    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(5.0f));
-    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(4.0f));
+    EXPECT_THAT(ApplyTwoFifthsToF::would_truncate(6.0f), IsFalse());
+    EXPECT_THAT(ApplyTwoFifthsToF::would_truncate(5.0f), IsFalse());
+    EXPECT_THAT(ApplyTwoFifthsToF::would_truncate(4.0f), IsFalse());
 
-    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(1.0f));
-    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(0.0f));
-    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(-1.0f));
+    EXPECT_THAT(ApplyTwoFifthsToF::would_truncate(1.0f), IsFalse());
+    EXPECT_THAT(ApplyTwoFifthsToF::would_truncate(0.0f), IsFalse());
+    EXPECT_THAT(ApplyTwoFifthsToF::would_truncate(-1.0f), IsFalse());
 
-    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(-4.0f));
-    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(-5.0f));
-    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(-6.0f));
+    EXPECT_THAT(ApplyTwoFifthsToF::would_truncate(-4.0f), IsFalse());
+    EXPECT_THAT(ApplyTwoFifthsToF::would_truncate(-5.0f), IsFalse());
+    EXPECT_THAT(ApplyTwoFifthsToF::would_truncate(-6.0f), IsFalse());
 
-    EXPECT_FALSE(ApplyTwoFifthsToF::would_truncate(-3.402e38f));
+    EXPECT_THAT(ApplyTwoFifthsToF::would_truncate(-3.402e38f), IsFalse());
 }
 
 TEST(WouldTruncate, AlwaysFalseWhenApplyingIrrationalMagnitude) {
     using ApplyPiByTwoToF = ApplyMagnitudeT<float, decltype(PI / mag<2>())>;
 
-    EXPECT_FALSE(ApplyPiByTwoToF::would_truncate(3.402e38f));
+    EXPECT_THAT(ApplyPiByTwoToF::would_truncate(3.402e38f), IsFalse());
 
-    EXPECT_FALSE(ApplyPiByTwoToF::would_truncate(1.0f));
-    EXPECT_FALSE(ApplyPiByTwoToF::would_truncate(0.0f));
-    EXPECT_FALSE(ApplyPiByTwoToF::would_truncate(-1.0f));
+    EXPECT_THAT(ApplyPiByTwoToF::would_truncate(1.0f), IsFalse());
+    EXPECT_THAT(ApplyPiByTwoToF::would_truncate(0.0f), IsFalse());
+    EXPECT_THAT(ApplyPiByTwoToF::would_truncate(-1.0f), IsFalse());
 
-    EXPECT_FALSE(ApplyPiByTwoToF::would_truncate(-3.402e38f));
+    EXPECT_THAT(ApplyPiByTwoToF::would_truncate(-3.402e38f), IsFalse());
 }
 }  // namespace detail
 }  // namespace au
