@@ -102,10 +102,20 @@ TEST(ApplyMagnitude, DividesForNegativeIntegerDivide) {
     ASSERT_EQ(categorize_magnitude(minus_one_thirteenth), ApplyAs::INTEGER_DIVIDE);
 
     // This test would fail if our implementation multiplied by the float representation of (-1/13),
-    // instead of dividing by -13, under the hood.
+    // instead of dividing by -13, under the hood.  (We'll use this `bool` variable to make sure
+    // that this claim is true.  If the test fails because this variable is `false`, then it
+    // probably means we don't have enough coverage, and we should check more numbers.)
+    constexpr auto inverse = get_value<float>(minus_one_thirteenth);
+    bool any_round_trip_failures = false;
+
     for (const auto &i : first_n_positive_values<float>(100u)) {
-        EXPECT_THAT(apply_magnitude(i * -13, minus_one_thirteenth), SameTypeAndValue(i));
+        const auto x = -13.0f * i;
+        if (x * inverse != i) {
+            any_round_trip_failures = true;
+        }
+        EXPECT_THAT(apply_magnitude(x, minus_one_thirteenth), SameTypeAndValue(i));
     }
+    EXPECT_TRUE(any_round_trip_failures);
 }
 
 TEST(ApplyMagnitude, MultipliesThenDividesForRationalMagnitudeOnInteger) {
