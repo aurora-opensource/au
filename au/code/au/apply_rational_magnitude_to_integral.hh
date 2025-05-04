@@ -110,9 +110,9 @@ constexpr bool is_abs_known_to_be_less_than_one(Magnitude<BPs...>) {
 template <typename T, typename MagT, bool IsMagLessThanOne>
 struct MaxNonOverflowingValueImplWhenNumFits;
 
-// Implementation helper for "the value is zero" (which recurs a bunch of times).
+// Implementation helper for "a value of zero" (which recurs a bunch of times).
 template <typename T>
-struct ValueIsZero {
+struct ValueOfZero {
     static constexpr T value() { return T{0}; }
 };
 
@@ -157,7 +157,7 @@ struct MaxNonOverflowingValueImpl;
 // For any situation where we're applying a negative factor to an unsigned type, simply short
 // circuit to set the max to zero.
 template <typename T, typename MagT, MagRepresentationOutcome NumOutcome>
-struct MaxNonOverflowingValueImpl<T, MagT, NumOutcome, true> : ValueIsZero<T> {};
+struct MaxNonOverflowingValueImpl<T, MagT, NumOutcome, true> : ValueOfZero<T> {};
 
 // If the numerator fits in the promoted type of `T`, delegate further based on whether the
 // denominator is bigger.
@@ -168,7 +168,7 @@ struct MaxNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::OK, false>
 // If `MagT` can't be represented in the promoted type of `T`, then the result is 0.
 template <typename T, typename MagT>
 struct MaxNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::ERR_CANNOT_FIT, false>
-    : ValueIsZero<T> {};
+    : ValueOfZero<T> {};
 
 template <typename T, typename MagT>
 struct ValidateTypeAndMagnitude {
@@ -248,7 +248,7 @@ struct MinNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::OK>
 // If the numerator can't be represented in the promoted type of `T`, then the result is 0.
 template <typename T, typename MagT>
 struct MinNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::ERR_CANNOT_FIT>
-    : ValueIsZero<T> {};
+    : ValueOfZero<T> {};
 
 template <typename T, typename MagT>
 struct MinNonOverflowingValue
