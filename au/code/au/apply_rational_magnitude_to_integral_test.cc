@@ -18,6 +18,7 @@
 #include "gtest/gtest.h"
 
 using ::testing::AllOf;
+using ::testing::Eq;
 using ::testing::Lt;
 using ::testing::StaticAssertTypeEq;
 
@@ -51,15 +52,25 @@ TEST(PromotedType, PromotesUint8TIntoLargerType) {
 }
 
 TEST(IsAbsKnownToBeLessThanOne, ProducesExpectedResultsForMagnitudesThatCanFitInUintmax) {
-    EXPECT_TRUE(is_abs_known_to_be_less_than_one(mag<1>() / mag<2>()));
-    EXPECT_TRUE(is_abs_known_to_be_less_than_one(mag<999'999>() / mag<1'000'000>()));
-    EXPECT_FALSE(is_abs_known_to_be_less_than_one(mag<1'000'000>() / mag<999'999>()));
+    EXPECT_THAT(is_abs_known_to_be_less_than_one(mag<1>() / mag<2>()),
+                Eq(IsAbsMagLessThanOne::DEFINITELY));
+
+    EXPECT_THAT(is_abs_known_to_be_less_than_one(mag<999'999>() / mag<1'000'000>()),
+                Eq(IsAbsMagLessThanOne::DEFINITELY));
+
+    EXPECT_THAT(is_abs_known_to_be_less_than_one(mag<1'000'000>() / mag<999'999>()),
+                Eq(IsAbsMagLessThanOne::MAYBE_NOT));
 }
 
 TEST(IsAbsKnownToBeLessThanOne, IgnoresSign) {
-    EXPECT_TRUE(is_abs_known_to_be_less_than_one(-mag<1>() / mag<2>()));
-    EXPECT_TRUE(is_abs_known_to_be_less_than_one(-mag<999'999>() / mag<1'000'000>()));
-    EXPECT_FALSE(is_abs_known_to_be_less_than_one(-mag<1'000'000>() / mag<999'999>()));
+    EXPECT_THAT(is_abs_known_to_be_less_than_one(-mag<1>() / mag<2>()),
+                Eq(IsAbsMagLessThanOne::DEFINITELY));
+
+    EXPECT_THAT(is_abs_known_to_be_less_than_one(-mag<999'999>() / mag<1'000'000>()),
+                Eq(IsAbsMagLessThanOne::DEFINITELY));
+
+    EXPECT_THAT(is_abs_known_to_be_less_than_one(-mag<1'000'000>() / mag<999'999>()),
+                Eq(IsAbsMagLessThanOne::MAYBE_NOT));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
