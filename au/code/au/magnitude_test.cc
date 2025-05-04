@@ -148,8 +148,8 @@ TEST(IntegerPart, PicksOutIntegersFromNumerator) {
 }
 
 TEST(IntegerPart, PreservesSign) {
-    EXPECT_EQ(integer_part(-mag<1>()), -mag<1>());
-    EXPECT_EQ(integer_part(-mag<8765>()), -mag<8765>());
+    EXPECT_THAT(integer_part(-mag<1>()), Eq(-mag<1>()));
+    EXPECT_THAT(integer_part(-mag<8765>()), Eq(-mag<8765>()));
 }
 
 TEST(Numerator, IsIdentityForInteger) {
