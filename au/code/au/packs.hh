@@ -591,17 +591,36 @@ struct SimplifyBasePowers<Pack<BPs...>> : stdx::type_identity<Pack<SimplifyBaseP
 // `NumeratorPartT` and `DenominatorPartT` implementation.
 
 namespace detail {
-template <template <class...> class Pack>
-struct NumeratorPart<Pack<>> : stdx::type_identity<Pack<>> {};
+template <typename BP>
+struct IsInNumerator : stdx::bool_constant<(ExpT<BP>::num > 0)> {};
 
-template <template <class...> class Pack, typename Head, typename... Tail>
-struct NumeratorPart<Pack<Head, Tail...>>
-    : std::conditional<(ExpT<Head>::num > 0),
-                       PackProductT<Pack, Pack<Head>, NumeratorPartT<Pack<Tail...>>>,
-                       NumeratorPartT<Pack<Tail...>>> {};
+template <typename BP>
+struct IsInDenominator : stdx::bool_constant<(ExpT<BP>::num < 0)> {};
+
+// A generic helper for both numerator and denominator.
+template <template <class> class Pred, typename T>
+struct PullOutMatchingPowers;
+
+// Base case: empty pack.
+template <template <class> class Pred, template <class...> class Pack>
+struct PullOutMatchingPowers<Pred, Pack<>> : stdx::type_identity<Pack<>> {};
+
+// Recursive case: non-empty pack.
+template <template <class> class Pred, template <class...> class Pack, typename H, typename... Ts>
+struct PullOutMatchingPowers<Pred, Pack<H, Ts...>>
+    : std::conditional<(Pred<H>::value),
+                       detail::PrependT<typename PullOutMatchingPowers<Pred, Pack<Ts...>>::type, H>,
+                       typename PullOutMatchingPowers<Pred, Pack<Ts...>>::type> {};
+
+template <typename T>
+struct NumeratorPart : PullOutMatchingPowers<IsInNumerator, T> {};
 
 template <template <class...> class Pack, typename... Ts>
-struct DenominatorPart<Pack<Ts...>> : NumeratorPart<PackInverseT<Pack, Pack<Ts...>>> {};
+struct DenominatorPart<Pack<Ts...>>
+    : stdx::type_identity<
+          PackInverseT<Pack, typename PullOutMatchingPowers<IsInDenominator, Pack<Ts...>>::type>> {
+};
+
 }  // namespace detail
 
 }  // namespace au
