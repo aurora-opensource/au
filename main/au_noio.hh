@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-16-g4019559
+// Version identifier: 0.4.1-17-g103aa79
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -56,6 +56,8 @@ struct Dimension;
 
 template <typename... BPs>
 struct Magnitude;
+
+struct Negative;
 
 template <typename UnitT>
 struct QuantityMaker;
@@ -2359,17 +2361,36 @@ struct SimplifyBasePowers<Pack<BPs...>> : stdx::type_identity<Pack<SimplifyBaseP
 // `NumeratorPartT` and `DenominatorPartT` implementation.
 
 namespace detail {
-template <template <class...> class Pack>
-struct NumeratorPart<Pack<>> : stdx::type_identity<Pack<>> {};
+template <typename BP>
+struct IsInNumerator : stdx::bool_constant<(ExpT<BP>::num > 0)> {};
 
-template <template <class...> class Pack, typename Head, typename... Tail>
-struct NumeratorPart<Pack<Head, Tail...>>
-    : std::conditional<(ExpT<Head>::num > 0),
-                       PackProductT<Pack, Pack<Head>, NumeratorPartT<Pack<Tail...>>>,
-                       NumeratorPartT<Pack<Tail...>>> {};
+template <typename BP>
+struct IsInDenominator : stdx::bool_constant<(ExpT<BP>::num < 0)> {};
+
+// A generic helper for both numerator and denominator.
+template <template <class> class Pred, typename T>
+struct PullOutMatchingPowers;
+
+// Base case: empty pack.
+template <template <class> class Pred, template <class...> class Pack>
+struct PullOutMatchingPowers<Pred, Pack<>> : stdx::type_identity<Pack<>> {};
+
+// Recursive case: non-empty pack.
+template <template <class> class Pred, template <class...> class Pack, typename H, typename... Ts>
+struct PullOutMatchingPowers<Pred, Pack<H, Ts...>>
+    : std::conditional<(Pred<H>::value),
+                       detail::PrependT<typename PullOutMatchingPowers<Pred, Pack<Ts...>>::type, H>,
+                       typename PullOutMatchingPowers<Pred, Pack<Ts...>>::type> {};
+
+template <typename T>
+struct NumeratorPart : PullOutMatchingPowers<IsInNumerator, T> {};
 
 template <template <class...> class Pack, typename... Ts>
-struct DenominatorPart<Pack<Ts...>> : NumeratorPart<PackInverseT<Pack, Pack<Ts...>>> {};
+struct DenominatorPart<Pack<Ts...>>
+    : stdx::type_identity<
+          PackInverseT<Pack, typename PullOutMatchingPowers<IsInDenominator, Pack<Ts...>>::type>> {
+};
+
 }  // namespace detail
 
 }  // namespace au
@@ -2654,6 +2675,38 @@ using MagQuotientT = PackQuotientT<Magnitude, T, U>;
 template <typename T>
 using MagInverseT = PackInverseT<Magnitude, T>;
 
+// Enable negative magnitudes with a type representing (-1) that appears/disappears under powers.
+struct Negative {};
+template <typename... BPs, std::intmax_t ExpNum, std::intmax_t ExpDen>
+struct PackPower<Magnitude, Magnitude<Negative, BPs...>, std::ratio<ExpNum, ExpDen>>
+    : std::conditional<
+          (std::ratio<ExpNum, ExpDen>::num % 2 == 0),
+
+          // Even powers of (-1) are 1 for any root.
+          PackPowerT<Magnitude, Magnitude<BPs...>, ExpNum, ExpDen>,
+
+          // At this point, we know we're taking the D'th root of (-1), which is (-1)
+          // if D is odd, and a hard compiler error if D is even.
+          MagProductT<Magnitude<Negative>, MagPowerT<Magnitude<BPs...>, ExpNum, ExpDen>>>
+// Implement the hard error for raising to (odd / even) power:
+{
+    static_assert(std::ratio<ExpNum, ExpDen>::den % 2 == 1,
+                  "Cannot take even root of negative magnitude");
+};
+template <typename... LeftBPs, typename... RightBPs>
+struct PackProduct<Magnitude, Magnitude<Negative, LeftBPs...>, Magnitude<Negative, RightBPs...>>
+    : stdx::type_identity<MagProductT<Magnitude<LeftBPs...>, Magnitude<RightBPs...>>> {};
+
+// Define negation.
+template <typename... BPs>
+constexpr auto operator-(Magnitude<Negative, BPs...>) {
+    return Magnitude<BPs...>{};
+}
+template <typename... BPs>
+constexpr auto operator-(Magnitude<BPs...>) {
+    return Magnitude<Negative, BPs...>{};
+}
+
 // A printable label to indicate the Magnitude for human readers.
 template <typename MagT>
 struct MagnitudeLabel;
@@ -2691,6 +2744,15 @@ struct Pi {
 namespace detail {
 template <typename T, typename U>
 struct OrderByValue : stdx::bool_constant<(T::value() < U::value())> {};
+
+template <typename T>
+struct OrderByValue<Negative, T> : std::true_type {};
+
+template <typename T>
+struct OrderByValue<T, Negative> : std::false_type {};
+
+template <>
+struct OrderByValue<Negative, Negative> : std::false_type {};
 }  // namespace detail
 
 template <typename A, typename B>
@@ -2705,12 +2767,22 @@ template <typename MagT>
 using IntegerPartT = typename IntegerPartImpl<MagT>::type;
 
 template <typename MagT>
+struct AbsImpl;
+template <typename MagT>
+using Abs = typename AbsImpl<MagT>::type;
+
+template <typename MagT>
 struct NumeratorImpl;
 template <typename MagT>
 using NumeratorT = typename NumeratorImpl<MagT>::type;
 
 template <typename MagT>
-using DenominatorT = NumeratorT<MagInverseT<MagT>>;
+using DenominatorT = NumeratorT<MagInverseT<Abs<MagT>>>;
+
+template <typename MagT>
+struct IsPositive : std::true_type {};
+template <typename... BPs>
+struct IsPositive<Magnitude<Negative, BPs...>> : std::false_type {};
 
 template <typename MagT>
 struct IsRational
@@ -2784,6 +2856,12 @@ constexpr auto integer_part(Magnitude<BPs...>) {
 }
 
 template <typename... BPs>
+constexpr auto abs(Magnitude<BPs...>) {
+    return Abs<Magnitude<BPs...>>{};
+}
+constexpr auto abs(Zero z) { return z; }
+
+template <typename... BPs>
 constexpr auto numerator(Magnitude<BPs...>) {
     return NumeratorT<Magnitude<BPs...>>{};
 }
@@ -2791,6 +2869,11 @@ constexpr auto numerator(Magnitude<BPs...>) {
 template <typename... BPs>
 constexpr auto denominator(Magnitude<BPs...>) {
     return DenominatorT<Magnitude<BPs...>>{};
+}
+
+template <typename... BPs>
+constexpr bool is_positive(Magnitude<BPs...>) {
+    return IsPositive<Magnitude<BPs...>>::value;
 }
 
 template <typename... BPs>
@@ -2869,6 +2952,22 @@ struct IntegerPartImpl<Magnitude<BPs...>>
     : stdx::type_identity<
           MagProductT<typename IntegerPartOfBasePower<BaseT<BPs>, ExpT<BPs>>::type...>> {};
 
+template <typename... BPs>
+struct IntegerPartImpl<Magnitude<Negative, BPs...>>
+    : stdx::type_identity<MagProductT<Magnitude<Negative>, IntegerPartT<Magnitude<BPs...>>>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `abs()` implementation.
+
+template <typename... BPs>
+struct AbsImpl<Magnitude<Negative, BPs...>> : stdx::type_identity<Magnitude<BPs...>> {};
+
+template <typename... BPs>
+struct AbsImpl<Magnitude<BPs...>> : stdx::type_identity<Magnitude<BPs...>> {};
+
+template <>
+struct AbsImpl<Zero> : stdx::type_identity<Zero> {};
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `numerator()` implementation.
 
@@ -2885,6 +2984,7 @@ namespace detail {
 enum class MagRepresentationOutcome {
     OK,
     ERR_NON_INTEGER_IN_INTEGER_TYPE,
+    ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE,
     ERR_INVALID_ROOT,
     ERR_CANNOT_FIT,
 };
@@ -3136,6 +3236,19 @@ template <typename T>
 constexpr MagRepresentationOrError<T> get_value_result(Magnitude<>) {
     return {MagRepresentationOutcome::OK, static_cast<T>(1)};
 }
+
+template <typename T, typename... BPs>
+constexpr MagRepresentationOrError<T> get_value_result(Magnitude<Negative, BPs...>) {
+    if (std::is_unsigned<T>::value) {
+        return {MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE};
+    }
+
+    const auto result = get_value_result<T>(Magnitude<BPs...>{});
+    if (result.outcome != MagRepresentationOutcome::OK) {
+        return result;
+    }
+    return {MagRepresentationOutcome::OK, static_cast<T>(-result.value)};
+}
 }  // namespace detail
 
 template <typename T, typename... BPs>
@@ -3234,6 +3347,18 @@ struct MagnitudeLabel<Magnitude<BPs...>>
     : detail::MagnitudeLabelImplementation<Magnitude<BPs...>,
                                            detail::categorize_mag_label(Magnitude<BPs...>{})> {};
 
+template <typename... BPs>
+struct MagnitudeLabel<Magnitude<Negative, BPs...>> :
+    // Inherit for "has exposed slash".
+    MagnitudeLabel<Magnitude<BPs...>> {
+    using LabelT = detail::ExtendedMagLabel<1u, Magnitude<BPs...>>;
+    static constexpr LabelT value =
+        detail::concatenate("-", MagnitudeLabel<Magnitude<BPs...>>::value);
+};
+template <typename... BPs>
+constexpr typename MagnitudeLabel<Magnitude<Negative, BPs...>>::LabelT
+    MagnitudeLabel<Magnitude<Negative, BPs...>>::value;
+
 template <typename MagT>
 constexpr const auto &mag_label(MagT) {
     return detail::as_char_array(MagnitudeLabel<MagT>::value);
@@ -3252,9 +3377,9 @@ template <typename BP, typename... Ts>
 struct PrependIfExpNegative<BP, Magnitude<Ts...>>
     : std::conditional<(ExpT<BP>::num < 0), Magnitude<BP, Ts...>, Magnitude<Ts...>> {};
 
-// If M is (N/D), DenominatorPartT<M> is D; we want 1/D.
+// Remove all positive powers from M.
 template <typename M>
-using NegativePowers = MagInverseT<DenominatorPartT<M>>;
+using NegativePowers = MagQuotientT<M, NumeratorPartT<M>>;
 }  // namespace detail
 
 // 1-ary case: identity.
