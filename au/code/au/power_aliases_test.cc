@@ -56,10 +56,24 @@ TEST(Inverse, RaisesToPowerNegativeOne) {
                        Vector<Pow<B<2>, -1>, Pow<B<3>, -8>, RatioPow<B<5>, -1, 2>>>();
 }
 
+TEST(Inverse, TypeBasedFormGivesExpectedResult) {
+    StaticAssertTypeEq<Inverse<Vector<>>, Vector<>>();
+
+    StaticAssertTypeEq<Inverse<Vector<B<2>, Pow<B<3>, 8>, RatioPow<B<5>, 1, 2>>>,
+                       Vector<Pow<B<2>, -1>, Pow<B<3>, -8>, RatioPow<B<5>, -1, 2>>>();
+}
+
 TEST(Squared, RaisesToPowerTwo) {
     StaticAssertTypeEq<decltype(squared(Vector<>{})), Vector<>>();
 
     StaticAssertTypeEq<decltype(squared(Vector<B<2>, Pow<B<3>, 8>, RatioPow<B<5>, 1, 2>>{})),
+                       Vector<Pow<B<2>, 2>, Pow<B<3>, 16>, B<5>>>();
+}
+
+TEST(Squared, TypeBasedFormGivesExpectedResult) {
+    StaticAssertTypeEq<Squared<Vector<>>, Vector<>>();
+
+    StaticAssertTypeEq<Squared<Vector<B<2>, Pow<B<3>, 8>, RatioPow<B<5>, 1, 2>>>,
                        Vector<Pow<B<2>, 2>, Pow<B<3>, 16>, B<5>>>();
 }
 
@@ -70,6 +84,13 @@ TEST(Cubed, RaisesToPowerThree) {
                        Vector<Pow<B<2>, 3>, Pow<B<3>, 24>, B<5>>>();
 }
 
+TEST(Cubed, TypeBasedFormGivesExpectedResult) {
+    StaticAssertTypeEq<Cubed<Vector<>>, Vector<>>();
+
+    StaticAssertTypeEq<Cubed<Vector<B<2>, Pow<B<3>, 8>, RatioPow<B<5>, 1, 3>>>,
+                       Vector<Pow<B<2>, 3>, Pow<B<3>, 24>, B<5>>>();
+}
+
 TEST(Sqrt, TakesSecondRoot) {
     StaticAssertTypeEq<decltype(sqrt(Vector<>{})), Vector<>>();
 
@@ -77,10 +98,24 @@ TEST(Sqrt, TakesSecondRoot) {
                        Vector<RatioPow<B<2>, 1, 2>, Pow<B<3>, 4>, B<5>>>();
 }
 
+TEST(Sqrt, TypeBasedFormGivesExpectedResult) {
+    StaticAssertTypeEq<Sqrt<Vector<>>, Vector<>>();
+
+    StaticAssertTypeEq<Sqrt<Vector<B<2>, Pow<B<3>, 8>, Pow<B<5>, 2>>>,
+                       Vector<RatioPow<B<2>, 1, 2>, Pow<B<3>, 4>, B<5>>>();
+}
+
 TEST(Cbrt, TakesThirdRoot) {
     StaticAssertTypeEq<decltype(cbrt(Vector<>{})), Vector<>>();
 
     StaticAssertTypeEq<decltype(cbrt(Vector<B<2>, Pow<B<3>, 9>, Pow<B<5>, 3>>{})),
+                       Vector<RatioPow<B<2>, 1, 3>, Pow<B<3>, 3>, B<5>>>();
+}
+
+TEST(Cbrt, TypeBasedFormGivesExpectedResult) {
+    StaticAssertTypeEq<Cbrt<Vector<>>, Vector<>>();
+
+    StaticAssertTypeEq<Cbrt<Vector<B<2>, Pow<B<3>, 9>, Pow<B<5>, 3>>>,
                        Vector<RatioPow<B<2>, 1, 3>, Pow<B<3>, 3>, B<5>>>();
 }
 
