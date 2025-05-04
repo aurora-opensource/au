@@ -763,7 +763,7 @@ template <typename BP, typename... Ts>
 struct PrependIfExpNegative<BP, Magnitude<Ts...>>
     : std::conditional<(ExpT<BP>::num < 0), Magnitude<BP, Ts...>, Magnitude<Ts...>> {};
 
-// If M is (N/D), DenominatorPartT<M> is D; we want 1/D.
+// Remove all positive powers from M.
 template <typename M>
 using NegativePowers = MagQuotientT<M, NumeratorPartT<M>>;
 }  // namespace detail
