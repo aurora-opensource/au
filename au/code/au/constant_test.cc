@@ -316,6 +316,8 @@ TEST(Constant, SupportsModWithQuantity) {
     EXPECT_THAT(degrees(300) % half_rev, SameTypeAndValue(degrees(120)));
 }
 
+TEST(MakeConstant, IdentityForZero) { EXPECT_THAT(make_constant(ZERO), SameTypeAndValue(ZERO)); }
+
 TEST(CanStoreValueIn, ChecksRangeOfTypeForIntegers) {
     EXPECT_TRUE(decltype(c)::can_store_value_in<int32_t>(meters / second));
     EXPECT_FALSE(decltype(c)::can_store_value_in<int16_t>(meters / second));

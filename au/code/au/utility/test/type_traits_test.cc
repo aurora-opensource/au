@@ -65,5 +65,11 @@ TEST(DropAll, DropsAllInstancesOfTarget) {
     StaticAssertTypeEq<DropAll<int, Pack<int, char, int, double>>, Pack<char, double>>();
 }
 
+TEST(IncludeInPackIf, MakesPackOfEverythingThatMatches) {
+    StaticAssertTypeEq<
+        IncludeInPackIf<std::is_unsigned, Pack, int32_t, uint8_t, double, char, uint64_t, int16_t>,
+        Pack<uint8_t, uint64_t>>();
+}
+
 }  // namespace detail
 }  // namespace au

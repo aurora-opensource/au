@@ -471,6 +471,18 @@ TEST(CommonUnit, DedupesUnitsMadeIdenticalAfterUnscalingSameScaledUnit) {
                        Feet>();
 }
 
+TEST(CommonUnit, HandlesAndNeglectsZero) {
+    StaticAssertTypeEq<CommonUnitT<Yards, Zero, Feet>, Feet>();
+    StaticAssertTypeEq<CommonUnitT<Zero, Feet, Zero>, Feet>();
+}
+
+TEST(CommonUnit, ZeroIfAllInputsAreZero) {
+    StaticAssertTypeEq<CommonUnitT<>, Zero>();
+    StaticAssertTypeEq<CommonUnitT<Zero>, Zero>();
+    StaticAssertTypeEq<CommonUnitT<Zero, Zero>, Zero>();
+    StaticAssertTypeEq<CommonUnitT<Zero, Zero, Zero>, Zero>();
+}
+
 TEST(CommonUnit, DownranksAnonymousScaledUnits) {
     StaticAssertTypeEq<CommonUnitT<Yards, decltype(Feet{} * mag<3>())>, Yards>();
 }
