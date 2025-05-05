@@ -1327,6 +1327,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#negation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Negation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#powers" class="md-nav__link">
     <span class="md-ellipsis">
       Powers
@@ -1959,7 +1968,7 @@
 
 
 <h1 id="magnitude">Magnitude<a class="headerlink" href="#magnitude" title="Permanent link">&para;</a></h1>
-<p><code>Magnitude</code> is a family of <a href="../detail/monovalue_types/">monovalue types</a> representing positive real
+<p><code>Magnitude</code> is a family of <a href="../detail/monovalue_types/">monovalue types</a> representing nonzero real
 numbers.  These values can be multiplied, divided, and raised to (rational) powers, and this
 arithmetic always takes place at compile time.  Values can also be converted to more standard
 numeric types, such as <code>double</code> and <code>int</code>, as long as the receiving type can represent the
@@ -2169,6 +2178,20 @@ In what follows, we&rsquo;ll use this convention:</p>
 </ul>
 </li>
 </ul>
+<h3 id="negation">Negation<a class="headerlink" href="#negation" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The negative of a <code>Magnitude</code>.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li>No special support, but you can form the product with <code>Magnitude&lt;Negative&gt;</code>, which represents
+  <code>-1</code>.</li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>-m</code></li>
+</ul>
+</li>
+</ul>
 <h3 id="powers">Powers<a class="headerlink" href="#powers" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> A <code>Magnitude</code> raised to an integral power.</p>
 <p><strong>Syntax:</strong></p>
@@ -2196,6 +2219,11 @@ In what follows, we&rsquo;ll use this convention:</p>
 </ul>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If <code>m</code> is negative, and <code>N</code> is even, then <code>root&lt;N&gt;(m)</code> produces a hard compiler error, because
+the result cannot be represented as a <code>Magnitude</code>.</p>
+</div>
 <h3 id="helpers-for-powers-and-roots">Helpers for powers and roots<a class="headerlink" href="#helpers-for-powers-and-roots" title="Permanent link">&para;</a></h3>
 <p>Magnitudes support all of the <a href="../powers/#helpers">power helpers</a>.  So, for example, for
 a magnitude instance <code>m</code>, you can write <code>sqrt(m)</code> as a more readable alternative to <code>root&lt;2&gt;(m)</code>.</p>

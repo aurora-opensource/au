@@ -1846,8 +1846,8 @@
 concept, the requirements, and how we implement it.</p>
 <h2 id="concepts">Concepts<a class="headerlink" href="#concepts" title="Permanent link">&para;</a></h2>
 <p>In this section, we&rsquo;ll use square bracket notation, <span class="arithmatex"><span class="MathJax_Preview">[x]</span><script type="math/tex">[x]</script></span>, to refer to a <strong>unit</strong>.  Units can be
-multiplied by <a href="../../../reference/magnitude/"><em>magnitudes</em></a> (i.e., positive real numbers) to form <em>new</em>
-units: so, <span class="arithmatex"><span class="MathJax_Preview">[12x]</span><script type="math/tex">[12x]</script></span> is a unit which is 12 times the size of the unit <span class="arithmatex"><span class="MathJax_Preview">[x]</span><script type="math/tex">[x]</script></span>.</p>
+multiplied by <a href="../../../reference/magnitude/"><em>magnitudes</em></a> (i.e., nonzero real numbers) to form
+<em>new</em> units: so, <span class="arithmatex"><span class="MathJax_Preview">[12x]</span><script type="math/tex">[12x]</script></span> is a unit which is 12 times the size of the unit <span class="arithmatex"><span class="MathJax_Preview">[x]</span><script type="math/tex">[x]</script></span>.</p>
 <p>A <em>quantity</em> is some property which can be measured.  A measurement result has two parts: the <em>unit
 of measure</em>, and the <em>value</em> of the quantity, which is the ratio of the quantity to that unit.  For
 example: suppose we had some physical length, and we found that if we placed four yardsticks
@@ -1981,7 +1981,7 @@ arbitrary (but same-dimension) units, <code>U1</code> and <code>U2</code>, and y
 </ul>
 </li>
 <li>What you <em>get</em> depends on the specific units.<ul>
-<li>For <code>CommonUnitT&lt;Inches, Meters&gt;</code>, the result might be <code>CommonUnit&lt;Inches, Meters&gt;</code>.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>  This
+<li>For <code>CommonUnitT&lt;Inches, Meters&gt;</code>, the result might be <code>CommonUnit&lt;Inches, Meters&gt;</code>.<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>  This
   is because the greatest common divisor for <code>Inches</code> and <code>Meters</code> is smaller than both of them.</li>
 <li>For <code>CommonUnitT&lt;Inches, Feet&gt;</code>, the result would simply be <code>Inches</code>, because <code>Inches</code> is
   quantity-equivalent to this common unit (it evenly divides both <code>Inches</code> and <code>Feet</code>).</li>
@@ -2037,8 +2037,8 @@ unit,&rdquo; but the origin adds a new complication.  We&rsquo;ll need to choose
 <ul>
 <li>
 <p>With &ldquo;common <em>quantity</em> units,&rdquo; our convention ensured that conversions could only <strong>multiply</strong> by
-  a <strong>positive integer</strong>.  This keeps us within the domain of the integers whenever we start there.
-  And we chose the <strong>smallest</strong> such number to minimize overflow risk.</p>
+  a <strong>nonzero integer</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.  This keeps us within the domain of the integers whenever we start
+  there. And we chose the <strong>smallest</strong> such number to minimize overflow risk.</p>
 </li>
 <li>
 <p>Similarly, with &ldquo;common quantity <em>point</em> units,&rdquo; we should choose its origin such that we only
@@ -2050,8 +2050,9 @@ unit,&rdquo; but the origin adds a new complication.  We&rsquo;ll need to choose
 <hr />
 <ol>
 <li id="fn:1">
-<p>It might also be <code>CommonUnit&lt;Meters, Inches&gt;</code>.  The ordering is deterministic, but
-unspecified.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>The overwhelmingly most common case here is that this integer is <em>positive</em> as well, not just
+nonzero, so that we usually don&rsquo;t change the sign, either.  If the integer happens to be negative,
+then this unit conversion would produce a hard compiler error if applied to an unsigned type.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
