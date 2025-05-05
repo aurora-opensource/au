@@ -743,6 +743,34 @@ TEST(UnitLabel, CommonPointUnitLabelTakesOriginOffsetIntoAccount) {
                       StrEq("EQUIV{[(1 / 5) (@(0 offset_deg_C) - @(0 deg_C))], [(1 / 3) deg_C]}")));
 }
 
+TEST(UnitLabel, CommonUnitOfCommonPointUnitsPerformsFlattening) {
+    using U =
+        CommonUnitT<CommonPointUnitT<Celsius, Kelvins>, CommonPointUnitT<Celsius, Fahrenheit>>;
+
+    // When enumerating the possibilities, we know that anonymous ad hoc units (such as the unit for
+    // the origin displacement from Kelvins to Celsius) will go last.  But we want to remain
+    // agnostic about orderings between named units.  This also means we'll be agnostic as to which
+    // of the (quantity-)equivalent units, Kelvins and Celsius, gets retained in the label, since
+    // one of them will be eliminated for being redundant with the other.
+    //
+    // Finally, we know not to expect the origin displacement from Fahrenheit to Celsius to show up
+    // in the label in any case, because it's already redundant with Fahrenheit (being [32 degF]).
+
+    // If Kelvins gets retained and Celsius gets treated as redundant:
+    const auto e1 =
+        StrEq("EQUIV{[(1 / 180) K], [(1 / 100) degF], [(1 / 49167) (@(0 deg_C) - @(0 K))]}");
+    const auto e2 =
+        StrEq("EQUIV{[(1 / 100) degF], [(1 / 180) K], [(1 / 49167) (@(0 deg_C) - @(0 K))]}");
+
+    // If Celsius gets retained and Kelvins gets treated as redundant:
+    const auto e3 =
+        StrEq("EQUIV{[(1 / 180) deg_C], [(1 / 100) degF], [(1 / 49167) (@(0 deg_C) - @(0 K))]}");
+    const auto e4 =
+        StrEq("EQUIV{[(1 / 100) degF], [(1 / 180) deg_C], [(1 / 49167) (@(0 deg_C) - @(0 K))]}");
+
+    EXPECT_THAT(unit_label(U{}), AnyOf(e1, e2, e3, e4));
+}
+
 TEST(UnitLabel, APICompatibleWithUnitSlots) { EXPECT_THAT(unit_label(feet), StrEq("ft")); }
 
 namespace detail {
