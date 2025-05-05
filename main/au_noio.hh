@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-17-g103aa79
+// Version identifier: 0.4.1-18-g677b756
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -3490,27 +3490,34 @@ constexpr T clamp_to_range_of(U x) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// `is_known_to_be_less_than_one(MagT)` is true if the magnitude `MagT` is purely rational; its
-// numerator is representable in `std::uintmax_t`; and, it is less than 1.
+// `is_abs_known_to_be_less_than_one(MagT)` is true if the absolute value of the magnitude `MagT` is
+// purely rational; its numerator is representable in `std::uintmax_t`; and, it is less than 1.
 //
 
+enum class IsAbsMagLessThanOne {
+    DEFINITELY,
+    MAYBE_NOT,
+};
+
 template <typename... BPs>
-constexpr bool is_known_to_be_less_than_one(Magnitude<BPs...>) {
-    using MagT = Magnitude<BPs...>;
+constexpr IsAbsMagLessThanOne is_abs_known_to_be_less_than_one(Magnitude<BPs...>) {
+    using MagT = Abs<Magnitude<BPs...>>;
     static_assert(is_rational(MagT{}), "Magnitude must be rational");
 
     constexpr auto num_result = get_value_result<std::uintmax_t>(numerator(MagT{}));
     static_assert(num_result.outcome == MagRepresentationOutcome::OK,
-                  "Magnitude must be representable in std::uintmax_t");
+                  "Numerator must be representable in std::uintmax_t");
 
     constexpr auto den_result = get_value_result<std::uintmax_t>(denominator(MagT{}));
     static_assert(
         den_result.outcome == MagRepresentationOutcome::OK ||
             den_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT,
-        "Magnitude must either be representable in std::uintmax_t, or fail due to overflow");
+        "Denominator must either be representable in std::uintmax_t, or fail due to overflow");
 
-    return den_result.outcome == MagRepresentationOutcome::OK ? num_result.value < den_result.value
-                                                              : true;
+    return (den_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT ||
+            num_result.value < den_result.value)
+               ? IsAbsMagLessThanOne::DEFINITELY
+               : IsAbsMagLessThanOne::MAYBE_NOT;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3527,13 +3534,19 @@ constexpr bool is_known_to_be_less_than_one(Magnitude<BPs...>) {
 //
 // Branch based on whether `MagT` is less than 1.
 //
-template <typename T, typename MagT, bool IsMagLessThanOne>
+template <typename T, typename MagT, IsAbsMagLessThanOne>
 struct MaxNonOverflowingValueImplWhenNumFits;
+
+// Implementation helper for "a value of zero" (which recurs a bunch of times).
+template <typename T>
+struct ValueOfZero {
+    static constexpr T value() { return T{0}; }
+};
 
 // If `MagT` is less than 1, then we only need to check for the limiting value where the _numerator
 // multiplication step alone_ would overflow.
 template <typename T, typename MagT>
-struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, true> {
+struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, IsAbsMagLessThanOne::DEFINITELY> {
     using P = PromotedType<T>;
 
     static constexpr T value() {
@@ -3542,11 +3555,11 @@ struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, true> {
     }
 };
 
-// If `MagT` is greater than 1, then we have two opportunities for overflow: the numerator
+// If `MagT` might be greater than 1, then we have two opportunities for overflow: the numerator
 // multiplication step can overflow the promoted type; or, the denominator division step can fail to
 // restore it to the original type's range.
 template <typename T, typename MagT>
-struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, false> {
+struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, IsAbsMagLessThanOne::MAYBE_NOT> {
     using P = PromotedType<T>;
 
     static constexpr T value() {
@@ -3565,17 +3578,24 @@ struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, false> {
 template <typename T, typename MagT, MagRepresentationOutcome NumOutcome>
 struct MaxNonOverflowingValueImpl;
 
+// For any situation where we're applying a negative factor to an unsigned type, simply short
+// circuit to set the max to zero.
+template <typename T, typename MagT>
+struct MaxNonOverflowingValueImpl<T,
+                                  MagT,
+                                  MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE>
+    : ValueOfZero<T> {};
+
 // If the numerator fits in the promoted type of `T`, delegate further based on whether the
 // denominator is bigger.
 template <typename T, typename MagT>
 struct MaxNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::OK>
-    : MaxNonOverflowingValueImplWhenNumFits<T, MagT, is_known_to_be_less_than_one(MagT{})> {};
+    : MaxNonOverflowingValueImplWhenNumFits<T, MagT, is_abs_known_to_be_less_than_one(MagT{})> {};
 
 // If `MagT` can't be represented in the promoted type of `T`, then the result is 0.
 template <typename T, typename MagT>
-struct MaxNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::ERR_CANNOT_FIT> {
-    static constexpr T value() { return T{0}; }
-};
+struct MaxNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::ERR_CANNOT_FIT>
+    : ValueOfZero<T> {};
 
 template <typename T, typename MagT>
 struct ValidateTypeAndMagnitude {
@@ -3606,13 +3626,13 @@ struct MaxNonOverflowingValue
 //
 // Branch based on whether `MagT` is less than 1.
 //
-template <typename T, typename MagT, bool IsMagLessThanOne>
+template <typename T, typename MagT, IsAbsMagLessThanOne>
 struct MinNonOverflowingValueImplWhenNumFits;
 
 // If `MagT` is less than 1, then we only need to check for the limiting value where the _numerator
 // multiplication step alone_ would overflow.
 template <typename T, typename MagT>
-struct MinNonOverflowingValueImplWhenNumFits<T, MagT, true> {
+struct MinNonOverflowingValueImplWhenNumFits<T, MagT, IsAbsMagLessThanOne::DEFINITELY> {
     using P = PromotedType<T>;
 
     static constexpr T value() {
@@ -3625,7 +3645,7 @@ struct MinNonOverflowingValueImplWhenNumFits<T, MagT, true> {
 // multiplication step can overflow the promoted type; or, the denominator division step can fail to
 // restore it to the original type's range.
 template <typename T, typename MagT>
-struct MinNonOverflowingValueImplWhenNumFits<T, MagT, false> {
+struct MinNonOverflowingValueImplWhenNumFits<T, MagT, IsAbsMagLessThanOne::MAYBE_NOT> {
     using P = PromotedType<T>;
 
     static constexpr T value() {
@@ -3648,13 +3668,12 @@ struct MinNonOverflowingValueImpl;
 // denominator is bigger.
 template <typename T, typename MagT>
 struct MinNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::OK>
-    : MinNonOverflowingValueImplWhenNumFits<T, MagT, is_known_to_be_less_than_one(MagT{})> {};
+    : MinNonOverflowingValueImplWhenNumFits<T, MagT, is_abs_known_to_be_less_than_one(MagT{})> {};
 
 // If the numerator can't be represented in the promoted type of `T`, then the result is 0.
 template <typename T, typename MagT>
-struct MinNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::ERR_CANNOT_FIT> {
-    static constexpr T value() { return T{0}; }
-};
+struct MinNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::ERR_CANNOT_FIT>
+    : ValueOfZero<T> {};
 
 template <typename T, typename MagT>
 struct MinNonOverflowingValue
@@ -4258,7 +4277,8 @@ struct IsFirstUnitRedundant
                          std::true_type,
                          std::conditional_t<AreUnitsQuantityEquivalent<U1, U2>::value,
                                             InOrderFor<Pack, U2, U1>,
-                                            IsInteger<UnitRatioT<U1, U2>>>> {};
+                                            stdx::conjunction<IsInteger<UnitRatioT<U1, U2>>,
+                                                              IsPositive<UnitRatioT<U1, U2>>>>> {};
 
 // Recursive case: eliminate first unit if it is redundant; else, keep it and eliminate any later
 // units that are redundant with it.
@@ -4703,12 +4723,9 @@ namespace au {
 template <typename Rep, typename... BPs>
 constexpr bool can_scale_without_overflow(Magnitude<BPs...> m, Rep value) {
     // Scales that shrink don't cause overflow.
-    if (get_value<double>(m) <= 1.0) {
-        (void)value;
-        return true;
-    } else {
-        return std::numeric_limits<Rep>::max() / get_value<Rep>(m) >= value;
-    }
+    constexpr bool mag_cannot_increase_values = get_value<double>(abs(m)) <= 1.0;
+    return mag_cannot_increase_values ||
+           (std::numeric_limits<Rep>::max() / get_value<Rep>(abs(m)) >= value);
 }
 
 namespace detail {
@@ -4749,9 +4766,19 @@ struct SettingPureRealFromMixedReal
     : stdx::conjunction<stdx::negation<std::is_same<SourceRep, RealPart<SourceRep>>>,
                         std::is_same<Rep, RealPart<Rep>>> {};
 
+// `SettingUnsignedFromNegativeScaleFactor<Rep, ScaleFactor>` makes sure we're not applying a
+// negative scale factor and then storing the result in an unsigned type.  This would only be OK if
+// the stored value itself were also negative, which is either never true (unsigned source) or true
+// only about half the time (signed source) --- in either case, not good enough for _implicit_
+// conversion.
+template <typename Rep, typename ScaleFactor>
+struct SettingUnsignedFromNegativeScaleFactor
+    : stdx::conjunction<std::is_unsigned<Rep>, stdx::negation<IsPositive<ScaleFactor>>> {};
+
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct CoreImplicitConversionPolicyImpl
     : stdx::conjunction<stdx::negation<SettingPureRealFromMixedReal<Rep, SourceRep>>,
+                        stdx::negation<SettingUnsignedFromNegativeScaleFactor<Rep, ScaleFactor>>,
                         CoreImplicitConversionPolicyImplAssumingReal<RealPart<Rep>,
                                                                      ScaleFactor,
                                                                      RealPart<SourceRep>>> {};
@@ -4761,14 +4788,20 @@ using CoreImplicitConversionPolicy = CoreImplicitConversionPolicyImpl<Rep, Scale
 
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion
-    : stdx::conjunction<std::is_same<ScaleFactor, Magnitude<>>,
+    : stdx::conjunction<std::is_same<Abs<ScaleFactor>, Magnitude<>>,
+                        stdx::disjunction<IsPositive<ScaleFactor>, std::is_signed<Rep>>,
                         std::is_integral<Rep>,
                         std::is_integral<SourceRep>,
                         std::is_assignable<Rep &, SourceRep>> {};
+
+template <typename Rep, typename ScaleFactor, typename SourceRep>
+using ImplicitConversionPolicy =
+    stdx::disjunction<CoreImplicitConversionPolicy<Rep, ScaleFactor, SourceRep>,
+                      PermitAsCarveOutForIntegerPromotion<Rep, ScaleFactor, SourceRep>>;
 }  // namespace detail
 
 template <typename Rep, typename ScaleFactor>
-struct ImplicitRepPermitted : detail::CoreImplicitConversionPolicy<Rep, ScaleFactor, Rep> {};
+struct ImplicitRepPermitted : detail::ImplicitConversionPolicy<Rep, ScaleFactor, Rep> {};
 
 template <typename Rep, typename SourceUnitSlot, typename TargetUnitSlot>
 constexpr bool implicit_rep_permitted_from_source_to_target(SourceUnitSlot, TargetUnitSlot) {
@@ -4793,9 +4826,7 @@ struct ConstructionPolicy {
     template <typename SourceUnit, typename SourceRep>
     using PermitImplicitFrom = stdx::conjunction<
         HasSameDimension<Unit, SourceUnit>,
-        stdx::disjunction<
-            detail::CoreImplicitConversionPolicy<Rep, ScaleFactor<SourceUnit>, SourceRep>,
-            detail::PermitAsCarveOutForIntegerPromotion<Rep, ScaleFactor<SourceUnit>, SourceRep>>>;
+        detail::ImplicitConversionPolicy<Rep, ScaleFactor<SourceUnit>, SourceRep>>;
 };
 
 }  // namespace au
