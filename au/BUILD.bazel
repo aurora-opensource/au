@@ -518,6 +518,7 @@ cc_library(
     hdrs = ["code/au/quantity_point.hh"],
     includes = ["code"],
     deps = [
+        ":constant",
         ":fwd",
         ":quantity",
         ":stdx",
@@ -623,6 +624,7 @@ cc_test(
     size = "small",
     srcs = ["code/au/unit_of_measure_test.cc"],
     deps = [
+        ":constant",
         ":prefix",
         ":testing",
         ":unit_of_measure",

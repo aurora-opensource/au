@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "au/constant.hh"
 #include "au/fwd.hh"
 #include "au/quantity.hh"
 #include "au/stdx/type_traits.hh"
@@ -46,19 +47,37 @@ template <typename P1, typename P2>
 struct AreQuantityPointTypesEquivalent;
 
 namespace detail {
-template <typename TargetRep, typename U1, typename U2>
-struct OriginDisplacementFitsIn;
+template <typename U, typename R, typename ConstUnit>
+constexpr Quantity<U, R> coerce_as_quantity(Constant<ConstUnit> c) {
+    return c.template coerce_as<R>(U{});
+}
+template <typename U, typename R>
+constexpr Quantity<U, R> coerce_as_quantity(Zero z) {
+    return z;
+}
 
 template <typename FromRep, typename ToRep>
 struct IntermediateRep;
 }  // namespace detail
 
+// Some units have an "origin".  This is not meaningful by itself, but its difference w.r.t. the
+// "origin" of another unit of the same Dimension _is_ meaningful.  This type trait provides access
+// to that difference.
+template <typename U1, typename U2>
+constexpr auto origin_displacement(U1, U2) {
+    return make_constant(detail::ComputeOriginDisplacementUnit<AssociatedUnitForPointsT<U1>,
+                                                               AssociatedUnitForPointsT<U2>>{});
+}
+
+template <typename U1, typename U2>
+using OriginDisplacement = decltype(origin_displacement(U1{}, U2{}));
+
 // QuantityPoint implementation and API elaboration.
 template <typename UnitT, typename RepT>
 class QuantityPoint {
     // Q: When should we enable IMPLICIT construction from another QuantityPoint type?
-    // A: EXACTLY WHEN our own Diff type can be IMPLICITLY constructed from the SUM of the target's
-    //    Diff type, and the offset between our Units' zero points.
+    // A: EXACTLY WHEN our own Diff type can be IMPLICITLY constructed from BOTH the target's Diff
+    //    type, AND the offset between our Units' zero points.
     //
     // In other words, there are two ways to fail implicit convertibility.
     //
@@ -72,10 +91,8 @@ class QuantityPoint {
     //      OK : QuantityPoint<Celsius, int> -> QuantityPoint<Milli<Kelvins>, int>
     template <typename OtherUnit, typename OtherRep>
     static constexpr bool should_enable_implicit_construction_from() {
-        return std::is_convertible<
-            decltype(std::declval<typename QuantityPoint<OtherUnit, OtherRep>::Diff>() +
-                     origin_displacement(UnitT{}, OtherUnit{})),
-            QuantityPoint::Diff>::value;
+        using Com = CommonUnitT<OtherUnit, detail::ComputeOriginDisplacementUnit<Unit, OtherUnit>>;
+        return std::is_convertible<Quantity<Com, OtherRep>, QuantityPoint::Diff>::value;
     }
 
     // This machinery exists to give us a conditionally explicit constructor, using SFINAE to select
@@ -131,27 +148,23 @@ class QuantityPoint {
     template <typename NewRep,
               typename NewUnit,
               typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
-    constexpr NewRep in(NewUnit u) const {
+    constexpr NewRep in(NewUnit) const {
         using CalcRep = typename detail::IntermediateRep<Rep, NewRep>::type;
-        return (rep_cast<CalcRep>(x_) -
-                rep_cast<CalcRep>(
-                    OriginDisplacement<Unit, AssociatedUnitForPointsT<NewUnit>>::value()))
-            .template in<NewRep>(associated_unit_for_points(u));
+        using Target = AssociatedUnitForPointsT<NewUnit>;
+        return (x_.template as<CalcRep>(Target{}) +
+                detail::coerce_as_quantity<Target, CalcRep>(origin_displacement(Target{}, Unit{})))
+            .template in<NewRep>(Target{});
     }
 
     template <typename NewUnit,
               typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
-    constexpr Rep in(NewUnit u) const {
-        static_assert(
-            detail::OriginDisplacementFitsIn<Rep, AssociatedUnitForPointsT<NewUnit>, Unit>::value,
-            "Cannot represent origin displacement in desired Rep");
-
+    constexpr Rep in(NewUnit) const {
+        using TargetUnit = AssociatedUnitForPointsT<NewUnit>;
         // `rep_cast` is needed because if these are integral types, their difference might become a
         // different type due to integer promotion.
-        return rep_cast<Rep>(
-                   x_ + rep_cast<Rep>(
-                            OriginDisplacement<AssociatedUnitForPointsT<NewUnit>, Unit>::value()))
-            .in(associated_unit_for_points(u));
+        return rep_cast<Rep>(x_.as(TargetUnit{}) +
+                             Quantity<TargetUnit, Rep>{origin_displacement(TargetUnit{}, Unit{})})
+            .in(TargetUnit{});
     }
 
     // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
@@ -395,23 +408,6 @@ constexpr auto operator<=>(const QuantityPoint<U1, R1> &lhs, const QuantityPoint
 #endif
 
 namespace detail {
-
-template <typename TargetRep, typename U, typename R>
-constexpr bool underlying_value_in_range(Quantity<U, R> q) {
-    return stdx::in_range<TargetRep>(q.in(U{}));
-}
-
-template <typename TargetRep>
-constexpr bool underlying_value_in_range(Zero) {
-    return true;
-}
-
-template <typename TargetRep, typename U1, typename U2>
-struct OriginDisplacementFitsIn
-    : std::conditional_t<std::is_integral<TargetRep>::value,
-                         stdx::bool_constant<underlying_value_in_range<TargetRep>(
-                             OriginDisplacement<U1, U2>::value())>,
-                         std::true_type> {};
 
 // We simply want a version of `std::make_signed_t` that won't choke on non-integral types.
 template <typename T, bool IsInt = std::is_integral<T>::value>
