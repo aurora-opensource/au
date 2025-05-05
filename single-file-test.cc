@@ -31,6 +31,18 @@ using ::au::symbols::s;
 
 constexpr auto ns = ::au::nano(s);
 
+namespace au::detail {
+std::ostream &operator<<(std::ostream &out, IsAbsMagLessThanOne val) {
+    switch (val) {
+        case IsAbsMagLessThanOne::DEFINITELY:
+            return out << "Definitely";
+        case IsAbsMagLessThanOne::MAYBE_NOT:
+            return out << "Maybe not";
+    }
+    return out;
+}
+}  // namespace au::detail
+
 // This ad hoc utility is a stand-in for GTEST, which we can't use here.
 template <typename ExpectedT, typename ActualT>
 bool expect_equal(ExpectedT expected, ActualT actual) {
