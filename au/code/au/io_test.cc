@@ -25,7 +25,11 @@
 using ::testing::StrEq;
 
 namespace au {
+
+using ::testing::StrEq;
+
 namespace {
+
 template <typename T>
 std::string stream_to_string(const T &x) {
     std::ostringstream oss;
@@ -57,8 +61,8 @@ constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
 }  // namespace
 
 TEST(StreamingOutput, PrintsValueAndUnitLabel) {
-    EXPECT_EQ(stream_to_string(feet(3)), "3 ft");
-    EXPECT_EQ(stream_to_string((feet / milli(second))(1.25)), "1.25 ft / ms");
+    EXPECT_THAT(stream_to_string(feet(3)), StrEq("3 ft"));
+    EXPECT_THAT(stream_to_string((feet / milli(second))(1.25)), StrEq("1.25 ft / ms"));
 }
 
 TEST(StreamingOutput, PrintValueRepChar) {
@@ -66,18 +70,18 @@ TEST(StreamingOutput, PrintValueRepChar) {
     // not the character literal that corresponds to 65 ('A').
     static_assert(std::is_same<int8_t, signed char>::value,
                   "Expected 'int8_t' to resolve to 'char'");
-    EXPECT_EQ(stream_to_string(feet(int8_t{65})), "65 ft");
+    EXPECT_THAT(stream_to_string(feet(int8_t{65})), StrEq("65 ft"));
 }
 
 TEST(StreamingOutput, DistinguishesPointFromQuantityByAtSign) {
-    EXPECT_EQ(stream_to_string(celsius_qty(20)), "20 deg C");
-    EXPECT_EQ(stream_to_string(celsius_pt(20)), "@(20 deg C)");
+    EXPECT_THAT(stream_to_string(celsius_qty(20)), StrEq("20 deg C"));
+    EXPECT_THAT(stream_to_string(celsius_pt(20)), StrEq("@(20 deg C)"));
 
-    EXPECT_EQ(stream_to_string(kelvins(20)), "20 K");
-    EXPECT_EQ(stream_to_string(kelvins_pt(20)), "@(20 K)");
+    EXPECT_THAT(stream_to_string(kelvins(20)), StrEq("20 K"));
+    EXPECT_THAT(stream_to_string(kelvins_pt(20)), StrEq("@(20 K)"));
 }
 
-TEST(StreamingOutput, PrintsZero) { EXPECT_EQ(stream_to_string(ZERO), "0"); }
+TEST(StreamingOutput, PrintsZero) { EXPECT_THAT(stream_to_string(ZERO), StrEq("0")); }
 
 TEST(StreamingOutput, PrintsMagnitude) {
     EXPECT_THAT(stream_to_string(mag<289374>()), StrEq("289374"));
