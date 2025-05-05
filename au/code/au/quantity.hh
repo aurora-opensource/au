@@ -101,7 +101,12 @@ constexpr auto as_quantity(T &&x) -> CorrespondingQuantityT<T> {
 }
 
 namespace detail {
-template <typename Rep, bool IsUnitPositive>
+enum class UnitSign {
+    POSITIVE,
+    NEGATIVE,
+};
+
+template <typename Rep, UnitSign>
 struct CompareUnderlyingValues;
 }  // namespace detail
 
@@ -111,7 +116,10 @@ class Quantity {
     using EnableIfImplicitOkIs = std::enable_if_t<
         ImplicitOk ==
         ConstructionPolicy<UnitT, RepT>::template PermitImplicitFrom<OtherUnit, OtherRep>::value>;
-    using Vals = detail::CompareUnderlyingValues<RepT, IsPositive<detail::MagT<UnitT>>::value>;
+    using Vals = detail::CompareUnderlyingValues<RepT,
+                                                 (IsPositive<detail::MagT<UnitT>>::value
+                                                      ? detail::UnitSign::POSITIVE
+                                                      : detail::UnitSign::NEGATIVE)>;
 
     // Not strictly necessary, but we want to keep each comparator implementation to one line.
     using Eq = detail::Equal;
@@ -852,7 +860,7 @@ constexpr auto operator>=(QLike q1, Quantity<U, R> q2) -> decltype(as_quantity(q
 
 namespace detail {
 template <typename Rep>
-struct CompareUnderlyingValues<Rep, true> {
+struct CompareUnderlyingValues<Rep, UnitSign::POSITIVE> {
     template <typename U, typename Comp>
     static constexpr auto cmp(Quantity<U, Rep> lhs, Quantity<U, Rep> rhs, Comp comp) {
         return comp(lhs.in(U{}), rhs.in(U{}));
@@ -860,7 +868,7 @@ struct CompareUnderlyingValues<Rep, true> {
 };
 
 template <typename Rep>
-struct CompareUnderlyingValues<Rep, false> {
+struct CompareUnderlyingValues<Rep, UnitSign::NEGATIVE> {
     template <typename U, typename Comp>
     static constexpr auto cmp(Quantity<U, Rep> lhs, Quantity<U, Rep> rhs, Comp comp) {
         return comp(rhs.in(U{}), lhs.in(U{}));
