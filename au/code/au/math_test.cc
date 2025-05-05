@@ -31,12 +31,16 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+namespace au {
+
 using ::testing::DoubleNear;
 using ::testing::Eq;
+using ::testing::IsFalse;
+using ::testing::IsTrue;
 using ::testing::StaticAssertTypeEq;
 
-namespace au {
 namespace {
+
 constexpr auto INTEGER_TOO_BIG_FOR_DOUBLE = 9'007'199'254'740'993LL;
 
 // Backport of std::clamp() from C++17 for testing purposes.
@@ -50,6 +54,7 @@ template <class T>
 constexpr const T &std_clamp(const T &v, const T &lo, const T &hi) {
     return std_clamp(v, lo, hi, std::less<void>{});
 }
+
 }  // namespace
 
 TEST(abs, AlwaysReturnsNonnegativeVersionOfInput) {
@@ -164,7 +169,8 @@ TEST(clamp, QuantityPointTakesOffsetIntoAccount) {
     // into account for this mixed result.  This means whatever unit we return must be at most 1/20
     // Kelvins, and must evenly divide 1/20 Kelvins.
     constexpr auto celsius_origin = clamp(celsius_pt(0), kelvins_pt(200), kelvins_pt(300));
-    ASSERT_TRUE(is_integer(unit_ratio(Kelvins{} / mag<20>(), decltype(celsius_origin)::unit)));
+    ASSERT_THAT(is_integer(unit_ratio(Kelvins{} / mag<20>(), decltype(celsius_origin)::unit)),
+                IsTrue());
     EXPECT_EQ(celsius_origin, centi(kelvins_pt)(273'15));
 }
 
@@ -719,7 +725,7 @@ TEST(isnan, TransparentlyActsOnSameAsValue) {
 TEST(isnan, UnqualifiedCallsGiveStdVersions) {
     // This test exists to make sure we don't break code with unqualified isnan calls.
     const bool b = isnan(5.5);
-    EXPECT_FALSE(b);
+    EXPECT_THAT(b, IsFalse());
 }
 
 TEST(numeric_limits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
@@ -730,18 +736,18 @@ TEST(numeric_limits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
     // Source for rule: https://en.cppreference.com/w/cpp/language/extending_std
     // List of members: https://en.cppreference.com/w/cpp/types/numeric_limits
     using meters_limits_int = std::numeric_limits<Quantity<Meters, int>>;
-    EXPECT_TRUE(meters_limits_int::is_specialized);
-    EXPECT_TRUE(meters_limits_int::is_signed);
-    EXPECT_TRUE(meters_limits_int::is_integer);
-    EXPECT_TRUE(meters_limits_int::is_exact);
-    EXPECT_FALSE(meters_limits_int::has_infinity);
-    EXPECT_FALSE(meters_limits_int::has_quiet_NaN);
-    EXPECT_FALSE(meters_limits_int::has_signaling_NaN);
+    EXPECT_THAT(meters_limits_int::is_specialized, IsTrue());
+    EXPECT_THAT(meters_limits_int::is_signed, IsTrue());
+    EXPECT_THAT(meters_limits_int::is_integer, IsTrue());
+    EXPECT_THAT(meters_limits_int::is_exact, IsTrue());
+    EXPECT_THAT(meters_limits_int::has_infinity, IsFalse());
+    EXPECT_THAT(meters_limits_int::has_quiet_NaN, IsFalse());
+    EXPECT_THAT(meters_limits_int::has_signaling_NaN, IsFalse());
     EXPECT_EQ(meters_limits_int::has_denorm, std::denorm_absent);
-    EXPECT_FALSE(meters_limits_int::has_denorm_loss);
+    EXPECT_THAT(meters_limits_int::has_denorm_loss, IsFalse());
     EXPECT_EQ(meters_limits_int::round_style, std::round_toward_zero);
-    EXPECT_FALSE(meters_limits_int::is_iec559);
-    EXPECT_TRUE(meters_limits_int::is_bounded);
+    EXPECT_THAT(meters_limits_int::is_iec559, IsFalse());
+    EXPECT_THAT(meters_limits_int::is_bounded, IsTrue());
     EXPECT_EQ(meters_limits_int::is_modulo, std::numeric_limits<int>::is_modulo);
     EXPECT_EQ(meters_limits_int::digits, std::numeric_limits<int>::digits);
     EXPECT_EQ(meters_limits_int::digits10, std::numeric_limits<int>::digits10);
@@ -751,23 +757,23 @@ TEST(numeric_limits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
     EXPECT_EQ(meters_limits_int::min_exponent10, 0);
     EXPECT_EQ(meters_limits_int::max_exponent, 0);
     EXPECT_EQ(meters_limits_int::max_exponent10, 0);
-    EXPECT_TRUE(meters_limits_int::traps);
-    EXPECT_FALSE(meters_limits_int::tinyness_before);
+    EXPECT_THAT(meters_limits_int::traps, IsTrue());
+    EXPECT_THAT(meters_limits_int::tinyness_before, IsFalse());
 
     using radians_limits_uint32_t = std::numeric_limits<Quantity<Radians, uint32_t>>;
-    EXPECT_TRUE(radians_limits_uint32_t::is_specialized);
-    EXPECT_FALSE(radians_limits_uint32_t::is_signed);
-    EXPECT_TRUE(radians_limits_uint32_t::is_integer);
-    EXPECT_TRUE(radians_limits_uint32_t::is_exact);
-    EXPECT_FALSE(radians_limits_uint32_t::has_infinity);
-    EXPECT_FALSE(radians_limits_uint32_t::has_quiet_NaN);
-    EXPECT_FALSE(radians_limits_uint32_t::has_signaling_NaN);
+    EXPECT_THAT(radians_limits_uint32_t::is_specialized, IsTrue());
+    EXPECT_THAT(radians_limits_uint32_t::is_signed, IsFalse());
+    EXPECT_THAT(radians_limits_uint32_t::is_integer, IsTrue());
+    EXPECT_THAT(radians_limits_uint32_t::is_exact, IsTrue());
+    EXPECT_THAT(radians_limits_uint32_t::has_infinity, IsFalse());
+    EXPECT_THAT(radians_limits_uint32_t::has_quiet_NaN, IsFalse());
+    EXPECT_THAT(radians_limits_uint32_t::has_signaling_NaN, IsFalse());
     EXPECT_EQ(radians_limits_uint32_t::has_denorm, std::denorm_absent);
-    EXPECT_FALSE(radians_limits_uint32_t::has_denorm_loss);
+    EXPECT_THAT(radians_limits_uint32_t::has_denorm_loss, IsFalse());
     EXPECT_EQ(radians_limits_uint32_t::round_style, std::round_toward_zero);
-    EXPECT_FALSE(radians_limits_uint32_t::is_iec559);
-    EXPECT_TRUE(radians_limits_uint32_t::is_bounded);
-    EXPECT_TRUE(radians_limits_uint32_t::is_modulo);
+    EXPECT_THAT(radians_limits_uint32_t::is_iec559, IsFalse());
+    EXPECT_THAT(radians_limits_uint32_t::is_bounded, IsTrue());
+    EXPECT_THAT(radians_limits_uint32_t::is_modulo, IsTrue());
     EXPECT_EQ(radians_limits_uint32_t::digits, std::numeric_limits<uint32_t>::digits);
     EXPECT_EQ(radians_limits_uint32_t::digits10, std::numeric_limits<uint32_t>::digits10);
     EXPECT_EQ(radians_limits_uint32_t::max_digits10, 0);
@@ -776,23 +782,23 @@ TEST(numeric_limits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
     EXPECT_EQ(radians_limits_uint32_t::min_exponent10, 0);
     EXPECT_EQ(radians_limits_uint32_t::max_exponent, 0);
     EXPECT_EQ(radians_limits_uint32_t::max_exponent10, 0);
-    EXPECT_TRUE(radians_limits_uint32_t::traps);
-    EXPECT_FALSE(radians_limits_uint32_t::tinyness_before);
+    EXPECT_THAT(radians_limits_uint32_t::traps, IsTrue());
+    EXPECT_THAT(radians_limits_uint32_t::tinyness_before, IsFalse());
 
     using celsius_limits_float = std::numeric_limits<Quantity<Celsius, float>>;
-    EXPECT_TRUE(celsius_limits_float::is_specialized);
-    EXPECT_TRUE(celsius_limits_float::is_signed);
-    EXPECT_FALSE(celsius_limits_float::is_integer);
-    EXPECT_FALSE(celsius_limits_float::is_exact);
-    EXPECT_TRUE(celsius_limits_float::has_infinity);
-    EXPECT_TRUE(celsius_limits_float::has_quiet_NaN);
-    EXPECT_TRUE(celsius_limits_float::has_signaling_NaN);
+    EXPECT_THAT(celsius_limits_float::is_specialized, IsTrue());
+    EXPECT_THAT(celsius_limits_float::is_signed, IsTrue());
+    EXPECT_THAT(celsius_limits_float::is_integer, IsFalse());
+    EXPECT_THAT(celsius_limits_float::is_exact, IsFalse());
+    EXPECT_THAT(celsius_limits_float::has_infinity, IsTrue());
+    EXPECT_THAT(celsius_limits_float::has_quiet_NaN, IsTrue());
+    EXPECT_THAT(celsius_limits_float::has_signaling_NaN, IsTrue());
     EXPECT_EQ(celsius_limits_float::has_denorm, std::denorm_present);
     EXPECT_EQ(celsius_limits_float::has_denorm_loss, std::numeric_limits<float>::has_denorm_loss);
     EXPECT_EQ(celsius_limits_float::round_style, std::round_to_nearest);
-    EXPECT_TRUE(celsius_limits_float::is_iec559);
-    EXPECT_TRUE(celsius_limits_float::is_bounded);
-    EXPECT_FALSE(celsius_limits_float::is_modulo);
+    EXPECT_THAT(celsius_limits_float::is_iec559, IsTrue());
+    EXPECT_THAT(celsius_limits_float::is_bounded, IsTrue());
+    EXPECT_THAT(celsius_limits_float::is_modulo, IsFalse());
     EXPECT_EQ(celsius_limits_float::digits, FLT_MANT_DIG);
     EXPECT_EQ(celsius_limits_float::digits10, FLT_DIG);
     EXPECT_EQ(celsius_limits_float::max_digits10, std::numeric_limits<float>::max_digits10);
@@ -801,7 +807,7 @@ TEST(numeric_limits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
     EXPECT_EQ(celsius_limits_float::min_exponent10, FLT_MIN_10_EXP);
     EXPECT_EQ(celsius_limits_float::max_exponent, FLT_MAX_EXP);
     EXPECT_EQ(celsius_limits_float::max_exponent10, FLT_MAX_10_EXP);
-    EXPECT_FALSE(celsius_limits_float::traps);
+    EXPECT_THAT(celsius_limits_float::traps, IsFalse());
     EXPECT_EQ(celsius_limits_float::tinyness_before, std::numeric_limits<float>::tinyness_before);
 }
 

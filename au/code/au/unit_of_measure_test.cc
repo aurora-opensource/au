@@ -27,15 +27,17 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+namespace au {
+
 using ::au::detail::DimT;
 using ::au::detail::MagT;
 using ::testing::AnyOf;
 using ::testing::Eq;
+using ::testing::IsFalse;
+using ::testing::IsTrue;
 using ::testing::Not;
 using ::testing::StaticAssertTypeEq;
 using ::testing::StrEq;
-
-namespace au {
 
 struct Celsius : Kelvins {
     static constexpr auto origin() { return milli(kelvins)(273'150); }
@@ -110,8 +112,9 @@ TEST(Unit, OriginRetainedForProductWithMagnitudeButNotWithUnit) {
     EXPECT_THAT(decltype(scaled_by_mag)::origin(), SameTypeAndValue(UnitWithOrigin::origin()));
 
     constexpr auto scaled_by_unit = UnitWithOrigin{} * One{};
-    EXPECT_FALSE(
-        (stdx::experimental::is_detected<detail::OriginMemberType, decltype(scaled_by_unit)>{}));
+    EXPECT_THAT(
+        (stdx::experimental::is_detected<detail::OriginMemberType, decltype(scaled_by_unit)>{}),
+        IsFalse());
 }
 
 TEST(ScaledUnit, IsTypeIdentityWhenScalingByOne) {
@@ -119,40 +122,42 @@ TEST(ScaledUnit, IsTypeIdentityWhenScalingByOne) {
     StaticAssertTypeEq<decltype((Feet{} * mag<3>()) / mag<3>()), Feet>();
 }
 
-TEST(IsUnit, TrueForUnitImpl) { EXPECT_TRUE(IsUnit<UnitImpl<Length>>::value); }
+TEST(IsUnit, TrueForUnitImpl) { EXPECT_THAT(IsUnit<UnitImpl<Length>>::value, IsTrue()); }
 
-TEST(IsUnit, TrueForOpaqueTypedef) { EXPECT_TRUE(IsUnit<Feet>::value); }
+TEST(IsUnit, TrueForOpaqueTypedef) { EXPECT_THAT(IsUnit<Feet>::value, IsTrue()); }
 
 TEST(IsUnit, TrueForPowerOfUnit) {
-    EXPECT_TRUE((IsUnit<Pow<Feet, 3>>::value));
-    EXPECT_TRUE((IsUnit<RatioPow<Feet, 1, 2>>::value));
+    EXPECT_THAT((IsUnit<Pow<Feet, 3>>::value), IsTrue());
+    EXPECT_THAT((IsUnit<RatioPow<Feet, 1, 2>>::value), IsTrue());
 }
 
 TEST(IsUnit, SupportsDeductionFromInstance) {
-    EXPECT_TRUE(is_unit(Feet{}));
-    EXPECT_FALSE(is_unit(3));
+    EXPECT_THAT(is_unit(Feet{}), IsTrue());
+    EXPECT_THAT(is_unit(3), IsFalse());
 }
 
-TEST(IsUnit, TrueForUnrelatedTypeWithDimAndMag) { EXPECT_TRUE(IsUnit<AdHocSpeedUnit>::value); }
+TEST(IsUnit, TrueForUnrelatedTypeWithDimAndMag) {
+    EXPECT_THAT(IsUnit<AdHocSpeedUnit>::value, IsTrue());
+}
 
 TEST(IsUnit, FalseIfDimOrMagHasWrongType) {
-    EXPECT_FALSE(is_unit(InvalidWrongDimType{}));
-    EXPECT_FALSE(is_unit(InvalidWrongMagType{}));
+    EXPECT_THAT(is_unit(InvalidWrongDimType{}), IsFalse());
+    EXPECT_THAT(is_unit(InvalidWrongMagType{}), IsFalse());
 }
 
-TEST(IsUnit, FunctionalFormFalseForQuantityMaker) { EXPECT_FALSE(is_unit(meters)); }
+TEST(IsUnit, FunctionalFormFalseForQuantityMaker) { EXPECT_THAT(is_unit(meters), IsFalse()); }
 
 TEST(FitsInUnitSlot, TrueForUnitAndQuantityMakerAndSingularNameFor) {
-    EXPECT_TRUE(fits_in_unit_slot(meters));
-    EXPECT_TRUE(fits_in_unit_slot(meter));
-    EXPECT_TRUE(fits_in_unit_slot(Meters{}));
+    EXPECT_THAT(fits_in_unit_slot(meters), IsTrue());
+    EXPECT_THAT(fits_in_unit_slot(meter), IsTrue());
+    EXPECT_THAT(fits_in_unit_slot(Meters{}), IsTrue());
 
-    EXPECT_FALSE(fits_in_unit_slot(1.2));
+    EXPECT_THAT(fits_in_unit_slot(1.2), IsFalse());
 }
 
 TEST(Product, IsUnitWithProductOfMagnitudesAndDimensions) {
     constexpr auto foot_yards = Feet{} * Yards{};
-    EXPECT_TRUE(is_unit(foot_yards));
+    EXPECT_THAT(is_unit(foot_yards), IsTrue());
 
     StaticAssertTypeEq<MagT<decltype(foot_yards)>, MagProductT<MagT<Feet>, MagT<Yards>>>();
     StaticAssertTypeEq<DimT<decltype(foot_yards)>, DimProductT<DimT<Feet>, DimT<Yards>>>();
@@ -160,7 +165,7 @@ TEST(Product, IsUnitWithProductOfMagnitudesAndDimensions) {
 
 TEST(Quotient, IsUnitWithQuotientOfMagnitudesAndDimensions) {
     constexpr auto in_per_min = Inches{} / Minutes{};
-    EXPECT_TRUE(is_unit(in_per_min));
+    EXPECT_THAT(is_unit(in_per_min), IsTrue());
     StaticAssertTypeEq<MagT<decltype(in_per_min)>, MagQuotientT<MagT<Inches>, MagT<Minutes>>>();
     StaticAssertTypeEq<DimT<decltype(in_per_min)>, DimQuotientT<DimT<Inches>, DimT<Minutes>>>();
 }
@@ -169,8 +174,8 @@ TEST(Pow, FunctionGivesUnitWhichIsEquivalentToManuallyComputedPower) {
     constexpr auto in = Inches{};
     constexpr auto cubic_inches = pow<3>(in);
 
-    EXPECT_TRUE(is_unit(cubic_inches));
-    EXPECT_TRUE(are_units_quantity_equivalent(cubic_inches, in * in * in));
+    EXPECT_THAT(is_unit(cubic_inches), IsTrue());
+    EXPECT_THAT(are_units_quantity_equivalent(cubic_inches, in * in * in), IsTrue());
 }
 
 TEST(UnitProduct, IsUnitlessUnitForNoInputs) {
@@ -190,7 +195,7 @@ TEST(UnitProductT, IdentityForSingleUnit) {
 
 TEST(UnitProductT, ProductOfTwoUnitsIsUnitWithProductsOfDimAndMag) {
     using FootInches = UnitProductT<Feet, Inches>;
-    EXPECT_TRUE(IsUnit<FootInches>::value);
+    EXPECT_THAT(IsUnit<FootInches>::value, IsTrue());
     StaticAssertTypeEq<DimT<FootInches>, DimProductT<DimT<Feet>, DimT<Inches>>>();
     StaticAssertTypeEq<MagT<FootInches>, MagProductT<MagT<Feet>, MagT<Inches>>>();
 }
@@ -256,88 +261,89 @@ TEST(Root, FunctionalInterfaceHandlesInstancesCorrectly) {
     constexpr auto cubic_inches = pow<3>(Inches{});
     constexpr auto cbrt_cubic_inches = root<3>(cubic_inches);
 
-    EXPECT_TRUE(is_unit(cbrt_cubic_inches));
-    EXPECT_TRUE(are_units_quantity_equivalent(cbrt_cubic_inches, Inches{}));
+    EXPECT_THAT(is_unit(cbrt_cubic_inches), IsTrue());
+    EXPECT_THAT(are_units_quantity_equivalent(cbrt_cubic_inches, Inches{}), IsTrue());
 }
 
 TEST(Inverse, RaisesToPowerNegativeOne) {
-    EXPECT_TRUE(are_units_quantity_equivalent(inverse(Meters{}), pow<-1>(Meters{})));
+    EXPECT_THAT(are_units_quantity_equivalent(inverse(Meters{}), pow<-1>(Meters{})), IsTrue());
 }
 
 TEST(Squared, RaisesToPowerTwo) {
-    EXPECT_TRUE(are_units_quantity_equivalent(squared(Meters{}), pow<2>(Meters{})));
+    EXPECT_THAT(are_units_quantity_equivalent(squared(Meters{}), pow<2>(Meters{})), IsTrue());
 }
 
 TEST(Cubed, RaisesToPowerThree) {
-    EXPECT_TRUE(are_units_quantity_equivalent(cubed(Meters{}), pow<3>(Meters{})));
+    EXPECT_THAT(are_units_quantity_equivalent(cubed(Meters{}), pow<3>(Meters{})), IsTrue());
 }
 
 TEST(Sqrt, TakesSecondRoot) {
-    EXPECT_TRUE(are_units_quantity_equivalent(sqrt(Meters{}), root<2>(Meters{})));
+    EXPECT_THAT(are_units_quantity_equivalent(sqrt(Meters{}), root<2>(Meters{})), IsTrue());
 }
 
 TEST(Cbrt, TakesThirdRoot) {
-    EXPECT_TRUE(are_units_quantity_equivalent(cbrt(Meters{}), root<3>(Meters{})));
+    EXPECT_THAT(are_units_quantity_equivalent(cbrt(Meters{}), root<3>(Meters{})), IsTrue());
 }
 
 TEST(IsDimensionless, PicksOutDimensionlessUnit) {
-    EXPECT_FALSE((IsDimensionless<Feet>::value));
+    EXPECT_THAT((IsDimensionless<Feet>::value), IsFalse());
 
-    EXPECT_TRUE((IsDimensionless<UnitQuotientT<Inches, Yards>>::value));
+    EXPECT_THAT((IsDimensionless<UnitQuotientT<Inches, Yards>>::value), IsTrue());
 
-    EXPECT_TRUE(
-        (IsDimensionless<UnitQuotientT<AdHocSpeedUnit, UnitQuotientT<Feet, Minutes>>>::value));
+    EXPECT_THAT(
+        (IsDimensionless<UnitQuotientT<AdHocSpeedUnit, UnitQuotientT<Feet, Minutes>>>::value),
+        IsTrue());
 }
 
 TEST(IsDimensionless, FunctionalInterfaceHandlesInstancesCorrectly) {
-    EXPECT_FALSE(is_dimensionless(Feet{}));
-    EXPECT_TRUE(is_dimensionless(Inches{} / Yards{}));
-    EXPECT_TRUE(is_dimensionless(AdHocSpeedUnit{} / Feet{} * Minutes{}));
+    EXPECT_THAT(is_dimensionless(Feet{}), IsFalse());
+    EXPECT_THAT(is_dimensionless(Inches{} / Yards{}), IsTrue());
+    EXPECT_THAT(is_dimensionless(AdHocSpeedUnit{} / Feet{} * Minutes{}), IsTrue());
 }
 
 TEST(IsDimensionless, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
-    EXPECT_FALSE(is_dimensionless(feet));
-    EXPECT_TRUE(is_dimensionless(inches / yards));
+    EXPECT_THAT(is_dimensionless(feet), IsFalse());
+    EXPECT_THAT(is_dimensionless(inches / yards), IsTrue());
 }
 
 TEST(IsUnitlessUnit, PicksOutUnitlessUnit) {
-    EXPECT_FALSE(is_unitless_unit(Inches{} / Yards{}));
-    EXPECT_TRUE(is_unitless_unit(Inches{} / Inches{}));
+    EXPECT_THAT(is_unitless_unit(Inches{} / Yards{}), IsFalse());
+    EXPECT_THAT(is_unitless_unit(Inches{} / Inches{}), IsTrue());
 }
 
 TEST(IsUnitlessUnit, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
-    EXPECT_FALSE(is_unitless_unit(inches / yards));
-    EXPECT_TRUE(is_unitless_unit(inches / inches));
+    EXPECT_THAT(is_unitless_unit(inches / yards), IsFalse());
+    EXPECT_THAT(is_unitless_unit(inches / inches), IsTrue());
 }
 
 TEST(HasSameDimension, TrueForAnySingleDimension) {
-    EXPECT_TRUE(HasSameDimension<Feet>::value);
-    EXPECT_TRUE(HasSameDimension<Minutes>::value);
-    EXPECT_TRUE(HasSameDimension<AdHocSpeedUnit>::value);
+    EXPECT_THAT(HasSameDimension<Feet>::value, IsTrue());
+    EXPECT_THAT(HasSameDimension<Minutes>::value, IsTrue());
+    EXPECT_THAT(HasSameDimension<AdHocSpeedUnit>::value, IsTrue());
 }
 
 TEST(HasSameDimension, CorrectlyIdentifiesEquivalenceClass) {
-    EXPECT_TRUE((HasSameDimension<Feet, Feet>::value));
-    EXPECT_TRUE((HasSameDimension<Feet, Yards>::value));
-    EXPECT_TRUE((HasSameDimension<Feet, Yards, Inches>::value));
+    EXPECT_THAT((HasSameDimension<Feet, Feet>::value), IsTrue());
+    EXPECT_THAT((HasSameDimension<Feet, Yards>::value), IsTrue());
+    EXPECT_THAT((HasSameDimension<Feet, Yards, Inches>::value), IsTrue());
 
-    EXPECT_FALSE((HasSameDimension<Minutes, Yards>::value));
+    EXPECT_THAT((HasSameDimension<Minutes, Yards>::value), IsFalse());
 }
 
 TEST(HasSameDimension, FunctionalInterfaceHandlesInstancesCorrectly) {
-    EXPECT_TRUE(has_same_dimension(Feet{}, Feet{}));
-    EXPECT_TRUE(has_same_dimension(Feet{}, Yards{}));
+    EXPECT_THAT(has_same_dimension(Feet{}, Feet{}), IsTrue());
+    EXPECT_THAT(has_same_dimension(Feet{}, Yards{}), IsTrue());
 
-    EXPECT_TRUE(has_same_dimension(Feet{}, Yards{}, Inches{}, Yards{}));
-    EXPECT_FALSE(has_same_dimension(Feet{}, Yards{}, Inches{}, Minutes{}));
+    EXPECT_THAT(has_same_dimension(Feet{}, Yards{}, Inches{}, Yards{}), IsTrue());
+    EXPECT_THAT(has_same_dimension(Feet{}, Yards{}, Inches{}, Minutes{}), IsFalse());
 }
 
 TEST(HasSameDimension, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
-    EXPECT_TRUE(has_same_dimension(feet, feet));
-    EXPECT_TRUE(has_same_dimension(feet, yards));
+    EXPECT_THAT(has_same_dimension(feet, feet), IsTrue());
+    EXPECT_THAT(has_same_dimension(feet, yards), IsTrue());
 
-    EXPECT_TRUE(has_same_dimension(feet, yards, inches, yards));
-    EXPECT_FALSE(has_same_dimension(feet, yards, inches, minutes));
+    EXPECT_THAT(has_same_dimension(feet, yards, inches, yards), IsTrue());
+    EXPECT_THAT(has_same_dimension(feet, yards, inches, minutes), IsFalse());
 }
 
 TEST(UnitRatio, ComputesRatioForSameDimensionedUnits) {
@@ -357,68 +363,69 @@ TEST(UnitRatio, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
 }
 
 TEST(AreUnitsQuantityEquivalent, UnitIsEquivalentToItself) {
-    EXPECT_TRUE((AreUnitsQuantityEquivalent<Feet, Feet>::value));
-    EXPECT_TRUE((AreUnitsQuantityEquivalent<Minutes, Minutes>::value));
+    EXPECT_THAT((AreUnitsQuantityEquivalent<Feet, Feet>::value), IsTrue());
+    EXPECT_THAT((AreUnitsQuantityEquivalent<Minutes, Minutes>::value), IsTrue());
 }
 
 TEST(AreUnitsQuantityEquivalent, InequivalentUnitCanBeMadeEquivalentByAppropriateScaling) {
-    EXPECT_FALSE((AreUnitsQuantityEquivalent<Feet, Inches>::value));
+    EXPECT_THAT((AreUnitsQuantityEquivalent<Feet, Inches>::value), IsFalse());
 
     using Stretchedinches = decltype(Inches{} * unit_ratio(Feet{}, Inches{}));
-    ASSERT_FALSE((detail::SameTypeIgnoringCvref<Feet, Stretchedinches>::value));
-    EXPECT_TRUE((AreUnitsQuantityEquivalent<Feet, Stretchedinches>::value));
+    ASSERT_THAT((detail::SameTypeIgnoringCvref<Feet, Stretchedinches>::value), IsFalse());
+    EXPECT_THAT((AreUnitsQuantityEquivalent<Feet, Stretchedinches>::value), IsTrue());
 }
 
 TEST(AreUnitsQuantityEquivalent, DifferentDimensionedUnitsAreNotEquivalent) {
-    EXPECT_FALSE((AreUnitsQuantityEquivalent<Feet, Minutes>::value));
+    EXPECT_THAT((AreUnitsQuantityEquivalent<Feet, Minutes>::value), IsFalse());
 }
 
 TEST(AreUnitsQuantityEquivalent, FunctionalInterfaceHandlesInstancesCorrectly) {
-    EXPECT_FALSE(are_units_quantity_equivalent(Feet{}, Minutes{}));
+    EXPECT_THAT(are_units_quantity_equivalent(Feet{}, Minutes{}), IsFalse());
 }
 
 TEST(AreUnitsQuantityEquivalent, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
-    EXPECT_FALSE(are_units_quantity_equivalent(feet, minutes));
+    EXPECT_THAT(are_units_quantity_equivalent(feet, minutes), IsFalse());
 }
 
 TEST(AreUnitsPointEquivalent, UnitIsEquivalentToItself) {
-    EXPECT_TRUE((AreUnitsPointEquivalent<Feet, Feet>::value));
-    EXPECT_TRUE((AreUnitsPointEquivalent<Celsius, Celsius>::value));
+    EXPECT_THAT((AreUnitsPointEquivalent<Feet, Feet>::value), IsTrue());
+    EXPECT_THAT((AreUnitsPointEquivalent<Celsius, Celsius>::value), IsTrue());
 }
 
 TEST(AreUnitsPointEquivalent, InequivalentUnitCanBeMadeEquivalentByAppropriateScaling) {
-    EXPECT_FALSE((AreUnitsPointEquivalent<Feet, Inches>::value));
+    EXPECT_THAT((AreUnitsPointEquivalent<Feet, Inches>::value), IsFalse());
 
     using Stretchedinches = decltype(Inches{} * unit_ratio(Feet{}, Inches{}));
-    ASSERT_FALSE((detail::SameTypeIgnoringCvref<Feet, Stretchedinches>::value));
-    EXPECT_TRUE((AreUnitsPointEquivalent<Feet, Stretchedinches>::value));
+    ASSERT_THAT((detail::SameTypeIgnoringCvref<Feet, Stretchedinches>::value), IsFalse());
+    EXPECT_THAT((AreUnitsPointEquivalent<Feet, Stretchedinches>::value), IsTrue());
 }
 
 TEST(AreUnitsPointEquivalent, DifferentDimensionedUnitsAreNotEquivalent) {
-    EXPECT_FALSE((AreUnitsPointEquivalent<Feet, Minutes>::value));
+    EXPECT_THAT((AreUnitsPointEquivalent<Feet, Minutes>::value), IsFalse());
 }
 
 TEST(AreUnitsPointEquivalent, UnitsWithDifferentOriginsAreNotPointEquivalent) {
-    ASSERT_TRUE(are_units_quantity_equivalent(Celsius{}, Kelvins{}));
-    EXPECT_FALSE(are_units_point_equivalent(Celsius{}, Kelvins{}));
+    ASSERT_THAT(are_units_quantity_equivalent(Celsius{}, Kelvins{}), IsTrue());
+    EXPECT_THAT(are_units_point_equivalent(Celsius{}, Kelvins{}), IsFalse());
 }
 
 TEST(AreUnitsPointEquivalent, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
-    ASSERT_TRUE(are_units_quantity_equivalent(celsius, kelvins));
-    EXPECT_FALSE(are_units_point_equivalent(celsius, kelvins));
+    ASSERT_THAT(are_units_quantity_equivalent(celsius, kelvins), IsTrue());
+    EXPECT_THAT(are_units_point_equivalent(celsius, kelvins), IsFalse());
 }
 
 TEST(AreUnitsPointEquivalent, DifferentUnitsWithDifferentButEquivalentOriginsArePointEquivalent) {
     // The origins of these units represent the same conceptual Quantity, although they are
     // represented in quantity-inequivalent units.
     ASSERT_THAT(Celsius::origin(), Eq(AlternateCelsius::origin()));
-    ASSERT_FALSE(are_units_quantity_equivalent(decltype(Celsius::origin())::unit,
-                                               decltype(AlternateCelsius::origin())::unit));
+    ASSERT_THAT(are_units_quantity_equivalent(decltype(Celsius::origin())::unit,
+                                              decltype(AlternateCelsius::origin())::unit),
+                IsFalse());
 
     // We check that this difference isn't enough to prevent them from being point-equivalent.  We
     // definitely want to be able to freely convert between `QuantityPoint` instances in either of
     // these point-equivalent units.
-    EXPECT_TRUE(are_units_point_equivalent(Celsius{}, AlternateCelsius{}));
+    EXPECT_THAT(are_units_point_equivalent(Celsius{}, AlternateCelsius{}), IsTrue());
 }
 
 TEST(OriginDisplacement, IdenticallyZeroForOriginsThatCompareEqual) {
@@ -512,13 +519,13 @@ struct Z : decltype(Inches{} * mag<7>()) {};
 
 TEST(CommonUnit, UnpacksTypesInNestedCommonUnit) {
     using C1 = CommonUnitT<W, X>;
-    ASSERT_TRUE((detail::IsPackOf<CommonUnit, C1>{}));
+    ASSERT_THAT((detail::IsPackOf<CommonUnit, C1>{}), IsTrue());
 
     using C2 = CommonUnitT<Y, Z>;
-    ASSERT_TRUE((detail::IsPackOf<CommonUnit, C2>{}));
+    ASSERT_THAT((detail::IsPackOf<CommonUnit, C2>{}), IsTrue());
 
     using Common = CommonUnitT<C1, C2>;
-    ASSERT_TRUE((detail::IsPackOf<CommonUnit, Common>{}));
+    ASSERT_THAT((detail::IsPackOf<CommonUnit, Common>{}), IsTrue());
 
     // Check that `c(c(w, x), c(y, z))` is the same as `c(w, x, y, z)`.
     StaticAssertTypeEq<Common, CommonUnitT<W, X, Y, Z>>();
@@ -553,7 +560,7 @@ TEST(CommonPointUnit, TakesOriginMagnitudeIntoAccount) {
 
     // The common point-unit should not be the _same_ as mK (since we never named the latter, and
     // thus can't "conjure it up").  However, it _should_ be _point-equivalent_ to mK.
-    ASSERT_FALSE((std::is_same<CommonByPoint, Milli<Kelvins>>::value));
+    ASSERT_THAT((std::is_same<CommonByPoint, Milli<Kelvins>>::value), IsFalse());
     EXPECT_THAT(CommonByPoint{}, PointEquivalentToUnit(milli(Kelvins{})));
 }
 
@@ -571,13 +578,13 @@ TEST(CommonPointUnit, PrefersUnitFromListIfAnyIdentical) {
 
 TEST(CommonPointUnit, UnpacksTypesInNestedCommonUnit) {
     using C1 = CommonPointUnitT<W, X>;
-    ASSERT_TRUE((detail::IsPackOf<CommonPointUnit, C1>{}));
+    ASSERT_THAT((detail::IsPackOf<CommonPointUnit, C1>{}), IsTrue());
 
     using C2 = CommonPointUnitT<Y, Z>;
-    ASSERT_TRUE((detail::IsPackOf<CommonPointUnit, C2>{}));
+    ASSERT_THAT((detail::IsPackOf<CommonPointUnit, C2>{}), IsTrue());
 
     using Common = CommonPointUnitT<C1, C2>;
-    ASSERT_TRUE((detail::IsPackOf<CommonPointUnit, Common>{}));
+    ASSERT_THAT((detail::IsPackOf<CommonPointUnit, Common>{}), IsTrue());
 
     // Check that `c(c(w, x), c(y, z))` is the same as `c(w, x, y, z)`.
     StaticAssertTypeEq<Common, CommonPointUnitT<W, X, Y, Z>>();

@@ -28,12 +28,15 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+namespace au {
+
 using ::testing::AnyOf;
 using ::testing::Eq;
+using ::testing::IsFalse;
+using ::testing::IsTrue;
 using ::testing::StaticAssertTypeEq;
 using ::testing::StrEq;
 
-namespace au {
 namespace {
 
 constexpr auto PI = Magnitude<Pi>{};
@@ -277,15 +280,18 @@ TEST(Constant, ImplicitlyConvertsToNonAuTypesWithAppropriateCorrespondingQuantit
     // If we had represented this constant as a quantity, it wouldn't be able to convert to a
     // quantity of seconds backed by `uint32_t`, because of the overflow safety surface.  However,
     // the constant value itself can be safely converted, because we know its exact value.
-    ASSERT_FALSE((
-        std::is_convertible<decltype(dt_as_quantity_u32), std::chrono::duration<uint32_t>>::value));
-    EXPECT_TRUE(
-        (std::is_convertible<decltype(dt_as_constant), std::chrono::duration<uint32_t>>::value));
+    ASSERT_THAT(
+        (std::is_convertible<decltype(dt_as_quantity_u32), std::chrono::duration<uint32_t>>::value),
+        IsFalse());
+    EXPECT_THAT(
+        (std::is_convertible<decltype(dt_as_constant), std::chrono::duration<uint32_t>>::value),
+        IsTrue());
 
     // Here, the constant value itself can't be safely converted, because it's too big for a
     // `uint16_t`.
-    EXPECT_FALSE(
-        (std::is_convertible<decltype(dt_as_constant), std::chrono::duration<uint16_t>>::value));
+    EXPECT_THAT(
+        (std::is_convertible<decltype(dt_as_constant), std::chrono::duration<uint16_t>>::value),
+        IsFalse());
 }
 
 TEST(Constant, SupportsUnitSlotAPIs) {
@@ -319,8 +325,8 @@ TEST(Constant, SupportsModWithQuantity) {
 TEST(MakeConstant, IdentityForZero) { EXPECT_THAT(make_constant(ZERO), SameTypeAndValue(ZERO)); }
 
 TEST(CanStoreValueIn, ChecksRangeOfTypeForIntegers) {
-    EXPECT_TRUE(decltype(c)::can_store_value_in<int32_t>(meters / second));
-    EXPECT_FALSE(decltype(c)::can_store_value_in<int16_t>(meters / second));
+    EXPECT_THAT(decltype(c)::can_store_value_in<int32_t>(meters / second), IsTrue());
+    EXPECT_THAT(decltype(c)::can_store_value_in<int16_t>(meters / second), IsFalse());
 }
 
 }  // namespace

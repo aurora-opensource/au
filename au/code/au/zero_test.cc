@@ -14,11 +14,16 @@
 
 #include "au/zero.hh"
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 using namespace std::chrono_literals;
 
 namespace au {
+
+using ::testing::IsFalse;
+using ::testing::IsTrue;
+
 // Example for supporting implicit construction from Zero.
 class WrappedInt {
  public:
@@ -34,17 +39,17 @@ class WrappedInt {
 };
 
 TEST(WrappedInt, BasicInterfaceWorksAsExpected) {
-    EXPECT_TRUE(WrappedInt{1} > WrappedInt{0});
-    EXPECT_FALSE(WrappedInt{0} > WrappedInt{1});
-    EXPECT_FALSE(WrappedInt{1} > WrappedInt{1});
+    EXPECT_THAT(WrappedInt{1} > WrappedInt{0}, IsTrue());
+    EXPECT_THAT(WrappedInt{0} > WrappedInt{1}, IsFalse());
+    EXPECT_THAT(WrappedInt{1} > WrappedInt{1}, IsFalse());
 
-    EXPECT_TRUE(WrappedInt{1} < WrappedInt{2});
-    EXPECT_FALSE(WrappedInt{2} < WrappedInt{1});
-    EXPECT_FALSE(WrappedInt{2} < WrappedInt{2});
+    EXPECT_THAT(WrappedInt{1} < WrappedInt{2}, IsTrue());
+    EXPECT_THAT(WrappedInt{2} < WrappedInt{1}, IsFalse());
+    EXPECT_THAT(WrappedInt{2} < WrappedInt{2}, IsFalse());
 
-    EXPECT_TRUE(WrappedInt{1} == WrappedInt{1});
-    EXPECT_FALSE(WrappedInt{2} == WrappedInt{1});
-    EXPECT_FALSE(WrappedInt{1} == WrappedInt{2});
+    EXPECT_THAT(WrappedInt{1} == WrappedInt{1}, IsTrue());
+    EXPECT_THAT(WrappedInt{2} == WrappedInt{1}, IsFalse());
+    EXPECT_THAT(WrappedInt{1} == WrappedInt{2}, IsFalse());
 }
 
 TEST(Zero, MinusZeroIsZero) {
@@ -68,13 +73,13 @@ TEST(Zero, ComparableToArbitraryQuantities) {
 }
 
 TEST(Zero, ComparesEqualToZero) {
-    EXPECT_TRUE(ZERO == ZERO);
-    EXPECT_TRUE(ZERO >= ZERO);
-    EXPECT_TRUE(ZERO <= ZERO);
+    EXPECT_THAT(ZERO == ZERO, IsTrue());
+    EXPECT_THAT(ZERO >= ZERO, IsTrue());
+    EXPECT_THAT(ZERO <= ZERO, IsTrue());
 
-    EXPECT_FALSE(ZERO != ZERO);
-    EXPECT_FALSE(ZERO > ZERO);
-    EXPECT_FALSE(ZERO < ZERO);
+    EXPECT_THAT(ZERO != ZERO, IsFalse());
+    EXPECT_THAT(ZERO > ZERO, IsFalse());
+    EXPECT_THAT(ZERO < ZERO, IsFalse());
 }
 
 TEST(Zero, ImplicitlyConvertsToNumericTypes) {

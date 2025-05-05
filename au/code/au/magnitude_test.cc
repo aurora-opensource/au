@@ -17,16 +17,21 @@
 #include <cmath>
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
+
+namespace au {
 
 using ::testing::DoubleEq;
 using ::testing::Eq;
 using ::testing::FloatEq;
+using ::testing::IsFalse;
+using ::testing::IsTrue;
 using ::testing::StaticAssertTypeEq;
 using ::testing::StrEq;
 
-namespace au {
 namespace {
+
 constexpr auto PI = Magnitude<Pi>{};
 
 template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
@@ -107,9 +112,9 @@ TEST(MagnitudeLabel, DefaultsToUnlabeledForFactorTooBig) {
 }
 
 TEST(MagnitudeLabel, IndicatesPresenceOfExposedSlash) {
-    EXPECT_FALSE(MagnitudeLabel<decltype(mag<287'987>())>::has_exposed_slash);
-    EXPECT_TRUE(MagnitudeLabel<decltype(mag<1>() / mag<2>())>::has_exposed_slash);
-    EXPECT_TRUE(MagnitudeLabel<decltype(-mag<1>() / mag<2>())>::has_exposed_slash);
+    EXPECT_THAT(MagnitudeLabel<decltype(mag<287'987>())>::has_exposed_slash, IsFalse());
+    EXPECT_THAT(MagnitudeLabel<decltype(mag<1>() / mag<2>())>::has_exposed_slash, IsTrue());
+    EXPECT_THAT(MagnitudeLabel<decltype(-mag<1>() / mag<2>())>::has_exposed_slash, IsTrue());
 }
 
 TEST(Pi, HasCorrectValue) {
@@ -199,63 +204,63 @@ TEST(Abs, FlipsSignForNegative) {
 TEST(Abs, IdentityForZero) { EXPECT_EQ(abs(ZERO), ZERO); }
 
 TEST(IsPositive, TrueForPositive) {
-    EXPECT_TRUE(is_positive(mag<1>()));
-    EXPECT_TRUE(is_positive(mag<2>()));
-    EXPECT_TRUE(is_positive(mag<5>() / mag<7>()));
+    EXPECT_THAT(is_positive(mag<1>()), IsTrue());
+    EXPECT_THAT(is_positive(mag<2>()), IsTrue());
+    EXPECT_THAT(is_positive(mag<5>() / mag<7>()), IsTrue());
 }
 
 TEST(IsPositive, FalseForNegative) {
-    EXPECT_FALSE(is_positive(-mag<1>()));
-    EXPECT_FALSE(is_positive(-mag<5>() / mag<7>()));
-    EXPECT_FALSE(is_positive(-mag<2>() / PI));
+    EXPECT_THAT(is_positive(-mag<1>()), IsFalse());
+    EXPECT_THAT(is_positive(-mag<5>() / mag<7>()), IsFalse());
+    EXPECT_THAT(is_positive(-mag<2>() / PI), IsFalse());
 }
 
 TEST(IsRational, TrueForRatios) {
-    EXPECT_TRUE(is_rational(mag<1>()));
-    EXPECT_TRUE(is_rational(mag<9>()));
-    EXPECT_TRUE(is_rational(mag<1>() / mag<10>()));
-    EXPECT_TRUE(is_rational(mag<9>() / mag<10>()));
+    EXPECT_THAT(is_rational(mag<1>()), IsTrue());
+    EXPECT_THAT(is_rational(mag<9>()), IsTrue());
+    EXPECT_THAT(is_rational(mag<1>() / mag<10>()), IsTrue());
+    EXPECT_THAT(is_rational(mag<9>() / mag<10>()), IsTrue());
 }
 
 TEST(IsRational, TrueForNegativeRatios) {
-    EXPECT_TRUE(is_rational(-mag<1>()));
-    EXPECT_TRUE(is_rational(-mag<9>()));
-    EXPECT_TRUE(is_rational(-mag<1>() / mag<10>()));
-    EXPECT_TRUE(is_rational(-mag<9>() / mag<10>()));
+    EXPECT_THAT(is_rational(-mag<1>()), IsTrue());
+    EXPECT_THAT(is_rational(-mag<9>()), IsTrue());
+    EXPECT_THAT(is_rational(-mag<1>() / mag<10>()), IsTrue());
+    EXPECT_THAT(is_rational(-mag<9>() / mag<10>()), IsTrue());
 }
 
 TEST(IsRational, FalseForInexactRoots) {
-    EXPECT_TRUE(is_rational(root<2>(mag<9>())));
-    EXPECT_FALSE(is_rational(root<3>(mag<9>())));
+    EXPECT_THAT(is_rational(root<2>(mag<9>())), IsTrue());
+    EXPECT_THAT(is_rational(root<3>(mag<9>())), IsFalse());
 }
 
 TEST(IsInteger, TrueForIntegers) {
-    EXPECT_TRUE(is_integer(mag<1>()));
-    EXPECT_TRUE(is_integer(mag<1234>()));
-    EXPECT_TRUE(is_integer(mag<142857>()));
+    EXPECT_THAT(is_integer(mag<1>()), IsTrue());
+    EXPECT_THAT(is_integer(mag<1234>()), IsTrue());
+    EXPECT_THAT(is_integer(mag<142857>()), IsTrue());
 }
 
 TEST(IsInteger, FalseForInexactFractions) {
-    EXPECT_TRUE(is_integer(mag<6>() / mag<3>()));
-    EXPECT_FALSE(is_integer(mag<7>() / mag<3>()));
-    EXPECT_FALSE(is_integer(mag<8>() / mag<3>()));
-    EXPECT_TRUE(is_integer(mag<9>() / mag<3>()));
+    EXPECT_THAT(is_integer(mag<6>() / mag<3>()), IsTrue());
+    EXPECT_THAT(is_integer(mag<7>() / mag<3>()), IsFalse());
+    EXPECT_THAT(is_integer(mag<8>() / mag<3>()), IsFalse());
+    EXPECT_THAT(is_integer(mag<9>() / mag<3>()), IsTrue());
 }
 
-TEST(IsInteger, FalseForIrrationalBase) { EXPECT_FALSE(is_integer(PI)); }
+TEST(IsInteger, FalseForIrrationalBase) { EXPECT_THAT(is_integer(PI), IsFalse()); }
 
 TEST(RepresentableIn, DocumentationExamplesAreCorrect) {
-    EXPECT_TRUE(representable_in<int>(mag<1>()));
+    EXPECT_THAT(representable_in<int>(mag<1>()), IsTrue());
 
     // (1 / 2) is not an integer.
-    EXPECT_FALSE(representable_in<int>(mag<1>() / mag<2>()));
+    EXPECT_THAT(representable_in<int>(mag<1>() / mag<2>()), IsFalse());
 
-    EXPECT_TRUE(representable_in<float>(mag<1>() / mag<2>()));
+    EXPECT_THAT(representable_in<float>(mag<1>() / mag<2>()), IsTrue());
 
-    EXPECT_TRUE(representable_in<uint32_t>(mag<4'000'000'000>()));
+    EXPECT_THAT(representable_in<uint32_t>(mag<4'000'000'000>()), IsTrue());
 
     // 4 billion is larger than the max value representable in `int32_t`.
-    EXPECT_FALSE(representable_in<int32_t>(mag<4'000'000'000>()));
+    EXPECT_THAT(representable_in<int32_t>(mag<4'000'000'000>()), IsFalse());
 }
 
 TEST(GetValue, SupportsIntegerOutputForIntegerMagnitude) {
@@ -311,7 +316,7 @@ TEST(GetValue, ImpossibleRequestsArePreventedAtCompileTime) {
     // get_value<double>(pow<3099999>(mag<10>()));
 
     constexpr auto sqrt_2 = root<2>(mag<2>());
-    ASSERT_FALSE(is_integer(sqrt_2));
+    ASSERT_THAT(is_integer(sqrt_2), IsFalse());
     // get_value<int>(sqrt_2);
 }
 
@@ -358,12 +363,12 @@ TEST(CommonMagnitude, DividesBothMagnitudes) {
     constexpr auto a = pow<10>(mag<2>()) * pow<-4>(mag<3>()) * pow<40>(mag<11>());
     constexpr auto b = pow<-1>(mag<2>()) * pow<12>(mag<3>()) * pow<-8>(mag<13>());
 
-    ASSERT_FALSE(is_integer(a / b));
-    ASSERT_FALSE(is_integer(b / a));
+    ASSERT_THAT(is_integer(a / b), IsFalse());
+    ASSERT_THAT(is_integer(b / a), IsFalse());
 
     EXPECT_EQ(common_magnitude(a, b), common_magnitude(b, a));
-    EXPECT_TRUE(is_integer(a / common_magnitude(a, b)));
-    EXPECT_TRUE(is_integer(b / common_magnitude(a, b)));
+    EXPECT_THAT(is_integer(a / common_magnitude(a, b)), IsTrue());
+    EXPECT_THAT(is_integer(b / common_magnitude(a, b)), IsTrue());
 }
 
 TEST(CommonMagnitude, HandlesMultiplePositivePowers) {
@@ -397,6 +402,7 @@ TEST(CommonMagnitude, CommonMagOfNegAndNegIsNeg) {
     EXPECT_EQ(common_magnitude(-mag<12>(), -mag<15>(), -mag<27>()), -mag<3>());
     EXPECT_EQ(common_magnitude(-mag<9>(), -mag<12>(), -mag<15>(), -mag<27>()), -mag<3>());
 }
+
 }  // namespace
 
 namespace detail {

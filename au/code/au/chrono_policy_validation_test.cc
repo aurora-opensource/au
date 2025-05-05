@@ -16,11 +16,15 @@
 
 #include "au/prefix.hh"
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 using namespace std::chrono_literals;
 
 namespace au {
+
+using ::testing::IsFalse;
+using ::testing::IsTrue;
 
 struct Meters : UnitImpl<Length> {};
 
@@ -61,31 +65,36 @@ TEST(MapToUnitsLib, IsIdentityForNonChronoDurationObjects) {
 }
 
 TEST(HasOp, DetectsOpExistence) {
-    EXPECT_TRUE((HasOp<Assignment, std::chrono::milliseconds, std::chrono::seconds>::value));
-    EXPECT_FALSE((HasOp<Assignment, std::chrono::milliseconds, std::chrono::nanoseconds>::value));
+    EXPECT_THAT((HasOp<Assignment, std::chrono::milliseconds, std::chrono::seconds>::value),
+                IsTrue());
+    EXPECT_THAT((HasOp<Assignment, std::chrono::milliseconds, std::chrono::nanoseconds>::value),
+                IsFalse());
 }
 
 TEST(BothPermit, TrueWhenBothOperationsPermittedAndCompatible) {
-    EXPECT_TRUE(both_permit<Assignment>(std::chrono::seconds{}, 4s));
+    EXPECT_THAT(both_permit<Assignment>(std::chrono::seconds{}, 4s), IsTrue());
 }
 
 TEST(BothPermit, IfExpectedValueSuppliedWeCheckBothTypeAndValue) {
-    EXPECT_TRUE(both_permit<Assignment>(std::chrono::seconds{}, 4s, 4s));
-    EXPECT_FALSE(both_permit<Assignment>(std::chrono::seconds{}, 4s, 5s));
-    EXPECT_FALSE(both_permit<Assignment>(std::chrono::seconds{}, 4s, 4000ms));
+    EXPECT_THAT(both_permit<Assignment>(std::chrono::seconds{}, 4s, 4s), IsTrue());
+    EXPECT_THAT(both_permit<Assignment>(std::chrono::seconds{}, 4s, 5s), IsFalse());
+    EXPECT_THAT(both_permit<Assignment>(std::chrono::seconds{}, 4s, 4000ms), IsFalse());
 }
 
 TEST(BothForbid, TrueWhenBothOperationsForbidden) {
     // Assigning Milli<X> to Kilo<X> will generally lose precision when using integral types.
-    EXPECT_TRUE(both_forbid<Assignment>(std::chrono::duration<int, std::kilo>(1),
-                                        std::chrono::duration<size_t, std::milli>(1)));
+    EXPECT_THAT(both_forbid<Assignment>(std::chrono::duration<int, std::kilo>(1),
+                                        std::chrono::duration<size_t, std::milli>(1)),
+                IsTrue());
 }
 
 TEST(ChronoPermitsButAuForbids, TrueWhenWeAreMoreRestrictive) {
     // Assigning X to Milli<X> in a 16-bit Rep won't lose information, but _will_ run a risk of
     // overflow which the au library considers too great to permit.
-    EXPECT_TRUE(chrono_permits_but_au_forbids<Assignment>(
-        std::chrono::duration<uint16_t, std::milli>(1), std::chrono::duration<uint16_t>(1)));
+    EXPECT_THAT(
+        chrono_permits_but_au_forbids<Assignment>(std::chrono::duration<uint16_t, std::milli>(1),
+                                                  std::chrono::duration<uint16_t>(1)),
+        IsTrue());
 }
 
 }  // namespace au

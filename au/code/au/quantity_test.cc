@@ -19,16 +19,19 @@
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/utility/type_traits.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
+
+namespace au {
 
 using ::testing::DoubleEq;
 using ::testing::Each;
 using ::testing::Eq;
 using ::testing::Gt;
+using ::testing::IsFalse;
+using ::testing::IsTrue;
 using ::testing::Lt;
 using ::testing::StaticAssertTypeEq;
-
-namespace au {
 
 struct Feet : UnitImpl<Length> {
     static constexpr const char label[] = "ft";
@@ -99,9 +102,9 @@ TEST(Quantity, IsItaniumAbiRegisterCompatible) {
     //
     // This blog post also contains some nice background on the ability (or not) of types to be
     // passed in registers: https://quuxplusone.github.io/blog/2018/05/02/trivial-abi-101/
-    EXPECT_TRUE(std::is_trivially_destructible<QuantityD<Feet>>::value);
-    EXPECT_TRUE(std::is_trivially_copy_constructible<QuantityD<Feet>>::value);
-    EXPECT_TRUE(std::is_trivially_move_constructible<QuantityD<Feet>>::value);
+    EXPECT_THAT(std::is_trivially_destructible<QuantityD<Feet>>::value, IsTrue());
+    EXPECT_THAT(std::is_trivially_copy_constructible<QuantityD<Feet>>::value, IsTrue());
+    EXPECT_THAT(std::is_trivially_move_constructible<QuantityD<Feet>>::value, IsTrue());
 }
 
 TEST(Quantity, HasCorrectRepNamedAliases) {
@@ -385,15 +388,15 @@ TEST(Quantity, RelativeComparisonsWork) {
     constexpr auto one_b = feet(1);
     constexpr auto two = feet(2);
 
-    EXPECT_FALSE(one_a < one_b);
-    EXPECT_FALSE(one_a > one_b);
-    EXPECT_TRUE(one_a <= one_b);
-    EXPECT_TRUE(one_a >= one_b);
+    EXPECT_THAT(one_a < one_b, IsFalse());
+    EXPECT_THAT(one_a > one_b, IsFalse());
+    EXPECT_THAT(one_a <= one_b, IsTrue());
+    EXPECT_THAT(one_a >= one_b, IsTrue());
 
-    EXPECT_TRUE(one_a < two);
-    EXPECT_FALSE(one_a > two);
-    EXPECT_TRUE(one_a <= two);
-    EXPECT_FALSE(one_a >= two);
+    EXPECT_THAT(one_a < two, IsTrue());
+    EXPECT_THAT(one_a > two, IsFalse());
+    EXPECT_THAT(one_a <= two, IsTrue());
+    EXPECT_THAT(one_a >= two, IsFalse());
 }
 
 TEST(Quantity, CopyingWorksAndIsDeepCopy) {
@@ -724,24 +727,26 @@ TEST(Quantity, QuantityCastAvoidsPreventableOverflowWhenGoingToSmallerType) {
 TEST(Quantity, CommonTypeMagnitudeEvenlyDividesBoth) {
     using A = Yards;
     using B = decltype(A{} * mag<2>() / mag<3>());
-    ASSERT_FALSE(is_integer(unit_ratio(A{}, B{})));
-    ASSERT_FALSE(is_integer(unit_ratio(B{}, A{})));
+    ASSERT_THAT(is_integer(unit_ratio(A{}, B{})), IsFalse());
+    ASSERT_THAT(is_integer(unit_ratio(B{}, A{})), IsFalse());
 
     constexpr auto c = std::common_type_t<QuantityD<A>, QuantityI32<B>>::unit;
-    EXPECT_TRUE(is_integer(unit_ratio(A{}, c)));
-    EXPECT_TRUE(is_integer(unit_ratio(B{}, c)));
+    EXPECT_THAT(is_integer(unit_ratio(A{}, c)), IsTrue());
+    EXPECT_THAT(is_integer(unit_ratio(B{}, c)), IsTrue());
 }
 
 TEST(Quantity, StdCommonTypeHasNoTypeMemberForDifferentDimensions) {
-    EXPECT_FALSE((stdx::experimental::
-                      is_detected<std::common_type_t, QuantityD<Hours>, QuantityD<Feet>>::value));
+    EXPECT_THAT((stdx::experimental::
+                     is_detected<std::common_type_t, QuantityD<Hours>, QuantityD<Feet>>::value),
+                IsFalse());
 }
 
 TEST(Quantity, PicksCommonTypeForRep) {
     using common_q_inches_double_float =
         std::common_type_t<Quantity<Inches, double>, Quantity<Inches, float>>;
-    EXPECT_TRUE((
-        AreQuantityTypesEquivalent<common_q_inches_double_float, Quantity<Inches, double>>::value));
+    EXPECT_THAT(
+        (AreQuantityTypesEquivalent<common_q_inches_double_float, Quantity<Inches, double>>::value),
+        IsTrue());
 }
 
 TEST(Quantity, MixedUnitAdditionUsesCommonDenominator) {
@@ -847,11 +852,11 @@ TEST(WillConversionOverflow, SensitiveToTypeBoundariesForPureIntegerMultiply) {
             return will_conversion_overflow(meters(x), milli(meters));
         };
 
-        EXPECT_TRUE(will_m_to_mm_overflow_i32(2'147'484));
-        EXPECT_FALSE(will_m_to_mm_overflow_i32(2'147'483));
+        EXPECT_THAT(will_m_to_mm_overflow_i32(2'147'484), IsTrue());
+        EXPECT_THAT(will_m_to_mm_overflow_i32(2'147'483), IsFalse());
 
-        EXPECT_FALSE(will_m_to_mm_overflow_i32(-2'147'483));
-        EXPECT_TRUE(will_m_to_mm_overflow_i32(-2'147'484));
+        EXPECT_THAT(will_m_to_mm_overflow_i32(-2'147'483), IsFalse());
+        EXPECT_THAT(will_m_to_mm_overflow_i32(-2'147'484), IsTrue());
     }
 
     {
@@ -859,10 +864,10 @@ TEST(WillConversionOverflow, SensitiveToTypeBoundariesForPureIntegerMultiply) {
             return will_conversion_overflow(meters(x), milli(meters));
         };
 
-        EXPECT_TRUE(will_m_to_mm_overflow_u8(255));
+        EXPECT_THAT(will_m_to_mm_overflow_u8(255), IsTrue());
 
-        EXPECT_TRUE(will_m_to_mm_overflow_u8(1));
-        EXPECT_FALSE(will_m_to_mm_overflow_u8(0));
+        EXPECT_THAT(will_m_to_mm_overflow_u8(1), IsTrue());
+        EXPECT_THAT(will_m_to_mm_overflow_u8(0), IsFalse());
     }
 
     {
@@ -870,50 +875,50 @@ TEST(WillConversionOverflow, SensitiveToTypeBoundariesForPureIntegerMultiply) {
             return will_conversion_overflow(meters(x), milli(meters));
         };
 
-        EXPECT_TRUE(will_m_to_mm_overflow_f(3.41e+35f));
-        EXPECT_FALSE(will_m_to_mm_overflow_f(3.40e+35f));
+        EXPECT_THAT(will_m_to_mm_overflow_f(3.41e+35f), IsTrue());
+        EXPECT_THAT(will_m_to_mm_overflow_f(3.40e+35f), IsFalse());
 
-        EXPECT_FALSE(will_m_to_mm_overflow_f(-3.40e+35f));
-        EXPECT_TRUE(will_m_to_mm_overflow_f(-3.41e+35f));
+        EXPECT_THAT(will_m_to_mm_overflow_f(-3.40e+35f), IsFalse());
+        EXPECT_THAT(will_m_to_mm_overflow_f(-3.41e+35f), IsTrue());
     }
 }
 
 TEST(WillConversionOverflow, AlwaysFalseForQuantityEquivalentUnits) {
     auto will_m_to_m_overflow = [](auto x) { return will_conversion_overflow(meters(x), meters); };
 
-    EXPECT_FALSE(will_m_to_m_overflow(2'147'483));
-    EXPECT_FALSE(will_m_to_m_overflow(-2'147'483));
-    EXPECT_FALSE(will_m_to_m_overflow(uint8_t{255}));
+    EXPECT_THAT(will_m_to_m_overflow(2'147'483), IsFalse());
+    EXPECT_THAT(will_m_to_m_overflow(-2'147'483), IsFalse());
+    EXPECT_THAT(will_m_to_m_overflow(uint8_t{255}), IsFalse());
 }
 
 TEST(WillConversionOverflow, UnsignedToIntegralDependsOnBoundaryOfIntegral) {
-    EXPECT_FALSE(will_conversion_overflow<int16_t>(feet(uint16_t{65'535}), yards));
+    EXPECT_THAT(will_conversion_overflow<int16_t>(feet(uint16_t{65'535}), yards), IsFalse());
 
-    EXPECT_FALSE(will_conversion_overflow<int16_t>(feet(uint16_t{2'700}), inches));
-    EXPECT_TRUE(will_conversion_overflow<int16_t>(feet(uint16_t{2'800}), inches));
+    EXPECT_THAT(will_conversion_overflow<int16_t>(feet(uint16_t{2'700}), inches), IsFalse());
+    EXPECT_THAT(will_conversion_overflow<int16_t>(feet(uint16_t{2'800}), inches), IsTrue());
 }
 
 TEST(WillConversionOverflow, NegativeValuesAlwaysOverflowUnsignedDestination) {
-    EXPECT_TRUE(will_conversion_overflow<uint64_t>(feet(-1), inches));
-    EXPECT_TRUE(will_conversion_overflow<uint64_t>(feet(int8_t{-100}), yards));
+    EXPECT_THAT(will_conversion_overflow<uint64_t>(feet(-1), inches), IsTrue());
+    EXPECT_THAT(will_conversion_overflow<uint64_t>(feet(int8_t{-100}), yards), IsTrue());
 }
 
 TEST(WillConversionOverflow, SignedToUnsignedDependsOnBoundaryOfDestination) {
-    EXPECT_FALSE(will_conversion_overflow<uint8_t>(feet(21), inches));
-    EXPECT_TRUE(will_conversion_overflow<uint8_t>(feet(22), inches));
+    EXPECT_THAT(will_conversion_overflow<uint8_t>(feet(21), inches), IsFalse());
+    EXPECT_THAT(will_conversion_overflow<uint8_t>(feet(22), inches), IsTrue());
 }
 
 TEST(WillConversionOverflow, SignedToSignedHandlesNegativeAndPositiveLimits) {
-    EXPECT_TRUE(will_conversion_overflow<int8_t>(feet(-11), inches));
-    EXPECT_FALSE(will_conversion_overflow<int8_t>(feet(-10), inches));
+    EXPECT_THAT(will_conversion_overflow<int8_t>(feet(-11), inches), IsTrue());
+    EXPECT_THAT(will_conversion_overflow<int8_t>(feet(-10), inches), IsFalse());
 
-    EXPECT_FALSE(will_conversion_overflow<int8_t>(feet(10), inches));
-    EXPECT_TRUE(will_conversion_overflow<int8_t>(feet(11), inches));
+    EXPECT_THAT(will_conversion_overflow<int8_t>(feet(10), inches), IsFalse());
+    EXPECT_THAT(will_conversion_overflow<int8_t>(feet(11), inches), IsTrue());
 }
 
 TEST(WillConversionOverflow, FloatToIntHandlesLimitsOfDestType) {
-    EXPECT_FALSE(will_conversion_overflow<uint8_t>(feet(21.0), inches));
-    EXPECT_TRUE(will_conversion_overflow<uint8_t>(feet(22.0), inches));
+    EXPECT_THAT(will_conversion_overflow<uint8_t>(feet(21.0), inches), IsFalse());
+    EXPECT_THAT(will_conversion_overflow<uint8_t>(feet(22.0), inches), IsTrue());
 }
 
 TEST(WillConversionTruncate, UsesModForIntegerTypes) {
@@ -921,25 +926,25 @@ TEST(WillConversionTruncate, UsesModForIntegerTypes) {
         return will_conversion_truncate(inches(x), feet);
     };
 
-    EXPECT_TRUE(will_in_to_ft_truncate_i32(121));
-    EXPECT_FALSE(will_in_to_ft_truncate_i32(120));
-    EXPECT_TRUE(will_in_to_ft_truncate_i32(119));
+    EXPECT_THAT(will_in_to_ft_truncate_i32(121), IsTrue());
+    EXPECT_THAT(will_in_to_ft_truncate_i32(120), IsFalse());
+    EXPECT_THAT(will_in_to_ft_truncate_i32(119), IsTrue());
 
-    EXPECT_TRUE(will_in_to_ft_truncate_i32(13));
-    EXPECT_FALSE(will_in_to_ft_truncate_i32(12));
-    EXPECT_TRUE(will_in_to_ft_truncate_i32(11));
+    EXPECT_THAT(will_in_to_ft_truncate_i32(13), IsTrue());
+    EXPECT_THAT(will_in_to_ft_truncate_i32(12), IsFalse());
+    EXPECT_THAT(will_in_to_ft_truncate_i32(11), IsTrue());
 
-    EXPECT_TRUE(will_in_to_ft_truncate_i32(1));
-    EXPECT_FALSE(will_in_to_ft_truncate_i32(0));
-    EXPECT_TRUE(will_in_to_ft_truncate_i32(-1));
+    EXPECT_THAT(will_in_to_ft_truncate_i32(1), IsTrue());
+    EXPECT_THAT(will_in_to_ft_truncate_i32(0), IsFalse());
+    EXPECT_THAT(will_in_to_ft_truncate_i32(-1), IsTrue());
 
-    EXPECT_TRUE(will_in_to_ft_truncate_i32(-11));
-    EXPECT_FALSE(will_in_to_ft_truncate_i32(-12));
-    EXPECT_TRUE(will_in_to_ft_truncate_i32(-13));
+    EXPECT_THAT(will_in_to_ft_truncate_i32(-11), IsTrue());
+    EXPECT_THAT(will_in_to_ft_truncate_i32(-12), IsFalse());
+    EXPECT_THAT(will_in_to_ft_truncate_i32(-13), IsTrue());
 
-    EXPECT_TRUE(will_in_to_ft_truncate_i32(-119));
-    EXPECT_FALSE(will_in_to_ft_truncate_i32(-120));
-    EXPECT_TRUE(will_in_to_ft_truncate_i32(-121));
+    EXPECT_THAT(will_in_to_ft_truncate_i32(-119), IsTrue());
+    EXPECT_THAT(will_in_to_ft_truncate_i32(-120), IsFalse());
+    EXPECT_THAT(will_in_to_ft_truncate_i32(-121), IsTrue());
 }
 
 TEST(WillConversionTruncate, AlwaysFalseForQuantityEquivalentUnits) {
@@ -947,18 +952,19 @@ TEST(WillConversionTruncate, AlwaysFalseForQuantityEquivalentUnits) {
         return will_conversion_truncate(inches(x), inches);
     };
 
-    EXPECT_FALSE(will_in_to_in_truncate(uint8_t{124}));
-    EXPECT_FALSE(will_in_to_in_truncate(0));
-    EXPECT_FALSE(will_in_to_in_truncate(-120));
+    EXPECT_THAT(will_in_to_in_truncate(uint8_t{124}), IsFalse());
+    EXPECT_THAT(will_in_to_in_truncate(0), IsFalse());
+    EXPECT_THAT(will_in_to_in_truncate(-120), IsFalse());
 }
 
 TEST(WillConversionTruncate, AlwaysFalseByConventionForFloatingPointDestination) {
-    EXPECT_FALSE(will_conversion_truncate<float>(miles(18'000'000'000'000'000'000u), inches));
+    EXPECT_THAT(will_conversion_truncate<float>(miles(18'000'000'000'000'000'000u), inches),
+                IsFalse());
 }
 
 TEST(WillConversionTruncate, FloatToIntHandlesFractionalParts) {
-    EXPECT_TRUE(will_conversion_truncate<uint8_t>(feet(0.1), inches));
-    EXPECT_FALSE(will_conversion_truncate<uint8_t>(feet(1.0), inches));
+    EXPECT_THAT(will_conversion_truncate<uint8_t>(feet(0.1), inches), IsTrue());
+    EXPECT_THAT(will_conversion_truncate<uint8_t>(feet(1.0), inches), IsFalse());
 }
 
 TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions) {
@@ -986,14 +992,14 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
             // recover the original value.
             if (!is_lossy) {
                 const bool is_inverse_lossy = is_conversion_lossy(converted, source_units);
-                ASSERT_FALSE(is_inverse_lossy);
+                ASSERT_THAT(is_inverse_lossy, IsFalse());
             }
 
             std::string reason{};
             if (is_lossy) {
                 const bool truncates = will_conversion_truncate(original, target_units);
                 const bool overflows = will_conversion_overflow(original, target_units);
-                ASSERT_TRUE(truncates || overflows);
+                ASSERT_THAT(truncates || overflows, IsTrue());
                 reason = std::string{" ("} + [&] {
                     if (truncates && overflows) {
                         return "truncates and overflows";
@@ -1027,21 +1033,21 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
 }
 
 TEST(IsConversionLossy, FloatToIntHandlesFractionalParts) {
-    EXPECT_TRUE(is_conversion_lossy<uint8_t>(feet(0.1), inches));
-    EXPECT_FALSE(is_conversion_lossy<uint8_t>(feet(1.0), inches));
+    EXPECT_THAT(is_conversion_lossy<uint8_t>(feet(0.1), inches), IsTrue());
+    EXPECT_THAT(is_conversion_lossy<uint8_t>(feet(1.0), inches), IsFalse());
 }
 
 TEST(IsConversionLossy, FloatToIntHandlesLimitsOfDestType) {
-    EXPECT_FALSE(is_conversion_lossy<uint8_t>(feet(21.0), inches));
-    EXPECT_TRUE(is_conversion_lossy<uint8_t>(feet(22.0), inches));
+    EXPECT_THAT(is_conversion_lossy<uint8_t>(feet(21.0), inches), IsFalse());
+    EXPECT_THAT(is_conversion_lossy<uint8_t>(feet(22.0), inches), IsTrue());
 }
 
 TEST(AreQuantityTypesEquivalent, RequiresSameRepAndEquivalentUnits) {
     using IntQFeet = decltype(feet(1));
     using IntQTwelveInches = decltype((inches * mag<12>())(1));
 
-    ASSERT_FALSE((std::is_same<IntQFeet, IntQTwelveInches>::value));
-    EXPECT_TRUE((AreQuantityTypesEquivalent<IntQFeet, IntQTwelveInches>::value));
+    ASSERT_THAT((std::is_same<IntQFeet, IntQTwelveInches>::value), IsFalse());
+    EXPECT_THAT((AreQuantityTypesEquivalent<IntQFeet, IntQTwelveInches>::value), IsTrue());
 }
 
 TEST(UnblockIntDiv, EnablesTruncatingIntegerDivisionIntoQuantity) {

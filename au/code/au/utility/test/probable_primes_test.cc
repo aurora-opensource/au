@@ -21,14 +21,17 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+namespace au {
+
 using ::testing::AllOf;
 using ::testing::ElementsAre;
 using ::testing::Eq;
 using ::testing::Gt;
+using ::testing::IsFalse;
 using ::testing::Lt;
 
-namespace au {
 namespace detail {
+
 // Make test output for `PrimeResult` easier to read.
 std::ostream &operator<<(std::ostream &out, const PrimeResult &m) {
     switch (m) {
@@ -318,7 +321,7 @@ TEST(Gcd, ResultIsAlwaysAFactorAndGCDFindsNoLargerFactor) {
 
             // Brute force: no larger factors.
             for (auto k = g + 1u; k < j / 2u; ++k) {
-                EXPECT_FALSE((i % k == 0u) && (j % k == 0u));
+                EXPECT_THAT((i % k == 0u) && (j % k == 0u), IsFalse());
             }
         }
     }
