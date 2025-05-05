@@ -19,6 +19,9 @@
 
 using ::testing::AllOf;
 using ::testing::Eq;
+using ::testing::Gt;
+using ::testing::IsFalse;
+using ::testing::IsTrue;
 using ::testing::Lt;
 using ::testing::StaticAssertTypeEq;
 
@@ -46,9 +49,9 @@ TEST(PromotedType, PromotesUint8TIntoLargerType) {
     // simply that a test would fail when run on some obscure architecture, and the failure would
     // direct the user to this comment.  This doesn't affect the actual library usage one way or
     // another.
-    ASSERT_FALSE((std::is_same<uint8_t, PromotedU8>::value));
+    ASSERT_THAT((std::is_same<uint8_t, PromotedU8>::value), IsFalse());
 
-    EXPECT_GT(sizeof(PromotedU8), sizeof(uint8_t));
+    EXPECT_THAT(sizeof(PromotedU8), Gt(sizeof(uint8_t)));
 }
 
 TEST(IsAbsKnownToBeLessThanOne, ProducesExpectedResultsForMagnitudesThatCanFitInUintmax) {
@@ -111,7 +114,7 @@ void validate_spec(TestSpec spec) {
     using PromotedT = PromotedType<T>;
     const bool is_promotable = !std::is_same<T, PromotedT>::value;
     const bool is_expected_to_be_promotable = (spec.is_promotable == IsPromotable::YES);
-    ASSERT_EQ(is_promotable, is_expected_to_be_promotable)
+    ASSERT_THAT(is_promotable, Eq(is_expected_to_be_promotable))
         << "Expected a type that " << (is_expected_to_be_promotable ? "is" : "is not")
         << " promotable; got a type that " << (is_promotable ? "is" : "is not");
 
@@ -119,7 +122,7 @@ void validate_spec(TestSpec spec) {
     constexpr auto num_value_result = get_value_result<PromotedT>(Num{});
     const bool is_num_representable = (num_value_result.outcome == MagRepresentationOutcome::OK);
     const bool is_num_expected_to_be_representable = (spec.num_fits == NumFitsInPromotedType::YES);
-    ASSERT_EQ(is_num_representable, is_num_expected_to_be_representable)
+    ASSERT_THAT(is_num_representable, Eq(is_num_expected_to_be_representable))
         << "Expected numerator " << (is_num_expected_to_be_representable ? "to be" : "not to be")
         << " representable in promoted type; it " << (is_num_representable ? "is" : "is not");
 
@@ -127,7 +130,7 @@ void validate_spec(TestSpec spec) {
     constexpr auto den_value_result = get_value_result<PromotedT>(Den{});
     const bool is_den_representable = (den_value_result.outcome == MagRepresentationOutcome::OK);
     const bool is_den_expected_to_be_representable = (spec.den_fits == DenFitsInPromotedType::YES);
-    ASSERT_EQ(is_den_representable, is_den_expected_to_be_representable)
+    ASSERT_THAT(is_den_representable, Eq(is_den_expected_to_be_representable))
         << "Expected denominator " << (is_den_expected_to_be_representable ? "to be" : "not to be")
         << " representable in promoted type; it " << (is_den_representable ? "is" : "is not");
 }
@@ -148,7 +151,7 @@ TEST(MaxNonOverflowingValue, AlwaysZeroIfNumCannotFitInPromotedType) {
             {IsPromotable::NO, NumFitsInPromotedType::NO, DenFitsInPromotedType::YES},
             huge,
             max_int);
-        EXPECT_EQ(max_int, 0);
+        EXPECT_THAT(max_int, Eq(0));
     }
     {
         uint16_t max_u16 = 123u;
@@ -156,7 +159,7 @@ TEST(MaxNonOverflowingValue, AlwaysZeroIfNumCannotFitInPromotedType) {
             {IsPromotable::YES, NumFitsInPromotedType::NO, DenFitsInPromotedType::YES},
             huge,
             max_u16);
-        EXPECT_EQ(max_u16, 0);
+        EXPECT_THAT(max_u16, Eq(0));
     }
 }
 
@@ -171,7 +174,7 @@ TEST(MaxNonOverflowingValue, ZeroIfFactorIsNegativeAndTypeIsUnsigned) {
             {IsPromotable::NO, NumFitsInPromotedType::NO, DenFitsInPromotedType::YES},
             ratio,
             max_u64);
-        EXPECT_EQ(max_u64, 0u);
+        EXPECT_THAT(max_u64, Eq(0u));
     }
     {
         uint32_t max_u32 = 123u;
@@ -179,7 +182,7 @@ TEST(MaxNonOverflowingValue, ZeroIfFactorIsNegativeAndTypeIsUnsigned) {
             {IsPromotable::NO, NumFitsInPromotedType::NO, DenFitsInPromotedType::YES},
             ratio,
             max_u32);
-        EXPECT_EQ(max_u32, 0u);
+        EXPECT_THAT(max_u32, Eq(0u));
     }
     {
         uint16_t max_u16 = 123u;
@@ -187,7 +190,7 @@ TEST(MaxNonOverflowingValue, ZeroIfFactorIsNegativeAndTypeIsUnsigned) {
             {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::YES},
             ratio,
             max_u16);
-        EXPECT_EQ(max_u16, 0u);
+        EXPECT_THAT(max_u16, Eq(0u));
     }
     {
         uint8_t max_u8 = 123u;
@@ -195,7 +198,7 @@ TEST(MaxNonOverflowingValue, ZeroIfFactorIsNegativeAndTypeIsUnsigned) {
             {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::YES},
             ratio,
             max_u8);
-        EXPECT_EQ(max_u8, 0u);
+        EXPECT_THAT(max_u8, Eq(0u));
     }
 }
 
@@ -209,7 +212,7 @@ TEST(MaxNonOverflowingValue, IsMaxTDividedByNWhenTIsNotPromotableAndDenomOverflo
             {IsPromotable::NO, NumFitsInPromotedType::YES, DenFitsInPromotedType::NO},
             huge_denom,
             max_int);
-        EXPECT_EQ(max_int, std::numeric_limits<int>::max() / 3);
+        EXPECT_THAT(max_int, Eq(std::numeric_limits<int>::max() / 3));
     }
 
     {
@@ -218,7 +221,7 @@ TEST(MaxNonOverflowingValue, IsMaxTDividedByNWhenTIsNotPromotableAndDenomOverflo
             {IsPromotable::NO, NumFitsInPromotedType::YES, DenFitsInPromotedType::NO},
             huge_denom,
             max_u64);
-        EXPECT_EQ(max_u64, std::numeric_limits<uint64_t>::max() / 3);
+        EXPECT_THAT(max_u64, Eq(std::numeric_limits<uint64_t>::max() / 3));
     }
 }
 
@@ -231,7 +234,7 @@ TEST(MaxNonOverflowingValue,
             {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::NO},
             mag<3>() / pow<400>(mag<10>()),
             max_i8);
-        EXPECT_EQ(max_i8, 127);
+        EXPECT_THAT(max_i8, Eq(127));
     }
 
     {
@@ -241,9 +244,9 @@ TEST(MaxNonOverflowingValue,
             mag<1'000'000>() / pow<400>(mag<11>()),
             max_u16);
 
-        ASSERT_TRUE((std::is_same<PromotedType<uint16_t>, int32_t>::value))
+        ASSERT_THAT((std::is_same<PromotedType<uint16_t>, int32_t>::value), IsTrue())
             << "This test will fail on architectures where uint16_t is not promoted to `int32_t`";
-        EXPECT_EQ(max_u16, 2'147);
+        EXPECT_THAT(max_u16, Eq(2'147));
     }
 }
 
@@ -257,7 +260,7 @@ TEST(MaxNonOverflowingValue,
             {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::YES},
             mag<3>() / mag<10>(),
             max_u8);
-        EXPECT_EQ(max_u8, 255);
+        EXPECT_THAT(max_u8, Eq(255));
     }
 
     {
@@ -266,7 +269,7 @@ TEST(MaxNonOverflowingValue,
             {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::YES},
             mag<1'000'000>() / pow<6>(mag<11>()),
             max_u16);
-        EXPECT_EQ(max_u16, 2'147);
+        EXPECT_THAT(max_u16, Eq(2'147));
     }
 }
 
@@ -280,9 +283,9 @@ TEST(MaxNonOverflowingValue, IsPromotedMaxOverNWhenNIsLargeAndDIsSlightlySmaller
         {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::YES},
         mag<1'000'000>() / mag<999'999>(),
         max_u16);
-    ASSERT_TRUE((std::is_same<PromotedType<uint16_t>, int32_t>::value))
+    ASSERT_THAT((std::is_same<PromotedType<uint16_t>, int32_t>::value), IsTrue())
         << "This test will fail on architectures where `uint16_t` is not promoted to `int32_t`";
-    EXPECT_EQ(max_u16, 2'147);
+    EXPECT_THAT(max_u16, Eq(2'147));
 }
 
 TEST(MaxNonOverflowingValue, IsTMaxOverNTimesDWhenMoreConstrainingThanPMaxOverN) {
@@ -295,10 +298,10 @@ TEST(MaxNonOverflowingValue, IsTMaxOverNTimesDWhenMoreConstrainingThanPMaxOverN)
         {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::YES},
         mag<1'000>() / mag<3>(),
         max_int16);
-    ASSERT_TRUE((std::is_same<PromotedType<int16_t>, int32_t>::value))
+    ASSERT_THAT((std::is_same<PromotedType<int16_t>, int32_t>::value), IsTrue())
         << "This test will fail on architectures where `int16_t` is not promoted to `int32_t`";
-    ASSERT_EQ(98, 32'768 * 3 / 1'000);
-    EXPECT_EQ(max_int16, 98);
+    ASSERT_THAT(98, Eq(32'768 * 3 / 1'000));
+    EXPECT_THAT(max_int16, Eq(98));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -321,7 +324,7 @@ TEST(MinNonOverflowingValue, AlwaysZeroIfNumCannotFitInPromotedType) {
             {IsPromotable::NO, NumFitsInPromotedType::NO, DenFitsInPromotedType::YES},
             huge,
             min_int);
-        EXPECT_EQ(min_int, 0);
+        EXPECT_THAT(min_int, Eq(0));
     }
 
     {
@@ -330,7 +333,7 @@ TEST(MinNonOverflowingValue, AlwaysZeroIfNumCannotFitInPromotedType) {
             {IsPromotable::YES, NumFitsInPromotedType::NO, DenFitsInPromotedType::YES},
             huge,
             min_i16);
-        EXPECT_EQ(min_i16, 0);
+        EXPECT_THAT(min_i16, Eq(0));
     }
 }
 
@@ -343,7 +346,7 @@ TEST(MinNonOverflowingValue, IsMinTDividedByNWhenTIsNotPromotableAndDenomOverflo
             {IsPromotable::NO, NumFitsInPromotedType::YES, DenFitsInPromotedType::NO},
             huge_denom,
             min_int);
-        EXPECT_EQ(min_int, std::numeric_limits<int>::lowest() / 3);
+        EXPECT_THAT(min_int, Eq(std::numeric_limits<int>::lowest() / 3));
     }
 
     {
@@ -352,7 +355,7 @@ TEST(MinNonOverflowingValue, IsMinTDividedByNWhenTIsNotPromotableAndDenomOverflo
             {IsPromotable::NO, NumFitsInPromotedType::YES, DenFitsInPromotedType::NO},
             huge_denom,
             min_i64);
-        EXPECT_EQ(min_i64, std::numeric_limits<int64_t>::lowest() / 3);
+        EXPECT_THAT(min_i64, Eq(std::numeric_limits<int64_t>::lowest() / 3));
     }
 }
 
@@ -364,7 +367,7 @@ TEST(MinNonOverflowingValue,
             {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::NO},
             mag<3>() / pow<400>(mag<10>()),
             min_i8);
-        EXPECT_EQ(min_i8, -128);
+        EXPECT_THAT(min_i8, Eq(-128));
     }
 
     {
@@ -374,9 +377,9 @@ TEST(MinNonOverflowingValue,
             mag<1'000'000>() / pow<400>(mag<11>()),
             min_i16);
 
-        ASSERT_TRUE((std::is_same<PromotedType<int16_t>, int32_t>::value))
+        ASSERT_THAT((std::is_same<PromotedType<int16_t>, int32_t>::value), IsTrue())
             << "This test will fail on architectures where `int16_t` is not promoted to `int32_t`";
-        EXPECT_EQ(min_i16, -2'147);
+        EXPECT_THAT(min_i16, Eq(-2'147));
     }
 }
 
@@ -389,7 +392,7 @@ TEST(MinNonOverflowingValue,
             {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::YES},
             mag<3>() / mag<10>(),
             min_i8);
-        EXPECT_EQ(min_i8, -128);
+        EXPECT_THAT(min_i8, Eq(-128));
     }
 
     {
@@ -398,7 +401,7 @@ TEST(MinNonOverflowingValue,
             {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::YES},
             mag<1'000'000>() / pow<6>(mag<11>()),
             min_i16);
-        EXPECT_EQ(min_i16, -2'147);
+        EXPECT_THAT(min_i16, Eq(-2'147));
     }
 }
 
@@ -411,9 +414,9 @@ TEST(MinNonOverflowingValue, IsPromotedMinOverNWhenNIsLargeAndDIsSlightlySmaller
         mag<1'000'000>() / mag<999'999>(),
         min_i16);
 
-    ASSERT_TRUE((std::is_same<PromotedType<int16_t>, int32_t>::value))
+    ASSERT_THAT((std::is_same<PromotedType<int16_t>, int32_t>::value), IsTrue())
         << "This test will fail on architectures where `int16_t` is not promoted to `int32_t`";
-    EXPECT_EQ(min_i16, -2'147);
+    EXPECT_THAT(min_i16, Eq(-2'147));
 }
 
 TEST(MinNonOverflowingValue, IsTMinOverNTimesDWhenMoreConstrainingThanPMinOverN) {
@@ -424,8 +427,8 @@ TEST(MinNonOverflowingValue, IsTMinOverNTimesDWhenMoreConstrainingThanPMinOverN)
         {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::YES},
         mag<1'000>() / mag<3>(),
         min_int16);
-    ASSERT_EQ(-98, -32'768 * 3 / 1'000);
-    EXPECT_EQ(min_int16, -98);
+    ASSERT_THAT(-98, Eq(-32'768 * 3 / 1'000));
+    EXPECT_THAT(min_int16, Eq(-98));
 }
 
 }  // namespace
