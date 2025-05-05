@@ -7,8 +7,8 @@ concept, the requirements, and how we implement it.
 ## Concepts
 
 In this section, we'll use square bracket notation, $[x]$, to refer to a **unit**.  Units can be
-multiplied by [_magnitudes_](../../reference/magnitude.md) (i.e., positive real numbers) to form _new_
-units: so, $[12x]$ is a unit which is 12 times the size of the unit $[x]$.
+multiplied by [_magnitudes_](../../reference/magnitude.md) (i.e., nonzero real numbers) to form
+_new_ units: so, $[12x]$ is a unit which is 12 times the size of the unit $[x]$.
 
 A _quantity_ is some property which can be measured.  A measurement result has two parts: the _unit
 of measure_, and the _value_ of the quantity, which is the ratio of the quantity to that unit.  For
@@ -168,9 +168,13 @@ So: what _is_ the "common quantity _point_ unit"?  Well, we can start with the "
 unit," but the origin adds a new complication.  We'll need to choose a convention.
 
 - With "common _quantity_ units," our convention ensured that conversions could only **multiply** by
-  a **positive integer**.  This keeps us within the domain of the integers whenever we start there.
-  And we chose the **smallest** such number to minimize overflow risk.
+  a **nonzero integer**[^1].  This keeps us within the domain of the integers whenever we start
+  there. And we chose the **smallest** such number to minimize overflow risk.
 
 - Similarly, with "common quantity _point_ units," we should choose its origin such that we only
   **add** a **non-negative** integer.  This convention preserves and extends the previous one: not
   only are we keeping integers as integers, but we support **unsigned** integers as best we can.
+
+[^1]: The overwhelmingly most common case here is that this integer is _positive_ as well, not just
+nonzero, so that we usually don't change the sign, either.  If the integer happens to be negative,
+then this unit conversion would produce a hard compiler error if applied to an unsigned type.
