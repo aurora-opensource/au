@@ -70,27 +70,34 @@ constexpr T clamp_to_range_of(U x) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// `is_known_to_be_less_than_one(MagT)` is true if the magnitude `MagT` is purely rational; its
-// numerator is representable in `std::uintmax_t`; and, it is less than 1.
+// `is_abs_known_to_be_less_than_one(MagT)` is true if the absolute value of the magnitude `MagT` is
+// purely rational; its numerator is representable in `std::uintmax_t`; and, it is less than 1.
 //
 
+enum class IsAbsMagLessThanOne {
+    DEFINITELY,
+    MAYBE_NOT,
+};
+
 template <typename... BPs>
-constexpr bool is_known_to_be_less_than_one(Magnitude<BPs...>) {
-    using MagT = Magnitude<BPs...>;
+constexpr IsAbsMagLessThanOne is_abs_known_to_be_less_than_one(Magnitude<BPs...>) {
+    using MagT = Abs<Magnitude<BPs...>>;
     static_assert(is_rational(MagT{}), "Magnitude must be rational");
 
     constexpr auto num_result = get_value_result<std::uintmax_t>(numerator(MagT{}));
     static_assert(num_result.outcome == MagRepresentationOutcome::OK,
-                  "Magnitude must be representable in std::uintmax_t");
+                  "Numerator must be representable in std::uintmax_t");
 
     constexpr auto den_result = get_value_result<std::uintmax_t>(denominator(MagT{}));
     static_assert(
         den_result.outcome == MagRepresentationOutcome::OK ||
             den_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT,
-        "Magnitude must either be representable in std::uintmax_t, or fail due to overflow");
+        "Denominator must either be representable in std::uintmax_t, or fail due to overflow");
 
-    return den_result.outcome == MagRepresentationOutcome::OK ? num_result.value < den_result.value
-                                                              : true;
+    return (den_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT ||
+            num_result.value < den_result.value)
+               ? IsAbsMagLessThanOne::DEFINITELY
+               : IsAbsMagLessThanOne::MAYBE_NOT;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,13 +114,19 @@ constexpr bool is_known_to_be_less_than_one(Magnitude<BPs...>) {
 //
 // Branch based on whether `MagT` is less than 1.
 //
-template <typename T, typename MagT, bool IsMagLessThanOne>
+template <typename T, typename MagT, IsAbsMagLessThanOne>
 struct MaxNonOverflowingValueImplWhenNumFits;
+
+// Implementation helper for "a value of zero" (which recurs a bunch of times).
+template <typename T>
+struct ValueOfZero {
+    static constexpr T value() { return T{0}; }
+};
 
 // If `MagT` is less than 1, then we only need to check for the limiting value where the _numerator
 // multiplication step alone_ would overflow.
 template <typename T, typename MagT>
-struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, true> {
+struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, IsAbsMagLessThanOne::DEFINITELY> {
     using P = PromotedType<T>;
 
     static constexpr T value() {
@@ -122,11 +135,11 @@ struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, true> {
     }
 };
 
-// If `MagT` is greater than 1, then we have two opportunities for overflow: the numerator
+// If `MagT` might be greater than 1, then we have two opportunities for overflow: the numerator
 // multiplication step can overflow the promoted type; or, the denominator division step can fail to
 // restore it to the original type's range.
 template <typename T, typename MagT>
-struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, false> {
+struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, IsAbsMagLessThanOne::MAYBE_NOT> {
     using P = PromotedType<T>;
 
     static constexpr T value() {
@@ -145,17 +158,24 @@ struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, false> {
 template <typename T, typename MagT, MagRepresentationOutcome NumOutcome>
 struct MaxNonOverflowingValueImpl;
 
+// For any situation where we're applying a negative factor to an unsigned type, simply short
+// circuit to set the max to zero.
+template <typename T, typename MagT>
+struct MaxNonOverflowingValueImpl<T,
+                                  MagT,
+                                  MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE>
+    : ValueOfZero<T> {};
+
 // If the numerator fits in the promoted type of `T`, delegate further based on whether the
 // denominator is bigger.
 template <typename T, typename MagT>
 struct MaxNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::OK>
-    : MaxNonOverflowingValueImplWhenNumFits<T, MagT, is_known_to_be_less_than_one(MagT{})> {};
+    : MaxNonOverflowingValueImplWhenNumFits<T, MagT, is_abs_known_to_be_less_than_one(MagT{})> {};
 
 // If `MagT` can't be represented in the promoted type of `T`, then the result is 0.
 template <typename T, typename MagT>
-struct MaxNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::ERR_CANNOT_FIT> {
-    static constexpr T value() { return T{0}; }
-};
+struct MaxNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::ERR_CANNOT_FIT>
+    : ValueOfZero<T> {};
 
 template <typename T, typename MagT>
 struct ValidateTypeAndMagnitude {
@@ -186,13 +206,13 @@ struct MaxNonOverflowingValue
 //
 // Branch based on whether `MagT` is less than 1.
 //
-template <typename T, typename MagT, bool IsMagLessThanOne>
+template <typename T, typename MagT, IsAbsMagLessThanOne>
 struct MinNonOverflowingValueImplWhenNumFits;
 
 // If `MagT` is less than 1, then we only need to check for the limiting value where the _numerator
 // multiplication step alone_ would overflow.
 template <typename T, typename MagT>
-struct MinNonOverflowingValueImplWhenNumFits<T, MagT, true> {
+struct MinNonOverflowingValueImplWhenNumFits<T, MagT, IsAbsMagLessThanOne::DEFINITELY> {
     using P = PromotedType<T>;
 
     static constexpr T value() {
@@ -205,7 +225,7 @@ struct MinNonOverflowingValueImplWhenNumFits<T, MagT, true> {
 // multiplication step can overflow the promoted type; or, the denominator division step can fail to
 // restore it to the original type's range.
 template <typename T, typename MagT>
-struct MinNonOverflowingValueImplWhenNumFits<T, MagT, false> {
+struct MinNonOverflowingValueImplWhenNumFits<T, MagT, IsAbsMagLessThanOne::MAYBE_NOT> {
     using P = PromotedType<T>;
 
     static constexpr T value() {
@@ -228,13 +248,12 @@ struct MinNonOverflowingValueImpl;
 // denominator is bigger.
 template <typename T, typename MagT>
 struct MinNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::OK>
-    : MinNonOverflowingValueImplWhenNumFits<T, MagT, is_known_to_be_less_than_one(MagT{})> {};
+    : MinNonOverflowingValueImplWhenNumFits<T, MagT, is_abs_known_to_be_less_than_one(MagT{})> {};
 
 // If the numerator can't be represented in the promoted type of `T`, then the result is 0.
 template <typename T, typename MagT>
-struct MinNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::ERR_CANNOT_FIT> {
-    static constexpr T value() { return T{0}; }
-};
+struct MinNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::ERR_CANNOT_FIT>
+    : ValueOfZero<T> {};
 
 template <typename T, typename MagT>
 struct MinNonOverflowingValue

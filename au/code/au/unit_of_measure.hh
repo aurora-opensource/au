@@ -609,7 +609,8 @@ struct IsFirstUnitRedundant
                          std::true_type,
                          std::conditional_t<AreUnitsQuantityEquivalent<U1, U2>::value,
                                             InOrderFor<Pack, U2, U1>,
-                                            IsInteger<UnitRatioT<U1, U2>>>> {};
+                                            stdx::conjunction<IsInteger<UnitRatioT<U1, U2>>,
+                                                              IsPositive<UnitRatioT<U1, U2>>>>> {};
 
 // Recursive case: eliminate first unit if it is redundant; else, keep it and eliminate any later
 // units that are redundant with it.

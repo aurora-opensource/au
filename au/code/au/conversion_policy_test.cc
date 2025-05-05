@@ -32,6 +32,7 @@ struct Nanograms : decltype(Grams{} / pow<9>(mag<10>())) {};
 
 struct Degrees : UnitImpl<Angle> {};
 struct EquivalentToDegrees : Degrees {};
+struct NegativeDegrees : decltype(Degrees{} * (-mag<1>())) {};
 
 TEST(CanScaleWithoutOverflow, DetectsOverflowLimits) {
     EXPECT_TRUE(can_scale_without_overflow<double>(mag<1000>(), 1e100));
@@ -45,6 +46,14 @@ TEST(ImplicitRepPermitted, TrueForIdentityMagnitude) {
     EXPECT_TRUE((ImplicitRepPermitted<float, Magnitude<>>::value));
     EXPECT_TRUE((ImplicitRepPermitted<int, Magnitude<>>::value));
     EXPECT_TRUE((ImplicitRepPermitted<uint8_t, Magnitude<>>::value));
+}
+
+TEST(ImplicitRepPermitted, TrueForNegativeOneUnlessUnsigned) {
+    EXPECT_TRUE((ImplicitRepPermitted<int64_t, Magnitude<Negative>>::value));
+    EXPECT_TRUE((ImplicitRepPermitted<int8_t, Magnitude<Negative>>::value));
+
+    EXPECT_FALSE((ImplicitRepPermitted<uint64_t, Magnitude<Negative>>::value));
+    EXPECT_FALSE((ImplicitRepPermitted<uint8_t, Magnitude<Negative>>::value));
 }
 
 TEST(ImplicitRepPermitted, TrueForFloatingPointTypesForVeryWideRanges) {
@@ -160,6 +169,19 @@ TEST(ConstructionPolicy, ForbidsImplicitConstructionOfIntegralTypeFromFloatingPt
 TEST(ConstructionPolicy, AlwaysOkForSameRepAndEquivalentUnit) {
     EXPECT_TRUE((ConstructionPolicy<EquivalentToDegrees,
                                     int8_t>::PermitImplicitFrom<Degrees, int8_t>::value));
+    EXPECT_TRUE(
+        (ConstructionPolicy<NegativeDegrees, int8_t>::PermitImplicitFrom<Degrees, int8_t>::value));
+}
+
+TEST(ConstructionPolicy, NotOkForNegativeRatioAndUnsignedDestination) {
+    EXPECT_FALSE(
+        (ConstructionPolicy<NegativeDegrees, uint8_t>::PermitImplicitFrom<Degrees, int8_t>::value));
+    EXPECT_FALSE((
+        ConstructionPolicy<NegativeDegrees, uint8_t>::PermitImplicitFrom<Degrees, uint8_t>::value));
+
+    // Make sure it's explicitly the unsigned _destination_ that we were forbidding.
+    ASSERT_TRUE(
+        (ConstructionPolicy<NegativeDegrees, int8_t>::PermitImplicitFrom<Degrees, uint8_t>::value));
 }
 
 TEST(ConstructionPolicy, OkForIntegralRepAndEquivalentUnit) {

@@ -486,6 +486,18 @@ TEST(Quantity, SupportsConvertingUnitsForComplexQuantity) {
     EXPECT_THAT(b, SameTypeAndValue(centi(meters)(std::complex<double>{-300.0, 400.0})));
 }
 
+TEST(Quantity, ConvertingByNegativeOneCanBeDoneImplicitly) {
+    // Use `int8_t`, because it's a type that requires the special carve-out.
+    constexpr auto neginches = inches * (-mag<1>());
+    constexpr auto q = inches(int8_t{-10});
+    EXPECT_THAT(q.as(neginches), SameTypeAndValue(neginches(int8_t{10})));
+}
+
+TEST(Quantity, AddingNegativeAndPositiveUnitsGivesPositiveUnit) {
+    constexpr auto neginches = inches * (-mag<1>());
+    EXPECT_THAT(neginches(10) + feet(2), QuantityEquivalent(inches(14)));
+}
+
 TEST(Quantity, SupportsExplicitRepConversionToComplexRep) {
     constexpr auto a = feet(15'000.0);
     const auto b = a.as<std::complex<int>>(miles);
