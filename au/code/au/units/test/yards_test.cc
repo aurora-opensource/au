@@ -15,13 +15,16 @@
 #include "au/units/yards.hh"
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Yards, HasExpectedLabel) { expect_label<Yards>("yd"); }
 
-TEST(Yards, EquivalentTo3Feet) { EXPECT_EQ(yards(1), feet(3)); }
+TEST(Yards, EquivalentTo3Feet) { EXPECT_THAT(yards(1), Eq(feet(3))); }
 
 TEST(Yards, HasExpectedSymbol) {
     using symbols::yd;

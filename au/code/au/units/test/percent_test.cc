@@ -17,13 +17,16 @@
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/unos.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Percent, HasExpectedLabel) { expect_label<Percent>("%"); }
 
-TEST(Percent, OneHundredthOfUnos) { EXPECT_EQ(percent(75.0), unos(0.75)); }
+TEST(Percent, OneHundredthOfUnos) { EXPECT_THAT(percent(75.0), Eq(unos(0.75))); }
 
 TEST(Percent, HasExpectedSymbol) {
     using symbols::pct;

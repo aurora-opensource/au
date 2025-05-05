@@ -16,13 +16,16 @@
 
 #include "au/testing.hh"
 #include "au/units/miles.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Furlongs, HasExpectedLabel) { expect_label<Furlongs>("fur"); }
 
-TEST(Furlongs, EquivalentToOneEighthMile) { EXPECT_EQ(furlongs(8), miles(1)); }
+TEST(Furlongs, EquivalentToOneEighthMile) { EXPECT_THAT(furlongs(8), Eq(miles(1))); }
 
 TEST(Furlongs, HasExpectedSymbol) {
     using symbols::fur;

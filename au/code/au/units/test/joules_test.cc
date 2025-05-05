@@ -17,13 +17,16 @@
 #include "au/testing.hh"
 #include "au/units/meters.hh"
 #include "au/units/newtons.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Joules, HasExpectedLabel) { expect_label<Joules>("J"); }
 
-TEST(Joules, EquivalentToNewtonMeters) { EXPECT_EQ(joules(18), (newton * meters)(18)); }
+TEST(Joules, EquivalentToNewtonMeters) { EXPECT_THAT(joules(18), Eq((newton * meters)(18))); }
 
 TEST(Joules, HasExpectedSymbol) {
     using symbols::J;

@@ -16,13 +16,16 @@
 
 #include "au/testing.hh"
 #include "au/units/bits.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Bytes, HasExpectedLabel) { expect_label<Bytes>("B"); }
 
-TEST(Bytes, EquivalentTo8Bits) { EXPECT_EQ(bytes(1), bits(8)); }
+TEST(Bytes, EquivalentTo8Bits) { EXPECT_THAT(bytes(1), Eq(bits(8))); }
 
 TEST(Bytes, HasExpectedSymbol) {
     using symbols::B;

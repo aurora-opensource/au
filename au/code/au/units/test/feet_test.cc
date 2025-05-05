@@ -15,13 +15,16 @@
 #include "au/units/feet.hh"
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Feet, HasExpectedLabel) { expect_label<Feet>("ft"); }
 
-TEST(Feet, EquivalentTo12Inches) { EXPECT_EQ(feet(1), inches(12)); }
+TEST(Feet, EquivalentTo12Inches) { EXPECT_THAT(feet(1), Eq(inches(12))); }
 
 TEST(Feet, HasExpectedSymbol) {
     using symbols::ft;

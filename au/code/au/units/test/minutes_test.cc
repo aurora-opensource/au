@@ -15,13 +15,16 @@
 #include "au/units/minutes.hh"
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Minutes, HasExpectedLabel) { expect_label<Minutes>("min"); }
 
-TEST(Minutes, EquivalentTo60Seconds) { EXPECT_EQ(minutes(3), seconds(180)); }
+TEST(Minutes, EquivalentTo60Seconds) { EXPECT_THAT(minutes(3), Eq(seconds(180))); }
 
 TEST(Minutes, HasExpectedSymbol) {
     using symbols::min;

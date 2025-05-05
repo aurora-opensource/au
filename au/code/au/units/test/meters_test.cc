@@ -17,13 +17,18 @@
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/inches.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Meters, HasExpectedLabel) { expect_label<Meters>("m"); }
 
-TEST(Meters, HasExpectedRelationshipsWithInches) { EXPECT_EQ(centi(meters)(254), inches(100)); }
+TEST(Meters, HasExpectedRelationshipsWithInches) {
+    EXPECT_THAT(centi(meters)(254), Eq(inches(100)));
+}
 
 TEST(Meters, HasExpectedSymbol) {
     using symbols::m;

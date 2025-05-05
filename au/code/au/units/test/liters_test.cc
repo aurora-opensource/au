@@ -15,17 +15,20 @@
 #include "au/units/liters.hh"
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Liters, HasExpectedLabel) { expect_label<Liters>("L"); }
 
 TEST(Liters, HasExpectedRelationshipsWithLinearUnits) {
-    EXPECT_EQ(liters(1), cubed(deci(meters))(1));
+    EXPECT_THAT(liters(1), Eq(cubed(deci(meters))(1)));
 
     // 1 mL == 1 c.c.
-    EXPECT_EQ(milli(liters)(1), cubed(centi(meters))(1));
+    EXPECT_THAT(milli(liters)(1), Eq(cubed(centi(meters))(1)));
 }
 
 TEST(Liters, HasExpectedSymbol) {

@@ -16,14 +16,17 @@
 
 #include "au/testing.hh"
 #include "au/units/celsius.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Fahrenheit, HasExpectedLabel) { expect_label<Fahrenheit>("degF"); }
 
 TEST(Fahrenheit, HasCorrectQuantityRelationshipWithCelsius) {
-    EXPECT_EQ(fahrenheit_qty(9), celsius_qty(5));
+    EXPECT_THAT(fahrenheit_qty(9), Eq(celsius_qty(5)));
 }
 
 TEST(Fahrenheit, HasCorrectRelationshipsWithCelsius) {

@@ -15,13 +15,16 @@
 #include "au/units/hours.hh"
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Hours, HasExpectedLabel) { expect_label<Hours>("h"); }
 
-TEST(Hours, EquivalentTo60Minutes) { EXPECT_EQ(hours(3), minutes(180)); }
+TEST(Hours, EquivalentTo60Minutes) { EXPECT_THAT(hours(3), Eq(minutes(180))); }
 
 TEST(Hours, HasExpectedSymbol) {
     using symbols::h;

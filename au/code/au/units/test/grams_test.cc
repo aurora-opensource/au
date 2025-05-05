@@ -16,14 +16,17 @@
 
 #include "au/testing.hh"
 #include "au/units/pounds_mass.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Grams, HasExpectedLabel) { expect_label<Grams>("g"); }
 
 TEST(Grams, HasCorrectRelationshipWithPoundsMass) {
-    EXPECT_EQ(micro(grams)(453'592'370L), pounds_mass(1L));
+    EXPECT_THAT(micro(grams)(453'592'370L), Eq(pounds_mass(1L)));
 }
 
 TEST(Grams, HasExpectedSymbol) {

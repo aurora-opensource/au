@@ -16,13 +16,16 @@
 
 #include "au/testing.hh"
 #include "au/units/us_gallons.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(USPints, HasExpectedLabel) { expect_label<USPints>("US_pt"); }
 
-TEST(USPints, EightInAGallon) { EXPECT_EQ(us_pints(8), us_gallons(1)); }
+TEST(USPints, EightInAGallon) { EXPECT_THAT(us_pints(8), Eq(us_gallons(1))); }
 
 TEST(USPints, HasExpectedSymbol) {
     using symbols::US_pt;

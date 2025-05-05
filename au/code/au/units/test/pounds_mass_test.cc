@@ -15,14 +15,17 @@
 #include "au/units/pounds_mass.hh"
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(PoundsMass, HasExpectedLabel) { expect_label<PoundsMass>("lb"); }
 
 TEST(PoundsMass, EquivalentToAppropriateQuantityOfKilograms) {
-    EXPECT_EQ(pounds_mass(100'000'000L), (kilo(grams)(45'359'237L)));
+    EXPECT_THAT(pounds_mass(100'000'000L), Eq(kilo(grams)(45'359'237L)));
 }
 
 TEST(PoundsMass, HasExpectedSymbol) {
