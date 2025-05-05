@@ -780,6 +780,25 @@ TEST(CommonOrigin, SymmetricUnderReordering) {
     EXPECT_THAT(common_origin_value, Not(SameTypeAndValue(AlternateCelsius::origin())));
 }
 
+TEST(ComputeOriginDisplacementUnit, ZeroForSameOrigin) {
+    StaticAssertTypeEq<ComputeOriginDisplacementUnit<Celsius, Milli<Celsius>>, Zero>();
+}
+
+TEST(ComputeOriginDisplacementUnit, HasExpectedMagnitudeAndSign) {
+    constexpr auto disp_k0_to_c0 = make_constant(ComputeOriginDisplacementUnit<Kelvins, Celsius>{});
+    EXPECT_THAT(disp_k0_to_c0, Eq(centi(kelvins)(273'15)));
+
+    constexpr auto disp_c0_to_k0 = make_constant(ComputeOriginDisplacementUnit<Celsius, Kelvins>{});
+    EXPECT_THAT(disp_c0_to_k0, Eq(centi(kelvins)(-273'15)));
+}
+
+TEST(ComputeOriginDisplacementUnit, HasExpectedLabel) {
+    EXPECT_THAT(unit_label(origin_displacement_unit(kelvins_pt, celsius_pt)),
+                StrEq("(@(0 deg_C) - @(0 K))"));
+    EXPECT_THAT(unit_label(origin_displacement_unit(celsius_pt, kelvins_pt)),
+                StrEq("(@(0 K) - @(0 deg_C))"));
+}
+
 TEST(EliminateRedundantUnits, IdentityForEmptySet) {
     StaticAssertTypeEq<EliminateRedundantUnits<SomePack<>>, SomePack<>>();
 }
