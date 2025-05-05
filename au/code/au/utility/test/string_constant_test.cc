@@ -21,13 +21,14 @@
 namespace au {
 
 using ::testing::Eq;
+using ::testing::IsEmpty;
 using ::testing::StrEq;
 
 namespace detail {
 
 TEST(StringConstant, CanCreateFromStringLiteral) {
     constexpr StringConstant<5> x{"hello"};
-    EXPECT_STREQ(x.c_str(), "hello");
+    EXPECT_THAT(x, StrEq("hello"));
 }
 
 TEST(StringConstant, HasLengthMember) {
@@ -37,12 +38,12 @@ TEST(StringConstant, HasLengthMember) {
 
 TEST(AsStringConstant, CanCreateFromStringLiteral) {
     constexpr auto x = as_string_constant("hello");
-    EXPECT_STREQ(x.c_str(), "hello");
+    EXPECT_THAT(x, StrEq("hello"));
 }
 
 TEST(AsStringConstant, PassingStringConstantIsIdentity) {
     constexpr auto x = as_string_constant(as_string_constant("goodbye"));
-    EXPECT_STREQ(x.c_str(), "goodbye");
+    EXPECT_THAT(x, StrEq("goodbye"));
 }
 
 TEST(AbsAsUnsigned, IdentityForPositiveNumbers) {
@@ -58,16 +59,16 @@ TEST(AbsAsUnsigned, NegatesNegativeNumbers) {
 }
 
 TEST(IToA, ValueHoldsStringVersionOfTemplateParameter) {
-    EXPECT_THAT(IToA<0>::value.c_str(), StrEq("0"));
+    EXPECT_THAT(IToA<0>::value, StrEq("0"));
 
-    EXPECT_THAT(IToA<1>::value.c_str(), StrEq("1"));
-    EXPECT_THAT(IToA<9>::value.c_str(), StrEq("9"));
-    EXPECT_THAT(IToA<10>::value.c_str(), StrEq("10"));
-    EXPECT_THAT(IToA<91>::value.c_str(), StrEq("91"));
-    EXPECT_THAT(IToA<312839>::value.c_str(), StrEq("312839"));
+    EXPECT_THAT(IToA<1>::value, StrEq("1"));
+    EXPECT_THAT(IToA<9>::value, StrEq("9"));
+    EXPECT_THAT(IToA<10>::value, StrEq("10"));
+    EXPECT_THAT(IToA<91>::value, StrEq("91"));
+    EXPECT_THAT(IToA<312839>::value, StrEq("312839"));
 
-    EXPECT_THAT(IToA<-1>::value.c_str(), StrEq("-1"));
-    EXPECT_THAT(IToA<-83294>::value.c_str(), StrEq("-83294"));
+    EXPECT_THAT(IToA<-1>::value, StrEq("-1"));
+    EXPECT_THAT(IToA<-83294>::value, StrEq("-83294"));
 
     // This funny way of writing it is because `-9'223'372'036'854'775'808` isn't a literal.  The
     // actual literal is `9'223'372'036'854'775'808`, which is too big (by one) to fit into
@@ -92,23 +93,23 @@ TEST(IToA, HasLengthMember) {
 }
 
 TEST(UIToA, CanHandleNumbersBiggerThanIntmaxButWithinUintmax) {
-    EXPECT_STREQ(UIToA<10000000000000000000u>::value.c_str(), "10000000000000000000");
+    EXPECT_THAT(UIToA<10'000'000'000'000'000'000u>::value, StrEq("10000000000000000000"));
 }
 
 TEST(join, EmptyStringForNoArguments) {
     constexpr auto x = as_string_constant("sep").join();
-    EXPECT_STREQ(x.c_str(), "");
+    EXPECT_THAT(x, IsEmpty());
 }
 
 TEST(join, InputStringForOneArgument) {
     constexpr auto fish = as_string_constant("sep").join(as_string_constant("fish"));
-    EXPECT_STREQ(fish.c_str(), "fish");
+    EXPECT_THAT(fish, StrEq("fish"));
 }
 
 TEST(join, JoinsMultipleArgumentsWithSep) {
     constexpr auto letter_groups = as_string_constant(" | ").join(
         as_string_constant("a"), as_string_constant("b"), as_string_constant("cde"));
-    EXPECT_STREQ(letter_groups.c_str(), "a | b | cde");
+    EXPECT_THAT(letter_groups, StrEq("a | b | cde"));
 }
 
 TEST(JoinBy, SupportsStringConstants) {
@@ -116,22 +117,22 @@ TEST(JoinBy, SupportsStringConstants) {
 
     constexpr auto letter_groups = join_by(" # ", "a", b, "cde");
 
-    EXPECT_STREQ(letter_groups.c_str(), "a # b # cde");
+    EXPECT_THAT(letter_groups, StrEq("a # b # cde"));
 }
 
 TEST(concatenate, EmptyStringForNoArguments) {
     constexpr auto x = concatenate();
-    EXPECT_STREQ(x.c_str(), "");
+    EXPECT_THAT(x, IsEmpty());
 }
 
 TEST(concatenate, ReturnsInputStringForOneArgument) {
     constexpr auto x = concatenate("foo");
-    EXPECT_STREQ(x.c_str(), "foo");
+    EXPECT_THAT(x, StrEq("foo"));
 }
 
 TEST(concatenate, ConcatenatesMultipleArguments) {
     constexpr auto x = concatenate("a", "b", "cde");
-    EXPECT_STREQ(x.c_str(), "abcde");
+    EXPECT_THAT(x, StrEq("abcde"));
 }
 
 TEST(concatenate, SupportsStringConstants) {
@@ -140,12 +141,12 @@ TEST(concatenate, SupportsStringConstants) {
 
     constexpr auto x = concatenate(a, "b", cde);
 
-    EXPECT_STREQ(x.c_str(), "abcde");
+    EXPECT_THAT(x, StrEq("abcde"));
 }
 
 TEST(ParensIf, WrapsInParensIfTrue) {
-    EXPECT_STREQ(parens_if<true>("a"), "(a)");
-    EXPECT_STREQ(parens_if<false>("123"), "123");
+    EXPECT_THAT(parens_if<true>("a"), StrEq("(a)"));
+    EXPECT_THAT(parens_if<false>("123"), StrEq("123"));
 }
 
 }  // namespace detail
