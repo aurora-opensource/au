@@ -109,6 +109,8 @@ constexpr Constant<AssociatedUnitT<UnitSlot>> make_constant(UnitSlot) {
     return {};
 }
 
+constexpr Zero make_constant(Zero) { return {}; }
+
 // Support using `Constant` in a unit slot.
 template <typename Unit>
 struct AssociatedUnit<Constant<Unit>> : stdx::type_identity<Unit> {};
