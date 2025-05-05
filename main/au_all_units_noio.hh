@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-22-g0dea968
+// Version identifier: 0.4.1-23-g11c216d
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -346,6 +346,11 @@ struct Prepend;
 template <typename PackT, typename T>
 using PrependT = typename Prepend<PackT, T>::type;
 
+template <template <class> class Condition, template <class...> class Pack, typename... Ts>
+struct IncludeInPackIfImpl;
+template <template <class> class Condition, template <class...> class Pack, typename... Ts>
+using IncludeInPackIf = typename IncludeInPackIfImpl<Condition, Pack, Ts...>::type;
+
 template <typename T, typename Pack>
 struct DropAllImpl;
 template <typename T, typename Pack>
@@ -373,6 +378,45 @@ template <template <typename...> class Pack, typename T, typename... Us>
 struct Prepend<Pack<Us...>, T> {
     using type = Pack<T, Us...>;
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `IncludeInPackIf` implementation.
+
+// Helper: change the pack.  This lets us do our work in one kind of pack, and then swap it out for
+// another pack at the end.
+template <template <class...> class NewPack, typename PackT>
+struct ChangePackToImpl;
+template <template <class...> class NewPack, typename PackT>
+using ChangePackTo = typename ChangePackToImpl<NewPack, PackT>::type;
+template <template <class...> class NewPack, template <class...> class OldPack, typename... Ts>
+struct ChangePackToImpl<NewPack, OldPack<Ts...>> : stdx::type_identity<NewPack<Ts...>> {};
+
+// A generic typelist with no constraints on members or ordering.  Intended as a type to hold
+// intermediate work.
+template <typename... Ts>
+struct GenericTypeList;
+
+template <template <class> class Condition, typename PackT>
+struct ListMatchingTypesImpl;
+template <template <class> class Condition, typename PackT>
+using ListMatchingTypes = typename ListMatchingTypesImpl<Condition, PackT>::type;
+
+// Base case:
+template <template <class> class Condition>
+struct ListMatchingTypesImpl<Condition, GenericTypeList<>>
+    : stdx::type_identity<GenericTypeList<>> {};
+
+// Recursive case:
+template <template <class> class Condition, typename H, typename... Ts>
+struct ListMatchingTypesImpl<Condition, GenericTypeList<H, Ts...>>
+    : std::conditional<Condition<H>::value,
+                       PrependT<ListMatchingTypes<Condition, GenericTypeList<Ts...>>, H>,
+                       ListMatchingTypes<Condition, GenericTypeList<Ts...>>> {};
+
+template <template <class> class Condition, template <class...> class Pack, typename... Ts>
+struct IncludeInPackIfImpl
+    : stdx::type_identity<
+          ChangePackTo<Pack, ListMatchingTypes<Condition, GenericTypeList<Ts...>>>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `DropAll` implementation.
@@ -4685,12 +4729,17 @@ struct SimplifyIfOnlyOneUnscaledUnitImpl;
 template <typename U>
 using SimplifyIfOnlyOneUnscaledUnit =
     typename SimplifyIfOnlyOneUnscaledUnitImpl<U, DistinctUnscaledUnits<U>>::type;
+template <>
+struct SimplifyIfOnlyOneUnscaledUnitImpl<Zero, UnitList<Zero>> : stdx::type_identity<Zero> {};
 template <typename U, typename SoleUnscaledUnit>
 struct SimplifyIfOnlyOneUnscaledUnitImpl<U, UnitList<SoleUnscaledUnit>>
     : stdx::type_identity<decltype(SoleUnscaledUnit{} * UnitRatioT<U, SoleUnscaledUnit>{})> {};
 template <typename U, typename... Us>
 struct SimplifyIfOnlyOneUnscaledUnitImpl<U, UnitList<Us...>> : stdx::type_identity<U> {};
 
+// Explicit specialization to short-circuit `FirstMatchingUnit` machinery for `Zero`.
+template <>
+struct FirstMatchingUnit<AreUnitsQuantityEquivalent, Zero, Zero> : stdx::type_identity<Zero> {};
 }  // namespace detail
 
 template <typename A, typename B>
@@ -4700,14 +4749,21 @@ template <typename... Us>
 using CommonUnitLabel = FlatDedupedTypeListT<detail::CommonUnitLabelImpl, Us...>;
 
 template <typename... Us>
-using ComputeCommonUnitImpl =
-    detail::EliminateRedundantUnits<FlatDedupedTypeListT<CommonUnit, Us...>>;
+struct ComputeCommonUnitImpl
+    : stdx::type_identity<
+          detail::EliminateRedundantUnits<FlatDedupedTypeListT<CommonUnit, Us...>>> {};
+template <>
+struct ComputeCommonUnitImpl<> : stdx::type_identity<Zero> {};
+
+template <typename T>
+struct IsNonzero : stdx::negation<std::is_same<T, Zero>> {};
 
 template <typename... Us>
 struct ComputeCommonUnit
-    : stdx::type_identity<detail::SimplifyIfOnlyOneUnscaledUnit<
-          typename detail::FirstMatchingUnit<AreUnitsQuantityEquivalent,
-                                             ComputeCommonUnitImpl<Us...>>::type>> {};
+    : stdx::type_identity<detail::SimplifyIfOnlyOneUnscaledUnit<typename detail::FirstMatchingUnit<
+          AreUnitsQuantityEquivalent,
+          typename detail::IncludeInPackIf<IsNonzero, ComputeCommonUnitImpl, Us...>::type>::type>> {
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `CommonPointUnitT` helper implementation.
@@ -7051,6 +7107,8 @@ template <typename UnitSlot>
 constexpr Constant<AssociatedUnitT<UnitSlot>> make_constant(UnitSlot) {
     return {};
 }
+
+constexpr Zero make_constant(Zero) { return {}; }
 
 // Support using `Constant` in a unit slot.
 template <typename Unit>
