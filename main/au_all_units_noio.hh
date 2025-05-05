@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-18-g677b756
+// Version identifier: 0.4.1-19-gbfe9b6a
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
