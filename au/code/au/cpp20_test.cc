@@ -18,11 +18,14 @@
 #include "au/quantity_point.hh"
 #include "au/testing.hh"
 #include "au/units/meters.hh"
+#include "gmock/gmock.h"
+#include "gtest/gtest.h"
 
 namespace au {
 
 using symbols::m;
 using ::testing::Eq;
+using ::testing::Lt;
 
 struct Foo {
     auto operator<=>(const Foo &) const = default;
@@ -36,7 +39,7 @@ struct FooPt {
     QuantityPointD<Meters> position;
 };
 
-TEST(Quantity, SupportsSpaceship) { EXPECT_LT(Foo{5 * m}, Foo{6 * m}); }
+TEST(Quantity, SupportsSpaceship) { EXPECT_THAT(Foo{5 * m}, Lt(Foo{6 * m})); }
 
 TEST(Quantity, SpaceshipCorrectForMixedSignUnits) {
     constexpr auto negm = m * (-mag<1>());
@@ -45,6 +48,8 @@ TEST(Quantity, SpaceshipCorrectForMixedSignUnits) {
     EXPECT_THAT((1 * m) <=> (-2 * negm), Eq((1 * m) <=> (2 * m)));
 }
 
-TEST(QuantityPoint, SupportsSpaceship) { EXPECT_LT(FooPt{meters_pt(5)}, FooPt{meters_pt(6)}); }
+TEST(QuantityPoint, SupportsSpaceship) {
+    EXPECT_THAT(FooPt{meters_pt(5)}, Lt(FooPt{meters_pt(6)}));
+}
 
 }  // namespace au

@@ -37,6 +37,7 @@ using ::testing::DoubleNear;
 using ::testing::Eq;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
+using ::testing::Ne;
 using ::testing::StaticAssertTypeEq;
 
 namespace {
@@ -396,7 +397,7 @@ TEST(max, ReturnsByValueForSameExactQuantityType) {
     const auto &max_a_b = max(a, b);
 
     EXPECT_THAT(max_a_b, Eq(b));
-    EXPECT_NE(&max_a_b, &b);
+    EXPECT_THAT(&max_a_b, Ne(&b));
 }
 
 TEST(max, SupportsConstexprForSameExactQuantityType) {
@@ -411,7 +412,7 @@ TEST(max, ReturnsByValueForSameExactQuantityPointType) {
     const auto &max_a_b = max(a, b);
 
     EXPECT_THAT(max_a_b, Eq(b));
-    EXPECT_NE(&max_a_b, &b);
+    EXPECT_THAT(&max_a_b, Ne(&b));
 }
 
 TEST(max, SupportsConstexprForSameExactQuantityPointType) {
@@ -461,7 +462,7 @@ TEST(min, ReturnsByValueForSameExactQuantityType) {
     const auto &min_a_b = min(a, b);
 
     EXPECT_THAT(min_a_b, Eq(a));
-    EXPECT_NE(&min_a_b, &a);
+    EXPECT_THAT(&min_a_b, Ne(&a));
 }
 
 TEST(min, SupportsConstexprForSameExactQuantityType) {
@@ -476,7 +477,7 @@ TEST(min, ReturnsByValueForSameExactQuantityPointType) {
     const auto &min_a_b = min(a, b);
 
     EXPECT_THAT(min_a_b, Eq(a));
-    EXPECT_NE(&min_a_b, &a);
+    EXPECT_THAT(&min_a_b, Ne(&a));
 }
 
 TEST(min, SupportsConstexprForSameExactQuantityPointType) {

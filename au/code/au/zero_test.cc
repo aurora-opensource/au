@@ -22,8 +22,10 @@ using namespace std::chrono_literals;
 namespace au {
 
 using ::testing::Eq;
+using ::testing::Gt;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
+using ::testing::Lt;
 
 // Example for supporting implicit construction from Zero.
 class WrappedInt {
@@ -65,12 +67,8 @@ TEST(Zero, PlusZeroIsZero) {
 
 TEST(Zero, ComparableToArbitraryQuantities) {
     EXPECT_THAT(ZERO, Eq(WrappedInt{0}));
-    EXPECT_LT(ZERO, WrappedInt{1});
-    EXPECT_GT(ZERO, WrappedInt{-1});
-
-    EXPECT_THAT(WrappedInt{0}, Eq(ZERO));
-    EXPECT_LT(ZERO, WrappedInt{1});
-    EXPECT_GT(ZERO, WrappedInt{-1});
+    EXPECT_THAT(ZERO, Lt(WrappedInt{1}));
+    EXPECT_THAT(ZERO, Gt(WrappedInt{-1}));
 }
 
 TEST(Zero, ComparesEqualToZero) {

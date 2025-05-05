@@ -27,6 +27,8 @@ using ::testing::Eq;
 using ::testing::FloatEq;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
+using ::testing::Le;
+using ::testing::Ne;
 using ::testing::StaticAssertTypeEq;
 using ::testing::StrEq;
 
@@ -46,7 +48,7 @@ TEST(Magnitude, SupportsEqualityComparison) {
     constexpr auto mag_2 = mag<2>();
     EXPECT_THAT(mag_2, Eq(mag_2));
 
-    EXPECT_NE(mag_1, mag_2);
+    EXPECT_THAT(mag_1, Ne(mag_2));
 }
 
 TEST(Magnitude, ProductBehavesCorrectly) {
@@ -295,7 +297,7 @@ TEST(GetValue, PiToArbitraryPowerPerformsComputationsInMostAccurateTypeAtCompile
     constexpr auto result_via_long_double = static_cast<float>(cubed(get_value<long double>(PI)));
 
     constexpr auto pi_cubed_value = get_value<float>(pi_cubed);
-    ASSERT_NE(pi_cubed_value, result_via_float);
+    ASSERT_THAT(pi_cubed_value, Ne(result_via_float));
     EXPECT_THAT(pi_cubed_value, Eq(result_via_long_double));
 }
 
@@ -322,7 +324,7 @@ TEST(GetValue, ImpossibleRequestsArePreventedAtCompileTime) {
 
 TEST(GetValue, HandlesRoots) {
     constexpr auto sqrt_2 = get_value<double>(root<2>(mag<2>()));
-    EXPECT_DOUBLE_EQ(sqrt_2 * sqrt_2, 2.0);
+    EXPECT_THAT(sqrt_2 * sqrt_2, DoubleEq(2.0));
 }
 
 TEST(GetValue, WorksForEmptyPack) {
@@ -548,7 +550,7 @@ TEST(Root, ResultAtLeastAsGoodAsStdPowForRationalPowers) {
         for (const auto power : std::vector<RationalPower>{{5, 2}, {2, 3}, {7, 4}}) {
             const auto error_from_root = round_trip_error(base, power, result_via_root);
             const auto error_from_std_pow = round_trip_error(base, power, result_via_std_pow);
-            EXPECT_LE(error_from_root, error_from_std_pow);
+            EXPECT_THAT(error_from_root, Le(error_from_std_pow));
         }
     }
 }

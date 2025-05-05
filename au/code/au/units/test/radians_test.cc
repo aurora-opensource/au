@@ -16,14 +16,18 @@
 
 #include "au/testing.hh"
 #include "au/units/revolutions.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::DoubleEq;
+
 TEST(Radians, HasExpectedLabel) { expect_label<Radians>("rad"); }
 
 TEST(Radians, TwoPiPerRevolution) {
-    EXPECT_DOUBLE_EQ(radians(get_value<double>(mag<2>() * Magnitude<Pi>{})).in(revolutions), 1.0);
+    EXPECT_THAT(radians(get_value<double>(mag<2>() * Magnitude<Pi>{})).in(revolutions),
+                DoubleEq(1.0));
 }
 
 TEST(Radians, HasExpectedSymbol) {

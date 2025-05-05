@@ -36,6 +36,7 @@
 namespace au {
 
 using ::testing::Eq;
+using ::testing::Lt;
 using ::testing::StaticAssertTypeEq;
 
 namespace {
@@ -112,7 +113,7 @@ TEST(Xkcd, Xkcd3038GivesReasonableSpeedLimit) {
 }
 
 TEST(QuantityPoint, DocumentationExampleIsCorrect) {
-    EXPECT_LT(fahrenheit_pt(-40) + celsius_qty(60), kelvins_pt(300));
+    EXPECT_THAT(fahrenheit_pt(-40) + celsius_qty(60), Lt(kelvins_pt(300)));
 }
 
 }  // namespace au

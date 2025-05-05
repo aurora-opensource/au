@@ -32,6 +32,7 @@ using ::testing::Gt;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
 using ::testing::Lt;
+using ::testing::Ne;
 using ::testing::StaticAssertTypeEq;
 
 struct Feet : UnitImpl<Length> {
@@ -383,7 +384,7 @@ TEST(Quantity, EqualityComparisonWorks) {
 TEST(Quantity, InequalityComparisonWorks) {
     constexpr auto a = hours(3.9);
     constexpr auto b = hours(5.7);
-    EXPECT_NE(a, b);
+    EXPECT_THAT(a, Ne(b));
 }
 
 TEST(Quantity, RelativeComparisonsWork) {
@@ -409,7 +410,7 @@ TEST(Quantity, CopyingWorksAndIsDeepCopy) {
 
     // To test that we're deep copying, modify the original.
     original += feet(2.5);
-    EXPECT_NE(original, copy);
+    EXPECT_THAT(original, Ne(copy));
 }
 
 TEST(Quantity, CanAddLikeQuantities) {
@@ -716,7 +717,7 @@ TEST(Quantity, QuantityCastAvoidsPreventableOverflowWhenGoingToLargerType) {
 
 TEST(Quantity, QuantityCastAvoidsPreventableOverflowWhenGoingToSmallerType) {
     constexpr uint64_t would_overflow_uint32 = 9'000'000'000;
-    ASSERT_GT(would_overflow_uint32, std::numeric_limits<uint32_t>::max());
+    ASSERT_THAT(would_overflow_uint32, Gt(std::numeric_limits<uint32_t>::max()));
 
     constexpr auto lots_of_nanoinches = nano(inches)(would_overflow_uint32);
 
@@ -813,7 +814,7 @@ TEST(QuantityNTTP, CanConvertFromNttpToAnyCompatibleQuantityType) {
 TEST(Quantity, CommonTypeRespectsImplicitRepSafetyChecks) {
     // The following test should fail to compile.  Uncomment both lines to check.
     // constexpr auto feeters = QuantityMaker<CommonUnitT<Meters, Feet>>{};
-    // EXPECT_NE(meters(uint16_t{53}), feeters(uint16_t{714}));
+    // EXPECT_THAT(meters(uint16_t{53}), Ne(feeters(uint16_t{714})));
 
     // Why the above values?  The common unit of Meters and Feet (herein called the "Feeter") is
     // (Meters / 1250); a.k.a., (Feet / 381).  (For reference, think of it as "a little less than a
@@ -1093,12 +1094,12 @@ TEST(mod, ReturnsCommonUnitForDifferentInputUnits) {
 
 TEST(Zero, ComparableToArbitraryQuantities) {
     EXPECT_THAT(ZERO, Eq(meters(0)));
-    EXPECT_LT(ZERO, meters(1));
-    EXPECT_GT(ZERO, meters(-1));
+    EXPECT_THAT(ZERO, Lt(meters(1)));
+    EXPECT_THAT(ZERO, Gt(meters(-1)));
 
     EXPECT_THAT(ZERO, Eq(hours(0)));
-    EXPECT_LT(ZERO, hours(1));
-    EXPECT_GT(ZERO, hours(-1));
+    EXPECT_THAT(ZERO, Lt(hours(1)));
+    EXPECT_THAT(ZERO, Gt(hours(-1)));
 }
 
 TEST(Zero, AssignableToArbitraryQuantities) {
