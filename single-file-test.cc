@@ -31,7 +31,8 @@ using ::au::symbols::s;
 
 constexpr auto ns = ::au::nano(s);
 
-namespace au::detail {
+namespace au {
+namespace detail {
 std::ostream &operator<<(std::ostream &out, IsAbsMagLessThanOne val) {
     switch (val) {
         case IsAbsMagLessThanOne::DEFINITELY:
@@ -41,7 +42,8 @@ std::ostream &operator<<(std::ostream &out, IsAbsMagLessThanOne val) {
     }
     return out;
 }
-}  // namespace au::detail
+}  // namespace detail
+}  // namespace au
 
 // This ad hoc utility is a stand-in for GTEST, which we can't use here.
 template <typename ExpectedT, typename ActualT>
