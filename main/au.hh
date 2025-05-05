@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-20-gc016096
+// Version identifier: 0.4.1-21-g25cbe3c
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -4622,6 +4622,16 @@ struct UnitLabel<ScaledUnit<U, M>> {
 template <typename U, typename M>
 constexpr typename UnitLabel<ScaledUnit<U, M>>::LabelT UnitLabel<ScaledUnit<U, M>>::value;
 
+// Special case for unit scaled by (-1).
+template <typename U>
+struct UnitLabel<ScaledUnit<U, Magnitude<Negative>>> {
+    using LabelT = detail::ExtendedLabel<3u, U>;
+    static constexpr LabelT value = detail::concatenate("[-", UnitLabel<U>::value, "]");
+};
+template <typename U>
+constexpr typename UnitLabel<ScaledUnit<U, Magnitude<Negative>>>::LabelT
+    UnitLabel<ScaledUnit<U, Magnitude<Negative>>>::value;
+
 // Implementation for CommonUnit: give size in terms of each constituent unit.
 template <typename... Us>
 struct UnitLabel<CommonUnit<Us...>>
@@ -5698,8 +5708,10 @@ constexpr auto root(QuantityMaker<Unit>) {
 // Check conversion for overflow (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit) {
-    return detail::ApplyMagnitudeT<R, decltype(unit_ratio(U{}, target_unit))>::would_overflow(
-        q.in(U{}));
+    using Ratio = decltype(unit_ratio(U{}, target_unit));
+    static_assert(IsPositive<Ratio>::value,
+                  "Runtime conversion checkers don't yet support negative units");
+    return detail::ApplyMagnitudeT<R, Ratio>::would_overflow(q.in(U{}));
 }
 
 // Check conversion for overflow (new rep).
@@ -5725,8 +5737,10 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_
 // Check conversion for truncation (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit) {
-    return detail::ApplyMagnitudeT<R, decltype(unit_ratio(U{}, target_unit))>::would_truncate(
-        q.in(U{}));
+    using Ratio = decltype(unit_ratio(U{}, target_unit));
+    static_assert(IsPositive<Ratio>::value,
+                  "Runtime conversion checkers don't yet support negative units");
+    return detail::ApplyMagnitudeT<R, Ratio>::would_truncate(q.in(U{}));
 }
 
 // Check conversion for truncation (new rep).
@@ -6588,6 +6602,10 @@ struct CanScaleByMagnitude {
     template <typename... BPs>
     friend constexpr auto operator/(UnitWrapper<Unit>, Magnitude<BPs...> m) {
         return UnitWrapper<decltype(Unit{} / m)>{};
+    }
+
+    friend constexpr auto operator-(UnitWrapper<Unit>) {
+        return UnitWrapper<decltype(Unit{} * (-mag<1>()))>{};
     }
 };
 
@@ -8164,6 +8182,7 @@ template <typename U, typename R>
 constexpr auto as_chrono_duration(Quantity<U, R> dt) {
     constexpr auto ratio = unit_ratio(U{}, seconds);
     static_assert(is_rational(ratio), "Cannot convert to chrono::duration with non-rational ratio");
+    static_assert(is_positive(ratio), "Chrono library does not support negative duration units");
     return std::chrono::duration<R,
                                  std::ratio<get_value<std::intmax_t>(numerator(ratio)),
                                             get_value<std::intmax_t>(denominator(ratio))>>{dt};
