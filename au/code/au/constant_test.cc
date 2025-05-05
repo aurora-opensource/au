@@ -29,6 +29,7 @@
 #include "gtest/gtest.h"
 
 using ::testing::AnyOf;
+using ::testing::Eq;
 using ::testing::StaticAssertTypeEq;
 using ::testing::StrEq;
 
@@ -36,6 +37,8 @@ namespace au {
 namespace {
 
 constexpr auto PI = Magnitude<Pi>{};
+constexpr auto m = symbol_for(meters);
+constexpr auto s = symbol_for(seconds);
 
 template <typename U, typename R>
 std::string stream_to_string(Quantity<U, R> q) {
@@ -82,8 +85,6 @@ TEST(MakeConstant, MakesAdHocConstantFromQuantityMaker) {
 }
 
 TEST(MakeConstant, MakesConstantFromSymbol) {
-    constexpr auto m = symbol_for(meters);
-    constexpr auto s = symbol_for(seconds);
     constexpr auto ad_hoc_c = mag<299'792'458>() * make_constant(m / s);
     EXPECT_THAT(123 * ad_hoc_c, QuantityEquivalent(123 * c));
 }
@@ -114,6 +115,16 @@ TEST(Constant, CanCoerce) {
     EXPECT_THAT(c.coerce_in<int>(kilo(meters) / second), SameTypeAndValue(299'792));
     EXPECT_THAT(c.coerce_as<int>(kilo(meters) / second),
                 SameTypeAndValue((kilo(meters) / second)(299'792)));
+}
+
+TEST(Constant, CanNegate) {
+    constexpr auto neg_c = -c;
+    EXPECT_THAT(neg_c, Eq(-299'792'458 * m / s));
+    EXPECT_THAT(stream_to_string(0.75 * neg_c), StrEq("0.75 [-c]"));
+
+    constexpr auto double_neg_c = -neg_c;
+    EXPECT_THAT(double_neg_c, Eq(299'792'458 * m / s));
+    EXPECT_THAT(stream_to_string(0.75 * double_neg_c), StrEq("0.75 c"));
 }
 
 TEST(Constant, MakesQuantityWhenPostMultiplyingNumericValue) {

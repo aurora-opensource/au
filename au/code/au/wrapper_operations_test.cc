@@ -163,6 +163,11 @@ TEST(SupportsRationalPowers, UnlocksNamedPowerHelpers) {
     StaticAssertTypeEq<decltype(sqrt(mol)), decltype(root<2>(mol))>();
 }
 
+TEST(CanScaleByMagnitude, SupportsNegation) {
+    constexpr auto mol = UnitWrapper<Moles>{};
+    StaticAssertTypeEq<decltype(-mol), UnitWrapper<decltype(Moles{} * (-mag<1>()))>>();
+}
+
 TEST(ForbidsComposingWith, FailsToCompileWhenMultiplyingOrDividingWithForbiddenWrapper) {
     // Uncomment each line below individually to verify.
 

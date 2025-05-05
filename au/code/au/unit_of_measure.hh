@@ -943,6 +943,16 @@ struct UnitLabel<ScaledUnit<U, M>> {
 template <typename U, typename M>
 constexpr typename UnitLabel<ScaledUnit<U, M>>::LabelT UnitLabel<ScaledUnit<U, M>>::value;
 
+// Special case for unit scaled by (-1).
+template <typename U>
+struct UnitLabel<ScaledUnit<U, Magnitude<Negative>>> {
+    using LabelT = detail::ExtendedLabel<3u, U>;
+    static constexpr LabelT value = detail::concatenate("[-", UnitLabel<U>::value, "]");
+};
+template <typename U>
+constexpr typename UnitLabel<ScaledUnit<U, Magnitude<Negative>>>::LabelT
+    UnitLabel<ScaledUnit<U, Magnitude<Negative>>>::value;
+
 // Implementation for CommonUnit: give size in terms of each constituent unit.
 template <typename... Us>
 struct UnitLabel<CommonUnit<Us...>>
