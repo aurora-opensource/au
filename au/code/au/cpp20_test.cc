@@ -22,6 +22,7 @@
 namespace au {
 
 using symbols::m;
+using ::testing::Eq;
 
 struct Foo {
     auto operator<=>(const Foo &) const = default;
@@ -36,6 +37,13 @@ struct FooPt {
 };
 
 TEST(Quantity, SupportsSpaceship) { EXPECT_LT(Foo{5 * m}, Foo{6 * m}); }
+
+TEST(Quantity, SpaceshipCorrectForMixedSignUnits) {
+    constexpr auto negm = m * (-mag<1>());
+    EXPECT_THAT((1 * m) <=> (0 * negm), Eq((1 * m) <=> (0 * m)));
+    EXPECT_THAT((1 * m) <=> (-1 * negm), Eq((1 * m) <=> (1 * m)));
+    EXPECT_THAT((1 * m) <=> (-2 * negm), Eq((1 * m) <=> (2 * m)));
+}
 
 TEST(QuantityPoint, SupportsSpaceship) { EXPECT_LT(FooPt{meters_pt(5)}, FooPt{meters_pt(6)}); }
 
