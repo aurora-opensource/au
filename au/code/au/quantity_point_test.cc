@@ -21,6 +21,7 @@
 
 namespace au {
 
+using ::testing::DoubleNear;
 using ::testing::Eq;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
@@ -205,7 +206,7 @@ TEST(QuantityPoint, HasDefaultConstructor) {
 
 TEST(QuantityPoint, InHandlesUnitsWithNonzeroOffset) {
     constexpr auto room_temperature = kelvins_pt(293.15);
-    EXPECT_NEAR(room_temperature.in(Celsius{}), 20, 1e-12);
+    EXPECT_THAT(room_temperature.in(Celsius{}), DoubleNear(20, 1e-12));
 }
 
 TEST(QuantityPoint, InHandlesIntegerRepInUnitsWithNonzeroOffset) {
