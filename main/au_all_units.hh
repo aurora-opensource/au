@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-19-gbfe9b6a
+// Version identifier: 0.4.1-20-gc016096
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -1372,6 +1372,16 @@ struct LessEqual {
     }
 };
 constexpr auto less_equal = LessEqual{};
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+struct ThreeWayCompare {
+    template <typename T>
+    constexpr auto operator()(const T &a, const T &b) const {
+        return a <=> b;
+    }
+};
+constexpr auto three_way_compare = ThreeWayCompare{};
+#endif
 
 //
 // Arithmetic operators.
@@ -5463,12 +5473,34 @@ constexpr auto as_quantity(T &&x) -> CorrespondingQuantityT<T> {
     return make_quantity<typename Q::Unit>(value);
 }
 
+namespace detail {
+enum class UnitSign {
+    POSITIVE,
+    NEGATIVE,
+};
+
+template <typename Rep, UnitSign>
+struct CompareUnderlyingValues;
+}  // namespace detail
+
 template <typename UnitT, typename RepT>
 class Quantity {
     template <bool ImplicitOk, typename OtherUnit, typename OtherRep>
     using EnableIfImplicitOkIs = std::enable_if_t<
         ImplicitOk ==
         ConstructionPolicy<UnitT, RepT>::template PermitImplicitFrom<OtherUnit, OtherRep>::value>;
+    using Vals = detail::CompareUnderlyingValues<RepT,
+                                                 (IsPositive<detail::MagT<UnitT>>::value
+                                                      ? detail::UnitSign::POSITIVE
+                                                      : detail::UnitSign::NEGATIVE)>;
+
+    // Not strictly necessary, but we want to keep each comparator implementation to one line.
+    using Eq = detail::Equal;
+    using Ne = detail::NotEqual;
+    using Lt = detail::Less;
+    using Le = detail::LessEqual;
+    using Gt = detail::Greater;
+    using Ge = detail::GreaterEqual;
 
  public:
     using Rep = RepT;
@@ -5610,12 +5642,17 @@ class Quantity {
     friend struct QuantityMaker<UnitT>;
 
     // Comparison operators.
-    friend constexpr bool operator==(Quantity a, Quantity b) { return a.value_ == b.value_; }
-    friend constexpr bool operator!=(Quantity a, Quantity b) { return a.value_ != b.value_; }
-    friend constexpr bool operator<(Quantity a, Quantity b) { return a.value_ < b.value_; }
-    friend constexpr bool operator<=(Quantity a, Quantity b) { return a.value_ <= b.value_; }
-    friend constexpr bool operator>(Quantity a, Quantity b) { return a.value_ > b.value_; }
-    friend constexpr bool operator>=(Quantity a, Quantity b) { return a.value_ >= b.value_; }
+    friend constexpr bool operator==(Quantity a, Quantity b) { return Vals::cmp(a, b, Eq{}); }
+    friend constexpr bool operator!=(Quantity a, Quantity b) { return Vals::cmp(a, b, Ne{}); }
+    friend constexpr bool operator<(Quantity a, Quantity b) { return Vals::cmp(a, b, Lt{}); }
+    friend constexpr bool operator<=(Quantity a, Quantity b) { return Vals::cmp(a, b, Le{}); }
+    friend constexpr bool operator>(Quantity a, Quantity b) { return Vals::cmp(a, b, Gt{}); }
+    friend constexpr bool operator>=(Quantity a, Quantity b) { return Vals::cmp(a, b, Ge{}); }
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+    using Twc = detail::ThreeWayCompare;
+    friend constexpr auto operator<=>(Quantity a, Quantity b) { return Vals::cmp(a, b, Twc{}); }
+#endif
 
     // Addition and subtraction for like quantities.
     friend constexpr Quantity<UnitT, decltype(std::declval<RepT>() + std::declval<RepT>())>
@@ -6194,11 +6231,28 @@ constexpr auto operator>=(QLike q1, Quantity<U, R> q2) -> decltype(as_quantity(q
     return as_quantity(q1) >= q2;
 }
 
+namespace detail {
+template <typename Rep>
+struct CompareUnderlyingValues<Rep, UnitSign::POSITIVE> {
+    template <typename U, typename Comp>
+    static constexpr auto cmp(Quantity<U, Rep> lhs, Quantity<U, Rep> rhs, Comp comp) {
+        return comp(lhs.in(U{}), rhs.in(U{}));
+    }
+};
+
+template <typename Rep>
+struct CompareUnderlyingValues<Rep, UnitSign::NEGATIVE> {
+    template <typename U, typename Comp>
+    static constexpr auto cmp(Quantity<U, Rep> lhs, Quantity<U, Rep> rhs, Comp comp) {
+        return comp(rhs.in(U{}), lhs.in(U{}));
+    }
+};
+}  // namespace detail
+
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename U1, typename R1, typename U2, typename R2>
 constexpr auto operator<=>(const Quantity<U1, R1> &lhs, const Quantity<U2, R2> &rhs) {
-    using U = CommonUnitT<U1, U2>;
-    return lhs.in(U{}) <=> rhs.in(U{});
+    return detail::using_common_type(lhs, rhs, detail::ThreeWayCompare{});
 }
 #endif
 
