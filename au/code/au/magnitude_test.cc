@@ -119,7 +119,7 @@ TEST(Pi, HasCorrectValue) {
 #ifdef M_PIl
     EXPECT_EQ(Pi::value(), M_PIl);
 #else
-    EXPECT_TRUE(false) << "M_PIl not available on this architecture";
+    ADD_FAILURE() << "M_PIl not available on this architecture";
 #endif
 }
 
@@ -279,7 +279,7 @@ TEST(GetValue, PiToThePower1HasCorrectValues) {
 #ifdef M_PIl
     EXPECT_THAT(get_value<long double>(PI), SameTypeAndValue(M_PIl));
 #else
-    EXPECT_TRUE(false) << "M_PIl not available on this architecture";
+    ADD_FAILURE() << "M_PIl not available on this architecture";
 #endif
 }
 
