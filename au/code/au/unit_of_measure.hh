@@ -496,7 +496,7 @@ using ValueDisplacementMagnitude = typename ValueDisplacementMagnitudeImpl<
 // Equal values case.
 template <typename U1, typename U2>
 struct ValueDisplacementMagnitudeImpl<U1, U2, AreValuesEqual::YES> : stdx::type_identity<Zero> {
-    static_assert(U1::value() == U2::value(), "Mismatched instantiation (should never happen)");
+    static_assert(U1::value() == U2::value(), "Mismatched instantiation (internal library error)");
 };
 
 // Prep for handling unequal values: it's useful to be able to turn a signed integer into a
@@ -518,7 +518,7 @@ constexpr auto signed_mag() {
 // _value in_ that unit.
 template <typename U1, typename U2>
 struct ValueDisplacementMagnitudeImpl<U1, U2, AreValuesEqual::NO> {
-    static_assert(U1::value() != U2::value(), "Mismatched instantiation (should never happen)");
+    static_assert(U1::value() != U2::value(), "Mismatched instantiation (internal library error)");
     static constexpr auto mag() {
         constexpr auto diff = U2::value() - U1::value();
         using D = typename decltype(diff)::Unit;
