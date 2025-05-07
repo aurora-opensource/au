@@ -353,13 +353,13 @@ TEST(UnitRatio, ComputesRatioForSameDimensionedUnits) {
 }
 
 TEST(UnitRatio, FunctionalInterfaceHandlesInstancesCorrectly) {
-    EXPECT_EQ(unit_ratio(Yards{}, Inches{}), mag<36>());
-    EXPECT_EQ(unit_ratio(Inches{}, Inches{}), mag<1>());
-    EXPECT_EQ(unit_ratio(Inches{}, Yards{}), mag<1>() / mag<36>());
+    EXPECT_THAT(unit_ratio(Yards{}, Inches{}), Eq(mag<36>()));
+    EXPECT_THAT(unit_ratio(Inches{}, Inches{}), Eq(mag<1>()));
+    EXPECT_THAT(unit_ratio(Inches{}, Yards{}), Eq(mag<1>() / mag<36>()));
 }
 
 TEST(UnitRatio, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
-    EXPECT_EQ(unit_ratio(yards, inches), mag<36>());
+    EXPECT_THAT(unit_ratio(yards, inches), Eq(mag<36>()));
 }
 
 TEST(AreUnitsQuantityEquivalent, UnitIsEquivalentToItself) {
@@ -435,13 +435,13 @@ TEST(OriginDisplacement, IdenticallyZeroForOriginsThatCompareEqual) {
 }
 
 TEST(OriginDisplacement, GivesDisplacementFromFirstToSecond) {
-    EXPECT_EQ(origin_displacement(Kelvins{}, Celsius{}), milli(kelvins)(273'150));
-    EXPECT_EQ(origin_displacement(Celsius{}, Kelvins{}), milli(kelvins)(-273'150));
+    EXPECT_THAT(origin_displacement(Kelvins{}, Celsius{}), Eq(milli(kelvins)(273'150)));
+    EXPECT_THAT(origin_displacement(Celsius{}, Kelvins{}), Eq(milli(kelvins)(-273'150)));
 }
 
 TEST(OriginDisplacement, FunctionalInterfaceHandlesInstancesCorrectly) {
-    EXPECT_EQ(origin_displacement(kelvins, celsius), milli(kelvins)(273'150));
-    EXPECT_EQ(origin_displacement(celsius, kelvins), milli(kelvins)(-273'150));
+    EXPECT_THAT(origin_displacement(kelvins, celsius), Eq(milli(kelvins)(273'150)));
+    EXPECT_THAT(origin_displacement(celsius, kelvins), Eq(milli(kelvins)(-273'150)));
 }
 
 struct OffsetCelsius : Celsius {
@@ -451,7 +451,7 @@ struct OffsetCelsius : Celsius {
 constexpr const char OffsetCelsius::label[];
 
 TEST(DisplaceOrigin, DisplacesOrigin) {
-    EXPECT_EQ(origin_displacement(Celsius{}, OffsetCelsius{}), kelvins(10));
+    EXPECT_THAT(origin_displacement(Celsius{}, OffsetCelsius{}), Eq(kelvins(10)));
 }
 
 TEST(CommonUnit, FindsCommonMagnitude) {
@@ -532,7 +532,7 @@ TEST(CommonUnit, UnpacksTypesInNestedCommonUnit) {
 }
 
 TEST(CommonUnit, CanCombineUnitsThatWouldBothBeAnonymousScaledUnits) {
-    EXPECT_EQ((feet / mag<3>())(1), (inches * mag<4>())(1));
+    EXPECT_THAT((feet / mag<3>())(1), Eq((inches * mag<4>())(1)));
 }
 
 TEST(CommonUnit, SupportsUnitSlots) {
@@ -547,8 +547,9 @@ TEST(CommonPointUnit, FindsCommonMagnitude) {
 }
 
 TEST(CommonPointUnit, HasMinimumOrigin) {
-    EXPECT_EQ(origin_displacement(CommonPointUnitT<Kelvins, Celsius>{}, Kelvins{}), ZERO);
-    EXPECT_EQ(origin_displacement(CommonPointUnitT<Fahrenheit, Celsius>{}, Fahrenheit{}), ZERO);
+    EXPECT_THAT(origin_displacement(CommonPointUnitT<Kelvins, Celsius>{}, Kelvins{}), Eq(ZERO));
+    EXPECT_THAT(origin_displacement(CommonPointUnitT<Fahrenheit, Celsius>{}, Fahrenheit{}),
+                Eq(ZERO));
 }
 
 TEST(CommonPointUnit, TakesOriginMagnitudeIntoAccount) {
@@ -556,7 +557,7 @@ TEST(CommonPointUnit, TakesOriginMagnitudeIntoAccount) {
     using CommonByPoint = CommonPointUnitT<Kelvins, Celsius>;
 
     // The definition of Celsius in this file uses millikelvin to define its constant.
-    EXPECT_EQ(unit_ratio(CommonByQuantity{}, CommonByPoint{}), mag<1000>());
+    EXPECT_THAT(unit_ratio(CommonByQuantity{}, CommonByPoint{}), Eq(mag<1000>()));
 
     // The common point-unit should not be the _same_ as mK (since we never named the latter, and
     // thus can't "conjure it up").  However, it _should_ be _point-equivalent_ to mK.
@@ -610,7 +611,7 @@ TEST(MakeCommonPoint, PreservesCategory) {
     constexpr auto celsenheit_pt = make_common_point(celsius_pt, fahrenheit_pt);
 
     // The origin of the common point unit is the lowest origin among all input units.
-    EXPECT_EQ(celsenheit_pt(0), fahrenheit_pt(0));
+    EXPECT_THAT(celsenheit_pt(0), Eq(fahrenheit_pt(0)));
     EXPECT_LT(celsenheit_pt(0), celsius_pt(0));
 
     // The common point unit should evenly divide both input units.
@@ -620,18 +621,18 @@ TEST(MakeCommonPoint, PreservesCategory) {
     constexpr auto one_f = fahrenheit_pt(1) - fahrenheit_pt(0);
     constexpr auto one_c = celsius_pt(1) - celsius_pt(0);
     constexpr auto one_ch = celsenheit_pt(1) - celsenheit_pt(0);
-    EXPECT_EQ(one_f % one_ch, ZERO);
-    EXPECT_EQ(one_c % one_ch, ZERO);
+    EXPECT_THAT(one_f % one_ch, Eq(ZERO));
+    EXPECT_THAT(one_c % one_ch, Eq(ZERO));
 }
 
 TEST(UnitLabel, DefaultsToUnlabeledUnit) {
     EXPECT_THAT(unit_label<UnlabeledUnit>(), StrEq("[UNLABELED UNIT]"));
-    EXPECT_EQ(sizeof(unit_label<UnlabeledUnit>()), 17);
+    EXPECT_THAT(sizeof(unit_label<UnlabeledUnit>()), Eq(17));
 }
 
 TEST(UnitLabel, PicksUpLabelForLabeledUnit) {
     EXPECT_THAT(unit_label<Feet>(), StrEq("ft"));
-    EXPECT_EQ(sizeof(unit_label<Feet>()), 3);
+    EXPECT_THAT(sizeof(unit_label<Feet>()), Eq(3));
 }
 
 TEST(UnitLabel, PrependsScaleFactorToLabelForScaledUnit) {
@@ -669,7 +670,7 @@ TEST(UnitLabel, EmptyForNullProduct) { EXPECT_THAT(unit_label<UnitProduct<>>(), 
 
 TEST(UnitLabel, NonintrusivelyLabelableByTrait) {
     EXPECT_THAT(unit_label<TraitLabeledUnit>(), StrEq("TLU"));
-    EXPECT_EQ(sizeof(unit_label<TraitLabeledUnit>()), 4);
+    EXPECT_THAT(sizeof(unit_label<TraitLabeledUnit>()), Eq(4));
 }
 
 TEST(UnitLabel, ProductComposesLabelsOfInputUnits) {

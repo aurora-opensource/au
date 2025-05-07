@@ -15,19 +15,23 @@
 #include "au/operators.hh"
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
+
+using ::testing::Eq;
+
 namespace detail {
 
 template <typename T>
 void expect_comparators_work(T a, T b) {
-    EXPECT_EQ(equal(a, b), (a == b));
-    EXPECT_EQ(not_equal(a, b), (a != b));
-    EXPECT_EQ(less(a, b), (a < b));
-    EXPECT_EQ(less_equal(a, b), (a <= b));
-    EXPECT_EQ(greater(a, b), (a > b));
-    EXPECT_EQ(greater_equal(a, b), (a >= b));
+    EXPECT_THAT(equal(a, b), Eq(a == b));
+    EXPECT_THAT(not_equal(a, b), Eq(a != b));
+    EXPECT_THAT(less(a, b), Eq(a < b));
+    EXPECT_THAT(less_equal(a, b), Eq(a <= b));
+    EXPECT_THAT(greater(a, b), Eq(a > b));
+    EXPECT_THAT(greater_equal(a, b), Eq(a >= b));
 }
 
 template <typename T, typename U>

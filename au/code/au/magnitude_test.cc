@@ -41,30 +41,30 @@ constexpr T cubed(T x) {
 
 TEST(Magnitude, SupportsEqualityComparison) {
     constexpr auto mag_1 = mag<1>();
-    EXPECT_EQ(mag_1, mag_1);
+    EXPECT_THAT(mag_1, Eq(mag_1));
 
     constexpr auto mag_2 = mag<2>();
-    EXPECT_EQ(mag_2, mag_2);
+    EXPECT_THAT(mag_2, Eq(mag_2));
 
     EXPECT_NE(mag_1, mag_2);
 }
 
 TEST(Magnitude, ProductBehavesCorrectly) {
-    EXPECT_EQ(mag<4>() * mag<6>(), mag<24>());
-    EXPECT_EQ(mag<142857>() * mag<7>(), mag<999999>());
+    EXPECT_THAT(mag<4>() * mag<6>(), Eq(mag<24>()));
+    EXPECT_THAT(mag<142857>() * mag<7>(), Eq(mag<999999>()));
 }
 
 TEST(Magnitude, QuotientBehavesCorrectly) {
-    EXPECT_EQ(mag<999999>() / mag<142857>(), mag<7>());
-    EXPECT_EQ(mag<10>() / mag<6>(), mag<5>() / mag<3>());
+    EXPECT_THAT(mag<999999>() / mag<142857>(), Eq(mag<7>()));
+    EXPECT_THAT(mag<10>() / mag<6>(), Eq(mag<5>() / mag<3>()));
 }
 
 TEST(Magnitude, PowersBehaveCorrectly) {
-    EXPECT_EQ(pow<3>(mag<2>()), mag<8>());
-    EXPECT_EQ(pow<-2>(mag<5>()), mag<1>() / mag<25>());
+    EXPECT_THAT(pow<3>(mag<2>()), Eq(mag<8>()));
+    EXPECT_THAT(pow<-2>(mag<5>()), Eq(mag<1>() / mag<25>()));
 }
 
-TEST(Magnitude, RootsBehaveCorrectly) { EXPECT_EQ(root<3>(mag<8>()), mag<2>()); }
+TEST(Magnitude, RootsBehaveCorrectly) { EXPECT_THAT(root<3>(mag<8>()), Eq(mag<2>())); }
 
 TEST(Magnitude, CanNegate) {
     EXPECT_THAT(-mag<5>(), Eq(MagProductT<Magnitude<Negative>, decltype(mag<5>())>{}));
@@ -122,34 +122,34 @@ TEST(Pi, HasCorrectValue) {
     // It does, however, permit us to _build_ on such an architecture with no problem.
 
 #ifdef M_PIl
-    EXPECT_EQ(Pi::value(), M_PIl);
+    EXPECT_THAT(Pi::value(), Eq(M_PIl));
 #else
     ADD_FAILURE() << "M_PIl not available on this architecture";
 #endif
 }
 
 TEST(Inverse, RaisesToPowerNegativeOne) {
-    EXPECT_EQ(inverse(mag<8>()), mag<1>() / mag<8>());
-    EXPECT_EQ(inverse(-mag<2>()), -mag<1>() / mag<2>());
+    EXPECT_THAT(inverse(mag<8>()), Eq(mag<1>() / mag<8>()));
+    EXPECT_THAT(inverse(-mag<2>()), Eq(-mag<1>() / mag<2>()));
 }
 
-TEST(Squared, RaisesToPowerTwo) { EXPECT_EQ(squared(mag<7>()), mag<49>()); }
+TEST(Squared, RaisesToPowerTwo) { EXPECT_THAT(squared(mag<7>()), Eq(mag<49>())); }
 
-TEST(Cubed, RaisesToPowerThree) { EXPECT_EQ(cubed(mag<5>()), mag<125>()); }
+TEST(Cubed, RaisesToPowerThree) { EXPECT_THAT(cubed(mag<5>()), Eq(mag<125>())); }
 
-TEST(Sqrt, TakesSecondRoot) { EXPECT_EQ(sqrt(mag<81>()), mag<9>()); }
+TEST(Sqrt, TakesSecondRoot) { EXPECT_THAT(sqrt(mag<81>()), Eq(mag<9>())); }
 
-TEST(Cbrt, TakesThirdRoot) { EXPECT_EQ(cbrt(mag<27>()), mag<3>()); }
+TEST(Cbrt, TakesThirdRoot) { EXPECT_THAT(cbrt(mag<27>()), Eq(mag<3>())); }
 
 TEST(IntegerPart, IdentityForIntegers) {
-    EXPECT_EQ(integer_part(mag<1>()), mag<1>());
-    EXPECT_EQ(integer_part(mag<2>()), mag<2>());
-    EXPECT_EQ(integer_part(mag<2380>()), mag<2380>());
+    EXPECT_THAT(integer_part(mag<1>()), Eq(mag<1>()));
+    EXPECT_THAT(integer_part(mag<2>()), Eq(mag<2>()));
+    EXPECT_THAT(integer_part(mag<2380>()), Eq(mag<2380>()));
 }
 
 TEST(IntegerPart, PicksOutIntegersFromNumerator) {
     // sqrt(32) = 4 * sqrt(2)
-    EXPECT_EQ(integer_part(PI * sqrt(mag<32>()) / mag<15>()), mag<4>());
+    EXPECT_THAT(integer_part(PI * sqrt(mag<32>()) / mag<15>()), Eq(mag<4>()));
 }
 
 TEST(IntegerPart, PreservesSign) {
@@ -158,50 +158,50 @@ TEST(IntegerPart, PreservesSign) {
 }
 
 TEST(Numerator, IsIdentityForInteger) {
-    EXPECT_EQ(numerator(mag<2>()), mag<2>());
-    EXPECT_EQ(numerator(mag<31415>()), mag<31415>());
+    EXPECT_THAT(numerator(mag<2>()), Eq(mag<2>()));
+    EXPECT_THAT(numerator(mag<31415>()), Eq(mag<31415>()));
 }
 
 TEST(Numerator, PutsFractionInLowestTerms) {
-    EXPECT_EQ(numerator(mag<24>() / mag<16>()), mag<3>());
+    EXPECT_THAT(numerator(mag<24>() / mag<16>()), Eq(mag<3>()));
 }
 
 TEST(Numerator, NegativeForNegativeNumber) {
-    EXPECT_EQ(numerator(-mag<2>()), -mag<2>());
-    EXPECT_EQ(numerator(-mag<31415>()), -mag<31415>());
-    EXPECT_EQ(numerator(-mag<5>() / mag<7>()), -mag<5>());
+    EXPECT_THAT(numerator(-mag<2>()), Eq(-mag<2>()));
+    EXPECT_THAT(numerator(-mag<31415>()), Eq(-mag<31415>()));
+    EXPECT_THAT(numerator(-mag<5>() / mag<7>()), Eq(-mag<5>()));
 }
 
 TEST(Numerator, IncludesNonIntegersWithPositiveExponent) {
-    EXPECT_EQ(numerator(PI * sqrt(mag<24>() / mag<16>())), PI * sqrt(mag<3>()));
+    EXPECT_THAT(numerator(PI * sqrt(mag<24>() / mag<16>())), Eq(PI * sqrt(mag<3>())));
 }
 
 TEST(Denominator, PutsFractionInLowestTerms) {
-    EXPECT_EQ(denominator(mag<24>() / mag<16>()), mag<2>());
+    EXPECT_THAT(denominator(mag<24>() / mag<16>()), Eq(mag<2>()));
 }
 
 TEST(Denominator, IncludesNonIntegersWithNegativeExponent) {
-    EXPECT_EQ(denominator(sqrt(mag<24>() / mag<16>()) / PI), PI * sqrt(mag<2>()));
+    EXPECT_THAT(denominator(sqrt(mag<24>() / mag<16>()) / PI), Eq(PI * sqrt(mag<2>())));
 }
 
 TEST(Denominator, PositiveForNegativeNumber) {
-    EXPECT_EQ(denominator(-mag<5>() / mag<7>()), mag<7>());
-    EXPECT_EQ(denominator(mag<5>() / (-mag<7>())), mag<7>());
+    EXPECT_THAT(denominator(-mag<5>() / mag<7>()), Eq(mag<7>()));
+    EXPECT_THAT(denominator(mag<5>() / (-mag<7>())), Eq(mag<7>()));
 }
 
 TEST(Abs, IdentityForPositive) {
-    EXPECT_EQ(abs(mag<1>()), mag<1>());
-    EXPECT_EQ(abs(mag<2>()), mag<2>());
-    EXPECT_EQ(abs(mag<5>() / mag<7>()), mag<5>() / mag<7>());
+    EXPECT_THAT(abs(mag<1>()), Eq(mag<1>()));
+    EXPECT_THAT(abs(mag<2>()), Eq(mag<2>()));
+    EXPECT_THAT(abs(mag<5>() / mag<7>()), Eq(mag<5>() / mag<7>()));
 }
 
 TEST(Abs, FlipsSignForNegative) {
-    EXPECT_EQ(abs(-mag<1>()), mag<1>());
-    EXPECT_EQ(abs(-mag<5>() / mag<7>()), mag<5>() / mag<7>());
-    EXPECT_EQ(abs(-mag<2>() / PI), mag<2>() / PI);
+    EXPECT_THAT(abs(-mag<1>()), Eq(mag<1>()));
+    EXPECT_THAT(abs(-mag<5>() / mag<7>()), Eq(mag<5>() / mag<7>()));
+    EXPECT_THAT(abs(-mag<2>() / PI), Eq(mag<2>() / PI));
 }
 
-TEST(Abs, IdentityForZero) { EXPECT_EQ(abs(ZERO), ZERO); }
+TEST(Abs, IdentityForZero) { EXPECT_THAT(abs(ZERO), Eq(ZERO)); }
 
 TEST(IsPositive, TrueForPositive) {
     EXPECT_THAT(is_positive(mag<1>()), IsTrue());
@@ -296,7 +296,7 @@ TEST(GetValue, PiToArbitraryPowerPerformsComputationsInMostAccurateTypeAtCompile
 
     constexpr auto pi_cubed_value = get_value<float>(pi_cubed);
     ASSERT_NE(pi_cubed_value, result_via_float);
-    EXPECT_EQ(pi_cubed_value, result_via_long_double);
+    EXPECT_THAT(pi_cubed_value, Eq(result_via_long_double));
 }
 
 TEST(GetValue, ImpossibleRequestsArePreventedAtCompileTime) {
@@ -338,25 +338,25 @@ TEST(GetValue, WorksForNegativeNumber) {
 }
 
 TEST(CommonMagnitude, ReturnsCommonMagnitudeWhenBothAreIdentical) {
-    EXPECT_EQ(common_magnitude(mag<1>(), mag<1>()), mag<1>());
-    EXPECT_EQ(common_magnitude(PI, PI), PI);
+    EXPECT_THAT(common_magnitude(mag<1>(), mag<1>()), Eq(mag<1>()));
+    EXPECT_THAT(common_magnitude(PI, PI), Eq(PI));
 
     constexpr auto x = pow<3>(PI) / root<2>(mag<2>()) * mag<412>();
-    EXPECT_EQ(common_magnitude(x, x), x);
+    EXPECT_THAT(common_magnitude(x, x), Eq(x));
 }
 
 TEST(CommonMagnitude, ReturnsSmallerMagnitudeWhenItEvenlyDividesLarger) {
-    EXPECT_EQ(common_magnitude(mag<1>(), mag<8>()), mag<1>());
-    EXPECT_EQ(common_magnitude(mag<8>(), mag<1>()), mag<1>());
+    EXPECT_THAT(common_magnitude(mag<1>(), mag<8>()), Eq(mag<1>()));
+    EXPECT_THAT(common_magnitude(mag<8>(), mag<1>()), Eq(mag<1>()));
 
     constexpr auto one_eighth = mag<1>() / mag<8>();
-    EXPECT_EQ(common_magnitude(mag<1>(), one_eighth), one_eighth);
-    EXPECT_EQ(common_magnitude(one_eighth, mag<1>()), one_eighth);
+    EXPECT_THAT(common_magnitude(mag<1>(), one_eighth), Eq(one_eighth));
+    EXPECT_THAT(common_magnitude(one_eighth, mag<1>()), Eq(one_eighth));
 
     constexpr auto a = pow<3>(mag<2>()) * pow<-1>(mag<3>()) * pow<5>(mag<5>()) * pow<7>(mag<7>());
     constexpr auto b = /*              */ pow<-2>(mag<3>()) * /*                     */ mag<7>();
-    EXPECT_EQ(common_magnitude(a, b), b);
-    EXPECT_EQ(common_magnitude(b, a), b);
+    EXPECT_THAT(common_magnitude(a, b), Eq(b));
+    EXPECT_THAT(common_magnitude(b, a), Eq(b));
 }
 
 TEST(CommonMagnitude, DividesBothMagnitudes) {
@@ -366,41 +366,41 @@ TEST(CommonMagnitude, DividesBothMagnitudes) {
     ASSERT_THAT(is_integer(a / b), IsFalse());
     ASSERT_THAT(is_integer(b / a), IsFalse());
 
-    EXPECT_EQ(common_magnitude(a, b), common_magnitude(b, a));
+    EXPECT_THAT(common_magnitude(a, b), Eq(common_magnitude(b, a)));
     EXPECT_THAT(is_integer(a / common_magnitude(a, b)), IsTrue());
     EXPECT_THAT(is_integer(b / common_magnitude(a, b)), IsTrue());
 }
 
 TEST(CommonMagnitude, HandlesMultiplePositivePowers) {
-    EXPECT_EQ(common_magnitude(ONE, mag<1000>()), ONE);
+    EXPECT_THAT(common_magnitude(ONE, mag<1000>()), Eq(ONE));
 }
 
 TEST(CommonMagnitude, ZeroGetsIgnored) {
-    EXPECT_EQ(common_magnitude(ZERO, mag<1000>()), mag<1000>());
-    EXPECT_EQ(common_magnitude(PI, ZERO), PI);
+    EXPECT_THAT(common_magnitude(ZERO, mag<1000>()), Eq(mag<1000>()));
+    EXPECT_THAT(common_magnitude(PI, ZERO), Eq(PI));
 }
 
 TEST(CommonMagnitude, ZeroResultIndicatesAllInputsAreZero) {
-    EXPECT_EQ(common_magnitude(ZERO), ZERO);
-    EXPECT_EQ(common_magnitude(ZERO, ZERO), ZERO);
-    EXPECT_EQ(common_magnitude(ZERO, ZERO, ZERO), ZERO);
-    EXPECT_EQ(common_magnitude(ZERO, ZERO, ZERO, ZERO, ZERO), ZERO);
+    EXPECT_THAT(common_magnitude(ZERO), Eq(ZERO));
+    EXPECT_THAT(common_magnitude(ZERO, ZERO), Eq(ZERO));
+    EXPECT_THAT(common_magnitude(ZERO, ZERO, ZERO), Eq(ZERO));
+    EXPECT_THAT(common_magnitude(ZERO, ZERO, ZERO, ZERO, ZERO), Eq(ZERO));
 }
 
 TEST(CommonMagnitude, CommonMagOfPosAndNegIsPos) {
-    EXPECT_EQ(common_magnitude(mag<12>(), -mag<15>()), mag<3>());
-    EXPECT_EQ(common_magnitude(-mag<12>(), mag<15>()), mag<3>());
+    EXPECT_THAT(common_magnitude(mag<12>(), -mag<15>()), Eq(mag<3>()));
+    EXPECT_THAT(common_magnitude(-mag<12>(), mag<15>()), Eq(mag<3>()));
 
-    EXPECT_EQ(common_magnitude(mag<12>(), -mag<15>(), -mag<27>()), mag<3>());
-    EXPECT_EQ(common_magnitude(-mag<9>(), mag<12>(), -mag<15>(), -mag<27>()), mag<3>());
+    EXPECT_THAT(common_magnitude(mag<12>(), -mag<15>(), -mag<27>()), Eq(mag<3>()));
+    EXPECT_THAT(common_magnitude(-mag<9>(), mag<12>(), -mag<15>(), -mag<27>()), Eq(mag<3>()));
 
-    EXPECT_EQ(common_magnitude(mag<1>(), -mag<1>() / mag<5>()), mag<1>() / mag<5>());
+    EXPECT_THAT(common_magnitude(mag<1>(), -mag<1>() / mag<5>()), Eq(mag<1>() / mag<5>()));
 }
 
 TEST(CommonMagnitude, CommonMagOfNegAndNegIsNeg) {
-    EXPECT_EQ(common_magnitude(-mag<12>(), -mag<15>()), -mag<3>());
-    EXPECT_EQ(common_magnitude(-mag<12>(), -mag<15>(), -mag<27>()), -mag<3>());
-    EXPECT_EQ(common_magnitude(-mag<9>(), -mag<12>(), -mag<15>(), -mag<27>()), -mag<3>());
+    EXPECT_THAT(common_magnitude(-mag<12>(), -mag<15>()), Eq(-mag<3>()));
+    EXPECT_THAT(common_magnitude(-mag<12>(), -mag<15>(), -mag<27>()), Eq(-mag<3>()));
+    EXPECT_THAT(common_magnitude(-mag<9>(), -mag<12>(), -mag<15>(), -mag<27>()), Eq(-mag<3>()));
 }
 
 }  // namespace

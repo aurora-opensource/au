@@ -316,8 +316,8 @@ TEST(Gcd, ResultIsAlwaysAFactorAndGCDFindsNoLargerFactor) {
     for (auto i = 0u; i < 500u; ++i) {
         for (auto j = 1u; j < i; ++j) {
             const auto g = gcd(i, j);
-            EXPECT_EQ(i % g, 0u);
-            EXPECT_EQ(j % g, 0u);
+            EXPECT_THAT(i % g, Eq(0u));
+            EXPECT_THAT(j % g, Eq(0u));
 
             // Brute force: no larger factors.
             for (auto k = g + 1u; k < j / 2u; ++k) {
@@ -329,9 +329,9 @@ TEST(Gcd, ResultIsAlwaysAFactorAndGCDFindsNoLargerFactor) {
 
 TEST(Gcd, HandlesZeroCorrectly) {
     // The usual convention: if one argument is 0, return the other argument.
-    EXPECT_EQ(gcd(0u, 0u), 0u);
-    EXPECT_EQ(gcd(10u, 0u), 10u);
-    EXPECT_EQ(gcd(0u, 10u), 10u);
+    EXPECT_THAT(gcd(0u, 0u), Eq(0u));
+    EXPECT_THAT(gcd(10u, 0u), Eq(10u));
+    EXPECT_THAT(gcd(0u, 10u), Eq(10u));
 }
 
 TEST(JacobiSymbol, ZeroWhenCommonFactorExists) {
@@ -339,7 +339,7 @@ TEST(JacobiSymbol, ZeroWhenCommonFactorExists) {
         for (auto j = 1u; j <= 19u; j += 2u) {
             for (auto factor = 3u; factor < 200u; factor += 2u) {
                 // Make sure that `j * factor` is odd, or else the result is undefined.
-                EXPECT_EQ(jacobi_symbol(i * static_cast<int>(factor), j * factor), 0)
+                EXPECT_THAT(jacobi_symbol(i * static_cast<int>(factor), j * factor), Eq(0))
                     << "jacobi(" << i * static_cast<int>(factor) << ", " << j * factor
                     << ") should be 0";
             }
@@ -349,23 +349,23 @@ TEST(JacobiSymbol, ZeroWhenCommonFactorExists) {
 
 TEST(JacobiSymbol, AlwaysOneWhenFirstInputIsOne) {
     for (auto i = 3u; i < 99u; i += 2u) {
-        EXPECT_EQ(jacobi_symbol(1, i), 1) << "jacobi(1, " << i << ") should be 1";
+        EXPECT_THAT(jacobi_symbol(1, i), Eq(1)) << "jacobi(1, " << i << ") should be 1";
     }
 }
 
 TEST(JacobiSymbol, ReproducesExamplesFromWikipedia) {
     // https://en.wikipedia.org/wiki/Jacobi_symbol#Example_of_calculations
-    EXPECT_EQ(jacobi_symbol(1001, 9907), -1);
+    EXPECT_THAT(jacobi_symbol(1001, 9907), Eq(-1));
 
     // https://en.wikipedia.org/wiki/Jacobi_symbol#Primality_testing
-    EXPECT_EQ(jacobi_symbol(19, 45), 1);
-    EXPECT_EQ(jacobi_symbol(8, 21), -1);
-    EXPECT_EQ(jacobi_symbol(5, 21), 1);
+    EXPECT_THAT(jacobi_symbol(19, 45), Eq(1));
+    EXPECT_THAT(jacobi_symbol(8, 21), Eq(-1));
+    EXPECT_THAT(jacobi_symbol(5, 21), Eq(1));
 }
 
 TEST(BoolSign, ReturnsCorrectValues) {
-    EXPECT_EQ(bool_sign(true), 1);
-    EXPECT_EQ(bool_sign(false), -1);
+    EXPECT_THAT(bool_sign(true), Eq(1));
+    EXPECT_THAT(bool_sign(false), Eq(-1));
 }
 
 }  // namespace

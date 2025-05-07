@@ -18,6 +18,7 @@
 #include "au/testing.hh"
 #include "au/units/joules.hh"
 #include "au/units/seconds.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -25,6 +26,7 @@ namespace {
 
 using symbols::J;
 using symbols::s;
+using ::testing::Eq;
 using ::testing::StrEq;
 
 TEST(ReducedPlanckConstant, HasExpectedValue) {
@@ -44,7 +46,7 @@ TEST(ReducedPlanckConstant, ExactlyPlanckConstantDividedByTwoPi) {
     // `int` as a rep, and we know that the comparison to `1` would not compile unless all
     // dimensions had cancelled out.
     constexpr int result = ratio.as<int>();
-    EXPECT_EQ(result, 1);
+    EXPECT_THAT(result, Eq(1));
 }
 
 TEST(ReducedPlanckConstant, HasExpectedLabel) {

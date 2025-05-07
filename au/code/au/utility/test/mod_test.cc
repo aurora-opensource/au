@@ -20,48 +20,53 @@
 #include "gtest/gtest.h"
 
 namespace au {
+
+using ::testing::Eq;
+
 namespace detail {
 namespace {
 
 constexpr auto MAX = std::numeric_limits<uint64_t>::max();
 
 TEST(AddMod, HandlesSimpleCases) {
-    EXPECT_EQ(add_mod(1u, 2u, 5u), 3u);
-    EXPECT_EQ(add_mod(4u, 4u, 5u), 3u);
+    EXPECT_THAT(add_mod(1u, 2u, 5u), Eq(3u));
+    EXPECT_THAT(add_mod(4u, 4u, 5u), Eq(3u));
 }
 
-TEST(AddMod, HandlesVeryLargeNumbers) { EXPECT_EQ(add_mod(MAX - 1u, MAX - 2u, MAX), MAX - 3u); }
+TEST(AddMod, HandlesVeryLargeNumbers) {
+    EXPECT_THAT(add_mod(MAX - 1u, MAX - 2u, MAX), Eq(MAX - 3u));
+}
 
 TEST(SubMod, HandlesSimpleCases) {
-    EXPECT_EQ(sub_mod(2u, 1u, 5u), 1u);
-    EXPECT_EQ(sub_mod(1u, 2u, 5u), 4u);
+    EXPECT_THAT(sub_mod(2u, 1u, 5u), Eq(1u));
+    EXPECT_THAT(sub_mod(1u, 2u, 5u), Eq(4u));
 }
 
 TEST(SubMod, HandlesVeryLargeNumbers) {
-    EXPECT_EQ(sub_mod(MAX - 2u, MAX - 1u, MAX), MAX - 1u);
-    EXPECT_EQ(sub_mod(1u, MAX - 1u, MAX), 2u);
+    EXPECT_THAT(sub_mod(MAX - 2u, MAX - 1u, MAX), Eq(MAX - 1u));
+    EXPECT_THAT(sub_mod(1u, MAX - 1u, MAX), Eq(2u));
 }
 
 TEST(MulMod, HandlesSimpleCases) {
-    EXPECT_EQ(mul_mod(6u, 7u, 10u), 2u);
-    EXPECT_EQ(mul_mod(13u, 11u, 50u), 43u);
+    EXPECT_THAT(mul_mod(6u, 7u, 10u), Eq(2u));
+    EXPECT_THAT(mul_mod(13u, 11u, 50u), Eq(43u));
 }
 
 TEST(MulMod, HandlesHugeNumbers) {
     constexpr auto JUST_UNDER_HALF = MAX / 2u;
-    ASSERT_EQ(JUST_UNDER_HALF * 2u + 1u, MAX);
+    ASSERT_THAT(JUST_UNDER_HALF * 2u + 1u, Eq(MAX));
 
-    EXPECT_EQ(mul_mod(JUST_UNDER_HALF, 10u, MAX), MAX - 5u);
+    EXPECT_THAT(mul_mod(JUST_UNDER_HALF, 10u, MAX), Eq(MAX - 5u));
 }
 
 TEST(HalfModOdd, HalvesEvenNumbers) {
-    EXPECT_EQ(half_mod_odd(0u, 11u), 0u);
-    EXPECT_EQ(half_mod_odd(10u, 11u), 5u);
+    EXPECT_THAT(half_mod_odd(0u, 11u), Eq(0u));
+    EXPECT_THAT(half_mod_odd(10u, 11u), Eq(5u));
 }
 
 TEST(HalfModOdd, HalvesSumWithNForOddNumbers) {
-    EXPECT_EQ(half_mod_odd(1u, 11u), 6u);
-    EXPECT_EQ(half_mod_odd(9u, 11u), 10u);
+    EXPECT_THAT(half_mod_odd(1u, 11u), Eq(6u));
+    EXPECT_THAT(half_mod_odd(9u, 11u), Eq(10u));
 }
 
 TEST(HalfModOdd, SameAsMultiplyingByCeilOfNOver2WhenNIsOdd) {
@@ -81,7 +86,7 @@ TEST(HalfModOdd, SameAsMultiplyingByCeilOfNOver2WhenNIsOdd) {
 
         std::vector<uint64_t> x_values{0u, 1u, 2u, (n / 2u), (n / 2u + 1u), (n - 2u), (n - 1u)};
         for (const auto &x : x_values) {
-            EXPECT_EQ(half_mod_odd(x, n), mul_mod(x, half_n, n));
+            EXPECT_THAT(half_mod_odd(x, n), Eq(mul_mod(x, half_n, n)));
         }
     }
 }
@@ -93,10 +98,10 @@ TEST(PowMod, HandlesSimpleCases) {
         x *= x;
         return x;
     };
-    EXPECT_EQ(pow_mod(5u, 8u, 9u), to_the_eighth(5u) % 9u);
+    EXPECT_THAT(pow_mod(5u, 8u, 9u), Eq(to_the_eighth(5u) % 9u));
 }
 
-TEST(PowMod, HandlesNumbersThatWouldOverflow) { EXPECT_EQ(pow_mod(2u, 64u, MAX), 1u); }
+TEST(PowMod, HandlesNumbersThatWouldOverflow) { EXPECT_THAT(pow_mod(2u, 64u, MAX), Eq(1u)); }
 
 TEST(PowMod, ProducesSameAnswerAsRepeatedModMulForLargeNumbers) {
     const auto x = MAX / 3u * 2u;
@@ -106,7 +111,7 @@ TEST(PowMod, ProducesSameAnswerAsRepeatedModMulForLargeNumbers) {
     const auto to_pow_10 = mul_mod(to_pow_5, to_pow_5, MAX);
     const auto to_pow_11 = mul_mod(x, to_pow_10, MAX);
     const auto to_pow_22 = mul_mod(to_pow_11, to_pow_11, MAX);
-    EXPECT_EQ(pow_mod(x, 22u, MAX), to_pow_22);
+    EXPECT_THAT(pow_mod(x, 22u, MAX), Eq(to_pow_22));
 }
 
 }  // namespace
