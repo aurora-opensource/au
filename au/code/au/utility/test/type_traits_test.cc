@@ -14,11 +14,15 @@
 
 #include "au/utility/type_traits.hh"
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+namespace au {
+
+using ::testing::IsFalse;
+using ::testing::IsTrue;
 using ::testing::StaticAssertTypeEq;
 
-namespace au {
 namespace detail {
 
 template <typename... Ts>
@@ -30,25 +34,25 @@ TEST(Prepend, PrependsToPack) {
 }
 
 TEST(SameTypeIgnoringCvref, IgnoresCvrefQualifiers) {
-    EXPECT_TRUE((SameTypeIgnoringCvref<int, int &>::value));
-    EXPECT_TRUE((SameTypeIgnoringCvref<const int &&, volatile int>::value));
+    EXPECT_THAT((SameTypeIgnoringCvref<int, int &>::value), IsTrue());
+    EXPECT_THAT((SameTypeIgnoringCvref<const int &&, volatile int>::value), IsTrue());
 }
 
 TEST(SameTypeIgnoringCvref, FalseForDifferentBases) {
-    EXPECT_FALSE((SameTypeIgnoringCvref<int, char>::value));
-    EXPECT_FALSE((SameTypeIgnoringCvref<const double &, const float &>::value));
+    EXPECT_THAT((SameTypeIgnoringCvref<int, char>::value), IsFalse());
+    EXPECT_THAT((SameTypeIgnoringCvref<const double &, const float &>::value), IsFalse());
 }
 
 TEST(SameTypeIgnoringCvref, CanTakeInstances) {
-    EXPECT_TRUE(same_type_ignoring_cvref(1, 2));
-    EXPECT_FALSE(same_type_ignoring_cvref(1.0, 2.0f));
+    EXPECT_THAT(same_type_ignoring_cvref(1, 2), IsTrue());
+    EXPECT_THAT(same_type_ignoring_cvref(1.0, 2.0f), IsFalse());
 }
 
 TEST(AlwaysFalse, IsAlwaysFalse) {
-    EXPECT_FALSE(AlwaysFalse<int>::value);
-    EXPECT_FALSE(AlwaysFalse<void>::value);
-    EXPECT_FALSE(AlwaysFalse<>::value);
-    EXPECT_FALSE((AlwaysFalse<int, char, double>::value));
+    EXPECT_THAT(AlwaysFalse<int>::value, IsFalse());
+    EXPECT_THAT(AlwaysFalse<void>::value, IsFalse());
+    EXPECT_THAT(AlwaysFalse<>::value, IsFalse());
+    EXPECT_THAT((AlwaysFalse<int, char, double>::value), IsFalse());
 }
 
 TEST(DropAll, IdentityWhenTargetAbsent) {

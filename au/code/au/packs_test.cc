@@ -14,11 +14,14 @@
 
 #include "au/packs.hh"
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-using ::testing::StaticAssertTypeEq;
-
 namespace au {
+
+using ::testing::IsFalse;
+using ::testing::IsTrue;
+using ::testing::StaticAssertTypeEq;
 
 // Short, readable pack name for testing purposes.
 template <typename... Ts>
@@ -216,122 +219,136 @@ TEST(PackInverseT, ProductWithOriginalIsNullPack) {
 }
 
 TEST(IsValidPack, FalseIfNotInstanceOfPack) {
-    EXPECT_FALSE((IsValidPack<Pack, int>::value));
-    EXPECT_FALSE((IsValidPack<Pack, std::ratio<3, 2>>::value));
+    EXPECT_THAT((IsValidPack<Pack, int>::value), IsFalse());
+    EXPECT_THAT((IsValidPack<Pack, std::ratio<3, 2>>::value), IsFalse());
 }
 
 TEST(LexicographicTotalOrdering, SecondArgumentIgnoredIfFirstIsUnambiguous) {
-    EXPECT_TRUE((InOrderFor<LexiPack, TwoIndex<0, 0>, TwoIndex<1, 0>>::value));
-    EXPECT_TRUE((InOrderFor<LexiPack, TwoIndex<0, 0>, TwoIndex<1, 8>>::value));
-    EXPECT_TRUE((InOrderFor<LexiPack, TwoIndex<0, 0>, TwoIndex<1, -8>>::value));
+    EXPECT_THAT((InOrderFor<LexiPack, TwoIndex<0, 0>, TwoIndex<1, 0>>::value), IsTrue());
+    EXPECT_THAT((InOrderFor<LexiPack, TwoIndex<0, 0>, TwoIndex<1, 8>>::value), IsTrue());
+    EXPECT_THAT((InOrderFor<LexiPack, TwoIndex<0, 0>, TwoIndex<1, -8>>::value), IsTrue());
 
-    EXPECT_FALSE((InOrderFor<LexiPack, TwoIndex<1, 0>, TwoIndex<0, 0>>::value));
-    EXPECT_FALSE((InOrderFor<LexiPack, TwoIndex<1, 0>, TwoIndex<0, 8>>::value));
-    EXPECT_FALSE((InOrderFor<LexiPack, TwoIndex<1, 0>, TwoIndex<0, -8>>::value));
+    EXPECT_THAT((InOrderFor<LexiPack, TwoIndex<1, 0>, TwoIndex<0, 0>>::value), IsFalse());
+    EXPECT_THAT((InOrderFor<LexiPack, TwoIndex<1, 0>, TwoIndex<0, 8>>::value), IsFalse());
+    EXPECT_THAT((InOrderFor<LexiPack, TwoIndex<1, 0>, TwoIndex<0, -8>>::value), IsFalse());
 }
 
 TEST(LexicographicTotalOrdering, SecondArgumentBreaksTieInFirst) {
-    EXPECT_FALSE((InOrderFor<LexiPack, TwoIndex<0, 0>, TwoIndex<0, 0>>::value));
-    EXPECT_TRUE((InOrderFor<LexiPack, TwoIndex<0, 0>, TwoIndex<0, 1>>::value));
+    EXPECT_THAT((InOrderFor<LexiPack, TwoIndex<0, 0>, TwoIndex<0, 0>>::value), IsFalse());
+    EXPECT_THAT((InOrderFor<LexiPack, TwoIndex<0, 0>, TwoIndex<0, 1>>::value), IsTrue());
 }
 
 TEST(InStandardPackOrder, NullPackComesBeforeEveryNonNullPack) {
-    EXPECT_FALSE((InStandardPackOrder<Pack<>, Pack<>>::value));
+    EXPECT_THAT((InStandardPackOrder<Pack<>, Pack<>>::value), IsFalse());
 
-    EXPECT_TRUE((InStandardPackOrder<Pack<>, Pack<B<2>>>::value));
-    EXPECT_TRUE(
-        (InStandardPackOrder<Pack<>, Pack<B<2>, Pow<B<3>, 8>, RatioPow<B<7>, 1, 4>>>::value));
+    EXPECT_THAT((InStandardPackOrder<Pack<>, Pack<B<2>>>::value), IsTrue());
+    EXPECT_THAT(
+        (InStandardPackOrder<Pack<>, Pack<B<2>, Pow<B<3>, 8>, RatioPow<B<7>, 1, 4>>>::value),
+        IsTrue());
 }
 
 TEST(InStandardPackOrder, IfLeadingBasesUnequalPicksWhicheverComesFirst) {
-    EXPECT_TRUE((InStandardPackOrder<Pack<B<2>>, Pack<B<3>>>::value));
-    EXPECT_TRUE((InStandardPackOrder<Pack<Pow<B<2>, 99>>, Pack<B<3>>>::value));
-    EXPECT_TRUE((InStandardPackOrder<Pack<B<2>>, Pack<RatioPow<B<3>, -1, 38>>>::value));
+    EXPECT_THAT((InStandardPackOrder<Pack<B<2>>, Pack<B<3>>>::value), IsTrue());
+    EXPECT_THAT((InStandardPackOrder<Pack<Pow<B<2>, 99>>, Pack<B<3>>>::value), IsTrue());
+    EXPECT_THAT((InStandardPackOrder<Pack<B<2>>, Pack<RatioPow<B<3>, -1, 38>>>::value), IsTrue());
 }
 
 TEST(InStandardPackOrder, IfLeadingBasesEqualUsesSmallerExpToBreakTie) {
-    EXPECT_TRUE((InStandardPackOrder<Pack<Pow<B<2>, -1>>, Pack<B<2>>>::value));
+    EXPECT_THAT((InStandardPackOrder<Pack<Pow<B<2>, -1>>, Pack<B<2>>>::value), IsTrue());
 
-    EXPECT_TRUE((InStandardPackOrder<Pack<B<2>>, Pack<RatioPow<B<2>, 11, 10>>>::value));
-    EXPECT_FALSE((InStandardPackOrder<Pack<B<2>>, Pack<RatioPow<B<2>, 9, 10>>>::value));
+    EXPECT_THAT((InStandardPackOrder<Pack<B<2>>, Pack<RatioPow<B<2>, 11, 10>>>::value), IsTrue());
+    EXPECT_THAT((InStandardPackOrder<Pack<B<2>>, Pack<RatioPow<B<2>, 9, 10>>>::value), IsFalse());
 }
 
 TEST(InStandardPackOrder, IfLeadingBaseAndExpEqualRecursesToRemainder) {
-    EXPECT_TRUE((InStandardPackOrder<Pack<Pow<B<2>, 4>, B<3>>, Pack<Pow<B<2>, 4>, B<5>>>::value));
+    EXPECT_THAT((InStandardPackOrder<Pack<Pow<B<2>, 4>, B<3>>, Pack<Pow<B<2>, 4>, B<5>>>::value),
+                IsTrue());
 
-    EXPECT_TRUE(
-        (InStandardPackOrder<Pack<Pow<B<2>, 4>, B<3>>, Pack<Pow<B<2>, 4>, B<3>, B<5>>>::value));
+    EXPECT_THAT(
+        (InStandardPackOrder<Pack<Pow<B<2>, 4>, B<3>>, Pack<Pow<B<2>, 4>, B<3>, B<5>>>::value),
+        IsTrue());
 
-    EXPECT_FALSE((InStandardPackOrder<Pack<Pow<B<2>, 4>, B<3>>,
-                                      Pack<Pow<B<2>, 4>, RatioPow<B<3>, 99, 100>, B<5>>>::value));
+    EXPECT_THAT((InStandardPackOrder<Pack<Pow<B<2>, 4>, B<3>>,
+                                     Pack<Pow<B<2>, 4>, RatioPow<B<3>, 99, 100>, B<5>>>::value),
+                IsFalse());
 }
 
-TEST(IsValidPack, TrueForEmptyPack) { EXPECT_TRUE((IsValidPack<Pack, Pack<>>::value)); }
+TEST(IsValidPack, TrueForEmptyPack) { EXPECT_THAT((IsValidPack<Pack, Pack<>>::value), IsTrue()); }
 
 TEST(IsValidPack, TrueForSingleElementPack) {
-    EXPECT_TRUE((IsValidPack<Pack, Pack<B<3>>>::value));
-    EXPECT_TRUE((IsValidPack<Pack, Pack<B<4>>>::value));
-    EXPECT_TRUE((IsValidPack<Pack, Pack<Pie>>::value));
+    EXPECT_THAT((IsValidPack<Pack, Pack<B<3>>>::value), IsTrue());
+    EXPECT_THAT((IsValidPack<Pack, Pack<B<4>>>::value), IsTrue());
+    EXPECT_THAT((IsValidPack<Pack, Pack<Pie>>::value), IsTrue());
 }
 
 TEST(IsValidPack, TrueForMoreComplicatedButValidExample) {
-    EXPECT_TRUE((IsValidPack<Pack, Pack<B<2>, Pow<B<3>, -2>, RatioPow<Pie, 1, 3>>>::value));
+    EXPECT_THAT((IsValidPack<Pack, Pack<B<2>, Pow<B<3>, -2>, RatioPow<Pie, 1, 3>>>::value),
+                IsTrue());
 }
 
 TEST(IsValidPack, BecomesFalseIfAnyExponentZeroedOut) {
-    ASSERT_TRUE((IsValidPack<Pack, Pack<B<2>, Pow<B<3>, -2>, RatioPow<Pie, 1, 3>>>::value));
+    ASSERT_THAT((IsValidPack<Pack, Pack<B<2>, Pow<B<3>, -2>, RatioPow<Pie, 1, 3>>>::value),
+                IsTrue());
 
-    EXPECT_FALSE((IsValidPack<Pack, Pack<B<2>, Pow<B<3>, 0>, RatioPow<Pie, 1, 3>>>::value));
-    EXPECT_FALSE((IsValidPack<Pack, Pack<B<2>, Pow<B<3>, -2>, RatioPow<Pie, 0, 3>>>::value));
+    EXPECT_THAT((IsValidPack<Pack, Pack<B<2>, Pow<B<3>, 0>, RatioPow<Pie, 1, 3>>>::value),
+                IsFalse());
+    EXPECT_THAT((IsValidPack<Pack, Pack<B<2>, Pow<B<3>, -2>, RatioPow<Pie, 0, 3>>>::value),
+                IsFalse());
 }
 
-TEST(AreBasesInOrder, TrueForEmptyPack) { EXPECT_TRUE((AreBasesInOrder<Pack, Pack<>>::value)); }
+TEST(AreBasesInOrder, TrueForEmptyPack) {
+    EXPECT_THAT((AreBasesInOrder<Pack, Pack<>>::value), IsTrue());
+}
 
 TEST(AreBasesInOrder, TrueForSingleElementPack) {
-    EXPECT_TRUE((AreBasesInOrder<Pack, Pack<B<3>>>::value));
-    EXPECT_TRUE((AreBasesInOrder<Pack, Pack<B<4>>>::value));
-    EXPECT_TRUE((AreBasesInOrder<Pack, Pack<Pie>>::value));
+    EXPECT_THAT((AreBasesInOrder<Pack, Pack<B<3>>>::value), IsTrue());
+    EXPECT_THAT((AreBasesInOrder<Pack, Pack<B<4>>>::value), IsTrue());
+    EXPECT_THAT((AreBasesInOrder<Pack, Pack<Pie>>::value), IsTrue());
 }
 
 TEST(AreBasesInOrder, DependsOnOrderingForTwoElementPack) {
-    EXPECT_TRUE((AreBasesInOrder<Pack, Pack<B<3>, B<4>>>::value));
-    EXPECT_FALSE((AreBasesInOrder<Pack, Pack<B<4>, B<3>>>::value));
+    EXPECT_THAT((AreBasesInOrder<Pack, Pack<B<3>, B<4>>>::value), IsTrue());
+    EXPECT_THAT((AreBasesInOrder<Pack, Pack<B<4>, B<3>>>::value), IsFalse());
 }
 
 TEST(AreBasesInOrder, CanMixIntegerAndFloatingPointCorrectly) {
-    EXPECT_TRUE((AreBasesInOrder<Pack, Pack<B<3>, Pie, B<4>>>::value));
-    EXPECT_FALSE((AreBasesInOrder<Pack, Pack<Pie, B<3>, B<4>>>::value));
-    EXPECT_FALSE((AreBasesInOrder<Pack, Pack<B<3>, B<4>, Pie>>::value));
+    EXPECT_THAT((AreBasesInOrder<Pack, Pack<B<3>, Pie, B<4>>>::value), IsTrue());
+    EXPECT_THAT((AreBasesInOrder<Pack, Pack<Pie, B<3>, B<4>>>::value), IsFalse());
+    EXPECT_THAT((AreBasesInOrder<Pack, Pack<B<3>, B<4>, Pie>>::value), IsFalse());
 }
 
 TEST(AreBasesInOrder, FalseIfAnyElementRepeated) {
-    EXPECT_FALSE((AreBasesInOrder<Pack, Pack<B<3>, B<3>, B<4>>>::value));
-    EXPECT_FALSE((AreBasesInOrder<Pack, Pack<B<3>, B<4>, B<4>>>::value));
+    EXPECT_THAT((AreBasesInOrder<Pack, Pack<B<3>, B<3>, B<4>>>::value), IsFalse());
+    EXPECT_THAT((AreBasesInOrder<Pack, Pack<B<3>, B<4>, B<4>>>::value), IsFalse());
 }
 
 TEST(AreAllPowersNonzero, TrueForEmptyPack) {
-    EXPECT_TRUE((AreAllPowersNonzero<Pack, Pack<>>::value));
+    EXPECT_THAT((AreAllPowersNonzero<Pack, Pack<>>::value), IsTrue());
 }
 
 TEST(AreAllPowersNonzero, DependsOnPowerForSingleElementPack) {
-    EXPECT_TRUE((AreAllPowersNonzero<Pack, Pack<B<3>>>::value));
-    EXPECT_FALSE((AreAllPowersNonzero<Pack, Pack<Pow<B<3>, 0>>>::value));
+    EXPECT_THAT((AreAllPowersNonzero<Pack, Pack<B<3>>>::value), IsTrue());
+    EXPECT_THAT((AreAllPowersNonzero<Pack, Pack<Pow<B<3>, 0>>>::value), IsFalse());
 
-    EXPECT_TRUE((AreAllPowersNonzero<Pack, Pack<Pie>>::value));
-    EXPECT_FALSE((AreAllPowersNonzero<Pack, Pack<Pow<Pie, 0>>>::value));
+    EXPECT_THAT((AreAllPowersNonzero<Pack, Pack<Pie>>::value), IsTrue());
+    EXPECT_THAT((AreAllPowersNonzero<Pack, Pack<Pow<Pie, 0>>>::value), IsFalse());
 }
 
 TEST(AreAllPowersNonzero, AllMustSatisfyForMultiElementPack) {
-    EXPECT_TRUE(
-        (AreAllPowersNonzero<Pack, Pack<RatioPow<B<3>, -1, 2>, Pow<Pie, 8>, Pow<B<5>, 2>>>::value));
+    EXPECT_THAT(
+        (AreAllPowersNonzero<Pack, Pack<RatioPow<B<3>, -1, 2>, Pow<Pie, 8>, Pow<B<5>, 2>>>::value),
+        IsTrue());
 
-    EXPECT_FALSE((AreAllPowersNonzero<Pack, Pack<Pow<B<3>, 0>, Pow<Pie, 8>, Pow<B<5>, 2>>>::value));
+    EXPECT_THAT((AreAllPowersNonzero<Pack, Pack<Pow<B<3>, 0>, Pow<Pie, 8>, Pow<B<5>, 2>>>::value),
+                IsFalse());
 
-    EXPECT_FALSE(
-        (AreAllPowersNonzero<Pack, Pack<RatioPow<B<3>, -1, 2>, Pow<Pie, 0>, Pow<B<5>, 2>>>::value));
+    EXPECT_THAT(
+        (AreAllPowersNonzero<Pack, Pack<RatioPow<B<3>, -1, 2>, Pow<Pie, 0>, Pow<B<5>, 2>>>::value),
+        IsFalse());
 
-    EXPECT_FALSE(
-        (AreAllPowersNonzero<Pack, Pack<RatioPow<B<3>, -1, 2>, Pow<Pie, 8>, Pow<B<5>, 0>>>::value));
+    EXPECT_THAT(
+        (AreAllPowersNonzero<Pack, Pack<RatioPow<B<3>, -1, 2>, Pow<Pie, 8>, Pow<B<5>, 0>>>::value),
+        IsFalse());
 }
 
 namespace detail {

@@ -15,11 +15,15 @@
 #include <type_traits>
 
 #include "au/chrono_policy_validation.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 using namespace std::chrono_literals;
 
 namespace au {
+
+using ::testing::IsTrue;
+
 namespace {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,96 +100,116 @@ struct Subtraction {
 TEST(Assignment, ReturnsExpectedValue) { EXPECT_EQ(2s, Assignment{}(1s, 2s)); }
 TEST(Addition, ReturnsExpectedValue) { EXPECT_EQ(1001ms, Addition{}(1s, 1ms)); }
 TEST(Subtraction, ReturnsExpectedValue) { EXPECT_EQ(999ms, Subtraction{}(1s, 1ms)); }
+
 }  // namespace
 
 TEST(Comparison, EnabledForArbitraryFloatingPointReps) {
-    EXPECT_TRUE(both_permit<Comparison>(std::chrono::duration<double>(1),
-                                        std::chrono::duration<double>(1)));
+    EXPECT_THAT(
+        both_permit<Comparison>(std::chrono::duration<double>(1), std::chrono::duration<double>(1)),
+        IsTrue());
 
-    EXPECT_TRUE(both_permit<Comparison>(std::chrono::duration<double>(1),
-                                        std::chrono::duration<double>(2)));
+    EXPECT_THAT(
+        both_permit<Comparison>(std::chrono::duration<double>(1), std::chrono::duration<double>(2)),
+        IsTrue());
 
-    EXPECT_TRUE(
-        both_permit<Comparison>(std::chrono::duration<float>(1), std::chrono::duration<float>(2)));
+    EXPECT_THAT(
+        both_permit<Comparison>(std::chrono::duration<float>(1), std::chrono::duration<float>(2)),
+        IsTrue());
 
-    EXPECT_TRUE(both_permit<Comparison>(std::chrono::duration<float>(1),
-                                        std::chrono::duration<float, std::milli>(1'000)));
-    EXPECT_TRUE(both_permit<Comparison>(std::chrono::duration<float>(1.001),
-                                        std::chrono::duration<float, std::milli>(1'000)));
-    EXPECT_TRUE(both_permit<Comparison>(std::chrono::duration<float>(0.999),
-                                        std::chrono::duration<float, std::milli>(1'000)));
+    EXPECT_THAT(both_permit<Comparison>(std::chrono::duration<float>(1),
+                                        std::chrono::duration<float, std::milli>(1'000)),
+                IsTrue());
+    EXPECT_THAT(both_permit<Comparison>(std::chrono::duration<float>(1.001),
+                                        std::chrono::duration<float, std::milli>(1'000)),
+                IsTrue());
+    EXPECT_THAT(both_permit<Comparison>(std::chrono::duration<float>(0.999),
+                                        std::chrono::duration<float, std::milli>(1'000)),
+                IsTrue());
 }
 
 TEST(Comparison, EnabledForReasonableCombosOfUnitsAndIntegralReps) {
-    EXPECT_TRUE(both_permit<Comparison>(1s, 1000ms));
-    EXPECT_TRUE(both_permit<Comparison>(1s, 1001ms));
-    EXPECT_TRUE(both_permit<Comparison>(1s, 999ms));
-    EXPECT_TRUE(both_permit<Comparison>(1'000'000'000ns, 1000ms));
+    EXPECT_THAT(both_permit<Comparison>(1s, 1000ms), IsTrue());
+    EXPECT_THAT(both_permit<Comparison>(1s, 1001ms), IsTrue());
+    EXPECT_THAT(both_permit<Comparison>(1s, 999ms), IsTrue());
+    EXPECT_THAT(both_permit<Comparison>(1'000'000'000ns, 1000ms), IsTrue());
 
-    EXPECT_TRUE(both_permit<Comparison>(std::chrono::duration<int16_t, std::milli>{50},
-                                        std::chrono::duration<int64_t, std::micro>{50'001}));
+    EXPECT_THAT(both_permit<Comparison>(std::chrono::duration<int16_t, std::milli>{50},
+                                        std::chrono::duration<int64_t, std::micro>{50'001}),
+                IsTrue());
 }
 
 TEST(Comparison, EnabledForMixedIntegralFloatingPointReps) {
-    EXPECT_TRUE(both_permit<Comparison>(1.0s, 1000ms));
-    EXPECT_TRUE(both_permit<Comparison>(1.0s, std::chrono::duration<uint64_t, std::milli>{1000}));
+    EXPECT_THAT(both_permit<Comparison>(1.0s, 1000ms), IsTrue());
+    EXPECT_THAT(both_permit<Comparison>(1.0s, std::chrono::duration<uint64_t, std::milli>{1000}),
+                IsTrue());
 }
 
 TEST(Assignment, EnabledForInt64IffScaleWidening) {
-    EXPECT_TRUE(both_permit<Assignment>(std::chrono::milliseconds{}, 1s));
-    EXPECT_TRUE(both_forbid<Assignment>(std::chrono::seconds{}, 1ms));
+    EXPECT_THAT(both_permit<Assignment>(std::chrono::milliseconds{}, 1s), IsTrue());
+    EXPECT_THAT(both_forbid<Assignment>(std::chrono::seconds{}, 1ms), IsTrue());
 }
 
 TEST(Assignment, EnabledForSameScaleIntegralTypes) {
-    EXPECT_TRUE(both_permit<Assignment>(std::chrono::duration<int64_t>{},
-                                        std::chrono::duration<int32_t>{1}));
-    EXPECT_TRUE(both_permit<Assignment>(std::chrono::duration<int32_t>{},
-                                        std::chrono::duration<int64_t>{1}));
+    EXPECT_THAT(both_permit<Assignment>(std::chrono::duration<int64_t>{},
+                                        std::chrono::duration<int32_t>{1}),
+                IsTrue());
+    EXPECT_THAT(both_permit<Assignment>(std::chrono::duration<int32_t>{},
+                                        std::chrono::duration<int64_t>{1}),
+                IsTrue());
 }
 
 TEST(Assignment, DisabledForOverflowRiskyIntegralConversions) {
-    EXPECT_TRUE(chrono_permits_but_au_forbids<Assignment>(
-        std::chrono::duration<int16_t, std::milli>{}, std::chrono::duration<uint64_t>{1}));
+    EXPECT_THAT(
+        chrono_permits_but_au_forbids<Assignment>(std::chrono::duration<int16_t, std::milli>{},
+                                                  std::chrono::duration<uint64_t>{1}),
+        IsTrue());
 }
 
 TEST(Assignment, DisabledForIntTypesFromFloatTypes) {
-    EXPECT_TRUE(both_forbid<Assignment>(std::chrono::seconds{}, std::chrono::duration<double>{1}));
-    EXPECT_TRUE(both_forbid<Assignment>(std::chrono::seconds{}, std::chrono::duration<float>{1}));
+    EXPECT_THAT(both_forbid<Assignment>(std::chrono::seconds{}, std::chrono::duration<double>{1}),
+                IsTrue());
+    EXPECT_THAT(both_forbid<Assignment>(std::chrono::seconds{}, std::chrono::duration<float>{1}),
+                IsTrue());
 }
 
 TEST(Assignment, EnabledForFloatTypes) {
-    EXPECT_TRUE(both_permit<Assignment>(std::chrono::duration<float>{}, 1s));
-    EXPECT_TRUE(both_permit<Assignment>(std::chrono::duration<float>{}, 1ms));
-    EXPECT_TRUE(both_permit<Assignment>(std::chrono::duration<float>{}, 1ns));
+    EXPECT_THAT(both_permit<Assignment>(std::chrono::duration<float>{}, 1s), IsTrue());
+    EXPECT_THAT(both_permit<Assignment>(std::chrono::duration<float>{}, 1ms), IsTrue());
+    EXPECT_THAT(both_permit<Assignment>(std::chrono::duration<float>{}, 1ns), IsTrue());
 
-    EXPECT_TRUE(both_permit<Assignment>(std::chrono::duration<double>{}, 1s));
-    EXPECT_TRUE(both_permit<Assignment>(std::chrono::duration<double>{}, 1ms));
-    EXPECT_TRUE(both_permit<Assignment>(std::chrono::duration<double>{}, 1ns));
+    EXPECT_THAT(both_permit<Assignment>(std::chrono::duration<double>{}, 1s), IsTrue());
+    EXPECT_THAT(both_permit<Assignment>(std::chrono::duration<double>{}, 1ms), IsTrue());
+    EXPECT_THAT(both_permit<Assignment>(std::chrono::duration<double>{}, 1ns), IsTrue());
 }
 
 TEST(Addition, EnabledForWideVarietyOfTypes) {
-    EXPECT_TRUE(both_permit<Addition>(1s, 1ms, 1001ms));
-    EXPECT_TRUE(both_permit<Addition>(1ms, 1s, 1001ms));
+    EXPECT_THAT(both_permit<Addition>(1s, 1ms, 1001ms), IsTrue());
+    EXPECT_THAT(both_permit<Addition>(1ms, 1s, 1001ms), IsTrue());
 
-    EXPECT_TRUE(both_permit<Addition>(std::chrono::duration<double, std::milli>{8},
+    EXPECT_THAT(both_permit<Addition>(std::chrono::duration<double, std::milli>{8},
                                       std::chrono::duration<double, std::nano>{321},
-                                      std::chrono::duration<double, std::nano>{8'000'321}));
-    EXPECT_TRUE(both_permit<Addition>(
-        std::chrono::duration<int8_t, std::ratio<3, 5>>{1},
-        std::chrono::duration<float, std::ratio<13, 17>>{2},
-        std::chrono::duration<float, std::ratio<1, 5 * 17>>{(1 * 3 * 17) + (2 * 5 * 13)}));
+                                      std::chrono::duration<double, std::nano>{8'000'321}),
+                IsTrue());
+    EXPECT_THAT(both_permit<Addition>(std::chrono::duration<int8_t, std::ratio<3, 5>>{1},
+                                      std::chrono::duration<float, std::ratio<13, 17>>{2},
+                                      std::chrono::duration<float, std::ratio<1, 5 * 17>>{
+                                          (1 * 3 * 17) + (2 * 5 * 13)}),
+                IsTrue());
 }
 
 TEST(Subtraction, EnabledForWideVarietyOfTypes) {
-    EXPECT_TRUE(both_permit<Subtraction>(1s, 1ms, 999ms));
-    EXPECT_TRUE(both_permit<Subtraction>(1ms, 1s, -999ms));
+    EXPECT_THAT(both_permit<Subtraction>(1s, 1ms, 999ms), IsTrue());
+    EXPECT_THAT(both_permit<Subtraction>(1ms, 1s, -999ms), IsTrue());
 
-    EXPECT_TRUE(both_permit<Subtraction>(std::chrono::duration<double, std::milli>{8},
+    EXPECT_THAT(both_permit<Subtraction>(std::chrono::duration<double, std::milli>{8},
                                          std::chrono::duration<double, std::nano>{321},
-                                         std::chrono::duration<double, std::nano>{7'999'679}));
-    EXPECT_TRUE(both_permit<Subtraction>(
-        std::chrono::duration<int8_t, std::ratio<3, 5>>{1},
-        std::chrono::duration<float, std::ratio<13, 17>>{2},
-        std::chrono::duration<float, std::ratio<1, 5 * 17>>{(1 * 3 * 17) - (2 * 5 * 13)}));
+                                         std::chrono::duration<double, std::nano>{7'999'679}),
+                IsTrue());
+    EXPECT_THAT(both_permit<Subtraction>(std::chrono::duration<int8_t, std::ratio<3, 5>>{1},
+                                         std::chrono::duration<float, std::ratio<13, 17>>{2},
+                                         std::chrono::duration<float, std::ratio<1, 5 * 17>>{
+                                             (1 * 3 * 17) - (2 * 5 * 13)}),
+                IsTrue());
 }
+
 }  // namespace au
