@@ -96,7 +96,7 @@ TEST(Zero, ImplicitlyConvertsToChronoDuration) {
     EXPECT_THAT(zero_ns, Eq(0ns));
 
     constexpr std::chrono::duration<float, std::milli> zero_ms_f = ZERO;
-    EXPECT_THAT(zero_ms_f, Eq((std::chrono::duration<float, std::milli>{0.f})));
+    EXPECT_THAT(zero_ms_f, Eq(std::chrono::duration<float, std::milli>{0.f}));
 }
 
 }  // namespace au
