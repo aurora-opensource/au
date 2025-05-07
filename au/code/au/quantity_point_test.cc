@@ -21,6 +21,7 @@
 
 namespace au {
 
+using ::testing::Eq;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
 using ::testing::Not;
@@ -130,18 +131,18 @@ TEST(QuantityPoint, IntermediateTypeIsSignedIfExplicitRepIsSigned) {
 TEST(QuantityPoint, SupportsDirectAccessWithSameUnit) {
     auto p = celsius_pt(3);
     ++(p.data_in(Celsius{}));
-    EXPECT_EQ(p, celsius_pt(4));
+    EXPECT_THAT(p, Eq(celsius_pt(4)));
 }
 
 TEST(QuantityPoint, SupportsDirectConstAccessWithSameUnit) {
     const auto p = meters_pt(3.5);
-    EXPECT_EQ(static_cast<const void *>(&p.data_in(Meters{})), static_cast<const void *>(&p));
+    EXPECT_THAT(static_cast<const void *>(&p.data_in(Meters{})), Eq(static_cast<const void *>(&p)));
 }
 
 TEST(QuantityPoint, SupportsDirectAccessWithEquivalentUnit) {
     auto p = kelvins_pt(3);
     ++(p.data_in(Micro<Mega<Kelvins>>{}));
-    EXPECT_EQ(p, kelvins_pt(4));
+    EXPECT_THAT(p, Eq(kelvins_pt(4)));
 
     // Uncomment to test compile time failure:
     // ++(p.data_in(Celsius{}));
@@ -149,29 +150,30 @@ TEST(QuantityPoint, SupportsDirectAccessWithEquivalentUnit) {
 
 TEST(QuantityPoint, SupportsDirectConstAccessWithEquivalentUnit) {
     const auto p = milli(meters_pt)(3.5);
-    EXPECT_EQ(static_cast<const void *>(&p.data_in(Micro<Kilo<Meters>>{})),
-              static_cast<const void *>(&p));
+    EXPECT_THAT(static_cast<const void *>(&p.data_in(Micro<Kilo<Meters>>{})),
+                Eq(static_cast<const void *>(&p)));
 
     // Uncomment to test compile time failure:
-    // EXPECT_EQ(static_cast<const void *>(&p.data_in(Micro<Meters>{})),
-    //           static_cast<const void *>(&p));
+    // EXPECT_THAT(static_cast<const void *>(&p.data_in(Micro<Meters>{})),
+    //             Eq(static_cast<const void *>(&p)));
 }
 
 TEST(QuantityPoint, SupportsDirectAccessWithQuantityMakerOfSameUnit) {
     auto p = meters_pt(3);
     ++(p.data_in(meters_pt));
-    EXPECT_EQ(p, meters_pt(4));
+    EXPECT_THAT(p, Eq(meters_pt(4)));
 }
 
 TEST(QuantityPoint, SupportsDirectConstAccessWithQuantityMakerOfSameUnit) {
     const auto p = celsius_pt(3.5);
-    EXPECT_EQ(static_cast<const void *>(&p.data_in(celsius_pt)), static_cast<const void *>(&p));
+    EXPECT_THAT(static_cast<const void *>(&p.data_in(celsius_pt)),
+                Eq(static_cast<const void *>(&p)));
 }
 
 TEST(QuantityPoint, SupportsDirectAccessWithQuantityMakerOfEquivalentUnit) {
     auto p = kelvins_pt(3);
     ++(p.data_in(micro(mega(kelvins_pt))));
-    EXPECT_EQ(p, kelvins_pt(4));
+    EXPECT_THAT(p, Eq(kelvins_pt(4)));
 
     // Uncomment to test compile time failure:
     // ++(p.data_in(micro(kelvins_pt)));
@@ -179,11 +181,12 @@ TEST(QuantityPoint, SupportsDirectAccessWithQuantityMakerOfEquivalentUnit) {
 
 TEST(QuantityPoint, SupportsDirectConstAccessWithQuantityMakerOfEquivalentUnit) {
     const auto p = milli(meters_pt)(3.5);
-    EXPECT_EQ(static_cast<const void *>(&p.data_in(micro(kilo(meters_pt)))),
-              static_cast<const void *>(&p));
+    EXPECT_THAT(static_cast<const void *>(&p.data_in(micro(kilo(meters_pt)))),
+                Eq(static_cast<const void *>(&p)));
 
     // Uncomment to test compile time failure:
-    // EXPECT_EQ(static_cast<const void*>(&p.data_in(meters_pt)), static_cast<const void*>(&p));
+    // EXPECT_THAT(static_cast<const void*>(&p.data_in(meters_pt)), Eq(static_cast<const
+    // void*>(&p)));
 }
 
 TEST(QuantityPoint, HasDefaultConstructor) {
@@ -191,7 +194,7 @@ TEST(QuantityPoint, HasDefaultConstructor) {
     // default constructor must _exist_, so we can use it with, e.g., `std::atomic`.
     QuantityPointF<Celsius> qp;
     qp = celsius_pt(4.5f);
-    EXPECT_EQ(qp.in(celsius_pt), 4.5f);
+    EXPECT_THAT(qp.in(celsius_pt), Eq(4.5f));
 }
 
 TEST(QuantityPoint, InHandlesUnitsWithNonzeroOffset) {
@@ -201,11 +204,11 @@ TEST(QuantityPoint, InHandlesUnitsWithNonzeroOffset) {
 
 TEST(QuantityPoint, InHandlesIntegerRepInUnitsWithNonzeroOffset) {
     constexpr auto room_temperature = celsius_pt(20);
-    EXPECT_EQ(room_temperature.in(celsius_pt), 20);
+    EXPECT_THAT(room_temperature.in(celsius_pt), Eq(20));
 }
 
 TEST(QuantityPoint, CanRequestOutputRepWhenCallingIn) {
-    EXPECT_EQ(celsius_pt(5.2).in<int>(Celsius{}), 5);
+    EXPECT_THAT(celsius_pt(5.2).in<int>(Celsius{}), Eq(5));
 }
 
 TEST(QuantityPoint, CanCastToUnitWithDifferentMagnitude) {
@@ -229,7 +232,7 @@ TEST(QuantityPoint, CoerceAsWillForceLossyConversion) {
     EXPECT_THAT(inches_pt(30).coerce_as(feet_pt), SameTypeAndValue(feet_pt(2)));
 
     // Unsigned overflow.
-    ASSERT_EQ(static_cast<uint8_t>(30 * 12), 104);
+    ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
     EXPECT_THAT(feet_pt(uint8_t{30}).coerce_as(inches_pt),
                 SameTypeAndValue(inches_pt(uint8_t{104})));
 }
@@ -243,7 +246,7 @@ TEST(QuantityPoint, CoerceAsExplicitRepSetsOutputType) {
     EXPECT_THAT(inches_pt(30).coerce_as<float>(feet_pt), SameTypeAndValue(feet_pt(2.5f)));
 
     // Coerced unsigned overflow.
-    ASSERT_EQ(static_cast<uint8_t>(30 * 12), 104);
+    ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
     EXPECT_THAT(feet_pt(30).coerce_as<uint8_t>(inches_pt),
                 SameTypeAndValue(inches_pt(uint8_t{104})));
 }
@@ -253,7 +256,7 @@ TEST(QuantityPoint, CoerceInWillForceLossyConversion) {
     EXPECT_THAT(inches_pt(30).coerce_in(feet_pt), SameTypeAndValue(2));
 
     // Unsigned overflow.
-    ASSERT_EQ(static_cast<uint8_t>(30 * 12), 104);
+    ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
     EXPECT_THAT(feet_pt(uint8_t{30}).coerce_in(inches_pt), SameTypeAndValue(uint8_t{104}));
 }
 
@@ -265,7 +268,7 @@ TEST(QuantityPoint, CoerceInExplicitRepSetsOutputType) {
     EXPECT_THAT(inches_pt(30).coerce_in<float>(feet_pt), SameTypeAndValue(2.5f));
 
     // Coerced unsigned overflow.
-    ASSERT_EQ(static_cast<uint8_t>(30 * 12), 104);
+    ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
     EXPECT_THAT(feet_pt(30).coerce_in<uint8_t>(inches_pt), SameTypeAndValue(uint8_t{104}));
 }
 
@@ -306,25 +309,25 @@ TEST(QuantityPoint, CanSubtractDiffTFromRight) {
 TEST(QuantityPoint, ShortHandAdditionAssignmentWorks) {
     auto d = kelvins_pt(1.25);
     d += kelvins(2.75);
-    EXPECT_EQ(d, kelvins_pt(4.));
+    EXPECT_THAT(d, Eq(kelvins_pt(4.)));
 }
 
 TEST(QuantityPoint, ShortHandAdditionHasReferenceCharacter) {
     auto d = kelvins_pt(1);
     (d += kelvins(1234)) = kelvins_pt(3);
-    EXPECT_EQ(d, (kelvins_pt(3)));
+    EXPECT_THAT(d, Eq(kelvins_pt(3)));
 }
 
 TEST(QuantityPoint, ShortHandSubtractionAssignmentWorks) {
     auto d = kelvins_pt(4.75);
     d -= kelvins(2.75);
-    EXPECT_EQ(d, (kelvins_pt(2.)));
+    EXPECT_THAT(d, Eq(kelvins_pt(2.)));
 }
 
 TEST(QuantityPoint, ShortHandSubtractionHasReferenceCharacter) {
     auto d = kelvins_pt(4);
     (d -= kelvins(1234)) = kelvins_pt(3);
-    EXPECT_EQ(d, (kelvins_pt(3)));
+    EXPECT_THAT(d, Eq(kelvins_pt(3)));
 }
 
 TEST(QuantityPoint, MixedUnitAdditionUsesCommonDenominator) {
@@ -353,7 +356,7 @@ TEST(QuantityPoint, MixedUnitsWithIdenticalNonzeroOriginDontGetSubdivided) {
     // Just to leave no doubt: the centi-celsius units of the origin should _not_ influence the
     // units in which the result is expressed (although we _should_ compare _equal_ to that result).
     constexpr auto right_answer_wrong_units = centi(celsius_pt)(10000);
-    ASSERT_EQ(diff, right_answer_wrong_units);
+    ASSERT_THAT(diff, Eq(right_answer_wrong_units));
     EXPECT_THAT(diff, Not(PointEquivalent(right_answer_wrong_units)));
 }
 
@@ -399,7 +402,7 @@ TEST(QuantityPoint, AddingPosUnitQuantityToNegUnitPointGivesPosUnitPoint) {
 }
 
 TEST(QuantityPoint, CanSubtractIntegralInputsWithNonintegralOriginDifference) {
-    EXPECT_EQ(celsius_pt(0) - kelvins_pt(273), centi(kelvins)(15));
+    EXPECT_THAT(celsius_pt(0) - kelvins_pt(273), Eq(centi(kelvins)(15)));
 }
 
 TEST(QuantityPoint, InheritsOverflowSafetySurfaceFromUnderlyingQuantityTypes) {
