@@ -18,10 +18,10 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+namespace au {
+
 using ::testing::Eq;
 using ::testing::StaticAssertTypeEq;
-
-namespace au {
 
 struct Bytes : UnitImpl<Information> {};
 
