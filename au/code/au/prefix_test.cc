@@ -15,8 +15,10 @@
 #include "au/prefix.hh"
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+using ::testing::Eq;
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
@@ -64,60 +66,60 @@ TEST(PrefixApplier, ConvertsSymbolForToCorrespondingPrefixedType) {
 }
 
 TEST(SiPrefixes, HaveCorrectAbsoluteValues) {
-    EXPECT_EQ(unit_ratio(Yotta<Bytes>{}, Bytes{}), pow<24>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Zetta<Bytes>{}, Bytes{}), pow<21>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Exa<Bytes>{}, Bytes{}), pow<18>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Peta<Bytes>{}, Bytes{}), pow<15>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Tera<Bytes>{}, Bytes{}), pow<12>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Giga<Bytes>{}, Bytes{}), pow<9>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Mega<Bytes>{}, Bytes{}), pow<6>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Kilo<Bytes>{}, Bytes{}), pow<3>(mag<10>()));
+    EXPECT_THAT(unit_ratio(Yotta<Bytes>{}, Bytes{}), Eq(pow<24>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Zetta<Bytes>{}, Bytes{}), Eq(pow<21>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Exa<Bytes>{}, Bytes{}), Eq(pow<18>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Peta<Bytes>{}, Bytes{}), Eq(pow<15>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Tera<Bytes>{}, Bytes{}), Eq(pow<12>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Giga<Bytes>{}, Bytes{}), Eq(pow<9>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Mega<Bytes>{}, Bytes{}), Eq(pow<6>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Kilo<Bytes>{}, Bytes{}), Eq(pow<3>(mag<10>())));
 
-    EXPECT_EQ(unit_ratio(Hecto<Bytes>{}, Bytes{}), pow<2>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Deka<Bytes>{}, Bytes{}), pow<1>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Deci<Bytes>{}, Bytes{}), pow<-1>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Centi<Bytes>{}, Bytes{}), pow<-2>(mag<10>()));
+    EXPECT_THAT(unit_ratio(Hecto<Bytes>{}, Bytes{}), Eq(pow<2>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Deka<Bytes>{}, Bytes{}), Eq(pow<1>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Deci<Bytes>{}, Bytes{}), Eq(pow<-1>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Centi<Bytes>{}, Bytes{}), Eq(pow<-2>(mag<10>())));
 
-    EXPECT_EQ(unit_ratio(Milli<Bytes>{}, Bytes{}), pow<-3>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Micro<Bytes>{}, Bytes{}), pow<-6>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Nano<Bytes>{}, Bytes{}), pow<-9>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Pico<Bytes>{}, Bytes{}), pow<-12>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Femto<Bytes>{}, Bytes{}), pow<-15>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Atto<Bytes>{}, Bytes{}), pow<-18>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Zepto<Bytes>{}, Bytes{}), pow<-21>(mag<10>()));
-    EXPECT_EQ(unit_ratio(Yocto<Bytes>{}, Bytes{}), pow<-24>(mag<10>()));
+    EXPECT_THAT(unit_ratio(Milli<Bytes>{}, Bytes{}), Eq(pow<-3>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Micro<Bytes>{}, Bytes{}), Eq(pow<-6>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Nano<Bytes>{}, Bytes{}), Eq(pow<-9>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Pico<Bytes>{}, Bytes{}), Eq(pow<-12>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Femto<Bytes>{}, Bytes{}), Eq(pow<-15>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Atto<Bytes>{}, Bytes{}), Eq(pow<-18>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Zepto<Bytes>{}, Bytes{}), Eq(pow<-21>(mag<10>())));
+    EXPECT_THAT(unit_ratio(Yocto<Bytes>{}, Bytes{}), Eq(pow<-24>(mag<10>())));
 }
 
 TEST(SiPrefixes, PrefixAppliersPredefined) {
     constexpr QuantityMaker<Inches> inches{};
 
-    EXPECT_EQ(quetta(inches)(1), ronna(inches)(1000));
-    EXPECT_EQ(ronna(inches)(1), yotta(inches)(1000));
-    EXPECT_EQ(yotta(inches)(1), zetta(inches)(1000));
-    EXPECT_EQ(zetta(inches)(1), exa(inches)(1000));
-    EXPECT_EQ(exa(inches)(1), peta(inches)(1000));
-    EXPECT_EQ(peta(inches)(1), tera(inches)(1000));
-    EXPECT_EQ(tera(inches)(1), giga(inches)(1000));
-    EXPECT_EQ(giga(inches)(1), mega(inches)(1000));
-    EXPECT_EQ(mega(inches)(1), kilo(inches)(1000));
+    EXPECT_THAT(quetta(inches)(1), Eq(ronna(inches)(1000)));
+    EXPECT_THAT(ronna(inches)(1), Eq(yotta(inches)(1000)));
+    EXPECT_THAT(yotta(inches)(1), Eq(zetta(inches)(1000)));
+    EXPECT_THAT(zetta(inches)(1), Eq(exa(inches)(1000)));
+    EXPECT_THAT(exa(inches)(1), Eq(peta(inches)(1000)));
+    EXPECT_THAT(peta(inches)(1), Eq(tera(inches)(1000)));
+    EXPECT_THAT(tera(inches)(1), Eq(giga(inches)(1000)));
+    EXPECT_THAT(giga(inches)(1), Eq(mega(inches)(1000)));
+    EXPECT_THAT(mega(inches)(1), Eq(kilo(inches)(1000)));
 
-    EXPECT_EQ(kilo(inches)(1), hecto(inches)(10));
-    EXPECT_EQ(hecto(inches)(1), deka(inches)(10));
-    EXPECT_EQ(deka(inches)(1), inches(10));
+    EXPECT_THAT(kilo(inches)(1), Eq(hecto(inches)(10)));
+    EXPECT_THAT(hecto(inches)(1), Eq(deka(inches)(10)));
+    EXPECT_THAT(deka(inches)(1), Eq(inches(10)));
 
-    EXPECT_EQ(inches(1), deci(inches)(10));
-    EXPECT_EQ(deci(inches)(1), centi(inches)(10));
-    EXPECT_EQ(centi(inches)(1), milli(inches)(10));
+    EXPECT_THAT(inches(1), Eq(deci(inches)(10)));
+    EXPECT_THAT(deci(inches)(1), Eq(centi(inches)(10)));
+    EXPECT_THAT(centi(inches)(1), Eq(milli(inches)(10)));
 
-    EXPECT_EQ(milli(inches)(1), micro(inches)(1000));
-    EXPECT_EQ(micro(inches)(1), nano(inches)(1000));
-    EXPECT_EQ(nano(inches)(1), pico(inches)(1000));
-    EXPECT_EQ(pico(inches)(1), femto(inches)(1000));
-    EXPECT_EQ(femto(inches)(1), atto(inches)(1000));
-    EXPECT_EQ(atto(inches)(1), zepto(inches)(1000));
-    EXPECT_EQ(zepto(inches)(1), yocto(inches)(1000));
-    EXPECT_EQ(yocto(inches)(1), ronto(inches)(1000));
-    EXPECT_EQ(ronto(inches)(1), quecto(inches)(1000));
+    EXPECT_THAT(milli(inches)(1), Eq(micro(inches)(1000)));
+    EXPECT_THAT(micro(inches)(1), Eq(nano(inches)(1000)));
+    EXPECT_THAT(nano(inches)(1), Eq(pico(inches)(1000)));
+    EXPECT_THAT(pico(inches)(1), Eq(femto(inches)(1000)));
+    EXPECT_THAT(femto(inches)(1), Eq(atto(inches)(1000)));
+    EXPECT_THAT(atto(inches)(1), Eq(zepto(inches)(1000)));
+    EXPECT_THAT(zepto(inches)(1), Eq(yocto(inches)(1000)));
+    EXPECT_THAT(yocto(inches)(1), Eq(ronto(inches)(1000)));
+    EXPECT_THAT(ronto(inches)(1), Eq(quecto(inches)(1000)));
 }
 
 TEST(SiPrefixes, CorrectlyLabelUnits) {
@@ -149,26 +151,26 @@ TEST(SiPrefixes, CorrectlyLabelUnits) {
 }
 
 TEST(BinaryPrefixes, HaveCorrectAbsoluteValues) {
-    EXPECT_EQ(unit_ratio(Yobi<Bytes>{}, Bytes{}), pow<8>(mag<1024>()));
-    EXPECT_EQ(unit_ratio(Zebi<Bytes>{}, Bytes{}), pow<7>(mag<1024>()));
-    EXPECT_EQ(unit_ratio(Exbi<Bytes>{}, Bytes{}), pow<6>(mag<1024>()));
-    EXPECT_EQ(unit_ratio(Pebi<Bytes>{}, Bytes{}), pow<5>(mag<1024>()));
-    EXPECT_EQ(unit_ratio(Tebi<Bytes>{}, Bytes{}), pow<4>(mag<1024>()));
-    EXPECT_EQ(unit_ratio(Gibi<Bytes>{}, Bytes{}), pow<3>(mag<1024>()));
-    EXPECT_EQ(unit_ratio(Mebi<Bytes>{}, Bytes{}), pow<2>(mag<1024>()));
-    EXPECT_EQ(unit_ratio(Kibi<Bytes>{}, Bytes{}), pow<1>(mag<1024>()));
+    EXPECT_THAT(unit_ratio(Yobi<Bytes>{}, Bytes{}), Eq(pow<8>(mag<1024>())));
+    EXPECT_THAT(unit_ratio(Zebi<Bytes>{}, Bytes{}), Eq(pow<7>(mag<1024>())));
+    EXPECT_THAT(unit_ratio(Exbi<Bytes>{}, Bytes{}), Eq(pow<6>(mag<1024>())));
+    EXPECT_THAT(unit_ratio(Pebi<Bytes>{}, Bytes{}), Eq(pow<5>(mag<1024>())));
+    EXPECT_THAT(unit_ratio(Tebi<Bytes>{}, Bytes{}), Eq(pow<4>(mag<1024>())));
+    EXPECT_THAT(unit_ratio(Gibi<Bytes>{}, Bytes{}), Eq(pow<3>(mag<1024>())));
+    EXPECT_THAT(unit_ratio(Mebi<Bytes>{}, Bytes{}), Eq(pow<2>(mag<1024>())));
+    EXPECT_THAT(unit_ratio(Kibi<Bytes>{}, Bytes{}), Eq(pow<1>(mag<1024>())));
 }
 
 TEST(BinaryPrefixes, PrefixAppliersPredefined) {
     constexpr QuantityMaker<Bytes> bytes{};
 
-    EXPECT_EQ(yobi(bytes)(1), zebi(bytes)(1024));
-    EXPECT_EQ(zebi(bytes)(1), exbi(bytes)(1024));
-    EXPECT_EQ(exbi(bytes)(1), pebi(bytes)(1024));
-    EXPECT_EQ(pebi(bytes)(1), tebi(bytes)(1024));
-    EXPECT_EQ(tebi(bytes)(1), gibi(bytes)(1024));
-    EXPECT_EQ(gibi(bytes)(1), mebi(bytes)(1024));
-    EXPECT_EQ(mebi(bytes)(1), kibi(bytes)(1024));
+    EXPECT_THAT(yobi(bytes)(1), Eq(zebi(bytes)(1024)));
+    EXPECT_THAT(zebi(bytes)(1), Eq(exbi(bytes)(1024)));
+    EXPECT_THAT(exbi(bytes)(1), Eq(pebi(bytes)(1024)));
+    EXPECT_THAT(pebi(bytes)(1), Eq(tebi(bytes)(1024)));
+    EXPECT_THAT(tebi(bytes)(1), Eq(gibi(bytes)(1024)));
+    EXPECT_THAT(gibi(bytes)(1), Eq(mebi(bytes)(1024)));
+    EXPECT_THAT(mebi(bytes)(1), Eq(kibi(bytes)(1024)));
 }
 
 TEST(BinaryPrefixes, CorrectlyLabelUnits) {

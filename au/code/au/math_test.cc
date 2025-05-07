@@ -58,24 +58,24 @@ constexpr const T &std_clamp(const T &v, const T &lo, const T &hi) {
 }  // namespace
 
 TEST(abs, AlwaysReturnsNonnegativeVersionOfInput) {
-    EXPECT_EQ(abs(meters(-1)), meters(1));
-    EXPECT_EQ(abs(meters(0)), meters(0));
-    EXPECT_EQ(abs(meters(1)), meters(1));
+    EXPECT_THAT(abs(meters(-1)), Eq(meters(1)));
+    EXPECT_THAT(abs(meters(0)), Eq(meters(0)));
+    EXPECT_THAT(abs(meters(1)), Eq(meters(1)));
 
-    EXPECT_EQ(abs(radians(-2.f)), radians(2.f));
-    EXPECT_EQ(abs(radians(0.f)), radians(0.f));
-    EXPECT_EQ(abs(radians(2.f)), radians(2.f));
+    EXPECT_THAT(abs(radians(-2.f)), Eq(radians(2.f)));
+    EXPECT_THAT(abs(radians(0.f)), Eq(radians(0.f)));
+    EXPECT_THAT(abs(radians(2.f)), Eq(radians(2.f)));
 }
 
 TEST(abs, FollowsSamePolicyAsStdAbsForInf) {
-    EXPECT_EQ(abs(degrees(INFINITY)), degrees(std::abs(INFINITY)));
-    EXPECT_EQ(abs(degrees(-INFINITY)), degrees(std::abs(-INFINITY)));
+    EXPECT_THAT(abs(degrees(INFINITY)), Eq(degrees(std::abs(INFINITY))));
+    EXPECT_THAT(abs(degrees(-INFINITY)), Eq(degrees(std::abs(-INFINITY))));
 }
 
 TEST(abs, SameAsStdAbsForNumericTypes) {
-    EXPECT_EQ(abs(-1), 1);
-    EXPECT_EQ(abs(0), 0);
-    EXPECT_EQ(abs(1), 1);
+    EXPECT_THAT(abs(-1), Eq(1));
+    EXPECT_THAT(abs(0), Eq(0));
+    EXPECT_THAT(abs(1), Eq(1));
 }
 
 TEST(cbrt, OutputRepDependsOnInputRep) {
@@ -171,7 +171,7 @@ TEST(clamp, QuantityPointTakesOffsetIntoAccount) {
     constexpr auto celsius_origin = clamp(celsius_pt(0), kelvins_pt(200), kelvins_pt(300));
     ASSERT_THAT(is_integer(unit_ratio(Kelvins{} / mag<20>(), decltype(celsius_origin)::unit)),
                 IsTrue());
-    EXPECT_EQ(celsius_origin, centi(kelvins_pt)(273'15));
+    EXPECT_THAT(celsius_origin, Eq(centi(kelvins_pt)(273'15)));
 }
 
 TEST(clamp, SupportsZeroForLowerBoundaryArgument) {
@@ -270,15 +270,15 @@ TEST(cos, TypeDependsOnInputType) {
 }
 
 TEST(cos, SameAsStdCosForNumericTypes) {
-    EXPECT_EQ(cos(1), std::cos(1));
-    EXPECT_EQ(cos(1.), std::cos(1.));
-    EXPECT_EQ(cos(1.f), std::cos(1.f));
-    EXPECT_EQ(cos(1.L), std::cos(1.L));
+    EXPECT_THAT(cos(1), Eq(std::cos(1)));
+    EXPECT_THAT(cos(1.), Eq(std::cos(1.)));
+    EXPECT_THAT(cos(1.f), Eq(std::cos(1.f)));
+    EXPECT_THAT(cos(1.L), Eq(std::cos(1.L)));
 }
 
 TEST(cos, GivesSameAnswersAsRawNumbersButInStrongTypes) {
-    EXPECT_EQ(cos(radians(1.23)), std::cos(1.23));
-    EXPECT_EQ(cos(radians(4.56f)), std::cos(4.56f));
+    EXPECT_THAT(cos(radians(1.23)), Eq(std::cos(1.23)));
+    EXPECT_THAT(cos(radians(4.56f)), Eq(std::cos(4.56f)));
 }
 
 TEST(cos, GivesCorrectAnswersForInputsInDegrees) {
@@ -314,7 +314,7 @@ TEST(fmod, SameAsStdFmodForNumericTypes) {
     const auto a = 3.5;
     const auto b = 3;
 
-    EXPECT_EQ(fmod(a, b), std::fmod(a, b));
+    EXPECT_THAT(fmod(a, b), Eq(std::fmod(a, b)));
 }
 
 TEST(fmod, ReturnsSameTypesAsStdModForSameUnitInputs) {
@@ -343,8 +343,8 @@ TEST(fmod, HandlesIrrationalCommonUnit) {
 }
 
 TEST(remainder, SameAsStdRemainderForNumericTypes) {
-    EXPECT_EQ(remainder(3.5, 3), std::remainder(3.5, 3));
-    EXPECT_EQ(remainder(2.5, 3), std::remainder(2.5, 3));
+    EXPECT_THAT(remainder(3.5, 3), Eq(std::remainder(3.5, 3)));
+    EXPECT_THAT(remainder(2.5, 3), Eq(std::remainder(2.5, 3)));
 }
 
 TEST(remainder, ReturnsSameTypesAsStdRemainderForSameUnitInputs) {
@@ -381,12 +381,12 @@ TEST(remainder, CenteredAroundZero) {
 
 TEST(max, ReturnsLarger) {
     constexpr auto result = max(centi(meters)(1), inches(1));
-    EXPECT_EQ(result, inches(1));
+    EXPECT_THAT(result, Eq(inches(1)));
 }
 
 TEST(max, HandlesDifferentOriginQuantityPoints) {
     constexpr auto result = max(fahrenheit_pt(30), celsius_pt(0));
-    EXPECT_EQ(result, celsius_pt(0));
+    EXPECT_THAT(result, Eq(celsius_pt(0)));
 }
 
 TEST(max, ReturnsByValueForSameExactQuantityType) {
@@ -395,13 +395,13 @@ TEST(max, ReturnsByValueForSameExactQuantityType) {
     const auto b = meters(2);
     const auto &max_a_b = max(a, b);
 
-    EXPECT_EQ(max_a_b, b);
+    EXPECT_THAT(max_a_b, Eq(b));
     EXPECT_NE(&max_a_b, &b);
 }
 
 TEST(max, SupportsConstexprForSameExactQuantityType) {
     constexpr auto result = max(meters(1), meters(2));
-    EXPECT_EQ(result, meters(2));
+    EXPECT_THAT(result, Eq(meters(2)));
 }
 
 TEST(max, ReturnsByValueForSameExactQuantityPointType) {
@@ -410,13 +410,13 @@ TEST(max, ReturnsByValueForSameExactQuantityPointType) {
     const auto b = meters_pt(2);
     const auto &max_a_b = max(a, b);
 
-    EXPECT_EQ(max_a_b, b);
+    EXPECT_THAT(max_a_b, Eq(b));
     EXPECT_NE(&max_a_b, &b);
 }
 
 TEST(max, SupportsConstexprForSameExactQuantityPointType) {
     constexpr auto result = max(meters_pt(1), meters_pt(2));
-    EXPECT_EQ(result, meters_pt(2));
+    EXPECT_THAT(result, Eq(meters_pt(2)));
 }
 
 TEST(max, SameAsStdMaxForNumericTypes) {
@@ -425,7 +425,7 @@ TEST(max, SameAsStdMaxForNumericTypes) {
 
     const auto &max_result = max(a, b);
 
-    EXPECT_EQ(&b, &max_result);
+    EXPECT_THAT(&b, Eq(&max_result));
 }
 
 TEST(max, SupportsZeroForFirstArgument) {
@@ -446,12 +446,12 @@ TEST(max, SupportsZeroForSecondArgument) {
 
 TEST(min, ReturnsSmaller) {
     constexpr auto result = min(centi(meters)(1), inches(1));
-    EXPECT_EQ(result, centi(meters)(1));
+    EXPECT_THAT(result, Eq(centi(meters)(1)));
 }
 
 TEST(min, HandlesDifferentOriginQuantityPoints) {
     constexpr auto result = min(fahrenheit_pt(30), celsius_pt(0));
-    EXPECT_EQ(result, fahrenheit_pt(30));
+    EXPECT_THAT(result, Eq(fahrenheit_pt(30)));
 }
 
 TEST(min, ReturnsByValueForSameExactQuantityType) {
@@ -460,13 +460,13 @@ TEST(min, ReturnsByValueForSameExactQuantityType) {
     const auto b = meters(2);
     const auto &min_a_b = min(a, b);
 
-    EXPECT_EQ(min_a_b, a);
+    EXPECT_THAT(min_a_b, Eq(a));
     EXPECT_NE(&min_a_b, &a);
 }
 
 TEST(min, SupportsConstexprForSameExactQuantityType) {
     constexpr auto result = min(meters(1), meters(2));
-    EXPECT_EQ(result, meters(1));
+    EXPECT_THAT(result, Eq(meters(1)));
 }
 
 TEST(min, ReturnsByValueForSameExactQuantityPointType) {
@@ -475,13 +475,13 @@ TEST(min, ReturnsByValueForSameExactQuantityPointType) {
     const auto b = meters_pt(2);
     const auto &min_a_b = min(a, b);
 
-    EXPECT_EQ(min_a_b, a);
+    EXPECT_THAT(min_a_b, Eq(a));
     EXPECT_NE(&min_a_b, &a);
 }
 
 TEST(min, SupportsConstexprForSameExactQuantityPointType) {
     constexpr auto result = min(meters_pt(1), meters_pt(2));
-    EXPECT_EQ(result, meters_pt(1));
+    EXPECT_THAT(result, Eq(meters_pt(1)));
 }
 
 TEST(min, SameAsStdMinForNumericTypes) {
@@ -490,7 +490,7 @@ TEST(min, SameAsStdMinForNumericTypes) {
 
     const auto &min_result = min(a, b);
 
-    EXPECT_EQ(&a, &min_result);
+    EXPECT_THAT(&a, Eq(&min_result));
 }
 
 TEST(min, SupportsZeroForFirstArgument) {
@@ -542,15 +542,15 @@ TEST(sin, TypeDependsOnInputType) {
 }
 
 TEST(sin, SameAsStdSinForNumericTypes) {
-    EXPECT_EQ(sin(1), std::sin(1));
-    EXPECT_EQ(sin(1.), std::sin(1.));
-    EXPECT_EQ(sin(1.f), std::sin(1.f));
-    EXPECT_EQ(sin(1.L), std::sin(1.L));
+    EXPECT_THAT(sin(1), Eq(std::sin(1)));
+    EXPECT_THAT(sin(1.), Eq(std::sin(1.)));
+    EXPECT_THAT(sin(1.f), Eq(std::sin(1.f)));
+    EXPECT_THAT(sin(1.L), Eq(std::sin(1.L)));
 }
 
 TEST(sin, GivesSameAnswersAsRawNumbersButInStrongTypes) {
-    EXPECT_EQ(sin(radians(1.23)), std::sin(1.23));
-    EXPECT_EQ(sin(radians(4.56f)), std::sin(4.56f));
+    EXPECT_THAT(sin(radians(1.23)), Eq(std::sin(1.23)));
+    EXPECT_THAT(sin(radians(4.56f)), Eq(std::sin(4.56f)));
 }
 
 TEST(sin, GivesCorrectAnswersForInputsInDegrees) {
@@ -576,10 +576,10 @@ TEST(sqrt, MixedUnitsSupportedWithCasting) {
 }
 
 TEST(sqrt, SameAsStdSqrtForNumericTypes) {
-    EXPECT_EQ(sqrt(1), std::sqrt(1));
-    EXPECT_EQ(sqrt(1.), std::sqrt(1.));
-    EXPECT_EQ(sqrt(1.f), std::sqrt(1.f));
-    EXPECT_EQ(sqrt(1.L), std::sqrt(1.L));
+    EXPECT_THAT(sqrt(1), Eq(std::sqrt(1)));
+    EXPECT_THAT(sqrt(1.), Eq(std::sqrt(1.)));
+    EXPECT_THAT(sqrt(1.f), Eq(std::sqrt(1.f)));
+    EXPECT_THAT(sqrt(1.L), Eq(std::sqrt(1.L)));
 }
 
 TEST(sqrt, CanConvertIfConversionFactorRational) {
@@ -610,10 +610,10 @@ TEST(tan, TypeDependsOnInputType) {
 }
 
 TEST(tan, SameAsStdTanForNumericTypes) {
-    EXPECT_EQ(tan(1), std::tan(1));
-    EXPECT_EQ(tan(1.), std::tan(1.));
-    EXPECT_EQ(tan(1.f), std::tan(1.f));
-    EXPECT_EQ(tan(1.L), std::tan(1.L));
+    EXPECT_THAT(tan(1), Eq(std::tan(1)));
+    EXPECT_THAT(tan(1.), Eq(std::tan(1.)));
+    EXPECT_THAT(tan(1.f), Eq(std::tan(1.f)));
+    EXPECT_THAT(tan(1.L), Eq(std::tan(1.L)));
 }
 
 TEST(tan, GivesSameAnswersAsRawNumbersButInStrongTypes) {
@@ -716,9 +716,9 @@ TEST(isnan, TransparentlyActsOnSameAsValue) {
     }};
 
     for (const double x : values) {
-        EXPECT_EQ(isnan(meters(x)), std::isnan(x));
-        EXPECT_EQ(isnan(meters_pt(x)), std::isnan(x));
-        EXPECT_EQ(isnan((radians / second)(x)), std::isnan(x));
+        EXPECT_THAT(isnan(meters(x)), Eq(std::isnan(x)));
+        EXPECT_THAT(isnan(meters_pt(x)), Eq(std::isnan(x)));
+        EXPECT_THAT(isnan((radians / second)(x)), Eq(std::isnan(x)));
     }
 }
 
@@ -743,20 +743,20 @@ TEST(numeric_limits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
     EXPECT_THAT(meters_limits_int::has_infinity, IsFalse());
     EXPECT_THAT(meters_limits_int::has_quiet_NaN, IsFalse());
     EXPECT_THAT(meters_limits_int::has_signaling_NaN, IsFalse());
-    EXPECT_EQ(meters_limits_int::has_denorm, std::denorm_absent);
+    EXPECT_THAT(meters_limits_int::has_denorm, Eq(std::denorm_absent));
     EXPECT_THAT(meters_limits_int::has_denorm_loss, IsFalse());
-    EXPECT_EQ(meters_limits_int::round_style, std::round_toward_zero);
+    EXPECT_THAT(meters_limits_int::round_style, Eq(std::round_toward_zero));
     EXPECT_THAT(meters_limits_int::is_iec559, IsFalse());
     EXPECT_THAT(meters_limits_int::is_bounded, IsTrue());
-    EXPECT_EQ(meters_limits_int::is_modulo, std::numeric_limits<int>::is_modulo);
-    EXPECT_EQ(meters_limits_int::digits, std::numeric_limits<int>::digits);
-    EXPECT_EQ(meters_limits_int::digits10, std::numeric_limits<int>::digits10);
-    EXPECT_EQ(meters_limits_int::max_digits10, 0);
-    EXPECT_EQ(meters_limits_int::radix, 2);
-    EXPECT_EQ(meters_limits_int::min_exponent, 0);
-    EXPECT_EQ(meters_limits_int::min_exponent10, 0);
-    EXPECT_EQ(meters_limits_int::max_exponent, 0);
-    EXPECT_EQ(meters_limits_int::max_exponent10, 0);
+    EXPECT_THAT(meters_limits_int::is_modulo, Eq(std::numeric_limits<int>::is_modulo));
+    EXPECT_THAT(meters_limits_int::digits, Eq(std::numeric_limits<int>::digits));
+    EXPECT_THAT(meters_limits_int::digits10, Eq(std::numeric_limits<int>::digits10));
+    EXPECT_THAT(meters_limits_int::max_digits10, Eq(0));
+    EXPECT_THAT(meters_limits_int::radix, Eq(2));
+    EXPECT_THAT(meters_limits_int::min_exponent, Eq(0));
+    EXPECT_THAT(meters_limits_int::min_exponent10, Eq(0));
+    EXPECT_THAT(meters_limits_int::max_exponent, Eq(0));
+    EXPECT_THAT(meters_limits_int::max_exponent10, Eq(0));
     EXPECT_THAT(meters_limits_int::traps, IsTrue());
     EXPECT_THAT(meters_limits_int::tinyness_before, IsFalse());
 
@@ -768,20 +768,20 @@ TEST(numeric_limits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
     EXPECT_THAT(radians_limits_uint32_t::has_infinity, IsFalse());
     EXPECT_THAT(radians_limits_uint32_t::has_quiet_NaN, IsFalse());
     EXPECT_THAT(radians_limits_uint32_t::has_signaling_NaN, IsFalse());
-    EXPECT_EQ(radians_limits_uint32_t::has_denorm, std::denorm_absent);
+    EXPECT_THAT(radians_limits_uint32_t::has_denorm, Eq(std::denorm_absent));
     EXPECT_THAT(radians_limits_uint32_t::has_denorm_loss, IsFalse());
-    EXPECT_EQ(radians_limits_uint32_t::round_style, std::round_toward_zero);
+    EXPECT_THAT(radians_limits_uint32_t::round_style, Eq(std::round_toward_zero));
     EXPECT_THAT(radians_limits_uint32_t::is_iec559, IsFalse());
     EXPECT_THAT(radians_limits_uint32_t::is_bounded, IsTrue());
     EXPECT_THAT(radians_limits_uint32_t::is_modulo, IsTrue());
-    EXPECT_EQ(radians_limits_uint32_t::digits, std::numeric_limits<uint32_t>::digits);
-    EXPECT_EQ(radians_limits_uint32_t::digits10, std::numeric_limits<uint32_t>::digits10);
-    EXPECT_EQ(radians_limits_uint32_t::max_digits10, 0);
-    EXPECT_EQ(radians_limits_uint32_t::radix, 2);
-    EXPECT_EQ(radians_limits_uint32_t::min_exponent, 0);
-    EXPECT_EQ(radians_limits_uint32_t::min_exponent10, 0);
-    EXPECT_EQ(radians_limits_uint32_t::max_exponent, 0);
-    EXPECT_EQ(radians_limits_uint32_t::max_exponent10, 0);
+    EXPECT_THAT(radians_limits_uint32_t::digits, Eq(std::numeric_limits<uint32_t>::digits));
+    EXPECT_THAT(radians_limits_uint32_t::digits10, Eq(std::numeric_limits<uint32_t>::digits10));
+    EXPECT_THAT(radians_limits_uint32_t::max_digits10, Eq(0));
+    EXPECT_THAT(radians_limits_uint32_t::radix, Eq(2));
+    EXPECT_THAT(radians_limits_uint32_t::min_exponent, Eq(0));
+    EXPECT_THAT(radians_limits_uint32_t::min_exponent10, Eq(0));
+    EXPECT_THAT(radians_limits_uint32_t::max_exponent, Eq(0));
+    EXPECT_THAT(radians_limits_uint32_t::max_exponent10, Eq(0));
     EXPECT_THAT(radians_limits_uint32_t::traps, IsTrue());
     EXPECT_THAT(radians_limits_uint32_t::tinyness_before, IsFalse());
 
@@ -793,42 +793,44 @@ TEST(numeric_limits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
     EXPECT_THAT(celsius_limits_float::has_infinity, IsTrue());
     EXPECT_THAT(celsius_limits_float::has_quiet_NaN, IsTrue());
     EXPECT_THAT(celsius_limits_float::has_signaling_NaN, IsTrue());
-    EXPECT_EQ(celsius_limits_float::has_denorm, std::denorm_present);
-    EXPECT_EQ(celsius_limits_float::has_denorm_loss, std::numeric_limits<float>::has_denorm_loss);
-    EXPECT_EQ(celsius_limits_float::round_style, std::round_to_nearest);
+    EXPECT_THAT(celsius_limits_float::has_denorm, Eq(std::denorm_present));
+    EXPECT_THAT(celsius_limits_float::has_denorm_loss,
+                Eq(std::numeric_limits<float>::has_denorm_loss));
+    EXPECT_THAT(celsius_limits_float::round_style, Eq(std::round_to_nearest));
     EXPECT_THAT(celsius_limits_float::is_iec559, IsTrue());
     EXPECT_THAT(celsius_limits_float::is_bounded, IsTrue());
     EXPECT_THAT(celsius_limits_float::is_modulo, IsFalse());
-    EXPECT_EQ(celsius_limits_float::digits, FLT_MANT_DIG);
-    EXPECT_EQ(celsius_limits_float::digits10, FLT_DIG);
-    EXPECT_EQ(celsius_limits_float::max_digits10, std::numeric_limits<float>::max_digits10);
-    EXPECT_EQ(celsius_limits_float::radix, FLT_RADIX);
-    EXPECT_EQ(celsius_limits_float::min_exponent, FLT_MIN_EXP);
-    EXPECT_EQ(celsius_limits_float::min_exponent10, FLT_MIN_10_EXP);
-    EXPECT_EQ(celsius_limits_float::max_exponent, FLT_MAX_EXP);
-    EXPECT_EQ(celsius_limits_float::max_exponent10, FLT_MAX_10_EXP);
+    EXPECT_THAT(celsius_limits_float::digits, Eq(FLT_MANT_DIG));
+    EXPECT_THAT(celsius_limits_float::digits10, Eq(FLT_DIG));
+    EXPECT_THAT(celsius_limits_float::max_digits10, Eq(std::numeric_limits<float>::max_digits10));
+    EXPECT_THAT(celsius_limits_float::radix, Eq(FLT_RADIX));
+    EXPECT_THAT(celsius_limits_float::min_exponent, Eq(FLT_MIN_EXP));
+    EXPECT_THAT(celsius_limits_float::min_exponent10, Eq(FLT_MIN_10_EXP));
+    EXPECT_THAT(celsius_limits_float::max_exponent, Eq(FLT_MAX_EXP));
+    EXPECT_THAT(celsius_limits_float::max_exponent10, Eq(FLT_MAX_10_EXP));
     EXPECT_THAT(celsius_limits_float::traps, IsFalse());
-    EXPECT_EQ(celsius_limits_float::tinyness_before, std::numeric_limits<float>::tinyness_before);
+    EXPECT_THAT(celsius_limits_float::tinyness_before,
+                Eq(std::numeric_limits<float>::tinyness_before));
 }
 
 TEST(numeric_limits, ProvidesLimitsForQuantity) {
     using nl1 = std::numeric_limits<Quantity<Meters, int>>;
-    EXPECT_EQ(nl1::max(), meters(std::numeric_limits<int>::max()));
-    EXPECT_EQ(nl1::lowest(), meters(std::numeric_limits<int>::lowest()));
-    EXPECT_EQ(nl1::min(), meters(std::numeric_limits<int>::min()));
-    EXPECT_EQ(nl1::epsilon(), meters(std::numeric_limits<int>::epsilon()));
-    EXPECT_EQ(nl1::round_error(), meters(std::numeric_limits<int>::round_error()));
-    EXPECT_EQ(nl1::infinity(), meters(std::numeric_limits<int>::infinity()));
-    EXPECT_EQ(nl1::denorm_min(), meters(std::numeric_limits<int>::denorm_min()));
+    EXPECT_THAT(nl1::max(), Eq(meters(std::numeric_limits<int>::max())));
+    EXPECT_THAT(nl1::lowest(), Eq(meters(std::numeric_limits<int>::lowest())));
+    EXPECT_THAT(nl1::min(), Eq(meters(std::numeric_limits<int>::min())));
+    EXPECT_THAT(nl1::epsilon(), Eq(meters(std::numeric_limits<int>::epsilon())));
+    EXPECT_THAT(nl1::round_error(), Eq(meters(std::numeric_limits<int>::round_error())));
+    EXPECT_THAT(nl1::infinity(), Eq(meters(std::numeric_limits<int>::infinity())));
+    EXPECT_THAT(nl1::denorm_min(), Eq(meters(std::numeric_limits<int>::denorm_min())));
 
     using nl2 = std::numeric_limits<Quantity<Ohms, float>>;
-    EXPECT_EQ(nl2::max(), ohms(std::numeric_limits<float>::max()));
-    EXPECT_EQ(nl2::lowest(), ohms(std::numeric_limits<float>::lowest()));
-    EXPECT_EQ(nl2::min(), ohms(std::numeric_limits<float>::min()));
-    EXPECT_EQ(nl2::epsilon(), ohms(std::numeric_limits<float>::epsilon()));
-    EXPECT_EQ(nl2::round_error(), ohms(std::numeric_limits<float>::round_error()));
-    EXPECT_EQ(nl2::infinity(), ohms(std::numeric_limits<float>::infinity()));
-    EXPECT_EQ(nl2::denorm_min(), ohms(std::numeric_limits<float>::denorm_min()));
+    EXPECT_THAT(nl2::max(), Eq(ohms(std::numeric_limits<float>::max())));
+    EXPECT_THAT(nl2::lowest(), Eq(ohms(std::numeric_limits<float>::lowest())));
+    EXPECT_THAT(nl2::min(), Eq(ohms(std::numeric_limits<float>::min())));
+    EXPECT_THAT(nl2::epsilon(), Eq(ohms(std::numeric_limits<float>::epsilon())));
+    EXPECT_THAT(nl2::round_error(), Eq(ohms(std::numeric_limits<float>::round_error())));
+    EXPECT_THAT(nl2::infinity(), Eq(ohms(std::numeric_limits<float>::infinity())));
+    EXPECT_THAT(nl2::denorm_min(), Eq(ohms(std::numeric_limits<float>::denorm_min())));
 
     // We cannot currently test `quiet_NaN` or `signaling_NaN`.  Later, we could provide overloads
     // for `isnan()`, which people could find via ADL.
@@ -837,39 +839,45 @@ TEST(numeric_limits, ProvidesLimitsForQuantity) {
 TEST(numeric_limits, InsensitiveToCvQualificationForQuantity) {
     using Q = Quantity<Degrees, float>;
 
-    EXPECT_EQ(std::numeric_limits<Q>::max(), std::numeric_limits<const Q>::max());
-    EXPECT_EQ(std::numeric_limits<Q>::max(), std::numeric_limits<volatile Q>::max());
-    EXPECT_EQ(std::numeric_limits<Q>::max(), std::numeric_limits<const volatile Q>::max());
+    EXPECT_THAT(std::numeric_limits<Q>::max(), Eq(std::numeric_limits<const Q>::max()));
+    EXPECT_THAT(std::numeric_limits<Q>::max(), Eq(std::numeric_limits<volatile Q>::max()));
+    EXPECT_THAT(std::numeric_limits<Q>::max(), Eq(std::numeric_limits<const volatile Q>::max()));
 
-    EXPECT_EQ(std::numeric_limits<Q>::lowest(), std::numeric_limits<const Q>::lowest());
-    EXPECT_EQ(std::numeric_limits<Q>::lowest(), std::numeric_limits<volatile Q>::lowest());
-    EXPECT_EQ(std::numeric_limits<Q>::lowest(), std::numeric_limits<const volatile Q>::lowest());
+    EXPECT_THAT(std::numeric_limits<Q>::lowest(), Eq(std::numeric_limits<const Q>::lowest()));
+    EXPECT_THAT(std::numeric_limits<Q>::lowest(), Eq(std::numeric_limits<volatile Q>::lowest()));
+    EXPECT_THAT(std::numeric_limits<Q>::lowest(),
+                Eq(std::numeric_limits<const volatile Q>::lowest()));
 
-    EXPECT_EQ(std::numeric_limits<Q>::min(), std::numeric_limits<const Q>::min());
-    EXPECT_EQ(std::numeric_limits<Q>::min(), std::numeric_limits<volatile Q>::min());
-    EXPECT_EQ(std::numeric_limits<Q>::min(), std::numeric_limits<const volatile Q>::min());
+    EXPECT_THAT(std::numeric_limits<Q>::min(), Eq(std::numeric_limits<const Q>::min()));
+    EXPECT_THAT(std::numeric_limits<Q>::min(), Eq(std::numeric_limits<volatile Q>::min()));
+    EXPECT_THAT(std::numeric_limits<Q>::min(), Eq(std::numeric_limits<const volatile Q>::min()));
 
-    EXPECT_EQ(std::numeric_limits<Q>::epsilon(), std::numeric_limits<const Q>::epsilon());
-    EXPECT_EQ(std::numeric_limits<Q>::epsilon(), std::numeric_limits<volatile Q>::epsilon());
-    EXPECT_EQ(std::numeric_limits<Q>::epsilon(), std::numeric_limits<const volatile Q>::epsilon());
+    EXPECT_THAT(std::numeric_limits<Q>::epsilon(), Eq(std::numeric_limits<const Q>::epsilon()));
+    EXPECT_THAT(std::numeric_limits<Q>::epsilon(), Eq(std::numeric_limits<volatile Q>::epsilon()));
+    EXPECT_THAT(std::numeric_limits<Q>::epsilon(),
+                Eq(std::numeric_limits<const volatile Q>::epsilon()));
 
-    EXPECT_EQ(std::numeric_limits<Q>::round_error(), std::numeric_limits<const Q>::round_error());
-    EXPECT_EQ(std::numeric_limits<Q>::round_error(),
-              std::numeric_limits<volatile Q>::round_error());
-    EXPECT_EQ(std::numeric_limits<Q>::round_error(),
-              std::numeric_limits<const volatile Q>::round_error());
+    EXPECT_THAT(std::numeric_limits<Q>::round_error(),
+                Eq(std::numeric_limits<const Q>::round_error()));
+    EXPECT_THAT(std::numeric_limits<Q>::round_error(),
+                Eq(std::numeric_limits<volatile Q>::round_error()));
+    EXPECT_THAT(std::numeric_limits<Q>::round_error(),
+                Eq(std::numeric_limits<const volatile Q>::round_error()));
 
-    EXPECT_EQ(std::numeric_limits<Q>::infinity(), std::numeric_limits<const Q>::infinity());
-    EXPECT_EQ(std::numeric_limits<Q>::infinity(), std::numeric_limits<volatile Q>::infinity());
-    EXPECT_EQ(std::numeric_limits<Q>::infinity(),
-              std::numeric_limits<const volatile Q>::infinity());
+    EXPECT_THAT(std::numeric_limits<Q>::infinity(), Eq(std::numeric_limits<const Q>::infinity()));
+    EXPECT_THAT(std::numeric_limits<Q>::infinity(),
+                Eq(std::numeric_limits<volatile Q>::infinity()));
+    EXPECT_THAT(std::numeric_limits<Q>::infinity(),
+                Eq(std::numeric_limits<const volatile Q>::infinity()));
 
     // It's hard to test `quiet_NaN` or `signaling_NaN`, because they have the property that x != x.
 
-    EXPECT_EQ(std::numeric_limits<Q>::denorm_min(), std::numeric_limits<const Q>::denorm_min());
-    EXPECT_EQ(std::numeric_limits<Q>::denorm_min(), std::numeric_limits<volatile Q>::denorm_min());
-    EXPECT_EQ(std::numeric_limits<Q>::denorm_min(),
-              std::numeric_limits<const volatile Q>::denorm_min());
+    EXPECT_THAT(std::numeric_limits<Q>::denorm_min(),
+                Eq(std::numeric_limits<const Q>::denorm_min()));
+    EXPECT_THAT(std::numeric_limits<Q>::denorm_min(),
+                Eq(std::numeric_limits<volatile Q>::denorm_min()));
+    EXPECT_THAT(std::numeric_limits<Q>::denorm_min(),
+                Eq(std::numeric_limits<const volatile Q>::denorm_min()));
 }
 
 TEST(RoundAs, SameAsStdRoundForSameUnits) {
