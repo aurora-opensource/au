@@ -15,13 +15,16 @@
 #include "au/units/revolutions.hh"
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Revolutions, HasExpectedLabel) { expect_label<Revolutions>("rev"); }
 
-TEST(Revolutions, ExactlyEquivalentTo360Degrees) { EXPECT_EQ(revolutions(1), degrees(360)); }
+TEST(Revolutions, ExactlyEquivalentTo360Degrees) { EXPECT_THAT(revolutions(1), Eq(degrees(360))); }
 
 TEST(Revolutions, HasExpectedSymbol) {
     using symbols::rev;

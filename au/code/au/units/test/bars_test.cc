@@ -16,13 +16,16 @@
 
 #include "au/testing.hh"
 #include "au/units/pascals.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Bars, HasExpectedLabel) { expect_label<Bars>("bar"); }
 
-TEST(Bars, HasCorrectRelationshipWithPascals) { EXPECT_EQ(bars(1), kilo(pascals)(100)); }
+TEST(Bars, HasCorrectRelationshipWithPascals) { EXPECT_THAT(bars(1), Eq(kilo(pascals)(100))); }
 
 TEST(Bars, HasExpectedSymbol) {
     using symbols::bar;

@@ -17,13 +17,16 @@
 #include "au/testing.hh"
 #include "au/units/inches.hh"
 #include "au/units/liters.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(USGallons, HasExpectedLabel) { expect_label<USGallons>("US_gal"); }
 
-TEST(USGallons, EquivalentTo231CubicInches) { EXPECT_EQ(us_gallons(1), cubed(inches)(231)); }
+TEST(USGallons, EquivalentTo231CubicInches) { EXPECT_THAT(us_gallons(1), Eq(cubed(inches)(231))); }
 
 TEST(USGallons, WithinExpectationComparedToLiters) {
     EXPECT_THAT(us_gallons(1), IsNear(liters(3.785), milli(liters)(1)));
