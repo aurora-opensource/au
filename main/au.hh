@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-27-ge837143
+// Version identifier: 0.4.1-28-g7c35573
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -4195,6 +4195,63 @@ struct ValueDifference {
 };
 }  // namespace detail
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `ValueDisplacementMagnitude` utility.
+namespace detail {
+
+// `ValueDisplacementMagnitude<T1, T2>` is a type that can be instantiated, and is either a
+// `Magnitude` type or else `Zero`.  It represents the magnitude of the unit that takes us from
+// `T1::value()` to `T2::value()` (and is `Zero` if and only if these values are equal).
+//
+// This is fully encapsulated inside of the `detail` namespace because we don't want end users
+// reasoning in terms of "the magnitude" of a unit.  This concept makes no sense generally.
+// However, it's useful to us internally, because it helps us compute the largest possible magnitude
+// of a common point unit.  Being fully encapsulated, we ourselves can be careful not to misuse it.
+enum class AreValuesEqual { YES, NO };
+template <typename U1, typename U2, AreValuesEqual>
+struct ValueDisplacementMagnitudeImpl;
+template <typename U1, typename U2>
+using ValueDisplacementMagnitude = typename ValueDisplacementMagnitudeImpl<
+    U1,
+    U2,
+    (U1::value() == U2::value() ? AreValuesEqual::YES : AreValuesEqual::NO)>::type;
+
+// Equal values case.
+template <typename U1, typename U2>
+struct ValueDisplacementMagnitudeImpl<U1, U2, AreValuesEqual::YES> : stdx::type_identity<Zero> {
+    static_assert(U1::value() == U2::value(), "Mismatched instantiation (internal library error)");
+};
+
+// Prep for handling unequal values: it's useful to be able to turn a signed integer into a
+// Magnitude.
+//
+// The `bool` template parameter in the `MagSign` interface has poor callsite readability, but it
+// doesn't matter because we're only using it right here.
+template <bool IsNeg>
+struct MagSign : stdx::type_identity<Magnitude<>> {};
+template <>
+struct MagSign<true> : stdx::type_identity<Magnitude<Negative>> {};
+template <std::intmax_t N>
+constexpr auto signed_mag() {
+    constexpr auto sign = typename MagSign<(N < 0)>::type{};
+    return sign * mag<(N < 0 ? (-N) : N)>();
+}
+
+// Unequal values case implementation: scale up the magnitude of the diff's _unit_ by the diff's
+// _value in_ that unit.
+template <typename U1, typename U2>
+struct ValueDisplacementMagnitudeImpl<U1, U2, AreValuesEqual::NO> {
+    static_assert(U1::value() != U2::value(), "Mismatched instantiation (internal library error)");
+    static constexpr auto mag() {
+        constexpr auto diff = U2::value() - U1::value();
+        using D = typename decltype(diff)::Unit;
+        return MagT<D>{} * signed_mag<diff.in(D{})>();
+    }
+    using type = decltype(mag());
+};
+
+}  // namespace detail
+
 // Why this conditional, instead of just using `ValueDifference` unconditionally?  The use case is
 // somewhat subtle.  Without it, we would still deduce a displacement _numerically_ equal to 0, but
 // it would be stored in specific _units_.  For example, for Celsius, the displacement would be "0
@@ -4484,6 +4541,30 @@ struct CommonOrigin<Head, Tail...> :
                                OriginOf<Head>,
                                CommonOrigin<Tail...>>>> {};
 
+template <typename U1, typename U2>
+struct OriginDisplacementUnit {
+    static_assert(OriginOf<U1>::value() != OriginOf<U2>::value(),
+                  "OriginDisplacementUnit must be an actual unit, so it must be nonzero.");
+
+    using Dim = CommonDimensionT<DimT<U1>, DimT<U2>>;
+    using Mag = ValueDisplacementMagnitude<OriginOf<U1>, OriginOf<U2>>;
+};
+
+// `ComputeOriginDisplacementUnit<U1, U2>` produces an ad hoc unit equal to the displacement from
+// the origin of `U1` to the origin of `U2`.  If `U1` and `U2` have equal origins, then it is
+// `Zero`.  Otherwise, it will be `OriginDisplacementUnit<U1, U2>`.
+template <typename U1, typename U2>
+using ComputeOriginDisplacementUnit =
+    std::conditional_t<(OriginOf<U1>::value() == OriginOf<U2>::value()),
+                       Zero,
+                       OriginDisplacementUnit<U1, U2>>;
+
+template <typename U1, typename U2>
+constexpr auto origin_displacement_unit(U1, U2) {
+    return ComputeOriginDisplacementUnit<AssociatedUnitForPointsT<U1>,
+                                         AssociatedUnitForPointsT<U2>>{};
+}
+
 // MagTypeT<T> gives some measure of the size of the unit for this "quantity-alike" type.
 //
 // Zero acts like a quantity in this context, and we treat it as if its unit's Magnitude is Zero.
@@ -4496,6 +4577,16 @@ template <>
 struct MagType<Zero> : stdx::type_identity<Zero> {};
 
 }  // namespace detail
+
+template <typename U1, typename U2>
+struct UnitLabel<detail::OriginDisplacementUnit<U1, U2>> {
+    using LabelT = detail::ExtendedLabel<15u, U1, U2>;
+    static constexpr LabelT value =
+        detail::concatenate("(@(0 ", UnitLabel<U2>::value, ") - @(0 ", UnitLabel<U1>::value, "))");
+};
+template <typename U1, typename U2>
+constexpr typename UnitLabel<detail::OriginDisplacementUnit<U1, U2>>::LabelT
+    UnitLabel<detail::OriginDisplacementUnit<U1, U2>>::value;
 
 // This exists to be the "named type" for the common unit of a bunch of input units.
 //
