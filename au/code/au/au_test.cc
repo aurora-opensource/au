@@ -30,16 +30,21 @@
 #include "au/units/miles.hh"
 #include "au/units/steradians.hh"
 #include "au/units/yards.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+namespace au {
+
+using ::testing::Eq;
 using ::testing::StaticAssertTypeEq;
 
-namespace au {
 namespace {
+
 template <typename T, typename U>
 auto IsBetween(T lower, U upper) {
     return ::testing::AllOf(::testing::Ge(lower), ::testing::Le(upper));
 }
+
 }  // namespace
 
 TEST(Conversions, SupportIntMHzToU32Hz) {
@@ -92,7 +97,7 @@ TEST(Xkcd, RoundAsReproducesXkcd2585) {
                                                   miles / hour);
 
     // Authoritative reference: https://xkcd.com/2585/
-    EXPECT_EQ((miles / hour)(45), rounded_speed);
+    EXPECT_THAT((miles / hour)(45), Eq(rounded_speed));
 }
 
 TEST(Xkcd, Xkcd3038GivesReasonableSpeedLimit) {

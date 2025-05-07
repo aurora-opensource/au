@@ -19,9 +19,11 @@
 #include "gtest/gtest.h"
 
 namespace au {
-namespace detail {
 
+using ::testing::Eq;
 using ::testing::StrEq;
+
+namespace detail {
 
 TEST(StringConstant, CanCreateFromStringLiteral) {
     constexpr StringConstant<5> x{"hello"};
@@ -29,8 +31,8 @@ TEST(StringConstant, CanCreateFromStringLiteral) {
 }
 
 TEST(StringConstant, HasLengthMember) {
-    EXPECT_EQ(StringConstant<2>::length, 2);
-    EXPECT_EQ(StringConstant<13>::length, 13);
+    EXPECT_THAT(StringConstant<2>::length, Eq(2));
+    EXPECT_THAT(StringConstant<13>::length, Eq(13));
 }
 
 TEST(AsStringConstant, CanCreateFromStringLiteral) {
@@ -76,17 +78,17 @@ TEST(IToA, ValueHoldsStringVersionOfTemplateParameter) {
 }
 
 TEST(IToA, HasLengthMember) {
-    EXPECT_EQ(IToA<0>::length, 1);
+    EXPECT_THAT(IToA<0>::length, Eq(1));
 
-    EXPECT_EQ(IToA<2>::length, 1);
-    EXPECT_EQ(IToA<9>::length, 1);
-    EXPECT_EQ(IToA<10>::length, 2);
-    EXPECT_EQ(IToA<12345>::length, 5);
+    EXPECT_THAT(IToA<2>::length, Eq(1));
+    EXPECT_THAT(IToA<9>::length, Eq(1));
+    EXPECT_THAT(IToA<10>::length, Eq(2));
+    EXPECT_THAT(IToA<12345>::length, Eq(5));
 
-    EXPECT_EQ(IToA<-2>::length, 2);
-    EXPECT_EQ(IToA<-9>::length, 2);
-    EXPECT_EQ(IToA<-10>::length, 3);
-    EXPECT_EQ(IToA<-12345>::length, 6);
+    EXPECT_THAT(IToA<-2>::length, Eq(2));
+    EXPECT_THAT(IToA<-9>::length, Eq(2));
+    EXPECT_THAT(IToA<-10>::length, Eq(3));
+    EXPECT_THAT(IToA<-12345>::length, Eq(6));
 }
 
 TEST(UIToA, CanHandleNumbersBiggerThanIntmaxButWithinUintmax) {
