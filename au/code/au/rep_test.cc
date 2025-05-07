@@ -31,6 +31,7 @@
 
 namespace au {
 
+using ::testing::Eq;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
 using ::testing::StaticAssertTypeEq;
@@ -116,7 +117,7 @@ TEST(IsProductValidRep, FalseIfProductDoesNotExist) {
 }
 
 TEST(IsProductValidRep, TrueOnlyForSideWhereProductExists) {
-    ASSERT_EQ(LeftMultiplyDoubleByThree{} * 4.5, 13.5);
+    ASSERT_THAT(LeftMultiplyDoubleByThree{} * 4.5, Eq(13.5));
 
     EXPECT_THAT((IsProductValidRep<LeftMultiplyDoubleByThree, double>::value), IsTrue());
     EXPECT_THAT((IsProductValidRep<double, LeftMultiplyDoubleByThree>::value), IsFalse());
@@ -134,7 +135,7 @@ TEST(IsQuotientValidRep, FalseIfQuotientIsQuantity) {
 }
 
 TEST(IsQuotientValidRep, TrueOnlyForSideWhereQuotientExists) {
-    ASSERT_EQ(DivideTenByFloat{} / 2.0f, 5.0f);
+    ASSERT_THAT(DivideTenByFloat{} / 2.0f, Eq(5.0f));
 
     EXPECT_THAT((IsQuotientValidRep<float, DivideTenByFloat>::value), IsFalse());
     EXPECT_THAT((IsQuotientValidRep<DivideTenByFloat, float>::value), IsTrue());

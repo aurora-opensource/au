@@ -22,6 +22,7 @@ using namespace std::chrono_literals;
 
 namespace au {
 
+using ::testing::Eq;
 using ::testing::IsTrue;
 
 namespace {
@@ -97,9 +98,9 @@ struct Subtraction {
     }
 };
 
-TEST(Assignment, ReturnsExpectedValue) { EXPECT_EQ(2s, Assignment{}(1s, 2s)); }
-TEST(Addition, ReturnsExpectedValue) { EXPECT_EQ(1001ms, Addition{}(1s, 1ms)); }
-TEST(Subtraction, ReturnsExpectedValue) { EXPECT_EQ(999ms, Subtraction{}(1s, 1ms)); }
+TEST(Assignment, ReturnsExpectedValue) { EXPECT_THAT(Assignment{}(1s, 2s), Eq(2s)); }
+TEST(Addition, ReturnsExpectedValue) { EXPECT_THAT(Addition{}(1s, 1ms), Eq(1001ms)); }
+TEST(Subtraction, ReturnsExpectedValue) { EXPECT_THAT(Subtraction{}(1s, 1ms), Eq(999ms)); }
 
 }  // namespace
 

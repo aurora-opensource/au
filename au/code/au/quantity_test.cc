@@ -121,25 +121,27 @@ TEST(Quantity, HasCorrectRepNamedAliases) {
 TEST(Quantity, CanCreateAndReadValuesByNamingUnits) {
     constexpr auto x = feet(3.14);
     constexpr double output_value = x.in(feet);
-    EXPECT_EQ(output_value, 3.14);
+    EXPECT_THAT(output_value, Eq(3.14));
 }
 
-TEST(Quantity, CanRequestOutputRepWhenCallingIn) { EXPECT_EQ(feet(3.14).in<int>(feet), 3); }
+TEST(Quantity, CanRequestOutputRepWhenCallingIn) { EXPECT_THAT(feet(3.14).in<int>(feet), Eq(3)); }
 
 TEST(MakeQuantity, MakesQuantityInGivenUnit) {
-    EXPECT_EQ(make_quantity<Feet>(1.234), feet(1.234));
-    EXPECT_EQ(make_quantity<Feet>(99), feet(99));
+    EXPECT_THAT(make_quantity<Feet>(1.234), Eq(feet(1.234)));
+    EXPECT_THAT(make_quantity<Feet>(99), Eq(feet(99)));
 }
 
 TEST(Quantity, RationalConversionRecoversExactIntegerValues) {
     // This test would fail if our implementation multiplied by the float
     // representation of (1/13), instead of dividing by 13, under the hood.
     for (int i = 1; i < 100; ++i) {
-        EXPECT_EQ(feet(static_cast<float>(i * 13)).in(feet * mag<13>()), i);
+        EXPECT_THAT(feet(static_cast<float>(i * 13)).in(feet * mag<13>()), Eq(i));
     }
 }
 
-TEST(QuantityMaker, CreatesAppropriateQuantityIfCalled) { EXPECT_EQ(yards(3.14).in(yards), 3.14); }
+TEST(QuantityMaker, CreatesAppropriateQuantityIfCalled) {
+    EXPECT_THAT(yards(3.14).in(yards), Eq(3.14));
+}
 
 TEST(QuantityMaker, CanBeMultipliedBySingularUnitToGetMakerOfProductUnit) {
     StaticAssertTypeEq<decltype(hour * feet), QuantityMaker<UnitProductT<Feet, Hours>>>();
@@ -175,25 +177,25 @@ TEST(QuantityMaker, CanMultiplyByMultipleSingularUnits) {
 }
 
 TEST(Quantity, CanRetrieveInDifferentUnitsWithSameDimension) {
-    EXPECT_EQ(feet(4).in(inches), 48);
-    EXPECT_EQ(yards(4).in(inches), 144);
+    EXPECT_THAT(feet(4).in(inches), Eq(48));
+    EXPECT_THAT(yards(4).in(inches), Eq(144));
 }
 
 TEST(Quantity, SupportsDirectAccessWithSameUnit) {
     auto x = inches(3);
     ++(x.data_in(Inches{}));
-    EXPECT_EQ(x, inches(4));
+    EXPECT_THAT(x, Eq(inches(4)));
 }
 
 TEST(Quantity, SupportsDirectConstAccessWithSameUnit) {
     const auto x = meters(3.5);
-    EXPECT_EQ(static_cast<const void *>(&x.data_in(Meters{})), static_cast<const void *>(&x));
+    EXPECT_THAT(static_cast<const void *>(&x.data_in(Meters{})), Eq(static_cast<const void *>(&x)));
 }
 
 TEST(Quantity, SupportsDirectAccessWithEquivalentUnit) {
     auto x = (kilo(feet) / hour)(3);
     ++(x.data_in(Feet{} / Milli<Hours>{}));
-    EXPECT_EQ(x, (kilo(feet) / hour)(4));
+    EXPECT_THAT(x, Eq((kilo(feet) / hour)(4)));
 
     // Uncomment to test compile time failure:
     // ++(x.data_in(Feet{} / Kilo<Hours>{}));
@@ -201,29 +203,29 @@ TEST(Quantity, SupportsDirectAccessWithEquivalentUnit) {
 
 TEST(Quantity, SupportsDirectConstAccessWithEquivalentUnit) {
     const auto x = (milli(meters) / minute)(3.5);
-    EXPECT_EQ(static_cast<const void *>(&x.data_in(Meters{} / Kilo<Minutes>{})),
-              static_cast<const void *>(&x));
+    EXPECT_THAT(static_cast<const void *>(&x.data_in(Meters{} / Kilo<Minutes>{})),
+                Eq(static_cast<const void *>(&x)));
 
     // Uncomment to test compile time failure:
-    // EXPECT_EQ(static_cast<const void *>(&x.data_in(Meters{} / Mega<Minutes>{})),
-    //           static_cast<const void *>(&x));
+    // EXPECT_THAT(static_cast<const void *>(&x.data_in(Meters{} / Mega<Minutes>{})),
+    //             Eq(static_cast<const void *>(&x)));
 }
 
 TEST(Quantity, SupportsDirectAccessWithQuantityMakerOfSameUnit) {
     auto x = inches(3);
     ++(x.data_in(inches));
-    EXPECT_EQ(x, inches(4));
+    EXPECT_THAT(x, Eq(inches(4)));
 }
 
 TEST(Quantity, SupportsDirectConstAccessWithQuantityMakerOfSameUnit) {
     const auto x = meters(3.5);
-    EXPECT_EQ(static_cast<const void *>(&x.data_in(meters)), static_cast<const void *>(&x));
+    EXPECT_THAT(static_cast<const void *>(&x.data_in(meters)), Eq(static_cast<const void *>(&x)));
 }
 
 TEST(Quantity, SupportsDirectAccessWithQuantityMakerOfEquivalentUnit) {
     auto x = (kilo(feet) / hour)(3);
     ++(x.data_in(feet / milli(hour)));
-    EXPECT_EQ(x, (kilo(feet) / hour)(4));
+    EXPECT_THAT(x, Eq((kilo(feet) / hour)(4)));
 
     // Uncomment to test compile time failure:
     // ++(x.data_in(feet / micro(hour)));
@@ -231,12 +233,12 @@ TEST(Quantity, SupportsDirectAccessWithQuantityMakerOfEquivalentUnit) {
 
 TEST(Quantity, SupportsDirectConstAccessWithQuantityMakerOfEquivalentUnit) {
     const auto x = (milli(meters) / minute)(3.5);
-    EXPECT_EQ(static_cast<const void *>(&x.data_in(meters / kilo(minute))),
-              static_cast<const void *>(&x));
+    EXPECT_THAT(static_cast<const void *>(&x.data_in(meters / kilo(minute))),
+                Eq(static_cast<const void *>(&x)));
 
     // Uncomment to test compile time failure:
-    // EXPECT_EQ(static_cast<const void *>(&x.data_in(meters / mega(minute))),
-    //           static_cast<const void *>(&x));
+    // EXPECT_THAT(static_cast<const void *>(&x.data_in(meters / mega(minute))),
+    //             Eq(static_cast<const void *>(&x)));
 }
 
 TEST(Quantity, CoerceAsWillForceLossyConversion) {
@@ -244,7 +246,7 @@ TEST(Quantity, CoerceAsWillForceLossyConversion) {
     EXPECT_THAT(inches(30).coerce_as(feet), SameTypeAndValue(feet(2)));
 
     // Unsigned overflow.
-    ASSERT_EQ(static_cast<uint8_t>(30 * 12), 104);
+    ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
     EXPECT_THAT(feet(uint8_t{30}).coerce_as(inches), SameTypeAndValue(inches(uint8_t{104})));
 }
 
@@ -256,7 +258,7 @@ TEST(Quantity, CoerceAsExplicitRepSetsOutputType) {
     EXPECT_THAT(inches(30).coerce_as<float>(feet), SameTypeAndValue(feet(2.5f)));
 
     // Coerced unsigned overflow.
-    ASSERT_EQ(static_cast<uint8_t>(30 * 12), 104);
+    ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
     EXPECT_THAT(feet(30).coerce_as<uint8_t>(inches), SameTypeAndValue(inches(uint8_t{104})));
 }
 
@@ -265,7 +267,7 @@ TEST(Quantity, CoerceInWillForceLossyConversion) {
     EXPECT_THAT(inches(30).coerce_in(feet), SameTypeAndValue(2));
 
     // Unsigned overflow.
-    ASSERT_EQ(static_cast<uint8_t>(30 * 12), 104);
+    ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
     EXPECT_THAT(feet(uint8_t{30}).coerce_in(inches), SameTypeAndValue(uint8_t{104}));
 }
 
@@ -277,7 +279,7 @@ TEST(Quantity, CoerceInExplicitRepSetsOutputType) {
     EXPECT_THAT(inches(30).coerce_in<float>(feet), SameTypeAndValue(2.5f));
 
     // Coerced unsigned overflow.
-    ASSERT_EQ(static_cast<uint8_t>(30 * 12), 104);
+    ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
     EXPECT_THAT(feet(30).coerce_in<uint8_t>(inches), SameTypeAndValue(uint8_t{104}));
 }
 
@@ -289,31 +291,31 @@ TEST(Quantity, CoerceAsPerformsConversionInWidestType) {
 
 TEST(Quantity, CanImplicitlyConvertToDifferentUnitOfSameDimension) {
     constexpr QuantityI32<Inches> x = yards(2);
-    EXPECT_EQ(x.in(inches), 72);
+    EXPECT_THAT(x.in(inches), Eq(72));
 }
 
 TEST(Quantity, HandlesBaseDimensionsWithFractionalExponents) {
     using KiloRootFeet = decltype(root<2>(Mega<Feet>{}));
     constexpr auto x = make_quantity<KiloRootFeet>(5);
-    EXPECT_EQ(x.in(root<2>(Feet{})), 5'000);
-    EXPECT_EQ(x * x, mega(feet)(25));
+    EXPECT_THAT(x.in(root<2>(Feet{})), Eq(5'000));
+    EXPECT_THAT(x * x, Eq(mega(feet)(25)));
 }
 
 TEST(Quantity, HandlesMagnitudesWithFractionalExponents) {
     constexpr auto x = sqrt(kilo(feet))(3.0);
 
     // We can retrieve the value in the same unit (regardless of the scale's fractional powers).
-    EXPECT_EQ(x.in(sqrt(kilo(feet))), 3.0);
+    EXPECT_THAT(x.in(sqrt(kilo(feet))), Eq(3.0));
 
     // We can retrieve the value in a *different* unit, which *also* has fractional powers, as long
     // as their *ratio* has no fractional powers.
-    EXPECT_EQ(x.in(sqrt(milli(feet))), 3'000.0);
+    EXPECT_THAT(x.in(sqrt(milli(feet))), Eq(3'000.0));
 
     // We can also retrieve the value in a different unit whose ratio *does* have fractional powers.
     EXPECT_NEAR(x.in(sqrt(feet)), 94.86833, 1e-5);
 
     // Squaring the fractional base power gives us an exact non-fractional dimension and scale.
-    EXPECT_EQ(x * x, kilo(feet)(9.0));
+    EXPECT_THAT(x * x, Eq(kilo(feet)(9.0)));
 }
 
 // A custom "Quantity-equivalent" type, whose interop with Quantity we'll provide below.
@@ -336,7 +338,7 @@ struct CorrespondingQuantity<MyHours> {
 
 TEST(Quantity, ImplicitConstructionFromCorrespondingQuantity) {
     constexpr Quantity<Hours, int> x = MyHours{3};
-    EXPECT_EQ(x, hours(3));
+    EXPECT_THAT(x, Eq(hours(3)));
 }
 
 TEST(Quantity, ImplicitConstructionFromTwoHopCorrespondingQuantity) {
@@ -347,7 +349,7 @@ TEST(Quantity, ImplicitConstructionFromTwoHopCorrespondingQuantity) {
 TEST(Quantity, ImplicitConstructionFromLvalueCorrespondingQuantity) {
     MyHours original{10};
     const Quantity<Hours, int> converted = original;
-    EXPECT_EQ(converted, hours(10));
+    EXPECT_THAT(converted, Eq(hours(10)));
 }
 
 TEST(Quantity, ImplicitConversionToCorrespondingQuantity) {
@@ -374,7 +376,7 @@ TEST(AsQuantity, DeducesCorrespondingQuantity) {
 TEST(Quantity, EqualityComparisonWorks) {
     constexpr auto a = feet(-4.8);
     constexpr auto b = feet(-4.8);
-    EXPECT_EQ(a, b);
+    EXPECT_THAT(a, Eq(b));
 }
 
 TEST(Quantity, InequalityComparisonWorks) {
@@ -402,7 +404,7 @@ TEST(Quantity, RelativeComparisonsWork) {
 TEST(Quantity, CopyingWorksAndIsDeepCopy) {
     auto original = feet(1.5);
     const auto copy{original};
-    EXPECT_EQ(original, copy);
+    EXPECT_THAT(original, Eq(copy));
 
     // To test that we're deep copying, modify the original.
     original += feet(2.5);
@@ -413,14 +415,14 @@ TEST(Quantity, CanAddLikeQuantities) {
     constexpr auto a = inches(1);
     constexpr auto b = inches(2);
     constexpr auto c = inches(3);
-    EXPECT_EQ(a + b, c);
+    EXPECT_THAT(a + b, Eq(c));
 }
 
 TEST(Quantity, CanSubtractLikeQuantities) {
     constexpr auto a = feet(1);
     constexpr auto b = feet(2);
     constexpr auto c = feet(3);
-    EXPECT_EQ(c - b, a);
+    EXPECT_THAT(c - b, Eq(a));
 }
 
 TEST(Quantity, AdditionAndSubtractionCommuteWithUnitTagging) {
@@ -448,18 +450,18 @@ TEST(Quantity, CanMultiplyArbitraryQuantities) {
     constexpr auto d = feet(6);
 
     v *t;
-    EXPECT_EQ(d, v * t);
+    EXPECT_THAT(d, Eq(v * t));
 }
 
 TEST(Quantity, ProductOfReciprocalTypesIsImplicitlyConvertibleToRawNumber) {
     constexpr int count = hours(2) * pow<-1>(hours)(3);
-    EXPECT_EQ(count, 6);
+    EXPECT_THAT(count, Eq(6));
 }
 
 TEST(Quantity, ScalarMultiplicationWorks) {
     constexpr auto d = feet(3);
-    EXPECT_EQ(feet(6), 2 * d);
-    EXPECT_EQ(feet(9), d * 3);
+    EXPECT_THAT(feet(6), Eq(2 * d));
+    EXPECT_THAT(feet(9), Eq(d * 3));
 }
 
 TEST(Quantity, SupportsMultiplicationForComplexRep) {
@@ -549,7 +551,7 @@ TEST(Quantity, CanDivideArbitraryQuantities) {
 
     constexpr auto v = (feet / hour)(2.);
 
-    EXPECT_EQ(v, d / t);
+    EXPECT_THAT(v, Eq(d / t));
 }
 
 TEST(Quantity, RatioOfSameTypeIsScalar) {
@@ -574,68 +576,68 @@ TEST(Quantity, ProductOfInvertingUnitsIsScalar) {
     // The point is to make sure that the product-unit of `Days` and `PerDay` does **not** reduce to
     // something trivial, like `UnitProduct<>`.  Rather, it should be its own non-trivial
     // unit---although, naturally, it must be **quantity-equivalent** to `UnitProduct<>`.
-    ASSERT_EQ(num_units_in_product(UnitProductT<Days, PerDay>{}), 2);
+    ASSERT_THAT(num_units_in_product(UnitProductT<Days, PerDay>{}), Eq(2));
 
     EXPECT_THAT(days(3) * per_day(8), SameTypeAndValue(24));
 }
 
 TEST(Quantity, ScalarDivisionWorks) {
     constexpr auto x = feet(10);
-    EXPECT_EQ(x / 2, feet(5));
-    EXPECT_EQ(20. / x, inverse(feet)(2.));
+    EXPECT_THAT(x / 2, Eq(feet(5)));
+    EXPECT_THAT(20. / x, Eq(inverse(feet)(2.)));
 }
 
 TEST(Quantity, ScalarDivisionIsConstexprCompatible) {
     constexpr auto quotient = feet(10.) / 2;
-    EXPECT_EQ(quotient, feet(5.));
+    EXPECT_THAT(quotient, Eq(feet(5.)));
 }
 
 TEST(Quantity, ShortHandAdditionAssignmentWorks) {
     auto d = feet(1.25);
     d += feet(2.75);
-    EXPECT_EQ(d, feet(4.));
+    EXPECT_THAT(d, Eq(feet(4.)));
 }
 
 TEST(Quantity, ShortHandAdditionHasReferenceCharacter) {
     auto d = feet(1);
     d += feet(1234) = feet(3);
-    EXPECT_EQ(d, (feet(4)));
+    EXPECT_THAT(d, Eq(feet(4)));
 }
 
 TEST(Quantity, ShortHandSubtractionAssignmentWorks) {
     auto d = feet(4.75);
     d -= feet(2.75);
-    EXPECT_EQ(d, (feet(2.)));
+    EXPECT_THAT(d, Eq(feet(2.)));
 }
 
 TEST(Quantity, ShortHandSubtractionHasReferenceCharacter) {
     auto d = feet(4);
     d -= feet(1234) = feet(3);
-    EXPECT_EQ(d, (feet(1)));
+    EXPECT_THAT(d, Eq(feet(1)));
 }
 
 TEST(Quantity, ShortHandMultiplicationAssignmentWorks) {
     auto d = feet(1.25);
     d *= 2;
-    EXPECT_EQ(d, (feet(2.5)));
+    EXPECT_THAT(d, Eq(feet(2.5)));
 }
 
 TEST(Quantity, ShortHandMultiplicationHasReferenceCharacter) {
     auto d = feet(1);
     (d *= 3) = feet(19);
-    EXPECT_EQ(d, (feet(19)));
+    EXPECT_THAT(d, Eq(feet(19)));
 }
 
 TEST(Quantity, ShortHandDivisionAssignmentWorks) {
     auto d = feet(2.5);
     d /= 2;
-    EXPECT_EQ(d, (feet(1.25)));
+    EXPECT_THAT(d, Eq(feet(1.25)));
 }
 
 TEST(Quantity, ShortHandDivisionHasReferenceCharacter) {
     auto d = feet(19);
     (d /= 3) = feet(1);
-    EXPECT_EQ(d, (feet(1)));
+    EXPECT_THAT(d, Eq(feet(1)));
 }
 
 TEST(Quantity, UnaryPlusWorks) {
@@ -644,12 +646,12 @@ TEST(Quantity, UnaryPlusWorks) {
     //      test_my_function(+5_mpss);  // <-- needs unary plus!
     //      test_my_function(-5_mpss);
     constexpr auto d = hours(22);
-    EXPECT_EQ(d, +d);
+    EXPECT_THAT(d, Eq(+d));
 }
 
 TEST(Quantity, UnaryMinusWorks) {
     constexpr auto d = hours(25);
-    EXPECT_EQ((hours(-25)), -d);
+    EXPECT_THAT((hours(-25)), Eq(-d));
 }
 
 TEST(Quantity, RepCastSupportsConstexprAndConst) {
@@ -705,7 +707,7 @@ TEST(Quantity, QuantityCastAccurateForChangingUnitsAndGoingFromIntegralToFloatin
 
 TEST(Quantity, QuantityCastAvoidsPreventableOverflowWhenGoingToLargerType) {
     constexpr auto lots_of_inches = inches(uint32_t{4'000'000'000});
-    ASSERT_EQ(lots_of_inches.in(inches), 4'000'000'000);
+    ASSERT_THAT(lots_of_inches.in(inches), Eq(4'000'000'000));
 
     EXPECT_THAT(lots_of_inches.as<uint64_t>(nano(inches)),
                 SameTypeAndValue(nano(inches)(uint64_t{4'000'000'000ULL * 1'000'000'000ULL})));
@@ -718,7 +720,7 @@ TEST(Quantity, QuantityCastAvoidsPreventableOverflowWhenGoingToSmallerType) {
     constexpr auto lots_of_nanoinches = nano(inches)(would_overflow_uint32);
 
     // Make sure we don't overflow in uint64_t.
-    ASSERT_EQ(lots_of_nanoinches.in(nano(inches)), would_overflow_uint32);
+    ASSERT_THAT(lots_of_nanoinches.in(nano(inches)), Eq(would_overflow_uint32));
 
     EXPECT_THAT(lots_of_nanoinches.coerce_as<uint32_t>(inches),
                 SameTypeAndValue(inches(uint32_t{9})));
@@ -1013,7 +1015,7 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
                 }() + ")";
             }
 
-            EXPECT_EQ(is_lossy, did_value_change)
+            EXPECT_THAT(is_lossy, Eq(did_value_change))
                 << "Conversion " << (is_lossy ? "is" : "is not") << " lossy" << reason
                 << ", but round-trip conversion " << (did_value_change ? "did" : "did not")
                 << " change the value.  original: " << original << ", converted: " << converted
@@ -1075,7 +1077,7 @@ TEST(UnblockIntDiv, IsNoOpForDivisionThatWouldBeAllowedAnyway) {
 
 TEST(Quantity, CanIntegerDivideQuantitiesOfQuantityEquivalentUnits) {
     constexpr auto ratio = meters(60) / meters(25);
-    EXPECT_EQ(ratio, 2);
+    EXPECT_THAT(ratio, Eq(2));
 }
 
 TEST(mod, ComputesRemainderForSameUnits) {
@@ -1089,11 +1091,11 @@ TEST(mod, ReturnsCommonUnitForDifferentInputUnits) {
 }
 
 TEST(Zero, ComparableToArbitraryQuantities) {
-    EXPECT_EQ(ZERO, meters(0));
+    EXPECT_THAT(ZERO, Eq(meters(0)));
     EXPECT_LT(ZERO, meters(1));
     EXPECT_GT(ZERO, meters(-1));
 
-    EXPECT_EQ(ZERO, hours(0));
+    EXPECT_THAT(ZERO, Eq(hours(0)));
     EXPECT_LT(ZERO, hours(1));
     EXPECT_GT(ZERO, hours(-1));
 }

@@ -27,6 +27,7 @@ using ::testing::IsTrue;
 using ::testing::Le;
 
 namespace detail {
+
 namespace {
 
 std::uintmax_t cube(std::uintmax_t n) { return n * n * n; }
@@ -47,13 +48,13 @@ TEST(FirstPrimes, HasOnlyPrimesInOrderAndDoesntSkipAny) {
 }
 
 TEST(FindFactor, ReturnsInputForPrimes) {
-    EXPECT_EQ(find_prime_factor(2u), 2u);
-    EXPECT_EQ(find_prime_factor(3u), 3u);
-    EXPECT_EQ(find_prime_factor(5u), 5u);
-    EXPECT_EQ(find_prime_factor(7u), 7u);
-    EXPECT_EQ(find_prime_factor(11u), 11u);
+    EXPECT_THAT(find_prime_factor(2u), Eq(2u));
+    EXPECT_THAT(find_prime_factor(3u), Eq(3u));
+    EXPECT_THAT(find_prime_factor(5u), Eq(5u));
+    EXPECT_THAT(find_prime_factor(7u), Eq(7u));
+    EXPECT_THAT(find_prime_factor(11u), Eq(11u));
 
-    EXPECT_EQ(find_prime_factor(196961u), 196961u);
+    EXPECT_THAT(find_prime_factor(196961u), Eq(196961u));
 }
 
 TEST(FindFactor, FindsFactorWhenFirstFactorIsSmall) {
@@ -132,10 +133,10 @@ TEST(IsPrime, CanHandleVeryLargePrimes) {
 
 TEST(Multiplicity, CountsFactors) {
     constexpr std::uintmax_t n = (2u * 2u * 2u) * (3u) * (5u * 5u);
-    EXPECT_EQ(multiplicity(2u, n), 3u);
-    EXPECT_EQ(multiplicity(3u, n), 1u);
-    EXPECT_EQ(multiplicity(5u, n), 2u);
-    EXPECT_EQ(multiplicity(7u, n), 0u);
+    EXPECT_THAT(multiplicity(2u, n), Eq(3u));
+    EXPECT_THAT(multiplicity(3u, n), Eq(1u));
+    EXPECT_THAT(multiplicity(5u, n), Eq(2u));
+    EXPECT_THAT(multiplicity(7u, n), Eq(0u));
 }
 
 }  // namespace detail

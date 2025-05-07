@@ -21,6 +21,7 @@ using namespace std::chrono_literals;
 
 namespace au {
 
+using ::testing::Eq;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
 
@@ -54,20 +55,20 @@ TEST(WrappedInt, BasicInterfaceWorksAsExpected) {
 
 TEST(Zero, MinusZeroIsZero) {
     constexpr auto zero_minus_zero = ZERO - ZERO;
-    EXPECT_EQ(ZERO, zero_minus_zero);
+    EXPECT_THAT(zero_minus_zero, Eq(ZERO));
 }
 
 TEST(Zero, PlusZeroIsZero) {
     constexpr auto zero_plus_zero = ZERO + ZERO;
-    EXPECT_EQ(ZERO, zero_plus_zero);
+    EXPECT_THAT(zero_plus_zero, Eq(ZERO));
 }
 
 TEST(Zero, ComparableToArbitraryQuantities) {
-    EXPECT_EQ(ZERO, WrappedInt{0});
+    EXPECT_THAT(ZERO, Eq(WrappedInt{0}));
     EXPECT_LT(ZERO, WrappedInt{1});
     EXPECT_GT(ZERO, WrappedInt{-1});
 
-    EXPECT_EQ(ZERO, WrappedInt{0});
+    EXPECT_THAT(WrappedInt{0}, Eq(ZERO));
     EXPECT_LT(ZERO, WrappedInt{1});
     EXPECT_GT(ZERO, WrappedInt{-1});
 }
@@ -84,18 +85,18 @@ TEST(Zero, ComparesEqualToZero) {
 
 TEST(Zero, ImplicitlyConvertsToNumericTypes) {
     constexpr int zero_i = ZERO;
-    EXPECT_EQ(zero_i, 0);
+    EXPECT_THAT(zero_i, Eq(0));
 
     constexpr float zero_f = ZERO;
-    EXPECT_EQ(zero_f, 0.f);
+    EXPECT_THAT(zero_f, Eq(0.f));
 }
 
 TEST(Zero, ImplicitlyConvertsToChronoDuration) {
     constexpr std::chrono::nanoseconds zero_ns = ZERO;
-    EXPECT_EQ(zero_ns, 0ns);
+    EXPECT_THAT(zero_ns, Eq(0ns));
 
     constexpr std::chrono::duration<float, std::milli> zero_ms_f = ZERO;
-    EXPECT_EQ(zero_ms_f, (std::chrono::duration<float, std::milli>{0.f}));
+    EXPECT_THAT(zero_ms_f, Eq(std::chrono::duration<float, std::milli>{0.f}));
 }
 
 }  // namespace au
