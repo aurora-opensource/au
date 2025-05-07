@@ -17,15 +17,20 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+namespace au {
+
 using ::testing::AnyOf;
 using ::testing::Eq;
 using ::testing::Gt;
+using ::testing::IsFalse;
+using ::testing::IsTrue;
 using ::testing::Le;
 
-namespace au {
 namespace detail {
 namespace {
+
 std::uintmax_t cube(std::uintmax_t n) { return n * n * n; }
+
 }  // namespace
 
 TEST(FirstPrimes, HasOnlyPrimesInOrderAndDoesntSkipAny) {
@@ -33,10 +38,10 @@ TEST(FirstPrimes, HasOnlyPrimesInOrderAndDoesntSkipAny) {
     auto i_prime = 0u;
     for (auto i = 2u; i <= first_primes.back(); ++i) {
         if (i == first_primes[i_prime]) {
-            EXPECT_TRUE(is_prime(i)) << i;
+            EXPECT_THAT(is_prime(i), IsTrue()) << i;
             ++i_prime;
         } else {
-            EXPECT_FALSE(is_prime(i)) << i;
+            EXPECT_THAT(is_prime(i), IsFalse()) << i;
         }
     }
 }
@@ -92,26 +97,26 @@ TEST(FindFactor, CanFactorChallengingCompositeNumbers) {
 }
 
 TEST(IsPrime, FalseForLessThan2) {
-    EXPECT_FALSE(is_prime(0u));
-    EXPECT_FALSE(is_prime(1u));
+    EXPECT_THAT(is_prime(0u), IsFalse());
+    EXPECT_THAT(is_prime(1u), IsFalse());
 }
 
 TEST(IsPrime, FindsPrimes) {
-    EXPECT_TRUE(is_prime(2u));
-    EXPECT_TRUE(is_prime(3u));
-    EXPECT_FALSE(is_prime(4u));
-    EXPECT_TRUE(is_prime(5u));
-    EXPECT_FALSE(is_prime(6u));
-    EXPECT_TRUE(is_prime(7u));
-    EXPECT_FALSE(is_prime(8u));
-    EXPECT_FALSE(is_prime(9u));
-    EXPECT_FALSE(is_prime(10u));
-    EXPECT_TRUE(is_prime(11u));
+    EXPECT_THAT(is_prime(2u), IsTrue());
+    EXPECT_THAT(is_prime(3u), IsTrue());
+    EXPECT_THAT(is_prime(4u), IsFalse());
+    EXPECT_THAT(is_prime(5u), IsTrue());
+    EXPECT_THAT(is_prime(6u), IsFalse());
+    EXPECT_THAT(is_prime(7u), IsTrue());
+    EXPECT_THAT(is_prime(8u), IsFalse());
+    EXPECT_THAT(is_prime(9u), IsFalse());
+    EXPECT_THAT(is_prime(10u), IsFalse());
+    EXPECT_THAT(is_prime(11u), IsTrue());
 
-    EXPECT_FALSE(is_prime(196959u));
-    EXPECT_FALSE(is_prime(196960u));
-    EXPECT_TRUE(is_prime(196961u));
-    EXPECT_FALSE(is_prime(196962u));
+    EXPECT_THAT(is_prime(196959u), IsFalse());
+    EXPECT_THAT(is_prime(196960u), IsFalse());
+    EXPECT_THAT(is_prime(196961u), IsTrue());
+    EXPECT_THAT(is_prime(196962u), IsFalse());
 }
 
 TEST(IsPrime, CanHandleVeryLargePrimes) {
@@ -121,7 +126,7 @@ TEST(IsPrime, CanHandleVeryLargePrimes) {
              uint64_t{9'007'199'254'740'881u},
              uint64_t{18'446'744'073'709'551'557u},
          }) {
-        EXPECT_TRUE(is_prime(p)) << p;
+        EXPECT_THAT(is_prime(p), IsTrue()) << p;
     }
 }
 

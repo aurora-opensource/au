@@ -14,23 +14,28 @@
 
 #include "au/stdx/utility.hh"
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
+
+using ::testing::IsFalse;
+using ::testing::IsTrue;
+
 namespace stdx {
 
 TEST(CmpLess, HandlesMixedSignedUnsigned) {
-    EXPECT_TRUE(cmp_less(-1, 1u));
-    EXPECT_FALSE(cmp_less(1u, -1));
-    EXPECT_FALSE(cmp_less(1u, 1));
-    EXPECT_TRUE(cmp_less(1u, 2));
+    EXPECT_THAT(cmp_less(-1, 1u), IsTrue());
+    EXPECT_THAT(cmp_less(1u, -1), IsFalse());
+    EXPECT_THAT(cmp_less(1u, 1), IsFalse());
+    EXPECT_THAT(cmp_less(1u, 2), IsTrue());
 }
 
 TEST(CmpEqual, HandlesMixedSignedUnsigned) {
-    EXPECT_FALSE(cmp_equal(-1, 1u));
-    EXPECT_FALSE(cmp_equal(1u, -1));
-    EXPECT_TRUE(cmp_equal(1u, 1));
-    EXPECT_FALSE(cmp_equal(1u, 2));
+    EXPECT_THAT(cmp_equal(-1, 1u), IsFalse());
+    EXPECT_THAT(cmp_equal(1u, -1), IsFalse());
+    EXPECT_THAT(cmp_equal(1u, 1), IsTrue());
+    EXPECT_THAT(cmp_equal(1u, 2), IsFalse());
 }
 
 }  // namespace stdx

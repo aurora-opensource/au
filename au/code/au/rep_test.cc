@@ -26,12 +26,16 @@
 #include "au/units/liters.hh"
 #include "au/units/miles.hh"
 #include "au/units/webers.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
-namespace {
 
+using ::testing::IsFalse;
+using ::testing::IsTrue;
 using ::testing::StaticAssertTypeEq;
+
+namespace {
 
 // A custom quantity that corresponds to `QuantityI<Meters>`.
 struct MyMeters {
@@ -52,6 +56,7 @@ struct LeftMultiplyDoubleByThree {
 struct DivideTenByFloat {
     friend float operator/(const DivideTenByFloat &, float x) { return 10.0f / x; }
 };
+
 }  // namespace
 
 // Set up the correspondence between `MyMeters` and `QuantityI<Meters>`.
@@ -61,81 +66,82 @@ struct CorrespondingQuantity<MyMeters> {
     using Rep = int;
 };
 
-TEST(IsValidRep, FalseForVoid) { EXPECT_FALSE(IsValidRep<void>::value); }
+TEST(IsValidRep, FalseForVoid) { EXPECT_THAT(IsValidRep<void>::value, IsFalse()); }
 
 TEST(IsValidRep, TrueForArithmeticTypes) {
-    EXPECT_TRUE(IsValidRep<int>::value);
-    EXPECT_TRUE(IsValidRep<float>::value);
-    EXPECT_TRUE(IsValidRep<double>::value);
-    EXPECT_TRUE(IsValidRep<uint8_t>::value);
-    EXPECT_TRUE(IsValidRep<int64_t>::value);
+    EXPECT_THAT(IsValidRep<int>::value, IsTrue());
+    EXPECT_THAT(IsValidRep<float>::value, IsTrue());
+    EXPECT_THAT(IsValidRep<double>::value, IsTrue());
+    EXPECT_THAT(IsValidRep<uint8_t>::value, IsTrue());
+    EXPECT_THAT(IsValidRep<int64_t>::value, IsTrue());
 }
 
 TEST(IsValidRep, TrueForStdComplex) {
-    EXPECT_TRUE(IsValidRep<std::complex<float>>::value);
-    EXPECT_TRUE(IsValidRep<std::complex<uint16_t>>::value);
+    EXPECT_THAT(IsValidRep<std::complex<float>>::value, IsTrue());
+    EXPECT_THAT(IsValidRep<std::complex<uint16_t>>::value, IsTrue());
 }
 
 TEST(IsValidRep, FalseForMagnitude) {
-    EXPECT_FALSE(IsValidRep<decltype(mag<84>())>::value);
-    EXPECT_FALSE(IsValidRep<decltype(sqrt(Magnitude<Pi>{}))>::value);
+    EXPECT_THAT(IsValidRep<decltype(mag<84>())>::value, IsFalse());
+    EXPECT_THAT(IsValidRep<decltype(sqrt(Magnitude<Pi>{}))>::value, IsFalse());
 }
 
 TEST(IsValidRep, FalseForUnits) {
-    EXPECT_FALSE(IsValidRep<Liters>::value);
-    EXPECT_FALSE(IsValidRep<Nano<Webers>>::value);
+    EXPECT_THAT(IsValidRep<Liters>::value, IsFalse());
+    EXPECT_THAT(IsValidRep<Nano<Webers>>::value, IsFalse());
 }
 
 TEST(IsValidRep, FalseForQuantity) {
-    EXPECT_FALSE((IsValidRep<Quantity<Milli<Liters>, int>>::value));
+    EXPECT_THAT((IsValidRep<Quantity<Milli<Liters>, int>>::value), IsFalse());
 }
 
 TEST(IsValidRep, FalseForQuantityPoint) {
-    EXPECT_FALSE((IsValidRep<QuantityPoint<Miles, double>>::value));
+    EXPECT_THAT((IsValidRep<QuantityPoint<Miles, double>>::value), IsFalse());
 }
 
 TEST(IsValidRep, FalseForConstant) {
-    EXPECT_FALSE(IsValidRep<decltype(make_constant(liters / mile))>::value);
+    EXPECT_THAT(IsValidRep<decltype(make_constant(liters / mile))>::value, IsFalse());
 }
 
-TEST(IsValidRep, FalseForSymbol) { EXPECT_FALSE(IsValidRep<SymbolFor<Webers>>::value); }
+TEST(IsValidRep, FalseForSymbol) { EXPECT_THAT(IsValidRep<SymbolFor<Webers>>::value, IsFalse()); }
 
 TEST(IsValidRep, FalseForTypeWithCorrespondingQuantity) {
-    EXPECT_FALSE(IsValidRep<MyMeters>::value);
-    EXPECT_FALSE(IsValidRep<std::chrono::nanoseconds>::value);
+    EXPECT_THAT(IsValidRep<MyMeters>::value, IsFalse());
+    EXPECT_THAT(IsValidRep<std::chrono::nanoseconds>::value, IsFalse());
 }
 
 TEST(IsProductValidRep, FalseIfProductDoesNotExist) {
-    EXPECT_FALSE((IsProductValidRep<IntWithNoOps, int>::value));
-    EXPECT_FALSE((IsProductValidRep<int, IntWithNoOps>::value));
+    EXPECT_THAT((IsProductValidRep<IntWithNoOps, int>::value), IsFalse());
+    EXPECT_THAT((IsProductValidRep<int, IntWithNoOps>::value), IsFalse());
 }
 
 TEST(IsProductValidRep, TrueOnlyForSideWhereProductExists) {
     ASSERT_EQ(LeftMultiplyDoubleByThree{} * 4.5, 13.5);
 
-    EXPECT_TRUE((IsProductValidRep<LeftMultiplyDoubleByThree, double>::value));
-    EXPECT_FALSE((IsProductValidRep<double, LeftMultiplyDoubleByThree>::value));
+    EXPECT_THAT((IsProductValidRep<LeftMultiplyDoubleByThree, double>::value), IsTrue());
+    EXPECT_THAT((IsProductValidRep<double, LeftMultiplyDoubleByThree>::value), IsFalse());
 }
 
 TEST(IsQuotientValidRep, FalseIfQuotientDoesNotExist) {
-    EXPECT_FALSE((IsQuotientValidRep<IntWithNoOps, int>::value));
-    EXPECT_FALSE((IsQuotientValidRep<int, IntWithNoOps>::value));
+    EXPECT_THAT((IsQuotientValidRep<IntWithNoOps, int>::value), IsFalse());
+    EXPECT_THAT((IsQuotientValidRep<int, IntWithNoOps>::value), IsFalse());
 }
 
 TEST(IsQuotientValidRep, FalseIfQuotientIsQuantity) {
     // Dividing by a Quantity can complicate matters because it involves hard compiler errors when
     // that quantity has an integral rep.  Make sure we handle this gracefully.
-    EXPECT_FALSE((IsQuotientValidRep<int, Quantity<Miles, int>>::value));
+    EXPECT_THAT((IsQuotientValidRep<int, Quantity<Miles, int>>::value), IsFalse());
 }
 
 TEST(IsQuotientValidRep, TrueOnlyForSideWhereQuotientExists) {
     ASSERT_EQ(DivideTenByFloat{} / 2.0f, 5.0f);
 
-    EXPECT_FALSE((IsQuotientValidRep<float, DivideTenByFloat>::value));
-    EXPECT_TRUE((IsQuotientValidRep<DivideTenByFloat, float>::value));
+    EXPECT_THAT((IsQuotientValidRep<float, DivideTenByFloat>::value), IsFalse());
+    EXPECT_THAT((IsQuotientValidRep<DivideTenByFloat, float>::value), IsTrue());
 }
 
 namespace detail {
+
 TEST(ResultIfNoneAreQuantity, GivesResultWhenNoneAreQuantity) {
     StaticAssertTypeEq<int, ResultIfNoneAreQuantityT<std::common_type_t, int, int>>();
     StaticAssertTypeEq<std::tuple<int, double, float>,
@@ -162,5 +168,6 @@ TEST(ProductTypeOrVoid, GivesVoidForInputsWithNoProductType) {
     StaticAssertTypeEq<void, ProductTypeOrVoid<IntWithNoOps, int>>();
     StaticAssertTypeEq<void, ProductTypeOrVoid<int, IntWithNoOps>>();
 }
+
 }  // namespace detail
 }  // namespace au
