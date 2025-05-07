@@ -18,15 +18,20 @@
 #include "au/units/hours.hh"
 #include "au/units/knots.hh"
 #include "au/units/meters.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(NauticalMiles, HasExpectedLabel) { expect_label<NauticalMiles>("nmi"); }
 
-TEST(NauticalMiles, EquivalentTo1852Meters) { EXPECT_EQ(nautical_miles(1), meters(1'852)); }
+TEST(NauticalMiles, EquivalentTo1852Meters) { EXPECT_THAT(nautical_miles(1), Eq(meters(1'852))); }
 
-TEST(NauticalMiles, EquivalentToKnotHours) { EXPECT_EQ(nautical_miles(1), (knot * hours)(1)); }
+TEST(NauticalMiles, EquivalentToKnotHours) {
+    EXPECT_THAT(nautical_miles(1), Eq((knot * hours)(1)));
+}
 
 TEST(NauticalMiles, HasExpectedSymbol) {
     using symbols::nmi;

@@ -16,9 +16,12 @@
 
 #include "au/testing.hh"
 #include "au/units/revolutions.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
+
+using ::testing::Eq;
 
 TEST(Degrees, HasExpectedLabel) { expect_label<Degrees>("deg"); }
 
@@ -26,7 +29,7 @@ TEST(Degrees, RoughlyEquivalentToPiOver180Radians) {
     EXPECT_DOUBLE_EQ(degrees(1.0).in(radians), get_value<double>(Magnitude<Pi>{} / mag<180>()));
 }
 
-TEST(Degrees, One360thOfARevolution) { EXPECT_EQ(degrees(360), revolutions(1)); }
+TEST(Degrees, One360thOfARevolution) { EXPECT_THAT(degrees(360), Eq(revolutions(1))); }
 
 TEST(Degrees, HasExpectedSymbol) {
     using symbols::deg;

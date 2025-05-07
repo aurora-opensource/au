@@ -15,13 +15,16 @@
 #include "au/units/miles.hh"
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Miles, HasExpectedLabel) { expect_label<Miles>("mi"); }
 
-TEST(Miles, EquivalentTo5280Feet) { EXPECT_EQ(miles(1), feet(5280)); }
+TEST(Miles, EquivalentTo5280Feet) { EXPECT_THAT(miles(1), Eq(feet(5280))); }
 
 TEST(Miles, HasExpectedSymbol) {
     using symbols::mi;

@@ -15,13 +15,16 @@
 #include "au/units/days.hh"
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Days, HasExpectedLabel) { expect_label<Days>("d"); }
 
-TEST(Days, EquivalentTo24Hours) { EXPECT_EQ(days(1), hours(24)); }
+TEST(Days, EquivalentTo24Hours) { EXPECT_THAT(days(1), Eq(hours(24))); }
 
 TEST(Days, HasExpectedSymbol) {
     using symbols::d;

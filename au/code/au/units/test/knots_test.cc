@@ -18,13 +18,18 @@
 #include "au/units/hours.hh"
 #include "au/units/knots.hh"
 #include "au/units/meters.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Knots, HasExpectedLabel) { expect_label<Knots>("kn"); }
 
-TEST(Knots, EquivalentToNauticalMilesPerHour) { EXPECT_EQ(knots(1), (nautical_miles / hour)(1)); }
+TEST(Knots, EquivalentToNauticalMilesPerHour) {
+    EXPECT_THAT(knots(1), Eq((nautical_miles / hour)(1)));
+}
 
 TEST(Knots, HasExpectedSymbol) {
     using symbols::kn;

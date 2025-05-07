@@ -15,13 +15,16 @@
 #include "au/units/inches.hh"
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Inches, HasExpectedLabel) { expect_label<Inches>("in"); }
 
-TEST(Inches, EquivalentTo2Point54CentiMeters) { EXPECT_EQ(centi(meters)(254), inches(100)); }
+TEST(Inches, EquivalentTo2Point54CentiMeters) { EXPECT_THAT(centi(meters)(254), Eq(inches(100))); }
 
 TEST(Inches, HasExpectedSymbol) {
     using symbols::in;

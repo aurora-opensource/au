@@ -16,13 +16,16 @@
 
 #include "au/testing.hh"
 #include "au/units/percent.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(Unos, HasExpectedLabel) { expect_label<Unos>("U"); }
 
-TEST(Unos, OneHundredPercent) { EXPECT_EQ(unos(2), percent(200)); }
+TEST(Unos, OneHundredPercent) { EXPECT_THAT(unos(2), Eq(percent(200))); }
 
 TEST(Unos, ImplicitlyConvertToRawNumbers) {
     constexpr double x = unos(1.23);
