@@ -500,7 +500,7 @@ struct MagSign<true> : stdx::type_identity<Magnitude<Negative>> {};
 template <std::intmax_t N>
 constexpr auto signed_mag() {
     constexpr auto sign = typename MagSign<(N < 0)>::type{};
-    return sign * mag<(N < 0 ? (-N) : N)>();
+    return sign * mag<static_cast<std::size_t>(N < 0 ? (-N) : N)>();
 }
 
 // Unequal values case implementation: scale up the magnitude of the diff's _unit_ by the diff's
