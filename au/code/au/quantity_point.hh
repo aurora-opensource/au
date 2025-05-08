@@ -159,12 +159,11 @@ class QuantityPoint {
     template <typename NewUnit,
               typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
     constexpr Rep in(NewUnit) const {
-        using TargetUnit = AssociatedUnitForPointsT<NewUnit>;
-        // `rep_cast` is needed because if these are integral types, their difference might become a
-        // different type due to integer promotion.
-        return rep_cast<Rep>(x_.as(TargetUnit{}) +
-                             Quantity<TargetUnit, Rep>{origin_displacement(TargetUnit{}, Unit{})})
-            .in(TargetUnit{});
+        constexpr auto target = AssociatedUnitForPointsT<NewUnit>{};
+
+        // The explicit `<Rep>` is needed because if these are integral types, their difference
+        // might become a different type due to integer promotion.
+        return (x_.as(target) + origin_displacement(target, Unit{})).template in<Rep>(target);
     }
 
     // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
