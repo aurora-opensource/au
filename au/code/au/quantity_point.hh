@@ -77,7 +77,7 @@ template <typename UnitT, typename RepT>
 class QuantityPoint {
     // Q: When should we enable IMPLICIT construction from another QuantityPoint type?
     // A: EXACTLY WHEN our own Diff type can be IMPLICITLY constructed from BOTH the target's Diff
-    //    type, AND the offset between our Units' zero points.
+    //    type AND the offset between our Units' zero points.
     //
     // In other words, there are two ways to fail implicit convertibility.
     //
