@@ -36,6 +36,7 @@ using ::testing::AnyOf;
 using ::testing::Eq;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
+using ::testing::Lt;
 using ::testing::Not;
 using ::testing::StaticAssertTypeEq;
 using ::testing::StrEq;
