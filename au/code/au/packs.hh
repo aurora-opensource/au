@@ -93,6 +93,20 @@ struct LexicographicTotalOrdering;
 template <typename T, typename U>
 struct InStandardPackOrder;
 
+// Insert an element in a list, using the ordering for a specific (possibly different) pack.
+//
+// A precondition is that the list must already be sorted by the given ordering.
+template <template <class...> class PackForOrdering, typename T, typename ListT>
+struct InsertUsingOrderingForImpl;
+template <template <class...> class PackForOrdering, typename T, typename ListT>
+using InsertUsingOrderingFor = typename InsertUsingOrderingForImpl<PackForOrdering, T, ListT>::type;
+
+// Sort a type list using the ordering for a specific (possibly different) pack.
+template <template <class...> class PackForOrdering, typename ListT>
+struct SortAsImpl;
+template <template <class...> class PackForOrdering, typename ListT>
+using SortAs = typename SortAsImpl<PackForOrdering, ListT>::type;
+
 // Make a List of deduplicated, sorted types.
 //
 // The result will always be List<...>, and the elements will be sorted according to the total
@@ -360,6 +374,44 @@ struct InStandardPackOrder<P<H1, T1...>, P<H2, T2...>>
                                  detail::LeadBasesInOrder,
                                  detail::LeadExpsInOrder,
                                  detail::TailsInStandardPackOrder> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `InsertUsingOrderingFor` implementation.
+
+// Base case.
+template <template <class...> class PackForOrdering, typename T, template <class...> class Pack>
+struct InsertUsingOrderingForImpl<PackForOrdering, T, Pack<>> : stdx::type_identity<Pack<T>> {};
+
+// Recursive case: simply prepend if it's already in order, or else recurse past the first element,
+// and then prepend the old first element.
+template <template <class...> class PackForOrdering,
+          typename T,
+          template <class...>
+          class Pack,
+          typename U,
+          typename... Us>
+struct InsertUsingOrderingForImpl<PackForOrdering, T, Pack<U, Us...>>
+    : std::conditional<
+          InOrderFor<PackForOrdering, T, U>::value,
+          Pack<T, U, Us...>,
+          detail::PrependT<InsertUsingOrderingFor<PackForOrdering, T, Pack<Us...>>, U>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `SortAs` implementation.
+
+// Base case.
+template <template <class...> class PackForOrdering, template <class...> class Pack>
+struct SortAsImpl<PackForOrdering, Pack<>> : stdx::type_identity<Pack<>> {};
+
+// Recursive case.
+template <template <class...> class PackForOrdering,
+          template <class...>
+          class Pack,
+          typename T,
+          typename... Ts>
+struct SortAsImpl<PackForOrdering, Pack<T, Ts...>>
+    : stdx::type_identity<
+          InsertUsingOrderingFor<PackForOrdering, T, SortAs<PackForOrdering, Pack<Ts...>>>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `FlatDedupedTypeListT` implementation.
