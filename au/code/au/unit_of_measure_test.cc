@@ -601,7 +601,7 @@ TEST(MakeCommonPoint, PreservesCategory) {
 
     // The origin of the common point unit is the lowest origin among all input units.
     EXPECT_THAT(celsenheit_pt(0), Eq(fahrenheit_pt(0)));
-    EXPECT_LT(celsenheit_pt(0), celsius_pt(0))
+    EXPECT_THAT(celsenheit_pt(0), Lt(celsius_pt(0)))
         << "Difference: " << celsius_pt(0) - celsenheit_pt(0);
 
     // The common point unit should evenly divide both input units.

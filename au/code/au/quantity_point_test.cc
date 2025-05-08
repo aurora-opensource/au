@@ -450,13 +450,13 @@ TEST(OriginDisplacement, IdenticallyZeroForOriginsThatCompareEqual) {
 }
 
 TEST(OriginDisplacement, GivesDisplacementFromFirstToSecond) {
-    EXPECT_EQ(origin_displacement(Kelvins{}, Celsius{}), milli(kelvins)(273'150));
-    EXPECT_EQ(origin_displacement(Celsius{}, Kelvins{}), milli(kelvins)(-273'150));
+    EXPECT_THAT(origin_displacement(Kelvins{}, Celsius{}), Eq(milli(kelvins)(273'150)));
+    EXPECT_THAT(origin_displacement(Celsius{}, Kelvins{}), Eq(milli(kelvins)(-273'150)));
 }
 
 TEST(OriginDisplacement, FunctionalInterfaceHandlesInstancesCorrectly) {
-    EXPECT_EQ(origin_displacement(kelvins_pt, celsius_pt), milli(kelvins)(273'150));
-    EXPECT_EQ(origin_displacement(celsius_pt, kelvins_pt), milli(kelvins)(-273'150));
+    EXPECT_THAT(origin_displacement(kelvins_pt, celsius_pt), Eq(milli(kelvins)(273'150)));
+    EXPECT_THAT(origin_displacement(celsius_pt, kelvins_pt), Eq(milli(kelvins)(-273'150)));
 }
 
 TEST(QuantityPointMaker, CanApplyPrefix) {
