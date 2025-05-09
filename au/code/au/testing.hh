@@ -22,6 +22,7 @@
 namespace au {
 
 using ::testing::Eq;
+using ::testing::StrEq;
 
 MATCHER_P(SameType, target, "") {
     return std::is_same<stdx::remove_cvref_t<decltype(arg)>,
@@ -58,7 +59,7 @@ MATCHER_P(PointEquivalent, target, "") {
 
 template <typename Unit, std::size_t N>
 void expect_label(const char (&label)[N]) {
-    EXPECT_STREQ(unit_label<Unit>(), label);
+    EXPECT_THAT(unit_label<Unit>(), StrEq(label));
     EXPECT_THAT(sizeof(unit_label<Unit>()), Eq(N));
 }
 
