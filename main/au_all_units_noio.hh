@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-29-g8f6d7a0
+// Version identifier: 0.4.1-30-g659b8d1
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -4242,12 +4242,6 @@ struct UnitRatio : stdx::type_identity<MagQuotientT<detail::MagT<U1>, detail::Ma
 template <typename U1, typename U2>
 using UnitRatioT = typename UnitRatio<U1, U2>::type;
 
-// Some units have an "origin".  This is not meaningful by itself, but its difference w.r.t. the
-// "origin" of another unit of the same Dimension _is_ meaningful.  This type trait provides access
-// to that difference.
-template <typename U1, typename U2>
-struct OriginDisplacement;
-
 template <typename U>
 struct AssociatedUnit : stdx::type_identity<U> {};
 template <typename U>
@@ -4350,11 +4344,6 @@ constexpr bool is_unitless_unit(U) {
 template <typename U1, typename U2>
 constexpr UnitRatioT<AssociatedUnitT<U1>, AssociatedUnitT<U2>> unit_ratio(U1, U2) {
     return {};
-}
-
-template <typename U1, typename U2>
-constexpr auto origin_displacement(U1, U2) {
-    return OriginDisplacement<AssociatedUnitT<U1>, AssociatedUnitT<U2>>::value();
 }
 
 template <typename U>
@@ -4551,7 +4540,7 @@ constexpr auto pow(SingularNameFor<Unit>) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `OriginDisplacement` implementation.
+// Origin displacement implementation.
 
 namespace detail {
 // Callable type trait for the default origin of a unit: choose ZERO.
@@ -4618,7 +4607,7 @@ struct MagSign<true> : stdx::type_identity<Magnitude<Negative>> {};
 template <std::intmax_t N>
 constexpr auto signed_mag() {
     constexpr auto sign = typename MagSign<(N < 0)>::type{};
-    return sign * mag<(N < 0 ? (-N) : N)>();
+    return sign * mag<static_cast<std::size_t>(N < 0 ? (-N) : N)>();
 }
 
 // Unequal values case implementation: scale up the magnitude of the diff's _unit_ by the diff's
@@ -4635,27 +4624,6 @@ struct ValueDisplacementMagnitudeImpl<U1, U2, AreValuesEqual::NO> {
 };
 
 }  // namespace detail
-
-// Why this conditional, instead of just using `ValueDifference` unconditionally?  The use case is
-// somewhat subtle.  Without it, we would still deduce a displacement _numerically_ equal to 0, but
-// it would be stored in specific _units_.  For example, for Celsius, the displacement would be "0
-// millikelvins" rather than a generic ZERO.  This has implications for type deduction.  It means
-// that, e.g., the following would fail!
-//
-//   celsius_pt(20).in(celsius_pt);
-//
-// The reason it would fail is because under the hood, we'd be subtracting a `QuantityI32<Celsius>`
-// from a `QuantityI32<Milli<Kelvins>>`, yielding a result expressed in millikelvins for what should
-// be an integer number of degrees Celsius.  True, that result happens to have a _value_ of 0... but
-// values don't affect overload resolution!
-//
-// Using ZeroValue when the origins are equal fixes this problem, by expressing the "zero-ness" in
-// the _type_.
-template <typename U1, typename U2>
-struct OriginDisplacement
-    : std::conditional_t<detail::OriginOf<U1>::value() == detail::OriginOf<U2>::value(),
-                         detail::ZeroValue,
-                         detail::ValueDifference<detail::OriginOf<U2>, detail::OriginOf<U1>>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `HasSameDimension` implementation.
@@ -4687,7 +4655,7 @@ struct AreUnitsQuantityEquivalent
 
 namespace detail {
 template <typename U1, typename U2>
-struct HasSameOrigin : stdx::bool_constant<(OriginDisplacement<U1, U2>::value() == ZERO)> {};
+struct HasSameOrigin : stdx::bool_constant<(OriginOf<U1>::value() == OriginOf<U2>::value())> {};
 }  // namespace detail
 
 template <typename U1, typename U2>
@@ -4991,35 +4959,17 @@ constexpr typename UnitLabel<detail::OriginDisplacementUnit<U1, U2>>::LabelT
 // responsible for this; thus, they should never name this type directly.  Rather, they should name
 // the `CommonPointUnitT` alias, which will handle the canonicalization.
 template <typename... Us>
-struct CommonPointUnit {
+using CommonAmongUnitsAndOriginDisplacements =
+    CommonUnitT<Us...,
+                detail::ComputeOriginDisplacementUnit<detail::UnitOfLowestOrigin<Us...>, Us>...>;
+template <typename... Us>
+struct CommonPointUnit : CommonAmongUnitsAndOriginDisplacements<Us...> {
     static_assert(AreElementsInOrder<CommonPointUnit, CommonPointUnit<Us...>>::value,
                   "Elements must be listed in ascending order");
     static_assert(HasSameDimension<Us...>::value,
                   "Common unit only meaningful if units have same dimension");
 
-    // We need to store the origin member inside of a type, so that it will act "just enough" like a
-    // unit to let us use `OriginDisplacement`.  (We'll link to this nested type's origin member for
-    // our own origin member.)
-    struct TypeHoldingCommonOrigin {
-        using OriginT = decltype(detail::CommonOrigin<Us...>::value());
-        static constexpr OriginT origin() { return detail::CommonOrigin<Us...>::value(); }
-    };
-    static constexpr auto origin() { return TypeHoldingCommonOrigin::origin(); }
-
-    // This handles checking that all the dimensions are the same.  It's what lets us reason in
-    // terms of pure Magnitudes below, whereas usually this kind of reasoning is meaningless.
-    using Dim = CommonDimensionT<detail::DimT<Us>...>;
-
-    // Now, for Magnitude reasoning.  `OriginDisplacementMagnitude` tells us how finely grained we
-    // are forced to split our Magnitude to handle the additive displacements from the common
-    // origin.  It might be `Zero` if there is no such constraint (which would mean all the units
-    // have the _same_ origin).
-    using OriginDisplacementMagnitude = CommonMagnitudeT<
-        detail::MagTypeT<decltype(OriginDisplacement<TypeHoldingCommonOrigin, Us>::value())>...>;
-
-    // The final Magnitude is just what it would have been before, except that we also take the
-    // results of `OriginDisplacementMagnitude` into account.
-    using Mag = CommonMagnitudeT<detail::MagT<Us>..., OriginDisplacementMagnitude>;
+    static constexpr auto origin() { return detail::CommonOrigin<Us...>::value(); }
 };
 
 template <typename A, typename B>
@@ -5186,8 +5136,7 @@ struct UnitLabel<CommonUnit<Us...>>
 // origin displacements into account.
 template <typename... Us>
 struct UnitLabel<CommonPointUnit<Us...>>
-    : CommonUnitLabel<decltype(
-          Us{} * (detail::MagT<CommonPointUnit<Us...>>{} / detail::MagT<Us>{}))...> {};
+    : UnitLabel<CommonAmongUnitsAndOriginDisplacements<Us...>> {};
 
 template <typename Unit>
 constexpr const auto &unit_label(Unit) {
@@ -5231,8 +5180,37 @@ template <typename... U1s, typename... U2s>
 struct OrderAsUnitProduct<UnitProduct<U1s...>, UnitProduct<U2s...>>
     : InStandardPackOrder<UnitProduct<U1s...>, UnitProduct<U2s...>> {};
 
+// OrderAsOriginDisplacementUnit<A, B> can only be true if both A and B are `OriginDisplacementUnit`
+// specializations, _and_ their first units are in order, or their first units are identical and
+// their second units are in order.  This default case handles the usual case where either A or B
+// (or both) is not a `OriginDisplacementUnit` specialization in the first place.
 template <typename A, typename B>
-struct OrderByOrigin : stdx::bool_constant<(OriginDisplacement<A, B>::value() < ZERO)> {};
+struct OrderAsOriginDisplacementUnit : std::false_type {};
+
+template <typename A, typename B>
+struct OrderByFirstInOriginDisplacementUnit;
+template <typename A1, typename A2, typename B1, typename B2>
+struct OrderByFirstInOriginDisplacementUnit<OriginDisplacementUnit<A1, A2>,
+                                            OriginDisplacementUnit<B1, B2>>
+    : InOrderFor<UnitProduct, A1, B1> {};
+
+template <typename A, typename B>
+struct OrderBySecondInOriginDisplacementUnit;
+template <typename A1, typename A2, typename B1, typename B2>
+struct OrderBySecondInOriginDisplacementUnit<OriginDisplacementUnit<A1, A2>,
+                                             OriginDisplacementUnit<B1, B2>>
+    : InOrderFor<UnitProduct, A2, B2> {};
+
+template <typename A1, typename A2, typename B1, typename B2>
+struct OrderAsOriginDisplacementUnit<OriginDisplacementUnit<A1, A2>, OriginDisplacementUnit<B1, B2>>
+    : LexicographicTotalOrdering<OriginDisplacementUnit<A1, A2>,
+                                 OriginDisplacementUnit<B1, B2>,
+                                 OrderByFirstInOriginDisplacementUnit,
+                                 OrderBySecondInOriginDisplacementUnit> {};
+
+template <typename A, typename B>
+struct OrderByOrigin
+    : stdx::bool_constant<(detail::OriginOf<A>::value() < detail::OriginOf<B>::value())> {};
 
 // "Unit avoidance" is a tiebreaker for quantity-equivalent units.  Anonymous units, such as
 // `UnitImpl<...>`, `ScaledUnit<...>`, and `UnitProduct<...>`, are more "avoidable" than units which
@@ -5269,14 +5247,16 @@ struct UnitAvoidance<CommonPointUnit<Us...>> : std::integral_constant<int, 7> {}
 }  // namespace detail
 
 template <typename A, typename B>
-struct InOrderFor<UnitProduct, A, B> : LexicographicTotalOrdering<A,
-                                                                  B,
-                                                                  detail::OrderByUnitAvoidance,
-                                                                  detail::OrderByDim,
-                                                                  detail::OrderByMag,
-                                                                  detail::OrderByScaleFactor,
-                                                                  detail::OrderByOrigin,
-                                                                  detail::OrderAsUnitProduct> {};
+struct InOrderFor<UnitProduct, A, B>
+    : LexicographicTotalOrdering<A,
+                                 B,
+                                 detail::OrderByUnitAvoidance,
+                                 detail::OrderByDim,
+                                 detail::OrderByMag,
+                                 detail::OrderByScaleFactor,
+                                 detail::OrderByOrigin,
+                                 detail::OrderAsUnitProduct,
+                                 detail::OrderAsOriginDisplacementUnit> {};
 
 }  // namespace au
 
@@ -6508,426 +6488,6 @@ struct common_type<au::Quantity<U1, R1>, au::Quantity<U2, R2>>
     : au::CommonQuantity<au::Quantity<U1, R1>, au::Quantity<U2, R2>> {};
 }  // namespace std
 
-
-namespace au {
-
-// `QuantityPoint`: an _affine space type_ modeling points on a line.
-//
-// For a quick primer on affine space types, see: http://videocortex.io/2018/Affine-Space-Types/
-//
-// By "modeling points", we mean that `QuantityPoint` instances cannot be added to each other, and
-// cannot be multiplied.  However, they can be subtracted: the difference between two
-// `QuantityPoint` instances (of the same Unit) is a `Quantity` of that unit.  We can also add a
-// `Quantity` to a `QuantityPoint`, and vice versa; the result is a new `QuantityPoint`.
-//
-// Key motivating examples include _mile markers_ (effectively `QuantityPoint<Miles, T>`), and
-// _absolute temperature measurements_ (e.g., `QuantityPoint<Celsius, T>`).  This type is also
-// analogous to `std::chrono::time_point`, in the same way that `Quantity` is analogous to
-// `std::chrono::duration`.
-
-// Make a Quantity of the given Unit, which has this value as measured in the Unit.
-template <typename UnitT, typename T>
-constexpr auto make_quantity_point(T value) {
-    return QuantityPointMaker<UnitT>{}(value);
-}
-
-// Trait to check whether two QuantityPoint types are exactly equivalent.
-template <typename P1, typename P2>
-struct AreQuantityPointTypesEquivalent;
-
-namespace detail {
-template <typename TargetRep, typename U1, typename U2>
-struct OriginDisplacementFitsIn;
-
-template <typename FromRep, typename ToRep>
-struct IntermediateRep;
-}  // namespace detail
-
-// QuantityPoint implementation and API elaboration.
-template <typename UnitT, typename RepT>
-class QuantityPoint {
-    // Q: When should we enable IMPLICIT construction from another QuantityPoint type?
-    // A: EXACTLY WHEN our own Diff type can be IMPLICITLY constructed from the SUM of the target's
-    //    Diff type, and the offset between our Units' zero points.
-    //
-    // In other words, there are two ways to fail implicit convertibility.
-    //
-    //   1. Their Diff type might not work with our Rep.  Examples:
-    //      BAD: QuantityPoint<Milli<Meters>, int> -> QuantityPoint<Meters, int>
-    //      OK : QuantityPoint<Kilo<Meters> , int> -> QuantityPoint<Meters, int>
-    //
-    //   2. Their zero point might be offset from ours by a non-representable amount.  Examples:
-    //      BAD: QuantityPoint<Celsius, int> -> QuantityPoint<Kelvins, int>
-    //      OK : QuantityPoint<Celsius, int> -> QuantityPoint<Kelvins, double>
-    //      OK : QuantityPoint<Celsius, int> -> QuantityPoint<Milli<Kelvins>, int>
-    template <typename OtherUnit, typename OtherRep>
-    static constexpr bool should_enable_implicit_construction_from() {
-        return std::is_convertible<
-            decltype(std::declval<typename QuantityPoint<OtherUnit, OtherRep>::Diff>() +
-                     origin_displacement(UnitT{}, OtherUnit{})),
-            QuantityPoint::Diff>::value;
-    }
-
-    // This machinery exists to give us a conditionally explicit constructor, using SFINAE to select
-    // the explicit or implicit version (https://stackoverflow.com/a/26949793/15777264).  If we had
-    // C++20, we could use the `explicit(bool)` feature, making this code simpler and faster.
-    template <bool ImplicitOk, typename OtherUnit, typename OtherRep>
-    using EnableIfImplicitOkIs = std::enable_if_t<
-        ImplicitOk ==
-        QuantityPoint::should_enable_implicit_construction_from<OtherUnit, OtherRep>()>;
-
- public:
-    using Rep = RepT;
-    using Unit = UnitT;
-    static constexpr Unit unit{};
-    using Diff = Quantity<Unit, Rep>;
-
-    // The default constructor produces a QuantityPoint in a valid but contractually unspecified
-    // state.  It exists to give you an object you can assign to.  The main motivating factor for
-    // including this is to support `std::atomic`, which requires its types to be
-    // default-constructible.
-    constexpr QuantityPoint() noexcept : x_{ZERO} {}
-
-    template <typename OtherUnit,
-              typename OtherRep,
-              typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>>
-    constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
-        : QuantityPoint{other.template as<Rep>(unit)} {}
-
-    template <typename OtherUnit,
-              typename OtherRep,
-              typename Enable = EnableIfImplicitOkIs<false, OtherUnit, OtherRep>,
-              typename ThisUnusedTemplateParameterDistinguishesUsFromTheAboveConstructor = void>
-    // Deleted: use `.as<NewRep>(new_unit)` to force a cast.
-    constexpr explicit QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other) = delete;
-
-    // The notion of "0" is *not* unambiguous for point types, because different scales can make
-    // different decisions about what point is labeled as "0".
-    constexpr QuantityPoint(Zero) = delete;
-
-    template <typename NewRep,
-              typename NewUnit,
-              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
-    constexpr auto as(NewUnit u) const {
-        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(this->template in<NewRep>(u));
-    }
-
-    template <typename NewUnit,
-              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
-    constexpr auto as(NewUnit u) const {
-        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in(u));
-    }
-
-    template <typename NewRep,
-              typename NewUnit,
-              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
-    constexpr NewRep in(NewUnit u) const {
-        using CalcRep = typename detail::IntermediateRep<Rep, NewRep>::type;
-        return (rep_cast<CalcRep>(x_) -
-                rep_cast<CalcRep>(
-                    OriginDisplacement<Unit, AssociatedUnitForPointsT<NewUnit>>::value()))
-            .template in<NewRep>(associated_unit_for_points(u));
-    }
-
-    template <typename NewUnit,
-              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
-    constexpr Rep in(NewUnit u) const {
-        static_assert(
-            detail::OriginDisplacementFitsIn<Rep, AssociatedUnitForPointsT<NewUnit>, Unit>::value,
-            "Cannot represent origin displacement in desired Rep");
-
-        // `rep_cast` is needed because if these are integral types, their difference might become a
-        // different type due to integer promotion.
-        return rep_cast<Rep>(
-                   x_ + rep_cast<Rep>(
-                            OriginDisplacement<AssociatedUnitForPointsT<NewUnit>, Unit>::value()))
-            .in(associated_unit_for_points(u));
-    }
-
-    // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
-    template <typename NewUnit>
-    constexpr auto coerce_as(NewUnit) const {
-        // Usage example: `p.coerce_as(new_units)`.
-        return as<Rep>(NewUnit{});
-    }
-    template <typename NewRep, typename NewUnit>
-    constexpr auto coerce_as(NewUnit) const {
-        // Usage example: `p.coerce_as<T>(new_units)`.
-        return as<NewRep>(NewUnit{});
-    }
-    template <typename NewUnit>
-    constexpr auto coerce_in(NewUnit) const {
-        // Usage example: `p.coerce_in(new_units)`.
-        return in<Rep>(NewUnit{});
-    }
-    template <typename NewRep, typename NewUnit>
-    constexpr auto coerce_in(NewUnit) const {
-        // Usage example: `p.coerce_in<T>(new_units)`.
-        return in<NewRep>(NewUnit{});
-    }
-
-    // Direct access to the underlying value member, with any Point-equivalent Unit.
-    //
-    // Mutable access, QuantityPointMaker input.
-    template <typename U>
-    Rep &data_in(const QuantityPointMaker<U> &) {
-        static_assert(AreUnitsPointEquivalent<U, Unit>::value,
-                      "Can only access value via Point-equivalent unit");
-        return x_.data_in(QuantityMaker<U>{});
-    }
-    // Mutable access, Unit input.
-    template <typename U>
-    Rep &data_in(const U &) {
-        return data_in(QuantityPointMaker<U>{});
-    }
-    // Const access, QuantityPointMaker input.
-    template <typename U>
-    const Rep &data_in(const QuantityPointMaker<U> &) const {
-        static_assert(AreUnitsPointEquivalent<U, Unit>::value,
-                      "Can only access value via Point-equivalent unit");
-        return x_.data_in(QuantityMaker<U>{});
-    }
-    // Const access, Unit input.
-    template <typename U>
-    const Rep &data_in(const U &) const {
-        return data_in(QuantityPointMaker<U>{});
-    }
-
-    // Comparison operators.
-    constexpr friend bool operator==(QuantityPoint a, QuantityPoint b) { return a.x_ == b.x_; }
-    constexpr friend bool operator!=(QuantityPoint a, QuantityPoint b) { return a.x_ != b.x_; }
-    constexpr friend bool operator>=(QuantityPoint a, QuantityPoint b) { return a.x_ >= b.x_; }
-    constexpr friend bool operator>(QuantityPoint a, QuantityPoint b) { return a.x_ > b.x_; }
-    constexpr friend bool operator<=(QuantityPoint a, QuantityPoint b) { return a.x_ <= b.x_; }
-    constexpr friend bool operator<(QuantityPoint a, QuantityPoint b) { return a.x_ < b.x_; }
-
-    // Subtraction between two QuantityPoint types.
-    constexpr friend Diff operator-(QuantityPoint a, QuantityPoint b) { return a.x_ - b.x_; }
-
-    // Left and right addition of a Diff.
-    constexpr friend auto operator+(Diff d, QuantityPoint p) { return QuantityPoint{d + p.x_}; }
-    constexpr friend auto operator+(QuantityPoint p, Diff d) { return QuantityPoint{p.x_ + d}; }
-
-    // Right subtraction of a Diff.
-    constexpr friend auto operator-(QuantityPoint p, Diff d) { return QuantityPoint{p.x_ - d}; }
-
-    // Short-hand addition assignment.
-    constexpr QuantityPoint &operator+=(Diff diff) {
-        x_ += diff;
-        return *this;
-    }
-
-    // Short-hand subtraction assignment.
-    constexpr QuantityPoint &operator-=(Diff diff) {
-        x_ -= diff;
-        return *this;
-    }
-
-    // Permit this factory functor to access our private constructor.
-    //
-    // We allow this because it explicitly names the unit at the callsite, even if people refer to
-    // this present Quantity type by an alias that omits the unit.  This preserves Unit Safety and
-    // promotes callsite readability.
-    friend struct QuantityPointMaker<Unit>;
-
- private:
-    constexpr explicit QuantityPoint(Diff x) : x_{x} {}
-
-    Diff x_;
-};
-
-template <typename Unit>
-struct QuantityPointMaker {
-    static constexpr auto unit = Unit{};
-
-    template <typename T>
-    constexpr auto operator()(T value) const {
-        return QuantityPoint<Unit, T>{make_quantity<Unit>(value)};
-    }
-
-    template <typename U, typename R>
-    constexpr void operator()(Quantity<U, R>) const {
-        constexpr bool is_not_a_quantity = detail::AlwaysFalse<U, R>::value;
-        static_assert(is_not_a_quantity, "Input to QuantityPointMaker is a Quantity");
-    }
-
-    template <typename U, typename R>
-    constexpr void operator()(QuantityPoint<U, R>) const {
-        constexpr bool is_not_already_a_quantity_point = detail::AlwaysFalse<U, R>::value;
-        static_assert(is_not_already_a_quantity_point,
-                      "Input to QuantityPointMaker is already a QuantityPoint");
-    }
-
-    template <typename... BPs>
-    constexpr auto operator*(Magnitude<BPs...> m) const {
-        return QuantityPointMaker<decltype(unit * m)>{};
-    }
-
-    template <typename... BPs>
-    constexpr auto operator/(Magnitude<BPs...> m) const {
-        return QuantityPointMaker<decltype(unit / m)>{};
-    }
-};
-
-template <typename U>
-struct AssociatedUnitForPoints<QuantityPointMaker<U>> : stdx::type_identity<U> {};
-
-// Provide nicer error messages when users try passing a `QuantityPoint` to a unit slot.
-template <typename U, typename R>
-struct AssociatedUnit<QuantityPoint<U, R>> {
-    static_assert(
-        detail::AlwaysFalse<U, R>::value,
-        "Cannot pass QuantityPoint to a unit slot (see: "
-        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
-};
-template <typename U, typename R>
-struct AssociatedUnitForPoints<QuantityPoint<U, R>> {
-    static_assert(
-        detail::AlwaysFalse<U, R>::value,
-        "Cannot pass QuantityPoint to a unit slot (see: "
-        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
-};
-
-// Type trait to detect whether two QuantityPoint types are equivalent.
-//
-// In this library, QuantityPoint types are "equivalent" exactly when they use the same Rep, and are
-// based on point-equivalent units.
-template <typename U1, typename U2, typename R1, typename R2>
-struct AreQuantityPointTypesEquivalent<QuantityPoint<U1, R1>, QuantityPoint<U2, R2>>
-    : stdx::conjunction<std::is_same<R1, R2>, AreUnitsPointEquivalent<U1, U2>> {};
-
-// Cast QuantityPoint to a different underlying type.
-template <typename NewRep, typename Unit, typename Rep>
-constexpr auto rep_cast(QuantityPoint<Unit, Rep> q) {
-    return q.template as<NewRep>(Unit{});
-}
-
-namespace detail {
-template <typename X, typename Y, typename Func>
-constexpr auto using_common_point_unit(X x, Y y, Func f) {
-    using R = std::common_type_t<typename X::Rep, typename Y::Rep>;
-    constexpr auto u = CommonPointUnitT<typename X::Unit, typename Y::Unit>{};
-    return f(rep_cast<R>(x).as(u), rep_cast<R>(y).as(u));
-}
-}  // namespace detail
-
-// Comparison functions for compatible QuantityPoint types.
-template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator<(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    return detail::using_common_point_unit(p1, p2, detail::less);
-}
-template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator>(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    return detail::using_common_point_unit(p1, p2, detail::greater);
-}
-template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator<=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    return detail::using_common_point_unit(p1, p2, detail::less_equal);
-}
-template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator>=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    return detail::using_common_point_unit(p1, p2, detail::greater_equal);
-}
-template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator==(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    return detail::using_common_point_unit(p1, p2, detail::equal);
-}
-template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator!=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    return detail::using_common_point_unit(p1, p2, detail::not_equal);
-}
-
-namespace detail {
-// Another subtlety arises when we mix QuantityPoint and Quantity in adding or subtracting.  We
-// actually don't want to use `CommonPointUnitT`, because this is too restrictive if the units have
-// different origins.  Imagine adding a `Quantity<Kelvins>` to a `QuantityPoint<Celsius>`---we
-// wouldn't want this to subdivide the unit of measure to satisfy an additive relative offset which
-// we will never actually use!
-//
-// The solution is to set the (unused!) origin of the `Quantity` unit to the same as the
-// `QuantityPoint` unit.  Once we do, everything flows simply from there.
-//
-// This utility should be used for every overload below which combines a `QuantityPoint` with a
-// `Quantity`.
-template <typename Target, typename U>
-constexpr auto borrow_origin(U u) {
-    return Target{} * unit_ratio(u, Target{});
-}
-}  // namespace detail
-
-// Addition and subtraction functions for compatible QuantityPoint types.
-template <typename UnitP, typename UnitQ, typename RepP, typename RepQ>
-constexpr auto operator+(QuantityPoint<UnitP, RepP> p, Quantity<UnitQ, RepQ> q) {
-    constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
-    return detail::using_common_point_unit(p, q.as(new_unit_q), detail::plus);
-}
-template <typename UnitQ, typename UnitP, typename RepQ, typename RepP>
-constexpr auto operator+(Quantity<UnitQ, RepQ> q, QuantityPoint<UnitP, RepP> p) {
-    constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
-    return detail::using_common_point_unit(q.as(new_unit_q), p, detail::plus);
-}
-template <typename UnitP, typename UnitQ, typename R1, typename RepQ>
-constexpr auto operator-(QuantityPoint<UnitP, R1> p, Quantity<UnitQ, RepQ> q) {
-    constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
-    return detail::using_common_point_unit(p, q.as(new_unit_q), detail::minus);
-}
-template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator-(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    return detail::using_common_point_unit(p1, p2, detail::minus);
-}
-
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
-template <typename U1, typename R1, typename U2, typename R2>
-constexpr auto operator<=>(const QuantityPoint<U1, R1> &lhs, const QuantityPoint<U2, R2> &rhs) {
-    using U = CommonPointUnitT<U1, U2>;
-    return lhs.in(U{}) <=> rhs.in(U{});
-}
-#endif
-
-namespace detail {
-
-template <typename TargetRep, typename U, typename R>
-constexpr bool underlying_value_in_range(Quantity<U, R> q) {
-    return stdx::in_range<TargetRep>(q.in(U{}));
-}
-
-template <typename TargetRep>
-constexpr bool underlying_value_in_range(Zero) {
-    return true;
-}
-
-template <typename TargetRep, typename U1, typename U2>
-struct OriginDisplacementFitsIn
-    : std::conditional_t<std::is_integral<TargetRep>::value,
-                         stdx::bool_constant<underlying_value_in_range<TargetRep>(
-                             OriginDisplacement<U1, U2>::value())>,
-                         std::true_type> {};
-
-// We simply want a version of `std::make_signed_t` that won't choke on non-integral types.
-template <typename T, bool IsInt = std::is_integral<T>::value>
-struct MakeSigned;
-template <typename T>
-struct MakeSigned<T, false> : stdx::type_identity<T> {};
-template <typename T>
-struct MakeSigned<T, true> : stdx::type_identity<std::make_signed_t<T>> {};
-
-// If the destination is a signed integer, we want to ensure we do our
-// computations in a signed type.  Otherwise, just use the common type for our
-// intermediate computations.
-template <typename CommonT, bool IsDestinationSigned>
-struct IntermediateRepImpl
-    : std::conditional_t<stdx::conjunction<std::is_integral<CommonT>,
-                                           stdx::bool_constant<IsDestinationSigned>>::value,
-                         MakeSigned<CommonT>,
-                         stdx::type_identity<CommonT>> {};
-
-template <typename FromRep, typename ToRep>
-struct IntermediateRep
-    : IntermediateRepImpl<std::common_type_t<FromRep, ToRep>, std::is_signed<ToRep>::value> {};
-
-}  // namespace detail
-}  // namespace au
-
 // Keep corresponding `_fwd.hh` file on top.
 
 
@@ -7270,6 +6830,420 @@ constexpr Zero make_constant(Zero) { return {}; }
 template <typename Unit>
 struct AssociatedUnit<Constant<Unit>> : stdx::type_identity<Unit> {};
 
+}  // namespace au
+
+
+namespace au {
+
+// `QuantityPoint`: an _affine space type_ modeling points on a line.
+//
+// For a quick primer on affine space types, see: http://videocortex.io/2018/Affine-Space-Types/
+//
+// By "modeling points", we mean that `QuantityPoint` instances cannot be added to each other, and
+// cannot be multiplied.  However, they can be subtracted: the difference between two
+// `QuantityPoint` instances (of the same Unit) is a `Quantity` of that unit.  We can also add a
+// `Quantity` to a `QuantityPoint`, and vice versa; the result is a new `QuantityPoint`.
+//
+// Key motivating examples include _mile markers_ (effectively `QuantityPoint<Miles, T>`), and
+// _absolute temperature measurements_ (e.g., `QuantityPoint<Celsius, T>`).  This type is also
+// analogous to `std::chrono::time_point`, in the same way that `Quantity` is analogous to
+// `std::chrono::duration`.
+
+// Make a Quantity of the given Unit, which has this value as measured in the Unit.
+template <typename UnitT, typename T>
+constexpr auto make_quantity_point(T value) {
+    return QuantityPointMaker<UnitT>{}(value);
+}
+
+// Trait to check whether two QuantityPoint types are exactly equivalent.
+template <typename P1, typename P2>
+struct AreQuantityPointTypesEquivalent;
+
+namespace detail {
+template <typename U, typename R, typename ConstUnit>
+constexpr Quantity<U, R> coerce_as_quantity(Constant<ConstUnit> c) {
+    return c.template coerce_as<R>(U{});
+}
+template <typename U, typename R>
+constexpr Quantity<U, R> coerce_as_quantity(Zero z) {
+    return z;
+}
+
+template <typename FromRep, typename ToRep>
+struct IntermediateRep;
+}  // namespace detail
+
+// Some units have an "origin".  This is not meaningful by itself, but its difference w.r.t. the
+// "origin" of another unit of the same Dimension _is_ meaningful.  This type trait provides access
+// to that difference.
+template <typename U1, typename U2>
+constexpr auto origin_displacement(U1, U2) {
+    return make_constant(detail::ComputeOriginDisplacementUnit<AssociatedUnitForPointsT<U1>,
+                                                               AssociatedUnitForPointsT<U2>>{});
+}
+
+template <typename U1, typename U2>
+using OriginDisplacement = decltype(origin_displacement(U1{}, U2{}));
+
+// QuantityPoint implementation and API elaboration.
+template <typename UnitT, typename RepT>
+class QuantityPoint {
+    // Q: When should we enable IMPLICIT construction from another QuantityPoint type?
+    // A: EXACTLY WHEN our own Diff type can be IMPLICITLY constructed from BOTH the target's Diff
+    //    type AND the offset between our Units' zero points.
+    //
+    // In other words, there are two ways to fail implicit convertibility.
+    //
+    //   1. Their Diff type might not work with our Rep.  Examples:
+    //      BAD: QuantityPoint<Milli<Meters>, int> -> QuantityPoint<Meters, int>
+    //      OK : QuantityPoint<Kilo<Meters> , int> -> QuantityPoint<Meters, int>
+    //
+    //   2. Their zero point might be offset from ours by a non-representable amount.  Examples:
+    //      BAD: QuantityPoint<Celsius, int> -> QuantityPoint<Kelvins, int>
+    //      OK : QuantityPoint<Celsius, int> -> QuantityPoint<Kelvins, double>
+    //      OK : QuantityPoint<Celsius, int> -> QuantityPoint<Milli<Kelvins>, int>
+    template <typename OtherUnit, typename OtherRep>
+    static constexpr bool should_enable_implicit_construction_from() {
+        using Com = CommonUnitT<OtherUnit, detail::ComputeOriginDisplacementUnit<Unit, OtherUnit>>;
+        return std::is_convertible<Quantity<Com, OtherRep>, QuantityPoint::Diff>::value;
+    }
+
+    // This machinery exists to give us a conditionally explicit constructor, using SFINAE to select
+    // the explicit or implicit version (https://stackoverflow.com/a/26949793/15777264).  If we had
+    // C++20, we could use the `explicit(bool)` feature, making this code simpler and faster.
+    template <bool ImplicitOk, typename OtherUnit, typename OtherRep>
+    using EnableIfImplicitOkIs = std::enable_if_t<
+        ImplicitOk ==
+        QuantityPoint::should_enable_implicit_construction_from<OtherUnit, OtherRep>()>;
+
+ public:
+    using Rep = RepT;
+    using Unit = UnitT;
+    static constexpr Unit unit{};
+    using Diff = Quantity<Unit, Rep>;
+
+    // The default constructor produces a QuantityPoint in a valid but contractually unspecified
+    // state.  It exists to give you an object you can assign to.  The main motivating factor for
+    // including this is to support `std::atomic`, which requires its types to be
+    // default-constructible.
+    constexpr QuantityPoint() noexcept : x_{ZERO} {}
+
+    template <typename OtherUnit,
+              typename OtherRep,
+              typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>>
+    constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
+        : QuantityPoint{other.template as<Rep>(unit)} {}
+
+    template <typename OtherUnit,
+              typename OtherRep,
+              typename Enable = EnableIfImplicitOkIs<false, OtherUnit, OtherRep>,
+              typename ThisUnusedTemplateParameterDistinguishesUsFromTheAboveConstructor = void>
+    // Deleted: use `.as<NewRep>(new_unit)` to force a cast.
+    constexpr explicit QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other) = delete;
+
+    // The notion of "0" is *not* unambiguous for point types, because different scales can make
+    // different decisions about what point is labeled as "0".
+    constexpr QuantityPoint(Zero) = delete;
+
+    template <typename NewRep,
+              typename NewUnit,
+              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
+    constexpr auto as(NewUnit u) const {
+        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(this->template in<NewRep>(u));
+    }
+
+    template <typename NewUnit,
+              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
+    constexpr auto as(NewUnit u) const {
+        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in(u));
+    }
+
+    template <typename NewRep,
+              typename NewUnit,
+              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
+    constexpr NewRep in(NewUnit) const {
+        using CalcRep = typename detail::IntermediateRep<Rep, NewRep>::type;
+        using Target = AssociatedUnitForPointsT<NewUnit>;
+        return (x_.template as<CalcRep>(Target{}) +
+                detail::coerce_as_quantity<Target, CalcRep>(origin_displacement(Target{}, Unit{})))
+            .template in<NewRep>(Target{});
+    }
+
+    template <typename NewUnit,
+              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
+    constexpr Rep in(NewUnit) const {
+        constexpr auto target = AssociatedUnitForPointsT<NewUnit>{};
+
+        // The explicit `<Rep>` is needed because if these are integral types, their difference
+        // might become a different type due to integer promotion.
+        return (x_.as(target) + origin_displacement(target, Unit{})).template in<Rep>(target);
+    }
+
+    // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
+    template <typename NewUnit>
+    constexpr auto coerce_as(NewUnit) const {
+        // Usage example: `p.coerce_as(new_units)`.
+        return as<Rep>(NewUnit{});
+    }
+    template <typename NewRep, typename NewUnit>
+    constexpr auto coerce_as(NewUnit) const {
+        // Usage example: `p.coerce_as<T>(new_units)`.
+        return as<NewRep>(NewUnit{});
+    }
+    template <typename NewUnit>
+    constexpr auto coerce_in(NewUnit) const {
+        // Usage example: `p.coerce_in(new_units)`.
+        return in<Rep>(NewUnit{});
+    }
+    template <typename NewRep, typename NewUnit>
+    constexpr auto coerce_in(NewUnit) const {
+        // Usage example: `p.coerce_in<T>(new_units)`.
+        return in<NewRep>(NewUnit{});
+    }
+
+    // Direct access to the underlying value member, with any Point-equivalent Unit.
+    //
+    // Mutable access, QuantityPointMaker input.
+    template <typename U>
+    Rep &data_in(const QuantityPointMaker<U> &) {
+        static_assert(AreUnitsPointEquivalent<U, Unit>::value,
+                      "Can only access value via Point-equivalent unit");
+        return x_.data_in(QuantityMaker<U>{});
+    }
+    // Mutable access, Unit input.
+    template <typename U>
+    Rep &data_in(const U &) {
+        return data_in(QuantityPointMaker<U>{});
+    }
+    // Const access, QuantityPointMaker input.
+    template <typename U>
+    const Rep &data_in(const QuantityPointMaker<U> &) const {
+        static_assert(AreUnitsPointEquivalent<U, Unit>::value,
+                      "Can only access value via Point-equivalent unit");
+        return x_.data_in(QuantityMaker<U>{});
+    }
+    // Const access, Unit input.
+    template <typename U>
+    const Rep &data_in(const U &) const {
+        return data_in(QuantityPointMaker<U>{});
+    }
+
+    // Comparison operators.
+    constexpr friend bool operator==(QuantityPoint a, QuantityPoint b) { return a.x_ == b.x_; }
+    constexpr friend bool operator!=(QuantityPoint a, QuantityPoint b) { return a.x_ != b.x_; }
+    constexpr friend bool operator>=(QuantityPoint a, QuantityPoint b) { return a.x_ >= b.x_; }
+    constexpr friend bool operator>(QuantityPoint a, QuantityPoint b) { return a.x_ > b.x_; }
+    constexpr friend bool operator<=(QuantityPoint a, QuantityPoint b) { return a.x_ <= b.x_; }
+    constexpr friend bool operator<(QuantityPoint a, QuantityPoint b) { return a.x_ < b.x_; }
+
+    // Subtraction between two QuantityPoint types.
+    constexpr friend Diff operator-(QuantityPoint a, QuantityPoint b) { return a.x_ - b.x_; }
+
+    // Left and right addition of a Diff.
+    constexpr friend auto operator+(Diff d, QuantityPoint p) { return QuantityPoint{d + p.x_}; }
+    constexpr friend auto operator+(QuantityPoint p, Diff d) { return QuantityPoint{p.x_ + d}; }
+
+    // Right subtraction of a Diff.
+    constexpr friend auto operator-(QuantityPoint p, Diff d) { return QuantityPoint{p.x_ - d}; }
+
+    // Short-hand addition assignment.
+    constexpr QuantityPoint &operator+=(Diff diff) {
+        x_ += diff;
+        return *this;
+    }
+
+    // Short-hand subtraction assignment.
+    constexpr QuantityPoint &operator-=(Diff diff) {
+        x_ -= diff;
+        return *this;
+    }
+
+    // Permit this factory functor to access our private constructor.
+    //
+    // We allow this because it explicitly names the unit at the callsite, even if people refer to
+    // this present Quantity type by an alias that omits the unit.  This preserves Unit Safety and
+    // promotes callsite readability.
+    friend struct QuantityPointMaker<Unit>;
+
+ private:
+    constexpr explicit QuantityPoint(Diff x) : x_{x} {}
+
+    Diff x_;
+};
+
+template <typename Unit>
+struct QuantityPointMaker {
+    static constexpr auto unit = Unit{};
+
+    template <typename T>
+    constexpr auto operator()(T value) const {
+        return QuantityPoint<Unit, T>{make_quantity<Unit>(value)};
+    }
+
+    template <typename U, typename R>
+    constexpr void operator()(Quantity<U, R>) const {
+        constexpr bool is_not_a_quantity = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_a_quantity, "Input to QuantityPointMaker is a Quantity");
+    }
+
+    template <typename U, typename R>
+    constexpr void operator()(QuantityPoint<U, R>) const {
+        constexpr bool is_not_already_a_quantity_point = detail::AlwaysFalse<U, R>::value;
+        static_assert(is_not_already_a_quantity_point,
+                      "Input to QuantityPointMaker is already a QuantityPoint");
+    }
+
+    template <typename... BPs>
+    constexpr auto operator*(Magnitude<BPs...> m) const {
+        return QuantityPointMaker<decltype(unit * m)>{};
+    }
+
+    template <typename... BPs>
+    constexpr auto operator/(Magnitude<BPs...> m) const {
+        return QuantityPointMaker<decltype(unit / m)>{};
+    }
+};
+
+template <typename U>
+struct AssociatedUnitForPoints<QuantityPointMaker<U>> : stdx::type_identity<U> {};
+
+// Provide nicer error messages when users try passing a `QuantityPoint` to a unit slot.
+template <typename U, typename R>
+struct AssociatedUnit<QuantityPoint<U, R>> {
+    static_assert(
+        detail::AlwaysFalse<U, R>::value,
+        "Cannot pass QuantityPoint to a unit slot (see: "
+        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+};
+template <typename U, typename R>
+struct AssociatedUnitForPoints<QuantityPoint<U, R>> {
+    static_assert(
+        detail::AlwaysFalse<U, R>::value,
+        "Cannot pass QuantityPoint to a unit slot (see: "
+        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+};
+
+// Type trait to detect whether two QuantityPoint types are equivalent.
+//
+// In this library, QuantityPoint types are "equivalent" exactly when they use the same Rep, and are
+// based on point-equivalent units.
+template <typename U1, typename U2, typename R1, typename R2>
+struct AreQuantityPointTypesEquivalent<QuantityPoint<U1, R1>, QuantityPoint<U2, R2>>
+    : stdx::conjunction<std::is_same<R1, R2>, AreUnitsPointEquivalent<U1, U2>> {};
+
+// Cast QuantityPoint to a different underlying type.
+template <typename NewRep, typename Unit, typename Rep>
+constexpr auto rep_cast(QuantityPoint<Unit, Rep> q) {
+    return q.template as<NewRep>(Unit{});
+}
+
+namespace detail {
+template <typename X, typename Y, typename Func>
+constexpr auto using_common_point_unit(X x, Y y, Func f) {
+    using R = std::common_type_t<typename X::Rep, typename Y::Rep>;
+    constexpr auto u = CommonPointUnitT<typename X::Unit, typename Y::Unit>{};
+    return f(rep_cast<R>(x).as(u), rep_cast<R>(y).as(u));
+}
+}  // namespace detail
+
+// Comparison functions for compatible QuantityPoint types.
+template <typename U1, typename U2, typename R1, typename R2>
+constexpr auto operator<(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+    return detail::using_common_point_unit(p1, p2, detail::less);
+}
+template <typename U1, typename U2, typename R1, typename R2>
+constexpr auto operator>(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+    return detail::using_common_point_unit(p1, p2, detail::greater);
+}
+template <typename U1, typename U2, typename R1, typename R2>
+constexpr auto operator<=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+    return detail::using_common_point_unit(p1, p2, detail::less_equal);
+}
+template <typename U1, typename U2, typename R1, typename R2>
+constexpr auto operator>=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+    return detail::using_common_point_unit(p1, p2, detail::greater_equal);
+}
+template <typename U1, typename U2, typename R1, typename R2>
+constexpr auto operator==(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+    return detail::using_common_point_unit(p1, p2, detail::equal);
+}
+template <typename U1, typename U2, typename R1, typename R2>
+constexpr auto operator!=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+    return detail::using_common_point_unit(p1, p2, detail::not_equal);
+}
+
+namespace detail {
+// Another subtlety arises when we mix QuantityPoint and Quantity in adding or subtracting.  We
+// actually don't want to use `CommonPointUnitT`, because this is too restrictive if the units have
+// different origins.  Imagine adding a `Quantity<Kelvins>` to a `QuantityPoint<Celsius>`---we
+// wouldn't want this to subdivide the unit of measure to satisfy an additive relative offset which
+// we will never actually use!
+//
+// The solution is to set the (unused!) origin of the `Quantity` unit to the same as the
+// `QuantityPoint` unit.  Once we do, everything flows simply from there.
+//
+// This utility should be used for every overload below which combines a `QuantityPoint` with a
+// `Quantity`.
+template <typename Target, typename U>
+constexpr auto borrow_origin(U u) {
+    return Target{} * unit_ratio(u, Target{});
+}
+}  // namespace detail
+
+// Addition and subtraction functions for compatible QuantityPoint types.
+template <typename UnitP, typename UnitQ, typename RepP, typename RepQ>
+constexpr auto operator+(QuantityPoint<UnitP, RepP> p, Quantity<UnitQ, RepQ> q) {
+    constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
+    return detail::using_common_point_unit(p, q.as(new_unit_q), detail::plus);
+}
+template <typename UnitQ, typename UnitP, typename RepQ, typename RepP>
+constexpr auto operator+(Quantity<UnitQ, RepQ> q, QuantityPoint<UnitP, RepP> p) {
+    constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
+    return detail::using_common_point_unit(q.as(new_unit_q), p, detail::plus);
+}
+template <typename UnitP, typename UnitQ, typename R1, typename RepQ>
+constexpr auto operator-(QuantityPoint<UnitP, R1> p, Quantity<UnitQ, RepQ> q) {
+    constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
+    return detail::using_common_point_unit(p, q.as(new_unit_q), detail::minus);
+}
+template <typename U1, typename U2, typename R1, typename R2>
+constexpr auto operator-(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+    return detail::using_common_point_unit(p1, p2, detail::minus);
+}
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+template <typename U1, typename R1, typename U2, typename R2>
+constexpr auto operator<=>(const QuantityPoint<U1, R1> &lhs, const QuantityPoint<U2, R2> &rhs) {
+    using U = CommonPointUnitT<U1, U2>;
+    return lhs.in(U{}) <=> rhs.in(U{});
+}
+#endif
+
+namespace detail {
+
+// We simply want a version of `std::make_signed_t` that won't choke on non-integral types.
+template <typename T, bool IsInt = std::is_integral<T>::value>
+struct MakeSigned;
+template <typename T>
+struct MakeSigned<T, false> : stdx::type_identity<T> {};
+template <typename T>
+struct MakeSigned<T, true> : stdx::type_identity<std::make_signed_t<T>> {};
+
+// If the destination is a signed integer, we want to ensure we do our
+// computations in a signed type.  Otherwise, just use the common type for our
+// intermediate computations.
+template <typename CommonT, bool IsDestinationSigned>
+struct IntermediateRepImpl
+    : std::conditional_t<stdx::conjunction<std::is_integral<CommonT>,
+                                           stdx::bool_constant<IsDestinationSigned>>::value,
+                         MakeSigned<CommonT>,
+                         stdx::type_identity<CommonT>> {};
+
+template <typename FromRep, typename ToRep>
+struct IntermediateRep
+    : IntermediateRepImpl<std::common_type_t<FromRep, ToRep>, std::is_signed<ToRep>::value> {};
+
+}  // namespace detail
 }  // namespace au
 
 

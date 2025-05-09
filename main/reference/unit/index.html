@@ -2710,6 +2710,26 @@ observable.  However, the <em>displacement</em> from one unit&rsquo;s origin to 
 that is what this trait produces.</p>
 <p>For example, the origin displacement from <code>Kelvins</code> to <code>Celsius</code> is equivalent to
 <span class="arithmatex"><span class="MathJax_Preview">273.15 \,\text{K}</span><script type="math/tex">273.15 \,\text{K}</script></span>.</p>
+<p>Rather than returning a <code>Quantity</code>, we return a &ldquo;shapeshifter&rdquo; type: that is, a <a href="../detail/monovalue_types/">monovalue
+type</a> that can <em>initialize</em> any appropriate <code>Quantity</code> type.  The
+conversion will succeed if and only if the value can be represented in the target <code>Quantity</code> without
+overflow or truncation &mdash; and if it fails, it will fail <em>at compile time</em>.  The specific
+shapeshifter type we return will be:</p>
+<ul>
+<li><a href="../zero/">Zero</a> if the origins of the two units coincide; or,</li>
+<li><a href="../constant/">Constant</a> if they differ.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Au 0.4.1 was the last release where the <code>OriginDisplacement</code> trait could be found in
+<code>"au/unit_of_measure.hh"</code>, along with all of the other traits documented here.  For all
+subsequent releases, it can be found in <code>"au/quantity_point.hh"</code>.</p>
+<p>The reason we moved it was because <code>"au/constant.hh"</code> (which defines <code>Constant</code>) depends on
+<code>"au/quantity.hh"</code>, which in turn depends on <code>"au/unit_of_measure.hh"</code>.  Therefore, we could
+never have used <code>Constant</code> inside of <code>"au/unit_of_measure.hh"</code>.  However,
+<code>"au/quantity_point.hh"</code> <em>could</em> depend on <code>"au/constant.hh"</code>.  Origin displacements aren&rsquo;t very
+useful without <code>QuantityPoint</code> anyway, so this new home is acceptable.</p>
+</div>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For <em>types</em> <code>U1</code> and <code>U2</code>:<ul>
