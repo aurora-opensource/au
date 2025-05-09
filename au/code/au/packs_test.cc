@@ -378,7 +378,7 @@ TEST(AreAllPowersNonzero, AllMustSatisfyForMultiElementPack) {
         IsFalse());
 }
 
-namespace detail {
+namespace auimpl {
 
 TEST(SimplifyBasePowersT, SimplifiesEachIndividualBasePower) {
     StaticAssertTypeEq<SimplifyBasePowersT<Pack<B<2>,                      // A. Leave alone.
@@ -425,5 +425,5 @@ TEST(DenominatorPartT, PullsOutAndInvertsNegativePowers) {
                        Pack<Pow<B<3>, 6>, Pow<B<5>, 3>>>();
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

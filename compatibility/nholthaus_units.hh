@@ -38,7 +38,7 @@
 
 namespace au {
 
-namespace detail {
+namespace auimpl {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // This utility lets us extract a single template parameter.
@@ -214,7 +214,7 @@ struct NholthausUnitType;
 template <class U, class R, template <class> class S>
 struct NholthausUnitType<units::unit_t<U, R, S>> : stdx::type_identity<U> {};
 
-}  // namespace detail
+}  // namespace auimpl
 
 // Define 1:1 mapping from each nholthaus type to its corresponding `au::Quantity` type.
 template <class R, class RationalScale, class BaseUnit, class PiPower>
@@ -222,10 +222,10 @@ struct CorrespondingQuantity<
     units::unit_t<units::unit<RationalScale, BaseUnit, PiPower, std::ratio<0>>,
                   R,
                   units::linear_scale>> {
-    using NholthausType = typename detail::SoleTemplateParameter<CorrespondingQuantity>::type;
-    using NholthausUnit = typename detail::NholthausUnitType<NholthausType>::type;
+    using NholthausType = typename auimpl::SoleTemplateParameter<CorrespondingQuantity>::type;
+    using NholthausUnit = typename auimpl::NholthausUnitType<NholthausType>::type;
 
-    using Unit = typename detail::AuUnit<NholthausUnit>::type;
+    using Unit = typename auimpl::AuUnit<NholthausUnit>::type;
     using Rep = R;
 
     static constexpr Rep extract_value(NholthausType d) { return d.template to<Rep>(); }
@@ -239,9 +239,9 @@ struct CorrespondingQuantity<
     units::unit_t<units::unit<RationalScale, units::base_unit<>, std::ratio<0>, std::ratio<0>>,
                   R,
                   units::linear_scale>> {
-    using NholthausType = typename detail::SoleTemplateParameter<CorrespondingQuantity>::type;
-    using NholthausUnit = typename detail::NholthausUnitType<NholthausType>::type;
-    using Mag = detail::NholthausUnitMagT<NholthausUnit>;
+    using NholthausType = typename auimpl::SoleTemplateParameter<CorrespondingQuantity>::type;
+    using NholthausUnit = typename auimpl::NholthausUnitType<NholthausType>::type;
+    using Mag = auimpl::NholthausUnitMagT<NholthausUnit>;
 
     using Unit = UnitImpl<Dimension<>, Mag>;
     using Rep = R;

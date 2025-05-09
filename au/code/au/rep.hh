@@ -49,7 +49,7 @@ struct IsQuotientValidRep;
 // Implementation details below.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace detail {
+namespace auimpl {
 template <typename T>
 struct IsAuType : std::false_type {};
 
@@ -121,21 +121,21 @@ using QuotientType = decltype(std::declval<T>() / std::declval<U>());
 
 template <typename T, typename U>
 using QuotientTypeOrVoid = stdx::experimental::detected_or_t<void, QuotientType, T, U>;
-}  // namespace detail
+}  // namespace auimpl
 
 // Implementation for `IsValidRep`.
 //
 // For now, we'll accept anything that isn't explicitly known to be invalid.  We may tighten this up
 // later, but this seems like a reasonable starting point.
 template <typename T>
-struct IsValidRep : stdx::negation<detail::IsKnownInvalidRep<T>> {};
+struct IsValidRep : stdx::negation<auimpl::IsKnownInvalidRep<T>> {};
 
 template <typename T, typename U>
 struct IsProductValidRep
-    : IsValidRep<detail::ResultIfNoneAreQuantityT<detail::ProductTypeOrVoid, T, U>> {};
+    : IsValidRep<auimpl::ResultIfNoneAreQuantityT<auimpl::ProductTypeOrVoid, T, U>> {};
 
 template <typename T, typename U>
 struct IsQuotientValidRep
-    : IsValidRep<detail::ResultIfNoneAreQuantityT<detail::QuotientTypeOrVoid, T, U>> {};
+    : IsValidRep<auimpl::ResultIfNoneAreQuantityT<auimpl::QuotientTypeOrVoid, T, U>> {};
 
 }  // namespace au

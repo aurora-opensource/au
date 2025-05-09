@@ -26,7 +26,7 @@ using ::testing::Lt;
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
-namespace detail {
+namespace auimpl {
 namespace {
 
 template <typename... BPs>
@@ -432,5 +432,5 @@ TEST(MinNonOverflowingValue, IsTMinOverNTimesDWhenMoreConstrainingThanPMinOverN)
 }
 
 }  // namespace
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

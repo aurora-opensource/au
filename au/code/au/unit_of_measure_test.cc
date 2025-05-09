@@ -30,8 +30,8 @@
 
 namespace au {
 
-using ::au::detail::DimT;
-using ::au::detail::MagT;
+using ::au::auimpl::DimT;
+using ::au::auimpl::MagT;
 using ::testing::AnyOf;
 using ::testing::Eq;
 using ::testing::IsFalse;
@@ -115,7 +115,7 @@ TEST(Unit, OriginRetainedForProductWithMagnitudeButNotWithUnit) {
 
     constexpr auto scaled_by_unit = UnitWithOrigin{} * One{};
     EXPECT_THAT(
-        (stdx::experimental::is_detected<detail::OriginMemberType, decltype(scaled_by_unit)>{}),
+        (stdx::experimental::is_detected<auimpl::OriginMemberType, decltype(scaled_by_unit)>{}),
         IsFalse());
 }
 
@@ -373,7 +373,7 @@ TEST(AreUnitsQuantityEquivalent, InequivalentUnitCanBeMadeEquivalentByAppropriat
     EXPECT_THAT((AreUnitsQuantityEquivalent<Feet, Inches>::value), IsFalse());
 
     using Stretchedinches = decltype(Inches{} * unit_ratio(Feet{}, Inches{}));
-    ASSERT_THAT((detail::SameTypeIgnoringCvref<Feet, Stretchedinches>::value), IsFalse());
+    ASSERT_THAT((auimpl::SameTypeIgnoringCvref<Feet, Stretchedinches>::value), IsFalse());
     EXPECT_THAT((AreUnitsQuantityEquivalent<Feet, Stretchedinches>::value), IsTrue());
 }
 
@@ -398,7 +398,7 @@ TEST(AreUnitsPointEquivalent, InequivalentUnitCanBeMadeEquivalentByAppropriateSc
     EXPECT_THAT((AreUnitsPointEquivalent<Feet, Inches>::value), IsFalse());
 
     using Stretchedinches = decltype(Inches{} * unit_ratio(Feet{}, Inches{}));
-    ASSERT_THAT((detail::SameTypeIgnoringCvref<Feet, Stretchedinches>::value), IsFalse());
+    ASSERT_THAT((auimpl::SameTypeIgnoringCvref<Feet, Stretchedinches>::value), IsFalse());
     EXPECT_THAT((AreUnitsPointEquivalent<Feet, Stretchedinches>::value), IsTrue());
 }
 
@@ -436,7 +436,7 @@ struct OffsetCelsius : Celsius {
     // be in units of [(1/3000) K].  However, the difference should boil down to a constant of
     // exactly (5/3 K)
     static constexpr auto origin() {
-        return detail::OriginOf<Celsius>::value() + (kelvins / mag<6>())(10);
+        return auimpl::OriginOf<Celsius>::value() + (kelvins / mag<6>())(10);
     }
     static constexpr const char label[] = "offset_deg_C";
 };
@@ -511,13 +511,13 @@ struct Z : decltype(Inches{} * mag<7>()) {};
 
 TEST(CommonUnit, UnpacksTypesInNestedCommonUnit) {
     using C1 = CommonUnitT<W, X>;
-    ASSERT_THAT((detail::IsPackOf<CommonUnit, C1>{}), IsTrue());
+    ASSERT_THAT((auimpl::IsPackOf<CommonUnit, C1>{}), IsTrue());
 
     using C2 = CommonUnitT<Y, Z>;
-    ASSERT_THAT((detail::IsPackOf<CommonUnit, C2>{}), IsTrue());
+    ASSERT_THAT((auimpl::IsPackOf<CommonUnit, C2>{}), IsTrue());
 
     using Common = CommonUnitT<C1, C2>;
-    ASSERT_THAT((detail::IsPackOf<CommonUnit, Common>{}), IsTrue());
+    ASSERT_THAT((auimpl::IsPackOf<CommonUnit, Common>{}), IsTrue());
 
     // Check that `c(c(w, x), c(y, z))` is the same as `c(w, x, y, z)`.
     StaticAssertTypeEq<Common, CommonUnitT<W, X, Y, Z>>();
@@ -569,13 +569,13 @@ TEST(CommonPointUnit, PrefersUnitFromListIfAnyIdentical) {
 
 TEST(CommonPointUnit, UnpacksTypesInNestedCommonUnit) {
     using C1 = CommonPointUnitT<W, X>;
-    ASSERT_THAT((detail::IsPackOf<CommonPointUnit, C1>{}), IsTrue());
+    ASSERT_THAT((auimpl::IsPackOf<CommonPointUnit, C1>{}), IsTrue());
 
     using C2 = CommonPointUnitT<Y, Z>;
-    ASSERT_THAT((detail::IsPackOf<CommonPointUnit, C2>{}), IsTrue());
+    ASSERT_THAT((auimpl::IsPackOf<CommonPointUnit, C2>{}), IsTrue());
 
     using Common = CommonPointUnitT<C1, C2>;
-    ASSERT_THAT((detail::IsPackOf<CommonPointUnit, Common>{}), IsTrue());
+    ASSERT_THAT((auimpl::IsPackOf<CommonPointUnit, Common>{}), IsTrue());
 
     // Check that `c(c(w, x), c(y, z))` is the same as `c(w, x, y, z)`.
     StaticAssertTypeEq<Common, CommonPointUnitT<W, X, Y, Z>>();
@@ -590,7 +590,7 @@ TEST(MakeCommon, PreservesCategory) {
     constexpr auto feeters = make_common(feet, meters);
     EXPECT_THAT(feet(1u) % feeters(1u), Eq(ZERO));
     EXPECT_THAT(meters(1u) % feeters(1u), Eq(ZERO));
-    EXPECT_THAT(detail::gcd(feet(1u).in(feeters), meters(1u).in(feeters)), Eq(1u));
+    EXPECT_THAT(auimpl::gcd(feet(1u).in(feeters), meters(1u).in(feeters)), Eq(1u));
 
     using symbols::ft;
     using symbols::m;
@@ -773,7 +773,7 @@ TEST(UnitLabel, CommonUnitOfCommonPointUnitsPerformsFlattening) {
 
 TEST(UnitLabel, APICompatibleWithUnitSlots) { EXPECT_THAT(unit_label(feet), StrEq("ft")); }
 
-namespace detail {
+namespace auimpl {
 
 TEST(Origin, ZeroForUnitWithNoSpecifiedOrigin) {
     EXPECT_THAT(OriginOf<Kelvins>::value(), SameTypeAndValue(ZERO));
@@ -884,5 +884,5 @@ TEST(SimplifyIfOnlyOneUnscaledUnit, IdentityForNonCommonUnit) {
                        decltype(Feet{} * mag<3>())>();
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

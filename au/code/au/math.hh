@@ -43,7 +43,7 @@ using std::sin;
 using std::sqrt;
 using std::tan;
 
-namespace detail {
+namespace auimpl {
 
 // This utility handles converting Quantity to Radians in a uniform way, while also giving a more
 // direct error message via the static_assert if users make a coding error and pass the wrong type.
@@ -115,7 +115,7 @@ struct RoundingRep<Quantity<U, R>, RoundingUnits> {
 template <typename U, typename R, typename RoundingUnits>
 struct RoundingRep<QuantityPoint<U, R>, RoundingUnits>
     : RoundingRep<Quantity<U, R>, RoundingUnits> {};
-}  // namespace detail
+}  // namespace auimpl
 
 // The absolute value of a Quantity.
 template <typename U, typename R>
@@ -207,7 +207,7 @@ constexpr auto copysign(Quantity<U1, R1> mag, Quantity<U2, R2> sgn) {
 // Wrapper for std::cos() which accepts a strongly typed angle quantity.
 template <typename U, typename R>
 auto cos(Quantity<U, R> q) {
-    return std::cos(detail::in_radians(q));
+    return std::cos(auimpl::in_radians(q));
 }
 
 // The floating point remainder of two values of the same dimension.
@@ -224,7 +224,7 @@ constexpr auto int_pow(Quantity<U, R> q) {
     static_assert((!std::is_integral<R>::value) || (Exp >= 0),
                   "Negative exponent on integral represented units are not supported.");
 
-    return make_quantity<UnitPowerT<U, Exp>>(detail::int_pow_impl(q.in(U{}), Exp));
+    return make_quantity<UnitPowerT<U, Exp>>(auimpl::int_pow_impl(q.in(U{}), Exp));
 }
 
 //
@@ -312,7 +312,7 @@ constexpr bool isnan(QuantityPoint<U, R> p) {
     return std::isnan(p.in(U{}));
 }
 
-namespace detail {
+namespace auimpl {
 // We can't use lambdas in `constexpr` contexts until C++17, so we make a manual function object.
 struct StdMaxByValue {
     template <typename T>
@@ -320,14 +320,14 @@ struct StdMaxByValue {
         return std::max(a, b);
     }
 };
-}  // namespace detail
+}  // namespace auimpl
 
 // The maximum of two values of the same dimension.
 //
 // Unlike std::max, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
 constexpr auto max(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, detail::StdMaxByValue{});
+    return auimpl::using_common_type(q1, q2, auimpl::StdMaxByValue{});
 }
 
 // The maximum of two point values of the same dimension.
@@ -335,7 +335,7 @@ constexpr auto max(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 // Unlike std::max, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
 constexpr auto max(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    return detail::using_common_point_unit(p1, p2, detail::StdMaxByValue{});
+    return auimpl::using_common_point_unit(p1, p2, auimpl::StdMaxByValue{});
 }
 
 // Overload to resolve ambiguity with `std::max` for identical `QuantityPoint` types.
@@ -344,7 +344,7 @@ constexpr auto max(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
     return std::max(a, b);
 }
 
-namespace detail {
+namespace auimpl {
 // We can't use lambdas in `constexpr` contexts until C++17, so we make a manual function object.
 struct StdMinByValue {
     template <typename T>
@@ -352,14 +352,14 @@ struct StdMinByValue {
         return std::min(a, b);
     }
 };
-}  // namespace detail
+}  // namespace auimpl
 
 // The minimum of two values of the same dimension.
 //
 // Unlike std::min, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
 constexpr auto min(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, detail::StdMinByValue{});
+    return auimpl::using_common_type(q1, q2, auimpl::StdMinByValue{});
 }
 
 // The minimum of two point values of the same dimension.
@@ -367,7 +367,7 @@ constexpr auto min(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 // Unlike std::min, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
 constexpr auto min(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    return detail::using_common_point_unit(p1, p2, detail::StdMinByValue{});
+    return auimpl::using_common_point_unit(p1, p2, auimpl::StdMinByValue{});
 }
 
 // Overload to resolve ambiguity with `std::min` for identical `QuantityPoint` types.
@@ -392,13 +392,13 @@ auto remainder(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
-    using OurRoundingRep = detail::RoundingRepT<Quantity<U, R>, RoundingUnits>;
+    using OurRoundingRep = auimpl::RoundingRepT<Quantity<U, R>, RoundingUnits>;
     return std::round(q.template in<OurRoundingRep>(rounding_units));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    using OurRoundingRep = detail::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
+    using OurRoundingRep = auimpl::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
     return std::round(p.template in<OurRoundingRep>(rounding_units));
 }
 
@@ -462,13 +462,13 @@ auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
-    using OurRoundingRep = detail::RoundingRepT<Quantity<U, R>, RoundingUnits>;
+    using OurRoundingRep = auimpl::RoundingRepT<Quantity<U, R>, RoundingUnits>;
     return std::floor(q.template in<OurRoundingRep>(rounding_units));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    using OurRoundingRep = detail::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
+    using OurRoundingRep = auimpl::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
     return std::floor(p.template in<OurRoundingRep>(rounding_units));
 }
 
@@ -531,13 +531,13 @@ auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
-    using OurRoundingRep = detail::RoundingRepT<Quantity<U, R>, RoundingUnits>;
+    using OurRoundingRep = auimpl::RoundingRepT<Quantity<U, R>, RoundingUnits>;
     return std::ceil(q.template in<OurRoundingRep>(rounding_units));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    using OurRoundingRep = detail::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
+    using OurRoundingRep = auimpl::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
     return std::ceil(p.template in<OurRoundingRep>(rounding_units));
 }
 
@@ -594,7 +594,7 @@ auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // Wrapper for std::sin() which accepts a strongly typed angle quantity.
 template <typename U, typename R>
 auto sin(Quantity<U, R> q) {
-    return std::sin(detail::in_radians(q));
+    return std::sin(auimpl::in_radians(q));
 }
 
 // Wrapper for std::sqrt() which handles Quantity types.
@@ -606,7 +606,7 @@ auto sqrt(Quantity<U, R> q) {
 // Wrapper for std::tan() which accepts a strongly typed angle quantity.
 template <typename U, typename R>
 auto tan(Quantity<U, R> q) {
-    return std::tan(detail::in_radians(q));
+    return std::tan(auimpl::in_radians(q));
 }
 
 }  // namespace au

@@ -18,7 +18,7 @@
 #include "au/magnitude.hh"
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 // The various categories by which a magnitude can be applied to a numeric quantity.
 enum class ApplyAs {
@@ -236,5 +236,5 @@ constexpr T apply_magnitude(const T &x, Magnitude<BPs...>) {
     return ApplyMagnitudeT<T, Magnitude<BPs...>>{}(x);
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

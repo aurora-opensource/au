@@ -20,7 +20,7 @@
 #include "au/utility/probable_primes.hh"
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 // Check whether a number is prime.
 constexpr bool is_prime(std::uintmax_t n) {
@@ -152,5 +152,5 @@ constexpr T int_pow(T base, std::uintmax_t exp) {
     return square(int_pow(base, exp / 2u));
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

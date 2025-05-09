@@ -22,7 +22,7 @@ namespace au {
 
 using ::testing::Eq;
 
-namespace detail {
+namespace auimpl {
 
 template <typename T>
 void expect_comparators_work(T a, T b) {
@@ -51,5 +51,5 @@ TEST(Arithmetic, ResultsMatchUnderlyingOperatorForSameTypes) {
     expect_arithmetic_works(int8_t{5}, int8_t{10});
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

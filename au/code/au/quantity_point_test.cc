@@ -445,8 +445,8 @@ TEST(QuantityPoint, PreservesRep) {
 }
 
 TEST(OriginDisplacement, IdenticallyZeroForOriginsThatCompareEqual) {
-    ASSERT_THAT(detail::OriginOf<Celsius>::value(),
-                Not(SameTypeAndValue(detail::OriginOf<AlternateCelsius>::value())));
+    ASSERT_THAT(auimpl::OriginOf<Celsius>::value(),
+                Not(SameTypeAndValue(auimpl::OriginOf<AlternateCelsius>::value())));
     EXPECT_THAT(origin_displacement(Celsius{}, AlternateCelsius{}), SameTypeAndValue(ZERO));
 }
 

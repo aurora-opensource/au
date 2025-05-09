@@ -19,7 +19,7 @@
 #include "au/stdx/type_traits.hh"
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 template <typename PackT, typename T>
 struct Prepend;
@@ -110,7 +110,7 @@ template <typename T, template <class...> class Pack, typename H, typename... Ts
 struct DropAllImpl<T, Pack<H, Ts...>>
     : std::conditional<std::is_same<T, H>::value,
                        DropAll<T, Pack<Ts...>>,
-                       detail::PrependT<DropAll<T, Pack<Ts...>>, H>> {};
+                       auimpl::PrependT<DropAll<T, Pack<Ts...>>, H>> {};
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

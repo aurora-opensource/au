@@ -34,7 +34,7 @@
 // take two more template parameters: the wrapper we're composing with, and the resulting wrapper.
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 // A SFINAE helper that is the identity, but only if we think a type is a valid rep.
 //
@@ -239,5 +239,5 @@ struct SupportsRationalPowers {
     }
 };
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

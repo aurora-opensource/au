@@ -63,7 +63,7 @@ void expect_label(const char (&label)[N]) {
     EXPECT_THAT(sizeof(unit_label<Unit>()), Eq(N));
 }
 
-namespace detail {
+namespace auimpl {
 // Compute the absolute difference in a specified Unit, with a floating point Rep.
 template <typename ResultUnit, typename Q1, typename Q2>
 auto absolute_diff(Q1 q1, Q2 q2) {
@@ -84,7 +84,7 @@ template <typename ArgT, typename TargetT, typename ToleranceUnit, typename Tole
            << (within_tolerance ? "does not exceed" : "exceeds") << " tolerance " << tolerance
            << ".";
 }
-}  // namespace detail
+}  // namespace auimpl
 
 //
 // Custom GMock matcher to match a Quantity to a target within a given tolerance.
@@ -94,7 +94,7 @@ template <typename ArgT, typename TargetT, typename ToleranceUnit, typename Tole
 //
 MATCHER_P2(IsNear, target, tolerance, "") {
     const auto assertion_result =
-        detail::arg_matches_target_within_tolerance(arg, target, tolerance);
+        auimpl::arg_matches_target_within_tolerance(arg, target, tolerance);
     *result_listener << assertion_result.message();
     return assertion_result;
 }

@@ -141,7 +141,7 @@ TEST(IsQuotientValidRep, TrueOnlyForSideWhereQuotientExists) {
     EXPECT_THAT((IsQuotientValidRep<DivideTenByFloat, float>::value), IsTrue());
 }
 
-namespace detail {
+namespace auimpl {
 
 TEST(ResultIfNoneAreQuantity, GivesResultWhenNoneAreQuantity) {
     StaticAssertTypeEq<int, ResultIfNoneAreQuantityT<std::common_type_t, int, int>>();
@@ -170,5 +170,5 @@ TEST(ProductTypeOrVoid, GivesVoidForInputsWithNoProductType) {
     StaticAssertTypeEq<void, ProductTypeOrVoid<int, IntWithNoOps>>();
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

@@ -20,7 +20,7 @@
 #include <type_traits>
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 template <typename Source, typename Dest>
 struct StaticCastChecker;
@@ -204,5 +204,5 @@ struct StaticCastChecker
     : StaticCastOverflowImpl<Source, Dest, categorize_overflow_situation<Source, Dest>()>,
       StaticCastTruncateImpl<Source, Dest, categorize_truncation_situation<Source, Dest>()> {};
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

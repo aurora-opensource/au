@@ -23,7 +23,7 @@
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
-namespace detail {
+namespace auimpl {
 namespace {
 
 constexpr auto PI = Magnitude<Pi>{};
@@ -183,5 +183,5 @@ TEST(ForbidsComposingWith, FailsToCompileWhenMultiplyingOrDividingWithForbiddenW
 }
 
 }  // namespace
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

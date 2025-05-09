@@ -32,7 +32,7 @@ using ::au::symbols::s;
 constexpr auto ns = ::au::nano(s);
 
 namespace au {
-namespace detail {
+namespace auimpl {
 std::ostream &operator<<(std::ostream &out, IsAbsMagLessThanOne val) {
     switch (val) {
         case IsAbsMagLessThanOne::DEFINITELY:
@@ -42,7 +42,7 @@ std::ostream &operator<<(std::ostream &out, IsAbsMagLessThanOne val) {
     }
     return out;
 }
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au
 
 // This ad hoc utility is a stand-in for GTEST, which we can't use here.
@@ -61,10 +61,10 @@ int main(int argc, char **argv) {
         {
             expect_equal((meters / second)(5) * seconds(6), meters(30)),
             expect_equal(SPEED_OF_LIGHT.as<int>(m / s), 299'792'458 * m / s),
-            expect_equal(detail::is_abs_known_to_be_less_than_one(mag<5>() / mag<7>()),
-                         detail::IsAbsMagLessThanOne::DEFINITELY),
-            expect_equal(detail::is_abs_known_to_be_less_than_one(mag<7>() / mag<5>()),
-                         detail::IsAbsMagLessThanOne::MAYBE_NOT),
+            expect_equal(auimpl::is_abs_known_to_be_less_than_one(mag<5>() / mag<7>()),
+                         auimpl::IsAbsMagLessThanOne::DEFINITELY),
+            expect_equal(auimpl::is_abs_known_to_be_less_than_one(mag<7>() / mag<5>()),
+                         auimpl::IsAbsMagLessThanOne::MAYBE_NOT),
             expect_equal((10 * m).coerce_in(m * mag<5>() / mag<7>()), 14),
             expect_equal(inverse_as(ns, 333 / s), 3'003'003 * ns),
         },

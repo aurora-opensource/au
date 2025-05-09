@@ -17,7 +17,7 @@
 
 namespace au {
 
-namespace detail {
+namespace auimpl {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
@@ -30,9 +30,9 @@ struct CesiumHyperfineTransitionFrequencyUnit : decltype(Hertz{} * mag<9'192'631
                                                 CesiumHyperfineTransitionFrequencyLabel<void> {
     using CesiumHyperfineTransitionFrequencyLabel<void>::label;
 };
-}  // namespace detail
+}  // namespace auimpl
 
 constexpr auto CESIUM_HYPERFINE_TRANSITION_FREQUENCY =
-    make_constant(detail::CesiumHyperfineTransitionFrequencyUnit{});
+    make_constant(auimpl::CesiumHyperfineTransitionFrequencyUnit{});
 
 }  // namespace au

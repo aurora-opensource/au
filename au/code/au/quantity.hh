@@ -100,7 +100,7 @@ constexpr auto as_quantity(T &&x) -> CorrespondingQuantityT<T> {
     return make_quantity<typename Q::Unit>(value);
 }
 
-namespace detail {
+namespace auimpl {
 enum class UnitSign {
     POSITIVE,
     NEGATIVE,
@@ -108,7 +108,7 @@ enum class UnitSign {
 
 template <typename Rep, UnitSign>
 struct CompareUnderlyingValues;
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename UnitT, typename RepT>
 class Quantity {
@@ -116,18 +116,18 @@ class Quantity {
     using EnableIfImplicitOkIs = std::enable_if_t<
         ImplicitOk ==
         ConstructionPolicy<UnitT, RepT>::template PermitImplicitFrom<OtherUnit, OtherRep>::value>;
-    using Vals = detail::CompareUnderlyingValues<RepT,
-                                                 (IsPositive<detail::MagT<UnitT>>::value
-                                                      ? detail::UnitSign::POSITIVE
-                                                      : detail::UnitSign::NEGATIVE)>;
+    using Vals = auimpl::CompareUnderlyingValues<RepT,
+                                                 (IsPositive<auimpl::MagT<UnitT>>::value
+                                                      ? auimpl::UnitSign::POSITIVE
+                                                      : auimpl::UnitSign::NEGATIVE)>;
 
     // Not strictly necessary, but we want to keep each comparator implementation to one line.
-    using Eq = detail::Equal;
-    using Ne = detail::NotEqual;
-    using Lt = detail::Less;
-    using Le = detail::LessEqual;
-    using Gt = detail::Greater;
-    using Ge = detail::GreaterEqual;
+    using Eq = auimpl::Equal;
+    using Ne = auimpl::NotEqual;
+    using Lt = auimpl::Less;
+    using Le = auimpl::LessEqual;
+    using Gt = auimpl::Greater;
+    using Ge = auimpl::GreaterEqual;
 
  public:
     using Rep = RepT;
@@ -170,7 +170,7 @@ class Quantity {
         using Factor = UnitRatioT<AssociatedUnitT<Unit>, AssociatedUnitT<NewUnit>>;
 
         return make_quantity<AssociatedUnitT<NewUnit>>(
-            static_cast<NewRep>(detail::apply_magnitude(static_cast<Common>(value_), Factor{})));
+            static_cast<NewRep>(auimpl::apply_magnitude(static_cast<Common>(value_), Factor{})));
     }
 
     template <typename NewUnit,
@@ -277,7 +277,7 @@ class Quantity {
     friend constexpr bool operator>=(Quantity a, Quantity b) { return Vals::cmp(a, b, Ge{}); }
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
-    using Twc = detail::ThreeWayCompare;
+    using Twc = auimpl::ThreeWayCompare;
     friend constexpr auto operator<=>(Quantity a, Quantity b) { return Vals::cmp(a, b, Twc{}); }
 #endif
 
@@ -343,8 +343,8 @@ class Quantity {
             IsValidRep<T>::value,
             "This overload is only for scalar mult/div-assignment with raw numeric types");
 
-        static_assert((!std::is_integral<detail::RealPart<Rep>>::value) ||
-                          std::is_integral<detail::RealPart<T>>::value,
+        static_assert((!std::is_integral<auimpl::RealPart<Rep>>::value) ||
+                          std::is_integral<auimpl::RealPart<T>>::value,
                       "We don't support compound mult/div of integral types by floating point");
     }
 
@@ -455,14 +455,14 @@ class Quantity {
 template <typename U, typename R>
 struct AssociatedUnit<Quantity<U, R>> {
     static_assert(
-        detail::AlwaysFalse<U, R>::value,
+        auimpl::AlwaysFalse<U, R>::value,
         "Can't pass `Quantity` to a unit slot (see: "
         "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
 };
 template <typename U, typename R>
 struct AssociatedUnitForPoints<Quantity<U, R>> {
     static_assert(
-        detail::AlwaysFalse<U, R>::value,
+        auimpl::AlwaysFalse<U, R>::value,
         "Can't pass `Quantity` to a unit slot for points (see: "
         "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
 };
@@ -598,13 +598,13 @@ struct QuantityMaker {
 
     template <typename U, typename R>
     constexpr void operator()(Quantity<U, R>) const {
-        constexpr bool is_not_already_a_quantity = detail::AlwaysFalse<U, R>::value;
+        constexpr bool is_not_already_a_quantity = auimpl::AlwaysFalse<U, R>::value;
         static_assert(is_not_already_a_quantity, "Input to QuantityMaker is already a Quantity");
     }
 
     template <typename U, typename R>
     constexpr void operator()(QuantityPoint<U, R>) const {
-        constexpr bool is_not_a_quantity_point = detail::AlwaysFalse<U, R>::value;
+        constexpr bool is_not_a_quantity_point = auimpl::AlwaysFalse<U, R>::value;
         static_assert(is_not_a_quantity_point, "Input to QuantityMaker is a QuantityPoint");
     }
 
@@ -661,7 +661,7 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_
     using Ratio = decltype(unit_ratio(U{}, target_unit));
     static_assert(IsPositive<Ratio>::value,
                   "Runtime conversion checkers don't yet support negative units");
-    return detail::ApplyMagnitudeT<R, Ratio>::would_overflow(q.in(U{}));
+    return auimpl::ApplyMagnitudeT<R, Ratio>::would_overflow(q.in(U{}));
 }
 
 // Check conversion for overflow (new rep).
@@ -671,7 +671,7 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_
     // computes, at compile time, the smallest value that would overflow, and then compares against
     // that.  This version will at least let us get off the ground for now.
     using Common = std::common_type_t<R, TargetRep>;
-    if (detail::will_static_cast_overflow<Common>(q.in(U{}))) {
+    if (auimpl::will_static_cast_overflow<Common>(q.in(U{}))) {
         return true;
     }
 
@@ -681,7 +681,7 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_
     }
 
     const auto converted_but_not_narrowed = to_common.coerce_in(target_unit);
-    return detail::will_static_cast_overflow<TargetRep>(converted_but_not_narrowed);
+    return auimpl::will_static_cast_overflow<TargetRep>(converted_but_not_narrowed);
 }
 
 // Check conversion for truncation (no change of rep).
@@ -690,14 +690,14 @@ constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_
     using Ratio = decltype(unit_ratio(U{}, target_unit));
     static_assert(IsPositive<Ratio>::value,
                   "Runtime conversion checkers don't yet support negative units");
-    return detail::ApplyMagnitudeT<R, Ratio>::would_truncate(q.in(U{}));
+    return auimpl::ApplyMagnitudeT<R, Ratio>::would_truncate(q.in(U{}));
 }
 
 // Check conversion for truncation (new rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit) {
     using Common = std::common_type_t<R, TargetRep>;
-    if (detail::will_static_cast_truncate<Common>(q.in(U{}))) {
+    if (auimpl::will_static_cast_truncate<Common>(q.in(U{}))) {
         return true;
     }
 
@@ -707,7 +707,7 @@ constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_
     }
 
     const auto converted_but_not_narrowed = to_common.coerce_in(target_unit);
-    return detail::will_static_cast_truncate<TargetRep>(converted_but_not_narrowed);
+    return auimpl::will_static_cast_truncate<TargetRep>(converted_but_not_narrowed);
 }
 
 // Check for any lossiness in conversion (no change of rep).
@@ -726,7 +726,7 @@ constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Comparing and/or combining Quantities of different types.
 
-namespace detail {
+namespace auimpl {
 // Helper to cast this Quantity to its common type with some other Quantity (explicitly supplied).
 //
 // Note that `TargetUnit` is supposed to be the common type of the input Quantity and some other
@@ -756,42 +756,42 @@ constexpr auto using_common_type(T t, U u, Func f) {
 
     return f(cast_to_common_type<C>(t), cast_to_common_type<C>(u));
 }
-}  // namespace detail
+}  // namespace auimpl
 
 // Comparison functions for compatible Quantity types.
 template <typename U1, typename U2, typename R1, typename R2>
 constexpr bool operator==(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, detail::equal);
+    return auimpl::using_common_type(q1, q2, auimpl::equal);
 }
 template <typename U1, typename U2, typename R1, typename R2>
 constexpr bool operator!=(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, detail::not_equal);
+    return auimpl::using_common_type(q1, q2, auimpl::not_equal);
 }
 template <typename U1, typename U2, typename R1, typename R2>
 constexpr bool operator<(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, detail::less);
+    return auimpl::using_common_type(q1, q2, auimpl::less);
 }
 template <typename U1, typename U2, typename R1, typename R2>
 constexpr bool operator<=(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, detail::less_equal);
+    return auimpl::using_common_type(q1, q2, auimpl::less_equal);
 }
 template <typename U1, typename U2, typename R1, typename R2>
 constexpr bool operator>(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, detail::greater);
+    return auimpl::using_common_type(q1, q2, auimpl::greater);
 }
 template <typename U1, typename U2, typename R1, typename R2>
 constexpr bool operator>=(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, detail::greater_equal);
+    return auimpl::using_common_type(q1, q2, auimpl::greater_equal);
 }
 
 // Addition and subtraction functions for compatible Quantity types.
 template <typename U1, typename U2, typename R1, typename R2>
 constexpr auto operator+(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, detail::plus);
+    return auimpl::using_common_type(q1, q2, auimpl::plus);
 }
 template <typename U1, typename U2, typename R1, typename R2>
 constexpr auto operator-(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, detail::minus);
+    return auimpl::using_common_type(q1, q2, auimpl::minus);
 }
 
 // Mixed-type operations with a left-Quantity, and right-Quantity-equivalent.
@@ -862,7 +862,7 @@ constexpr auto operator>=(QLike q1, Quantity<U, R> q2) -> decltype(as_quantity(q
     return as_quantity(q1) >= q2;
 }
 
-namespace detail {
+namespace auimpl {
 template <typename Rep>
 struct CompareUnderlyingValues<Rep, UnitSign::POSITIVE> {
     template <typename U, typename Comp>
@@ -878,12 +878,12 @@ struct CompareUnderlyingValues<Rep, UnitSign::NEGATIVE> {
         return comp(rhs.in(U{}), lhs.in(U{}));
     }
 };
-}  // namespace detail
+}  // namespace auimpl
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename U1, typename R1, typename U2, typename R2>
 constexpr auto operator<=>(const Quantity<U1, R1> &lhs, const Quantity<U2, R2> &rhs) {
-    return detail::using_common_type(lhs, rhs, detail::ThreeWayCompare{});
+    return auimpl::using_common_type(lhs, rhs, auimpl::ThreeWayCompare{});
 }
 #endif
 

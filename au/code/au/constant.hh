@@ -35,13 +35,13 @@ namespace au {
 // correctly representable value will succeed, and every unrepresentable conversion will fail.
 //
 template <typename Unit>
-struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
-                  detail::ScalesQuantity<Constant, Unit>,
-                  detail::ComposesWith<Constant, Unit, Constant, Constant>,
-                  detail::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
-                  detail::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
-                  detail::SupportsRationalPowers<Constant, Unit>,
-                  detail::CanScaleByMagnitude<Constant, Unit> {
+struct Constant : auimpl::MakesQuantityFromNumber<Constant, Unit>,
+                  auimpl::ScalesQuantity<Constant, Unit>,
+                  auimpl::ComposesWith<Constant, Unit, Constant, Constant>,
+                  auimpl::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
+                  auimpl::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
+                  auimpl::SupportsRationalPowers<Constant, Unit>,
+                  auimpl::CanScaleByMagnitude<Constant, Unit> {
     // Convert this constant to a Quantity of the given rep.
     template <typename T>
     constexpr auto as() const {

@@ -24,7 +24,7 @@ using ::testing::IsTrue;
 using ::testing::Not;
 
 namespace au {
-namespace detail {
+namespace auimpl {
 namespace {
 constexpr auto PI = Magnitude<Pi>{};
 
@@ -506,5 +506,5 @@ TEST(WouldTruncate, AlwaysFalseWhenApplyingIrrationalMagnitude) {
 
     EXPECT_THAT(ApplyPiByTwoToF::would_truncate(-3.402e38f), IsFalse());
 }
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

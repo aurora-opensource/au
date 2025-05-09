@@ -407,7 +407,7 @@ TEST(CommonMagnitude, CommonMagOfNegAndNegIsNeg) {
 
 }  // namespace
 
-namespace detail {
+namespace auimpl {
 
 MATCHER(CannotFit, "") {
     return (arg.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT) && (arg.value == 0);
@@ -582,5 +582,5 @@ TEST(DenominatorPart, OmitsSignForNegativeNumbers) {
     StaticAssertTypeEq<DenominatorPartT<decltype(-mag<3>() / mag<7>())>, decltype(mag<7>())>();
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

@@ -18,7 +18,7 @@
 #include <limits>
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 // (a + b) % n
 //
@@ -98,5 +98,5 @@ constexpr uint64_t pow_mod(uint64_t base, uint64_t exp, uint64_t n) {
     return result;
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

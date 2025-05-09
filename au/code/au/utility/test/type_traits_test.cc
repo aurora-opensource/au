@@ -23,7 +23,7 @@ using ::testing::IsFalse;
 using ::testing::IsTrue;
 using ::testing::StaticAssertTypeEq;
 
-namespace detail {
+namespace auimpl {
 
 template <typename... Ts>
 struct Pack;
@@ -75,5 +75,5 @@ TEST(IncludeInPackIf, MakesPackOfEverythingThatMatches) {
         Pack<uint8_t, uint64_t>>();
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

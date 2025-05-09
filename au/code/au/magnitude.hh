@@ -108,7 +108,7 @@ constexpr auto mag();
 // A base type for prime numbers.
 template <std::uintmax_t N>
 struct Prime {
-    static_assert(detail::is_prime(N), "Prime<N> requires that N is prime");
+    static_assert(auimpl::is_prime(N), "Prime<N> requires that N is prime");
 
     static constexpr std::uintmax_t value() { return N; }
 };
@@ -127,7 +127,7 @@ struct Pi {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Define the lexicographic ordering of bases for Magnitude.
 
-namespace detail {
+namespace auimpl {
 template <typename T, typename U>
 struct OrderByValue : stdx::bool_constant<(T::value() < U::value())> {};
 
@@ -139,10 +139,10 @@ struct OrderByValue<T, Negative> : std::false_type {};
 
 template <>
 struct OrderByValue<Negative, Negative> : std::false_type {};
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename A, typename B>
-struct InOrderFor<Magnitude, A, B> : LexicographicTotalOrdering<A, B, detail::OrderByValue> {};
+struct InOrderFor<Magnitude, A, B> : LexicographicTotalOrdering<A, B, auimpl::OrderByValue> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Type trait based interface for Magnitude.
@@ -291,7 +291,7 @@ constexpr auto common_magnitude(Ms...) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `mag<N>()` implementation.
 
-namespace detail {
+namespace auimpl {
 
 // Helper to perform prime factorization.
 template <std::uintmax_t N>
@@ -315,11 +315,11 @@ struct PrimeFactorization {
                              PrimeFactorizationT<remainder>>;
 };
 
-}  // namespace detail
+}  // namespace auimpl
 
 template <std::size_t N>
 constexpr auto mag() {
-    return detail::PrimeFactorizationT<N>{};
+    return auimpl::PrimeFactorizationT<N>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -365,7 +365,7 @@ struct NumeratorImpl<Magnitude<BPs...>>
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `get_value<T>(Magnitude)` implementation.
 
-namespace detail {
+namespace auimpl {
 
 enum class MagRepresentationOutcome {
     OK,
@@ -635,18 +635,18 @@ constexpr MagRepresentationOrError<T> get_value_result(Magnitude<Negative, BPs..
     }
     return {MagRepresentationOutcome::OK, static_cast<T>(-result.value)};
 }
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename T, typename... BPs>
 constexpr bool representable_in(Magnitude<BPs...> m) {
-    using namespace detail;
+    using namespace auimpl;
 
     return get_value_result<T>(m).outcome == MagRepresentationOutcome::OK;
 }
 
 template <typename T, typename... BPs>
 constexpr T get_value(Magnitude<BPs...> m) {
-    using namespace detail;
+    using namespace auimpl;
 
     constexpr auto result = get_value_result<T>(m);
 
@@ -664,7 +664,7 @@ constexpr T get_value(Magnitude<BPs...> m) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `MagnitudeLabel` implementation.
 
-namespace detail {
+namespace auimpl {
 enum class MagLabelCategory {
     INTEGER,
     RATIONAL,
@@ -697,14 +697,14 @@ constexpr const bool MagnitudeLabelImplementation<MagT, Category>::has_exposed_s
 
 template <typename MagT>
 struct MagnitudeLabelImplementation<MagT, MagLabelCategory::INTEGER>
-    : detail::UIToA<get_value<std::uintmax_t>(MagT{})> {
+    : auimpl::UIToA<get_value<std::uintmax_t>(MagT{})> {
     static constexpr const bool has_exposed_slash = false;
 };
 template <typename MagT>
 constexpr const bool
     MagnitudeLabelImplementation<MagT, MagLabelCategory::INTEGER>::has_exposed_slash;
 
-// Analogous to `detail::ExtendedLabel`, but for magnitudes.
+// Analogous to `auimpl::ExtendedLabel`, but for magnitudes.
 //
 // This makes it easier to name the exact type for compound labels.
 template <std::size_t ExtensionStrlen, typename... Mags>
@@ -726,20 +726,20 @@ template <typename MagT>
 constexpr const bool
     MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL>::has_exposed_slash;
 
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename... BPs>
 struct MagnitudeLabel<Magnitude<BPs...>>
-    : detail::MagnitudeLabelImplementation<Magnitude<BPs...>,
-                                           detail::categorize_mag_label(Magnitude<BPs...>{})> {};
+    : auimpl::MagnitudeLabelImplementation<Magnitude<BPs...>,
+                                           auimpl::categorize_mag_label(Magnitude<BPs...>{})> {};
 
 template <typename... BPs>
 struct MagnitudeLabel<Magnitude<Negative, BPs...>> :
     // Inherit for "has exposed slash".
     MagnitudeLabel<Magnitude<BPs...>> {
-    using LabelT = detail::ExtendedMagLabel<1u, Magnitude<BPs...>>;
+    using LabelT = auimpl::ExtendedMagLabel<1u, Magnitude<BPs...>>;
     static constexpr LabelT value =
-        detail::concatenate("-", MagnitudeLabel<Magnitude<BPs...>>::value);
+        auimpl::concatenate("-", MagnitudeLabel<Magnitude<BPs...>>::value);
 };
 template <typename... BPs>
 constexpr typename MagnitudeLabel<Magnitude<Negative, BPs...>>::LabelT
@@ -747,13 +747,13 @@ constexpr typename MagnitudeLabel<Magnitude<Negative, BPs...>>::LabelT
 
 template <typename MagT>
 constexpr const auto &mag_label(MagT) {
-    return detail::as_char_array(MagnitudeLabel<MagT>::value);
+    return auimpl::as_char_array(MagnitudeLabel<MagT>::value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `CommonMagnitude` implementation.
 
-namespace detail {
+namespace auimpl {
 // Helper: prepend a base power, but only if the Exp is negative.
 template <typename BP, typename MagT>
 struct PrependIfExpNegative;
@@ -766,7 +766,7 @@ struct PrependIfExpNegative<BP, Magnitude<Ts...>>
 // Remove all positive powers from M.
 template <typename M>
 using NegativePowers = MagQuotientT<M, NumeratorPartT<M>>;
-}  // namespace detail
+}  // namespace auimpl
 
 // 1-ary case: identity.
 template <typename M>
@@ -779,12 +779,12 @@ struct CommonMagnitude<Magnitude<>, Magnitude<>> : stdx::type_identity<Magnitude
 // 2-ary base case: only left Magnitude is null.
 template <typename Head, typename... Tail>
 struct CommonMagnitude<Magnitude<>, Magnitude<Head, Tail...>>
-    : stdx::type_identity<detail::NegativePowers<Magnitude<Head, Tail...>>> {};
+    : stdx::type_identity<auimpl::NegativePowers<Magnitude<Head, Tail...>>> {};
 
 // 2-ary base case: only right Magnitude is null.
 template <typename Head, typename... Tail>
 struct CommonMagnitude<Magnitude<Head, Tail...>, Magnitude<>>
-    : stdx::type_identity<detail::NegativePowers<Magnitude<Head, Tail...>>> {};
+    : stdx::type_identity<auimpl::NegativePowers<Magnitude<Head, Tail...>>> {};
 
 // 2-ary recursive case: two non-null Magnitudes.
 template <typename H1, typename... T1, typename H2, typename... T2>
@@ -793,12 +793,12 @@ struct CommonMagnitude<Magnitude<H1, T1...>, Magnitude<H2, T2...>> :
     // If the bases for H1 and H2 are in-order, prepend H1-if-negative to the remainder.
     std::conditional<
         (InOrderFor<Magnitude, BaseT<H1>, BaseT<H2>>::value),
-        detail::PrependIfExpNegativeT<H1, CommonMagnitudeT<Magnitude<T1...>, Magnitude<H2, T2...>>>,
+        auimpl::PrependIfExpNegativeT<H1, CommonMagnitudeT<Magnitude<T1...>, Magnitude<H2, T2...>>>,
 
         // If the bases for H2 and H1 are in-order, prepend H2-if-negative to the remainder.
         std::conditional_t<
             (InOrderFor<Magnitude, BaseT<H2>, BaseT<H1>>::value),
-            detail::PrependIfExpNegativeT<H2,
+            auimpl::PrependIfExpNegativeT<H2,
                                           CommonMagnitudeT<Magnitude<T2...>, Magnitude<H1, T1...>>>,
 
             // If we got here, the bases must be the same.  (We can assume that `InOrderFor` does
@@ -806,8 +806,8 @@ struct CommonMagnitude<Magnitude<H1, T1...>, Magnitude<H2, T2...>> :
             // violate total ordering.)
             std::conditional_t<
                 (std::ratio_subtract<ExpT<H1>, ExpT<H2>>::num < 0),
-                detail::PrependT<CommonMagnitudeT<Magnitude<T1...>, Magnitude<T2...>>, H1>,
-                detail::PrependT<CommonMagnitudeT<Magnitude<T1...>, Magnitude<T2...>>, H2>>>> {};
+                auimpl::PrependT<CommonMagnitudeT<Magnitude<T1...>, Magnitude<T2...>>, H1>,
+                auimpl::PrependT<CommonMagnitudeT<Magnitude<T1...>, Magnitude<T2...>>, H2>>>> {};
 
 // N-ary case: recurse.
 template <typename M1, typename M2, typename... Tail>

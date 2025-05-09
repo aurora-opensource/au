@@ -28,7 +28,7 @@ namespace au {
 // - a member typedef `Dim`, which is a valid Dimension; and,
 // - a member typedef `Mag`, which is a valid Magnitude.
 //
-// These can be accessed by traits `detail::DimT` and `detail::MagT`, respectively.  The detail
+// These can be accessed by traits `auimpl::DimT` and `auimpl::MagT`, respectively.  The auimpl
 // namespace is meant to discourage _end users_ from accessing these concepts directly.  For
 // example, we don't want end users to ask _which dimension_ a Unit has.  We'd rather they ask
 // whether it is the _same_ as some other unit.  (It's also meaningful to ask whether it is
@@ -69,7 +69,7 @@ struct DefaultUnitLabel {
 template <typename T>
 constexpr const char DefaultUnitLabel<T>::value[];
 
-namespace detail {
+namespace auimpl {
 // To preserve support for C++14, we need to _name the type_ of the member variable.  However, the
 // `StringConstant` template produces a different type for every length, and that length depends on
 // _both_ the prefix _and_ the unit label.
@@ -82,15 +82,15 @@ namespace detail {
 // `StringConstant` instances of different lengths.
 template <std::size_t ExtensionStrlen, typename... Us>
 using ExtendedLabel = StringConstant<concatenate(unit_label<Us>()...).size() + ExtensionStrlen>;
-}  // namespace detail
+}  // namespace auimpl
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Type traits.
 
 // Type trait to detect whether a type fulfills our definition of a "Unit".
 template <typename T>
-struct IsUnit : stdx::conjunction<IsValidPack<Dimension, detail::DimT<T>>,
-                                  IsValidPack<Magnitude, detail::MagT<T>>> {};
+struct IsUnit : stdx::conjunction<IsValidPack<Dimension, auimpl::DimT<T>>,
+                                  IsValidPack<Magnitude, auimpl::MagT<T>>> {};
 
 // Type trait to detect whether two Units have the same Dimension.
 template <typename... Us>
@@ -114,7 +114,7 @@ struct AreUnitsPointEquivalent;
 
 // Type trait to detect whether U is a Unit which is dimensionless.
 template <typename U>
-struct IsDimensionless : std::is_same<detail::DimT<U>, Dimension<>> {};
+struct IsDimensionless : std::is_same<auimpl::DimT<U>, Dimension<>> {};
 
 // Type trait to detect whether a Unit is "quantity-equivalent" to "the unitless unit".
 //
@@ -122,13 +122,13 @@ struct IsDimensionless : std::is_same<detail::DimT<U>, Dimension<>> {};
 // dimensionless units such as Percent).
 template <typename U>
 struct IsUnitlessUnit
-    : stdx::conjunction<IsDimensionless<U>, std::is_same<detail::MagT<U>, Magnitude<>>> {};
+    : stdx::conjunction<IsDimensionless<U>, std::is_same<auimpl::MagT<U>, Magnitude<>>> {};
 
 // A Magnitude representing the ratio of two same-dimensioned units.
 //
 // Useful in doing unit conversions.
 template <typename U1, typename U2>
-struct UnitRatio : stdx::type_identity<MagQuotientT<detail::MagT<U1>, detail::MagT<U2>>> {
+struct UnitRatio : stdx::type_identity<MagQuotientT<auimpl::MagT<U1>, auimpl::MagT<U2>>> {
     static_assert(HasSameDimension<U1, U2>::value,
                   "Can only compute ratio of same-dimension units");
 };
@@ -275,7 +275,7 @@ constexpr auto make_common_point(Utility<Us>...) {
 // A Unit, scaled by some factor.
 //
 // Retains all of the member variables and typedefs of the existing Unit, except that the
-// `detail::MagT` trait is appropriately scaled, and the unit label is erased.
+// `auimpl::MagT` trait is appropriately scaled, and the unit label is erased.
 //
 // NOTE: This strategy will lead to long chains of inherited types when we scale a unit multiple
 // times (say, going from Meters -> Centi<Meters> -> Inches -> Feet -> Miles).  What's more, each
@@ -304,15 +304,15 @@ template <typename Unit, typename ScaleFactor>
 struct ScaledUnit : Unit {
     static_assert(IsValidPack<Magnitude, ScaleFactor>::value,
                   "Can only scale by a Magnitude<...> type");
-    using Dim = detail::DimT<Unit>;
-    using Mag = MagProductT<detail::MagT<Unit>, ScaleFactor>;
+    using Dim = auimpl::DimT<Unit>;
+    using Mag = MagProductT<auimpl::MagT<Unit>, ScaleFactor>;
 };
 
 // Type template to hold the product of powers of Units.
 template <typename... UnitPows>
 struct UnitProduct {
-    using Dim = DimProductT<detail::DimT<UnitPows>...>;
-    using Mag = MagProductT<detail::MagT<UnitPows>...>;
+    using Dim = DimProductT<auimpl::DimT<UnitPows>...>;
+    using Mag = MagProductT<auimpl::MagT<UnitPows>...>;
 };
 
 // Helper to make a canonicalized product of units.
@@ -435,7 +435,7 @@ constexpr auto pow(SingularNameFor<Unit>) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Origin displacement implementation.
 
-namespace detail {
+namespace auimpl {
 // Callable type trait for the default origin of a unit: choose ZERO.
 struct ZeroValue {
     static constexpr Zero value() { return Zero{}; }
@@ -459,17 +459,17 @@ template <typename T, typename U>
 struct ValueDifference {
     static constexpr auto value() { return T::value() - U::value(); }
 };
-}  // namespace detail
+}  // namespace auimpl
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `ValueDisplacementMagnitude` utility.
-namespace detail {
+namespace auimpl {
 
 // `ValueDisplacementMagnitude<T1, T2>` is a type that can be instantiated, and is either a
 // `Magnitude` type or else `Zero`.  It represents the magnitude of the unit that takes us from
 // `T1::value()` to `T2::value()` (and is `Zero` if and only if these values are equal).
 //
-// This is fully encapsulated inside of the `detail` namespace because we don't want end users
+// This is fully encapsulated inside of the `auimpl` namespace because we don't want end users
 // reasoning in terms of "the magnitude" of a unit.  This concept makes no sense generally.
 // However, it's useful to us internally, because it helps us compute the largest possible magnitude
 // of a common point unit.  Being fully encapsulated, we ourselves can be careful not to misuse it.
@@ -516,7 +516,7 @@ struct ValueDisplacementMagnitudeImpl<U1, U2, AreValuesEqual::NO> {
     using type = decltype(mag());
 };
 
-}  // namespace detail
+}  // namespace auimpl
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `HasSameDimension` implementation.
@@ -526,34 +526,34 @@ struct HasSameDimension<U> : std::true_type {};
 
 template <typename U1, typename U2, typename... Us>
 struct HasSameDimension<U1, U2, Us...>
-    : stdx::conjunction<std::is_same<detail::DimT<U1>, detail::DimT<U2>>,
+    : stdx::conjunction<std::is_same<auimpl::DimT<U1>, auimpl::DimT<U2>>,
                         HasSameDimension<U2, Us...>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `AreUnitsQuantityEquivalent` implementation.
 
-namespace detail {
+namespace auimpl {
 // We don't want to advertise this utility, because "same magnitude" is meaningless unless the units
 // also have the same dimension.
 template <typename U1, typename U2>
-struct HasSameMagnitude : std::is_same<detail::MagT<U1>, detail::MagT<U2>> {};
-}  // namespace detail
+struct HasSameMagnitude : std::is_same<auimpl::MagT<U1>, auimpl::MagT<U2>> {};
+}  // namespace auimpl
 
 template <typename U1, typename U2>
 struct AreUnitsQuantityEquivalent
-    : stdx::conjunction<HasSameDimension<U1, U2>, detail::HasSameMagnitude<U1, U2>> {};
+    : stdx::conjunction<HasSameDimension<U1, U2>, auimpl::HasSameMagnitude<U1, U2>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `AreUnitsPointEquivalent` implementation.
 
-namespace detail {
+namespace auimpl {
 template <typename U1, typename U2>
 struct HasSameOrigin : stdx::bool_constant<(OriginOf<U1>::value() == OriginOf<U2>::value())> {};
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename U1, typename U2>
 struct AreUnitsPointEquivalent
-    : stdx::conjunction<AreUnitsQuantityEquivalent<U1, U2>, detail::HasSameOrigin<U1, U2>> {};
+    : stdx::conjunction<AreUnitsQuantityEquivalent<U1, U2>, auimpl::HasSameOrigin<U1, U2>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `CommonUnit` helper implementation.
@@ -570,8 +570,8 @@ struct CommonUnit {
     static_assert(HasSameDimension<Us...>::value,
                   "Common unit only meaningful if units have same dimension");
 
-    using Dim = CommonDimensionT<detail::DimT<Us>...>;
-    using Mag = CommonMagnitudeT<detail::MagT<Us>...>;
+    using Dim = CommonDimensionT<auimpl::DimT<Us>...>;
+    using Mag = CommonMagnitudeT<auimpl::MagT<Us>...>;
 };
 
 template <typename A, typename B>
@@ -582,7 +582,7 @@ struct UnitList {};
 template <typename A, typename B>
 struct InOrderFor<UnitList, A, B> : InOrderFor<UnitProduct, A, B> {};
 
-namespace detail {
+namespace auimpl {
 // This machinery searches a unit list for one that "matches" a target unit.
 //
 // If none do, it will produce the target unit.
@@ -716,18 +716,18 @@ struct ReplaceCommonPointUnitWithCommonUnitImpl : stdx::type_identity<U> {};
 template <typename U>
 using ReplaceCommonPointUnitWithCommonUnit =
     typename ReplaceCommonPointUnitWithCommonUnitImpl<U>::type;
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename A, typename B>
-struct InOrderFor<detail::CommonUnitLabelImpl, A, B> : InOrderFor<UnitProduct, A, B> {};
+struct InOrderFor<auimpl::CommonUnitLabelImpl, A, B> : InOrderFor<UnitProduct, A, B> {};
 
 template <typename... Us>
-using CommonUnitLabel = FlatDedupedTypeListT<detail::CommonUnitLabelImpl, Us...>;
+using CommonUnitLabel = FlatDedupedTypeListT<auimpl::CommonUnitLabelImpl, Us...>;
 
 template <typename... Us>
 struct ComputeCommonUnitImpl
-    : stdx::type_identity<detail::EliminateRedundantUnits<
-          FlatDedupedTypeListT<CommonUnit, detail::ReplaceCommonPointUnitWithCommonUnit<Us>...>>> {
+    : stdx::type_identity<auimpl::EliminateRedundantUnits<
+          FlatDedupedTypeListT<CommonUnit, auimpl::ReplaceCommonPointUnitWithCommonUnit<Us>...>>> {
 };
 template <>
 struct ComputeCommonUnitImpl<> : stdx::type_identity<Zero> {};
@@ -737,15 +737,15 @@ struct IsNonzero : stdx::negation<std::is_same<T, Zero>> {};
 
 template <typename... Us>
 struct ComputeCommonUnit
-    : stdx::type_identity<detail::SimplifyIfOnlyOneUnscaledUnit<typename detail::FirstMatchingUnit<
+    : stdx::type_identity<auimpl::SimplifyIfOnlyOneUnscaledUnit<typename auimpl::FirstMatchingUnit<
           AreUnitsQuantityEquivalent,
-          typename detail::IncludeInPackIf<IsNonzero, ComputeCommonUnitImpl, Us...>::type>::type>> {
+          typename auimpl::IncludeInPackIf<IsNonzero, ComputeCommonUnitImpl, Us...>::type>::type>> {
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `CommonPointUnitT` helper implementation.
 
-namespace detail {
+namespace auimpl {
 
 // For equal origins expressed in different units, we can compare the values in their native units
 // as a way to decide which unit has the biggest Magnitude.  Bigger Magnitude, smaller value.  (We
@@ -841,17 +841,17 @@ using MagTypeT = typename MagType<stdx::remove_cvref_t<QuantityOrZero>>::type;
 template <>
 struct MagType<Zero> : stdx::type_identity<Zero> {};
 
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename U1, typename U2>
-struct UnitLabel<detail::OriginDisplacementUnit<U1, U2>> {
-    using LabelT = detail::ExtendedLabel<15u, U1, U2>;
+struct UnitLabel<auimpl::OriginDisplacementUnit<U1, U2>> {
+    using LabelT = auimpl::ExtendedLabel<15u, U1, U2>;
     static constexpr LabelT value =
-        detail::concatenate("(@(0 ", UnitLabel<U2>::value, ") - @(0 ", UnitLabel<U1>::value, "))");
+        auimpl::concatenate("(@(0 ", UnitLabel<U2>::value, ") - @(0 ", UnitLabel<U1>::value, "))");
 };
 template <typename U1, typename U2>
-constexpr typename UnitLabel<detail::OriginDisplacementUnit<U1, U2>>::LabelT
-    UnitLabel<detail::OriginDisplacementUnit<U1, U2>>::value;
+constexpr typename UnitLabel<auimpl::OriginDisplacementUnit<U1, U2>>::LabelT
+    UnitLabel<auimpl::OriginDisplacementUnit<U1, U2>>::value;
 
 // This exists to be the "named type" for the common unit of a bunch of input units.
 //
@@ -861,7 +861,7 @@ constexpr typename UnitLabel<detail::OriginDisplacementUnit<U1, U2>>::LabelT
 template <typename... Us>
 using CommonAmongUnitsAndOriginDisplacements =
     CommonUnitT<Us...,
-                detail::ComputeOriginDisplacementUnit<detail::UnitOfLowestOrigin<Us...>, Us>...>;
+                auimpl::ComputeOriginDisplacementUnit<auimpl::UnitOfLowestOrigin<Us...>, Us>...>;
 template <typename... Us>
 struct CommonPointUnit : CommonAmongUnitsAndOriginDisplacements<Us...> {
     static_assert(AreElementsInOrder<CommonPointUnit, CommonPointUnit<Us...>>::value,
@@ -869,14 +869,14 @@ struct CommonPointUnit : CommonAmongUnitsAndOriginDisplacements<Us...> {
     static_assert(HasSameDimension<Us...>::value,
                   "Common unit only meaningful if units have same dimension");
 
-    static constexpr auto origin() { return detail::CommonOrigin<Us...>::value(); }
+    static constexpr auto origin() { return auimpl::CommonOrigin<Us...>::value(); }
 };
 
-namespace detail {
+namespace auimpl {
 template <typename... Us>
 struct ReplaceCommonPointUnitWithCommonUnitImpl<CommonPointUnit<Us...>>
     : stdx::type_identity<CommonAmongUnitsAndOriginDisplacements<Us...>> {};
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename A, typename B>
 struct InOrderFor<CommonPointUnit, A, B> : InOrderFor<UnitProduct, A, B> {};
@@ -886,12 +886,12 @@ using ComputeCommonPointUnitImpl = FlatDedupedTypeListT<CommonPointUnit, Us...>;
 
 template <typename... Us>
 struct ComputeCommonPointUnit
-    : detail::FirstMatchingUnit<AreUnitsPointEquivalent, ComputeCommonPointUnitImpl<Us...>> {};
+    : auimpl::FirstMatchingUnit<AreUnitsPointEquivalent, ComputeCommonPointUnitImpl<Us...>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `UnitLabel` implementation.
 
-namespace detail {
+namespace auimpl {
 
 template <typename Unit>
 using HasLabel = decltype(Unit::label);
@@ -981,40 +981,40 @@ struct QuotientLabeler<UnitProduct<>, UnitProduct<>, T> {
 };
 template <typename T>
 constexpr const char QuotientLabeler<UnitProduct<>, UnitProduct<>, T>::value[];
-}  // namespace detail
+}  // namespace auimpl
 
 // Unified implementation.
 template <typename Unit>
 struct UnitLabel
-    : std::conditional_t<stdx::experimental::is_detected<detail::HasLabel, Unit>::value,
-                         detail::LabelRef<Unit>,
+    : std::conditional_t<stdx::experimental::is_detected<auimpl::HasLabel, Unit>::value,
+                         auimpl::LabelRef<Unit>,
                          DefaultUnitLabel<void>> {};
 
 // Implementation for Pow.
 template <typename Unit, std::intmax_t N>
-struct UnitLabel<Pow<Unit, N>> : detail::PowerLabeler<detail::ExpLabelForPow<N>, Unit> {};
+struct UnitLabel<Pow<Unit, N>> : auimpl::PowerLabeler<auimpl::ExpLabelForPow<N>, Unit> {};
 
 // Implementation for RatioPow.
 template <typename Unit, std::intmax_t N, std::intmax_t D>
 struct UnitLabel<RatioPow<Unit, N, D>>
-    : detail::PowerLabeler<detail::ExpLabelForRatioPow<N, D>, Unit> {};
+    : auimpl::PowerLabeler<auimpl::ExpLabelForRatioPow<N, D>, Unit> {};
 
 // Implementation for UnitProduct: split into positive and negative powers.
 template <typename... Us>
 struct UnitLabel<UnitProduct<Us...>>
-    : detail::QuotientLabeler<detail::NumeratorPartT<UnitProduct<Us...>>,
-                              detail::DenominatorPartT<UnitProduct<Us...>>,
+    : auimpl::QuotientLabeler<auimpl::NumeratorPartT<UnitProduct<Us...>>,
+                              auimpl::DenominatorPartT<UnitProduct<Us...>>,
                               void> {};
 
 // Implementation for ScaledUnit: scaling unit U by M gets label `"[M U]"`.
 template <typename U, typename M>
 struct UnitLabel<ScaledUnit<U, M>> {
     using MagLab = MagnitudeLabel<M>;
-    using LabelT = detail::
-        ExtendedLabel<detail::parens_if<MagLab::has_exposed_slash>(MagLab::value).size() + 3u, U>;
+    using LabelT = auimpl::
+        ExtendedLabel<auimpl::parens_if<MagLab::has_exposed_slash>(MagLab::value).size() + 3u, U>;
     static constexpr LabelT value =
-        detail::concatenate("[",
-                            detail::parens_if<MagLab::has_exposed_slash>(MagLab::value),
+        auimpl::concatenate("[",
+                            auimpl::parens_if<MagLab::has_exposed_slash>(MagLab::value),
                             " ",
                             UnitLabel<U>::value,
                             "]");
@@ -1025,8 +1025,8 @@ constexpr typename UnitLabel<ScaledUnit<U, M>>::LabelT UnitLabel<ScaledUnit<U, M
 // Special case for unit scaled by (-1).
 template <typename U>
 struct UnitLabel<ScaledUnit<U, Magnitude<Negative>>> {
-    using LabelT = detail::ExtendedLabel<3u, U>;
-    static constexpr LabelT value = detail::concatenate("[-", UnitLabel<U>::value, "]");
+    using LabelT = auimpl::ExtendedLabel<3u, U>;
+    static constexpr LabelT value = auimpl::concatenate("[-", UnitLabel<U>::value, "]");
 };
 template <typename U>
 constexpr typename UnitLabel<ScaledUnit<U, Magnitude<Negative>>>::LabelT
@@ -1036,7 +1036,7 @@ constexpr typename UnitLabel<ScaledUnit<U, Magnitude<Negative>>>::LabelT
 template <typename... Us>
 struct UnitLabel<CommonUnit<Us...>>
     : CommonUnitLabel<decltype(Us{} *
-                               (detail::MagT<CommonUnit<Us...>>{} / detail::MagT<Us>{}))...> {};
+                               (auimpl::MagT<CommonUnit<Us...>>{} / auimpl::MagT<Us>{}))...> {};
 
 // Implementation for CommonPointUnit: give size in terms of each constituent unit, taking any
 // origin displacements into account.
@@ -1046,7 +1046,7 @@ struct UnitLabel<CommonPointUnit<Us...>>
 
 template <typename Unit>
 constexpr const auto &unit_label(Unit) {
-    return detail::as_char_array(UnitLabel<AssociatedUnitT<Unit>>::value);
+    return auimpl::as_char_array(UnitLabel<AssociatedUnitT<Unit>>::value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1054,7 +1054,7 @@ constexpr const auto &unit_label(Unit) {
 //
 // It's just a standard pack product, so all we need to do is carefully define the total ordering.
 
-namespace detail {
+namespace auimpl {
 template <typename A, typename B>
 struct OrderByDim : InStandardPackOrder<DimT<A>, DimT<B>> {};
 
@@ -1116,7 +1116,7 @@ struct OrderAsOriginDisplacementUnit<OriginDisplacementUnit<A1, A2>, OriginDispl
 
 template <typename A, typename B>
 struct OrderByOrigin
-    : stdx::bool_constant<(detail::OriginOf<A>::value() < detail::OriginOf<B>::value())> {};
+    : stdx::bool_constant<(auimpl::OriginOf<A>::value() < auimpl::OriginOf<B>::value())> {};
 
 // "Unit avoidance" is a tiebreaker for quantity-equivalent units.  Anonymous units, such as
 // `UnitImpl<...>`, `ScaledUnit<...>`, and `UnitProduct<...>`, are more "avoidable" than units which
@@ -1150,18 +1150,18 @@ struct UnitAvoidance<CommonUnit<Us...>> : std::integral_constant<int, 6> {};
 
 template <typename... Us>
 struct UnitAvoidance<CommonPointUnit<Us...>> : std::integral_constant<int, 7> {};
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename A, typename B>
 struct InOrderFor<UnitProduct, A, B>
     : LexicographicTotalOrdering<A,
                                  B,
-                                 detail::OrderByUnitAvoidance,
-                                 detail::OrderByDim,
-                                 detail::OrderByMag,
-                                 detail::OrderByScaleFactor,
-                                 detail::OrderByOrigin,
-                                 detail::OrderAsUnitProduct,
-                                 detail::OrderAsOriginDisplacementUnit> {};
+                                 auimpl::OrderByUnitAvoidance,
+                                 auimpl::OrderByDim,
+                                 auimpl::OrderByMag,
+                                 auimpl::OrderByScaleFactor,
+                                 auimpl::OrderByOrigin,
+                                 auimpl::OrderAsUnitProduct,
+                                 auimpl::OrderAsOriginDisplacementUnit> {};
 
 }  // namespace au

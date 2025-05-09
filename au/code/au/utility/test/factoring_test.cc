@@ -26,7 +26,7 @@ using ::testing::IsFalse;
 using ::testing::IsTrue;
 using ::testing::Le;
 
-namespace detail {
+namespace auimpl {
 
 namespace {
 
@@ -139,5 +139,5 @@ TEST(Multiplicity, CountsFactors) {
     EXPECT_THAT(multiplicity(7u, n), Eq(0u));
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

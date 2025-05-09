@@ -19,7 +19,7 @@
 #include "au/utility/mod.hh"
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 //
 // The possible results of a probable prime test.
@@ -346,5 +346,5 @@ constexpr PrimeResult baillie_psw(uint64_t n) {
     return strong_lucas(n);
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

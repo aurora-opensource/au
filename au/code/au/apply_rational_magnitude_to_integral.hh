@@ -35,7 +35,7 @@
 // every combination of integral type and numerator and denominator magnitudes.
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -266,5 +266,5 @@ struct MinNonOverflowingValue
                   "We assume the promoted type is also signed");
 };
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

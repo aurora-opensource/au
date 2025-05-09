@@ -30,7 +30,7 @@
 // say, `std::less<void>::operator()`, but work correctly with our alternatives.
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 //
 // Comparison operators.
@@ -114,5 +114,5 @@ struct Minus {
 };
 constexpr auto minus = Minus{};
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

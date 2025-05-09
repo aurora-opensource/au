@@ -30,7 +30,7 @@ using ::testing::Gt;
 using ::testing::IsFalse;
 using ::testing::Lt;
 
-namespace detail {
+namespace auimpl {
 
 // Make test output for `PrimeResult` easier to read.
 std::ostream &operator<<(std::ostream &out, const PrimeResult &m) {
@@ -369,5 +369,5 @@ TEST(BoolSign, ReturnsCorrectValues) {
 }
 
 }  // namespace
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

@@ -32,7 +32,7 @@ constexpr bool can_scale_without_overflow(Magnitude<BPs...> m, Rep value) {
            (std::numeric_limits<Rep>::max() / get_value<Rep>(abs(m)) >= value);
 }
 
-namespace detail {
+namespace auimpl {
 // Chosen so as to allow populating a `QuantityI32<Hertz>` with an input in MHz.
 constexpr auto OVERFLOW_THRESHOLD = 2'147;
 
@@ -54,7 +54,7 @@ struct CoreImplicitConversionPolicyImplAssumingReal
           std::is_floating_point<Rep>,
           stdx::conjunction<std::is_integral<SourceRep>,
                             IsInteger<ScaleFactor>,
-                            detail::CanScaleThresholdWithoutOverflow<Rep, ScaleFactor>>> {};
+                            auimpl::CanScaleThresholdWithoutOverflow<Rep, ScaleFactor>>> {};
 
 // Always permit the identity scaling.
 template <typename Rep>
@@ -102,10 +102,10 @@ template <typename Rep, typename ScaleFactor, typename SourceRep>
 using ImplicitConversionPolicy =
     stdx::disjunction<CoreImplicitConversionPolicy<Rep, ScaleFactor, SourceRep>,
                       PermitAsCarveOutForIntegerPromotion<Rep, ScaleFactor, SourceRep>>;
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename Rep, typename ScaleFactor>
-struct ImplicitRepPermitted : detail::ImplicitConversionPolicy<Rep, ScaleFactor, Rep> {};
+struct ImplicitRepPermitted : auimpl::ImplicitConversionPolicy<Rep, ScaleFactor, Rep> {};
 
 template <typename Rep, typename SourceUnitSlot, typename TargetUnitSlot>
 constexpr bool implicit_rep_permitted_from_source_to_target(SourceUnitSlot, TargetUnitSlot) {
@@ -125,12 +125,12 @@ struct ConstructionPolicy {
     // build in this hard error for safety.  Here, we need a soft error, so we do the dimension
     // check manually below.
     template <typename SourceUnit>
-    using ScaleFactor = MagQuotientT<detail::MagT<SourceUnit>, detail::MagT<Unit>>;
+    using ScaleFactor = MagQuotientT<auimpl::MagT<SourceUnit>, auimpl::MagT<Unit>>;
 
     template <typename SourceUnit, typename SourceRep>
     using PermitImplicitFrom = stdx::conjunction<
         HasSameDimension<Unit, SourceUnit>,
-        detail::ImplicitConversionPolicy<Rep, ScaleFactor<SourceUnit>, SourceRep>>;
+        auimpl::ImplicitConversionPolicy<Rep, ScaleFactor<SourceUnit>, SourceRep>>;
 };
 
 }  // namespace au
