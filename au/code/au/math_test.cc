@@ -283,10 +283,10 @@ TEST(cos, GivesSameAnswersAsRawNumbersButInStrongTypes) {
 
 TEST(cos, GivesCorrectAnswersForInputsInDegrees) {
     constexpr auto TOL = 1e-15;
-    EXPECT_NEAR(cos(degrees(0)), 1.0, TOL);
-    EXPECT_NEAR(cos(degrees(45)), std::sqrt(0.5), TOL);
-    EXPECT_NEAR(cos(degrees(60)), 0.5, TOL);
-    EXPECT_NEAR(cos(degrees(90)), 0.0, TOL);
+    EXPECT_THAT(cos(degrees(0)), DoubleNear(1.0, TOL));
+    EXPECT_THAT(cos(degrees(45)), DoubleNear(std::sqrt(0.5), TOL));
+    EXPECT_THAT(cos(degrees(60)), DoubleNear(0.5, TOL));
+    EXPECT_THAT(cos(degrees(90)), DoubleNear(0.0, TOL));
 }
 
 // Our `fmod` and `remainder` overloads mix conversions and computations.
@@ -555,10 +555,10 @@ TEST(sin, GivesSameAnswersAsRawNumbersButInStrongTypes) {
 
 TEST(sin, GivesCorrectAnswersForInputsInDegrees) {
     constexpr auto TOL = 1e-15;
-    EXPECT_NEAR(sin(degrees(0)), 0.0, TOL);
-    EXPECT_NEAR(sin(degrees(30)), 0.5, TOL);
-    EXPECT_NEAR(sin(degrees(45)), std::sqrt(0.5), TOL);
-    EXPECT_NEAR(sin(degrees(90)), 1.0, TOL);
+    EXPECT_THAT(sin(degrees(0)), DoubleNear(0.0, TOL));
+    EXPECT_THAT(sin(degrees(30)), DoubleNear(0.5, TOL));
+    EXPECT_THAT(sin(degrees(45)), DoubleNear(std::sqrt(0.5), TOL));
+    EXPECT_THAT(sin(degrees(90)), DoubleNear(1.0, TOL));
 }
 
 TEST(sqrt, OutputRepDependsOnInputRep) {

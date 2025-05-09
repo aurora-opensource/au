@@ -25,6 +25,7 @@
 namespace au {
 
 using ::testing::DoubleEq;
+using ::testing::DoubleNear;
 using ::testing::Each;
 using ::testing::Eq;
 using ::testing::Gt;
@@ -312,7 +313,7 @@ TEST(Quantity, HandlesMagnitudesWithFractionalExponents) {
     EXPECT_THAT(x.in(sqrt(milli(feet))), Eq(3'000.0));
 
     // We can also retrieve the value in a different unit whose ratio *does* have fractional powers.
-    EXPECT_NEAR(x.in(sqrt(feet)), 94.86833, 1e-5);
+    EXPECT_THAT(x.in(sqrt(feet)), DoubleNear(94.86833, 1e-5));
 
     // Squaring the fractional base power gives us an exact non-fractional dimension and scale.
     EXPECT_THAT(x * x, Eq(kilo(feet)(9.0)));
