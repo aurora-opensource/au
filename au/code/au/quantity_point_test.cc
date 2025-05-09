@@ -57,17 +57,17 @@ constexpr QuantityMaker<Kelvins> kelvins{};
 constexpr QuantityPointMaker<Kelvins> kelvins_pt{};
 
 struct Celsius : Kelvins {
-    // We must divide by 100 to turn the integer value of `273'15` into the decimal `273.15`.  We
-    // split that division between the unit and the value.  The goal is to divide the unit by as
-    // little as possible (while still keeping the value an integer), because that will make the
-    // conversion factor as small as possible in converting to the common-point-unit.
-    static constexpr auto origin() { return (kelvins / mag<20>())(273'15 / 5); }
+    static constexpr auto origin() { return centi(kelvins)(273'15); }
 
     static constexpr const char label[] = "degC";
 };
 constexpr const char Celsius::label[];
 constexpr QuantityMaker<Celsius> celsius_qty{};
 constexpr QuantityPointMaker<Celsius> celsius_pt{};
+
+struct AlternateCelsius : Kelvins {
+    static constexpr auto origin() { return micro(kelvins)(273'150'000); }
+};
 
 TEST(Quantity, HasCorrectRepNamedAliases) {
     StaticAssertTypeEq<QuantityPointD<Meters>, QuantityPoint<Meters, double>>();
@@ -126,6 +126,12 @@ TEST(QuantityPoint, CanGetValueInDifferentUnits) {
 TEST(QuantityPoint, IntermediateTypeIsSignedIfExplicitRepIsSigned) {
     EXPECT_THAT(milli(kelvins_pt)(0u).coerce_as<int>(celsius_pt),
                 SameTypeAndValue(celsius_pt(-273)));
+}
+
+TEST(QuantityPoint, CanConstructExpected) {
+    using Com = CommonPointUnitT<Kelvins, Celsius>;
+    QuantityPointI<Com> pt{celsius_pt(0)};
+    EXPECT_THAT(pt, Eq((kelvins_pt / mag<20>())(273'15 / 5)));
 }
 
 TEST(QuantityPoint, SupportsDirectAccessWithSameUnit) {
@@ -374,8 +380,8 @@ TEST(QuantityPoint, MixedUnitAndRepDifferenceUsesCommonPointType) {
 
 TEST(QuantityPoint, CommonPointUnitLabel) {
     EXPECT_THAT(stream_to_string(celsius_pt(0) - kelvins_pt(0)),
-                AnyOf(StrEq("5463 EQUIV{[(1 / 20) K], [(1 / 20) degC]}"),
-                      StrEq("5463 EQUIV{[(1 / 20) degC], [(1 / 20) K]}")));
+                AnyOf(StrEq("5463 EQUIV{[(1 / 20) K], [(1 / 5463) (@(0 degC) - @(0 K))]}"),
+                      StrEq("5463 EQUIV{[(1 / 5463) (@(0 degC) - @(0 K))], [(1 / 20) K]}")));
 }
 
 TEST(QuantityPoint, CanCompareUnitsWithDifferentOrigins) {
@@ -437,6 +443,22 @@ TEST(QuantityPoint, PreservesRep) {
                 SameTypeAndValue(static_cast<uint16_t>(27'315 / 5)));
 }
 
+TEST(OriginDisplacement, IdenticallyZeroForOriginsThatCompareEqual) {
+    ASSERT_THAT(detail::OriginOf<Celsius>::value(),
+                Not(SameTypeAndValue(detail::OriginOf<AlternateCelsius>::value())));
+    EXPECT_THAT(origin_displacement(Celsius{}, AlternateCelsius{}), SameTypeAndValue(ZERO));
+}
+
+TEST(OriginDisplacement, GivesDisplacementFromFirstToSecond) {
+    EXPECT_THAT(origin_displacement(Kelvins{}, Celsius{}), Eq(milli(kelvins)(273'150)));
+    EXPECT_THAT(origin_displacement(Celsius{}, Kelvins{}), Eq(milli(kelvins)(-273'150)));
+}
+
+TEST(OriginDisplacement, FunctionalInterfaceHandlesInstancesCorrectly) {
+    EXPECT_THAT(origin_displacement(kelvins_pt, celsius_pt), Eq(milli(kelvins)(273'150)));
+    EXPECT_THAT(origin_displacement(celsius_pt, kelvins_pt), Eq(milli(kelvins)(-273'150)));
+}
+
 TEST(QuantityPointMaker, CanApplyPrefix) {
     EXPECT_THAT(centi(kelvins_pt)(12), SameTypeAndValue(make_quantity_point<Centi<Kelvins>>(12)));
 }
@@ -447,46 +469,4 @@ TEST(QuantityPointMaker, CanScaleByMagnitude) {
     StaticAssertTypeEq<decltype(kelvins_pt / mag<5>()),
                        QuantityPointMaker<decltype(Kelvins{} / mag<5>())>>();
 }
-
-namespace detail {
-
-TEST(OriginDisplacementFitsIn, CanRetrieveValueInGivenRep) {
-    EXPECT_THAT((OriginDisplacementFitsIn<uint64_t, Kelvins, Celsius>::value), IsTrue());
-    EXPECT_THAT((OriginDisplacementFitsIn<int64_t, Kelvins, Celsius>::value), IsTrue());
-
-    EXPECT_THAT((OriginDisplacementFitsIn<uint32_t, Kelvins, Celsius>::value), IsTrue());
-    EXPECT_THAT((OriginDisplacementFitsIn<int32_t, Kelvins, Celsius>::value), IsTrue());
-
-    EXPECT_THAT((OriginDisplacementFitsIn<uint16_t, Kelvins, Celsius>::value), IsTrue());
-    EXPECT_THAT((OriginDisplacementFitsIn<int16_t, Kelvins, Celsius>::value), IsTrue());
-
-    EXPECT_THAT((OriginDisplacementFitsIn<uint8_t, Kelvins, Celsius>::value), IsFalse());
-    EXPECT_THAT((OriginDisplacementFitsIn<int8_t, Kelvins, Celsius>::value), IsFalse());
-}
-
-TEST(OriginDisplacementFitsIn, AlwaysTrueForZero) {
-    EXPECT_THAT((OriginDisplacementFitsIn<uint64_t, Celsius, Celsius>::value), IsTrue());
-    EXPECT_THAT((OriginDisplacementFitsIn<int64_t, Celsius, Celsius>::value), IsTrue());
-
-    EXPECT_THAT((OriginDisplacementFitsIn<uint32_t, Celsius, Celsius>::value), IsTrue());
-    EXPECT_THAT((OriginDisplacementFitsIn<int32_t, Celsius, Celsius>::value), IsTrue());
-
-    EXPECT_THAT((OriginDisplacementFitsIn<uint16_t, Celsius, Celsius>::value), IsTrue());
-    EXPECT_THAT((OriginDisplacementFitsIn<int16_t, Celsius, Celsius>::value), IsTrue());
-
-    EXPECT_THAT((OriginDisplacementFitsIn<uint8_t, Celsius, Celsius>::value), IsTrue());
-    EXPECT_THAT((OriginDisplacementFitsIn<int8_t, Celsius, Celsius>::value), IsTrue());
-}
-
-TEST(OriginDisplacementFitsIn, FailsNegativeDisplacementForUnsignedRep) {
-    EXPECT_THAT((OriginDisplacementFitsIn<uint64_t, Celsius, Kelvins>::value), IsFalse());
-    EXPECT_THAT((OriginDisplacementFitsIn<uint32_t, Celsius, Kelvins>::value), IsFalse());
-    EXPECT_THAT((OriginDisplacementFitsIn<uint16_t, Celsius, Kelvins>::value), IsFalse());
-
-    EXPECT_THAT((OriginDisplacementFitsIn<int64_t, Celsius, Kelvins>::value), IsTrue());
-    EXPECT_THAT((OriginDisplacementFitsIn<int32_t, Celsius, Kelvins>::value), IsTrue());
-    EXPECT_THAT((OriginDisplacementFitsIn<int16_t, Celsius, Kelvins>::value), IsTrue());
-}
-
-}  // namespace detail
 }  // namespace au

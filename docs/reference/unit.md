@@ -488,6 +488,26 @@ that is what this trait produces.
 For example, the origin displacement from `Kelvins` to `Celsius` is equivalent to
 $273.15 \,\text{K}$.
 
+Rather than returning a `Quantity`, we return a "shapeshifter" type: that is, a [monovalue
+type](./detail/monovalue_types.md) that can _initialize_ any appropriate `Quantity` type.  The
+conversion will succeed if and only if the value can be represented in the target `Quantity` without
+overflow or truncation --- and if it fails, it will fail _at compile time_.  The specific
+shapeshifter type we return will be:
+
+- [Zero](./zero.md) if the origins of the two units coincide; or,
+- [Constant](./constant.md) if they differ.
+
+!!! note
+    Au 0.4.1 was the last release where the `OriginDisplacement` trait could be found in
+    `"au/unit_of_measure.hh"`, along with all of the other traits documented here.  For all
+    subsequent releases, it can be found in `"au/quantity_point.hh"`.
+
+    The reason we moved it was because `"au/constant.hh"` (which defines `Constant`) depends on
+    `"au/quantity.hh"`, which in turn depends on `"au/unit_of_measure.hh"`.  Therefore, we could
+    never have used `Constant` inside of `"au/unit_of_measure.hh"`.  However,
+    `"au/quantity_point.hh"` _could_ depend on `"au/constant.hh"`.  Origin displacements aren't very
+    useful without `QuantityPoint` anyway, so this new home is acceptable.
+
 **Syntax:**
 
 - For _types_ `U1` and `U2`:
