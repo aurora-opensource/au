@@ -149,7 +149,7 @@ class Quantity {
               typename Enable = EnableIfImplicitOkIs<false, OtherUnit, OtherRep>,
               typename ThisUnusedTemplateParameterDistinguishesUsFromTheAboveConstructor = void>
     // Deleted: use `.as<NewRep>(new_unit)` to force a cast.
-    explicit constexpr Quantity(Quantity<OtherUnit, OtherRep> other) = delete;
+    constexpr Quantity(Quantity<OtherUnit, OtherRep> other) = delete;
 
     // Construct this Quantity with a value of exactly Zero.
     constexpr Quantity(Zero) : value_{0} {}
