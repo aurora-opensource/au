@@ -71,6 +71,9 @@ cc_test(
     srcs = ["code/au/cpp20_test.cc"],
     tags = ["manual"],
     deps = [
+        ":constants",
+        ":math",
+        ":prefix",
         ":quantity",
         ":quantity_point",
         ":testing",

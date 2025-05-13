@@ -434,6 +434,14 @@ class Quantity {
         return (v < lo) ? lo : ((hi < v) ? hi : v);
     }
 
+#if defined(__cpp_lib_interpolate) && __cpp_lib_interpolate >= 201902L
+    // `std::lerp` requires C++20 support.
+    template <typename T>
+    friend constexpr auto lerp(Quantity a, Quantity b, T t) {
+        return make_quantity<UnitT>(std::lerp(a.in(unit), b.in(unit), t));
+    }
+#endif
+
  private:
     template <typename OtherUnit, typename OtherRep>
     static constexpr void warn_if_integer_division() {
