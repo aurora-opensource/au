@@ -106,7 +106,9 @@ constexpr auto as_quantity(T &&x) -> CorrespondingQuantityT<T> {
 //
 // Identity for non-`Quantity` types.
 template <typename U, typename R>
-constexpr R as_raw_number(Quantity<U, R> q);
+constexpr R as_raw_number(Quantity<U, R> q) {
+    return q.as(UnitProductT<>{});
+}
 template <typename T>
 constexpr T as_raw_number(T x) {
     return x;
@@ -568,12 +570,6 @@ template <typename U1, typename R1, typename U2, typename R2>
 constexpr auto operator%(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     using U = CommonUnitT<U1, U2>;
     return make_quantity<U>(q1.in(U{}) % q2.in(U{}));
-}
-
-// Now that `Quantity` has been defined, we can finish defining this `as_raw_number` overload.
-template <typename U, typename R>
-constexpr R as_raw_number(Quantity<U, R> q) {
-    return q.as(UnitProductT<>{});
 }
 
 // Type trait to detect whether two Quantity types are equivalent.
