@@ -199,12 +199,12 @@ expand the note below for further details.
 #### `lerp` (C++20)
 
 !!! warning
-    `lerp`, based on `std::lerp`, is only available for C++20 and later.
+    `lerp`, based on [std::lerp], is only available for C++20 and later.
 
 Linearly interpolate between two `Quantity` or `QuantityPoint` values, based on a parameter `t`,
 such that `t=0` corresponds to the first argument, and `t=1` corresponds to the second argument.
 That is, `lerp(a, b, t)` is logically equivalent to `a + (b - a) * t`, but with all of the special
-case handling found in [`std::lerp`].
+case handling found in [std::lerp].
 
 **Signatures:**
 
@@ -219,10 +219,10 @@ constexpr auto lerp(QuantityPoint<U1, R1> a, QuantityPoint<U2, R2> b, T t);
 ```
 
 **Returns:** The value notionally equivalent to $a + t(b - a)$, subject to all of the special case
-handling outlined in [`std::lerp`].  The return value will be expressed in the common unit of the
+handling outlined in [std::lerp].  The return value will be expressed in the common unit of the
 units of the inputs `a` and `b`.
 
-[`std::lerp`]: https://en.cppreference.com/w/cpp/numeric/lerp
+[std::lerp]: https://en.cppreference.com/w/cpp/numeric/lerp
 
 ### Exponentiation
 
