@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-35-g071818f
+// Version identifier: 0.4.1-36-g6e35f82
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -5355,6 +5355,20 @@ constexpr auto as_quantity(T &&x) -> CorrespondingQuantityT<T> {
     return make_quantity<typename Q::Unit>(value);
 }
 
+// Callsite-readable way to convert a `Quantity` to a raw number.
+//
+// Only works for dimensionless `Quantities`; will return a compile-time error otherwise.
+//
+// Identity for non-`Quantity` types.
+template <typename U, typename R>
+constexpr R as_raw_number(Quantity<U, R> q) {
+    return q.as(UnitProductT<>{});
+}
+template <typename T>
+constexpr T as_raw_number(T x) {
+    return x;
+}
+
 namespace detail {
 enum class UnitSign {
     POSITIVE,
@@ -5689,6 +5703,14 @@ class Quantity {
         return (v < lo) ? lo : ((hi < v) ? hi : v);
     }
 
+#if defined(__cpp_lib_interpolate) && __cpp_lib_interpolate >= 201902L
+    // `std::lerp` requires C++20 support.
+    template <typename T>
+    friend constexpr auto lerp(Quantity a, Quantity b, T t) {
+        return make_quantity<UnitT>(std::lerp(a.in(unit), b.in(unit), as_raw_number(t)));
+    }
+#endif
+
  private:
     template <typename OtherUnit, typename OtherRep>
     static constexpr void warn_if_integer_division() {
@@ -5803,20 +5825,6 @@ template <typename U1, typename R1, typename U2, typename R2>
 constexpr auto operator%(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     using U = CommonUnitT<U1, U2>;
     return make_quantity<U>(q1.in(U{}) % q2.in(U{}));
-}
-
-// Callsite-readable way to convert a `Quantity` to a raw number.
-//
-// Only works for dimensionless `Quantities`; will return a compile-time error otherwise.
-//
-// Identity for non-`Quantity` types.
-template <typename U, typename R>
-constexpr R as_raw_number(Quantity<U, R> q) {
-    return q.as(UnitProductT<>{});
-}
-template <typename T>
-constexpr T as_raw_number(T x) {
-    return x;
 }
 
 // Type trait to detect whether two Quantity types are equivalent.
@@ -7774,6 +7782,29 @@ template <typename U, typename R>
 constexpr bool isnan(QuantityPoint<U, R> p) {
     return std::isnan(p.in(U{}));
 }
+
+//
+// Linear interpolation between two values of the same dimension, as per `std::lerp`.
+//
+// Note that `std::lerp` is not defined until C++20, so neither is `au::lerp`.
+//
+// Note, too, that the implementation for same-type `Quantity` instances lives inside of the
+// `Quantity` class implementation as a hidden friend, so that we can support shapeshifter types
+// such as `Zero` or `Constant<U>`.
+//
+#if defined(__cpp_lib_interpolate) && __cpp_lib_interpolate >= 201902L
+template <typename U1, typename R1, typename U2, typename R2, typename T>
+constexpr auto lerp(Quantity<U1, R1> q1, Quantity<U2, R2> q2, T t) {
+    using U = CommonUnitT<U1, U2>;
+    return make_quantity<U>(std::lerp(q1.in(U{}), q2.in(U{}), as_raw_number(t)));
+}
+
+template <typename U1, typename R1, typename U2, typename R2, typename T>
+constexpr auto lerp(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2, T t) {
+    using U = CommonPointUnitT<U1, U2>;
+    return make_quantity_point<U>(std::lerp(p1.in(U{}), p2.in(U{}), as_raw_number(t)));
+}
+#endif
 
 namespace detail {
 // We can't use lambdas in `constexpr` contexts until C++17, so we make a manual function object.
