@@ -194,6 +194,36 @@ expand the note below for further details.
     arguments have the same type.  Write `clamp(a, b, c)`, not `au::clamp(a, b, c)`: the latter will
     frequently result in the right overload not being found.
 
+### Interpolating functions
+
+#### `lerp` (C++20)
+
+!!! warning
+    `lerp`, based on [std::lerp], is only available for C++20 and later.
+
+Linearly interpolate between two `Quantity` or `QuantityPoint` values, based on a parameter `t`,
+such that `t=0` corresponds to the first argument, and `t=1` corresponds to the second argument.
+That is, `lerp(a, b, t)` is logically equivalent to `a + (b - a) * t`, but with all of the special
+case handling found in [std::lerp].
+
+**Signatures:**
+
+```cpp
+// 1. `Quantity` inputs
+template <typename U1, typename R1, typename U2, typename R2, typename T>
+constexpr auto lerp(Quantity<U1, R1> a, Quantity<U2, R2> b, T t);
+
+// 2. `QuantityPoint` inputs
+template <typename U1, typename R1, typename U2, typename R2, typename T>
+constexpr auto lerp(QuantityPoint<U1, R1> a, QuantityPoint<U2, R2> b, T t);
+```
+
+**Returns:** The value notionally equivalent to $a + t(b - a)$, subject to all of the special case
+handling outlined in [std::lerp].  The return value will be expressed in the common unit of the
+units of the inputs `a` and `b`.
+
+[std::lerp]: https://en.cppreference.com/w/cpp/numeric/lerp
+
 ### Exponentiation
 
 #### `int_pow`
