@@ -100,6 +100,18 @@ constexpr auto as_quantity(T &&x) -> CorrespondingQuantityT<T> {
     return make_quantity<typename Q::Unit>(value);
 }
 
+// Callsite-readable way to convert a `Quantity` to a raw number.
+//
+// Only works for dimensionless `Quantities`; will return a compile-time error otherwise.
+//
+// Identity for non-`Quantity` types.
+template <typename U, typename R>
+constexpr R as_raw_number(Quantity<U, R> q);
+template <typename T>
+constexpr T as_raw_number(T x) {
+    return x;
+}
+
 namespace detail {
 enum class UnitSign {
     POSITIVE,
@@ -438,7 +450,7 @@ class Quantity {
     // `std::lerp` requires C++20 support.
     template <typename T>
     friend constexpr auto lerp(Quantity a, Quantity b, T t) {
-        return make_quantity<UnitT>(std::lerp(a.in(unit), b.in(unit), t));
+        return make_quantity<UnitT>(std::lerp(a.in(unit), b.in(unit), as_raw_number(t)));
     }
 #endif
 
@@ -558,18 +570,10 @@ constexpr auto operator%(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return make_quantity<U>(q1.in(U{}) % q2.in(U{}));
 }
 
-// Callsite-readable way to convert a `Quantity` to a raw number.
-//
-// Only works for dimensionless `Quantities`; will return a compile-time error otherwise.
-//
-// Identity for non-`Quantity` types.
+// Now that `Quantity` has been defined, we can finish defining this `as_raw_number` overload.
 template <typename U, typename R>
 constexpr R as_raw_number(Quantity<U, R> q) {
     return q.as(UnitProductT<>{});
-}
-template <typename T>
-constexpr T as_raw_number(T x) {
-    return x;
 }
 
 // Type trait to detect whether two Quantity types are equivalent.

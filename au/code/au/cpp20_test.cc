@@ -23,6 +23,7 @@
 #include "au/units/celsius.hh"
 #include "au/units/kelvins.hh"
 #include "au/units/meters.hh"
+#include "au/units/percent.hh"
 #include "au/units/seconds.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -30,6 +31,10 @@
 namespace au {
 
 using symbols::m;
+using symbols::s;
+
+constexpr auto mm = milli(m);
+
 using ::testing::Eq;
 using ::testing::Lt;
 
@@ -90,10 +95,22 @@ TEST(Lerp, SupportsZero) {
 
 TEST(Lerp, SupportsConstant) {
     constexpr auto c = SPEED_OF_LIGHT;
-    using symbols::m;
-    using symbols::s;
     EXPECT_THAT(lerp(0 * m / s, c, 0.75), SameTypeAndValue(c.as<double>(m / s) * 0.75));
     EXPECT_THAT(lerp(c, 0 * m / s, 0.75), SameTypeAndValue(c.as<double>(m / s) * 0.25));
+}
+
+TEST(Lerp, SupportsPercentForThirdArgument) {
+    // `Quantity`, same type.
+    EXPECT_THAT(lerp(0 * m, 10 * m, percent(75.0)), SameTypeAndValue(7.5 * m));
+
+    // Mixed `Quantity` types.
+    EXPECT_THAT(lerp(0 * m, 10 * mm, percent(35.0)), SameTypeAndValue(3.5 * mm));
+
+    // `Quantity` with a shapeshifter argument.
+    EXPECT_THAT(lerp(ZERO, 10 * m, percent(37.5)), SameTypeAndValue(3.75 * m));
+
+    // `QuantityPoint`, same type.
+    EXPECT_THAT(lerp(meters_pt(0), meters_pt(10), percent(75.0)), SameTypeAndValue(meters_pt(7.5)));
 }
 
 TEST(Lerp, QuantityPointConsistentWithStdLerpWhenTypesAreIdentical) {

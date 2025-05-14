@@ -325,13 +325,13 @@ constexpr bool isnan(QuantityPoint<U, R> p) {
 template <typename U1, typename R1, typename U2, typename R2, typename T>
 constexpr auto lerp(Quantity<U1, R1> q1, Quantity<U2, R2> q2, T t) {
     using U = CommonUnitT<U1, U2>;
-    return make_quantity<U>(std::lerp(q1.in(U{}), q2.in(U{}), t));
+    return make_quantity<U>(std::lerp(q1.in(U{}), q2.in(U{}), as_raw_number(t)));
 }
 
 template <typename U1, typename R1, typename U2, typename R2, typename T>
 constexpr auto lerp(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2, T t) {
     using U = CommonPointUnitT<U1, U2>;
-    return make_quantity_point<U>(std::lerp(p1.in(U{}), p2.in(U{}), t));
+    return make_quantity_point<U>(std::lerp(p1.in(U{}), p2.in(U{}), as_raw_number(t)));
 }
 #endif
 
