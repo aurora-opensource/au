@@ -115,6 +115,9 @@ constexpr T as_raw_number(T x) {
 }
 
 namespace detail {
+// We implement `Quantity` comparisons by converting to a common unit, and comparing the values
+// stored in the underlying Rep types.  This means we need to know the _sign_ of that common unit,
+// so we can know which order to pass those underlying values (it gets reversed for negative units).
 template <typename SignMag, typename Op>
 struct SignAwareComparison;
 }  // namespace detail
