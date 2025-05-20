@@ -1657,6 +1657,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#unit-sign" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unit sign
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#origin-displacement" class="md-nav__link">
     <span class="md-ellipsis">
       Origin displacement
@@ -2700,6 +2709,22 @@ as an inch.</p>
 </li>
 <li>For <em>instances</em> <code>u1</code> and <code>u2</code>:<ul>
 <li><code>unit_ratio(u1, u2)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="unit-sign">Unit sign<a class="headerlink" href="#unit-sign" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The <a href="../magnitude/">magnitude</a> representing the sign of the unit.  This takes the value
+<code>mag&lt;1&gt;()</code> if increases in the underlying stored value correspond to <em>increases</em> in the quantity,
+and <code>-mag&lt;1&gt;()</code> if increases in the underlying stored value correspond to <em>decreases</em> in the
+quantity.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>U</code>:<ul>
+<li><code>UnitSign&lt;U&gt;</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>u</code>:<ul>
+<li><code>unit_sign(u)</code></li>
 </ul>
 </li>
 </ul>

@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-36-g6e35f82
+// Version identifier: 0.4.1-37-g46b5962
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -2879,6 +2879,11 @@ template <typename MagT>
 using Abs = typename AbsImpl<MagT>::type;
 
 template <typename MagT>
+struct SignImpl;
+template <typename MagT>
+using Sign = typename SignImpl<MagT>::type;
+
+template <typename MagT>
 struct NumeratorImpl;
 template <typename MagT>
 using NumeratorT = typename NumeratorImpl<MagT>::type;
@@ -2967,6 +2972,11 @@ constexpr auto abs(Magnitude<BPs...>) {
     return Abs<Magnitude<BPs...>>{};
 }
 constexpr auto abs(Zero z) { return z; }
+
+template <typename... BPs>
+constexpr auto sign(Magnitude<BPs...>) {
+    return Sign<Magnitude<BPs...>>{};
+}
 
 template <typename... BPs>
 constexpr auto numerator(Magnitude<BPs...>) {
@@ -3074,6 +3084,15 @@ struct AbsImpl<Magnitude<BPs...>> : stdx::type_identity<Magnitude<BPs...>> {};
 
 template <>
 struct AbsImpl<Zero> : stdx::type_identity<Zero> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `sign()` implementation.
+
+template <typename... BPs>
+struct SignImpl<Magnitude<BPs...>> : stdx::type_identity<Magnitude<>> {};
+
+template <typename... BPs>
+struct SignImpl<Magnitude<Negative, BPs...>> : stdx::type_identity<Magnitude<Negative>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `numerator()` implementation.
@@ -3910,6 +3929,10 @@ struct UnitRatio : stdx::type_identity<MagQuotientT<detail::MagT<U1>, detail::Ma
 template <typename U1, typename U2>
 using UnitRatioT = typename UnitRatio<U1, U2>::type;
 
+// The sign of a unit: almost always `mag<1>()`, but `-mag<1>()` for "negative" units.
+template <typename U>
+using UnitSign = Sign<detail::MagT<U>>;
+
 template <typename U>
 struct AssociatedUnit : stdx::type_identity<U> {};
 template <typename U>
@@ -4011,6 +4034,12 @@ constexpr bool is_unitless_unit(U) {
 // Useful in doing unit conversions.
 template <typename U1, typename U2>
 constexpr UnitRatioT<AssociatedUnitT<U1>, AssociatedUnitT<U2>> unit_ratio(U1, U2) {
+    return {};
+}
+
+// Type trait for the sign of a Unit (represented as a Magnitude).
+template <typename U>
+constexpr UnitSign<AssociatedUnitT<U>> unit_sign(U) {
     return {};
 }
 

@@ -1378,18 +1378,27 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#integer-test" class="md-nav__link">
+  <a href="#is-integer" class="md-nav__link">
     <span class="md-ellipsis">
-      Integer test
+      Is Integer?
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#rational-test" class="md-nav__link">
+  <a href="#is-rational" class="md-nav__link">
     <span class="md-ellipsis">
-      Rational test
+      Is Rational?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-positive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Is Positive?
     </span>
   </a>
   
@@ -1417,6 +1426,24 @@
   <a href="#denominator-integer-part" class="md-nav__link">
     <span class="md-ellipsis">
       Denominator (integer part)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absolute-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      Absolute value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sign" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sign
     </span>
   </a>
   
@@ -2229,7 +2256,7 @@ the result cannot be represented as a <code>Magnitude</code>.</p>
 a magnitude instance <code>m</code>, you can write <code>sqrt(m)</code> as a more readable alternative to <code>root&lt;2&gt;(m)</code>.</p>
 <h2 id="traits">Traits<a class="headerlink" href="#traits" title="Permanent link">&para;</a></h2>
 <p>These traits provide information, at compile time, about the number represented by a <code>Magnitude</code>.</p>
-<h3 id="integer-test">Integer test<a class="headerlink" href="#integer-test" title="Permanent link">&para;</a></h3>
+<h3 id="is-integer">Is Integer?<a class="headerlink" href="#is-integer" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> A <code>bool</code> indicating whether a <code>Magnitude</code> represents an <em>integer</em> (<code>true</code> if it does;
 <code>false</code> otherwise).</p>
 <p><strong>Syntax:</strong></p>
@@ -2243,7 +2270,7 @@ a magnitude instance <code>m</code>, you can write <code>sqrt(m)</code> as a mor
 </ul>
 </li>
 </ul>
-<h3 id="rational-test">Rational test<a class="headerlink" href="#rational-test" title="Permanent link">&para;</a></h3>
+<h3 id="is-rational">Is Rational?<a class="headerlink" href="#is-rational" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> A <code>bool</code> indicating whether a <code>Magnitude</code> represents a <em>rational number</em> (<code>true</code> if it
 does; <code>false</code> otherwise).</p>
 <p><strong>Syntax:</strong></p>
@@ -2254,6 +2281,20 @@ does; <code>false</code> otherwise).</p>
 </li>
 <li>For an <em>instance</em> <code>m</code>:<ul>
 <li><code>is_rational(m)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="is-positive">Is Positive?<a class="headerlink" href="#is-positive" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A <code>bool</code> indicating whether a <code>Magnitude</code> represents a <em>positive number</em> (<code>true</code> if it
+does; <code>false</code> otherwise).</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li><code>IsPositive&lt;M&gt;::value</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>is_positive(m)</code></li>
 </ul>
 </li>
 </ul>
@@ -2303,6 +2344,33 @@ another <code>Magnitude</code>.</p>
 </li>
 <li>For an <em>instance</em> <code>m</code>:<ul>
 <li><code>denominator(m)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="absolute-value">Absolute value<a class="headerlink" href="#absolute-value" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The absolute value of a <code>Magnitude</code>, which is another <code>Magnitude</code>.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li><code>Abs&lt;M&gt;</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>abs(m)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="sign">Sign<a class="headerlink" href="#sign" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A <code>Magnitude</code>: <code>1</code> if the input is positive, and <code>-1</code> if the input is negative.</p>
+<p>We expect that the relation <code>m == sign(m) * abs(m)</code> will hold for every <code>Magnitude</code> <code>m</code>.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li><code>Sign&lt;M&gt;</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>sign(m)</code></li>
 </ul>
 </li>
 </ul>
