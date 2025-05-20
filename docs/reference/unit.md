@@ -477,6 +477,20 @@ as an inch.
 - For _instances_ `u1` and `u2`:
     - `unit_ratio(u1, u2)`
 
+### Unit sign
+
+**Result:** The [magnitude](./magnitude.md) representing the sign of the unit.  This takes the value
+`mag<1>()` if increases in the underlying stored value correspond to _increases_ in the quantity,
+and `-mag<1>()` if increases in the underlying stored value correspond to _decreases_ in the
+quantity.
+
+**Syntax:**
+
+- For a _type_ `U`:
+    - `UnitSign<U>`
+- For an _instance_ `u`:
+    - `unit_sign(u)`
+
 ### Origin displacement
 
 **Result:** The displacement from the first unit's origin to the second unit's origin.

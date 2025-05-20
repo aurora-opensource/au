@@ -205,6 +205,16 @@ TEST(Abs, FlipsSignForNegative) {
 
 TEST(Abs, IdentityForZero) { EXPECT_THAT(abs(ZERO), Eq(ZERO)); }
 
+TEST(Sign, OneForPositiveNumber) {
+    EXPECT_THAT(sign(mag<1>()), Eq(mag<1>()));
+    EXPECT_THAT(sign(mag<3>() / mag<8>()), Eq(mag<1>()));
+}
+
+TEST(Sign, MinusOneForNegativeNumber) {
+    EXPECT_THAT(sign(-mag<1>()), Eq(-mag<1>()));
+    EXPECT_THAT(sign(-mag<3>() / mag<8>()), Eq(-mag<1>()));
+}
+
 TEST(IsPositive, TrueForPositive) {
     EXPECT_THAT(is_positive(mag<1>()), IsTrue());
     EXPECT_THAT(is_positive(mag<2>()), IsTrue());

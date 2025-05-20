@@ -616,6 +616,28 @@ TEST(MakeCommonPoint, PreservesCategory) {
     EXPECT_THAT(one_c % one_ch, Eq(ZERO));
 }
 
+TEST(UnitSignTrait, OneForPositiveUnits) {
+    StaticAssertTypeEq<UnitSign<Feet>, Magnitude<>>();
+    StaticAssertTypeEq<UnitSign<Inches>, Magnitude<>>();
+}
+
+TEST(UnitSignTrait, MinusOneForNegativeUnits) {
+    using NegFeet = decltype(Feet{} * (-mag<1>()));
+    using NegInches = decltype(Inches{} * (-mag<1>()));
+    StaticAssertTypeEq<UnitSign<NegFeet>, Magnitude<Negative>>();
+    StaticAssertTypeEq<UnitSign<NegInches>, Magnitude<Negative>>();
+}
+
+TEST(UnitSign, OneForPositiveUnits) {
+    EXPECT_THAT(unit_sign(feet), Eq(mag<1>()));
+    EXPECT_THAT(unit_sign(inches), Eq(mag<1>()));
+}
+
+TEST(UnitSign, MinusOneForNegativeUnits) {
+    EXPECT_THAT(unit_sign(feet * (-mag<5280>())), Eq(-mag<1>()));
+    EXPECT_THAT(unit_sign(inches * (-mag<36>())), Eq(-mag<1>()));
+}
+
 TEST(UnitLabel, DefaultsToUnlabeledUnit) {
     EXPECT_THAT(unit_label<UnlabeledUnit>(), StrEq("[UNLABELED UNIT]"));
     EXPECT_THAT(sizeof(unit_label<UnlabeledUnit>()), Eq(17));
