@@ -14,14 +14,12 @@
 
 #pragma once
 
-// This file provides drop-in replacements for certain standard library function objects for
-// comparison and arithmetic: `std::less<void>`, `std::plus<void>`, etc.
+// This file provides alternatives to certain standard library function objects for comparison and
+// arithmetic: `std::less<void>`, `std::plus<void>`, etc.
 //
 // These are _not_ intended as _fully general_ replacements.  They are _only_ intended for certain
-// specific use cases in this library, where we can ensure certain preconditions are met before they
-// are called.  For example, these utilities don't handle comparing signed and unsigned integral
-// types, because we only ever use them in places where we've already explicitly cast our quantities
-// to the same Rep.
+// specific use cases in this library.  External user code should not use these utilities: they are
+// subject to change their contract at any time to suit the needs of Au.
 //
 // There are two main reasons we rolled our own versions instead of just using the ones from the
 // standard library (as we had initially done).  First, the `<functional>` header is moderately
@@ -37,48 +35,48 @@ namespace detail {
 //
 
 struct Equal {
-    template <typename T>
-    constexpr bool operator()(const T &a, const T &b) const {
+    template <typename T, typename U>
+    constexpr bool operator()(const T &a, const U &b) const {
         return a == b;
     }
 };
 constexpr auto equal = Equal{};
 
 struct NotEqual {
-    template <typename T>
-    constexpr bool operator()(const T &a, const T &b) const {
+    template <typename T, typename U>
+    constexpr bool operator()(const T &a, const U &b) const {
         return a != b;
     }
 };
 constexpr auto not_equal = NotEqual{};
 
 struct Greater {
-    template <typename T>
-    constexpr bool operator()(const T &a, const T &b) const {
+    template <typename T, typename U>
+    constexpr bool operator()(const T &a, const U &b) const {
         return a > b;
     }
 };
 constexpr auto greater = Greater{};
 
 struct Less {
-    template <typename T>
-    constexpr bool operator()(const T &a, const T &b) const {
+    template <typename T, typename U>
+    constexpr bool operator()(const T &a, const U &b) const {
         return a < b;
     }
 };
 constexpr auto less = Less{};
 
 struct GreaterEqual {
-    template <typename T>
-    constexpr bool operator()(const T &a, const T &b) const {
+    template <typename T, typename U>
+    constexpr bool operator()(const T &a, const U &b) const {
         return a >= b;
     }
 };
 constexpr auto greater_equal = GreaterEqual{};
 
 struct LessEqual {
-    template <typename T>
-    constexpr bool operator()(const T &a, const T &b) const {
+    template <typename T, typename U>
+    constexpr bool operator()(const T &a, const U &b) const {
         return a <= b;
     }
 };
@@ -86,8 +84,8 @@ constexpr auto less_equal = LessEqual{};
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 struct ThreeWayCompare {
-    template <typename T>
-    constexpr auto operator()(const T &a, const T &b) const {
+    template <typename T, typename U>
+    constexpr auto operator()(const T &a, const U &b) const {
         return a <=> b;
     }
 };
