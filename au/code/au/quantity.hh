@@ -765,9 +765,10 @@ constexpr auto using_common_type(T t, U u, Func f) {
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
 constexpr auto convert_and_compare(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     using U = CommonUnitT<U1, U2>;
-    using R = std::common_type_t<R1, R2>;
-    return detail::SignAwareComparison<UnitSign<U>, Op>{}(q1.template in<R>(U{}),
-                                                          q2.template in<R>(U{}));
+    using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
+    using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
+    return detail::SignAwareComparison<UnitSign<U>, Op>{}(q1.template in<ComRep1>(U{}),
+                                                          q2.template in<ComRep2>(U{}));
 }
 }  // namespace detail
 

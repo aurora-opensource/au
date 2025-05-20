@@ -47,6 +47,12 @@ constexpr bool same_type_ignoring_cvref(T, U) {
 template <typename... Ts>
 struct AlwaysFalse : std::false_type {};
 
+template <typename R1, typename R2>
+struct CommonTypeButPreserveIntSignednessImpl;
+template <typename R1, typename R2>
+using CommonTypeButPreserveIntSignedness =
+    typename CommonTypeButPreserveIntSignednessImpl<R1, R2>::type;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation details below.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,6 +117,30 @@ struct DropAllImpl<T, Pack<H, Ts...>>
     : std::conditional<std::is_same<T, H>::value,
                        DropAll<T, Pack<Ts...>>,
                        detail::PrependT<DropAll<T, Pack<Ts...>>, H>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `CommonTypeButPreserveIntSignedness` implementation.
+
+// `CopySignednessIfIntType<X, T>` has a `type` member that is always `T`, unless `T` is an integral
+// type: in which case, it's the signed version of `T` if `X` is signed, and the unsigned version of
+// `T` if `X` is unsigned.
+template <typename SignednessSource, typename T, bool IsTIntegral>
+struct CopySignednessIfIntTypeHelper;
+template <typename SignednessSource, typename T>
+struct CopySignednessIfIntTypeHelper<SignednessSource, T, true>
+    : std::conditional<std::is_unsigned<SignednessSource>::value,
+                       std::make_unsigned_t<T>,
+                       std::make_signed_t<T>> {};
+template <typename SignednessSource, typename T>
+struct CopySignednessIfIntTypeHelper<SignednessSource, T, false> : stdx::type_identity<T> {};
+
+template <typename SignednessSource, typename T>
+struct CopySignednessIfIntType
+    : CopySignednessIfIntTypeHelper<SignednessSource, T, std::is_integral<T>::value> {};
+
+template <typename R1, typename R2>
+struct CommonTypeButPreserveIntSignednessImpl
+    : CopySignednessIfIntType<R1, std::common_type_t<R1, R2>> {};
 
 }  // namespace detail
 }  // namespace au

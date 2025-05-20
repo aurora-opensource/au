@@ -75,5 +75,16 @@ TEST(IncludeInPackIf, MakesPackOfEverythingThatMatches) {
         Pack<uint8_t, uint64_t>>();
 }
 
+TEST(CommonTypeButPreserveIntSignedness, CommonTypeIfItIsNotIntegral) {
+    StaticAssertTypeEq<CommonTypeButPreserveIntSignedness<int, double>, double>();
+    StaticAssertTypeEq<CommonTypeButPreserveIntSignedness<float, int>, float>();
+    StaticAssertTypeEq<CommonTypeButPreserveIntSignedness<double, float>, double>();
+}
+
+TEST(CommonTypeButPreserveIntSignedness, UsesSignOfFirstArgumentIfCommonTypeIsIntegral) {
+    StaticAssertTypeEq<CommonTypeButPreserveIntSignedness<int, uint8_t>, int>();
+    StaticAssertTypeEq<CommonTypeButPreserveIntSignedness<uint8_t, int>, uint>();
+}
+
 }  // namespace detail
 }  // namespace au
