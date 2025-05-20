@@ -18,8 +18,8 @@
 // arithmetic: `std::less<void>`, `std::plus<void>`, etc.
 //
 // These are _not_ intended as _fully general_ replacements.  They are _only_ intended for certain
-// specific use cases in this library.  External user code should not use these utilities: they are
-// subject to change their contract at any time to suit the needs of Au.
+// specific use cases in this library.  External user code should not use these utilities: their
+// contract is subject to change at any time to suit the needs of Au.
 //
 // There are two main reasons we rolled our own versions instead of just using the ones from the
 // standard library (as we had initially done).  First, the `<functional>` header is moderately
