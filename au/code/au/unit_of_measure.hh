@@ -135,6 +135,10 @@ struct UnitRatio : stdx::type_identity<MagQuotientT<detail::MagT<U1>, detail::Ma
 template <typename U1, typename U2>
 using UnitRatioT = typename UnitRatio<U1, U2>::type;
 
+// The sign of a unit: almost always `mag<1>()`, but `-mag<1>()` for "negative" units.
+template <typename U>
+using UnitSign = Sign<detail::MagT<U>>;
+
 template <typename U>
 struct AssociatedUnit : stdx::type_identity<U> {};
 template <typename U>
@@ -236,6 +240,12 @@ constexpr bool is_unitless_unit(U) {
 // Useful in doing unit conversions.
 template <typename U1, typename U2>
 constexpr UnitRatioT<AssociatedUnitT<U1>, AssociatedUnitT<U2>> unit_ratio(U1, U2) {
+    return {};
+}
+
+// Type trait for the sign of a Unit (represented as a Magnitude).
+template <typename U>
+constexpr UnitSign<AssociatedUnitT<U>> unit_sign(U) {
     return {};
 }
 

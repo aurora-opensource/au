@@ -158,6 +158,11 @@ template <typename MagT>
 using Abs = typename AbsImpl<MagT>::type;
 
 template <typename MagT>
+struct SignImpl;
+template <typename MagT>
+using Sign = typename SignImpl<MagT>::type;
+
+template <typename MagT>
 struct NumeratorImpl;
 template <typename MagT>
 using NumeratorT = typename NumeratorImpl<MagT>::type;
@@ -246,6 +251,11 @@ constexpr auto abs(Magnitude<BPs...>) {
     return Abs<Magnitude<BPs...>>{};
 }
 constexpr auto abs(Zero z) { return z; }
+
+template <typename... BPs>
+constexpr auto sign(Magnitude<BPs...>) {
+    return Sign<Magnitude<BPs...>>{};
+}
 
 template <typename... BPs>
 constexpr auto numerator(Magnitude<BPs...>) {
@@ -353,6 +363,15 @@ struct AbsImpl<Magnitude<BPs...>> : stdx::type_identity<Magnitude<BPs...>> {};
 
 template <>
 struct AbsImpl<Zero> : stdx::type_identity<Zero> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `sign()` implementation.
+
+template <typename... BPs>
+struct SignImpl<Magnitude<BPs...>> : stdx::type_identity<Magnitude<>> {};
+
+template <typename... BPs>
+struct SignImpl<Magnitude<Negative, BPs...>> : stdx::type_identity<Magnitude<Negative>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `numerator()` implementation.

@@ -251,7 +251,7 @@ a magnitude instance `m`, you can write `sqrt(m)` as a more readable alternative
 
 These traits provide information, at compile time, about the number represented by a `Magnitude`.
 
-### Integer test
+### Is Integer?
 
 **Result:** A `bool` indicating whether a `Magnitude` represents an _integer_ (`true` if it does;
 `false` otherwise).
@@ -263,7 +263,7 @@ These traits provide information, at compile time, about the number represented 
 - For an _instance_ `m`:
     - `is_integer(m)`
 
-### Rational test
+### Is Rational?
 
 **Result:** A `bool` indicating whether a `Magnitude` represents a _rational number_ (`true` if it
 does; `false` otherwise).
@@ -274,6 +274,18 @@ does; `false` otherwise).
     - `IsRational<M>::value`
 - For an _instance_ `m`:
     - `is_rational(m)`
+
+### Is Positive?
+
+**Result:** A `bool` indicating whether a `Magnitude` represents a _positive number_ (`true` if it
+does; `false` otherwise).
+
+**Syntax:**
+
+- For a _type_ `M`:
+    - `IsPositive<M>::value`
+- For an _instance_ `m`:
+    - `is_positive(m)`
 
 ### Integer part
 
@@ -328,3 +340,27 @@ For example, the "denominator" of $\frac{3\sqrt{3}}{5\pi}$ would be $5\pi$.
     - `DenominatorT<M>`
 - For an _instance_ `m`:
     - `denominator(m)`
+
+### Absolute value
+
+**Result:** The absolute value of a `Magnitude`, which is another `Magnitude`.
+
+**Syntax:**
+
+- For a _type_ `M`:
+    - `Abs<M>`
+- For an _instance_ `m`:
+    - `abs(m)`
+
+### Sign
+
+**Result:** A `Magnitude`: `1` if the input is positive, and `-1` if the input is negative.
+
+We expect that the relation `m == sign(m) * abs(m)` will hold for every `Magnitude` `m`.
+
+**Syntax:**
+
+- For a _type_ `M`:
+    - `Sign<M>`
+- For an _instance_ `m`:
+    - `sign(m)`
