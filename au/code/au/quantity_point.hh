@@ -335,9 +335,10 @@ constexpr auto using_common_point_unit(X x, Y y, Func f) {
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
 constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     using U = CommonPointUnitT<U1, U2>;
-    using R = std::common_type_t<R1, R2>;
-    return detail::SignAwareComparison<UnitSign<U>, Op>{}(p1.template in<R>(U{}),
-                                                          p2.template in<R>(U{}));
+    using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
+    using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
+    return detail::SignAwareComparison<UnitSign<U>, Op>{}(p1.template in<ComRep1>(U{}),
+                                                          p2.template in<ComRep2>(U{}));
 }
 }  // namespace detail
 
