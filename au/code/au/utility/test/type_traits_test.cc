@@ -77,7 +77,7 @@ TEST(IncludeInPackIf, MakesPackOfEverythingThatMatches) {
 
 TEST(CommonTypeButPreserveIntSignedness, CommonTypeIfItIsNotIntegral) {
     StaticAssertTypeEq<CommonTypeButPreserveIntSignedness<int, double>, double>();
-    StaticAssertTypeEq<CommonTypeButPreserveIntSignedness<float, int>, float>();
+    StaticAssertTypeEq<CommonTypeButPreserveIntSignedness<float, uint>, float>();
     StaticAssertTypeEq<CommonTypeButPreserveIntSignedness<double, float>, double>();
 }
 
