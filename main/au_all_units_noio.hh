@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-38-gabf10ad
+// Version identifier: 0.4.1-39-g5a827cf
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -367,6 +367,12 @@ constexpr bool same_type_ignoring_cvref(T, U) {
 template <typename... Ts>
 struct AlwaysFalse : std::false_type {};
 
+template <typename R1, typename R2>
+struct CommonTypeButPreserveIntSignednessImpl;
+template <typename R1, typename R2>
+using CommonTypeButPreserveIntSignedness =
+    typename CommonTypeButPreserveIntSignednessImpl<R1, R2>::type;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation details below.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -431,6 +437,30 @@ struct DropAllImpl<T, Pack<H, Ts...>>
     : std::conditional<std::is_same<T, H>::value,
                        DropAll<T, Pack<Ts...>>,
                        detail::PrependT<DropAll<T, Pack<Ts...>>, H>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `CommonTypeButPreserveIntSignedness` implementation.
+
+// `CopySignednessIfIntType<X, T>` has a `type` member that is always `T`, unless `T` is an integral
+// type: in which case, it's the signed version of `T` if `X` is signed, and the unsigned version of
+// `T` if `X` is unsigned.
+template <typename SignednessSource, typename T, bool IsTIntegral>
+struct CopySignednessIfIntTypeHelper;
+template <typename SignednessSource, typename T>
+struct CopySignednessIfIntTypeHelper<SignednessSource, T, true>
+    : std::conditional<std::is_unsigned<SignednessSource>::value,
+                       std::make_unsigned_t<T>,
+                       std::make_signed_t<T>> {};
+template <typename SignednessSource, typename T>
+struct CopySignednessIfIntTypeHelper<SignednessSource, T, false> : stdx::type_identity<T> {};
+
+template <typename SignednessSource, typename T>
+struct CopySignednessIfIntType
+    : CopySignednessIfIntTypeHelper<SignednessSource, T, std::is_integral<T>::value> {};
+
+template <typename R1, typename R2>
+struct CommonTypeButPreserveIntSignednessImpl
+    : CopySignednessIfIntType<R1, std::common_type_t<R1, R2>> {};
 
 }  // namespace detail
 }  // namespace au
@@ -6379,9 +6409,10 @@ constexpr auto using_common_type(T t, U u, Func f) {
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
 constexpr auto convert_and_compare(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     using U = CommonUnitT<U1, U2>;
-    using R = std::common_type_t<R1, R2>;
-    return detail::SignAwareComparison<UnitSign<U>, Op>{}(q1.template in<R>(U{}),
-                                                          q2.template in<R>(U{}));
+    using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
+    using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
+    return detail::SignAwareComparison<UnitSign<U>, Op>{}(q1.template in<ComRep1>(U{}),
+                                                          q2.template in<ComRep2>(U{}));
 }
 }  // namespace detail
 
@@ -7238,9 +7269,10 @@ constexpr auto using_common_point_unit(X x, Y y, Func f) {
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
 constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     using U = CommonPointUnitT<U1, U2>;
-    using R = std::common_type_t<R1, R2>;
-    return detail::SignAwareComparison<UnitSign<U>, Op>{}(p1.template in<R>(U{}),
-                                                          p2.template in<R>(U{}));
+    using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
+    using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
+    return detail::SignAwareComparison<UnitSign<U>, Op>{}(p1.template in<ComRep1>(U{}),
+                                                          p2.template in<ComRep2>(U{}));
 }
 }  // namespace detail
 
