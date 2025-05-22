@@ -50,5 +50,7 @@ TEST(CommonSingleFile, IncludesMathFunctions) {
     EXPECT_DOUBLE_EQ(sin(radians(get_value<double>(PI / mag<2>()))), 1.0);
 }
 
+TEST(CommonSingleFile, MixedSignQuantityComparisonWorks) { EXPECT_LT(meters(-1), meters(1u)); }
+
 }  // namespace
 }  // namespace au

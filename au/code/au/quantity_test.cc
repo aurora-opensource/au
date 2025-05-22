@@ -403,6 +403,10 @@ TEST(Quantity, RelativeComparisonsWork) {
     EXPECT_THAT(one_a >= two, IsFalse());
 }
 
+TEST(Quantity, RelativeComparisonsHandleMixedSignIntegersProperly) {
+    EXPECT_THAT(feet(-1), Lt(inches(1u)));
+}
+
 TEST(Quantity, CopyingWorksAndIsDeepCopy) {
     auto original = feet(1.5);
     const auto copy{original};

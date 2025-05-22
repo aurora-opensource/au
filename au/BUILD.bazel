@@ -408,6 +408,7 @@ cc_library(
     name = "operators",
     hdrs = ["code/au/operators.hh"],
     includes = ["code"],
+    deps = [":stdx"],
 )
 
 cc_test(
