@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-39-g5a827cf
+// Version identifier: 0.4.1-40-g9d785de
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -1377,6 +1377,7 @@ struct IsQuotientValidRep
 
 }  // namespace au
 
+
 // This file provides alternatives to certain standard library function objects for comparison and
 // arithmetic: `std::less<void>`, `std::plus<void>`, etc.
 //
@@ -1384,14 +1385,32 @@ struct IsQuotientValidRep
 // specific use cases in this library.  External user code should not use these utilities: their
 // contract is subject to change at any time to suit the needs of Au.
 //
-// There are two main reasons we rolled our own versions instead of just using the ones from the
-// standard library (as we had initially done).  First, the `<functional>` header is moderately
+// The biggest change is that these function objects produce mathematically correct results when
+// comparing built-in integral types with mixed signedness.  As a concrete example: in the C++
+// language, `-1 < 1u` is `false`, because the common type of the input types is `unsigned int`, and
+// the `int` input `-1` gets converted to a (very large) `unsigned int` value.  However, using these
+// types, `Lt{}(-1, 1u)` will correctly return `true`!
+//
+// There were two initial motivations to roll our own versions instead of just using the ones from
+// the standard library (as we had done earlier).  First, the `<functional>` header is moderately
 // expensive to include---using these alternatives could save 100 ms or more on every file.  Second,
 // certain compilers (such as the Green Hills compiler) struggle with the trailing return types in,
 // say, `std::less<void>::operator()`, but work correctly with our alternatives.
 
 namespace au {
 namespace detail {
+
+// These tag types act as a kind of "compile time enum".
+struct CompareBuiltInIntegers {};
+struct DefaultComparison {};
+
+// `ComparisonCategory<T, U>` acts like a function which takes two _types_, and returns the correct
+// instance of the above "compile time enum".
+template <typename T, typename U>
+using ComparisonCategory =
+    std::conditional_t<stdx::conjunction<std::is_integral<T>, std::is_integral<U>>::value,
+                       CompareBuiltInIntegers,
+                       DefaultComparison>;
 
 //
 // Comparison operators.
@@ -1400,7 +1419,17 @@ namespace detail {
 struct Equal {
     template <typename T, typename U>
     constexpr bool operator()(const T &a, const U &b) const {
+        return op_impl(ComparisonCategory<T, U>{}, a, b);
+    }
+
+    template <typename T, typename U>
+    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a == b;
+    }
+
+    template <typename T, typename U>
+    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+        return stdx::cmp_equal(a, b);
     }
 };
 constexpr auto equal = Equal{};
@@ -1408,7 +1437,17 @@ constexpr auto equal = Equal{};
 struct NotEqual {
     template <typename T, typename U>
     constexpr bool operator()(const T &a, const U &b) const {
+        return op_impl(ComparisonCategory<T, U>{}, a, b);
+    }
+
+    template <typename T, typename U>
+    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a != b;
+    }
+
+    template <typename T, typename U>
+    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+        return stdx::cmp_not_equal(a, b);
     }
 };
 constexpr auto not_equal = NotEqual{};
@@ -1416,7 +1455,17 @@ constexpr auto not_equal = NotEqual{};
 struct Greater {
     template <typename T, typename U>
     constexpr bool operator()(const T &a, const U &b) const {
+        return op_impl(ComparisonCategory<T, U>{}, a, b);
+    }
+
+    template <typename T, typename U>
+    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a > b;
+    }
+
+    template <typename T, typename U>
+    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+        return stdx::cmp_greater(a, b);
     }
 };
 constexpr auto greater = Greater{};
@@ -1424,7 +1473,17 @@ constexpr auto greater = Greater{};
 struct Less {
     template <typename T, typename U>
     constexpr bool operator()(const T &a, const U &b) const {
+        return op_impl(ComparisonCategory<T, U>{}, a, b);
+    }
+
+    template <typename T, typename U>
+    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a < b;
+    }
+
+    template <typename T, typename U>
+    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+        return stdx::cmp_less(a, b);
     }
 };
 constexpr auto less = Less{};
@@ -1432,7 +1491,17 @@ constexpr auto less = Less{};
 struct GreaterEqual {
     template <typename T, typename U>
     constexpr bool operator()(const T &a, const U &b) const {
+        return op_impl(ComparisonCategory<T, U>{}, a, b);
+    }
+
+    template <typename T, typename U>
+    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a >= b;
+    }
+
+    template <typename T, typename U>
+    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+        return stdx::cmp_greater_equal(a, b);
     }
 };
 constexpr auto greater_equal = GreaterEqual{};
@@ -1440,7 +1509,17 @@ constexpr auto greater_equal = GreaterEqual{};
 struct LessEqual {
     template <typename T, typename U>
     constexpr bool operator()(const T &a, const U &b) const {
+        return op_impl(ComparisonCategory<T, U>{}, a, b);
+    }
+
+    template <typename T, typename U>
+    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a <= b;
+    }
+
+    template <typename T, typename U>
+    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+        return stdx::cmp_less_equal(a, b);
     }
 };
 constexpr auto less_equal = LessEqual{};
@@ -1449,6 +1528,10 @@ constexpr auto less_equal = LessEqual{};
 struct ThreeWayCompare {
     template <typename T, typename U>
     constexpr auto operator()(const T &a, const U &b) const {
+        // Note that we do not need special treatment for the case where `T` and `U` are both
+        // integral types, because the C++ language already prohibits narrowing conversions (such as
+        // `int` to `uint`) for `operator<=>`.  We can rely on this implicit warning to induce users
+        // to fix their code.
         return a <=> b;
     }
 };
