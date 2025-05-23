@@ -76,26 +76,26 @@ to write how you expect it to be printed.
         For example, if you see this:
 
         ```cpp
-        EXPECT_EQ(stream_to_string(squared(meters)(100)), "");
+        EXPECT_THAT(stream_to_string(squared(meters)(100)), StrEq(""));
         ```
 
         then you would replace it with this:
 
         ```cpp
-        EXPECT_EQ(stream_to_string(squared(meters)(100)), "100 m^2");
+        EXPECT_THAT(stream_to_string(squared(meters)(100)), StrEq("100 m^2"));
         ```
 
     === "Solution and Discussion"
         When you're done, your assertions should look something like this:
 
         ```cpp
-        EXPECT_EQ(stream_to_string(meters(100)), "100 m");
+        EXPECT_THAT(stream_to_string(meters(100)), StrEq("100 m"));
 
-        EXPECT_EQ(stream_to_string(meters(100.0) / seconds(8.0)), "12.5 m / s");
-        EXPECT_EQ(stream_to_string((meters / second)(12.5)), "12.5 m / s");
+        EXPECT_THAT(stream_to_string(meters(100.0) / seconds(8.0)), StrEq("12.5 m / s"));
+        EXPECT_THAT(stream_to_string((meters / second)(12.5)), StrEq("12.5 m / s"));
 
-        EXPECT_EQ(stream_to_string((meters / second)(10.0) / seconds(8.0)), "1.25 m / s^2");
-        EXPECT_EQ(stream_to_string((meters / second)(10.0) * seconds(8.0)), "80 m");
+        EXPECT_THAT(stream_to_string((meters / second)(10.0) / seconds(8.0)), StrEq("1.25 m / s^2"));
+        EXPECT_THAT(stream_to_string((meters / second)(10.0) * seconds(8.0)), StrEq("80 m"));
         ```
 
         The first is a warm-up problem: a checkpoint to make sure you're doing the exercise

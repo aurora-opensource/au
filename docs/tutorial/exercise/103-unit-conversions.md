@@ -53,7 +53,7 @@ Replace it with an ad hoc inline conversion based on Au.
             // TODO: replace `angle_rad` computation with an ad hoc conversion, using Au.
             constexpr double angle_rad = angle_deg * RAD_PER_DEG;
 
-            EXPECT_DOUBLE_EQ(angle_rad, 3.0 * M_PI / 4.0);
+            EXPECT_THAT(angle_rad, DoubleEq(3.0 * M_PI / 4.0));
         }
         ```
 
@@ -69,7 +69,7 @@ Replace it with an ad hoc inline conversion based on Au.
 
             constexpr double angle_rad = degrees(angle_deg).in(radians);
 
-            EXPECT_DOUBLE_EQ(angle_rad, 3.0 * M_PI / 4.0);
+            EXPECT_THAT(angle_rad, DoubleEq(3.0 * M_PI / 4.0));
         }
         ```
 
@@ -107,7 +107,7 @@ Replace it with an ad hoc inline conversion based on Au.
             // TODO: replace `speed_mps` computation with an ad hoc conversion, using Au.
             constexpr double speed_mps = speed_mph * MPS_PER_MPH;
 
-            EXPECT_DOUBLE_EQ(speed_mps, 29.0576);
+            EXPECT_THAT(speed_mps, DoubleEq(29.0576));
         }
         ```
 
@@ -132,7 +132,7 @@ Replace it with an ad hoc inline conversion based on Au.
 
             constexpr double speed_mps = (miles / hour)(speed_mph).in(meters / second);
 
-            EXPECT_DOUBLE_EQ(speed_mps, 29.0576);
+            EXPECT_THAT(speed_mps, DoubleEq(29.0576));
         }
         ```
 
