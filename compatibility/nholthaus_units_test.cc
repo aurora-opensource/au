@@ -30,11 +30,14 @@
 #include "au/units/volts.hh"
 #include "au/units/watts.hh"
 #include "compatibility/nholthaus_units_example_usage.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace {
 
 using namespace au;
+
+using ::testing::Eq;
 
 // Usage: `expect_equivalent<::units::dim::specific_unit_t>(specific_unit)`.
 //
@@ -68,7 +71,7 @@ void expect_equivalent(QuantityMaker<AuUnit> expected_au_unit) {
     // Check that the equivalent Quantity type can be _implicitly_ converted back to the original
     // nholthaus type, and that this round trip is the identity.
     const NholthausType round_trip = implicitly_converted_to_quantity;
-    EXPECT_EQ(round_trip, original);
+    EXPECT_THAT(round_trip, Eq(original));
 }
 
 TEST(NholthausTypes, MapsBaseUnitsOntoCorrectAuQuantityTypes) {
@@ -158,7 +161,7 @@ TEST(FootPounds, EquivalentWithinAFewPartsPerBillion) {
     EXPECT_THAT(converted_to_au, IsNear((foot_pounds)(1.2), nano(foot_pounds)(4)));
 
     const ::units::torque::foot_pound_t round_trip = converted_to_au;
-    EXPECT_EQ(round_trip, original);
+    EXPECT_THAT(round_trip, Eq(original));
 }
 
 }  // namespace

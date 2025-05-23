@@ -15,6 +15,7 @@
 #include <chrono>
 
 #include "docs/au_all_units_noio.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 // clang-format off
@@ -26,9 +27,11 @@
 
 namespace au {
 
+using ::testing::Eq;
+
 TEST(AuAllUnitsNoioHh, IncludesMoreObscureUnits) {
-    EXPECT_EQ(minutes(120), hours(2));
-    EXPECT_EQ(fahrenheit_pt(32), celsius_pt(0));
+    EXPECT_THAT(minutes(120), Eq(hours(2)));
+    EXPECT_THAT(fahrenheit_pt(32), Eq(celsius_pt(0)));
 }
 
 }  // namespace au
