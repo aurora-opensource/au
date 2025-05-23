@@ -138,22 +138,22 @@ If you need to check whether your magnitude `m` can be represented in a type `T`
     Here are some example test cases which will pass.
 
     ```cpp
-    EXPECT_TRUE(representable_in<int>(mag<1>()));
+    EXPECT_THAT(representable_in<int>(mag<1>()), IsTrue());
 
     // (1 / 2) is not an integer.
-    EXPECT_FALSE(representable_in<int>(mag<1>() / mag<2>()));
+    EXPECT_THAT(representable_in<int>(mag<1>() / mag<2>()), IsFalse());
 
-    EXPECT_TRUE(representable_in<float>(mag<1>() / mag<2>()));
+    EXPECT_THAT(representable_in<float>(mag<1>() / mag<2>()), IsTrue());
     ```
 
 ??? example "Example: range of the type"
     Here are some example test cases which will pass.
 
     ```cpp
-    EXPECT_TRUE(representable_in<uint32_t>(mag<4'000'000'000>()));
+    EXPECT_THAT(representable_in<uint32_t>(mag<4'000'000'000>()), IsTrue());
 
     // 4 billion is larger than the max value representable in `int32_t`.
-    EXPECT_FALSE(representable_in<int32_t>(mag<4'000'000'000>()));
+    EXPECT_THAT(representable_in<int32_t>(mag<4'000'000'000>()), IsFalse());
     ```
 
 Note that this function's return value also depends on _whether we can compute_ the value, not just

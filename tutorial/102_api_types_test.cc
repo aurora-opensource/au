@@ -15,7 +15,10 @@
 #include "tutorial/102_api_types.hh"
 
 #include "au/testing.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
+
+using ::testing::DoubleNear;
 
 TEST(StoppingDistanceM, GivesCorrectAnswerForZeroSpeed) {
     const double speed_mps = 0.0;
@@ -23,7 +26,7 @@ TEST(StoppingDistanceM, GivesCorrectAnswerForZeroSpeed) {
     const double distance_m = stopping_distance_m(speed_mps, acceleration_mpss);
 
     // If we are stopped already, the stopping distance should be zero.
-    EXPECT_NEAR(distance_m, 0.0, 1e-9);
+    EXPECT_THAT(distance_m, DoubleNear(0.0, 1e-9));
 }
 
 TEST(StoppingDistanceM, GivesCorrectAnswerForNonzeroSpeed) {
@@ -32,7 +35,7 @@ TEST(StoppingDistanceM, GivesCorrectAnswerForNonzeroSpeed) {
     const double distance_m = stopping_distance_m(speed_mps, acceleration_mpss);
 
     // If we slam on the brakes at low speed, we can stop in a very short distance.
-    EXPECT_NEAR(distance_m, 2.5, 1e-9);
+    EXPECT_THAT(distance_m, DoubleNear(2.5, 1e-9));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
