@@ -1938,7 +1938,7 @@ Celsius, would it be hotter than 300 Kelvins?  Doing this by hand, we might make
 </ul>
 <p>Now we can see whether Au comes to the same conclusion.  Note how easy it is to express the question
 with clarity, despite mixing <em>three</em> different temperature scales:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">EXPECT_LT</span><span class="p">(</span><span class="n">fahrenheit_pt</span><span class="p">(</span><span class="mi">-40</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">celsius_qty</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span><span class="w"> </span><span class="n">kelvins_pt</span><span class="p">(</span><span class="mi">300</span><span class="p">));</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">EXPECT_THAT</span><span class="p">(</span><span class="n">fahrenheit_pt</span><span class="p">(</span><span class="mi">-40</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">celsius_qty</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span><span class="w"> </span><span class="n">Lt</span><span class="p">(</span><span class="n">kelvins_pt</span><span class="p">(</span><span class="mi">300</span><span class="p">)));</span>
 </code></pre></div>
 <p>As hoped, this test passes.</p>
 <div class="admonition note">

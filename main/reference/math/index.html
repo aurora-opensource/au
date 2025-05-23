@@ -2359,7 +2359,7 @@ the <a href="https://en.cppreference.com/w/cpp/numeric/math/sin"><code>std::sin<
 <details class="example">
 <summary>Example: using angles of integer degrees</summary>
 <p>This example is taken from a test case in the library.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">EXPECT_NEAR</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">degrees</span><span class="p">(</span><span class="mi">30</span><span class="p">)),</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="mf">1e-15</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">EXPECT_THAT</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">degrees</span><span class="p">(</span><span class="mi">30</span><span class="p">)),</span><span class="w"> </span><span class="n">DoubleNear</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="mf">1e-15</span><span class="p">));</span>
 </code></pre></div>
 </details>
 <h4 id="arcsin-arccos-arctan"><code>arcsin</code>, <code>arccos</code>, <code>arctan</code><a class="headerlink" href="#arcsin-arccos-arctan" title="Permanent link">&para;</a></h4>
