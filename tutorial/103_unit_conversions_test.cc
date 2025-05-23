@@ -19,10 +19,14 @@
 #include "au/units/miles.hh"
 #include "au/units/radians.hh"
 #include "au/units/seconds.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 // For testing/tutorial purposes.
 using namespace au;
+
+using ::testing::DoubleEq;
+using ::testing::Eq;
 
 // Replace this constant with an appropriate conversion function, wherever it occurs.
 constexpr auto PLACEHOLDER = ZERO;
@@ -42,7 +46,7 @@ TEST(AdHocConversions, DegreesToRadians) {
     // TODO: replace `angle_rad` computation with an ad hoc conversion, using Au.
     constexpr double angle_rad = angle_deg * RAD_PER_DEG;
 
-    EXPECT_DOUBLE_EQ(angle_rad, 3.0 * M_PI / 4.0);
+    EXPECT_THAT(angle_rad, DoubleEq(3.0 * M_PI / 4.0));
 }
 
 TEST(AdHocConversions, MilesPerHourToMetersPerSecond) {
@@ -62,7 +66,7 @@ TEST(AdHocConversions, MilesPerHourToMetersPerSecond) {
     // TODO: replace `speed_mps` computation with an ad hoc conversion, using Au.
     constexpr double speed_mps = speed_mph * MPS_PER_MPH;
 
-    EXPECT_DOUBLE_EQ(speed_mps, 29.0576);
+    EXPECT_THAT(speed_mps, DoubleEq(29.0576));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,6 +104,6 @@ Height decompose_height(QuantityU32<Inches> total_height) {
 }
 
 TEST(Height, DecomposesCorrectly) {
-    EXPECT_EQ(decompose_height(inches(60)), (Height{feet(5), inches(0)}));
-    EXPECT_EQ(decompose_height(inches(83)), (Height{feet(6), inches(11)}));
+    EXPECT_THAT(decompose_height(inches(60)), Eq(Height{feet(5), inches(0)}));
+    EXPECT_THAT(decompose_height(inches(83)), Eq(Height{feet(6), inches(11)}));
 }

@@ -17,11 +17,15 @@
 #include "au/io.hh"
 #include "au/units/meters.hh"
 #include "au/units/seconds.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "tutorial/utils.hh"
 
 // For testing/tutorial purposes.
 using namespace au;
+
+using ::testing::DoubleEq;
+using ::testing::StrEq;
 
 // An API we'll upgrade later, along with some tests.
 double stopping_accel_mpss(double initial_speed_mps, double stopping_distance_m);
@@ -29,7 +33,7 @@ double stopping_accel_mpss(double initial_speed_mps, double stopping_distance_m)
 TEST(StoppingAccelMpss, ReturnsZeroIfAlreadyStopped) {
     constexpr double speed_mps = 0.0;
     constexpr double stopping_distance_m = 1.0;
-    EXPECT_EQ(stopping_accel_mpss(speed_mps, stopping_distance_m), 0.0);
+    EXPECT_THAT(stopping_accel_mpss(speed_mps, stopping_distance_m), DoubleEq(0.0));
 }
 
 TEST(StoppingAccelMpss, ReturnsCorrectAnswerForNonzeroValues) {
@@ -40,9 +44,9 @@ TEST(StoppingAccelMpss, ReturnsCorrectAnswerForNonzeroValues) {
     constexpr double expected_accel_mpss = -2.0;
     constexpr double t_s = -speed_mps / expected_accel_mpss;
     constexpr double distance_m = speed_mps * t_s + 0.5 * expected_accel_mpss * t_s * t_s;
-    ASSERT_DOUBLE_EQ(distance_m, stopping_distance_m);
+    ASSERT_THAT(distance_m, DoubleEq(stopping_distance_m));
 
-    EXPECT_EQ(stopping_accel_mpss(speed_mps, stopping_distance_m), expected_accel_mpss);
+    EXPECT_THAT(stopping_accel_mpss(speed_mps, stopping_distance_m), DoubleEq(expected_accel_mpss));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,23 +82,23 @@ void print_raw_number_and_quantity() {
 // "", as the expected answer.  This is just a placeholder.  Replace it with the answer you expect.
 // For example, if you see this:
 //
-//     EXPECT_EQ(stream_to_string(squared(meters)(100)), "");
+//     EXPECT_THAT(stream_to_string(squared(meters)(100)), StrEq(""));
 //
 // then you would replace it with this:
 //
-//     EXPECT_EQ(stream_to_string(squared(meters)(100)), "100 m^2");
+//     EXPECT_THAT(stream_to_string(squared(meters)(100)), StrEq("100 m^2"));
 //
 // TIP: you may find it useful to uncomment the lines one at a time.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 TEST(Quantity, PrintsAsExpected) {
-    // EXPECT_EQ(stream_to_string(meters(100)), "");
+    // EXPECT_THAT(stream_to_string(meters(100)), StrEq(""));
 
-    // EXPECT_EQ(stream_to_string(meters(100.0) / seconds(8.0)), "");
-    // EXPECT_EQ(stream_to_string((meters / second)(12.5)), "");
+    // EXPECT_THAT(stream_to_string(meters(100.0) / seconds(8.0)), StrEq(""));
+    // EXPECT_THAT(stream_to_string((meters / second)(12.5)), StrEq(""));
 
-    // EXPECT_EQ(stream_to_string((meters / second)(10.0) / seconds(8.0)), "");
-    // EXPECT_EQ(stream_to_string((meters / second)(10.0) * seconds(8.0)), "");
+    // EXPECT_THAT(stream_to_string((meters / second)(10.0) / seconds(8.0)), StrEq(""));
+    // EXPECT_THAT(stream_to_string((meters / second)(10.0) * seconds(8.0)), StrEq(""));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

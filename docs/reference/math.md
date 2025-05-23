@@ -314,7 +314,7 @@ the [`std::sin` documentation](https://en.cppreference.com/w/cpp/numeric/math/si
     This example is taken from a test case in the library.
 
     ```cpp
-    EXPECT_NEAR(sin(degrees(30)), 0.5, 1e-15);
+    EXPECT_THAT(sin(degrees(30)), DoubleNear(0.5, 1e-15));
     ```
 
 #### `arcsin`, `arccos`, `arctan`
