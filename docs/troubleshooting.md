@@ -134,16 +134,6 @@ It's the "classic" error the units library aims to prevent.
           |               ^~~~~~~~
     ```
 
-    **Compiler error (MSVC 2019 x64)**
-    ```
-    error_examples.cc(32): error C2248: 'au::Quantity<au::Seconds,double>::Quantity': cannot access private member declared in class 'au::Quantity<au::Seconds,double>'
-    D:\a\au\au\au.hh(3202): note: see declaration of 'au::Quantity<au::Seconds,double>::Quantity'
-    D:\a\au\au\au.hh(3269): note: see declaration of 'au::Quantity<au::Seconds,double>'
-    error_examples.cc(35): error C2248: 'au::Quantity<au::Meters,double>::Quantity': cannot access private member declared in class 'au::Quantity<au::Meters,double>'
-    D:\a\au\au\au.hh(3202): note: see declaration of 'au::Quantity<au::Meters,double>::Quantity'
-    D:\a\au\au\au.hh(3269): note: see declaration of 'au::Quantity<au::Meters,double>'
-    ```
-
     **Compiler error (MSVC 2022 x64)**
     ```
     error_examples.cc(32): error C2248: 'au::Quantity<au::Seconds,double>::Quantity': cannot access private member declared in class 'au::Quantity<au::Seconds,double>'
@@ -257,27 +247,6 @@ point maker), but it's _already_ a `Quantity` or `QuantityPoint`.
       295 |         static_assert(is_not_already_a_quantity_point,
           |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ```
-
-    **Compiler error (MSVC 2019 x64)**
-    ```
-    D:\a\au\au\au.hh(4391): error C2338: Input to QuantityMaker is already a Quantity
-    error_examples.cc(48): note: see reference to function template instantiation 'void au::QuantityMaker<au::Meters>::operator ()<au::Meters,int>(au::Quantity<au::Meters,int>) const' being compiled
-    error_examples.cc(48): note: see reference to function template instantiation 'void au::QuantityMaker<au::Meters>::operator ()<au::Meters,int>(au::Quantity<au::Meters,int>) const' being compiled
-    D:\a\au\au\au.hh(5111): error C2338: Input to QuantityPointMaker is already a QuantityPoint
-    error_examples.cc(51): note: see reference to function template instantiation 'void au::QuantityPointMaker<au::Meters>::operator ()<Unit,T>(au::QuantityPoint<Unit,T>) const' being compiled
-            with
-            [
-                Unit=au::Meters,
-                T=int
-            ]
-    error_examples.cc(51): note: see reference to function template instantiation 'void au::QuantityPointMaker<au::Meters>::operator ()<Unit,T>(au::QuantityPoint<Unit,T>) const' being compiled
-            with
-            [
-                Unit=au::Meters,
-                T=int
-            ]
-    ```
-
 
     **Compiler error (MSVC 2022 x64)**
     ```
@@ -410,17 +379,6 @@ operation (at least in this format).
     ./au/quantity.hh:169:13: error: static assertion failed: Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion
     ```
 
-    **Compiler error (MSVC 2019 x64)**
-    ```
-    D:\a\au\au\au.hh(2952): error C2338: Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion
-    D:\a\au\au\au.hh(2989): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<NewUnit,void>(NewUnit) const' being compiled
-            with
-            [
-                NewUnit=au::Feet
-            ]
-    error_examples.cc(45): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<au::Feet>(au::QuantityMaker<au::Feet>) const' being compiled
-    ```
-
     **Compiler error (MSVC 2022 x64)**
     ```
     D:\a\au\au\au.hh(2952): error C2338: static_assert failed: 'Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion'
@@ -526,79 +484,6 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
     au/quantity.hh:627:94: error: no type named 'type' in 'struct std::common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int> >'
       627 |         std::is_same<typename C::Rep, std::common_type_t<typename T::Rep, typename U::Rep>>::value,
           |                                                                                              ^~~~~
-    ```
-
-    **Compiler error (MSVC 2019 x64)**
-    ```
-    C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.29.30133\include\type_traits(1164): error C2794: 'type': is not a member of any direct or indirect base class of 'std::common_type<T,U>'
-            with
-            [
-                T=au::Quantity<au::Meters,int>,
-                U=au::Quantity<au::Seconds,int>
-            ]
-    D:\a\au\au\au.hh(4493): note: see reference to alias template instantiation 'std::common_type_t<au::Quantity<au::Meters,int>,U>' being compiled
-            with
-            [
-                U=au::Quantity<au::Seconds,int>
-            ]
-    D:\a\au\au\au.hh(4531): note: see reference to function template instantiation 'auto au::detail::using_common_type<au::Quantity<au::Meters,int>,au::Quantity<au::Seconds,int>,au::detail::Plus>(T,U,Func)' being compiled
-            with
-            [
-                T=au::Quantity<au::Meters,int>,
-                U=au::Quantity<au::Seconds,int>,
-                Func=au::detail::Plus
-            ]
-    error_examples.cc(70): note: see reference to function template instantiation 'auto au::operator +<au::Meters,au::Seconds,int,int>(au::Quantity<au::Meters,int>,au::Quantity<au::Seconds,int>)' being compiled
-    D:\a\au\au\au.hh(4493): error C2938: 'std::common_type_t' : Failed to specialize alias template
-    D:\a\au\au\au.hh(4495): error C2057: expected constant expression
-    D:\a\au\au\au.hh(4367): error C2668: 'au::Quantity<au::Meters,int>::as': ambiguous call to overloaded function
-    D:\a\au\au\au.hh(4023): note: could be 'auto au::Quantity<au::Meters,int>::as<NewRep,enable_if<au::IsUnit<AssociatedUnit<NewUnit>::type>::value,void>::type>(NewUnit) const'
-            with
-            [
-                NewRep=TargetUnit::Rep,
-                NewUnit=TargetUnit::Rep
-            ]
-    D:\a\au\au\au.hh(4013): note: or       'auto au::Quantity<au::Meters,int>::as<NewRep,Unit,void>(NewUnit) const'
-            with
-            [
-                NewRep=TargetUnit::Rep,
-                Unit=au::Meters,
-                NewUnit=au::Meters
-            ]
-    D:\a\au\au\au.hh(4367): note: while trying to match the argument list '(Unit)'
-            with
-            [
-                Unit=au::Meters
-            ]
-    D:\a\au\au\au.hh(4488): note: see reference to function template instantiation 'auto au::rep_cast<TargetUnit::Rep,au::Meters,int>(au::Quantity<au::Meters,int>)' being compiled
-    D:\a\au\au\au.hh(4498): note: see reference to function template instantiation 'auto au::detail::cast_to_common_type<C,au::Meters,int>(au::Quantity<au::Meters,int>)' being compiled
-    D:\a\au\au\au.hh(4367): error C2668: 'au::Quantity<au::Seconds,int>::as': ambiguous call to overloaded function
-    D:\a\au\au\au.hh(4023): note: could be 'auto au::Quantity<au::Seconds,int>::as<NewRep,enable_if<au::IsUnit<AssociatedUnit<NewUnit>::type>::value,void>::type>(NewUnit) const'
-            with
-            [
-                NewRep=TargetUnit::Rep,
-                NewUnit=TargetUnit::Rep
-            ]
-    D:\a\au\au\au.hh(4013): note: or       'auto au::Quantity<au::Seconds,int>::as<NewRep,Unit,void>(NewUnit) const'
-            with
-            [
-                NewRep=TargetUnit::Rep,
-                Unit=au::Seconds,
-                NewUnit=au::Seconds
-            ]
-    D:\a\au\au\au.hh(4367): note: while trying to match the argument list '(Unit)'
-            with
-            [
-                Unit=au::Seconds
-            ]
-    D:\a\au\au\au.hh(4488): note: see reference to function template instantiation 'auto au::rep_cast<TargetUnit::Rep,au::Seconds,int>(au::Quantity<au::Seconds,int>)' being compiled
-    D:\a\au\au\au.hh(4498): note: see reference to function template instantiation 'auto au::detail::cast_to_common_type<C,au::Seconds,int>(au::Quantity<au::Seconds,int>)' being compiled
-    D:\a\au\au\au.hh(4498): error C2672: 'operator __surrogate_func': no matching overloaded function found
-    D:\a\au\au\au.hh(4498): error C2893: Failed to specialize function template 'auto au::detail::Plus::operator ()(const T &,const U &) const'
-    D:\a\au\au\au.hh(954): note: see declaration of 'au::detail::Plus::operator ()'
-    D:\a\au\au\au.hh(4498): note: With the following template arguments:
-    D:\a\au\au\au.hh(4498): note: 'T=void'
-    D:\a\au\au\au.hh(4498): note: 'U=void'
     ```
 
     **Compiler error (MSVC 2022 x64)**
@@ -829,59 +714,6 @@ a unit that you scale by a magnitude, `mag<N>()`.
                      from au/error_examples.cc:15:
     ```
 
-    **Compiler error (MSVC 2019 x64)**
-
-    ```
-    D:\a\au\au\au.hh(5267): error C2338: Can't pass `Quantity` to a unit slot (see: https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)
-    D:\a\au\au\au.hh(7394): note: see reference to class template instantiation 'au::AssociatedUnit<RoundingUnits>' being compiled
-            with
-            [
-                RoundingUnits=au::Quantity<au::Bytes,int>
-            ]
-    D:\a\au\au\au.hh(7394): note: see reference to alias template instantiation 'au::AssociatedUnitT<au::Quantity<au::Bytes,int>>' being compiled
-    error_examples.cc(79): note: see reference to function template instantiation 'auto au::round_as<int,au::Quantity<au::Bytes,int>,au::Bytes,int>(RoundingUnits,au::Quantity<au::Bytes,int>)' being compiled
-            with
-            [
-                RoundingUnits=au::Quantity<au::Bytes,int>
-            ]
-    D:\a\au\au\au.hh(3638): error C2794: 'type': is not a member of any direct or indirect base class of 'au::AssociatedUnit<RoundingUnits>'
-            with
-            [
-                RoundingUnits=au::Quantity<au::Bytes,int>
-            ]
-    D:\a\au\au\au.hh(7394): error C2938: 'au::AssociatedUnitT' : Failed to specialize alias template
-    D:\a\au\au\au.hh(7342): error C2672: 'au::Quantity<au::Bytes,int>::in': no matching overloaded function found
-    D:\a\au\au\au.hh(7360): note: see reference to function template instantiation 'auto au::round_in<RoundingUnits,au::Bytes,int>(RoundingUnits,au::Quantity<au::Bytes,int>)' being compiled
-            with
-            [
-                RoundingUnits=au::Quantity<au::Bytes,int>
-            ]
-    D:\a\au\au\au.hh(7394): note: see reference to function template instantiation 'auto au::round_in<OutputRep,RoundingUnits,au::Bytes,int>(RoundingUnits,au::Quantity<au::Bytes,int>)' being compiled
-            with
-            [
-                OutputRep=int,
-                RoundingUnits=au::Quantity<au::Bytes,int>
-            ]
-    D:\a\au\au\au.hh(7342): error C2783: 'NewRep au::Quantity<au::Bytes,int>::in(NewUnit) const': could not deduce template argument for '<unnamed-symbol>'
-    D:\a\au\au\au.hh(5010): note: see declaration of 'au::Quantity<au::Bytes,int>::in'
-    D:\a\au\au\au.hh(7360): error C2440: 'static_cast': cannot convert from 'void' to 'OutputRep'
-            with
-            [
-                OutputRep=int
-            ]
-    D:\a\au\au\au.hh(7360): note: Expressions of type void cannot be converted to other types
-    D:\a\au\au\au.hh(7394): error C2672: 'au::make_quantity': no matching overloaded function found
-    D:\a\au\au\au.hh(7394): error C2893: Failed to specialize function template 'auto au::make_quantity(T)'
-    D:\a\au\au\au.hh(4872): note: see declaration of 'au::make_quantity'
-    D:\a\au\au\au.hh(7394): note: With the following template arguments:
-    D:\a\au\au\au.hh(7394): note: 'UnitT=unknown-type'
-    D:\a\au\au\au.hh(7394): note: 'T=void'
-    error_examples.cc(79): error C2679: binary '=': no operator found which takes a right-hand operand of type 'void' (or there is no acceptable conversion)
-    D:\a\au\au\au.hh(5261): note: could be 'au::Quantity<au::Bytes,int> &au::Quantity<au::Bytes,int>::operator =(au::Quantity<au::Bytes,int> &&)'
-    D:\a\au\au\au.hh(5261): note: or       'au::Quantity<au::Bytes,int> &au::Quantity<au::Bytes,int>::operator =(const au::Quantity<au::Bytes,int> &)'
-    error_examples.cc(79): note: while trying to match the argument list '(au::Quantity<au::Bytes,int>, void)'
-    ```
-
     **Compiler error (MSVC 2022 x64)**
 
     ```
@@ -1035,29 +867,6 @@ Otherwise, use floating point types.
           |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
     ```
 
-    **Compiler error (MSVC 2019 x64)**
-    ```
-    D:\a\au\au\au.hh(4263): error C2338: Integer division forbidden: wrap denominator in `unblock_int_div()` if you really want it
-    D:\a\au\au\au.hh(4193): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherUnit,OtherRep>(void)' being compiled
-            with
-            [
-                OtherUnit=au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,
-                OtherRep=int
-            ]
-    D:\a\au\au\au.hh(4193): note: see reference to function template instantiation 'void au::Quantity<au::Meters,int>::warn_if_integer_division<OtherUnit,OtherRep>(void)' being compiled
-            with
-            [
-                OtherUnit=au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,
-                OtherRep=int
-            ]
-    error_examples.cc(78): note: see reference to function template instantiation 'au::Quantity<au::UnitProduct<T,au::Pow<B,-1>,au::Hours>,int> au::Quantity<au::Meters,int>::operator /<au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,int>(au::Quantity<au::UnitProduct<au::Miles,au::Pow<au::Hours,-1>>,int>) const' being compiled
-            with
-            [
-                T=au::Meters,
-                B=au::Miles
-            ]
-    ```
-
     **Compiler error (MSVC 2022 x64)**
     ```
     D:\a\au\au\au.hh(4263): error C2338: static_assert failed: 'Integer division forbidden: wrap denominator in `unblock_int_div()` if you really want it'
@@ -1165,21 +974,6 @@ use a smaller target unit.
           |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ```
 
-    **Compiler error (MSVC 2019 x64)**
-    ```
-    D:\a\au\au\au.hh(6120): error C2338: Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired
-    D:\a\au\au\au.hh(6135): note: see reference to function template instantiation 'auto au::inverse_in<TargetUnits,au::Hertz,int>(TargetUnits,au::Quantity<au::Hertz,int>)' being compiled
-            with
-            [
-                TargetUnits=au::QuantityMaker<au::Seconds>
-            ]
-    error_examples.cc(86): note: see reference to function template instantiation 'auto au::inverse_as<au::QuantityMaker<au::Seconds>,au::Hertz,int>(TargetUnits,au::Quantity<au::Hertz,int>)' being compiled
-            with
-            [
-                TargetUnits=au::QuantityMaker<au::Seconds>
-            ]
-    ```
-
     **Compiler error (MSVC 2022 x64)**
     ```
     D:\a\au\au\au.hh(6120): error C2338: static_assert failed: 'Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired'
@@ -1266,20 +1060,6 @@ casting automatically when possible.
        96 |          }) {
           |          ^
     au/error_examples.cc:96:10: note:   deduced conflicting types for parameter 'auto' ('au::Quantity<au::Hertz, double>' and 'au::Quantity<au::Pow<au::Seconds, -1>, double>')
-    ```
-
-    **Compiler error (MSVC 2019 x64)**
-    ```
-    error_examples.cc(94): error C3535: cannot deduce type for 'auto &&' from 'initializer list'
-    error_examples.cc(94): error C2440: 'initializing': cannot convert from 'initializer list' to 'std::initializer_list<int> &&'
-    error_examples.cc(97): note: Reason: cannot convert from 'initializer list' to 'std::initializer_list<int>'
-    error_examples.cc(94): note: Element '1': no conversion from 'au::Quantity<au::Hertz,double>' to 'int'
-    error_examples.cc(94): note: Element '2': no conversion from 'au::Quantity<au::Pow<B,-1>,T>' to 'int'
-            with
-            [
-                B=au::Seconds,
-                T=double
-            ]
     ```
 
     **Compiler error (MSVC 2022 x64)**
@@ -1526,139 +1306,6 @@ ordering!
     au/unit_of_measure.hh:495:70: error: static assertion failed: Elements must be listed in ascending order
       495 |     static_assert(AreElementsInOrder<CommonUnit, CommonUnit<Us...>>::value,
           |                                                                      ^~~~~
-    ```
-
-    **Compiler error (MSVC 2019 x64)**
-    ```
-    D:\a\au\au\au.hh(1392): error C2338: Broken strict total ordering: distinct input types compare equal
-    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B>' being compiled
-            with
-            [
-                A=au::Quarterfeet,
-                B=au::Trinches
-            ]
-    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderAsUnitProduct>' being compiled
-            with
-            [
-                A=au::Quarterfeet,
-                B=au::Trinches
-            ]
-    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
-            with
-            [
-                A=au::Quarterfeet,
-                B=au::Trinches
-            ]
-    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
-            with
-            [
-                A=au::Quarterfeet,
-                B=au::Trinches
-            ]
-    D:\a\au\au\au.hh(1423): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
-            with
-            [
-                A=au::Quarterfeet,
-                B=au::Trinches
-            ]
-    D:\a\au\au\au.hh(3563): note: see reference to class template instantiation 'au::LexicographicTotalOrdering<A,B,au::detail::OrderByUnitAvoidance,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct>' being compiled
-            with
-            [
-                A=au::Quarterfeet,
-                B=au::Trinches
-            ]
-    D:\a\au\au\au.hh(3142): note: see reference to class template instantiation 'au::InOrderFor<au::UnitProduct,A,B>' being compiled
-            with
-            [
-                A=au::Quarterfeet,
-                B=au::Trinches
-            ]
-    D:\a\au\au\au.hh(1502): note: see reference to class template instantiation 'au::InOrderFor<List,T,H>' being compiled
-            with
-            [
-                List=au::CommonUnit,
-                T=au::Quarterfeet,
-                H=au::Trinches
-            ]
-    D:\a\au\au\au.hh(3226): note: see reference to class template instantiation 'au::FlatDedupedTypeList<au::CommonUnit,au::CommonUnit<T>,au::CommonUnit<au::Trinches>>' being compiled
-            with
-            [
-                T=au::Quarterfeet
-            ]
-    D:\a\au\au\au.hh(3226): note: see reference to alias template instantiation 'au::FlatDedupedTypeListT<au::CommonUnit,au::Quarterfeet,au::Trinches>' being compiled
-    D:\a\au\au\au.hh(3230): note: see reference to alias template instantiation 'au::ComputeCommonUnitImpl<au::Quarterfeet,au::Trinches>' being compiled
-    D:\a\au\au\au.hh(4619): note: see reference to class template instantiation 'au::ComputeCommonUnit<U1,U2>' being compiled
-            with
-            [
-                U1=au::Quarterfeet,
-                U2=au::Trinches
-            ]
-    D:\a\au\au\au.hh(4619): note: see reference to alias template instantiation 'au::CommonUnitT<au::Quarterfeet,au::Trinches>' being compiled
-    D:\a\au\au\au.hh(4630): note: see reference to class template instantiation 'au::CommonQuantity<au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>,void>' being compiled
-    D:\a\au\au\au.hh(4493): note: see reference to class template instantiation 'std::common_type<T,U>' being compiled
-            with
-            [
-                T=au::Quantity<au::Quarterfeet,int>,
-                U=au::Quantity<au::Trinches,int>
-            ]
-    D:\a\au\au\au.hh(4493): note: see reference to alias template instantiation 'std::common_type_t<au::Quantity<au::Quarterfeet,int>,U>' being compiled
-            with
-            [
-                U=au::Quantity<au::Trinches,int>
-            ]
-    D:\a\au\au\au.hh(4505): note: see reference to function template instantiation 'auto au::detail::using_common_type<au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>,au::detail::Equal>(T,U,Func)' being compiled
-            with
-            [
-                T=au::Quantity<au::Quarterfeet,int>,
-                U=au::Quantity<au::Trinches,int>,
-                Func=au::detail::Equal
-            ]
-    error_examples.cc(113): note: see reference to function template instantiation 'bool au::operator ==<au::Quarterfeet,au::Trinches,int,int>(au::Quantity<au::Quarterfeet,int>,au::Quantity<au::Trinches,int>)' being compiled
-    D:\a\au\au\au.hh(3132): error C2338: Elements must be listed in ascending order
-    D:\a\au\au\au.hh(1310): note: see reference to class template instantiation 'au::CommonUnit<T,au::Quarterfeet>' being compiled
-            with
-            [
-                T=au::Trinches
-            ]
-    D:\a\au\au\au.hh(3133): note: see reference to alias template instantiation 'au::detail::DimMemberT<au::CommonUnit<T,au::Quarterfeet>>' being compiled
-            with
-            [
-                T=au::Trinches
-            ]
-    D:\a\au\au\au.hh(3094): note: see reference to class template instantiation 'au::detail::DimImpl<U1>' being compiled
-            with
-            [
-                U1=au::CommonUnit<au::Trinches,au::Quarterfeet>
-            ]
-    D:\a\au\au\au.hh(3093): note: see reference to alias template instantiation 'au::detail::DimT<au::CommonUnit<T,au::Quarterfeet>>' being compiled
-            with
-            [
-                T=au::Trinches
-            ]
-    D:\a\au\au\au.hh(210): note: see reference to class template instantiation 'au::HasSameDimension<U1,U2>' being compiled
-            with
-            [
-                U1=au::CommonUnit<au::Trinches,au::Quarterfeet>,
-                U2=au::Trinches
-            ]
-    D:\a\au\au\au.hh(3108): note: see reference to class template instantiation 'au::stdx::conjunction<au::HasSameDimension<U1,U2>,au::detail::HasSameMagnitude<U1,U2>>' being compiled
-            with
-            [
-                U1=au::CommonUnit<au::Trinches,au::Quarterfeet>,
-                U2=au::Trinches
-            ]
-    D:\a\au\au\au.hh(3172): note: see reference to class template instantiation 'au::AreUnitsQuantityEquivalent<TargetUnit,H>' being compiled
-            with
-            [
-                TargetUnit=au::CommonUnit<au::Trinches,au::Quarterfeet>,
-                H=au::Trinches
-            ]
-    D:\a\au\au\au.hh(3230): note: see reference to class template instantiation 'au::detail::FirstMatchingUnit<au::AreUnitsQuantityEquivalent,au::CommonUnit<T,au::Quarterfeet>,TargetUnit>' being compiled
-            with
-            [
-                T=au::Trinches,
-                TargetUnit=au::CommonUnit<au::Trinches,au::Quarterfeet>
-            ]
     ```
 
     **Compiler error (MSVC 2022 x64)**
