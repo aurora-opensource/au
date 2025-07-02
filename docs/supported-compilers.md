@@ -27,9 +27,10 @@ preferred configuration are welcome to file an issue, especially if they can pro
 as to how we can help it meet the requirements for that tier (that is, how to set up suitable GitHub
 workflows or bazel toolchains for it).
 
-Some status changes may be out of our control.  For example, if GitHub actions drops support for
-Windows Server 2019, we won't be able to continue running GitHub workflows for MSVC x64 19.29.  If
-that happened, we would have to move that configuration to the "Assumed Support" tier.
+Some status changes may be out of our control.  For example, when GitHub actions dropped support for
+Windows Server 2019, we became unable to continue running GitHub workflows for MSVC x64 19.29.  The
+MSVC 2019 configuration was therefore moved (implicitly) to the "Assumed Support" tier in
+https://github.com/aurora-opensource/au/pull/441.
 
 ## Tiers: Requirements and members
 
@@ -67,5 +68,4 @@ Here are the configurations that have Best Effort Support status.
 
 | Platform | Compiler | Status |
 |----------|----------|--------|
-| Windows Server 2019 | MSVC 2019 x64 | [![MSVC 2019 x64]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2019-x64.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2019-x64.yml) |
 | Windows Server 2022 | MSVC 2022 x64 | [![MSVC 2022 x64]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml) |
