@@ -131,14 +131,14 @@ def enumerate_units_and_constants(args):
 
     if args.all_units:
         args.units = [
-            f[:-3] for f in os.listdir("au/code/au/units/") if looks_like_header(f)
+            f[:-3] for f in os.listdir("au/units/") if looks_like_header(f)
         ]
     del args.all_units
 
     if args.all_constants:
         args.constants = [
             f[:-3].upper()
-            for f in os.listdir("au/code/au/constants/")
+            for f in os.listdir("au/constants/")
             if looks_like_header(f)
         ]
     del args.all_constants
@@ -178,7 +178,7 @@ class SourceFile:
         self.lines = []
 
         in_copyright_header = False
-        with open(os.path.join("au/code", filename)) as f:
+        with open(filename) as f:
             was_last_line_blank = False
             for line in f:
                 if line.startswith("#pragma once"):
