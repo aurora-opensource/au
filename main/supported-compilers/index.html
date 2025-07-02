@@ -1974,9 +1974,10 @@ configuration that doesn&rsquo;t meet the bar for any higher tier is in the &ldq
 preferred configuration are welcome to file an issue, especially if they can provide some guidance
 as to how we can help it meet the requirements for that tier (that is, how to set up suitable GitHub
 workflows or bazel toolchains for it).</p>
-<p>Some status changes may be out of our control.  For example, if GitHub actions drops support for
-Windows Server 2019, we won&rsquo;t be able to continue running GitHub workflows for MSVC x64 19.29.  If
-that happened, we would have to move that configuration to the &ldquo;Assumed Support&rdquo; tier.</p>
+<p>Some status changes may be out of our control.  For example, when GitHub actions dropped support for
+Windows Server 2019, we became unable to continue running GitHub workflows for MSVC x64 19.29.  The
+MSVC 2019 configuration was therefore moved (implicitly) to the &ldquo;Assumed Support&rdquo; tier in
+https://github.com/aurora-opensource/au/pull/441.</p>
 <h2 id="tiers-requirements-and-members">Tiers: Requirements and members<a class="headerlink" href="#tiers-requirements-and-members" title="Permanent link">&para;</a></h2>
 <p>Now we&rsquo;ll go into more detail about each tier.  We&rsquo;ll explain the requirements which a configuration
 must meet to join that tier, and we&rsquo;ll list the configurations that are currently included.</p>
@@ -2031,11 +2032,6 @@ measurement badges, so that potential users with these configurations are forewa
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>Windows Server 2019</td>
-<td>MSVC 2019 x64</td>
-<td><a href="https://github.com/aurora-opensource/au/actions/workflows/msvc-2019-x64.yml"><img alt="MSVC 2019 x64" src="https://github.com/aurora-opensource/au/actions/workflows/msvc-2019-x64.yml/badge.svg?branch=main&amp;event=push" /></a></td>
-</tr>
 <tr>
 <td>Windows Server 2022</td>
 <td>MSVC 2022 x64</td>
