@@ -1060,6 +1060,40 @@ constexpr const auto &unit_label(Unit) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// `UnitAvoidance`: Support for customizing unit ordering.
+//
+// "Unit avoidance" is a tiebreaker for quantity-equivalent units.  Anonymous units, such as
+// `UnitImpl<...>`, `ScaledUnit<...>`, and `UnitProduct<...>`, are more "avoidable" than units which
+// are none of these, because the latter are likely explicitly named and thus more user-facing.  The
+// relative ordering among these built-in template types is probably less important than the fact
+// that there _is_ a relative ordering among them (because we need to have a strict total ordering).
+//
+// Users can specialize UnitAvoidance for their own units to customize the ordering behavior.
+template <typename T>
+struct UnitAvoidance : std::integral_constant<int, 0> {};
+
+template <typename... Ts>
+struct UnitAvoidance<UnitProduct<Ts...>> : std::integral_constant<int, 1> {};
+
+template <typename... Ts>
+struct UnitAvoidance<UnitImpl<Ts...>> : std::integral_constant<int, 2> {};
+
+template <typename... Ts>
+struct UnitAvoidance<ScaledUnit<Ts...>> : std::integral_constant<int, 3> {};
+
+template <typename B, std::intmax_t N>
+struct UnitAvoidance<Pow<B, N>> : std::integral_constant<int, 4> {};
+
+template <typename B, std::intmax_t N, std::intmax_t D>
+struct UnitAvoidance<RatioPow<B, N, D>> : std::integral_constant<int, 5> {};
+
+template <typename... Us>
+struct UnitAvoidance<CommonUnit<Us...>> : std::integral_constant<int, 6> {};
+
+template <typename... Us>
+struct UnitAvoidance<CommonPointUnit<Us...>> : std::integral_constant<int, 7> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // `UnitProduct` implementation.
 //
 // It's just a standard pack product, so all we need to do is carefully define the total ordering.
@@ -1128,38 +1162,9 @@ template <typename A, typename B>
 struct OrderByOrigin
     : stdx::bool_constant<(detail::OriginOf<A>::value() < detail::OriginOf<B>::value())> {};
 
-// "Unit avoidance" is a tiebreaker for quantity-equivalent units.  Anonymous units, such as
-// `UnitImpl<...>`, `ScaledUnit<...>`, and `UnitProduct<...>`, are more "avoidable" than units which
-// are none of these, because the latter are likely explicitly named and thus more user-facing.  The
-// relative ordering among these built-in template types is probably less important than the fact
-// that there _is_ a relative ordering among them (because we need to have a strict total ordering).
-template <typename T>
-struct UnitAvoidance : std::integral_constant<int, 0> {};
-
 template <typename A, typename B>
 struct OrderByUnitAvoidance
     : stdx::bool_constant<(UnitAvoidance<A>::value < UnitAvoidance<B>::value)> {};
-
-template <typename... Ts>
-struct UnitAvoidance<UnitProduct<Ts...>> : std::integral_constant<int, 1> {};
-
-template <typename... Ts>
-struct UnitAvoidance<UnitImpl<Ts...>> : std::integral_constant<int, 2> {};
-
-template <typename... Ts>
-struct UnitAvoidance<ScaledUnit<Ts...>> : std::integral_constant<int, 3> {};
-
-template <typename B, std::intmax_t N>
-struct UnitAvoidance<Pow<B, N>> : std::integral_constant<int, 4> {};
-
-template <typename B, std::intmax_t N, std::intmax_t D>
-struct UnitAvoidance<RatioPow<B, N, D>> : std::integral_constant<int, 5> {};
-
-template <typename... Us>
-struct UnitAvoidance<CommonUnit<Us...>> : std::integral_constant<int, 6> {};
-
-template <typename... Us>
-struct UnitAvoidance<CommonPointUnit<Us...>> : std::integral_constant<int, 7> {};
 }  // namespace detail
 
 template <typename A, typename B>

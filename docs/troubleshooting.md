@@ -1153,10 +1153,10 @@ ordering!
         struct Trinches : decltype(Inches{} * mag<3>()) {};
         constexpr auto trinches = QuantityMaker<Trinches>{};
 
-        namespace au { namespace detail {
+        namespace au {
         template <>
         struct UnitAvoidance<::Trinches> : std::integral_constant<int, 100> {};
-        }}
+        }
 
         // (FIXED): Trinches has high "unit avoidance", so it goes after Quarterfeet
         if (quarterfeet(10) == trinches(10)) {
