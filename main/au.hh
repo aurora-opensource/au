@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-44-gc2bc7b5
+// Version identifier: 0.4.1-45-g07aac9a
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -494,7 +494,7 @@ constexpr std::make_unsigned_t<S> abs_as_unsigned(S x) {
     constexpr auto UMAX = std::numeric_limits<U>::max();
 
     auto result = static_cast<U>(x);
-    return (result > SMAX) ? (UMAX - result + 1u) : result;
+    return (result > SMAX) ? static_cast<U>(UMAX - result + 1u) : result;
 }
 
 // The string-length needed to hold a representation of this unsigned integer.
