@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-45-g07aac9a
+// Version identifier: 0.4.1-46-gab2123e
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -5905,11 +5905,18 @@ class Quantity {
               typename NewUnit,
               typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
     constexpr auto as(NewUnit) const {
-        using Common = std::common_type_t<Rep, NewRep>;
+        constexpr bool REAL_TO_COMPLEX =
+            std::is_arithmetic<Rep>::value &&
+            stdx::experimental::is_detected<detail::TypeOfRealMember, NewRep>::value;
+        using Common = std::conditional_t<REAL_TO_COMPLEX,
+                                          std::common_type_t<Rep, detail::RealPart<NewRep>>,
+                                          std::common_type_t<Rep, NewRep>>;
+        using Intermediate = std::conditional_t<REAL_TO_COMPLEX, detail::RealPart<NewRep>, NewRep>;
         using Factor = UnitRatioT<AssociatedUnitT<Unit>, AssociatedUnitT<NewUnit>>;
 
         return make_quantity<AssociatedUnitT<NewUnit>>(
-            static_cast<NewRep>(detail::apply_magnitude(static_cast<Common>(value_), Factor{})));
+            static_cast<NewRep>(static_cast<Intermediate>(
+                detail::apply_magnitude(static_cast<Common>(value_), Factor{}))));
     }
 
     template <typename NewUnit,
