@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-46-gab2123e
+// Version identifier: 0.4.1-47-g1db22dc
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
