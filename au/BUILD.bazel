@@ -565,10 +565,6 @@ cc_test(
 
 cc_library(
     name = "stdx",
-    srcs = glob([
-        "stdx/*.cc",
-        "stdx/experimental/*.cc",
-    ]),
     hdrs = glob([
         "stdx/*.hh",
         "stdx/experimental/*.hh",
