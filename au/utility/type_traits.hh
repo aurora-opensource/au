@@ -58,6 +58,15 @@ template <typename R1, typename R2>
 using CommonTypeButPreserveIntSignedness =
     typename CommonTypeButPreserveIntSignednessImpl<R1, R2>::type;
 
+//
+// `PromotedType<T>` is the result type for arithmetic operations involving `T`.  Of course, this is
+// normally just `T`, but integer promotion for small integral types can change this.
+//
+template <typename T>
+struct PromotedTypeImpl;
+template <typename T>
+using PromotedType = typename PromotedTypeImpl<T>::type;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation details below.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -183,6 +192,17 @@ struct CopySignednessIfIntType
 template <typename R1, typename R2>
 struct CommonTypeButPreserveIntSignednessImpl
     : CopySignednessIfIntType<R1, std::common_type_t<R1, R2>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `PromotedType<T>` implementation.
+
+template <typename T>
+struct PromotedTypeImpl {
+    using type = decltype(std::declval<T>() * std::declval<T>());
+
+    static_assert(std::is_same<type, typename PromotedTypeImpl<type>::type>::value,
+                  "We explicitly assume that promoted types are not again promotable");
+};
 
 }  // namespace detail
 }  // namespace au

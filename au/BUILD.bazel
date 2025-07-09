@@ -185,6 +185,7 @@ cc_library(
     deps = [
         ":apply_rational_magnitude_to_integral",
         ":magnitude",
+        ":utility",
     ],
 )
 
@@ -202,7 +203,11 @@ cc_test(
 cc_library(
     name = "apply_rational_magnitude_to_integral",
     hdrs = ["apply_rational_magnitude_to_integral.hh"],
-    deps = [":magnitude"],
+    deps = [
+        ":magnitude",
+        ":stdx",
+        ":utility",
+    ],
 )
 
 cc_test(

@@ -19,6 +19,7 @@
 
 namespace au {
 
+using ::testing::Gt;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
 using ::testing::StaticAssertTypeEq;
@@ -98,6 +99,24 @@ TEST(CommonTypeButPreserveIntSignedness, CommonTypeIfItIsNotIntegral) {
 TEST(CommonTypeButPreserveIntSignedness, UsesSignOfFirstArgumentIfCommonTypeIsIntegral) {
     StaticAssertTypeEq<CommonTypeButPreserveIntSignedness<int, uint8_t>, int>();
     StaticAssertTypeEq<CommonTypeButPreserveIntSignedness<uint8_t, int>, uint>();
+}
+
+TEST(PromotedType, IdentityForInt) {
+    // `int` does not undergo type promotion.
+    StaticAssertTypeEq<int, PromotedType<int>>();
+}
+
+TEST(PromotedType, PromotesUint8TIntoLargerType) {
+    using PromotedU8 = PromotedType<uint8_t>;
+
+    // Technically, this need not be true on every conceivable architecture.  However, it is true on
+    // the vast majority that are used in practice.  Moreover, the failure mode if it's not is
+    // simply that a test would fail when run on some obscure architecture, and the failure would
+    // direct the user to this comment.  This doesn't affect the actual library usage one way or
+    // another.
+    ASSERT_THAT((std::is_same<uint8_t, PromotedU8>::value), IsFalse());
+
+    EXPECT_THAT(sizeof(PromotedU8), Gt(sizeof(uint8_t)));
 }
 
 }  // namespace detail
