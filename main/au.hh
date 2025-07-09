@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-49-gb21c1be
+// Version identifier: 0.4.1-50-g0878280
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -300,6 +300,11 @@ struct DropAllImpl;
 template <typename T, typename Pack>
 using DropAll = typename DropAllImpl<T, Pack>::type;
 
+template <template <class...> class Pack, typename... Ts>
+struct FlattenAsImpl;
+template <template <class...> class Pack, typename... Ts>
+using FlattenAs = typename FlattenAsImpl<Pack, Ts...>::type;
+
 template <typename T, typename U>
 struct SameTypeIgnoringCvref : std::is_same<stdx::remove_cvref_t<T>, stdx::remove_cvref_t<U>> {};
 
@@ -381,6 +386,43 @@ struct DropAllImpl<T, Pack<H, Ts...>>
     : std::conditional<std::is_same<T, H>::value,
                        DropAll<T, Pack<Ts...>>,
                        detail::PrependT<DropAll<T, Pack<Ts...>>, H>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `FlattenAs` implementation.
+
+template <typename P1, typename P2>
+struct ConcatImpl;
+template <typename P1, typename P2>
+using Concat = typename ConcatImpl<P1, P2>::type;
+
+template <template <class...> class Pack, typename... T1s, typename... T2s>
+struct ConcatImpl<Pack<T1s...>, Pack<T2s...>> : stdx::type_identity<Pack<T1s..., T2s...>> {};
+
+template <template <class...> class Pack, typename ResultPack, typename... Ts>
+struct FlattenAsImplHelper;
+
+template <template <class...> class Pack, typename ResultPack>
+struct FlattenAsImplHelper<Pack, ResultPack> : stdx::type_identity<ResultPack> {};
+
+// Skip empty packs.
+template <template <class...> class Pack, typename ResultPack, typename... Us>
+struct FlattenAsImplHelper<Pack, ResultPack, Pack<>, Us...>
+    : FlattenAsImplHelper<Pack, ResultPack, Us...> {};
+
+template <template <class...> class Pack,
+          typename ResultPack,
+          typename T,
+          typename... Ts,
+          typename... Us>
+struct FlattenAsImplHelper<Pack, ResultPack, Pack<T, Ts...>, Us...>
+    : FlattenAsImplHelper<Pack, ResultPack, T, Pack<Ts...>, Us...> {};
+
+template <template <class...> class Pack, typename ResultPack, typename T, typename... Us>
+struct FlattenAsImplHelper<Pack, ResultPack, T, Us...>
+    : FlattenAsImplHelper<Pack, Concat<ResultPack, Pack<T>>, Us...> {};
+
+template <template <class...> class Pack, typename... Ts>
+struct FlattenAsImpl : FlattenAsImplHelper<Pack, Pack<>, Ts...> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `CommonTypeButPreserveIntSignedness` implementation.
