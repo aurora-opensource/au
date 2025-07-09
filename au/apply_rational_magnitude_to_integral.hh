@@ -18,6 +18,7 @@
 
 #include "au/magnitude.hh"
 #include "au/stdx/utility.hh"
+#include "au/utility/type_traits.hh"
 
 // This file exists to analyze one single calculation: `x * N / D`, where `x` is
 // some integral type, and `N` and `D` are the numerator and denominator of a
@@ -36,21 +37,6 @@
 
 namespace au {
 namespace detail {
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// `PromotedType<T>` is the result type for arithmetic operations involving `T`.  Of course, this is
-// normally just `T`, but integer promotion for small integral types can change this.
-//
-template <typename T>
-struct PromotedTypeImpl {
-    using type = decltype(std::declval<T>() * std::declval<T>());
-
-    static_assert(std::is_same<type, typename PromotedTypeImpl<type>::type>::value,
-                  "We explicitly assume that promoted types are not again promotable");
-};
-template <typename T>
-using PromotedType = typename PromotedTypeImpl<T>::type;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //

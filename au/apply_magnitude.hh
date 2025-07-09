@@ -16,6 +16,7 @@
 
 #include "au/apply_rational_magnitude_to_integral.hh"
 #include "au/magnitude.hh"
+#include "au/utility/type_traits.hh"
 
 namespace au {
 namespace detail {
