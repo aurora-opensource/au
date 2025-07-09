@@ -349,6 +349,13 @@ TEST(GetValue, WorksForNegativeNumber) {
     EXPECT_THAT(get_value<float>(neg_5), SameTypeAndValue(-5.f));
 }
 
+TEST(GetValue, HandlesMostNegativeValue) {
+    EXPECT_THAT(detail::get_value_result<int16_t>(-mag<32769>()).outcome,
+                Eq(detail::MagRepresentationOutcome::ERR_CANNOT_FIT));
+    EXPECT_THAT(get_value<int16_t>(-mag<32768>()),
+                SameTypeAndValue(std::numeric_limits<int16_t>::lowest()));
+}
+
 TEST(CommonMagnitude, ReturnsCommonMagnitudeWhenBothAreIdentical) {
     EXPECT_THAT(common_magnitude(mag<1>(), mag<1>()), Eq(mag<1>()));
     EXPECT_THAT(common_magnitude(PI, PI), Eq(PI));
