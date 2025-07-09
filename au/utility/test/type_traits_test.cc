@@ -69,6 +69,20 @@ TEST(DropAll, DropsAllInstancesOfTarget) {
     StaticAssertTypeEq<DropAll<int, Pack<int, char, int, double>>, Pack<char, double>>();
 }
 
+TEST(FlattenAs, CombinesElementsIfNotAlreadyOfPack) {
+    StaticAssertTypeEq<FlattenAs<Pack, int, char, double>, Pack<int, char, double>>();
+}
+
+TEST(FlattenAs, ConcatenatesExistingPacks) {
+    StaticAssertTypeEq<FlattenAs<Pack, Pack<int>, Pack<char, double>>, Pack<int, char, double>>();
+}
+
+TEST(FlattenAs, HandlesArbitraryNesting) {
+    StaticAssertTypeEq<
+        FlattenAs<Pack, Pack<int, Pack<char>>, Pack<>, Pack<Pack<Pack<Pack<double>>>>>,
+        Pack<int, char, double>>();
+}
+
 TEST(IncludeInPackIf, MakesPackOfEverythingThatMatches) {
     StaticAssertTypeEq<
         IncludeInPackIf<std::is_unsigned, Pack, int32_t, uint8_t, double, char, uint64_t, int16_t>,
