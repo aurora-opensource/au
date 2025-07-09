@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-48-g0b835a7
+// Version identifier: 0.4.1-49-gb21c1be
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -3474,10 +3474,29 @@ constexpr MagRepresentationOrError<T> get_value_result(Magnitude<>) {
     return {MagRepresentationOutcome::OK, static_cast<T>(1)};
 }
 
+template <typename T, typename MagT, bool IsCandidate>
+struct IsExactlyLowestOfSignedIntegral : std::false_type {};
 template <typename T, typename... BPs>
-constexpr MagRepresentationOrError<T> get_value_result(Magnitude<Negative, BPs...>) {
+struct IsExactlyLowestOfSignedIntegral<T, Magnitude<Negative, BPs...>, true>
+    : std::is_same<
+          decltype(mag<static_cast<std::make_unsigned_t<T>>(std::numeric_limits<T>::max()) + 1u>()),
+          Magnitude<BPs...>> {};
+template <typename T, typename... BPs>
+constexpr bool is_exactly_lowest_of_signed_integral(Magnitude<BPs...>) {
+    return IsExactlyLowestOfSignedIntegral<
+        T,
+        Magnitude<BPs...>,
+        stdx::conjunction<std::is_integral<T>, std::is_signed<T>>::value>::value;
+}
+
+template <typename T, typename... BPs>
+constexpr MagRepresentationOrError<T> get_value_result(Magnitude<Negative, BPs...> m) {
     if (std::is_unsigned<T>::value) {
         return {MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE};
+    }
+
+    if (is_exactly_lowest_of_signed_integral<T>(m)) {
+        return {MagRepresentationOutcome::OK, std::numeric_limits<T>::lowest()};
     }
 
     const auto result = get_value_result<T>(Magnitude<BPs...>{});
