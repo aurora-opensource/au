@@ -14,6 +14,7 @@
 
 #include "au/zero.hh"
 
+#include "au/testing.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -95,6 +96,10 @@ TEST(Zero, ImplicitlyConvertsToChronoDuration) {
 
     constexpr std::chrono::duration<float, std::milli> zero_ms_f = ZERO;
     EXPECT_THAT(zero_ms_f, Eq(std::chrono::duration<float, std::milli>{0.f}));
+}
+
+TEST(ValueOfZero, ProducesValueOfZero) {
+    EXPECT_THAT(ValueOfZero<float>::value(), SameTypeAndValue(0.f));
 }
 
 }  // namespace au
