@@ -80,6 +80,14 @@ TEST(DivideTypeByInteger, IntegerTypeDividedByIntegerTooBigToRepresentGivesZero)
                 SameTypeAndValue(uint8_t{0}));
 }
 
+TEST(DivideTypeByInteger, IntegerTypeDividedByIntegerMagGreaterThanDividendGivesZero) {
+    EXPECT_THAT((DivideTypeByInteger<uint8_t, decltype(mag<2>())>::apply_to(uint8_t{1})),
+                SameTypeAndValue(uint8_t{0}));
+
+    EXPECT_THAT((DivideTypeByInteger<int, decltype(mag<2025>())>::apply_to(int{2024})),
+                SameTypeAndValue(int{0}));
+}
+
 TEST(DivideTypeByInteger, FloatingPointTypeDividedByNumberTooBigToRepresentGivesZero) {
     EXPECT_THAT((DivideTypeByInteger<float, decltype(-pow<40>(mag<10>()))>::apply_to(float{1.0f})),
                 SameTypeAndValue(0.0f));
