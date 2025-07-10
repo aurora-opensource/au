@@ -180,6 +180,24 @@ cc_test(
 # Implementation detail libraries and tests
 
 cc_library(
+    name = "abstract_operations",
+    hdrs = ["abstract_operations.hh"],
+    deps = [":magnitude"],
+)
+
+cc_test(
+    name = "abstract_operations_test",
+    size = "small",
+    srcs = ["abstract_operations_test.cc"],
+    deps = [
+        ":abstract_operations",
+        ":magnitude",
+        ":testing",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "apply_magnitude",
     hdrs = ["apply_magnitude.hh"],
     deps = [
