@@ -37,7 +37,7 @@ struct NoUpperLimit {
 };
 
 template <typename T>
-struct LowerLimitIsZero : NoUpperLimit<T> {
+struct LowerLimitOfZero : NoUpperLimit<T> {
     static constexpr T lower() { return T{0}; }
 };
 
@@ -209,13 +209,13 @@ TEST(StaticCast, MinGoodUnchangedWithExplicitLimitLessConstrainingThanExistingRe
 }
 
 TEST(StaticCast, MinGoodUnchangedForUnsignedDestinationAndExplicitLimitOfZero) {
-    EXPECT_THAT((MinGood<StaticCast<uint8_t, uint16_t>, LowerLimitIsZero<uint16_t>>::value()),
+    EXPECT_THAT((MinGood<StaticCast<uint8_t, uint16_t>, LowerLimitOfZero<uint16_t>>::value()),
                 Eq(MinGood<StaticCast<uint8_t, uint16_t>>::value()));
 
-    EXPECT_THAT((MinGood<StaticCast<int32_t, uint64_t>, LowerLimitIsZero<uint64_t>>::value()),
+    EXPECT_THAT((MinGood<StaticCast<int32_t, uint64_t>, LowerLimitOfZero<uint64_t>>::value()),
                 Eq(MinGood<StaticCast<int32_t, uint64_t>>::value()));
 
-    EXPECT_THAT((MinGood<StaticCast<double, uint32_t>, LowerLimitIsZero<uint32_t>>::value()),
+    EXPECT_THAT((MinGood<StaticCast<double, uint32_t>, LowerLimitOfZero<uint32_t>>::value()),
                 Eq(MinGood<StaticCast<double, uint32_t>>::value()));
 }
 
