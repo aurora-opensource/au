@@ -94,7 +94,7 @@ struct OverflowBoundaryNotYetImplemented {
 
 // A type whose `::value()` function returns `0`, expressed in `T`.
 template <typename T>
-struct ValueIsZero {
+struct ValueOfZero {
     static constexpr T value() { return T{0}; }
 };
 
@@ -102,7 +102,7 @@ struct ValueIsZero {
 // `LowerLimit<U, ULimit>` expressed in `T`.  Assumes that `U` is more expansive than `T`, so that
 // we can cast everything to `U` to do the comparisons.
 template <typename T, typename U, typename ULimit>
-struct ValueIsSourceLowestUnlessDestLimitIsHigher {
+struct ValueOfSourceLowestUnlessDestLimitIsHigher {
     static constexpr T value() {
         constexpr auto LOWEST_T_IN_U = static_cast<U>(std::numeric_limits<T>::lowest());
         constexpr auto U_LIMIT = LowerLimit<U, ULimit>::value();
@@ -113,7 +113,7 @@ struct ValueIsSourceLowestUnlessDestLimitIsHigher {
 
 // A type whose `::value()` function returns the lowest value of `U`, expressed in `T`.
 template <typename T, typename U = T, typename ULimit = void>
-struct ValueIsLowestInDestination {
+struct ValueOfLowestInDestination {
     static constexpr T value() { return static_cast<T>(LowerLimit<U, ULimit>::value()); }
 
     static_assert(static_cast<U>(value()) == LowerLimit<U, ULimit>::value(),
@@ -143,14 +143,14 @@ struct MinGoodImplForStaticCastFromArithmeticToNonArithmetic
 template <typename T, typename U, typename ULimit>
 struct MinGoodImplForStaticCastFromSignedToSigned
     : std::conditional<sizeof(T) <= sizeof(U),
-                       ValueIsSourceLowestUnlessDestLimitIsHigher<T, U, ULimit>,
-                       ValueIsLowestInDestination<T, U, ULimit>> {};
+                       ValueOfSourceLowestUnlessDestLimitIsHigher<T, U, ULimit>,
+                       ValueOfLowestInDestination<T, U, ULimit>> {};
 
 // (S) -> (I)
 template <typename T, typename U, typename ULimit>
 struct MinGoodImplForStaticCastFromSignedToIntegral
     : std::conditional_t<std::is_unsigned<U>::value,
-                         stdx::type_identity<ValueIsZero<T>>,
+                         stdx::type_identity<ValueOfZero<T>>,
                          MinGoodImplForStaticCastFromSignedToSigned<T, U, ULimit>> {};
 
 // (S) -> (A)
@@ -158,7 +158,7 @@ template <typename T, typename U, typename ULimit>
 struct MinGoodImplForStaticCastFromSignedToArithmetic
     : std::conditional_t<
           std::is_floating_point<U>::value,
-          stdx::type_identity<ValueIsSourceLowestUnlessDestLimitIsHigher<T, U, ULimit>>,
+          stdx::type_identity<ValueOfSourceLowestUnlessDestLimitIsHigher<T, U, ULimit>>,
           MinGoodImplForStaticCastFromSignedToIntegral<T, U, ULimit>> {};
 
 // (I) -> (A)
@@ -166,22 +166,22 @@ template <typename T, typename U, typename ULimit>
 struct MinGoodImplForStaticCastFromIntegralToArithmetic
     : std::conditional_t<
           std::is_unsigned<T>::value,
-          stdx::type_identity<ValueIsSourceLowestUnlessDestLimitIsHigher<T, U, ULimit>>,
+          stdx::type_identity<ValueOfSourceLowestUnlessDestLimitIsHigher<T, U, ULimit>>,
           MinGoodImplForStaticCastFromSignedToArithmetic<T, U, ULimit>> {};
 
 // (F) -> (F)
 template <typename T, typename U, typename ULimit>
 struct MinGoodImplForStaticCastFromFloatingPointToFloatingPoint
     : std::conditional<sizeof(T) <= sizeof(U),
-                       ValueIsSourceLowestUnlessDestLimitIsHigher<T, U, ULimit>,
-                       ValueIsLowestInDestination<T, U, ULimit>> {};
+                       ValueOfSourceLowestUnlessDestLimitIsHigher<T, U, ULimit>,
+                       ValueOfLowestInDestination<T, U, ULimit>> {};
 
 // (F) -> (A)
 template <typename T, typename U, typename ULimit>
 struct MinGoodImplForStaticCastFromFloatingPointToArithmetic
     : std::conditional_t<std::is_floating_point<U>::value,
                          MinGoodImplForStaticCastFromFloatingPointToFloatingPoint<T, U, ULimit>,
-                         stdx::type_identity<ValueIsLowestInDestination<T, U, ULimit>>> {};
+                         stdx::type_identity<ValueOfLowestInDestination<T, U, ULimit>>> {};
 
 // (A) -> (A)
 template <typename T, typename U, typename ULimit>
