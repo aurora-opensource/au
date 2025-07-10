@@ -15,6 +15,7 @@
 #pragma once
 
 #include <limits>
+#include <type_traits>
 
 #include "au/abstract_operations.hh"
 #include "au/magnitude.hh"
