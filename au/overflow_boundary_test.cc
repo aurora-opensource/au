@@ -15,6 +15,7 @@
 #include "au/overflow_boundary.hh"
 
 #include <complex>
+#include <limits>
 
 #include "au/testing.hh"
 #include "gmock/gmock.h"
