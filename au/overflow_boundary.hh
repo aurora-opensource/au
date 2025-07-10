@@ -92,12 +92,6 @@ struct OverflowBoundaryNotYetImplemented {
                   "Overflow boundary not yet implemented for this type.");
 };
 
-// A type whose `::value()` function returns `0`, expressed in `T`.
-template <typename T>
-struct ValueOfZero {
-    static constexpr T value() { return T{0}; }
-};
-
 // A type whose `::value()` function returns the higher of `std::numeric_limits<T>::lowest()`, or
 // `LowerLimit<U, ULimit>` expressed in `T`.  Assumes that `U` is more expansive than `T`, so that
 // we can cast everything to `U` to do the comparisons.

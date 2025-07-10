@@ -103,12 +103,6 @@ constexpr IsAbsMagLessThanOne is_abs_known_to_be_less_than_one(Magnitude<BPs...>
 template <typename T, typename MagT, IsAbsMagLessThanOne>
 struct MaxNonOverflowingValueImplWhenNumFits;
 
-// Implementation helper for "a value of zero" (which recurs a bunch of times).
-template <typename T>
-struct ValueOfZero {
-    static constexpr T value() { return T{0}; }
-};
-
 // If `MagT` is less than 1, then we only need to check for the limiting value where the _numerator
 // multiplication step alone_ would overflow.
 template <typename T, typename MagT>
