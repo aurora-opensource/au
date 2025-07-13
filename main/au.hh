@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-52-g6bc9161
+// Version identifier: 0.4.1-53-gb40984b
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -1683,6 +1683,12 @@ inline constexpr bool operator<=(Zero, Zero) { return true; }
 inline constexpr bool operator!=(Zero, Zero) { return false; }
 inline constexpr bool operator>(Zero, Zero) { return false; }
 inline constexpr bool operator<(Zero, Zero) { return false; }
+
+// Implementation helper for "a type where value() returns 0".
+template <typename T>
+struct ValueOfZero {
+    static constexpr T value() { return ZERO; }
+};
 
 }  // namespace au
 
@@ -3839,12 +3845,6 @@ constexpr IsAbsMagLessThanOne is_abs_known_to_be_less_than_one(Magnitude<BPs...>
 //
 template <typename T, typename MagT, IsAbsMagLessThanOne>
 struct MaxNonOverflowingValueImplWhenNumFits;
-
-// Implementation helper for "a value of zero" (which recurs a bunch of times).
-template <typename T>
-struct ValueOfZero {
-    static constexpr T value() { return T{0}; }
-};
 
 // If `MagT` is less than 1, then we only need to check for the limiting value where the _numerator
 // multiplication step alone_ would overflow.
