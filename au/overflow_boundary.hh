@@ -72,6 +72,17 @@ using MaxGood = typename MaxGoodImpl<Op, Limits>::type;
 // (U) = unsigned integral
 // (X) = any type
 
+// `UpperLimit<T, Limits>::value()` returns `Limits::upper()` (assumed to be of type `T`), unless
+// `Limits` is `void`, in which case it means "no limit" and we return the highest possible value.
+template <typename T, typename Limits>
+struct UpperLimit {
+    static constexpr T value() { return Limits::upper(); }
+};
+template <typename T>
+struct UpperLimit<T, void> {
+    static constexpr T value() { return std::numeric_limits<T>::max(); }
+};
+
 // `LowerLimit<T, Limits>::value()` returns `Limits::lower()` (assumed to be of type `T`), unless
 // `Limits` is `void`, in which case it means "no limit" and we return the lowest possible value.
 template <typename T, typename Limits>
@@ -105,6 +116,19 @@ struct ValueOfSourceLowestUnlessDestLimitIsHigher {
     }
 };
 
+// A type whose `::value()` function returns the lower of `std::numeric_limits<T>::max()`, or
+// `UpperLimit<U, ULimit>` expressed in `T`.  Assumes that `U` is more expansive than `T`, so that
+// we can cast everything to `U` to do the comparisons.
+template <typename T, typename U, typename ULimit>
+struct ValueOfSourceHighestUnlessDestLimitIsLower {
+    static constexpr T value() {
+        constexpr auto HIGHEST_T_IN_U = static_cast<U>(std::numeric_limits<T>::max());
+        constexpr auto U_LIMIT = UpperLimit<U, ULimit>::value();
+        return (HIGHEST_T_IN_U >= U_LIMIT) ? static_cast<T>(U_LIMIT)
+                                           : std::numeric_limits<T>::max();
+    }
+};
+
 // A type whose `::value()` function returns the lowest value of `U`, expressed in `T`.
 template <typename T, typename U = T, typename ULimit = void>
 struct ValueOfLowestInDestination {
@@ -112,6 +136,67 @@ struct ValueOfLowestInDestination {
 
     static_assert(static_cast<U>(value()) == LowerLimit<U, ULimit>::value(),
                   "This utility assumes lossless round trips");
+};
+
+// A type whose `::value()` function returns the highest value of `U`, expressed in `T`.
+template <typename T, typename U = T, typename ULimit = void>
+struct ValueOfHighestInDestination {
+    static constexpr T value() { return static_cast<T>(UpperLimit<U, ULimit>::value()); }
+
+    static_assert(static_cast<U>(value()) == UpperLimit<U, ULimit>::value(),
+                  "This utility assumes lossless round trips");
+};
+
+// A type whose `::value()` function is capped at the highest value in `Float` (assumed to be a
+// floating point type) that can be cast to `Int` (assumed to be an integral type).  We need to be
+// really careful in how we express this, because max int values tend not to be nice powers of 2.
+// Therefore, even though we can cast the `Int` max to `Float` successfully, casting back to `Int`
+// will produce a compile time error because the closest representable integer in `Float` is
+// slightly _higher_ than that max.
+//
+// On the implementation side, keep in mind that our library supports C++14, and most common
+// floating point utilities (such as `std::nextafter`) are not `constexpr` compatible in C++14.
+// Therefore, we need to use alternative strategies to explore the floating point type.  These are
+// always evaluated at compile time, so we are not especially concerned about the efficiency: it
+// should have no runtime effect at all, and we expect even the compile time impact --- which we
+// measure regularly as we land commits --- to be too small to measure.
+template <typename Float, typename Int, typename IntLimit>
+struct ValueOfMaxFloatNotExceedingMaxInt {
+    // The `Float` value where all mantissa bits are set to `1`, and the exponent is `0`.
+    static constexpr Float max_mantissa() {
+        constexpr Float ONE = Float{1};
+        Float x = ONE;
+        Float last = x;
+        while (x + ONE > x) {
+            last = x;
+            x += x + ONE;
+        }
+        return last;
+    }
+
+    // Function to do the actual computation of the value.
+    static constexpr Float compute_value() {
+        constexpr Float LIMIT = static_cast<Float>(std::numeric_limits<Int>::max());
+        constexpr Float MAX_MANTISSA = max_mantissa();
+
+        if (LIMIT <= MAX_MANTISSA) {
+            return LIMIT;
+        }
+
+        Float x = MAX_MANTISSA;
+        while (x + x < LIMIT) {
+            x += x;
+        }
+        return x;
+    }
+
+    // `value()` implementation simply computes the result _once_ (caching it), and then returns it.
+    static constexpr Float value() {
+        constexpr Float FLOAT_LIMIT = compute_value();
+        constexpr Float EXPLICIT_LIMIT = static_cast<Float>(UpperLimit<Int, IntLimit>::value());
+        constexpr Float RESULT = (FLOAT_LIMIT <= EXPLICIT_LIMIT) ? FLOAT_LIMIT : EXPLICIT_LIMIT;
+        return RESULT;
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -201,6 +286,78 @@ struct MinGoodImplForStaticCastUsingRealPart
 
 template <typename T, typename U, typename ULimit>
 struct MinGoodImpl<StaticCast<T, U>, ULimit> : MinGoodImplForStaticCastUsingRealPart<T, U, ULimit> {
+};
+
+//
+// `MaxGood<StaticCast<T, U>>` implementation cluster.
+//
+// See comment above for meanings of (N), (X), (A), etc.
+//
+
+// (N) -> (X) (placeholder)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromNonArithmetic
+    : OverflowBoundaryNotYetImplemented<StaticCast<T, U>> {};
+
+// (A) -> (N) (placeholder)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromArithmeticToNonArithmetic
+    : OverflowBoundaryNotYetImplemented<StaticCast<T, U>> {};
+
+// (I) -> (I)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromIntegralToIntegral
+    : std::conditional<(static_cast<std::common_type_t<T, U>>(std::numeric_limits<T>::max()) <=
+                        static_cast<std::common_type_t<T, U>>(std::numeric_limits<U>::max())),
+                       ValueOfSourceHighestUnlessDestLimitIsLower<T, U, ULimit>,
+                       ValueOfHighestInDestination<T, U, ULimit>> {};
+
+// (I) -> (A)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromIntegralToArithmetic
+    : std::conditional_t<
+          std::is_integral<U>::value,
+          MaxGoodImplForStaticCastFromIntegralToIntegral<T, U, ULimit>,
+          stdx::type_identity<ValueOfSourceHighestUnlessDestLimitIsLower<T, U, ULimit>>> {};
+
+// (F) -> (F)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromFloatingPointToFloatingPoint
+    : std::conditional<sizeof(T) <= sizeof(U),
+                       ValueOfSourceHighestUnlessDestLimitIsLower<T, U, ULimit>,
+                       ValueOfHighestInDestination<T, U, ULimit>> {};
+
+// (F) -> (A)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromFloatingPointToArithmetic
+    : std::conditional_t<std::is_floating_point<U>::value,
+                         MaxGoodImplForStaticCastFromFloatingPointToFloatingPoint<T, U, ULimit>,
+                         stdx::type_identity<ValueOfMaxFloatNotExceedingMaxInt<T, U, ULimit>>> {};
+
+// (A) -> (A)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromArithmeticToArithmetic
+    : std::conditional_t<std::is_integral<T>::value,
+                         MaxGoodImplForStaticCastFromIntegralToArithmetic<T, U, ULimit>,
+                         MaxGoodImplForStaticCastFromFloatingPointToArithmetic<T, U, ULimit>> {};
+
+// (A) -> (X)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromArithmetic
+    : std::conditional_t<std::is_arithmetic<U>::value,
+                         MaxGoodImplForStaticCastFromArithmeticToArithmetic<T, U, ULimit>,
+                         MaxGoodImplForStaticCastFromArithmeticToNonArithmetic<T, U, ULimit>> {};
+
+// (X) -> (X)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastUsingRealPart
+    : std::conditional_t<
+          std::is_arithmetic<RealPart<T>>::value,
+          MaxGoodImplForStaticCastFromArithmetic<RealPart<T>, RealPart<U>, ULimit>,
+          MaxGoodImplForStaticCastFromNonArithmetic<RealPart<T>, RealPart<U>, ULimit>> {};
+
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImpl<StaticCast<T, U>, ULimit> : MaxGoodImplForStaticCastUsingRealPart<T, U, ULimit> {
 };
 
 }  // namespace detail
