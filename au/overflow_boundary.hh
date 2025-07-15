@@ -238,14 +238,13 @@ struct ValueOfMaxFloatNotExceedingMaxInt {
     }
 };
 
-template <typename T, typename MagT, MagRepresentationOutcome>
+template <typename T, typename MagT, MagRepresentationOutcome Outcome>
 struct MagHelper {
     static constexpr T div(const T &, const T &) {
-        // We assume the most likely reason to be here is that the magnitude was too large to
-        // represent in the type, so we treat this as a "divide by infinity" and return zero.
-        //
-        // Really, this should probably just not be called, but it definitely needs to exist for the
-        // code to compile.
+        static_assert(Outcome == MagRepresentationOutcome::ERR_CANNOT_FIT,
+                      "Internal library error");
+
+        // Dividing by a number that is too big to fit in the type implies a result of 0.
         return T{0};
     }
 };
