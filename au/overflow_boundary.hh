@@ -655,12 +655,11 @@ struct MaxGoodImpl<DivideTypeByInteger<T, M>, Limits>
 //
 
 template <typename OnlyOp, typename Limits>
-struct MinGoodImpl<OpSequenceImpl<OnlyOp>, Limits> : stdx::type_identity<MinGood<OnlyOp, Limits>> {
-};
+struct MinGoodImpl<OpSequenceImpl<OnlyOp>, Limits> : MinGoodImpl<OnlyOp, Limits> {};
 
 template <typename Op1, typename Op2, typename... Ops, typename Limits>
 struct MinGoodImpl<OpSequenceImpl<Op1, Op2, Ops...>, Limits>
-    : stdx::type_identity<MinGood<Op1, LimitsFor<OpSequenceImpl<Op2, Ops...>, Limits>>> {
+    : MinGoodImpl<Op1, LimitsFor<OpSequenceImpl<Op2, Ops...>, Limits>> {
     static_assert(std::is_same<OpOutput<Op1>, OpInput<Op2>>::value,
                   "Output of each op in sequence must match input of next op");
 };
@@ -670,12 +669,11 @@ struct MinGoodImpl<OpSequenceImpl<Op1, Op2, Ops...>, Limits>
 //
 
 template <typename OnlyOp, typename Limits>
-struct MaxGoodImpl<OpSequenceImpl<OnlyOp>, Limits> : stdx::type_identity<MaxGood<OnlyOp, Limits>> {
-};
+struct MaxGoodImpl<OpSequenceImpl<OnlyOp>, Limits> : MaxGoodImpl<OnlyOp, Limits> {};
 
 template <typename Op1, typename Op2, typename... Ops, typename Limits>
 struct MaxGoodImpl<OpSequenceImpl<Op1, Op2, Ops...>, Limits>
-    : stdx::type_identity<MaxGood<Op1, LimitsFor<OpSequenceImpl<Op2, Ops...>, Limits>>> {
+    : MaxGoodImpl<Op1, LimitsFor<OpSequenceImpl<Op2, Ops...>, Limits>> {
     static_assert(std::is_same<OpOutput<Op1>, OpInput<Op2>>::value,
                   "Output of each op in sequence must match input of next op");
 };

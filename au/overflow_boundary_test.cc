@@ -1447,7 +1447,7 @@ TEST(OpSequence, MinGoodIsZeroIfUnsignedTypeFoundOnBothSidesOfNegativeMultiplica
 }
 
 //
-// `MinGood<OpSequence>`:
+// `MaxGood<OpSequence>`:
 //
 
 TEST(OpSequence, MaxGoodForSequenceOfSingleOpIsMaxGoodForThatOp) {
