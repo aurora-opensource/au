@@ -435,6 +435,7 @@ cc_library(
     deps = [
         ":abstract_operations",
         ":magnitude",
+        ":operators",
         ":stdx",
     ],
 )

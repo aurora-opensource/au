@@ -19,6 +19,7 @@
 
 #include "au/abstract_operations.hh"
 #include "au/magnitude.hh"
+#include "au/operators.hh"
 #include "au/stdx/type_traits.hh"
 
 // These utilities help assess overflow risk for an operation `Op` by finding the minimum and
@@ -133,6 +134,17 @@ struct LowerLimit<T, void> {
     static constexpr T value() { return std::numeric_limits<T>::lowest(); }
 };
 
+template <typename T>
+constexpr T clamped_negate(T x) {
+    if (Less{}(x, T{0}) && Less{}(x, -std::numeric_limits<T>::max())) {
+        return std::numeric_limits<T>::max();
+    }
+    if (Greater{}(x, T{0}) && Greater{}(x, clamped_negate(std::numeric_limits<T>::lowest()))) {
+        return std::numeric_limits<T>::lowest();
+    }
+    return -x;
+}
+
 // Inherit from this struct to produce a compiler error in case we try to use a combination of types
 // that isn't yet supported.
 template <typename T>
@@ -240,6 +252,7 @@ struct ValueOfMaxFloatNotExceedingMaxInt {
 
 template <typename T, typename MagT, MagRepresentationOutcome Outcome>
 struct MagHelper {
+    static constexpr bool equal(const T &, const T &) { return false; }
     static constexpr T div(const T &, const T &) {
         static_assert(Outcome == MagRepresentationOutcome::ERR_CANNOT_FIT,
                       "Internal library error");
@@ -251,6 +264,7 @@ struct MagHelper {
 
 template <typename T, typename MagT>
 struct MagHelper<T, MagT, MagRepresentationOutcome::OK> {
+    static constexpr bool equal(const T &x, const T &value) { return x == value; }
     static constexpr T div(const T &a, const T &b) { return a / b; }
 };
 
@@ -288,12 +302,14 @@ struct ClampLowestOfLimitsTimesInverseValue {
     static constexpr T value() {
         constexpr auto ABS_DIVISOR = MagInverseT<Abs<M>>{};
 
-        constexpr T RELEVANT_LIMIT =
-            IsPositive<M>::value ? LowerLimit<T, Limits>::value() : -UpperLimit<T, Limits>::value();
+        constexpr T RELEVANT_LIMIT = IsPositive<M>::value
+                                         ? LowerLimit<T, Limits>::value()
+                                         : clamped_negate(UpperLimit<T, Limits>::value());
 
         constexpr T RELEVANT_BOUND =
-            IsPositive<M>::value ? divide_by_mag(std::numeric_limits<T>::lowest(), ABS_DIVISOR)
-                                 : -divide_by_mag(std::numeric_limits<T>::max(), ABS_DIVISOR);
+            IsPositive<M>::value
+                ? divide_by_mag(std::numeric_limits<T>::lowest(), ABS_DIVISOR)
+                : clamped_negate(divide_by_mag(std::numeric_limits<T>::max(), ABS_DIVISOR));
         constexpr bool SHOULD_CLAMP = RELEVANT_BOUND >= RELEVANT_LIMIT;
 
         // This value will be meaningless if `get_value_result<T>(ABS_DIVISOR).outcome` is not `OK`,
@@ -301,6 +317,56 @@ struct ClampLowestOfLimitsTimesInverseValue {
         constexpr auto ABS_DIVISOR_AS_T = get_value_result<T>(ABS_DIVISOR).value;
 
         return SHOULD_CLAMP ? std::numeric_limits<T>::lowest() : RELEVANT_LIMIT * ABS_DIVISOR_AS_T;
+    }
+};
+
+template <typename T, typename... BPs>
+constexpr bool mag_representation_equals(const T &x, Magnitude<BPs...> m) {
+    constexpr auto result = get_value_result<T>(m);
+    return MagHelper<T, Magnitude<BPs...>, result.outcome>::equal(x, result.value);
+}
+
+// Name reads as "highest of (limits divided by value)".  Of course, normally this is just the
+// higher limit divided by the value.  But if the value is negative, then the _lower limit_ will
+// give the higher result _after_ we divide.
+//
+// Also, `Abs<M>` can be assumed to be greater than one, or else we would have been shunted into the
+// clamping variant.  This means that dividing by `M` will shrink values, so we don't risk overflow.
+template <typename T, typename M, typename Limits>
+struct HighestOfLimitsDividedByValue {
+    static constexpr T value() {
+        if (mag_representation_equals(LowerLimit<T, Limits>::value(), M{})) {
+            return T{1};
+        }
+
+        return (IsPositive<M>::value)
+                   ? divide_by_mag(UpperLimit<T, Limits>::value(), M{})
+                   : clamped_negate(divide_by_mag(LowerLimit<T, Limits>::value(), Abs<M>{}));
+    }
+};
+
+// Name reads as "clamp highest of (limits times inverse value)".  See comments for
+// `ClampLowestOfLimitsTimesInverseValue` for more details on the motivation and logic.
+template <typename T, typename M, typename Limits>
+struct ClampHighestOfLimitsTimesInverseValue {
+    static constexpr T value() {
+        constexpr auto ABS_DIVISOR = MagInverseT<Abs<M>>{};
+
+        constexpr T RELEVANT_LIMIT = IsPositive<M>::value
+                                         ? UpperLimit<T, Limits>::value()
+                                         : clamped_negate(LowerLimit<T, Limits>::value());
+
+        constexpr T RELEVANT_BOUND =
+            IsPositive<M>::value
+                ? divide_by_mag(std::numeric_limits<T>::max(), ABS_DIVISOR)
+                : clamped_negate(divide_by_mag(std::numeric_limits<T>::lowest(), ABS_DIVISOR));
+        constexpr bool SHOULD_CLAMP = RELEVANT_BOUND <= RELEVANT_LIMIT;
+
+        // This value will be meaningless if `get_value_result<T>(ABS_DIVISOR).outcome` is not `OK`,
+        // but we won't end up actually using the value in those cases.
+        constexpr auto ABS_DIVISOR_AS_T = get_value_result<T>(ABS_DIVISOR).value;
+
+        return SHOULD_CLAMP ? std::numeric_limits<T>::max() : RELEVANT_LIMIT * ABS_DIVISOR_AS_T;
     }
 };
 
@@ -506,6 +572,33 @@ struct MinGoodImplForMultiplyTypeByUsingRealPart
 template <typename T, typename M, typename Limits>
 struct MinGoodImpl<MultiplyTypeBy<T, M>, Limits>
     : MinGoodImplForMultiplyTypeByUsingRealPart<RealPart<T>, M, Limits> {};
+
+//
+// `MaxGood<MultiplyTypeBy<T, M>>` implementation cluster.
+//
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImplForMultiplyCompatibleTypeBy
+    : std::conditional<IsClampingRequired<T, M>::value,
+                       ClampHighestOfLimitsTimesInverseValue<T, M, Limits>,
+                       HighestOfLimitsDividedByValue<T, M, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImplForMultiplyTypeByAssumingSignedTypeOrPositiveFactor
+    : std::conditional_t<IsCompatibleApartFromMaybeOverflow<T, M>::value,
+                         MaxGoodImplForMultiplyCompatibleTypeBy<T, M, Limits>,
+                         stdx::type_identity<ValueOfZero<T>>> {};
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImplForMultiplyTypeByUsingRealPart
+    : std::conditional_t<
+          stdx::conjunction<IsDefinitelyUnsigned<T>, stdx::negation<IsPositive<M>>>::value,
+          stdx::type_identity<ValueOfZero<T>>,
+          MaxGoodImplForMultiplyTypeByAssumingSignedTypeOrPositiveFactor<T, M, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImpl<MultiplyTypeBy<T, M>, Limits>
+    : MaxGoodImplForMultiplyTypeByUsingRealPart<RealPart<T>, M, Limits> {};
 
 }  // namespace detail
 }  // namespace au
