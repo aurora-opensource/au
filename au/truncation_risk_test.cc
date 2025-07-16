@@ -43,11 +43,11 @@ TEST(WouldValueTruncate, AlwaysFalseForNoTruncationRisk) {
 
 TEST(WouldValueTruncate, OnlyFalseForZeroForValueIsNotZeroFloat) {
     EXPECT_THAT(ValueIsNotZero<float>::would_value_truncate(-1.23456e7f), IsTrue());
-    EXPECT_THAT(ValueIsNotZero<float>::would_value_truncate(-9.87e-12), IsTrue());
+    EXPECT_THAT(ValueIsNotZero<float>::would_value_truncate(-9.87e-12f), IsTrue());
 
     EXPECT_THAT(ValueIsNotZero<float>::would_value_truncate(0.0f), IsFalse());
 
-    EXPECT_THAT(ValueIsNotZero<float>::would_value_truncate(9.87e-12), IsTrue());
+    EXPECT_THAT(ValueIsNotZero<float>::would_value_truncate(9.87e-12f), IsTrue());
     EXPECT_THAT(ValueIsNotZero<float>::would_value_truncate(1.23456e7f), IsTrue());
 }
 
