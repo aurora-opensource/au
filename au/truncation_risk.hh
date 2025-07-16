@@ -153,6 +153,59 @@ struct TruncationRiskForImpl<DivideTypeByInteger<T, M>>
     : TruncationRiskForDivideByIntAssumingScalar<RealPart<T>, M> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// `OpSequence<...>` section:
+
+// A little helper to simplify instances of `ValueTimesRatioIsNotInteger` that turn out to be
+// trivial (because their type is integral, so they can never produce truncating values).
+template <typename T, typename M>
+struct ReduceValueTimesRatioIsNotIntegerImpl
+    : std::conditional<stdx::conjunction<IsInteger<M>, std::is_integral<T>>::value,
+                       NoTruncationRisk<T>,
+                       ValueTimesRatioIsNotInteger<T, M>> {};
+template <typename T, typename M>
+using ReduceValueTimesRatioIsNotInteger =
+    typename ReduceValueTimesRatioIsNotIntegerImpl<T, M>::type;
+
+//
+// `UpdateRisk<Op, Risk>` adapts a "downstream" risk to the "upstream" interface.
+//
+// At minimum, this updates the input type to `OpInput<Op>`.  But it may also tweak the parameters
+// (e.g., for `ValuesNotSomeIntegerTimes`), or even change the risk type entirely.
+//
+template <typename Op, typename Risk>
+struct UpdateRiskImpl;
+template <typename Op, typename Risk>
+using UpdateRisk = typename UpdateRiskImpl<Op, Risk>::type;
+
+template <template <class> class Risk, typename T, typename U>
+struct UpdateRiskImpl<StaticCast<T, U>, Risk<RealPart<U>>>
+    : stdx::type_identity<Risk<RealPart<T>>> {};
+
+template <typename T, typename U, typename M>
+struct UpdateRiskImpl<StaticCast<T, U>, ValueTimesRatioIsNotInteger<RealPart<U>, M>>
+    : std::conditional<stdx::conjunction<IsInteger<M>, std::is_integral<T>>::value,
+                       NoTruncationRisk<RealPart<T>>,
+                       ReduceValueTimesRatioIsNotInteger<RealPart<T>, M>> {};
+
+template <template <class> class Risk, typename T, typename M>
+struct UpdateRiskImpl<MultiplyTypeBy<T, M>, Risk<RealPart<T>>>
+    : stdx::type_identity<Risk<RealPart<T>>> {};
+
+template <template <class> class Risk, typename T, typename M>
+struct UpdateRiskImpl<DivideTypeByInteger<T, M>, Risk<RealPart<T>>>
+    : stdx::type_identity<Risk<RealPart<T>>> {};
+
+template <typename T, typename M1, typename M2>
+struct UpdateRiskImpl<MultiplyTypeBy<T, M1>, ValueTimesRatioIsNotInteger<RealPart<T>, M2>>
+    : std::conditional<IsRational<M1>::value,
+                       ReduceValueTimesRatioIsNotInteger<RealPart<T>, MagProductT<M1, M2>>,
+                       ValueIsNotZero<RealPart<T>>> {};
+
+template <typename T, typename M1, typename M2>
+struct UpdateRiskImpl<DivideTypeByInteger<T, M1>, ValueTimesRatioIsNotInteger<RealPart<T>, M2>>
+    : stdx::type_identity<ReduceValueTimesRatioIsNotInteger<RealPart<T>, MagQuotientT<M2, M1>>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // `ValueTimesRatioIsNotInteger` section:
 
 template <typename T, typename M>
