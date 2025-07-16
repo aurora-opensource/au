@@ -27,11 +27,112 @@ namespace au {
 namespace detail {
 namespace {
 
+constexpr auto PI = Magnitude<Pi>{};
+
 template <typename T, typename M>
 using ValueTimesIntIsNotInteger = ValueTimesRatioIsNotInteger<T, M>;
 
 template <typename T, typename M>
 using ValueDivIntIsNotInteger = ValueTimesRatioIsNotInteger<T, MagInverseT<M>>;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `TruncationRiskFor` section:
+
+//
+// `StaticCast` section:
+//
+
+TEST(TruncationRiskFor, StaticCastArithToArithFloatAssumedToNeverTruncate) {
+    StaticAssertTypeEq<TruncationRiskFor<StaticCast<int16_t, float>>, NoTruncationRisk<int16_t>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<StaticCast<uint16_t, double>>,
+                       NoTruncationRisk<uint16_t>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<StaticCast<float, double>>, NoTruncationRisk<float>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<StaticCast<long double, float>>,
+                       NoTruncationRisk<long double>>();
+}
+
+TEST(TruncationRiskFor, StaticCastArithIntToArithAssumedToNeverTruncate) {
+    StaticAssertTypeEq<TruncationRiskFor<StaticCast<int, int16_t>>, NoTruncationRisk<int>>();
+    StaticAssertTypeEq<TruncationRiskFor<StaticCast<int16_t, int>>, NoTruncationRisk<int16_t>>();
+    StaticAssertTypeEq<TruncationRiskFor<StaticCast<int, int8_t>>, NoTruncationRisk<int>>();
+    StaticAssertTypeEq<TruncationRiskFor<StaticCast<uint8_t, int>>, NoTruncationRisk<uint8_t>>();
+    StaticAssertTypeEq<TruncationRiskFor<StaticCast<uint64_t, float>>,
+                       NoTruncationRisk<uint64_t>>();
+}
+
+TEST(TruncationRiskFor, StaticCastArithFloatToArithIntRisksNonIntegerValues) {
+    StaticAssertTypeEq<TruncationRiskFor<StaticCast<float, int>>, ValueIsNotInteger<float>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<StaticCast<double, uint16_t>>,
+                       ValueIsNotInteger<double>>();
+}
+
+//
+// `MultiplyTypeBy` section:
+//
+
+TEST(TruncationRiskFor, MultiplyAnythingByIntNeverTruncates) {
+    StaticAssertTypeEq<TruncationRiskFor<MultiplyTypeBy<int16_t, decltype(mag<2>())>>,
+                       NoTruncationRisk<int16_t>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<MultiplyTypeBy<uint32_t, decltype(-mag<1>())>>,
+                       NoTruncationRisk<uint32_t>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<MultiplyTypeBy<float, decltype(mag<3000>())>>,
+                       NoTruncationRisk<float>>();
+}
+
+TEST(TruncationRiskFor, MultiplyFloatByInverseIntNeverTruncates) {
+    StaticAssertTypeEq<TruncationRiskFor<MultiplyTypeBy<float, decltype(mag<1>() / mag<2>())>>,
+                       NoTruncationRisk<float>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<MultiplyTypeBy<double, decltype(mag<1>() / mag<3456>())>>,
+                       NoTruncationRisk<double>>();
+}
+
+TEST(TruncationRiskFor, MultiplyIntByIrrationalTruncatesForValueIsNotZero) {
+    StaticAssertTypeEq<TruncationRiskFor<MultiplyTypeBy<uint8_t, decltype(PI / mag<180>())>>,
+                       ValueIsNotZero<uint8_t>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<MultiplyTypeBy<int32_t, decltype(sqrt(mag<2>()))>>,
+                       ValueIsNotZero<int32_t>>();
+}
+
+TEST(TruncationRiskFor, MultiplyFloatByIrrationalNeverTruncates) {
+    StaticAssertTypeEq<TruncationRiskFor<MultiplyTypeBy<float, decltype(PI / mag<180>())>>,
+                       NoTruncationRisk<float>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<MultiplyTypeBy<double, decltype(sqrt(mag<2>()))>>,
+                       NoTruncationRisk<double>>();
+}
+
+//
+// `DivideTypeByInteger` section:
+//
+
+TEST(TruncationRiskFor, DividingFloatByIntNeverTruncates) {
+    StaticAssertTypeEq<TruncationRiskFor<DivideTypeByInteger<float, decltype(mag<2>())>>,
+                       NoTruncationRisk<float>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<DivideTypeByInteger<double, decltype(mag<3456>())>>,
+                       NoTruncationRisk<double>>();
+}
+
+TEST(TruncationRiskFor, DivideIntByIntTruncatesNumbersNotDivisibleByIt) {
+    StaticAssertTypeEq<TruncationRiskFor<DivideTypeByInteger<int16_t, decltype(mag<3>())>>,
+                       ValueDivIntIsNotInteger<int16_t, decltype(mag<3>())>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<DivideTypeByInteger<uint32_t, decltype(mag<432>())>>,
+                       ValueDivIntIsNotInteger<uint32_t, decltype(mag<432>())>>();
+}
+
+TEST(TruncationRiskFor, DivideIntByTooBigIntGivesValuesIsNotZero) {
+    StaticAssertTypeEq<TruncationRiskFor<DivideTypeByInteger<uint8_t, decltype(mag<256>())>>,
+                       ValueIsNotZero<uint8_t>>();
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `WouldValueTruncate` section:
