@@ -600,5 +600,45 @@ template <typename T, typename M, typename Limits>
 struct MaxGoodImpl<MultiplyTypeBy<T, M>, Limits>
     : MaxGoodImplForMultiplyTypeByUsingRealPart<RealPart<T>, M, Limits> {};
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `DivideTypeByInteger<T, M>` implementation.
+
+//
+// `MinGood<DivideTypeByInteger<T, M>>` implementation cluster.
+//
+
+template <typename T, typename M, typename Limits>
+struct MinGoodImplForDivideTypeByIntegerAssumingSigned
+    : stdx::type_identity<ClampLowestOfLimitsTimesInverseValue<T, MagInverseT<M>, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MinGoodImplForDivideTypeByIntegerUsingRealPart
+    : std::conditional_t<IsDefinitelyUnsigned<T>::value,
+                         stdx::type_identity<ValueOfZero<T>>,
+                         MinGoodImplForDivideTypeByIntegerAssumingSigned<T, M, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MinGoodImpl<DivideTypeByInteger<T, M>, Limits>
+    : MinGoodImplForDivideTypeByIntegerUsingRealPart<RealPart<T>, M, Limits> {};
+
+//
+// `MaxGood<DivideTypeByInteger<T, M>>` implementation cluster.
+//
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImplForDivideTypeByIntegerAssumingSignedTypeOrPositiveFactor
+    : stdx::type_identity<ClampHighestOfLimitsTimesInverseValue<T, MagInverseT<M>, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImplForDivideTypeByIntegerUsingRealPart
+    : std::conditional_t<
+          stdx::conjunction<IsDefinitelyUnsigned<T>, stdx::negation<IsPositive<M>>>::value,
+          stdx::type_identity<ValueOfZero<T>>,
+          MaxGoodImplForDivideTypeByIntegerAssumingSignedTypeOrPositiveFactor<T, M, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImpl<DivideTypeByInteger<T, M>, Limits>
+    : MaxGoodImplForDivideTypeByIntegerUsingRealPart<RealPart<T>, M, Limits> {};
+
 }  // namespace detail
 }  // namespace au

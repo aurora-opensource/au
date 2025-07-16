@@ -59,6 +59,11 @@ MultiplyTypeBy<T, M> multiply_type_by(M) {
     return MultiplyTypeBy<T, M>{};
 }
 
+template <typename T, typename M>
+DivideTypeByInteger<T, M> divide_type_by_integer(M) {
+    return DivideTypeByInteger<T, M>{};
+}
+
 template <typename Op>
 auto min_good_value(Op) {
     return MinGood<Op>::value();
@@ -1146,6 +1151,245 @@ TEST(MultiplyTypeBy, MaxGoodForFloatTimesNegIrrationalSmallerThanOneIsClampedLow
 TEST(MultiplyTypeBy, MaxGoodForComplexOfTProvidesAnswerAsT) {
     EXPECT_THAT(max_good_value(multiply_type_by<std::complex<int32_t>>(mag<12>())),
                 SameTypeAndValue(max_good_value(multiply_type_by<int32_t>(mag<12>()))));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `DivideTypeByInteger` section:
+
+//
+// `MinGood<DivideTypeByInteger>`:
+//
+
+TEST(DivideTypeByInteger, MinGoodForUnsignedIsAlwaysZero) {
+    EXPECT_THAT(min_good_value(divide_type_by_integer<uint8_t>(mag<1>())),
+                SameTypeAndValue(uint8_t{0}));
+
+    EXPECT_THAT(min_good_value(divide_type_by_integer<uint16_t>(mag<123>())),
+                SameTypeAndValue(uint16_t{0}));
+}
+
+TEST(DivideTypeByInteger, MinGoodForSignedDivByPosIntIsCappedLowerLimitTimesMagInv) {
+    struct I8LowerLimitMinus16 : NoUpperLimit<int8_t> {
+        static constexpr int8_t lower() { return -16; }
+    };
+
+    EXPECT_THAT(min_good_value(divide_type_by_integer<int8_t>(mag<2>()), I8LowerLimitMinus16{}),
+                SameTypeAndValue(int8_t{-32}));
+
+    EXPECT_THAT(min_good_value(divide_type_by_integer<int8_t>(mag<8>()), I8LowerLimitMinus16{}),
+                SameTypeAndValue(int8_t{-128}));
+
+    // Clamped case.
+    EXPECT_THAT(min_good_value(divide_type_by_integer<int8_t>(mag<9>()), I8LowerLimitMinus16{}),
+                SameTypeAndValue(int8_t{-128}));
+}
+
+TEST(DivideTypeByInteger, MinGoodForSignedDivByNegativeIntIsCappedUpperLimitTimesMagInv) {
+    struct I8UpperLimit16 : NoLowerLimit<int8_t> {
+        static constexpr int8_t upper() { return 16; }
+    };
+
+    EXPECT_THAT(min_good_value(divide_type_by_integer<int8_t>(-mag<2>()), I8UpperLimit16{}),
+                SameTypeAndValue(int8_t{-32}));
+
+    EXPECT_THAT(min_good_value(divide_type_by_integer<int8_t>(-mag<8>()), I8UpperLimit16{}),
+                SameTypeAndValue(int8_t{-128}));
+
+    // Clamped case.
+    EXPECT_THAT(min_good_value(divide_type_by_integer<int8_t>(-mag<9>()), I8UpperLimit16{}),
+                SameTypeAndValue(int8_t{-128}));
+}
+
+TEST(DivideTypeByInteger, MinGoodForFloatDivByPosIntIsCappedLowerLimitTimesMagInv) {
+    struct FloatLowerLimitMinus64 : NoUpperLimit<float> {
+        static constexpr float lower() { return -64.0f; }
+    };
+
+    EXPECT_THAT(min_good_value(divide_type_by_integer<float>(mag<2>()), FloatLowerLimitMinus64{}),
+                SameTypeAndValue(-128.0f));
+
+    EXPECT_THAT(min_good_value(divide_type_by_integer<float>(mag<8>()), FloatLowerLimitMinus64{}),
+                SameTypeAndValue(-512.0f));
+
+    // Clamped cases.
+    constexpr auto m = highest_floating_point_as_mag<float>() / mag<64>();
+    ASSERT_THAT(is_integer(m), IsTrue());
+    EXPECT_THAT(
+        min_good_value(divide_type_by_integer<float>(m / mag<2>()), FloatLowerLimitMinus64{}),
+        SameTypeAndValue(std::numeric_limits<float>::lowest() / 2.0f));
+    EXPECT_THAT(min_good_value(divide_type_by_integer<float>(m), FloatLowerLimitMinus64{}),
+                SameTypeAndValue(std::numeric_limits<float>::lowest()));
+    EXPECT_THAT(
+        min_good_value(divide_type_by_integer<float>(m * mag<2>()), FloatLowerLimitMinus64{}),
+        SameTypeAndValue(std::numeric_limits<float>::lowest()));
+}
+
+TEST(DivideTypeByInteger, MinGoodForFloatDivByNegIntIsCappedUpperLimitTimesMagInv) {
+    struct FloatUpperLimit64 : NoLowerLimit<float> {
+        static constexpr float upper() { return 64.0f; }
+    };
+
+    EXPECT_THAT(min_good_value(divide_type_by_integer<float>(-mag<2>()), FloatUpperLimit64{}),
+                SameTypeAndValue(-128.0f));
+
+    EXPECT_THAT(min_good_value(divide_type_by_integer<float>(-mag<8>()), FloatUpperLimit64{}),
+                SameTypeAndValue(-512.0f));
+
+    // Clamped cases.
+    constexpr auto m = lowest_floating_point_as_mag<float>() / mag<64>();
+    ASSERT_THAT(is_integer(m), IsTrue());
+    EXPECT_THAT(min_good_value(divide_type_by_integer<float>(m / mag<2>()), FloatUpperLimit64{}),
+                SameTypeAndValue(std::numeric_limits<float>::lowest() / 2.0f));
+    EXPECT_THAT(min_good_value(divide_type_by_integer<float>(m), FloatUpperLimit64{}),
+                SameTypeAndValue(std::numeric_limits<float>::lowest()));
+    EXPECT_THAT(min_good_value(divide_type_by_integer<float>(m * mag<2>()), FloatUpperLimit64{}),
+                SameTypeAndValue(std::numeric_limits<float>::lowest()));
+}
+
+TEST(DivideTypeByInteger, MinGoodForComplexOfTProvidesAnswerAsT) {
+    EXPECT_THAT(min_good_value(divide_type_by_integer<std::complex<int32_t>>(mag<12>())),
+                SameTypeAndValue(min_good_value(divide_type_by_integer<int32_t>(mag<12>()))));
+}
+
+//
+// `MaxGood<DivideTypeByInteger>`:
+//
+
+TEST(DivideTypeByInteger, MaxGoodForUnsignedIsAlwaysZeroIfMagIsNegative) {
+    EXPECT_THAT(max_good_value(divide_type_by_integer<uint8_t>(-mag<1>())),
+                SameTypeAndValue(uint8_t{0}));
+
+    EXPECT_THAT(max_good_value(divide_type_by_integer<uint16_t>(-mag<123>())),
+                SameTypeAndValue(uint16_t{0}));
+}
+
+TEST(DivideTypeByInteger, MaxGoodForUnlimitedUnsignedDivByPosIntIsUpperLimit) {
+    EXPECT_THAT(max_good_value(divide_type_by_integer<uint8_t>(mag<1>())),
+                SameTypeAndValue(uint8_t{255}));
+
+    EXPECT_THAT(max_good_value(divide_type_by_integer<uint8_t>(mag<2>())),
+                SameTypeAndValue(uint8_t{255}));
+
+    EXPECT_THAT(max_good_value(divide_type_by_integer<uint8_t>(mag<8>())),
+                SameTypeAndValue(uint8_t{255}));
+
+    EXPECT_THAT(max_good_value(divide_type_by_integer<uint8_t>(mag<255>())),
+                SameTypeAndValue(uint8_t{255}));
+}
+
+TEST(DivideTypeByInteger, MaxGoodForIntDivByTooBigNumberIsUpperLimitOfType) {
+    EXPECT_THAT(max_good_value(divide_type_by_integer<int8_t>(mag<128>())),
+                SameTypeAndValue(int8_t{127}));
+
+    struct Int8UpperLimit50 : NoLowerLimit<int8_t> {
+        static constexpr int8_t upper() { return 50; }
+    };
+    EXPECT_THAT(max_good_value(divide_type_by_integer<int8_t>(mag<128>()), Int8UpperLimit50{}),
+                SameTypeAndValue(int8_t{127}));
+}
+
+TEST(DivideTypeByInteger, MaxGoodForFloatDivByTooBigNumberIsUpperLimitOfType) {
+    constexpr auto m = pow<40>(mag<10>());
+    EXPECT_THAT(max_good_value(divide_type_by_integer<float>(m)),
+                SameTypeAndValue(std::numeric_limits<float>::max()));
+
+    struct FloatUpperLimit64 : NoLowerLimit<float> {
+        static constexpr float upper() { return 64.0f; }
+    };
+    EXPECT_THAT(max_good_value(divide_type_by_integer<float>(m), FloatUpperLimit64{}),
+                SameTypeAndValue(std::numeric_limits<float>::max()));
+}
+
+TEST(DivideTypeByInteger, MaxGoodForUnlimitedSignedDivNegIntIsClampedLowerLimit) {
+    EXPECT_THAT(max_good_value(divide_type_by_integer<int>(-mag<12>())),
+                SameTypeAndValue(std::numeric_limits<int>::max()));
+}
+
+TEST(DivideTypeByInteger, MaxGoodForSignedDivByPosIntIsCappedUpperLimitTimesMagInv) {
+    struct I8UpperLimit16 : NoLowerLimit<int8_t> {
+        static constexpr int8_t upper() { return 16; }
+    };
+
+    EXPECT_THAT(max_good_value(divide_type_by_integer<int8_t>(mag<2>()), I8UpperLimit16{}),
+                SameTypeAndValue(int8_t{32}));
+
+    EXPECT_THAT(max_good_value(divide_type_by_integer<int8_t>(mag<7>()), I8UpperLimit16{}),
+                SameTypeAndValue(int8_t{112}));
+
+    // Clamped cases.
+    EXPECT_THAT(max_good_value(divide_type_by_integer<int8_t>(mag<8>()), I8UpperLimit16{}),
+                SameTypeAndValue(int8_t{127}));
+    EXPECT_THAT(max_good_value(divide_type_by_integer<int8_t>(mag<9>()), I8UpperLimit16{}),
+                SameTypeAndValue(int8_t{127}));
+}
+
+TEST(DivideTypeByInteger, MaxGoodForSignedDivByNegativeIntIsCappedLowerLimitTimesMagInv) {
+    struct I8LowerLimitMinus16 : NoUpperLimit<int8_t> {
+        static constexpr int8_t lower() { return -16; }
+    };
+
+    EXPECT_THAT(max_good_value(divide_type_by_integer<int8_t>(-mag<2>()), I8LowerLimitMinus16{}),
+                SameTypeAndValue(int8_t{32}));
+
+    EXPECT_THAT(max_good_value(divide_type_by_integer<int8_t>(-mag<7>()), I8LowerLimitMinus16{}),
+                SameTypeAndValue(int8_t{112}));
+
+    // Clamped cases.
+    EXPECT_THAT(max_good_value(divide_type_by_integer<int8_t>(-mag<8>()), I8LowerLimitMinus16{}),
+                SameTypeAndValue(int8_t{127}));
+    EXPECT_THAT(max_good_value(divide_type_by_integer<int8_t>(-mag<9>()), I8LowerLimitMinus16{}),
+                SameTypeAndValue(int8_t{127}));
+}
+
+TEST(DivideTypeByInteger, MaxGoodForFloatDivByPosIntIsCappedUpperLimitTimesMagInv) {
+    struct FloatUpperLimit64 : NoLowerLimit<float> {
+        static constexpr float upper() { return 64.0f; }
+    };
+
+    EXPECT_THAT(max_good_value(divide_type_by_integer<float>(mag<2>()), FloatUpperLimit64{}),
+                SameTypeAndValue(128.0f));
+
+    EXPECT_THAT(max_good_value(divide_type_by_integer<float>(mag<8>()), FloatUpperLimit64{}),
+                SameTypeAndValue(512.0f));
+
+    // Clamped cases.
+    constexpr auto m = highest_floating_point_as_mag<float>() / mag<64>();
+    ASSERT_THAT(is_integer(m), IsTrue());
+    EXPECT_THAT(max_good_value(divide_type_by_integer<float>(m / mag<2>()), FloatUpperLimit64{}),
+                SameTypeAndValue(std::numeric_limits<float>::max() / 2.0f));
+    EXPECT_THAT(max_good_value(divide_type_by_integer<float>(m), FloatUpperLimit64{}),
+                SameTypeAndValue(std::numeric_limits<float>::max()));
+    EXPECT_THAT(max_good_value(divide_type_by_integer<float>(m * mag<2>()), FloatUpperLimit64{}),
+                SameTypeAndValue(std::numeric_limits<float>::max()));
+}
+
+TEST(DivideTypeByInteger, MaxGoodForFloatDivByNegIntIsCappedLowerLimitTimesMagInv) {
+    struct FloatLowerLimitMinus64 : NoUpperLimit<float> {
+        static constexpr float lower() { return -64.0f; }
+    };
+
+    EXPECT_THAT(max_good_value(divide_type_by_integer<float>(-mag<2>()), FloatLowerLimitMinus64{}),
+                SameTypeAndValue(128.0f));
+
+    EXPECT_THAT(max_good_value(divide_type_by_integer<float>(-mag<8>()), FloatLowerLimitMinus64{}),
+                SameTypeAndValue(512.0f));
+
+    // Clamped cases.
+    constexpr auto m = lowest_floating_point_as_mag<float>() / mag<64>();
+    ASSERT_THAT(is_integer(m), IsTrue());
+    EXPECT_THAT(
+        max_good_value(divide_type_by_integer<float>(m / mag<2>()), FloatLowerLimitMinus64{}),
+        SameTypeAndValue(std::numeric_limits<float>::max() / 2.0f));
+    EXPECT_THAT(max_good_value(divide_type_by_integer<float>(m), FloatLowerLimitMinus64{}),
+                SameTypeAndValue(std::numeric_limits<float>::max()));
+    EXPECT_THAT(
+        max_good_value(divide_type_by_integer<float>(m * mag<2>()), FloatLowerLimitMinus64{}),
+        SameTypeAndValue(std::numeric_limits<float>::max()));
+}
+
+TEST(DivideTypeByInteger, MaxGoodForComplexOfTProvidesAnswerAsT) {
+    EXPECT_THAT(max_good_value(divide_type_by_integer<std::complex<int32_t>>(mag<12>())),
+                SameTypeAndValue(max_good_value(divide_type_by_integer<int32_t>(mag<12>()))));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
