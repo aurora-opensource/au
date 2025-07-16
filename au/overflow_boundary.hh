@@ -326,9 +326,12 @@ constexpr bool mag_representation_equals(const T &x, Magnitude<BPs...> m) {
     return MagHelper<T, Magnitude<BPs...>, result.outcome>::equal(x, result.value);
 }
 
-// Name reads as "highest of (limits divided by value)".  Remember that the value can be negative,
-// so we just take whichever limit is larger _after_ dividing.  And since `Abs<M>` can be assumed to
-// be greater than one, we know that dividing by `M` will shrink values, so we don't risk overflow.
+// Name reads as "highest of (limits divided by value)".  Of course, normally this is just the
+// higher limit divided by the value.  But if the value is negative, then the _lower limit_ will
+// give the higher result _after_ we divide.
+//
+// Also, `Abs<M>` can be assumed to be greater than one, or else we would have been shunted into the
+// clamping variant.  This means that dividing by `M` will shrink values, so we don't risk overflow.
 template <typename T, typename M, typename Limits>
 struct HighestOfLimitsDividedByValue {
     static constexpr T value() {
