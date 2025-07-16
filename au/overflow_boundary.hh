@@ -145,6 +145,13 @@ constexpr T clamped_negate(T x) {
     return -x;
 }
 
+// `LimitsFor<Op, Limits>` produces a type which can be the `Limits` argument for some other op.
+template <typename Op, typename Limits>
+struct LimitsFor {
+    static constexpr RealPart<OpInput<Op>> lower() { return MinGood<Op, Limits>::value(); }
+    static constexpr RealPart<OpInput<Op>> upper() { return MaxGood<Op, Limits>::value(); }
+};
+
 // Inherit from this struct to produce a compiler error in case we try to use a combination of types
 // that isn't yet supported.
 template <typename T>
@@ -639,6 +646,39 @@ struct MaxGoodImplForDivideTypeByIntegerUsingRealPart
 template <typename T, typename M, typename Limits>
 struct MaxGoodImpl<DivideTypeByInteger<T, M>, Limits>
     : MaxGoodImplForDivideTypeByIntegerUsingRealPart<RealPart<T>, M, Limits> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `OpSequence<Ops...>` implementation.
+
+//
+// `MinGood<OpSequence<Ops...>>` implementation cluster.
+//
+
+template <typename OnlyOp, typename Limits>
+struct MinGoodImpl<OpSequenceImpl<OnlyOp>, Limits> : stdx::type_identity<MinGood<OnlyOp, Limits>> {
+};
+
+template <typename Op1, typename Op2, typename... Ops, typename Limits>
+struct MinGoodImpl<OpSequenceImpl<Op1, Op2, Ops...>, Limits>
+    : stdx::type_identity<MinGood<Op1, LimitsFor<OpSequenceImpl<Op2, Ops...>, Limits>>> {
+    static_assert(std::is_same<OpOutput<Op1>, OpInput<Op2>>::value,
+                  "Output of each op in sequence must match input of next op");
+};
+
+//
+// `MaxGood<OpSequence<Ops...>>` implementation cluster.
+//
+
+template <typename OnlyOp, typename Limits>
+struct MaxGoodImpl<OpSequenceImpl<OnlyOp>, Limits> : stdx::type_identity<MaxGood<OnlyOp, Limits>> {
+};
+
+template <typename Op1, typename Op2, typename... Ops, typename Limits>
+struct MaxGoodImpl<OpSequenceImpl<Op1, Op2, Ops...>, Limits>
+    : stdx::type_identity<MaxGood<Op1, LimitsFor<OpSequenceImpl<Op2, Ops...>, Limits>>> {
+    static_assert(std::is_same<OpOutput<Op1>, OpInput<Op2>>::value,
+                  "Output of each op in sequence must match input of next op");
+};
 
 }  // namespace detail
 }  // namespace au

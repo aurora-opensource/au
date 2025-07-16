@@ -84,6 +84,11 @@ auto max_good_value(Op, Limits) {
     return MaxGood<Op, Limits>::value();
 }
 
+template <typename... Ops>
+auto op_sequence(Ops...) {
+    return OpSequence<Ops...>{};
+}
+
 template <bool IsPositive>
 struct MagSignIfPositiveIs : stdx::type_identity<Magnitude<>> {};
 template <>
@@ -1390,6 +1395,123 @@ TEST(DivideTypeByInteger, MaxGoodForFloatDivByNegIntIsCappedLowerLimitTimesMagIn
 TEST(DivideTypeByInteger, MaxGoodForComplexOfTProvidesAnswerAsT) {
     EXPECT_THAT(max_good_value(divide_type_by_integer<std::complex<int32_t>>(mag<12>())),
                 SameTypeAndValue(max_good_value(divide_type_by_integer<int32_t>(mag<12>()))));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `OpSequence` section:
+
+//
+// `MinGood<OpSequence>`:
+//
+
+TEST(OpSequence, MinGoodForSequenceOfSingleOpIsMinGoodForThatOp) {
+    auto expect_min_good_for_sequence_of_only_this_is_min_good_for_this = [](auto op) {
+        EXPECT_THAT(min_good_value(op_sequence(op)), SameTypeAndValue(min_good_value(op)));
+    };
+
+    expect_min_good_for_sequence_of_only_this_is_min_good_for_this(
+        multiply_type_by<uint8_t>(mag<1>()));
+
+    expect_min_good_for_sequence_of_only_this_is_min_good_for_this(StaticCast<int16_t, float>{});
+}
+
+TEST(OpSequence, MinGoodForDivideThenNarrowIsLimitsOfTypeIfDivisorIsBigEnough) {
+    EXPECT_THAT(min_good_value(op_sequence(divide_type_by_integer<int16_t>(mag<1000>()),
+                                           StaticCast<int16_t, int8_t>{})),
+                SameTypeAndValue(std::numeric_limits<int16_t>::min()));
+}
+
+TEST(OpSequence, MinGoodForDivideThenNarrowIsScaledUpDestinationBoundIfDivisorIsSmallEnough) {
+    EXPECT_THAT(min_good_value(op_sequence(divide_type_by_integer<int16_t>(mag<10>()),
+                                           StaticCast<int16_t, int8_t>{})),
+                SameTypeAndValue(int16_t{-1280}));
+}
+
+TEST(OpSequence, MinGoodOfStaticCastSequenceIsMostConstrainingType) {
+    EXPECT_THAT(min_good_value(op_sequence(StaticCast<int64_t, float>{},
+                                           StaticCast<float, int32_t>{},
+                                           StaticCast<int32_t, int16_t>{},
+                                           StaticCast<int16_t, double>{})),
+                SameTypeAndValue(static_cast<int64_t>(std::numeric_limits<int16_t>::min())));
+}
+
+TEST(OpSequence, MinGoodIsZeroIfUnsignedTypeFoundOnBothSidesOfNegativeMultiplication) {
+    EXPECT_THAT(min_good_value(op_sequence(StaticCast<int64_t, float>{},
+                                           StaticCast<float, uint32_t>{},
+                                           StaticCast<uint32_t, int16_t>{},
+                                           multiply_type_by<int16_t>(-mag<1>() / mag<234>()),
+                                           StaticCast<int16_t, double>{},
+                                           StaticCast<double, uint8_t>{},
+                                           StaticCast<uint8_t, int32_t>{})),
+                SameTypeAndValue(int64_t{0}));
+}
+
+//
+// `MinGood<OpSequence>`:
+//
+
+TEST(OpSequence, MaxGoodForSequenceOfSingleOpIsMaxGoodForThatOp) {
+    auto expect_max_good_for_sequence_of_only_this_is_max_good_for_this = [](auto op) {
+        EXPECT_THAT(max_good_value(op_sequence(op)), SameTypeAndValue(max_good_value(op)));
+    };
+
+    expect_max_good_for_sequence_of_only_this_is_max_good_for_this(
+        multiply_type_by<uint8_t>(mag<1>()));
+
+    expect_max_good_for_sequence_of_only_this_is_max_good_for_this(StaticCast<int16_t, float>{});
+}
+
+TEST(OpSequence, MaxGoodForDivideThenNarrowIsLimitsOfTypeIfDivisorIsBigEnough) {
+    EXPECT_THAT(max_good_value(op_sequence(divide_type_by_integer<uint16_t>(mag<1000>()),
+                                           StaticCast<uint16_t, uint8_t>{})),
+                SameTypeAndValue(std::numeric_limits<uint16_t>::max()));
+}
+
+TEST(OpSequence, MaxGoodForDivideThenNarrowIsScaledDownDestinationBoundIfDivisorIsSmallEnough) {
+    EXPECT_THAT(max_good_value(op_sequence(divide_type_by_integer<uint16_t>(mag<10>()),
+                                           StaticCast<uint16_t, uint8_t>{})),
+                SameTypeAndValue(uint16_t{2550}));
+}
+
+TEST(OpSequence, MaxGoodOfStaticCastSequenceIsMostConstrainingType) {
+    EXPECT_THAT(max_good_value(op_sequence(StaticCast<int64_t, float>{},
+                                           StaticCast<float, uint32_t>{},
+                                           StaticCast<uint32_t, int16_t>{},
+                                           StaticCast<int16_t, double>{})),
+                SameTypeAndValue(static_cast<int64_t>(std::numeric_limits<int16_t>::max())));
+}
+
+TEST(OpSequence, MaxGoodIsZeroIfUnsignedTypeFoundOnBothSidesOfNegativeMultiplication) {
+    EXPECT_THAT(max_good_value(op_sequence(StaticCast<int64_t, float>{},
+                                           StaticCast<float, uint32_t>{},
+                                           StaticCast<uint32_t, int16_t>{},
+                                           divide_type_by_integer<int16_t>(-mag<234>()),
+                                           StaticCast<int16_t, double>{},
+                                           StaticCast<double, uint8_t>{},
+                                           StaticCast<uint8_t, int32_t>{})),
+                SameTypeAndValue(int64_t{0}));
+}
+
+TEST(OpSequence, DividingByTooBigNumberResetsTheLimitToTheMax) {
+    // We are multiplying a promotable integer type by a rational magnitude, whose denominator is
+    // too big to fit even in the promoted type.  Steps are:
+    //
+    // 1. Static cast to the promoted type.
+    // 2. Multiply by numerator.
+    // 3. Divide by (huge) denominator.
+    // 4. Static cast back to the original type.
+    //
+    // Step 4 imposes a limit of the max of the (tiny) original type.  But in dividing by the (huge)
+    // denominator in step 3, _every_ value will end up in the range of the destination type
+    // (because they'll all be trivial: 0), so the limit should expand to be the max of the promoted
+    // type.  We can tell the difference because step 2 multiplies by an integer, whose effect on
+    // the _limit_ is to _divide_ by that integer.  The key is to make sure we're dividing that
+    // expanded limit, and not the tiny limit of the original type.
+    EXPECT_THAT(max_good_value(op_sequence(StaticCast<int8_t, int>{},
+                                           multiply_type_by<int>(mag<3>()),
+                                           divide_type_by_integer<int>(pow<400>(mag<10>())),
+                                           StaticCast<int, int8_t>{})),
+                SameTypeAndValue(std::numeric_limits<int8_t>::max()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
