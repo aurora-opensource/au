@@ -32,6 +32,28 @@ namespace au {
 namespace detail {
 
 //
+// `MinPossible<Op>::value()` is the smallest representable value in the "scalar type" for
+// `OpInput<Op>` (see above comments for definition of "scalar type").
+//
+// This exists to give us an interface for `numeric_limits<T>::lowest()` that is as easy as possible
+// to use with `MinGood<Op, Limits>`.  That means it automatically applies to the scalar type, and
+// that it stores the result behind a `::value()` interface.
+//
+template <typename Op>
+struct MinPossibleImpl;
+template <typename Op>
+using MinPossible = typename MinPossibleImpl<Op>::type;
+
+//
+// `MaxPossible<Op>::value()` is the largest representable value in the "scalar type" for
+// `OpInput<Op>` (see above comments for definition of "scalar type").
+//
+template <typename Op>
+struct MaxPossibleImpl;
+template <typename Op>
+using MaxPossible = typename MaxPossibleImpl<Op>::type;
+
+//
 // `MinGood<Op>::value()` is a constexpr constant of the "scalar type" for `OpInput<Op>` that is the
 // minimum value that does not overflow.
 //
@@ -52,6 +74,37 @@ template <typename Op, typename Limits = void>
 struct MaxGoodImpl;
 template <typename Op, typename Limits = void>
 using MaxGood = typename MaxGoodImpl<Op, Limits>::type;
+
+//
+// `CanOverflowBelow<Op>::value` is `true` if there is any value in `OpInput<Op>` that can cause the
+// operation to exceed its bounds.
+//
+template <typename Op>
+struct CanOverflowBelow;
+
+//
+// `CanOverflowAbove<Op>::value` is `true` if there is any value in `OpInput<Op>` that can cause the
+// operation to exceed its bounds.
+//
+template <typename Op>
+struct CanOverflowAbove;
+
+// `MinValueChecker<Op>::is_too_small(x)` checks whether the value `x` is small enough to overflow
+// the bounds of the operation.
+template <typename Op>
+struct MinValueChecker;
+
+// `MaxValueChecker<Op>::is_too_large(x)` checks whether the value `x` is large enough to overflow
+// the bounds of the operation.
+template <typename Op>
+struct MaxValueChecker;
+
+// `would_value_overflow<Op>(x)` checks whether the value `x` would exceed the bounds of the
+// operation at any stage.
+template <typename Op>
+constexpr bool would_value_overflow(const OpInput<Op> &x) {
+    return MinValueChecker<Op>::is_too_small(x) || MaxValueChecker<Op>::is_too_large(x);
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // IMPLEMENTATION DETAILS
@@ -387,6 +440,26 @@ struct IsCompatibleApartFromMaybeOverflow
     : stdx::bool_constant<is_ok_or_err_cannot_fit(get_value_result<T>(M{}).outcome)> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// `MinPossible<Op>` implementation.
+
+// Why this lazy implementation, instead of using `std::numeric_limits` directly?  Simply because we
+// need a _type_ whose _`value()` method_ returns the given value.  We already built that for more
+// complicated use cases (it's called `LowestOfLimitsDividedByValue`), so we can just reuse it here.
+template <typename Op>
+struct MinPossibleImpl
+    : stdx::type_identity<LowestOfLimitsDividedByValue<RealPart<OpInput<Op>>, Magnitude<>, void>> {
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `MaxPossible<Op>` implementation.
+
+// See `MinPossibleImpl` comments above for explanation of this lazy approach.
+template <typename Op>
+struct MaxPossibleImpl
+    : stdx::type_identity<HighestOfLimitsDividedByValue<RealPart<OpInput<Op>>, Magnitude<>, void>> {
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // `StaticCast<T, U>` implementation.
 
 //
@@ -677,6 +750,43 @@ struct MaxGoodImpl<OpSequenceImpl<Op1, Op2, Ops...>, Limits>
     static_assert(std::is_same<OpOutput<Op1>, OpInput<Op2>>::value,
                   "Output of each op in sequence must match input of next op");
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `CanOverflowBelow<Op>` implementation.
+
+template <typename Op>
+struct CanOverflowBelow : stdx::bool_constant<(MinGood<Op>::value() > MinPossible<Op>::value())> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `CanOverflowAbove<Op>` implementation.
+
+template <typename Op>
+struct CanOverflowAbove : stdx::bool_constant<(MaxGood<Op>::value() < MaxPossible<Op>::value())> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `MinValueChecker<Op>` and `MaxValueChecker<Op>` implementation.
+
+template <typename Op, bool IsOverflowPossible>
+struct MinValueCheckerImpl {
+    static constexpr bool is_too_small(const OpInput<Op> &x) { return x < MinGood<Op>::value(); }
+};
+template <typename Op>
+struct MinValueCheckerImpl<Op, false> {
+    static constexpr bool is_too_small(const OpInput<Op> &) { return false; }
+};
+template <typename Op>
+struct MinValueChecker : MinValueCheckerImpl<Op, CanOverflowBelow<Op>::value> {};
+
+template <typename Op, bool IsOverflowPossible>
+struct MaxValueCheckerImpl {
+    static constexpr bool is_too_large(const OpInput<Op> &x) { return x > MaxGood<Op>::value(); }
+};
+template <typename Op>
+struct MaxValueCheckerImpl<Op, false> {
+    static constexpr bool is_too_large(const OpInput<Op> &) { return false; }
+};
+template <typename Op>
+struct MaxValueChecker : MaxValueCheckerImpl<Op, CanOverflowAbove<Op>::value> {};
 
 }  // namespace detail
 }  // namespace au
