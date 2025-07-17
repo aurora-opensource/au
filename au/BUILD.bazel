@@ -332,6 +332,27 @@ cc_test(
 )
 
 cc_library(
+    name = "conversion_strategy",
+    hdrs = ["conversion_strategy.hh"],
+    deps = [
+        ":abstract_operations",
+        ":magnitude",
+        ":stdx",
+    ],
+)
+
+cc_test(
+    name = "conversion_strategy_test",
+    size = "small",
+    srcs = ["conversion_strategy_test.cc"],
+    deps = [
+        ":conversion_strategy",
+        ":testing",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "dimension",
     hdrs = ["dimension.hh"],
     deps = [
