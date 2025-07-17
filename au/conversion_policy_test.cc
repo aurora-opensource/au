@@ -17,6 +17,7 @@
 #include <complex>
 
 #include "au/unit_of_measure.hh"
+#include "au/utility/type_traits.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -195,6 +196,15 @@ TEST(ConstructionPolicy, OkForSignedIntegralToUnsignedIntegral) {
     EXPECT_THAT(
         (ConstructionPolicy<Grams, uint64_t>::PermitImplicitFrom<Kilograms, int64_t>::value),
         IsTrue());
+}
+
+TEST(ConstructionPolicy, OkForExactlyPromotedType) {
+    ASSERT_THAT((std::is_same<int, detail::PromotedType<int8_t>>::value), IsTrue());
+
+    EXPECT_THAT((ConstructionPolicy<Grams, int8_t>::PermitImplicitFrom<Grams, int>::value),
+                IsTrue());
+    EXPECT_THAT((ConstructionPolicy<Grams, int8_t>::PermitImplicitFrom<Grams, uint16_t>::value),
+                IsFalse());
 }
 
 }  // namespace

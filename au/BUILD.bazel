@@ -313,6 +313,7 @@ cc_test(
     deps = [
         ":conversion_policy",
         ":unit_of_measure",
+        ":utility",
         "@com_google_googletest//:gtest_main",
     ],
 )
