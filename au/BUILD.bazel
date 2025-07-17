@@ -182,6 +182,7 @@ cc_test(
 cc_library(
     name = "abstract_operations",
     hdrs = ["abstract_operations.hh"],
+    visibility = ["//fuzz:__subpackages__"],
     deps = [":magnitude"],
 )
 
@@ -334,6 +335,7 @@ cc_test(
 cc_library(
     name = "conversion_strategy",
     hdrs = ["conversion_strategy.hh"],
+    visibility = ["//fuzz:__subpackages__"],
     deps = [
         ":abstract_operations",
         ":magnitude",
