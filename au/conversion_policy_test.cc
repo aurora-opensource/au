@@ -191,5 +191,11 @@ TEST(ConstructionPolicy, OkForIntegralRepAndEquivalentUnit) {
         IsTrue());
 }
 
+TEST(ConstructionPolicy, OkForSignedIntegralToUnsignedIntegral) {
+    EXPECT_THAT(
+        (ConstructionPolicy<Grams, uint64_t>::PermitImplicitFrom<Kilograms, int64_t>::value),
+        IsTrue());
+}
+
 }  // namespace
 }  // namespace au

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "au/static_cast_checkers.hh"
-
+#include "au/overflow_boundary.hh"
+#include "au/truncation_risk.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -23,6 +23,16 @@ using ::testing::IsFalse;
 using ::testing::IsTrue;
 
 namespace detail {
+
+template <typename U, typename T>
+constexpr bool will_static_cast_overflow(const T &value) {
+    return would_value_overflow<StaticCast<T, U>>(value);
+}
+
+template <typename U, typename T>
+constexpr bool will_static_cast_truncate(const T &value) {
+    return TruncationRiskFor<StaticCast<T, U>>::would_value_truncate(value);
+}
 
 TEST(WillStaticCastOverflow, DependsOnValueForUnsignedToNonContainingSigned) {
     EXPECT_THAT(will_static_cast_overflow<int8_t>(uint8_t{127}), IsFalse());
