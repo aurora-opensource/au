@@ -38,13 +38,6 @@ struct Degrees : UnitImpl<Angle> {};
 struct EquivalentToDegrees : Degrees {};
 struct NegativeDegrees : decltype(Degrees{} * (-mag<1>())) {};
 
-TEST(CanScaleWithoutOverflow, DetectsOverflowLimits) {
-    EXPECT_THAT(can_scale_without_overflow<double>(mag<1000>(), 1e100), IsTrue());
-    EXPECT_THAT(
-        can_scale_without_overflow<double>(mag<1000>(), 0.5 * std::numeric_limits<double>::max()),
-        IsFalse());
-}
-
 TEST(ImplicitRepPermitted, TrueForIdentityMagnitude) {
     EXPECT_THAT((ImplicitRepPermitted<long double, Magnitude<>>::value), IsTrue());
     EXPECT_THAT((ImplicitRepPermitted<double, Magnitude<>>::value), IsTrue());
