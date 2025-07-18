@@ -39,43 +39,8 @@ std::vector<T> first_n_positive_values(std::size_t n) {
 }
 }  // namespace
 
-TEST(CategorizeMagnitude, FindsIntegerMultiplyInstances) {
-    EXPECT_THAT(categorize_magnitude(mag<2>()), Eq(ApplyAs::INTEGER_MULTIPLY));
-    EXPECT_THAT(categorize_magnitude(mag<35>()), Eq(ApplyAs::INTEGER_MULTIPLY));
-
-    EXPECT_THAT(categorize_magnitude(-mag<35>()), Eq(ApplyAs::INTEGER_MULTIPLY));
-
-    EXPECT_THAT(categorize_magnitude(mag<35>() / mag<7>()), Eq(ApplyAs::INTEGER_MULTIPLY));
-}
-
-TEST(CategorizeMagnitude, FindsIntegerDivideInstances) {
-    EXPECT_THAT(categorize_magnitude(ONE / mag<2>()), Eq(ApplyAs::INTEGER_DIVIDE));
-    EXPECT_THAT(categorize_magnitude(ONE / mag<35>()), Eq(ApplyAs::INTEGER_DIVIDE));
-
-    EXPECT_THAT(categorize_magnitude(-ONE / mag<35>()), Eq(ApplyAs::INTEGER_DIVIDE));
-
-    EXPECT_THAT(categorize_magnitude(mag<7>() / mag<35>()), Eq(ApplyAs::INTEGER_DIVIDE));
-}
-
-TEST(CategorizeMagnitude, FindsRationalMultiplyInstances) {
-    EXPECT_THAT(categorize_magnitude(mag<5>() / mag<2>()), Eq(ApplyAs::RATIONAL_MULTIPLY));
-    EXPECT_THAT(categorize_magnitude(mag<2>() / mag<5>()), Eq(ApplyAs::RATIONAL_MULTIPLY));
-
-    EXPECT_THAT(categorize_magnitude(-mag<5>() / mag<2>()), Eq(ApplyAs::RATIONAL_MULTIPLY));
-    EXPECT_THAT(categorize_magnitude(-mag<2>() / mag<5>()), Eq(ApplyAs::RATIONAL_MULTIPLY));
-}
-
-TEST(CategorizeMagnitude, FindsIrrationalMultiplyInstances) {
-    EXPECT_THAT(categorize_magnitude(sqrt(mag<2>())), Eq(ApplyAs::IRRATIONAL_MULTIPLY));
-    EXPECT_THAT(categorize_magnitude(-sqrt(mag<2>())), Eq(ApplyAs::IRRATIONAL_MULTIPLY));
-
-    EXPECT_THAT(categorize_magnitude(PI), Eq(ApplyAs::IRRATIONAL_MULTIPLY));
-    EXPECT_THAT(categorize_magnitude(-PI), Eq(ApplyAs::IRRATIONAL_MULTIPLY));
-}
-
 TEST(ApplyMagnitude, MultipliesForIntegerMultiply) {
     constexpr auto m = mag<25>();
-    ASSERT_THAT(categorize_magnitude(m), Eq(ApplyAs::INTEGER_MULTIPLY));
 
     EXPECT_THAT(apply_magnitude(4, m), SameTypeAndValue(100));
     EXPECT_THAT(apply_magnitude(4.0f, m), SameTypeAndValue(100.0f));
@@ -83,7 +48,6 @@ TEST(ApplyMagnitude, MultipliesForIntegerMultiply) {
 
 TEST(ApplyMagnitude, MultipliesForNegativeIntegerMultiply) {
     constexpr auto m = -mag<20>();
-    ASSERT_THAT(categorize_magnitude(m), Eq(ApplyAs::INTEGER_MULTIPLY));
 
     EXPECT_THAT(apply_magnitude(4, m), SameTypeAndValue(-80));
     EXPECT_THAT(apply_magnitude(4.0f, m), SameTypeAndValue(-80.0f));
@@ -91,7 +55,6 @@ TEST(ApplyMagnitude, MultipliesForNegativeIntegerMultiply) {
 
 TEST(ApplyMagnitude, DividesForIntegerDivide) {
     constexpr auto one_thirteenth = ONE / mag<13>();
-    ASSERT_THAT(categorize_magnitude(one_thirteenth), Eq(ApplyAs::INTEGER_DIVIDE));
 
     // This test would fail if our implementation multiplied by the float representation of (1/13),
     // instead of dividing by 13, under the hood.
@@ -102,7 +65,6 @@ TEST(ApplyMagnitude, DividesForIntegerDivide) {
 
 TEST(ApplyMagnitude, DividesForNegativeIntegerDivide) {
     constexpr auto minus_one_thirteenth = -ONE / mag<13>();
-    ASSERT_THAT(categorize_magnitude(minus_one_thirteenth), Eq(ApplyAs::INTEGER_DIVIDE));
 
     // This test would fail if our implementation multiplied by the float representation of (-1/13),
     // instead of dividing by -13, under the hood.  (We'll use this `bool` variable to make sure
@@ -130,7 +92,6 @@ TEST(ApplyMagnitude, MultipliesThenDividesForRationalMagnitudeOnInteger) {
     // If we divide-then-multiply --- say, because we are trying to avoid overflow --- then we get
     // (5 / 2) * 3 = 2 * 3 = 6, which is wrong.
     constexpr auto three_halves = mag<3>() / mag<2>();
-    ASSERT_THAT(categorize_magnitude(three_halves), Eq(ApplyAs::RATIONAL_MULTIPLY));
 
     EXPECT_THAT(apply_magnitude(5, three_halves), SameTypeAndValue(7));
 }
@@ -138,7 +99,6 @@ TEST(ApplyMagnitude, MultipliesThenDividesForRationalMagnitudeOnInteger) {
 TEST(ApplyMagnitude, MultipliesThenDividesForNegativeRationalMagnitudeOnInteger) {
     // Similar to the above test case, but with a negative number.
     constexpr auto minus_three_halves = -mag<3>() / mag<2>();
-    ASSERT_THAT(categorize_magnitude(minus_three_halves), Eq(ApplyAs::RATIONAL_MULTIPLY));
 
     EXPECT_THAT(apply_magnitude(5, minus_three_halves), SameTypeAndValue(-7));
 }
@@ -176,7 +136,6 @@ TEST(ApplyMagnitude, MultipliesSingleNumberForRationalMagnitudeOnFloatingPoint) 
 
     // Create our rational magnitude, (2 / 13).
     constexpr auto two_thirteenths = mag<2>() / mag<13>();
-    ASSERT_THAT(categorize_magnitude(two_thirteenths), Eq(ApplyAs::RATIONAL_MULTIPLY));
 
     // Test a bunch of values.  We are hoping that the two different strategies will yield different
     // results for at least some of these strategies (and we'll check that this is the case).
@@ -199,7 +158,6 @@ TEST(ApplyMagnitude, MultipliesSingleNumberForRationalMagnitudeOnFloatingPoint) 
 }
 
 TEST(ApplyMagnitude, MultipliesSingleNumberForIrrationalMagnitudeOnFloatingPoint) {
-    ASSERT_THAT(categorize_magnitude(PI), Eq(ApplyAs::IRRATIONAL_MULTIPLY));
     EXPECT_THAT(apply_magnitude(2.0f, PI), SameTypeAndValue(2.0f * static_cast<float>(M_PI)));
 }
 
