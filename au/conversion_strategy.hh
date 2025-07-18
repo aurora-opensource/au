@@ -68,31 +68,67 @@ struct ApplicationStrategyForImpl<T, Mag, MagKind::INTEGER_DIVIDE>
 template <typename T, typename Mag>
 struct ApplicationStrategyForImpl<T, Mag, MagKind::NONTRIVIAL_RATIONAL>
     : std::conditional<
-          std::is_integral<T>::value,
+          std::is_integral<RealPart<T>>::value,
           OpSequence<MultiplyTypeBy<T, NumeratorT<Mag>>, DivideTypeByInteger<T, DenominatorT<Mag>>>,
           MultiplyTypeBy<T, Mag>> {};
 
 //
-// `FullConversionImpl<OldRep, PromotedCommon, NewRep, Factor>` should resolve to the most efficient
-// sequence of operations for a conversion from `OldRep` to `NewRep`, with a magnitude `Factor`,
-// where `PromotedCommon` is the promoted type of the common type of `OldRep` and `NewRep`.
+// `ConversionRep<OldRep, NewRep>` is the rep we should use when applying the conversion factor.
+//
+template <typename OldRep, typename NewRep>
+struct ConversionRepImpl;
+template <typename OldRep, typename NewRep>
+using ConversionRep = typename ConversionRepImpl<OldRep, NewRep>::type;
+
+template <typename OldRep, typename NewRep>
+struct IsRealToComplex
+    : stdx::conjunction<std::is_same<OldRep, RealPart<OldRep>>,
+                        stdx::experimental::is_detected<TypeOfRealMember, NewRep>> {};
+
+template <typename OldRep, typename NewRep>
+struct ConversionRepImpl
+    : std::conditional<IsRealToComplex<OldRep, NewRep>::value,
+                       PromotedType<std::common_type_t<RealPart<OldRep>, RealPart<NewRep>>>,
+                       PromotedType<std::common_type_t<OldRep, NewRep>>> {};
+
+//
+// `StaticCastSequence<T, U>` is the sequence of operations that gets us from `T` to `U`.
+//
+// Normally, of course, this is just `StaticCast<T, U>`.  But we have weird edge cases like going
+// from `double` to `std::complex<int>`, which require an intermediate step of static casting to
+// `int`.
 //
 
-template <typename OldRep, typename PromotedCommon, typename NewRep, typename Factor>
+template <typename T, typename U>
+struct StaticCastSequenceImpl
+    : std::conditional<stdx::conjunction<IsRealToComplex<T, U>,
+                                         stdx::negation<std::is_same<T, RealPart<U>>>>::value,
+                       OpSequence<StaticCast<T, RealPart<U>>, StaticCast<RealPart<U>, U>>,
+                       StaticCast<T, U>> {};
+template <typename T, typename U>
+using StaticCastSequence = typename StaticCastSequenceImpl<T, U>::type;
+
+//
+// `FullConversionImpl<OldRep, ConversionRepT, NewRep, Factor>` should resolve to the most efficient
+// sequence of operations for a conversion from `OldRep` to `NewRep`, with a magnitude `Factor`,
+// where `ConversionRepT` is the promoted type of the common type of `OldRep` and `NewRep`.
+//
+
+template <typename OldRep, typename ConversionRepT, typename NewRep, typename Factor>
 struct FullConversionImpl
-    : stdx::type_identity<OpSequence<StaticCast<OldRep, PromotedCommon>,
-                                     ApplicationStrategyFor<PromotedCommon, Factor>,
-                                     StaticCast<PromotedCommon, NewRep>>> {};
+    : stdx::type_identity<OpSequence<StaticCastSequence<OldRep, ConversionRepT>,
+                                     ApplicationStrategyFor<ConversionRepT, Factor>,
+                                     StaticCastSequence<ConversionRepT, NewRep>>> {};
 
-template <typename OldRepIsPromotedCommon, typename NewRep, typename Factor>
-struct FullConversionImpl<OldRepIsPromotedCommon, OldRepIsPromotedCommon, NewRep, Factor>
-    : stdx::type_identity<OpSequence<ApplicationStrategyFor<OldRepIsPromotedCommon, Factor>,
-                                     StaticCast<OldRepIsPromotedCommon, NewRep>>> {};
+template <typename OldRepIsConversionRep, typename NewRep, typename Factor>
+struct FullConversionImpl<OldRepIsConversionRep, OldRepIsConversionRep, NewRep, Factor>
+    : stdx::type_identity<OpSequence<ApplicationStrategyFor<OldRepIsConversionRep, Factor>,
+                                     StaticCastSequence<OldRepIsConversionRep, NewRep>>> {};
 
-template <typename OldRep, typename NewRepIsPromotedCommon, typename Factor>
-struct FullConversionImpl<OldRep, NewRepIsPromotedCommon, NewRepIsPromotedCommon, Factor>
-    : stdx::type_identity<OpSequence<StaticCast<OldRep, NewRepIsPromotedCommon>,
-                                     ApplicationStrategyFor<NewRepIsPromotedCommon, Factor>>> {};
+template <typename OldRep, typename NewRepIsConversionRep, typename Factor>
+struct FullConversionImpl<OldRep, NewRepIsConversionRep, NewRepIsConversionRep, Factor>
+    : stdx::type_identity<OpSequence<StaticCastSequence<OldRep, NewRepIsConversionRep>,
+                                     ApplicationStrategyFor<NewRepIsConversionRep, Factor>>> {};
 
 template <typename Rep, typename Factor>
 struct FullConversionImpl<Rep, Rep, Rep, Factor>
@@ -101,8 +137,7 @@ struct FullConversionImpl<Rep, Rep, Rep, Factor>
 // To implement `ConversionForRepsAndFactor`, delegate to `FullConversionImpl`.
 template <typename OldRep, typename NewRep, typename Factor>
 struct ConversionForRepsAndFactorImpl
-    : FullConversionImpl<OldRep, PromotedType<std::common_type_t<OldRep, NewRep>>, NewRep, Factor> {
-};
+    : FullConversionImpl<OldRep, ConversionRep<OldRep, NewRep>, NewRep, Factor> {};
 
 }  // namespace detail
 }  // namespace au
