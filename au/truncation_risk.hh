@@ -19,6 +19,11 @@
 namespace au {
 namespace detail {
 
+template <typename Op>
+struct TruncationRiskForImpl;
+template <typename Op>
+using TruncationRiskFor = typename TruncationRiskForImpl<Op>::type;
+
 template <typename T>
 struct NoTruncationRisk {
     static constexpr bool would_value_truncate(const T &) { return false; }
@@ -45,6 +50,107 @@ struct CannotAssessTruncationRiskFor {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // IMPLEMENTATION DETAILS (`truncation_risk.hh`):
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `StaticCast<T, U>` section:
+
+// (A) -> (A)
+template <typename T, typename U>
+struct TruncationRiskForStaticCastFromArithmeticToArithmetic
+    : std::conditional<stdx::conjunction<std::is_floating_point<T>, std::is_integral<U>>::value,
+                       ValueIsNotInteger<T>,
+                       NoTruncationRisk<T>> {};
+
+// (A) -> (X)
+template <typename T, typename U>
+struct TruncationRiskForStaticCastFromArithmetic
+    : std::conditional_t<std::is_arithmetic<U>::value,
+                         TruncationRiskForStaticCastFromArithmeticToArithmetic<T, U>,
+                         stdx::type_identity<CannotAssessTruncationRiskFor<T>>> {};
+
+// (X) -> (X)
+template <typename T, typename U>
+struct TruncationRiskForStaticCastAssumingScalar
+    : std::conditional_t<std::is_arithmetic<T>::value,
+                         TruncationRiskForStaticCastFromArithmetic<T, U>,
+                         stdx::type_identity<CannotAssessTruncationRiskFor<T>>> {};
+
+template <typename T, typename U>
+struct TruncationRiskForImpl<StaticCast<T, U>>
+    : TruncationRiskForStaticCastAssumingScalar<RealPart<T>, RealPart<U>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `MultiplyTypeBy<T, M>` section:
+
+template <typename T, typename M>
+struct TruncationRiskForMultiplyArithmeticByIrrational
+    : std::conditional<std::is_integral<T>::value, ValueIsNotZero<T>, NoTruncationRisk<T>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForMultiplyByIrrational
+    : std::conditional_t<std::is_arithmetic<T>::value,
+                         TruncationRiskForMultiplyArithmeticByIrrational<T, M>,
+                         stdx::type_identity<CannotAssessTruncationRiskFor<T>>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForMultiplyArithmeticByRationalNontrivialDenominator
+    : std::conditional<(get_value_result<RealPart<T>>(DenominatorT<M>{}).outcome ==
+                        MagRepresentationOutcome::ERR_CANNOT_FIT),
+                       ValueIsNotZero<T>,
+                       ValueTimesRatioIsNotInteger<T, M>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForMultiplyArithmeticByRational
+    : std::conditional_t<stdx::disjunction<IsInteger<M>, std::is_floating_point<T>>::value,
+                         stdx::type_identity<NoTruncationRisk<T>>,
+                         TruncationRiskForMultiplyArithmeticByRationalNontrivialDenominator<T, M>> {
+};
+
+template <typename T, typename M>
+struct TruncationRiskForMultiplyByRational
+    : std::conditional_t<std::is_arithmetic<T>::value,
+                         TruncationRiskForMultiplyArithmeticByRational<T, M>,
+                         stdx::type_identity<CannotAssessTruncationRiskFor<T>>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForMultiplyByAssumingScalar
+    : std::conditional_t<IsRational<M>::value,
+                         TruncationRiskForMultiplyByRational<T, M>,
+                         TruncationRiskForMultiplyByIrrational<T, M>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForImpl<MultiplyTypeBy<T, M>>
+    : TruncationRiskForMultiplyByAssumingScalar<RealPart<T>, M> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `DivideTypeByInteger<T, M>` section:
+
+template <typename T, typename M>
+struct TruncationRiskForDivideNonArithmeticByInteger
+    : stdx::type_identity<CannotAssessTruncationRiskFor<T>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForDivideIntegralByInteger
+    : std::conditional<(get_value_result<T>(M{}).outcome ==
+                        MagRepresentationOutcome::ERR_CANNOT_FIT),
+                       ValueIsNotZero<T>,
+                       ValueTimesRatioIsNotInteger<T, MagInverseT<M>>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForDivideArithmeticByInteger
+    : std::conditional_t<std::is_floating_point<T>::value,
+                         stdx::type_identity<NoTruncationRisk<T>>,
+                         TruncationRiskForDivideIntegralByInteger<T, M>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForDivideByIntAssumingScalar
+    : std::conditional_t<std::is_arithmetic<T>::value,
+                         TruncationRiskForDivideArithmeticByInteger<T, M>,
+                         TruncationRiskForDivideNonArithmeticByInteger<T, M>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForImpl<DivideTypeByInteger<T, M>>
+    : TruncationRiskForDivideByIntAssumingScalar<RealPart<T>, M> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `ValueTimesRatioIsNotInteger` section:
