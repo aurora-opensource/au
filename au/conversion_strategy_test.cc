@@ -14,6 +14,8 @@
 
 #include "au/conversion_strategy.hh"
 
+#include <complex>
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -59,6 +61,15 @@ TEST(ConversionForRepsAndFactor, ApplyingNontrivialRationalToFloatingPointIsSing
                        MultiplyTypeBy<double, decltype(mag<3>() / mag<4>())>>();
 }
 
+TEST(ConversionForRepsAndFactor,
+     ApplyingNontrivialRationalToComplexIntegralTypeIsMultiplyThenDivide) {
+    StaticAssertTypeEq<ConversionForRepsAndFactor<std::complex<int>,
+                                                  std::complex<int>,
+                                                  decltype(mag<3>() / mag<4>())>,
+                       OpSequence<MultiplyTypeBy<std::complex<int>, decltype(mag<3>())>,
+                                  DivideTypeByInteger<std::complex<int>, decltype(mag<4>())>>>();
+}
+
 TEST(ConversionForRepsAndFactor, WhenTargetIsPromotedTypeSkipFinalStaticCast) {
     using T = uint16_t;
     using Promoted = PromotedType<T>;
@@ -73,6 +84,35 @@ TEST(ConversionForRepsAndFactor, WhenOldRepIsPromotedCommonSkipInitialStaticCast
     StaticAssertTypeEq<ConversionForRepsAndFactor<float, int, decltype(mag<13>() / mag<15>())>,
                        OpSequence<MultiplyTypeBy<float, decltype(mag<13>() / mag<15>())>,
                                   StaticCast<float, int>>>();
+}
+
+TEST(ConversionForRepsAndFactor,
+     StaticCastToScalarOfComplexAfterMultiplyForScalarFloatToComplexInt) {
+    StaticAssertTypeEq<ConversionForRepsAndFactor<double, std::complex<int>, decltype(mag<12>())>,
+                       OpSequence<MultiplyTypeBy<double, decltype(mag<12>())>,
+                                  StaticCast<double, int>,
+                                  StaticCast<int, std::complex<int>>>>();
+}
+
+TEST(ConversionForRepsAndFactor,
+     StaticCastToScalarOfComplexBeforeMultiplyForScalarIntToComplexFloat) {
+    StaticAssertTypeEq<ConversionForRepsAndFactor<int, std::complex<double>, decltype(mag<12>())>,
+                       OpSequence<StaticCast<int, double>,
+                                  MultiplyTypeBy<double, decltype(mag<12>())>,
+                                  StaticCast<double, std::complex<double>>>>();
+}
+
+TEST(ConversionForRepsAndFactor,
+     PerformsConversionInHighestFidelityComplexForTwoComplexFloatTypes) {
+    StaticAssertTypeEq<
+        ConversionForRepsAndFactor<std::complex<float>, std::complex<double>, decltype(mag<12>())>,
+        OpSequence<StaticCast<std::complex<float>, std::complex<double>>,
+                   MultiplyTypeBy<std::complex<double>, decltype(mag<12>())>>>();
+
+    StaticAssertTypeEq<
+        ConversionForRepsAndFactor<std::complex<double>, std::complex<float>, decltype(mag<12>())>,
+        OpSequence<MultiplyTypeBy<std::complex<double>, decltype(mag<12>())>,
+                   StaticCast<std::complex<double>, std::complex<float>>>>();
 }
 
 }  // namespace detail
