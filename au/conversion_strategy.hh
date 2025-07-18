@@ -73,12 +73,12 @@ struct ApplicationStrategyForImpl<T, Mag, MagKind::NONTRIVIAL_RATIONAL>
           MultiplyTypeBy<T, Mag>> {};
 
 //
-// `RepForConversion<OldRep, NewRep>` is the rep we should use when applying the conversion factor.
+// `ConversionRep<OldRep, NewRep>` is the rep we should use when applying the conversion factor.
 //
 template <typename OldRep, typename NewRep>
-struct ApplicationRepImpl;
+struct ConversionRepImpl;
 template <typename OldRep, typename NewRep>
-using RepForConversion = typename ApplicationRepImpl<OldRep, NewRep>::type;
+using ConversionRep = typename ConversionRepImpl<OldRep, NewRep>::type;
 
 template <typename OldRep, typename NewRep>
 struct IsRealToComplex
@@ -86,7 +86,7 @@ struct IsRealToComplex
                         stdx::experimental::is_detected<TypeOfRealMember, NewRep>> {};
 
 template <typename OldRep, typename NewRep>
-struct ApplicationRepImpl
+struct ConversionRepImpl
     : std::conditional<IsRealToComplex<OldRep, NewRep>::value,
                        PromotedType<std::common_type_t<RealPart<OldRep>, RealPart<NewRep>>>,
                        PromotedType<std::common_type_t<OldRep, NewRep>>> {};
@@ -109,26 +109,26 @@ template <typename T, typename U>
 using StaticCastSequence = typename StaticCastSequenceImpl<T, U>::type;
 
 //
-// `FullConversionImpl<OldRep, ApplicationRep, NewRep, Factor>` should resolve to the most efficient
+// `FullConversionImpl<OldRep, ConversionRepT, NewRep, Factor>` should resolve to the most efficient
 // sequence of operations for a conversion from `OldRep` to `NewRep`, with a magnitude `Factor`,
-// where `ApplicationRep` is the promoted type of the common type of `OldRep` and `NewRep`.
+// where `ConversionRepT` is the promoted type of the common type of `OldRep` and `NewRep`.
 //
 
-template <typename OldRep, typename ApplicationRep, typename NewRep, typename Factor>
+template <typename OldRep, typename ConversionRepT, typename NewRep, typename Factor>
 struct FullConversionImpl
-    : stdx::type_identity<OpSequence<StaticCastSequence<OldRep, ApplicationRep>,
-                                     ApplicationStrategyFor<ApplicationRep, Factor>,
-                                     StaticCastSequence<ApplicationRep, NewRep>>> {};
+    : stdx::type_identity<OpSequence<StaticCastSequence<OldRep, ConversionRepT>,
+                                     ApplicationStrategyFor<ConversionRepT, Factor>,
+                                     StaticCastSequence<ConversionRepT, NewRep>>> {};
 
-template <typename OldRepIsApplicationRep, typename NewRep, typename Factor>
-struct FullConversionImpl<OldRepIsApplicationRep, OldRepIsApplicationRep, NewRep, Factor>
-    : stdx::type_identity<OpSequence<ApplicationStrategyFor<OldRepIsApplicationRep, Factor>,
-                                     StaticCastSequence<OldRepIsApplicationRep, NewRep>>> {};
+template <typename OldRepIsConversionRep, typename NewRep, typename Factor>
+struct FullConversionImpl<OldRepIsConversionRep, OldRepIsConversionRep, NewRep, Factor>
+    : stdx::type_identity<OpSequence<ApplicationStrategyFor<OldRepIsConversionRep, Factor>,
+                                     StaticCastSequence<OldRepIsConversionRep, NewRep>>> {};
 
-template <typename OldRep, typename NewRepIsApplicationRep, typename Factor>
-struct FullConversionImpl<OldRep, NewRepIsApplicationRep, NewRepIsApplicationRep, Factor>
-    : stdx::type_identity<OpSequence<StaticCastSequence<OldRep, NewRepIsApplicationRep>,
-                                     ApplicationStrategyFor<NewRepIsApplicationRep, Factor>>> {};
+template <typename OldRep, typename NewRepIsConversionRep, typename Factor>
+struct FullConversionImpl<OldRep, NewRepIsConversionRep, NewRepIsConversionRep, Factor>
+    : stdx::type_identity<OpSequence<StaticCastSequence<OldRep, NewRepIsConversionRep>,
+                                     ApplicationStrategyFor<NewRepIsConversionRep, Factor>>> {};
 
 template <typename Rep, typename Factor>
 struct FullConversionImpl<Rep, Rep, Rep, Factor>
@@ -137,7 +137,7 @@ struct FullConversionImpl<Rep, Rep, Rep, Factor>
 // To implement `ConversionForRepsAndFactor`, delegate to `FullConversionImpl`.
 template <typename OldRep, typename NewRep, typename Factor>
 struct ConversionForRepsAndFactorImpl
-    : FullConversionImpl<OldRep, RepForConversion<OldRep, NewRep>, NewRep, Factor> {};
+    : FullConversionImpl<OldRep, ConversionRep<OldRep, NewRep>, NewRep, Factor> {};
 
 }  // namespace detail
 }  // namespace au
