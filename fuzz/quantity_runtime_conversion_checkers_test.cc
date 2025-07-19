@@ -29,6 +29,7 @@
 namespace au {
 namespace {
 
+using ::testing::Eq;
 using ::testing::StaticAssertTypeEq;
 
 using ::au::detail::FloatingPointPrefixPart;
@@ -105,7 +106,8 @@ TYPED_TEST_P(QuantityRuntimeConversionChecker, RoundTripIsIdentityIffConversionN
         const auto round_trip = value.coerce_as(destination_unit).coerce_as(meters);
         const bool actual_loss = (value != round_trip);
 
-        EXPECT_EQ(expect_loss, actual_loss) << "Value: " << value << " Round trip: " << round_trip;
+        EXPECT_THAT(expect_loss, Eq(actual_loss))
+            << "Value: " << value << " Round trip: " << round_trip;
     }
 }
 

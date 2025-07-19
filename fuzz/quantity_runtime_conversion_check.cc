@@ -56,7 +56,7 @@ std::string print(RoundTripResult result) {
 
 template <typename T>
 T next_higher(T x, std::size_t n = 1u) {
-    static_assert(std::is_floating_point<T>::value, "");
+    static_assert(std::is_floating_point<T>::value, "Utility only for floating point");
     while (n-- > 0u) {
         x = std::nextafter(x, std::numeric_limits<T>::infinity());
     }
@@ -65,7 +65,7 @@ T next_higher(T x, std::size_t n = 1u) {
 
 template <typename T>
 T next_lower(T x, std::size_t n = 1u) {
-    static_assert(std::is_floating_point<T>::value, "");
+    static_assert(std::is_floating_point<T>::value, "Utility only for floating point");
     while (n-- > 0u) {
         x = std::nextafter(x, -std::numeric_limits<T>::infinity());
     }
@@ -74,12 +74,12 @@ T next_lower(T x, std::size_t n = 1u) {
 
 template <typename U, typename R>
 Quantity<U, R> next_higher_quantity(Quantity<U, R> q, std::size_t n = 1u) {
-    return make_quantity<U>(next_higher(q.in(U{}), n));
+    return make_quantity<U>(next_higher(q.data_in(U{}), n));
 }
 
 template <typename U, typename R>
 Quantity<U, R> next_lower_quantity(Quantity<U, R> q, std::size_t n = 1u) {
-    return make_quantity<U>(next_lower(q.in(U{}), n));
+    return make_quantity<U>(next_lower(q.data_in(U{}), n));
 }
 
 constexpr std::size_t MAX_DIST = 1000u;
@@ -197,31 +197,38 @@ template <typename RepT,
           TestCategory Category>
 struct TestBodyImpl;
 
-template <bool R1Unsigned, bool R2Unsigned>
+enum class Unsigned {
+    NEITHER,
+    LHS_ONLY,
+    RHS_ONLY,
+    BOTH,
+};
+
+template <Unsigned>
 struct SignFlipImpl;
 template <>
-struct SignFlipImpl<true, true> {
+struct SignFlipImpl<Unsigned::BOTH> {
     template <typename U1, typename R1, typename U2, typename R2>
     static constexpr bool assess(const Quantity<U1, R1> &, const Quantity<U2, R2> &) {
         return false;
     }
 };
 template <>
-struct SignFlipImpl<true, false> {
+struct SignFlipImpl<Unsigned::LHS_ONLY> {
     template <typename U1, typename R1, typename U2, typename R2>
     static constexpr bool assess(const Quantity<U1, R1> &, const Quantity<U2, R2> &b) {
         return b < ZERO;
     }
 };
 template <>
-struct SignFlipImpl<false, true> {
+struct SignFlipImpl<Unsigned::RHS_ONLY> {
     template <typename U1, typename R1, typename U2, typename R2>
     static constexpr bool assess(const Quantity<U1, R1> &a, const Quantity<U2, R2> &) {
         return a < ZERO;
     }
 };
 template <>
-struct SignFlipImpl<false, false> {
+struct SignFlipImpl<Unsigned::NEITHER> {
     template <typename U1, typename R1, typename U2, typename R2>
     static constexpr bool assess(const Quantity<U1, R1> &a, const Quantity<U2, R2> &b) {
         return (a < ZERO) != (b < ZERO);
@@ -229,7 +236,11 @@ struct SignFlipImpl<false, false> {
 };
 template <typename U1, typename R1, typename U2, typename R2>
 constexpr bool sign_flip(const Quantity<U1, R1> &a, const Quantity<U2, R2> &b) {
-    return SignFlipImpl<std::is_unsigned<R1>::value, std::is_unsigned<R2>::value>::assess(a, b);
+    constexpr auto unsignedness =
+        std::is_unsigned<R1>::value
+            ? (std::is_unsigned<R2>::value ? Unsigned::BOTH : Unsigned::LHS_ONLY)
+            : (std::is_unsigned<R2>::value ? Unsigned::RHS_ONLY : Unsigned::NEITHER);
+    return SignFlipImpl<unsignedness>::assess(a, b);
 }
 
 struct LossCheck {
@@ -322,12 +333,11 @@ struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::INTEGRAL_TO_F
             << "  Round trip: " << round_trip << std::endl
             << "  Max OK:     " << max_ok << std::endl;
 
-        const auto result = ignore_because_subnormal
-                                ? RoundTripResult::IGNORE_SUBNORMALS
-                                : ((round_trip == value) ? RoundTripResult::IDENTICAL
-                                   : (round_trip < min_ok || round_trip > max_ok)
-                                       ? RoundTripResult::SIGNIFICANT_LOSS
-                                       : RoundTripResult::MINOR_LOSS);
+        const auto result = ignore_because_subnormal ? RoundTripResult::IGNORE_SUBNORMALS
+                            : round_trip == value    ? RoundTripResult::IDENTICAL
+                            : round_trip < min_ok || round_trip > max_ok
+                                ? RoundTripResult::SIGNIFICANT_LOSS
+                                : RoundTripResult::MINOR_LOSS;
 
         return {result, oss.str()};
     }
