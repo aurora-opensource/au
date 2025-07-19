@@ -97,7 +97,7 @@ TYPED_TEST_P(QuantityRuntimeConversionChecker, RoundTripIsIdentityIffConversionN
     using Rep = std::tuple_element_t<0, TypeParam>;
     constexpr auto destination_unit = std::tuple_element_t<1, TypeParam>{};
     RandomValueGenerator<Rep> generator{9876543210u};
-    for (auto i = 0u; i < 1'000'000u; ++i) {
+    for (auto _ = 1'000'000u; --_;) {
         const auto value = meters(generator.next_value());
 
         const bool expect_loss = is_conversion_lossy(value, destination_unit);
