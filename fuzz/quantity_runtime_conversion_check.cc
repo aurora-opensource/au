@@ -278,11 +278,11 @@ struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_FLOA
 
         std::ostringstream oss;
         oss << "Breakdown:" << std::setprecision(std::numeric_limits<RepT>::digits10 + 1u)
-            << std::endl
-            << "  Initial:    " << value << std::endl
-            << "  Min OK:     " << min_ok << std::endl
-            << "  Round trip: " << round_trip << std::endl
-            << "  Max OK:     " << max_ok << std::endl;
+            << '\n'
+            << "  Initial:    " << value << '\n'
+            << "  Min OK:     " << min_ok << '\n'
+            << "  Round trip: " << round_trip << '\n'
+            << "  Max OK:     " << max_ok << '\n';
 
         const auto result =
             ((round_trip == value)                          ? RoundTripResult::IDENTICAL
