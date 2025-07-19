@@ -89,6 +89,16 @@ auto op_sequence(Ops...) {
     return OpSequence<Ops...>{};
 }
 
+template <typename Op>
+bool can_overflow_below(Op) {
+    return CanOverflowBelow<Op>::value;
+}
+
+template <typename Op>
+bool can_overflow_above(Op) {
+    return CanOverflowAbove<Op>::value;
+}
+
 template <bool IsPositive>
 struct MagSignIfPositiveIs : stdx::type_identity<Magnitude<>> {};
 template <>
@@ -152,6 +162,50 @@ constexpr auto lowest_floating_point_as_mag() {
 template <typename Float>
 constexpr auto highest_floating_point_as_mag() {
     return MagFromFloatingPointConstantImpl<Float, ValueOfHighestInDestination<Float>>::value();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `MinPossible` section:
+
+TEST(MinPossible, GivesStdNumericLimitsLowestForSimpleTypes) {
+    EXPECT_THAT((MinPossible<StaticCast<uint64_t, int>>::value()),
+                SameTypeAndValue(std::numeric_limits<uint64_t>::lowest()));
+
+    EXPECT_THAT((MinPossible<StaticCast<int8_t, int32_t>>::value()),
+                SameTypeAndValue(std::numeric_limits<int8_t>::lowest()));
+
+    EXPECT_THAT((MinPossible<StaticCast<float, double>>::value()),
+                SameTypeAndValue(std::numeric_limits<float>::lowest()));
+}
+
+TEST(MinPossible, GivesStdNumericLimitsLowestOfScalarTypeForCompoundTypes) {
+    EXPECT_THAT((MinPossible<StaticCast<std::complex<float>, std::complex<double>>>::value()),
+                SameTypeAndValue(std::numeric_limits<float>::lowest()));
+
+    EXPECT_THAT((MinPossible<StaticCast<std::complex<double>, std::complex<float>>>::value()),
+                SameTypeAndValue(std::numeric_limits<double>::lowest()));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `MaxPossible` section:
+
+TEST(MaxPossible, GivesStdNumericLimitsMaxForSimpleTypes) {
+    EXPECT_THAT((MaxPossible<StaticCast<uint64_t, int>>::value()),
+                SameTypeAndValue(std::numeric_limits<uint64_t>::max()));
+
+    EXPECT_THAT((MaxPossible<StaticCast<int8_t, int32_t>>::value()),
+                SameTypeAndValue(std::numeric_limits<int8_t>::max()));
+
+    EXPECT_THAT((MaxPossible<StaticCast<float, double>>::value()),
+                SameTypeAndValue(std::numeric_limits<float>::max()));
+}
+
+TEST(MaxPossible, GivesStdNumericLimitsMaxOfScalarTypeForCompoundTypes) {
+    EXPECT_THAT((MaxPossible<StaticCast<std::complex<float>, std::complex<double>>>::value()),
+                SameTypeAndValue(std::numeric_limits<float>::max()));
+
+    EXPECT_THAT((MaxPossible<StaticCast<std::complex<double>, std::complex<float>>>::value()),
+                SameTypeAndValue(std::numeric_limits<double>::max()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1512,6 +1566,38 @@ TEST(OpSequence, DividingByTooBigNumberResetsTheLimitToTheMax) {
                                            divide_type_by_integer<int>(pow<400>(mag<10>())),
                                            StaticCast<int, int8_t>{})),
                 SameTypeAndValue(std::numeric_limits<int8_t>::max()));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `CanOverflowBelow` section:
+
+TEST(CanOverflowBelow, TrueIfValueCanBeSmallEnoughToGoOutsideBounds) {
+    EXPECT_THAT(can_overflow_below(multiply_type_by<int8_t>(mag<2>())), IsTrue());
+}
+
+TEST(CanOverflowBelow, TrueForOverflowableStdComplex) {
+    EXPECT_THAT(can_overflow_below(multiply_type_by<std::complex<int8_t>>(mag<2>())), IsTrue());
+}
+
+TEST(CanOverflowBelow, FalseIfValueCannotBeSmallEnoughToGoOutsideBounds) {
+    EXPECT_THAT(can_overflow_below(multiply_type_by<uint8_t>(mag<8>())), IsFalse());
+    EXPECT_THAT(can_overflow_below(multiply_type_by<double>(mag<1>() / PI)), IsFalse());
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `CanOverflowAbove` section:
+
+TEST(CanOverflowAbove, TrueIfValueCanBeBigEnoughToGoOutsideBounds) {
+    EXPECT_THAT(can_overflow_above(multiply_type_by<int8_t>(mag<2>())), IsTrue());
+}
+
+TEST(CanOverflowAbove, TrueForOverflowableStdComplex) {
+    EXPECT_THAT(can_overflow_above(multiply_type_by<std::complex<int8_t>>(mag<2>())), IsTrue());
+}
+
+TEST(CanOverflowAbove, FalseIfValueCannotBeBigEnoughToGoOutsideBounds) {
+    EXPECT_THAT(can_overflow_above(divide_type_by_integer<uint8_t>(mag<8>())), IsFalse());
+    EXPECT_THAT(can_overflow_above(multiply_type_by<double>(-mag<1>() / PI)), IsFalse());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -36,28 +36,6 @@ constexpr void ensure_relevant_kind_of_magnitude(Magnitude<BPs...> m) {
     static_assert(!is_integer(ONE / m), "Magnitude must not be purely inverse-integer");
 }
 
-TEST(IsAbsKnownToBeLessThanOne, ProducesExpectedResultsForMagnitudesThatCanFitInUintmax) {
-    EXPECT_THAT(is_abs_known_to_be_less_than_one(mag<1>() / mag<2>()),
-                Eq(IsAbsMagLessThanOne::DEFINITELY));
-
-    EXPECT_THAT(is_abs_known_to_be_less_than_one(mag<999'999>() / mag<1'000'000>()),
-                Eq(IsAbsMagLessThanOne::DEFINITELY));
-
-    EXPECT_THAT(is_abs_known_to_be_less_than_one(mag<1'000'000>() / mag<999'999>()),
-                Eq(IsAbsMagLessThanOne::MAYBE_NOT));
-}
-
-TEST(IsAbsKnownToBeLessThanOne, IgnoresSign) {
-    EXPECT_THAT(is_abs_known_to_be_less_than_one(-mag<1>() / mag<2>()),
-                Eq(IsAbsMagLessThanOne::DEFINITELY));
-
-    EXPECT_THAT(is_abs_known_to_be_less_than_one(-mag<999'999>() / mag<1'000'000>()),
-                Eq(IsAbsMagLessThanOne::DEFINITELY));
-
-    EXPECT_THAT(is_abs_known_to_be_less_than_one(-mag<1'000'000>() / mag<999'999>()),
-                Eq(IsAbsMagLessThanOne::MAYBE_NOT));
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Test cases for maximum non-overflowing value.
 //
