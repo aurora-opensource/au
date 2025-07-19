@@ -134,6 +134,88 @@ TEST(TruncationRiskFor, DivideIntByTooBigIntGivesValuesIsNotZero) {
                        ValueIsNotZero<uint8_t>>();
 }
 
+//
+// `OpSequence` section:
+//
+
+TEST(TruncationRiskFor, OpSequenceOfOneOpHasRiskOfThatOp) {
+    StaticAssertTypeEq<TruncationRiskFor<OpSequence<StaticCast<int16_t, float>>>,
+                       TruncationRiskFor<StaticCast<int16_t, float>>>();
+
+    StaticAssertTypeEq<
+        TruncationRiskFor<OpSequence<MultiplyTypeBy<int16_t, decltype(mag<1>() / mag<2>())>>>,
+        TruncationRiskFor<MultiplyTypeBy<int16_t, decltype(mag<1>() / mag<2>())>>>();
+}
+
+TEST(TruncationRiskFor, StaticCastIntToFloatToIntNeverTruncates) {
+    StaticAssertTypeEq<
+        TruncationRiskFor<OpSequence<StaticCast<int16_t, float>, StaticCast<float, int>>>,
+        NoTruncationRisk<int16_t>>();
+
+    StaticAssertTypeEq<
+        TruncationRiskFor<OpSequence<StaticCast<uint32_t, double>, StaticCast<double, uint32_t>>>,
+        NoTruncationRisk<uint32_t>>();
+}
+
+TEST(TruncationRiskFor, StaticCastFloatToIntBeforeNonRiskyOpIsValueIsNotInteger) {
+    StaticAssertTypeEq<TruncationRiskFor<OpSequence<StaticCast<float, int>,
+                                                    MultiplyTypeBy<int, decltype(mag<2>())>>>,
+                       ValueIsNotInteger<float>>();
+}
+
+TEST(TruncationRiskFor, MultiplyByIrrationalThenCastToIntIsValueIsNotZero) {
+    StaticAssertTypeEq<
+        TruncationRiskFor<
+            OpSequence<MultiplyTypeBy<float, decltype(PI / mag<180>())>, StaticCast<float, int>>>,
+        ValueIsNotZero<float>>();
+
+    StaticAssertTypeEq<
+        TruncationRiskFor<
+            OpSequence<MultiplyTypeBy<double, decltype(sqrt(mag<2>()))>, StaticCast<double, int>>>,
+        ValueIsNotZero<double>>();
+}
+
+TEST(TruncationRiskFor, MultiplyIntByIrrationalThenCastToFloatIsValueIsNotZero) {
+    StaticAssertTypeEq<TruncationRiskFor<OpSequence<MultiplyTypeBy<int, decltype(PI / mag<180>())>,
+                                                    StaticCast<int, float>>>,
+                       ValueIsNotZero<int>>();
+
+    StaticAssertTypeEq<
+        TruncationRiskFor<OpSequence<MultiplyTypeBy<uint32_t, decltype(sqrt(mag<2>()))>,
+                                     StaticCast<uint32_t, float>>>,
+        ValueIsNotZero<uint32_t>>();
+}
+
+TEST(TruncationRiskFor, CastIntToFloatThenMultiplyByIrrationalThenCastToAnotherFloatIsNoRisk) {
+    StaticAssertTypeEq<
+        TruncationRiskFor<OpSequence<StaticCast<int16_t, float>,
+                                     MultiplyTypeBy<float, decltype(PI / mag<180>())>,
+                                     StaticCast<float, double>>>,
+        NoTruncationRisk<int16_t>>();
+}
+
+TEST(TruncationRiskFor, MultiplyFloatByIntThenCastToIntHasExpectedRatio) {
+    StaticAssertTypeEq<TruncationRiskFor<OpSequence<MultiplyTypeBy<float, decltype(mag<3>())>,
+                                                    StaticCast<float, int>>>,
+                       ValueTimesIntIsNotInteger<float, decltype(mag<3>())>>();
+}
+
+TEST(TruncationRiskFor, CollectsDenominatorFactors) {
+    StaticAssertTypeEq<
+        TruncationRiskFor<OpSequence<MultiplyTypeBy<float, decltype(mag<1>() / mag<2>())>,
+                                     MultiplyTypeBy<float, decltype(mag<1>() / mag<3>())>,
+                                     StaticCast<float, int>>>,
+        ValueDivIntIsNotInteger<float, decltype(mag<6>())>>();
+}
+
+TEST(TruncationRiskFor, UsesScalarTypeToAssessRisk) {
+    StaticAssertTypeEq<TruncationRiskFor<OpSequence<
+                           MultiplyTypeBy<std::complex<float>, decltype(mag<1>() / mag<2>())>,
+                           MultiplyTypeBy<std::complex<float>, decltype(mag<1>() / mag<3>())>,
+                           StaticCast<std::complex<float>, std::complex<int>>>>,
+                       ValueDivIntIsNotInteger<float, decltype(mag<6>())>>();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `WouldValueTruncate` section:
 
@@ -193,6 +275,13 @@ TEST(WouldValueTruncate, ValueTimesRatioIsNotIntegerDividesByDenominatorForFloat
         EXPECT_THAT(FloatTimesOneSeventhIsNotInteger::would_value_truncate(f - 1.f), IsTrue());
         EXPECT_THAT(FloatTimesOneSeventhIsNotInteger::would_value_truncate(f + 1.f), IsTrue());
     }
+}
+
+TEST(WouldValueTruncate, FalseForVeryBigFloatInputThatProducesIntegerAfterDividing) {
+    using FloatInchesToMiles =
+        TruncationRiskFor<OpSequence<MultiplyTypeBy<float, decltype(mag<1>() / mag<63360>())>,
+                                     StaticCast<float, int>>>;
+    EXPECT_THAT(FloatInchesToMiles::would_value_truncate(-2.47875092e+10f), IsFalse());
 }
 
 TEST(WouldValueTruncate, AssumedAlwaysTrueIfCannotAssessTruncationRisk) {
