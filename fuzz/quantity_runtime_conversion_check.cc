@@ -184,12 +184,10 @@ constexpr TestCategory categorize_testing_scenario() {
     if (std::is_integral<RepT>::value) {
         return std::is_integral<DestRepT>::value ? TestCategory::INTEGRAL_TO_INTEGRAL
                                                  : TestCategory::INTEGRAL_TO_FLOAT;
-    } else {
-        return std::is_integral<DestRepT>::value ? TestCategory::FLOAT_TO_INTEGRAL
-                                                 : TestCategory::FLOAT_TO_FLOAT;
     }
-
-    return TestCategory::UNSUPPORTED;
+    
+    return std::is_integral<DestRepT>::value ? TestCategory::FLOAT_TO_INTEGRAL
+                                             : TestCategory::FLOAT_TO_FLOAT;
 }
 
 template <typename RepT,
