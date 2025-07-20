@@ -38,6 +38,42 @@ struct Degrees : UnitImpl<Angle> {};
 struct EquivalentToDegrees : Degrees {};
 struct NegativeDegrees : decltype(Degrees{} * (-mag<1>())) {};
 
+TEST(ConversionRisk, IgnoreOverflowRiskChecksTruncationRiskButNotOverflowRisk) {
+    constexpr auto policy = ignore(OVERFLOW_RISK);
+    EXPECT_THAT(policy.should_check(ConversionRisk::OVERFLOW), IsFalse());
+    EXPECT_THAT(policy.should_check(ConversionRisk::TRUNCATION), IsTrue());
+}
+
+TEST(ConversionRisk, IgnoreTruncationRiskChecksOverflowRiskButNotTruncationRisk) {
+    constexpr auto policy = ignore(TRUNCATION_RISK);
+    EXPECT_THAT(policy.should_check(ConversionRisk::OVERFLOW), IsTrue());
+    EXPECT_THAT(policy.should_check(ConversionRisk::TRUNCATION), IsFalse());
+}
+
+TEST(ConversionRisk, IgnoreAllRisksChecksNeitherRisk) {
+    constexpr auto policy = ignore(ALL_RISKS);
+    EXPECT_THAT(policy.should_check(ConversionRisk::OVERFLOW), IsFalse());
+    EXPECT_THAT(policy.should_check(ConversionRisk::TRUNCATION), IsFalse());
+}
+
+TEST(ConversionRisk, CheckOverflowRiskChecksOverflowRiskButNotTruncationRisk) {
+    constexpr auto policy = check(OVERFLOW_RISK);
+    EXPECT_THAT(policy.should_check(ConversionRisk::OVERFLOW), IsTrue());
+    EXPECT_THAT(policy.should_check(ConversionRisk::TRUNCATION), IsFalse());
+}
+
+TEST(ConversionRisk, CheckTruncationRiskChecksTruncationRiskButNotOverflowRisk) {
+    constexpr auto policy = check(TRUNCATION_RISK);
+    EXPECT_THAT(policy.should_check(ConversionRisk::OVERFLOW), IsFalse());
+    EXPECT_THAT(policy.should_check(ConversionRisk::TRUNCATION), IsTrue());
+}
+
+TEST(ConversionRisk, CheckAllRisksChecksBothRisks) {
+    constexpr auto policy = check(ALL_RISKS);
+    EXPECT_THAT(policy.should_check(ConversionRisk::OVERFLOW), IsTrue());
+    EXPECT_THAT(policy.should_check(ConversionRisk::TRUNCATION), IsTrue());
+}
+
 TEST(ImplicitRepPermitted, TrueForIdentityMagnitude) {
     EXPECT_THAT((ImplicitRepPermitted<long double, Magnitude<>>::value), IsTrue());
     EXPECT_THAT((ImplicitRepPermitted<double, Magnitude<>>::value), IsTrue());
