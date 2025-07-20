@@ -24,26 +24,32 @@ struct TruncationRiskForImpl;
 template <typename Op>
 using TruncationRiskFor = typename TruncationRiskForImpl<Op>::type;
 
+template <int N>
+struct TruncationRiskClass {
+    static constexpr int truncation_risk_class() { return N; }
+};
+
 template <typename T>
-struct NoTruncationRisk {
+struct NoTruncationRisk : TruncationRiskClass<0> {
     static constexpr bool would_value_truncate(const T &) { return false; }
 };
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImpl;
 template <typename T, typename M>
-struct ValueTimesRatioIsNotInteger : ValueTimesRatioIsNotIntegerImpl<T, M> {};
+struct ValueTimesRatioIsNotInteger : ValueTimesRatioIsNotIntegerImpl<T, M>,
+                                     TruncationRiskClass<10> {};
 
 template <typename T>
 using ValueIsNotInteger = ValueTimesRatioIsNotInteger<T, Magnitude<>>;
 
 template <typename T>
-struct ValueIsNotZero {
+struct ValueIsNotZero : TruncationRiskClass<20> {
     static constexpr bool would_value_truncate(const T &x) { return x != T{0}; }
 };
 
 template <typename T>
-struct CannotAssessTruncationRiskFor {
+struct CannotAssessTruncationRiskFor : TruncationRiskClass<1000> {
     static constexpr bool would_value_truncate(const T &) { return true; }
 };
 
@@ -204,6 +210,58 @@ struct UpdateRiskImpl<MultiplyTypeBy<T, M1>, ValueTimesRatioIsNotInteger<RealPar
 template <typename T, typename M1, typename M2>
 struct UpdateRiskImpl<DivideTypeByInteger<T, M1>, ValueTimesRatioIsNotInteger<RealPart<T>, M2>>
     : stdx::type_identity<ReduceValueTimesRatioIsNotInteger<RealPart<T>, MagQuotientT<M2, M1>>> {};
+
+//
+// `BiggestRiskImpl<Risk1, Risk2>` is a helper that computes the "biggest" risk between two risks.
+//
+
+template <typename Risk1, typename Risk2>
+struct TruncationRisks {};
+
+template <typename Risk1, typename Risk2>
+struct OrderByTruncationRiskClass
+    : stdx::bool_constant<(Risk1::truncation_risk_class() < Risk2::truncation_risk_class())> {};
+
+template <typename Risk>
+struct DenominatorOfRatioImpl : stdx::type_identity<Magnitude<>> {};
+template <typename T, typename M>
+struct DenominatorOfRatioImpl<ValueTimesRatioIsNotInteger<T, M>>
+    : stdx::type_identity<DenominatorT<M>> {};
+template <typename Risk>
+using DenominatorOfRatio = typename DenominatorOfRatioImpl<Risk>::type;
+
+template <typename Risk1, typename Risk2>
+struct OrderByDenominatorOfRatio
+    : stdx::bool_constant<(get_value<uint64_t>(DenominatorOfRatio<Risk1>{}) <
+                           get_value<uint64_t>(DenominatorOfRatio<Risk2>{}))> {};
+
+}  // namespace detail
+
+// Must be in `::au` namespace:
+template <typename Risk1, typename Risk2>
+struct InOrderFor<detail::TruncationRisks, Risk1, Risk2>
+    : LexicographicTotalOrdering<Risk1,
+                                 Risk2,
+                                 detail::OrderByTruncationRiskClass,
+                                 detail::OrderByDenominatorOfRatio> {};
+
+namespace detail {
+
+template <typename Risk1, typename Risk2>
+struct BiggestRiskImpl
+    : std::conditional<InOrderFor<TruncationRisks, Risk1, Risk2>::value, Risk2, Risk1> {};
+
+//
+// Full `TruncationRiskFor` implementation for `OpSequence<Op>`:
+//
+
+template <typename Op>
+struct TruncationRiskForImpl<OpSequenceImpl<Op>> : TruncationRiskForImpl<Op> {};
+
+template <typename Op, typename... Ops>
+struct TruncationRiskForImpl<OpSequenceImpl<Op, Ops...>>
+    : BiggestRiskImpl<UpdateRisk<Op, TruncationRiskFor<OpSequenceImpl<Ops...>>>,
+                      TruncationRiskFor<Op>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `ValueTimesRatioIsNotInteger` section:
