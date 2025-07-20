@@ -119,6 +119,10 @@ TEST(QuantityPoint, CanCreateAndRetrieveValue) {
     EXPECT_THAT(p.in(Celsius{}), SameTypeAndValue(3));
 }
 
+TEST(QuantityPoint, CanRetrieveInSameUnitEvenForVerySmallRep) {
+    EXPECT_THAT(celsius_pt(int8_t{20}).in(celsius_pt), SameTypeAndValue(int8_t{20}));
+}
+
 TEST(QuantityPoint, CanGetValueInDifferentUnits) {
     constexpr auto p = meters_pt(3);
     EXPECT_THAT(p.in(centi(meters_pt)), SameTypeAndValue(300));
@@ -227,6 +231,29 @@ TEST(QuantityPoint, CanCastToUnitWithDifferentMagnitude) {
 TEST(QuantityPoint, CanCastToUnitWithDifferentOrigin) {
     EXPECT_THAT(celsius_pt(10.).as(kelvins_pt), IsNear(kelvins_pt(283.15), nano(kelvins)(1)));
     EXPECT_THAT(celsius_pt(10).coerce_as(Kelvins{}), SameTypeAndValue(kelvins_pt(283)));
+}
+
+TEST(QuantityPoint, AsCanProvideConversionPolicy) {
+    EXPECT_THAT(celsius_pt(10).as(kelvins_pt, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(kelvins_pt(283)));
+    EXPECT_THAT(deci(celsius_pt)(10'9).as(kelvins_pt, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(kelvins_pt(284)));
+}
+
+TEST(QuantityPoint, AsWithExplicitRepCanProvideConversionPolicy) {
+    EXPECT_THAT(celsius_pt(10.86).as<int>(kelvins_pt, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(kelvins_pt(284)));
+}
+
+TEST(QuantityPoint, InCanProvideConversionPolicy) {
+    EXPECT_THAT(celsius_pt(10).in(kelvins_pt, ignore(TRUNCATION_RISK)), SameTypeAndValue(283));
+    EXPECT_THAT(deci(celsius_pt)(10'9).in(kelvins_pt, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(284));
+}
+
+TEST(QuantityPoint, InWithExplicitRepCanProvideConversionPolicy) {
+    EXPECT_THAT(celsius_pt(10.86).in<int>(kelvins_pt, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(284));
 }
 
 TEST(QuantityPoint, HandlesConversionWithSignedSourceAndUnsignedDestination) {
