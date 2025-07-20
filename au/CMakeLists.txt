@@ -21,25 +21,26 @@ include("${PROJECT_SOURCE_DIR}/cmake/HeaderOnlyLibrary.cmake")
 header_only_library(
   NAME au
   HEADERS
-    apply_magnitude.hh
-    apply_rational_magnitude_to_integral.hh
+    abstract_operations.hh
     au.hh
     chrono_interop.hh
     constant.hh
     conversion_policy.hh
+    conversion_strategy.hh
     dimension.hh
     fwd.hh
     io.hh
     magnitude.hh
     math.hh
     operators.hh
+    overflow_boundary.hh
     packs.hh
     power_aliases.hh
     prefix.hh
     quantity.hh
     quantity_point.hh
     rep.hh
-    static_cast_checkers.hh
+    truncation_risk.hh
     unit_of_measure.hh
     unit_symbol.hh
     wrapper_operations.hh
@@ -210,6 +211,15 @@ endif()
 #
 
 gtest_based_test(
+  NAME abstract_operations_test
+  SRCS
+    abstract_operations_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
   NAME au_test
   SRCS
     au_test.cc
@@ -254,6 +264,24 @@ gtest_based_test(
 )
 
 gtest_based_test(
+  NAME conversion_policy_test
+  SRCS
+    conversion_policy_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
+  NAME conversion_strategy_test
+  SRCS
+    conversion_strategy_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
   NAME io_test
   SRCS
     io_test.cc
@@ -265,6 +293,15 @@ gtest_based_test(
   NAME math_test
   SRCS
     math_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
+  NAME overflow_boundary_test
+  SRCS
+    overflow_boundary_test.cc
   DEPS
     au
     testing
@@ -303,6 +340,15 @@ gtest_based_test(
   NAME testing_test
   SRCS
     testing_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
+  NAME truncation_risk_test
+  SRCS
+    truncation_risk_test.cc
   DEPS
     au
     testing
