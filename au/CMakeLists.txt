@@ -211,15 +211,6 @@ endif()
 #
 
 gtest_based_test(
-  NAME abstract_operations_test
-  SRCS
-    abstract_operations_test.cc
-  DEPS
-    au
-    testing
-)
-
-gtest_based_test(
   NAME au_test
   SRCS
     au_test.cc
@@ -264,24 +255,6 @@ gtest_based_test(
 )
 
 gtest_based_test(
-  NAME conversion_policy_test
-  SRCS
-    conversion_policy_test.cc
-  DEPS
-    au
-    testing
-)
-
-gtest_based_test(
-  NAME conversion_strategy_test
-  SRCS
-    conversion_strategy_test.cc
-  DEPS
-    au
-    testing
-)
-
-gtest_based_test(
   NAME io_test
   SRCS
     io_test.cc
@@ -293,15 +266,6 @@ gtest_based_test(
   NAME math_test
   SRCS
     math_test.cc
-  DEPS
-    au
-    testing
-)
-
-gtest_based_test(
-  NAME overflow_boundary_test
-  SRCS
-    overflow_boundary_test.cc
   DEPS
     au
     testing
@@ -340,15 +304,6 @@ gtest_based_test(
   NAME testing_test
   SRCS
     testing_test.cc
-  DEPS
-    au
-    testing
-)
-
-gtest_based_test(
-  NAME truncation_risk_test
-  SRCS
-    truncation_risk_test.cc
   DEPS
     au
     testing
@@ -434,6 +389,15 @@ gtest_based_test(
 #
 
 gtest_based_test(
+  NAME abstract_operations_test
+  SRCS
+    abstract_operations_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
   NAME apply_magnitude_test
   SRCS
     apply_magnitude_test.cc
@@ -472,6 +436,15 @@ gtest_based_test(
 )
 
 gtest_based_test(
+  NAME conversion_strategy_test
+  SRCS
+    conversion_strategy_test.cc
+  DEPS
+    au
+    testing
+)
+
+gtest_based_test(
   NAME dimension_test
   SRCS
     dimension_test.cc
@@ -494,6 +467,15 @@ gtest_based_test(
   SRCS
     operators_test.cc
   DEPS
+    testing
+)
+
+gtest_based_test(
+  NAME overflow_boundary_test
+  SRCS
+    overflow_boundary_test.cc
+  DEPS
+    au
     testing
 )
 
@@ -535,6 +517,15 @@ gtest_based_test(
     stdx/test/utility_test.cc
   DEPS
     au
+)
+
+gtest_based_test(
+  NAME truncation_risk_test
+  SRCS
+    truncation_risk_test.cc
+  DEPS
+    au
+    testing
 )
 
 gtest_based_test(
