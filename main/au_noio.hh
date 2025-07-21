@@ -19,13 +19,12 @@
 #include <chrono>
 #include <cmath>
 #include <cstdint>
-#include <exception>
 #include <limits>
 #include <ratio>
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-69-g1cf8980
+// Version identifier: 0.4.1-70-gbe01249
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -877,195 +876,6 @@ struct identity {
 };
 
 }  // namespace stdx
-}  // namespace au
-
-
-namespace au {
-namespace detail {
-
-template <typename Source, typename Dest>
-struct StaticCastChecker;
-
-template <typename Dest, typename Source>
-constexpr bool will_static_cast_overflow(Source x) {
-    return StaticCastChecker<Source, Dest>::will_static_cast_overflow(x);
-}
-
-template <typename Dest, typename Source>
-constexpr bool will_static_cast_truncate(Source x) {
-    return StaticCastChecker<Source, Dest>::will_static_cast_truncate(x);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Implementation details below.
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Overflow checking:
-
-// Earlier enum values have higher priority than later ones.
-enum class OverflowSituation {
-    DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS,
-    UNSIGNED_TO_INTEGRAL,
-    SIGNED_TO_UNSIGNED,
-    SIGNED_TO_SIGNED,
-    FLOAT_TO_ANYTHING,
-
-    // If we categorize as this "catch-all" category, then we've hit a case that we haven't yet
-    // handled.  This will result in a compiler error.  We can decide how to handle it at that time.
-    UNEXPLORED,
-};
-
-template <typename Source, typename Dest>
-constexpr OverflowSituation categorize_overflow_situation() {
-    static_assert(std::is_arithmetic<Source>::value && std::is_arithmetic<Dest>::value,
-                  "Only arithmetic types are supported so far.");
-
-    if (std::is_integral<Source>::value && std::is_integral<Dest>::value) {
-        if ((std::is_signed<Source>::value == std::is_signed<Dest>::value) &&
-            (sizeof(Source) <= sizeof(Dest))) {
-            return OverflowSituation::DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS;
-        }
-
-        if (std::is_unsigned<Source>::value) {
-            return OverflowSituation::UNSIGNED_TO_INTEGRAL;
-        }
-
-        return std::is_unsigned<Dest>::value ? OverflowSituation::SIGNED_TO_UNSIGNED
-                                             : OverflowSituation::SIGNED_TO_SIGNED;
-    }
-
-    if (std::is_integral<Source>::value && std::is_floating_point<Dest>::value) {
-        // For any integral-to-floating-point situation, `Dest` should always fully contain
-        // `Source`.  This code simply double checks our assumption.
-        return ((static_cast<long double>(std::numeric_limits<Dest>::max()) >=
-                 static_cast<long double>(std::numeric_limits<Source>::max())) &&
-                (static_cast<long double>(std::numeric_limits<Dest>::lowest()) <=
-                 static_cast<long double>(std::numeric_limits<Source>::lowest())))
-                   ? OverflowSituation::DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS
-                   : OverflowSituation::UNEXPLORED;
-    }
-
-    if (std::is_floating_point<Source>::value && std::is_integral<Dest>::value) {
-        return OverflowSituation::FLOAT_TO_ANYTHING;
-    }
-
-    if (std::is_floating_point<Source>::value && std::is_floating_point<Dest>::value) {
-        return (sizeof(Source) <= sizeof(Dest))
-                   ? OverflowSituation::DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS
-                   : OverflowSituation::FLOAT_TO_ANYTHING;
-    }
-
-    return OverflowSituation::UNEXPLORED;
-}
-
-template <typename Source, typename Dest, OverflowSituation Cat>
-struct StaticCastOverflowImpl;
-
-template <typename Source, typename Dest>
-struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS> {
-    static constexpr bool will_static_cast_overflow(Source) { return false; }
-};
-
-template <typename Source, typename Dest>
-struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::UNSIGNED_TO_INTEGRAL> {
-    static constexpr bool will_static_cast_overflow(Source x) {
-        // Note that we know that the max value of `Dest` can fit into `Source`, because otherwise,
-        // this would have been categorized as `DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS` rather than
-        // `UNSIGNED_TO_INTEGRAL`.
-        return x > static_cast<Source>(std::numeric_limits<Dest>::max());
-    }
-};
-
-template <typename Source, typename Dest>
-struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::SIGNED_TO_UNSIGNED> {
-    static constexpr bool will_static_cast_overflow(Source x) {
-        return (x < 0) ||
-               (static_cast<std::make_unsigned_t<Source>>(x) >
-                static_cast<std::make_unsigned_t<Source>>(std::numeric_limits<Dest>::max()));
-    }
-};
-
-template <typename Source, typename Dest>
-struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::SIGNED_TO_SIGNED> {
-    static constexpr bool will_static_cast_overflow(Source x) {
-        return (x < static_cast<Source>(std::numeric_limits<Dest>::lowest())) ||
-               (x > static_cast<Source>(std::numeric_limits<Dest>::max()));
-    }
-};
-
-template <typename Source, typename Dest>
-struct StaticCastOverflowImpl<Source, Dest, OverflowSituation::FLOAT_TO_ANYTHING> {
-    static constexpr bool will_static_cast_overflow(Source x) {
-        // It's pretty safe to assume that `Source` can hold the limits of `Dest`, because otherwise
-        // this would have been categorized as `DEST_BOUNDS_CONTAIN_SOURCE_BOUNDS` rather than
-        // `FLOAT_TO_ANYTHING`.
-        return (x < static_cast<Source>(std::numeric_limits<Dest>::lowest())) ||
-               (x > static_cast<Source>(std::numeric_limits<Dest>::max()));
-    }
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Truncation checking:
-
-enum class TruncationSituation {
-    CANNOT_TRUNCATE,
-    FLOAT_TO_INTEGRAL,
-
-    // If we categorize as this "catch-all" category, then we've hit a case that we haven't yet
-    // handled.  This will result in a compiler error.  We can decide how to handle it at that time.
-    UNEXPLORED,
-};
-
-template <typename Source, typename Dest>
-constexpr TruncationSituation categorize_truncation_situation() {
-    static_assert(std::is_arithmetic<Source>::value && std::is_arithmetic<Dest>::value,
-                  "Only arithmetic types are supported so far.");
-
-    if (std::is_same<Source, Dest>::value) {
-        return TruncationSituation::CANNOT_TRUNCATE;
-    }
-
-    if (std::is_floating_point<Dest>::value) {
-        // We explicitly treat floating point destinations as value-preserving, as does the rest of
-        // the library.  This isn't strictly true, but if a user is going into the floating point
-        // domain, we assume they are OK with the usual floating point errors.
-        return TruncationSituation::CANNOT_TRUNCATE;
-    }
-
-    if (std::is_integral<Source>::value) {
-        return TruncationSituation::CANNOT_TRUNCATE;
-    }
-
-    if (std::is_floating_point<Source>::value && std::is_integral<Dest>::value) {
-        return TruncationSituation::FLOAT_TO_INTEGRAL;
-    }
-
-    return TruncationSituation::UNEXPLORED;
-}
-
-template <typename Source, typename Dest, TruncationSituation Cat>
-struct StaticCastTruncateImpl;
-
-template <typename Source, typename Dest>
-struct StaticCastTruncateImpl<Source, Dest, TruncationSituation::CANNOT_TRUNCATE> {
-    static constexpr bool will_static_cast_truncate(Source) { return false; }
-};
-
-template <typename Source, typename Dest>
-struct StaticCastTruncateImpl<Source, Dest, TruncationSituation::FLOAT_TO_INTEGRAL> {
-    static constexpr bool will_static_cast_truncate(Source x) { return std::trunc(x) != x; }
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Main implementation:
-
-template <typename Source, typename Dest>
-struct StaticCastChecker
-    : StaticCastOverflowImpl<Source, Dest, categorize_overflow_situation<Source, Dest>()>,
-      StaticCastTruncateImpl<Source, Dest, categorize_truncation_situation<Source, Dest>()> {};
-
-}  // namespace detail
 }  // namespace au
 
 
@@ -3761,232 +3571,1049 @@ struct CommonMagnitude<Zero, Zero> : stdx::type_identity<Zero> {};
 }  // namespace  au
 
 
+namespace au {
+namespace detail {
 
-// This file exists to analyze one single calculation: `x * N / D`, where `x` is
-// some integral type, and `N` and `D` are the numerator and denominator of a
-// rational magnitude (and hence, are automatically in lowest terms),
-// represented in that same type.  We want to answer one single question: will
-// this calculation overflow at any stage?
 //
-// Importantly, we need to produce correct answers even when `N` and/or `D`
-// _cannot be represented_ in that type (because they would overflow).  We also
-// need to handle subtleties around integer promotion, where the type of `x * x`
-// can be different from the type of `x` when those types are small.
+// `OpInput<Op>` and `OpOutput<Op>` are the input and output types of an operation.
 //
-// The goal for the final solution we produce is to be as fast and efficient as
-// the best such function that an expert C++ engineer could produce by hand, for
-// every combination of integral type and numerator and denominator magnitudes.
+template <typename Op>
+struct OpInputImpl;
+template <typename Op>
+using OpInput = typename OpInputImpl<Op>::type;
+
+template <typename Op>
+struct OpOutputImpl;
+template <typename Op>
+using OpOutput = typename OpOutputImpl<Op>::type;
+
+//
+// `StaticCast<T, U>` represents an operation that converts from `T` to `U` via `static_cast`.
+//
+template <typename T, typename U>
+struct StaticCast;
+
+//
+// `MultiplyTypeBy<T, M>` represents an operation that multiplies a value of type `T` by the
+// magnitude `M`.
+//
+// Note that this operation does *not* model integer promotion.  It will always force the result to
+// be `T`.  To model integer promotion, form a compound operation with `OpSequence` that includes
+// appropriate `StaticCast`.
+//
+template <typename T, typename M>
+struct MultiplyTypeBy;
+
+//
+// `DivideTypeByInteger<T, M>` represents an operation that divides a value of type `T` by the
+// magnitude `M`.
+//
+// Note that this operation does *not* model integer promotion.  It will always force the result to
+// be `T`.  To model integer promotion, form a compound operation with `OpSequence` that includes
+// appropriate `StaticCast`.
+//
+template <typename T, typename M>
+struct DivideTypeByInteger;
+
+//
+// `OpSequence<Ops...>` represents an ordered sequence of operations.
+//
+// We require that the output type of each operation is the same as the input type of the next one
+// (see below for `OpInput` and `OpOutput`).
+//
+template <typename... Ops>
+struct OpSequenceImpl;
+template <typename... Ops>
+using OpSequence = FlattenAs<OpSequenceImpl, Ops...>;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// IMPLEMENTATION DETAILS (`abstract_operations.hh`):
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `StaticCast<T, U>` implementation.
+
+// `OpInput` and `OpOutput`:
+template <typename T, typename U>
+struct OpInputImpl<StaticCast<T, U>> : stdx::type_identity<T> {};
+template <typename T, typename U>
+struct OpOutputImpl<StaticCast<T, U>> : stdx::type_identity<U> {};
+
+// `StaticCast<T, U>` operation:
+template <typename T, typename U>
+struct StaticCast {
+    static constexpr U apply_to(T value) { return static_cast<U>(value); }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `MultiplyTypeBy<T, M>` implementation.
+
+// `OpInput` and `OpOutput`:
+template <typename T, typename M>
+struct OpInputImpl<MultiplyTypeBy<T, M>> : stdx::type_identity<T> {};
+template <typename T, typename M>
+struct OpOutputImpl<MultiplyTypeBy<T, M>> : stdx::type_identity<T> {};
+
+// `MultiplyTypeBy<T, M>` operation:
+template <typename T, typename Mag>
+struct MultiplyTypeBy {
+    static constexpr T apply_to(T value) {
+        return static_cast<T>(value * get_value<RealPart<T>>(Mag{}));
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `DivideTypeByInteger<T, M>` implementation.
+
+// `OpInput` and `OpOutput`:
+template <typename T, typename M>
+struct OpInputImpl<DivideTypeByInteger<T, M>> : stdx::type_identity<T> {};
+template <typename T, typename M>
+struct OpOutputImpl<DivideTypeByInteger<T, M>> : stdx::type_identity<T> {};
+
+template <typename T, typename M, MagRepresentationOutcome MagOutcome>
+struct DivideTypeByIntegerImpl {
+    static constexpr T apply_to(T value) {
+        static_assert(MagOutcome == MagRepresentationOutcome::OK, "Internal library error");
+        return static_cast<T>(value / get_value<RealPart<T>>(M{}));
+    }
+};
+
+template <typename T, typename M>
+struct DivideTypeByIntegerImpl<T, M, MagRepresentationOutcome::ERR_CANNOT_FIT> {
+    // If a number is too big to fit in the type, then dividing by it should produce 0.
+    static constexpr T apply_to(T) { return T{0}; }
+};
+
+template <typename T, typename M>
+struct DivideTypeByInteger
+    : DivideTypeByIntegerImpl<T, M, get_value_result<RealPart<T>>(M{}).outcome> {
+    static_assert(IsInteger<M>::value,
+                  "Internal library error: inappropriate operation"
+                  " (use `MultiplyTypeBy` with inverse instead)");
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `OpSequence<Ops...>` implementation.
+
+// `OpInput`:
+template <typename Op, typename... Ops>
+struct OpInputImpl<OpSequenceImpl<Op, Ops...>> : stdx::type_identity<OpInput<Op>> {};
+
+// `OpOutput`:
+template <typename Op, typename... Ops>
+struct OpOutputImpl<OpSequenceImpl<Op, Ops...>>
+    : stdx::type_identity<OpOutput<OpSequence<Ops...>>> {};
+template <typename OnlyOp>
+struct OpOutputImpl<OpSequenceImpl<OnlyOp>> : stdx::type_identity<OpOutput<OnlyOp>> {};
+
+template <typename Op>
+struct OpSequenceImpl<Op> {
+    static constexpr auto apply_to(OpInput<OpSequenceImpl> value) { return Op::apply_to(value); }
+};
+
+template <typename Op, typename... Ops>
+struct OpSequenceImpl<Op, Ops...> {
+    static constexpr auto apply_to(OpInput<OpSequenceImpl> value) {
+        return OpSequenceImpl<Ops...>::apply_to(Op::apply_to(value));
+    }
+};
+
+}  // namespace detail
+}  // namespace au
+
 
 namespace au {
 namespace detail {
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// `clamp_to_range_of<T>(x)` returns `x` if it is in the range of `T`, and otherwise returns the
-// maximum value representable in `T` if `x` is too large, or the minimum value representable in `T`
-// if `x` is too small.
+// `ConversionForRepsAndFactor<OldRep, NewRep, Factor>` is the operation that takes a value of
+// `OldRep`, and produces the product of that value with magnitude `Factor` in the type `NewRep`.
+//
+template <typename OldRep, typename NewRep, typename Factor>
+struct ConversionForRepsAndFactorImpl;
+template <typename OldRep, typename NewRep, typename Factor>
+using ConversionForRepsAndFactor =
+    typename ConversionForRepsAndFactorImpl<OldRep, NewRep, Factor>::type;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Implementation details (`conversion_strategy.hh`):
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//
+// `ApplicationStrategyFor<T, Mag>` tells us how we should apply a magnitude `Mag` to a type `T`.
+//
+
+enum class MagKind {
+    DEFAULT,
+    INTEGER_DIVIDE,
+    NONTRIVIAL_RATIONAL,
+};
+
+template <typename M>
+constexpr MagKind mag_kind_for(M) {
+    if (stdx::conjunction<IsRational<M>,
+                          stdx::negation<std::is_same<DenominatorT<M>, Magnitude<>>>>::value) {
+        return std::is_same<Abs<NumeratorT<M>>, Magnitude<>>::value ? MagKind::INTEGER_DIVIDE
+                                                                    : MagKind::NONTRIVIAL_RATIONAL;
+    }
+    return MagKind::DEFAULT;
+}
+
+template <typename T, typename Mag, MagKind>
+struct ApplicationStrategyForImpl : stdx::type_identity<MultiplyTypeBy<T, Mag>> {};
+template <typename T, typename Mag>
+using ApplicationStrategyFor =
+    typename ApplicationStrategyForImpl<T, Mag, mag_kind_for(Mag{})>::type;
+
+template <typename T, typename Mag>
+struct ApplicationStrategyForImpl<T, Mag, MagKind::INTEGER_DIVIDE>
+    : stdx::type_identity<DivideTypeByInteger<T, MagProductT<Sign<Mag>, DenominatorT<Mag>>>> {};
+
+template <typename T, typename Mag>
+struct ApplicationStrategyForImpl<T, Mag, MagKind::NONTRIVIAL_RATIONAL>
+    : std::conditional<
+          std::is_integral<RealPart<T>>::value,
+          OpSequence<MultiplyTypeBy<T, NumeratorT<Mag>>, DivideTypeByInteger<T, DenominatorT<Mag>>>,
+          MultiplyTypeBy<T, Mag>> {};
+
+//
+// `ConversionRep<OldRep, NewRep>` is the rep we should use when applying the conversion factor.
+//
+template <typename OldRep, typename NewRep>
+struct ConversionRepImpl;
+template <typename OldRep, typename NewRep>
+using ConversionRep = typename ConversionRepImpl<OldRep, NewRep>::type;
+
+template <typename OldRep, typename NewRep>
+struct IsRealToComplex
+    : stdx::conjunction<std::is_same<OldRep, RealPart<OldRep>>,
+                        stdx::experimental::is_detected<TypeOfRealMember, NewRep>> {};
+
+template <typename OldRep, typename NewRep>
+struct ConversionRepImpl
+    : std::conditional<IsRealToComplex<OldRep, NewRep>::value,
+                       PromotedType<std::common_type_t<RealPart<OldRep>, RealPart<NewRep>>>,
+                       PromotedType<std::common_type_t<OldRep, NewRep>>> {};
+
+//
+// `StaticCastSequence<T, U>` is the sequence of operations that gets us from `T` to `U`.
+//
+// Normally, of course, this is just `StaticCast<T, U>`.  But we have weird edge cases like going
+// from `double` to `std::complex<int>`, which require an intermediate step of static casting to
+// `int`.
 //
 
 template <typename T, typename U>
-constexpr T clamp_to_range_of(U x) {
-    return stdx::cmp_greater(x, std::numeric_limits<T>::max())
-               ? std::numeric_limits<T>::max()
-               : (stdx::cmp_less(x, std::numeric_limits<T>::lowest())
-                      ? std::numeric_limits<T>::lowest()
-                      : static_cast<T>(x));
+struct StaticCastSequenceImpl
+    : std::conditional<stdx::conjunction<IsRealToComplex<T, U>,
+                                         stdx::negation<std::is_same<T, RealPart<U>>>>::value,
+                       OpSequence<StaticCast<T, RealPart<U>>, StaticCast<RealPart<U>, U>>,
+                       StaticCast<T, U>> {};
+template <typename T, typename U>
+using StaticCastSequence = typename StaticCastSequenceImpl<T, U>::type;
+
+//
+// `FullConversionImpl<OldRep, ConversionRepT, NewRep, Factor>` should resolve to the most efficient
+// sequence of operations for a conversion from `OldRep` to `NewRep`, with a magnitude `Factor`,
+// where `ConversionRepT` is the promoted type of the common type of `OldRep` and `NewRep`.
+//
+
+template <typename OldRep, typename ConversionRepT, typename NewRep, typename Factor>
+struct FullConversionImpl
+    : stdx::type_identity<OpSequence<StaticCastSequence<OldRep, ConversionRepT>,
+                                     ApplicationStrategyFor<ConversionRepT, Factor>,
+                                     StaticCastSequence<ConversionRepT, NewRep>>> {};
+
+template <typename OldRepIsConversionRep, typename NewRep, typename Factor>
+struct FullConversionImpl<OldRepIsConversionRep, OldRepIsConversionRep, NewRep, Factor>
+    : stdx::type_identity<OpSequence<ApplicationStrategyFor<OldRepIsConversionRep, Factor>,
+                                     StaticCastSequence<OldRepIsConversionRep, NewRep>>> {};
+
+template <typename OldRep, typename NewRepIsConversionRep, typename Factor>
+struct FullConversionImpl<OldRep, NewRepIsConversionRep, NewRepIsConversionRep, Factor>
+    : stdx::type_identity<OpSequence<StaticCastSequence<OldRep, NewRepIsConversionRep>,
+                                     ApplicationStrategyFor<NewRepIsConversionRep, Factor>>> {};
+
+template <typename Rep, typename Factor>
+struct FullConversionImpl<Rep, Rep, Rep, Factor>
+    : stdx::type_identity<ApplicationStrategyFor<Rep, Factor>> {};
+
+// To implement `ConversionForRepsAndFactor`, delegate to `FullConversionImpl`.
+template <typename OldRep, typename NewRep, typename Factor>
+struct ConversionForRepsAndFactorImpl
+    : FullConversionImpl<OldRep, ConversionRep<OldRep, NewRep>, NewRep, Factor> {};
+
+}  // namespace detail
+}  // namespace au
+
+
+
+// These utilities help assess overflow risk for an operation `Op` by finding the minimum and
+// maximum values in the "scalar type" of `OpInput<Op>` that are guaranteed to not overflow.
+//
+// The "scalar type" of `T` is usually just `T`, but if `T` is something like `std::complex<U>`, or
+// `Eigen::Vector<U, N>`, then it would be `U`.
+
+namespace au {
+namespace detail {
+
+//
+// `MinPossible<Op>::value()` is the smallest representable value in the "scalar type" for
+// `OpInput<Op>` (see above comments for definition of "scalar type").
+//
+// This exists to give us an interface for `numeric_limits<T>::lowest()` that is as easy as possible
+// to use with `MinGood<Op, Limits>`.  That means it automatically applies to the scalar type, and
+// that it stores the result behind a `::value()` interface.
+//
+template <typename Op>
+struct MinPossibleImpl;
+template <typename Op>
+using MinPossible = typename MinPossibleImpl<Op>::type;
+
+//
+// `MaxPossible<Op>::value()` is the largest representable value in the "scalar type" for
+// `OpInput<Op>` (see above comments for definition of "scalar type").
+//
+template <typename Op>
+struct MaxPossibleImpl;
+template <typename Op>
+using MaxPossible = typename MaxPossibleImpl<Op>::type;
+
+//
+// `MinGood<Op>::value()` is a constexpr constant of the "scalar type" for `OpInput<Op>` that is the
+// minimum value that does not overflow.
+//
+// IMPORTANT: the result must always be non-positive.  The code is structured on this assumption.
+//
+template <typename Op, typename Limits>
+struct MinGoodImpl;
+template <typename Op, typename Limits = void>
+using MinGood = typename MinGoodImpl<Op, Limits>::type;
+
+//
+// `MaxGood<Op>::value()` is a constexpr constant of the "scalar type" for `OpInput<Op>` that is the
+// maximum value that does not overflow.
+//
+// IMPORTANT: the result must always be non-negative.  The code is structured on this assumption.
+//
+template <typename Op, typename Limits = void>
+struct MaxGoodImpl;
+template <typename Op, typename Limits = void>
+using MaxGood = typename MaxGoodImpl<Op, Limits>::type;
+
+//
+// `CanOverflowBelow<Op>::value` is `true` if there is any value in `OpInput<Op>` that can cause the
+// operation to exceed its bounds.
+//
+template <typename Op>
+struct CanOverflowBelow;
+
+//
+// `CanOverflowAbove<Op>::value` is `true` if there is any value in `OpInput<Op>` that can cause the
+// operation to exceed its bounds.
+//
+template <typename Op>
+struct CanOverflowAbove;
+
+// `MinValueChecker<Op>::is_too_small(x)` checks whether the value `x` is small enough to overflow
+// the bounds of the operation.
+template <typename Op>
+struct MinValueChecker;
+
+// `MaxValueChecker<Op>::is_too_large(x)` checks whether the value `x` is large enough to overflow
+// the bounds of the operation.
+template <typename Op>
+struct MaxValueChecker;
+
+// `would_value_overflow<Op>(x)` checks whether the value `x` would exceed the bounds of the
+// operation at any stage.
+template <typename Op>
+constexpr bool would_value_overflow(const OpInput<Op> &x) {
+    return MinValueChecker<Op>::is_too_small(x) || MaxValueChecker<Op>::is_too_large(x);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// `is_abs_known_to_be_less_than_one(MagT)` is true if the absolute value of the magnitude `MagT` is
-// purely rational; its numerator is representable in `std::uintmax_t`; and, it is less than 1.
-//
+// IMPLEMENTATION DETAILS
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
-enum class IsAbsMagLessThanOne {
-    DEFINITELY,
-    MAYBE_NOT,
+// General note:
+//
+// The implementation strategy will be to decompose to increasingly specific cases, using
+// `std::conditional` constructs that are _at most one layer deep_.  This should keep every
+// individual piece as easy to understand as possible, although it does mean we'll tend to be
+// navigating many layers deep from the top-level API to the ultimate implementation.
+//
+// It's easier to navigate these helpers if we put a shorthand comment at the top of each.  Here's
+// the key:
+//
+// (A) = arithmetic (integral or floating point)
+// (F) = floating point
+// (I) = integral (signed or unsigned)
+// (N) = non-arithmetic
+// (S) = signed integral
+// (U) = unsigned integral
+// (X) = any type
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Predicate helpers
+
+//
+// `IsDefinitelyBounded<T>::value` is `true` if `T` is known to have specific min/max values.
+//
+template <typename T>
+using IsDefinitelyBounded =
+    stdx::conjunction<stdx::bool_constant<(std::numeric_limits<T>::is_specialized)>,
+                      stdx::bool_constant<(std::numeric_limits<T>::is_bounded)>>;
+
+//
+// `IsDefinitelyUnsigned<T>::value` is `true` if `T` is known to be an unsigned type.
+//
+template <typename T>
+using IsDefinitelyUnsigned =
+    stdx::conjunction<stdx::bool_constant<std::numeric_limits<T>::is_specialized>,
+                      stdx::bool_constant<!std::numeric_limits<T>::is_signed>>;
+
+//
+// `IsAbsProbablyBiggerThanOne<T, M>::value` is `true` if `Abs<M>` is bigger than 1.
+//
+template <typename T, typename M, MagRepresentationOutcome Outcome>
+struct IsAbsProbablyBiggerThanOneHelper : std::false_type {};
+
+template <typename T, typename M>
+struct IsAbsProbablyBiggerThanOneHelper<T, M, MagRepresentationOutcome::OK>
+    : stdx::bool_constant<(get_value<T>(Abs<M>{}) >= T{1})> {};
+
+template <typename T, typename M>
+struct IsAbsProbablyBiggerThanOneHelper<T, M, MagRepresentationOutcome::ERR_CANNOT_FIT>
+    : std::true_type {};
+
+template <typename T, typename M>
+struct IsAbsProbablyBiggerThanOne
+    : IsAbsProbablyBiggerThanOneHelper<T, M, get_value_result<T>(Abs<M>{}).outcome> {};
+
+// `UpperLimit<T, Limits>::value()` returns `Limits::upper()` (assumed to be of type `T`), unless
+// `Limits` is `void`, in which case it means "no limit" and we return the highest possible value.
+template <typename T, typename Limits>
+struct UpperLimit {
+    static constexpr T value() { return Limits::upper(); }
+};
+template <typename T>
+struct UpperLimit<T, void> {
+    static constexpr T value() { return std::numeric_limits<T>::max(); }
 };
 
-template <typename... BPs>
-constexpr IsAbsMagLessThanOne is_abs_known_to_be_less_than_one(Magnitude<BPs...>) {
-    using MagT = Abs<Magnitude<BPs...>>;
-    static_assert(is_rational(MagT{}), "Magnitude must be rational");
+// `LowerLimit<T, Limits>::value()` returns `Limits::lower()` (assumed to be of type `T`), unless
+// `Limits` is `void`, in which case it means "no limit" and we return the lowest possible value.
+template <typename T, typename Limits>
+struct LowerLimit {
+    static constexpr T value() { return Limits::lower(); }
+};
+template <typename T>
+struct LowerLimit<T, void> {
+    static constexpr T value() { return std::numeric_limits<T>::lowest(); }
+};
 
-    constexpr auto num_result = get_value_result<std::uintmax_t>(numerator(MagT{}));
-    static_assert(num_result.outcome == MagRepresentationOutcome::OK,
-                  "Numerator must be representable in std::uintmax_t");
-
-    constexpr auto den_result = get_value_result<std::uintmax_t>(denominator(MagT{}));
-    static_assert(
-        den_result.outcome == MagRepresentationOutcome::OK ||
-            den_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT,
-        "Denominator must either be representable in std::uintmax_t, or fail due to overflow");
-
-    return (den_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT ||
-            num_result.value < den_result.value)
-               ? IsAbsMagLessThanOne::DEFINITELY
-               : IsAbsMagLessThanOne::MAYBE_NOT;
+template <typename T>
+constexpr T clamped_negate(T x) {
+    if (Less{}(x, T{0}) && Less{}(x, -std::numeric_limits<T>::max())) {
+        return std::numeric_limits<T>::max();
+    }
+    if (Greater{}(x, T{0}) && Greater{}(x, clamped_negate(std::numeric_limits<T>::lowest()))) {
+        return std::numeric_limits<T>::lowest();
+    }
+    return -x;
 }
 
+// `LimitsFor<Op, Limits>` produces a type which can be the `Limits` argument for some other op.
+template <typename Op, typename Limits>
+struct LimitsFor {
+    static constexpr RealPart<OpInput<Op>> lower() { return MinGood<Op, Limits>::value(); }
+    static constexpr RealPart<OpInput<Op>> upper() { return MaxGood<Op, Limits>::value(); }
+};
+
+// Inherit from this struct to produce a compiler error in case we try to use a combination of types
+// that isn't yet supported.
+template <typename T>
+struct OverflowBoundaryNotYetImplemented {
+    struct NotYetImplemented {};
+    static_assert(std::is_same<T, NotYetImplemented>::value,
+                  "Overflow boundary not yet implemented for this type.");
+};
+
+// A type whose `::value()` function returns the higher of `std::numeric_limits<T>::lowest()`, or
+// `LowerLimit<U, ULimit>` expressed in `T`.  Assumes that `U` is more expansive than `T`, so that
+// we can cast everything to `U` to do the comparisons.
+template <typename T, typename U, typename ULimit>
+struct ValueOfSourceLowestUnlessDestLimitIsHigher {
+    static constexpr T value() {
+        constexpr auto LOWEST_T_IN_U = static_cast<U>(std::numeric_limits<T>::lowest());
+        constexpr auto U_LIMIT = LowerLimit<U, ULimit>::value();
+        return (LOWEST_T_IN_U <= U_LIMIT) ? static_cast<T>(U_LIMIT)
+                                          : std::numeric_limits<T>::lowest();
+    }
+};
+
+// A type whose `::value()` function returns the lower of `std::numeric_limits<T>::max()`, or
+// `UpperLimit<U, ULimit>` expressed in `T`.  Assumes that `U` is more expansive than `T`, so that
+// we can cast everything to `U` to do the comparisons.
+template <typename T, typename U, typename ULimit>
+struct ValueOfSourceHighestUnlessDestLimitIsLower {
+    static constexpr T value() {
+        constexpr auto HIGHEST_T_IN_U = static_cast<U>(std::numeric_limits<T>::max());
+        constexpr auto U_LIMIT = UpperLimit<U, ULimit>::value();
+        return (HIGHEST_T_IN_U >= U_LIMIT) ? static_cast<T>(U_LIMIT)
+                                           : std::numeric_limits<T>::max();
+    }
+};
+
+// A type whose `::value()` function returns the lowest value of `U`, expressed in `T`.
+template <typename T, typename U = T, typename ULimit = void>
+struct ValueOfLowestInDestination {
+    static constexpr T value() { return static_cast<T>(LowerLimit<U, ULimit>::value()); }
+
+    static_assert(static_cast<U>(value()) == LowerLimit<U, ULimit>::value(),
+                  "This utility assumes lossless round trips");
+};
+
+// A type whose `::value()` function returns the highest value of `U`, expressed in `T`.
+template <typename T, typename U = T, typename ULimit = void>
+struct ValueOfHighestInDestination {
+    static constexpr T value() { return static_cast<T>(UpperLimit<U, ULimit>::value()); }
+
+    static_assert(static_cast<U>(value()) == UpperLimit<U, ULimit>::value(),
+                  "This utility assumes lossless round trips");
+};
+
+// A type whose `::value()` function is capped at the highest value in `Float` (assumed to be a
+// floating point type) that can be cast to `Int` (assumed to be an integral type).  We need to be
+// really careful in how we express this, because max int values tend not to be nice powers of 2.
+// Therefore, even though we can cast the `Int` max to `Float` successfully, casting back to `Int`
+// will produce a compile time error because the closest representable integer in `Float` is
+// slightly _higher_ than that max.
+//
+// On the implementation side, keep in mind that our library supports C++14, and most common
+// floating point utilities (such as `std::nextafter`) are not `constexpr` compatible in C++14.
+// Therefore, we need to use alternative strategies to explore the floating point type.  These are
+// always evaluated at compile time, so we are not especially concerned about the efficiency: it
+// should have no runtime effect at all, and we expect even the compile time impact --- which we
+// measure regularly as we land commits --- to be too small to measure.
+template <typename Float, typename Int, typename IntLimit>
+struct ValueOfMaxFloatNotExceedingMaxInt {
+    // The `Float` value where all mantissa bits are set to `1`, and the exponent is `0`.
+    static constexpr Float max_mantissa() {
+        constexpr Float ONE = Float{1};
+        Float x = ONE;
+        Float last = x;
+        while (x + ONE > x) {
+            last = x;
+            x += x + ONE;
+        }
+        return last;
+    }
+
+    // Function to do the actual computation of the value.
+    static constexpr Float compute_value() {
+        constexpr Float LIMIT = static_cast<Float>(std::numeric_limits<Int>::max());
+        constexpr Float MAX_MANTISSA = max_mantissa();
+
+        if (LIMIT <= MAX_MANTISSA) {
+            return LIMIT;
+        }
+
+        Float x = MAX_MANTISSA;
+        while (x + x < LIMIT) {
+            x += x;
+        }
+        return x;
+    }
+
+    // `value()` implementation simply computes the result _once_ (caching it), and then returns it.
+    static constexpr Float value() {
+        constexpr Float FLOAT_LIMIT = compute_value();
+        constexpr Float EXPLICIT_LIMIT = static_cast<Float>(UpperLimit<Int, IntLimit>::value());
+        constexpr Float RESULT = (FLOAT_LIMIT <= EXPLICIT_LIMIT) ? FLOAT_LIMIT : EXPLICIT_LIMIT;
+        return RESULT;
+    }
+};
+
+template <typename T, typename MagT, MagRepresentationOutcome Outcome>
+struct MagHelper {
+    static constexpr bool equal(const T &, const T &) { return false; }
+    static constexpr T div(const T &, const T &) {
+        static_assert(Outcome == MagRepresentationOutcome::ERR_CANNOT_FIT,
+                      "Internal library error");
+
+        // Dividing by a number that is too big to fit in the type implies a result of 0.
+        return T{0};
+    }
+};
+
+template <typename T, typename MagT>
+struct MagHelper<T, MagT, MagRepresentationOutcome::OK> {
+    static constexpr bool equal(const T &x, const T &value) { return x == value; }
+    static constexpr T div(const T &a, const T &b) { return a / b; }
+};
+
+template <typename T, typename... BPs>
+constexpr T divide_by_mag(const T &x, Magnitude<BPs...> m) {
+    constexpr auto result = get_value_result<T>(m);
+    return MagHelper<T, Magnitude<BPs...>, result.outcome>::div(x, result.value);
+}
+
+// Name reads as "lowest of (limits divided by value)".  Remember that the value can be negative, so
+// we just take whichever limit is smaller _after_ dividing.
+//
+// This utility should only be called when `Abs<M>` is greater than 1.  (We can't easily check this
+// condition, so we simply assume it; all callers are library-internal anyway, and we have unit
+// tests.)  Since `Abs<M>` can be assumed to be greater than one, we know that dividing by `M` will
+// shrink values, so we don't risk overflow.
+template <typename T, typename M, typename Limits>
+struct LowestOfLimitsDividedByValue {
+    static constexpr T value() {
+        constexpr auto RELEVANT_LIMIT =
+            IsPositive<M>::value ? LowerLimit<T, Limits>::value() : UpperLimit<T, Limits>::value();
+
+        return divide_by_mag(RELEVANT_LIMIT, M{});
+    }
+};
+
+// Name reads as "clamp lowest of (limits times inverse value)".  First, remember that the value can
+// be negative, so multiplying can sometimes switch the sign: we want whichever is smaller _after_
+// that operation.  Next, if clamping is relevant, that means both that the type is bounded (so
+// overflow is _possible_), and that `Abs<M>` is _smaller_ than 1 (implying that its _inverse_ can
+// _grow_ values, so we risk overflow).  Therefore, we have to start from the bounds of the type,
+// and back out the most extreme value for the limit that will _not_ overflow.
+template <typename T, typename M, typename Limits>
+struct ClampLowestOfLimitsTimesInverseValue {
+    static constexpr T value() {
+        constexpr auto ABS_DIVISOR = MagInverseT<Abs<M>>{};
+
+        constexpr T RELEVANT_LIMIT = IsPositive<M>::value
+                                         ? LowerLimit<T, Limits>::value()
+                                         : clamped_negate(UpperLimit<T, Limits>::value());
+
+        constexpr T RELEVANT_BOUND =
+            IsPositive<M>::value
+                ? divide_by_mag(std::numeric_limits<T>::lowest(), ABS_DIVISOR)
+                : clamped_negate(divide_by_mag(std::numeric_limits<T>::max(), ABS_DIVISOR));
+        constexpr bool SHOULD_CLAMP = RELEVANT_BOUND >= RELEVANT_LIMIT;
+
+        // This value will be meaningless if `get_value_result<T>(ABS_DIVISOR).outcome` is not `OK`,
+        // but we won't end up actually using the value in those cases.
+        constexpr auto ABS_DIVISOR_AS_T = get_value_result<T>(ABS_DIVISOR).value;
+
+        return SHOULD_CLAMP ? std::numeric_limits<T>::lowest() : RELEVANT_LIMIT * ABS_DIVISOR_AS_T;
+    }
+};
+
+template <typename T, typename... BPs>
+constexpr bool mag_representation_equals(const T &x, Magnitude<BPs...> m) {
+    constexpr auto result = get_value_result<T>(m);
+    return MagHelper<T, Magnitude<BPs...>, result.outcome>::equal(x, result.value);
+}
+
+// Name reads as "highest of (limits divided by value)".  Of course, normally this is just the
+// higher limit divided by the value.  But if the value is negative, then the _lower limit_ will
+// give the higher result _after_ we divide.
+//
+// Also, `Abs<M>` can be assumed to be greater than one, or else we would have been shunted into the
+// clamping variant.  This means that dividing by `M` will shrink values, so we don't risk overflow.
+template <typename T, typename M, typename Limits>
+struct HighestOfLimitsDividedByValue {
+    static constexpr T value() {
+        if (mag_representation_equals(LowerLimit<T, Limits>::value(), M{})) {
+            return T{1};
+        }
+
+        return (IsPositive<M>::value)
+                   ? divide_by_mag(UpperLimit<T, Limits>::value(), M{})
+                   : clamped_negate(divide_by_mag(LowerLimit<T, Limits>::value(), Abs<M>{}));
+    }
+};
+
+// Name reads as "clamp highest of (limits times inverse value)".  See comments for
+// `ClampLowestOfLimitsTimesInverseValue` for more details on the motivation and logic.
+template <typename T, typename M, typename Limits>
+struct ClampHighestOfLimitsTimesInverseValue {
+    static constexpr T value() {
+        constexpr auto ABS_DIVISOR = MagInverseT<Abs<M>>{};
+
+        constexpr T RELEVANT_LIMIT = IsPositive<M>::value
+                                         ? UpperLimit<T, Limits>::value()
+                                         : clamped_negate(LowerLimit<T, Limits>::value());
+
+        constexpr T RELEVANT_BOUND =
+            IsPositive<M>::value
+                ? divide_by_mag(std::numeric_limits<T>::max(), ABS_DIVISOR)
+                : clamped_negate(divide_by_mag(std::numeric_limits<T>::lowest(), ABS_DIVISOR));
+        constexpr bool SHOULD_CLAMP = RELEVANT_BOUND <= RELEVANT_LIMIT;
+
+        // This value will be meaningless if `get_value_result<T>(ABS_DIVISOR).outcome` is not `OK`,
+        // but we won't end up actually using the value in those cases.
+        constexpr auto ABS_DIVISOR_AS_T = get_value_result<T>(ABS_DIVISOR).value;
+
+        return SHOULD_CLAMP ? std::numeric_limits<T>::max() : RELEVANT_LIMIT * ABS_DIVISOR_AS_T;
+    }
+};
+
+constexpr bool is_ok_or_err_cannot_fit(MagRepresentationOutcome outcome) {
+    return outcome == MagRepresentationOutcome::OK ||
+           outcome == MagRepresentationOutcome::ERR_CANNOT_FIT;
+}
+
+template <typename T, typename M>
+struct IsCompatibleApartFromMaybeOverflow
+    : stdx::bool_constant<is_ok_or_err_cannot_fit(get_value_result<T>(M{}).outcome)> {};
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// `MaxNonOverflowingValue<T, MagT>` is the maximum value of type `T` that can have `MagT` applied
-// as numerator-and-denominator without overflowing.  We require that `T` is some integral
-// arithmetic type, and that `MagT` is a rational magnitude that is neither purely integral nor
-// purely inverse-integral.
-//
-// If you are trying to understand these helpers, we suggest starting at the bottom with
-// `MaxNonOverflowingValue`, and reading upwards.
-//
+// `MinPossible<Op>` implementation.
 
-//
-// Branch based on whether `MagT` is less than 1.
-//
-template <typename T, typename MagT, IsAbsMagLessThanOne>
-struct MaxNonOverflowingValueImplWhenNumFits;
-
-// If `MagT` is less than 1, then we only need to check for the limiting value where the _numerator
-// multiplication step alone_ would overflow.
-template <typename T, typename MagT>
-struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, IsAbsMagLessThanOne::DEFINITELY> {
-    using P = PromotedType<T>;
-
-    static constexpr T value() {
-        return clamp_to_range_of<T>(std::numeric_limits<P>::max() /
-                                    get_value<P>(numerator(MagT{})));
-    }
+// Why this lazy implementation, instead of using `std::numeric_limits` directly?  Simply because we
+// need a _type_ whose _`value()` method_ returns the given value.  We already built that for more
+// complicated use cases (it's called `LowestOfLimitsDividedByValue`), so we can just reuse it here.
+template <typename Op>
+struct MinPossibleImpl
+    : stdx::type_identity<LowestOfLimitsDividedByValue<RealPart<OpInput<Op>>, Magnitude<>, void>> {
 };
-
-// If `MagT` might be greater than 1, then we have two opportunities for overflow: the numerator
-// multiplication step can overflow the promoted type; or, the denominator division step can fail to
-// restore it to the original type's range.
-template <typename T, typename MagT>
-struct MaxNonOverflowingValueImplWhenNumFits<T, MagT, IsAbsMagLessThanOne::MAYBE_NOT> {
-    using P = PromotedType<T>;
-
-    static constexpr T value() {
-        constexpr auto num = get_value<P>(numerator(MagT{}));
-        constexpr auto den = get_value<P>(denominator(MagT{}));
-        constexpr auto t_max = std::numeric_limits<T>::max();
-        constexpr auto p_max = std::numeric_limits<P>::max();
-        constexpr auto limit_to_avoid = (den > p_max / t_max) ? p_max : t_max * den;
-        return clamp_to_range_of<T>(limit_to_avoid / num);
-    }
-};
-
-//
-// Branch based on whether the numerator of `MagT` can fit in the promoted type of `T`.
-//
-template <typename T, typename MagT, MagRepresentationOutcome NumOutcome>
-struct MaxNonOverflowingValueImpl;
-
-// For any situation where we're applying a negative factor to an unsigned type, simply short
-// circuit to set the max to zero.
-template <typename T, typename MagT>
-struct MaxNonOverflowingValueImpl<T,
-                                  MagT,
-                                  MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE>
-    : ValueOfZero<T> {};
-
-// If the numerator fits in the promoted type of `T`, delegate further based on whether the
-// denominator is bigger.
-template <typename T, typename MagT>
-struct MaxNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::OK>
-    : MaxNonOverflowingValueImplWhenNumFits<T, MagT, is_abs_known_to_be_less_than_one(MagT{})> {};
-
-// If `MagT` can't be represented in the promoted type of `T`, then the result is 0.
-template <typename T, typename MagT>
-struct MaxNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::ERR_CANNOT_FIT>
-    : ValueOfZero<T> {};
-
-template <typename T, typename MagT>
-struct ValidateTypeAndMagnitude {
-    static_assert(std::is_integral<T>::value, "Only designed for integral types");
-    static_assert(is_rational(MagT{}), "Magnitude must be rational");
-    static_assert(!is_integer(MagT{}), "Magnitude must not be purely integral");
-    static_assert(!is_integer(inverse(MagT{})), "Magnitude must not be purely inverse-integral");
-};
-
-template <typename T, typename MagT>
-struct MaxNonOverflowingValue
-    : ValidateTypeAndMagnitude<T, MagT>,
-      MaxNonOverflowingValueImpl<T,
-                                 MagT,
-                                 get_value_result<PromotedType<T>>(numerator(MagT{})).outcome> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// `MinNonOverflowingValue<T, MagT>` is the minimum (i.e., most-negative) value of type `T` that can
-// have `MagT` applied as numerator-and-denominator without overflowing (i.e., becoming too-negative
-// to represent).  We require that `T` is some integral arithmetic type, and that `MagT` is a
-// rational magnitude that is neither purely integral nor purely inverse-integral.
-//
-// If you are trying to understand these helpers, we suggest starting at the bottom with
-// `MinNonOverflowingValue`, and reading upwards.
-//
+// `MaxPossible<Op>` implementation.
 
-//
-// Branch based on whether `MagT` is less than 1.
-//
-template <typename T, typename MagT, IsAbsMagLessThanOne>
-struct MinNonOverflowingValueImplWhenNumFits;
-
-// If `MagT` is less than 1, then we only need to check for the limiting value where the _numerator
-// multiplication step alone_ would overflow.
-template <typename T, typename MagT>
-struct MinNonOverflowingValueImplWhenNumFits<T, MagT, IsAbsMagLessThanOne::DEFINITELY> {
-    using P = PromotedType<T>;
-
-    static constexpr T value() {
-        return clamp_to_range_of<T>(std::numeric_limits<P>::lowest() /
-                                    get_value<P>(numerator(MagT{})));
-    }
+// See `MinPossibleImpl` comments above for explanation of this lazy approach.
+template <typename Op>
+struct MaxPossibleImpl
+    : stdx::type_identity<HighestOfLimitsDividedByValue<RealPart<OpInput<Op>>, Magnitude<>, void>> {
 };
 
-// If `MagT` is greater than 1, then we have two opportunities for overflow: the numerator
-// multiplication step can overflow the promoted type; or, the denominator division step can fail to
-// restore it to the original type's range.
-template <typename T, typename MagT>
-struct MinNonOverflowingValueImplWhenNumFits<T, MagT, IsAbsMagLessThanOne::MAYBE_NOT> {
-    using P = PromotedType<T>;
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `StaticCast<T, U>` implementation.
 
-    static constexpr T value() {
-        constexpr auto num = get_value<P>(numerator(MagT{}));
-        constexpr auto den = get_value<P>(denominator(MagT{}));
-        constexpr auto t_min = std::numeric_limits<T>::lowest();
-        constexpr auto p_min = std::numeric_limits<P>::lowest();
-        constexpr auto limit_to_avoid = (den > p_min / t_min) ? p_min : t_min * den;
-        return clamp_to_range_of<T>(limit_to_avoid / num);
-    }
+//
+// `MinGood<StaticCast<T, U>>` implementation cluster.
+//
+// See comment above for meanings of (N), (X), (A), etc.
+//
+
+// (N) -> (X) (placeholder)
+template <typename T, typename U, typename ULimit>
+struct MinGoodImplForStaticCastFromNonArithmetic
+    : OverflowBoundaryNotYetImplemented<StaticCast<T, U>> {};
+
+// (A) -> (N) (placeholder)
+template <typename T, typename U, typename ULimit>
+struct MinGoodImplForStaticCastFromArithmeticToNonArithmetic
+    : OverflowBoundaryNotYetImplemented<StaticCast<T, U>> {};
+
+// (S) -> (S)
+template <typename T, typename U, typename ULimit>
+struct MinGoodImplForStaticCastFromSignedToSigned
+    : std::conditional<sizeof(T) <= sizeof(U),
+                       ValueOfSourceLowestUnlessDestLimitIsHigher<T, U, ULimit>,
+                       ValueOfLowestInDestination<T, U, ULimit>> {};
+
+// (S) -> (I)
+template <typename T, typename U, typename ULimit>
+struct MinGoodImplForStaticCastFromSignedToIntegral
+    : std::conditional_t<std::is_unsigned<U>::value,
+                         stdx::type_identity<ValueOfZero<T>>,
+                         MinGoodImplForStaticCastFromSignedToSigned<T, U, ULimit>> {};
+
+// (S) -> (A)
+template <typename T, typename U, typename ULimit>
+struct MinGoodImplForStaticCastFromSignedToArithmetic
+    : std::conditional_t<
+          std::is_floating_point<U>::value,
+          stdx::type_identity<ValueOfSourceLowestUnlessDestLimitIsHigher<T, U, ULimit>>,
+          MinGoodImplForStaticCastFromSignedToIntegral<T, U, ULimit>> {};
+
+// (I) -> (A)
+template <typename T, typename U, typename ULimit>
+struct MinGoodImplForStaticCastFromIntegralToArithmetic
+    : std::conditional_t<
+          std::is_unsigned<T>::value,
+          stdx::type_identity<ValueOfSourceLowestUnlessDestLimitIsHigher<T, U, ULimit>>,
+          MinGoodImplForStaticCastFromSignedToArithmetic<T, U, ULimit>> {};
+
+// (F) -> (F)
+template <typename T, typename U, typename ULimit>
+struct MinGoodImplForStaticCastFromFloatingPointToFloatingPoint
+    : std::conditional<sizeof(T) <= sizeof(U),
+                       ValueOfSourceLowestUnlessDestLimitIsHigher<T, U, ULimit>,
+                       ValueOfLowestInDestination<T, U, ULimit>> {};
+
+// (F) -> (A)
+template <typename T, typename U, typename ULimit>
+struct MinGoodImplForStaticCastFromFloatingPointToArithmetic
+    : std::conditional_t<std::is_floating_point<U>::value,
+                         MinGoodImplForStaticCastFromFloatingPointToFloatingPoint<T, U, ULimit>,
+                         stdx::type_identity<ValueOfLowestInDestination<T, U, ULimit>>> {};
+
+// (A) -> (A)
+template <typename T, typename U, typename ULimit>
+struct MinGoodImplForStaticCastFromArithmeticToArithmetic
+    : std::conditional_t<std::is_integral<T>::value,
+                         MinGoodImplForStaticCastFromIntegralToArithmetic<T, U, ULimit>,
+                         MinGoodImplForStaticCastFromFloatingPointToArithmetic<T, U, ULimit>> {};
+
+// (A) -> (X)
+template <typename T, typename U, typename ULimit>
+struct MinGoodImplForStaticCastFromArithmetic
+    : std::conditional_t<std::is_arithmetic<U>::value,
+                         MinGoodImplForStaticCastFromArithmeticToArithmetic<T, U, ULimit>,
+                         MinGoodImplForStaticCastFromArithmeticToNonArithmetic<T, U, ULimit>> {};
+
+// (X) -> (X)
+template <typename T, typename U, typename ULimit>
+struct MinGoodImplForStaticCastUsingRealPart
+    : std::conditional_t<
+          std::is_arithmetic<RealPart<T>>::value,
+          MinGoodImplForStaticCastFromArithmetic<RealPart<T>, RealPart<U>, ULimit>,
+          MinGoodImplForStaticCastFromNonArithmetic<RealPart<T>, RealPart<U>, ULimit>> {};
+
+template <typename T, typename U, typename ULimit>
+struct MinGoodImpl<StaticCast<T, U>, ULimit> : MinGoodImplForStaticCastUsingRealPart<T, U, ULimit> {
 };
 
 //
-// Branch based on whether the denominator of `MagT` can fit in the promoted type of `T`.
+// `MaxGood<StaticCast<T, U>>` implementation cluster.
 //
-template <typename T, typename MagT, MagRepresentationOutcome NumOutcome>
-struct MinNonOverflowingValueImpl;
+// See comment above for meanings of (N), (X), (A), etc.
+//
 
-// If the numerator fits in the promoted type of `T`, delegate further based on whether the
-// denominator is bigger.
-template <typename T, typename MagT>
-struct MinNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::OK>
-    : MinNonOverflowingValueImplWhenNumFits<T, MagT, is_abs_known_to_be_less_than_one(MagT{})> {};
+// (N) -> (X) (placeholder)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromNonArithmetic
+    : OverflowBoundaryNotYetImplemented<StaticCast<T, U>> {};
 
-// If the numerator can't be represented in the promoted type of `T`, then the result is 0.
-template <typename T, typename MagT>
-struct MinNonOverflowingValueImpl<T, MagT, MagRepresentationOutcome::ERR_CANNOT_FIT>
-    : ValueOfZero<T> {};
+// (A) -> (N) (placeholder)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromArithmeticToNonArithmetic
+    : OverflowBoundaryNotYetImplemented<StaticCast<T, U>> {};
 
-template <typename T, typename MagT>
-struct MinNonOverflowingValue
-    : ValidateTypeAndMagnitude<T, MagT>,
-      MinNonOverflowingValueImpl<T,
-                                 MagT,
-                                 get_value_result<PromotedType<T>>(numerator(MagT{})).outcome> {
-    static_assert(std::is_signed<T>::value, "Only designed for signed types");
-    static_assert(std::is_signed<PromotedType<T>>::value,
-                  "We assume the promoted type is also signed");
+// (I) -> (I)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromIntegralToIntegral
+    : std::conditional<(static_cast<std::common_type_t<T, U>>(std::numeric_limits<T>::max()) <=
+                        static_cast<std::common_type_t<T, U>>(std::numeric_limits<U>::max())),
+                       ValueOfSourceHighestUnlessDestLimitIsLower<T, U, ULimit>,
+                       ValueOfHighestInDestination<T, U, ULimit>> {};
+
+// (I) -> (A)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromIntegralToArithmetic
+    : std::conditional_t<
+          std::is_integral<U>::value,
+          MaxGoodImplForStaticCastFromIntegralToIntegral<T, U, ULimit>,
+          stdx::type_identity<ValueOfSourceHighestUnlessDestLimitIsLower<T, U, ULimit>>> {};
+
+// (F) -> (F)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromFloatingPointToFloatingPoint
+    : std::conditional<sizeof(T) <= sizeof(U),
+                       ValueOfSourceHighestUnlessDestLimitIsLower<T, U, ULimit>,
+                       ValueOfHighestInDestination<T, U, ULimit>> {};
+
+// (F) -> (A)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromFloatingPointToArithmetic
+    : std::conditional_t<std::is_floating_point<U>::value,
+                         MaxGoodImplForStaticCastFromFloatingPointToFloatingPoint<T, U, ULimit>,
+                         stdx::type_identity<ValueOfMaxFloatNotExceedingMaxInt<T, U, ULimit>>> {};
+
+// (A) -> (A)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromArithmeticToArithmetic
+    : std::conditional_t<std::is_integral<T>::value,
+                         MaxGoodImplForStaticCastFromIntegralToArithmetic<T, U, ULimit>,
+                         MaxGoodImplForStaticCastFromFloatingPointToArithmetic<T, U, ULimit>> {};
+
+// (A) -> (X)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastFromArithmetic
+    : std::conditional_t<std::is_arithmetic<U>::value,
+                         MaxGoodImplForStaticCastFromArithmeticToArithmetic<T, U, ULimit>,
+                         MaxGoodImplForStaticCastFromArithmeticToNonArithmetic<T, U, ULimit>> {};
+
+// (X) -> (X)
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImplForStaticCastUsingRealPart
+    : std::conditional_t<
+          std::is_arithmetic<RealPart<T>>::value,
+          MaxGoodImplForStaticCastFromArithmetic<RealPart<T>, RealPart<U>, ULimit>,
+          MaxGoodImplForStaticCastFromNonArithmetic<RealPart<T>, RealPart<U>, ULimit>> {};
+
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImpl<StaticCast<T, U>, ULimit> : MaxGoodImplForStaticCastUsingRealPart<T, U, ULimit> {
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `MultiplyTypeBy<T, M>` implementation.
+
+template <typename T, typename M>
+using IsClampingRequired =
+    stdx::conjunction<stdx::negation<IsAbsProbablyBiggerThanOne<T, M>>, IsDefinitelyBounded<T>>;
+
+//
+// `MinGood<MultiplyTypeBy<T, M>>` implementation cluster.
+//
+
+template <typename T, typename M, typename Limits>
+struct MinGoodImplForMultiplyCompatibleTypeBy
+    : std::conditional<IsClampingRequired<T, M>::value,
+                       ClampLowestOfLimitsTimesInverseValue<T, M, Limits>,
+                       LowestOfLimitsDividedByValue<T, M, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MinGoodImplForMultiplyTypeByAssumingSigned
+    : std::conditional_t<IsCompatibleApartFromMaybeOverflow<T, M>::value,
+                         MinGoodImplForMultiplyCompatibleTypeBy<T, M, Limits>,
+                         stdx::type_identity<ValueOfZero<T>>> {};
+
+template <typename T, typename M, typename Limits>
+struct MinGoodImplForMultiplyTypeByUsingRealPart
+    : std::conditional_t<IsDefinitelyUnsigned<T>::value,
+                         stdx::type_identity<ValueOfZero<T>>,
+                         MinGoodImplForMultiplyTypeByAssumingSigned<T, M, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MinGoodImpl<MultiplyTypeBy<T, M>, Limits>
+    : MinGoodImplForMultiplyTypeByUsingRealPart<RealPart<T>, M, Limits> {};
+
+//
+// `MaxGood<MultiplyTypeBy<T, M>>` implementation cluster.
+//
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImplForMultiplyCompatibleTypeBy
+    : std::conditional<IsClampingRequired<T, M>::value,
+                       ClampHighestOfLimitsTimesInverseValue<T, M, Limits>,
+                       HighestOfLimitsDividedByValue<T, M, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImplForMultiplyTypeByAssumingSignedTypeOrPositiveFactor
+    : std::conditional_t<IsCompatibleApartFromMaybeOverflow<T, M>::value,
+                         MaxGoodImplForMultiplyCompatibleTypeBy<T, M, Limits>,
+                         stdx::type_identity<ValueOfZero<T>>> {};
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImplForMultiplyTypeByUsingRealPart
+    : std::conditional_t<
+          stdx::conjunction<IsDefinitelyUnsigned<T>, stdx::negation<IsPositive<M>>>::value,
+          stdx::type_identity<ValueOfZero<T>>,
+          MaxGoodImplForMultiplyTypeByAssumingSignedTypeOrPositiveFactor<T, M, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImpl<MultiplyTypeBy<T, M>, Limits>
+    : MaxGoodImplForMultiplyTypeByUsingRealPart<RealPart<T>, M, Limits> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `DivideTypeByInteger<T, M>` implementation.
+
+//
+// `MinGood<DivideTypeByInteger<T, M>>` implementation cluster.
+//
+
+template <typename T, typename M, typename Limits>
+struct MinGoodImplForDivideTypeByIntegerAssumingSigned
+    : stdx::type_identity<ClampLowestOfLimitsTimesInverseValue<T, MagInverseT<M>, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MinGoodImplForDivideTypeByIntegerUsingRealPart
+    : std::conditional_t<IsDefinitelyUnsigned<T>::value,
+                         stdx::type_identity<ValueOfZero<T>>,
+                         MinGoodImplForDivideTypeByIntegerAssumingSigned<T, M, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MinGoodImpl<DivideTypeByInteger<T, M>, Limits>
+    : MinGoodImplForDivideTypeByIntegerUsingRealPart<RealPart<T>, M, Limits> {};
+
+//
+// `MaxGood<DivideTypeByInteger<T, M>>` implementation cluster.
+//
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImplForDivideTypeByIntegerAssumingSignedTypeOrPositiveFactor
+    : stdx::type_identity<ClampHighestOfLimitsTimesInverseValue<T, MagInverseT<M>, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImplForDivideTypeByIntegerUsingRealPart
+    : std::conditional_t<
+          stdx::conjunction<IsDefinitelyUnsigned<T>, stdx::negation<IsPositive<M>>>::value,
+          stdx::type_identity<ValueOfZero<T>>,
+          MaxGoodImplForDivideTypeByIntegerAssumingSignedTypeOrPositiveFactor<T, M, Limits>> {};
+
+template <typename T, typename M, typename Limits>
+struct MaxGoodImpl<DivideTypeByInteger<T, M>, Limits>
+    : MaxGoodImplForDivideTypeByIntegerUsingRealPart<RealPart<T>, M, Limits> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `OpSequence<Ops...>` implementation.
+
+//
+// `MinGood<OpSequence<Ops...>>` implementation cluster.
+//
+
+template <typename OnlyOp, typename Limits>
+struct MinGoodImpl<OpSequenceImpl<OnlyOp>, Limits> : MinGoodImpl<OnlyOp, Limits> {};
+
+template <typename Op1, typename Op2, typename... Ops, typename Limits>
+struct MinGoodImpl<OpSequenceImpl<Op1, Op2, Ops...>, Limits>
+    : MinGoodImpl<Op1, LimitsFor<OpSequenceImpl<Op2, Ops...>, Limits>> {
+    static_assert(std::is_same<OpOutput<Op1>, OpInput<Op2>>::value,
+                  "Output of each op in sequence must match input of next op");
+};
+
+//
+// `MaxGood<OpSequence<Ops...>>` implementation cluster.
+//
+
+template <typename OnlyOp, typename Limits>
+struct MaxGoodImpl<OpSequenceImpl<OnlyOp>, Limits> : MaxGoodImpl<OnlyOp, Limits> {};
+
+template <typename Op1, typename Op2, typename... Ops, typename Limits>
+struct MaxGoodImpl<OpSequenceImpl<Op1, Op2, Ops...>, Limits>
+    : MaxGoodImpl<Op1, LimitsFor<OpSequenceImpl<Op2, Ops...>, Limits>> {
+    static_assert(std::is_same<OpOutput<Op1>, OpInput<Op2>>::value,
+                  "Output of each op in sequence must match input of next op");
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `CanOverflowBelow<Op>` implementation.
+
+template <typename Op>
+struct CanOverflowBelow : stdx::bool_constant<(MinGood<Op>::value() > MinPossible<Op>::value())> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `CanOverflowAbove<Op>` implementation.
+
+template <typename Op>
+struct CanOverflowAbove : stdx::bool_constant<(MaxGood<Op>::value() < MaxPossible<Op>::value())> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `MinValueChecker<Op>` and `MaxValueChecker<Op>` implementation.
+
+template <typename Op, bool IsOverflowPossible>
+struct MinValueCheckerImpl {
+    static constexpr bool is_too_small(const OpInput<Op> &x) { return x < MinGood<Op>::value(); }
+};
+template <typename Op>
+struct MinValueCheckerImpl<Op, false> {
+    static constexpr bool is_too_small(const OpInput<Op> &) { return false; }
+};
+template <typename Op>
+struct MinValueChecker : MinValueCheckerImpl<Op, CanOverflowBelow<Op>::value> {};
+
+template <typename Op, bool IsOverflowPossible>
+struct MaxValueCheckerImpl {
+    static constexpr bool is_too_large(const OpInput<Op> &x) { return x > MaxGood<Op>::value(); }
+};
+template <typename Op>
+struct MaxValueCheckerImpl<Op, false> {
+    static constexpr bool is_too_large(const OpInput<Op> &) { return false; }
+};
+template <typename Op>
+struct MaxValueChecker : MaxValueCheckerImpl<Op, CanOverflowAbove<Op>::value> {};
 
 }  // namespace detail
 }  // namespace au
@@ -5147,45 +5774,313 @@ struct InOrderFor<UnitProduct, A, B>
 }  // namespace au
 
 
-
 namespace au {
-
-// Check that this particular Magnitude won't cause this specific value to overflow its type.
-template <typename Rep, typename... BPs>
-constexpr bool can_scale_without_overflow(Magnitude<BPs...> m, Rep value) {
-    // Scales that shrink don't cause overflow.
-    constexpr bool mag_cannot_increase_values = get_value<double>(abs(m)) <= 1.0;
-    return mag_cannot_increase_values ||
-           (std::numeric_limits<Rep>::max() / get_value<Rep>(abs(m)) >= value);
-}
-
 namespace detail {
-// Chosen so as to allow populating a `QuantityI32<Hertz>` with an input in MHz.
-constexpr auto OVERFLOW_THRESHOLD = 2'147;
 
-// This wrapper for `can_scale_without_overflow<...>(..., OVERFLOW_THRESHOLD)` can prevent an
-// instantiation via short-circuiting, speeding up compile times.
-template <typename Rep, typename ScaleFactor>
-struct CanScaleThresholdWithoutOverflow
-    : stdx::conjunction<
-          stdx::bool_constant<stdx::in_range<Rep>(OVERFLOW_THRESHOLD)>,
-          stdx::bool_constant<can_scale_without_overflow<Rep>(ScaleFactor{}, OVERFLOW_THRESHOLD)>> {
+template <typename Op>
+struct TruncationRiskForImpl;
+template <typename Op>
+using TruncationRiskFor = typename TruncationRiskForImpl<Op>::type;
+
+template <int N>
+struct TruncationRiskClass {
+    static constexpr int truncation_risk_class() { return N; }
 };
 
-template <typename U1, typename U2>
-struct SameDimension : stdx::bool_constant<U1::dim_ == U2::dim_> {};
+template <typename T>
+struct NoTruncationRisk : TruncationRiskClass<0> {
+    static constexpr bool would_value_truncate(const T &) { return false; }
+};
 
-template <typename Rep, typename ScaleFactor, typename SourceRep>
-struct CoreImplicitConversionPolicyImplAssumingReal
-    : stdx::disjunction<
-          std::is_floating_point<Rep>,
-          stdx::conjunction<std::is_integral<SourceRep>,
-                            IsInteger<ScaleFactor>,
-                            detail::CanScaleThresholdWithoutOverflow<Rep, ScaleFactor>>> {};
+template <typename T, typename M>
+struct ValueTimesRatioIsNotIntegerImpl;
+template <typename T, typename M>
+struct ValueTimesRatioIsNotInteger : ValueTimesRatioIsNotIntegerImpl<T, M>,
+                                     TruncationRiskClass<10> {};
 
-// Always permit the identity scaling.
-template <typename Rep>
-struct CoreImplicitConversionPolicyImplAssumingReal<Rep, Magnitude<>, Rep> : std::true_type {};
+template <typename T>
+using ValueIsNotInteger = ValueTimesRatioIsNotInteger<T, Magnitude<>>;
+
+template <typename T>
+struct ValueIsNotZero : TruncationRiskClass<20> {
+    static constexpr bool would_value_truncate(const T &x) { return x != T{0}; }
+};
+
+template <typename T>
+struct CannotAssessTruncationRiskFor : TruncationRiskClass<1000> {
+    static constexpr bool would_value_truncate(const T &) { return true; }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// IMPLEMENTATION DETAILS (`truncation_risk.hh`):
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `StaticCast<T, U>` section:
+
+// (A) -> (A)
+template <typename T, typename U>
+struct TruncationRiskForStaticCastFromArithmeticToArithmetic
+    : std::conditional<stdx::conjunction<std::is_floating_point<T>, std::is_integral<U>>::value,
+                       ValueIsNotInteger<T>,
+                       NoTruncationRisk<T>> {};
+
+// (A) -> (X)
+template <typename T, typename U>
+struct TruncationRiskForStaticCastFromArithmetic
+    : std::conditional_t<std::is_arithmetic<U>::value,
+                         TruncationRiskForStaticCastFromArithmeticToArithmetic<T, U>,
+                         stdx::type_identity<CannotAssessTruncationRiskFor<T>>> {};
+
+// (X) -> (X)
+template <typename T, typename U>
+struct TruncationRiskForStaticCastAssumingScalar
+    : std::conditional_t<std::is_arithmetic<T>::value,
+                         TruncationRiskForStaticCastFromArithmetic<T, U>,
+                         stdx::type_identity<CannotAssessTruncationRiskFor<T>>> {};
+
+template <typename T, typename U>
+struct TruncationRiskForImpl<StaticCast<T, U>>
+    : TruncationRiskForStaticCastAssumingScalar<RealPart<T>, RealPart<U>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `MultiplyTypeBy<T, M>` section:
+
+template <typename T, typename M>
+struct TruncationRiskForMultiplyArithmeticByIrrational
+    : std::conditional<std::is_integral<T>::value, ValueIsNotZero<T>, NoTruncationRisk<T>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForMultiplyByIrrational
+    : std::conditional_t<std::is_arithmetic<T>::value,
+                         TruncationRiskForMultiplyArithmeticByIrrational<T, M>,
+                         stdx::type_identity<CannotAssessTruncationRiskFor<T>>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForMultiplyArithmeticByRationalNontrivialDenominator
+    : std::conditional<(get_value_result<RealPart<T>>(DenominatorT<M>{}).outcome ==
+                        MagRepresentationOutcome::ERR_CANNOT_FIT),
+                       ValueIsNotZero<T>,
+                       ValueTimesRatioIsNotInteger<T, M>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForMultiplyArithmeticByRational
+    : std::conditional_t<stdx::disjunction<IsInteger<M>, std::is_floating_point<T>>::value,
+                         stdx::type_identity<NoTruncationRisk<T>>,
+                         TruncationRiskForMultiplyArithmeticByRationalNontrivialDenominator<T, M>> {
+};
+
+template <typename T, typename M>
+struct TruncationRiskForMultiplyByRational
+    : std::conditional_t<std::is_arithmetic<T>::value,
+                         TruncationRiskForMultiplyArithmeticByRational<T, M>,
+                         stdx::type_identity<CannotAssessTruncationRiskFor<T>>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForMultiplyByAssumingScalar
+    : std::conditional_t<IsRational<M>::value,
+                         TruncationRiskForMultiplyByRational<T, M>,
+                         TruncationRiskForMultiplyByIrrational<T, M>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForImpl<MultiplyTypeBy<T, M>>
+    : TruncationRiskForMultiplyByAssumingScalar<RealPart<T>, M> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `DivideTypeByInteger<T, M>` section:
+
+template <typename T, typename M>
+struct TruncationRiskForDivideNonArithmeticByInteger
+    : stdx::type_identity<CannotAssessTruncationRiskFor<T>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForDivideIntegralByInteger
+    : std::conditional<(get_value_result<T>(M{}).outcome ==
+                        MagRepresentationOutcome::ERR_CANNOT_FIT),
+                       ValueIsNotZero<T>,
+                       ValueTimesRatioIsNotInteger<T, MagInverseT<M>>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForDivideArithmeticByInteger
+    : std::conditional_t<std::is_floating_point<T>::value,
+                         stdx::type_identity<NoTruncationRisk<T>>,
+                         TruncationRiskForDivideIntegralByInteger<T, M>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForDivideByIntAssumingScalar
+    : std::conditional_t<std::is_arithmetic<T>::value,
+                         TruncationRiskForDivideArithmeticByInteger<T, M>,
+                         TruncationRiskForDivideNonArithmeticByInteger<T, M>> {};
+
+template <typename T, typename M>
+struct TruncationRiskForImpl<DivideTypeByInteger<T, M>>
+    : TruncationRiskForDivideByIntAssumingScalar<RealPart<T>, M> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `OpSequence<...>` section:
+
+// A little helper to simplify instances of `ValueTimesRatioIsNotInteger` that turn out to be
+// trivial (because their type is integral, so they can never produce truncating values).
+template <typename T, typename M>
+struct ReduceValueTimesRatioIsNotIntegerImpl
+    : std::conditional<stdx::conjunction<IsInteger<M>, std::is_integral<T>>::value,
+                       NoTruncationRisk<T>,
+                       ValueTimesRatioIsNotInteger<T, M>> {};
+template <typename T, typename M>
+using ReduceValueTimesRatioIsNotInteger =
+    typename ReduceValueTimesRatioIsNotIntegerImpl<T, M>::type;
+
+//
+// `UpdateRisk<Op, Risk>` adapts a "downstream" risk to the "upstream" interface.
+//
+// At minimum, this updates the input type to `OpInput<Op>`.  But it may also tweak the parameters
+// (e.g., for `ValuesNotSomeIntegerTimes`), or even change the risk type entirely.
+//
+template <typename Op, typename Risk>
+struct UpdateRiskImpl;
+template <typename Op, typename Risk>
+using UpdateRisk = typename UpdateRiskImpl<Op, Risk>::type;
+
+template <template <class> class Risk, typename T, typename U>
+struct UpdateRiskImpl<StaticCast<T, U>, Risk<RealPart<U>>>
+    : stdx::type_identity<Risk<RealPart<T>>> {};
+
+template <typename T, typename U, typename M>
+struct UpdateRiskImpl<StaticCast<T, U>, ValueTimesRatioIsNotInteger<RealPart<U>, M>>
+    : std::conditional<stdx::conjunction<IsInteger<M>, std::is_integral<T>>::value,
+                       NoTruncationRisk<RealPart<T>>,
+                       ReduceValueTimesRatioIsNotInteger<RealPart<T>, M>> {};
+
+template <template <class> class Risk, typename T, typename M>
+struct UpdateRiskImpl<MultiplyTypeBy<T, M>, Risk<RealPart<T>>>
+    : stdx::type_identity<Risk<RealPart<T>>> {};
+
+template <template <class> class Risk, typename T, typename M>
+struct UpdateRiskImpl<DivideTypeByInteger<T, M>, Risk<RealPart<T>>>
+    : stdx::type_identity<Risk<RealPart<T>>> {};
+
+template <typename T, typename M1, typename M2>
+struct UpdateRiskImpl<MultiplyTypeBy<T, M1>, ValueTimesRatioIsNotInteger<RealPart<T>, M2>>
+    : std::conditional<IsRational<M1>::value,
+                       ReduceValueTimesRatioIsNotInteger<RealPart<T>, MagProductT<M1, M2>>,
+                       ValueIsNotZero<RealPart<T>>> {};
+
+template <typename T, typename M1, typename M2>
+struct UpdateRiskImpl<DivideTypeByInteger<T, M1>, ValueTimesRatioIsNotInteger<RealPart<T>, M2>>
+    : stdx::type_identity<ReduceValueTimesRatioIsNotInteger<RealPart<T>, MagQuotientT<M2, M1>>> {};
+
+//
+// `BiggestRiskImpl<Risk1, Risk2>` is a helper that computes the "biggest" risk between two risks.
+//
+
+template <typename Risk1, typename Risk2>
+struct TruncationRisks {};
+
+template <typename Risk1, typename Risk2>
+struct OrderByTruncationRiskClass
+    : stdx::bool_constant<(Risk1::truncation_risk_class() < Risk2::truncation_risk_class())> {};
+
+template <typename Risk>
+struct DenominatorOfRatioImpl : stdx::type_identity<Magnitude<>> {};
+template <typename T, typename M>
+struct DenominatorOfRatioImpl<ValueTimesRatioIsNotInteger<T, M>>
+    : stdx::type_identity<DenominatorT<M>> {};
+template <typename Risk>
+using DenominatorOfRatio = typename DenominatorOfRatioImpl<Risk>::type;
+
+template <typename Risk1, typename Risk2>
+struct OrderByDenominatorOfRatio
+    : stdx::bool_constant<(get_value<uint64_t>(DenominatorOfRatio<Risk1>{}) <
+                           get_value<uint64_t>(DenominatorOfRatio<Risk2>{}))> {};
+
+}  // namespace detail
+
+// Must be in `::au` namespace:
+template <typename Risk1, typename Risk2>
+struct InOrderFor<detail::TruncationRisks, Risk1, Risk2>
+    : LexicographicTotalOrdering<Risk1,
+                                 Risk2,
+                                 detail::OrderByTruncationRiskClass,
+                                 detail::OrderByDenominatorOfRatio> {};
+
+namespace detail {
+
+template <typename Risk1, typename Risk2>
+struct BiggestRiskImpl
+    : std::conditional<InOrderFor<TruncationRisks, Risk1, Risk2>::value, Risk2, Risk1> {};
+
+//
+// Full `TruncationRiskFor` implementation for `OpSequence<Op>`:
+//
+
+template <typename Op>
+struct TruncationRiskForImpl<OpSequenceImpl<Op>> : TruncationRiskForImpl<Op> {};
+
+template <typename Op, typename... Ops>
+struct TruncationRiskForImpl<OpSequenceImpl<Op, Ops...>>
+    : BiggestRiskImpl<UpdateRisk<Op, TruncationRiskFor<OpSequenceImpl<Ops...>>>,
+                      TruncationRiskFor<Op>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `ValueTimesRatioIsNotInteger` section:
+
+template <typename T, typename M>
+struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorDoesNotFit {
+    static constexpr bool would_value_truncate(const T &value) { return value != T{0}; }
+};
+
+template <typename T, typename M>
+struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits {
+    static constexpr bool would_value_truncate(const T &value) {
+        return (value % get_value<RealPart<T>>(DenominatorT<M>{})) != T{0};
+    }
+};
+
+template <typename T, typename M>
+struct ValueTimesRatioIsNotIntegerImplForInt
+    : std::conditional_t<get_value_result<RealPart<T>>(DenominatorT<M>{}).outcome ==
+                             MagRepresentationOutcome::ERR_CANNOT_FIT,
+                         ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorDoesNotFit<T, M>,
+                         ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits<T, M>> {};
+
+template <typename T, typename M>
+struct ValueTimesRatioIsNotIntegerImplForFloatGeneric {
+    static constexpr bool would_value_truncate(const T &value) {
+        const auto result = value * get_value<RealPart<T>>(M{});
+        return std::trunc(result) != result;
+    }
+};
+
+template <typename T, typename M>
+struct ValueTimesRatioIsNotIntegerImplForFloatDivideByInteger {
+    static constexpr bool would_value_truncate(const T &value) {
+        const auto result = value / get_value<RealPart<T>>(MagInverseT<M>{});
+        return std::trunc(result) != result;
+    }
+};
+
+template <typename T, typename M>
+struct ValueTimesRatioIsNotIntegerImplForFloat
+    : std::conditional_t<IsInteger<MagInverseT<M>>::value,
+                         ValueTimesRatioIsNotIntegerImplForFloatDivideByInteger<T, M>,
+                         ValueTimesRatioIsNotIntegerImplForFloatGeneric<T, M>> {};
+
+template <typename T, typename M>
+struct ValueTimesRatioIsNotIntegerImpl
+    : std::conditional_t<std::is_integral<T>::value,
+                         ValueTimesRatioIsNotIntegerImplForInt<T, M>,
+                         ValueTimesRatioIsNotIntegerImplForFloat<T, M>> {};
+
+}  // namespace detail
+}  // namespace au
+
+
+
+namespace au {
+namespace detail {
+
+// Chosen so as to allow populating a `QuantityI32<Hertz>` with an input in MHz.
+constexpr auto OVERFLOW_THRESHOLD = mag<2'147>();
 
 // `SettingPureRealFromMixedReal<A, B>` tests whether `A` is a pure real type, _and_ `B` is a type
 // that has a real _part_, but is not purely real (call it a "mixed-real" type).
@@ -5197,25 +6092,52 @@ struct SettingPureRealFromMixedReal
     : stdx::conjunction<stdx::negation<std::is_same<SourceRep, RealPart<SourceRep>>>,
                         std::is_same<Rep, RealPart<Rep>>> {};
 
-// `SettingUnsignedFromNegativeScaleFactor<Rep, ScaleFactor>` makes sure we're not applying a
-// negative scale factor and then storing the result in an unsigned type.  This would only be OK if
-// the stored value itself were also negative, which is either never true (unsigned source) or true
-// only about half the time (signed source) --- in either case, not good enough for _implicit_
-// conversion.
-template <typename Rep, typename ScaleFactor>
-struct SettingUnsignedFromNegativeScaleFactor
-    : stdx::conjunction<std::is_unsigned<Rep>, stdx::negation<IsPositive<ScaleFactor>>> {};
+template <typename T>
+constexpr bool meets_threshold(T x) {
+    constexpr auto threshold_result = get_value_result<T>(OVERFLOW_THRESHOLD);
+    static_assert(threshold_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT ||
+                      threshold_result.outcome == MagRepresentationOutcome::OK,
+                  "Overflow threshold must be a valid representation");
+    const auto threshold = (threshold_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT)
+                               ? std::numeric_limits<T>::max()
+                               : threshold_result.value;
+    if (Less{}(x, T{0})) {
+        x = T{0} - x;
+    }
+    return x >= threshold;
+}
 
-template <typename Rep, typename ScaleFactor, typename SourceRep>
-struct CoreImplicitConversionPolicyImpl
-    : stdx::conjunction<stdx::negation<SettingPureRealFromMixedReal<Rep, SourceRep>>,
-                        stdx::negation<SettingUnsignedFromNegativeScaleFactor<Rep, ScaleFactor>>,
-                        CoreImplicitConversionPolicyImplAssumingReal<RealPart<Rep>,
-                                                                     ScaleFactor,
-                                                                     RealPart<SourceRep>>> {};
+// Check overflow risk from above.
+template <bool CanOverflowAbove, typename Op>
+struct OverflowAboveRiskAcceptablyLowImpl
+    : stdx::bool_constant<meets_threshold(MaxGood<Op>::value())> {};
+template <typename Op>
+struct OverflowAboveRiskAcceptablyLowImpl<false, Op> : std::true_type {};
 
-template <typename Rep, typename ScaleFactor, typename SourceRep>
-using CoreImplicitConversionPolicy = CoreImplicitConversionPolicyImpl<Rep, ScaleFactor, SourceRep>;
+template <typename Op>
+struct OverflowAboveRiskAcceptablyLow
+    : OverflowAboveRiskAcceptablyLowImpl<CanOverflowAbove<Op>::value, Op> {};
+
+// Check overflow risk, using "overflow above" risk only.
+//
+// We currently do not check the risk for overflowing _below_, because it is overwhelmingly common
+// in practice for people to initialize an unsigned integer variable with a constant of a signed
+// type whose value is known to be positive.  While we would love to be able to prevent implicit
+// signed to unsigned conversions --- and, while our overflow detection machinery can easily do so
+// --- we simply cannot afford to break that many _valid_ use cases to catch those invalid ones.
+//
+// That said, the _runtime_ overflow checkers _do_ check both above and below.
+template <typename Op>
+struct OverflowRiskAcceptablyLow : OverflowAboveRiskAcceptablyLow<Op> {};
+
+// Check truncation risk.
+template <typename Op>
+struct TruncationRiskAcceptablyLow
+    : std::is_same<TruncationRiskFor<Op>, NoTruncationRisk<RealPart<OpInput<Op>>>> {};
+
+template <typename Op>
+struct ConversionRiskAcceptablyLow
+    : stdx::conjunction<OverflowRiskAcceptablyLow<Op>, TruncationRiskAcceptablyLow<Op>> {};
 
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion
@@ -5226,9 +6148,16 @@ struct PermitAsCarveOutForIntegerPromotion
                         std::is_assignable<Rep &, SourceRep>> {};
 
 template <typename Rep, typename ScaleFactor, typename SourceRep>
+struct PassesConversionRiskCheck
+    : stdx::disjunction<
+          PermitAsCarveOutForIntegerPromotion<Rep, ScaleFactor, SourceRep>,
+          ConversionRiskAcceptablyLow<ConversionForRepsAndFactor<SourceRep, Rep, ScaleFactor>>> {};
+
+template <typename Rep, typename ScaleFactor, typename SourceRep>
 using ImplicitConversionPolicy =
-    stdx::disjunction<CoreImplicitConversionPolicy<Rep, ScaleFactor, SourceRep>,
-                      PermitAsCarveOutForIntegerPromotion<Rep, ScaleFactor, SourceRep>>;
+    stdx::conjunction<PassesConversionRiskCheck<Rep, ScaleFactor, SourceRep>,
+                      stdx::negation<SettingPureRealFromMixedReal<Rep, SourceRep>>>;
+
 }  // namespace detail
 
 template <typename Rep, typename ScaleFactor>
@@ -5260,229 +6189,6 @@ struct ConstructionPolicy {
         detail::ImplicitConversionPolicy<Rep, ScaleFactor<SourceUnit>, SourceRep>>;
 };
 
-}  // namespace au
-
-
-namespace au {
-namespace detail {
-
-// The various categories by which a magnitude can be applied to a numeric quantity.
-enum class ApplyAs {
-    INTEGER_MULTIPLY,
-    INTEGER_DIVIDE,
-    RATIONAL_MULTIPLY,
-    IRRATIONAL_MULTIPLY,
-};
-
-template <typename... BPs>
-constexpr ApplyAs categorize_magnitude(Magnitude<BPs...>) {
-    if (IsInteger<Magnitude<BPs...>>::value) {
-        return ApplyAs::INTEGER_MULTIPLY;
-    }
-
-    if (IsInteger<MagInverseT<Magnitude<BPs...>>>::value) {
-        return ApplyAs::INTEGER_DIVIDE;
-    }
-
-    return IsRational<Magnitude<BPs...>>::value ? ApplyAs::RATIONAL_MULTIPLY
-                                                : ApplyAs::IRRATIONAL_MULTIPLY;
-}
-
-template <typename Mag, ApplyAs Category, typename T, bool is_T_integral>
-struct ApplyMagnitudeImpl;
-
-template <typename T, bool IsMagnitudeValid>
-struct OverflowChecker {
-    // Default case: `IsMagnitudeValid` is true.
-    static constexpr bool would_product_overflow(T x, T mag_value) {
-        return (x > (std::numeric_limits<T>::max() / mag_value)) ||
-               (x < (std::numeric_limits<T>::lowest() / mag_value));
-    }
-};
-
-template <typename T>
-struct OverflowChecker<T, false> {
-    // Specialization for when `IsMagnitudeValid` is false.
-    //
-    // This means that the magnitude itself could not fit inside of the type; therefore, the only
-    // possible value that would not overflow is zero.
-    static constexpr bool would_product_overflow(T x, T) { return (x != T{0}); }
-};
-
-template <typename T, bool IsTIntegral>
-struct TruncationCheckerIfMagnitudeValid {
-    // Default case: T is integral.
-    static_assert(std::is_integral<T>::value && IsTIntegral,
-                  "Mismatched instantiation (should never be done manually)");
-
-    static constexpr bool would_truncate(T x, T mag_value) { return (x % mag_value != T{0}); }
-};
-
-template <typename T>
-struct TruncationCheckerIfMagnitudeValid<T, false> {
-    // Specialization for when T is not integral: by convention, assume no truncation for floats.
-    static_assert(!std::is_integral<T>::value,
-                  "Mismatched instantiation (should never be done manually)");
-    static constexpr bool would_truncate(T, T) { return false; }
-};
-
-template <typename T, bool IsMagnitudeValid>
-// Default case: `IsMagnitudeValid` is true.
-struct TruncationChecker : TruncationCheckerIfMagnitudeValid<T, std::is_integral<T>::value> {
-    static_assert(IsMagnitudeValid, "Mismatched instantiation (should never be done manually)");
-};
-
-template <typename T>
-struct TruncationChecker<T, false> {
-    // Specialization for when `IsMagnitudeValid` is false.
-    //
-    // This means that the magnitude itself could not fit inside of the type; therefore, the only
-    // possible value that would not truncate is zero.
-    static constexpr bool would_truncate(T x, T) { return (x != T{0}); }
-};
-
-// Multiplying by an integer, for any type T.
-template <typename Mag, typename T, bool is_T_integral>
-struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_MULTIPLY, T, is_T_integral> {
-    static_assert(categorize_magnitude(Mag{}) == ApplyAs::INTEGER_MULTIPLY,
-                  "Mismatched instantiation (should never be done manually)");
-    static_assert(is_T_integral == std::is_integral<T>::value,
-                  "Mismatched instantiation (should never be done manually)");
-
-    constexpr T operator()(const T &x) { return x * get_value<RealPart<T>>(Mag{}); }
-
-    static constexpr bool would_overflow(const T &x) {
-        constexpr auto mag_value_result = get_value_result<T>(Mag{});
-        return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
-            would_product_overflow(x, mag_value_result.value);
-    }
-
-    static constexpr bool would_truncate(const T &) { return false; }
-};
-
-// Dividing by an integer, for any type T.
-template <typename Mag, typename T, bool is_T_integral>
-struct ApplyMagnitudeImpl<Mag, ApplyAs::INTEGER_DIVIDE, T, is_T_integral> {
-    static_assert(categorize_magnitude(Mag{}) == ApplyAs::INTEGER_DIVIDE,
-                  "Mismatched instantiation (should never be done manually)");
-    static_assert(is_T_integral == std::is_integral<T>::value,
-                  "Mismatched instantiation (should never be done manually)");
-
-    constexpr T operator()(const T &x) { return x / get_value<RealPart<T>>(MagInverseT<Mag>{}); }
-
-    static constexpr bool would_overflow(const T &) { return false; }
-
-    static constexpr bool would_truncate(const T &x) {
-        constexpr auto mag_value_result = get_value_result<T>(MagInverseT<Mag>{});
-        return TruncationChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
-            would_truncate(x, mag_value_result.value);
-    }
-};
-
-template <typename T, typename Mag, bool is_T_signed>
-struct RationalOverflowChecker;
-template <typename T, typename Mag>
-struct RationalOverflowChecker<T, Mag, true> {
-    static constexpr bool would_overflow(const T &x) {
-        static_assert(std::is_signed<T>::value,
-                      "Mismatched instantiation (should never be done manually)");
-        const bool safe = (x <= MaxNonOverflowingValue<T, Mag>::value()) &&
-                          (x >= MinNonOverflowingValue<T, Mag>::value());
-        return !safe;
-    }
-};
-template <typename T, typename Mag>
-struct RationalOverflowChecker<T, Mag, false> {
-    static constexpr bool would_overflow(const T &x) {
-        static_assert(!std::is_signed<T>::value,
-                      "Mismatched instantiation (should never be done manually)");
-        const bool safe = (x <= MaxNonOverflowingValue<T, Mag>::value());
-        return !safe;
-    }
-};
-
-// Applying a (non-integer, non-inverse-integer) rational, for any integral type T.
-template <typename Mag, typename T>
-struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, true> {
-    static_assert(categorize_magnitude(Mag{}) == ApplyAs::RATIONAL_MULTIPLY,
-                  "Mismatched instantiation (should never be done manually)");
-    static_assert(std::is_integral<T>::value,
-                  "Mismatched instantiation (should never be done manually)");
-
-    constexpr T operator()(const T &x) {
-        using P = PromotedType<T>;
-        return static_cast<T>(x * get_value<RealPart<P>>(numerator(Mag{})) /
-                              get_value<RealPart<P>>(denominator(Mag{})));
-    }
-
-    static constexpr bool would_overflow(const T &x) {
-        return RationalOverflowChecker<T, Mag, std::is_signed<T>::value>::would_overflow(x);
-    }
-
-    static constexpr bool would_truncate(const T &x) {
-        constexpr auto mag_value_result = get_value_result<T>(denominator(Mag{}));
-        return TruncationChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
-            would_truncate(x, mag_value_result.value);
-    }
-};
-
-// Applying a (non-integer, non-inverse-integer) rational, for any non-integral type T.
-template <typename Mag, typename T>
-struct ApplyMagnitudeImpl<Mag, ApplyAs::RATIONAL_MULTIPLY, T, false> {
-    static_assert(categorize_magnitude(Mag{}) == ApplyAs::RATIONAL_MULTIPLY,
-                  "Mismatched instantiation (should never be done manually)");
-    static_assert(!std::is_integral<T>::value,
-                  "Mismatched instantiation (should never be done manually)");
-
-    constexpr T operator()(const T &x) { return x * get_value<RealPart<T>>(Mag{}); }
-
-    static constexpr bool would_overflow(const T &x) {
-        constexpr auto mag_value_result = get_value_result<T>(Mag{});
-        return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
-            would_product_overflow(x, mag_value_result.value);
-    }
-
-    static constexpr bool would_truncate(const T &) { return false; }
-};
-
-// Applying an irrational for any type T (although only non-integral T makes sense).
-template <typename Mag, typename T, bool is_T_integral>
-struct ApplyMagnitudeImpl<Mag, ApplyAs::IRRATIONAL_MULTIPLY, T, is_T_integral> {
-    static_assert(!std::is_integral<T>::value, "Cannot apply irrational magnitude to integer type");
-
-    static_assert(categorize_magnitude(Mag{}) == ApplyAs::IRRATIONAL_MULTIPLY,
-                  "Mismatched instantiation (should never be done manually)");
-    static_assert(is_T_integral == std::is_integral<T>::value,
-                  "Mismatched instantiation (should never be done manually)");
-
-    constexpr T operator()(const T &x) { return x * get_value<RealPart<T>>(Mag{}); }
-
-    static constexpr bool would_overflow(const T &x) {
-        constexpr auto mag_value_result = get_value_result<T>(Mag{});
-        return OverflowChecker<T, mag_value_result.outcome == MagRepresentationOutcome::OK>::
-            would_product_overflow(x, mag_value_result.value);
-    }
-
-    static constexpr bool would_truncate(const T &) { return false; }
-};
-
-template <typename T, typename MagT>
-struct ApplyMagnitudeType;
-template <typename T, typename MagT>
-using ApplyMagnitudeT = typename ApplyMagnitudeType<T, MagT>::type;
-template <typename T, typename... BPs>
-struct ApplyMagnitudeType<T, Magnitude<BPs...>>
-    : stdx::type_identity<ApplyMagnitudeImpl<Magnitude<BPs...>,
-                                             categorize_magnitude(Magnitude<BPs...>{}),
-                                             T,
-                                             std::is_integral<T>::value>> {};
-
-template <typename T, typename... BPs>
-constexpr T apply_magnitude(const T &x, Magnitude<BPs...>) {
-    return ApplyMagnitudeT<T, Magnitude<BPs...>>{}(x);
-}
-
-}  // namespace detail
 }  // namespace au
 
 
@@ -5637,23 +6343,16 @@ class Quantity {
               typename NewUnit,
               typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
     constexpr auto as(NewUnit) const {
-        constexpr bool REAL_TO_COMPLEX =
-            std::is_arithmetic<Rep>::value &&
-            stdx::experimental::is_detected<detail::TypeOfRealMember, NewRep>::value;
-        using Common = std::conditional_t<REAL_TO_COMPLEX,
-                                          std::common_type_t<Rep, detail::RealPart<NewRep>>,
-                                          std::common_type_t<Rep, NewRep>>;
-        using Intermediate = std::conditional_t<REAL_TO_COMPLEX, detail::RealPart<NewRep>, NewRep>;
-        using Factor = UnitRatioT<AssociatedUnitT<Unit>, AssociatedUnitT<NewUnit>>;
-
         return make_quantity<AssociatedUnitT<NewUnit>>(
-            static_cast<NewRep>(static_cast<Intermediate>(
-                detail::apply_magnitude(static_cast<Common>(value_), Factor{}))));
+            detail::ConversionForRepsAndFactor<
+                Rep,
+                NewRep,
+                UnitRatioT<AssociatedUnitT<Unit>, AssociatedUnitT<NewUnit>>>::apply_to(value_));
     }
 
     template <typename NewUnit,
               typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
-    constexpr auto as(NewUnit u) const {
+    constexpr auto as(NewUnit) const {
         constexpr bool IMPLICIT_OK =
             implicit_rep_permitted_from_source_to_target<Rep>(unit, NewUnit{});
         constexpr bool INTEGRAL_REP = std::is_integral<Rep>::value;
@@ -5665,7 +6364,11 @@ class Quantity {
             IMPLICIT_OK,
             "Dangerous conversion for integer Rep!  See: "
             "https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion");
-        return as<Rep>(u);
+        return make_quantity<AssociatedUnitT<NewUnit>>(
+            detail::ConversionForRepsAndFactor<
+                Rep,
+                Rep,
+                UnitRatioT<AssociatedUnitT<Unit>, AssociatedUnitT<NewUnit>>>::apply_to(value_));
     }
 
     template <typename NewRep,
@@ -6129,57 +6832,34 @@ constexpr auto root(QuantityMaker<Unit>) {
 
 // Check conversion for overflow (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
-constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit) {
-    using Ratio = decltype(unit_ratio(U{}, target_unit));
-    static_assert(IsPositive<Ratio>::value,
-                  "Runtime conversion checkers don't yet support negative units");
-    return detail::ApplyMagnitudeT<R, Ratio>::would_overflow(q.in(U{}));
+constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
+    using Op =
+        detail::ConversionForRepsAndFactor<R, R, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
+    return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
 // Check conversion for overflow (new rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
-constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit) {
-    // TODO(#349): Someday, we would like a more efficient implementation --- one that simply
-    // computes, at compile time, the smallest value that would overflow, and then compares against
-    // that.  This version will at least let us get off the ground for now.
-    using Common = std::common_type_t<R, TargetRep>;
-    if (detail::will_static_cast_overflow<Common>(q.in(U{}))) {
-        return true;
-    }
-
-    const auto to_common = rep_cast<Common>(q);
-    if (will_conversion_overflow(to_common, target_unit)) {
-        return true;
-    }
-
-    const auto converted_but_not_narrowed = to_common.coerce_in(target_unit);
-    return detail::will_static_cast_overflow<TargetRep>(converted_but_not_narrowed);
+constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
+    using Op = detail::
+        ConversionForRepsAndFactor<R, TargetRep, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
+    return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
 // Check conversion for truncation (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
-constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit) {
-    using Ratio = decltype(unit_ratio(U{}, target_unit));
-    static_assert(IsPositive<Ratio>::value,
-                  "Runtime conversion checkers don't yet support negative units");
-    return detail::ApplyMagnitudeT<R, Ratio>::would_truncate(q.in(U{}));
+constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
+    using Op =
+        detail::ConversionForRepsAndFactor<R, R, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
+    return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
 // Check conversion for truncation (new rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
-constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit) {
-    using Common = std::common_type_t<R, TargetRep>;
-    if (detail::will_static_cast_truncate<Common>(q.in(U{}))) {
-        return true;
-    }
-
-    const auto to_common = rep_cast<Common>(q);
-    if (will_conversion_truncate(to_common, target_unit)) {
-        return true;
-    }
-
-    const auto converted_but_not_narrowed = to_common.coerce_in(target_unit);
-    return detail::will_static_cast_truncate<TargetRep>(converted_but_not_narrowed);
+constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
+    using Op = detail::
+        ConversionForRepsAndFactor<R, TargetRep, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
+    return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
 // Check for any lossiness in conversion (no change of rep).
