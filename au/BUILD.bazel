@@ -198,34 +198,15 @@ cc_test(
     ],
 )
 
-cc_library(
-    name = "apply_magnitude",
-    hdrs = ["apply_magnitude.hh"],
-    deps = [
-        ":apply_rational_magnitude_to_integral",
-        ":magnitude",
-        ":utility",
-    ],
-)
-
 cc_test(
     name = "apply_magnitude_test",
     size = "small",
     srcs = ["apply_magnitude_test.cc"],
     deps = [
-        ":apply_magnitude",
+        ":conversion_strategy",
+        ":magnitude",
         ":testing",
         "@com_google_googletest//:gtest_main",
-    ],
-)
-
-cc_library(
-    name = "apply_rational_magnitude_to_integral",
-    hdrs = ["apply_rational_magnitude_to_integral.hh"],
-    deps = [
-        ":magnitude",
-        ":stdx",
-        ":utility",
     ],
 )
 
@@ -234,7 +215,7 @@ cc_test(
     size = "small",
     srcs = ["apply_rational_magnitude_to_integral_test.cc"],
     deps = [
-        ":apply_rational_magnitude_to_integral",
+        ":conversion_strategy",
         ":testing",
         "@com_google_googletest//:gtest_main",
     ],
@@ -315,8 +296,12 @@ cc_library(
     name = "conversion_policy",
     hdrs = ["conversion_policy.hh"],
     deps = [
+        ":conversion_strategy",
         ":magnitude",
+        ":operators",
+        ":overflow_boundary",
         ":stdx",
+        ":truncation_risk",
         ":unit_of_measure",
     ],
 )
@@ -537,12 +522,13 @@ cc_library(
     name = "quantity",
     hdrs = ["quantity.hh"],
     deps = [
-        ":apply_magnitude",
         ":conversion_policy",
+        ":conversion_strategy",
         ":fwd",
         ":operators",
+        ":overflow_boundary",
         ":rep",
-        ":static_cast_checkers",
+        ":truncation_risk",
         ":unit_of_measure",
         ":utility",
         ":zero",
@@ -616,17 +602,13 @@ cc_test(
     ],
 )
 
-cc_library(
-    name = "static_cast_checkers",
-    hdrs = ["static_cast_checkers.hh"],
-)
-
 cc_test(
     name = "static_cast_checkers_test",
     size = "small",
     srcs = ["static_cast_checkers_test.cc"],
     deps = [
-        ":static_cast_checkers",
+        ":overflow_boundary",
+        ":truncation_risk",
         "@com_google_googletest//:gtest_main",
     ],
 )

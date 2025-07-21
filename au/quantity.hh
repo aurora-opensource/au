@@ -16,13 +16,13 @@
 
 #include <utility>
 
-#include "au/apply_magnitude.hh"
 #include "au/conversion_policy.hh"
+#include "au/conversion_strategy.hh"
 #include "au/fwd.hh"
 #include "au/operators.hh"
 #include "au/rep.hh"
-#include "au/static_cast_checkers.hh"
 #include "au/stdx/functional.hh"
+#include "au/truncation_risk.hh"
 #include "au/unit_of_measure.hh"
 #include "au/utility/type_traits.hh"
 #include "au/zero.hh"
@@ -177,23 +177,16 @@ class Quantity {
               typename NewUnit,
               typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
     constexpr auto as(NewUnit) const {
-        constexpr bool REAL_TO_COMPLEX =
-            std::is_arithmetic<Rep>::value &&
-            stdx::experimental::is_detected<detail::TypeOfRealMember, NewRep>::value;
-        using Common = std::conditional_t<REAL_TO_COMPLEX,
-                                          std::common_type_t<Rep, detail::RealPart<NewRep>>,
-                                          std::common_type_t<Rep, NewRep>>;
-        using Intermediate = std::conditional_t<REAL_TO_COMPLEX, detail::RealPart<NewRep>, NewRep>;
-        using Factor = UnitRatioT<AssociatedUnitT<Unit>, AssociatedUnitT<NewUnit>>;
-
         return make_quantity<AssociatedUnitT<NewUnit>>(
-            static_cast<NewRep>(static_cast<Intermediate>(
-                detail::apply_magnitude(static_cast<Common>(value_), Factor{}))));
+            detail::ConversionForRepsAndFactor<
+                Rep,
+                NewRep,
+                UnitRatioT<AssociatedUnitT<Unit>, AssociatedUnitT<NewUnit>>>::apply_to(value_));
     }
 
     template <typename NewUnit,
               typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
-    constexpr auto as(NewUnit u) const {
+    constexpr auto as(NewUnit) const {
         constexpr bool IMPLICIT_OK =
             implicit_rep_permitted_from_source_to_target<Rep>(unit, NewUnit{});
         constexpr bool INTEGRAL_REP = std::is_integral<Rep>::value;
@@ -205,7 +198,11 @@ class Quantity {
             IMPLICIT_OK,
             "Dangerous conversion for integer Rep!  See: "
             "https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion");
-        return as<Rep>(u);
+        return make_quantity<AssociatedUnitT<NewUnit>>(
+            detail::ConversionForRepsAndFactor<
+                Rep,
+                Rep,
+                UnitRatioT<AssociatedUnitT<Unit>, AssociatedUnitT<NewUnit>>>::apply_to(value_));
     }
 
     template <typename NewRep,
@@ -669,57 +666,34 @@ constexpr auto root(QuantityMaker<Unit>) {
 
 // Check conversion for overflow (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
-constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit) {
-    using Ratio = decltype(unit_ratio(U{}, target_unit));
-    static_assert(IsPositive<Ratio>::value,
-                  "Runtime conversion checkers don't yet support negative units");
-    return detail::ApplyMagnitudeT<R, Ratio>::would_overflow(q.in(U{}));
+constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
+    using Op =
+        detail::ConversionForRepsAndFactor<R, R, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
+    return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
 // Check conversion for overflow (new rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
-constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot target_unit) {
-    // TODO(#349): Someday, we would like a more efficient implementation --- one that simply
-    // computes, at compile time, the smallest value that would overflow, and then compares against
-    // that.  This version will at least let us get off the ground for now.
-    using Common = std::common_type_t<R, TargetRep>;
-    if (detail::will_static_cast_overflow<Common>(q.in(U{}))) {
-        return true;
-    }
-
-    const auto to_common = rep_cast<Common>(q);
-    if (will_conversion_overflow(to_common, target_unit)) {
-        return true;
-    }
-
-    const auto converted_but_not_narrowed = to_common.coerce_in(target_unit);
-    return detail::will_static_cast_overflow<TargetRep>(converted_but_not_narrowed);
+constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
+    using Op = detail::
+        ConversionForRepsAndFactor<R, TargetRep, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
+    return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
 // Check conversion for truncation (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
-constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit) {
-    using Ratio = decltype(unit_ratio(U{}, target_unit));
-    static_assert(IsPositive<Ratio>::value,
-                  "Runtime conversion checkers don't yet support negative units");
-    return detail::ApplyMagnitudeT<R, Ratio>::would_truncate(q.in(U{}));
+constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
+    using Op =
+        detail::ConversionForRepsAndFactor<R, R, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
+    return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
 // Check conversion for truncation (new rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
-constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot target_unit) {
-    using Common = std::common_type_t<R, TargetRep>;
-    if (detail::will_static_cast_truncate<Common>(q.in(U{}))) {
-        return true;
-    }
-
-    const auto to_common = rep_cast<Common>(q);
-    if (will_conversion_truncate(to_common, target_unit)) {
-        return true;
-    }
-
-    const auto converted_but_not_narrowed = to_common.coerce_in(target_unit);
-    return detail::will_static_cast_truncate<TargetRep>(converted_but_not_narrowed);
+constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
+    using Op = detail::
+        ConversionForRepsAndFactor<R, TargetRep, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
+    return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
 // Check for any lossiness in conversion (no change of rep).

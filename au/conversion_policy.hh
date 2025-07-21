@@ -16,49 +16,20 @@
 
 #include <limits>
 
+#include "au/conversion_strategy.hh"
 #include "au/magnitude.hh"
+#include "au/operators.hh"
+#include "au/overflow_boundary.hh"
 #include "au/stdx/type_traits.hh"
 #include "au/stdx/utility.hh"
+#include "au/truncation_risk.hh"
 #include "au/unit_of_measure.hh"
 
 namespace au {
-
-// Check that this particular Magnitude won't cause this specific value to overflow its type.
-template <typename Rep, typename... BPs>
-constexpr bool can_scale_without_overflow(Magnitude<BPs...> m, Rep value) {
-    // Scales that shrink don't cause overflow.
-    constexpr bool mag_cannot_increase_values = get_value<double>(abs(m)) <= 1.0;
-    return mag_cannot_increase_values ||
-           (std::numeric_limits<Rep>::max() / get_value<Rep>(abs(m)) >= value);
-}
-
 namespace detail {
+
 // Chosen so as to allow populating a `QuantityI32<Hertz>` with an input in MHz.
-constexpr auto OVERFLOW_THRESHOLD = 2'147;
-
-// This wrapper for `can_scale_without_overflow<...>(..., OVERFLOW_THRESHOLD)` can prevent an
-// instantiation via short-circuiting, speeding up compile times.
-template <typename Rep, typename ScaleFactor>
-struct CanScaleThresholdWithoutOverflow
-    : stdx::conjunction<
-          stdx::bool_constant<stdx::in_range<Rep>(OVERFLOW_THRESHOLD)>,
-          stdx::bool_constant<can_scale_without_overflow<Rep>(ScaleFactor{}, OVERFLOW_THRESHOLD)>> {
-};
-
-template <typename U1, typename U2>
-struct SameDimension : stdx::bool_constant<U1::dim_ == U2::dim_> {};
-
-template <typename Rep, typename ScaleFactor, typename SourceRep>
-struct CoreImplicitConversionPolicyImplAssumingReal
-    : stdx::disjunction<
-          std::is_floating_point<Rep>,
-          stdx::conjunction<std::is_integral<SourceRep>,
-                            IsInteger<ScaleFactor>,
-                            detail::CanScaleThresholdWithoutOverflow<Rep, ScaleFactor>>> {};
-
-// Always permit the identity scaling.
-template <typename Rep>
-struct CoreImplicitConversionPolicyImplAssumingReal<Rep, Magnitude<>, Rep> : std::true_type {};
+constexpr auto OVERFLOW_THRESHOLD = mag<2'147>();
 
 // `SettingPureRealFromMixedReal<A, B>` tests whether `A` is a pure real type, _and_ `B` is a type
 // that has a real _part_, but is not purely real (call it a "mixed-real" type).
@@ -70,25 +41,52 @@ struct SettingPureRealFromMixedReal
     : stdx::conjunction<stdx::negation<std::is_same<SourceRep, RealPart<SourceRep>>>,
                         std::is_same<Rep, RealPart<Rep>>> {};
 
-// `SettingUnsignedFromNegativeScaleFactor<Rep, ScaleFactor>` makes sure we're not applying a
-// negative scale factor and then storing the result in an unsigned type.  This would only be OK if
-// the stored value itself were also negative, which is either never true (unsigned source) or true
-// only about half the time (signed source) --- in either case, not good enough for _implicit_
-// conversion.
-template <typename Rep, typename ScaleFactor>
-struct SettingUnsignedFromNegativeScaleFactor
-    : stdx::conjunction<std::is_unsigned<Rep>, stdx::negation<IsPositive<ScaleFactor>>> {};
+template <typename T>
+constexpr bool meets_threshold(T x) {
+    constexpr auto threshold_result = get_value_result<T>(OVERFLOW_THRESHOLD);
+    static_assert(threshold_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT ||
+                      threshold_result.outcome == MagRepresentationOutcome::OK,
+                  "Overflow threshold must be a valid representation");
+    const auto threshold = (threshold_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT)
+                               ? std::numeric_limits<T>::max()
+                               : threshold_result.value;
+    if (Less{}(x, T{0})) {
+        x = T{0} - x;
+    }
+    return x >= threshold;
+}
 
-template <typename Rep, typename ScaleFactor, typename SourceRep>
-struct CoreImplicitConversionPolicyImpl
-    : stdx::conjunction<stdx::negation<SettingPureRealFromMixedReal<Rep, SourceRep>>,
-                        stdx::negation<SettingUnsignedFromNegativeScaleFactor<Rep, ScaleFactor>>,
-                        CoreImplicitConversionPolicyImplAssumingReal<RealPart<Rep>,
-                                                                     ScaleFactor,
-                                                                     RealPart<SourceRep>>> {};
+// Check overflow risk from above.
+template <bool CanOverflowAbove, typename Op>
+struct OverflowAboveRiskAcceptablyLowImpl
+    : stdx::bool_constant<meets_threshold(MaxGood<Op>::value())> {};
+template <typename Op>
+struct OverflowAboveRiskAcceptablyLowImpl<false, Op> : std::true_type {};
 
-template <typename Rep, typename ScaleFactor, typename SourceRep>
-using CoreImplicitConversionPolicy = CoreImplicitConversionPolicyImpl<Rep, ScaleFactor, SourceRep>;
+template <typename Op>
+struct OverflowAboveRiskAcceptablyLow
+    : OverflowAboveRiskAcceptablyLowImpl<CanOverflowAbove<Op>::value, Op> {};
+
+// Check overflow risk, using "overflow above" risk only.
+//
+// We currently do not check the risk for overflowing _below_, because it is overwhelmingly common
+// in practice for people to initialize an unsigned integer variable with a constant of a signed
+// type whose value is known to be positive.  While we would love to be able to prevent implicit
+// signed to unsigned conversions --- and, while our overflow detection machinery can easily do so
+// --- we simply cannot afford to break that many _valid_ use cases to catch those invalid ones.
+//
+// That said, the _runtime_ overflow checkers _do_ check both above and below.
+template <typename Op>
+struct OverflowRiskAcceptablyLow : OverflowAboveRiskAcceptablyLow<Op> {};
+
+// Check truncation risk.
+template <typename Op>
+struct TruncationRiskAcceptablyLow
+    : std::is_same<TruncationRiskFor<Op>, NoTruncationRisk<RealPart<OpInput<Op>>>> {};
+
+template <typename Op>
+struct ConversionRiskAcceptablyLow
+    : stdx::conjunction<OverflowRiskAcceptablyLow<Op>, TruncationRiskAcceptablyLow<Op>> {};
 
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion
@@ -99,9 +97,16 @@ struct PermitAsCarveOutForIntegerPromotion
                         std::is_assignable<Rep &, SourceRep>> {};
 
 template <typename Rep, typename ScaleFactor, typename SourceRep>
+struct PassesConversionRiskCheck
+    : stdx::disjunction<
+          PermitAsCarveOutForIntegerPromotion<Rep, ScaleFactor, SourceRep>,
+          ConversionRiskAcceptablyLow<ConversionForRepsAndFactor<SourceRep, Rep, ScaleFactor>>> {};
+
+template <typename Rep, typename ScaleFactor, typename SourceRep>
 using ImplicitConversionPolicy =
-    stdx::disjunction<CoreImplicitConversionPolicy<Rep, ScaleFactor, SourceRep>,
-                      PermitAsCarveOutForIntegerPromotion<Rep, ScaleFactor, SourceRep>>;
+    stdx::conjunction<PassesConversionRiskCheck<Rep, ScaleFactor, SourceRep>,
+                      stdx::negation<SettingPureRealFromMixedReal<Rep, SourceRep>>>;
+
 }  // namespace detail
 
 template <typename Rep, typename ScaleFactor>
