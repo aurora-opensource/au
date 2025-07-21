@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-73-g87d355c
+// Version identifier: 0.4.1-74-gd0571e6
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -3750,28 +3750,32 @@ enum class MagKind {
     NONTRIVIAL_RATIONAL,
 };
 
-template <typename M>
-constexpr MagKind mag_kind_for(M) {
-    if (stdx::conjunction<IsRational<M>,
-                          stdx::negation<std::is_same<DenominatorT<M>, Magnitude<>>>>::value) {
-        return std::is_same<Abs<NumeratorT<M>>, Magnitude<>>::value ? MagKind::INTEGER_DIVIDE
-                                                                    : MagKind::NONTRIVIAL_RATIONAL;
-    }
-    return MagKind::DEFAULT;
-}
+template <MagKind>
+struct MagKindHolder {};
 
-template <typename T, typename Mag, MagKind>
+template <typename M>
+struct MagKindForImpl
+    : std::conditional<
+          stdx::conjunction<IsRational<M>,
+                            stdx::negation<std::is_same<DenominatorT<M>, Magnitude<>>>>::value,
+          std::conditional_t<std::is_same<Abs<NumeratorT<M>>, Magnitude<>>::value,
+                             MagKindHolder<MagKind::INTEGER_DIVIDE>,
+                             MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>,
+          MagKindHolder<MagKind::DEFAULT>> {};
+template <typename M>
+using MagKindFor = typename MagKindForImpl<M>::type;
+
+template <typename T, typename Mag, typename MagKindValue>
 struct ApplicationStrategyForImpl : stdx::type_identity<MultiplyTypeBy<T, Mag>> {};
 template <typename T, typename Mag>
-using ApplicationStrategyFor =
-    typename ApplicationStrategyForImpl<T, Mag, mag_kind_for(Mag{})>::type;
+using ApplicationStrategyFor = typename ApplicationStrategyForImpl<T, Mag, MagKindFor<Mag>>::type;
 
 template <typename T, typename Mag>
-struct ApplicationStrategyForImpl<T, Mag, MagKind::INTEGER_DIVIDE>
+struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::INTEGER_DIVIDE>>
     : stdx::type_identity<DivideTypeByInteger<T, MagProductT<Sign<Mag>, DenominatorT<Mag>>>> {};
 
 template <typename T, typename Mag>
-struct ApplicationStrategyForImpl<T, Mag, MagKind::NONTRIVIAL_RATIONAL>
+struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>
     : std::conditional<
           std::is_integral<RealPart<T>>::value,
           OpSequence<MultiplyTypeBy<T, NumeratorT<Mag>>, DivideTypeByInteger<T, DenominatorT<Mag>>>,
