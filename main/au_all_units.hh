@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-68-g536754e
+// Version identifier: 0.4.1-69-g1cf8980
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -7508,12 +7508,8 @@ constexpr auto operator<=>(const QuantityPoint<U1, R1> &lhs, const QuantityPoint
 namespace detail {
 
 // We simply want a version of `std::make_signed_t` that won't choke on non-integral types.
-template <typename T, bool IsInt = std::is_integral<T>::value>
-struct MakeSigned;
 template <typename T>
-struct MakeSigned<T, false> : stdx::type_identity<T> {};
-template <typename T>
-struct MakeSigned<T, true> : stdx::type_identity<std::make_signed_t<T>> {};
+struct MakeSigned : std::conditional<std::is_integral<T>::value, std::make_signed_t<T>, T> {};
 
 // If the destination is a signed integer, we want to ensure we do our
 // computations in a signed type.  Otherwise, just use the common type for our
