@@ -146,6 +146,7 @@ struct ConversionRiskAcceptablyLow : stdx::conjunction<OverflowRiskAcceptablyLow
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion
     : stdx::conjunction<std::is_same<Abs<ScaleFactor>, Magnitude<>>,
+                        std::is_same<SourceRep, PromotedType<Rep>>,
                         stdx::disjunction<IsPositive<ScaleFactor>, std::is_signed<Rep>>,
                         std::is_integral<Rep>,
                         std::is_integral<SourceRep>,
