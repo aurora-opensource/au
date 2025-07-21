@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-74-gd0571e6
+// Version identifier: 0.4.1-75-gf08649d
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -6338,9 +6338,9 @@ constexpr auto as_quantity(T &&x) -> CorrespondingQuantityT<T> {
 // Only works for dimensionless `Quantities`; will return a compile-time error otherwise.
 //
 // Identity for non-`Quantity` types.
-template <typename U, typename R>
-constexpr R as_raw_number(Quantity<U, R> q) {
-    return q.as(UnitProductT<>{});
+template <typename U, typename R, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+constexpr R as_raw_number(Quantity<U, R> q, RiskPolicyT policy = RiskPolicyT{}) {
+    return q.in(UnitProductT<>{}, policy);
 }
 template <typename T>
 constexpr T as_raw_number(T x) {
