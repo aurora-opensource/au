@@ -904,6 +904,13 @@ TEST(AsRawNumber, PerformsConversionsWherePermissible) {
     EXPECT_THAT(as_raw_number(kilo(hertz)(7) * seconds(3)), SameTypeAndValue(21'000));
 }
 
+TEST(AsRawNumber, CanProvideConversionRiskPolicyAsSecondArgument) {
+    EXPECT_THAT(as_raw_number(percent(234), ignore(TRUNCATION_RISK)), SameTypeAndValue(2));
+
+    EXPECT_THAT(as_raw_number((giga(hertz) / hertz)(uint32_t{8}), ignore(OVERFLOW_RISK)),
+                SameTypeAndValue(static_cast<uint32_t>(8'000'000'000u % (uint64_t{1u} << 32u))));
+}
+
 TEST(AsRawNumber, IdentityForBuiltInNumericTypes) {
     EXPECT_THAT(as_raw_number(3), SameTypeAndValue(3));
     EXPECT_THAT(as_raw_number(3u), SameTypeAndValue(3u));
