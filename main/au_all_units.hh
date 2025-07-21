@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-70-gbe01249
+// Version identifier: 0.4.1-71-gf17444b
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -6476,6 +6476,7 @@ struct ConversionRiskAcceptablyLow
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion
     : stdx::conjunction<std::is_same<Abs<ScaleFactor>, Magnitude<>>,
+                        std::is_same<SourceRep, PromotedType<Rep>>,
                         stdx::disjunction<IsPositive<ScaleFactor>, std::is_signed<Rep>>,
                         std::is_integral<Rep>,
                         std::is_integral<SourceRep>,
