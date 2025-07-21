@@ -26,8 +26,63 @@
 #include "au/unit_of_measure.hh"
 
 namespace au {
-namespace detail {
 
+//
+// Conversion risk section.
+//
+// End users can use the constants `OVERFLOW_RISK` and `TRUNCATION_RISK`.  They can combine them as
+// flags with `|`.  And they can pass either of these (or the result of `|`) to either `check()` or
+// `ignore()`.  The result of these functions is a risk _policy_, which can be passed as a second
+// argument to conversion functions to control which checks are performed.
+//
+
+namespace detail {
+enum class ConversionRisk : uint8_t {
+    // We use CamelCase instead of UPPER_CASE because `OVERFLOW` is the name of a macro that exists
+    // in the wild in some versions of glibc's `math.h`.
+    Overflow = (1u << 0u),
+    Truncation = (1u << 1u),
+};
+
+template <typename T>
+struct CheckTheseRisks;
+
+template <uint8_t RiskFlags>
+struct RiskSet {
+    static_assert(RiskFlags <= 3u, "Invalid risk flags");
+
+    template <uint8_t OtherFlags>
+    constexpr RiskSet<RiskFlags | OtherFlags> operator|(RiskSet<OtherFlags>) const {
+        return {};
+    }
+
+    constexpr uint8_t flags() const { return RiskFlags; }
+
+    friend constexpr CheckTheseRisks<RiskSet<RiskFlags>> check(RiskSet) { return {}; }
+    friend constexpr CheckTheseRisks<RiskSet<3u - RiskFlags>> ignore(RiskSet) { return {}; }
+};
+
+template <uint8_t RiskFlags>
+struct CheckTheseRisks<RiskSet<RiskFlags>> {
+    constexpr bool should_check(ConversionRisk risk) const {
+        return (RiskFlags & static_cast<uint8_t>(risk)) != 0u;
+    }
+};
+
+constexpr auto OVERFLOW_RISK = RiskSet<static_cast<uint8_t>(ConversionRisk::Overflow)>{};
+constexpr auto TRUNCATION_RISK = RiskSet<static_cast<uint8_t>(ConversionRisk::Truncation)>{};
+
+}  // namespace detail
+
+constexpr auto OVERFLOW_RISK = detail::OVERFLOW_RISK;
+constexpr auto TRUNCATION_RISK = detail::TRUNCATION_RISK;
+constexpr auto ALL_RISKS = OVERFLOW_RISK | TRUNCATION_RISK;
+
+//
+// "Main" conversion policy section.
+//
+
+namespace detail {
 // Chosen so as to allow populating a `QuantityI32<Hertz>` with an input in MHz.
 constexpr auto OVERFLOW_THRESHOLD = mag<2'147>();
 
@@ -76,17 +131,23 @@ struct OverflowAboveRiskAcceptablyLow
 // --- we simply cannot afford to break that many _valid_ use cases to catch those invalid ones.
 //
 // That said, the _runtime_ overflow checkers _do_ check both above and below.
-template <typename Op>
-struct OverflowRiskAcceptablyLow : OverflowAboveRiskAcceptablyLow<Op> {};
+template <typename Op, typename Policy>
+struct OverflowRiskAcceptablyLow
+    : std::conditional_t<Policy{}.should_check(detail::ConversionRisk::Overflow),
+                         OverflowAboveRiskAcceptablyLow<Op>,
+                         std::true_type> {};
 
 // Check truncation risk.
-template <typename Op>
+template <typename Op, typename Policy>
 struct TruncationRiskAcceptablyLow
-    : std::is_same<TruncationRiskFor<Op>, NoTruncationRisk<RealPart<OpInput<Op>>>> {};
+    : std::conditional_t<
+          Policy{}.should_check(detail::ConversionRisk::Truncation),
+          std::is_same<TruncationRiskFor<Op>, NoTruncationRisk<RealPart<OpInput<Op>>>>,
+          std::true_type> {};
 
-template <typename Op>
-struct ConversionRiskAcceptablyLow
-    : stdx::conjunction<OverflowRiskAcceptablyLow<Op>, TruncationRiskAcceptablyLow<Op>> {};
+template <typename Op, typename Policy = decltype(check(ALL_RISKS))>
+struct ConversionRiskAcceptablyLow : stdx::conjunction<OverflowRiskAcceptablyLow<Op, Policy>,
+                                                       TruncationRiskAcceptablyLow<Op, Policy>> {};
 
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion

@@ -47,15 +47,6 @@ template <typename P1, typename P2>
 struct AreQuantityPointTypesEquivalent;
 
 namespace detail {
-template <typename U, typename R, typename ConstUnit>
-constexpr Quantity<U, R> coerce_as_quantity(Constant<ConstUnit> c) {
-    return c.template coerce_as<R>(U{});
-}
-template <typename U, typename R>
-constexpr Quantity<U, R> coerce_as_quantity(Zero z) {
-    return z;
-}
-
 template <typename FromRep, typename ToRep>
 struct IntermediateRep;
 }  // namespace detail
@@ -132,38 +123,24 @@ class QuantityPoint {
     // different decisions about what point is labeled as "0".
     constexpr QuantityPoint(Zero) = delete;
 
-    template <typename NewRep,
-              typename NewUnit,
-              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
-    constexpr auto as(NewUnit u) const {
-        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(this->template in<NewRep>(u));
+    template <typename NewRep, typename NewUnit, typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
+    constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in_impl<NewRep>(u, policy));
     }
 
-    template <typename NewUnit,
-              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
-    constexpr auto as(NewUnit u) const {
-        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in(u));
+    template <typename NewUnit, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+    constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in_impl<Rep>(u, policy));
     }
 
-    template <typename NewRep,
-              typename NewUnit,
-              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
-    constexpr NewRep in(NewUnit) const {
-        using CalcRep = typename detail::IntermediateRep<Rep, NewRep>::type;
-        using Target = AssociatedUnitForPointsT<NewUnit>;
-        return (x_.template as<CalcRep>(Target{}) +
-                detail::coerce_as_quantity<Target, CalcRep>(origin_displacement(Target{}, Unit{})))
-            .template in<NewRep>(Target{});
+    template <typename NewRep, typename NewUnit, typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
+    constexpr NewRep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+        return in_impl<NewRep>(u, policy);
     }
 
-    template <typename NewUnit,
-              typename = std::enable_if_t<IsUnit<AssociatedUnitForPointsT<NewUnit>>::value>>
-    constexpr Rep in(NewUnit) const {
-        constexpr auto target = AssociatedUnitForPointsT<NewUnit>{};
-
-        // The explicit `<Rep>` is needed because if these are integral types, their difference
-        // might become a different type due to integer promotion.
-        return (x_.as(target) + origin_displacement(target, Unit{})).template in<Rep>(target);
+    template <typename NewUnit, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+    constexpr Rep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+        return in_impl<Rep>(u, policy);
     }
 
     // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
@@ -253,6 +230,19 @@ class QuantityPoint {
     friend struct QuantityPointMaker<Unit>;
 
  private:
+    template <typename OtherRep, typename OtherPointUnitSlot, typename RiskPolicyT>
+    constexpr OtherRep in_impl(OtherPointUnitSlot, RiskPolicyT policy) const {
+        using OtherUnit = AssociatedUnitForPointsT<OtherPointUnitSlot>;
+        using OriginDisplacementUnit = detail::ComputeOriginDisplacementUnit<Unit, OtherUnit>;
+        using Common = CommonUnitT<Unit, OtherUnit, OriginDisplacementUnit>;
+
+        using CalcRep = typename detail::IntermediateRep<Rep, OtherRep>::type;
+
+        Quantity<Common, CalcRep> intermediate_result =
+            x_.template as<CalcRep>(Common{}, policy) + origin_displacement(OtherUnit{}, unit);
+        return intermediate_result.template in<OtherRep>(OtherUnit{}, policy);
+    }
+
     constexpr explicit QuantityPoint(Diff x) : x_{x} {}
 
     Diff x_;

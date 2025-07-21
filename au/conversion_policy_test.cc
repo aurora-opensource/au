@@ -39,6 +39,42 @@ struct Degrees : UnitImpl<Angle> {};
 struct EquivalentToDegrees : Degrees {};
 struct NegativeDegrees : decltype(Degrees{} * (-mag<1>())) {};
 
+TEST(ConversionRisk, IgnoreOverflowRiskChecksTruncationRiskButNotOverflowRisk) {
+    constexpr auto policy = ignore(OVERFLOW_RISK);
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsFalse());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsTrue());
+}
+
+TEST(ConversionRisk, IgnoreTruncationRiskChecksOverflowRiskButNotTruncationRisk) {
+    constexpr auto policy = ignore(TRUNCATION_RISK);
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsTrue());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsFalse());
+}
+
+TEST(ConversionRisk, IgnoreAllRisksChecksNeitherRisk) {
+    constexpr auto policy = ignore(ALL_RISKS);
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsFalse());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsFalse());
+}
+
+TEST(ConversionRisk, CheckOverflowRiskChecksOverflowRiskButNotTruncationRisk) {
+    constexpr auto policy = check(OVERFLOW_RISK);
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsTrue());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsFalse());
+}
+
+TEST(ConversionRisk, CheckTruncationRiskChecksTruncationRiskButNotOverflowRisk) {
+    constexpr auto policy = check(TRUNCATION_RISK);
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsFalse());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsTrue());
+}
+
+TEST(ConversionRisk, CheckAllRisksChecksBothRisks) {
+    constexpr auto policy = check(ALL_RISKS);
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsTrue());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsTrue());
+}
+
 TEST(ImplicitRepPermitted, TrueForIdentityMagnitude) {
     EXPECT_THAT((ImplicitRepPermitted<long double, Magnitude<>>::value), IsTrue());
     EXPECT_THAT((ImplicitRepPermitted<double, Magnitude<>>::value), IsTrue());
