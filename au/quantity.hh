@@ -181,13 +181,13 @@ class Quantity {
         return make_quantity<AssociatedUnitT<NewUnitSlot>>(in_impl<NewRep>(u, policy));
     }
 
-    // `q.as<Rep>(new_unit)`, or `q.as<Rep>(new_unit, risk_policy)`
+    // `q.as(new_unit)`, or `q.as(new_unit, risk_policy)`
     template <typename NewUnitSlot, typename RiskPolicyT = decltype(check(ALL_RISKS))>
     constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity<AssociatedUnitT<NewUnitSlot>>(in_impl<Rep>(u, policy));
     }
 
-    // `q.in(new_unit)`, or `q.in(new_unit, risk_policy)`
+    // `q.in<Rep>(new_unit)`, or `q.in<Rep>(new_unit, risk_policy)`
     template <typename NewRep,
               typename NewUnitSlot,
               typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
