@@ -173,7 +173,7 @@ class Quantity {
         std::enable_if_t<std::is_convertible<CorrespondingQuantityT<T>, Quantity>::value, int> = 0>
     constexpr Quantity(T &&x) : Quantity{as_quantity(std::forward<T>(x))} {}
 
-    // `q.as<R>(new_unit)`, or `q.as<R>(new_unit, risk_policy)`
+    // `q.as<Rep>(new_unit)`, or `q.as<Rep>(new_unit, risk_policy)`
     template <typename NewRep,
               typename NewUnitSlot,
               typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
