@@ -37,8 +37,10 @@ namespace au {
 //
 
 enum class ConversionRisk : uint8_t {
-    OVERFLOW = 1u << 0u,
-    TRUNCATION = 1u << 1u,
+    // We use CamelCase instead of UPPER_SNAKE_CASE because `OVERFLOW` causes compiler errors on gcc
+    // and MSVC.
+    Overflow = 1u,
+    Truncation = 2u,
 };
 
 template <typename T>
@@ -66,8 +68,8 @@ struct CheckTheseRisks<RiskSet<RiskFlags>> {
     }
 };
 
-constexpr auto OVERFLOW_RISK = RiskSet<static_cast<uint8_t>(ConversionRisk::OVERFLOW)>{};
-constexpr auto TRUNCATION_RISK = RiskSet<static_cast<uint8_t>(ConversionRisk::TRUNCATION)>{};
+constexpr auto OVERFLOW_RISK = RiskSet<static_cast<uint8_t>(ConversionRisk::Overflow)>{};
+constexpr auto TRUNCATION_RISK = RiskSet<static_cast<uint8_t>(ConversionRisk::Truncation)>{};
 constexpr auto ALL_RISKS = OVERFLOW_RISK | TRUNCATION_RISK;
 
 //
@@ -125,7 +127,7 @@ struct OverflowAboveRiskAcceptablyLow
 // That said, the _runtime_ overflow checkers _do_ check both above and below.
 template <typename Op, typename Policy>
 struct OverflowRiskAcceptablyLow
-    : std::conditional_t<Policy{}.should_check(ConversionRisk::OVERFLOW),
+    : std::conditional_t<Policy{}.should_check(ConversionRisk::Overflow),
                          OverflowAboveRiskAcceptablyLow<Op>,
                          std::true_type> {};
 
@@ -133,7 +135,7 @@ struct OverflowRiskAcceptablyLow
 template <typename Op, typename Policy>
 struct TruncationRiskAcceptablyLow
     : std::conditional_t<
-          Policy{}.should_check(ConversionRisk::TRUNCATION),
+          Policy{}.should_check(ConversionRisk::Truncation),
           std::is_same<TruncationRiskFor<Op>, NoTruncationRisk<RealPart<OpInput<Op>>>>,
           std::true_type> {};
 
