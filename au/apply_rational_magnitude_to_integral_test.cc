@@ -28,6 +28,14 @@ namespace au {
 namespace detail {
 namespace {
 
+//
+// This file held the unit tests for an older library, `:apply_rational_magnitude_to_integral`,
+// which we no longer need. We have retained the test file so that we can still get value out of all
+// of the pre-existing test cases.  The first part of this file simply re-implements the
+// functionality of the old library very concisely, in a few lines of code that use the replacement
+// libraries.
+//
+
 template <typename... BPs>
 constexpr void ensure_relevant_kind_of_magnitude(Magnitude<BPs...> m) {
     static_assert(is_rational(m), "Magnitude must be rational");

@@ -24,6 +24,13 @@ using ::testing::IsTrue;
 
 namespace detail {
 
+//
+// This file held the unit tests for an older library, `:static_cast_checkers`, which we no longer
+// need. We have retained the test file so that we can still get value out of all of the
+// pre-existing test cases.  The first part of this file simply re-implements the functionality of
+// the old library very concisely, in a few lines of code that use the replacement libraries.
+//
+
 template <typename U, typename T>
 constexpr bool will_static_cast_overflow(const T &value) {
     return would_value_overflow<StaticCast<T, U>>(value);

@@ -28,6 +28,13 @@ namespace au {
 namespace detail {
 namespace {
 
+//
+// This file held the unit tests for an older library, `:apply_magnitude`, which we no longer need.
+// We have retained the test file so that we can still get value out of all of the pre-existing test
+// cases.  The first part of this file simply re-implements the functionality of the old library
+// very concisely, in a few lines of code that use the replacement libraries.
+//
+
 // `NewOverflowChecker<Op>::would_product_overflow(x)` checks whether the value `x` would exceed the
 // bounds of the operation `Op`.
 template <typename Op>
