@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-71-gf17444b
+// Version identifier: 0.4.1-72-gd54e86b
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -6410,8 +6410,63 @@ struct ValueTimesRatioIsNotIntegerImpl
 
 
 namespace au {
-namespace detail {
 
+//
+// Conversion risk section.
+//
+// End users can use the constants `OVERFLOW_RISK` and `TRUNCATION_RISK`.  They can combine them as
+// flags with `|`.  And they can pass either of these (or the result of `|`) to either `check()` or
+// `ignore()`.  The result of these functions is a risk _policy_, which can be passed as a second
+// argument to conversion functions to control which checks are performed.
+//
+
+namespace detail {
+enum class ConversionRisk : uint8_t {
+    // We use CamelCase instead of UPPER_CASE because `OVERFLOW` is the name of a macro that exists
+    // in the wild in some versions of glibc's `math.h`.
+    Overflow = (1u << 0u),
+    Truncation = (1u << 1u),
+};
+
+template <typename T>
+struct CheckTheseRisks;
+
+template <uint8_t RiskFlags>
+struct RiskSet {
+    static_assert(RiskFlags <= 3u, "Invalid risk flags");
+
+    template <uint8_t OtherFlags>
+    constexpr RiskSet<RiskFlags | OtherFlags> operator|(RiskSet<OtherFlags>) const {
+        return {};
+    }
+
+    constexpr uint8_t flags() const { return RiskFlags; }
+
+    friend constexpr CheckTheseRisks<RiskSet<RiskFlags>> check(RiskSet) { return {}; }
+    friend constexpr CheckTheseRisks<RiskSet<3u - RiskFlags>> ignore(RiskSet) { return {}; }
+};
+
+template <uint8_t RiskFlags>
+struct CheckTheseRisks<RiskSet<RiskFlags>> {
+    constexpr bool should_check(ConversionRisk risk) const {
+        return (RiskFlags & static_cast<uint8_t>(risk)) != 0u;
+    }
+};
+
+constexpr auto OVERFLOW_RISK = RiskSet<static_cast<uint8_t>(ConversionRisk::Overflow)>{};
+constexpr auto TRUNCATION_RISK = RiskSet<static_cast<uint8_t>(ConversionRisk::Truncation)>{};
+
+}  // namespace detail
+
+constexpr auto OVERFLOW_RISK = detail::OVERFLOW_RISK;
+constexpr auto TRUNCATION_RISK = detail::TRUNCATION_RISK;
+constexpr auto ALL_RISKS = OVERFLOW_RISK | TRUNCATION_RISK;
+
+//
+// "Main" conversion policy section.
+//
+
+namespace detail {
 // Chosen so as to allow populating a `QuantityI32<Hertz>` with an input in MHz.
 constexpr auto OVERFLOW_THRESHOLD = mag<2'147>();
 
@@ -6460,17 +6515,23 @@ struct OverflowAboveRiskAcceptablyLow
 // --- we simply cannot afford to break that many _valid_ use cases to catch those invalid ones.
 //
 // That said, the _runtime_ overflow checkers _do_ check both above and below.
-template <typename Op>
-struct OverflowRiskAcceptablyLow : OverflowAboveRiskAcceptablyLow<Op> {};
+template <typename Op, typename Policy>
+struct OverflowRiskAcceptablyLow
+    : std::conditional_t<Policy{}.should_check(detail::ConversionRisk::Overflow),
+                         OverflowAboveRiskAcceptablyLow<Op>,
+                         std::true_type> {};
 
 // Check truncation risk.
-template <typename Op>
+template <typename Op, typename Policy>
 struct TruncationRiskAcceptablyLow
-    : std::is_same<TruncationRiskFor<Op>, NoTruncationRisk<RealPart<OpInput<Op>>>> {};
+    : std::conditional_t<
+          Policy{}.should_check(detail::ConversionRisk::Truncation),
+          std::is_same<TruncationRiskFor<Op>, NoTruncationRisk<RealPart<OpInput<Op>>>>,
+          std::true_type> {};
 
-template <typename Op>
-struct ConversionRiskAcceptablyLow
-    : stdx::conjunction<OverflowRiskAcceptablyLow<Op>, TruncationRiskAcceptablyLow<Op>> {};
+template <typename Op, typename Policy = decltype(check(ALL_RISKS))>
+struct ConversionRiskAcceptablyLow : stdx::conjunction<OverflowRiskAcceptablyLow<Op, Policy>,
+                                                       TruncationRiskAcceptablyLow<Op, Policy>> {};
 
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion
@@ -6673,58 +6734,32 @@ class Quantity {
         std::enable_if_t<std::is_convertible<CorrespondingQuantityT<T>, Quantity>::value, int> = 0>
     constexpr Quantity(T &&x) : Quantity{as_quantity(std::forward<T>(x))} {}
 
+    // `q.as<Rep>(new_unit)`, or `q.as<Rep>(new_unit, risk_policy)`
     template <typename NewRep,
-              typename NewUnit,
-              typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
-    constexpr auto as(NewUnit) const {
-        return make_quantity<AssociatedUnitT<NewUnit>>(
-            detail::ConversionForRepsAndFactor<
-                Rep,
-                NewRep,
-                UnitRatioT<AssociatedUnitT<Unit>, AssociatedUnitT<NewUnit>>>::apply_to(value_));
+              typename NewUnitSlot,
+              typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
+    constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
+        return make_quantity<AssociatedUnitT<NewUnitSlot>>(in_impl<NewRep>(u, policy));
     }
 
-    template <typename NewUnit,
-              typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
-    constexpr auto as(NewUnit) const {
-        constexpr bool IMPLICIT_OK =
-            implicit_rep_permitted_from_source_to_target<Rep>(unit, NewUnit{});
-        constexpr bool INTEGRAL_REP = std::is_integral<Rep>::value;
-        static_assert(
-            IMPLICIT_OK || INTEGRAL_REP,
-            "Should never occur.  In the following static_assert, we assume that IMPLICIT_OK "
-            "can never fail unless INTEGRAL_REP is true.");
-        static_assert(
-            IMPLICIT_OK,
-            "Dangerous conversion for integer Rep!  See: "
-            "https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion");
-        return make_quantity<AssociatedUnitT<NewUnit>>(
-            detail::ConversionForRepsAndFactor<
-                Rep,
-                Rep,
-                UnitRatioT<AssociatedUnitT<Unit>, AssociatedUnitT<NewUnit>>>::apply_to(value_));
+    // `q.as(new_unit)`, or `q.as(new_unit, risk_policy)`
+    template <typename NewUnitSlot, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+    constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
+        return make_quantity<AssociatedUnitT<NewUnitSlot>>(in_impl<Rep>(u, policy));
     }
 
+    // `q.in<Rep>(new_unit)`, or `q.in<Rep>(new_unit, risk_policy)`
     template <typename NewRep,
-              typename NewUnit,
-              typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
-    constexpr NewRep in(NewUnit u) const {
-        if (are_units_quantity_equivalent(unit, u) && std::is_same<Rep, NewRep>::value) {
-            return static_cast<NewRep>(value_);
-        } else {
-            return as<NewRep>(u).in(u);
-        }
+              typename NewUnitSlot,
+              typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
+    constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
+        return in_impl<NewRep>(u, policy);
     }
 
-    template <typename NewUnit,
-              typename = std::enable_if_t<IsUnit<AssociatedUnitT<NewUnit>>::value>>
-    constexpr Rep in(NewUnit u) const {
-        if (are_units_quantity_equivalent(unit, u)) {
-            return value_;
-        } else {
-            // Since Rep was requested _implicitly_, delegate to `.as()` for its safety checks.
-            return as(u).in(u);
-        }
+    // `q.in(new_unit)`, or `q.in(new_unit, risk_policy)`
+    template <typename NewUnitSlot, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+    constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
+        return in_impl<Rep>(u, policy);
     }
 
     // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
@@ -6967,6 +7002,18 @@ class Quantity {
         static_assert(are_units_quantity_equivalent || !uses_integer_division,
                       "Integer division forbidden: wrap denominator in `unblock_int_div()` if you "
                       "really want it");
+    }
+
+    template <typename OtherRep, typename OtherUnitSlot, typename RiskPolicyT>
+    constexpr OtherRep in_impl(OtherUnitSlot, RiskPolicyT) const {
+        using OtherUnit = AssociatedUnitT<OtherUnitSlot>;
+        static_assert(IsUnit<OtherUnit>::value, "Invalid type passed to unit slot");
+
+        using Op = detail::ConversionForRepsAndFactor<Rep, OtherRep, UnitRatioT<Unit, OtherUnit>>;
+        static_assert(detail::ConversionRiskAcceptablyLow<Op, RiskPolicyT>::value,
+                      "Conversion risks too high for policy");
+
+        return Op::apply_to(value_);
     }
 
     constexpr Quantity(Rep value) : value_{value} {}
