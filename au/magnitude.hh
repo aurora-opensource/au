@@ -489,6 +489,7 @@ struct GeneralNontrivialRoot {
         if (x < 0) {
             if (n % 2 == 0) {
                 return {MagRepresentationOutcome::ERR_INVALID_ROOT};
+            }
 
             const auto negative_result = root(-x, n);
             if (negative_result.outcome != MagRepresentationOutcome::OK) {
