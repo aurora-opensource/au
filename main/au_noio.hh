@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-75-gf08649d
+// Version identifier: 0.4.1-76-g9de747d
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -7391,9 +7391,25 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // Convert this constant to a Quantity of the given unit and rep.
     template <typename T, typename OtherUnit>
     constexpr auto as(OtherUnit u) const {
-        static_assert(can_store_value_in<T>(OtherUnit{}),
-                      "Cannot represent constant in this unit/rep");
-        return coerce_as<T>(u);
+        return as<T>(u, check(ALL_RISKS));
+    }
+
+    // Convert this constant to a Quantity of the given unit and rep, following this risk policy.
+    template <typename T, typename OtherUnit, typename RiskPolicyT>
+    constexpr auto as(OtherUnit, RiskPolicyT) const {
+        constexpr auto this_value = make_quantity<Unit>(static_cast<T>(1));
+
+        constexpr bool has_unacceptable_overflow =
+            RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow) &&
+            will_conversion_overflow(this_value, OtherUnit{});
+        static_assert(!has_unacceptable_overflow, "Constant conversion known to overflow");
+
+        constexpr bool has_unacceptable_truncation =
+            RiskPolicyT{}.should_check(detail::ConversionRisk::Truncation) &&
+            will_conversion_truncate(this_value, OtherUnit{});
+        static_assert(!has_unacceptable_truncation, "Constant conversion known to truncate");
+
+        return this_value.as(OtherUnit{}, ignore(ALL_RISKS));
     }
 
     // Get the value of this constant in the given unit and rep, ignoring safety checks.
@@ -7405,9 +7421,13 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // Get the value of this constant in the given unit and rep.
     template <typename T, typename OtherUnit>
     constexpr auto in(OtherUnit u) const {
-        static_assert(can_store_value_in<T>(OtherUnit{}),
-                      "Cannot represent constant in this unit/rep");
-        return coerce_in<T>(u);
+        return in<T>(u, check(ALL_RISKS));
+    }
+
+    // Get the value of this constant in the given unit and rep, following this risk policy.
+    template <typename T, typename OtherUnit, typename RiskPolicyT>
+    constexpr auto in(OtherUnit u, RiskPolicyT policy) const {
+        return as<T>(u, policy).in(u);
     }
 
     // Implicitly convert to any quantity type which passes safety checks.
