@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-76-g9de747d
+// Version identifier: 0.4.1-77-g6059154
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -3147,6 +3147,32 @@ constexpr MagRepresentationOrError<T> checked_int_pow(T base, std::uintmax_t exp
 }
 
 template <typename T>
+using IsKnownToBeInteger = stdx::bool_constant<(std::numeric_limits<T>::is_specialized &&
+                                                std::numeric_limits<T>::is_integer)>;
+
+template <typename T>
+struct NontrivialRootForInt {
+    constexpr MagRepresentationOrError<T> operator()(T, std::uintmax_t) const {
+        // There exist input values where a valid answer exists.  If this were a fully general root
+        // finding function, we would want to support them.  However, those situations can't arise
+        // in this instance.  We would never take a non-trivial root that returns an integer,
+        // because all inputs are products of rational powers of basis numbers.  If the result were
+        // an integer, then this would be made from rational powers of primes, and those rational
+        // exponents would have been converted to lowest terms already.
+        return {MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE};
+    }
+};
+
+template <typename T>
+struct GeneralNontrivialRoot;
+
+template <typename T, bool IsTKnownToBeInteger>
+struct NontrivialRootImpl
+    : std::conditional_t<IsTKnownToBeInteger, NontrivialRootForInt<T>, GeneralNontrivialRoot<T>> {
+    static_assert(IsKnownToBeInteger<T>::value == IsTKnownToBeInteger, "Internal library error");
+};
+
+template <typename T>
 constexpr MagRepresentationOrError<T> root(T x, std::uintmax_t n) {
     // The "zeroth root" would be mathematically undefined.
     if (n == 0) {
@@ -3158,89 +3184,109 @@ constexpr MagRepresentationOrError<T> root(T x, std::uintmax_t n) {
         return {MagRepresentationOutcome::OK, x};
     }
 
-    // We only support nontrivial roots of floating point types.
-    if (!std::is_floating_point<T>::value) {
-        return {MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE};
-    }
-
-    // Handle negative numbers: only odd roots are allowed.
-    if (x < 0) {
-        if (n % 2 == 0) {
-            return {MagRepresentationOutcome::ERR_INVALID_ROOT};
-        } else {
-            const auto negative_result = root(-x, n);
-            if (negative_result.outcome != MagRepresentationOutcome::OK) {
-                return {negative_result.outcome};
-            }
-            return {MagRepresentationOutcome::OK, static_cast<T>(-negative_result.value)};
-        }
-    }
-
     // Handle special cases of zero and one.
     if (x == 0 || x == 1) {
         return {MagRepresentationOutcome::OK, x};
     }
 
-    // Handle numbers bewtween 0 and 1.
-    if (x < 1) {
-        const auto inverse_result = root(T{1} / x, n);
-        if (inverse_result.outcome != MagRepresentationOutcome::OK) {
-            return {inverse_result.outcome};
-        }
-        return {MagRepresentationOutcome::OK, static_cast<T>(T{1} / inverse_result.value)};
-    }
-
-    //
-    // At this point, error conditions are finished, and we can proceed with the "core" algorithm.
-    //
-
-    // Always use `long double` for intermediate computations.  We don't ever expect people to be
-    // calling this at runtime, so we want maximum accuracy.
-    long double lo = 1.0;
-    long double hi = static_cast<long double>(x);
-
-    // Do a binary search to find the closest value such that `checked_int_pow` recovers the input.
-    //
-    // Because we know `n > 1`, and `x > 1`, and x^n is monotonically increasing, we know that
-    // `checked_int_pow(lo, n) < x < checked_int_pow(hi, n)`.  We will preserve this as an
-    // invariant.
-    while (lo < hi) {
-        long double mid = lo + (hi - lo) / 2;
-
-        auto result = checked_int_pow(mid, n);
-
-        if (result.outcome != MagRepresentationOutcome::OK) {
-            return {result.outcome};
-        }
-
-        // Early return if we get lucky with an exact answer.
-        if (result.value == x) {
-            return {MagRepresentationOutcome::OK, static_cast<T>(mid)};
-        }
-
-        // Check for stagnation.
-        if (mid == lo || mid == hi) {
-            break;
-        }
-
-        // Preserve the invariant that `checked_int_pow(lo, n) < x < checked_int_pow(hi, n)`.
-        if (result.value < x) {
-            lo = mid;
-        } else {
-            hi = mid;
-        }
-    }
-
-    // Pick whichever one gets closer to the target.
-    const auto lo_diff = x - checked_int_pow(lo, n).value;
-    const auto hi_diff = checked_int_pow(hi, n).value - x;
-    return {MagRepresentationOutcome::OK, static_cast<T>(lo_diff < hi_diff ? lo : hi)};
+    return NontrivialRootImpl<T, IsKnownToBeInteger<T>::value>{}(x, n);
 }
+
+template <typename T>
+struct GeneralNontrivialRoot {
+    constexpr MagRepresentationOrError<T> operator()(T x, std::uintmax_t n) const {
+        // Handle negative numbers: only odd roots are allowed.
+        if (x < 0) {
+            if (n % 2 == 0) {
+                return {MagRepresentationOutcome::ERR_INVALID_ROOT};
+            }
+
+            const auto negative_result = root(-x, n);
+            if (negative_result.outcome != MagRepresentationOutcome::OK) {
+                return {negative_result.outcome};
+            }
+
+            return {MagRepresentationOutcome::OK, static_cast<T>(-negative_result.value)};
+        }
+
+        // Handle numbers bewtween 0 and 1.
+        if (x < 1) {
+            const auto inverse_result = root(T{1} / x, n);
+            if (inverse_result.outcome != MagRepresentationOutcome::OK) {
+                return {inverse_result.outcome};
+            }
+            return {MagRepresentationOutcome::OK, static_cast<T>(T{1} / inverse_result.value)};
+        }
+
+        //
+        // At this point, error conditions are finished, and we can proceed with the "core"
+        // algorithm.
+        //
+
+        // Always use `long double` for intermediate computations.  We don't ever expect people to
+        // be calling this at runtime, so we want maximum accuracy.
+        long double lo = 1.0;
+        long double hi = static_cast<long double>(x);
+
+        // Do a binary search to find the closest value such that `checked_int_pow` recovers the
+        // input.
+        //
+        // Because we know `n > 1`, and `x > 1`, and x^n is monotonically increasing, we know that
+        // `checked_int_pow(lo, n) < x < checked_int_pow(hi, n)`.  We will preserve this as an
+        // invariant.
+        while (lo < hi) {
+            long double mid = lo + (hi - lo) / 2;
+
+            auto result = checked_int_pow(mid, n);
+
+            if (result.outcome != MagRepresentationOutcome::OK) {
+                return {result.outcome};
+            }
+
+            // Early return if we get lucky with an exact answer.
+            if (result.value == x) {
+                return {MagRepresentationOutcome::OK, static_cast<T>(mid)};
+            }
+
+            // Check for stagnation.
+            if (mid == lo || mid == hi) {
+                break;
+            }
+
+            // Preserve the invariant that `checked_int_pow(lo, n) < x < checked_int_pow(hi, n)`.
+            if (result.value < x) {
+                lo = mid;
+            } else {
+                hi = mid;
+            }
+        }
+
+        // Pick whichever one gets closer to the target.
+        const auto lo_diff = x - checked_int_pow(lo, n).value;
+        const auto hi_diff = checked_int_pow(hi, n).value - x;
+        return {MagRepresentationOutcome::OK, static_cast<T>(lo_diff < hi_diff ? lo : hi)};
+    }
+};
+enum class SignOfExponent { POSITIVE_SIGN, NEGATIVE_SIGN };
+
+template <typename T, std::uintmax_t N, std::uintmax_t D, typename B, SignOfExponent>
+struct BasePowerValueImpl;
 
 template <typename T, std::intmax_t N, std::uintmax_t D, typename B>
 constexpr MagRepresentationOrError<Widen<T>> base_power_value(B base) {
-    if (N < 0) {
-        const auto inverse_result = base_power_value<T, -N, D>(base);
+    return BasePowerValueImpl<T,
+                              static_cast<std::uintmax_t>(N < 0 ? -N : N),
+                              D,
+                              B,
+                              (N < 0 ? SignOfExponent::NEGATIVE_SIGN
+                                     : SignOfExponent::POSITIVE_SIGN)>{}(base);
+}
+
+template <typename T, std::uintmax_t N, std::uintmax_t D, typename B>
+struct BasePowerValueImpl<T, N, D, B, SignOfExponent::NEGATIVE_SIGN> {
+    constexpr MagRepresentationOrError<Widen<T>> operator()(B base) const {
+        const auto inverse_result =
+            BasePowerValueImpl<T, N, D, B, SignOfExponent::POSITIVE_SIGN>{}(base);
         if (inverse_result.outcome != MagRepresentationOutcome::OK) {
             return inverse_result;
         }
@@ -3249,14 +3295,18 @@ constexpr MagRepresentationOrError<Widen<T>> base_power_value(B base) {
             Widen<T>{1} / inverse_result.value,
         };
     }
+};
 
-    const auto power_result =
-        checked_int_pow(static_cast<Widen<T>>(base), static_cast<std::uintmax_t>(N));
-    if (power_result.outcome != MagRepresentationOutcome::OK) {
-        return {power_result.outcome};
+template <typename T, std::uintmax_t N, std::uintmax_t D, typename B>
+struct BasePowerValueImpl<T, N, D, B, SignOfExponent::POSITIVE_SIGN> {
+    constexpr MagRepresentationOrError<Widen<T>> operator()(B base) const {
+        const auto power_result = checked_int_pow(static_cast<Widen<T>>(base), N);
+        if (power_result.outcome != MagRepresentationOutcome::OK) {
+            return {power_result.outcome};
+        }
+        return (D > 1) ? root(power_result.value, D) : power_result;
     }
-    return (D > 1) ? root(power_result.value, D) : power_result;
-}
+};
 
 template <typename T, std::size_t N>
 constexpr MagRepresentationOrError<T> product(const MagRepresentationOrError<T> (&values)[N]) {
