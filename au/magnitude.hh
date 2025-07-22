@@ -489,13 +489,13 @@ struct GeneralNontrivialRoot {
         if (x < 0) {
             if (n % 2 == 0) {
                 return {MagRepresentationOutcome::ERR_INVALID_ROOT};
-            } else {
-                const auto negative_result = root(-x, n);
-                if (negative_result.outcome != MagRepresentationOutcome::OK) {
-                    return {negative_result.outcome};
-                }
-                return {MagRepresentationOutcome::OK, static_cast<T>(-negative_result.value)};
+
+            const auto negative_result = root(-x, n);
+            if (negative_result.outcome != MagRepresentationOutcome::OK) {
+                return {negative_result.outcome};
             }
+
+            return {MagRepresentationOutcome::OK, static_cast<T>(-negative_result.value)};
         }
 
         // Handle numbers bewtween 0 and 1.
