@@ -120,6 +120,13 @@ TEST(Constant, CanCoerce) {
                 SameTypeAndValue((kilo(meters) / second)(299'792)));
 }
 
+TEST(Constant, CanProvidePolicy) {
+    EXPECT_THAT(c.in<int>(kilo(meters) / second, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(299'792));
+    EXPECT_THAT(c.as<int>(kilo(meters) / second, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue((kilo(meters) / second)(299'792)));
+}
+
 TEST(Constant, CanNegate) {
     constexpr auto neg_c = -c;
     EXPECT_THAT(neg_c, Eq(-299'792'458 * m / s));
@@ -135,7 +142,7 @@ TEST(Constant, MakesQuantityWhenPostMultiplyingNumericValue) {
 }
 
 TEST(Constant, MakesQuantityWhenPreMultiplyingNumericValue) {
-    EXPECT_THAT((c * 2).coerce_as(meters / second),
+    EXPECT_THAT((c * 2).as(meters / second, ignore(OVERFLOW_RISK)),
                 SameTypeAndValue((meters / second)(get_value<int>(mag<2>() * C_MPS))));
 }
 
