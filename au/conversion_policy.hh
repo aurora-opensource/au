@@ -131,23 +131,17 @@ struct OverflowAboveRiskAcceptablyLow
 // --- we simply cannot afford to break that many _valid_ use cases to catch those invalid ones.
 //
 // That said, the _runtime_ overflow checkers _do_ check both above and below.
-template <typename Op, typename Policy>
-struct OverflowRiskAcceptablyLow
-    : std::conditional_t<Policy{}.should_check(detail::ConversionRisk::Overflow),
-                         OverflowAboveRiskAcceptablyLow<Op>,
-                         std::true_type> {};
+template <typename Op>
+struct OverflowRiskAcceptablyLow : OverflowAboveRiskAcceptablyLow<Op> {};
 
 // Check truncation risk.
-template <typename Op, typename Policy>
+template <typename Op>
 struct TruncationRiskAcceptablyLow
-    : std::conditional_t<
-          Policy{}.should_check(detail::ConversionRisk::Truncation),
-          std::is_same<TruncationRiskFor<Op>, NoTruncationRisk<RealPart<OpInput<Op>>>>,
-          std::true_type> {};
+    : std::is_same<TruncationRiskFor<Op>, NoTruncationRisk<RealPart<OpInput<Op>>>> {};
 
-template <typename Op, typename Policy = decltype(check(ALL_RISKS))>
-struct ConversionRiskAcceptablyLow : stdx::conjunction<OverflowRiskAcceptablyLow<Op, Policy>,
-                                                       TruncationRiskAcceptablyLow<Op, Policy>> {};
+template <typename Op>
+struct ConversionRiskAcceptablyLow
+    : stdx::conjunction<OverflowRiskAcceptablyLow<Op>, TruncationRiskAcceptablyLow<Op>> {};
 
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion
