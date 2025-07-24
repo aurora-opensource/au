@@ -449,8 +449,37 @@ class Quantity {
         static_assert(IsUnit<OtherUnit>::value, "Invalid type passed to unit slot");
 
         using Op = detail::ConversionForRepsAndFactor<Rep, OtherRep, UnitRatioT<Unit, OtherUnit>>;
-        static_assert(detail::ConversionRiskAcceptablyLow<Op, RiskPolicyT>::value,
-                      "Conversion risks too high for policy");
+
+        constexpr bool should_check_overflow =
+            RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow);
+        constexpr bool is_overflow_risk_ok = detail::OverflowRiskAcceptablyLow<Op>::value;
+
+        constexpr bool should_check_truncation =
+            RiskPolicyT{}.should_check(detail::ConversionRisk::Truncation);
+        constexpr bool is_truncation_risk_ok = detail::TruncationRiskAcceptablyLow<Op>::value;
+
+        constexpr bool is_overflow_only_unacceptable_risk =
+            (should_check_overflow && !is_overflow_risk_ok && is_truncation_risk_ok);
+        static_assert(!is_overflow_only_unacceptable_risk,
+                      "Overflow risk too high.  "
+                      "Can silence by passing `ignore(OVERFLOW_RISK)` as second argument, "
+                      "but first CAREFULLY CONSIDER whether this is really what you mean to do.");
+
+        constexpr bool is_truncation_only_unacceptable_risk =
+            (should_check_truncation && !is_truncation_risk_ok && is_overflow_risk_ok);
+        static_assert(!is_truncation_only_unacceptable_risk,
+                      "Truncation risk too high.  "
+                      "Can silence by passing `ignore(TRUNCATION_RISK)` as second argument, "
+                      "but first CAREFULLY CONSIDER whether this is really what you mean to do.");
+
+        constexpr bool are_both_overflow_and_truncation_unacceptably_risky =
+            (should_check_overflow || should_check_truncation) && !is_overflow_risk_ok &&
+            !is_truncation_risk_ok;
+        static_assert(!are_both_overflow_and_truncation_unacceptably_risky,
+                      "Both truncation and overflow risk too high.  "
+                      "Can silence by passing `ignore(OVERFLOW_RISK | TRUNCATION_RISK)` as second "
+                      "argument, but first CAREFULLY CONSIDER whether this is really what you mean "
+                      "to do.");
 
         return Op::apply_to(value_);
     }
