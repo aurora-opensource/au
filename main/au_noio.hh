@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-77-g6059154
+// Version identifier: 0.4.1-78-g645a106
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -6236,23 +6236,17 @@ struct OverflowAboveRiskAcceptablyLow
 // --- we simply cannot afford to break that many _valid_ use cases to catch those invalid ones.
 //
 // That said, the _runtime_ overflow checkers _do_ check both above and below.
-template <typename Op, typename Policy>
-struct OverflowRiskAcceptablyLow
-    : std::conditional_t<Policy{}.should_check(detail::ConversionRisk::Overflow),
-                         OverflowAboveRiskAcceptablyLow<Op>,
-                         std::true_type> {};
+template <typename Op>
+struct OverflowRiskAcceptablyLow : OverflowAboveRiskAcceptablyLow<Op> {};
 
 // Check truncation risk.
-template <typename Op, typename Policy>
+template <typename Op>
 struct TruncationRiskAcceptablyLow
-    : std::conditional_t<
-          Policy{}.should_check(detail::ConversionRisk::Truncation),
-          std::is_same<TruncationRiskFor<Op>, NoTruncationRisk<RealPart<OpInput<Op>>>>,
-          std::true_type> {};
+    : std::is_same<TruncationRiskFor<Op>, NoTruncationRisk<RealPart<OpInput<Op>>>> {};
 
-template <typename Op, typename Policy = decltype(check(ALL_RISKS))>
-struct ConversionRiskAcceptablyLow : stdx::conjunction<OverflowRiskAcceptablyLow<Op, Policy>,
-                                                       TruncationRiskAcceptablyLow<Op, Policy>> {};
+template <typename Op>
+struct ConversionRiskAcceptablyLow
+    : stdx::conjunction<OverflowRiskAcceptablyLow<Op>, TruncationRiskAcceptablyLow<Op>> {};
 
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion
@@ -6731,8 +6725,37 @@ class Quantity {
         static_assert(IsUnit<OtherUnit>::value, "Invalid type passed to unit slot");
 
         using Op = detail::ConversionForRepsAndFactor<Rep, OtherRep, UnitRatioT<Unit, OtherUnit>>;
-        static_assert(detail::ConversionRiskAcceptablyLow<Op, RiskPolicyT>::value,
-                      "Conversion risks too high for policy");
+
+        constexpr bool should_check_overflow =
+            RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow);
+        constexpr bool is_overflow_risk_ok = detail::OverflowRiskAcceptablyLow<Op>::value;
+
+        constexpr bool should_check_truncation =
+            RiskPolicyT{}.should_check(detail::ConversionRisk::Truncation);
+        constexpr bool is_truncation_risk_ok = detail::TruncationRiskAcceptablyLow<Op>::value;
+
+        constexpr bool is_overflow_only_unacceptable_risk =
+            (should_check_overflow && !is_overflow_risk_ok && is_truncation_risk_ok);
+        static_assert(!is_overflow_only_unacceptable_risk,
+                      "Overflow risk too high.  "
+                      "Can silence by passing `ignore(OVERFLOW_RISK)` as second argument, "
+                      "but first CAREFULLY CONSIDER whether this is really what you mean to do.");
+
+        constexpr bool is_truncation_only_unacceptable_risk =
+            (should_check_truncation && !is_truncation_risk_ok && is_overflow_risk_ok);
+        static_assert(!is_truncation_only_unacceptable_risk,
+                      "Truncation risk too high.  "
+                      "Can silence by passing `ignore(TRUNCATION_RISK)` as second argument, "
+                      "but first CAREFULLY CONSIDER whether this is really what you mean to do.");
+
+        constexpr bool are_both_overflow_and_truncation_unacceptably_risky =
+            (should_check_overflow || should_check_truncation) && !is_overflow_risk_ok &&
+            !is_truncation_risk_ok;
+        static_assert(!are_both_overflow_and_truncation_unacceptably_risky,
+                      "Both truncation and overflow risk too high.  "
+                      "Can silence by passing `ignore(OVERFLOW_RISK | TRUNCATION_RISK)` as second "
+                      "argument, but first CAREFULLY CONSIDER whether this is really what you mean "
+                      "to do.");
 
         return Op::apply_to(value_);
     }
