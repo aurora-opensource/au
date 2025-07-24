@@ -477,8 +477,9 @@ class Quantity {
             !is_truncation_risk_ok;
         static_assert(!are_both_overflow_and_truncation_unacceptably_risky,
                       "Both truncation and overflow risk too high.  "
-                      "Can silence by passing `ignore(ALL_RISKS)` as second argument, "
-                      "but first CAREFULLY CONSIDER whether this is really what you mean to do.");
+                      "Can silence by passing `ignore(OVERFLOW_RISK | TRUNCATION_RISK)` as second "
+                      "argument, but first CAREFULLY CONSIDER whether this is really what you mean "
+                      "to do.");
 
         return Op::apply_to(value_);
     }
