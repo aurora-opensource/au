@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-78-g645a106
+// Version identifier: 0.4.1-79-g40bd52c
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -5423,6 +5423,13 @@ constexpr auto pow(SingularNameFor<Unit>) {
     return SingularNameFor<UnitPowerT<Unit, Exp>>{};
 }
 
+//
+// Specialize `UnitOrderTiebreaker<YourCustomUnit>` as below, but with a different constant, in
+// order to reduce the chance of hitting "distinct input types compare equal" errors.
+//
+template <typename U>
+struct UnitOrderTiebreaker;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation details below
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6119,45 +6126,57 @@ struct OrderByOrigin
 // relative ordering among these built-in template types is probably less important than the fact
 // that there _is_ a relative ordering among them (because we need to have a strict total ordering).
 template <typename T>
-struct UnitAvoidance : std::integral_constant<int, 0> {};
+struct CoarseUnitOrdering : std::integral_constant<int, 0> {};
 
 template <typename A, typename B>
-struct OrderByUnitAvoidance
-    : stdx::bool_constant<(UnitAvoidance<A>::value < UnitAvoidance<B>::value)> {};
+struct OrderByCoarseUnitOrdering
+    : stdx::bool_constant<(CoarseUnitOrdering<A>::value < CoarseUnitOrdering<B>::value)> {};
 
 template <typename... Ts>
-struct UnitAvoidance<UnitProduct<Ts...>> : std::integral_constant<int, 1> {};
+struct CoarseUnitOrdering<UnitProduct<Ts...>> : std::integral_constant<int, 1> {};
 
 template <typename... Ts>
-struct UnitAvoidance<UnitImpl<Ts...>> : std::integral_constant<int, 2> {};
+struct CoarseUnitOrdering<UnitImpl<Ts...>> : std::integral_constant<int, 2> {};
 
 template <typename... Ts>
-struct UnitAvoidance<ScaledUnit<Ts...>> : std::integral_constant<int, 3> {};
+struct CoarseUnitOrdering<ScaledUnit<Ts...>> : std::integral_constant<int, 3> {};
 
 template <typename B, std::intmax_t N>
-struct UnitAvoidance<Pow<B, N>> : std::integral_constant<int, 4> {};
+struct CoarseUnitOrdering<Pow<B, N>> : std::integral_constant<int, 4> {};
 
 template <typename B, std::intmax_t N, std::intmax_t D>
-struct UnitAvoidance<RatioPow<B, N, D>> : std::integral_constant<int, 5> {};
+struct CoarseUnitOrdering<RatioPow<B, N, D>> : std::integral_constant<int, 5> {};
 
 template <typename... Us>
-struct UnitAvoidance<CommonUnit<Us...>> : std::integral_constant<int, 6> {};
+struct CoarseUnitOrdering<CommonUnit<Us...>> : std::integral_constant<int, 6> {};
 
 template <typename... Us>
-struct UnitAvoidance<CommonPointUnit<Us...>> : std::integral_constant<int, 7> {};
+struct CoarseUnitOrdering<CommonPointUnit<Us...>> : std::integral_constant<int, 7> {};
+
+template <typename A, typename B>
+struct OrderByUnitOrderTiebreaker
+    : stdx::bool_constant<(UnitOrderTiebreaker<A>::value < UnitOrderTiebreaker<B>::value)> {};
+
+template <typename U>
+struct UnitAvoidance : std::integral_constant<int, 0> {};
+
 }  // namespace detail
+
+template <typename U>
+struct UnitOrderTiebreaker : detail::UnitAvoidance<U> {};
 
 template <typename A, typename B>
 struct InOrderFor<UnitProduct, A, B>
     : LexicographicTotalOrdering<A,
                                  B,
-                                 detail::OrderByUnitAvoidance,
+                                 detail::OrderByCoarseUnitOrdering,
                                  detail::OrderByDim,
                                  detail::OrderByMag,
                                  detail::OrderByScaleFactor,
                                  detail::OrderByOrigin,
                                  detail::OrderAsUnitProduct,
-                                 detail::OrderAsOriginDisplacementUnit> {};
+                                 detail::OrderAsOriginDisplacementUnit,
+                                 detail::OrderByUnitOrderTiebreaker> {};
 
 }  // namespace au
 
