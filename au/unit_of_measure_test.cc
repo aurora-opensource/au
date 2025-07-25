@@ -795,7 +795,33 @@ TEST(UnitLabel, CommonUnitOfCommonPointUnitsPerformsFlattening) {
 
 TEST(UnitLabel, APICompatibleWithUnitSlots) { EXPECT_THAT(unit_label(feet), StrEq("ft")); }
 
+struct Trinches : decltype(Inches{} * mag<3>()) {};
+struct Quarterfeet : decltype(Feet{} / mag<4>()) {};
+
+template <>
+struct UnitOrderTiebreaker<Trinches> : std::integral_constant<int, 1> {};
+
+TEST(UnitOrderTiebreaker, CanBreakTiesForDistinctButOtherwiseUnorderableUnits) {
+    // The point of this test is that this line would fail to compile if not for the
+    // `UnitOrderTiebreaker<Trinches>` specialization just above, whose value must not be `0`.
+    StaticAssertTypeEq<UnitProductT<Trinches, Quarterfeet>, UnitProductT<Quarterfeet, Trinches>>();
+}
+
 namespace detail {
+
+struct Threet : decltype(Feet{} * mag<3>()) {};
+
+template <>
+struct UnitAvoidance<Threet> : std::integral_constant<int, 1234> {};
+
+TEST(UnitAvoidance, CanTemporarilyBreakTiesForDistinctButOtherwiseUnorderableUnits) {
+    // The point of this test is that this line would fail to compile if not for the
+    // `UnitAvoidance<Threet>` specialization just above.
+    //
+    // This method of making distinct units orderable is deprecated, because it relies on end users
+    // naming a type in our `detail::` namespace.
+    StaticAssertTypeEq<UnitProductT<Yards, Threet>, UnitProductT<Threet, Yards>>();
+}
 
 TEST(Origin, ZeroForUnitWithNoSpecifiedOrigin) {
     EXPECT_THAT(OriginOf<Kelvins>::value(), SameTypeAndValue(ZERO));
