@@ -541,33 +541,6 @@ class AlwaysDivisibleQuantity {
     Quantity<U, R> q_;
 };
 
-// Force integer division beteween two integer Quantities, in a callsite-obvious way.
-template <typename U1, typename R1, typename U2, typename R2>
-[[deprecated("Replace `integer_quotient(a, b)` with `a / unblock_int_div(b)`")]] constexpr auto
-integer_quotient(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    static_assert(std::is_integral<R1>::value && std::is_integral<R2>::value,
-                  "integer_quotient() can only be called with integral Rep");
-    return make_quantity<UnitQuotientT<U1, U2>>(q1.in(U1{}) / q2.in(U2{}));
-}
-
-// Force integer division beteween an integer Quantity and a raw number.
-template <typename U, typename R, typename T>
-[[deprecated("Replace `integer_quotient(a, b)` with `a / unblock_int_div(b)`")]] constexpr auto
-integer_quotient(Quantity<U, R> q, T x) {
-    static_assert(std::is_integral<R>::value && std::is_integral<T>::value,
-                  "integer_quotient() can only be called with integral Rep");
-    return make_quantity<U>(q.in(U{}) / x);
-}
-
-// Force integer division beteween a raw number and an integer Quantity.
-template <typename T, typename U, typename R>
-[[deprecated("Replace `integer_quotient(a, b)` with `a / unblock_int_div(b)`")]] constexpr auto
-integer_quotient(T x, Quantity<U, R> q) {
-    static_assert(std::is_integral<T>::value && std::is_integral<R>::value,
-                  "integer_quotient() can only be called with integral Rep");
-    return make_quantity<UnitInverseT<U>>(x / q.in(U{}));
-}
-
 // The modulo operator (i.e., the remainder of an integer division).
 //
 // Only defined whenever (R1{} % R2{}) is defined (i.e., for integral Reps), _and_
