@@ -40,6 +40,7 @@ struct Feet : UnitImpl<Length> {
 };
 constexpr const char Feet::label[];
 constexpr auto feet = QuantityMaker<Feet>{};
+constexpr auto ft = SymbolFor<Feet>{};
 
 struct Miles : decltype(Feet{} * mag<5'280>()) {
     static constexpr const char label[] = "mi";
@@ -220,6 +221,17 @@ TEST(Quantity, SupportsDirectAccessWithQuantityMakerOfSameUnit) {
 }
 
 TEST(Quantity, SupportsDirectConstAccessWithQuantityMakerOfSameUnit) {
+    const auto x = meters(3.5);
+    EXPECT_THAT(static_cast<const void *>(&x.data_in(meters)), Eq(static_cast<const void *>(&x)));
+}
+
+TEST(Quantity, SupportsDirectAccessWithUnitSymbol) {
+    auto x = feet(3);
+    ++(x.data_in(ft));
+    EXPECT_THAT(x, Eq(feet(4)));
+}
+
+TEST(Quantity, SupportsDirectConstAccessWithUnitSymbol) {
     const auto x = meters(3.5);
     EXPECT_THAT(static_cast<const void *>(&x.data_in(meters)), Eq(static_cast<const void *>(&x)));
 }
