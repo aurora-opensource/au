@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-80-gb5e44c6
+// Version identifier: 0.4.1-81-gc1c97f6
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -6521,29 +6521,19 @@ class Quantity {
 
     // Direct access to the underlying value member, with any Quantity-equivalent Unit.
     //
-    // Mutable access, QuantityMaker input.
-    template <typename U>
-    Rep &data_in(const QuantityMaker<U> &) {
-        static_assert(AreUnitsQuantityEquivalent<U, Unit>::value,
+    // Mutable access:
+    template <typename UnitSlot>
+    Rep &data_in(UnitSlot) {
+        static_assert(AreUnitsQuantityEquivalent<AssociatedUnitT<UnitSlot>, Unit>::value,
                       "Can only access value via Quantity-equivalent unit");
         return value_;
     }
-    // Mutable access, Unit input.
-    template <typename U>
-    Rep &data_in(const U &) {
-        return data_in(QuantityMaker<U>{});
-    }
-    // Const access, QuantityMaker input.
-    template <typename U>
-    const Rep &data_in(const QuantityMaker<U> &) const {
-        static_assert(AreUnitsQuantityEquivalent<U, Unit>::value,
+    // Const access:
+    template <typename UnitSlot>
+    const Rep &data_in(UnitSlot) const {
+        static_assert(AreUnitsQuantityEquivalent<AssociatedUnitT<UnitSlot>, Unit>::value,
                       "Can only access value via Quantity-equivalent unit");
         return value_;
-    }
-    // Const access, Unit input.
-    template <typename U>
-    const Rep &data_in(const U &) const {
-        return data_in(QuantityMaker<U>{});
     }
 
     // Permit this factory functor to access our private constructor.
