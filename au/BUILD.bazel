@@ -84,6 +84,8 @@ cc_test(
     name = "fmt_test",
     size = "small",
     srcs = ["fmt_test.cc"],
+    copts = ["-Wno-sign-conversion"],
+    tags = ["no_wsign_conversion"],
     deps = [
         ":quantity",
         ":testing",
