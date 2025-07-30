@@ -12,25 +12,25 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/concepts/arithmetic/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/format/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../corresponding_quantity/">
       
       
-        <link rel="next" href="../common_unit/">
+        <link rel="next" href="../magnitude/">
       
       
-      <link rel="icon" href="../../../assets/favicon.ico">
+      <link rel="icon" href="../../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
     
     
       
-        <title>Arithmetic Operations - The Au units library</title>
+        <title>Format - The Au units library</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.342714a4.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
       
       
 
@@ -49,9 +49,9 @@
       
     
     
-      <link rel="stylesheet" href="../../../tweaks.css">
+      <link rel="stylesheet" href="../../tweaks.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#arithmetic-operations" class="md-skip">
+        <a href="#format" class="md-skip">
           Skip to content
         </a>
       
@@ -90,9 +90,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../../assets/au-logo.png" alt="logo">
+  <img src="../../assets/au-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Arithmetic Operations
+              Format
             
           </span>
         </div>
@@ -201,9 +201,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../../assets/au-logo.png" alt="logo">
+  <img src="../../assets/au-logo.png" alt="logo">
 
     </a>
     The Au units library
@@ -230,7 +230,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -252,7 +252,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../develop/" class="md-nav__link">
+      <a href="../../develop/" class="md-nav__link">
         
   
   
@@ -274,7 +274,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../install/" class="md-nav__link">
+      <a href="../../install/" class="md-nav__link">
         
   
   
@@ -296,7 +296,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../supported-compilers/" class="md-nav__link">
+      <a href="../../supported-compilers/" class="md-nav__link">
         
   
   
@@ -318,7 +318,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../troubleshooting/" class="md-nav__link">
+      <a href="../../troubleshooting/" class="md-nav__link">
         
   
   
@@ -378,7 +378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../alternatives/" class="md-nav__link">
+      <a href="../../alternatives/" class="md-nav__link">
         
   
   
@@ -405,20 +405,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
@@ -434,7 +432,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Discussion
@@ -448,7 +446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../" class="md-nav__link">
+      <a href="../../discussion/" class="md-nav__link">
         
   
   
@@ -468,20 +466,18 @@
                 
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
         
           
           <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
@@ -497,7 +493,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7_2">
             <span class="md-nav__icon md-icon"></span>
             Concepts
@@ -511,7 +507,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../discussion/concepts/" class="md-nav__link">
         
   
   
@@ -531,32 +527,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Arithmetic Operations
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/arithmetic/" class="md-nav__link">
         
   
   
@@ -567,68 +541,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#quantities-values-and-units-101" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quantities, values, and units 101
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#arbitrary-unit" class="md-nav__link">
-    <span class="md-ellipsis">
-      Arbitrary-unit operations
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Arbitrary-unit operations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#mixed-units-and-conversions" class="md-nav__link">
-    <span class="md-ellipsis">
-      Mixed Units and Conversions
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#common-unit" class="md-nav__link">
-    <span class="md-ellipsis">
-      Common unit operations
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -641,7 +553,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../common_unit/" class="md-nav__link">
+      <a href="../../discussion/concepts/common_unit/" class="md-nav__link">
         
   
   
@@ -664,7 +576,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dimensionless/" class="md-nav__link">
+      <a href="../../discussion/concepts/dimensionless/" class="md-nav__link">
         
   
   
@@ -687,7 +599,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../overflow/" class="md-nav__link">
+      <a href="../../discussion/concepts/overflow/" class="md-nav__link">
         
   
   
@@ -710,7 +622,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quantity_point/" class="md-nav__link">
+      <a href="../../discussion/concepts/quantity_point/" class="md-nav__link">
         
   
   
@@ -733,7 +645,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../zero/" class="md-nav__link">
+      <a href="../../discussion/concepts/zero/" class="md-nav__link">
         
   
   
@@ -802,7 +714,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../idioms/" class="md-nav__link">
+      <a href="../../discussion/idioms/" class="md-nav__link">
         
   
   
@@ -825,7 +737,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../idioms/unit-slots/" class="md-nav__link">
+      <a href="../../discussion/idioms/unit-slots/" class="md-nav__link">
         
   
   
@@ -894,7 +806,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../implementation/" class="md-nav__link">
+      <a href="../../discussion/implementation/" class="md-nav__link">
         
   
   
@@ -917,7 +829,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../implementation/applying_magnitudes/" class="md-nav__link">
+      <a href="../../discussion/implementation/applying_magnitudes/" class="md-nav__link">
         
   
   
@@ -940,7 +852,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../implementation/vector_space/" class="md-nav__link">
+      <a href="../../discussion/implementation/vector_space/" class="md-nav__link">
         
   
   
@@ -1016,7 +928,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/" class="md-nav__link">
+      <a href="../../howto/" class="md-nav__link">
         
   
   
@@ -1039,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/forward-declarations/" class="md-nav__link">
+      <a href="../../howto/forward-declarations/" class="md-nav__link">
         
   
   
@@ -1062,7 +974,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/new-constants/" class="md-nav__link">
+      <a href="../../howto/new-constants/" class="md-nav__link">
         
   
   
@@ -1085,7 +997,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/new-dimensions/" class="md-nav__link">
+      <a href="../../howto/new-dimensions/" class="md-nav__link">
         
   
   
@@ -1108,7 +1020,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/new-units/" class="md-nav__link">
+      <a href="../../howto/new-units/" class="md-nav__link">
         
   
   
@@ -1131,7 +1043,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/quantity-template-parameters/" class="md-nav__link">
+      <a href="../../howto/quantity-template-parameters/" class="md-nav__link">
         
   
   
@@ -1192,7 +1104,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/interop/" class="md-nav__link">
+      <a href="../../howto/interop/" class="md-nav__link">
         
   
   
@@ -1215,7 +1127,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/interop/nholthaus/" class="md-nav__link">
+      <a href="../../howto/interop/nholthaus/" class="md-nav__link">
         
   
   
@@ -1250,18 +1162,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
@@ -1277,7 +1191,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Reference
@@ -1291,7 +1205,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   
@@ -1314,7 +1228,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/constant/" class="md-nav__link">
+      <a href="../constant/" class="md-nav__link">
         
   
   
@@ -1337,7 +1251,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/corresponding_quantity/" class="md-nav__link">
+      <a href="../corresponding_quantity/" class="md-nav__link">
         
   
   
@@ -1357,10 +1271,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../../reference/format/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Format
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1371,6 +1307,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      Syntax
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Syntax">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#specialized-use-cases" class="md-nav__link">
+    <span class="md-ellipsis">
+      Specialized use cases
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1383,7 +1372,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/magnitude/" class="md-nav__link">
+      <a href="../magnitude/" class="md-nav__link">
         
   
   
@@ -1406,7 +1395,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/math/" class="md-nav__link">
+      <a href="../math/" class="md-nav__link">
         
   
   
@@ -1429,7 +1418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/powers/" class="md-nav__link">
+      <a href="../powers/" class="md-nav__link">
         
   
   
@@ -1452,7 +1441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/prefix/" class="md-nav__link">
+      <a href="../prefix/" class="md-nav__link">
         
   
   
@@ -1475,7 +1464,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/quantity/" class="md-nav__link">
+      <a href="../quantity/" class="md-nav__link">
         
   
   
@@ -1498,7 +1487,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/quantity_point/" class="md-nav__link">
+      <a href="../quantity_point/" class="md-nav__link">
         
   
   
@@ -1521,7 +1510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/unit/" class="md-nav__link">
+      <a href="../unit/" class="md-nav__link">
         
   
   
@@ -1544,7 +1533,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/zero/" class="md-nav__link">
+      <a href="../zero/" class="md-nav__link">
         
   
   
@@ -1605,7 +1594,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/detail/" class="md-nav__link">
+      <a href="../detail/" class="md-nav__link">
         
   
   
@@ -1628,7 +1617,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/detail/dimension/" class="md-nav__link">
+      <a href="../detail/dimension/" class="md-nav__link">
         
   
   
@@ -1651,7 +1640,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/detail/monovalue_types/" class="md-nav__link">
+      <a href="../detail/monovalue_types/" class="md-nav__link">
         
   
   
@@ -1674,7 +1663,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/detail/packs/" class="md-nav__link">
+      <a href="../detail/packs/" class="md-nav__link">
         
   
   
@@ -1750,7 +1739,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/" class="md-nav__link">
+      <a href="../../tutorial/" class="md-nav__link">
         
   
   
@@ -1773,7 +1762,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/101-quantity-makers/" class="md-nav__link">
+      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
         
   
   
@@ -1796,7 +1785,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/102-api-types/" class="md-nav__link">
+      <a href="../../tutorial/102-api-types/" class="md-nav__link">
         
   
   
@@ -1819,7 +1808,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/103-unit-conversions/" class="md-nav__link">
+      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
         
   
   
@@ -1880,7 +1869,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
         
   
   
@@ -1903,7 +1892,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/exercise/102-api-types/" class="md-nav__link">
+      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
         
   
   
@@ -1926,7 +1915,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
         
   
   
@@ -1976,148 +1965,151 @@
   
 
 
-<h1 id="arithmetic-operations">Arithmetic Operations<a class="headerlink" href="#arithmetic-operations" title="Permanent link">&para;</a></h1>
-<p>Quantity arithmetic operations fall into two categories.</p>
-<ul>
-<li>
-<p><strong>Arbitrary-unit operations</strong> work with any units &mdash; even if there are multiple input units with
-  different dimensions!  Examples include products, quotients, powers, and roots.</p>
-</li>
-<li>
-<p><strong>Common-unit operations</strong> require the inputs to be expressed in the same unit.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>  Examples include
-  addition, subtraction, and relational operators.</p>
-</li>
-</ul>
-<p>We&rsquo;ll explain how the library handles each category below.  First, a brief refresher.</p>
-<h2 id="quantities-values-and-units-101">Quantities, values, and units 101<a class="headerlink" href="#quantities-values-and-units-101" title="Permanent link">&para;</a></h2>
-<p>A <em>quantity</em> is an abstract concept: some physical property that can be measured.  To <em>work with</em>
-that quantity, we need to pick a <em>unit of measure</em>, or &ldquo;unit&rdquo;.  Once we&rsquo;ve done so, the quantity
-obtains a <em>value</em> with respect to that unit.</p>
-<p>Different choices of unit will lead to different values for the same quantity.  For example, suppose
-we have a rod that is one foot long.  The distance between its endpoints is <code>feet(1.0)</code>, where
-<code>feet</code> is the unit, and <code>1.0</code> is the value.  It&rsquo;s also equal to <code>inches(12.0)</code>, where <code>inches</code> is
-another unit we could have chosen, and <code>12.0</code> is the value we&rsquo;d obtain if we did.</p>
-<p>Note that <code>feet(1.0)</code> and <code>inches(12.0)</code> are the <em>same quantity</em>, conceptually!  But when we pick
-different units, we&rsquo;ll end up <em>storing different values</em> (i.e., <code>1.0</code> vs. <code>12.0</code>) in the bits and
-bytes of our computer program.</p>
-<h2 id="arbitrary-unit">Arbitrary-unit operations<a class="headerlink" href="#arbitrary-unit" title="Permanent link">&para;</a></h2>
-<p>For arbitrary-unit operations (products, quotients, powers, and roots), there is a simple, golden
-rule: apply the operation (say, multiplication) <em>independently</em> to both the <em>value</em> and the <em>unit</em>.
-Consider this example:</p>
-<div class="arithmatex">
-<div class="MathJax_Preview">(150 \,\,\text{mi}) \div (2 \,\,\text{h}) = (75 \,\,\text{mi} / \text{h})</div>
-<script type="math/tex; mode=display">(150 \,\,\text{mi}) \div (2 \,\,\text{h}) = (75 \,\,\text{mi} / \text{h})</script>
-</div>
-<p>Notice how the operation applies independently to the value and the unit:</p>
-<ul>
-<li><strong>values:</strong> <span class="arithmatex"><span class="MathJax_Preview">150 \div 2 = 75</span><script type="math/tex">150 \div 2 = 75</script></span></li>
-<li><strong>units:</strong> <span class="arithmatex"><span class="MathJax_Preview">\text{mi} \div \text{h} = \text{mi} / \text{h}</span><script type="math/tex">\text{mi} \div \text{h} = \text{mi} / \text{h}</script></span></li>
-</ul>
-<p>Au works the same way.  Here&rsquo;s how that computation would look in our library:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">miles</span><span class="p">(</span><span class="mf">150.0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hours</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">)(</span><span class="mf">75.0</span><span class="p">)</span>
-</code></pre></div>
-<p>Here, <code>(miles / hour)</code> creates a new, compound <em>unit</em> on the fly, and calling it on <code>75.0</code> stores
-that <em>value</em> to create a <em>quantity</em>.</p>
-<h3 id="mixed-units-and-conversions">Mixed Units and Conversions<a class="headerlink" href="#mixed-units-and-conversions" title="Permanent link">&para;</a></h3>
-<p>Au makes it easy to do complicated, multi-step operations.  For example:</p>
-<blockquote>
-<p>How many &ldquo;g&rsquo;s&rdquo; of acceleration will a car experience, going from 0 to 60 MPH in 3 seconds?</p>
-</blockquote>
-<p>Assuming constant acceleration, we have:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">StandardGravity</span><span class="o">&gt;</span><span class="w"> </span><span class="n">accel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">)(</span><span class="mf">60.0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mf">3.0</span><span class="p">);</span>
-</code></pre></div>
-<p>It&rsquo;s worth breaking down the operations the library performs, and the order in which it performs
-them.  In particular, remember that division happens <em>first</em>, before the assignment.</p>
-<p>For the division, we know we can reason <em>independently</em> about the value; so, the value is <code>20.0</code>.
-Similarly, the unit is <code>miles / hour / second</code>.  Altogether, the division step yields
-<span class="arithmatex"><span class="MathJax_Preview">20 \,\,\text{MPH} / \text{s}</span><script type="math/tex">20 \,\,\text{MPH} / \text{s}</script></span>.</p>
-<p>Next comes assignment.  Since standard gravity (<span class="arithmatex"><span class="MathJax_Preview">g_0</span><script type="math/tex">g_0</script></span>) and <span class="arithmatex"><span class="MathJax_Preview">\text{MPH}/\text{s}</span><script type="math/tex">\text{MPH}/\text{s}</script></span> both have the same
-<em>dimension</em> (namely, acceleration), then <span class="arithmatex"><span class="MathJax_Preview">\frac{g_0}{\text{MPH}/\text{s}}</span><script type="math/tex">\frac{g_0}{\text{MPH}/\text{s}}</script></span> is some real number:
-namely, <span class="arithmatex"><span class="MathJax_Preview">\frac{980665}{44704}</span><script type="math/tex">\frac{980665}{44704}</script></span>.  The library computes this number <em>at compile time</em>, and performs
-only a single multiplication or division at runtime.  The final printed result is roughly
-<code>0.911708 g_0</code>.</p>
-<p>And this makes sense!  We know intuitively that going from 0 to 60 MPH in 3 seconds &ldquo;feels very
-fast&rdquo;.  We can see that in fact, it&rsquo;s pulling almost a full &ldquo;g&rdquo;.</p>
-<h2 id="common-unit">Common unit operations<a class="headerlink" href="#common-unit" title="Permanent link">&para;</a></h2>
-<p>If two quantities have the same dimension, it&rsquo;s <em>physically</em> meaningful to add, subtract, or compare
-them.  Consider two lengths: we can <em>physically</em> add them by placing them in series and measuring
-the total distance, even if we had measured one in &ldquo;feet&rdquo;, and the other in &ldquo;inches&rdquo;.</p>
-<p><em>Computationally</em>, it&rsquo;s a different story: we need to express them in a <a href="../common_unit/"><strong>common
-unit</strong></a>.  Once we do, it&rsquo;s easy to add/subtract/compare the <em>quantities</em>: we
-simply add/subtract/compare the <em>values</em>.</p>
-<p>The &ldquo;common unit&rdquo; of two units is the <em>largest</em> unit that <em>evenly divides both</em><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>&mdash;essentially,
-the <em>greatest common divisor</em>.  This convention has two benefits:</p>
+<h1 id="format">Format<a class="headerlink" href="#format" title="Permanent link">&para;</a></h1>
+<p>Au supports string formatting using either the <a href="https://github.com/fmtlib/fmt">{fmt}</a> library, or else <a href="https://en.cppreference.com/w/cpp/utility/format/format.html">std::format</a> (available
+in C++20 or later).</p>
+<details class="warning">
+<summary>Warning: if using {fmt}, ensure version is at least 9.0</summary>
+<p>If you are using the <a href="https://github.com/fmtlib/fmt">{fmt}</a> library, <strong>make sure that it is at least <a href="https://github.com/fmtlib/fmt/releases/tag/9.0.0">version 9.0</a></strong> (July 5,
+2022).</p>
+<p>All earlier versions provide automatic specializations for <code>formatter&lt;T&gt;</code> for any type <code>T</code> that
+supports streaming output.  While this is convenient, it also makes it extremely easy to violate
+the One Definition Rule (ODR): if anyone calls <code>format</code> in a file without Au&rsquo;s specialization,
+then both definitions will exist.  This makes the program &ldquo;ill-formed, no diagnostic required&rdquo;
+(IFNDR), which means that it has <strong>silently</strong> failed to be a valid C++ program, and all
+guarantees are out the window.</p>
+<p>Version 9.0 was the first release to make the default specialization cause a hard compiler
+error.  This mitigates the risk of having two definitions, undetected.</p>
+<p>As for <code>std::format</code>, it has always required explicit specializations, so it is not subject to
+this vulnerability.</p>
+</details>
+<p>We can&rsquo;t provide fully seamless support out of the box without adding an external dependency &mdash; and
+Au is committed to being a zero-dependency library.  What we <em>can</em> do is to define the format string
+specification, and take the hard work out of implementing it.  To use it in your project, you&rsquo;ll
+create a single file, and write a single line of code.  Then, you&rsquo;ll include that file anywhere you
+want to format a <code>Quantity</code>.</p>
+<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h2>
+<p>There are two steps to support formatting in your project:</p>
 <ol>
 <li>
-<p>Converting each input quantity to the common unit involves <em>multiplying the value by an integer</em>.
-   This is really important for quantities with integral storage types!</p>
+<p>Create a file to hold the authoritative formatter definition.</p>
 </li>
 <li>
-<p>The <em>value</em> of that multiplier will be as <em>small as possible</em> (relative to other units that
-   evenly divide both input units).  This minimizes the risk of integer overflow.</p>
+<p>Include this file anywhere you want to format a <code>Quantity</code>.</p>
 </li>
 </ol>
-<p>Let&rsquo;s look at a few examples.</p>
-<ul>
-<li>
-<p><code>feet(1) + inches(6)</code>: This converts each input to their common unit, which is <code>inches</code>, resulting
-  in <code>inches(18)</code>.</p>
-</li>
-<li>
-<p><code>inches(100) &gt; centi(meters)(200)</code>: The common unit doesn&rsquo;t have a name, so let&rsquo;s call it
-  <span class="arithmatex"><span class="MathJax_Preview">\text{com}</span><script type="math/tex">\text{com}</script></span>.  An inch is <span class="arithmatex"><span class="MathJax_Preview">127 \,\text{com}</span><script type="math/tex">127 \,\text{com}</script></span>, and a centimeter is <span class="arithmatex"><span class="MathJax_Preview">50 \,\text{com}</span><script type="math/tex">50 \,\text{com}</script></span>.  After
-  implicitly converting each argument, the input reduces to <code>coms(12700) &gt; coms(10000)</code>, which
-  clearly evaluates to <code>true</code>.</p>
-</li>
-</ul>
-<p>Check your understanding: what would we get if we <em>added</em> these last values instead of <em>comparing</em>
-them?</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Question</label><label for="__tabbed_1_2">Answer and discussion</label></div>
+<p>Here are the contents of the file to create:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Using {fmt}</label><label for="__tabbed_1_2">Using std::format</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">inches</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">centi</span><span class="p">(</span><span class="n">meters</span><span class="p">)(</span><span class="mi">200</span><span class="p">)</span><span class="w"> </span><span class="c1">// -&gt; ...?</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#pragma once</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/au.hh&quot;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;fmt/format.h&quot;</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">fmt</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="k">struct</span><span class="w"> </span><span class="nc">formatter</span><span class="o">&lt;::</span><span class="n">au</span><span class="o">::</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="o">::</span><span class="n">au</span><span class="o">::</span><span class="n">QuantityFormatter</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="o">::</span><span class="n">fmt</span><span class="o">::</span><span class="n">formatter</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">}</span><span class="w">  </span><span class="c1">// namespace fmt</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">inches</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">centi</span><span class="p">(</span><span class="n">meters</span><span class="p">)(</span><span class="mi">200</span><span class="p">)</span><span class="w"> </span><span class="c1">// -&gt; coms(22700), using above notation</span>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>These instructions have not yet been tested, because the Au repo doesn&rsquo;t yet have an
+official toolchain that supports <code>std::format</code>.</p>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="cp">#pragma once</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;format&gt;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/au.hh&quot;</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="k">struct</span><span class="w"> </span><span class="nc">std</span><span class="o">::</span><span class="n">formatter</span><span class="o">&lt;::</span><span class="n">au</span><span class="o">::</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="o">::</span><span class="n">au</span><span class="o">::</span><span class="n">QuantityFormatter</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">formatter</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{};</span>
 </code></pre></div>
-<p>We know that addition is a &ldquo;common unit operation&rdquo;, which means we have to convert both inputs
-to the common unit before performing it.  As above, let&rsquo;s temporarily assume we&rsquo;ve given a name,
-<code>coms</code>, to this anonymous unit.  We already saw that these inputs convert to <code>coms(12700)</code> and
-<code>coms(10000)</code>, respectively, so all we have to do is add them together to get <code>coms(22700)</code>.</p>
-<p>Of course, in real code, this unit wouldn&rsquo;t have a name.  We&rsquo;d just have some <code>Quantity</code> of an
-anonymous length unit with this magnitude, storing the value <code>22700</code>.  So: what can we <em>do</em> with
-this result?  Well, we can&rsquo;t assign it to an <em>integer</em> Quantity of <code>inches</code> <em>or</em>
-<code>centi(meters)</code>, because it&rsquo;s not an integer in either of those units.  However, we <em>can</em>&hellip;</p>
-<ul>
-<li>&hellip;<strong>compare</strong> it to an integer Quantity of <code>inches</code> or <code>centi(meters)</code></li>
-<li>&hellip;assign it to a <strong>floating point</strong> Quantity of <code>inches</code> or <code>centi(meters)</code></li>
-<li>&hellip;assign it to an integer Quantity of some <strong>smaller divisor unit</strong>, such as
-    <code>micro(meters)</code></li>
-</ul>
-<p>So, for example, this would work:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">QuantityI32</span><span class="o">&lt;</span><span class="n">Micro</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inches</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">centi</span><span class="p">(</span><span class="n">meters</span><span class="p">)(</span><span class="mi">200</span><span class="p">)</span>
+</div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip: finding the file in your project</p>
+<p>It&rsquo;s very important to have <em>only one</em> definition of <code>formatter&lt;Quantity&lt;U, R&gt;&gt;</code> in your
+project.  This means you need a way to tell whether someone has created this file already, and
+find it if it exists.</p>
+<p>Fortunately, the string <code>QuantityFormatter</code> is very greppable.  In most cases, it should only
+occur once in your project &mdash; even if there are a few stray mentions, it should be easy to find
+the authoritative definition.  Start by grepping your project for this string.  If you find it,
+you can just use the file, and if not, you know you need to create it.</p>
+</div>
+<h2 id="syntax">Syntax<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
+<p>Printing a quantity means printing its numeric value, followed by its unit label.  Au lets you
+provide format strings for either or both of these.  If you add a format string for the unit label,
+you need to prefix it with a <code>U</code>.  If you add format strings for both, separate them with a <code>;</code>.  In
+both cases, the syntax delegates to the <a href="https://hackingcpp.com/cpp/libs/fmt.html">standard format syntax</a> for each piece.</p>
+<p>It may be easier to understand with several examples.</p>
+<table>
+<thead>
+<tr>
+<th>Specialize format for</th>
+<th>Pattern</th>
+<th>Example</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Neither</td>
+<td><code>{}</code></td>
+<td><code>std::format("{}", meters(123.456))</code></td>
+<td><code>"123.456 m"</code></td>
+</tr>
+<tr>
+<td>Numeric value</td>
+<td><code>{:~^10.2f}</code></td>
+<td><code>std::format("{:~^10.2f}", meters(123.456))</code></td>
+<td><code>"~~123.46~~ m"</code></td>
+</tr>
+<tr>
+<td>Unit label</td>
+<td><code>{:U.&gt;5}</code></td>
+<td><code>std::format("{:U.&gt;5}", meters(123.456))</code></td>
+<td><code>"123.456 ....m"</code></td>
+</tr>
+<tr>
+<td>Both</td>
+<td><code>{:~^10.2f;U.&gt;5}</code></td>
+<td><code>std::format("{:~^10.2f;U.&gt;5}", meters(123.456))</code></td>
+<td><code>"~~123.46~~ ....m"</code></td>
+</tr>
+</tbody>
+</table>
+<p>To target a specific and consistent overall width &mdash; say, for aligning columnar output &mdash; provide
+formatters for both the numeric value and the unit label, and choose a specific width for each.  The
+overall width will be the sum of the widths of the two pieces, plus one space in between.</p>
+<h3 id="specialized-use-cases">Specialized use cases<a class="headerlink" href="#specialized-use-cases" title="Permanent link">&para;</a></h3>
+<p>The core support provides a formatted numeric value, then a space <code>' '</code>, then a formatted unit
+label.  There may be other use cases, but we don&rsquo;t support them directly, and we don&rsquo;t plan to.
+Fortunately, these tend to have straightforward workarounds.</p>
+<p>Here are some examples.</p>
+<p>Besides the separate formatters for the numeric value and unit label, some users may wish to format
+the &ldquo;overall result&rdquo;.  For example, they may want the whole quantity (unit and label) to be centered
+in a width of, say, 25 characters.  We cannot support this directly without excessive complexity, in
+both the implementation, and the formatter syntax.  The simple workaround is to format your quantity
+as desired using the existing syntax, and then format the result using simple <code>std::string</code>
+formatting, like so:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">speed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">centi</span><span class="p">(</span><span class="n">meters</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">second</span><span class="p">)(</span><span class="mf">987.654321</span><span class="p">);</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;{:.^31}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;{:,&lt;8.2f;U*&gt;10}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">speed</span><span class="p">));</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1">// Output: &quot;......987.65,, ****cm / s......&quot;</span>
 </code></pre></div>
-<p>The value of <code>x</code> would be <code>micro(meters)(4'540'000)</code>.</p>
-</div>
-</div>
-</div>
-<div class="footnote">
-<hr />
-<ol>
-<li id="fn:1">
-<p>Note that this is only possible in the first place if the units have the same <em>dimension</em>.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:2">
-<p>Of course, this definition only applies to units which <em>have</em> a common divisor.  This happens
-whenever their ratio (a dimensionless number) is an exact rational number.  This won&rsquo;t work for unit
-pairs such as <code>degrees</code> and <code>radians</code>, whose ratio is the irrational number <span class="arithmatex"><span class="MathJax_Preview">(\pi / 180)</span><script type="math/tex">(\pi / 180)</script></span>.  For
-&ldquo;irrational ratios&rdquo;, no convention can provide the benefits in this section, so we make an arbitrary
-choice based on convenience of implementation.  For more details, see the <a href="../common_unit/">common unit
-docs</a>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
-</li>
-</ol>
-</div>
+<p>Some users may want a format that prints <em>only</em> the numeric value, or <em>only</em> the unit label.  We
+don&rsquo;t provide a direct way to do this, because neither of these pieces is meaningful on its own.  If
+you do have a use case for formatting only one of these, the workaround is straightforward.  Simply
+retrieve the numeric value or unit label by the library&rsquo;s standard methods, and pass the result to
+a formatter for that numeric type, like so:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">299&#39;792.458</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">km</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;{:,&lt;12.2f}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">data_in</span><span class="p">(</span><span class="n">km</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">s</span><span class="p">));</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1">// Output: &quot;299792.46,,,&quot;</span>
+</code></pre></div>
 
 
 
@@ -2147,7 +2139,7 @@ docs</a>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to f
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Generic Concepts">
+          <a href="../corresponding_quantity/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Corresponding Quantity">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2157,20 +2149,20 @@ docs</a>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to f
                 Previous
               </span>
               <div class="md-ellipsis">
-                Generic Concepts
+                Corresponding Quantity
               </div>
             </div>
           </a>
         
         
           
-          <a href="../common_unit/" class="md-footer__link md-footer__link--next" aria-label="Next: Common Units">
+          <a href="../magnitude/" class="md-footer__link md-footer__link--next" aria-label="Next: Magnitude">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Common Units
+                Magnitude
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -2210,10 +2202,10 @@ docs</a>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to f
     
     
       
-      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       
