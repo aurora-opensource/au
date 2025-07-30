@@ -18,11 +18,11 @@ cc_binary(
     name = "quantity_runtime_conversion_check",
     testonly = True,
     srcs = ["quantity_runtime_conversion_check.cc"],
+    tags = ["manual"],
     deps = [
         ":quantity_runtime_conversion_checkers",
         "//au:conversion_strategy",
         "//au:testing",
-        "@com_google_googletest//:gtest_main",
     ],
 )
 
