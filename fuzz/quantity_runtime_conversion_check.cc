@@ -185,7 +185,7 @@ constexpr TestCategory categorize_testing_scenario() {
         return std::is_integral<DestRepT>::value ? TestCategory::INTEGRAL_TO_INTEGRAL
                                                  : TestCategory::INTEGRAL_TO_FLOAT;
     }
-    
+
     return std::is_integral<DestRepT>::value ? TestCategory::FLOAT_TO_INTEGRAL
                                              : TestCategory::FLOAT_TO_FLOAT;
 }
@@ -288,8 +288,7 @@ struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_FLOA
         const auto max_ok = next_higher_quantity(value, 2u);
 
         std::ostringstream oss;
-        oss << "Breakdown:" << std::setprecision(std::numeric_limits<RepT>::digits10 + 1u)
-            << '\n'
+        oss << "Breakdown:" << std::setprecision(std::numeric_limits<RepT>::digits10 + 1u) << '\n'
             << "  Initial:    " << value << '\n'
             << "  Min OK:     " << min_ok << '\n'
             << "  Round trip: " << round_trip << '\n'
@@ -498,7 +497,7 @@ struct TestBody : TestBodyImpl<RepT,
                                DestUnitT,
                                categorize_testing_scenario<RepT, UnitT, DestRepT, DestUnitT>()> {};
 
-TEST(RuntimeConversionCheckers, Fuzz) {
+int main() {
     GeneratorFor<Reps> generators{9876543210u};
     constexpr auto for_each_params = ForEach<CartesianProduct<std::tuple, Reps, Units>>{};
     auto print_if_equals = 1u;
@@ -525,7 +524,11 @@ TEST(RuntimeConversionCheckers, Fuzz) {
             });
         });
     }
+
+    return 0;
 }
 
 }  // namespace detail
 }  // namespace au
+
+int main(int, char **) { return ::au::detail::main(); }
