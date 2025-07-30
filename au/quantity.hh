@@ -941,7 +941,7 @@ struct QuantityFormatter {
         if (is_unit_label) {
             ++it;
         }
-        FormatParseContext parse_ctx{it, static_cast<int>(next_end - it)};
+        FormatParseContext parse_ctx{{it, static_cast<std::size_t>(next_end - it)}, 0};
 
         if (is_unit_label) {
             unit_label_format.parse(parse_ctx);
