@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-82-ge027ce6
+// Version identifier: 0.4.1-83-g17521c4
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -7529,78 +7529,6 @@ struct CommonQuantity<Quantity<U1, R1>,
                       Quantity<U2, R2>,
                       std::enable_if_t<HasSameDimension<U1, U2>::value>>
     : stdx::type_identity<Quantity<CommonUnitT<U1, U2>, std::common_type_t<R1, R2>>> {};
-
-//
-// Formatter implementation for fmtlib or `std::format`.
-//
-// Support for `std::format` is automatically included whenever `std::format` is present.
-//
-// To use with fmtlib, add this template specialization to a file that includes both
-// `"au/quantity.hh"`, and `"fmt/format.h"`:
-//
-//    namespace fmt {
-//    template <typename U, typename R>
-//    struct formatter<::au::Quantity<U, R>> : ::au::QuantityFormatter<U, R, ::fmt::formatter> {};
-//    }  // namespace fmt
-//
-// Then, include that file any time you want to format a `Quantity`.
-//
-template <typename U, typename R, template <class...> class Formatter>
-struct QuantityFormatter {
-    template <typename FormatParseContext>
-    constexpr auto parse(FormatParseContext &ctx) {
-        auto it = ctx.begin();
-
-        while (it != ctx.end() && *it != '}') {
-            it = parse_section<FormatParseContext>(it, ctx.end());
-        }
-
-        return it;
-    }
-
-    template <typename FormatParseContext, typename Iter, typename End>
-    constexpr auto parse_section(Iter it, End end) {
-        const auto next_end = find_next_end(it, end);
-        const auto next_begin =
-            (next_end == end || *next_end == '}') ? next_end : std::next(next_end);
-
-        const bool is_unit_label = (*it == 'U');
-        if (is_unit_label) {
-            ++it;
-        }
-        FormatParseContext parse_ctx{it, static_cast<int>(next_end - it)};
-
-        if (is_unit_label) {
-            unit_label_format.parse(parse_ctx);
-        } else {
-            value_format.parse(parse_ctx);
-        }
-
-        return next_begin;
-    }
-
-    template <typename Iter, typename End>
-    constexpr auto find_next_end(Iter it, End end) {
-        auto next_end = std::find(it, end, ';');
-
-        if (next_end == end) {
-            next_end = std::find(it, end, '}');
-        }
-
-        return next_end;
-    }
-
-    template <typename FormatContext>
-    auto format(const au::Quantity<U, R> &q, FormatContext &ctx) const {
-        value_format.format(q.data_in(U{}), ctx);
-        ctx.out() = ' ';
-        return unit_label_format.format(unit_label(U{}), ctx);
-    }
-
-    Formatter<R> value_format{};
-    Formatter<const char *> unit_label_format{};
-};
-
 }  // namespace au
 
 namespace std {
