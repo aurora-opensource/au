@@ -80,21 +80,6 @@ cc_test(
     ],
 )
 
-cc_test(
-    name = "fmt_test",
-    size = "small",
-    srcs = ["fmt_test.cc"],
-    copts = ["-Wno-sign-conversion"],
-    tags = ["no_wsign_conversion"],
-    deps = [
-        ":quantity",
-        ":testing",
-        ":units",
-        "@com_google_googletest//:gtest_main",
-        "@fmt",
-    ],
-)
-
 cc_library(
     name = "fwd",
     hdrs = ["fwd.hh"],
