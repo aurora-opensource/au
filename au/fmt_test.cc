@@ -21,8 +21,16 @@
 #include "gtest/gtest.h"
 
 namespace fmt {
+struct FmtFormatterImpl {
+    template <typename OutIter, typename... Args>
+    static auto format_to(OutIter out, const char *fmt_str, Args &&...args) {
+        return fmt::format_to(out, fmt_str, std::forward<Args>(args)...);
+    }
+};
+
 template <typename U, typename R>
-struct formatter<::au::Quantity<U, R>> : ::au::QuantityFormatter<U, R, ::fmt::formatter> {};
+struct formatter<::au::Quantity<U, R>>
+    : ::au::QuantityFormatter<U, R, ::fmt::formatter, FmtFormatterImpl> {};
 }  // namespace fmt
 
 namespace au {

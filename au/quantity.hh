@@ -15,6 +15,7 @@
 #pragma once
 
 #include <algorithm>
+#include <string>
 #include <utility>
 
 #include "au/conversion_policy.hh"
@@ -918,20 +919,26 @@ struct CommonQuantity<Quantity<U1, R1>,
 //
 // Then, include that file any time you want to format a `Quantity`.
 //
-template <typename U, typename R, template <class...> class Formatter>
+template <typename U,
+          typename R,
+          template <class...>
+          class Formatter,
+          class FormatImpl,
+          size_t N = 32>
 struct QuantityFormatter {
+    static_assert(N > 4, "Infeasible: must leave space for '{', ':', '}', and null terminator");
     template <typename FormatParseContext>
     constexpr auto parse(FormatParseContext &ctx) {
         auto it = ctx.begin();
 
         while (it != ctx.end() && *it != '}') {
-            it = parse_section<FormatParseContext>(it, ctx.end());
+            it = parse_section(it, ctx.end());
         }
 
         return it;
     }
 
-    template <typename FormatParseContext, typename Iter, typename End>
+    template <typename Iter, typename End>
     constexpr auto parse_section(Iter it, End end) {
         const auto next_end = find_next_end(it, end);
         const auto next_begin =
@@ -941,15 +948,26 @@ struct QuantityFormatter {
         if (is_unit_label) {
             ++it;
         }
-        FormatParseContext parse_ctx{it, static_cast<int>(next_end - it)};
 
         if (is_unit_label) {
-            unit_label_format.parse(parse_ctx);
+            copy_subset(it, next_end, unit_label_format_string);
         } else {
-            value_format.parse(parse_ctx);
+            copy_subset(it, next_end, value_format_string);
         }
 
         return next_begin;
+    }
+
+    template <typename Iter, typename End>
+    constexpr void copy_subset(Iter it, End end, char *dest) {
+        *dest++ = '{';
+        *dest++ = ':';
+        size_t capacity = N - 4u;
+        while (it != end && *it != '}' && capacity-- > 0u) {
+            *dest++ = *it++;
+        }
+        *dest++ = '}';
+        *dest++ = '\0';
     }
 
     template <typename Iter, typename End>
@@ -965,13 +983,13 @@ struct QuantityFormatter {
 
     template <typename FormatContext>
     auto format(const au::Quantity<U, R> &q, FormatContext &ctx) const {
-        value_format.format(q.data_in(U{}), ctx);
+        FormatImpl::format_to(ctx.out(), value_format_string, q.data_in(U{}));
         ctx.out() = ' ';
-        return unit_label_format.format(unit_label(U{}), ctx);
+        return FormatImpl::format_to(ctx.out(), unit_label_format_string, unit_label(U{}));
     }
 
-    Formatter<R> value_format{};
-    Formatter<const char *> unit_label_format{};
+    char value_format_string[N] = "{}";
+    char unit_label_format_string[N] = "{}";
 };
 
 }  // namespace au
