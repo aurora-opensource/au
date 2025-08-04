@@ -37,12 +37,6 @@ struct Pascals : decltype(Newtons{} / squared(Meters{})), PascalsLabel<void> {
     using PascalsLabel<void>::label;
 };
 
-#ifndef pascal
-[[deprecated(
-    "Conflicts with the `pascal` macro from <Windows.h>; declare manually "
-    "instead.")]] constexpr auto pascal = SingularNameFor<Pascals>{};
-#endif
-
 constexpr auto pascals = QuantityMaker<Pascals>{};
 constexpr QuantityPointMaker<Pascals> pascals_pt{};
 
