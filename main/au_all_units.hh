@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-83-g17521c4
+// Version identifier: 0.4.1-84-gee94dca
 // <iostream> support: INCLUDED
 // List of included units:
 //   amperes
@@ -3241,18 +3241,6 @@ using CommonMagnitudeT = typename CommonMagnitude<Ms...>::type;
 // Value based interface for Magnitude.
 
 static constexpr auto ONE = Magnitude<>{};
-
-#ifndef PI
-// Some users must work with frameworks that define `PI` as a macro.  Having a macro with this
-// easily collidable name is exceedingly unwise.  Nevertheless, that's not the users' fault, so we
-// accommodate those frameworks by omitting the definition of `PI` in this case.
-//
-// If you are stuck with such a framework, you can choose a different name that does not collide,
-// and reproduce the following line in your own system.
-[[deprecated(
-    "If you need a magnitude instance for pi, define your own as `constexpr auto PI = "
-    "Magnitude<Pi>{};`")]] static constexpr auto PI = Magnitude<Pi>{};
-#endif
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator*(Magnitude<BP1s...>, Magnitude<BP2s...>) {
@@ -7170,33 +7158,6 @@ class AlwaysDivisibleQuantity {
     Quantity<U, R> q_;
 };
 
-// Force integer division beteween two integer Quantities, in a callsite-obvious way.
-template <typename U1, typename R1, typename U2, typename R2>
-[[deprecated("Replace `integer_quotient(a, b)` with `a / unblock_int_div(b)`")]] constexpr auto
-integer_quotient(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    static_assert(std::is_integral<R1>::value && std::is_integral<R2>::value,
-                  "integer_quotient() can only be called with integral Rep");
-    return make_quantity<UnitQuotientT<U1, U2>>(q1.in(U1{}) / q2.in(U2{}));
-}
-
-// Force integer division beteween an integer Quantity and a raw number.
-template <typename U, typename R, typename T>
-[[deprecated("Replace `integer_quotient(a, b)` with `a / unblock_int_div(b)`")]] constexpr auto
-integer_quotient(Quantity<U, R> q, T x) {
-    static_assert(std::is_integral<R>::value && std::is_integral<T>::value,
-                  "integer_quotient() can only be called with integral Rep");
-    return make_quantity<U>(q.in(U{}) / x);
-}
-
-// Force integer division beteween a raw number and an integer Quantity.
-template <typename T, typename U, typename R>
-[[deprecated("Replace `integer_quotient(a, b)` with `a / unblock_int_div(b)`")]] constexpr auto
-integer_quotient(T x, Quantity<U, R> q) {
-    static_assert(std::is_integral<T>::value && std::is_integral<R>::value,
-                  "integer_quotient() can only be called with integral Rep");
-    return make_quantity<UnitInverseT<U>>(x / q.in(U{}));
-}
-
 // The modulo operator (i.e., the remainder of an integer division).
 //
 // Only defined whenever (R1{} % R2{}) is defined (i.e., for integral Reps), _and_
@@ -10324,12 +10285,6 @@ constexpr const char PascalsLabel<T>::label[];
 struct Pascals : decltype(Newtons{} / squared(Meters{})), PascalsLabel<void> {
     using PascalsLabel<void>::label;
 };
-
-#ifndef pascal
-[[deprecated(
-    "Conflicts with the `pascal` macro from <Windows.h>; declare manually "
-    "instead.")]] constexpr auto pascal = SingularNameFor<Pascals>{};
-#endif
 
 constexpr auto pascals = QuantityMaker<Pascals>{};
 constexpr QuantityPointMaker<Pascals> pascals_pt{};
