@@ -105,7 +105,7 @@ constexpr auto as_quantity(T &&x) -> CorrespondingQuantityT<T> {
 // Only works for dimensionless `Quantities`; will return a compile-time error otherwise.
 //
 // Identity for non-`Quantity` types.
-template <typename U, typename R, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+template <typename U, typename R, typename RiskPolicyT = decltype(guard_against(ALL_RISKS))>
 constexpr R as_raw_number(Quantity<U, R> q, RiskPolicyT policy = RiskPolicyT{}) {
     return q.in(UnitProductT<>{}, policy);
 }
@@ -182,7 +182,7 @@ class Quantity {
     }
 
     // `q.as(new_unit)`, or `q.as(new_unit, risk_policy)`
-    template <typename NewUnitSlot, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+    template <typename NewUnitSlot, typename RiskPolicyT = decltype(guard_against(ALL_RISKS))>
     constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity<AssociatedUnitT<NewUnitSlot>>(in_impl<Rep>(u, policy));
     }
@@ -196,7 +196,7 @@ class Quantity {
     }
 
     // `q.in(new_unit)`, or `q.in(new_unit, risk_policy)`
-    template <typename NewUnitSlot, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+    template <typename NewUnitSlot, typename RiskPolicyT = decltype(guard_against(ALL_RISKS))>
     constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<Rep>(u, policy);
     }

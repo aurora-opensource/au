@@ -31,9 +31,9 @@ namespace au {
 // Conversion risk section.
 //
 // End users can use the constants `OVERFLOW_RISK` and `TRUNCATION_RISK`.  They can combine them as
-// flags with `|`.  And they can pass either of these (or the result of `|`) to either `check()` or
-// `ignore()`.  The result of these functions is a risk _policy_, which can be passed as a second
-// argument to conversion functions to control which checks are performed.
+// flags with `|`.  And they can pass either of these (or the result of `|`) to either
+// `guard_against()` or `ignore()`.  The result of these functions is a risk _policy_, which can be
+// passed as a second argument to conversion functions to control which checks are performed.
 //
 
 namespace detail {
@@ -58,7 +58,7 @@ struct RiskSet {
 
     constexpr uint8_t flags() const { return RiskFlags; }
 
-    friend constexpr CheckTheseRisks<RiskSet<RiskFlags>> check(RiskSet) { return {}; }
+    friend constexpr CheckTheseRisks<RiskSet<RiskFlags>> guard_against(RiskSet) { return {}; }
     friend constexpr CheckTheseRisks<RiskSet<3u - RiskFlags>> ignore(RiskSet) { return {}; }
 };
 

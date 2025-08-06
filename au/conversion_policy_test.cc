@@ -58,19 +58,19 @@ TEST(ConversionRisk, IgnoreAllRisksChecksNeitherRisk) {
 }
 
 TEST(ConversionRisk, CheckOverflowRiskChecksOverflowRiskButNotTruncationRisk) {
-    constexpr auto policy = check(OVERFLOW_RISK);
+    constexpr auto policy = guard_against(OVERFLOW_RISK);
     EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsTrue());
     EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsFalse());
 }
 
 TEST(ConversionRisk, CheckTruncationRiskChecksTruncationRiskButNotOverflowRisk) {
-    constexpr auto policy = check(TRUNCATION_RISK);
+    constexpr auto policy = guard_against(TRUNCATION_RISK);
     EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsFalse());
     EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsTrue());
 }
 
 TEST(ConversionRisk, CheckAllRisksChecksBothRisks) {
-    constexpr auto policy = check(ALL_RISKS);
+    constexpr auto policy = guard_against(ALL_RISKS);
     EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsTrue());
     EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsTrue());
 }
