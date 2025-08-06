@@ -114,6 +114,11 @@ TEST(QuantityPoint, ImplicitConstructionsAreCorrect) {
     EXPECT_THAT(zero_celsius_as_mK, SameTypeAndValue(milli(kelvins_pt)(273'150)));
 }
 
+TEST(QuantityPoint, CanProvidePolicyToConstructor) {
+    constexpr auto temp = QuantityPointI<Kelvins>{celsius_pt(20), ignore(TRUNCATION_RISK)};
+    EXPECT_THAT(temp, SameTypeAndValue(kelvins_pt(293)));
+}
+
 TEST(QuantityPoint, CanCreateAndRetrieveValue) {
     constexpr auto p = celsius_pt(3);
     EXPECT_THAT(p.in(Celsius{}), SameTypeAndValue(3));
