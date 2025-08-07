@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-85-gc07682a
+// Version identifier: 0.4.1-86-g2f32834
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -6778,6 +6778,11 @@ class Quantity {
     // Deleted: use `.as<NewRep>(new_unit)` to force a cast.
     explicit constexpr Quantity(Quantity<OtherUnit, OtherRep> other) = delete;
 
+    // Constructor for another Quantity with an explicit conversion risk policy.
+    template <typename OtherUnit, typename OtherRep, typename RiskPolicyT>
+    constexpr Quantity(Quantity<OtherUnit, OtherRep> other, RiskPolicyT policy)
+        : value_{other.template in<Rep>(UnitT{}, policy)} {}
+
     // Construct this Quantity with a value of exactly Zero.
     constexpr Quantity(Zero) : value_{0} {}
 
@@ -8003,6 +8008,11 @@ class QuantityPoint {
               typename ThisUnusedTemplateParameterDistinguishesUsFromTheAboveConstructor = void>
     // Deleted: use `.as<NewRep>(new_unit)` to force a cast.
     constexpr explicit QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other) = delete;
+
+    // Construct from another QuantityPoint with an explicit conversion risk policy.
+    template <typename OtherUnit, typename OtherRep, typename RiskPolicyT>
+    constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other, RiskPolicyT policy)
+        : QuantityPoint{other.template as<Rep>(Unit{}, policy)} {}
 
     // The notion of "0" is *not* unambiguous for point types, because different scales can make
     // different decisions about what point is labeled as "0".
