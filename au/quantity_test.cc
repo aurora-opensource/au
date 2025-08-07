@@ -127,6 +127,11 @@ TEST(Quantity, CanCreateAndReadValuesByNamingUnits) {
     EXPECT_THAT(output_value, Eq(3.14));
 }
 
+TEST(Quantity, CanProvidePolicyToConstructor) {
+    constexpr auto length = QuantityI<Feet>{inches(36), ignore(TRUNCATION_RISK)};
+    EXPECT_THAT(length, SameTypeAndValue(feet(3)));
+}
+
 TEST(Quantity, CanRequestOutputRepWhenCallingIn) { EXPECT_THAT(feet(3.14).in<int>(feet), Eq(3)); }
 
 TEST(MakeQuantity, MakesQuantityInGivenUnit) {
