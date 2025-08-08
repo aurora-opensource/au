@@ -165,7 +165,7 @@ You may find it useful to use the explicit-Rep overload to force a conversion th
 risky, but in _this_ instance is known to be OK.  You should not need to use floating point
 numbers at all.
 
-!!! example "Exercise 1(b)"
+!!! example "Exercise 2"
     === "Task"
         Replace `PLACEHOLDER` instances with correct expressions.
 
@@ -188,7 +188,7 @@ numbers at all.
         // inches.  For example, `inches(17)` would be decomposed into `Height{feet(1), inches(5)}`.
         Height decompose_height(QuantityU32<Inches> total_height) {
             Height h;
-            h.feet = total_height.coerce_as(feet);  // NOTE: truncation is intended.
+            h.feet = total_height.as(feet, ignore(TRUNCATION_RISK)); // Truncation desired.
             h.inches = total_height - h.feet.as(inches);
             return h;
         }
@@ -210,7 +210,7 @@ numbers at all.
 
 This exercise gave a few worked examples of unit conversions.  We saw how Au can immediately replace
 crufty, error-prone manual conversions, making code more readable.  We also saw a practical example
-of quantity-to-quantity conversion using `.as(...)`, including one example where the forcing
-"explicit-Rep" form is clearly safe and correct to use.
+of quantity-to-quantity conversion using `.as(...)`, including one example where explicitly turning
+off the truncation risk check was clearly safe and correct to use.
 
 Return to the [main tutorial page](../103-unit-conversions.md).

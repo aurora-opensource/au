@@ -197,7 +197,38 @@ the requested unit can be exactly represented in the type `T`.
 The argument `unit` is a [unit slot](../discussion/idioms/unit-slots.md) API, so it accepts a unit
 instance, quantity maker instance, or any other instance compatible with a unit slot.
 
+### `.as<T>(unit, policy)`
+
+This function expresses the constant as a `Quantity` in the requested unit, using a rep of `T`.  As
+usual, `Constant` has perfect knowledge at compile time about whether the conversion will cause
+overflow or truncation.  However, if the `policy` argument instructs it to ignore either of these
+problems, then it will not perform the corresponding safety check.
+
+The argument `unit` is a [unit slot](../discussion/idioms/unit-slots.md) API, so it accepts a unit
+instance, quantity maker instance, or any other instance compatible with a unit slot.
+
+The argument `policy` is a [conversion risk policy](./conversion_risk_policies.md).  In this
+context, instead of applying to the _risk_ of a problem, it applies to the _actual existence_ of
+that problem.  For example: you would **not** need to provide `ignore(TRUNCATION_RISK)` unless the
+specific conversion will _actually cause truncation_.
+
+!!! tip
+    This overload is typically only useful when you know that a specific conversion is _actually
+    lossy_, but you want it anyway.  Any non-lossy conversion would already be allowed with the
+    [simpler overload](#as-T-unit), which should be preferred.
+
+    Additionally, the conversion risks are not equally useful.  Use cases for
+    `ignore(TRUNCATION_RISK)` are straightforward to imagine: for example, you may simply want
+    a less precise version of the context.  Use cases for `ignore(OVERFLOW_RISK)` are very hard to
+    imagine, as they will produce a grossly incorrect result with no physical relationship to the
+    actual value.
+
 ### `.coerce_as<T>(unit)`
+
+!!! warning
+    We plan to deprecate APIs with `coerce` in their name in the [0.6.0] release ([#481]).  For
+    a `Constant` `c`, instead of `c.coerce_as<T>(unit)`, prefer `c.as<T>(unit, policy)`, where
+    `policy` is the desired [conversion risk policy](./conversion_risk_policies.md).
 
 This function expresses the constant as a `Quantity` in the requested unit, using a rep of `T`.  It
 is similar to [`.as<T>(unit)`](#as-T-unit), except that it will ignore the safety checks that
@@ -218,7 +249,38 @@ constant's value in the requested unit can be exactly represented in the type `T
 The argument `unit` is a [unit slot](../discussion/idioms/unit-slots.md) API, so it accepts a unit
 instance, quantity maker instance, or any other instance compatible with a unit slot.
 
+### `.in<T>(unit, policy)`
+
+This function produces a raw numeric value, of type `T`, holding the value of the constant in the
+requested unit.  As usual, `Constant` has perfect knowledge at compile time about whether the
+conversion will cause overflow or truncation.  However, if the `policy` argument instructs it to
+ignore either of these problems, then it will not perform the corresponding safety check.
+
+The argument `unit` is a [unit slot](../discussion/idioms/unit-slots.md) API, so it accepts a unit
+instance, quantity maker instance, or any other instance compatible with a unit slot.
+
+The argument `policy` is a [conversion risk policy](./conversion_risk_policies.md).  In this
+context, instead of applying to the _risk_ of a problem, it applies to the _actual existence_ of
+that problem.  For example: you would **not** need to provide `ignore(TRUNCATION_RISK)` unless the
+specific conversion will _actually cause truncation_.
+
+!!! tip
+    This overload is typically only useful when you know that a specific conversion is _actually
+    lossy_, but you want it anyway.  Any non-lossy conversion would already be allowed with the
+    [simpler overload](#in-T-unit), which should be preferred.
+
+    Additionally, the conversion risks are not equally useful.  Use cases for
+    `ignore(TRUNCATION_RISK)` are straightforward to imagine: for example, you may simply want
+    a less precise version of the context.  Use cases for `ignore(OVERFLOW_RISK)` are very hard to
+    imagine, as they will produce a grossly incorrect result with no physical relationship to the
+    actual value.
+
 ### `.coerce_in<T>(unit)`
+
+!!! warning
+    We plan to deprecate APIs with `coerce` in their name in the [0.6.0] release ([#481]).  For
+    a `Constant` `c`, instead of `c.coerce_in<T>(unit)`, prefer `c.in<T>(unit, policy)`, where
+    `policy` is the desired [conversion risk policy](./conversion_risk_policies.md).
 
 This function produces a raw numeric value, of type `T`, holding the value of the constant in the
 requested unit.  It is similar to [`.in<T>(unit)`](#in-T-unit), except that it will ignore the
@@ -346,3 +408,6 @@ because quantity points do not support multiplication.
 
 Multiplying or dividing `Constant<Unit>` with a `QuantityPoint<U, R>` is explicitly deleted,
 because quantity points do not support multiplication.
+
+[0.6.0]: https://github.com/aurora-opensource/au/milestone/9
+[#481]: https://github.com/aurora-opensource/au/issues/481

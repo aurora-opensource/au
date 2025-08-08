@@ -83,7 +83,7 @@ are many dimensions, and new ones can be created on the fly, it's infeasible to 
 a "practical range" for _all_ of them.  Besides, users can still form arbitrary
 `std::chrono::duration` types, and they may not realize the safety they have given up in doing so.
 
-### Adapt to risk
+### Adapt to risk {#adapt}
 
 Fundamentally, there are two contributions to the level of overflow risk:
 
