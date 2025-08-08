@@ -129,21 +129,40 @@ fail to exist in several ways.
 1. If the input quantity has a **different dimension**, then the operation is intrinsically
    meaningless and we forbid it.
 
-2. If the _constructed_ quantity's rep (that is, `Rep` in the code snippet above) is **not floating
-   point**, then we forbid any conversion that might produce a non-integer value.  Examples include:
+2. If the unit conversion has what we consider to be **unacceptable risk**, then we also forbid it.
+   Common examples include:
 
-    a. When `OtherRep` _is floating point_, we forbid this conversion.
+    a. When `OtherRep` is _floating point_, but `Rep` is _integral_, we forbid this conversion for
+       excessive truncation risk.
 
-    b. When `UnitRatioT<OtherUnit, Unit>` is _not an integer_, we forbid this conversion.
-
-3. If we're performing an integer-to-integer conversion, and the conversion factor carries
-   a significant risk of overflowing the rep, we forbid the conversion.  This is the adaptive
-   "overflow safety surface" which we featured in our [Au announcement blog
-   post](https://blog.aurora.tech/engineering/introducing-au-our-open-source-c-units-library).
+    b. If the conversion factor is large, and `Rep` is small, such that _even very small values_ in
+       `OtherRep` would exceed the bounds of `Rep`, we forbid this conversion for excessive overflow
+       risk.  See the [overflow safety surface](../discussion/concepts/overflow.md#adapt) docs for
+       more details.
 
 These last two are examples of conversions that are physically meaningful, but forbidden due to the
 risk of larger-than-usual errors.  The library can still perform these conversions, but not via this
-constructor, and it must be "forced" to do so.  See [`.coerce_as(unit)`](#coerce) for more details.
+constructor, and it must be "forced" to do so.  The next section explains how to do this.
+
+### Constructing from another `Quantity`, with explicit risk policy
+
+This constructor also performs a unit conversion, but the user selects which conversion risks are
+actively checked for.  This is done by passing an explicit [conversion risk
+policy](./conversion_risk_policies.md) as a second argument.
+
+Here is the signature.  We've simplified it slightly for illustration purposes, and enclosed it
+inside the class definition for context.
+
+```cpp
+template <typename Unit, typename Rep>
+class Quantity {
+    template <typename OtherUnit, typename OtherRep, typename Policy>
+    Quantity(Quantity<OtherUnit, OtherRep> other, Policy policy);
+};
+```
+
+A common example for `policy` is `ignore(TRUNCATION_RISK)`.  This can be used when truncation is
+actually desired, or when you independently know that the specific input value will not truncate.
 
 ### Constructing from `Zero`
 
@@ -282,24 +301,16 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
 
 However, note that we may change this second property in the future.  The version with the template
 arguments may be changed later so that it _does_ prevent lossy conversions.  If you want this
-"forcing" semantic, prefer to use [`.coerce_as(unit)`](#coerce), and add the explicit template
-parameter only if you want to change the rep.  See
-[#122](https://github.com/aurora-opensource/au/issues/122) for more details.
-
-??? example "Example: forcing a conversion from inches to feet"
-    `inches(24).as(feet)` is not allowed.  This conversion will divide the underlying value, `24`,
-    by `12`.  Now, it so happens that this _particular_ value _would_ produce an integer result.
-    However, the compiler must decide whether to permit this operation _at compile time_, which
-    means we don't yet know the value.  Since most `int` values would _not_ produce integer results,
-    we forbid this.
-
-    `inches(24).as<int>(feet)` _is_ allowed.  The "explicit rep" template parameter has "forcing"
-    semantics.  This would produce `feet(2)`.  However, note that this operation uses integer
-    division, which truncates: so, for example, `inches(23).as<int>(feet)` would produce `feet(1)`.
+"forcing" semantic, prefer to use a policy argument, and add the explicit template parameter only if
+you want to change the rep.  See [#122] to track progress on this change, and see the [policy
+argument section](#policy-argument) for an example of the _preferred_ way to force a conversion.
 
 !!! tip
     Prefer to **omit** the template argument if possible, because you will get more safety checks.
     The risks which the no-template-argument version warns about are real.
+
+    As of [0.6.0] and [#122], however, this advice will no longer apply.  At that point, the
+    explicit-rep versions will have the same safety checks as the implicit-rep versions.
 
 ### `.in(unit)`, `.in<T>(unit)`
 
@@ -333,27 +344,83 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
 
 However, note that we may change this second property in the future.  The version with the template
 arguments may be changed later so that it _does_ prevent lossy conversions.  If you want this
-"forcing" semantic, prefer to use [`.coerce_in(unit)`](#coerce), and add the explicit template
-parameter only if you want to change the rep.  See
-[#122](https://github.com/aurora-opensource/au/issues/122) for more details.
-
-??? example "Example: forcing a conversion from inches to feet"
-    `inches(24).in(feet)` is not allowed.  This conversion will divide the underlying value, `24`,
-    by `12`.  Now, it so happens that this _particular_ value _would_ produce an integer result.
-    However, the compiler must decide whether to permit this operation _at compile time_, which
-    means we don't yet know the value.  Since most `int` values would _not_ produce integer results,
-    we forbid this.
-
-    `inches(24).in<int>(feet)` _is_ allowed.  The "explicit rep" template parameter has "forcing"
-    semantics (at least for now; see [#122](https://github.com/aurora-opensource/au/issues/122)).
-    This would produce `2`.  However, note that this operation uses integer division, which
-    truncates: so, for example, `inches(23).in<int>(feet)` would produce `1`.
+"forcing" semantic, prefer to use a policy argument, and add the explicit template parameter only if
+you want to change the rep.  See [#122] to track progress on this change, and see the [policy
+argument section](#policy-argument) for an example of the _preferred_ way to force a conversion.
 
 !!! tip
     Prefer to **omit** the template argument if possible, because you will get more safety checks.
     The risks which the no-template-argument version warns about are real.
 
+    As of [0.6.0] and [#122], however, this advice will no longer apply.  At that point, the
+    explicit-rep versions will have the same safety checks as the implicit-rep versions.
+
+### Skipping risk checks: the `policy` argument {#policy-argument}
+
+Some unit conversions have too much [conversion risk](../discussion/concepts/conversion_risks.md) to
+permit by default.  When that happens, the compiler will tell you which risk (overflow or
+truncation) it deemed too high.  You can still perform the conversion, but you must explicitly turn
+off the corresponding safety check, by passing a [policy argument](./conversion_risk_policies.md).
+Every variant of `as` and `in` mentioned above supports such an argument.  If you pass a policy, it
+will control the set of conversion risks that we check for.
+
+To be concrete, here are the signatures of the functions that support the policy argument:
+
+| Usual form | With policy argument |
+|------------|----------------------|
+| `.as(unit)` | `.as(unit, policy)` |
+| `.as<T>(unit)` | `.as<T>(unit, policy)` |
+| `.in(unit)` | `.in(unit, policy)` |
+| `.in<T>(unit)` | `.in<T>(unit, policy)` |
+
+??? example "Example: forcing a conversion from inches to feet"
+    `inches(24).as(feet)` is not allowed.  This conversion will divide the underlying value, `24`,
+    by `12`.  While this particular value would produce an integer result, most other `int` values
+    would not.  Because our result uses `int` for storage --- same as the input --- we forbid this.
+
+    `inches(24).as(feet, ignore(TRUNCATION_RISK))` _is_ allowed.  This second argument turns off the
+    truncation risk check.  The conversion would produce `feet(2)`.  However, note that this
+    operation uses integer division, which truncates: so, for example,
+    `inches(23).as(feet, ignore(TRUNCATION_RISK))` would produce `feet(1)`.
+
+??? example "Example: simultaneous unit and type conversion"
+    `inches(27.8).as<int>(feet, ignore(TRUNCATION_RISK))` will return `feet(2)`.
+
+!!! tip
+    In most cases, prefer **not** to use the policy versions if possible, because you will get more
+    safety checks.  The risks which the "base" versions warn about are real.
+
+    However, one place where it's _very safe_ to use the "coercing versions" is right after running
+    a _runtime conversion checker_.  These provde _exact_ conversion checks, even more accurate than
+    the default compile-time safety surface (although at the cost of runtime operations).  See the
+    [subsequent section](#runtime-conversion-checkers) for more details.
+
 ### Forcing lossy conversions: `.coerce_as(unit)`, `.coerce_in(unit)` {#coerce}
+
+!!! warning
+    We are planning to deprecate these functions in the [0.6.0] release.  See [#481] to track the
+    progress.
+
+    In the meantime, here is how you convert.
+
+    First, figure out which conversion risks you are trying to override: **overflow**, or
+    **truncation**, or **both**.  (If you don't have an explicit `<Rep>` argument, you can simply
+    delete the `"coerce_"` word and compile, and the error message will tell you which one is
+    relevant.  Otherwise, you will need to use your knowledge of the types and units involved to
+    figure this out.)
+
+    Then, follow this table to rewrite your conversion, using the conversion risk you identified
+    above.
+
+    | "Coerce" version (dis-preferred; will be deprecated) | "Policy" version (preferred) |
+    |------------------------------------------------------|------------------------------|
+    | `q.coerce_as(unit)` | One of:<br>`q.as(unit, ignore(OVERFLOW_RISK))`<br>`q.as(unit, ignore(TRUNCATION_RISK))`<br>`q.as(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
+    | `q.coerce_as<T>(unit)` | One of:<br>`q.as<T>(unit, ignore(OVERFLOW_RISK))`<br>`q.as<T>(unit, ignore(TRUNCATION_RISK))`<br>`q.as<T>(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
+    | `q.coerce_in(unit)` | One of:<br>`q.in(unit, ignore(OVERFLOW_RISK))`<br>`q.in(unit, ignore(TRUNCATION_RISK))`<br>`q.in(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
+    | `q.coerce_in<T>(unit)` | One of:<br>`q.in<T>(unit, ignore(OVERFLOW_RISK))`<br>`q.in<T>(unit, ignore(TRUNCATION_RISK))`<br>`q.in<T>(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
+
+    These new versions are both more clear about their intent, and safer (because they only turn off
+    the safety checks that they need to).
 
 This function performs the exact same kind of unit conversion as if the string `coerce_` were
 removed.  However, it will ignore any safety checks for overflow or truncation.
@@ -439,22 +506,9 @@ conversion will truncate.  For example, if the target unit is `feet`, then `inch
 `inches(11)` _would_ truncate, but `inches(12)` would _not_ truncate. Users can also provide an
 "explicit rep" template parameter to check the corresponding explicit-rep conversion.
 
-!!! warning "Warning: floating point destination types are treated as non-truncating"
-    Consistent with the rest of the library, and with the convention established by the
-    `std::chrono` library, we treat floating point types as value preserving.  This is not always
-    strictly true --- for example, there are many large integers which cannot be represented in
-    floating point, and converting these integers to floating point is really a form of truncation.
-
-    However, there are two compelling reasons for upholding this convenient fiction in this
-    function's policy.  First, it keeps these functions consistent with the rest of the library.
-    Second, if a user willingly enters the floating point domain, we may assume they accept the
-    kinds of precision losses that have always come along with it (often called the "usual floating
-    point error").
-
-    Designing APIs that wrestle in detail with the implications of floating point error --- not to
-    mention other numeric types, such as fixed point --- would be an interesting and worthwhile
-    endeavor, but also a very subtle and challenging one.  We hope to see that work take place
-    someday, whether in this library or another.
+!!! note "Note: floating point destination types are treated as non-truncating"
+    See the discussion in the [floating point section](../discussion/concepts/truncation.md#float)
+    of our truncation discussion for more detail.
 
 Here are the usage patterns, and their corresponding signatures.
 
@@ -507,7 +561,7 @@ Here are the usage patterns, and their corresponding signatures.
     constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit);
     ```
 
-### Special case: dimensionless and unitless results {#as-raw-number}
+### Dimensionless and unitless results: `as_raw_number` {#as-raw-number}
 
 Users may expect that the product of quantities such as `seconds` and `hertz` would completely
 cancel out, and produce a raw, simple C++ numeric type.  Currently, this is indeed the case, but we
@@ -522,16 +576,43 @@ all mechanisms and safety features of the library.  In particular:
 - We will automatically perform all necessary conversions.
 - This will not compile unless the input is _dimensionless_.
 - If the conversion is dangerous (say, from `Quantity<Percent, int>`, which cannot in general be
-  represented exactly as a raw `int`, we will also fail to compile.
+  represented exactly as a raw `int`), we will also fail to compile, unless users provide a second
+  policy argument to override the safety check.
 
 Users should get in the habit of using `as_raw_number` whenever they really want a raw number.  This
 communicates intent, and also works both before and after [#185] is implemented.
 
-!!! example
+Here are the available APIs:
+
+- `as_raw_number(q)`
+    - Converts the dimensionless quantity `q` to be unitless, and returns the underlying value.
+    - For compatibility reasons, also accepts an argument that is already a raw number, simply
+      returning it.
+- `as_raw_number(q, policy)`
+    - Same as above, but allows the user to override safety checks by passing a [policy
+      argument](./conversion_risk_policies.md).
+
+!!! example "Example: `as_raw_number` with a non-truncating conversion"
     ```cpp
     constexpr auto num_beats = as_raw_number(kilo(hertz)(7) * seconds(3));
     // Result: 21'000 (of type `int`)
     ```
+
+!!! example "Example: overriding safety checks for a truncating conversion"
+    The following will not compile:
+
+    ```cpp
+    constexpr auto factor = as_raw_number(percent(1234));
+    ```
+
+    The result would in principle be 12.34, but the rep is an `int`, which cannot hold this value.
+    If truncation is truly desired, you can provide a second argument to override the safety check:
+
+    ```cpp
+    constexpr auto factor = as_raw_number(percent(1234), ignore(TRUNCATION_RISK));
+    ```
+
+    This produces `12` (of type `int`).
 
 ## Non-Type Template Parameters (NTTPs) {#nttp}
 
@@ -855,4 +936,7 @@ the following conditions hold.
 - For _types_ `U1` and `U2`:
     - `AreQuantityTypesEquivalent<U1, U2>::value`
 
+[#122]: https://github.com/aurora-opensource/au/issues/122
 [#185]: https://github.com/aurora-opensource/au/issues/185
+[#481]: https://github.com/aurora-opensource/au/issues/481
+[0.6.0]: https://github.com/aurora-opensource/au/milestone/9
