@@ -391,7 +391,7 @@ To be concrete, here are the signatures of the functions that support the policy
     safety checks.  The risks which the "base" versions warn about are real.
 
     However, one place where it's _very safe_ to use the "coercing versions" is right after running
-    a _runtime conversion checker_.  These provde _exact_ conversion checks, even more accurate than
+    a _runtime conversion checker_.  These provide _exact_ conversion checks, even more accurate than
     the default compile-time safety surface (although at the cost of runtime operations).  See the
     [subsequent section](#runtime-conversion-checkers) for more details.
 
