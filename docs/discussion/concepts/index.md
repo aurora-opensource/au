@@ -15,7 +15,7 @@ and help you use units libraries more effectively.
   teaches you what choice we make, and what advantages it has.
 
 - **[Conversion Risks](./conversion_risks.md)**.  Unit conversions can be lossy.  This page explains
-  how to think about conversoin lossiness: both for individual input values, and for the overall
+  how to think about conversion lossiness: both for individual input values, and for the overall
   conversion as a whole.  We'll learn about the safety checks built into Au's APIs, and how to
   circumvent them when necessary.
 
