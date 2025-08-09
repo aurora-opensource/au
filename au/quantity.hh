@@ -162,6 +162,11 @@ class Quantity {
     // Deleted: use `.as<NewRep>(new_unit)` to force a cast.
     explicit constexpr Quantity(Quantity<OtherUnit, OtherRep> other) = delete;
 
+    // Constructor for another Quantity with an explicit conversion risk policy.
+    template <typename OtherUnit, typename OtherRep, typename RiskPolicyT>
+    constexpr Quantity(Quantity<OtherUnit, OtherRep> other, RiskPolicyT policy)
+        : value_{other.template in<Rep>(UnitT{}, policy)} {}
+
     // Construct this Quantity with a value of exactly Zero.
     constexpr Quantity(Zero) : value_{0} {}
 

@@ -119,6 +119,11 @@ class QuantityPoint {
     // Deleted: use `.as<NewRep>(new_unit)` to force a cast.
     constexpr explicit QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other) = delete;
 
+    // Construct from another QuantityPoint with an explicit conversion risk policy.
+    template <typename OtherUnit, typename OtherRep, typename RiskPolicyT>
+    constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other, RiskPolicyT policy)
+        : QuantityPoint{other.template as<Rep>(Unit{}, policy)} {}
+
     // The notion of "0" is *not* unambiguous for point types, because different scales can make
     // different decisions about what point is labeled as "0".
     constexpr QuantityPoint(Zero) = delete;
