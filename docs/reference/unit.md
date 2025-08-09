@@ -653,6 +653,16 @@ A specialization will only exist if the inputs are all units, and will exist but
 error if any two input units have different Dimensions.  We also strive to keep the result
 associative, and symmetric under interchange of any inputs.
 
+To understand the precise definition of the common point unit, first assume that the "origin
+displacement" for any two units with different origins is itself a new unit, which we can create
+implicitly.  Then, the _common point unit_ is defined as the unit such that:
+
+- It is quantity-equivalent to the _common unit_ of **both** all input units, **and** of all "origin
+  displacement units" created by any pairs of input units with different origins.
+
+- Its _origin_ is the _lowest_ of all input origins, because this is the _highest_ value that is
+  still "common" to all input units (in the sense that all additive offsets will be non-negative).
+
 ??? note "A note on inputs vs. outputs for the `common_point_unit(us...)` form"
     The return value of the instance version is a _unit_, while the input parameters are
     [unit _slots_](../discussion/idioms/unit-slots.md).  This means that the return value will often
