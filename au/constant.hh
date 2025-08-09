@@ -57,7 +57,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // Convert this constant to a Quantity of the given unit and rep.
     template <typename T, typename OtherUnit>
     constexpr auto as(OtherUnit u) const {
-        return as<T>(u, guard_against(ALL_RISKS));
+        return as<T>(u, check_for(ALL_RISKS));
     }
 
     // Convert this constant to a Quantity of the given unit and rep, following this risk policy.
@@ -87,7 +87,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // Get the value of this constant in the given unit and rep.
     template <typename T, typename OtherUnit>
     constexpr auto in(OtherUnit u) const {
-        return in<T>(u, guard_against(ALL_RISKS));
+        return in<T>(u, check_for(ALL_RISKS));
     }
 
     // Get the value of this constant in the given unit and rep, following this risk policy.
