@@ -133,7 +133,7 @@ class QuantityPoint {
         return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in_impl<NewRep>(u, policy));
     }
 
-    template <typename NewUnit, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+    template <typename NewUnit, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in_impl<Rep>(u, policy));
     }
@@ -143,7 +143,7 @@ class QuantityPoint {
         return in_impl<NewRep>(u, policy);
     }
 
-    template <typename NewUnit, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+    template <typename NewUnit, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr Rep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<Rep>(u, policy);
     }
