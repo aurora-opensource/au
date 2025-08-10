@@ -574,6 +574,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../discussion/concepts/conversion_risks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../discussion/concepts/dimensionless/" class="md-nav__link">
         
   
@@ -626,6 +649,29 @@
   
   <span class="md-ellipsis">
     Quantity Point
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../discussion/concepts/truncation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Truncation
     
   </span>
   
@@ -1247,6 +1293,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../reference/conversion_risk_policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risk Policies
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../reference/corresponding_quantity/" class="md-nav__link">
         
   
@@ -1462,10 +1531,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_12" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_13" >
         
           
-          <label class="md-nav__link" for="__nav_9_12" id="__nav_9_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9_13" id="__nav_9_13_label" tabindex="0">
             
   
   
@@ -1478,8 +1547,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_12_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_12">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_13">
             <span class="md-nav__icon md-icon"></span>
             Detail
           </label>
@@ -2102,7 +2171,7 @@ that will make the test below pass.</p>
 risky, but in <em>this</em> instance is known to be OK.  You should not need to use floating point
 numbers at all.</p>
 <div class="admonition example">
-<p class="admonition-title">Exercise 1(b)</p>
+<p class="admonition-title">Exercise 2</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Task</label><label for="__tabbed_3_2">Solution and Discussion</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -2123,7 +2192,7 @@ numbers at all.</p>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1">// inches.  For example, `inches(17)` would be decomposed into `Height{feet(1), inches(5)}`.</span>
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">Height</span><span class="w"> </span><span class="nf">decompose_height</span><span class="p">(</span><span class="n">QuantityU32</span><span class="o">&lt;</span><span class="n">Inches</span><span class="o">&gt;</span><span class="w"> </span><span class="n">total_height</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="n">Height</span><span class="w"> </span><span class="n">h</span><span class="p">;</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="n">h</span><span class="p">.</span><span class="n">feet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">total_height</span><span class="p">.</span><span class="n">coerce_as</span><span class="p">(</span><span class="n">feet</span><span class="p">);</span><span class="w">  </span><span class="c1">// NOTE: truncation is intended.</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="n">h</span><span class="p">.</span><span class="n">feet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">total_height</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">feet</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">TRUNCATION_RISK</span><span class="p">));</span><span class="w"> </span><span class="c1">// Truncation desired.</span>
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="n">h</span><span class="p">.</span><span class="n">inches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">total_height</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">h</span><span class="p">.</span><span class="n">feet</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">inches</span><span class="p">);</span>
 <a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">h</span><span class="p">;</span>
 <a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="p">}</span>
@@ -2147,8 +2216,8 @@ tutorial, so we wrote the example solution using only constructs you&rsquo;ve al
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <p>This exercise gave a few worked examples of unit conversions.  We saw how Au can immediately replace
 crufty, error-prone manual conversions, making code more readable.  We also saw a practical example
-of quantity-to-quantity conversion using <code>.as(...)</code>, including one example where the forcing
-&ldquo;explicit-Rep&rdquo; form is clearly safe and correct to use.</p>
+of quantity-to-quantity conversion using <code>.as(...)</code>, including one example where explicitly turning
+off the truncation risk check was clearly safe and correct to use.</p>
 <p>Return to the <a href="../../103-unit-conversions/">main tutorial page</a>.</p>
 
 

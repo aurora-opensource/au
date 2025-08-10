@@ -18,7 +18,7 @@
         <link rel="prev" href="../">
       
       
-        <link rel="next" href="../corresponding_quantity/">
+        <link rel="next" href="../conversion_risk_policies/">
       
       
       <link rel="icon" href="../../assets/favicon.ico">
@@ -576,6 +576,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../../discussion/concepts/conversion_risks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../discussion/concepts/dimensionless/" class="md-nav__link">
         
   
@@ -628,6 +651,29 @@
   
   <span class="md-ellipsis">
     Quantity Point
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/truncation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Truncation
     
   </span>
   
@@ -1348,6 +1394,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#astunit-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      .as&lt;T&gt;(unit, policy)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#coerce_astunit" class="md-nav__link">
     <span class="md-ellipsis">
       .coerce_as&lt;T&gt;(unit)
@@ -1360,6 +1415,15 @@
   <a href="#in-T-unit" class="md-nav__link">
     <span class="md-ellipsis">
       .in&lt;T&gt;(unit)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intunit-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      .in&lt;T&gt;(unit, policy)
     </span>
   </a>
   
@@ -1479,6 +1543,29 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conversion_risk_policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risk Policies
+    
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1706,10 +1793,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_12" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_13" >
         
           
-          <label class="md-nav__link" for="__nav_9_12" id="__nav_9_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9_13" id="__nav_9_13_label" tabindex="0">
             
   
   
@@ -1722,8 +1809,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_12_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_12">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_13">
             <span class="md-nav__icon md-icon"></span>
             Detail
           </label>
@@ -2320,7 +2407,35 @@ has a perfect conversion policy, which means that it compiles if and only if the
 the requested unit can be exactly represented in the type <code>T</code>.</p>
 <p>The argument <code>unit</code> is a <a href="../../discussion/idioms/unit-slots/">unit slot</a> API, so it accepts a unit
 instance, quantity maker instance, or any other instance compatible with a unit slot.</p>
+<h3 id="astunit-policy"><code>.as&lt;T&gt;(unit, policy)</code><a class="headerlink" href="#astunit-policy" title="Permanent link">&para;</a></h3>
+<p>This function expresses the constant as a <code>Quantity</code> in the requested unit, using a rep of <code>T</code>.  As
+usual, <code>Constant</code> has perfect knowledge at compile time about whether the conversion will cause
+overflow or truncation.  However, if the <code>policy</code> argument instructs it to ignore either of these
+problems, then it will not perform the corresponding safety check.</p>
+<p>The argument <code>unit</code> is a <a href="../../discussion/idioms/unit-slots/">unit slot</a> API, so it accepts a unit
+instance, quantity maker instance, or any other instance compatible with a unit slot.</p>
+<p>The argument <code>policy</code> is a <a href="../conversion_risk_policies/">conversion risk policy</a>.  In this
+context, instead of applying to the <em>risk</em> of a problem, it applies to the <em>actual existence</em> of
+that problem.  For example: you would <strong>not</strong> need to provide <code>ignore(TRUNCATION_RISK)</code> unless the
+specific conversion will <em>actually cause truncation</em>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This overload is typically only useful when you know that a specific conversion is <em>actually
+lossy</em>, but you want it anyway.  Any non-lossy conversion would already be allowed with the
+<a href="#as-T-unit">simpler overload</a>, which should be preferred.</p>
+<p>Additionally, the conversion risks are not equally useful.  Use cases for
+<code>ignore(TRUNCATION_RISK)</code> are straightforward to imagine: for example, you may simply want
+a less precise version of the context.  Use cases for <code>ignore(OVERFLOW_RISK)</code> are very hard to
+imagine, as they will produce a grossly incorrect result with no physical relationship to the
+actual value.</p>
+</div>
 <h3 id="coerce_astunit"><code>.coerce_as&lt;T&gt;(unit)</code><a class="headerlink" href="#coerce_astunit" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>We plan to deprecate APIs with <code>coerce</code> in their name in the <a href="https://github.com/aurora-opensource/au/milestone/9">0.6.0</a> release (<a href="https://github.com/aurora-opensource/au/issues/481">#481</a>).  For
+a <code>Constant</code> <code>c</code>, instead of <code>c.coerce_as&lt;T&gt;(unit)</code>, prefer <code>c.as&lt;T&gt;(unit, policy)</code>, where
+<code>policy</code> is the desired <a href="../conversion_risk_policies/">conversion risk policy</a>.</p>
+</div>
 <p>This function expresses the constant as a <code>Quantity</code> in the requested unit, using a rep of <code>T</code>.  It
 is similar to <a href="#as-T-unit"><code>.as&lt;T&gt;(unit)</code></a>, except that it will ignore the safety checks that
 prevent truncation and overflow.</p>
@@ -2337,7 +2452,35 @@ requested unit.  It has a perfect conversion policy, which means that it compile
 constant&rsquo;s value in the requested unit can be exactly represented in the type <code>T</code>.</p>
 <p>The argument <code>unit</code> is a <a href="../../discussion/idioms/unit-slots/">unit slot</a> API, so it accepts a unit
 instance, quantity maker instance, or any other instance compatible with a unit slot.</p>
+<h3 id="intunit-policy"><code>.in&lt;T&gt;(unit, policy)</code><a class="headerlink" href="#intunit-policy" title="Permanent link">&para;</a></h3>
+<p>This function produces a raw numeric value, of type <code>T</code>, holding the value of the constant in the
+requested unit.  As usual, <code>Constant</code> has perfect knowledge at compile time about whether the
+conversion will cause overflow or truncation.  However, if the <code>policy</code> argument instructs it to
+ignore either of these problems, then it will not perform the corresponding safety check.</p>
+<p>The argument <code>unit</code> is a <a href="../../discussion/idioms/unit-slots/">unit slot</a> API, so it accepts a unit
+instance, quantity maker instance, or any other instance compatible with a unit slot.</p>
+<p>The argument <code>policy</code> is a <a href="../conversion_risk_policies/">conversion risk policy</a>.  In this
+context, instead of applying to the <em>risk</em> of a problem, it applies to the <em>actual existence</em> of
+that problem.  For example: you would <strong>not</strong> need to provide <code>ignore(TRUNCATION_RISK)</code> unless the
+specific conversion will <em>actually cause truncation</em>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This overload is typically only useful when you know that a specific conversion is <em>actually
+lossy</em>, but you want it anyway.  Any non-lossy conversion would already be allowed with the
+<a href="#in-T-unit">simpler overload</a>, which should be preferred.</p>
+<p>Additionally, the conversion risks are not equally useful.  Use cases for
+<code>ignore(TRUNCATION_RISK)</code> are straightforward to imagine: for example, you may simply want
+a less precise version of the context.  Use cases for <code>ignore(OVERFLOW_RISK)</code> are very hard to
+imagine, as they will produce a grossly incorrect result with no physical relationship to the
+actual value.</p>
+</div>
 <h3 id="coerce_intunit"><code>.coerce_in&lt;T&gt;(unit)</code><a class="headerlink" href="#coerce_intunit" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>We plan to deprecate APIs with <code>coerce</code> in their name in the <a href="https://github.com/aurora-opensource/au/milestone/9">0.6.0</a> release (<a href="https://github.com/aurora-opensource/au/issues/481">#481</a>).  For
+a <code>Constant</code> <code>c</code>, instead of <code>c.coerce_in&lt;T&gt;(unit)</code>, prefer <code>c.in&lt;T&gt;(unit, policy)</code>, where
+<code>policy</code> is the desired <a href="../conversion_risk_policies/">conversion risk policy</a>.</p>
+</div>
 <p>This function produces a raw numeric value, of type <code>T</code>, holding the value of the constant in the
 requested unit.  It is similar to <a href="#in-T-unit"><code>.in&lt;T&gt;(unit)</code></a>, except that it will ignore the
 safety checks that prevent truncation and overflow.</p>
@@ -2613,13 +2756,13 @@ because quantity points do not support multiplication.</p>
         
         
           
-          <a href="../corresponding_quantity/" class="md-footer__link md-footer__link--next" aria-label="Next: Corresponding Quantity">
+          <a href="../conversion_risk_policies/" class="md-footer__link md-footer__link--next" aria-label="Next: Conversion Risk Policies">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Corresponding Quantity
+                Conversion Risk Policies
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -12,13 +12,13 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/concepts/arithmetic/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/concepts/truncation/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../quantity_point/">
       
       
-        <link rel="next" href="../common_unit/">
+        <link rel="next" href="../zero/">
       
       
       <link rel="icon" href="../../../assets/favicon.ico">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Arithmetic Operations - The Au units library</title>
+        <title>Truncation - The Au units library</title>
       
     
     
@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#arithmetic-operations" class="md-skip">
+        <a href="#truncation" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Arithmetic Operations
+              Truncation
             
           </span>
         </div>
@@ -531,32 +531,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Arithmetic Operations
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../arithmetic/" class="md-nav__link">
         
   
   
@@ -567,68 +545,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#quantities-values-and-units-101" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quantities, values, and units 101
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#arbitrary-unit" class="md-nav__link">
-    <span class="md-ellipsis">
-      Arbitrary-unit operations
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Arbitrary-unit operations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#mixed-units-and-conversions" class="md-nav__link">
-    <span class="md-ellipsis">
-      Mixed Units and Conversions
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#common-unit" class="md-nav__link">
-    <span class="md-ellipsis">
-      Common unit operations
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -753,10 +669,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../truncation/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Truncation
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -767,6 +705,119 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#aus-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      Au&rsquo;s approach
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#truncation-in-mathematical-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Truncation in mathematical operations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Truncation in mathematical operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#integral-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Integral types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#float" class="md-nav__link">
+    <span class="md-ellipsis">
+      Floating point types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Other types
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#truncation-in-casting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Truncation in casting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Truncation in casting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arithmetic-to-arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arithmetic to arithmetic
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#non-arithmetic-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Non-arithmetic types
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2022,145 +2073,102 @@
   
 
 
-<h1 id="arithmetic-operations">Arithmetic Operations<a class="headerlink" href="#arithmetic-operations" title="Permanent link">&para;</a></h1>
-<p>Quantity arithmetic operations fall into two categories.</p>
-<ul>
-<li>
-<p><strong>Arbitrary-unit operations</strong> work with any units &mdash; even if there are multiple input units with
-  different dimensions!  Examples include products, quotients, powers, and roots.</p>
-</li>
-<li>
-<p><strong>Common-unit operations</strong> require the inputs to be expressed in the same unit.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>  Examples include
-  addition, subtraction, and relational operators.</p>
-</li>
-</ul>
-<p>We&rsquo;ll explain how the library handles each category below.  First, a brief refresher.</p>
-<h2 id="quantities-values-and-units-101">Quantities, values, and units 101<a class="headerlink" href="#quantities-values-and-units-101" title="Permanent link">&para;</a></h2>
-<p>A <em>quantity</em> is an abstract concept: some physical property that can be measured.  To <em>work with</em>
-that quantity, we need to pick a <em>unit of measure</em>, or &ldquo;unit&rdquo;.  Once we&rsquo;ve done so, the quantity
-obtains a <em>value</em> with respect to that unit.</p>
-<p>Different choices of unit will lead to different values for the same quantity.  For example, suppose
-we have a rod that is one foot long.  The distance between its endpoints is <code>feet(1.0)</code>, where
-<code>feet</code> is the unit, and <code>1.0</code> is the value.  It&rsquo;s also equal to <code>inches(12.0)</code>, where <code>inches</code> is
-another unit we could have chosen, and <code>12.0</code> is the value we&rsquo;d obtain if we did.</p>
-<p>Note that <code>feet(1.0)</code> and <code>inches(12.0)</code> are the <em>same quantity</em>, conceptually!  But when we pick
-different units, we&rsquo;ll end up <em>storing different values</em> (i.e., <code>1.0</code> vs. <code>12.0</code>) in the bits and
-bytes of our computer program.</p>
-<h2 id="arbitrary-unit">Arbitrary-unit operations<a class="headerlink" href="#arbitrary-unit" title="Permanent link">&para;</a></h2>
-<p>For arbitrary-unit operations (products, quotients, powers, and roots), there is a simple, golden
-rule: apply the operation (say, multiplication) <em>independently</em> to both the <em>value</em> and the <em>unit</em>.
-Consider this example:</p>
-<div class="arithmatex">
-<div class="MathJax_Preview">(150 \,\,\text{mi}) \div (2 \,\,\text{h}) = (75 \,\,\text{mi} / \text{h})</div>
-<script type="math/tex; mode=display">(150 \,\,\text{mi}) \div (2 \,\,\text{h}) = (75 \,\,\text{mi} / \text{h})</script>
-</div>
-<p>Notice how the operation applies independently to the value and the unit:</p>
-<ul>
-<li><strong>values:</strong> <span class="arithmatex"><span class="MathJax_Preview">150 \div 2 = 75</span><script type="math/tex">150 \div 2 = 75</script></span></li>
-<li><strong>units:</strong> <span class="arithmatex"><span class="MathJax_Preview">\text{mi} \div \text{h} = \text{mi} / \text{h}</span><script type="math/tex">\text{mi} \div \text{h} = \text{mi} / \text{h}</script></span></li>
-</ul>
-<p>Au works the same way.  Here&rsquo;s how that computation would look in our library:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">miles</span><span class="p">(</span><span class="mf">150.0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hours</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">)(</span><span class="mf">75.0</span><span class="p">)</span>
-</code></pre></div>
-<p>Here, <code>(miles / hour)</code> creates a new, compound <em>unit</em> on the fly, and calling it on <code>75.0</code> stores
-that <em>value</em> to create a <em>quantity</em>.</p>
-<h3 id="mixed-units-and-conversions">Mixed Units and Conversions<a class="headerlink" href="#mixed-units-and-conversions" title="Permanent link">&para;</a></h3>
-<p>Au makes it easy to do complicated, multi-step operations.  For example:</p>
-<blockquote>
-<p>How many &ldquo;g&rsquo;s&rdquo; of acceleration will a car experience, going from 0 to 60 MPH in 3 seconds?</p>
-</blockquote>
-<p>Assuming constant acceleration, we have:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">StandardGravity</span><span class="o">&gt;</span><span class="w"> </span><span class="n">accel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">)(</span><span class="mf">60.0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mf">3.0</span><span class="p">);</span>
-</code></pre></div>
-<p>It&rsquo;s worth breaking down the operations the library performs, and the order in which it performs
-them.  In particular, remember that division happens <em>first</em>, before the assignment.</p>
-<p>For the division, we know we can reason <em>independently</em> about the value; so, the value is <code>20.0</code>.
-Similarly, the unit is <code>miles / hour / second</code>.  Altogether, the division step yields
-<span class="arithmatex"><span class="MathJax_Preview">20 \,\,\text{MPH} / \text{s}</span><script type="math/tex">20 \,\,\text{MPH} / \text{s}</script></span>.</p>
-<p>Next comes assignment.  Since standard gravity (<span class="arithmatex"><span class="MathJax_Preview">g_0</span><script type="math/tex">g_0</script></span>) and <span class="arithmatex"><span class="MathJax_Preview">\text{MPH}/\text{s}</span><script type="math/tex">\text{MPH}/\text{s}</script></span> both have the same
-<em>dimension</em> (namely, acceleration), then <span class="arithmatex"><span class="MathJax_Preview">\frac{g_0}{\text{MPH}/\text{s}}</span><script type="math/tex">\frac{g_0}{\text{MPH}/\text{s}}</script></span> is some real number:
-namely, <span class="arithmatex"><span class="MathJax_Preview">\frac{980665}{44704}</span><script type="math/tex">\frac{980665}{44704}</script></span>.  The library computes this number <em>at compile time</em>, and performs
-only a single multiplication or division at runtime.  The final printed result is roughly
-<code>0.911708 g_0</code>.</p>
-<p>And this makes sense!  We know intuitively that going from 0 to 60 MPH in 3 seconds &ldquo;feels very
-fast&rdquo;.  We can see that in fact, it&rsquo;s pulling almost a full &ldquo;g&rdquo;.</p>
-<h2 id="common-unit">Common unit operations<a class="headerlink" href="#common-unit" title="Permanent link">&para;</a></h2>
-<p>If two quantities have the same dimension, it&rsquo;s <em>physically</em> meaningful to add, subtract, or compare
-them.  Consider two lengths: we can <em>physically</em> add them by placing them in series and measuring
-the total distance, even if we had measured one in &ldquo;feet&rdquo;, and the other in &ldquo;inches&rdquo;.</p>
-<p><em>Computationally</em>, it&rsquo;s a different story: we need to express them in a <a href="../common_unit/"><strong>common
-unit</strong></a>.  Once we do, it&rsquo;s easy to add/subtract/compare the <em>quantities</em>: we
-simply add/subtract/compare the <em>values</em>.</p>
-<p>The &ldquo;common unit&rdquo; of two units is the <em>largest</em> unit that <em>evenly divides both</em><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>&mdash;essentially,
-the <em>greatest common divisor</em>.  This convention has two benefits:</p>
-<ol>
-<li>
-<p>Converting each input quantity to the common unit involves <em>multiplying the value by an integer</em>.
-   This is really important for quantities with integral storage types!</p>
-</li>
-<li>
-<p>The <em>value</em> of that multiplier will be as <em>small as possible</em> (relative to other units that
-   evenly divide both input units).  This minimizes the risk of integer overflow.</p>
-</li>
-</ol>
-<p>Let&rsquo;s look at a few examples.</p>
-<ul>
-<li>
-<p><code>feet(1) + inches(6)</code>: This converts each input to their common unit, which is <code>inches</code>, resulting
-  in <code>inches(18)</code>.</p>
-</li>
-<li>
-<p><code>inches(100) &gt; centi(meters)(200)</code>: The common unit doesn&rsquo;t have a name, so let&rsquo;s call it
-  <span class="arithmatex"><span class="MathJax_Preview">\text{com}</span><script type="math/tex">\text{com}</script></span>.  An inch is <span class="arithmatex"><span class="MathJax_Preview">127 \,\text{com}</span><script type="math/tex">127 \,\text{com}</script></span>, and a centimeter is <span class="arithmatex"><span class="MathJax_Preview">50 \,\text{com}</span><script type="math/tex">50 \,\text{com}</script></span>.  After
-  implicitly converting each argument, the input reduces to <code>coms(12700) &gt; coms(10000)</code>, which
-  clearly evaluates to <code>true</code>.</p>
-</li>
-</ul>
-<p>Check your understanding: what would we get if we <em>added</em> these last values instead of <em>comparing</em>
-them?</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Question</label><label for="__tabbed_1_2">Answer and discussion</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">inches</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">centi</span><span class="p">(</span><span class="n">meters</span><span class="p">)(</span><span class="mi">200</span><span class="p">)</span><span class="w"> </span><span class="c1">// -&gt; ...?</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">inches</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">centi</span><span class="p">(</span><span class="n">meters</span><span class="p">)(</span><span class="mi">200</span><span class="p">)</span><span class="w"> </span><span class="c1">// -&gt; coms(22700), using above notation</span>
-</code></pre></div>
-<p>We know that addition is a &ldquo;common unit operation&rdquo;, which means we have to convert both inputs
-to the common unit before performing it.  As above, let&rsquo;s temporarily assume we&rsquo;ve given a name,
-<code>coms</code>, to this anonymous unit.  We already saw that these inputs convert to <code>coms(12700)</code> and
-<code>coms(10000)</code>, respectively, so all we have to do is add them together to get <code>coms(22700)</code>.</p>
-<p>Of course, in real code, this unit wouldn&rsquo;t have a name.  We&rsquo;d just have some <code>Quantity</code> of an
-anonymous length unit with this magnitude, storing the value <code>22700</code>.  So: what can we <em>do</em> with
-this result?  Well, we can&rsquo;t assign it to an <em>integer</em> Quantity of <code>inches</code> <em>or</em>
-<code>centi(meters)</code>, because it&rsquo;s not an integer in either of those units.  However, we <em>can</em>&hellip;</p>
-<ul>
-<li>&hellip;<strong>compare</strong> it to an integer Quantity of <code>inches</code> or <code>centi(meters)</code></li>
-<li>&hellip;assign it to a <strong>floating point</strong> Quantity of <code>inches</code> or <code>centi(meters)</code></li>
-<li>&hellip;assign it to an integer Quantity of some <strong>smaller divisor unit</strong>, such as
-    <code>micro(meters)</code></li>
-</ul>
-<p>So, for example, this would work:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">QuantityI32</span><span class="o">&lt;</span><span class="n">Micro</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inches</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">centi</span><span class="p">(</span><span class="n">meters</span><span class="p">)(</span><span class="mi">200</span><span class="p">)</span>
-</code></pre></div>
-<p>The value of <code>x</code> would be <code>micro(meters)(4'540'000)</code>.</p>
-</div>
-</div>
-</div>
+<h1 id="truncation">Truncation<a class="headerlink" href="#truncation" title="Permanent link">&para;</a></h1>
+<p><em>Truncation</em> occurs when the result of a unit conversion lands <em>in-between</em> representable values in
+the destination type.  Along with <a href="../overflow/">overflow</a>, it&rsquo;s one of the two main <a href="../conversion_risks/">conversion risks</a> in units
+libraries.</p>
+<h2 id="aus-approach">Au&rsquo;s approach<a class="headerlink" href="#aus-approach" title="Permanent link">&para;</a></h2>
+<p>Au implements unit conversions as <em>sequences of operations</em>.  Some operations multiply or divide by
+a particular number.  Others cast a value from one type to another.</p>
+<p>Au checks every operation in the sequence to see whether any input values might cause truncation.
+If we find <em>any</em> risk, we forbid the conversion &mdash; at least, by default.  There may be valid
+reasons to perform such a conversion anyway.  If users are confident this is what they want, they
+can pass <code>ignore(TRUNCATION_RISK)</code> as a second argument to any conversion operator.</p>
+<p>Usually, even conversions with truncation risk will truncate for only some values, and not for
+others.  Users can check <em>individual values</em> at runtime to see if that particular value is safe.
+<code>will_conversion_truncate(q, u)</code> examines converting the <em>specific</em> <code>Quantity</code> value <code>q</code> to the new
+unit <code>u</code>.  If the conversion being checked also changes the representation type (the &ldquo;rep&rdquo;), to
+a new type <code>T</code>, <code>will_conversion_truncate&lt;T&gt;(q, u)</code> is the right form to use.</p>
+<p>These tools complement each other.  A common pattern is to check an individual value at runtime, and
+then call the actual conversion function with <code>ignore(TRUNCATION_RISK)</code> if the check passes.
+Remember, the <code>TRUNCATION_RISK</code> flag refers to the risk of the <em>conversion as a whole</em>.  If you&rsquo;ve
+just proved that <em>your particular value</em> is safe, then ignoring that <em>general</em> risk is clearly fine.</p>
+<h2 id="truncation-in-mathematical-operations">Truncation in mathematical operations<a class="headerlink" href="#truncation-in-mathematical-operations" title="Permanent link">&para;</a></h2>
+<p>By &ldquo;mathematical operations&rdquo;, we mainly mean multiplying or dividing by numerical constants.  To
+understand the truncation risk, we first put the rep into one of several categories, because the
+risk profile strongly depends on the category.</p>
+<p>The main categories are the arithmetic<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> types: integral, and floating point.  We&rsquo;ll also briefly
+discuss how to think about other numeric types that we hope to support more fully in the future
+(<a href="https://github.com/aurora-opensource/au/issues/52">#52</a>).</p>
+<h3 id="integral-types">Integral types<a class="headerlink" href="#integral-types" title="Permanent link">&para;</a></h3>
+<p>Integral types are considered <em>exact</em>.  To see the implications for truncation, we need to consider
+various <a href="../../implementation/applying_magnitudes/">types of conversion factors</a>.</p>
+<p>First, we have multiplying by an integer.  This is easy: it stays within the domain of the integers,
+so it can never truncate.</p>
+<p>Next, we have multiplication by a non-integer rational (including reciprocal integers).  This will
+truncate for any input that isn&rsquo;t an exact integer multiple of the denominator, so the <em>conversion
+as a whole</em> clearly has truncation risk.  When checking <em>individual values</em>, we can use the built-in
+<code>%</code> operator.</p>
+<p>Finally, we have multiplication by an irrational number.  For integral types, this truncates for
+every nonzero input, because integers are exact types, and the only integer that produces an integer
+when multiplied by an irrational is zero.</p>
+<h3 id="float">Floating point types<a class="headerlink" href="#float" title="Permanent link">&para;</a></h3>
+<p>Mathematical operations on floating point types are governed by a very simple philosophy: <em>floating
+point never truncates</em>.</p>
+<p>This may surprise the reader: after all, truncation means the result falls in-between representable
+values, and floating point types certainly have gaps!  But consider the design philosophy of
+floating point.  The goal is to <em>emulate</em> a continuous real line.  Floating point values implicitly
+come with a <em>relative tolerance</em>: one that is small, but <em>not</em> zero.  Each representable value
+effectively stands in for a small range of real values around it, and the exact size of that range
+depends on the precise calculations.</p>
+<p>Or, more simply: floating point types are considered <em>inexact</em>.</p>
+<p>Now, we return to the problem of truncation in units libraries.  The very act of choosing a floating
+point representation is a statement, by the user, that <em>exact values do not matter</em> for their
+application.  It would be inappropriate for us to raise warnings about perfectly routine properties
+of the user&rsquo;s chosen type.  Hence: <em>floating point never truncates</em>.</p>
+<h3 id="other-types">Other types<a class="headerlink" href="#other-types" title="Permanent link">&para;</a></h3>
+<p>Currently, Au has only limited support for non-arithmetic rep types (full support is tracked in
+<a href="https://github.com/aurora-opensource/au/issues/52">#52</a>). As a stopgap, Au treats any non-arithmetic type conservatively, and assumes that it can
+truncate.  We hope to refine this approach when we strengthen our support for more rep types.</p>
+<h2 id="truncation-in-casting">Truncation in casting<a class="headerlink" href="#truncation-in-casting" title="Permanent link">&para;</a></h2>
+<p>Besides mathematical operations, the other main operation in unit conversions is casting from one
+type to another.  We assess truncation risk for these operations as well.</p>
+<h3 id="arithmetic-to-arithmetic">Arithmetic to arithmetic<a class="headerlink" href="#arithmetic-to-arithmetic" title="Permanent link">&para;</a></h3>
+<p>Casting from one <em>arithmetic</em> type to another is governed by simple rules.</p>
+<p>If the source and destination types are in the same <em>category</em> &mdash; that is, either both integral, or
+both floating point &mdash; then the cast never truncates.  The reason for integral types is
+straightforward: clearly, the source can&rsquo;t hold a non-integer value.  As for floating point types,
+they are governed by the <a href="#float">philsophy explained above</a>.</p>
+<p>Casting from a floating point type to an integral type does have truncation risk: we would truncate
+for any non-integer input.  We can check this for individual values by discarding the fractional
+part, and checking whether this changes the value.</p>
+<p>Casting from an integral type to a floating point type is an interesting case.  As floating point
+values get larger, they grow farther apart.  At some point, consecutive representable values can
+differ by <em>multiple</em> integers.  If we cast an input integer in this range, it may seem that we
+should consider this to truncate.  But recall the <a href="#float">philosophy above</a>: floating point types
+are all about <em>relative</em> position.  For this reason, we consider casting from integral to floating
+point as a <strong>non-truncating</strong> operation.</p>
+<h3 id="non-arithmetic-types">Non-arithmetic types<a class="headerlink" href="#non-arithmetic-types" title="Permanent link">&para;</a></h3>
+<p>Here, too, our support for non-arithmetic rep types is limited (see <a href="https://github.com/aurora-opensource/au/issues/52">#52</a>), and we take
+a conservative approach.  Any cast involving a non-arithmetic type, either as source or destination,
+is considered to have truncation risk, and will not be allowed by default: users must pass
+<code>ignore(TRUNCATION_RISK)</code> as a second argument to override this.  We hope to have better default
+behavior once we support non-arithmetic types more fully.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>Truncation happens when the result of an operation falls in-between representable values in the
+numeric type where we&rsquo;re storing it.  If any input values for a unit conversion can truncate &mdash; or,
+if we <em>don&rsquo;t know</em> whether any can &mdash; then we forbid the conversion.  Users can override this
+behavior by passing <code>ignore(TRUNCATION_RISK)</code> as a second argument.  Users can also check
+whether <em>individual values</em> truncate using the <code>will_conversion_truncate</code> function.</p>
+<p>Truncation risk depends strongly on the types involved.  Integral types are vulnerable to truncation
+for non-integer scale factors.  On the other hand, we treat floating point types as though they
+never &ldquo;truncate&rdquo;, because they&rsquo;re already inexact.  Finally, since we don&rsquo;t yet fully support
+non-arithmetic types, we treat them conservatively and assume that they carry truncation risk.</p>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>Note that this is only possible in the first place if the units have the same <em>dimension</em>.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:2">
-<p>Of course, this definition only applies to units which <em>have</em> a common divisor.  This happens
-whenever their ratio (a dimensionless number) is an exact rational number.  This won&rsquo;t work for unit
-pairs such as <code>degrees</code> and <code>radians</code>, whose ratio is the irrational number <span class="arithmatex"><span class="MathJax_Preview">(\pi / 180)</span><script type="math/tex">(\pi / 180)</script></span>.  For
-&ldquo;irrational ratios&rdquo;, no convention can provide the benefits in this section, so we make an arbitrary
-choice based on convenience of implementation.  For more details, see the <a href="../common_unit/">common unit
-docs</a>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>&ldquo;Arithmetic&rdquo; types are C++&rsquo;s built-in numeric types: <code>int</code>, <code>double</code>, <code>uint64_t</code>, and so on.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
@@ -2193,7 +2201,7 @@ docs</a>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to f
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Generic Concepts">
+          <a href="../quantity_point/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Quantity Point">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2203,20 +2211,20 @@ docs</a>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to f
                 Previous
               </span>
               <div class="md-ellipsis">
-                Generic Concepts
+                Quantity Point
               </div>
             </div>
           </a>
         
         
           
-          <a href="../common_unit/" class="md-footer__link md-footer__link--next" aria-label="Next: Common Units">
+          <a href="../zero/" class="md-footer__link md-footer__link--next" aria-label="Next: Zero">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Common Units
+                Zero
               </div>
             </div>
             <div class="md-footer__button md-icon">

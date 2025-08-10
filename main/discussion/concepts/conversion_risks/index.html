@@ -12,13 +12,13 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/concepts/arithmetic/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/concepts/conversion_risks/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../common_unit/">
       
       
-        <link rel="next" href="../common_unit/">
+        <link rel="next" href="../dimensionless/">
       
       
       <link rel="icon" href="../../../assets/favicon.ico">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Arithmetic Operations - The Au units library</title>
+        <title>Conversion Risks - The Au units library</title>
       
     
     
@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#arithmetic-operations" class="md-skip">
+        <a href="#conversion-risks" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Arithmetic Operations
+              Conversion Risks
             
           </span>
         </div>
@@ -531,32 +531,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Arithmetic Operations
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../arithmetic/" class="md-nav__link">
         
   
   
@@ -567,68 +545,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#quantities-values-and-units-101" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quantities, values, and units 101
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#arbitrary-unit" class="md-nav__link">
-    <span class="md-ellipsis">
-      Arbitrary-unit operations
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Arbitrary-unit operations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#mixed-units-and-conversions" class="md-nav__link">
-    <span class="md-ellipsis">
-      Mixed Units and Conversions
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#common-unit" class="md-nav__link">
-    <span class="md-ellipsis">
-      Common unit operations
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -661,10 +577,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../conversion_risks/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risks
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -675,6 +613,119 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-can-go-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      What can go wrong?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Default policies
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Default policies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overall-risk-versus-individual-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overall risk versus individual values
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opting-out-of-safety-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opting out of safety checks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#not-all-conversions-are-actually-possible" class="md-nav__link">
+    <span class="md-ellipsis">
+      Not all conversions are actually possible
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Runtime checks
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Runtime checks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#provided-checkers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provided checkers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-checked-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating checked helpers
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#takeaways" class="md-nav__link">
+    <span class="md-ellipsis">
+      Takeaways
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2022,145 +2073,274 @@
   
 
 
-<h1 id="arithmetic-operations">Arithmetic Operations<a class="headerlink" href="#arithmetic-operations" title="Permanent link">&para;</a></h1>
-<p>Quantity arithmetic operations fall into two categories.</p>
-<ul>
-<li>
-<p><strong>Arbitrary-unit operations</strong> work with any units &mdash; even if there are multiple input units with
-  different dimensions!  Examples include products, quotients, powers, and roots.</p>
-</li>
-<li>
-<p><strong>Common-unit operations</strong> require the inputs to be expressed in the same unit.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>  Examples include
-  addition, subtraction, and relational operators.</p>
-</li>
-</ul>
-<p>We&rsquo;ll explain how the library handles each category below.  First, a brief refresher.</p>
-<h2 id="quantities-values-and-units-101">Quantities, values, and units 101<a class="headerlink" href="#quantities-values-and-units-101" title="Permanent link">&para;</a></h2>
-<p>A <em>quantity</em> is an abstract concept: some physical property that can be measured.  To <em>work with</em>
-that quantity, we need to pick a <em>unit of measure</em>, or &ldquo;unit&rdquo;.  Once we&rsquo;ve done so, the quantity
-obtains a <em>value</em> with respect to that unit.</p>
-<p>Different choices of unit will lead to different values for the same quantity.  For example, suppose
-we have a rod that is one foot long.  The distance between its endpoints is <code>feet(1.0)</code>, where
-<code>feet</code> is the unit, and <code>1.0</code> is the value.  It&rsquo;s also equal to <code>inches(12.0)</code>, where <code>inches</code> is
-another unit we could have chosen, and <code>12.0</code> is the value we&rsquo;d obtain if we did.</p>
-<p>Note that <code>feet(1.0)</code> and <code>inches(12.0)</code> are the <em>same quantity</em>, conceptually!  But when we pick
-different units, we&rsquo;ll end up <em>storing different values</em> (i.e., <code>1.0</code> vs. <code>12.0</code>) in the bits and
-bytes of our computer program.</p>
-<h2 id="arbitrary-unit">Arbitrary-unit operations<a class="headerlink" href="#arbitrary-unit" title="Permanent link">&para;</a></h2>
-<p>For arbitrary-unit operations (products, quotients, powers, and roots), there is a simple, golden
-rule: apply the operation (say, multiplication) <em>independently</em> to both the <em>value</em> and the <em>unit</em>.
-Consider this example:</p>
-<div class="arithmatex">
-<div class="MathJax_Preview">(150 \,\,\text{mi}) \div (2 \,\,\text{h}) = (75 \,\,\text{mi} / \text{h})</div>
-<script type="math/tex; mode=display">(150 \,\,\text{mi}) \div (2 \,\,\text{h}) = (75 \,\,\text{mi} / \text{h})</script>
-</div>
-<p>Notice how the operation applies independently to the value and the unit:</p>
-<ul>
-<li><strong>values:</strong> <span class="arithmatex"><span class="MathJax_Preview">150 \div 2 = 75</span><script type="math/tex">150 \div 2 = 75</script></span></li>
-<li><strong>units:</strong> <span class="arithmatex"><span class="MathJax_Preview">\text{mi} \div \text{h} = \text{mi} / \text{h}</span><script type="math/tex">\text{mi} \div \text{h} = \text{mi} / \text{h}</script></span></li>
-</ul>
-<p>Au works the same way.  Here&rsquo;s how that computation would look in our library:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">miles</span><span class="p">(</span><span class="mf">150.0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hours</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">)(</span><span class="mf">75.0</span><span class="p">)</span>
-</code></pre></div>
-<p>Here, <code>(miles / hour)</code> creates a new, compound <em>unit</em> on the fly, and calling it on <code>75.0</code> stores
-that <em>value</em> to create a <em>quantity</em>.</p>
-<h3 id="mixed-units-and-conversions">Mixed Units and Conversions<a class="headerlink" href="#mixed-units-and-conversions" title="Permanent link">&para;</a></h3>
-<p>Au makes it easy to do complicated, multi-step operations.  For example:</p>
-<blockquote>
-<p>How many &ldquo;g&rsquo;s&rdquo; of acceleration will a car experience, going from 0 to 60 MPH in 3 seconds?</p>
-</blockquote>
-<p>Assuming constant acceleration, we have:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">StandardGravity</span><span class="o">&gt;</span><span class="w"> </span><span class="n">accel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">miles</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hour</span><span class="p">)(</span><span class="mf">60.0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mf">3.0</span><span class="p">);</span>
-</code></pre></div>
-<p>It&rsquo;s worth breaking down the operations the library performs, and the order in which it performs
-them.  In particular, remember that division happens <em>first</em>, before the assignment.</p>
-<p>For the division, we know we can reason <em>independently</em> about the value; so, the value is <code>20.0</code>.
-Similarly, the unit is <code>miles / hour / second</code>.  Altogether, the division step yields
-<span class="arithmatex"><span class="MathJax_Preview">20 \,\,\text{MPH} / \text{s}</span><script type="math/tex">20 \,\,\text{MPH} / \text{s}</script></span>.</p>
-<p>Next comes assignment.  Since standard gravity (<span class="arithmatex"><span class="MathJax_Preview">g_0</span><script type="math/tex">g_0</script></span>) and <span class="arithmatex"><span class="MathJax_Preview">\text{MPH}/\text{s}</span><script type="math/tex">\text{MPH}/\text{s}</script></span> both have the same
-<em>dimension</em> (namely, acceleration), then <span class="arithmatex"><span class="MathJax_Preview">\frac{g_0}{\text{MPH}/\text{s}}</span><script type="math/tex">\frac{g_0}{\text{MPH}/\text{s}}</script></span> is some real number:
-namely, <span class="arithmatex"><span class="MathJax_Preview">\frac{980665}{44704}</span><script type="math/tex">\frac{980665}{44704}</script></span>.  The library computes this number <em>at compile time</em>, and performs
-only a single multiplication or division at runtime.  The final printed result is roughly
-<code>0.911708 g_0</code>.</p>
-<p>And this makes sense!  We know intuitively that going from 0 to 60 MPH in 3 seconds &ldquo;feels very
-fast&rdquo;.  We can see that in fact, it&rsquo;s pulling almost a full &ldquo;g&rdquo;.</p>
-<h2 id="common-unit">Common unit operations<a class="headerlink" href="#common-unit" title="Permanent link">&para;</a></h2>
-<p>If two quantities have the same dimension, it&rsquo;s <em>physically</em> meaningful to add, subtract, or compare
-them.  Consider two lengths: we can <em>physically</em> add them by placing them in series and measuring
-the total distance, even if we had measured one in &ldquo;feet&rdquo;, and the other in &ldquo;inches&rdquo;.</p>
-<p><em>Computationally</em>, it&rsquo;s a different story: we need to express them in a <a href="../common_unit/"><strong>common
-unit</strong></a>.  Once we do, it&rsquo;s easy to add/subtract/compare the <em>quantities</em>: we
-simply add/subtract/compare the <em>values</em>.</p>
-<p>The &ldquo;common unit&rdquo; of two units is the <em>largest</em> unit that <em>evenly divides both</em><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>&mdash;essentially,
-the <em>greatest common divisor</em>.  This convention has two benefits:</p>
+<h1 id="conversion-risks">Conversion Risks<a class="headerlink" href="#conversion-risks" title="Permanent link">&para;</a></h1>
+<p>Unit conversions turn one <code>Quantity</code> into another, where both the unit and the representation type
+(the &ldquo;rep&rdquo;) might change.  Think of a &ldquo;unit conversion&rdquo; as being defined by three parameters:</p>
 <ol>
-<li>
-<p>Converting each input quantity to the common unit involves <em>multiplying the value by an integer</em>.
-   This is really important for quantities with integral storage types!</p>
-</li>
-<li>
-<p>The <em>value</em> of that multiplier will be as <em>small as possible</em> (relative to other units that
-   evenly divide both input units).  This minimizes the risk of integer overflow.</p>
-</li>
+<li>The <em>initial</em> <strong>rep</strong>.</li>
+<li>The <em>target</em> <strong>rep</strong>.</li>
+<li>The ratio between the <em>initial</em> and <em>target</em> <strong>units</strong>.</li>
 </ol>
-<p>Let&rsquo;s look at a few examples.</p>
+<p>Under the hood, we implement each conversion as a sequence of operations, including <code>static_cast</code>
+for changing the rep, and mathematical operations (mainly multiplying and dividing) for changing the
+value.  Each operation has an input type, and an output type (which might be the same as the input).</p>
+<h2 id="what-can-go-wrong">What can go wrong?<a class="headerlink" href="#what-can-go-wrong" title="Permanent link">&para;</a></h2>
+<p>On pen and paper, any unit conversion can be done exactly.  <em>In software</em>, this is not true.  Most
+representation types can only represent a limited range of numbers, and with only finite precision
+within that range.  This means that some conversions can produce grossly incorrect results!  In
+general, there are two main failure modes for an operation:</p>
+<ul>
+<li><strong><a href="../overflow/">Overflow</a></strong>: the result <em>exceeds the bounds</em> of the output type.</li>
+<li><strong><a href="../truncation/">Truncation</a></strong>: the output type has <em>insufficient precision</em> to represent the
+  result.</li>
+</ul>
+<p>Au accounts for these risks in our APIs.  For each conversion, we assess the overall risk in
+deciding whether to permit it <em>by default</em>.  We also let you opt out of individual named safety
+checks, for situations where you&rsquo;re confident it&rsquo;s okay.  Finally, we have efficient functions to
+check the lossiness of <em>individual values</em> at runtime, for the most granular control possible.</p>
+<h2 id="default-policies">Default policies<a class="headerlink" href="#default-policies" title="Permanent link">&para;</a></h2>
+<p>Any conversion has a set of input values that are lossy, and a set that aren&rsquo;t.  For example,
+imagine that we had <code>int x</code>:</p>
+<ul>
+<li><code>inches(x).as(feet)</code> would be lossy for any number that isn&rsquo;t an exact multiple of 12 (due to
+  truncation).</li>
+<li><code>feet(x).as(inches)</code> would be lossy for any number greater than <code>357913941</code>, or less than
+  <code>-357913941</code> (due to overflow).</li>
+</ul>
+<p>Au&rsquo;s task is to decide which unit conversions to allow, and which to turn into compiler errors.
+Because we must make this decision at compile time, <em>we don&rsquo;t know the actual input value</em>. All we
+can do is to assess the risk across the values that we expect to see most often.</p>
+<p>Notice how the above two examples present very different risk profiles.  For <code>inches(x).as(feet)</code>,
+11 out of every 12 values will be significantly lossy.  For <code>feet(x).as(inches)</code>, it&rsquo;s another
+story.  In practice, users are unlikely to use values greater than 357 million feet in most
+applications, since that&rsquo;s over &frac14; of the way to the moon!  As you might expect, Au forbids the
+first conversion but permits the second.</p>
+<p>In more detail, Au has separate risk checks for overflow and truncation.</p>
 <ul>
 <li>
-<p><code>feet(1) + inches(6)</code>: This converts each input to their common unit, which is <code>inches</code>, resulting
-  in <code>inches(18)</code>.</p>
+<p>The <strong>overflow check</strong> is an <a href="../overflow/#adapt">adaptive check</a> based on a single number: the
+  smallest input that would exceed the output range.</p>
 </li>
 <li>
-<p><code>inches(100) &gt; centi(meters)(200)</code>: The common unit doesn&rsquo;t have a name, so let&rsquo;s call it
-  <span class="arithmatex"><span class="MathJax_Preview">\text{com}</span><script type="math/tex">\text{com}</script></span>.  An inch is <span class="arithmatex"><span class="MathJax_Preview">127 \,\text{com}</span><script type="math/tex">127 \,\text{com}</script></span>, and a centimeter is <span class="arithmatex"><span class="MathJax_Preview">50 \,\text{com}</span><script type="math/tex">50 \,\text{com}</script></span>.  After
-  implicitly converting each argument, the input reduces to <code>coms(12700) &gt; coms(10000)</code>, which
-  clearly evaluates to <code>true</code>.</p>
+<p>The <strong>truncation check</strong> is based on whether truncation is possible for <em>any</em> input value, with
+  the caveat that we treat <a href="../truncation/#float">floating point as non-truncating</a>.</p>
 </li>
 </ul>
-<p>Check your understanding: what would we get if we <em>added</em> these last values instead of <em>comparing</em>
-them?</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Question</label><label for="__tabbed_1_2">Answer and discussion</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">inches</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">centi</span><span class="p">(</span><span class="n">meters</span><span class="p">)(</span><span class="mi">200</span><span class="p">)</span><span class="w"> </span><span class="c1">// -&gt; ...?</span>
+<p>Au only permits conversions by default if they pass <em>both</em> checks.</p>
+<h3 id="overall-risk-versus-individual-values">Overall risk versus individual values<a class="headerlink" href="#overall-risk-versus-individual-values" title="Permanent link">&para;</a></h3>
+<p>It&rsquo;s critically important to understand that these policies are based on <em>risk</em>, which takes into
+account <em>all possible</em> input values (and, crudely, their relative likelihoods).  This is different
+from determining whether <em>a specific input value</em> will be lossy.  For example:</p>
+<table>
+<thead>
+<tr>
+<th>Conversion</th>
+<th>Policy</th>
+<th>Result (if allowed)</th>
+<th>Actually lossy?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>inches(24).as(feet)</code></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/274c.svg" title=":x:" /> Forbidden (truncation risk)</td>
+<td><code>feet(2)</code></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> No</td>
+</tr>
+<tr>
+<td><code>seconds(4u).as(nano(seconds))</code><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/274c.svg" title=":x:" /> Forbidden (overflow risk)</td>
+<td><code>nano(seconds(4'000'000'000u))</code></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> No</td>
+</tr>
+<tr>
+<td><code>seconds(9000u).as(micro(seconds))</code><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> Allowed</td>
+<td><code>micro(seconds(410'065'408u))</code></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/274c.svg" title=":x:" /> Yes (overflow)</td>
+</tr>
+</tbody>
+</table>
+<p>This shows that our default policy has two kinds of failure modes.</p>
+<p>The first is that <strong>allowed conversions can still be lossy</strong> for some input values.  Granted, this
+can only happen for cases that Au assesses to be low risk.  While practical experience has largely
+validated these policies, some applications may not be able to tolerate <em>any</em> risk of loss.  We&rsquo;ll
+explore the solution &mdash; namely, <em>runtime checking</em> &mdash; later on in more detail.</p>
+<p>The second is that we forbid some conversions that are actually perfectly fine, at least for certain
+values.  Or, certain use cases &mdash; for example, many embedded applications <em>expect and desire</em> the
+truncating properties of integer division.  The solution for these cases is to opt out of individual
+safety checks.  We&rsquo;ll dive into it now.</p>
+<h3 id="opting-out-of-safety-checks">Opting out of safety checks<a class="headerlink" href="#opting-out-of-safety-checks" title="Permanent link">&para;</a></h3>
+<p>When a conversion fails to compile, the error message will tell you what risk Au was concerned
+about.  You can then pass <code>ignore(X)</code> as a <em>second parameter to the conversion function</em>, and it
+will ignore the risk <code>X</code>.  There are two reasons to prefer this more granular opt-out mechanism to
+a blanket approach that turns off all safety checks:</p>
+<ol>
+<li>It&rsquo;s more <em>intent-based</em>: readers will better understand what risk you are ignoring.</li>
+<li>It&rsquo;s <em>safer</em>: you still have coverage for the other risk.</li>
+</ol>
+<p>Let&rsquo;s look at some more examples to make this clear.</p>
+<table>
+<thead>
+<tr>
+<th>Conversion</th>
+<th>Policy</th>
+<th>Result</th>
+<th>Actually lossy?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>inches(24).as(feet, ignore(TRUNCATION_RISK))</code></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> Allowed (by policy override)</td>
+<td><code>feet(2)</code></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> No</td>
+</tr>
+<tr>
+<td><code>seconds(4u).as(nano(seconds), ignore(OVERFLOW_RISK))</code><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> Allowed (by policy override)</td>
+<td><code>nano(seconds(4'000'000'000))</code></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> No</td>
+</tr>
+</tbody>
+</table>
+<p>Here, we have revisited the examples from the previous table, but thanks to our policy override,
+they are no longer forbidden.  We see that they do produce the correct results.  However, we
+emphasize that this is due to the <em>specific input values</em> that we used.  Very similar input values
+could easily produce grossly incorrect results:</p>
+<table>
+<thead>
+<tr>
+<th>Conversion</th>
+<th>Policy</th>
+<th>Result</th>
+<th>Actually lossy?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>inches(23).as(feet, ignore(TRUNCATION_RISK))</code></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> Allowed (by policy override)</td>
+<td><code>feet(1)</code></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/274c.svg" title=":x:" /> Yes (truncation)</td>
+</tr>
+<tr>
+<td><code>seconds(5u).as(nano(seconds), ignore(OVERFLOW_RISK))</code><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> Allowed (by policy override)</td>
+<td><code>nano(seconds(705'032'704u))</code></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/274c.svg" title=":x:" /> Yes (overflow)</td>
+</tr>
+</tbody>
+</table>
+<p>Use the opt-out tool wisely, and carefully consider whether it&rsquo;s the right solution for your use
+case.</p>
+<h3 id="not-all-conversions-are-actually-possible">Not all conversions are actually possible<a class="headerlink" href="#not-all-conversions-are-actually-possible" title="Permanent link">&para;</a></h3>
+<p>Opting out of safety checks is not sufficient to guarantee that Au will perform a conversion.  The
+opt-out removes one barrier.  If there are others, the conversion will still not happen.</p>
+<p>One common example is when users try to convert between two units with different dimensions.  This
+is a meaningless operation, and is always user error.  Au will not perform this conversion because
+it does not exist.</p>
+<p>Another example is when a conversion is meaningful in principle, but Au doesn&rsquo;t know how to
+implement it in the desired rep.  For example, <code>radians(1).as(degrees)</code> would require us to support
+irrational conversion factors in integral reps, which is very hard (although <a href="https://github.com/aurora-opensource/au/issues/453">#453</a> tracks one
+possible future solution).  In this case, if your architecture can tolerate floating point types
+such as <code>double</code>, you can write <code>radians(1.0).as&lt;int&gt;(degrees)</code> to obtain the answer.</p>
+<h2 id="runtime-checks">Runtime checks<a class="headerlink" href="#runtime-checks" title="Permanent link">&para;</a></h2>
+<p>Here, we address the second limitation: even conversions that Au considers low-risk can be lossy.
+If we tried to stick to compile time solutions, we would end up only allowing conversions where
+<em>no</em> input value is lossy.  In practice, this is incredibly restrictive.</p>
+<p>The alternative is to provide <em>runtime checkers</em>, which can efficiently and accurately assess
+whether any individual value will be lossy.</p>
+<p>Unlike the compile time approach, we will pay a runtime cost.  However, this cost can be extremely
+low &mdash; for example, the overflow checks simply compare to a single number that we compute for each
+conversion.  What&rsquo;s more, this cost doesn&rsquo;t usually <em>matter</em>, because unit conversions almost never
+occur in the performance-sensitive &ldquo;hot loops&rdquo; of well designed programs.</p>
+<p>A more serious issue is that you have to decide what to do if the check <em>fails</em>.  In general, there
+is no one-size-fits-all error handling mechanism that would be suitable for all clients of Au.  In
+general, you should use whatever error handling mechanism is appropriate for your project.</p>
+<h3 id="provided-checkers">Provided checkers<a class="headerlink" href="#provided-checkers" title="Permanent link">&para;</a></h3>
+<p>Au provides runtime checkers for overflow, truncation, and combined lossiness.  For a <code>Quantity q</code>,
+converting to a new unit <code>u</code>, we provide these signatures:</p>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Target rep</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Overflow</td>
+<td>same</td>
+<td><code>will_conversion_overflow(q, u)</code></td>
+</tr>
+<tr>
+<td>Overflow</td>
+<td>New rep <code>T</code></td>
+<td><code>will_conversion_overflow&lt;T&gt;(q, u)</code></td>
+</tr>
+<tr>
+<td>Truncation</td>
+<td>same</td>
+<td><code>will_conversion_truncate(q, u)</code></td>
+</tr>
+<tr>
+<td>Truncation</td>
+<td>New rep <code>T</code></td>
+<td><code>will_conversion_truncate&lt;T&gt;(q, u)</code></td>
+</tr>
+<tr>
+<td>Any lossiness</td>
+<td>same</td>
+<td><code>is_conversion_lossy(q, u)</code></td>
+</tr>
+<tr>
+<td>Any lossiness</td>
+<td>New rep <code>T</code></td>
+<td><code>is_conversion_lossy&lt;T&gt;(q, u)</code></td>
+</tr>
+</tbody>
+</table>
+<p>In general, <code>is_conversion_lossy</code> will return true if either <code>will_conversion_overflow</code> or
+<code>will_conversion_truncate</code> returns true.</p>
+<h3 id="creating-checked-helpers">Creating checked helpers<a class="headerlink" href="#creating-checked-helpers" title="Permanent link">&para;</a></h3>
+<p>In general, effective runtime checker use has two steps.  First, call the checker you&rsquo;re interested
+in. Then, if it passed, call the conversion function while <em>opting out of the risk check you already
+validated</em>.</p>
+<p>It&rsquo;s even better to combine these in a utility function.  For example, using C++17&rsquo;s
+<code>std::optional</code>, here&rsquo;s a function that returns the correct result for non-truncating inputs, or
+<code>std::nullopt</code> otherwise:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Target</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">TargetUnit</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">checked_conversion</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">Target</span><span class="w"> </span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">will_conversion_truncate</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">u</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="o">?</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nullopt</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_optional</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">TRUNCATION_RISK</span><span class="p">)));</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">}</span>
 </code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">inches</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">centi</span><span class="p">(</span><span class="n">meters</span><span class="p">)(</span><span class="mi">200</span><span class="p">)</span><span class="w"> </span><span class="c1">// -&gt; coms(22700), using above notation</span>
-</code></pre></div>
-<p>We know that addition is a &ldquo;common unit operation&rdquo;, which means we have to convert both inputs
-to the common unit before performing it.  As above, let&rsquo;s temporarily assume we&rsquo;ve given a name,
-<code>coms</code>, to this anonymous unit.  We already saw that these inputs convert to <code>coms(12700)</code> and
-<code>coms(10000)</code>, respectively, so all we have to do is add them together to get <code>coms(22700)</code>.</p>
-<p>Of course, in real code, this unit wouldn&rsquo;t have a name.  We&rsquo;d just have some <code>Quantity</code> of an
-anonymous length unit with this magnitude, storing the value <code>22700</code>.  So: what can we <em>do</em> with
-this result?  Well, we can&rsquo;t assign it to an <em>integer</em> Quantity of <code>inches</code> <em>or</em>
-<code>centi(meters)</code>, because it&rsquo;s not an integer in either of those units.  However, we <em>can</em>&hellip;</p>
-<ul>
-<li>&hellip;<strong>compare</strong> it to an integer Quantity of <code>inches</code> or <code>centi(meters)</code></li>
-<li>&hellip;assign it to a <strong>floating point</strong> Quantity of <code>inches</code> or <code>centi(meters)</code></li>
-<li>&hellip;assign it to an integer Quantity of some <strong>smaller divisor unit</strong>, such as
-    <code>micro(meters)</code></li>
-</ul>
-<p>So, for example, this would work:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">QuantityI32</span><span class="o">&lt;</span><span class="n">Micro</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inches</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">centi</span><span class="p">(</span><span class="n">meters</span><span class="p">)(</span><span class="mi">200</span><span class="p">)</span>
-</code></pre></div>
-<p>The value of <code>x</code> would be <code>micro(meters)(4'540'000)</code>.</p>
-</div>
-</div>
-</div>
+<p><code>checked_conversion(inches(35), feet)</code> will produce <code>std::nullopt</code>, while
+<code>checked_conversion(inches(36), feet)</code> gives <code>std::make_optional(feet(3))</code>.</p>
+<h2 id="takeaways">Takeaways<a class="headerlink" href="#takeaways" title="Permanent link">&para;</a></h2>
+<p>By default, Au only permits a conversion if the risk is low, for both overflow and truncation.
+However, this is just a heuristic, based on <em>all inputs</em> for a conversion.  Almost every conversion
+has <em>some</em> inputs that go against this policy.</p>
+<p>If your conversion is forbidden, but you&rsquo;re confident it&rsquo;s OK for your inputs, you can <em>pass
+a second argument</em> to opt out of that safety check: usually, <code>ignore(OVERFLOW_RISK)</code> or
+<code>ignore(TRUNCATION_RISK)</code>.  This tool does a good job of communicating your intent, but be wary of
+using it too widely.  The risk checks are there for good reason, so make sure your use case really
+is OK.</p>
+<p>By contrast, if you can&rsquo;t tolerate any lossiness, Au provides <em>runtime checkers</em> that can quickly
+provide accurate answers for any individual value.  This adds runtime cost, but it&rsquo;s rarely
+important.  A harder problem is deciding what to do if the check fails.  We recommend using the
+runtime checkers as building blocks for a &ldquo;checked conversion&rdquo; utility, because this lets you use
+the error handling mechanism that&rsquo;s best for your project.</p>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>Note that this is only possible in the first place if the units have the same <em>dimension</em>.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:2">
-<p>Of course, this definition only applies to units which <em>have</em> a common divisor.  This happens
-whenever their ratio (a dimensionless number) is an exact rational number.  This won&rsquo;t work for unit
-pairs such as <code>degrees</code> and <code>radians</code>, whose ratio is the irrational number <span class="arithmatex"><span class="MathJax_Preview">(\pi / 180)</span><script type="math/tex">(\pi / 180)</script></span>.  For
-&ldquo;irrational ratios&rdquo;, no convention can provide the benefits in this section, so we make an arbitrary
-choice based on convenience of implementation.  For more details, see the <a href="../common_unit/">common unit
-docs</a>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>In these docs, we assume that <code>unsigned int</code> values (such as <code>4u</code> and <code>9000u</code>) are 32 bits
+wide.  On architectures where this is not true, you could pattern-replace items such as <code>4u</code> with
+<code>uint32_t{4}</code> to reproduce the results in the tables.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
@@ -2193,7 +2373,7 @@ docs</a>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to f
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Generic Concepts">
+          <a href="../common_unit/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Common Units">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2203,20 +2383,20 @@ docs</a>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to f
                 Previous
               </span>
               <div class="md-ellipsis">
-                Generic Concepts
+                Common Units
               </div>
             </div>
           </a>
         
         
           
-          <a href="../common_unit/" class="md-footer__link md-footer__link--next" aria-label="Next: Common Units">
+          <a href="../dimensionless/" class="md-footer__link md-footer__link--next" aria-label="Next: Dimensionless Units and Quantities">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Common Units
+                Dimensionless Units and Quantities
               </div>
             </div>
             <div class="md-footer__button md-icon">

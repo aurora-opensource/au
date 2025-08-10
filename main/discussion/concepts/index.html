@@ -590,6 +590,29 @@
   
   
     <li class="md-nav__item">
+      <a href="conversion_risks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="dimensionless/" class="md-nav__link">
         
   
@@ -642,6 +665,29 @@
   
   <span class="md-ellipsis">
     Quantity Point
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="truncation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Truncation
     
   </span>
   
@@ -1263,6 +1309,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/conversion_risk_policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risk Policies
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/corresponding_quantity/" class="md-nav__link">
         
   
@@ -1478,10 +1547,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_12" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_13" >
         
           
-          <label class="md-nav__link" for="__nav_9_12" id="__nav_9_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9_13" id="__nav_9_13_label" tabindex="0">
             
   
   
@@ -1494,8 +1563,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_12_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_12">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_13">
             <span class="md-nav__icon md-icon"></span>
             Detail
           </label>
@@ -1897,6 +1966,12 @@ and help you use units libraries more effectively.</p>
   teaches you what choice we make, and what advantages it has.</p>
 </li>
 <li>
+<p><strong><a href="conversion_risks/">Conversion Risks</a></strong>.  Unit conversions can be lossy.  This page explains
+  how to think about conversion lossiness: both for individual input values, and for the overall
+  conversion as a whole.  We&rsquo;ll learn about the safety checks built into Au&rsquo;s APIs, and how to
+  circumvent them when necessary.</p>
+</li>
+<li>
 <p><strong><a href="dimensionless/">Dimensionless Units and Quantities</a></strong>.  &ldquo;Dimensionless&rdquo; isn&rsquo;t the same
   thing as &ldquo;unitless&rdquo;; we support dimensionless units, like <code>Percent</code>.  Here we explain how the
   library handles these situations, and avoids common pitfalls.</p>
@@ -1910,6 +1985,11 @@ and help you use units libraries more effectively.</p>
 <li>
 <p><strong><a href="quantity_point/">Quantity Point</a></strong>.  An abstraction for &ldquo;point types&rdquo; that have units.
   Most use cases don&rsquo;t need this, but for a few &mdash; including temperatures &mdash; it&rsquo;s indispensable.</p>
+</li>
+<li>
+<p><strong><a href="truncation/">Truncation</a></strong>.  Unit conversions truncate when the destination type can&rsquo;t hold
+  the result with acceptable precision.  This page will explain Au&rsquo;s approach to managing this risk,
+  both for individual values, and for the overall conversion.</p>
 </li>
 <li>
 <p><strong><a href="zero/">Zero</a></strong>.  Switching to a units library can make some easy computations hard.  Learn

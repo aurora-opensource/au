@@ -576,6 +576,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../../discussion/concepts/conversion_risks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../discussion/concepts/dimensionless/" class="md-nav__link">
         
   
@@ -628,6 +651,29 @@
   
   <span class="md-ellipsis">
     Quantity Point
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/truncation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Truncation
     
   </span>
   
@@ -1249,6 +1295,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/conversion_risk_policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risk Policies
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/corresponding_quantity/" class="md-nav__link">
         
   
@@ -1464,10 +1533,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_12" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_13" >
         
           
-          <label class="md-nav__link" for="__nav_9_12" id="__nav_9_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9_13" id="__nav_9_13_label" tabindex="0">
             
   
   
@@ -1480,8 +1549,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_12_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_12">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_13">
             <span class="md-nav__icon md-icon"></span>
             Detail
           </label>
@@ -1787,9 +1856,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#forcing-lossy-conversions-coerce_as-and-coerce_in" class="md-nav__link">
+  <a href="#forcing-lossy-conversions-the-policy-argument" class="md-nav__link">
     <span class="md-ellipsis">
-      Forcing lossy conversions: .coerce_as(...) and .coerce_in(...)
+      Forcing lossy conversions: the policy argument
     </span>
   </a>
   
@@ -2153,31 +2222,34 @@ have <em>different dimensions</em> (namely, <em>length</em> and <em>temperature<
 </div>
 </div>
 </div>
-<h2 id="forcing-lossy-conversions-coerce_as-and-coerce_in">Forcing lossy conversions: <code>.coerce_as(...)</code> and <code>.coerce_in(...)</code><a class="headerlink" href="#forcing-lossy-conversions-coerce_as-and-coerce_in" title="Permanent link">&para;</a></h2>
+<h2 id="forcing-lossy-conversions-the-policy-argument">Forcing lossy conversions: the <code>policy</code> argument<a class="headerlink" href="#forcing-lossy-conversions-the-policy-argument" title="Permanent link">&para;</a></h2>
 <p>Sometimes, you may want to perform a conversion even though you know it&rsquo;s usually lossy.  For
 example, maybe you know that <em>your particular</em> value will give an exact result (like converting
 6 feet into yards).  Or perhaps the truncation is desired.</p>
-<p>Whatever the reason, you can simply add the word &ldquo;coerce&rdquo; before your conversion function to make it
-&ldquo;forcing&rdquo;.  Consider this example.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">feet</span><span class="p">(</span><span class="mf">6.0</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">yards</span><span class="p">);</span><span class="w">       </span><span class="c1">// yards(2.0)</span>
+<p>Whatever the reason, you can simply add an explicit
+<a href="../../reference/conversion_risk_policies/">policy</a> as a second argument to turn off a given risk
+check.  Consider this example.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">feet</span><span class="p">(</span><span class="mf">6.0</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">yards</span><span class="p">);</span><span class="w">                         </span><span class="c1">// yards(2.0)</span>
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="c1">// Compiler error!</span>
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1">// feet(6).as(yards);</span>
 <a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
-<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">coerce_as</span><span class="p">(</span><span class="n">yards</span><span class="p">);</span><span class="w">  </span><span class="c1">// yards(2)</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">yards</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">TRUNCATION_RISK</span><span class="p">));</span><span class="w">  </span><span class="c1">// yards(2)</span>
 </code></pre></div>
-<p>These &ldquo;coercing&rdquo; versions work similarly to <code>static_cast</code>, in that they will truncate if necessary.
-For example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="n">coerce_as</span><span class="p">(</span><span class="n">yards</span><span class="p">);</span><span class="w">  </span><span class="c1">// yards(1) --- a truncation of (5/3 = 1.6666...) yards</span>
+<p>These versions work similarly to <code>static_cast</code>, in that they will truncate if necessary. For
+example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">yards</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">TRUNCATION_RISK</span><span class="p">));</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="c1">// Gives `yards(1)` --- a truncation of (5/3 = 1.666...) yards</span>
 </code></pre></div>
-<p>You can use this to &ldquo;overrule&rdquo; Au when we prevent a <em>physically meaningful</em> conversion because we
-think it&rsquo;s too risky.</p>
+<p>Besides <code>TRUNCATION_RISK</code>, you can also pass <code>OVERFLOW_RISK</code>, or even <code>ALL_RISKS</code>.  These versions
+can &ldquo;overrule&rdquo; Au when we prevent a <em>physically meaningful</em> conversion because we think it&rsquo;s too
+risky.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Prefer <strong>not</strong> to use the coercing versions unless you have a good reason.  If you do, consider
-adding a comment to explain why your specific use case is OK.</p>
-<p>As a code reviewer, if you see a coercing version that doesn&rsquo;t seem necessary or justified, ask
-about it!</p>
+<p>Prefer <strong>not</strong> to use these policy-override versions unless you have a good reason.  If you do,
+consider adding a comment to explain why your specific use case is OK.</p>
+<p>As a code reviewer, if you see a risk check being ignored, and it doesn&rsquo;t seem necessary or
+justified, ask about it!</p>
 </div>
 <p>At this point, we&rsquo;ve seen several examples of conversions which Au forbids.  We&rsquo;ve also seen how
 some of them can be forced anyway.  Here&rsquo;s a chance to test your understanding: what will happen if
@@ -2189,11 +2261,11 @@ ready, click over to the &ldquo;Results and Discussion&rdquo; tab to check your 
 <div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Conversion</label><label for="__tabbed_4_2">Results and Discussion</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">coerce_as</span><span class="p">(</span><span class="n">kelvins</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">kelvins</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">ALL_RISKS</span><span class="p">));</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">coerce_as</span><span class="p">(</span><span class="n">kelvins</span><span class="p">);</span><span class="w">  </span><span class="c1">// Compiler error!</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">kelvins</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">ALL_RISKS</span><span class="p">));</span><span class="w">  </span><span class="c1">// Compiler error!</span>
 </code></pre></div>
 <p>Converting units with different dimensions isn&rsquo;t merely &ldquo;unsafe&rdquo;; it&rsquo;s completely
 meaningless.  We can&rsquo;t &ldquo;force&rdquo; the answer because there isn&rsquo;t even an answer to force.</p>
@@ -2218,14 +2290,14 @@ storage types.</p>
   <tr>
     <td><code>length.as(yards)</code></td>
     <td class="fair">
-        <b>Forbidden</b>: not guaranteed to be integral<br>(can be forced with coercing version)
+        <b>Forbidden</b>: not guaranteed to be integral<br>(can be forced with <code>ignore(TRUNCATION_RISK)</code>)
     </td>
     <td class="good"><code>yards(2.0)</code></td>
   </tr>
   <tr>
     <td><code>length.as(nano(meters))</code></td>
     <td class="fair">
-        <b>Forbidden</b>: excessive overflow risk<br>(can be forced with coercing version)
+        <b>Forbidden</b>: excessive overflow risk<br>(can be forced with <code>ignore(OVERFLOW_RISK)</code>)
     </td>
     <td class="good"><code>nano(meters)(1'828'800'000.0)</code></td>
   </tr>
@@ -2323,12 +2395,14 @@ dimension.)</p>
 </ul>
 </li>
 <li>
-<p>You can <strong>force</strong> a conversion that is <strong>meaningful, but considered dangerous</strong> by preceding your
-   function name with <strong><code>coerce_</code></strong>.</p>
+<p>You can <strong>force</strong> a conversion that is <strong>meaningful, but considered dangerous</strong> by passing
+   a <a href="../../reference/conversion_risk_policies/">conversion risk policy argument</a> as a second
+   parameter.</p>
 <ul>
 <li>
-<p>For example: <code>seconds(200).as(minutes)</code> won&rsquo;t compile, but <code>seconds(200).coerce_as(minutes)</code>
-  gives <code>minutes(3)</code>, because we forced this lossy conversion by using the word &ldquo;coerce&rdquo;.</p>
+<p>For example: <code>seconds(200).as(minutes)</code> won&rsquo;t compile, but
+  <code>seconds(200).as(minutes, ignore(TRUNCATION_RISK))</code> gives <code>minutes(3)</code>, because the second
+  argument turned off the truncation risk check.</p>
 </li>
 <li>
 <p><strong>Use this sparingly,</strong> since the safety checks are there for a reason, and consider <strong>adding
