@@ -66,8 +66,12 @@ from determining whether _a specific input value_ will be lossy.  For example:
 | Conversion | Policy | Result (if allowed) | Actually lossy? |
 |------------|--------|---------------------|-----------------|
 | `inches(24).as(feet)` | :x: Forbidden (truncation risk) | `feet(2)` | :thumbs_up: No |
-| `seconds(4u).as(nano(seconds))` | :x: Forbidden (overflow risk) | `nano(seconds(4'000'000'000u))` | :thumbs_up: No |
-| `seconds(9000u).as(micro(seconds))` | :thumbs_up: Allowed | `micro(seconds(410'065'408u))` | :x: Yes (overflow) |
+| `seconds(4u).as(nano(seconds))`[^1] | :x: Forbidden (overflow risk) | `nano(seconds(4'000'000'000u))` | :thumbs_up: No |
+| `seconds(9000u).as(micro(seconds))`[^1] | :thumbs_up: Allowed | `micro(seconds(410'065'408u))` | :x: Yes (overflow) |
+
+[^1]: In these docs, we assume that `unsigned int` values (such as `4u` and `9000u`) are 32 bits
+wide.  On architectures where this is not true, you could pattern-replace items such as `4u` with
+`uint32_t{4}` to reproduce the results in the tables.
 
 This shows that our default policy has two kinds of failure modes.
 
@@ -96,7 +100,7 @@ Let's look at some more examples to make this clear.
 | Conversion | Policy | Result | Actually lossy? |
 |------------|--------|--------|-----------------|
 | `inches(24).as(feet, ignore(TRUNCATION_RISK))` | :thumbs_up: Allowed (by policy override) | `feet(2)` | :thumbs_up: No |
-| `seconds(4u).as(nano(seconds), ignore(OVERFLOW_RISK))` | :thumbs_up: Allowed (by policy override) | `nano(seconds(4'000'000'000))` | :thumbs_up: No |
+| `seconds(4u).as(nano(seconds), ignore(OVERFLOW_RISK))`[^1] | :thumbs_up: Allowed (by policy override) | `nano(seconds(4'000'000'000))` | :thumbs_up: No |
 
 Here, we have revisited the examples from the previous table, but thanks to our policy override,
 they are no longer forbidden.  We see that they do produce the correct results.  However, we
@@ -106,7 +110,7 @@ could easily produce grossly incorrect results:
 | Conversion | Policy | Result | Actually lossy? |
 |------------|--------|--------|-----------------|
 | `inches(23).as(feet, ignore(TRUNCATION_RISK))` | :thumbs_up: Allowed (by policy override) | `feet(1)` | :x: Yes (truncation) |
-| `seconds(5u).as(nano(seconds), ignore(OVERFLOW_RISK))` | :thumbs_up: Allowed (by policy override) | `nano(seconds(705'032'704u))` | :x: Yes (overflow) |
+| `seconds(5u).as(nano(seconds), ignore(OVERFLOW_RISK))`[^1] | :thumbs_up: Allowed (by policy override) | `nano(seconds(705'032'704u))` | :x: Yes (overflow) |
 
 Use the opt-out tool wisely, and carefully consider whether it's the right solution for your use
 case.
