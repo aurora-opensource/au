@@ -657,7 +657,7 @@ To understand the precise definition of the common point unit, first assume that
 displacement" for any two units with different origins is itself a new unit, which we can create
 implicitly.  Then, the _common point unit_ is defined as the unit such that:
 
-- It is quantity-equivalent to the _common unit_ of **both** all input units, **and** of all "origin
+- It is quantity-equivalent to the _common unit_ of **both** all input units **and** of all "origin
   displacement units" created by any pairs of input units with different origins.
 
 - Its _origin_ is the _lowest_ of all input origins, because this is the _highest_ value that is
