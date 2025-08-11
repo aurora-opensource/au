@@ -2220,18 +2220,19 @@ arbitrary (but same-dimension) units, <code>U1</code> and <code>U2</code>, and y
 </details>
 <h2 id="common-quantity-point">Changes for <code>QuantityPoint</code><a class="headerlink" href="#common-quantity-point" title="Permanent link">&para;</a></h2>
 <p>The common unit for <a href="../quantity_point/"><code>QuantityPoint</code></a> operations is different from the common
-unit for <code>Quantity</code>.  To see why a single notion of &ldquo;common unit&rdquo; isn&rsquo;t enough, consider <code>Celsius</code>
+unit for <code>Quantity</code>.  To see why we can&rsquo;t just reuse the same &ldquo;common unit&rdquo;, consider <code>Celsius</code>
 and <code>Kelvins</code>.</p>
 <ul>
 <li>
 <p>For a <strong><code>Quantity</code></strong>, these two units are identical.  The &ldquo;common unit&rdquo; will be
-  (quantity-)equivalent to both of them.</p>
+  <a href="../../../reference/unit/#quantity-equivalent">(quantity-)equivalent</a> to both of
+  them.</p>
 </li>
 <li>
 <p>For a <strong><code>QuantityPoint</code></strong>, these units are very different.  A &ldquo;temperature point&rdquo; of 0 degrees
-  <code>Celsius</code> is (point-)equivalent to a temperature point of 273.15 <code>Kelvins</code>.  This additive offset
-  means that we&rsquo;ll need to convert both to <code>Centi&lt;Kelvins&gt;</code> before we can subtract and/or compare
-  them!</p>
+  <code>Celsius</code> is <a href="../../../reference/unit/#point-equivalent">(point-)equivalent</a> to a temperature point
+  of 273.15 <code>Kelvins</code>.  This additive offset means that we&rsquo;ll need to convert both to
+  <code>Centi&lt;Kelvins&gt;</code> before we can subtract and/or compare them!</p>
 </li>
 </ul>
 <p>Thus, what we&rsquo;ve been calling <code>CommonUnitT</code> is really more like <code>CommonQuantityUnitT</code> (although
@@ -2252,6 +2253,55 @@ unit,&rdquo; but the origin adds a new complication.  We&rsquo;ll need to choose
   only are we keeping integers as integers, but we support <strong>unsigned</strong> integers as best we can.</p>
 </li>
 </ul>
+<p>So the <em>origin</em> of the &ldquo;common point unit&rdquo; is simply the <em>lowest</em> origin of any input unit.</p>
+<p>To complete our definition, we need to determine the <em>precise</em> effect that origin displacements
+should have on the unit&rsquo;s <em>magnitude</em>.  Our approach is to take every pair of units with different
+origins, and treat their origin displacement as a <em>new, implicitly created unit</em>.  This new unit
+then participates in the common unit calculation in the usual way, on equal footing with the others.</p>
+<details class="example">
+<summary>Example: common point unit of degrees Celsius and Kelvins</summary>
+<p>The magnitude of the unit itself is 1 K, in both cases.  The <em>origin displacement</em> is 273.15 K,
+and we treat this as a new, implicit unit.  Now we simply combine these units using the usual
+common unit algorithm, which is equivalent to <a href="https://en.wikipedia.org/wiki/Euclidean_algorithm">Euclid&rsquo;s
+algorithm</a> for the greatest common divisor:</p>
+<table>
+<thead>
+<tr>
+<th>Higher</th>
+<th>Lower</th>
+<th>Remainder</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>273.15 K</td>
+<td>1 K</td>
+<td>0.15 K</td>
+</tr>
+<tr>
+<td>1 K</td>
+<td>0.15 K</td>
+<td>0.10 K</td>
+</tr>
+<tr>
+<td>0.15 K</td>
+<td>0.10 K</td>
+<td>0.05 K</td>
+</tr>
+<tr>
+<td>0.10 K</td>
+<td>0.05 K</td>
+<td>0 K</td>
+</tr>
+</tbody>
+</table>
+<p>Therefore, the greatest common divisor has a magnitude of 0.05 K.  This means that our common
+point unit is a unit with a magnitude of 0.05 K, whose origin equals the origin of Kelvins
+(because it is lower than the origin of degrees Celsius).</p>
+<p>Au will automatically generate the label
+<code>"EQUIV{[(1 / 20) K], [(1 / 5463) (@(0 degC) - @(0 K))]}"</code>
+for this unit, which gives the value in terms of all relevant inputs.</p>
+</details>
 <div class="footnote">
 <hr />
 <ol>
