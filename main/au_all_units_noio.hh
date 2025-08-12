@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-88-ga1d6c44
+// Version identifier: 0.4.1-89-gf9946c2
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -6476,9 +6476,9 @@ namespace au {
 // Conversion risk section.
 //
 // End users can use the constants `OVERFLOW_RISK` and `TRUNCATION_RISK`.  They can combine them as
-// flags with `|`.  And they can pass either of these (or the result of `|`) to either `check()` or
-// `ignore()`.  The result of these functions is a risk _policy_, which can be passed as a second
-// argument to conversion functions to control which checks are performed.
+// flags with `|`.  And they can pass either of these (or the result of `|`) to either
+// `check_for()` or `ignore()`.  The result of these functions is a risk _policy_, which can be
+// passed as a second argument to conversion functions to control which checks are performed.
 //
 
 namespace detail {
@@ -6503,7 +6503,7 @@ struct RiskSet {
 
     constexpr uint8_t flags() const { return RiskFlags; }
 
-    friend constexpr CheckTheseRisks<RiskSet<RiskFlags>> check(RiskSet) { return {}; }
+    friend constexpr CheckTheseRisks<RiskSet<RiskFlags>> check_for(RiskSet) { return {}; }
     friend constexpr CheckTheseRisks<RiskSet<3u - RiskFlags>> ignore(RiskSet) { return {}; }
 };
 
@@ -6721,7 +6721,7 @@ constexpr auto as_quantity(T &&x) -> CorrespondingQuantityT<T> {
 // Only works for dimensionless `Quantities`; will return a compile-time error otherwise.
 //
 // Identity for non-`Quantity` types.
-template <typename U, typename R, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+template <typename U, typename R, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
 constexpr R as_raw_number(Quantity<U, R> q, RiskPolicyT policy = RiskPolicyT{}) {
     return q.in(UnitProductT<>{}, policy);
 }
@@ -6803,7 +6803,7 @@ class Quantity {
     }
 
     // `q.as(new_unit)`, or `q.as(new_unit, risk_policy)`
-    template <typename NewUnitSlot, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+    template <typename NewUnitSlot, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity<AssociatedUnitT<NewUnitSlot>>(in_impl<Rep>(u, policy));
     }
@@ -6817,7 +6817,7 @@ class Quantity {
     }
 
     // `q.in(new_unit)`, or `q.in(new_unit, risk_policy)`
-    template <typename NewUnitSlot, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+    template <typename NewUnitSlot, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<Rep>(u, policy);
     }
@@ -7792,7 +7792,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // Convert this constant to a Quantity of the given unit and rep.
     template <typename T, typename OtherUnit>
     constexpr auto as(OtherUnit u) const {
-        return as<T>(u, check(ALL_RISKS));
+        return as<T>(u, check_for(ALL_RISKS));
     }
 
     // Convert this constant to a Quantity of the given unit and rep, following this risk policy.
@@ -7822,7 +7822,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // Get the value of this constant in the given unit and rep.
     template <typename T, typename OtherUnit>
     constexpr auto in(OtherUnit u) const {
-        return in<T>(u, check(ALL_RISKS));
+        return in<T>(u, check_for(ALL_RISKS));
     }
 
     // Get the value of this constant in the given unit and rep, following this risk policy.
@@ -8023,7 +8023,7 @@ class QuantityPoint {
         return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in_impl<NewRep>(u, policy));
     }
 
-    template <typename NewUnit, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+    template <typename NewUnit, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in_impl<Rep>(u, policy));
     }
@@ -8033,7 +8033,7 @@ class QuantityPoint {
         return in_impl<NewRep>(u, policy);
     }
 
-    template <typename NewUnit, typename RiskPolicyT = decltype(check(ALL_RISKS))>
+    template <typename NewUnit, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr Rep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<Rep>(u, policy);
     }
