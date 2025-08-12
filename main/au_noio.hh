@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-89-gf9946c2
+// Version identifier: 0.4.1-90-g3450828
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -7754,11 +7754,10 @@ class QuantityPoint {
     static constexpr Unit unit{};
     using Diff = Quantity<Unit, Rep>;
 
-    // The default constructor produces a QuantityPoint in a valid but contractually unspecified
-    // state.  It exists to give you an object you can assign to.  The main motivating factor for
-    // including this is to support `std::atomic`, which requires its types to be
-    // default-constructible.
-    constexpr QuantityPoint() noexcept : x_{ZERO} {}
+    // The default constructor produces a QuantityPoint whose value is default constructed.  It
+    // exists to give you an object you can assign to.  The main motivating factor for including
+    // this is to support `std::atomic`, which requires its types to be default-constructible.
+    constexpr QuantityPoint() noexcept : x_{} {}
 
     template <typename OtherUnit,
               typename OtherRep,

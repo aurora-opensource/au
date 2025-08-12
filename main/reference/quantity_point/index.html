@@ -2437,11 +2437,15 @@ actually desired, or when you independently know that the specific input value w
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">QuantityPoint</span><span class="p">();</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">};</span>
 </code></pre></div>
-<p>A default-constructed <code>QuantityPoint</code> is initialized to some value, which helps avoid certain kinds
-of memory safety bugs.  However, <strong>the value is contractually unspecified</strong>.  You can of course look
-up that value by reading the source code, but we may change it in the future, and <strong>we would not
-consider this to be a breaking change</strong>.  The only valid operation on a default-constructed
-<code>QuantityPoint</code> is to assign to it later on.</p>
+<p>A default-constructed <code>QuantityPoint</code> default-constructs the underlying type, which helps avoid
+certain kinds of memory safety bugs.  It will contain a default-constructed instance of the rep
+type.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Avoid relying on the <em>specific value</em> of a default-constructed <code>QuantityPoint</code>, because it
+poorly communicates intent.  The only logically valid operation on a default-constructed
+<code>Quantity</code> is to assign to it later on.</p>
+</div>
 <h2 id="extracting-the-stored-value">Extracting the stored value<a class="headerlink" href="#extracting-the-stored-value" title="Permanent link">&para;</a></h2>
 <p>In order to access the raw numeric value stored inside of <code>QuantityPoint</code>, you must explicitly name
 the unit at the callsite.  There are two functions which can do this, depending on whether you want
