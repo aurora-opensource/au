@@ -148,16 +148,17 @@ unspecified.
 ## Changes for `QuantityPoint` {#common-quantity-point}
 
 The common unit for [`QuantityPoint`](./quantity_point.md) operations is different from the common
-unit for `Quantity`.  To see why a single notion of "common unit" isn't enough, consider `Celsius`
+unit for `Quantity`.  To see why we can't just reuse the same "common unit", consider `Celsius`
 and `Kelvins`.
 
 - For a **`Quantity`**, these two units are identical.  The "common unit" will be
-  (quantity-)equivalent to both of them.
+  [(quantity-)equivalent](../../reference/unit.md#quantity-equivalent) to both of
+  them.
 
 - For a **`QuantityPoint`**, these units are very different.  A "temperature point" of 0 degrees
-  `Celsius` is (point-)equivalent to a temperature point of 273.15 `Kelvins`.  This additive offset
-  means that we'll need to convert both to `Centi<Kelvins>` before we can subtract and/or compare
-  them!
+  `Celsius` is [(point-)equivalent](../../reference/unit.md#point-equivalent) to a temperature point
+  of 273.15 `Kelvins`.  This additive offset means that we'll need to convert both to
+  `Centi<Kelvins>` before we can subtract and/or compare them!
 
 Thus, what we've been calling `CommonUnitT` is really more like `CommonQuantityUnitT` (although
 we've kept the name short because `Quantity` is by far the typical use case).  For `QuantityPoint`
@@ -174,6 +175,34 @@ unit," but the origin adds a new complication.  We'll need to choose a conventio
 - Similarly, with "common quantity _point_ units," we should choose its origin such that we only
   **add** a **non-negative** integer.  This convention preserves and extends the previous one: not
   only are we keeping integers as integers, but we support **unsigned** integers as best we can.
+
+So the _origin_ of the "common point unit" is simply the _lowest_ origin of any input unit.
+
+To complete our definition, we need to determine the _precise_ effect that origin displacements
+should have on the unit's _magnitude_.  Our approach is to take every pair of units with different
+origins, and treat their origin displacement as a _new, implicitly created unit_.  This new unit
+then participates in the common unit calculation in the usual way, on equal footing with the others.
+
+??? example "Example: common point unit of degrees Celsius and Kelvins"
+    The magnitude of the unit itself is 1 K, in both cases.  The _origin displacement_ is 273.15 K,
+    and we treat this as a new, implicit unit.  Now we simply combine these units using the usual
+    common unit algorithm, which is equivalent to [Euclid's
+    algorithm](https://en.wikipedia.org/wiki/Euclidean_algorithm) for the greatest common divisor:
+
+    | Higher | Lower | Remainder |
+    |--------|-------|-----------|
+    | 273.15 K | 1 K   | 0.15 K    |
+    | 1 K    | 0.15 K | 0.10 K    |
+    | 0.15 K | 0.10 K | 0.05 K    |
+    | 0.10 K | 0.05 K | 0 K       |
+
+    Therefore, the greatest common divisor has a magnitude of 0.05 K.  This means that our common
+    point unit is a unit with a magnitude of 0.05 K, whose origin equals the origin of Kelvins
+    (because it is lower than the origin of degrees Celsius).
+
+    Au will automatically generate the label
+    `"EQUIV{[(1 / 20) K], [(1 / 5463) (@(0 degC) - @(0 K))]}"`
+    for this unit, which gives the value in terms of all relevant inputs.
 
 [^1]: The overwhelmingly most common case here is that this integer is _positive_ as well, not just
 nonzero, so that we usually don't change the sign, either.  If the integer happens to be negative,

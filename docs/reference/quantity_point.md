@@ -508,7 +508,7 @@ As [required by the standard](https://en.cppreference.com/w/cpp/types/common_typ
 [SFINAE](https://en.cppreference.com/w/cpp/language/sfinae)-friendly: improper combinations will
 simply not be present, rather than producing a hard error.
 
-### AreQuantityPointTypesEquivalent
+### AreQuantityPointTypesEquivalent {#are-quantity-point-types-equivalent}
 
 **Result:** Indicates whether two `QuantityPoint` types are equivalent.  Equivalent types may be
 freely converted to each other, and no arithmetic operations will be performed in doing so.
