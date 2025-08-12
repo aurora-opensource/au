@@ -3,7 +3,7 @@
 A conversion risk policy is a [monovalue type](./detail/monovalue_types.md) that indicates how
 a unit conversion function should handle [conversion
 risks](../discussion/concepts/conversion_risks.md).  Au tracks two kinds of conversion risk:
-overflow, and truncation.  Each conversion risk policy will either enable or disable checking for
+overflow and truncation.  Each conversion risk policy will either enable or disable checking for
 each of these risks.
 
 ## Conversion Risk Sets

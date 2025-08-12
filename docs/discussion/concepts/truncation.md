@@ -45,7 +45,7 @@ various [types of conversion factors](../implementation/applying_magnitudes.md).
 First, we have multiplying by an integer.  This is easy: it stays within the domain of the integers,
 so it can never truncate.
 
-Next, we have multiplication by a non-integer rational (including reciprocal integers).  This will
+Next, we have multiplying by a non-integer rational (including reciprocal integers).  This will
 truncate for any input that isn't an exact integer multiple of the denominator, so the _conversion
 as a whole_ clearly has truncation risk.  When checking _individual values_, we can use the built-in
 `%` operator.
