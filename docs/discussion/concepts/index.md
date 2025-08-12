@@ -32,7 +32,7 @@ and help you use units libraries more effectively.
   Most use cases don't need this, but for a few --- including temperatures --- it's indispensable.
 
 - **[Truncation](./truncation.md)**.  Unit conversions truncate when the destination type can't hold
-  the result with acceptable precision.  This page will explain Au's approach to managing this risk,
+  the result with acceptable precision.  This page explains Au's approach to managing this risk,
   both for individual values, and for the overall conversion.
 
 - **[Zero](./zero.md)**.  Switching to a units library can make some easy computations hard.  Learn
