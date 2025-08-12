@@ -2105,7 +2105,7 @@ discuss how to think about other numeric types that we hope to support more full
 various <a href="../../implementation/applying_magnitudes/">types of conversion factors</a>.</p>
 <p>First, we have multiplying by an integer.  This is easy: it stays within the domain of the integers,
 so it can never truncate.</p>
-<p>Next, we have multiplication by a non-integer rational (including reciprocal integers).  This will
+<p>Next, we have multiplying by a non-integer rational (including reciprocal integers).  This will
 truncate for any input that isn&rsquo;t an exact integer multiple of the denominator, so the <em>conversion
 as a whole</em> clearly has truncation risk.  When checking <em>individual values</em>, we can use the built-in
 <code>%</code> operator.</p>
