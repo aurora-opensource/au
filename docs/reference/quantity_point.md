@@ -143,11 +143,14 @@ class QuantityPoint {
 };
 ```
 
-A default-constructed `QuantityPoint` is initialized to some value, which helps avoid certain kinds
-of memory safety bugs.  However, **the value is contractually unspecified**.  You can of course look
-up that value by reading the source code, but we may change it in the future, and **we would not
-consider this to be a breaking change**.  The only valid operation on a default-constructed
-`QuantityPoint` is to assign to it later on.
+A default-constructed `QuantityPoint` default-constructs the underlying type, which helps avoid
+certain kinds of memory safety bugs.  It will contain a default-constructed instance of the rep
+type.
+
+!!! warning
+    Avoid relying on the _specific value_ of a default-constructed `QuantityPoint`, because it
+    poorly communicates intent.  The only logically valid operation on a default-constructed
+    `Quantity` is to assign to it later on.
 
 ## Extracting the stored value
 
