@@ -87,13 +87,8 @@ It may be easier to understand with several examples.
 |-----------------------|---------|---------|--------|
 | Neither | `{}` | `fmt::format("{}", meters(123.456))` | `"123.456 m"` |
 | Numeric value | `{:~^10.2f}` | `fmt::format("{:~^10.2f}", meters(123.456))` | `"~~123.46~~ m"` |
-| Unit label | `{:U5}` | `fmt::format("{:U5}", meters(123.456))` | `"123.456 m____"`<br>(Each `'_'` char represents a space `' '`; see footnote[^1]) |
-| Both | `{:U5;~^10.2f}` | `fmt::format("{:U5;~^10.2f}", meters(123.456))` | `"~~123.46~~ m____"`<br>(Each `'_'` char represents a space `' '`; see footnote[^1]) |
-
-[^1]: Our documentation website cannot properly render multiple consecutive space characters in
-a monospaced block.  Therefore, we replaced the space characters `' '` with underscore characters
-`'_'`.  The real string does not have any `'_'` characters in any of these examples, so we hope that
-this does not cause too much confusion.
+| Unit label | `{:U5}` | `fmt::format("{:U5}", meters(123.456))` | `"123.456 m    "` |
+| Both | `{:U5;~^10.2f}` | `fmt::format("{:U5;~^10.2f}", meters(123.456))` | `"~~123.46~~ m    "` |
 
 To target a specific and consistent overall width --- say, for aligning columnar output --- provide
 formatters for both the unit label and the numeric value, and choose a specific width for each.  The
