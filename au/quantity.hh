@@ -902,32 +902,26 @@ struct QuantityFormatter {
         if (it == ctx.end()) {
             return it;
         }
-        
+
         if (*it != 'U') {
             return it;
         }
-            // Consume the 'U'.
-            ++it;
+        // Consume the 'U'.
+        ++it;
 
-            // Parse the total width.
-            while (it != ctx.end() && *it >= '0' && *it <= '9') {
-                min_label_width_ = (min_label_width_ * 10) + static_cast<std::size_t>(*it++ - '0');
-            }
-
-            if (it == ctx.end()) {
-                return it;
-            }
-
-            if (*it == '}') {
-                return it;
-            }
-
-            if (*it++ != ';') {
-                // Cause an error condition in further parsing.
-                it = ctx.end();
-            }
+        // Parse the total width.
+        while (it != ctx.end() && *it >= '0' && *it <= '9') {
+            min_label_width_ = (min_label_width_ * 10) + static_cast<std::size_t>(*it++ - '0');
         }
 
+        if (it == ctx.end() || *it == '}') {
+            return it;
+        }
+
+        if (*it++ != ';') {
+            // Cause an error condition in further parsing.
+            it = ctx.end();
+        }
         return it;
     }
 
