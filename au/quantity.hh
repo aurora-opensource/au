@@ -899,7 +899,13 @@ struct QuantityFormatter {
     constexpr auto parse_unit_label_part(FormatParseContext &ctx) {
         auto it = ctx.begin();
 
-        if (it != ctx.end() && *it == 'U') {
+        if (it == ctx.end()) {
+            return it;
+        }
+        
+        if (*it != 'U') {
+            return it;
+        }
             // Consume the 'U'.
             ++it;
 
@@ -908,15 +914,17 @@ struct QuantityFormatter {
                 min_label_width_ = (min_label_width_ * 10) + static_cast<std::size_t>(*it++ - '0');
             }
 
-            if (it != ctx.end()) {
-                if (*it == '}') {
-                    return it;
-                }
+            if (it == ctx.end()) {
+                return it;
+            }
 
-                if (*it++ != ';') {
-                    // Cause an error condition in further parsing.
-                    it = ctx.end();
-                }
+            if (*it == '}') {
+                return it;
+            }
+
+            if (*it++ != ';') {
+                // Cause an error condition in further parsing.
+                it = ctx.end();
             }
         }
 
