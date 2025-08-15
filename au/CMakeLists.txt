@@ -40,6 +40,7 @@ header_only_library(
     quantity.hh
     quantity_point.hh
     rep.hh
+    std_format.hh
     truncation_risk.hh
     unit_of_measure.hh
     unit_symbol.hh

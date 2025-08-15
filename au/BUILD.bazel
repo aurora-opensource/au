@@ -143,6 +143,15 @@ cc_test(
 )
 
 cc_library(
+    name = "std_format",
+    hdrs = ["std_format.hh"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":quantity",
+    ],
+)
+
+cc_library(
     name = "testing",
     testonly = True,
     hdrs = ["testing.hh"],

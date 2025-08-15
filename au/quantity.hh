@@ -957,16 +957,6 @@ struct QuantityFormatter {
 
 }  // namespace au
 
-// We want the `std::formatter` specialization to be defined if and only if `std::format` is
-// supported.  Putting it in the same file helps avoid ODR violations.
-#if defined(__cpp_lib_format) && __cpp_lib_format >= 201907L
-#include <format>
-namespace std {
-template <typename U, typename R>
-struct formatter<au::Quantity<U, R>> : ::au::QuantityFormatter<U, R, ::std::formatter> {};
-}  // namespace std
-#endif
-
 namespace std {
 // Note: we would prefer not to reopen `namespace std` [1].  However, some older compilers (which we
 // still want to support) incorrectly treat the preferred syntax recommended in [1] as an error.

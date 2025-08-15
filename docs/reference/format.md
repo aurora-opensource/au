@@ -28,7 +28,14 @@ want to format a `Quantity`.
 
 ## Setup
 
-The setup depends on whether you are using the [{fmt}] library, or `std::format`.
+The setup depends on whether you are using `std::format`, or the [{fmt}] library.
+
+### Using `std::format`
+
+Include `"au/std_format.hh"`.
+
+Note that this will not work unless you are building on a toolchain that fully supports
+`std::format` and the `<format>` header.
 
 ### Using `{fmt}`
 
@@ -61,11 +68,6 @@ struct formatter<::au::Quantity<U, R>> : ::au::QuantityFormatter<U, R, ::fmt::fo
     occur once in your project --- even if there are a few stray mentions, it should be easy to find
     the authoritative definition.  Start by grepping your project for this string.  If you find it,
     you can just use the file.  If not, you know you need to create it.
-
-### Using `std::format`
-
-Au automatically supports `Quantity` formatting on any configuration that includes `std::format`.
-No setup is necessary.
 
 ## Syntax
 
