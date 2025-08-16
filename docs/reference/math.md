@@ -798,6 +798,24 @@ auto fmod(Quantity<U1, R1> q1, Quantity<U2, R2> q2);
 **Returns:** The remainder of `q1 / q2`, in the type `Quantity<U, R>`, where `U` is the common unit
 of `U1` and `U2`, and `R` is the common type of `R1` and `R2`.
 
+#### `hypot`
+
+A unit-aware adaptation of `std::hypot`, giving the length of the hypotenuse of a right triangle
+with the given side lengths.
+
+As with many math functions, we first express the inputs in their [common
+unit](../discussion/concepts/common_unit.md).
+
+**Signature:**
+
+```cpp
+template <typename U1, typename R1, typename U2, typename R2>
+auto hypot(Quantity<U1, R1> q1, Quantity<U2, R2> q2);
+```
+
+**Returns:** The hypotenuse length, in the type `Quantity<U, R>`, where `U` is the common unit of
+`U1` and `U2`, and `R` is the common type of `R1` and `R2`.
+
 #### `remainder`
 
 A unit-aware adaptation of `std::remainder`, giving the zero-centered remainder of the division of

@@ -196,9 +196,8 @@ latter because we've performed an _exact_ safety check.
 
 At the time of writing, Au is the only units library we know that provides conversion checkers to do
 this heavy lifting.  We'd like to see other units libraries try it out as well!  Meanwhile, even on
-our end, there's still more work to do --- such as adding "explicit rep" versions of these
-utilities, and supporting `QuantityPoint`.  You can track our progress on this feature in issue
-[#110].
+our end, there's still more work to do --- such as supporting `QuantityPoint`.  You can track our
+progress on this feature in issue [#352].
 
 ## Summary
 
@@ -209,5 +208,5 @@ specific conversion.  But the most robust solution of all is to make it as easy 
 every conversion as it happens, and be prepared for it to fail.
 
 [threshold]: https://github.com/aurora-opensource/au/blob/dbd79b2/au/conversion_policy.hh#L27-L28
-[#110]: https://github.com/aurora-opensource/au/issues/110
+[#352]: https://github.com/aurora-opensource/au/issues/352
 [integer promotion]: https://en.cppreference.com/w/c/language/conversion#Integer_promotions
