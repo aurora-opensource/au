@@ -198,7 +198,7 @@ cmake_pop_check_state()
 # Conditionally add `std_format.hh` to the `au` target.
 if (AU_HAS_STD_FORMAT)
   message(STATUS "<format> is available; providing \"au/std_format.hh\" in `au`.")
-  list(APPEND AU_MAIN_HEADERS au/std_format.hh)
+  list(APPEND AU_MAIN_HEADERS std_format.hh)
 else()
   message(STATUS "<format> is NOT available; excluding \"au/std_format.hh\" from `au`.")
 endif()
