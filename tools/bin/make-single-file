@@ -53,6 +53,7 @@ def main(argv=None):
             units=args.units,
             constants=args.constants,
             include_io=args.include_io,
+            include_std_format=args.std_format,
         )
     )
     print_unified_file(files, args=args)
@@ -60,7 +61,7 @@ def main(argv=None):
     return 0
 
 
-def filenames(main_files, units, constants, include_io):
+def filenames(main_files, units, constants, include_io, include_std_format):
     """Construct the list of project filenames to include.
 
     The script will be sure to include all of these, and will also include any
@@ -74,6 +75,8 @@ def filenames(main_files, units, constants, include_io):
     )
     if include_io:
         names.append("au/io.hh")
+    if include_std_format:
+        names.append("au/std_format.hh")
     return names
 
 
@@ -114,6 +117,13 @@ def parse_command_line_args(argv):
         action="store_false",
         dest="include_io",
         help="Exclude I/O capabilities",
+    )
+
+    parser.add_argument(
+        "--std-format",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Include support for `std::format` (C++20)",
     )
 
     return parser.parse_args()
@@ -282,6 +292,7 @@ def manifest(args):
         [
             f"Version identifier: {args.version_id}",
             f'<iostream> support: {"INCLUDED" if args.include_io else "EXCLUDED"}',
+            f'<format> support: {"INCLUDED" if args.std_format else "EXCLUDED"}',
             "List of included units:",
         ]
         + [f"  {u}" for u in sorted(args.units)]
@@ -293,7 +304,8 @@ def manifest(args):
         lines.append("Extra files included:")
         lines.extend(f"  {f}" for f in sorted(args.main_files))
 
-    assert args.are_all_used()
+    unused_args = args.unused_args()
+    assert not unused_args, f"Arguments not used: {unused_args}"
     return lines
 
 
@@ -302,8 +314,8 @@ class CheckArgs(dict):
         self.vars = vars(args)
         self.used = set()
 
-    def are_all_used(self):
-        return not set(self.vars.keys()).difference(self.used)
+    def unused_args(self):
+        return set(self.vars.keys()).difference(self.used)
 
     def __getattr__(self, k):
         self.used.add(k)
