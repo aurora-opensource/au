@@ -36,15 +36,15 @@ are included for being especially pioneering or popular (or both).  Here, we lis
 indicate which version we considered, and say a few words about why we included it in the analysis.
 
 - [**Boost Units**](https://www.boost.org/doc/libs/1_82_0/doc/html/boost_units.html) (version:
-  1.82.0)
+  1.2, from Boost version 1.89.0)
     - One of the longest-standing C++ unit libraries, and the most prominent pre-C++14 option.
-- [**nholthaus/units**](https://github.com/nholthaus/units) (version: 2.3.3)
+- [**nholthaus/units**](https://github.com/nholthaus/units) (version: 2.3.4)
     - Kicked off the revolution in modern (that is, post-C++11 watershed) units libraries.
     - Its laser-sharp focus on accessibility and low friction have made it probably the most widely
       used C++ units library to date.
-- [**bernedom/SI**](https://github.com/bernedom/SI) (version: 2.5.1)
+- [**bernedom/SI**](https://github.com/bernedom/SI) (version: 2.5.4)
     - A newer, C++17-compatible offering with a large number of GitHub stars.
-- [**mp-units**](https://github.com/mpusz/mp-units) (version: 2.0.0)
+- [**mp-units**](https://github.com/mpusz/mp-units) (version: 2.4.0)
     - A library designed to take full advantage of ultra-modern (that is, post-C++20 watershed)
       features, such as concepts and non-template type parameters (NTTPs).
     - mp-units is leading the efforts towards a standard C++ units library, both by field testing
@@ -145,10 +145,15 @@ at all, and if so, how hard it will be to obtain.
         <td class="fair">Available on conan</td>
         <td class="fair">Available on conan and vcpkg</td>
         <td class="best">
-            <p>Supports single-header delivery, with features:
             <ul>
-                <li class="check">Easy to customize units and I/O support</li>
-                <li class="check">Version-stamped for full reproducibility</li>
+                <li class="check">Full support for bazel and CMake</li>
+                <li class="check">Available on conan and vcpkg, thanks to community support</li>
+                <li class="check">Supports single-header delivery, with features:
+                    <ul>
+                        <li class="check">Easy to customize units and I/O support</li>
+                        <li class="check">Version-stamped for full reproducibility</li>
+                    </ul>
+                </li>
             </ul>
         </td>
     </tr>
@@ -307,6 +312,7 @@ features.
             Meets `std::chrono` baseline, plus:
             <ul>
                 <li class="check">Automatically adapts to level of overflow risk</li>
+                <li class="check">Can separately opt out of checking for overflow and truncation</li>
                 <li class="check">Runtime conversion checkers</li>
                 <li class="check">Constants have perfect conversion policy</li>
             </ul>
@@ -449,7 +455,7 @@ features.
                 </ul>
             </details>
         </td>
-        <td class="good">
+        <td class="fair">
             <ul>
                 <li class="check">Toggleable <code>&lt;iostream&gt;</code> support</li>
                 <li class="check">
@@ -477,16 +483,14 @@ features.
                 <li class="check">Supports <code>&lt;iostream&gt;</code></li>
                 <li class="check">Unit labels available even without <code>&lt;iostream&gt;</code></li>
                 <li class="check">Supports <code>std::format</code></li>
+                <li class="check">Many customization options</li>
             </ul>
         </td>
-        <td class="fair">
+        <td class="good">
             <ul>
                 <li class="check">Toggleable <code>&lt;iostream&gt;</code> support</li>
                 <li class="check">Unit labels available even without <code>&lt;iostream&gt;</code></li>
-                <li class="x">
-                    Plan to add fmtlib support; see <a
-                    href="https://github.com/aurora-opensource/au/issues/149">#149</a>
-                </li>
+                <li class="check">Supports <code>std::format</code></li>
             </ul>
         </td>
     </tr>
@@ -674,9 +678,16 @@ features.
         </td>
         <td class="poor">None; would be hard to add, since units conflated with quantity type</td>
         <td class="best">
-            Custom origins really easy to use and compose
+            <ul>
+                <li class="check">Custom origins really easy to use and compose</li>
+                <li class="check">Elegant `point` and `delta` modifiers on quantity spec</li>
+            </ul>
         </td>
-        <td class="good"></td>
+        <td class="good">
+            <ul>
+                <li class="check">Maximally efficient common units</li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>
@@ -958,6 +969,28 @@ features.
                 <li class="check">Only library with pre-C++20 support</li>
                 <li class="x">User must provide exact unit and rep</li>
                 <li class="x">No floating point support</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Negative units</summary>
+                <p>
+                    Correctly supporting units, constants, and magnitudes that are negative: so,
+                    larger stored values correspond to smaller quantities.
+                </p>
+            </details>
+        </td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="best">
+            <ul>
+                <li class="check">Negative constants</li>
+                <li class="check">Negative units</li>
+                <li class="check">Negative magnitudes</li>
             </ul>
         </td>
     </tr>
