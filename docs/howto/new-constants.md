@@ -30,7 +30,7 @@ will simply be cumbersome.
     Here's how to create a constant for the speed of light, without giving it a special symbol.
 
     ```cpp
-    constexpr auto c = au::make_constant(au::meters / au::second * au::mag<299'792'458>());
+    constexpr auto c = make_constant(au::meters / au::second * au::mag<299'792'458>());
     ```
 
     Here's an example use case, in user code:
