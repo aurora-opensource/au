@@ -16,13 +16,13 @@
 # 2022, and is our newest officially supported compiler.  The next CMake release was v3.23.0, on
 # March 29, 2022.  Therefore, our minimum version must be at least CMake 3.23.
 #
-# We also use the `CMAKE_VERIFY_INTERFACE_HEADER_SETS`, which was added in CMake
-# 3.24, which means the minimum must also be at least 3.24.
+# We also use the `SKIP_LINTING` property, which was added in CMake 3.27, which means the minimum
+# must also be at least 3.27.
 #
 # The maximum version should be the latest version we've tested the project with.
 #
 # [1]: https://cliutils.gitlab.io/modern-cmake/chapters/intro/dodonot.html
-cmake_minimum_required(VERSION 3.24...3.29)
+cmake_minimum_required(VERSION 3.27...3.29)
 
 project(
    Au

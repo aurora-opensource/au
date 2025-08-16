@@ -60,11 +60,12 @@ def _get_cmake_headers():
 
 
 def _get_bazel_headers():
+    deps_str = ' union '.join(f'deps(//au{target})' for target in ['', ':io', ':std_format'])
     raw_output = subprocess.run(
         [
             "bazel",
             "query",
-            "kind(source, filter(//au, deps(//au) union deps(//au:io)))",
+            f"kind(source, filter(//au, {deps_str}))",
         ],
         stdout=subprocess.PIPE,
         check=True,

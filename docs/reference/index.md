@@ -31,6 +31,11 @@ Here's a guide to the main reference pages.
   unit with a specified _relative size_.  For example, `centi` is a prefix whose relative magnitude
   is $1/100$, and a `centi(meter)` is a new unit which is one one-hundredth of a `meter`.
 
-- **[`Math functions`](./math.md).**  We provide many common mathematical functions out of the box.
+- **[Math functions](./math.md).**  We provide many common mathematical functions out of the box.
+
+- **[Format support](./format.md).**  Exercise fine-grained control over formatting quantities to
+  strings, using either the popular [{fmt}] library, or C++20's `std::format`.
 
 See the sidebar for the complete list of pages.
+
+[{fmt}]: https://github.com/fmtlib/fmt
