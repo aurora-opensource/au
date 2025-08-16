@@ -14,13 +14,12 @@
 
 include("${PROJECT_SOURCE_DIR}/cmake/HeaderOnlyLibrary.cmake")
 
+# Build up the authoritative list of headers for our main target, `au`.
 #
-# Publicly exported targets
-#
-
-header_only_library(
-  NAME au
-  HEADERS
+# Making a separate list variable will let us conditionally include files based
+# on the toolchain support, most notably `"au/std_format.hh"`, which requires
+# support for the `<format>` header.
+set(AU_MAIN_HEADERS
     abstract_operations.hh
     au.hh
     chrono_interop.hh
@@ -40,7 +39,6 @@ header_only_library(
     quantity.hh
     quantity_point.hh
     rep.hh
-    std_format.hh
     truncation_risk.hh
     unit_of_measure.hh
     unit_symbol.hh
@@ -180,6 +178,38 @@ header_only_library(
     utility/probable_primes.hh
     utility/string_constant.hh
     utility/type_traits.hh
+)
+
+# Check whether `<format>` is available, storing in `AU_HAS_STD_FORMAT`.
+include(CheckCXXSourceCompiles)
+include(CMakePushCheckState)
+cmake_push_check_state()
+set(CMAKE_REQUIRED_QUIET ${AU_HAS_STD_FORMAT_QUIET})
+message(STATUS "Checking for <format> support")
+check_cxx_source_compiles(
+  "
+  #include <format>
+  int main() { return 0; }
+  "
+  AU_HAS_STD_FORMAT
+)
+cmake_pop_check_state()
+
+# Conditionally add `std_format.hh` to the `au` target.
+if (AU_HAS_STD_FORMAT)
+  message(STATUS "<format> is available; providing \"au/std_format.hh\" in `au`.")
+  list(APPEND AU_MAIN_HEADERS au/std_format.hh)
+else()
+  message(STATUS "<format> is NOT available; excluding \"au/std_format.hh\" from `au`.")
+endif()
+
+#
+# Publicly exported targets
+#
+
+header_only_library(
+  NAME au
+  HEADERS ${AU_MAIN_HEADERS}
 )
 
 if (NOT AU_EXCLUDE_GTEST_DEPENDENCY)
