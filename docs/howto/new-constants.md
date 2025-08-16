@@ -30,7 +30,7 @@ will simply be cumbersome.
     Here's how to create a constant for the speed of light, without giving it a special symbol.
 
     ```cpp
-    constexpr auto c = make_constant(meters / second * mag<299'792'458>());
+    constexpr auto c = au::make_constant(au::meters / au::second * au::mag<299'792'458>());
     ```
 
     Here's an example use case, in user code:
@@ -55,23 +55,23 @@ Next, pass an instance of this custom unit to `make_constant`.
 
     === "C++14"
         ```cpp
-        // In `.hh` file:
-        struct SpeedOfLightUnit : decltype(Meters{} / Seconds{} * mag<299'792'458>()) {
+        // In `.hh` file, in your project's namespace:
+        struct SpeedOfLightUnit : decltype(au::Meters{} / au::Seconds{} * au::mag<299'792'458>()) {
             static constexpr const char label[] = "c";
         };
-        constexpr auto c = make_constant(SpeedOfLightUnit{});
+        constexpr auto c = au::make_constant(SpeedOfLightUnit{});
 
-        // In `.cc` file:
+        // In `.cc` file, in your project's namespace:
         constexpr const char SpeedOfLightUnit::label[];
         ```
 
     === "C++17"
         ```cpp
-        // In `.hh` file:
-        struct SpeedOfLightUnit : decltype(Meters{} / Seconds{} * mag<299'792'458>()) {
+        // In `.hh` file, in your project's namespace:
+        struct SpeedOfLightUnit : decltype(au::Meters{} / au::Seconds{} * au::mag<299'792'458>()) {
             static constexpr inline const char label[] = "c";
         };
-        constexpr auto c = make_constant(SpeedOfLightUnit{});
+        constexpr auto c = au::make_constant(SpeedOfLightUnit{});
         ```
 
     Here's an example use case, in user code:
