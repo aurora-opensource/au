@@ -33,6 +33,10 @@ py_binary(
         ":au_all_units_noio_hh",
         ":au_hh",
         ":au_noio_hh",
+        ":au_stdformat_hh",
+        ":au_stdformat_noio_hh",
+        ":au_all_units_stdformat_hh",
+        ":au_all_units_stdformat_noio_hh",
     ] + glob(["docs/**"]),
     deps = [
         requirement("mkdocs"),
@@ -49,6 +53,10 @@ py_binary(
         ":au_all_units_noio_hh",
         ":au_hh",
         ":au_noio_hh",
+        ":au_stdformat_hh",
+        ":au_stdformat_noio_hh",
+        ":au_all_units_stdformat_hh",
+        ":au_all_units_stdformat_noio_hh",
     ] + glob(["docs/**"]),
     main = "mike_bin.py",
     deps = [
@@ -93,6 +101,7 @@ genrule(
     ),
     stamp = True,
     tools = ["tools/bin/make-single-file"],
+    visibility = ["//release:__pkg__"],
 )
 
 cc_library(
@@ -140,6 +149,7 @@ genrule(
     ),
     stamp = True,
     tools = ["tools/bin/make-single-file"],
+    visibility = ["//release:__pkg__"],
 )
 
 cc_library(
@@ -171,3 +181,83 @@ cc_library(
     hdrs = ["docs/au_all_units_noio.hh"],
     visibility = ["//release:__pkg__"],
 )
+
+################################################################################
+# Release single-file package `au_stdformat.hh`
+
+genrule(
+    name = "au_stdformat_hh",
+    srcs = ["//au:headers"],
+    outs = ["docs/au_stdformat.hh"],
+    cmd = CMD_ROOT.format(
+        all_constants = "",
+        extra_opts = "--std-format",
+        id_cmd = GIT_ID_CMD,
+        units = "--units " + BASE_UNIT_STRING,
+    ),
+    stamp = True,
+    tools = ["tools/bin/make-single-file"],
+    visibility = ["//release:__pkg__"],
+)
+
+# TODO(#508): no `cc_library`, because we don't yet have a toolchain that supports `std::format`.
+
+################################################################################
+# Release single-file package `au_stdformat_noio.hh`
+
+genrule(
+    name = "au_stdformat_noio_hh",
+    srcs = ["//au:headers"],
+    outs = ["docs/au_stdformat_noio.hh"],
+    cmd = CMD_ROOT.format(
+        all_constants = "",
+        extra_opts = "--std-format --noio",
+        id_cmd = GIT_ID_CMD,
+        units = "--units " + BASE_UNIT_STRING,
+    ),
+    stamp = True,
+    tools = ["tools/bin/make-single-file"],
+    visibility = ["//release:__pkg__"],
+)
+
+# TODO(#508): no `cc_library`, because we don't yet have a toolchain that supports `std::format`.
+
+################################################################################
+# Release single-file package `au_all_units_stdformat.hh`
+
+genrule(
+    name = "au_all_units_stdformat_hh",
+    srcs = ["//au:headers"],
+    outs = ["docs/au_all_units_stdformat.hh"],
+    cmd = CMD_ROOT.format(
+        all_constants = "--all-constants",
+        extra_opts = "--std-format",
+        id_cmd = GIT_ID_CMD,
+        units = "--all-units",
+    ),
+    stamp = True,
+    tools = ["tools/bin/make-single-file"],
+    visibility = ["//release:__pkg__"],
+)
+
+# TODO(#508): no `cc_library`, because we don't yet have a toolchain that supports `std::format`.
+
+################################################################################
+# Release single-file package `au_all_units_stdformat_noio.hh`
+
+genrule(
+    name = "au_all_units_stdformat_noio_hh",
+    srcs = ["//au:headers"],
+    outs = ["docs/au_all_units_stdformat_noio.hh"],
+    cmd = CMD_ROOT.format(
+        all_constants = "--all-constants",
+        extra_opts = "--std-format --noio",
+        id_cmd = GIT_ID_CMD,
+        units = "--all-units",
+    ),
+    stamp = True,
+    tools = ["tools/bin/make-single-file"],
+    visibility = ["//release:__pkg__"],
+)
+
+# TODO(#508): no `cc_library`, because we don't yet have a toolchain that supports `std::format`.
