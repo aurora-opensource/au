@@ -1065,11 +1065,11 @@ casting automatically when possible.
 
     **Compiler error (MSVC 2022 x64)**
     ```
-    error_examples.cc(94): error C3535: cannot deduce type for 'auto &&' from 'initializer list'
-    error_examples.cc(94): error C2440: 'initializing': cannot convert from 'initializer list' to 'std::initializer_list<int> &&'
-    error_examples.cc(94): note: Reason: cannot convert from 'initializer list' to 'std::initializer_list<int>'
-    error_examples.cc(94): note: Element '1': no conversion from 'au::Quantity<au::Hertz,double>' to 'int'
-    error_examples.cc(94): note: Element '2': no conversion from 'au::Quantity<au::Pow<B,-1>,T>' to 'int'
+    error_examples.cc(104): error C3535: cannot deduce type for 'auto &&' from 'initializer list'
+    error_examples.cc(104): error C2440: 'initializing': cannot convert from 'initializer list' to 'std::initializer_list<<error type>> &&'
+    error_examples.cc(104): note: Reason: cannot convert from 'initializer list' to 'std::initializer_list<<error type>>'
+    error_examples.cc(104): note: Element '1': no conversion from 'au::Quantity<au::Hertz,double>' to '<error type>'
+    error_examples.cc(104): note: Element '2': no conversion from 'au::Quantity<au::Pow<B,-1>,T>' to '<error type>'
             with
             [
                 B=au::Seconds,

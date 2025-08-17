@@ -94,8 +94,6 @@ void example_dangerous_inversion() {
     inverse_as(seconds, hertz(5));
 }
 
-*/
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Deduced conflicting types
 
@@ -109,7 +107,7 @@ void example_deduced_conflicting_types() {
     }
 }
 
-/*
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION:
@@ -126,6 +124,5 @@ void example_() {
         // ...
     }
 }
-*/
 
 }  // namespace au
