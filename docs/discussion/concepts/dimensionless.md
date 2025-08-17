@@ -58,7 +58,14 @@ feels like the right compromise solution for us to start with.
     conversion of this integral Quantity.  Rather, the library's job is to safely hold the obtained
     numeric value of `500`.  The Magnitude attached to the Quantity is what lets us do so.
 
-## Other dimensionless units and implicit conversions {#implicit-conversions}
+## Raw number conversions
+
+Converting dimensionless quantities to raw numbers raises several interesting and subtle questions.
+For dimensionless quantities that are also _unitless_, it's straightforward: implicit conversion is
+always safe, and we always permit it.  However, dimensionless quantities with _non-trivial
+magnitudes_ require more careful consideration.
+
+### Implicit conversions {#implicit-conversions}
 
 A common choice among units libraries is to support implicit conversions with dimensionless units.
 This is intuitively appealing: after all, a Quantity like `percent(75.0)` represents the value
@@ -81,5 +88,29 @@ up stray factors of 100 in the round trip!
 
 It is safer (and not _much_ less convenient!) to use separate, unambiguous idioms for these two
 notions of "value".
+
+### Explicit conversions
+
+We have seen why _implicit_ conversions are problematic, but it's still important to support
+_explicit_ conversions robustly.  For this, we have the
+[`as_raw_number()`](../../reference/quantity.md#as-raw-number) utility.  The name disambiguates
+between the two notions of "value", making it clear that we are considering the _quantity_
+holistically (as with any other `as`-named interface).  So, something like
+`as_raw_number(percent(75.0))` could only ever mean `0.75`.
+
+Additionally, `as_raw_number` gets all the same safety checks as any other conversion function,
+guarding against both truncation and overflow.  For example, `as_raw_number(percent(150))` would
+fail to compile, because the true value of 1.5 cannot be represented in `int`.  We can even use the
+same mechanisms to turn off [conversion risks](./conversion_risks.md): so,
+`as_raw_number(percent(150), ignore(TRUNCATION_RISK))` _would_ compile, and produce `1`.
+
+## Summary
+
+Any time your computation produces a dimensionless result, consider keeping it as a `Quantity` type.
+You get the benefit of having the compiler keep track of any scale factors, such as the
+$\frac{1}{100}$ associated with `Percent`.  When you do want just a raw number, though, pass the
+result to `as_raw_number`.  You'll make your intent clear, get all the usual safety checks, and even
+get the ability to selectively override safety checks when you know that's the right move for your
+use case.
 
 [unos]: https://archive.iupap.org/commissions/interunion/iu14/ga-99.html
