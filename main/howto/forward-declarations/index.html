@@ -2062,6 +2062,12 @@ forward declarations.  This page explains how to use them.</p>
 configurations.  Most users won&rsquo;t need to forward declare Au&rsquo;s types.  However, for situations
 where you really do need every bit of speed, these forward declarations can help.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We are omitting the <code>au::</code> namespace in the text of this how-to guide, for conciseness and
+readability.  However, all code samples will include the <code>au::</code> namespace qualification wherever
+appropriate.</p>
+</div>
 <h2 id="how-to-use">How to use<a class="headerlink" href="#how-to-use" title="Permanent link">&para;</a></h2>
 <p>First, identify the file in your project that could benefit from forward declarations.  <em>This is
 usually a file that gets included in several other files,</em> and the point is to speed up compilation
@@ -2136,7 +2142,7 @@ matters, we can do the next best thing: make it easy to check that it&rsquo;s ri
     <code>UnitProduct&lt;...&gt;</code> are instances of <code>Pow</code> or <code>RatioPow</code>, you&rsquo;ll want to make an alias for those
     types.  If your compound unit is, say, the inverse cube of a unit, you can forward declare it
     like this:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">using</span><span class="w"> </span><span class="n">InverseYourUnitsCubedFwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ForwardDeclareUnitPow</span><span class="o">&lt;</span><span class="n">YourUnits</span><span class="p">,</span><span class="w"> </span><span class="mi">-3</span><span class="o">&gt;</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">using</span><span class="w"> </span><span class="n">InverseYourUnitsCubedFwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">ForwardDeclareUnitPow</span><span class="o">&lt;</span><span class="n">YourUnits</span><span class="p">,</span><span class="w"> </span><span class="mi">-3</span><span class="o">&gt;</span><span class="p">;</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">using</span><span class="w"> </span><span class="n">InverseYourUnitsCubed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">YourUnitsCubedFwd</span><span class="o">::</span><span class="n">unit_type</span><span class="p">;</span>
 </code></pre></div>
 <p>If you add a third template parameter to <code>ForwardDeclareUnitPow</code>, it will be treated as the
@@ -2148,7 +2154,7 @@ denominator for the power.  For example, to form a square root of the above unit
     to the above.  For example, if the full product type from step 1 was
     <code>UnitProduct&lt;OtherUnits, Pow&lt;YourUnits, -3&gt;&gt;</code>, you would forward declare it like this (using the
     existing <code>InverseYourUnitsCubed</code> that you would have defined in step 2):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">using</span><span class="w"> </span><span class="n">OtherUnitsPerYourUnitsCubedFwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ForwardDeclareUnitProduct</span><span class="o">&lt;</span><span class="n">OtherUnits</span><span class="p">,</span><span class="w"> </span><span class="n">InverseYourUnitsCubed</span><span class="o">&gt;</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">using</span><span class="w"> </span><span class="n">OtherUnitsPerYourUnitsCubedFwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">ForwardDeclareUnitProduct</span><span class="o">&lt;</span><span class="n">OtherUnits</span><span class="p">,</span><span class="w"> </span><span class="n">InverseYourUnitsCubed</span><span class="o">&gt;</span><span class="p">;</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">using</span><span class="w"> </span><span class="n">OtherUnitsPerYourUnitsCubed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OtherUnitsPerYourUnitsCubedFwd</span><span class="o">::</span><span class="n">unit_type</span><span class="p">;</span>
 </code></pre></div>
 </li>
@@ -2158,17 +2164,12 @@ denominator for the power.  For example, to form a square root of the above unit
     the utility <code>is_forward_declared_unit_valid(...)</code>, which can be used with <code>static_assert</code>.  For
     example:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// In whatever file _corresponds to_ the one with the forward declarations:</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">static_assert</span><span class="p">(</span><span class="n">is_forward_declared_unit_valid</span><span class="p">(</span><span class="n">InverseYourUnitsCubedFwd</span><span class="p">{}));</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">static_assert</span><span class="p">(</span><span class="n">is_forward_declared_unit_valid</span><span class="p">(</span><span class="n">OtherUnitsPerYourUnitsCubedFwd</span><span class="p">{}));</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">static_assert</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">is_forward_declared_unit_valid</span><span class="p">(</span><span class="n">InverseYourUnitsCubedFwd</span><span class="p">{}));</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">static_assert</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">is_forward_declared_unit_valid</span><span class="p">(</span><span class="n">OtherUnitsPerYourUnitsCubedFwd</span><span class="p">{}));</span>
 </code></pre></div>
 </li>
 </ol>
 <h2 id="full-worked-example">Full worked example<a class="headerlink" href="#full-worked-example" title="Permanent link">&para;</a></h2>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>We are omitting the <code>au::</code> namespace in the text of this example, for conciseness and
-readability.</p>
-</div>
 <p>Suppose we want to make a library target that can print a speed, in km/h, to a <code>std::string</code>.
 Suppose, too, that we want our library to be as lightweight as possible: maybe some client targets
 are interacting with all of their <code>Quantity</code> types by const-ref, so they don&rsquo;t actually need to see
@@ -2221,8 +2222,8 @@ and declare our function signature.  Here&rsquo;s what it looks like all togethe
 <a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
 <a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">my_library</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
-<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="k">static_assert</span><span class="p">(</span><span class="n">is_forward_declared_unit_valid</span><span class="p">(</span><span class="n">InverseHoursFwd</span><span class="p">{}));</span>
-<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="k">static_assert</span><span class="p">(</span><span class="n">is_forward_declared_unit_valid</span><span class="p">(</span><span class="n">KilometersPerHourFwd</span><span class="p">{}));</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="k">static_assert</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">is_forward_declared_unit_valid</span><span class="p">(</span><span class="n">InverseHoursFwd</span><span class="p">{}));</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="k">static_assert</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">is_forward_declared_unit_valid</span><span class="p">(</span><span class="n">KilometersPerHourFwd</span><span class="p">{}));</span>
 <a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>
 <a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">print_to_string</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">KilometersPerHour</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">speed</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span><span class="w"> </span><span class="n">oss</span><span class="p">;</span>
