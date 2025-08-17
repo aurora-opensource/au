@@ -275,9 +275,33 @@ Here are the two ways to get a single-file packaging of the library.
 We provide pre-generated single-file versions of the library, automatically generated from the
 latest commit in the repo:
 
-- [`au.hh`](./au.hh)
-- [`au_noio.hh`](./au_noio.hh)
-  (Same as above, but with `<iostream>` support stripped out)
+<table>
+  <tr>
+    <th>Includes <code>std::format</code>?</th>
+    <th>Includes <code>&lt;iostream&gt;</code>?</th>
+    <th>Filename</th>
+  </tr>
+  <tr>
+    <td class="poor">No</td>
+    <td class="good">Yes</td>
+    <td><a href="../au.hh">au.hh</a></td>
+  </tr>
+  <tr>
+    <td class="poor">No</td>
+    <td class="poor">No</td>
+    <td><a href="../au_noio.hh">au_noio.hh</a></td>
+  </tr>
+  <tr>
+    <td class="good">Yes</td>
+    <td class="good">Yes</td>
+    <td><a href="../au_stdformat.hh">au_stdformat.hh</a></td>
+  </tr>
+  <tr>
+    <td class="good">Yes</td>
+    <td class="poor">No</td>
+    <td><a href="../au_stdformat_noio.hh">au_stdformat_noio.hh</a></td>
+  </tr>
+</table>
 
 These include very few units (to keep compile times short).  However, _combinations_ of these units
 should get you any other unit you're likely to want.  The units we include are:
@@ -322,10 +346,33 @@ should get you any other unit you're likely to want.  The units we include are:
 
     **If you don't care about compile times**, here are the files:
 
-    - [`au_all_units.hh`](./au_all_units.hh)
-    - [`au_all_units_noio.hh`](./au_all_units_noio.hh)
-      (Same as above, but with `<iostream>` support stripped out)
-
+    <table>
+      <tr>
+        <th>Includes <code>std::format</code>?</th>
+        <th>Includes <code>&lt;iostream&gt;</code>?</th>
+        <th>Filename</th>
+      </tr>
+      <tr>
+        <td class="poor">No</td>
+        <td class="good">Yes</td>
+        <td><a href="../au_all_units.hh">au_all_units.hh</a></td>
+      </tr>
+      <tr>
+        <td class="poor">No</td>
+        <td class="poor">No</td>
+        <td><a href="../au_all_units_noio.hh">au_all_units_noio.hh</a></td>
+      </tr>
+      <tr>
+        <td class="good">Yes</td>
+        <td class="good">Yes</td>
+        <td><a href="../au_all_units_stdformat.hh">au_all_units_stdformat.hh</a></td>
+      </tr>
+      <tr>
+        <td class="good">Yes</td>
+        <td class="poor">No</td>
+        <td><a href="../au_all_units_stdformat_noio.hh">au_all_units_stdformat_noio.hh</a></td>
+      </tr>
+    </table>
 
 #### Custom single file
 
