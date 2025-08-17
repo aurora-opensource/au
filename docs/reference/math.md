@@ -196,10 +196,12 @@ expand the note below for further details.
 
 ### Interpolating functions
 
-#### `lerp` (C++20)
+#### `lerp` (C++20) {#lerp}
 
 !!! warning
     `lerp`, based on [std::lerp], is only available for C++20 and later.
+
+    For the special case where `t = 0.5`, [`mean`](#mean) (see below) presents an alternative.
 
 Linearly interpolate between two `Quantity` or `QuantityPoint` values, based on a parameter `t`,
 such that `t=0` corresponds to the first argument, and `t=1` corresponds to the second argument.
@@ -223,6 +225,37 @@ handling outlined in [std::lerp].  The return value will be expressed in the com
 units of the inputs `a` and `b`.
 
 [std::lerp]: https://en.cppreference.com/w/cpp/numeric/lerp
+
+#### `mean` {#mean}
+
+Produce the arithmetic mean of two or more `Quantity` or `QuantityPoint` values.
+
+**Signatures:**
+
+```cpp
+// 1. `Quantity` inputs
+template <typename U0, typename R0, typename... Us, typename... Rs>
+constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs);
+
+// 2. `QuantityPoint` inputs
+template <typename U0, typename R0, typename... Us, typename... Rs>
+constexpr auto mean(QuantityPoint<U0, R0> p0, QuantityPoint<Us, Rs>... ps);
+```
+
+**Returns:** The arithmetic mean of all inputs.  The return value will be expressed in the common
+unit of the units of the inputs, and the rep will be the common type of the reps of all inputs.
+
+!!! note
+    `mean` has overlap with `lerp`: `mean(a, b)` is similar to `lerp(a, b, 0.5)`.  Here is
+    a comparison table to help you decide which to use.
+
+    | Criterion | `mean` | `lerp` |
+    |-----------|--------|--------|
+    | Number of inputs | 2 or more | Exactly 2 |
+    | Weights | All equal | Arbitrary |
+    | Special case handling | Avoids overflows | Delegates to [std::lerp], which handles many special cases |
+    | Approach to integer types | Use integer arithmetic | Delegates to [std::lerp], which always converts to floating point |
+    | C++ version compatibility | All versions of Au (C++14 and later) | C++20 and later |
 
 ### Exponentiation
 
