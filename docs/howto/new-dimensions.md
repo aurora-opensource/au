@@ -76,8 +76,8 @@ unit label, quantity maker, and singular name.
     struct Pixels : au::UnitImpl<au::Dimension<PixelBaseDim>> {
         static constexpr const char label[] = "px";
     };
-    constexpr auto pixel  = SingularNameFor<Pixels>{};
-    constexpr auto pixels = QuantityMaker<Pixels>{};
+    constexpr auto pixel  = au::SingularNameFor<Pixels>{};
+    constexpr auto pixels = au::QuantityMaker<Pixels>{};
 
     // In .cc file:
     constexpr const char Pixels::label[];
@@ -90,8 +90,8 @@ unit label, quantity maker, and singular name.
     struct Pixels : au::UnitImpl<au::Dimension<PixelBaseDim>> {
         static constexpr inline const char label[] = "px";
     };
-    constexpr auto pixel  = SingularNameFor<Pixels>{};
-    constexpr auto pixels = QuantityMaker<Pixels>{};
+    constexpr auto pixel  = au::SingularNameFor<Pixels>{};
+    constexpr auto pixels = au::QuantityMaker<Pixels>{};
     ```
 
 ## Usage example
@@ -101,8 +101,8 @@ This new unit will compose with other units in all of the usual ways.
 Here's an example test case:
 
 ```cpp
-constexpr auto resolution = (pixels / inch)(300);
-EXPECT_THAT(resolution * inches(6), SameTypeAndValue(pixels(1800)));
+constexpr auto resolution = (pixels / au::inch)(300);
+EXPECT_THAT(resolution * au::inches(6), SameTypeAndValue(pixels(1800)));
 ```
 
 If we followed the instructions in the previous section, this test should pass --- and you can use
