@@ -78,8 +78,6 @@ void example_cant_pass_quantity_to_unit_slot() {
     size = round_as<int>(bytes(10), size);
 }
 
-*/
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Integer division forbidden
 
@@ -88,7 +86,7 @@ void example_integer_division_forbidden() {
     QuantityD<Seconds> t = meters(60) / (miles / hour)(65);
 }
 
-/*
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Dangerous inversion
@@ -97,6 +95,8 @@ void example_dangerous_inversion() {
     // (BROKEN): excessive truncation risk.
     inverse_as(seconds, hertz(5));
 }
+
+/*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Deduced conflicting types
