@@ -2391,11 +2391,34 @@ explains how to customize it to get exactly the units you want.</p>
 </div>
 <p>We provide pre-generated single-file versions of the library, automatically generated from the
 latest commit in the repo:</p>
-<ul>
-<li><a href="../au.hh"><code>au.hh</code></a></li>
-<li><a href="../au_noio.hh"><code>au_noio.hh</code></a>
-  (Same as above, but with <code>&lt;iostream&gt;</code> support stripped out)</li>
-</ul>
+<table>
+  <tr>
+    <th>Includes <code>std::format</code>?</th>
+    <th>Includes <code>&lt;iostream&gt;</code>?</th>
+    <th>Filename</th>
+  </tr>
+  <tr>
+    <td class="poor">No</td>
+    <td class="good">Yes</td>
+    <td><a href="../au.hh">au.hh</a></td>
+  </tr>
+  <tr>
+    <td class="poor">No</td>
+    <td class="poor">No</td>
+    <td><a href="../au_noio.hh">au_noio.hh</a></td>
+  </tr>
+  <tr>
+    <td class="good">Yes</td>
+    <td class="good">Yes</td>
+    <td><a href="../au_stdformat.hh">au_stdformat.hh</a></td>
+  </tr>
+  <tr>
+    <td class="good">Yes</td>
+    <td class="poor">No</td>
+    <td><a href="../au_stdformat_noio.hh">au_stdformat_noio.hh</a></td>
+  </tr>
+</table>
+
 <p>These include very few units (to keep compile times short).  However, <em>combinations</em> of these units
 should get you any other unit you&rsquo;re likely to want.  The units we include are:</p>
 <ul>
@@ -2430,11 +2453,33 @@ better over time</em> (by supporting more and more units out of the box).</p>
 <p>Therefore, these files are only for use cases where <em>you don&rsquo;t care about compile time</em>.  The
 primary example is <a href="https://godbolt.org/z/KrvfhP4M3">the Compiler Explorer (&ldquo;godbolt&rdquo;)</a>.</p>
 <p><strong>If you don&rsquo;t care about compile times</strong>, here are the files:</p>
-<ul>
-<li><a href="../au_all_units.hh"><code>au_all_units.hh</code></a></li>
-<li><a href="../au_all_units_noio.hh"><code>au_all_units_noio.hh</code></a>
-  (Same as above, but with <code>&lt;iostream&gt;</code> support stripped out)</li>
-</ul>
+<p><table>
+  <tr>
+    <th>Includes <code>std::format</code>?</th>
+    <th>Includes <code>&lt;iostream&gt;</code>?</th>
+    <th>Filename</th>
+  </tr>
+  <tr>
+    <td class="poor">No</td>
+    <td class="good">Yes</td>
+    <td><a href="../au_all_units.hh">au_all_units.hh</a></td>
+  </tr>
+  <tr>
+    <td class="poor">No</td>
+    <td class="poor">No</td>
+    <td><a href="../au_all_units_noio.hh">au_all_units_noio.hh</a></td>
+  </tr>
+  <tr>
+    <td class="good">Yes</td>
+    <td class="good">Yes</td>
+    <td><a href="../au_all_units_stdformat.hh">au_all_units_stdformat.hh</a></td>
+  </tr>
+  <tr>
+    <td class="good">Yes</td>
+    <td class="poor">No</td>
+    <td><a href="../au_all_units_stdformat_noio.hh">au_all_units_stdformat_noio.hh</a></td>
+  </tr>
+</table></p>
 </details>
 <h4 id="custom-single-file">Custom single file<a class="headerlink" href="#custom-single-file" title="Permanent link">&para;</a></h4>
 <p>It&rsquo;s easy to package the library in a <em>custom</em> single file with <em>exactly</em> the units you need.

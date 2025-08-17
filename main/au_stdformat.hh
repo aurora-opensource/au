@@ -19,6 +19,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <format>
 #include <limits>
 #include <ostream>
 #include <ratio>
@@ -27,7 +28,7 @@
 
 // Version identifier: 0.4.1-96-g0ab7a5d
 // <iostream> support: INCLUDED
-// <format> support: EXCLUDED
+// <format> support: INCLUDED
 // List of included units:
 //   amperes
 //   bits
@@ -278,197 +279,6 @@ template <class...>
 using void_t = void;
 
 }  // namespace stdx
-}  // namespace au
-
-
-
-namespace au {
-namespace detail {
-
-template <typename PackT, typename T>
-struct Prepend;
-template <typename PackT, typename T>
-using PrependT = typename Prepend<PackT, T>::type;
-
-template <template <class> class Condition, template <class...> class Pack, typename... Ts>
-struct IncludeInPackIfImpl;
-template <template <class> class Condition, template <class...> class Pack, typename... Ts>
-using IncludeInPackIf = typename IncludeInPackIfImpl<Condition, Pack, Ts...>::type;
-
-template <typename T, typename Pack>
-struct DropAllImpl;
-template <typename T, typename Pack>
-using DropAll = typename DropAllImpl<T, Pack>::type;
-
-template <template <class...> class Pack, typename... Ts>
-struct FlattenAsImpl;
-template <template <class...> class Pack, typename... Ts>
-using FlattenAs = typename FlattenAsImpl<Pack, Ts...>::type;
-
-template <typename T, typename U>
-struct SameTypeIgnoringCvref : std::is_same<stdx::remove_cvref_t<T>, stdx::remove_cvref_t<U>> {};
-
-template <typename T, typename U>
-constexpr bool same_type_ignoring_cvref(T, U) {
-    return SameTypeIgnoringCvref<T, U>::value;
-}
-
-template <typename... Ts>
-struct AlwaysFalse : std::false_type {};
-
-template <typename R1, typename R2>
-struct CommonTypeButPreserveIntSignednessImpl;
-template <typename R1, typename R2>
-using CommonTypeButPreserveIntSignedness =
-    typename CommonTypeButPreserveIntSignednessImpl<R1, R2>::type;
-
-//
-// `PromotedType<T>` is the result type for arithmetic operations involving `T`.  Of course, this is
-// normally just `T`, but integer promotion for small integral types can change this.
-//
-template <typename T>
-struct PromotedTypeImpl;
-template <typename T>
-using PromotedType = typename PromotedTypeImpl<T>::type;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Implementation details below.
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// `Prepend` implementation.
-
-template <template <typename...> class Pack, typename T, typename... Us>
-struct Prepend<Pack<Us...>, T> {
-    using type = Pack<T, Us...>;
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// `IncludeInPackIf` implementation.
-
-// Helper: change the pack.  This lets us do our work in one kind of pack, and then swap it out for
-// another pack at the end.
-template <template <class...> class NewPack, typename PackT>
-struct ChangePackToImpl;
-template <template <class...> class NewPack, typename PackT>
-using ChangePackTo = typename ChangePackToImpl<NewPack, PackT>::type;
-template <template <class...> class NewPack, template <class...> class OldPack, typename... Ts>
-struct ChangePackToImpl<NewPack, OldPack<Ts...>> : stdx::type_identity<NewPack<Ts...>> {};
-
-// A generic typelist with no constraints on members or ordering.  Intended as a type to hold
-// intermediate work.
-template <typename... Ts>
-struct GenericTypeList;
-
-template <template <class> class Condition, typename PackT>
-struct ListMatchingTypesImpl;
-template <template <class> class Condition, typename PackT>
-using ListMatchingTypes = typename ListMatchingTypesImpl<Condition, PackT>::type;
-
-// Base case:
-template <template <class> class Condition>
-struct ListMatchingTypesImpl<Condition, GenericTypeList<>>
-    : stdx::type_identity<GenericTypeList<>> {};
-
-// Recursive case:
-template <template <class> class Condition, typename H, typename... Ts>
-struct ListMatchingTypesImpl<Condition, GenericTypeList<H, Ts...>>
-    : std::conditional<Condition<H>::value,
-                       PrependT<ListMatchingTypes<Condition, GenericTypeList<Ts...>>, H>,
-                       ListMatchingTypes<Condition, GenericTypeList<Ts...>>> {};
-
-template <template <class> class Condition, template <class...> class Pack, typename... Ts>
-struct IncludeInPackIfImpl
-    : stdx::type_identity<
-          ChangePackTo<Pack, ListMatchingTypes<Condition, GenericTypeList<Ts...>>>> {};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// `DropAll` implementation.
-
-// Base case.
-template <typename T, template <class...> class Pack>
-struct DropAllImpl<T, Pack<>> : stdx::type_identity<Pack<>> {};
-
-// Recursive case:
-template <typename T, template <class...> class Pack, typename H, typename... Ts>
-struct DropAllImpl<T, Pack<H, Ts...>>
-    : std::conditional<std::is_same<T, H>::value,
-                       DropAll<T, Pack<Ts...>>,
-                       detail::PrependT<DropAll<T, Pack<Ts...>>, H>> {};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// `FlattenAs` implementation.
-
-template <typename P1, typename P2>
-struct ConcatImpl;
-template <typename P1, typename P2>
-using Concat = typename ConcatImpl<P1, P2>::type;
-
-template <template <class...> class Pack, typename... T1s, typename... T2s>
-struct ConcatImpl<Pack<T1s...>, Pack<T2s...>> : stdx::type_identity<Pack<T1s..., T2s...>> {};
-
-template <template <class...> class Pack, typename ResultPack, typename... Ts>
-struct FlattenAsImplHelper;
-
-template <template <class...> class Pack, typename ResultPack>
-struct FlattenAsImplHelper<Pack, ResultPack> : stdx::type_identity<ResultPack> {};
-
-// Skip empty packs.
-template <template <class...> class Pack, typename ResultPack, typename... Us>
-struct FlattenAsImplHelper<Pack, ResultPack, Pack<>, Us...>
-    : FlattenAsImplHelper<Pack, ResultPack, Us...> {};
-
-template <template <class...> class Pack,
-          typename ResultPack,
-          typename T,
-          typename... Ts,
-          typename... Us>
-struct FlattenAsImplHelper<Pack, ResultPack, Pack<T, Ts...>, Us...>
-    : FlattenAsImplHelper<Pack, ResultPack, T, Pack<Ts...>, Us...> {};
-
-template <template <class...> class Pack, typename ResultPack, typename T, typename... Us>
-struct FlattenAsImplHelper<Pack, ResultPack, T, Us...>
-    : FlattenAsImplHelper<Pack, Concat<ResultPack, Pack<T>>, Us...> {};
-
-template <template <class...> class Pack, typename... Ts>
-struct FlattenAsImpl : FlattenAsImplHelper<Pack, Pack<>, Ts...> {};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// `CommonTypeButPreserveIntSignedness` implementation.
-
-// `CopySignednessIfIntType<X, T>` has a `type` member that is always `T`, unless `T` is an integral
-// type: in which case, it's the signed version of `T` if `X` is signed, and the unsigned version of
-// `T` if `X` is unsigned.
-template <typename SignednessSource, typename T, bool IsTIntegral>
-struct CopySignednessIfIntTypeHelper;
-template <typename SignednessSource, typename T>
-struct CopySignednessIfIntTypeHelper<SignednessSource, T, true>
-    : std::conditional<std::is_unsigned<SignednessSource>::value,
-                       std::make_unsigned_t<T>,
-                       std::make_signed_t<T>> {};
-template <typename SignednessSource, typename T>
-struct CopySignednessIfIntTypeHelper<SignednessSource, T, false> : stdx::type_identity<T> {};
-
-template <typename SignednessSource, typename T>
-struct CopySignednessIfIntType
-    : CopySignednessIfIntTypeHelper<SignednessSource, T, std::is_integral<T>::value> {};
-
-template <typename R1, typename R2>
-struct CommonTypeButPreserveIntSignednessImpl
-    : CopySignednessIfIntType<R1, std::common_type_t<R1, R2>> {};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// `PromotedType<T>` implementation.
-
-template <typename T>
-struct PromotedTypeImpl {
-    using type = decltype(std::declval<T>() * std::declval<T>());
-
-    static_assert(std::is_same<type, typename PromotedTypeImpl<type>::type>::value,
-                  "We explicitly assume that promoted types are not again promotable");
-};
-
-}  // namespace detail
 }  // namespace au
 
 
@@ -1501,6 +1311,197 @@ struct ValueOfZero {
     static constexpr T value() { return ZERO; }
 };
 
+}  // namespace au
+
+
+
+namespace au {
+namespace detail {
+
+template <typename PackT, typename T>
+struct Prepend;
+template <typename PackT, typename T>
+using PrependT = typename Prepend<PackT, T>::type;
+
+template <template <class> class Condition, template <class...> class Pack, typename... Ts>
+struct IncludeInPackIfImpl;
+template <template <class> class Condition, template <class...> class Pack, typename... Ts>
+using IncludeInPackIf = typename IncludeInPackIfImpl<Condition, Pack, Ts...>::type;
+
+template <typename T, typename Pack>
+struct DropAllImpl;
+template <typename T, typename Pack>
+using DropAll = typename DropAllImpl<T, Pack>::type;
+
+template <template <class...> class Pack, typename... Ts>
+struct FlattenAsImpl;
+template <template <class...> class Pack, typename... Ts>
+using FlattenAs = typename FlattenAsImpl<Pack, Ts...>::type;
+
+template <typename T, typename U>
+struct SameTypeIgnoringCvref : std::is_same<stdx::remove_cvref_t<T>, stdx::remove_cvref_t<U>> {};
+
+template <typename T, typename U>
+constexpr bool same_type_ignoring_cvref(T, U) {
+    return SameTypeIgnoringCvref<T, U>::value;
+}
+
+template <typename... Ts>
+struct AlwaysFalse : std::false_type {};
+
+template <typename R1, typename R2>
+struct CommonTypeButPreserveIntSignednessImpl;
+template <typename R1, typename R2>
+using CommonTypeButPreserveIntSignedness =
+    typename CommonTypeButPreserveIntSignednessImpl<R1, R2>::type;
+
+//
+// `PromotedType<T>` is the result type for arithmetic operations involving `T`.  Of course, this is
+// normally just `T`, but integer promotion for small integral types can change this.
+//
+template <typename T>
+struct PromotedTypeImpl;
+template <typename T>
+using PromotedType = typename PromotedTypeImpl<T>::type;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Implementation details below.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `Prepend` implementation.
+
+template <template <typename...> class Pack, typename T, typename... Us>
+struct Prepend<Pack<Us...>, T> {
+    using type = Pack<T, Us...>;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `IncludeInPackIf` implementation.
+
+// Helper: change the pack.  This lets us do our work in one kind of pack, and then swap it out for
+// another pack at the end.
+template <template <class...> class NewPack, typename PackT>
+struct ChangePackToImpl;
+template <template <class...> class NewPack, typename PackT>
+using ChangePackTo = typename ChangePackToImpl<NewPack, PackT>::type;
+template <template <class...> class NewPack, template <class...> class OldPack, typename... Ts>
+struct ChangePackToImpl<NewPack, OldPack<Ts...>> : stdx::type_identity<NewPack<Ts...>> {};
+
+// A generic typelist with no constraints on members or ordering.  Intended as a type to hold
+// intermediate work.
+template <typename... Ts>
+struct GenericTypeList;
+
+template <template <class> class Condition, typename PackT>
+struct ListMatchingTypesImpl;
+template <template <class> class Condition, typename PackT>
+using ListMatchingTypes = typename ListMatchingTypesImpl<Condition, PackT>::type;
+
+// Base case:
+template <template <class> class Condition>
+struct ListMatchingTypesImpl<Condition, GenericTypeList<>>
+    : stdx::type_identity<GenericTypeList<>> {};
+
+// Recursive case:
+template <template <class> class Condition, typename H, typename... Ts>
+struct ListMatchingTypesImpl<Condition, GenericTypeList<H, Ts...>>
+    : std::conditional<Condition<H>::value,
+                       PrependT<ListMatchingTypes<Condition, GenericTypeList<Ts...>>, H>,
+                       ListMatchingTypes<Condition, GenericTypeList<Ts...>>> {};
+
+template <template <class> class Condition, template <class...> class Pack, typename... Ts>
+struct IncludeInPackIfImpl
+    : stdx::type_identity<
+          ChangePackTo<Pack, ListMatchingTypes<Condition, GenericTypeList<Ts...>>>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `DropAll` implementation.
+
+// Base case.
+template <typename T, template <class...> class Pack>
+struct DropAllImpl<T, Pack<>> : stdx::type_identity<Pack<>> {};
+
+// Recursive case:
+template <typename T, template <class...> class Pack, typename H, typename... Ts>
+struct DropAllImpl<T, Pack<H, Ts...>>
+    : std::conditional<std::is_same<T, H>::value,
+                       DropAll<T, Pack<Ts...>>,
+                       detail::PrependT<DropAll<T, Pack<Ts...>>, H>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `FlattenAs` implementation.
+
+template <typename P1, typename P2>
+struct ConcatImpl;
+template <typename P1, typename P2>
+using Concat = typename ConcatImpl<P1, P2>::type;
+
+template <template <class...> class Pack, typename... T1s, typename... T2s>
+struct ConcatImpl<Pack<T1s...>, Pack<T2s...>> : stdx::type_identity<Pack<T1s..., T2s...>> {};
+
+template <template <class...> class Pack, typename ResultPack, typename... Ts>
+struct FlattenAsImplHelper;
+
+template <template <class...> class Pack, typename ResultPack>
+struct FlattenAsImplHelper<Pack, ResultPack> : stdx::type_identity<ResultPack> {};
+
+// Skip empty packs.
+template <template <class...> class Pack, typename ResultPack, typename... Us>
+struct FlattenAsImplHelper<Pack, ResultPack, Pack<>, Us...>
+    : FlattenAsImplHelper<Pack, ResultPack, Us...> {};
+
+template <template <class...> class Pack,
+          typename ResultPack,
+          typename T,
+          typename... Ts,
+          typename... Us>
+struct FlattenAsImplHelper<Pack, ResultPack, Pack<T, Ts...>, Us...>
+    : FlattenAsImplHelper<Pack, ResultPack, T, Pack<Ts...>, Us...> {};
+
+template <template <class...> class Pack, typename ResultPack, typename T, typename... Us>
+struct FlattenAsImplHelper<Pack, ResultPack, T, Us...>
+    : FlattenAsImplHelper<Pack, Concat<ResultPack, Pack<T>>, Us...> {};
+
+template <template <class...> class Pack, typename... Ts>
+struct FlattenAsImpl : FlattenAsImplHelper<Pack, Pack<>, Ts...> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `CommonTypeButPreserveIntSignedness` implementation.
+
+// `CopySignednessIfIntType<X, T>` has a `type` member that is always `T`, unless `T` is an integral
+// type: in which case, it's the signed version of `T` if `X` is signed, and the unsigned version of
+// `T` if `X` is unsigned.
+template <typename SignednessSource, typename T, bool IsTIntegral>
+struct CopySignednessIfIntTypeHelper;
+template <typename SignednessSource, typename T>
+struct CopySignednessIfIntTypeHelper<SignednessSource, T, true>
+    : std::conditional<std::is_unsigned<SignednessSource>::value,
+                       std::make_unsigned_t<T>,
+                       std::make_signed_t<T>> {};
+template <typename SignednessSource, typename T>
+struct CopySignednessIfIntTypeHelper<SignednessSource, T, false> : stdx::type_identity<T> {};
+
+template <typename SignednessSource, typename T>
+struct CopySignednessIfIntType
+    : CopySignednessIfIntTypeHelper<SignednessSource, T, std::is_integral<T>::value> {};
+
+template <typename R1, typename R2>
+struct CommonTypeButPreserveIntSignednessImpl
+    : CopySignednessIfIntType<R1, std::common_type_t<R1, R2>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `PromotedType<T>` implementation.
+
+template <typename T>
+struct PromotedTypeImpl {
+    using type = decltype(std::declval<T>() * std::declval<T>());
+
+    static_assert(std::is_same<type, typename PromotedTypeImpl<type>::type>::value,
+                  "We explicitly assume that promoted types are not again promotable");
+};
+
+}  // namespace detail
 }  // namespace au
 
 
@@ -7253,26 +7254,6 @@ struct common_type<au::Quantity<U1, R1>, au::Quantity<U2, R2>>
     : au::CommonQuantity<au::Quantity<U1, R1>, au::Quantity<U2, R2>> {};
 }  // namespace std
 
-// Keep corresponding `_fwd.hh` file on top.
-
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct UnosLabel {
-    static constexpr const char label[] = "U";
-};
-template <typename T>
-constexpr const char UnosLabel<T>::label[];
-struct Unos : UnitProductT<>, UnosLabel<void> {
-    using UnosLabel<void>::label;
-};
-constexpr auto unos = QuantityMaker<Unos>{};
-
-}  // namespace au
-
 
 // "Mixin" classes to add operations for a "unit wrapper" --- that is, a template with a _single
 // template parameter_ that is a unit.
@@ -7616,6 +7597,33 @@ template <typename Unit>
 struct AssociatedUnit<Constant<Unit>> : stdx::type_identity<Unit> {};
 
 }  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct UnosLabel {
+    static constexpr const char label[] = "U";
+};
+template <typename T>
+constexpr const char UnosLabel<T>::label[];
+struct Unos : UnitProductT<>, UnosLabel<void> {
+    using UnosLabel<void>::label;
+};
+constexpr auto unos = QuantityMaker<Unos>{};
+
+}  // namespace au
+
+
+
+namespace std {
+template <typename U, typename R>
+struct formatter<au::Quantity<U, R>> : ::au::QuantityFormatter<U, R, ::std::formatter> {};
+}  // namespace std
 
 
 namespace au {
