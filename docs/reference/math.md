@@ -199,7 +199,9 @@ expand the note below for further details.
 #### `lerp` (C++20) {#lerp}
 
 !!! warning
-    `lerp`, based on [std::lerp], is only available for C++20 and later.  For the special case where `t = 0.5`, see [`mean`](#mean) below.
+    `lerp`, based on [std::lerp], is only available for C++20 and later.
+
+    For the special case where `t = 0.5`, [`mean`](#mean) (see below) presents an alternative.
 
 Linearly interpolate between two `Quantity` or `QuantityPoint` values, based on a parameter `t`,
 such that `t=0` corresponds to the first argument, and `t=1` corresponds to the second argument.
