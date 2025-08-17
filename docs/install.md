@@ -122,6 +122,7 @@ to your `deps` attribute, and include the appropriate files.
 |------------|------------------|-------|
 | `@au//au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) and [constants](./reference/constant.md#built-in) |
 | `@au//au:io` | `"au/io.hh"` | `operator<<` support |
+| `@au//au:std_format` | `"au/std_format.hh"` | `std::format` support[^1] |
 | `@au//au:testing` | `"au/testing.hh"` | Utilities for writing googletest tests<br>_Note:_ `testonly = True` |
 
 #### CMake
@@ -141,8 +142,12 @@ In either case, here are the main targets and include files provided by the Au l
 
 | Target | Headers provided | Notes |
 |--------|------------------|-------|
-| `Au::au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/io.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
+| `Au::au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/io.hh"`<br>`"au/std_format.hh"`[^1]<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
 | `Au::testing` | `"au/testing.hh"` | Utilities for writing googletest tests |
+
+[^1]: Do not include `"au/std_format.hh"` unless you know that both your compiler and your build
+configuration fully supports `std::format`.  This requires at least C++20, but many compilers with
+nominal C++20 support do not actually support `std::format`.
 
 !!! note
     These instructions are for adding Au to a _project_ that uses CMake, not building Au itself

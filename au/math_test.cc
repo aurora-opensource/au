@@ -562,6 +562,15 @@ TEST(sin, GivesCorrectAnswersForInputsInDegrees) {
     EXPECT_THAT(sin(degrees(90)), DoubleNear(1.0, TOL));
 }
 
+TEST(mean, QuantityMeanGivesCommonUnit) {
+    EXPECT_THAT(mean(feet(1), inches(12), yards(2)), SameTypeAndValue(inches(32)));
+}
+
+TEST(mean, QuantityPointMeanGivesCommonUnit) {
+    EXPECT_THAT(mean(meters_pt(2), centi(meters_pt)(150), milli(meters_pt)(2500)),
+                SameTypeAndValue(milli(meters_pt)(2000)));
+}
+
 TEST(sqrt, OutputRepDependsOnInputRep) {
     EXPECT_THAT(sqrt(squared(meters)(4)), QuantityEquivalent(meters(2.)));
     EXPECT_THAT(sqrt(squared(meters)(4.)), QuantityEquivalent(meters(2.)));
