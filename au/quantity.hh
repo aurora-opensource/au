@@ -434,7 +434,7 @@ class Quantity {
         constexpr bool are_units_quantity_equivalent =
             AreUnitsQuantityEquivalent<UnitT, OtherUnit>::value;
         static_assert(are_units_quantity_equivalent || !uses_integer_division,
-                      "Dangerous integer division forbidden.  See "
+                      "Integer division forbidden.  See "
                       "<https://aurora-opensource.github.io/au/main/troubleshooting/"
                       "#integer-division-forbidden> for more details about the risks, "
                       "and your options to resolve this error.");
