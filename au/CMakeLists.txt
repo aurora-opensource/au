@@ -40,6 +40,7 @@ header_only_library(
     quantity.hh
     quantity_point.hh
     rep.hh
+    std_format.hh
     truncation_risk.hh
     unit_of_measure.hh
     unit_symbol.hh
@@ -179,6 +180,14 @@ header_only_library(
     utility/probable_primes.hh
     utility/string_constant.hh
     utility/type_traits.hh
+)
+
+# Skip the header verification for `std_format.hh`, since we don't expect it to
+# work on all configurations.  Users are responsible for only including it in
+# configurations that fully support `std::format`.
+set_source_files_properties(
+  std_format.hh
+  PROPERTIES SKIP_LINTING TRUE
 )
 
 if (NOT AU_EXCLUDE_GTEST_DEPENDENCY)
