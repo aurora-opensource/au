@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-91-g28cbabc
+// Version identifier: 0.4.1-92-g4b353bf
 // <iostream> support: EXCLUDED
 // List of included units:
 //   amperes
@@ -9373,6 +9373,32 @@ constexpr auto min(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
 template <typename U, typename R>
 constexpr auto min(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
     return std::min(a, b);
+}
+
+template <typename U0, typename R0, typename... Us, typename... Rs>
+constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs) {
+    using R = std::common_type_t<R0, Rs...>;
+    using Common = Quantity<CommonUnitT<U0, Us...>, R>;
+    const auto base = Common{q0};
+    Common diffs[] = {(Common{qs} - base)...};
+    Common sum_diffs = ZERO;
+    for (const auto &d : diffs) {
+        sum_diffs += d;
+    }
+    return base + (sum_diffs / static_cast<R>(1u + sizeof...(qs)));
+}
+
+template <typename U0, typename R0, typename... Us, typename... Rs>
+constexpr auto mean(QuantityPoint<U0, R0> p0, QuantityPoint<Us, Rs>... ps) {
+    using U = CommonPointUnitT<U0, Us...>;
+    using R = std::common_type_t<R0, Rs...>;
+    const auto base = QuantityPoint<U, R>{p0};
+    Quantity<U, R> diffs[] = {(QuantityPoint<U, R>{ps} - base)...};
+    Quantity<U, R> sum_diffs = ZERO;
+    for (const auto &d : diffs) {
+        sum_diffs += d;
+    }
+    return base + (sum_diffs / static_cast<R>(1u + sizeof...(ps)));
 }
 
 // The (zero-centered) floating point remainder of two values of the same dimension.
