@@ -51,8 +51,6 @@ void example_input_to_maker() {
     meters_pt(x_pt);
 }
 
-*/
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Dangerous conversion
 
@@ -64,7 +62,7 @@ void example_dangerous_conversion() {
     giga(hertz)(1).as(hertz);
 }
 
-/*
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: No type named 'type' in 'std::common_type'
@@ -73,6 +71,8 @@ void example_no_type_named_type_in_std_common_type() {
     // (BROKEN): different dimensions.
     meters(1) + seconds(1);
 }
+
+/*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Can't pass `Quantity` to a unit slot

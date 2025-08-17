@@ -379,13 +379,42 @@ operation (at least in this format).
 
     **Compiler error (MSVC 2022 x64)**
     ```
-    D:\a\au\au\au.hh(2952): error C2338: static_assert failed: 'Dangerous conversion for integer Rep!  See: https://aurora-opensource.github.io/au/main/troubleshooting/#dangerous-conversion'
-    D:\a\au\au\au.hh(2989): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<NewUnit,void>(NewUnit) const' being compiled
+    D:\a\au\au\au.hh(6742): error C2338: static_assert failed: 'Truncation risk too high.  Can silence by passing `ignore(TRUNCATION_RISK)` as second argument, but first CAREFULLY CONSIDER whether this is really what you mean to do.'
+    D:\a\au\au\au.hh(6742): note: the template instantiation context (the oldest one first) is
+    error_examples.cc(61): note: see reference to function template instantiation 'au::Quantity<au::Feet,T> au::Quantity<au::Inches,int>::as<au::QuantityMaker<au::Feet>,au::detail::CheckTheseRisks<au::detail::RiskSet<3>>>(NewUnitSlot,RiskPolicyT) const' being compiled
             with
             [
-                NewUnit=au::Feet
+                T=int,
+                NewUnitSlot=au::QuantityMaker<au::Feet>,
+                RiskPolicyT=au::detail::CheckTheseRisks<au::detail::RiskSet<3>>
             ]
-    error_examples.cc(45): note: see reference to function template instantiation 'auto au::Quantity<au::Inches,int>::as<au::Feet>(au::QuantityMaker<au::Feet>) const' being compiled
+    D:\a\au\au\au.hh(6469): note: see reference to function template instantiation 'OtherRep au::Quantity<au::Inches,int>::in_impl<int,NewUnitSlot,RiskPolicyT>(OtherUnitSlot,RiskPolicyT) const' being compiled
+            with
+            [
+                OtherRep=int,
+                NewUnitSlot=au::QuantityMaker<au::Feet>,
+                RiskPolicyT=au::detail::CheckTheseRisks<au::detail::RiskSet<3>>,
+                OtherUnitSlot=au::QuantityMaker<au::Feet>
+            ]
+    D:\a\au\au\au.hh(6735): error C2338: static_assert failed: 'Overflow risk too high.  Can silence by passing `ignore(OVERFLOW_RISK)` as second argument, but first CAREFULLY CONSIDER whether this is really what you mean to do.'
+    D:\a\au\au\au.hh(6735): note: the template instantiation context (the oldest one first) is
+    error_examples.cc(64): note: see reference to function template instantiation 'au::Quantity<au::Hertz,T> au::Quantity<au::Giga<U>,int>::as<au::QuantityMaker<au::Hertz>,au::detail::CheckTheseRisks<au::detail::RiskSet<3>>>(NewUnitSlot,RiskPolicyT) const' being compiled
+            with
+            [
+                T=int,
+                U=au::Hertz,
+                NewUnitSlot=au::QuantityMaker<au::Hertz>,
+                RiskPolicyT=au::detail::CheckTheseRisks<au::detail::RiskSet<3>>
+            ]
+    D:\a\au\au\au.hh(6469): note: see reference to function template instantiation 'OtherRep au::Quantity<au::Giga<U>,int>::in_impl<int,NewUnitSlot,RiskPolicyT>(OtherUnitSlot,RiskPolicyT) const' being compiled
+            with
+            [
+                OtherRep=int,
+                U=au::Hertz,
+                NewUnitSlot=au::QuantityMaker<au::Hertz>,
+                RiskPolicyT=au::detail::CheckTheseRisks<au::detail::RiskSet<3>>,
+                OtherUnitSlot=au::QuantityMaker<au::Hertz>
+            ]
     ```
 
 ## No type named 'type' in 'std::common_type'
