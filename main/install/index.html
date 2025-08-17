@@ -1482,6 +1482,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/format/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Format
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../reference/magnitude/" class="md-nav__link">
         
   
@@ -1674,10 +1697,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_13" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_14" >
         
           
-          <label class="md-nav__link" for="__nav_9_13" id="__nav_9_13_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9_14" id="__nav_9_14_label" tabindex="0">
             
   
   
@@ -1690,8 +1713,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_13_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_13">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_14">
             <span class="md-nav__icon md-icon"></span>
             Detail
           </label>
@@ -2216,6 +2239,11 @@ to your <code>deps</code> attribute, and include the appropriate files.</p>
 <td><code>operator&lt;&lt;</code> support</td>
 </tr>
 <tr>
+<td><code>@au//au:std_format</code></td>
+<td><code>"au/std_format.hh"</code></td>
+<td><code>std::format</code> support<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
 <td><code>@au//au:testing</code></td>
 <td><code>"au/testing.hh"</code></td>
 <td>Utilities for writing googletest tests<br><em>Note:</em> <code>testonly = True</code></td>
@@ -2248,7 +2276,7 @@ system-wide version of Au, then you can install it to the system, and simply use
 <tbody>
 <tr>
 <td><code>Au::au</code></td>
-<td><code>"au/au.hh"</code><br><code>"au/fwd.hh"</code><br><code>"au/io.hh"</code><br><code>"au/units/*.hh"</code><br><code>"au/units/*_fwd.hh"</code><br><code>"au/constants/*.hh"</code></td>
+<td><code>"au/au.hh"</code><br><code>"au/fwd.hh"</code><br><code>"au/io.hh"</code><br><code>"au/std_format.hh"</code><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><br><code>"au/units/*.hh"</code><br><code>"au/units/*_fwd.hh"</code><br><code>"au/constants/*.hh"</code></td>
 <td>Core library functionality.  See <a href="https://github.com/aurora-opensource/au/tree/main/au/units">all available units</a></td>
 </tr>
 <tr>
@@ -2435,6 +2463,16 @@ Here&rsquo;s how:</p>
 </li>
 </ol>
 <p>Now you have a file, <code>~/au.hh</code>, which you can add to your <code>third_party</code> folder.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Do not include <code>"au/std_format.hh"</code> unless you know that both your compiler and your build
+configuration fully supports <code>std::format</code>.  This requires at least C++20, but many compilers with
+nominal C++20 support do not actually support <code>std::format</code>.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

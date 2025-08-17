@@ -25,8 +25,9 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-92-g4b353bf
+// Version identifier: 0.4.1-93-g0835a64
 // <iostream> support: INCLUDED
+// <format> support: EXCLUDED
 // List of included units:
 //   amperes
 //   bits
@@ -7163,6 +7164,82 @@ struct CommonQuantity<Quantity<U1, R1>,
                       Quantity<U2, R2>,
                       std::enable_if_t<HasSameDimension<U1, U2>::value>>
     : stdx::type_identity<Quantity<CommonUnitT<U1, U2>, std::common_type_t<R1, R2>>> {};
+
+//
+// Formatter implementation for fmtlib or `std::format`.
+//
+// To use with fmtlib, add this template specialization to a file that includes both
+// `"au/quantity.hh"`, and `"fmt/format.h"`:
+//
+//    namespace fmt {
+//    template <typename U, typename R>
+//    struct formatter<::au::Quantity<U, R>> : ::au::QuantityFormatter<U, R, ::fmt::formatter> {};
+//    }  // namespace fmt
+//
+// Then, include that file any time you want to format a `Quantity`.
+//
+template <typename U, typename R, template <class...> class Formatter>
+struct QuantityFormatter {
+    template <typename FormatParseContext>
+    constexpr auto parse_unit_label_part(FormatParseContext &ctx) {
+        auto it = ctx.begin();
+
+        if (it == ctx.end()) {
+            return it;
+        }
+
+        if (*it != 'U') {
+            return it;
+        }
+        // Consume the 'U'.
+        ++it;
+
+        // Parse the total width.
+        while (it != ctx.end() && *it >= '0' && *it <= '9') {
+            min_label_width_ = (min_label_width_ * 10) + static_cast<std::size_t>(*it++ - '0');
+        }
+
+        if (it == ctx.end() || *it == '}') {
+            return it;
+        }
+
+        if (*it++ != ';') {
+            // Cause an error condition in further parsing.
+            it = ctx.end();
+        }
+        return it;
+    }
+
+    template <typename FormatParseContext>
+    constexpr auto parse(FormatParseContext &ctx) {
+        ctx.advance_to(parse_unit_label_part(ctx));
+        return value_format.parse(ctx);
+    }
+
+    template <typename FormatContext>
+    constexpr auto format(const au::Quantity<U, R> &q, FormatContext &ctx) const {
+        value_format.format(q.data_in(U{}), ctx);
+        *ctx.out()++ = ' ';
+        return write_and_pad(unit_label(U{}), sizeof(unit_label(U{})), ctx);
+    }
+
+    template <typename FormatContext>
+    constexpr auto write_and_pad(const char *data,
+                                 std::size_t data_size,
+                                 FormatContext &ctx) const {
+        Formatter<const char *> unit_label_formatter{};
+        unit_label_formatter.format(data, ctx);
+        while (data_size <= min_label_width_) {
+            *ctx.out()++ = ' ';
+            ++data_size;
+        }
+        return ctx.out();
+    }
+
+    Formatter<R> value_format{};
+    std::size_t min_label_width_{0};
+};
+
 }  // namespace au
 
 namespace std {
