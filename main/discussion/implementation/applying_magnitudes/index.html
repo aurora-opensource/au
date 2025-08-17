@@ -2155,10 +2155,13 @@ certainly give us a much closer result!  However, the cost would be reduced accu
 values, which are far more common.  Consider applying <span class="arithmatex"><span class="MathJax_Preview">\frac{2}{3}</span><script type="math/tex">\frac{2}{3}</script></span> to a smaller number, such as
 <code>5</code>.  The exact rational answer is <span class="arithmatex"><span class="MathJax_Preview">\frac{10}{3}</span><script type="math/tex">\frac{10}{3}</script></span>, which truncates to <code>3</code>.  If we perform the
 multiplication first, this is what we get, but doing the division first would give <code>2</code>.</p>
-<p>If you know that your final answer is representable, <em>and</em> you have an integer type with more bits
-than your type <code>T</code>, then you can work around this issue manually by casting to the wider type,
-applying the magnitude, and casting back to <code>T</code>. However, if you <em>don&rsquo;t</em> have a wider integer types,
-we know of no <em>general</em> &ldquo;solution&rdquo; that wouldn&rsquo;t do more harm then good.</p>
+<p>In the future, we hope to be able to circumvent this dilemma entirely by introducing a fixed point
+rational strategy.  This would represent the fraction as a double-wide integer type &mdash; either
+built-in, or emulated &mdash; whose implicit denominator is <span class="arithmatex"><span class="MathJax_Preview">2^N</span><script type="math/tex">2^N</script></span> for an <span class="arithmatex"><span class="MathJax_Preview">N</span><script type="math/tex">N</script></span>-bit integer.  This would
+give us efficient performance (just a single multiplication and shift), maximum precision, and no
+&ldquo;extra&rdquo; overflow risk.  See <a href="https://github.com/aurora-opensource/au/issues/453">#453</a> to track progress.</p>
+<p>In the meanwhile, we&rsquo;ll stick with the multiply-and-divide approach, because the risk of overflow is
+generally much more tolerable than the reduced accuracy that would come from dividing first.</p>
 <h4 id="floating-point-types">Floating point types<a class="headerlink" href="#floating-point-types" title="Permanent link">&para;</a></h4>
 <p>Applying a rational magnitude <span class="arithmatex"><span class="MathJax_Preview">\frac{N}{D}</span><script type="math/tex">\frac{N}{D}</script></span> to a value of floating point type <code>T</code> presents a genuine
 tradeoff. On the one hand, we could take the same approach as for the integers, and perform two
@@ -2213,7 +2216,11 @@ applying it to a floating point variable.</p>
 we&rsquo;re multiplying our variable by an irrational number, we know the result won&rsquo;t be exactly
 representable.  Therefore, we always simply multiply by the closest representation of this
 conversion factor.</p>
-<p>The one difference is that we forbid this operation for integral types, because it makes no sense.</p>
+<p>Of course, this assumes that we can <em>actually implement</em> this unit conversion.  For integral types,
+this is currently not the case: after all, we can&rsquo;t represent irrational numbers as integers!
+However, we hope to change this in the future, by introducing a fixed point rational strategy.  See
+<a href="https://github.com/aurora-opensource/au/issues/453">#453</a> for details, but in the meantime, applying irrational conversion factors to integral types
+simply produces a compiler error.</p>
 <h2 id="summary-and-conclusion">Summary and conclusion<a class="headerlink" href="#summary-and-conclusion" title="Permanent link">&para;</a></h2>
 <p>Applying a conversion factor to a numeric variable of type <code>T</code> can be a tricky and subtle business.
 Au takes a thoughtful, tailored approach, which can be summarized as follows:</p>

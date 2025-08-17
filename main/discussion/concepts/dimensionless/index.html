@@ -671,9 +671,42 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#raw-number-conversions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Raw number conversions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Raw number conversions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#implicit-conversions" class="md-nav__link">
     <span class="md-ellipsis">
-      Other dimensionless units and implicit conversions
+      Implicit conversions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explicit-conversions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Explicit conversions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
     </span>
   </a>
   
@@ -2078,7 +2111,12 @@ of <span class="arithmatex"><span class="MathJax_Preview">1 / 2</span><script ty
 conversion of this integral Quantity.  Rather, the library&rsquo;s job is to safely hold the obtained
 numeric value of <code>500</code>.  The Magnitude attached to the Quantity is what lets us do so.</p>
 </div>
-<h2 id="implicit-conversions">Other dimensionless units and implicit conversions<a class="headerlink" href="#implicit-conversions" title="Permanent link">&para;</a></h2>
+<h2 id="raw-number-conversions">Raw number conversions<a class="headerlink" href="#raw-number-conversions" title="Permanent link">&para;</a></h2>
+<p>Converting dimensionless quantities to raw numbers raises several interesting and subtle questions.
+For dimensionless quantities that are also <em>unitless</em>, it&rsquo;s straightforward: implicit conversion is
+always safe, and we always permit it.  However, dimensionless quantities with <em>non-trivial
+magnitudes</em> require more careful consideration.</p>
+<h3 id="implicit-conversions">Implicit conversions<a class="headerlink" href="#implicit-conversions" title="Permanent link">&para;</a></h3>
 <p>A common choice among units libraries is to support implicit conversions with dimensionless units.
 This is intuitively appealing: after all, a Quantity like <code>percent(75.0)</code> represents the value
 <code>0.75</code>.  Shouldn&rsquo;t we handle that conversion automatically, just as happily as we turn <code>feet(3)</code>
@@ -2098,6 +2136,25 @@ a <code>Quantity&lt;Percent, T&gt;</code> may be implicitly constructible <em>an
 up stray factors of 100 in the round trip!</p>
 <p>It is safer (and not <em>much</em> less convenient!) to use separate, unambiguous idioms for these two
 notions of &ldquo;value&rdquo;.</p>
+<h3 id="explicit-conversions">Explicit conversions<a class="headerlink" href="#explicit-conversions" title="Permanent link">&para;</a></h3>
+<p>We have seen why <em>implicit</em> conversions are problematic, but it&rsquo;s still important to support
+<em>explicit</em> conversions robustly.  For this, we have the
+<a href="../../../reference/quantity/#as-raw-number"><code>as_raw_number()</code></a> utility.  The name disambiguates
+between the two notions of &ldquo;value&rdquo;, making it clear that we are considering the <em>quantity</em>
+holistically (as with any other <code>as</code>-named interface).  So, something like
+<code>as_raw_number(percent(75.0))</code> could only ever mean <code>0.75</code>.</p>
+<p>Additionally, <code>as_raw_number</code> gets all the same safety checks as any other conversion function,
+guarding against both truncation and overflow.  For example, <code>as_raw_number(percent(150))</code> would
+fail to compile, because the true value of 1.5 cannot be represented in <code>int</code>.  We can even use the
+same mechanisms to turn off <a href="../conversion_risks/">conversion risks</a>: so,
+<code>as_raw_number(percent(150), ignore(TRUNCATION_RISK))</code> <em>would</em> compile, and produce <code>1</code>.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>Any time your computation produces a dimensionless result, consider keeping it as a <code>Quantity</code> type.
+You get the benefit of having the compiler keep track of any scale factors, such as the
+<span class="arithmatex"><span class="MathJax_Preview">\frac{1}{100}</span><script type="math/tex">\frac{1}{100}</script></span> associated with <code>Percent</code>.  When you do want just a raw number, though, pass the
+result to <code>as_raw_number</code>.  You&rsquo;ll make your intent clear, get all the usual safety checks, and even
+get the ability to selectively override safety checks when you know that&rsquo;s the right move for your
+use case.</p>
 
 
 
