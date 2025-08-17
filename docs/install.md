@@ -122,6 +122,7 @@ to your `deps` attribute, and include the appropriate files.
 |------------|------------------|-------|
 | `@au//au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) and [constants](./reference/constant.md#built-in) |
 | `@au//au:io` | `"au/io.hh"` | `operator<<` support |
+| `@au//au:std_format` | `"au/std_format.hh"` | `std::format` support[^1] |
 | `@au//au:testing` | `"au/testing.hh"` | Utilities for writing googletest tests<br>_Note:_ `testonly = True` |
 
 #### CMake
@@ -141,8 +142,12 @@ In either case, here are the main targets and include files provided by the Au l
 
 | Target | Headers provided | Notes |
 |--------|------------------|-------|
-| `Au::au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/io.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
+| `Au::au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/io.hh"`<br>`"au/std_format.hh"`[^1]<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
 | `Au::testing` | `"au/testing.hh"` | Utilities for writing googletest tests |
+
+[^1]: Do not include `"au/std_format.hh"` unless you know that both your compiler and your build
+configuration fully supports `std::format`.  This requires at least C++20, but many compilers with
+nominal C++20 support do not actually support `std::format`.
 
 !!! note
     These instructions are for adding Au to a _project_ that uses CMake, not building Au itself
@@ -185,7 +190,7 @@ In either case, here are the main targets and include files provided by the Au l
 
     ```sh
     # Optional, but recommended:
-    git checkout "0.4.0"  # Or whichever tag you prefer.
+    git checkout "0.4.1"  # Or whichever tag you prefer.
     ```
 
     Now, build and test the library.  These commands will include both the explicit tests, and also
@@ -270,9 +275,33 @@ Here are the two ways to get a single-file packaging of the library.
 We provide pre-generated single-file versions of the library, automatically generated from the
 latest commit in the repo:
 
-- [`au.hh`](./au.hh)
-- [`au_noio.hh`](./au_noio.hh)
-  (Same as above, but with `<iostream>` support stripped out)
+<table>
+  <tr>
+    <th>Includes <code>std::format</code>?</th>
+    <th>Includes <code>&lt;iostream&gt;</code>?</th>
+    <th>Filename</th>
+  </tr>
+  <tr>
+    <td class="poor">No</td>
+    <td class="good">Yes</td>
+    <td><a href="../au.hh">au.hh</a></td>
+  </tr>
+  <tr>
+    <td class="poor">No</td>
+    <td class="poor">No</td>
+    <td><a href="../au_noio.hh">au_noio.hh</a></td>
+  </tr>
+  <tr>
+    <td class="good">Yes</td>
+    <td class="good">Yes</td>
+    <td><a href="../au_stdformat.hh">au_stdformat.hh</a></td>
+  </tr>
+  <tr>
+    <td class="good">Yes</td>
+    <td class="poor">No</td>
+    <td><a href="../au_stdformat_noio.hh">au_stdformat_noio.hh</a></td>
+  </tr>
+</table>
 
 These include very few units (to keep compile times short).  However, _combinations_ of these units
 should get you any other unit you're likely to want.  The units we include are:
@@ -317,10 +346,33 @@ should get you any other unit you're likely to want.  The units we include are:
 
     **If you don't care about compile times**, here are the files:
 
-    - [`au_all_units.hh`](./au_all_units.hh)
-    - [`au_all_units_noio.hh`](./au_all_units_noio.hh)
-      (Same as above, but with `<iostream>` support stripped out)
-
+    <table>
+      <tr>
+        <th>Includes <code>std::format</code>?</th>
+        <th>Includes <code>&lt;iostream&gt;</code>?</th>
+        <th>Filename</th>
+      </tr>
+      <tr>
+        <td class="poor">No</td>
+        <td class="good">Yes</td>
+        <td><a href="../au_all_units.hh">au_all_units.hh</a></td>
+      </tr>
+      <tr>
+        <td class="poor">No</td>
+        <td class="poor">No</td>
+        <td><a href="../au_all_units_noio.hh">au_all_units_noio.hh</a></td>
+      </tr>
+      <tr>
+        <td class="good">Yes</td>
+        <td class="good">Yes</td>
+        <td><a href="../au_all_units_stdformat.hh">au_all_units_stdformat.hh</a></td>
+      </tr>
+      <tr>
+        <td class="good">Yes</td>
+        <td class="poor">No</td>
+        <td><a href="../au_all_units_stdformat_noio.hh">au_all_units_stdformat_noio.hh</a></td>
+      </tr>
+    </table>
 
 #### Custom single file
 

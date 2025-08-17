@@ -9,6 +9,11 @@ forward declarations.  This page explains how to use them.
     configurations.  Most users won't need to forward declare Au's types.  However, for situations
     where you really do need every bit of speed, these forward declarations can help.
 
+!!! note
+    We are omitting the `au::` namespace in the text of this how-to guide, for conciseness and
+    readability.  However, all code samples will include the `au::` namespace qualification wherever
+    appropriate.
+
 ## How to use {#how-to-use}
 
 First, identify the file in your project that could benefit from forward declarations.  _This is
@@ -96,7 +101,7 @@ Here is a series of steps to follow to forward declare compound units.
     like this:
 
     ```cpp
-    using InverseYourUnitsCubedFwd = ForwardDeclareUnitPow<YourUnits, -3>;
+    using InverseYourUnitsCubedFwd = au::ForwardDeclareUnitPow<YourUnits, -3>;
     using InverseYourUnitsCubed = YourUnitsCubedFwd::unit_type;
     ```
 
@@ -110,7 +115,7 @@ Here is a series of steps to follow to forward declare compound units.
     existing `InverseYourUnitsCubed` that you would have defined in step 2):
 
     ```cpp
-    using OtherUnitsPerYourUnitsCubedFwd = ForwardDeclareUnitProduct<OtherUnits, InverseYourUnitsCubed>;
+    using OtherUnitsPerYourUnitsCubedFwd = au::ForwardDeclareUnitProduct<OtherUnits, InverseYourUnitsCubed>;
     using OtherUnitsPerYourUnitsCubed = OtherUnitsPerYourUnitsCubedFwd::unit_type;
     ```
 
@@ -121,15 +126,11 @@ Here is a series of steps to follow to forward declare compound units.
 
     ```cpp
     // In whatever file _corresponds to_ the one with the forward declarations:
-    static_assert(is_forward_declared_unit_valid(InverseYourUnitsCubedFwd{}));
-    static_assert(is_forward_declared_unit_valid(OtherUnitsPerYourUnitsCubedFwd{}));
+    static_assert(au::is_forward_declared_unit_valid(InverseYourUnitsCubedFwd{}));
+    static_assert(au::is_forward_declared_unit_valid(OtherUnitsPerYourUnitsCubedFwd{}));
     ```
 
 ## Full worked example
-
-!!! note
-    We are omitting the `au::` namespace in the text of this example, for conciseness and
-    readability.
 
 Suppose we want to make a library target that can print a speed, in km/h, to a `std::string`.
 Suppose, too, that we want our library to be as lightweight as possible: maybe some client targets
@@ -193,8 +194,8 @@ Now, the implementation file:
 
 namespace my_library {
 
-static_assert(is_forward_declared_unit_valid(InverseHoursFwd{}));
-static_assert(is_forward_declared_unit_valid(KilometersPerHourFwd{}));
+static_assert(au::is_forward_declared_unit_valid(InverseHoursFwd{}));
+static_assert(au::is_forward_declared_unit_valid(KilometersPerHourFwd{}));
 
 std::string print_to_string(const au::QuantityD<KilometersPerHour>& speed) {
     std::ostringstream oss;

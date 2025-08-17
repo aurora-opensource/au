@@ -1,0 +1,51 @@
+# Copyright 2025 Aurora Operations, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+
+cc_binary(
+    name = "quantity_runtime_conversion_check",
+    testonly = True,
+    srcs = ["quantity_runtime_conversion_check.cc"],
+    tags = ["manual"],
+    deps = [
+        ":quantity_runtime_conversion_checkers",
+        "//au:conversion_strategy",
+        "//au:testing",
+    ],
+)
+
+cc_library(
+    name = "quantity_runtime_conversion_checkers",
+    testonly = True,
+    hdrs = ["quantity_runtime_conversion_checkers.hh"],
+    deps = [
+        "//au",
+        "//au:abstract_operations",
+        "@com_google_googletest//:gtest",
+    ],
+)
+
+cc_test(
+    name = "quantity_runtime_conversion_checkers_test",
+    size = "small",
+    srcs = ["quantity_runtime_conversion_checkers_test.cc"],
+    deps = [
+        ":quantity_runtime_conversion_checkers",
+        "//au",
+        "//au:conversion_strategy",
+        "//au:testing",
+        "@com_google_googletest//:gtest_main",
+    ],
+)

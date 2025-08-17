@@ -53,6 +53,7 @@ def main(argv=None):
             units=args.units,
             constants=args.constants,
             include_io=args.include_io,
+            include_std_format=args.std_format,
         )
     )
     print_unified_file(files, args=args)
@@ -60,7 +61,7 @@ def main(argv=None):
     return 0
 
 
-def filenames(main_files, units, constants, include_io):
+def filenames(main_files, units, constants, include_io, include_std_format):
     """Construct the list of project filenames to include.
 
     The script will be sure to include all of these, and will also include any
@@ -74,6 +75,8 @@ def filenames(main_files, units, constants, include_io):
     )
     if include_io:
         names.append("au/io.hh")
+    if include_std_format:
+        names.append("au/std_format.hh")
     return names
 
 
@@ -116,6 +119,13 @@ def parse_command_line_args(argv):
         help="Exclude I/O capabilities",
     )
 
+    parser.add_argument(
+        "--std-format",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Include support for `std::format` (C++20)",
+    )
+
     return parser.parse_args()
 
 
@@ -131,14 +141,14 @@ def enumerate_units_and_constants(args):
 
     if args.all_units:
         args.units = [
-            f[:-3] for f in os.listdir("au/code/au/units/") if looks_like_header(f)
+            f[:-3] for f in os.listdir("au/units/") if looks_like_header(f)
         ]
     del args.all_units
 
     if args.all_constants:
         args.constants = [
             f[:-3].upper()
-            for f in os.listdir("au/code/au/constants/")
+            for f in os.listdir("au/constants/")
             if looks_like_header(f)
         ]
     del args.all_constants
@@ -178,7 +188,7 @@ class SourceFile:
         self.lines = []
 
         in_copyright_header = False
-        with open(os.path.join("au/code", filename)) as f:
+        with open(filename) as f:
             was_last_line_blank = False
             for line in f:
                 if line.startswith("#pragma once"):
@@ -282,6 +292,7 @@ def manifest(args):
         [
             f"Version identifier: {args.version_id}",
             f'<iostream> support: {"INCLUDED" if args.include_io else "EXCLUDED"}',
+            f'<format> support: {"INCLUDED" if args.std_format else "EXCLUDED"}',
             "List of included units:",
         ]
         + [f"  {u}" for u in sorted(args.units)]
@@ -293,7 +304,8 @@ def manifest(args):
         lines.append("Extra files included:")
         lines.extend(f"  {f}" for f in sorted(args.main_files))
 
-    assert args.are_all_used()
+    unused_args = args.unused_args()
+    assert not unused_args, f"Arguments not used: {unused_args}"
     return lines
 
 
@@ -302,8 +314,8 @@ class CheckArgs(dict):
         self.vars = vars(args)
         self.used = set()
 
-    def are_all_used(self):
-        return not set(self.vars.keys()).difference(self.used)
+    def unused_args(self):
+        return set(self.vars.keys()).difference(self.used)
 
     def __getattr__(self, k):
         self.used.add(k)

@@ -18,36 +18,49 @@
 // single-file versions of the library (i.e., with and without <iostream>)
 // should pass.
 
+#include "gmock/gmock.h"
+#include "gtest/gtest.h"
+
 namespace au {
+
+using ::testing::DoubleEq;
+using ::testing::Eq;
+using ::testing::Lt;
+
 namespace {
+
 constexpr auto PI = Magnitude<Pi>{};
 
 TEST(CommonSingleFile, HasExpectedUnits) {
-    EXPECT_EQ(meters(1.23).in(meters), 1.23);
-    EXPECT_EQ(seconds(1.23).in(seconds), 1.23);
-    EXPECT_EQ(kilo(grams)(1.23).in(kilo(grams)), 1.23);
-    EXPECT_EQ(kelvins(1.23).in(kelvins), 1.23);
-    EXPECT_EQ(amperes(1.23).in(amperes), 1.23);
-    EXPECT_EQ(moles(1.23).in(moles), 1.23);
-    EXPECT_EQ(candelas(1.23).in(candelas), 1.23);
-    EXPECT_EQ(radians(1.23).in(radians), 1.23);
-    EXPECT_EQ(bits(1.23).in(bits), 1.23);
-    EXPECT_EQ(unos(1.23).in(unos), 1.23);
+    EXPECT_THAT(meters(1.23).in(meters), Eq(1.23));
+    EXPECT_THAT(seconds(1.23).in(seconds), Eq(1.23));
+    EXPECT_THAT(kilo(grams)(1.23).in(kilo(grams)), Eq(1.23));
+    EXPECT_THAT(kelvins(1.23).in(kelvins), Eq(1.23));
+    EXPECT_THAT(amperes(1.23).in(amperes), Eq(1.23));
+    EXPECT_THAT(moles(1.23).in(moles), Eq(1.23));
+    EXPECT_THAT(candelas(1.23).in(candelas), Eq(1.23));
+    EXPECT_THAT(radians(1.23).in(radians), Eq(1.23));
+    EXPECT_THAT(bits(1.23).in(bits), Eq(1.23));
+    EXPECT_THAT(unos(1.23).in(unos), Eq(1.23));
 }
 
 TEST(CommonSingleFile, SupportsPrefixes) {
-    EXPECT_EQ(kibi(bits)(1), bits(1024));
-    EXPECT_EQ(centi(meters)(100), meters(1));
+    EXPECT_THAT(kibi(bits)(1), Eq(bits(1024)));
+    EXPECT_THAT(centi(meters)(100), Eq(meters(1)));
 }
 
 TEST(CommonSingleFile, SeamlesslyInteroperatesWithStdChronoDuration) {
     constexpr std::chrono::nanoseconds as_chrono = micro(seconds)(5);
-    EXPECT_EQ(as_chrono, std::chrono::nanoseconds{5'000});
+    EXPECT_THAT(as_chrono, Eq(std::chrono::nanoseconds{5'000}));
 }
 
 TEST(CommonSingleFile, IncludesMathFunctions) {
-    EXPECT_EQ(round_as(meters, centi(meters)(187)), meters(2));
-    EXPECT_DOUBLE_EQ(sin(radians(get_value<double>(PI / mag<2>()))), 1.0);
+    EXPECT_THAT(round_as(meters, centi(meters)(187)), Eq(meters(2)));
+    EXPECT_THAT(sin(radians(get_value<double>(PI / mag<2>()))), DoubleEq(1.0));
+}
+
+TEST(CommonSingleFile, MixedSignQuantityComparisonWorks) {
+    EXPECT_THAT(meters(-1), Lt(meters(1u)));
 }
 
 }  // namespace

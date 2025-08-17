@@ -15,6 +15,7 @@
 #include <chrono>
 
 #include "docs/au_all_units.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 // clang-format off
@@ -26,15 +27,21 @@
 
 namespace au {
 
+using ::testing::StrEq;
+
 namespace {
+
 template <typename T>
 std::string stream_to_string(const T &x) {
     std::ostringstream oss;
     oss << x;
     return oss.str();
 }
+
 }  // namespace
 
-TEST(AuAllUnitsHh, PrintsValueAndUnitLabel) { EXPECT_EQ(stream_to_string(minutes(3)), "3 min"); }
+TEST(AuAllUnitsHh, PrintsValueAndUnitLabel) {
+    EXPECT_THAT(stream_to_string(minutes(3)), StrEq("3 min"));
+}
 
 }  // namespace au

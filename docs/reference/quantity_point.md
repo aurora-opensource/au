@@ -73,22 +73,22 @@ fail to exist in several ways.
 1. If the input quantity has a **different dimension**, then the operation is intrinsically
    meaningless and we forbid it.
 
-2. If the _constructed_ quantity's rep (that is, `Rep` in the code snippet above) is **not floating
-   point**, then we forbid any conversion that might produce a non-integer value.  Examples include:
+2. If the unit conversion has what we consider to be **unacceptable risk**, then we also forbid it.
+   Common examples include:
 
-    a. When `OtherRep` _is floating point_, we forbid this conversion.
+    a. When `OtherRep` is _floating point_, but `Rep` is _integral_, we forbid this conversion for
+       excessive truncation risk.
 
-    b. When `UnitRatioT<OtherUnit, Unit>` is _not an integer_, we forbid this conversion.
+    b. If the conversion factor is large, and `Rep` is small, such that _even very small values_ in
+       `OtherRep` would exceed the bounds of `Rep`, we forbid this conversion for excessive overflow
+       risk.  See the [overflow safety surface](../discussion/concepts/overflow.md#adapt) docs for
+       more details.
 
     c. When the origin of `OtherUnit` is _additively offset_ from the origin of `Unit` by an amount
        that can't be represented as an integer in the target units, `Unit`, we forbid this
-       conversion.
+       conversion if `Rep` is an integral type.
 
 Note that case `c` doesn't occur for `Quantity`; it is unique to `QuantityPoint`.
-
-We also inherit the "overflow safety surface" from the `Quantity` member inside of `QuantityPoint`
-(discussed as point 3 of the [`Quantity` constructor docs](./quantity.md#implicit-from-quantity)).
-This can prevent certain quantity point conversions which have excessive overflow risk.
 
 Here are several examples to illustrate the conditions under which implicit conversions are allowed.
 
@@ -112,6 +112,26 @@ have the same dimension), but some conversions are forbidden due to the risk of 
 errors.  The library can still perform these conversions, but not via this constructor, and it must
 be "forced" to do so. See [`.coerce_as(unit)`](#coerce) for more details.
 
+### Constructing from another `QuantityPoint`, with explicit risk policy
+
+This constructor also performs a unit conversion, but the user selects which conversion risks are
+actively checked for.  This is done by passing an explicit [conversion risk
+policy](./conversion_risk_policies.md) as a second argument.
+
+Here is the signature.  We've simplified it slightly for illustration purposes, and enclosed it
+inside the class definition for context.
+
+```cpp
+template <typename Unit, typename Rep>
+class QuantityPoint {
+    template <typename OtherUnit, typename OtherRep, typename Policy>
+    QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other, Policy policy);
+};
+```
+
+A common example for `policy` is `ignore(TRUNCATION_RISK)`.  This can be used when truncation is
+actually desired, or when you independently know that the specific input value will not truncate.
+
 ### Default constructor
 
 Here is the signature of the constructor, enclosed in the class template definition for context.
@@ -123,11 +143,14 @@ class QuantityPoint {
 };
 ```
 
-A default-constructed `QuantityPoint` is initialized to some value, which helps avoid certain kinds
-of memory safety bugs.  However, **the value is contractually unspecified**.  You can of course look
-up that value by reading the source code, but we may change it in the future, and **we would not
-consider this to be a breaking change**.  The only valid operation on a default-constructed
-`QuantityPoint` is to assign to it later on.
+A default-constructed `QuantityPoint` default-constructs the underlying type, which helps avoid
+certain kinds of memory safety bugs.  It will contain a default-constructed instance of the rep
+type.
+
+!!! warning
+    Avoid relying on the _specific value_ of a default-constructed `QuantityPoint`, because it
+    poorly communicates intent.  The only logically valid operation on a default-constructed
+    `Quantity` is to assign to it later on.
 
 ## Extracting the stored value
 
@@ -202,25 +225,16 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
 
 However, note that we may change this second property in the future.  The version with the template
 arguments may be changed later so that it _does_ prevent lossy conversions.  If you want this
-"forcing" semantic, prefer to use [`.coerce_as(unit)`](#coerce), and add the explicit template
-parameter only if you want to change the rep.  See
-[#122](https://github.com/aurora-opensource/au/issues/122) for more details.
-
-??? example "Example: forcing a conversion from centimeters to meters"
-    `centi(meters_pt)(200).as(meters_pt)` is not allowed.  This conversion will divide the
-    underlying value, `200`, by `100`.  Now, it so happens that this _particular_ value _would_
-    produce an integer result. However, the compiler must decide whether to permit this operation
-    _at compile time_, which means we don't yet know the value.  Since most `int` values would _not_
-    produce integer results, we forbid this.
-
-    `centi(meters_pt)(200).as<int>(meters_pt)` _is_ allowed.  The "explicit rep" template parameter
-    has "forcing" semantics.  This would produce `meters_pt(2)`. However, note that this operation
-    uses integer division, which truncates: so, for example,
-    `centi(meters_pt)(199).as<int>(meters_pt)` would produce `meters_pt(1)`.
+"forcing" semantic, prefer to use a policy argument, and add the explicit template parameter only if
+you want to change the rep.  See [#122] to track progress on this change, and see the [policy
+argument section](#policy-argument) for an example of the _preferred_ way to force a conversion.
 
 !!! tip
     Prefer to **omit** the template argument if possible, because you will get more safety checks.
     The risks which the no-template-argument version warns about are real.
+
+    As of [0.6.0] and [#122], however, this advice will no longer apply.  At that point, the
+    explicit-rep versions will have the same safety checks as the implicit-rep versions.
 
 ### `.in(unit)`, `.in<T>(unit)`
 
@@ -254,28 +268,82 @@ are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` 
 
 However, note that we may change this second property in the future.  The version with the template
 arguments may be changed later so that it _does_ prevent lossy conversions.  If you want this
-"forcing" semantic, prefer to use [`.coerce_in(unit)`](#coerce), and add the explicit template
-parameter only if you want to change the rep.  See
-[#122](https://github.com/aurora-opensource/au/issues/122) for more details.
-
-??? example "Example: forcing a conversion from centimeters to meters"
-    `centi(meters_pt)(200).in(meters_pt)` is not allowed.  This conversion will divide the
-    underlying value, `200`, by `100`.  Now, it so happens that this _particular_ value _would_
-    produce an integer result. However, the compiler must decide whether to permit this operation
-    _at compile time_, which means we don't yet know the value.  Since most `int` values would _not_
-    produce integer results, we forbid this.
-
-    `centi(meters_pt)(200).in<int>(meters_pt)` _is_ allowed.  The "explicit rep" template parameter
-    has "forcing" semantics (at least for now; see
-    [#122](https://github.com/aurora-opensource/au/issues/122)).  This would produce `2`. However,
-    note that this operation uses integer division, which truncates: so, for example,
-    `centi(meters_pt)(199).in<int>(meters_pt)` would produce `1`.
+"forcing" semantic, prefer to use a policy argument, and add the explicit template parameter only if
+you want to change the rep.  See [#122] to track progress on this change, and see the [policy
+argument section](#policy-argument) for an example of the _preferred_ way to force a conversion.
 
 !!! tip
     Prefer to **omit** the template argument if possible, because you will get more safety checks.
     The risks which the no-template-argument version warns about are real.
 
+    As of [0.6.0] and [#122], however, this advice will no longer apply.  At that point, the
+    explicit-rep versions will have the same safety checks as the implicit-rep versions.
+
+### Skipping risk checks: the `policy` argument {#policy-argument}
+
+Some unit conversions have too much [conversion risk](../discussion/concepts/conversion_risks.md) to
+permit by default.  When that happens, the compiler will tell you which risk (overflow or
+truncation) it deemed too high.  You can still perform the conversion, but you must explicitly turn
+off the corresponding safety check, by passing a [policy argument](./conversion_risk_policies.md).
+Every variant of `as` and `in` mentioned above supports such an argument.  If you pass a policy, it
+will control the set of conversion risks that we check for.
+
+To be concrete, here are the signatures of the functions that support the policy argument:
+
+| Usual form | With policy argument |
+|------------|----------------------|
+| `.as(unit)` | `.as(unit, policy)` |
+| `.as<T>(unit)` | `.as<T>(unit, policy)` |
+| `.in(unit)` | `.in(unit, policy)` |
+| `.in<T>(unit)` | `.in<T>(unit, policy)` |
+
+??? example "Example: forcing a conversion from degrees Celsius to Kelvins"
+    `celsius_pt(20).as(kelvins_pt)` is not allowed.  This conversion would add the non-integer value
+    `273.15` to the underlying value, `20`, which is an `int`.  Clearly, this would truncate, so we
+    forbid it.
+
+    `celsius_pt(20).as(kelvins_pt, ignore(TRUNCATION_RISK))` _is_ allowed.  The second argument
+    turns off the truncation risk check.  In this case, there is more than just a _risk_ of
+    truncation; there is _actual_ truncation.  The result would be `kelvins_pt(293)`, where the
+    underlying value has discarded the fractional part of the exact answer, $293.15 \,\text{K}$.
+
+??? example "Example: simultaneous unit and type conversion"
+    `celsius_pt(20.86).as<int>(kelvins_pt, ignore(TRUNCATION_RISK))` will return `kelvins_pt(294)`.
+
+!!! tip
+    In most cases, prefer **not** to use the policy versions if possible, because you will get more
+    safety checks.  The risks which the "base" versions warn about are real.
+
+    However, once we provide runtime conversion checkers for `QuantityPoint` (see [#352]), then it
+    will always be safe to provide a policy argument that ignores a risk that you have just verified
+    to be absent.
+
 ### Forcing lossy conversions: `.coerce_as(unit)`, `.coerce_in(unit)` {#coerce}
+
+!!! warning
+    We are planning to deprecate these functions in the [0.6.0] release.  See [#481] to track the
+    progress.
+
+    In the meantime, here is how you convert.
+
+    First, figure out which conversion risks you are trying to override: **overflow**, or
+    **truncation**, or **both**.  (If you don't have an explicit `<Rep>` argument, you can simply
+    delete the `"coerce_"` word and compile, and the error message will tell you which one is
+    relevant.  Otherwise, you will need to use your knowledge of the types and units involved to
+    figure this out.)
+
+    Then, follow this table to rewrite your conversion, using the conversion risk you identified
+    above.
+
+    | "Coerce" version (dis-preferred; will be deprecated) | "Policy" version (preferred) |
+    |------------------------------------------------------|------------------------------|
+    | `q.coerce_as(unit)` | One of:<br>`q.as(unit, ignore(OVERFLOW_RISK))`<br>`q.as(unit, ignore(TRUNCATION_RISK))`<br>`q.as(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
+    | `q.coerce_as<T>(unit)` | One of:<br>`q.as<T>(unit, ignore(OVERFLOW_RISK))`<br>`q.as<T>(unit, ignore(TRUNCATION_RISK))`<br>`q.as<T>(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
+    | `q.coerce_in(unit)` | One of:<br>`q.in(unit, ignore(OVERFLOW_RISK))`<br>`q.in(unit, ignore(TRUNCATION_RISK))`<br>`q.in(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
+    | `q.coerce_in<T>(unit)` | One of:<br>`q.in<T>(unit, ignore(OVERFLOW_RISK))`<br>`q.in<T>(unit, ignore(TRUNCATION_RISK))`<br>`q.in<T>(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
+
+    These new versions are both more clear about their intent, and safer (because they only turn off
+    the safety checks that they need to).
 
 This function performs the exact same kind of unit conversion as if the string `coerce_` were
 removed.  However, it will ignore any safety checks for overflow or truncation.
@@ -440,7 +508,7 @@ As [required by the standard](https://en.cppreference.com/w/cpp/types/common_typ
 [SFINAE](https://en.cppreference.com/w/cpp/language/sfinae)-friendly: improper combinations will
 simply not be present, rather than producing a hard error.
 
-### AreQuantityPointTypesEquivalent
+### AreQuantityPointTypesEquivalent {#are-quantity-point-types-equivalent}
 
 **Result:** Indicates whether two `QuantityPoint` types are equivalent.  Equivalent types may be
 freely converted to each other, and no arithmetic operations will be performed in doing so.
@@ -456,3 +524,8 @@ More precisely, `QuantityPoint<U1, R1>` and `QuantityPoint<U2, R2>` are equivale
 
 - For _types_ `U1` and `U2`:
     - `AreQuantityPointTypesEquivalent<U1, U2>::value`
+
+[#122]: https://github.com/aurora-opensource/au/issues/122
+[#352]: https://github.com/aurora-opensource/au/issues/352
+[#481]: https://github.com/aurora-opensource/au/issues/481
+[0.6.0]: https://github.com/aurora-opensource/au/milestone/9

@@ -84,7 +84,7 @@ example for the `nholthaus/units` library:
         // Check that the equivalent Quantity type can be _implicitly_ converted back to the
         // original nholthaus type, and that this round trip is the identity.
         const NholthausType round_trip = implicitly_converted_to_quantity;
-        EXPECT_EQ(round_trip, original);
+        EXPECT_THAT(round_trip, Eq(original));
     }
     ```
 

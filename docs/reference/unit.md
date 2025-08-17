@@ -477,6 +477,20 @@ as an inch.
 - For _instances_ `u1` and `u2`:
     - `unit_ratio(u1, u2)`
 
+### Unit sign
+
+**Result:** The [magnitude](./magnitude.md) representing the sign of the unit.  This takes the value
+`mag<1>()` if increases in the underlying stored value correspond to _increases_ in the quantity,
+and `-mag<1>()` if increases in the underlying stored value correspond to _decreases_ in the
+quantity.
+
+**Syntax:**
+
+- For a _type_ `U`:
+    - `UnitSign<U>`
+- For an _instance_ `u`:
+    - `unit_sign(u)`
+
 ### Origin displacement
 
 **Result:** The displacement from the first unit's origin to the second unit's origin.
@@ -487,6 +501,26 @@ that is what this trait produces.
 
 For example, the origin displacement from `Kelvins` to `Celsius` is equivalent to
 $273.15 \,\text{K}$.
+
+Rather than returning a `Quantity`, we return a "shapeshifter" type: that is, a [monovalue
+type](./detail/monovalue_types.md) that can _initialize_ any appropriate `Quantity` type.  The
+conversion will succeed if and only if the value can be represented in the target `Quantity` without
+overflow or truncation --- and if it fails, it will fail _at compile time_.  The specific
+shapeshifter type we return will be:
+
+- [Zero](./zero.md) if the origins of the two units coincide; or,
+- [Constant](./constant.md) if they differ.
+
+!!! note
+    Au 0.4.1 was the last release where the `OriginDisplacement` trait could be found in
+    `"au/unit_of_measure.hh"`, along with all of the other traits documented here.  For all
+    subsequent releases, it can be found in `"au/quantity_point.hh"`.
+
+    The reason we moved it was because `"au/constant.hh"` (which defines `Constant`) depends on
+    `"au/quantity.hh"`, which in turn depends on `"au/unit_of_measure.hh"`.  Therefore, we could
+    never have used `Constant` inside of `"au/unit_of_measure.hh"`.  However,
+    `"au/quantity_point.hh"` _could_ depend on `"au/constant.hh"`.  Origin displacements aren't very
+    useful without `QuantityPoint` anyway, so this new home is acceptable.
 
 **Syntax:**
 
@@ -618,6 +652,16 @@ in all other cases.
 A specialization will only exist if the inputs are all units, and will exist but produce a hard
 error if any two input units have different Dimensions.  We also strive to keep the result
 associative, and symmetric under interchange of any inputs.
+
+To understand the precise definition of the common point unit, first assume that the "origin
+displacement" for any two units with different origins is itself a new unit, which we can create
+implicitly.  Then, the _common point unit_ is defined as the unit such that:
+
+- It is quantity-equivalent to the _common unit_ of **both** all input units **and** of all "origin
+  displacement units" created by any pairs of input units with different origins.
+
+- Its _origin_ is the _lowest_ of all input origins, because this is the _highest_ value that is
+  still "common" to all input units (in the sense that all additive offsets will be non-negative).
 
 ??? note "A note on inputs vs. outputs for the `common_point_unit(us...)` form"
     The return value of the instance version is a _unit_, while the input parameters are

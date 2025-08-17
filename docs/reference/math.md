@@ -194,6 +194,69 @@ expand the note below for further details.
     arguments have the same type.  Write `clamp(a, b, c)`, not `au::clamp(a, b, c)`: the latter will
     frequently result in the right overload not being found.
 
+### Interpolating functions
+
+#### `lerp` (C++20) {#lerp}
+
+!!! warning
+    `lerp`, based on [std::lerp], is only available for C++20 and later.
+
+    For the special case where `t = 0.5`, [`mean`](#mean) (see below) presents an alternative.
+
+Linearly interpolate between two `Quantity` or `QuantityPoint` values, based on a parameter `t`,
+such that `t=0` corresponds to the first argument, and `t=1` corresponds to the second argument.
+That is, `lerp(a, b, t)` is logically equivalent to `a + (b - a) * t`, but with all of the special
+case handling found in [std::lerp].
+
+**Signatures:**
+
+```cpp
+// 1. `Quantity` inputs
+template <typename U1, typename R1, typename U2, typename R2, typename T>
+constexpr auto lerp(Quantity<U1, R1> a, Quantity<U2, R2> b, T t);
+
+// 2. `QuantityPoint` inputs
+template <typename U1, typename R1, typename U2, typename R2, typename T>
+constexpr auto lerp(QuantityPoint<U1, R1> a, QuantityPoint<U2, R2> b, T t);
+```
+
+**Returns:** The value notionally equivalent to $a + t(b - a)$, subject to all of the special case
+handling outlined in [std::lerp].  The return value will be expressed in the common unit of the
+units of the inputs `a` and `b`.
+
+[std::lerp]: https://en.cppreference.com/w/cpp/numeric/lerp
+
+#### `mean` {#mean}
+
+Produce the arithmetic mean of two or more `Quantity` or `QuantityPoint` values.
+
+**Signatures:**
+
+```cpp
+// 1. `Quantity` inputs
+template <typename U0, typename R0, typename... Us, typename... Rs>
+constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs);
+
+// 2. `QuantityPoint` inputs
+template <typename U0, typename R0, typename... Us, typename... Rs>
+constexpr auto mean(QuantityPoint<U0, R0> p0, QuantityPoint<Us, Rs>... ps);
+```
+
+**Returns:** The arithmetic mean of all inputs.  The return value will be expressed in the common
+unit of the units of the inputs, and the rep will be the common type of the reps of all inputs.
+
+!!! note
+    `mean` has overlap with `lerp`: `mean(a, b)` is similar to `lerp(a, b, 0.5)`.  Here is
+    a comparison table to help you decide which to use.
+
+    | Criterion | `mean` | `lerp` |
+    |-----------|--------|--------|
+    | Number of inputs | 2 or more | Exactly 2 |
+    | Weights | All equal | Arbitrary |
+    | Special case handling | Avoids overflows | Delegates to [std::lerp], which handles many special cases |
+    | Approach to integer types | Use integer arithmetic | Delegates to [std::lerp], which always converts to floating point |
+    | C++ version compatibility | All versions of Au (C++14 and later) | C++20 and later |
+
 ### Exponentiation
 
 #### `int_pow`
@@ -214,54 +277,32 @@ constexpr auto int_pow(Quantity<U, R> q);
 **Returns:**  A `Quantity` whose unit is the input unit raised to the given power, and whose value
 is the input value raised to the given power.
 
-#### `sqrt`
+#### `sqrt`, `cbrt`
 
-A unit-aware adaptation of [`std::sqrt`](https://en.cppreference.com/w/cpp/numeric/math/sqrt).  Both
-the input and output are `Quantity` types.  Since `sqrt` is an [arbitrary-unit
-operation](../discussion/concepts/arithmetic.md#arbitrary-unit), the square root applies
+A unit-aware adaptation of [`std::sqrt`](https://en.cppreference.com/w/cpp/numeric/math/sqrt) and
+[`std::cbrt`](https://en.cppreference.com/w/cpp/numeric/math/cbrt).  Both the input and output are
+`Quantity` types.  Since `sqrt` and `cbrt` are [arbitrary-unit
+operations](../discussion/concepts/arithmetic.md#arbitrary-unit), the root applies
 _independently_ to the unit and to the value.
 
-We mirror `std::sqrt` in selecting our output rep.  That is to say: the output rep will be the
-return type of `std::sqrt` when called with a value of our input rep.
+We mirror `std::sqrt` and `std::cbrt` in selecting our output rep.  That is to say: the output rep
+for `sqrt` and `cbrt` will be the return type of `std::sqrt` or `std::cbrt`, respectively, when
+called with a value of our input rep.  For example, if the input quantity has `int` rep, then the
+output will be `double`.
 
 **Signature:**
 
 ```cpp
 template <typename U, typename R>
 auto sqrt(Quantity<U, R> q);
+
+template <typename U, typename R>
+auto cbrt(Quantity<U, R> q);
 ```
 
-**Returns:** A `Quantity` whose unit is the square root of the input quantity's unit, and whose
-value is the square root of the input quantity's value.
-
-??? warning "Warning: not all unit conversions are currently supported"
-    There is one edge case to be aware of with `sqrt`: we don't yet support any **conversion** which
-    picks up a radical factor.  This is because all conversion factors get computed at compile time,
-    and we don't have a way to compute rational powers at compile time.  To fix this, we would need
-    a `constexpr`-compatible implementation of `std::powl`.
-
-    Let's clarify what you can and can't do in today's library, with an example.
-
-    ```cpp
-    // Taking the square root of "weird" units: this works.
-    const auto geo_mean_length = sqrt(inches(1) * meters(1));
-
-    // Now let's look at retrieving the value in different units.
-
-    // Using a Quantity-equivalent Unit just retrieves the stored value.
-    // This _always_ works.  (In this case, it gives `1.0`.)
-    const auto retrieved_value = geo_mean_length.in(sqrt(inch * meters));
-
-    // This conversion is non-trivial, but it's also OK.
-    // The reason is that the conversion factor doesn't have any rational powers.
-    // (In this case, it gives `10.0`.)
-    const auto rationally_converted_value = geo_mean_length.in(sqrt(inch * centi(meters)));
-
-    // This test case doesn't currently work.
-    // Later, if we can compute radical conversion factors at compile time, it will.
-    // (It should give roughly 6.274558...)
-    // const auto radically_converted_value = geo_mean_length.in(inches);
-    ```
+**Returns:** A `Quantity` whose unit is the square root (for `sqrt`) or cube root (for `cbrt`) of
+the input quantity's unit, and whose value is the square root (for `sqrt`) or cube root (for `cbrt`)
+of the input quantity's value.
 
 ### Trigonometric functions
 
@@ -306,7 +347,7 @@ the [`std::sin` documentation](https://en.cppreference.com/w/cpp/numeric/math/si
     This example is taken from a test case in the library.
 
     ```cpp
-    EXPECT_NEAR(sin(degrees(30)), 0.5, 1e-15);
+    EXPECT_THAT(sin(degrees(30)), DoubleNear(0.5, 1e-15));
     ```
 
 #### `arcsin`, `arccos`, `arctan`
@@ -789,6 +830,24 @@ auto fmod(Quantity<U1, R1> q1, Quantity<U2, R2> q2);
 
 **Returns:** The remainder of `q1 / q2`, in the type `Quantity<U, R>`, where `U` is the common unit
 of `U1` and `U2`, and `R` is the common type of `R1` and `R2`.
+
+#### `hypot`
+
+A unit-aware adaptation of `std::hypot`, giving the length of the hypotenuse of a right triangle
+with the given side lengths.
+
+As with many math functions, we first express the inputs in their [common
+unit](../discussion/concepts/common_unit.md).
+
+**Signature:**
+
+```cpp
+template <typename U1, typename R1, typename U2, typename R2>
+auto hypot(Quantity<U1, R1> q1, Quantity<U2, R2> q2);
+```
+
+**Returns:** The hypotenuse length, in the type `Quantity<U, R>`, where `U` is the common unit of
+`U1` and `U2`, and `R` is the common type of `R1` and `R2`.
 
 #### `remainder`
 

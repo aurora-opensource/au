@@ -1,6 +1,6 @@
 # Magnitude
 
-`Magnitude` is a family of [monovalue types](./detail/monovalue_types.md) representing positive real
+`Magnitude` is a family of [monovalue types](./detail/monovalue_types.md) representing nonzero real
 numbers.  These values can be multiplied, divided, and raised to (rational) powers, and this
 arithmetic always takes place at compile time.  Values can also be converted to more standard
 numeric types, such as `double` and `int`, as long as the receiving type can represent the
@@ -138,22 +138,22 @@ If you need to check whether your magnitude `m` can be represented in a type `T`
     Here are some example test cases which will pass.
 
     ```cpp
-    EXPECT_TRUE(representable_in<int>(mag<1>()));
+    EXPECT_THAT(representable_in<int>(mag<1>()), IsTrue());
 
     // (1 / 2) is not an integer.
-    EXPECT_FALSE(representable_in<int>(mag<1>() / mag<2>()));
+    EXPECT_THAT(representable_in<int>(mag<1>() / mag<2>()), IsFalse());
 
-    EXPECT_TRUE(representable_in<float>(mag<1>() / mag<2>()));
+    EXPECT_THAT(representable_in<float>(mag<1>() / mag<2>()), IsTrue());
     ```
 
 ??? example "Example: range of the type"
     Here are some example test cases which will pass.
 
     ```cpp
-    EXPECT_TRUE(representable_in<uint32_t>(mag<4'000'000'000>()));
+    EXPECT_THAT(representable_in<uint32_t>(mag<4'000'000'000>()), IsTrue());
 
     // 4 billion is larger than the max value representable in `int32_t`.
-    EXPECT_FALSE(representable_in<int32_t>(mag<4'000'000'000>()));
+    EXPECT_THAT(representable_in<int32_t>(mag<4'000'000'000>()), IsFalse());
     ```
 
 Note that this function's return value also depends on _whether we can compute_ the value, not just
@@ -203,6 +203,18 @@ In what follows, we'll use this convention:
 - For _instances_ `m1` and `m2`:
     - `m1 / m2`
 
+### Negation
+
+**Result:** The negative of a `Magnitude`.
+
+**Syntax:**
+
+- For a _type_ `M`:
+    - No special support, but you can form the product with `Magnitude<Negative>`, which represents
+      `-1`.
+- For an _instance_ `m`:
+    - `-m`
+
 ### Powers
 
 **Result:** A `Magnitude` raised to an integral power.
@@ -226,6 +238,10 @@ In what follows, we'll use this convention:
 - For an _instance_ `m`, and an integral root `N`:
     - `root<N>(m)`
 
+!!! note
+    If `m` is negative, and `N` is even, then `root<N>(m)` produces a hard compiler error, because
+    the result cannot be represented as a `Magnitude`.
+
 ### Helpers for powers and roots
 
 Magnitudes support all of the [power helpers](./powers.md#helpers).  So, for example, for
@@ -235,7 +251,7 @@ a magnitude instance `m`, you can write `sqrt(m)` as a more readable alternative
 
 These traits provide information, at compile time, about the number represented by a `Magnitude`.
 
-### Integer test
+### Is Integer?
 
 **Result:** A `bool` indicating whether a `Magnitude` represents an _integer_ (`true` if it does;
 `false` otherwise).
@@ -247,7 +263,7 @@ These traits provide information, at compile time, about the number represented 
 - For an _instance_ `m`:
     - `is_integer(m)`
 
-### Rational test
+### Is Rational?
 
 **Result:** A `bool` indicating whether a `Magnitude` represents a _rational number_ (`true` if it
 does; `false` otherwise).
@@ -258,6 +274,18 @@ does; `false` otherwise).
     - `IsRational<M>::value`
 - For an _instance_ `m`:
     - `is_rational(m)`
+
+### Is Positive?
+
+**Result:** A `bool` indicating whether a `Magnitude` represents a _positive number_ (`true` if it
+does; `false` otherwise).
+
+**Syntax:**
+
+- For a _type_ `M`:
+    - `IsPositive<M>::value`
+- For an _instance_ `m`:
+    - `is_positive(m)`
 
 ### Integer part
 
@@ -312,3 +340,27 @@ For example, the "denominator" of $\frac{3\sqrt{3}}{5\pi}$ would be $5\pi$.
     - `DenominatorT<M>`
 - For an _instance_ `m`:
     - `denominator(m)`
+
+### Absolute value
+
+**Result:** The absolute value of a `Magnitude`, which is another `Magnitude`.
+
+**Syntax:**
+
+- For a _type_ `M`:
+    - `Abs<M>`
+- For an _instance_ `m`:
+    - `abs(m)`
+
+### Sign
+
+**Result:** A `Magnitude`: `1` if the input is positive, and `-1` if the input is negative.
+
+We expect that the relation `m == sign(m) * abs(m)` will hold for every `Magnitude` `m`.
+
+**Syntax:**
+
+- For a _type_ `M`:
+    - `Sign<M>`
+- For an _instance_ `m`:
+    - `sign(m)`

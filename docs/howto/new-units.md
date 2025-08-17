@@ -28,20 +28,20 @@ a complete sample definition of a new Unit, with these features annotated and ex
     //
     // Items labeled with `*` are _required_; everything else is optional.
 
-    // In .hh file:
-    struct Fathoms : decltype(Inches{} * mag<72>()) {           // *[1]
-        static constexpr const char label[] = "ftm";            //  [2a]
+    // In .hh file, in your project's namespace:
+    struct Fathoms : decltype(au::Inches{} * au::mag<72>()) {       // *[1]
+        static constexpr const char label[] = "ftm";                //  [2a]
     };
-    constexpr auto fathom  = SingularNameFor<Fathoms>{};        //  [3]
-    constexpr auto fathoms = QuantityMaker<Fathoms>{};          // *[4]
-    constexpr auto fathoms_pt = QuantityPointMaker<Fathoms>{};  //  [5; less common]
+    constexpr auto fathom  = au::SingularNameFor<Fathoms>{};        //  [3]
+    constexpr auto fathoms = au::QuantityMaker<Fathoms>{};          // *[4]
+    constexpr auto fathoms_pt = au::QuantityPointMaker<Fathoms>{};  //  [5; less common]
 
     namespace symbols {
-    constexpr auto ftm = SymbolFor<Fathoms>{};                  //  [6]
+    constexpr auto ftm = au::SymbolFor<Fathoms>{};                  //  [6]
     }
 
-    // In .cc file:
-    constexpr const char Fathoms::label[];                      //  [2b]
+    // In .cc file, in your project's namespace:
+    constexpr const char Fathoms::label[];                          //  [2b]
     ```
 
 === "C++17 or later"
@@ -51,16 +51,16 @@ a complete sample definition of a new Unit, with these features annotated and ex
     //
     // Items labeled with `*` are _required_; everything else is optional.
 
-    // In .hh file:
-    struct Fathoms : decltype(Inches{} * mag<72>()) {           // *[1]
-        static constexpr inline const char label[] = "ftm";     //  [2]
+    // In .hh file, in your project's namespace:
+    struct Fathoms : decltype(au::Inches{} * au::mag<72>()) {       // *[1]
+        static constexpr inline const char label[] = "ftm";         //  [2]
     };
-    constexpr auto fathom  = SingularNameFor<Fathoms>{};        //  [3]
-    constexpr auto fathoms = QuantityMaker<Fathoms>{};          // *[4]
-    constexpr auto fathoms_pt = QuantityPointMaker<Fathoms>{};  //  [5; less common]
+    constexpr auto fathom  = au::SingularNameFor<Fathoms>{};        //  [3]
+    constexpr auto fathoms = au::QuantityMaker<Fathoms>{};          // *[4]
+    constexpr auto fathoms_pt = au::QuantityPointMaker<Fathoms>{};  //  [5; less common]
 
     namespace symbols {
-    constexpr auto ftm = SymbolFor<Fathoms>{};                  //  [6]
+    constexpr auto ftm = au::SymbolFor<Fathoms>{};                  //  [6]
     }
     ```
 
@@ -129,8 +129,8 @@ Above, we said to inherit your unit's strong type from the `decltype` of a [unit
 expression](../discussion/idioms/unit-slots.md#unit-expression). Recall the line from above:
 
 ```cpp
-struct Fathoms : decltype(Inches{} * mag<72>()) {
-//        Unit Expression ^^^^^^^^^^^^^^^^^^^^
+struct Fathoms : decltype(au::Inches{} * au::mag<72>()) {
+//        Unit Expression ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ```
 
 Some users may be surprised that we recommend using `decltype` and instances, instead of just naming
@@ -154,8 +154,8 @@ Here are some example unit expressions we might reach for to define various comm
 A shorter method of defining units is as _aliases_ for a compound unit.  For example:
 
 ```cpp
-using MilesPerHour = decltype(Miles{} / Hours{});
-constexpr auto miles_per_hour = miles / hour;
+using MilesPerHour = decltype(au::Miles{} / au::Hours{});
+constexpr auto miles_per_hour = au::miles / au::hour;
 ```
 
 We can use the alias, `MilesPerHour`, anywhere we'd use a unit type.  And we can call the

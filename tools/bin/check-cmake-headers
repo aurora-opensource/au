@@ -1,0 +1,129 @@
+#!/usr/bin/python3
+# Copyright 2025 Aurora Operations, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import os
+import subprocess
+import sys
+
+
+def main(argv=None):
+    cmake_headers = _get_cmake_headers()
+    bazel_headers = _get_bazel_headers()
+    ok = _check_equality_and_print_any_differences(
+        cmake_headers=cmake_headers, bazel_headers=bazel_headers
+    )
+    return 0 if ok else 1
+
+
+def _get_cmake_headers():
+    # Ensure that CMake has been set up appropriately.  Command taken from:
+    # <https://aurora-opensource.github.io/au/main/install/#__tabbed_1_2>
+    subprocess.run(
+        [
+            "cmake",
+            "-S",
+            ".",
+            "-B",
+            "cmake/build",
+            "-DCMAKE_VERIFY_INTERFACE_HEADER_SETS=TRUE",
+        ],
+        check=True,
+    )
+
+    # Run the actual CMake custom target that lists the relevant headers.
+    raw_output = subprocess.run(
+        ["cmake", "--build", "cmake/build", "--target", "print_au_files"],
+        stdout=subprocess.PIPE,
+        check=True,
+    )
+
+    # De-duplicate headers and remove common prefix.
+    return _as_set_relative_to_common_prefix(
+        [
+            path
+            for line in raw_output.stdout.decode().splitlines()
+            for path in _get_cmake_headers_from_line(line)
+        ]
+    )
+
+
+def _get_bazel_headers():
+    deps_str = ' union '.join(f'deps(//au{target})' for target in ['', ':io', ':std_format'])
+    raw_output = subprocess.run(
+        [
+            "bazel",
+            "query",
+            f"kind(source, filter(//au, {deps_str}))",
+        ],
+        stdout=subprocess.PIPE,
+        check=True,
+    )
+    paths = raw_output.stdout.decode().splitlines()
+    return _as_set_relative_to_common_prefix(paths)
+
+
+def _check_equality_and_print_any_differences(cmake_headers, bazel_headers):
+    cmake = (cmake_headers, "CMake")
+    bazel = (bazel_headers, "bazel")
+    result = (cmake_headers == bazel_headers)
+
+    if not result:
+        print("\n** ERROR **: Headers in CMake and bazel are not identical.")
+    _print_any_only_in_first(first=cmake, second=bazel)
+    _print_any_only_in_first(first=bazel, second=cmake)
+
+    return result
+
+
+def _as_set_relative_to_common_prefix(paths):
+    """Turn the input into a set, and remove the common prefix."""
+    p = os.path.commonprefix(paths)
+    return set([path.removeprefix(p) for path in paths])
+
+
+def _get_cmake_headers_from_line(line):
+    """
+    Extract header names from one line of output from CMake's `print_au_files` target.
+
+    This custom target outputs relevant headers only on a line that begins with the special token
+    "PRESERVE:", and the headers are the rest of the tokens.
+    """
+    tokens = line.split()
+    if not tokens:
+        return []
+    first, *rest = tokens
+    return rest if first == "PRESERVE:" else []
+
+
+def _print_any_only_in_first(first, second):
+    """
+    Print any headers that are in the first group, but not the second.
+
+    Args:
+        first: A tuple of (headers, name) where `headers` is a set of headers and `name` is a string.
+        second: A tuple of (headers, name) where `headers` is a set of headers and `name` is a string.
+    """
+    first_headers, first_name = first
+    second_headers, second_name = second
+
+    extras = first_headers - second_headers
+    if extras:
+        print(f"\nHeaders in {first_name} but not {second_name}:")
+        for header in extras:
+            print(f"  {header}")
+
+
+if __name__ == "__main__":
+    sys.exit(main())

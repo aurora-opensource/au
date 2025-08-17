@@ -1,6 +1,6 @@
 # Applying Magnitudes
 
-Every unit conversion factor is a [_magnitude_](../../reference/magnitude.md) --- a positive real
+Every unit conversion factor is a [_magnitude_](../../reference/magnitude.md) --- a nonzero real
 number.  When we apply it to a value, conceptually, we're just multiplying the value by that number.
 However, that doesn't mean that multiplying by a number is the best _implementation_!  Consider
 these examples.
@@ -80,10 +80,14 @@ values, which are far more common.  Consider applying $\frac{2}{3}$ to a smaller
 `5`.  The exact rational answer is $\frac{10}{3}$, which truncates to `3`.  If we perform the
 multiplication first, this is what we get, but doing the division first would give `2`.
 
-If you know that your final answer is representable, _and_ you have an integer type with more bits
-than your type `T`, then you can work around this issue manually by casting to the wider type,
-applying the magnitude, and casting back to `T`. However, if you _don't_ have a wider integer types,
-we know of no _general_ "solution" that wouldn't do more harm then good.
+In the future, we hope to be able to circumvent this dilemma entirely by introducing a fixed point
+rational strategy.  This would represent the fraction as a double-wide integer type --- either
+built-in, or emulated --- whose implicit denominator is $2^N$ for an $N$-bit integer.  This would
+give us efficient performance (just a single multiplication and shift), maximum precision, and no
+"extra" overflow risk.  See [#453] to track progress.
+
+In the meanwhile, we'll stick with the multiply-and-divide approach, because the risk of overflow is
+generally much more tolerable than the reduced accuracy that would come from dividing first.
 
 #### Floating point types
 
@@ -123,7 +127,11 @@ we're multiplying our variable by an irrational number, we know the result won't
 representable.  Therefore, we always simply multiply by the closest representation of this
 conversion factor.
 
-The one difference is that we forbid this operation for integral types, because it makes no sense.
+Of course, this assumes that we can _actually implement_ this unit conversion.  For integral types,
+this is currently not the case: after all, we can't represent irrational numbers as integers!
+However, we hope to change this in the future, by introducing a fixed point rational strategy.  See
+[#453] for details, but in the meantime, applying irrational conversion factors to integral types
+simply produces a compiler error.
 
 ## Summary and conclusion
 
@@ -135,3 +143,5 @@ Au takes a thoughtful, tailored approach, which can be summarized as follows:
   and divide by $D$ (each represented in `T`).
 - Otherwise, we simply multiply by the nearest representation of the conversion factor in `T` ---
   with the exception that if `T` is integral, we raise a compiler error for irrational factors.
+
+[#453]: https://github.com/aurora-opensource/au/issues/453

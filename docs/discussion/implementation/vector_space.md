@@ -112,7 +112,7 @@ others worth recognizing.
 
 ### Magnitude
 
-The ratio between two Units of the same Dimension is a positive real number: a "Magnitude".  We use
+The ratio between two Units of the same Dimension is a nonzero real number: a "Magnitude".  We use
 a vector space representation for Magnitudes, because then it will naturally support all the same
 operations which Dimensions support.  But then, what are the basis vectors?  What numbers can we use
 that are "independent", in the sense that every Magnitude gets a **unique** representation?

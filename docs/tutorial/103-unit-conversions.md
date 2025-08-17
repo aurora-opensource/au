@@ -197,40 +197,43 @@ types.
         have _different dimensions_ (namely, _length_ and _temperature_).  For both **integral** and
         **floating point** Rep, we **forbid** this operation.
 
-## Forcing lossy conversions: `.coerce_as(...)` and `.coerce_in(...)`
+## Forcing lossy conversions: the `policy` argument
 
 Sometimes, you may want to perform a conversion even though you know it's usually lossy.  For
 example, maybe you know that _your particular_ value will give an exact result (like converting
 6 feet into yards).  Or perhaps the truncation is desired.
 
-Whatever the reason, you can simply add the word "coerce" before your conversion function to make it
-"forcing".  Consider this example.
+Whatever the reason, you can simply add an explicit
+[policy](../reference/conversion_risk_policies.md) as a second argument to turn off a given risk
+check.  Consider this example.
 
 ```cpp
-feet(6.0).as(yards);       // yards(2.0)
+feet(6.0).as(yards);                         // yards(2.0)
 
 // Compiler error!
 // feet(6).as(yards);
 
-feet(6).coerce_as(yards);  // yards(2)
+feet(6).as(yards, ignore(TRUNCATION_RISK));  // yards(2)
 ```
 
-These "coercing" versions work similarly to `static_cast`, in that they will truncate if necessary.
-For example:
+These versions work similarly to `static_cast`, in that they will truncate if necessary. For
+example:
 
 ```cpp
-feet(5).coerce_as(yards);  // yards(1) --- a truncation of (5/3 = 1.6666...) yards
+feet(5).as(yards, ignore(TRUNCATION_RISK));
+// Gives `yards(1)` --- a truncation of (5/3 = 1.666...) yards
 ```
 
-You can use this to "overrule" Au when we prevent a _physically meaningful_ conversion because we
-think it's too risky.
+Besides `TRUNCATION_RISK`, you can also pass `OVERFLOW_RISK`, or even `ALL_RISKS`.  These versions
+can "overrule" Au when we prevent a _physically meaningful_ conversion because we think it's too
+risky.
 
 !!! tip
-    Prefer **not** to use the coercing versions unless you have a good reason.  If you do, consider
-    adding a comment to explain why your specific use case is OK.
+    Prefer **not** to use these policy-override versions unless you have a good reason.  If you do,
+    consider adding a comment to explain why your specific use case is OK.
 
-    As a code reviewer, if you see a coercing version that doesn't seem necessary or justified, ask
-    about it!
+    As a code reviewer, if you see a risk check being ignored, and it doesn't seem necessary or
+    justified, ask about it!
 
 At this point, we've seen several examples of conversions which Au forbids.  We've also seen how
 some of them can be forced anyway.  Here's a chance to test your understanding: what will happen if
@@ -243,12 +246,12 @@ you try to force that _final_ example --- the one where the _dimensions_ differ?
 
     === "Conversion"
         ```cpp
-        feet(6).coerce_as(kelvins);
+        feet(6).as(kelvins, ignore(ALL_RISKS));
         ```
 
     === "Results and Discussion"
         ```cpp
-        feet(6).coerce_as(kelvins);  // Compiler error!
+        feet(6).as(kelvins, ignore(ALL_RISKS));  // Compiler error!
         ```
 
         Converting units with different dimensions isn't merely "unsafe"; it's completely
@@ -273,14 +276,14 @@ storage types.
   <tr>
     <td><code>length.as(yards)</code></td>
     <td class="fair">
-        <b>Forbidden</b>: not guaranteed to be integral<br>(can be forced with coercing version)
+        <b>Forbidden</b>: not guaranteed to be integral<br>(can be forced with <code>ignore(TRUNCATION_RISK)</code>)
     </td>
     <td class="good"><code>yards(2.0)</code></td>
   </tr>
   <tr>
     <td><code>length.as(nano(meters))</code></td>
     <td class="fair">
-        <b>Forbidden</b>: excessive overflow risk<br>(can be forced with coercing version)
+        <b>Forbidden</b>: excessive overflow risk<br>(can be forced with <code>ignore(OVERFLOW_RISK)</code>)
     </td>
     <td class="good"><code>nano(meters)(1'828'800'000.0)</code></td>
   </tr>
@@ -371,11 +374,13 @@ Check out the [Au 103: Unit Conversions Exercise](./exercise/103-unit-conversion
       library](https://en.cppreference.com/w/cpp/chrono/duration/duration)), _and_ we **don't have
       excessive overflow risk** (an Au-original feature!).
 
-4. You can **force** a conversion that is **meaningful, but considered dangerous** by preceding your
-   function name with **`coerce_`**.
+4. You can **force** a conversion that is **meaningful, but considered dangerous** by passing
+   a [conversion risk policy argument](../reference/conversion_risk_policies.md) as a second
+   parameter.
 
-    - For example: `seconds(200).as(minutes)` won't compile, but `seconds(200).coerce_as(minutes)`
-      gives `minutes(3)`, because we forced this lossy conversion by using the word "coerce".
+    - For example: `seconds(200).as(minutes)` won't compile, but
+      `seconds(200).as(minutes, ignore(TRUNCATION_RISK))` gives `minutes(3)`, because the second
+      argument turned off the truncation risk check.
 
     - **Use this sparingly,** since the safety checks are there for a reason, and consider **adding
       a comment** to explain why your usage is safe.

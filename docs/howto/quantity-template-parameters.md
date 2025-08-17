@@ -60,10 +60,10 @@ Here's how we'd define that template.
 
 ```cpp
 // Step (1): use the NTTP type as the template parameter.
-template <QuantityU64<Hertz>::NTTP ClockFreq>
+template <au::QuantityU64<au::Hertz>::NTTP ClockFreq>
 class Processor {
  public:
-    static constexpr QuantityD<Giga<Hertz>> clock_freq() {
+    static constexpr au::QuantityD<au::Giga<au::Hertz>> clock_freq() {
 
         // Step (3): use `from_nttp()` to make it a `Quantity`.
         //
@@ -78,7 +78,7 @@ And here's how we'd use it.
 
 ```cpp
 // Step (2): when instantiating, convert to the exact right `Quantity` type.
-using Proc = Processor<mega(hertz)(1'200).as<uint64_t>(hertz)>;
+using Proc = Processor<au::mega(au::hertz)(1'200).as<uint64_t>(au::hertz)>;
 
 std::cout << Proc::clock_freq() << std::endl;
 ```

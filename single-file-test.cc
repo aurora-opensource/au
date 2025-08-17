@@ -47,8 +47,6 @@ int main(int argc, char **argv) {
         {
             expect_equal((meters / second)(5) * seconds(6), meters(30)),
             expect_equal(SPEED_OF_LIGHT.as<int>(m / s), 299'792'458 * m / s),
-            expect_equal(detail::is_known_to_be_less_than_one(mag<5>() / mag<7>()), true),
-            expect_equal(detail::is_known_to_be_less_than_one(mag<7>() / mag<5>()), false),
             expect_equal((10 * m).coerce_in(m * mag<5>() / mag<7>()), 14),
             expect_equal(inverse_as(ns, 333 / s), 3'003'003 * ns),
         },

@@ -119,7 +119,7 @@ Now we can see whether Au comes to the same conclusion.  Note how easy it is to 
 with clarity, despite mixing _three_ different temperature scales:
 
 ```cpp
-EXPECT_LT(fahrenheit_pt(-40) + celsius_qty(60), kelvins_pt(300));
+EXPECT_THAT(fahrenheit_pt(-40) + celsius_qty(60), Lt(kelvins_pt(300)));
 ```
 
 As hoped, this test passes.
