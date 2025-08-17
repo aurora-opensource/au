@@ -70,8 +70,6 @@ void example_no_type_named_type_in_std_common_type() {
     meters(1) + seconds(1);
 }
 
-*/
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Can't pass `Quantity` to a unit slot
 
@@ -80,7 +78,7 @@ void example_cant_pass_quantity_to_unit_slot() {
     size = round_as<int>(bytes(10), size);
 }
 
-/*
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Integer division forbidden
@@ -89,6 +87,8 @@ void example_integer_division_forbidden() {
     // (BROKEN): gives (60 / 65) == 0 before conversion!
     QuantityD<Seconds> t = meters(60) / (miles / hour)(65);
 }
+
+/*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // SECTION: Dangerous inversion

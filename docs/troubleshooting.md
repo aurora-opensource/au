@@ -746,8 +746,47 @@ a unit that you scale by a magnitude, `mag<N>()`.
     ```
 
     **Compiler error (MSVC 2022 x64)**
-
     ```
+    D:\a\au\au\au.hh(6768): error C2338: static_assert failed: 'Can't pass `Quantity` to a unit slot (see: https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)'
+    D:\a\au\au\au.hh(6768): note: the template instantiation context (the oldest one first) is
+    error_examples.cc(80): note: see reference to function template instantiation 'auto au::round_as<int,au::Quantity<au::Bytes,int>,au::Bytes,int>(RoundingUnits,au::Quantity<au::Bytes,int>)' being compiled
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(9080): note: see reference to alias template instantiation 'au::AssociatedUnitT<RoundingUnits>' being compiled
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(4778): note: see reference to class template instantiation 'au::AssociatedUnit<RoundingUnits>' being compiled
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(4778): error C2794: 'type': is not a member of any direct or indirect base class of 'au::AssociatedUnit<RoundingUnits>'
+            with
+            [
+                RoundingUnits=au::Quantity<au::Bytes,int>
+            ]
+    D:\a\au\au\au.hh(9080): error C2938: 'au::AssociatedUnitT' : Failed to specialize alias template
+    D:\a\au\au\au.hh(6314): error C2955: 'au::QuantityMaker': use of class template requires template argument list
+    D:\a\au\au\au.hh(6859): note: see declaration of 'au::QuantityMaker'
+    D:\a\au\au\au.hh(6314): note: the template instantiation context (the oldest one first) is
+    D:\a\au\au\au.hh(9080): note: see reference to function template instantiation 'auto au::make_quantity<<error type>,OutputRep>(T)' being compiled
+            with
+            [
+                OutputRep=int,
+                T=int
+            ]
+    error_examples.cc(80): error C2679: binary '=': no operator found which takes a right-hand operand of type 'void' (or there is no acceptable conversion)
+    D:\a\au\au\au.hh(6762): note: could be 'au::Quantity<au::Bytes,int> &au::Quantity<au::Bytes,int>::operator =(au::Quantity<au::Bytes,int> &&)'
+    error_examples.cc(80): note: 'au::Quantity<au::Bytes,int> &au::Quantity<au::Bytes,int>::operator =(au::Quantity<au::Bytes,int> &&)': cannot convert argument 2 from 'void' to 'au::Quantity<au::Bytes,int> &&'
+    error_examples.cc(80): note: Expressions of type void cannot be converted to other types
+    D:\a\au\au\au.hh(6762): note: or       'au::Quantity<au::Bytes,int> &au::Quantity<au::Bytes,int>::operator =(const au::Quantity<au::Bytes,int> &)'
+    error_examples.cc(80): note: 'au::Quantity<au::Bytes,int> &au::Quantity<au::Bytes,int>::operator =(const au::Quantity<au::Bytes,int> &)': cannot convert argument 2 from 'void' to 'const au::Quantity<au::Bytes,int> &'
+    error_examples.cc(80): note: Expressions of type void cannot be converted to other types
+    error_examples.cc(80): note: while trying to match the argument list '(au::Quantity<au::Bytes,int>, void)'
     ```
 
 ## Integer division forbidden {#integer-division-forbidden}
