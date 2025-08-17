@@ -250,22 +250,20 @@ point maker), but it's _already_ a `Quantity` or `QuantityPoint`.
 
     **Compiler error (MSVC 2022 x64)**
     ```
-    D:\a\au\au\au.hh(4391): error C2338: static_assert failed: 'Input to QuantityMaker is already a Quantity'
-    D:\a\au\au\au.hh(4391): note: the template instantiation context (the oldest one first) is
-    error_examples.cc(48): note: see reference to function template instantiation 'void au::QuantityMaker<au::Meters>::operator ()<au::Meters,int>(au::Quantity<au::Meters,int>) const' being compiled
-    error_examples.cc(48): note: see the first reference to 'au::QuantityMaker<au::Meters>::operator ()' in 'au::example_input_to_maker'
-    D:\a\au\au\au.hh(5111): error C2338: static_assert failed: 'Input to QuantityPointMaker is already a QuantityPoint'
-    D:\a\au\au\au.hh(5111): note: the template instantiation context (the oldest one first) is
-    error_examples.cc(51): note: see reference to function template instantiation 'void au::QuantityPointMaker<au::Meters>::operator ()<Unit,T>(au::QuantityPoint<Unit,T>) const' being compiled
+    D:\a\au\au\au.hh(6871): error C2338: static_assert failed: 'Input to QuantityMaker is already a Quantity'
+    D:\a\au\au\au.hh(6871): note: the template instantiation context (the oldest one first) is
+    error_examples.cc(50): note: see reference to function template instantiation 'void au::QuantityMaker<au::Meters>::operator ()<au::Meters,int>(au::Quantity<au::Meters,int>) const' being compiled
+    error_examples.cc(50): note: see the first reference to 'au::QuantityMaker<au::Meters>::operator ()' in 'au::example_input_to_maker'
+    D:\a\au\au\au.hh(7880): error C2338: static_assert failed: 'Input to QuantityPointMaker is already a QuantityPoint'
+    D:\a\au\au\au.hh(7880): note: the template instantiation context (the oldest one first) is
+    error_examples.cc(53): note: see reference to function template instantiation 'void au::QuantityPointMaker<au::Meters>::operator ()<Unit,T>(au::QuantityPoint<Unit,T>) const' being compiled
             with
             [
                 Unit=au::Meters,
                 T=int
             ]
-    error_examples.cc(51): note: see the first reference to 'au::QuantityPointMaker<au::Meters>::operator ()' in 'au::example_input_to_maker'
+    error_examples.cc(53): note: see the first reference to 'au::QuantityPointMaker<au::Meters>::operator ()' in 'au::example_input_to_maker'
     ```
-
-
 
 ## Dangerous conversion
 
