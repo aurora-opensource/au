@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-97-gd47954d
+// Version identifier: 0.4.1-98-g5d41280
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -7052,8 +7052,10 @@ class Quantity {
         constexpr bool are_units_quantity_equivalent =
             AreUnitsQuantityEquivalent<UnitT, OtherUnit>::value;
         static_assert(are_units_quantity_equivalent || !uses_integer_division,
-                      "Integer division forbidden: wrap denominator in `unblock_int_div()` if you "
-                      "really want it");
+                      "Integer division forbidden.  See "
+                      "<https://aurora-opensource.github.io/au/main/troubleshooting/"
+                      "#integer-division-forbidden> for more details about the risks, "
+                      "and your options to resolve this error.");
     }
 
     template <typename OtherRep, typename OtherUnitSlot, typename RiskPolicyT>
@@ -7074,25 +7076,24 @@ class Quantity {
         constexpr bool is_overflow_only_unacceptable_risk =
             (should_check_overflow && !is_overflow_risk_ok && is_truncation_risk_ok);
         static_assert(!is_overflow_only_unacceptable_risk,
-                      "Overflow risk too high.  "
-                      "Can silence by passing `ignore(OVERFLOW_RISK)` as second argument, "
-                      "but first CAREFULLY CONSIDER whether this is really what you mean to do.");
+                      "Overflow risk too high.  See "
+                      "<https://aurora-opensource.github.io/au/main/troubleshooting/#risk-too-high>"
+                      ".  Your \"risk set\" is `OVERFLOW_RISK`.");
 
         constexpr bool is_truncation_only_unacceptable_risk =
             (should_check_truncation && !is_truncation_risk_ok && is_overflow_risk_ok);
         static_assert(!is_truncation_only_unacceptable_risk,
-                      "Truncation risk too high.  "
-                      "Can silence by passing `ignore(TRUNCATION_RISK)` as second argument, "
-                      "but first CAREFULLY CONSIDER whether this is really what you mean to do.");
+                      "Truncation risk too high.  See "
+                      "<https://aurora-opensource.github.io/au/main/troubleshooting/#risk-too-high>"
+                      ".  Your \"risk set\" is `TRUNCATION_RISK`.");
 
         constexpr bool are_both_overflow_and_truncation_unacceptably_risky =
             (should_check_overflow || should_check_truncation) && !is_overflow_risk_ok &&
             !is_truncation_risk_ok;
         static_assert(!are_both_overflow_and_truncation_unacceptably_risky,
-                      "Both truncation and overflow risk too high.  "
-                      "Can silence by passing `ignore(OVERFLOW_RISK | TRUNCATION_RISK)` as second "
-                      "argument, but first CAREFULLY CONSIDER whether this is really what you mean "
-                      "to do.");
+                      "Both truncation and overflow risk too high.  See "
+                      "<https://aurora-opensource.github.io/au/main/troubleshooting/#risk-too-high>"
+                      ".  Your \"risk set\" is `OVERFLOW_RISK | TRUNCATION_RISK`.");
 
         return Op::apply_to(value_);
     }
