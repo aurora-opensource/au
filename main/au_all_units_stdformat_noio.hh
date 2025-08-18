@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-98-g5d41280
+// Version identifier: 0.4.1-99-g870a201
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -3696,26 +3696,45 @@ constexpr bool safe_to_cast_to(InputT x) {
     return SafeCastingChecker<T>{}(x);
 }
 
-template <typename T, typename... BPs>
-constexpr MagRepresentationOrError<T> get_value_result(Magnitude<BPs...>) {
-    // Representing non-integer values in integral types is something we never plan to support.
-    constexpr bool REPRESENTING_NON_INTEGER_IN_INTEGRAL_TYPE =
-        stdx::conjunction<std::is_integral<T>, stdx::negation<IsInteger<Magnitude<BPs...>>>>::value;
-    if (REPRESENTING_NON_INTEGER_IN_INTEGRAL_TYPE) {
+template <typename T, typename MagT>
+struct GetValueResultImplForNonIntegerInIntegralType {
+    constexpr MagRepresentationOrError<T> operator()() {
         return {MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE};
     }
+};
 
-    // Force the expression to be evaluated in a constexpr context.
-    constexpr auto widened_result = product(
-        {base_power_value<RealPart<T>, ExpT<BPs>::num, static_cast<std::uintmax_t>(ExpT<BPs>::den)>(
-            BaseT<BPs>::value())...});
+template <typename T, typename MagT>
+struct GetValueResultImplForDefaultCase;
+template <typename T, typename... BPs>
+struct GetValueResultImplForDefaultCase<T, Magnitude<BPs...>> {
+    constexpr MagRepresentationOrError<T> operator()() {
+        // Force the expression to be evaluated in a constexpr context.
+        constexpr auto widened_result =
+            product({base_power_value<RealPart<T>,
+                                      ExpT<BPs>::num,
+                                      static_cast<std::uintmax_t>(ExpT<BPs>::den)>(
+                BaseT<BPs>::value())...});
 
-    if ((widened_result.outcome != MagRepresentationOutcome::OK) ||
-        !safe_to_cast_to<T>(widened_result.value)) {
-        return {MagRepresentationOutcome::ERR_CANNOT_FIT};
+        if ((widened_result.outcome != MagRepresentationOutcome::OK) ||
+            !safe_to_cast_to<T>(widened_result.value)) {
+            return {MagRepresentationOutcome::ERR_CANNOT_FIT};
+        }
+
+        return {MagRepresentationOutcome::OK, static_cast<T>(widened_result.value)};
     }
+};
 
-    return {MagRepresentationOutcome::OK, static_cast<T>(widened_result.value)};
+template <typename T, typename MagT>
+struct GetValueResultImpl
+    : std::conditional_t<
+          stdx::conjunction<std::is_integral<T>, stdx::negation<IsInteger<MagT>>>::value,
+          GetValueResultImplForNonIntegerInIntegralType<T, MagT>,
+          GetValueResultImplForDefaultCase<T, MagT>> {};
+
+template <typename T, typename... BPs>
+constexpr MagRepresentationOrError<T> get_value_result(Magnitude<BPs...>) {
+    constexpr auto result = GetValueResultImpl<T, Magnitude<BPs...>>{}();
+    return result;
 }
 
 // This simple overload avoids edge cases with creating and passing zero-sized arrays.
@@ -3793,15 +3812,14 @@ enum class MagLabelCategory {
 
 template <typename... BPs>
 constexpr MagLabelCategory categorize_mag_label(Magnitude<BPs...> m) {
-    if (IsInteger<Magnitude<BPs...>>::value) {
-        return get_value_result<std::uintmax_t>(m).outcome == MagRepresentationOutcome::OK
-                   ? MagLabelCategory::INTEGER
-                   : MagLabelCategory::UNSUPPORTED;
-    }
-    if (IsRational<Magnitude<BPs...>>::value) {
-        return MagLabelCategory::RATIONAL;
-    }
-    return MagLabelCategory::UNSUPPORTED;
+    // This unsightly "nested ternary" approach makes this entire function into --- _technically_
+    // --- a one-liner, which appeases the Green Hills compiler.
+    return IsInteger<Magnitude<BPs...>>::value
+               ? (get_value_result<std::uintmax_t>(m).outcome == MagRepresentationOutcome::OK
+                      ? MagLabelCategory::INTEGER
+                      : MagLabelCategory::UNSUPPORTED)
+               : (IsRational<Magnitude<BPs...>>::value ? MagLabelCategory::RATIONAL
+                                                       : MagLabelCategory::UNSUPPORTED);
 }
 
 template <typename MagT, MagLabelCategory Category>
@@ -4494,12 +4512,11 @@ struct ValueOfMaxFloatNotExceedingMaxInt {
         constexpr Float LIMIT = static_cast<Float>(std::numeric_limits<Int>::max());
         constexpr Float MAX_MANTISSA = max_mantissa();
 
-        if (LIMIT <= MAX_MANTISSA) {
-            return LIMIT;
-        }
+        return (LIMIT <= MAX_MANTISSA) ? LIMIT : double_first_until_second(MAX_MANTISSA, LIMIT);
+    }
 
-        Float x = MAX_MANTISSA;
-        while (x + x < LIMIT) {
+    static constexpr Float double_first_until_second(Float x, Float limit) {
+        while (x + x < limit) {
             x += x;
         }
         return x;
