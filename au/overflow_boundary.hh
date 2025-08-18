@@ -290,12 +290,11 @@ struct ValueOfMaxFloatNotExceedingMaxInt {
         constexpr Float LIMIT = static_cast<Float>(std::numeric_limits<Int>::max());
         constexpr Float MAX_MANTISSA = max_mantissa();
 
-        if (LIMIT <= MAX_MANTISSA) {
-            return LIMIT;
-        }
+        return (LIMIT <= MAX_MANTISSA) ? LIMIT : double_first_until_second(MAX_MANTISSA, LIMIT);
+    }
 
-        Float x = MAX_MANTISSA;
-        while (x + x < LIMIT) {
+    static constexpr Float double_first_until_second(Float x, Float limit) {
+        while (x + x < limit) {
             x += x;
         }
         return x;
