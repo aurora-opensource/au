@@ -121,21 +121,11 @@ Issues!  Alphabetically:
 ### Prepare the release branch
 
 First, make sure the "final commit" (which updates the CMake variables) has already landed, and is
-currently checked out.  This will be the "base" commit for the release.
-
-Then, use the command below, replacing `0.3.1` with the version to create.
-
-```sh
-# Remember to update the version number!
-git tag -a 0.3.1-base
-```
-
-For the message, write "Base commit for the 0.3.1 release." (again, updating the version number as
-needed).  Now, we're going to create the release branch, and push both tag and branch to GitHub.
+currently checked out.  This will be the "base" commit for the release branch, which we'll create
+and push to GitHub.
 
 ```sh
 # Remember to update the version number!
-git push origin 0.3.1-base
 git switch --checkout release-0.3.1
 git push origin release-0.3.1
 ```
