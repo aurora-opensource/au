@@ -242,6 +242,9 @@ On the tags page, click the three-dots menu, and select "Create release".
 - Copy the body of the release notes into the Release Notes text box.
 - Attach all tarballs --- the release tarball, and every future-proof release tarball --- that you
   downloaded in the previous steps.
+    - Add a table with the name of each artifact (`0.3.1`, `0.3.1-future-122`, etc.) and its SHA256
+      checksum.  (This both saves users the effort of downloading and hashing the files themselves,
+      and also gives them an authoritatively correct value.)
 - Click the `Publish release` button.
 
 ### Regenerate the doc website
