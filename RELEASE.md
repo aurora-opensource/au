@@ -136,7 +136,7 @@ needed).  Now, we're going to create the release branch, and push both tag and b
 ```sh
 # Remember to update the version number!
 git push origin 0.3.1-base
-git checkout -b release-0.3.1
+git switch --checkout release-0.3.1
 git push origin release-0.3.1
 ```
 
@@ -168,7 +168,7 @@ Once the above PR has landed, that commit _is_ the release, so it's time to tag 
 
 ```sh
 # Remember to update the version number!
-git tag -a 0.3.1
+git tag --annotate 0.3.1
 ```
 
 Copy/paste the message you composed earlier, and format it as needed.  Then, push the tag to GitHub.
@@ -211,7 +211,7 @@ as the final future-proofing release.
 # Remember to update the version number!
 git fetch origin release-0.3.1:release-0.3.1
 git switch release-0.3.1
-git tag -a 0.3.1-future
+git tag --annotate 0.3.1-future
 ```
 
 Write a message of the form:
