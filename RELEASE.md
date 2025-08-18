@@ -36,6 +36,7 @@ First, go to the [latest release](https://github.com/aurora-opensource/au/releas
 the list of "commits to main since this release", found near the top.  Read through the commits, and
 keep track of the main changes as you go.  Use the following categories.
 
+- Upgrading from (a.b.x)
 - User-facing library changes
     - If the compilation speed has been significantly impacted, mention this here.
 - New units and constants
@@ -75,6 +76,9 @@ The second line should be blank.
 Release Notes
 =============
 
+Upgrading from (a.b.x)
+----------------------
+
 User-facing library changes
 ---------------------------
 
@@ -89,6 +93,9 @@ Documentation updates
 
 Repo updates
 ------------
+
+Future-proofing releases
+------------------------
 
 Closed Issues
 -------------
@@ -111,32 +118,131 @@ Issues!  Alphabetically:
 - ...
 ```
 
-### Create the tag
+### Prepare the release branch
 
-First, make sure the "final commit" (which updates the CMake variables) has already landed.
+First, make sure the "final commit" (which updates the CMake variables) has already landed, and is
+currently checked out.  This will be the "base" commit for the release.
 
 Then, use the command below, replacing `0.3.1` with the version to create.
 
 ```sh
-# Remember to update the tag number!
+# Remember to update the version number!
+git tag -a 0.3.1-base
+```
+
+For the message, write "Base commit for the 0.3.1 release." (again, updating the version number as
+needed).  Now, we're going to create the release branch, and push both tag and branch to GitHub.
+
+```sh
+# Remember to update the version number!
+git push origin 0.3.1-base
+git checkout -b release-0.3.1
+git push origin release-0.3.1
+```
+
+Branches named similarly to `release-0.3.1` are protected in the Au repo, so we will need to make
+PRs for the final changes for the release.
+
+### PR: Update links
+
+Several C++ files in the repository link to the documentation website, but they link to the version
+at `main`.  This version will change over time in ways that we can't predict.  It's important for
+users who use a release to have permanent links.  Therefore, the first PR for the release branch is
+to find every link to `main` in C++ files, and replace it with a link to the release version.
+
+```
+Find this:
+https://aurora-opensource.github.io/au/main/...
+                                       ^^^^
+
+Replace with this (remember to update the version number!):
+https://aurora-opensource.github.io/au/0.3.1/...
+                                       ^^^^^
+```
+
+We do this in a PR on the release branch in order to avoid churn commits on the main branch.
+
+### Create the tag for the release
+
+Once the above PR has landed, that commit _is_ the release, so it's time to tag it as such:
+
+```sh
+# Remember to update the version number!
 git tag -a 0.3.1
 ```
 
-Copy/paste the above message, and format it as needed.  Then, push the tag to
-GitHub.
+Copy/paste the message you composed earlier, and format it as needed.  Then, push the tag to GitHub.
 
 ```sh
-# Remember to update the tag number!
+# Remember to update the version number!
 git push origin 0.3.1
 ```
 
-### Upload the artifact
+### Create future-proofing releases
 
-Manually uploading releases helps future-proof us against previous breakages.  See:
+These give users the opportunity to modernize their project's usage of Au incrementally and at their
+own pace.  Project maintainers who take advantage of this should find that when the _next_ release
+comes out, they can upgrade to it without breakages.
+
+First, go through all issues slated for a future minor-or-larger release, and identify the ones that
+are suitable for this approach.  Make a list.
+
+#### Individual issues
+
+Make a PR against the release branch that is, essentially, "our best guess for how we will implement
+this feature".  Strive for something that we could simply cherry pick when it's time to land to the
+main branch.  This doesn't mean we _commit_ to doing it _exactly_ this way, but it's a good guide.
+In any case, the code must be high enough quality to pass code review.
+
+**Important:** every PR must use the release **tag** as its base commit, not the HEAD of the release
+branch.  Do **not** pull in any changes from the release branch later.
+
+When each PR lands, tag the HEAD commit _of the PR's branch_ with a tag of the format
+`0.3.1-future-NNN`, where `NNN` is the issue number that the PR future-proofs for, and where `0.3.1`
+must again be replaced with the actual version number.
+
+#### Final future-proof release
+
+At this point, the release branch consists of the release tag commit itself, followed by a series of
+commits that implement future-proofing changes.  We now need to tag the HEAD of the release branch
+as the final future-proofing release.
+
+```sh
+# Remember to update the version number!
+git fetch origin release-0.3.1:release-0.3.1
+git switch release-0.3.1
+git tag -a 0.3.1-future
+```
+
+Write a message of the form:
+
+```
+# Remember to update the version number!
+Future-proofing release for 0.3.1, comprising:
+
+# Add one line for every future-proofed issue:
+- #NNN
+- #MMM
+# etc.
+```
+
+(Lines starting with `#` are instructions, and should not be included in the actual message.)
+
+Finally, push the new tag to GitHub.
+
+```sh
+# Remember to update the version number!
+git push origin 0.3.1-future
+```
+
+### Download all artifacts
+
+Manually uploading releases helps future-proof us against known failure modes.  See:
 https://github.blog/2023-02-21-update-on-the-future-stability-of-source-code-archives-and-hashes/
 
 On the [tags page](https://github.com/aurora-opensource/au/tags), click the `.tar.gz` link to
-download the tarball.
+download every tarball.  This will always include the release tarball, and may also include one or
+more future-proof tarballs.
 
 ### Create the release
 
@@ -144,7 +250,8 @@ On the tags page, click the three-dots menu, and select "Create release".
 
 - Use the version number as the title.
 - Copy the body of the release notes into the Release Notes text box.
-- Attach the tarball downloaded in the previous step.
+- Attach all tarballs --- the release tarball, and every future-proof release tarball --- that you
+  downloaded in the previous steps.
 - Click the `Publish release` button.
 
 ### Regenerate the doc website
