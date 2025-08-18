@@ -76,20 +76,6 @@ span.criterion {
     padding-left: 0.5rem;
 }
 
-li.check, li.x {
-    list-style: none;
-    margin-left: 0;
-    text-indent: -2ch;
-}
-
-li.check:before {
-    content: "\2713  ";
-}
-
-li.x:before {
-    content: "\2717  ";
-}
-
 details.criterion > summary::before {
     display: none;
 }

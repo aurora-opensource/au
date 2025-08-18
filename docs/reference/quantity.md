@@ -754,12 +754,11 @@ number](../discussion/concepts/dimensionless.md#exact-cancellation).
 If either _input_ is a raw number, then it only affects the value, not the unit.  It's equivalent to
 a `Quantity` whose unit is [a unitless unit](./unit.md#unitless-unit).
 
-#### `unblock_int_div()`
+#### `unblock_int_div()` {#unblock-int-div}
 
 Experience has shown that raw integer division can be dangerous in a units library context.  It
 conflicts with intuitions, and can produce code that is silently and grossly incorrect: see the
-[integer division section](../troubleshooting.md#integer-division-forbidden) of the troubleshooting
-guide for an example.
+[integer division section] of the troubleshooting guide for an example.
 
 To use integer division, you must ask for it explicitly by name, by calling `unblock_int_div()` on
 the denominator.
@@ -769,17 +768,26 @@ the denominator.
     This will not work:
 
     ```cpp
-    miles(125) / hours(2);
+    miles(115) / hours(2);
     //         ^--- Forbidden!  Compiler error.
     ```
 
     However, this will work just fine:
 
     ```cpp
-    miles(125) / unblock_int_div(hours(2));
+    miles(115) / unblock_int_div(hours(2));
     ```
 
-    It produces `(miles / hour)(62)`.
+    It produces `(miles / hour)(57)`.
+
+!!! warning "`unblock_int_div` can be dangerous"
+    This compiler error is limited to what experience has shown to be the most dangerous types of
+    integer division: those where the _denominator_ has non-trivial units, and they are _different_
+    from the numerator's units.
+
+    Before using `unblock_int_div`, please carefully read the [integer division section] of the
+    troubleshooting guide to understand the risks.  If you end up using it anyway, consider adding
+    a brief comment to explain why it's OK in your use case.
 
 ### Unary `+` and `-`
 
@@ -940,3 +948,4 @@ the following conditions hold.
 [#185]: https://github.com/aurora-opensource/au/issues/185
 [#481]: https://github.com/aurora-opensource/au/issues/481
 [0.6.0]: https://github.com/aurora-opensource/au/milestone/9
+[integer division section]: ../troubleshooting.md#integer-division-forbidden
