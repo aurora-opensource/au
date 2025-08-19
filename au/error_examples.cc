@@ -38,7 +38,7 @@ void example_private_constructor() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// SECTION: ...
+// SECTION: Input to Maker
 
 void example_input_to_maker() {
     constexpr auto x = meters(1);
@@ -52,7 +52,7 @@ void example_input_to_maker() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// SECTION: Dangerous conversion
+// SECTION: Conversion risk too high
 
 void example_dangerous_conversion() {
     // A (BROKEN): inexact conversion.
@@ -108,7 +108,7 @@ void example_deduced_conflicting_types() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// SECTION:
+// SECTION: Broken strict total ordering
 
 struct Quarterfeet : decltype(Feet{} / mag<4>()) {};
 constexpr auto quarterfeet = QuantityMaker<Quarterfeet>{};
