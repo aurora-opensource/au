@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.4.1-100-g3ea10ca
+// Version identifier: 0.4.1-101-g66c3e74
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -7367,8 +7367,9 @@ constexpr auto convert_and_compare(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     using U = CommonUnitT<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
-    return detail::SignAwareComparison<UnitSign<U>, Op>{}(q1.template in<ComRep1>(U{}),
-                                                          q2.template in<ComRep2>(U{}));
+    return detail::SignAwareComparison<UnitSign<U>, Op>{}(
+        q1.template in<ComRep1>(U{}, check_for(ALL_RISKS)),
+        q2.template in<ComRep2>(U{}, check_for(ALL_RISKS)));
 }
 }  // namespace detail
 
@@ -8324,8 +8325,9 @@ constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R
     using U = CommonPointUnitT<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
-    return detail::SignAwareComparison<UnitSign<U>, Op>{}(p1.template in<ComRep1>(U{}),
-                                                          p2.template in<ComRep2>(U{}));
+    return detail::SignAwareComparison<UnitSign<U>, Op>{}(
+        p1.template in<ComRep1>(U{}, check_for(ALL_RISKS)),
+        p2.template in<ComRep2>(U{}, check_for(ALL_RISKS)));
 }
 }  // namespace detail
 
