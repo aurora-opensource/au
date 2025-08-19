@@ -126,7 +126,7 @@ and push to GitHub.
 
 ```sh
 # Remember to update the version number!
-git switch --checkout release-0.3.1
+git switch --create release-0.3.1
 git push origin release-0.3.1
 ```
 
