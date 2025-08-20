@@ -752,7 +752,8 @@ TEST(Quantity, QuantityCastAvoidsPreventableOverflowWhenGoingToSmallerType) {
     // Make sure we don't overflow in uint64_t.
     ASSERT_THAT(lots_of_nanoinches.in(nano(inches)), Eq(would_overflow_uint32));
 
-    EXPECT_THAT(lots_of_nanoinches.as<uint32_t>(inches), SameTypeAndValue(inches(uint32_t{9})));
+    EXPECT_THAT(lots_of_nanoinches.as<uint32_t>(inches, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(inches(uint32_t{9})));
 }
 
 TEST(Quantity, CommonTypeMagnitudeEvenlyDividesBoth) {

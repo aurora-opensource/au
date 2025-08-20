@@ -258,7 +258,7 @@ TEST(QuantityPoint, InWithExplicitRepCanProvideConversionPolicy) {
 }
 
 TEST(QuantityPoint, HandlesConversionWithSignedSourceAndUnsignedDestination) {
-    EXPECT_THAT(celsius_pt(int16_t{-5}).as<uint16_t>(kelvins_pt),
+    EXPECT_THAT(celsius_pt(int16_t{-5}).as<uint16_t>(kelvins_pt, ignore(TRUNCATION_RISK)),
                 SameTypeAndValue(kelvins_pt(uint16_t{268})));
 }
 
