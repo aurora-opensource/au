@@ -44,12 +44,6 @@ struct Meters : UnitImpl<Length> {};
 constexpr QuantityMaker<Meters> meters{};
 constexpr QuantityPointMaker<Meters> meters_pt{};
 
-struct Inches : decltype(Centi<Meters>{} * mag<254>() / mag<100>()) {};
-constexpr auto inches_pt = QuantityPointMaker<Inches>{};
-
-struct Feet : decltype(Inches{} * mag<12>()) {};
-constexpr auto feet_pt = QuantityPointMaker<Feet>{};
-
 struct Kelvins : UnitImpl<Temperature> {
     static constexpr const char label[] = "K";
 };
@@ -134,7 +128,7 @@ TEST(QuantityPoint, CanGetValueInDifferentUnits) {
 }
 
 TEST(QuantityPoint, IntermediateTypeIsSignedIfExplicitRepIsSigned) {
-    EXPECT_THAT(milli(kelvins_pt)(0u).coerce_as<int>(celsius_pt),
+    EXPECT_THAT(milli(kelvins_pt)(0u).as<int>(celsius_pt, ignore(TRUNCATION_RISK)),
                 SameTypeAndValue(celsius_pt(-273)));
 }
 
@@ -228,14 +222,16 @@ TEST(QuantityPoint, CanRequestOutputRepWhenCallingIn) {
 }
 
 TEST(QuantityPoint, CanCastToUnitWithDifferentMagnitude) {
-    EXPECT_THAT(centi(meters_pt)(75).coerce_as(meters_pt), SameTypeAndValue(meters_pt(0)));
+    EXPECT_THAT(centi(meters_pt)(75).as(meters_pt, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(meters_pt(0)));
 
     EXPECT_THAT(centi(meters_pt)(75.0).as(meters_pt), SameTypeAndValue(meters_pt(0.75)));
 }
 
 TEST(QuantityPoint, CanCastToUnitWithDifferentOrigin) {
     EXPECT_THAT(celsius_pt(10.).as(kelvins_pt), IsNear(kelvins_pt(283.15), nano(kelvins)(1)));
-    EXPECT_THAT(celsius_pt(10).coerce_as(Kelvins{}), SameTypeAndValue(kelvins_pt(283)));
+    EXPECT_THAT(celsius_pt(10).as(Kelvins{}, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(kelvins_pt(283)));
 }
 
 TEST(QuantityPoint, AsCanProvideConversionPolicy) {
@@ -262,59 +258,8 @@ TEST(QuantityPoint, InWithExplicitRepCanProvideConversionPolicy) {
 }
 
 TEST(QuantityPoint, HandlesConversionWithSignedSourceAndUnsignedDestination) {
-    EXPECT_THAT(celsius_pt(int16_t{-5}).coerce_as<uint16_t>(kelvins_pt),
+    EXPECT_THAT(celsius_pt(int16_t{-5}).as<uint16_t>(kelvins_pt),
                 SameTypeAndValue(kelvins_pt(uint16_t{268})));
-}
-
-TEST(QuantityPoint, CoerceAsWillForceLossyConversion) {
-    // Truncation.
-    EXPECT_THAT(inches_pt(30).coerce_as(feet_pt), SameTypeAndValue(feet_pt(2)));
-
-    // Unsigned overflow.
-    ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
-    EXPECT_THAT(feet_pt(uint8_t{30}).coerce_as(inches_pt),
-                SameTypeAndValue(inches_pt(uint8_t{104})));
-}
-
-TEST(QuantityPoint, CoerceAsExplicitRepSetsOutputType) {
-    // Coerced truncation.
-    EXPECT_THAT(inches_pt(30).coerce_as<std::size_t>(feet_pt),
-                SameTypeAndValue(feet_pt(std::size_t{2})));
-
-    // Exact answer for floating point destination type.
-    EXPECT_THAT(inches_pt(30).coerce_as<float>(feet_pt), SameTypeAndValue(feet_pt(2.5f)));
-
-    // Coerced unsigned overflow.
-    ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
-    EXPECT_THAT(feet_pt(30).coerce_as<uint8_t>(inches_pt),
-                SameTypeAndValue(inches_pt(uint8_t{104})));
-}
-
-TEST(QuantityPoint, CoerceInWillForceLossyConversion) {
-    // Truncation.
-    EXPECT_THAT(inches_pt(30).coerce_in(feet_pt), SameTypeAndValue(2));
-
-    // Unsigned overflow.
-    ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
-    EXPECT_THAT(feet_pt(uint8_t{30}).coerce_in(inches_pt), SameTypeAndValue(uint8_t{104}));
-}
-
-TEST(QuantityPoint, CoerceInExplicitRepSetsOutputType) {
-    // Coerced truncation.
-    EXPECT_THAT(inches_pt(30).coerce_in<std::size_t>(feet_pt), SameTypeAndValue(std::size_t{2}));
-
-    // Exact answer for floating point destination type.
-    EXPECT_THAT(inches_pt(30).coerce_in<float>(feet_pt), SameTypeAndValue(2.5f));
-
-    // Coerced unsigned overflow.
-    ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
-    EXPECT_THAT(feet_pt(30).coerce_in<uint8_t>(inches_pt), SameTypeAndValue(uint8_t{104}));
-}
-
-TEST(QuantityPoint, CoerceAsPerformsConversionInWidestType) {
-    constexpr QuantityPointU32<Milli<Kelvins>> temp = milli(kelvins_pt)(313'150u);
-    EXPECT_THAT(temp.coerce_as<uint16_t>(deci(kelvins_pt)),
-                SameTypeAndValue(deci(kelvins_pt)(uint16_t{3131})));
 }
 
 TEST(QuantityPoint, ComparisonsWorkAsExpected) {
