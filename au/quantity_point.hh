@@ -150,28 +150,6 @@ class QuantityPoint {
         return in_impl<Rep>(u, policy);
     }
 
-    // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
-    template <typename NewUnit>
-    constexpr auto coerce_as(NewUnit) const {
-        // Usage example: `p.coerce_as(new_units)`.
-        return as<Rep>(NewUnit{});
-    }
-    template <typename NewRep, typename NewUnit>
-    constexpr auto coerce_as(NewUnit) const {
-        // Usage example: `p.coerce_as<T>(new_units)`.
-        return as<NewRep>(NewUnit{});
-    }
-    template <typename NewUnit>
-    constexpr auto coerce_in(NewUnit) const {
-        // Usage example: `p.coerce_in(new_units)`.
-        return in<Rep>(NewUnit{});
-    }
-    template <typename NewRep, typename NewUnit>
-    constexpr auto coerce_in(NewUnit) const {
-        // Usage example: `p.coerce_in<T>(new_units)`.
-        return in<NewRep>(NewUnit{});
-    }
-
     // Direct access to the underlying value member, with any Point-equivalent Unit.
     //
     // Mutable access, QuantityPointMaker input.
