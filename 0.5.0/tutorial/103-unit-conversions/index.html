@@ -1,0 +1,2579 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++ units library, by Aurora">
+      
+      
+        <meta name="author" content="Au team">
+      
+      
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/0.5.0/tutorial/103-unit-conversions/">
+      
+      
+        <link rel="prev" href="../102-api-types/">
+      
+      
+        <link rel="next" href="../exercise/101-quantity-makers/">
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+    
+    
+      
+        <title>Au 103: Unit Conversions - The Au units library</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../tweaks.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#au-103-unit-conversions" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../assets/au-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            The Au units library
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Au 103: Unit Conversions
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../assets/au-logo.png" alt="logo">
+
+    </a>
+    The Au units library
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au documentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../develop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Development Setup
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../supported-compilers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Supported Compilers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Alternatives
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Alternatives
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alternatives/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Comparison of Alternatives
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Discussion
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Discussion
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Discussion Docs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Concepts
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Generic Concepts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/arithmetic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arithmetic Operations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/common_unit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Common Units
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/conversion_risks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/dimensionless/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dimensionless Units and Quantities
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/overflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overflow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/quantity_point/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quantity Point
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/truncation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Truncation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/zero/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zero
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Idioms
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            Idioms
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/idioms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au Idioms
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/idioms/unit-slots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Unit slots
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Implementation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            Implementation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Implementation Details
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/applying_magnitudes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Applying Magnitudes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/vector_space/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Vector Space Representations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Howto
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Howto
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    How-to guides
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/forward-declarations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Forward declarations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/new-constants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Defining new constants
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/new-dimensions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Defining new dimensions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/new-units/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Defining new units
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/quantity-template-parameters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quantity template parameters
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/upgrade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Upgrading Au
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_8" id="__nav_8_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Interop
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_8">
+            <span class="md-nav__icon md-icon"></span>
+            Interop
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/interop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inter-library Interoperation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/interop/nholthaus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    nholthaus/units Interoperation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reference Docs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/constant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Constant
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/conversion_risk_policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risk Policies
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/corresponding_quantity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Corresponding Quantity
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/format/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Format
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/magnitude/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Magnitude
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/math/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Math functions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/powers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Powers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/prefix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Prefix
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/quantity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quantity
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/quantity_point/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    QuantityPoint
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/unit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Unit
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/zero/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zero
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_9_14" id="__nav_9_14_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Detail
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_14">
+            <span class="md-nav__icon md-icon"></span>
+            Detail
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/detail/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Implementation Details
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/detail/dimension/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dimension
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/detail/monovalue_types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Monovalue Types
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/detail/packs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Parameter packs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tutorial
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorial
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tutorials: home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../101-quantity-makers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 101: Quantity Makers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../102-api-types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 102: API Types
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Au 103: Unit Conversions
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 103: Unit Conversions
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#new-units-for-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      New units for .in(...)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#as-like-in-but-makes-a-quantity" class="md-nav__link">
+    <span class="md-ellipsis">
+      .as(...): like .in(...), but makes a quantity
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conversion-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conversion categories
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#forcing-lossy-conversions-the-policy-argument" class="md-nav__link">
+    <span class="md-ellipsis">
+      Forcing lossy conversions: the policy argument
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conversion-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conversion summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implicit-conversions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implicit conversions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercise-practicing-conversions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exercise: practicing conversions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#takeaways" class="md-nav__link">
+    <span class="md-ellipsis">
+      Takeaways
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_5" id="__nav_10_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Exercise
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_5">
+            <span class="md-nav__icon md-icon"></span>
+            Exercise
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exercise/101-quantity-makers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 101: Quantity Makers Exercise
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exercise/102-api-types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 102: API Types Exercise
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exercise/103-unit-conversions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 103: Unit Conversions Exercise
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="au-103-unit-conversions">Au 103: Unit Conversions<a class="headerlink" href="#au-103-unit-conversions" title="Permanent link">&para;</a></h1>
+<p>This tutorial explains how to perform unit conversions, both implicitly and explicitly.</p>
+<ul>
+<li><strong>Time:</strong> 30 minutes.</li>
+<li><strong>Prerequisites:</strong><ul>
+<li><a href="../101-quantity-makers/">Au 101: Quantity Makers</a>.</li>
+<li><a href="../102-api-types/">Au 102: API types</a></li>
+</ul>
+</li>
+<li><strong>You will learn:</strong><ul>
+<li>How <code>.in(...)</code>, the &ldquo;value retrieving&rdquo; function, actually performs unit conversions.</li>
+<li><code>.as(...)</code>: the safer cousin of <code>.in(...)</code>, which gives a quantity instead of a raw number.</li>
+<li>How to &ldquo;force&rdquo; a physically meaningful conversion which Au thinks is dangerous.</li>
+<li>Which conversions work automatically, which work only when forced, and which are prevented.</li>
+<li>Which <em>implicit</em> conversions are allowed.</li>
+</ul>
+</li>
+</ul>
+<h2 id="new-units-for-in">New units for <code>.in(...)</code><a class="headerlink" href="#new-units-for-in" title="Permanent link">&para;</a></h2>
+<p>Once we store a value in a <code>Quantity</code>, we know we need to name its unit explicitly to get the value
+back out &mdash; that&rsquo;s <a href="../101-quantity-makers/">Au 101</a>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">);</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">q</span><span class="p">.</span><span class="n">in</span><span class="p">(</span><span class="n">feet</span><span class="p">);</span><span class="w">  </span><span class="c1">// &lt;-- produces `6`</span>
+</code></pre></div>
+<p>That API is awfully suggestive, though.  What happens if we pass some <em>other</em> unit?</p>
+<p>Answer: it does just what it looks like it does.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">);</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">q</span><span class="p">.</span><span class="n">in</span><span class="p">(</span><span class="n">inches</span><span class="p">);</span><span class="w"> </span><span class="c1">// &lt;-- produces `72`</span>
+</code></pre></div>
+<p>We introduced <code>.in(...)</code> as, essentially, &ldquo;the function that gets the value back out&rdquo;.  That was
+true, but incomplete.  Now we see its true role: it&rsquo;s the <em>quantity value conversion function</em>.  The
+role we saw earlier is just a special case: when we pass the same unit we used to create it, that
+&ldquo;conversion&rdquo; is simply the identity.</p>
+<p>Already, this opens up a new simple, self-contained use case for Au: it&rsquo;s very easy to conjure up
+highly readable unit conversions on the fly, even if you both start and end with raw numbers.
+Consider this example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// Starting with a raw numeric type:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kt">double</span><span class="w"> </span><span class="n">angle_deg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">90.0</span><span class="p">;</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">{</span><span class="w"> </span><span class="c1">// ⚠️ Old, manual method for doing conversions:</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">RAD_PER_DEG</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">M_PI</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">180.0</span><span class="p">;</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">angle_rad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">angle_deg</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">RAD_PER_DEG</span><span class="p">;</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">{</span><span class="w"> </span><span class="c1">// ✔️ Easy, readable ad hoc conversion with Au:</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">angle_rad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">degrees</span><span class="p">(</span><span class="n">angle_deg</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">radians</span><span class="p">);</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">}</span>
+</code></pre></div>
+<p>With the old method, we needed to manually craft a carefully named conversion constant.  And because
+this was an <em>angular</em> conversion, we also needed to worry about how to get a good value for <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span>
+(here, we chose the <code>M_PI</code> macro).  By contrast, the Au-based alternative gives you a readable,
+clearly correct one-liner out of the box &mdash; and it doesn&rsquo;t trouble the author or reader with the
+details of correctly obtaining (and using) <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span>.</p>
+<h2 id="as-like-in-but-makes-a-quantity"><code>.as(...)</code>: like <code>.in(...)</code>, but makes a quantity<a class="headerlink" href="#as-like-in-but-makes-a-quantity" title="Permanent link">&para;</a></h2>
+<p>Using <code>.in(...)</code> works very well when you want a raw number &mdash; typically, when you&rsquo;re interacting
+with some legacy interface.  However, sometimes what you want is a <em>quantity</em> that&rsquo;s expressed in a
+specific unit.  For example, you might be comparing quantities in a hot loop, and you&rsquo;d rather avoid
+repeated conversions.  Or, you might want to print your quantity in some specific unit.</p>
+<p>We <em>could</em> satisfy these use cases with <code>.in(...)</code>, but it&rsquo;s a little clunky:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// Not recommended!  See below.</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">radians</span><span class="p">(</span><span class="n">degrees</span><span class="p">(</span><span class="n">angle_deg</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">radians</span><span class="p">));</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1">//           ^^^^^^^        Raw number--^^ ^^^^^^^</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1">//                 |                       |</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1">//                 \--Repeated identifier--/</span>
+</code></pre></div>
+<p>This approach wouldn&rsquo;t just be repetitive; it would also create a (small!) opportunity for error,
+because you temporarily leave the safety of the units library before re-entering it.</p>
+<p>Fortunately, there&rsquo;s a better choice.  <code>Quantity</code> has another member function, <code>.as(...)</code>, for
+exactly this use case.  You can pass it any unit you would pass to <code>.in(...)</code>, but <code>.as(...)</code>
+<em>returns a quantity</em>, not a raw number.  Building on our earlier example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">degrees</span><span class="p">(</span><span class="n">angle_deg</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">radians</span><span class="p">);</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1">//      👍 Don&#39;t Repeat Yourself---^^^^^^^</span>
+</code></pre></div>
+<p>Use <code>.as(...)</code> when you want easy, inline, fine-grained control over the units in which your
+quantities are expressed.</p>
+<h2 id="conversion-categories">Conversion categories<a class="headerlink" href="#conversion-categories" title="Permanent link">&para;</a></h2>
+<p>The examples so far have been pretty straightforward.  To convert from <code>feet</code> to <code>inches</code>, we simply
+multiply the underlying value by 12.  That seems pretty safe for just about any Rep<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>, whether
+floating point or integral.  However, other conversions can be more subtle.</p>
+<p>Let&rsquo;s look at a bunch of example unit conversions.  We&rsquo;ll show how each conversion works with both
+<code>int</code> and <code>double</code> Rep, because the rules can differ significantly for integral and floating point
+types.</p>
+<div class="admonition note">
+<p class="admonition-title">Instructions</p>
+<p><em>For each example:</em> stop and think about what you would expect the library to produce in each
+case.  When you&rsquo;re ready, click over to the &ldquo;Results and Discussion&rdquo; tab to check your
+intuition.</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example: <code>feet</code> to <code>yards</code></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Conversion</label><label for="__tabbed_1_2">Results and Discussion</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">yards</span><span class="p">);</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">feet</span><span class="p">(</span><span class="mf">6.0</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">yards</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">yards</span><span class="p">);</span><span class="w">  </span><span class="c1">// Compiler error!</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">feet</span><span class="p">(</span><span class="mf">6.0</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">yards</span><span class="p">);</span><span class="w">  </span><span class="c1">// yards(2.0)</span>
+</code></pre></div>
+<p>Converting from <code>feet</code> to <code>yards</code> means dividing the underlying value by 3.</p>
+<p>For an <strong>integral</strong> Rep, this actually yields a <strong>compiler error</strong>, because we can&rsquo;t
+guarantee that the result will be an integer.  True, with <code>feet(6)</code>, it so happens that it
+would &mdash; but if we had <code>feet(5)</code>, this wouldn&rsquo;t be the case!</p>
+<p><strong>Floating point</strong> Rep is simpler.  When we divide any value by <code>3</code>, we won&rsquo;t exceed typical
+floating point error.  Because this level of uncertainty simply goes with the territory when
+using floating point types, Au <strong>allows</strong> this operation with no complaint.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example: <code>feet</code> to <code>nano(meters)</code></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Conversion</label><label for="__tabbed_2_2">Results and Discussion</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">nano</span><span class="p">(</span><span class="n">meters</span><span class="p">));</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">feet</span><span class="p">(</span><span class="mf">6.0</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">nano</span><span class="p">(</span><span class="n">meters</span><span class="p">));</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">nano</span><span class="p">(</span><span class="n">meters</span><span class="p">));</span><span class="w">  </span><span class="c1">// Compiler error!</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">feet</span><span class="p">(</span><span class="mf">6.0</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">nano</span><span class="p">(</span><span class="n">meters</span><span class="p">));</span><span class="w">  </span><span class="c1">// nano(meters)(1&#39;828&#39;800&#39;000.0)</span>
+</code></pre></div>
+<p>Converting from <code>feet</code> to <code>nano(meters)</code> means multiplying the underlying value by
+304,800,000.</p>
+<p>Unlike the last example, this is guaranteed to produce an integer result.  Yet, the
+<strong>integral</strong> Rep <em>again</em> gives us a <strong>compiler error</strong>!  This time, we&rsquo;re guarding against
+a different risk: <strong>overflow</strong>.  It turns out that <em>any underlying value larger than
+<code>feet(7)</code></em> would overflow in this conversion.  That&rsquo;s pretty scary, so we forbid this
+conversion.</p>
+<p>Of course, that&rsquo;s just because <code>int</code> is typically only 32 bits.  Au <em>adapts</em> to the specific
+level of overflow risk, based on both the conversion and the range of the type.  For
+example, <em>this</em> integral-type conversion <em>would</em> work:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">feet</span><span class="p">(</span><span class="mf">6L</span><span class="n">L</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">nano</span><span class="p">(</span><span class="n">meters</span><span class="p">));</span><span class="w">  </span><span class="c1">// nano(meters)(1&#39;828&#39;800&#39;000LL)</span>
+</code></pre></div>
+<p>Since <code>long long</code> is at least 64 bits, we could handle values into the tens of billions of
+feet before overflowing!  (For more details on the overflow problem, and Au&rsquo;s strategies for
+mitigating it, read our <a href="../../discussion/concepts/overflow/">overflow discussion</a>.)</p>
+<p>As for the <strong>floating point</strong> value, this is again very safe, so we <strong>allow</strong> it without
+complaint.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example: <code>feet</code> to <code>kelvins</code></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Conversion</label><label for="__tabbed_3_2">Results and Discussion</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">kelvins</span><span class="p">);</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">feet</span><span class="p">(</span><span class="mf">6.0</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">kelvins</span><span class="p">);</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">kelvins</span><span class="p">);</span><span class="w">  </span><span class="c1">// Compiler error!</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">feet</span><span class="p">(</span><span class="mf">6.0</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">kelvins</span><span class="p">);</span><span class="w">  </span><span class="c1">// Compiler error!</span>
+</code></pre></div>
+<p>Converting from <code>feet</code> to <code>kelvins</code> is an intrinsically meaningless operation, because they
+have <em>different dimensions</em> (namely, <em>length</em> and <em>temperature</em>).  For both <strong>integral</strong> and
+<strong>floating point</strong> Rep, we <strong>forbid</strong> this operation.</p>
+</div>
+</div>
+</div>
+</div>
+<h2 id="forcing-lossy-conversions-the-policy-argument">Forcing lossy conversions: the <code>policy</code> argument<a class="headerlink" href="#forcing-lossy-conversions-the-policy-argument" title="Permanent link">&para;</a></h2>
+<p>Sometimes, you may want to perform a conversion even though you know it&rsquo;s usually lossy.  For
+example, maybe you know that <em>your particular</em> value will give an exact result (like converting
+6 feet into yards).  Or perhaps the truncation is desired.</p>
+<p>Whatever the reason, you can simply add an explicit
+<a href="../../reference/conversion_risk_policies/">policy</a> as a second argument to turn off a given risk
+check.  Consider this example.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">feet</span><span class="p">(</span><span class="mf">6.0</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">yards</span><span class="p">);</span><span class="w">                         </span><span class="c1">// yards(2.0)</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="c1">// Compiler error!</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1">// feet(6).as(yards);</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">yards</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">TRUNCATION_RISK</span><span class="p">));</span><span class="w">  </span><span class="c1">// yards(2)</span>
+</code></pre></div>
+<p>These versions work similarly to <code>static_cast</code>, in that they will truncate if necessary. For
+example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">yards</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">TRUNCATION_RISK</span><span class="p">));</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="c1">// Gives `yards(1)` --- a truncation of (5/3 = 1.666...) yards</span>
+</code></pre></div>
+<p>Besides <code>TRUNCATION_RISK</code>, you can also pass <code>OVERFLOW_RISK</code>, or even <code>ALL_RISKS</code>.  These versions
+can &ldquo;overrule&rdquo; Au when we prevent a <em>physically meaningful</em> conversion because we think it&rsquo;s too
+risky.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Prefer <strong>not</strong> to use these policy-override versions unless you have a good reason.  If you do,
+consider adding a comment to explain why your specific use case is OK.</p>
+<p>As a code reviewer, if you see a risk check being ignored, and it doesn&rsquo;t seem necessary or
+justified, ask about it!</p>
+</div>
+<p>At this point, we&rsquo;ve seen several examples of conversions which Au forbids.  We&rsquo;ve also seen how
+some of them can be forced anyway.  Here&rsquo;s a chance to test your understanding: what will happen if
+you try to force that <em>final</em> example &mdash; the one where the <em>dimensions</em> differ?</p>
+<div class="admonition example">
+<p class="admonition-title">Example: forcing different-dimension conversions?</p>
+<p>As before, stop and think about what you would expect the library to produce.  When you&rsquo;re
+ready, click over to the &ldquo;Results and Discussion&rdquo; tab to check your intuition.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Conversion</label><label for="__tabbed_4_2">Results and Discussion</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">kelvins</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">ALL_RISKS</span><span class="p">));</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">as</span><span class="p">(</span><span class="n">kelvins</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">ALL_RISKS</span><span class="p">));</span><span class="w">  </span><span class="c1">// Compiler error!</span>
+</code></pre></div>
+<p>Converting units with different dimensions isn&rsquo;t merely &ldquo;unsafe&rdquo;; it&rsquo;s completely
+meaningless.  We can&rsquo;t &ldquo;force&rdquo; the answer because there isn&rsquo;t even an answer to force.</p>
+</div>
+</div>
+</div>
+</div>
+<h2 id="conversion-summary">Conversion summary<a class="headerlink" href="#conversion-summary" title="Permanent link">&para;</a></h2>
+<p>This table gives a visual summary of how different kinds of risks impact conversions with different
+storage types.</p>
+<table>
+  <tr>
+    <th>Conversion</th>
+    <th>Result (<code>int</code> Rep):<br><code>length = feet(6)</code></th>
+    <th>Result (<code>double</code> Rep):<br><code>length = feet(6.0)</code></th>
+  </tr>
+  <tr>
+    <td><code>length.as(inches)</code></td>
+    <td class="good"><code>inches(72)</code></td>
+    <td class="good"><code>inches(72.0)</code></td>
+  </tr>
+  <tr>
+    <td><code>length.as(yards)</code></td>
+    <td class="fair">
+        <b>Forbidden</b>: not guaranteed to be integral<br>(can be forced with <code>ignore(TRUNCATION_RISK)</code>)
+    </td>
+    <td class="good"><code>yards(2.0)</code></td>
+  </tr>
+  <tr>
+    <td><code>length.as(nano(meters))</code></td>
+    <td class="fair">
+        <b>Forbidden</b>: excessive overflow risk<br>(can be forced with <code>ignore(OVERFLOW_RISK)</code>)
+    </td>
+    <td class="good"><code>nano(meters)(1'828'800'000.0)</code></td>
+  </tr>
+  <tr>
+    <td><code>length.as(kelvins)</code></td>
+    <td class="poor"><b>Forbidden</b>: meaningless</td>
+    <td class="poor"><b>Forbidden</b>: meaningless</td>
+  </tr>
+</table>
+
+<h2 id="implicit-conversions">Implicit conversions<a class="headerlink" href="#implicit-conversions" title="Permanent link">&para;</a></h2>
+<p>Au emphasizes developer experience.  We strive to provide the same ergonomics which developers have
+come to expect from the venerable <code>std::chrono</code> library.  This means that any meaningful conversion
+which we consider &ldquo;safe enough&rdquo; (based on the above criteria), we permit <em>implicitly</em>.  This lets
+you fluently initialize a quantity parameter with <em>any convertible expression</em>.  For example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1">// API accepting a quantity parameter.</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">rotate</span><span class="p">(</span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Radians</span><span class="o">&gt;</span><span class="w"> </span><span class="n">angle</span><span class="p">);</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1">// This works!</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="c1">// We&#39;ll automatically convert the integral quantity of degrees to `QuantityD&lt;Radians&gt;`.</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="n">rotate</span><span class="p">(</span><span class="n">degrees</span><span class="p">(</span><span class="mi">45</span><span class="p">));</span>
+</code></pre></div>
+<p>Our conversion policy is a <em>refinement</em> of <a href="https://en.cppreference.com/w/cpp/chrono/duration/duration">the policy for <code>std::chrono::duration</code></a>.  Here
+is their policy (paraphrased and simplified):</p>
+<ul>
+<li>Implicit conversions are permitted if <em>either</em>:<ul>
+<li>The destination is floating point;</li>
+<li>Or, the <em>source</em> type is integer, and the conversion <em>multiplies</em> by an integer.</li>
+</ul>
+</li>
+</ul>
+<p>And here is our refinement (the <em>overflow safety surface</em>):</p>
+<ul>
+<li>If an integral-Rep conversion would overflow the <em>destination type</em> for a <em>source value</em> <a href="https://github.com/aurora-opensource/au/blob/dbd79b2/au/conversion_policy.hh#L27-L28">as small
+  as <code>2'147</code></a>, we <em>forbid</em> the conversion.</li>
+</ul>
+<details class="info">
+<summary>Deeper dive: comparing overflow strategies for Au and <code>chrono</code></summary>
+<p>The <code>std::chrono</code> library doesn&rsquo;t consider overflow in its conversion policy, because they
+handle the problem in a different way.  Instead of encouraging users to use <code>duration</code> directly,
+they provide pre-defined helper types such as <code>std::chrono::nanoseconds</code>,
+<code>std::chrono::milliseconds</code>, etc.  The Rep for each of these types is chosen to guarantee
+covering at least 292 years in either direction.</p>
+<p>This is a good and practical solution, which is effective at preventing overflow for users who
+stick to these helper types.  The downside is that it forces users to change their underlying
+storage types &mdash; changing the assembly code produced &mdash; in the process of acquiring unit
+safety.</p>
+<p>A key design goal of Au is to avoid forcing users to change their underyling numeric types.  We
+want to empower people to get the same assembly they would have had without Au, just more
+safely. Because smaller numeric types bring this extra overflow risk (and in a way that&rsquo;s often
+non-obvious to developers), we designed this adaptive policy which prevents the biggest risks.</p>
+</details>
+<p>(Lastly, of course we also forbid conversions between units of different dimensions.  This
+consideration wasn&rsquo;t part of the <code>std::chrono</code> library, because that library only has a single
+dimension.)</p>
+<h2 id="exercise-practicing-conversions">Exercise: practicing conversions<a class="headerlink" href="#exercise-practicing-conversions" title="Permanent link">&para;</a></h2>
+<p>Check out the <a href="../exercise/103-unit-conversions/">Au 103: Unit Conversions Exercise</a>!</p>
+<h2 id="takeaways">Takeaways<a class="headerlink" href="#takeaways" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>To convert</strong> a quantity to a particular unit, <strong>pass that unit&rsquo;s quantity maker</strong> to the
+   appropriate member function, <code>.in(...)</code> or <code>.as(...)</code>.</p>
+<ul>
+<li>For example, <code>minutes(3)</code> is a quantity, and <code>minutes(3).as(seconds)</code> produces <code>seconds(180)</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>.in(...)</code></strong> gives a <strong>raw number</strong>, while <strong><code>.as(...)</code></strong> gives a <strong>quantity</strong>.</p>
+<ul>
+<li>
+<p>These names are used consistently in this way throughout the library.  For example, we&rsquo;ll
+  learn in the next tutorial that <code>round_in(...)</code> produces a <em>raw number</em>, while <code>round_as(...)</code>
+  produces a <em>quantity</em>.</p>
+</li>
+<li>
+<p><strong>Prefer <code>.as(...)</code></strong> when you have a choice, because it stays within the safety of the
+  library.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Both conversion functions <strong>include safety checks</strong>.  This means you can generally <em>just use
+   them</em>, and rely on the library to guard against the biggest risks.  Here are the details to
+   remember about these safety checks.</p>
+<ul>
+<li>
+<p>We <strong>forbid</strong> conversions with <strong>mismatched dimensions</strong> (as with any units library).</p>
+</li>
+<li>
+<p>We <strong>forbid</strong> conversions for <strong>integer destinations</strong> <em>unless</em> we&rsquo;re sure we&rsquo;ll <strong>always have an
+  integer</strong> (as <a href="https://en.cppreference.com/w/cpp/chrono/duration/duration">with the <code>chrono</code>
+  library</a>), <em>and</em> we <strong>don&rsquo;t have
+  excessive overflow risk</strong> (an Au-original feature!).</p>
+</li>
+</ul>
+</li>
+<li>
+<p>You can <strong>force</strong> a conversion that is <strong>meaningful, but considered dangerous</strong> by passing
+   a <a href="../../reference/conversion_risk_policies/">conversion risk policy argument</a> as a second
+   parameter.</p>
+<ul>
+<li>
+<p>For example: <code>seconds(200).as(minutes)</code> won&rsquo;t compile, but
+  <code>seconds(200).as(minutes, ignore(TRUNCATION_RISK))</code> gives <code>minutes(3)</code>, because the second
+  argument turned off the truncation risk check.</p>
+</li>
+<li>
+<p><strong>Use this sparingly,</strong> since the safety checks are there for a reason, and consider <strong>adding
+  a comment</strong> to explain why your usage is safe.</p>
+</li>
+<li>
+<p>You can never force a conversion to a different dimension, because this is not meaningful.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Any conversion <strong>allowed by <code>.as(...)</code></strong> will also work as an <strong>implicit conversion</strong>.</p>
+<ul>
+<li>For example, if you have an API which takes <code>QuantityD&lt;Radians&gt;</code>, you can pass <code>degrees(45)</code>
+  directly to it.</li>
+</ul>
+</li>
+</ol>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Recall that the &ldquo;Rep&rdquo; is shorthand for the underlying storage type of the quantity.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../102-api-types/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Au 102: API Types">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Au 102: API Types
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../exercise/101-quantity-makers/" class="md-footer__link md-footer__link--next" aria-label="Next: Au 101: Quantity Makers Exercise">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Au 101: Quantity Makers Exercise
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022, Aurora Operations, Inc. All rights reserved
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      
+    
+  </body>
+</html>
