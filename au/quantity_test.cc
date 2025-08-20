@@ -646,20 +646,20 @@ TEST(Quantity, CanDivideArbitraryQuantities) {
     EXPECT_THAT(v, Eq(d / t));
 }
 
-TEST(Quantity, RatioOfSameTypeIsScalar) {
+TEST(Quantity, RatioOfSameTypeIsQuantity) {
     constexpr auto x = yards(8.2);
 
-    EXPECT_THAT(x / x, SameTypeAndValue(1.0));
+    EXPECT_THAT(x / x, QuantityEquivalent(unos(1.0)));
 }
 
-TEST(Quantity, RatioOfEquivalentTypesIsScalar) {
+TEST(Quantity, RatioOfEquivalentTypesIsQuantity) {
     constexpr auto x = feet(10.0);
     constexpr auto y = (feet * mag<1>())(5.0);
 
-    EXPECT_THAT(x / y, SameTypeAndValue(2.0));
+    EXPECT_THAT(x / y, QuantityEquivalent(unos(2.0)));
 }
 
-TEST(Quantity, ProductOfInvertingUnitsIsScalar) {
+TEST(Quantity, ProductOfInvertingUnitsIsQuantity) {
     // We pass `UnitProductT` to this function template, which ensures that we get a `UnitProduct`
     // (note: NOT `UnitProductT`!) with the expected number of arguments.  Recall that
     // `UnitProductT` is the user-facing "unit computation" interface, and `UnitProduct` is the
@@ -670,7 +670,7 @@ TEST(Quantity, ProductOfInvertingUnitsIsScalar) {
     // unit---although, naturally, it must be **quantity-equivalent** to `UnitProduct<>`.
     ASSERT_THAT(num_units_in_product(UnitProductT<Days, PerDay>{}), Eq(2));
 
-    EXPECT_THAT(days(3) * per_day(8), SameTypeAndValue(24));
+    EXPECT_THAT(days(3) * per_day(8), QuantityEquivalent(unos(24)));
 }
 
 TEST(Quantity, ScalarDivisionWorks) {
@@ -1176,7 +1176,7 @@ TEST(UnblockIntDiv, IsNoOpForDivisionThatWouldBeAllowedAnyway) {
 
 TEST(Quantity, CanIntegerDivideQuantitiesOfQuantityEquivalentUnits) {
     constexpr auto ratio = meters(60) / meters(25);
-    EXPECT_THAT(ratio, Eq(2));
+    EXPECT_THAT(ratio, QuantityEquivalent(unos(2)));
 }
 
 TEST(mod, ComputesRemainderForSameUnits) {
