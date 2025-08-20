@@ -218,7 +218,7 @@ TEST(QuantityPoint, InHandlesIntegerRepInUnitsWithNonzeroOffset) {
 }
 
 TEST(QuantityPoint, CanRequestOutputRepWhenCallingIn) {
-    EXPECT_THAT(celsius_pt(5.2).in<int>(Celsius{}), Eq(5));
+    EXPECT_THAT(celsius_pt(5.2).in<int>(Celsius{}, ignore(TRUNCATION_RISK)), Eq(5));
 }
 
 TEST(QuantityPoint, CanCastToUnitWithDifferentMagnitude) {
@@ -258,7 +258,7 @@ TEST(QuantityPoint, InWithExplicitRepCanProvideConversionPolicy) {
 }
 
 TEST(QuantityPoint, HandlesConversionWithSignedSourceAndUnsignedDestination) {
-    EXPECT_THAT(celsius_pt(int16_t{-5}).as<uint16_t>(kelvins_pt),
+    EXPECT_THAT(celsius_pt(int16_t{-5}).as<uint16_t>(kelvins_pt, ignore(TRUNCATION_RISK)),
                 SameTypeAndValue(kelvins_pt(uint16_t{268})));
 }
 

@@ -289,28 +289,10 @@ the [unit slots](../discussion/idioms/unit-slots.md) discussion for valid choice
     type `Inches`, writing `length.as(Inches{})`.  The former is generally preferable; the latter is
     mainly useful in generic code where the unit type may be all you have.
 
-**Without** a template argument, `.as(unit)` obeys the same safety checks as for the [implicit
-constructors](#implicit-from-quantity): conversions at high risk for integer overflow or truncation
-are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` of the input.
+**Without** a template argument, `.as(unit)`, the output `Rep` is identical to the `Rep` of the
+input.
 
-**With** a template argument, `.as<T>(unit)` has two differences.
-
-1. The output `Rep` will be `T`.
-2. The conversion is considered "forcing", and will be permitted in spite of any overflow or
-   truncation risk.  The semantics are similar to `static_cast<T>`.
-
-However, note that we may change this second property in the future.  The version with the template
-arguments may be changed later so that it _does_ prevent lossy conversions.  If you want this
-"forcing" semantic, prefer to use a policy argument, and add the explicit template parameter only if
-you want to change the rep.  See [#122] to track progress on this change, and see the [policy
-argument section](#policy-argument) for an example of the _preferred_ way to force a conversion.
-
-!!! tip
-    Prefer to **omit** the template argument if possible, because you will get more safety checks.
-    The risks which the no-template-argument version warns about are real.
-
-    As of [0.6.0] and [#122], however, this advice will no longer apply.  At that point, the
-    explicit-rep versions will have the same safety checks as the implicit-rep versions.
+**With** a template argument, `.as<T>(unit)`, the output `Rep` will be `T`.
 
 ### `.in(unit)`, `.in<T>(unit)`
 
@@ -332,28 +314,10 @@ slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `uni
     type `Inches`, writing `length.in(Inches{})`.  The former is generally preferable; the latter is
     mainly useful in generic code where the unit type may be all you have.
 
-**Without** a template argument, `.in(unit)` obeys the same safety checks as for the [implicit
-constructors](#implicit-from-quantity): conversions at high risk for integer overflow or truncation
-are forbidden.  Additionally, the `Rep` of the output is identical to the `Rep` of the input.
+**Without** a template argument, `.in(unit)`, the output type is identical to the `Rep` of the
+input.
 
-**With** a template argument, `.in<T>(unit)` has two differences.
-
-1. The output type will be `T`.
-2. The conversion is considered "forcing", and will be permitted in spite of any overflow or
-   truncation risk.  The semantics are similar to `static_cast<T>`.
-
-However, note that we may change this second property in the future.  The version with the template
-arguments may be changed later so that it _does_ prevent lossy conversions.  If you want this
-"forcing" semantic, prefer to use a policy argument, and add the explicit template parameter only if
-you want to change the rep.  See [#122] to track progress on this change, and see the [policy
-argument section](#policy-argument) for an example of the _preferred_ way to force a conversion.
-
-!!! tip
-    Prefer to **omit** the template argument if possible, because you will get more safety checks.
-    The risks which the no-template-argument version warns about are real.
-
-    As of [0.6.0] and [#122], however, this advice will no longer apply.  At that point, the
-    explicit-rep versions will have the same safety checks as the implicit-rep versions.
+**With** a template argument, `.in<T>(unit)`, the output type will be `T`.
 
 ### Skipping risk checks: the `policy` argument {#policy-argument}
 
@@ -888,7 +852,6 @@ the following conditions hold.
 - For _types_ `U1` and `U2`:
     - `AreQuantityTypesEquivalent<U1, U2>::value`
 
-[#122]: https://github.com/aurora-opensource/au/issues/122
 [#481]: https://github.com/aurora-opensource/au/issues/481
 [0.6.0]: https://github.com/aurora-opensource/au/milestone/9
 [integer division section]: ../troubleshooting.md#integer-division-forbidden
