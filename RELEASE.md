@@ -240,6 +240,8 @@ On the tags page, click the three-dots menu, and select "Create release".
 
 - Use the version number as the title.
 - Copy the body of the release notes into the Release Notes text box.
+    - For every future-proof release, _include specific migration instructions_: tell users what
+      syntax will be compatible with both the current and future releases.
 - Attach all tarballs --- the release tarball, and every future-proof release tarball --- that you
   downloaded in the previous steps.
     - Add a table with the name of each artifact (`0.3.1`, `0.3.1-future-122`, etc.) and its SHA256
