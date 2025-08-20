@@ -37,12 +37,6 @@ constexpr auto make_quantity(T value) {
     return QuantityMaker<UnitT>{}(value);
 }
 
-template <typename Unit, typename T>
-constexpr auto make_quantity_unless_unitless(T value) {
-    return std::conditional_t<IsUnitlessUnit<Unit>::value, stdx::identity, QuantityMaker<Unit>>{}(
-        value);
-}
-
 // Trait to check whether two Quantity types are exactly equivalent.
 //
 // For purposes of our library, "equivalent" means that they have the same Dimension and Magnitude.
@@ -299,16 +293,14 @@ class Quantity {
     // Multiplication for dimensioned quantities.
     template <typename OtherUnit, typename OtherRep>
     constexpr auto operator*(Quantity<OtherUnit, OtherRep> q) const {
-        return make_quantity_unless_unitless<UnitProductT<Unit, OtherUnit>>(value_ *
-                                                                            q.in(OtherUnit{}));
+        return make_quantity<UnitProductT<Unit, OtherUnit>>(value_ * q.in(OtherUnit{}));
     }
 
     // Division for dimensioned quantities.
     template <typename OtherUnit, typename OtherRep>
     constexpr auto operator/(Quantity<OtherUnit, OtherRep> q) const {
         warn_if_integer_division<OtherUnit, OtherRep>();
-        return make_quantity_unless_unitless<UnitQuotientT<Unit, OtherUnit>>(value_ /
-                                                                             q.in(OtherUnit{}));
+        return make_quantity<UnitQuotientT<Unit, OtherUnit>>(value_ / q.in(OtherUnit{}));
     }
 
     // Short-hand addition and subtraction assignment.
