@@ -103,7 +103,8 @@ TYPED_TEST_P(QuantityRuntimeConversionChecker, RoundTripIsIdentityIffConversionN
 
         const bool expect_loss = is_conversion_lossy(value, destination_unit);
 
-        const auto round_trip = value.coerce_as(destination_unit).coerce_as(meters);
+        const auto round_trip =
+            value.as(destination_unit, ignore(ALL_RISKS)).as(meters, ignore(ALL_RISKS));
         const bool actual_loss = (value != round_trip);
 
         EXPECT_THAT(expect_loss, Eq(actual_loss))
