@@ -44,12 +44,6 @@ struct Meters : UnitImpl<Length> {};
 constexpr QuantityMaker<Meters> meters{};
 constexpr QuantityPointMaker<Meters> meters_pt{};
 
-struct Inches : decltype(Centi<Meters>{} * mag<254>() / mag<100>()) {};
-constexpr auto inches_pt = QuantityPointMaker<Inches>{};
-
-struct Feet : decltype(Inches{} * mag<12>()) {};
-constexpr auto feet_pt = QuantityPointMaker<Feet>{};
-
 struct Kelvins : UnitImpl<Temperature> {
     static constexpr const char label[] = "K";
 };
