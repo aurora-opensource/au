@@ -812,11 +812,11 @@ namespace detail {
 struct Threet : decltype(Feet{} * mag<3>()) {};
 
 template <>
-struct UnitAvoidance<Threet> : std::integral_constant<int, 1234> {};
+struct RenamedUnitAvoidance<Threet> : std::integral_constant<int, 1234> {};
 
 TEST(UnitAvoidance, CanTemporarilyBreakTiesForDistinctButOtherwiseUnorderableUnits) {
     // The point of this test is that this line would fail to compile if not for the
-    // `UnitAvoidance<Threet>` specialization just above.
+    // `RenamedUnitAvoidance<Threet>` specialization just above.
     //
     // This method of making distinct units orderable is deprecated, because it relies on end users
     // naming a type in our `detail::` namespace.
