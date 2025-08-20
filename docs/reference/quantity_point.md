@@ -110,7 +110,7 @@ https://github.com/mkdocs/mkdocs/issues/1198#issuecomment-1253896100
 Note that every case in the above table is _physically_ meaningful (because the source and target
 have the same dimension), but some conversions are forbidden due to the risk of larger-than-usual
 errors.  The library can still perform these conversions, but not via this constructor, and it must
-be "forced" to do so. See [`.coerce_as(unit)`](#coerce) for more details.
+be "forced" to do so. See the [policy argument](#policy-argument) section for more details.
 
 ### Constructing from another `QuantityPoint`, with explicit risk policy
 
@@ -281,58 +281,6 @@ To be concrete, here are the signatures of the functions that support the policy
     However, once we provide runtime conversion checkers for `QuantityPoint` (see [#352]), then it
     will always be safe to provide a policy argument that ignores a risk that you have just verified
     to be absent.
-
-### Forcing lossy conversions: `.coerce_as(unit)`, `.coerce_in(unit)` {#coerce}
-
-!!! warning
-    We are planning to deprecate these functions in the [0.6.0] release.  See [#481] to track the
-    progress.
-
-    In the meantime, here is how you convert.
-
-    First, figure out which conversion risks you are trying to override: **overflow**, or
-    **truncation**, or **both**.  (If you don't have an explicit `<Rep>` argument, you can simply
-    delete the `"coerce_"` word and compile, and the error message will tell you which one is
-    relevant.  Otherwise, you will need to use your knowledge of the types and units involved to
-    figure this out.)
-
-    Then, follow this table to rewrite your conversion, using the conversion risk you identified
-    above.
-
-    | "Coerce" version (dis-preferred; will be deprecated) | "Policy" version (preferred) |
-    |------------------------------------------------------|------------------------------|
-    | `q.coerce_as(unit)` | One of:<br>`q.as(unit, ignore(OVERFLOW_RISK))`<br>`q.as(unit, ignore(TRUNCATION_RISK))`<br>`q.as(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
-    | `q.coerce_as<T>(unit)` | One of:<br>`q.as<T>(unit, ignore(OVERFLOW_RISK))`<br>`q.as<T>(unit, ignore(TRUNCATION_RISK))`<br>`q.as<T>(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
-    | `q.coerce_in(unit)` | One of:<br>`q.in(unit, ignore(OVERFLOW_RISK))`<br>`q.in(unit, ignore(TRUNCATION_RISK))`<br>`q.in(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
-    | `q.coerce_in<T>(unit)` | One of:<br>`q.in<T>(unit, ignore(OVERFLOW_RISK))`<br>`q.in<T>(unit, ignore(TRUNCATION_RISK))`<br>`q.in<T>(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
-
-    These new versions are both more clear about their intent, and safer (because they only turn off
-    the safety checks that they need to).
-
-This function performs the exact same kind of unit conversion as if the string `coerce_` were
-removed.  However, it will ignore any safety checks for overflow or truncation.
-
-??? example "Example: forcing a conversion from centimeters to meters"
-    `centi(meters_pt)(200).in(meters_pt)` is not allowed.  This conversion will divide the
-    underlying value, `200`, by `100`.  Now, it so happens that this _particular_ value _would_
-    produce an integer result. However, the compiler must decide whether to permit this operation
-    _at compile time_, which means we don't yet know the value.  Since most `int` values would _not_
-    produce integer results, we forbid this.
-
-    `centi(meters_pt)(200).coerce_in(meters_pt)` _is_ allowed.  The `coerce_` prefix has "forcing"
-    semantics.  This would produce `2`. However, note that this operation uses integer division,
-    which truncates: so, for example, `centi(meters_pt)(199).coerce_in(meters_pt)` would produce
-    `1`.
-
-These functions also support an explicit template parameter: so, `.coerce_as<T>(unit)` and
-`.coerce_in<T>(unit)`.  If you supply this parameter, it will be the rep of the result.
-
-??? example "Example: simultaneous unit and type conversion"
-    `centi(meters_pt)(271.8).coerce_as<int>(meters_pt)` will return `meters_pt(2)`.
-
-!!! tip
-    Prefer **not** to use the "coercing versions" if possible, because you will get more safety
-    checks.  The risks which the "base" versions warn about are real.
 
 ## Operations
 

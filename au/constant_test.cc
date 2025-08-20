@@ -114,12 +114,6 @@ TEST(Constant, UsesExactSafetyChecksInsteadOfHeuristics) {
     // c.as<int16_t>(meters / second);
 }
 
-TEST(Constant, CanCoerce) {
-    EXPECT_THAT(c.coerce_in<int>(kilo(meters) / second), SameTypeAndValue(299'792));
-    EXPECT_THAT(c.coerce_as<int>(kilo(meters) / second),
-                SameTypeAndValue((kilo(meters) / second)(299'792)));
-}
-
 TEST(Constant, CanProvidePolicy) {
     EXPECT_THAT(c.in<int>(kilo(meters) / second, ignore(TRUNCATION_RISK)),
                 SameTypeAndValue(299'792));

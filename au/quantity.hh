@@ -37,12 +37,6 @@ constexpr auto make_quantity(T value) {
     return QuantityMaker<UnitT>{}(value);
 }
 
-template <typename Unit, typename T>
-constexpr auto make_quantity_unless_unitless(T value) {
-    return std::conditional_t<IsUnitlessUnit<Unit>::value, stdx::identity, QuantityMaker<Unit>>{}(
-        value);
-}
-
 // Trait to check whether two Quantity types are exactly equivalent.
 //
 // For purposes of our library, "equivalent" means that they have the same Dimension and Magnitude.
@@ -208,28 +202,6 @@ class Quantity {
         return in_impl<Rep>(u, policy);
     }
 
-    // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
-    template <typename NewUnit>
-    constexpr auto coerce_as(NewUnit) const {
-        // Usage example: `q.coerce_as(new_units)`.
-        return as(NewUnit{}, ignore(ALL_RISKS));
-    }
-    template <typename NewRep, typename NewUnit>
-    constexpr auto coerce_as(NewUnit) const {
-        // Usage example: `q.coerce_as<T>(new_units)`.
-        return as<NewRep>(NewUnit{}, ignore(ALL_RISKS));
-    }
-    template <typename NewUnit>
-    constexpr auto coerce_in(NewUnit) const {
-        // Usage example: `q.coerce_in(new_units)`.
-        return in(NewUnit{}, ignore(ALL_RISKS));
-    }
-    template <typename NewRep, typename NewUnit>
-    constexpr auto coerce_in(NewUnit) const {
-        // Usage example: `q.coerce_in<T>(new_units)`.
-        return in<NewRep>(NewUnit{}, ignore(ALL_RISKS));
-    }
-
     // Direct access to the underlying value member, with any Quantity-equivalent Unit.
     //
     // Mutable access:
@@ -301,16 +273,14 @@ class Quantity {
     // Multiplication for dimensioned quantities.
     template <typename OtherUnit, typename OtherRep>
     constexpr auto operator*(Quantity<OtherUnit, OtherRep> q) const {
-        return make_quantity_unless_unitless<UnitProductT<Unit, OtherUnit>>(value_ *
-                                                                            q.in(OtherUnit{}));
+        return make_quantity<UnitProductT<Unit, OtherUnit>>(value_ * q.in(OtherUnit{}));
     }
 
     // Division for dimensioned quantities.
     template <typename OtherUnit, typename OtherRep>
     constexpr auto operator/(Quantity<OtherUnit, OtherRep> q) const {
         warn_if_integer_division<OtherUnit, OtherRep>();
-        return make_quantity_unless_unitless<UnitQuotientT<Unit, OtherUnit>>(value_ /
-                                                                             q.in(OtherUnit{}));
+        return make_quantity<UnitQuotientT<Unit, OtherUnit>>(value_ / q.in(OtherUnit{}));
     }
 
     // Short-hand addition and subtraction assignment.
