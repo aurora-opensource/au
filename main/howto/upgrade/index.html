@@ -12,13 +12,13 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/howto/new-constants/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/howto/upgrade/">
       
       
-        <link rel="prev" href="../forward-declarations/">
+        <link rel="prev" href="../quantity-template-parameters/">
       
       
-        <link rel="next" href="../new-dimensions/">
+        <link rel="next" href="../interop/">
       
       
       <link rel="icon" href="../../assets/favicon.ico">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Defining new constants - The Au units library</title>
+        <title>Upgrading Au - The Au units library</title>
       
     
     
@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#defining-new-constants" class="md-skip">
+        <a href="#upgrading-au" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Defining new constants
+              Upgrading Au
             
           </span>
         </div>
@@ -1019,32 +1019,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Defining new constants
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../new-constants/" class="md-nav__link">
         
   
   
@@ -1055,59 +1033,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#methods-of-definition" class="md-nav__link">
-    <span class="md-ellipsis">
-      Methods of definition
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Methods of definition">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ad-hoc-no-special-label" class="md-nav__link">
-    <span class="md-ellipsis">
-      Ad hoc (no special label)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#full-unit-definition-includes-custom-label" class="md-nav__link">
-    <span class="md-ellipsis">
-      Full unit definition (includes custom label)
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1186,10 +1111,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../upgrade/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Upgrading Au
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1200,6 +1147,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#direct-versus-incremental" class="md-nav__link">
+    <span class="md-ellipsis">
+      Direct versus incremental
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-upgrade-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic upgrade process
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Basic upgrade process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#future-proof-releases" class="md-nav__link">
+    <span class="md-ellipsis">
+      Future proof releases
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2057,74 +2057,182 @@
   
 
 
-<h1 id="defining-new-constants">Defining new constants<a class="headerlink" href="#defining-new-constants" title="Permanent link">&para;</a></h1>
-<p>This page explains how to define new constants that aren&rsquo;t <a href="../../reference/constant/#built-in">included in the
-library</a>.</p>
+<h1 id="upgrading-au">Upgrading Au<a class="headerlink" href="#upgrading-au" title="Permanent link">&para;</a></h1>
+<p>Every new release of Au improves safety, ergonomics, or both.  It&rsquo;s vitally important to stay up to
+date.  Upgrading gets harder the longer you wait, because more breaking changes accumulate with
+respect to the latest release.  Fortunately, Au has historically had only 2 to 3 significant
+releases per year, so staying up to date should not be very onerous.</p>
+<p>Au strives to enable simple, minimal upgrades.  That doesn&rsquo;t mean we don&rsquo;t have breaking changes.
+It means whenever there <em>is</em> a breaking change, we provide a syntax that works in both versions.
+This lets you put your syntax updates in separate commits, so the upgrade commit does one thing
+only.</p>
+<p>Additionally, starting with Au 0.5.0, we provide new tools to get <em>ahead</em> of the game, and become
+compatible with changes we know we&rsquo;ll make in the <em>next</em> release.  These &ldquo;future proof&rdquo; release
+artifacts empower you to make upgrades as painless as possible.  We&rsquo;ll explain below how to use
+them.</p>
+<h2 id="direct-versus-incremental">Direct versus incremental<a class="headerlink" href="#direct-versus-incremental" title="Permanent link">&para;</a></h2>
+<p>If your current release was the latest when the new release came out, then you can skip this
+section: a direct upgrade is already as &ldquo;incremental&rdquo; as can be.  Otherwise, you&rsquo;ve got a choice:</p>
+<ul>
+<li><strong>Direct:</strong> Upgrade directly to the latest release, ignoring any intermediate releases.</li>
+<li><strong>Incremental:</strong> Upgrade stepwise, one release at a time, until you reach the latest release.</li>
+</ul>
+<p>The direct approach can be less work overall, if it works well.  The downside is that it can become
+overwhelming if there are too many failures.  In that case, the incremental approach lets you deal
+with the minimum number of breaking changes at one time.</p>
+<p>A good compromise can be to start by trying the direct approach, and switch to the incremental
+approach if things become overwhelming.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>If you think it <em>should</em> be included in the library, feel free to <a href="https://github.com/aurora-opensource/au/issues">file an
-issue</a>: there&rsquo;s no harm in asking.</p>
-<p>In order for us to consider it, it should be relatively widely used.  It also needs to have an
-<em>exact</em> value: we don&rsquo;t have a great way to deal with values that can change over time.</p>
-<p>If these conditions don&rsquo;t apply, then follow the directions in this guide to define a <em>custom</em>
-constant for your project.</p>
+<p>The rest of the guide covers upgrading from one specific version to another specific version.
+Therefore, if you choose the incremental approach, you would apply the instructions repeatedly,
+once for each &ldquo;step&rdquo;.</p>
 </div>
-<h2 id="methods-of-definition">Methods of definition<a class="headerlink" href="#methods-of-definition" title="Permanent link">&para;</a></h2>
-<p>There are two ways to define a new constant.  The only difference is <em>whether you need a label</em> for
-your constant.  In either case, you create a constant by calling <code>make_constant(...)</code>.  The argument
-is a <a href="../../discussion/idioms/unit-slots/">unit slot</a>, so you can pass it anything that goes into
-a unit slot.</p>
-<h3 id="ad-hoc-no-special-label">Ad hoc (no special label)<a class="headerlink" href="#ad-hoc-no-special-label" title="Permanent link">&para;</a></h3>
-<p>Pass any ad hoc unit expression to the unit slot.  The constant will produce correct results in
-code, in every situation.  It will even have <em>a</em> label, which will identify it exactly.  The label
-will simply be cumbersome.</p>
-<div class="admonition example">
-<p class="admonition-title">Example: speed of light in an ad hoc manner</p>
-<p>Here&rsquo;s how to create a constant for the speed of light, without giving it a special symbol.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">second</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">());</span>
-</code></pre></div>
-<p>Here&rsquo;s an example use case, in user code:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="mf">0.8</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-</code></pre></div>
-<p>The above prints <code>"0.8 [299792458 m/s]"</code>.  Notice how the unit label, <code>"[299792458 m/s]"</code>, is
-<em>correct</em>, but <em>cumbersome</em>.</p>
-</div>
-<h3 id="full-unit-definition-includes-custom-label">Full unit definition (includes custom label)<a class="headerlink" href="#full-unit-definition-includes-custom-label" title="Permanent link">&para;</a></h3>
-<p>First, follow a stripped down version of the <a href="../new-units/">new unit instructions</a> to define
-a <em>unit</em> for the constant.  The only thing you need to give it is a <em>label</em>; you can omit the
-instructions for quantity makers and so on.</p>
-<p>Next, pass an instance of this custom unit to <code>make_constant</code>.</p>
-<div class="admonition example">
-<p class="admonition-title">Example: speed of light with full unit definition</p>
-<p>Here&rsquo;s how to create a constant for the speed of light using a full custom unit, with label.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">C++14</label><label for="__tabbed_1_2">C++17</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// In `.hh` file, in your project&#39;s namespace:</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">SpeedOfLightUnit</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">Meters</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">Seconds</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">;</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">};</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">make_constant</span><span class="p">(</span><span class="n">SpeedOfLightUnit</span><span class="p">{});</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1">// In `.cc` file, in your project&#39;s namespace:</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">SpeedOfLightUnit</span><span class="o">::</span><span class="n">label</span><span class="p">[];</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// In `.hh` file, in your project&#39;s namespace:</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">SpeedOfLightUnit</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">Meters</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">Seconds</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">299&#39;792&#39;458</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">label</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">;</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">};</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">make_constant</span><span class="p">(</span><span class="n">SpeedOfLightUnit</span><span class="p">{});</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-<p>Here&rsquo;s an example use case, in user code:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="mf">0.8</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-</code></pre></div>
-<p>The above prints <code>"0.8 c"</code>.</p>
-</div>
+<h2 id="basic-upgrade-process">Basic upgrade process<a class="headerlink" href="#basic-upgrade-process" title="Permanent link">&para;</a></h2>
+<p>Suppose you are on version <code>A</code>, and upgrading to version <code>B</code>.  Here are the recommended steps to take:</p>
+<ol>
+<li>
+<p>Using your installation method, switch Au from version <code>A</code> to version <code>B</code>.</p>
+<ul>
+<li>This depends greatly on whatever method of installation you used.  See our <a href="../../install/">installation
+  guide</a> for details.</li>
+</ul>
+</li>
+<li>
+<p>Run all builds and tests for your project, fixing all failures as you go.</p>
+<ul>
+<li>
+<p>Read the release notes for every version <em>after</em> <code>A</code>, up to and including <code>B</code>.  Any potential
+  breaking changes will be listed prominently at the top.  If the change needs special guidance
+  for how to resolve it, we will include it there too.</p>
+</li>
+<li>
+<p>Continue to iterate until your full project builds and all tests pass.</p>
+</li>
+<li>
+<p><em><strong>Optional:</strong> If release <code>A</code> has future proof artifacts, you can use them to make this step more
+  incremental.</em>  (The first release with future proof artifacts is 0.5.0.  Not every subsequent
+  release will necessarily have these.  Check your release notes.)</p>
+<ul>
+<li>
+<p>For every future proof release artifact (<code>A-future-1</code>, <code>A-future-2</code>, etc.), use it instead
+  of release <code>B</code>, and fix the errors you find.  Then switch to the next future proof artifact,
+  and repeat.</p>
+</li>
+<li>
+<p>When your project is simultaneously clean under all future proof artifacts, switch back to
+  release <code>B</code>: you should find far fewer errors, if any at all.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>At the end of this step, your project will build cleanly under release <code>B</code>.  You can certainly
+  land this commit as is, combining the upgrade with syntax updates, but we recommend a cleaner
+  approach: make well scoped syntax update commits, followed by a final simple commit to upgrade
+  the library.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Optional:</strong> Make commits for syntax updates.</p>
+<ul>
+<li>
+<p>A good first step is to temporarily revert to the previous version (&ldquo;version <code>A</code>&rdquo;), but keep
+  all of the fixes.  If the library builds, then you can put all of your syntax updates into
+  commits that land before the upgrade.  However, <em>any breakages will have to be included in the
+  same commit that updates the library</em>.  We strive to avoid ever forcing users to do this, but
+  it may happen.</p>
+</li>
+<li>
+<p>Group the commits logically to keep them single purpose.  In particular:</p>
+<ul>
+<li>
+<p>Assuming they go through code review, the review will be easier if <em>each commit makes only
+  one kind of syntax change</em>.</p>
+</li>
+<li>
+<p>If a syntax change has very many instances, it may even be worth breaking it up into
+  smaller commits, perhaps grouping them by areas of the codebase.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Land the commit that updates the library.</p>
+<ul>
+<li>
+<p>If you followed step 3, this will usually be a very simple commit that just changes the Au
+  artifact you are using.</p>
+</li>
+<li>
+<p>If you opted out of step 3 &mdash; or, if you encountered incompatible changes &mdash; then it will
+  also include syntax updates.</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>At this point, you are on the new version of Au.  Read the rest of the release notes, and find out
+about all the goodies you just unlocked!</p>
+<h3 id="future-proof-releases">Future proof releases<a class="headerlink" href="#future-proof-releases" title="Permanent link">&para;</a></h3>
+<p>The flaw with the above approach is that the breaking change updates happen <em>when the new release is
+already ready</em>, which creates time pressure.  Even if you break up the syntax updates nicely into
+smaller commits, it&rsquo;s still a lot of work all at once.</p>
+<p>Starting with Au 0.5.0, we provide new tools &mdash; <em>future proof release artifacts</em> &mdash; to make that
+upgrade process more incremental, and easier to do at your leisure.  Each future proof artifact is
+a copy of the release, but with <em>one specific future breaking change</em> pulled forward and applied.
+You can use it to find all of the callsites that you&rsquo;ll need to update when that breaking change
+lands to the main branch.  Crucially, <em>those updates are also compatible with the current release</em>,
+so you can make them immediately.</p>
+<p>We also provide an &ldquo;overall&rdquo; future proof release that contains <em>all</em> individual future proof
+changes, combined.</p>
+<p>Here are the detailed steps for how to use all of these.  Assume that you have just finished
+upgrading to version <code>B</code>:</p>
+<ol>
+<li>
+<p>In your local client, replace your version of Au (version <code>B</code>) with the first future proof
+   artifact &mdash; say, <code>B-future-1</code>.</p>
+<ul>
+<li>The number after <code>-future-</code> &mdash; here, <code>1</code> &mdash; indicates which
+  <a href="https://github.com/aurora-opensource/au/issues">issue</a> this artifact is future-proofing for.</li>
+</ul>
+</li>
+<li>
+<p>Run all builds and tests for your project, fixing all failures as you go.</p>
+<ul>
+<li>The release notes will tell you how to resolve the issues for that specific future proof
+  artifact.  They will provide a syntax that is compatible with both the current and the future
+  proof release.</li>
+</ul>
+</li>
+<li>
+<p>Revert your local client back to the &ldquo;current&rdquo; release, <code>B</code>, and land the syntax changes you have
+   made &mdash; whether as one commit, or several.</p>
+</li>
+<li>
+<p>Repeat steps 1-3 for every future proof artifact.</p>
+</li>
+<li>
+<p>Make a &ldquo;long-lived pull request&rdquo; whose <em>only change</em> is to update the Au artifact from version
+   <code>B</code> to <code>B-future</code>: an artifact that contains <em>all</em> future proof changes.</p>
+<ul>
+<li>This is <em>not for landing</em>; it is a tool to keep your project up to date.</li>
+</ul>
+</li>
+<li>
+<p>From time to time, merge the latest version of mainline into this pull request, to catch any new
+   inconsistencies as they pop up.</p>
+<ul>
+<li>This works best if your project automatically builds and runs all tests on pull requests: you
+  can lean on your Continuous Integration (CI) to find the issues.  If not, you&rsquo;ll have to build
+  and test manually.</li>
+</ul>
+</li>
+</ol>
+<p>Note that these steps can take place over as long a time as you like.  In this way, you can prepare
+your project for future releases incrementally, and at your own pace. When the next release comes
+out, upgrading will be as painless as possible: you should only have to deal with whatever breaking
+changes we couldn&rsquo;t anticipate ahead of time.</p>
 
 
 
@@ -2154,7 +2262,7 @@ instructions for quantity makers and so on.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../forward-declarations/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Forward declarations">
+          <a href="../quantity-template-parameters/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Quantity template parameters">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2164,20 +2272,20 @@ instructions for quantity makers and so on.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Forward declarations
+                Quantity template parameters
               </div>
             </div>
           </a>
         
         
           
-          <a href="../new-dimensions/" class="md-footer__link md-footer__link--next" aria-label="Next: Defining new dimensions">
+          <a href="../interop/" class="md-footer__link md-footer__link--next" aria-label="Next: Inter-library Interoperation">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Defining new dimensions
+                Inter-library Interoperation
               </div>
             </div>
             <div class="md-footer__button md-icon">
