@@ -421,7 +421,7 @@ struct NominalTestBodyImpl : LossChecker<RepT, UnitT, DestRepT, DestUnitT, Cat> 
         const bool expect_trunc = will_conversion_truncate<DestRepT>(value, DestUnitT{});
         const bool expect_overflow = will_conversion_overflow<DestRepT>(value, DestUnitT{});
 
-        const auto destination = value.template coerce_as<DestRepT>(DestUnitT{});
+        const auto destination = value.template as<DestRepT>(DestUnitT{}, ignore(ALL_RISKS));
         const auto dest_from_op = Op::apply_to(value.in(UnitT{}));
         if (!std::isnan(dest_from_op) && dest_from_op != destination.in(DestUnitT{})) {
             std::cerr << "Programming error: either `Op` is wrong, or it was applied wrong.\n"
@@ -436,7 +436,7 @@ struct NominalTestBodyImpl : LossChecker<RepT, UnitT, DestRepT, DestUnitT, Cat> 
             std::terminate();
         }
 
-        const auto round_trip = destination.template coerce_as<RepT>(UnitT{});
+        const auto round_trip = destination.template as<RepT>(UnitT{}, ignore(ALL_RISKS));
 
         const auto loss_check = check_for_loss(value, destination, round_trip);
         const auto actual_loss = loss_check.result;
