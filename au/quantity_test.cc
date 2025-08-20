@@ -144,7 +144,9 @@ TEST(Quantity, PolicyConstructorDoesNotCreateAmbiguities) {
     overload_that_takes_a_quantity_or_a_combo({meters(5.0), seconds(10.0)});
 }
 
-TEST(Quantity, CanRequestOutputRepWhenCallingIn) { EXPECT_THAT(feet(3.14).in<int>(feet), Eq(3)); }
+TEST(Quantity, CanRequestOutputRepWhenCallingIn) {
+    EXPECT_THAT(feet(3.14).in<int>(feet, ignore(TRUNCATION_RISK)), Eq(3));
+}
 
 TEST(MakeQuantity, MakesQuantityInGivenUnit) {
     EXPECT_THAT(make_quantity<Feet>(1.234), Eq(feet(1.234)));
@@ -561,7 +563,6 @@ TEST(Quantity, AsCanExplicitlyOptOutOfOverflowRiskCheck) {
 }
 
 TEST(Quantity, AsCanExplicitlyOptOutOfOverflowRiskCheckForExplicitRep) {
-    // In future versions (see #122), this would fail to compile without `ignore(OVERFLOW_RISK)`.
     constexpr auto q = seconds(2u).as<int32_t>(nano(seconds), ignore(OVERFLOW_RISK));
     EXPECT_THAT(q, SameTypeAndValue(nano(seconds)(int32_t{2'000'000'000})));
 }
@@ -573,7 +574,6 @@ TEST(Quantity, AsCanExplicitlyOptOutOfTruncationRiskCheck) {
 }
 
 TEST(Quantity, AsCanExplicitlyOptOutOfTruncationRiskCheckForExplicitRep) {
-    // In future versions (see #122), this would fail to compile without `ignore(TRUNCATION_RISK)`.
     constexpr auto q = inches(36u).as<int>(feet, ignore(TRUNCATION_RISK));
     EXPECT_THAT(q, SameTypeAndValue(feet(int{3})));
 }
@@ -585,7 +585,6 @@ TEST(Quantity, InCanExplicitlyOptOutOfOverflowRiskCheck) {
 }
 
 TEST(Quantity, InCanExplicitlyOptOutOfOverflowRiskCheckForExplicitRep) {
-    // In future versions (see #122), this would fail to compile without `ignore(OVERFLOW_RISK)`.
     constexpr auto q = seconds(2u).in<int32_t>(nano(seconds), ignore(OVERFLOW_RISK));
     EXPECT_THAT(q, SameTypeAndValue(int32_t{2'000'000'000}));
 }
@@ -597,7 +596,6 @@ TEST(Quantity, InCanExplicitlyOptOutOfTruncationRiskCheck) {
 }
 
 TEST(Quantity, InCanExplicitlyOptOutOfTruncationRiskCheckForExplicitRep) {
-    // In future versions (see #122), this would fail to compile without `ignore(TRUNCATION_RISK)`.
     constexpr auto q = inches(36u).in<int>(feet, ignore(TRUNCATION_RISK));
     EXPECT_THAT(q, SameTypeAndValue(3));
 }
@@ -624,7 +622,7 @@ TEST(Quantity, AddingNegativeAndPositiveUnitsGivesPositiveUnit) {
 
 TEST(Quantity, SupportsExplicitRepConversionToComplexRep) {
     constexpr auto a = feet(15'000.0);
-    const auto b = a.as<std::complex<int>>(miles);
+    const auto b = a.as<std::complex<int>>(miles, ignore(TRUNCATION_RISK));
     EXPECT_THAT(b, SameTypeAndValue(miles(std::complex<int>{2, 0})));
 }
 

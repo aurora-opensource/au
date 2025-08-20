@@ -146,7 +146,7 @@ TEST(QuantityPoint, CanGetValueInDifferentUnits) {
 }
 
 TEST(QuantityPoint, IntermediateTypeIsSignedIfExplicitRepIsSigned) {
-    EXPECT_THAT(milli(kelvins_pt)(0u).coerce_as<int>(celsius_pt),
+    EXPECT_THAT(milli(kelvins_pt)(0u).as<int>(celsius_pt, ignore(TRUNCATION_RISK)),
                 SameTypeAndValue(celsius_pt(-273)));
 }
 
@@ -249,18 +249,20 @@ TEST(QuantityPoint, InHandlesIntegerRepInUnitsWithNonzeroOffset) {
 }
 
 TEST(QuantityPoint, CanRequestOutputRepWhenCallingIn) {
-    EXPECT_THAT(celsius_pt(5.2).in<int>(Celsius{}), Eq(5));
+    EXPECT_THAT(celsius_pt(5.2).in<int>(Celsius{}, ignore(TRUNCATION_RISK)), Eq(5));
 }
 
 TEST(QuantityPoint, CanCastToUnitWithDifferentMagnitude) {
-    EXPECT_THAT(centi(meters_pt)(75).coerce_as(meters_pt), SameTypeAndValue(meters_pt(0)));
+    EXPECT_THAT(centi(meters_pt)(75).as(meters_pt, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(meters_pt(0)));
 
     EXPECT_THAT(centi(meters_pt)(75.0).as(meters_pt), SameTypeAndValue(meters_pt(0.75)));
 }
 
 TEST(QuantityPoint, CanCastToUnitWithDifferentOrigin) {
     EXPECT_THAT(celsius_pt(10.).as(kelvins_pt), IsNear(kelvins_pt(283.15), nano(kelvins)(1)));
-    EXPECT_THAT(celsius_pt(10).coerce_as(Kelvins{}), SameTypeAndValue(kelvins_pt(283)));
+    EXPECT_THAT(celsius_pt(10).as(Kelvins{}, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(kelvins_pt(283)));
 }
 
 TEST(QuantityPoint, AsCanProvideConversionPolicy) {
