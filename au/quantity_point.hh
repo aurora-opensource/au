@@ -127,7 +127,9 @@ class QuantityPoint {
     // different decisions about what point is labeled as "0".
     constexpr QuantityPoint(Zero) = delete;
 
-    template <typename NewRep, typename NewUnit, typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
+    template <typename NewRep,
+              typename NewUnit,
+              typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in_impl<NewRep>(u, policy));
     }
@@ -137,7 +139,9 @@ class QuantityPoint {
         return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in_impl<Rep>(u, policy));
     }
 
-    template <typename NewRep, typename NewUnit, typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
+    template <typename NewRep,
+              typename NewUnit,
+              typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr NewRep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<NewRep>(u, policy);
     }
@@ -151,22 +155,22 @@ class QuantityPoint {
     template <typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
         // Usage example: `p.coerce_as(new_units)`.
-        return as<Rep>(NewUnit{});
+        return as(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
         // Usage example: `p.coerce_as<T>(new_units)`.
-        return as<NewRep>(NewUnit{});
+        return as<NewRep>(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {
         // Usage example: `p.coerce_in(new_units)`.
-        return in<Rep>(NewUnit{});
+        return in(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {
         // Usage example: `p.coerce_in<T>(new_units)`.
-        return in<NewRep>(NewUnit{});
+        return in<NewRep>(NewUnit{}, ignore(ALL_RISKS));
     }
 
     // Direct access to the underlying value member, with any Point-equivalent Unit.
@@ -315,7 +319,7 @@ struct AreQuantityPointTypesEquivalent<QuantityPoint<U1, R1>, QuantityPoint<U2, 
 // Cast QuantityPoint to a different underlying type.
 template <typename NewRep, typename Unit, typename Rep>
 constexpr auto rep_cast(QuantityPoint<Unit, Rep> q) {
-    return q.template as<NewRep>(Unit{});
+    return q.template as<NewRep>(Unit{}, ignore(ALL_RISKS));
 }
 
 namespace detail {

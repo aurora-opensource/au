@@ -152,7 +152,9 @@ class Quantity {
               typename OtherRep,
               typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>>
     constexpr Quantity(Quantity<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
-        : Quantity{other.template as<Rep>(UnitT{})} {}
+
+        // `ignore(ALL_RISKS)` because we already determined that this implicit conversion is OK.
+        : value_{other.template in<Rep>(UnitT{}, ignore(ALL_RISKS))} {}
 
     // EXPLICIT constructor for another Quantity of the same Dimension.
     template <typename OtherUnit,
@@ -181,7 +183,7 @@ class Quantity {
     // `q.as<Rep>(new_unit)`, or `q.as<Rep>(new_unit, risk_policy)`
     template <typename NewRep,
               typename NewUnitSlot,
-              typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
+              typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity<AssociatedUnitT<NewUnitSlot>>(in_impl<NewRep>(u, policy));
     }
@@ -195,7 +197,7 @@ class Quantity {
     // `q.in<Rep>(new_unit)`, or `q.in<Rep>(new_unit, risk_policy)`
     template <typename NewRep,
               typename NewUnitSlot,
-              typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
+              typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<NewRep>(u, policy);
     }
@@ -210,22 +212,22 @@ class Quantity {
     template <typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
         // Usage example: `q.coerce_as(new_units)`.
-        return as<Rep>(NewUnit{});
+        return as(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
         // Usage example: `q.coerce_as<T>(new_units)`.
-        return as<NewRep>(NewUnit{});
+        return as<NewRep>(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {
         // Usage example: `q.coerce_in(new_units)`.
-        return in<Rep>(NewUnit{});
+        return in(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {
         // Usage example: `q.coerce_in<T>(new_units)`.
-        return in<NewRep>(NewUnit{});
+        return in<NewRep>(NewUnit{}, ignore(ALL_RISKS));
     }
 
     // Direct access to the underlying value member, with any Quantity-equivalent Unit.
@@ -568,7 +570,7 @@ struct AreQuantityTypesEquivalent<Quantity<U1, R1>, Quantity<U2, R2>>
 // Cast Quantity to a different underlying type.
 template <typename NewRep, typename Unit, typename Rep>
 constexpr auto rep_cast(Quantity<Unit, Rep> q) {
-    return q.template as<NewRep>(Unit{});
+    return q.template as<NewRep>(Unit{}, ignore(ALL_RISKS));
 }
 
 // Help Zero act more faithfully like a Quantity.
