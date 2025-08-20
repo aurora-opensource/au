@@ -70,6 +70,10 @@ The first line should be the tag name.
 
 The second line should be blank.
 
+Crucially, if you have future proof releases, then the notes for every one _must include specific
+migration instructions_: tell users what syntax will be compatible with both the current and future
+releases.
+
 ```
 0.3.1  <--- NOTE: update this!
 

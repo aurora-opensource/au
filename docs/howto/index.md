@@ -3,6 +3,10 @@
 This section provides detailed instructions for various common tasks that come up in the course of
 using the library.  Here's a summary of what you'll find.
 
+- **[Upgrade Au](./upgrade.md).**  Learn how to keep your project up to date with the latest version
+  of Au, including how our "future proof" releases can make those upgrades more incremental and
+  painless.
+
 - **[Quantity template parameters](./quantity-template-parameters.md).**  How to use a `Quantity`
   _value_ as a template parameter, emulating C++20's expanded support for new kinds of "non-type
   template parameters" (NTTPs).
