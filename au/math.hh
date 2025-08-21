@@ -401,26 +401,28 @@ constexpr auto min(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
 
 template <typename U0, typename R0, typename... Us, typename... Rs>
 constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs) {
+    static_assert(sizeof...(qs) > 0, "mean() requires at least two inputs");
     using R = std::common_type_t<R0, Rs...>;
     using Common = Quantity<CommonUnitT<U0, Us...>, R>;
     const auto base = Common{q0};
     Common diffs[] = {(Common{qs} - base)...};
-    Common sum_diffs = ZERO;
-    for (const auto &d : diffs) {
-        sum_diffs += d;
+    Common sum_diffs = diffs[0];
+    for (auto i = 1u; i < sizeof...(qs); ++i) {
+        sum_diffs += diffs[i];
     }
     return base + (sum_diffs / static_cast<R>(1u + sizeof...(qs)));
 }
 
 template <typename U0, typename R0, typename... Us, typename... Rs>
 constexpr auto mean(QuantityPoint<U0, R0> p0, QuantityPoint<Us, Rs>... ps) {
+    static_assert(sizeof...(ps) > 0, "mean() requires at least two inputs");
     using U = CommonPointUnitT<U0, Us...>;
     using R = std::common_type_t<R0, Rs...>;
     const auto base = QuantityPoint<U, R>{p0};
     Quantity<U, R> diffs[] = {(QuantityPoint<U, R>{ps} - base)...};
-    Quantity<U, R> sum_diffs = ZERO;
-    for (const auto &d : diffs) {
-        sum_diffs += d;
+    Quantity<U, R> sum_diffs = diffs[0];
+    for (auto i = 1u; i < sizeof...(ps); ++i) {
+        sum_diffs += diffs[i];
     }
     return base + (sum_diffs / static_cast<R>(1u + sizeof...(ps)));
 }
