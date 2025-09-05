@@ -119,6 +119,18 @@ TEST(QuantityPoint, CanProvidePolicyToConstructor) {
     EXPECT_THAT(temp, SameTypeAndValue(kelvins_pt(293)));
 }
 
+struct Combo {
+    QuantityPointD<Meters> x;
+    QuantityPointD<Centi<Meters>> y;
+};
+
+void overload_that_takes_a_quantity_point_or_a_combo(Combo) {}
+void overload_that_takes_a_quantity_point_or_a_combo(QuantityPointD<Meters>) {}
+
+TEST(QuantityPoint, PolicyConstructorDoesNotCreateAmbiguities) {
+    overload_that_takes_a_quantity_point_or_a_combo({meters_pt(1.0), centi(meters_pt)(1.0)});
+}
+
 TEST(QuantityPoint, CanCreateAndRetrieveValue) {
     constexpr auto p = celsius_pt(3);
     EXPECT_THAT(p.in(Celsius{}), SameTypeAndValue(3));
