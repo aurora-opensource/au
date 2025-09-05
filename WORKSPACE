@@ -97,13 +97,6 @@ gcc_register_toolchain(
 )
 
 http_archive(
-    name = "rules_python",
-    sha256 = "a868059c8c6dd6ad45a205cca04084c652cfe1852e6df2d5aca036f6e5438380",
-    strip_prefix = "rules_python-0.14.0",
-    url = "https://github.com/bazelbuild/rules_python/archive/refs/tags/0.14.0.tar.gz",
-)
-
-http_archive(
     name = "nholthaus_units",
     add_prefix = "nholthaus_units",
     build_file = "@//third_party/nholthaus_units:BUILD.bazel",
@@ -131,26 +124,6 @@ http_archive(
     strip_prefix = "fmt-11.0.2",
     url = "https://github.com/fmtlib/fmt/releases/download/11.0.2/fmt-11.0.2.zip",
 )
-
-load("@rules_python//python:repositories.bzl", "python_register_toolchains")
-
-python_register_toolchains(
-    name = "python3_10",
-    python_version = "3.10",
-)
-
-load("@python3_10//:defs.bzl", "interpreter")
-load("@rules_python//python:pip.bzl", "pip_parse")
-
-pip_parse(
-    name = "au_pip_deps",
-    python_interpreter_target = interpreter,
-    requirements_lock = "@//:requirements_lock.txt",
-)
-
-load("@au_pip_deps//:requirements.bzl", "install_deps")
-
-install_deps()
 
 ################################################################################
 # SECTION: Install buildifier.

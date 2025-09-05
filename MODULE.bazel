@@ -19,3 +19,20 @@ module(
 bazel_dep(name = "googletest", version = "1.12.1")  # NOTE: if updating this version, also update the version numbers in `CMakelists.txt`.
 
 bazel_dep(name = "bazel_skylib", version = "1.8.1", dev_dependency = True)
+bazel_dep(name = "rules_python", version = "1.6.0", dev_dependency = True)
+
+python = use_extension(
+    "@rules_python//python/extensions:python.bzl",
+    "python",
+    dev_dependency = True,
+)
+python.defaults(python_version = "3.10")
+python.toolchain(python_version = "3.10")
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    hub_name = "au_pip_deps",
+    python_version = "3.10",
+    requirements_lock = "//:requirements_lock.txt",
+)
+use_repo(pip, "au_pip_deps")
