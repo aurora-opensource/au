@@ -33,7 +33,7 @@ cc_library(
     deps = [
         "//au",
         "//au:abstract_operations",
-        "@com_google_googletest//:gtest",
+        "@googletest//:gtest",
     ],
 )
 
@@ -46,6 +46,6 @@ cc_test(
         "//au",
         "//au:conversion_strategy",
         "//au:testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )

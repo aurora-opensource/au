@@ -28,7 +28,7 @@ cc_binary(
         ":utils",
         "//au",
         "//au:io",
-        "@com_google_googletest//:gtest",
+        "@googletest//:gtest",
     ],
 )
 
@@ -47,7 +47,7 @@ cc_test(
     deps = [
         ":102_api_types",
         "//au:testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -59,6 +59,6 @@ cc_test(
     deps = [
         "//au",
         "//au:testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
