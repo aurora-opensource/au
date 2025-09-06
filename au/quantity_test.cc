@@ -132,6 +132,18 @@ TEST(Quantity, CanProvidePolicyToConstructor) {
     EXPECT_THAT(length, SameTypeAndValue(feet(3)));
 }
 
+struct Combo {
+    QuantityD<Meters> x;
+    QuantityD<Seconds> t;
+};
+
+void overload_that_takes_a_quantity_or_a_combo(QuantityD<Meters>) {}
+void overload_that_takes_a_quantity_or_a_combo(Combo) {}
+
+TEST(Quantity, PolicyConstructorDoesNotCreateAmbiguities) {
+    overload_that_takes_a_quantity_or_a_combo({meters(5.0), seconds(10.0)});
+}
+
 TEST(Quantity, CanRequestOutputRepWhenCallingIn) { EXPECT_THAT(feet(3.14).in<int>(feet), Eq(3)); }
 
 TEST(MakeQuantity, MakesQuantityInGivenUnit) {

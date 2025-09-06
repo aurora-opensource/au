@@ -78,6 +78,17 @@ constexpr auto OVERFLOW_RISK = detail::OVERFLOW_RISK;
 constexpr auto TRUNCATION_RISK = detail::TRUNCATION_RISK;
 constexpr auto ALL_RISKS = OVERFLOW_RISK | TRUNCATION_RISK;
 
+// `IsConversionRiskPolicy<T>` checks whether `T` is a conversion risk policy type.  For now, this
+// boils down to being a specialization of `CheckTheseRisks` on some `RiskSet`.
+//
+// Although we have no such plans at present, it's conceivable that we could create more general
+// conversion risk policy types later.  If we do, this trait will still be authoritatively correct.
+template <typename T>
+struct IsConversionRiskPolicy : std::false_type {};
+template <uint8_t RiskFlags>
+struct IsConversionRiskPolicy<detail::CheckTheseRisks<detail::RiskSet<RiskFlags>>>
+    : std::true_type {};
+
 //
 // "Main" conversion policy section.
 //
