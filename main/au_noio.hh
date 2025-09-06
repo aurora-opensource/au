@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-1-gcb0e839
+// Version identifier: 0.5.0-base-2-gead8764
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -6208,6 +6208,17 @@ constexpr auto OVERFLOW_RISK = detail::OVERFLOW_RISK;
 constexpr auto TRUNCATION_RISK = detail::TRUNCATION_RISK;
 constexpr auto ALL_RISKS = OVERFLOW_RISK | TRUNCATION_RISK;
 
+// `IsConversionRiskPolicy<T>` checks whether `T` is a conversion risk policy type.  For now, this
+// boils down to being a specialization of `CheckTheseRisks` on some `RiskSet`.
+//
+// Although we have no such plans at present, it's conceivable that we could create more general
+// conversion risk policy types later.  If we do, this trait will still be authoritatively correct.
+template <typename T>
+struct IsConversionRiskPolicy : std::false_type {};
+template <uint8_t RiskFlags>
+struct IsConversionRiskPolicy<detail::CheckTheseRisks<detail::RiskSet<RiskFlags>>>
+    : std::true_type {};
+
 //
 // "Main" conversion policy section.
 //
@@ -6464,7 +6475,10 @@ class Quantity {
     explicit constexpr Quantity(Quantity<OtherUnit, OtherRep> other) = delete;
 
     // Constructor for another Quantity with an explicit conversion risk policy.
-    template <typename OtherUnit, typename OtherRep, typename RiskPolicyT>
+    template <typename OtherUnit,
+              typename OtherRep,
+              typename RiskPolicyT,
+              std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
     constexpr Quantity(Quantity<OtherUnit, OtherRep> other, RiskPolicyT policy)
         : value_{other.template in<Rep>(UnitT{}, policy)} {}
 
@@ -7869,7 +7883,10 @@ class QuantityPoint {
     constexpr explicit QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other) = delete;
 
     // Construct from another QuantityPoint with an explicit conversion risk policy.
-    template <typename OtherUnit, typename OtherRep, typename RiskPolicyT>
+    template <typename OtherUnit,
+              typename OtherRep,
+              typename RiskPolicyT,
+              std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
     constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other, RiskPolicyT policy)
         : QuantityPoint{other.template as<Rep>(Unit{}, policy)} {}
 
