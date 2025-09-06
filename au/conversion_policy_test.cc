@@ -39,6 +39,30 @@ struct Degrees : UnitImpl<Angle> {};
 struct EquivalentToDegrees : Degrees {};
 struct NegativeDegrees : decltype(Degrees{} * (-mag<1>())) {};
 
+template <typename T>
+constexpr bool is_conversion_risk_policy(T) {
+    return IsConversionRiskPolicy<T>::value;
+}
+
+TEST(IsConversionRiskPolicy, TrueForConversionPolicy) {
+    EXPECT_THAT(is_conversion_risk_policy(ignore(ALL_RISKS)), IsTrue());
+    EXPECT_THAT(is_conversion_risk_policy(check_for(ALL_RISKS)), IsTrue());
+
+    EXPECT_THAT(is_conversion_risk_policy(ignore(OVERFLOW_RISK)), IsTrue());
+    EXPECT_THAT(is_conversion_risk_policy(check_for(OVERFLOW_RISK)), IsTrue());
+
+    EXPECT_THAT(is_conversion_risk_policy(ignore(TRUNCATION_RISK)), IsTrue());
+    EXPECT_THAT(is_conversion_risk_policy(check_for(TRUNCATION_RISK)), IsTrue());
+}
+
+TEST(IsConversionRiskPolicy, FalseForNonConversionPolicy) {
+    EXPECT_THAT(is_conversion_risk_policy(5), IsFalse());
+    EXPECT_THAT(is_conversion_risk_policy("hello"), IsFalse());
+    EXPECT_THAT(is_conversion_risk_policy(nullptr), IsFalse());
+    EXPECT_THAT(is_conversion_risk_policy(Degrees{}), IsFalse());
+    EXPECT_THAT(is_conversion_risk_policy(Grams{}), IsFalse());
+}
+
 TEST(ConversionRisk, IgnoreOverflowRiskChecksTruncationRiskButNotOverflowRisk) {
     constexpr auto policy = ignore(OVERFLOW_RISK);
     EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsFalse());
