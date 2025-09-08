@@ -17,6 +17,7 @@
       ".clang-format",
       ".envrc",
       ".github/**/*.yml",
+      "MODULE.bazel",
       "requirements.in",
       "cmake/*.cmake",
       "cmake/*.cmake.in",
@@ -56,6 +57,7 @@
   {
     "include": [
       "**/*.md",
+      "**/*.lock",
       "**/*.txt",
       "**/*.png",
       "**/*.ico",
