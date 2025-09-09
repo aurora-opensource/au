@@ -17,3 +17,4 @@ module(
 )
 
 bazel_dep(name = "bazel_skylib", version = "1.8.1", dev_dependency = True)
+bazel_dep(name = "googletest", version = "1.12.1", dev_dependency = True)  # NOTE: if updating this version, also update the version numbers in `CMakelists.txt`.

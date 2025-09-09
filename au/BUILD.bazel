@@ -37,7 +37,7 @@ cc_test(
     deps = [
         ":au",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -59,7 +59,7 @@ cc_test(
         ":constants",
         ":testing",
         ":units",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -76,7 +76,7 @@ cc_test(
         ":quantity_point",
         ":testing",
         ":units",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -88,7 +88,7 @@ cc_test(
         ":quantity",
         ":testing",
         ":units",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
         "@fmt",
     ],
 )
@@ -112,7 +112,7 @@ cc_test(
         ":io",
         ":quantity",
         ":units",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -138,7 +138,7 @@ cc_test(
         ":constants",
         ":io",
         ":prefix",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -160,7 +160,7 @@ cc_library(
         ":io",
         ":stdx",
         ":unit_of_measure",
-        "@com_google_googletest//:gtest",
+        "@googletest//:gtest",
     ],
 )
 
@@ -170,7 +170,7 @@ cc_test(
     srcs = ["testing_test.cc"],
     deps = [
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -194,7 +194,7 @@ cc_test(
     deps = [
         ":testing",
         ":units",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -216,7 +216,7 @@ cc_test(
         ":abstract_operations",
         ":magnitude",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -228,7 +228,7 @@ cc_test(
         ":conversion_strategy",
         ":magnitude",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -239,7 +239,7 @@ cc_test(
     deps = [
         ":conversion_strategy",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -261,7 +261,7 @@ cc_test(
         ":chrono_interop",
         ":prefix",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -274,7 +274,7 @@ cc_library(
         ":quantity",
         ":stdx",
         ":unit_of_measure",
-        "@com_google_googletest//:gtest",
+        "@googletest//:gtest",
     ],
 )
 
@@ -286,7 +286,7 @@ cc_test(
         ":chrono_policy_validation",
         ":prefix",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -310,7 +310,7 @@ cc_test(
         ":constant",
         ":testing",
         ":units",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -336,7 +336,7 @@ cc_test(
         ":conversion_policy",
         ":unit_of_measure",
         ":utility",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -358,7 +358,7 @@ cc_test(
     deps = [
         ":conversion_strategy",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -380,7 +380,7 @@ cc_test(
         ":dimension",
         ":testing",
         ":units",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -404,7 +404,7 @@ cc_test(
     deps = [
         ":magnitude",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -426,7 +426,7 @@ cc_test(
     deps = [
         ":math",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -439,7 +439,7 @@ cc_test(
         ":quantity",
         ":testing",
         ":units",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -456,7 +456,7 @@ cc_test(
     deps = [
         ":operators",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -478,7 +478,7 @@ cc_test(
     deps = [
         ":overflow_boundary",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -498,7 +498,7 @@ cc_test(
     srcs = ["packs_test.cc"],
     deps = [
         ":packs",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -514,7 +514,7 @@ cc_test(
     deps = [
         ":packs",
         ":power_aliases",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -537,7 +537,7 @@ cc_test(
     deps = [
         ":prefix",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -570,7 +570,7 @@ cc_test(
         ":prefix",
         ":quantity",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -594,7 +594,7 @@ cc_test(
         ":prefix",
         ":quantity_point",
         ":testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -621,7 +621,7 @@ cc_test(
         ":rep",
         ":unit_symbol",
         ":units",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -632,7 +632,7 @@ cc_test(
     deps = [
         ":overflow_boundary",
         ":truncation_risk",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -650,7 +650,7 @@ cc_test(
     srcs = glob(["stdx/test/*.cc"]),
     deps = [
         ":stdx",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -671,7 +671,7 @@ cc_test(
         ":magnitude",
         ":testing",
         ":truncation_risk",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -698,7 +698,7 @@ cc_test(
         ":testing",
         ":unit_of_measure",
         ":units",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -719,7 +719,7 @@ cc_test(
         ":testing",
         ":unit_symbol",
         ":units",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -736,7 +736,7 @@ cc_test(
     deps = [
         ":testing",
         ":utility",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -757,7 +757,7 @@ cc_test(
         ":testing",
         ":units",
         ":wrapper_operations",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -774,7 +774,7 @@ cc_test(
     deps = [
         ":testing",
         ":zero",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 

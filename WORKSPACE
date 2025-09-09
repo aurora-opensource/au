@@ -97,14 +97,6 @@ gcc_register_toolchain(
 )
 
 http_archive(
-    name = "com_google_googletest",
-    sha256 = "24564e3b712d3eb30ac9a85d92f7d720f60cc0173730ac166f27dda7fed76cb2",
-    # NOTE: if updating this version, also update the version numbers in `CMakelists.txt`.
-    strip_prefix = "googletest-release-1.12.1",
-    urls = ["https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip"],
-)
-
-http_archive(
     name = "rules_python",
     sha256 = "a868059c8c6dd6ad45a205cca04084c652cfe1852e6df2d5aca036f6e5438380",
     strip_prefix = "rules_python-0.14.0",

@@ -26,7 +26,7 @@ cc_test(
     deps = [
         ":common_test_cases",
         "//:au_all_units_hh_lib",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -37,7 +37,7 @@ cc_test(
     deps = [
         ":common_test_cases",
         "//:au_all_units_noio_hh_lib",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -48,7 +48,7 @@ cc_test(
     deps = [
         ":common_test_cases",
         "//:au_hh_lib",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -59,6 +59,6 @@ cc_test(
     deps = [
         ":common_test_cases",
         "//:au_noio_hh_lib",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )

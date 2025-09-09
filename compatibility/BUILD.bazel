@@ -31,7 +31,7 @@ cc_test(
         ":nholthaus_units",
         "//au",
         "//au:testing",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
         "@nholthaus_units",
     ],
 )
