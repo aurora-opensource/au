@@ -36,6 +36,8 @@
     "https://bcr.bazel.build/modules/bazel_skylib/1.8.1/source.json": "7ebaefba0b03efe59cac88ed5bbc67bcf59a3eff33af937345ede2a38b2d368a",
     "https://bcr.bazel.build/modules/buildozer/7.1.2/MODULE.bazel": "2e8dd40ede9c454042645fd8d8d0cd1527966aa5c919de86661e62953cd73d84",
     "https://bcr.bazel.build/modules/buildozer/7.1.2/source.json": "c9028a501d2db85793a6996205c8de120944f50a0d570438fcae0457a5f9d1f8",
+    "https://bcr.bazel.build/modules/fmt/11.0.2/MODULE.bazel": "d9e0ea6f68a762a84055172ce8f55cc01da950c94b5e27f66c1acc14e6fc59ce",
+    "https://bcr.bazel.build/modules/fmt/11.0.2/source.json": "36cde5a3cbbee5eefc1e7f8a5a66d8ac9f352f7742bdd0c9b2d869601169c881",
     "https://bcr.bazel.build/modules/google_benchmark/1.8.2/MODULE.bazel": "a70cf1bba851000ba93b58ae2f6d76490a9feb74192e57ab8e8ff13c34ec50cb",
     "https://bcr.bazel.build/modules/googletest/1.11.0/MODULE.bazel": "3a83f095183f66345ca86aa13c58b59f9f94a2f81999c093d4eeaa2d262d12f4",
     "https://bcr.bazel.build/modules/googletest/1.12.1/MODULE.bazel": "abc33f70934a2688139c34dbee705e541a9acd8bd404d09b77dbd869e9b911e1",
