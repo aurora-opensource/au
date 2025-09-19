@@ -35,7 +35,7 @@ td.best, td.best * {
     color: white;
 }
 
-td.na {
+td.na, td.invalid {
     background-color: #d9d9d9;
 }
 
