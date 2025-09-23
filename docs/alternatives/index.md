@@ -320,7 +320,7 @@ incremental as possible.
                 <li class="check">
                     <a
                     href="https://github.com/aurora-opensource/au/issues?q=is%3Aissue%20state%3Aopen%20-author%3Achiphogg%20-author%3Ahoffbrinkle%20-author%3Ageoffviola%20-author%3Atobin">External
-                    issues</a> always promptly responded, usually closed
+                    issues</a> always promptly responded to, usually closed
                 </li>
             </ul>
         </td>
