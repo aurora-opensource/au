@@ -165,7 +165,7 @@ experience.
 
 2. You will get **more compiler errors** that developers will need to understand and fix.
 
-These costs can bring significant benefits, but we still want them to be as small as possible.
+These costs purchase significant benefits, but we still want them to be as small as possible.
 
 <table>
     <tr>
@@ -244,13 +244,148 @@ These costs can bring significant benefits, but we still want them to be as smal
     </tr>
 </table>
 
+### Ongoing maintenance
+
+The last thing to consider before diving into features is how the library will evolve over time.
+There are two extremes that a production-worthy library must avoid:
+
+- _Changing too much_, especially when a new version forces a monolithic, codebase-wide change.
+- _Changing too little_, especially when the library becomes unmaintained or abandoned.
+
+These opposite extremes have the same effect: they lock you into an old and ever-aging version of
+the code, depriving you of bugfixes and improvements.  The ideal library would be one that is
+actively maintained, but that respects its production users and makes upgrades as smooth and
+incremental as possible.
+
+<table>
+    <tr>
+        <th></th>
+        <th>Boost</th>
+        <th>nholthaus</th>
+        <th>bernedom/SI</th>
+        <th>mp-units</th>
+        <th class="highlight">Au</th>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Actively Maintained</summary>
+                <p>
+                    Does the library respond to issues?  Is it continuing to receive regular
+                    commits?  Does it put out new releases, ideally at least once per year?
+                </p>
+            </details>
+        </td>
+        <td class="poor">
+            <p>Long unmaintained.</p>
+            <ul>
+                <li class="x">
+                    No <a
+                    href="https://www.boost.org/doc/libs/latest/doc/html/boost_units/ReleaseNotes.html">releases</a>
+                    since 2010; no <i>significant</i> releases since March 2007
+                </li>
+                <li class="x">
+                    Most <a href="https://github.com/boostorg/units/issues">issues</a> are open and
+                    unanswered
+                </li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Still putting out feature releases on 3.x branch as of 2025</li>
+                <li class="x">Many open issues; some unresponded for years</li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li>Still receiving commits, but no release since 2022</li>
+                <li>
+                    Most issues closed/addressed, but some issues have gone multiple years with no
+                    response
+                </li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Regular commits and releases</li>
+                <li class="check">
+                    <a href="https://github.com/mpusz/mp-units/issues">Issues</a> responded to and
+                    closed over time
+                </li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Regular commits and releases</li>
+                <li class="check">
+                    <a
+                    href="https://github.com/aurora-opensource/au/issues?q=is%3Aissue%20state%3Aopen%20-author%3Achiphogg%20-author%3Ahoffbrinkle%20-author%3Ageoffviola%20-author%3Atobin">External
+                    issues</a> always promptly responded to, usually closed
+                </li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Smooth Upgrades</summary>
+                <p>
+                    The ideal library...
+                    <ul>
+                        <li>enables incremental upgrades (no "megadiff" required)</li>
+                        <li>clearly calls out each breaking change, and explains how to adapt</li>
+                    </ul>
+                </p>
+            </details>
+        </td>
+        <td class="invalid"><p><b>Not Applicable:</b><br>No new releases to judge</p></td>
+        <td class="good">
+            <ul>
+                <li class="check">Updates within 2.x family usually smooth</li>
+                <li class="x">2.x to 3.x <a
+                    href="https://github.com/nholthaus/units/issues/313">expected</a> to require
+                    monolithic change, but 2.x still receives backports
+                </li>
+            </ul>
+        </td>
+        <td class="good">
+            No evidence of user-reported issues with upgrades
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">
+                    Good quality release notes, with breaking changes clearly called out
+                </li>
+                <li class="x">
+                    Upgrade from 0.8 to 2.0 badly broke many users who were treating it as
+                    production software
+                </li>
+            </ul>
+        </td>
+        <td class="best">
+            <p>As incremental as possible:</p>
+            <ul>
+                <li class="check">
+                    Every breaking change provides a syntax that works in both old and new versions
+                </li>
+                <li class="check">
+                    Starting from 0.5.0, <a
+                    href="https://aurora-opensource.github.io/au/main/howto/upgrade/#future-proof-releases">future-proof
+                    releases</a> let you tackle breaking changes one at a time
+                </li>
+            </ul>
+        </td>
+    </tr>
+</table>
+
 ### Library features
 
 At this point, you've assessed:
 
 - whether you can use each library at all;
 - how hard it will be to add to your project;
-- and, what costs you'll pay in developer experience if you do.
+- what costs you'll pay in developer experience if you do;
+- and, how you can expect it to evolve over time.
 
 Now we're ready to compare the libraries "as units libraries" --- that is, in terms of their core
 features.
