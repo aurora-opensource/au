@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <limits>
 #include <utility>
 
@@ -315,7 +316,7 @@ struct PrimeFactorization {
 
 }  // namespace detail
 
-template <std::size_t N>
+template <std::uintmax_t N>
 constexpr auto mag() {
     return detail::PrimeFactorizationT<N>{};
 }
