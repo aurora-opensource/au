@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-11-g4d3f37c
+// Version identifier: 0.5.0-base-12-g1bbd713
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -3145,7 +3145,7 @@ template <typename MagT>
 constexpr const auto &mag_label(MagT = MagT{});
 
 // A helper function to create a Magnitude from an integer constant.
-template <std::size_t N>
+template <std::uintmax_t N>
 constexpr auto mag();
 
 // A base type for prime numbers.
@@ -3358,7 +3358,7 @@ struct PrimeFactorization {
 
 }  // namespace detail
 
-template <std::size_t N>
+template <std::uintmax_t N>
 constexpr auto mag() {
     return detail::PrimeFactorizationT<N>{};
 }
