@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <limits>
 #include <utility>
 
@@ -102,7 +103,7 @@ template <typename MagT>
 constexpr const auto &mag_label(MagT = MagT{});
 
 // A helper function to create a Magnitude from an integer constant.
-template <std::size_t N>
+template <std::uintmax_t N>
 constexpr auto mag();
 
 // A base type for prime numbers.
@@ -315,7 +316,7 @@ struct PrimeFactorization {
 
 }  // namespace detail
 
-template <std::size_t N>
+template <std::uintmax_t N>
 constexpr auto mag() {
     return detail::PrimeFactorizationT<N>{};
 }
