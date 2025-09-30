@@ -96,26 +96,6 @@ gcc_register_toolchain(
     target_settings = ["@//build:gcc10_requested"],
 )
 
-http_archive(
-    name = "fmt",
-    patch_cmds = [
-        "mv support/bazel/.bazelversion .bazelversion",
-        "mv support/bazel/BUILD.bazel BUILD.bazel",
-        "mv support/bazel/MODULE.bazel MODULE.bazel",
-        "mv support/bazel/WORKSPACE.bazel WORKSPACE.bazel",
-    ],
-    # Windows related patch commands are only needed in the case MSYS2 is not installed
-    patch_cmds_win = [
-        "Move-Item -Path support/bazel/.bazelversion -Destination .bazelversion",
-        "Move-Item -Path support/bazel/BUILD.bazel -Destination BUILD.bazel",
-        "Move-Item -Path support/bazel/MODULE.bazel -Destination MODULE.bazel",
-        "Move-Item -Path support/bazel/WORKSPACE.bazel -Destination WORKSPACE.bazel",
-    ],
-    sha256 = "40fc58bebcf38c759e11a7bd8fdc163507d2423ef5058bba7f26280c5b9c5465",
-    strip_prefix = "fmt-11.0.2",
-    url = "https://github.com/fmtlib/fmt/releases/download/11.0.2/fmt-11.0.2.zip",
-)
-
 ################################################################################
 # SECTION: Install buildifier.
 #

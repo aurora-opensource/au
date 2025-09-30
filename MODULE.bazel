@@ -19,6 +19,7 @@ module(
 bazel_dep(name = "googletest", version = "1.12.1")  # NOTE: if updating this version, also update the version numbers in `CMakelists.txt`.
 
 bazel_dep(name = "bazel_skylib", version = "1.8.1", dev_dependency = True)
+bazel_dep(name = "fmt", version = "11.0.2", dev_dependency = True)
 bazel_dep(name = "rules_python", version = "1.6.0", dev_dependency = True)
 
 python = use_extension(
