@@ -541,8 +541,11 @@ class AlwaysDivisibleQuantity {
         return make_quantity<UnitInverseT<U>>(x / q.q_.in(U{}));
     }
 
-    friend constexpr AlwaysDivisibleQuantity<U, R> unblock_int_div<U, R>(Quantity<U, R> q);
-    friend constexpr AlwaysDivisibleQuantity<UnitProductT<>, R> unblock_int_div<R>(R x);
+    template <typename UU, typename RR>
+    friend constexpr AlwaysDivisibleQuantity<UU, RR> unblock_int_div(Quantity<UU, RR> q);
+
+    template <typename RR>
+    friend constexpr AlwaysDivisibleQuantity<UnitProductT<>, RR> unblock_int_div(RR x);
 
  private:
     constexpr AlwaysDivisibleQuantity(Quantity<U, R> q) : q_{q} {}
