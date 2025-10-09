@@ -141,7 +141,8 @@ constexpr int jacobi_symbol_positive_numerator(uint64_t a, uint64_t n, int start
 
     while (a != 0u) {
         // Handle even numbers in the "numerator".
-        const int sign_for_even = bool_sign(n % 8u == 1u || n % 8u == 7u);
+        const uint64_t rem_8 = n % 8u;
+        const int sign_for_even = bool_sign(rem_8 == 1u || rem_8 == 7u);
         while (a % 2u == 0u) {
             a /= 2u;
             result *= sign_for_even;

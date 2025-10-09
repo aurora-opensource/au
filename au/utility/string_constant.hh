@@ -255,11 +255,11 @@ constexpr StringConstant<UIToA<N>::length> UIToA<N>::value;
 
 template <bool IsPositive>
 struct SignIfPositiveIs {
-    static constexpr StringConstant<0> value() { return ""; }
+    static constexpr StringConstant<0> value() { return StringConstant<0>{""}; }
 };
 template <>
 struct SignIfPositiveIs<false> {
-    static constexpr StringConstant<1> value() { return "-"; }
+    static constexpr StringConstant<1> value() { return StringConstant<1>{"-"}; }
 };
 
 template <int64_t N>
