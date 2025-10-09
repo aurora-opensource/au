@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-14-gc1e7b5b
+// Version identifier: 0.5.0-base-15-gb5026ff
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -516,11 +516,11 @@ constexpr StringConstant<UIToA<N>::length> UIToA<N>::value;
 
 template <bool IsPositive>
 struct SignIfPositiveIs {
-    static constexpr StringConstant<0> value() { return ""; }
+    static constexpr StringConstant<0> value() { return StringConstant<0>{""}; }
 };
 template <>
 struct SignIfPositiveIs<false> {
-    static constexpr StringConstant<1> value() { return "-"; }
+    static constexpr StringConstant<1> value() { return StringConstant<1>{"-"}; }
 };
 
 template <int64_t N>
@@ -1627,7 +1627,8 @@ constexpr int jacobi_symbol_positive_numerator(uint64_t a, uint64_t n, int start
 
     while (a != 0u) {
         // Handle even numbers in the "numerator".
-        const int sign_for_even = bool_sign(n % 8u == 1u || n % 8u == 7u);
+        const uint64_t rem_8 = n % 8u;
+        const int sign_for_even = bool_sign(rem_8 == 1u || rem_8 == 7u);
         while (a % 2u == 0u) {
             a /= 2u;
             result *= sign_for_even;
@@ -6853,8 +6854,11 @@ class AlwaysDivisibleQuantity {
         return make_quantity<UnitInverseT<U>>(x / q.q_.in(U{}));
     }
 
-    friend constexpr AlwaysDivisibleQuantity<U, R> unblock_int_div<U, R>(Quantity<U, R> q);
-    friend constexpr AlwaysDivisibleQuantity<UnitProductT<>, R> unblock_int_div<R>(R x);
+    template <typename UU, typename RR>
+    friend constexpr AlwaysDivisibleQuantity<UU, RR> unblock_int_div(Quantity<UU, RR> q);
+
+    template <typename RR>
+    friend constexpr AlwaysDivisibleQuantity<UnitProductT<>, RR> unblock_int_div(RR x);
 
  private:
     constexpr AlwaysDivisibleQuantity(Quantity<U, R> q) : q_{q} {}
