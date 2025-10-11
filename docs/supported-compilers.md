@@ -14,6 +14,9 @@ Formally, we have three tiers of support.
 1. **Full Support.**  These configurations must be kept passing on every commit.
 2. **Best Effort Support.**  We measure _whether_ these configurations are passing on every commit,
    and strive to _keep_ them passing.  However, if we cannot do so, we may let them break.
+      - _**Note:** To be crystal clear, we have never yet let any such compiler "break", and we
+        expect that we never will.  For all intents and purposes, end users will experience these as
+        equivalent to "full support"._
 3. **Assumed Support.**  These include all other C++14-compatible configurations which we do not
    measure explicitly.
 
@@ -69,3 +72,21 @@ Here are the configurations that have Best Effort Support status.
 | Platform | Compiler | Status |
 |----------|----------|--------|
 | Windows Server 2022 | MSVC 2022 x64 | [![MSVC 2022 x64]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml) |
+
+### Assumed support
+
+This section only discusses compilers that we can't run in CI.  This means we have no way to keep
+them working on every commit.  However, some users may bring issues with specific compiler versions
+to our attention.  If it's feasible for us to fix them, we will.
+
+This section will discuss our experience with a few specific compiler versions.
+
+| Platform | Compiler | Status |
+|----------|----------|--------|
+| Ubuntu   | gcc 5.3  | Works on [0.3.5].  Broken on [0.4.0], [0.4.1], and [0.5.0], but expected to be fixed on [0.6.0]. |
+
+[0.3.5]: https://github.com/aurora-opensource/au/releases/tag/0.3.5
+[0.4.0]: https://github.com/aurora-opensource/au/releases/tag/0.4.0
+[0.4.1]: https://github.com/aurora-opensource/au/releases/tag/0.4.1
+[0.5.0]: https://github.com/aurora-opensource/au/releases/tag/0.5.0
+[0.6.0]: https://github.com/aurora-opensource/au/milestone/9
