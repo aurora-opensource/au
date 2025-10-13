@@ -10,6 +10,24 @@ These are test cases that we can't test automatically, usually because the inten
 a compiler error.  Grep the codebase for `uncomment`, and test every such case individually to make
 sure they still display the desired behavior.
 
+### Check known "problem" compilers
+
+Some compilers in our "Assumed Support" tier (see [supported compilers]) are known to be prone to
+problems or errors.  We can't keep these passing on every _commit_, but if we check in on them at
+_release_ time, we can keep builds passing for more users.  To be added to this list, a compiler
+must (a) be requested by an actual user, and (b) fail in a way that we can't capture on our CI.
+
+For each link below, make sure the build completes successfully.  If it doesn't, fix the build if
+possible.
+
+- [gcc 5.3](https://godbolt.org/z/EoEaK3aWs)
+    - Issues seen:
+        - functions giving different results in `constexpr` vs. runtime
+        - incorrectly restricting `friend` template declarations
+        - incorrectly failing to apply an implicit constructor
+
+[supported compilers]: https://aurora-opensource.github.io/au/main/supported-compilers/
+
 ### Check Aurora's code
 
 Create a draft PR which updates Aurora's internal code to the candidate release.  Make sure all of
