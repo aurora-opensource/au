@@ -382,6 +382,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#assumed-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Assumed support
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2078,7 +2087,12 @@ this doc.</p>
 <ol>
 <li><strong>Full Support.</strong>  These configurations must be kept passing on every commit.</li>
 <li><strong>Best Effort Support.</strong>  We measure <em>whether</em> these configurations are passing on every commit,
-   and strive to <em>keep</em> them passing.  However, if we cannot do so, we may let them break.</li>
+   and strive to <em>keep</em> them passing.  However, if we cannot do so, we may let them break.<ul>
+<li><em><strong>Note:</strong> To be crystal clear, we have never yet let any such compiler &ldquo;break&rdquo;, and we
+    expect that we never will.  For all intents and purposes, end users will experience these as
+    equivalent to &ldquo;full support&rdquo;.</em></li>
+</ul>
+</li>
 <li><strong>Assumed Support.</strong>  These include all other C++14-compatible configurations which we do not
    measure explicitly.</li>
 </ol>
@@ -2151,6 +2165,27 @@ measurement badges, so that potential users with these configurations are forewa
 <td>Windows Server 2022</td>
 <td>MSVC 2022 x64</td>
 <td><a href="https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml"><img alt="MSVC 2022 x64" src="https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml/badge.svg?branch=main&amp;event=push" /></a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="assumed-support">Assumed support<a class="headerlink" href="#assumed-support" title="Permanent link">&para;</a></h3>
+<p>This section only discusses compilers that we can&rsquo;t run in CI.  This means we have no way to keep
+them working on every commit.  However, some users may bring issues with specific compiler versions
+to our attention.  If it&rsquo;s feasible for us to fix them, we will.</p>
+<p>This section will discuss our experience with a few specific compiler versions.</p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Compiler</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ubuntu</td>
+<td>gcc 5.3</td>
+<td>Works on <a href="https://github.com/aurora-opensource/au/releases/tag/0.3.5">0.3.5</a>.  Broken on <a href="https://github.com/aurora-opensource/au/releases/tag/0.4.0">0.4.0</a>, <a href="https://github.com/aurora-opensource/au/releases/tag/0.4.1">0.4.1</a>, and <a href="https://github.com/aurora-opensource/au/releases/tag/0.5.0">0.5.0</a>, but expected to be fixed on <a href="https://github.com/aurora-opensource/au/milestone/9">0.6.0</a>.</td>
 </tr>
 </tbody>
 </table>
