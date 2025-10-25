@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-16-gad769f0
+// Version identifier: 0.5.0-base-17-ge8afcc9
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -8591,6 +8591,7 @@ using std::copysign;
 using std::cos;
 using std::fmod;
 using std::hypot;
+using std::isinf;
 using std::isnan;
 using std::max;
 using std::min;
@@ -8852,6 +8853,20 @@ constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
 template <typename TargetRep, typename TargetUnits, typename U, typename R>
 constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
     return make_quantity<AssociatedUnitT<TargetUnits>>(inverse_in<TargetRep>(target_units, q));
+}
+
+//
+// Check whether the value stored is (positive or negative) infinity.
+//
+template <typename U, typename R>
+constexpr bool isinf(Quantity<U, R> q) {
+    return std::isinf(q.in(U{}));
+}
+
+// Overload of `isinf` for `QuantityPoint`.
+template <typename U, typename R>
+constexpr bool isinf(QuantityPoint<U, R> p) {
+    return std::isinf(p.in(U{}));
 }
 
 //
