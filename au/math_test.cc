@@ -716,6 +716,28 @@ TEST(arctan2, SupportsUnitsTypes) {
     EXPECT_THAT(angle, IsNear(degrees(45), pico(degrees)(1)));
 }
 
+TEST(isinf, TransparentlyActsOnSameAsValue) {
+    const std::vector<double> values{{
+        0.,
+        1.23,
+        -4.5e6,
+        std::numeric_limits<double>::infinity(),
+        -std::numeric_limits<double>::infinity(),
+    }};
+
+    for (const double x : values) {
+        EXPECT_THAT(isinf(meters(x)), Eq(std::isinf(x)));
+        EXPECT_THAT(isinf(meters_pt(x)), Eq(std::isinf(x)));
+        EXPECT_THAT(isinf((radians / second)(x)), Eq(std::isinf(x)));
+    }
+}
+
+TEST(isinf, UnqualifiedCallsGiveStdVersions) {
+    // This test exists to make sure we don't break code with unqualified isinf calls.
+    const bool b = isinf(5.5);
+    EXPECT_THAT(b, IsFalse());
+}
+
 TEST(isnan, TransparentlyActsOnSameAsValue) {
     const std::vector<double> values{{
         0.,

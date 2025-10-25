@@ -761,6 +761,24 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q);
 
 ### Special values and language features
 
+#### `isinf`
+
+Indicates whether the underlying value of a `Quantity` is an infinity value (positive or negative).
+
+**Signature:**
+
+```cpp
+// 1. `Quantity` inputs
+template <typename U, typename R>
+constexpr bool isinf(Quantity<U, R> q);
+
+// 2. `QuantityPoint` inputs
+template <typename U, typename R>
+constexpr bool isinf(QuantityPoint<U, R> q);
+```
+
+**Returns:** `true` if `q` is infinite; `false` otherwise.
+
 #### `isnan`
 
 Indicates whether the underlying value of a `Quantity` is a NaN ("not-a-number") value.
