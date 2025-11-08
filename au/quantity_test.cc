@@ -212,6 +212,19 @@ TEST(Quantity, SupportsDirectConstAccessWithSameUnit) {
     EXPECT_THAT(static_cast<const void *>(&x.data_in(Meters{})), Eq(static_cast<const void *>(&x)));
 }
 
+TEST(Quantity, DataInSupportsConstexprAccess) {
+    constexpr auto x = kilo(feet)(3).data_in(kilo(feet));
+    static_assert(x == 3, "Expected constexpr access to work");
+    EXPECT_THAT(x, SameTypeAndValue(3));
+}
+
+TEST(Quantity, DataInSupportsConstexprAccessOnConstObject) {
+    constexpr auto q = meters(5.5);
+    constexpr auto q_m = q.data_in(meters);
+    static_assert(q_m == 5.5, "Expected constexpr access to work");
+    EXPECT_THAT(q_m, SameTypeAndValue(5.5));
+}
+
 TEST(Quantity, SupportsDirectAccessWithEquivalentUnit) {
     auto x = (kilo(feet) / hour)(3);
     ++(x.data_in(Feet{} / Milli<Hours>{}));
