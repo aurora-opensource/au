@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-17-ge8afcc9
+// Version identifier: 0.5.0-base-18-ge17cd92
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -6882,14 +6882,14 @@ class Quantity {
     //
     // Mutable access:
     template <typename UnitSlot>
-    Rep &data_in(UnitSlot) {
+    constexpr Rep &data_in(UnitSlot) {
         static_assert(AreUnitsQuantityEquivalent<AssociatedUnitT<UnitSlot>, Unit>::value,
                       "Can only access value via Quantity-equivalent unit");
         return value_;
     }
     // Const access:
     template <typename UnitSlot>
-    const Rep &data_in(UnitSlot) const {
+    constexpr const Rep &data_in(UnitSlot) const {
         static_assert(AreUnitsQuantityEquivalent<AssociatedUnitT<UnitSlot>, Unit>::value,
                       "Can only access value via Quantity-equivalent unit");
         return value_;
@@ -8186,29 +8186,19 @@ class QuantityPoint {
 
     // Direct access to the underlying value member, with any Point-equivalent Unit.
     //
-    // Mutable access, QuantityPointMaker input.
-    template <typename U>
-    Rep &data_in(const QuantityPointMaker<U> &) {
-        static_assert(AreUnitsPointEquivalent<U, Unit>::value,
+    // Mutable access:
+    template <typename UnitSlot>
+    constexpr Rep &data_in(UnitSlot) {
+        static_assert(AreUnitsPointEquivalent<AssociatedUnitForPointsT<UnitSlot>, Unit>::value,
                       "Can only access value via Point-equivalent unit");
-        return x_.data_in(QuantityMaker<U>{});
+        return x_.data_in(AssociatedUnitForPointsT<UnitSlot>{});
     }
-    // Mutable access, Unit input.
-    template <typename U>
-    Rep &data_in(const U &) {
-        return data_in(QuantityPointMaker<U>{});
-    }
-    // Const access, QuantityPointMaker input.
-    template <typename U>
-    const Rep &data_in(const QuantityPointMaker<U> &) const {
-        static_assert(AreUnitsPointEquivalent<U, Unit>::value,
+    // Const access:
+    template <typename UnitSlot>
+    constexpr const Rep &data_in(UnitSlot) const {
+        static_assert(AreUnitsPointEquivalent<AssociatedUnitForPointsT<UnitSlot>, Unit>::value,
                       "Can only access value via Point-equivalent unit");
-        return x_.data_in(QuantityMaker<U>{});
-    }
-    // Const access, Unit input.
-    template <typename U>
-    const Rep &data_in(const U &) const {
-        return data_in(QuantityPointMaker<U>{});
+        return x_.data_in(AssociatedUnitForPointsT<UnitSlot>{});
     }
 
     // Comparison operators.
