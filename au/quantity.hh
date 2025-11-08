@@ -235,14 +235,14 @@ class Quantity {
     //
     // Mutable access:
     template <typename UnitSlot>
-    Rep &data_in(UnitSlot) {
+    constexpr Rep &data_in(UnitSlot) {
         static_assert(AreUnitsQuantityEquivalent<AssociatedUnitT<UnitSlot>, Unit>::value,
                       "Can only access value via Quantity-equivalent unit");
         return value_;
     }
     // Const access:
     template <typename UnitSlot>
-    const Rep &data_in(UnitSlot) const {
+    constexpr const Rep &data_in(UnitSlot) const {
         static_assert(AreUnitsQuantityEquivalent<AssociatedUnitT<UnitSlot>, Unit>::value,
                       "Can only access value via Quantity-equivalent unit");
         return value_;

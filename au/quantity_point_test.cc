@@ -167,6 +167,19 @@ TEST(QuantityPoint, SupportsDirectConstAccessWithSameUnit) {
     EXPECT_THAT(static_cast<const void *>(&p.data_in(Meters{})), Eq(static_cast<const void *>(&p)));
 }
 
+TEST(QuantityPoint, DataInSupportsConstexprAccess) {
+    constexpr auto p = kelvins_pt(3).data_in(kelvins_pt);
+    static_assert(p == 3, "QuantityPoint::data_in should support constexpr access");
+    EXPECT_THAT(p, SameTypeAndValue(3));
+}
+
+TEST(QuantityPoint, DataInSupportsConstexprAccessOnConstObject) {
+    constexpr auto p = milli(meters_pt)(3.5);
+    constexpr auto v = p.data_in(Micro<Kilo<Meters>>{});
+    static_assert(v == 3.5, "data_in should support constexpr access on const objects");
+    EXPECT_THAT(v, SameTypeAndValue(3.5));
+}
+
 TEST(QuantityPoint, SupportsDirectAccessWithEquivalentUnit) {
     auto p = kelvins_pt(3);
     ++(p.data_in(Micro<Mega<Kelvins>>{}));
