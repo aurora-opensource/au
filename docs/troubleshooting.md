@@ -733,7 +733,12 @@ first glance _even to most experts_, but the risk for truncating (_even down to 
 higher than usual.
 
 **Solution:**  Floating point types do not have this problem, so you can change either of the
-variables to floating point.  If you cannot use floating point, then wrapping the denominator in
+variables to floating point.
+
+Alternatively, if the dimensions are the same, you may want to perform the division in their common
+unit, using the `divide_in_common_units()` utility.
+
+If you cannot use floating point, and the dimensions are different, then wrapping the denominator in
 `unblock_int_div()` will overrule the compiler error.  However, please be very careful about this
 approach: read the warning below first.
 
@@ -776,22 +781,47 @@ approach: read the warning below first.
 
     How long does it take to travel 60 m at a speed of 65 MPH?
 
+    And how many 40-minute periods are in 8 hours?
+
     === "Broken"
         ```cpp
         // (BROKEN): gives (60 / 65) == 0 before conversion!
         QuantityD<Seconds> t = meters(60) / (miles / hour)(65);
+
+        // (BROKEN): gives (8 / 40) == 0 before conversion!
+        const auto n = hours(8) / minutes(40);
         ```
 
     === "Fixed (1. Floating point)"
         ```cpp
         // (FIXED): 1. Using floating point, we get ~= seconds(2.06486)
         QuantityD<Seconds> t = meters(60.0) / (miles / hour)(65.0);
+
+        // (FIXED): 1. Using floating point, we get ~= (hours / minute)(0.2)
+        //
+        // Despite the unfamiliar units, this is the same as (60 * 0.2) == 12.
+        const auto n = hours(8.0) / minutes(40.0);
         ```
 
-    === "\"Fixed\" (2. `unblock_int_div()`)"
+    === "Fixed (2. Divide in common units)"
         ```cpp
-        // ("FIXED"): 2. Integer result == `(meter * hours / mile)(0)`:
+        // (FIX NOT APPLICABLE): 2. Divide-in-common-units needs same-dimension inputs
+        // QuantityD<Seconds> t = divide_in_common_units(meters(60), (miles / hour)(65));
+        // (Will produce a compiler error.)
+
+        // (FIXED): 2. Divide-in-common-units produces 480 min / 40 min == 12
+        const auto n = divide_in_common_units(hours(8), minutes(40));
+        ```
+
+
+
+    === "\"Fixed\" (3. `unblock_int_div()`)"
+        ```cpp
+        // ("FIXED"): 3. Integer result == `(meter * hours / mile)(0)`:
         auto               t = meters(60) / unblock_int_div((miles / hour)(65));
+
+        // ("FIXED"): 3. Integer result == `(hours / minute)(0)`:
+        const auto         n = hours(8) / unblock_int_div(minutes(40));
 
         // Now it compiles, but note that the answer is very inaccurate: it has truncated to 0!
         ```
