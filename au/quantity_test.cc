@@ -1189,7 +1189,7 @@ TEST(UnblockIntDiv, IsNoOpForDivisionThatWouldBeAllowedAnyway) {
 
 TEST(DivideInCommonUnits, ConvertsInputsToSameUnit) {
     EXPECT_THAT(divide_in_common_units(inches(80), feet(2)), SameTypeAndValue(3));
-    EXPECT_THAT(divide_in_common_units(hours(8), minutes(60), SameTypeAndValue(8));
+    EXPECT_THAT(divide_in_common_units(hours(8), minutes(60)), SameTypeAndValue(8));
 }
 
 TEST(Quantity, CanIntegerDivideQuantitiesOfQuantityEquivalentUnits) {
