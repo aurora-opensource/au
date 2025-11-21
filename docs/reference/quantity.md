@@ -762,7 +762,7 @@ number](../discussion/concepts/dimensionless.md#exact-cancellation).
     dangerous division; see [`unblock_int_div`](#unblock-int-div) below.)
 
     The _common-unit_ form of division, obtained via the
-    [`divide_in_common_units()`](#divide-in-common-units) function, will convert both inputs to
+    [`divide_using_common_unit()`](#divide-using-common-unit) function, will convert both inputs to
     their common unit before dividing.  In this case, it will convert `hours(8)` to `minutes(480)`,
     and the division will produce the dimensionless result of `8`. This form of division also pairs
     properly with the `%` operator; see [`mod`](#mod) below for more details.
@@ -809,11 +809,11 @@ the denominator.
     If your inputs have the _same dimension_, you most likely want to convert them to the same unit
     --- their _common unit_ --- before dividing.  This removes the need for `unblock_int_div` in the
     most common cases, and is generally much safer.  See
-    [`divide_in_common_units()`](#divide-in-common-units) below for more details.
+    [`divide_using_common_unit()`](#divide-using-common-unit) below for more details.
 
-#### `divide_in_common_units()` {#divide-in-common-units}
+#### `divide_using_common_unit()` {#divide-using-common-unit}
 
-The `divide_in_common_units()` utility takes two `Quantity` inputs, `a`, and `b`, whose dimension is
+The `divide_using_common_unit()` utility takes two `Quantity` inputs, `a`, and `b`, whose dimension is
 the same.  It first converts each input to their [common
 unit](../discussion/concepts/common_unit.md), and then performs regular division.  The result
 will be a dimensionless and unitless number (or, after [#185], a `Quantity`).

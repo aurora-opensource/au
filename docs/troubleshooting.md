@@ -736,7 +736,7 @@ higher than usual.
 variables to floating point.
 
 Alternatively, if the dimensions are the same, you may want to perform the division in their common
-unit, using the `divide_in_common_units()` utility.
+unit, using the `divide_using_common_unit()` utility.
 
 If you cannot use floating point, and the dimensions are different, then wrapping the denominator in
 `unblock_int_div()` will overrule the compiler error.  However, please be very careful about this
@@ -807,11 +807,11 @@ approach: read the warning below first.
     === "Fixed (2. Divide in common units)"
         ```cpp
         // (FIX NOT APPLICABLE): 2. Divide-in-common-units needs same-dimension inputs
-        // QuantityD<Seconds> t = divide_in_common_units(meters(60), (miles / hour)(65));
+        // QuantityD<Seconds> t = divide_using_common_unit(meters(60), (miles / hour)(65));
         // (Will produce a compiler error.)
 
         // (FIXED): 2. Divide-in-common-units produces 480 min / 40 min == 12
-        const auto n = divide_in_common_units(hours(8), minutes(40));
+        const auto n = divide_using_common_unit(hours(8), minutes(40));
         ```
 
 

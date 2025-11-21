@@ -559,7 +559,7 @@ class AlwaysDivisibleQuantity {
 // dividing them.  When they have different dimension, the operation is undefined, and we'll get a
 // compiler error.
 template <typename U1, typename R1, typename U2, typename R2>
-constexpr auto divide_in_common_units(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+constexpr auto divide_using_common_unit(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     using U = CommonUnitT<U1, U2>;
     return q1.as(U{}) / q2.as(U{});
 }
