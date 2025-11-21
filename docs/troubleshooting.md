@@ -799,7 +799,8 @@ approach: read the warning below first.
 
         // (FIXED): 1. Using floating point, we get ~= (hours / minute)(0.2)
         //
-        // Despite the unfamiliar units, this is the same as (60 * 0.2) == 12.
+        // To get more familiar units, we can call `.as(unos)`, obtaining `unos(12)`.
+        // This corresponds to the expected result of 12.
         const auto n = hours(8.0) / minutes(40.0);
         ```
 
