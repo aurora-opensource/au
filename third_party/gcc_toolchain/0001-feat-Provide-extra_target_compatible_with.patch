@@ -1,0 +1,76 @@
+From b04e37084ee174f34178231b2fcc51310ad746a8 Mon Sep 17 00:00:00 2001
+From: Michael Hordijk <hordijk@aurora.tech>
+Date: Tue, 25 Nov 2025 06:40:20 -0700
+Subject: [PATCH] feat: Provide extra_target_compatible_with
+
+This allows configuration of additional target constraints to be
+considered in toolchain resolution.
+---
+ toolchain/defs.bzl              | 17 ++++++++++++++++-
+ toolchain/module_extensions.bzl |  1 +
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/toolchain/defs.bzl b/toolchain/defs.bzl
+index 0e55fd7..52d662f 100644
+--- a/toolchain/defs.bzl
++++ b/toolchain/defs.bzl
+@@ -115,6 +115,7 @@ def _gcc_toolchain_impl(rctx):
+         v.format(target_arch = target_arch)
+         for v in rctx.attr.target_compatible_with
+     ]
++    target_compatible_with.extend([str(c) for c in rctx.attr.extra_target_compatible_with])
+ 
+     target_settings = [
+         v.format(target_arch = target_arch)
+@@ -358,6 +359,10 @@ _FEATURE_ATTRS = {
+         doc = "contraint_values passed to target_compatible_with of the toolchain. {target_arch} is rendered to the target_arch attribute value.",
+         mandatory = False,
+     ),
++    "extra_target_compatible_with": attr.label_list(
++        doc = "additional contraint_values passed to target_compatible_with of the toolchain.",
++        mandatory = False,
++    ),
+     "target_settings": attr.string_list(
+         default = [],
+         doc = "config_settings passed to target_compatible_with of the toolchain. {target_arch} is rendered to the target_arch attribute value.",
+@@ -381,7 +386,16 @@ gcc_toolchain = repository_rule(
+ 
+ ATTRS_SHARED_WITH_MODULE_EXTENSION = {
+     attr_name: _FEATURE_ATTRS[attr_name]
+-    for attr_name in ["gcc_version", "gcc_versions", "extra_cflags", "extra_cxxflags", "extra_ldflags", "extra_fflags", "extra_asmflags"]
++    for attr_name in [
++        "gcc_version",
++        "gcc_versions",
++        "extra_cflags",
++        "extra_cxxflags",
++        "extra_ldflags",
++        "extra_fflags",
++        "extra_asmflags",
++        "extra_target_compatible_with",
++    ]
+ }
+ 
+ def _render_tool_paths(rctx, path_prefix, binary_prefix):
+@@ -496,6 +510,7 @@ def gcc_declare_toolchain(
+         extra_fflags = kwargs.pop("extra_fflags", []),
+         extra_ldflags = kwargs.pop("extra_ldflags", []),
+         extra_asmflags = kwargs.pop("extra_asmflags", []),
++        extra_target_compatible_with = kwargs.pop("extra_target_compatible_with", []),
+         includes = kwargs.pop("includes", []),
+         fincludes = kwargs.pop("fincludes", []),
+         target_arch = target_arch,
+diff --git a/toolchain/module_extensions.bzl b/toolchain/module_extensions.bzl
+index 1eb37ab..a4fa666 100644
+--- a/toolchain/module_extensions.bzl
++++ b/toolchain/module_extensions.bzl
+@@ -19,6 +19,7 @@ def _gcc_register_toolchain_module_extension(mctx):
+                 extra_cxxflags = declare.extra_cxxflags,
+                 extra_ldflags = declare.extra_ldflags,
+                 extra_fflags = declare.extra_fflags,
++                extra_target_compatible_with = declare.extra_target_compatible_with,
+             )
+ 
+     # Since we know that for each gcc toolchain repository we'll generate the same files, we mark the rule as reproducible.
+-- 
+2.51.0
+
