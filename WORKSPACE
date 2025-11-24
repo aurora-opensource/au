@@ -13,61 +13,7 @@
 # limitations under the License.
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-load("//build:copts.bzl", "BASE_CLANG_COPTS", "EXTRA_COPTS")
-
-BAZEL_TOOLCHAIN_RELEASE = "v1.2.0"
-
-BAZEL_TOOLCHAIN_SHA = "e3fb6dc6b77eaf167cb2b0c410df95d09127cbe20547e5a329c771808a816ab4"
-
-http_archive(
-    name = "toolchains_llvm",
-    canonical_id = BAZEL_TOOLCHAIN_RELEASE,
-    sha256 = BAZEL_TOOLCHAIN_SHA,
-    strip_prefix = "toolchains_llvm-{ref}".format(ref = BAZEL_TOOLCHAIN_RELEASE),
-    url = "https://github.com/bazel-contrib/toolchains_llvm/releases/download/{ref}/toolchains_llvm-{ref}.tar.gz".format(ref = BAZEL_TOOLCHAIN_RELEASE),
-)
-
-load("@toolchains_llvm//toolchain:deps.bzl", "bazel_toolchain_dependencies")
-
-bazel_toolchain_dependencies()
-
-load("@toolchains_llvm//toolchain:rules.bzl", "llvm_toolchain")
-
-llvm_toolchain(
-    name = "llvm_11_toolchain",
-    compile_flags = {
-        "": BASE_CLANG_COPTS + EXTRA_COPTS,
-    },
-    cxx_standard = {
-        "": "c++14",
-    },
-    extra_target_compatible_with = {
-        "": ["@//build/compiler:clang_11"],
-    },
-    llvm_version = "11.1.0",
-)
-
-load("@llvm_11_toolchain//:toolchains.bzl", llvm_11_register_toolchains = "llvm_register_toolchains")
-
-llvm_11_register_toolchains()
-
-llvm_toolchain(
-    name = "llvm_14_toolchain",
-    compile_flags = {
-        "": BASE_CLANG_COPTS + EXTRA_COPTS,
-    },
-    cxx_standard = {
-        "": "c++14",
-    },
-    extra_target_compatible_with = {
-        "": ["@//build/compiler:clang_14"],
-    },
-    llvm_version = "14.0.0",
-)
-
-load("@llvm_14_toolchain//:toolchains.bzl", llvm_14_register_toolchains = "llvm_register_toolchains")
-
-llvm_14_register_toolchains()
+load("//build:copts.bzl", "EXTRA_COPTS")
 
 http_archive(
     name = "aspect_gcc_toolchain",

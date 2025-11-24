@@ -33,8 +33,77 @@ bazel_dep(
 bazel_dep(name = "bazel_skylib", version = "1.8.1", dev_dependency = True)
 bazel_dep(name = "fmt", version = "11.0.2", dev_dependency = True)
 bazel_dep(name = "rules_python", version = "1.6.0", dev_dependency = True)
+bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
 
 # Configuration of above deps.
+
+# Configure and register the LLVM toolchain.
+
+# Since the clang toolchain we're using doesn't let us extract the default flags, we have to
+# manually specify the default flags here. These are copied from:
+# https://github.com/bazel-contrib/toolchains_llvm/blob/069ee4e20ec605a6c76c1798658e17175b2eb35e/toolchain/cc_toolchain_config.bzl#L118
+BASE_CLANG_COPTS = [
+    # Security
+    "-U_FORTIFY_SOURCE",  # https://github.com/google/sanitizers/issues/247
+    "-fstack-protector",
+    "-fno-omit-frame-pointer",
+    # Diagnostics
+    "-fcolor-diagnostics",
+    "-Wall",
+    "-Wshadow",
+    "-Wthread-safety",
+    "-Wself-assign",
+]
+
+# Extra flags we want to pass to the compilers.
+EXTRA_COPTS = [
+    "-Wextra",
+    "-pedantic",
+]
+
+llvm_11 = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm", dev_dependency = True)
+llvm_11.toolchain(
+    name = "llvm_11",
+    compile_flags = {
+        "": BASE_CLANG_COPTS + EXTRA_COPTS,
+    },
+    cxx_standard = {
+        "": "c++14",
+    },
+    llvm_version = "11.1.0",
+)
+llvm_11.extra_target_compatible_with(
+    name = "llvm_11",
+    constraints = ["@//build/compiler:clang_11"],
+)
+use_repo(llvm_11, "llvm_11")
+
+register_toolchains(
+    "@llvm_11//:all",
+    dev_dependency = True,
+)
+
+llvm_14 = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm", dev_dependency = True)
+llvm_14.toolchain(
+    name = "llvm_14",
+    compile_flags = {
+        "": BASE_CLANG_COPTS + EXTRA_COPTS,
+    },
+    cxx_standard = {
+        "": "c++14",
+    },
+    llvm_version = "14.0.0",
+)
+llvm_14.extra_target_compatible_with(
+    name = "llvm_14",
+    constraints = ["@//build/compiler:clang_14"],
+)
+use_repo(llvm_14, "llvm_14")
+
+register_toolchains(
+    "@llvm_14//:all",
+    dev_dependency = True,
+)
 
 # Python configuration and pips
 
