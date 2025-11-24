@@ -15,23 +15,23 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("//build:copts.bzl", "BASE_CLANG_COPTS", "EXTRA_COPTS")
 
-BAZEL_TOOLCHAIN_RELEASE = "0.10.3"
+BAZEL_TOOLCHAIN_RELEASE = "v1.2.0"
 
-BAZEL_TOOLCHAIN_SHA = "b7cd301ef7b0ece28d20d3e778697a5e3b81828393150bed04838c0c52963a01"
+BAZEL_TOOLCHAIN_SHA = "e3fb6dc6b77eaf167cb2b0c410df95d09127cbe20547e5a329c771808a816ab4"
 
 http_archive(
-    name = "com_grail_bazel_toolchain",
+    name = "toolchains_llvm",
     canonical_id = BAZEL_TOOLCHAIN_RELEASE,
     sha256 = BAZEL_TOOLCHAIN_SHA,
     strip_prefix = "toolchains_llvm-{ref}".format(ref = BAZEL_TOOLCHAIN_RELEASE),
     url = "https://github.com/bazel-contrib/toolchains_llvm/releases/download/{ref}/toolchains_llvm-{ref}.tar.gz".format(ref = BAZEL_TOOLCHAIN_RELEASE),
 )
 
-load("@com_grail_bazel_toolchain//toolchain:deps.bzl", "bazel_toolchain_dependencies")
+load("@toolchains_llvm//toolchain:deps.bzl", "bazel_toolchain_dependencies")
 
 bazel_toolchain_dependencies()
 
-load("@com_grail_bazel_toolchain//toolchain:rules.bzl", "llvm_toolchain")
+load("@toolchains_llvm//toolchain:rules.bzl", "llvm_toolchain")
 
 llvm_toolchain(
     name = "llvm_11_toolchain",
