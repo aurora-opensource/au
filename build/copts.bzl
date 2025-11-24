@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # Extra flags we want to pass to the compilers.
-# -Wall is already set by aspect_gcc_toolchain.
+# -Wall is already set by gcc_toolchain.
 EXTRA_COPTS = [
     "-Wextra",
     "-pedantic",

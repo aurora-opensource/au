@@ -23,6 +23,7 @@ build:clang11 --platforms=@//build/platform:clang_11
 build:clang14 --platforms=@//build/platform:clang_14
 build:gcc10 --platforms=@//build/platform:gcc_10
 build:gcc10 --features=static_libstdcxx
+build:gcc10 --copt=-std=c++14
 
 # Add a generic alias if the user doesn't care about the exact version.
 build:clang --config=clang14

@@ -28,10 +28,10 @@ jobs:
     steps:
       - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b #v4.1.5
       - name: Build and test (${{ inputs.config }})
-        run: bazel test --copt=-Werror --config=${{ inputs.config }} //...:all
+        run: bazel test --config=${{ inputs.config }} --copt=-Werror //...:all
       - name: Build and test with -Wconversion (${{ inputs.config }})
-        run: bazel test --copt=-Werror --copt=-Wconversion --config=${{ inputs.config }} --test_tag_filters=-no_wconversion --build_tag_filters=-no_wconversion //au/...:all
+        run: bazel test --config=${{ inputs.config }} --copt=-Werror --copt=-Wconversion --test_tag_filters=-no_wconversion --build_tag_filters=-no_wconversion //au/...:all
       - name: Build and test in C++20 mode (${{ inputs.config }})
-        run: bazel test --copt=-Werror --copt=-std=c++20 --config=${{ inputs.config }} //...:all //au:cpp20_test
+        run: bazel test --config=${{ inputs.config }} --copt=-Werror --copt=-std=c++20 //...:all //au:cpp20_test
       - name: Build and test with -Wsign-conversion
-        run: bazel build --copt=-Werror --copt=-Wsign-conversion --test_tag_filters=-no_wsign_conversion --build_tag_filters=-no_wsign_conversion --config=${{ inputs.config }} //au/...:all //release/...:all
+        run: bazel build --config=${{ inputs.config }} --copt=-Werror --copt=-Wsign-conversion --test_tag_filters=-no_wsign_conversion --build_tag_filters=-no_wsign_conversion //au/...:all //release/...:all
