@@ -18,10 +18,11 @@
       ".envrc",
       ".github/**/*.yml",
       "MODULE.bazel",
+      "REPO.bazel",
       "requirements.in",
+      "cmake/WORKSPACE",
       "cmake/*.cmake",
-      "cmake/*.cmake.in",
-      "**/WORKSPACE"
+      "cmake/*.cmake.in"
     ],
     "exclude": [
       "third_party/**/*"
