@@ -1187,6 +1187,11 @@ TEST(UnblockIntDiv, IsNoOpForDivisionThatWouldBeAllowedAnyway) {
     expect_unblock_int_div_is_no_op(1.23, minutes(4.56));
 }
 
+TEST(DivideInCommonUnits, ConvertsInputsToSameUnit) {
+    EXPECT_THAT(divide_using_common_unit(inches(80), feet(2)), SameTypeAndValue(3));
+    EXPECT_THAT(divide_using_common_unit(hours(8), minutes(60)), SameTypeAndValue(8));
+}
+
 TEST(Quantity, CanIntegerDivideQuantitiesOfQuantityEquivalentUnits) {
     constexpr auto ratio = meters(60) / meters(25);
     EXPECT_THAT(ratio, Eq(2));

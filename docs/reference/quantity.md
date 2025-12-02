@@ -751,6 +751,22 @@ The output is always a `Quantity` with this unit and rep, _unless_ the units **c
 out (returning [a unitless unit](./unit.md#unitless-unit)).  If they do, then [we return a raw
 number](../discussion/concepts/dimensionless.md#exact-cancellation).
 
+!!! warning
+    If your two quantities have the same dimension, you may prefer the _common-unit_ form of
+    division, rather than the _arbitrary-unit_ form that `/` provides.
+
+    As a motivating example, note that `hours(8) / minutes(60)` is `(hours / minute)(0)` --- that
+    is, the stored value is _zero_ when expressed in the dimensionless unit `hours / minute`
+    (because we are using an integral rep, which truncates). This is the correct result for these
+    input units, but is unlikely to be what the user wants.  (Happily, Au protects against this
+    dangerous division; see [`unblock_int_div`](#unblock-int-div) below.)
+
+    The _common-unit_ form of division, obtained via the
+    [`divide_using_common_unit()`](#divide-using-common-unit) function, will convert both inputs to
+    their common unit before dividing.  In this case, it will convert `hours(8)` to `minutes(480)`,
+    and the division will produce the dimensionless result of `8`. This form of division also pairs
+    properly with the `%` operator; see [`mod`](#mod) below for more details.
+
 If either _input_ is a raw number, then it only affects the value, not the unit.  It's equivalent to
 a `Quantity` whose unit is [a unitless unit](./unit.md#unitless-unit).
 
@@ -788,6 +804,22 @@ the denominator.
     Before using `unblock_int_div`, please carefully read the [integer division section] of the
     troubleshooting guide to understand the risks.  If you end up using it anyway, consider adding
     a brief comment to explain why it's OK in your use case.
+
+!!! tip
+    If your inputs have the _same dimension_, you most likely want to convert them to the same unit
+    --- their _common unit_ --- before dividing.  This removes the need for `unblock_int_div` in the
+    most common cases, and is generally much safer.  See
+    [`divide_using_common_unit()`](#divide-using-common-unit) below for more details.
+
+#### `divide_using_common_unit()` {#divide-using-common-unit}
+
+The `divide_using_common_unit()` utility takes two `Quantity` inputs, `a`, and `b`, whose dimension is
+the same.  It first converts each input to their [common
+unit](../discussion/concepts/common_unit.md), and then performs regular division.  The result
+will be a dimensionless and unitless number (or, after [#185], a `Quantity`).
+
+There is no need to wrap the denominator in a call to `unblock_int_div`, because same-unit division
+is always allowed by Au.
 
 ### Unary `+` and `-`
 
