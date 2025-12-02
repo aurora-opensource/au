@@ -804,13 +804,13 @@ approach: read the warning below first.
         const auto n = hours(8.0) / minutes(40.0);
         ```
 
-    === "Fixed (2. Divide in common units)"
+    === "Fixed (2. Divide using common units)"
         ```cpp
-        // (FIX NOT APPLICABLE): 2. Divide-in-common-units needs same-dimension inputs
+        // (FIX NOT APPLICABLE): 2. Divide-using-common-units needs same-dimension inputs
         // QuantityD<Seconds> t = divide_using_common_unit(meters(60), (miles / hour)(65));
         // (Will produce a compiler error.)
 
-        // (FIXED): 2. Divide-in-common-units produces 480 min / 40 min == 12
+        // (FIXED): 2. Divide-using-common-units produces 480 min / 40 min == 12
         const auto n = divide_using_common_unit(hours(8), minutes(40));
         ```
 
