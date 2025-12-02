@@ -1832,6 +1832,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#divide-using-common-unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      divide_using_common_unit()
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3168,6 +3177,21 @@ This means you can reason independently about the units and the values.</p>
 <p>The output is always a <code>Quantity</code> with this unit and rep, <em>unless</em> the units <strong>completely</strong> cancel
 out (returning <a href="../unit/#unitless-unit">a unitless unit</a>).  If they do, then <a href="../../discussion/concepts/dimensionless/#exact-cancellation">we return a raw
 number</a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If your two quantities have the same dimension, you may prefer the <em>common-unit</em> form of
+division, rather than the <em>arbitrary-unit</em> form that <code>/</code> provides.</p>
+<p>As a motivating example, note that <code>hours(8) / minutes(60)</code> is <code>(hours / minute)(0)</code> &mdash; that
+is, the stored value is <em>zero</em> when expressed in the dimensionless unit <code>hours / minute</code>
+(because we are using an integral rep, which truncates). This is the correct result for these
+input units, but is unlikely to be what the user wants.  (Happily, Au protects against this
+dangerous division; see <a href="#unblock-int-div"><code>unblock_int_div</code></a> below.)</p>
+<p>The <em>common-unit</em> form of division, obtained via the
+<a href="#divide-using-common-unit"><code>divide_using_common_unit()</code></a> function, will convert both inputs to
+their common unit before dividing.  In this case, it will convert <code>hours(8)</code> to <code>minutes(480)</code>,
+and the division will produce the dimensionless result of <code>8</code>. This form of division also pairs
+properly with the <code>%</code> operator; see <a href="#mod"><code>mod</code></a> below for more details.</p>
+</div>
 <p>If either <em>input</em> is a raw number, then it only affects the value, not the unit.  It&rsquo;s equivalent to
 a <code>Quantity</code> whose unit is <a href="../unit/#unitless-unit">a unitless unit</a>.</p>
 <h4 id="unblock-int-div"><code>unblock_int_div()</code><a class="headerlink" href="#unblock-int-div" title="Permanent link">&para;</a></h4>
@@ -3196,6 +3220,20 @@ from the numerator&rsquo;s units.</p>
 troubleshooting guide to understand the risks.  If you end up using it anyway, consider adding
 a brief comment to explain why it&rsquo;s OK in your use case.</p>
 </div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If your inputs have the <em>same dimension</em>, you most likely want to convert them to the same unit
+&mdash; their <em>common unit</em> &mdash; before dividing.  This removes the need for <code>unblock_int_div</code> in the
+most common cases, and is generally much safer.  See
+<a href="#divide-using-common-unit"><code>divide_using_common_unit()</code></a> below for more details.</p>
+</div>
+<h4 id="divide-using-common-unit"><code>divide_using_common_unit()</code><a class="headerlink" href="#divide-using-common-unit" title="Permanent link">&para;</a></h4>
+<p>The <code>divide_using_common_unit()</code> utility takes two <code>Quantity</code> inputs, <code>a</code>, and <code>b</code>, whose dimension is
+the same.  It first converts each input to their <a href="../../discussion/concepts/common_unit/">common
+unit</a>, and then performs regular division.  The result
+will be a dimensionless and unitless number (or, after <a href="https://github.com/aurora-opensource/au/issues/185">#185</a>, a <code>Quantity</code>).</p>
+<p>There is no need to wrap the denominator in a call to <code>unblock_int_div</code>, because same-unit division
+is always allowed by Au.</p>
 <h3 id="unary-and-">Unary <code>+</code> and <code>-</code><a class="headerlink" href="#unary-and-" title="Permanent link">&para;</a></h3>
 <p>For a <code>Quantity</code> instance <code>q</code>, you can apply a &ldquo;unary plus&rdquo; (<code>+q</code>) or &ldquo;unary minus&rdquo; (<code>-q</code>).  These
 produce a <code>Quantity</code> of the same type, with the unary plus or minus operator applied to the
