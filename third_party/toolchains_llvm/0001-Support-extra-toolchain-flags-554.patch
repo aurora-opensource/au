@@ -1,0 +1,218 @@
+From 1d0c58ff030fe232a8c6bb75dc8fb8fb4f2ddb00 Mon Sep 17 00:00:00 2001
+From: zifeitong <zifeitong@gmail.com>
+Date: Tue, 30 Sep 2025 09:44:12 -0700
+Subject: [PATCH] Support extra toolchain flags (#554)
+
+If you just want to add a single flag (that is per platform) and leave
+the rest of the default
+flags, you have to copy out all the existing flags and add it to what
+you have. Instead support just adding an extra flag that is appended to
+the default flags.
+
+This is a resubmit of #452 by @rockwotj with minor fixes in
+documentation.
+
+---------
+
+Co-authored-by: Tyler Rockwood <rockwood@redpanda.com>
+---
+ toolchain/cc_toolchain_config.bzl | 23 ++++++++
+ toolchain/internal/configure.bzl  | 33 ++++++++++++
+ toolchain/internal/repo.bzl       | 89 +++++++++++++++++++++++++++++++
+ 3 files changed, 145 insertions(+)
+
+diff --git a/toolchain/cc_toolchain_config.bzl b/toolchain/cc_toolchain_config.bzl
+index aa6cc28..7690f2f 100644
+--- a/toolchain/cc_toolchain_config.bzl
++++ b/toolchain/cc_toolchain_config.bzl
+@@ -412,6 +412,29 @@ def cc_toolchain_config(
+     if compiler_configuration["unfiltered_compile_flags"] != None:
+         unfiltered_compile_flags = _fmt_flags(compiler_configuration["unfiltered_compile_flags"], toolchain_path_prefix)
+ 
++    if compiler_configuration["extra_compile_flags"] != None:
++        compile_flags.extend(_fmt_flags(compiler_configuration["extra_compile_flags"], toolchain_path_prefix))
++    if compiler_configuration["extra_cxx_flags"] != None:
++        cxx_flags.extend(_fmt_flags(compiler_configuration["extra_cxx_flags"], toolchain_path_prefix))
++    if compiler_configuration["extra_link_flags"] != None:
++        link_flags.extend(_fmt_flags(compiler_configuration["extra_link_flags"], toolchain_path_prefix))
++    if compiler_configuration["extra_archive_flags"] != None:
++        archive_flags.extend(_fmt_flags(compiler_configuration["extra_archive_flags"], toolchain_path_prefix))
++    if compiler_configuration["extra_link_libs"] != None:
++        link_libs.extend(_fmt_flags(compiler_configuration["extra_link_libs"], toolchain_path_prefix))
++    if compiler_configuration["extra_opt_compile_flags"] != None:
++        opt_compile_flags.extend(_fmt_flags(compiler_configuration["extra_opt_compile_flags"], toolchain_path_prefix))
++    if compiler_configuration["extra_opt_link_flags"] != None:
++        opt_link_flags.extend(_fmt_flags(compiler_configuration["extra_opt_link_flags"], toolchain_path_prefix))
++    if compiler_configuration["extra_dbg_compile_flags"] != None:
++        dbg_compile_flags.extend(_fmt_flags(compiler_configuration["extra_dbg_compile_flags"], toolchain_path_prefix))
++    if compiler_configuration["extra_coverage_compile_flags"] != None:
++        coverage_compile_flags.extend(_fmt_flags(compiler_configuration["extra_coverage_compile_flags"], toolchain_path_prefix))
++    if compiler_configuration["extra_coverage_link_flags"] != None:
++        coverage_link_flags.extend(_fmt_flags(compiler_configuration["extra_coverage_link_flags"], toolchain_path_prefix))
++    if compiler_configuration["extra_unfiltered_compile_flags"] != None:
++        unfiltered_compile_flags.extend(_fmt_flags(compiler_configuration["extra_unfiltered_compile_flags"], toolchain_path_prefix))
++
+     # Source: https://cs.opensource.google/bazel/bazel/+/master:tools/cpp/unix_cc_toolchain_config.bzl
+     unix_cc_toolchain_config(
+         name = name,
+diff --git a/toolchain/internal/configure.bzl b/toolchain/internal/configure.bzl
+index 0599388..4d482fd 100644
+--- a/toolchain/internal/configure.bzl
++++ b/toolchain/internal/configure.bzl
+@@ -176,6 +176,17 @@ def llvm_config_impl(rctx):
+         extra_compiler_files = rctx.attr.extra_compiler_files,
+         extra_exec_compatible_with = rctx.attr.extra_exec_compatible_with,
+         extra_target_compatible_with = rctx.attr.extra_target_compatible_with,
++        extra_compile_flags_dict = rctx.attr.extra_compile_flags,
++        extra_cxx_flags_dict = rctx.attr.extra_cxx_flags,
++        extra_link_flags_dict = rctx.attr.extra_link_flags,
++        extra_archive_flags_dict = rctx.attr.extra_archive_flags,
++        extra_link_libs_dict = rctx.attr.extra_link_libs,
++        extra_opt_compile_flags_dict = rctx.attr.extra_opt_compile_flags,
++        extra_opt_link_flags_dict = rctx.attr.extra_opt_link_flags,
++        extra_dbg_compile_flags_dict = rctx.attr.extra_dbg_compile_flags,
++        extra_coverage_compile_flags_dict = rctx.attr.extra_coverage_compile_flags,
++        extra_coverage_link_flags_dict = rctx.attr.extra_coverage_link_flags,
++        extra_unfiltered_compile_flags_dict = rctx.attr.extra_unfiltered_compile_flags,
+     )
+     exec_dl_ext = "dylib" if os == "darwin" else "so"
+     cc_toolchains_str, toolchain_labels_str = _cc_toolchains_str(
+@@ -404,6 +415,17 @@ cc_toolchain_config(
+       "coverage_compile_flags": {coverage_compile_flags},
+       "coverage_link_flags": {coverage_link_flags},
+       "unfiltered_compile_flags": {unfiltered_compile_flags},
++      "extra_compile_flags": {extra_compile_flags},
++      "extra_cxx_flags": {extra_cxx_flags},
++      "extra_link_flags": {extra_link_flags},
++      "extra_archive_flags": {extra_archive_flags},
++      "extra_link_libs": {extra_link_libs},
++      "extra_opt_compile_flags": {extra_opt_compile_flags},
++      "extra_opt_link_flags": {extra_opt_link_flags},
++      "extra_dbg_compile_flags": {extra_dbg_compile_flags},
++      "extra_coverage_compile_flags": {extra_coverage_compile_flags},
++      "extra_coverage_link_flags": {extra_coverage_link_flags},
++      "extra_unfiltered_compile_flags": {extra_unfiltered_compile_flags},
+     }},
+     cxx_builtin_include_directories = {cxx_builtin_include_directories},
+     major_llvm_version = {major_llvm_version},
+@@ -579,6 +601,17 @@ cc_toolchain(
+         coverage_compile_flags = _list_to_string(_dict_value(toolchain_info.coverage_compile_flags_dict, target_pair)),
+         coverage_link_flags = _list_to_string(_dict_value(toolchain_info.coverage_link_flags_dict, target_pair)),
+         unfiltered_compile_flags = _list_to_string(_dict_value(toolchain_info.unfiltered_compile_flags_dict, target_pair)),
++        extra_compile_flags = _list_to_string(_dict_value(toolchain_info.extra_compile_flags_dict, target_pair)),
++        extra_cxx_flags = _list_to_string(_dict_value(toolchain_info.extra_cxx_flags_dict, target_pair)),
++        extra_link_flags = _list_to_string(_dict_value(toolchain_info.extra_link_flags_dict, target_pair)),
++        extra_archive_flags = _list_to_string(_dict_value(toolchain_info.extra_archive_flags_dict, target_pair)),
++        extra_link_libs = _list_to_string(_dict_value(toolchain_info.extra_link_libs_dict, target_pair)),
++        extra_opt_compile_flags = _list_to_string(_dict_value(toolchain_info.extra_opt_compile_flags_dict, target_pair)),
++        extra_opt_link_flags = _list_to_string(_dict_value(toolchain_info.extra_opt_link_flags_dict, target_pair)),
++        extra_dbg_compile_flags = _list_to_string(_dict_value(toolchain_info.extra_dbg_compile_flags_dict, target_pair)),
++        extra_coverage_compile_flags = _list_to_string(_dict_value(toolchain_info.extra_coverage_compile_flags_dict, target_pair)),
++        extra_coverage_link_flags = _list_to_string(_dict_value(toolchain_info.extra_coverage_link_flags_dict, target_pair)),
++        extra_unfiltered_compile_flags = _list_to_string(_dict_value(toolchain_info.extra_unfiltered_compile_flags_dict, target_pair)),
+         extra_files_str = extra_files_str,
+         cxx_builtin_include_directories = _list_to_string(filtered_cxx_builtin_include_directories),
+         extra_compiler_files = ("\"%s\"," % str(toolchain_info.extra_compiler_files)) if toolchain_info.extra_compiler_files else "",
+diff --git a/toolchain/internal/repo.bzl b/toolchain/internal/repo.bzl
+index 3b09201..96e8563 100644
+--- a/toolchain/internal/repo.bzl
++++ b/toolchain/internal/repo.bzl
+@@ -265,6 +265,95 @@ _compiler_configuration_attrs = {
+                "target OS and arch pair you want to override " +
+                "({}); empty key overrides all.".format(_target_pairs)),
+     ),
++    # Same as the above flags, but instead of overriding the defaults, it just adds extras
++    "extra_compile_flags": attr.string_list_dict(
++        mandatory = False,
++        doc = ("Extra compile_flags, added after default values. " +
++               "`{toolchain_path_prefix}` in the flags will be substituted by the path " +
++               "to the root LLVM distribution directory. Provide one list for each " +
++               "target OS and arch pair you want to add " +
++               "({}); an empty key adds all.".format(_target_pairs)),
++    ),
++    "extra_cxx_flags": attr.string_list_dict(
++        mandatory = False,
++        doc = ("Extra cxx_flags, added after default values. " +
++               "`{toolchain_path_prefix}` in the flags will be substituted by the path " +
++               "to the root LLVM distribution directory. Provide one list for each " +
++               "target OS and arch pair you want to add " +
++               "({}); an empty key adds all.".format(_target_pairs)),
++    ),
++    "extra_link_flags": attr.string_list_dict(
++        mandatory = False,
++        doc = ("Extra link_flags, added after the default values. " +
++               "`{toolchain_path_prefix}` in the flags will be substituted by the path " +
++               "to the root LLVM distribution directory. Provide one list for each " +
++               "target OS and arch pair you want to add " +
++               "({}); an empty key adds all.".format(_target_pairs)),
++    ),
++    "extra_archive_flags": attr.string_list_dict(
++        mandatory = False,
++        doc = ("Extra archive_flags, added after the default values. " +
++               "`{toolchain_path_prefix}` in the flags will be substituted by the path " +
++               "to the root LLVM distribution directory. Provide one list for each " +
++               "target OS and arch pair you want to add " +
++               "({}); an empty key adds all.".format(_target_pairs)),
++    ),
++    "extra_link_libs": attr.string_list_dict(
++        mandatory = False,
++        doc = ("Extra for link_libs, added after the default values. " +
++               "`{toolchain_path_prefix}` in the flags will be substituted by the path " +
++               "to the root LLVM distribution directory. Provide one list for each " +
++               "target OS and arch pair you want to add " +
++               "({}); an empty key adds all.".format(_target_pairs)),
++    ),
++    "extra_opt_compile_flags": attr.string_list_dict(
++        mandatory = False,
++        doc = ("Extra opt_compile_flags, added after the default values. " +
++               "`{toolchain_path_prefix}` in the flags will be substituted by the path " +
++               "to the root LLVM distribution directory. Provide one list for each " +
++               "target OS and arch pair you want to add " +
++               "({}); an empty key adds all.".format(_target_pairs)),
++    ),
++    "extra_opt_link_flags": attr.string_list_dict(
++        mandatory = False,
++        doc = ("Extra opt_link_flags, added after the default values. " +
++               "`{toolchain_path_prefix}` in the flags will be substituted by the path " +
++               "to the root LLVM distribution directory. Provide one list for each " +
++               "target OS and arch pair you want to add " +
++               "({}); an empty key adds all.".format(_target_pairs)),
++    ),
++    "extra_dbg_compile_flags": attr.string_list_dict(
++        mandatory = False,
++        doc = ("Extra dbg_compile_flags, added after the default values. " +
++               "`{toolchain_path_prefix}` in the flags will be substituted by the path " +
++               "to the root LLVM distribution directory. Provide one list for each " +
++               "target OS and arch pair you want to add " +
++               "({}); an empty key adds all.".format(_target_pairs)),
++    ),
++    "extra_coverage_compile_flags": attr.string_list_dict(
++        mandatory = False,
++        doc = ("Extra coverage_compile_flags, added after the default values. " +
++               "`{toolchain_path_prefix}` in the flags will be substituted by the path " +
++               "to the root LLVM distribution directory. Provide one list for each " +
++               "target OS and arch pair you want to add " +
++               "({}); an empty key adds all.".format(_target_pairs)),
++    ),
++    "extra_coverage_link_flags": attr.string_list_dict(
++        mandatory = False,
++        doc = ("Extra coverage_link_flags, added after the default values. " +
++               "`{toolchain_path_prefix}` in the flags will be substituted by the path " +
++               "to the root LLVM distribution directory. Provide one list for each " +
++               "target OS and arch pair you want to add " +
++               "({}); an empty key adds all.".format(_target_pairs)),
++    ),
++    "extra_unfiltered_compile_flags": attr.string_list_dict(
++        mandatory = False,
++        doc = ("Extra unfiltered_compile_flags, added after the default values. " +
++               "`{toolchain_path_prefix}` in the flags will be substituted by the path " +
++               "to the root LLVM distribution directory. Provide one list for each " +
++               "target OS and arch pair you want to add " +
++               "({}); an empty key adds all.".format(_target_pairs)),
++    ),
+     "target_settings": attr.string_list_dict(
+         mandatory = False,
+         doc = ("Override the toolchain's `target_settings` attribute."),
+-- 
+2.51.0
+
