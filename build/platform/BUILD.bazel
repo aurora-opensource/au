@@ -1,4 +1,4 @@
-# Copyright 2022 Aurora Operations, Inc.
+# Copyright 2025 Aurora Operations, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,3 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+platform(
+    name = "clang_11",
+    constraint_values = ["//build/compiler:clang_11"],
+    parents = ["@platforms//host"],
+)
+
+platform(
+    name = "clang_14",
+    constraint_values = ["//build/compiler:clang_14"],
+    parents = ["@platforms//host"],
+)
+
+platform(
+    name = "gcc_10",
+    constraint_values = ["//build/compiler:gcc_10"],
+    parents = ["@platforms//host"],
+)

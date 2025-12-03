@@ -41,10 +41,10 @@ llvm_toolchain(
     cxx_standard = {
         "": "c++14",
     },
-    llvm_version = "11.1.0",
-    target_settings = {
-        "": ["@//build:clang11_requested"],
+    extra_target_compatible_with = {
+        "": ["@//build/compiler:clang_11"],
     },
+    llvm_version = "11.1.0",
 )
 
 load("@llvm_11_toolchain//:toolchains.bzl", llvm_11_register_toolchains = "llvm_register_toolchains")
@@ -59,10 +59,10 @@ llvm_toolchain(
     cxx_standard = {
         "": "c++14",
     },
-    llvm_version = "14.0.0",
-    target_settings = {
-        "": ["@//build:clang14_requested"],
+    extra_target_compatible_with = {
+        "": ["@//build/compiler:clang_14"],
     },
+    llvm_version = "14.0.0",
 )
 
 load("@llvm_14_toolchain//:toolchains.bzl", llvm_14_register_toolchains = "llvm_register_toolchains")
@@ -93,7 +93,7 @@ gcc_register_toolchain(
     gcc_version = "10.3.0",
     sysroot_variant = "x86_64",
     target_arch = ARCHS.x86_64,
-    target_settings = ["@//build:gcc10_requested"],
+    target_compatible_with = ["@//build/compiler:gcc_10"],
 )
 
 # This is not a "real" local bazel repository.  We define this in this WORKSPACE
