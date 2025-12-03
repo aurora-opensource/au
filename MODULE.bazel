@@ -120,19 +120,37 @@ single_version_override(
     ],
 )
 
-gcc_14 = use_extension("@gcc_toolchain//toolchain:module_extensions.bzl", "gcc_toolchains", dev_dependency = True)
-gcc_14.toolchain(
-    name = "gcc_14",
+gcc_12 = use_extension("@gcc_toolchain//toolchain:module_extensions.bzl", "gcc_toolchains", dev_dependency = True)
+gcc_12.toolchain(
+    name = "gcc_12",
     extra_cflags = EXTRA_COPTS,
+    extra_cxxflags = EXTRA_COPTS,
     extra_ldflags = ["-l:libstdc++.a"],
-    extra_target_compatible_with = ["@//build/compiler:gcc_14"],
-    gcc_version = "14.3.0",
+    extra_target_compatible_with = ["@//build/compiler:gcc_12"],
+    gcc_version = "12.5.0",
     target_arch = "x86_64",
 )
-use_repo(gcc_14, "gcc_14")
+use_repo(gcc_12, "gcc_12")
 
 register_toolchains(
-    "@gcc_14//:all",
+    "@gcc_12//:all",
+    dev_dependency = True,
+)
+
+gcc_15 = use_extension("@gcc_toolchain//toolchain:module_extensions.bzl", "gcc_toolchains", dev_dependency = True)
+gcc_15.toolchain(
+    name = "gcc_15",
+    extra_cflags = EXTRA_COPTS,
+    extra_cxxflags = EXTRA_COPTS,
+    extra_ldflags = ["-l:libstdc++.a"],
+    extra_target_compatible_with = ["@//build/compiler:gcc_15"],
+    gcc_version = "15.2.0",
+    target_arch = "x86_64",
+)
+use_repo(gcc_15, "gcc_15")
+
+register_toolchains(
+    "@gcc_15//:all",
     dev_dependency = True,
 )
 

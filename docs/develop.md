@@ -156,10 +156,10 @@ bazel test //au:all //release:au_hh_test
 
 Au comes pre-packaged with support for several different compiler toolchains.  To use a specific
 toolchain --- say, `X` --- pass it as a `--config=X` argument.  For example, here's how you would
-run all of the tests using gcc 10:
+run all of the tests using gcc 15:
 
 ```sh
-bazel test --config=gcc14 //...:all
+bazel test --config=gcc15 //...:all
 ```
 
 Here are the possible values we support for `--config`:
@@ -169,7 +169,8 @@ Here are the possible values we support for `--config`:
 | `clang17` | Clang 17 (default) |
 | `clang14` | Clang 14 |
 | `clang11` | Clang 11 |
-| `gcc14` | gcc 14 |
+| `gcc12` | gcc 12 |
+| `gcc12` | gcc 15 |
 
 ??? question "What if your preferred compiler isn't in this list?"
     Our goal is for Au to work with any standards-compliant compiler that fully supports C++14, or

@@ -31,7 +31,13 @@ platform(
 )
 
 platform(
-    name = "gcc_14",
-    constraint_values = ["//build/compiler:gcc_14"],
+    name = "gcc_12",
+    constraint_values = ["//build/compiler:gcc_12"],
+    parents = ["@platforms//host"],
+)
+
+platform(
+    name = "gcc_15",
+    constraint_values = ["//build/compiler:gcc_15"],
     parents = ["@platforms//host"],
 )
