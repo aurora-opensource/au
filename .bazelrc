@@ -27,7 +27,7 @@ build:gcc10 --features=static_libstdcxx
 build:gcc10 --copt=-std=c++14
 
 # Add a generic alias if the user doesn't care about the exact version.
-build:clang --config=clang14
+build:clang --config=clang17
 build:gcc --config=gcc10
 
 # Compile with clang by default
