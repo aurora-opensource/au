@@ -459,7 +459,7 @@
     "@@toolchains_llvm~//toolchain/extensions:llvm.bzl%llvm": {
       "general": {
         "bzlTransitiveDigest": "Ig86IHvOgrQgAB2yat4DzsKbO/VMSvoplfwgLcauwSc=",
-        "usagesDigest": "stFq7ONJVzZEQbcmhgmtHg1fUKoaMmi0acya6cYHAr0=",
+        "usagesDigest": "8v/SeLBsbmN8gnjBCCA4KogpcfbCNBHAa7EDrQWxITE=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -604,6 +604,81 @@
               "link_libs": {},
               "llvm_versions": {
                 "": "14.0.0"
+              },
+              "opt_compile_flags": {},
+              "opt_link_flags": {},
+              "stdlib": {},
+              "target_settings": {},
+              "unfiltered_compile_flags": {},
+              "toolchain_roots": {},
+              "sysroot": {}
+            }
+          },
+          "llvm_17_llvm": {
+            "bzlFile": "@@toolchains_llvm~//toolchain:rules.bzl",
+            "ruleClassName": "llvm",
+            "attributes": {
+              "alternative_llvm_sources": [],
+              "auth_patterns": {},
+              "distribution": "auto",
+              "exec_arch": "",
+              "exec_os": "",
+              "extra_llvm_distributions": {},
+              "libclang_rt": {},
+              "llvm_mirror": "",
+              "llvm_version": "17.0.6",
+              "llvm_versions": {},
+              "netrc": "",
+              "sha256": {},
+              "strip_prefix": {},
+              "urls": {}
+            }
+          },
+          "llvm_17": {
+            "bzlFile": "@@toolchains_llvm~//toolchain:rules.bzl",
+            "ruleClassName": "toolchain",
+            "attributes": {
+              "absolute_paths": false,
+              "archive_flags": {},
+              "compile_flags": {},
+              "conly_flags": {},
+              "coverage_compile_flags": {},
+              "coverage_link_flags": {},
+              "cxx_builtin_include_directories": {},
+              "cxx_flags": {},
+              "cxx_standard": {
+                "": "c++14"
+              },
+              "dbg_compile_flags": {},
+              "exec_arch": "",
+              "exec_os": "",
+              "extra_archive_flags": {},
+              "extra_compile_flags": {
+                "": [
+                  "-Wextra",
+                  "-pedantic"
+                ]
+              },
+              "extra_coverage_compile_flags": {},
+              "extra_coverage_link_flags": {},
+              "extra_cxx_flags": {},
+              "extra_dbg_compile_flags": {},
+              "extra_exec_compatible_with": {},
+              "extra_link_flags": {},
+              "extra_link_libs": {},
+              "extra_opt_compile_flags": {},
+              "extra_opt_link_flags": {},
+              "extra_target_compatible_with": {
+                "": [
+                  "'@@//build/compiler:clang_17'"
+                ]
+              },
+              "extra_unfiltered_compile_flags": {},
+              "fastbuild_compile_flags": {},
+              "link_flags": {},
+              "link_libs": {},
+              "llvm_versions": {
+                "": "17.0.6"
               },
               "opt_compile_flags": {},
               "opt_link_flags": {},

@@ -25,6 +25,12 @@ platform(
 )
 
 platform(
+    name = "clang_17",
+    constraint_values = ["//build/compiler:clang_17"],
+    parents = ["@platforms//host"],
+)
+
+platform(
     name = "gcc_10",
     constraint_values = ["//build/compiler:gcc_10"],
     parents = ["@platforms//host"],
