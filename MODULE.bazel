@@ -90,6 +90,24 @@ register_toolchains(
     dev_dependency = True,
 )
 
+llvm_17 = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm", dev_dependency = True)
+llvm_17.toolchain(
+    name = "llvm_17",
+    cxx_standard = {"": "c++14"},
+    extra_compile_flags = {"": EXTRA_COPTS},
+    llvm_version = "17.0.6",
+)
+llvm_17.extra_target_compatible_with(
+    name = "llvm_17",
+    constraints = ["@//build/compiler:clang_17"],
+)
+use_repo(llvm_17, "llvm_17")
+
+register_toolchains(
+    "@llvm_17//:all",
+    dev_dependency = True,
+)
+
 # Python configuration and pips
 
 python = use_extension(

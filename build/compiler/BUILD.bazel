@@ -27,6 +27,12 @@ constraint_value(
 )
 
 constraint_value(
+    name = "clang_17",
+    constraint_setting = ":version",
+    visibility = ["//visibility:public"],
+)
+
+constraint_value(
     name = "gcc_10",
     constraint_setting = ":version",
     visibility = ["//visibility:public"],
