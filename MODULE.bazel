@@ -33,8 +33,62 @@ bazel_dep(
 bazel_dep(name = "bazel_skylib", version = "1.8.1", dev_dependency = True)
 bazel_dep(name = "fmt", version = "11.0.2", dev_dependency = True)
 bazel_dep(name = "rules_python", version = "1.6.0", dev_dependency = True)
+bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
+single_version_override(
+    module_name = "toolchains_llvm",
+    patch_strip = 1,
+    patches = [
+        # This is currently on main, should be available in the next release.
+        # https://github.com/bazel-contrib/toolchains_llvm/commit/1d0c58ff030fe232a8c6bb75dc8fb8fb4f2ddb00.patch
+        "//third_party/toolchains_llvm:0001-Support-extra-toolchain-flags-554.patch",
+    ],
+)
 
 # Configuration of above deps.
+
+# Configure and register the LLVM toolchain.
+
+# Extra flags we want to pass to the compilers.
+EXTRA_COPTS = [
+    "-Wextra",
+    "-pedantic",
+]
+
+llvm_11 = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm", dev_dependency = True)
+llvm_11.toolchain(
+    name = "llvm_11",
+    cxx_standard = {"": "c++14"},
+    extra_compile_flags = {"": EXTRA_COPTS},
+    llvm_version = "11.1.0",
+)
+llvm_11.extra_target_compatible_with(
+    name = "llvm_11",
+    constraints = ["@//build/compiler:clang_11"],
+)
+use_repo(llvm_11, "llvm_11")
+
+register_toolchains(
+    "@llvm_11//:all",
+    dev_dependency = True,
+)
+
+llvm_14 = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm", dev_dependency = True)
+llvm_14.toolchain(
+    name = "llvm_14",
+    cxx_standard = {"": "c++14"},
+    extra_compile_flags = {"": EXTRA_COPTS},
+    llvm_version = "14.0.0",
+)
+llvm_14.extra_target_compatible_with(
+    name = "llvm_14",
+    constraints = ["@//build/compiler:clang_14"],
+)
+use_repo(llvm_14, "llvm_14")
+
+register_toolchains(
+    "@llvm_14//:all",
+    dev_dependency = True,
+)
 
 # Python configuration and pips
 
