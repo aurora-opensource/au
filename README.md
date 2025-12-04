@@ -1,6 +1,8 @@
 ![Au library logo](docs/assets/au-logo-color.png)
 
-[![clang14-ubuntu](
+[![clang17-ubuntu](
+https://github.com/aurora-opensource/au/actions/workflows/clang17-ubuntu.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/clang17-ubuntu.yml) [![clang14-ubuntu](
 https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml/badge.svg?branch=main&event=push)](
 https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml) [![clang11-ubuntu](
 https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml/badge.svg?branch=main&event=push)](
