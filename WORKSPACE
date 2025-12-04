@@ -16,21 +16,16 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("//build:copts.bzl", "EXTRA_COPTS")
 
 http_archive(
-    name = "aspect_gcc_toolchain",
-    patch_args = ["-p1"],
-    patches = [
-        "@//:third_party/aspect_gcc_toolchain/0001-Expose-target_settings-and-set-std-c-14.patch",
-    ],
-    sha256 = "0651c0d595417b71fdbd903bf852c59a4a576a82e15651bd9672416b64019530",
-    strip_prefix = "gcc-toolchain-ac745d4685e2095cc4f057862800f3f0a473c201",
-    type = "tar.gz",
+    name = "gcc_toolchain",
+    sha256 = "4fb44eeb43a086556c934a8b9526df0c2ccb47bf5941c05806b0163ad92baadf",
+    strip_prefix = "gcc-toolchain-0.5.0",
     urls = [
-        "https://github.com/f0rmiga/gcc-toolchain/archive/ac745d4685e2095cc4f057862800f3f0a473c201.tar.gz",
+        "https://github.com/f0rmiga/gcc-toolchain/archive/refs/tags/0.5.0.tar.gz",
     ],
 )
 
-load("@aspect_gcc_toolchain//sysroot:flags.bzl", gcc_sysroot_cflags = "cflags", gcc_sysroot_cxxflags = "cxxflags")
-load("@aspect_gcc_toolchain//toolchain:defs.bzl", "ARCHS", "gcc_register_toolchain")
+load("@gcc_toolchain//sysroot:flags.bzl", gcc_sysroot_cflags = "cflags", gcc_sysroot_cxxflags = "cxxflags")
+load("@gcc_toolchain//toolchain:defs.bzl", "ARCHS", "gcc_register_toolchain")
 
 gcc_register_toolchain(
     name = "gcc_toolchain_x86_64",
