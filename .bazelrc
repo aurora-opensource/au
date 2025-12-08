@@ -21,6 +21,7 @@ build --workspace_status_command=./tools/bin/workspace_status.sh
 # Allow the user to switch to various Clang version for compiling everything.
 build:clang11 --platforms=@//build/platform:clang_11
 build:clang14 --platforms=@//build/platform:clang_14
+build:clang17 --platforms=@//build/platform:clang_17
 build:gcc10 --platforms=@//build/platform:gcc_10
 build:gcc10 --features=static_libstdcxx
 build:gcc10 --copt=-std=c++14
@@ -30,7 +31,7 @@ build:clang --config=clang14
 build:gcc --config=gcc10
 
 # Compile with clang by default
-build --config=clang14
+build --config=clang
 
 # Show test output when there are errors.
 # Making this true by default significantly improves developer experience.
