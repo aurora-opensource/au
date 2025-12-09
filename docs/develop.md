@@ -166,8 +166,8 @@ Here are the possible values we support for `--config`:
 
 | `--config` value | compiler |
 |------------------|----------|
-| `clang17` | Clang 17 |
-| `clang14` | Clang 14 (default) |
+| `clang17` | Clang 17 (default) |
+| `clang14` | Clang 14 |
 | `clang11` | Clang 11 |
 | `gcc14` | gcc 14 |
 
