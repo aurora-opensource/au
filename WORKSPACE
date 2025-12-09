@@ -17,24 +17,21 @@ load("//build:copts.bzl", "EXTRA_COPTS")
 
 http_archive(
     name = "gcc_toolchain",
-    sha256 = "4fb44eeb43a086556c934a8b9526df0c2ccb47bf5941c05806b0163ad92baadf",
-    strip_prefix = "gcc-toolchain-0.5.0",
+    sha256 = "efd0589d0374472d0f7cd583dd6b724aef07f680cd34205f09a6b24037a02680",
+    strip_prefix = "gcc-toolchain-0.7.0",
     urls = [
-        "https://github.com/f0rmiga/gcc-toolchain/archive/refs/tags/0.5.0.tar.gz",
+        "https://github.com/f0rmiga/gcc-toolchain/archive/refs/tags/0.7.0.tar.gz",
     ],
 )
 
-load("@gcc_toolchain//sysroot:flags.bzl", gcc_sysroot_cflags = "cflags", gcc_sysroot_cxxflags = "cxxflags")
 load("@gcc_toolchain//toolchain:defs.bzl", "ARCHS", "gcc_register_toolchain")
 
 gcc_register_toolchain(
     name = "gcc_toolchain_x86_64",
-    extra_cflags = gcc_sysroot_cflags + EXTRA_COPTS,
-    extra_cxxflags = gcc_sysroot_cxxflags + EXTRA_COPTS,
-    gcc_version = "10.3.0",
-    sysroot_variant = "x86_64",
+    extra_cflags = EXTRA_COPTS,
+    extra_ldflags = ["-l:libstdc++.a"],
     target_arch = ARCHS.x86_64,
-    target_compatible_with = ["@//build/compiler:gcc_10"],
+    target_compatible_with = ["@//build/compiler:gcc_14"],
 )
 
 # This is not a "real" local bazel repository.  We define this in this WORKSPACE
