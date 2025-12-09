@@ -169,7 +169,7 @@ Here are the possible values we support for `--config`:
 | `clang17` | Clang 17 |
 | `clang14` | Clang 14 (default) |
 | `clang11` | Clang 11 |
-| `gcc14` | gcc 10 |
+| `gcc14` | gcc 14 |
 
 ??? question "What if your preferred compiler isn't in this list?"
     Our goal is for Au to work with any standards-compliant compiler that fully supports C++14, or
