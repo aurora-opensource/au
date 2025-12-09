@@ -1,0 +1,26 @@
+From f4ca7dffb9da07a405cd2b0d9c03972d3d25558c Mon Sep 17 00:00:00 2001
+From: Michael Hordijk <hordijk@aurora.tech>
+Date: Tue, 9 Dec 2025 13:45:22 -0700
+Subject: [PATCH] Make _cgo_yield a proper prototype
+
+C deprecates function declarations without a prototype.
+---
+ src/runtime/cgo/gcc_util.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/runtime/cgo/gcc_util.c b/src/runtime/cgo/gcc_util.c
+index 3fcb48cc8d..c48127e206 100644
+--- src/runtime/cgo/gcc_util.c
++++ src/runtime/cgo/gcc_util.c
+@@ -24,7 +24,7 @@ x_cgo_thread_start(ThreadStart *arg)
+ }
+ 
+ #ifndef CGO_TSAN
+-void(* const _cgo_yield)() = NULL;
++void(* const _cgo_yield)(void) = NULL;
+ #else
+ 
+ #include <string.h>
+-- 
+2.51.0
+
