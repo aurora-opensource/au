@@ -2247,7 +2247,7 @@ target is <code>//release:au_hh_test</code>), you could write:</p>
 <p>Au comes pre-packaged with support for several different compiler toolchains.  To use a specific
 toolchain &mdash; say, <code>X</code> &mdash; pass it as a <code>--config=X</code> argument.  For example, here&rsquo;s how you would
 run all of the tests using gcc 10:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>bazel<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--config<span class="o">=</span>gcc10<span class="w"> </span>//...:all
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>bazel<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--config<span class="o">=</span>gcc14<span class="w"> </span>//...:all
 </code></pre></div>
 <p>Here are the possible values we support for <code>--config</code>:</p>
 <table>
@@ -2271,8 +2271,8 @@ run all of the tests using gcc 10:</p>
 <td>Clang 11</td>
 </tr>
 <tr>
-<td><code>gcc10</code></td>
-<td>gcc 10</td>
+<td><code>gcc14</code></td>
+<td>gcc 14</td>
 </tr>
 </tbody>
 </table>
