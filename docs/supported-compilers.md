@@ -54,7 +54,7 @@ Here are the configurations that have Full Support status.
 | Ubuntu | clang 11 | [![clang11-ubuntu]( https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml) |
 | Ubuntu | clang 14 | [![clang14-ubuntu]( https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml) |
 | Ubuntu | clang 17 | [![clang17-ubuntu]( https://github.com/aurora-opensource/au/actions/workflows/clang17-ubuntu.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/clang17-ubuntu.yml) |
-| Ubuntu | gcc 10 | [![gcc10-ubuntu]( https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/gcc10-ubuntu.yml) |
+| Ubuntu | gcc 14 | [![gcc14-ubuntu]( https://github.com/aurora-opensource/au/actions/workflows/gcc14-ubuntu.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/gcc14-ubuntu.yml) |
 
 ### Best effort support
 
