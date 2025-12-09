@@ -32,6 +32,7 @@ bazel_dep(
 # Primary deps that we use directly.
 bazel_dep(name = "bazel_skylib", version = "1.8.1", dev_dependency = True)
 bazel_dep(name = "fmt", version = "11.0.2", dev_dependency = True)
+bazel_dep(name = "gcc_toolchain", version = "0.9.0", dev_dependency = True)
 bazel_dep(name = "rules_python", version = "1.6.0", dev_dependency = True)
 bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
 single_version_override(
@@ -109,6 +110,31 @@ register_toolchains(
 )
 
 # Python configuration and pips
+# Configure and register the GCC toolrchain.
+
+single_version_override(
+    module_name = "gcc_toolchain",
+    patch_strip = 1,
+    patches = [
+        "//third_party/gcc_toolchain:0001-feat-Provide-extra_target_compatible_with.patch",
+    ],
+)
+
+gcc_14 = use_extension("@gcc_toolchain//toolchain:module_extensions.bzl", "gcc_toolchains", dev_dependency = True)
+gcc_14.toolchain(
+    name = "gcc_14",
+    extra_cflags = EXTRA_COPTS,
+    extra_ldflags = ["-l:libstdc++.a"],
+    extra_target_compatible_with = ["@//build/compiler:gcc_14"],
+    gcc_version = "14.3.0",
+    target_arch = "x86_64",
+)
+use_repo(gcc_14, "gcc_14")
+
+register_toolchains(
+    "@gcc_14//:all",
+    dev_dependency = True,
+)
 
 python = use_extension(
     "@rules_python//python/extensions:python.bzl",
