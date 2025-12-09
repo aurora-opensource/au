@@ -26,7 +26,7 @@ build:gcc14 --platforms=@//build/platform:gcc_14
 build:gcc14 --copt=-std=c++14
 
 # Add a generic alias if the user doesn't care about the exact version.
-build:clang --config=clang14
+build:clang --config=clang17
 build:gcc --config=gcc14
 
 # Compile with clang by default
