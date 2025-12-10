@@ -33,7 +33,13 @@ constraint_value(
 )
 
 constraint_value(
-    name = "gcc_14",
+    name = "gcc_12",
+    constraint_setting = ":version",
+    visibility = ["//visibility:public"],
+)
+
+constraint_value(
+    name = "gcc_15",
     constraint_setting = ":version",
     visibility = ["//visibility:public"],
 )
