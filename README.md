@@ -9,12 +9,14 @@ https://github.com/aurora-opensource/au/actions/workflows/clang14-ubuntu.yml)
 [![clang11-ubuntu](
 https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml/badge.svg?branch=main&event=push)](
 https://github.com/aurora-opensource/au/actions/workflows/clang11-ubuntu.yml)
-[![gcc12-ubuntu](
-https://github.com/aurora-opensource/au/actions/workflows/gcc12-ubuntu.yml/badge.svg?branch=main&event=push)](
-https://github.com/aurora-opensource/au/actions/workflows/gcc12-ubuntu.yml)
+<br/>
 [![gcc15-ubuntu](
 https://github.com/aurora-opensource/au/actions/workflows/gcc15-ubuntu.yml/badge.svg?branch=main&event=push)](
 https://github.com/aurora-opensource/au/actions/workflows/gcc15-ubuntu.yml)
+[![gcc12-ubuntu](
+https://github.com/aurora-opensource/au/actions/workflows/gcc12-ubuntu.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/gcc12-ubuntu.yml)
+<br/>
 [![MSVC 2022 x64](
 https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml/badge.svg?branch=main&event=push)](
 https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml)
