@@ -16,6 +16,8 @@ module(
     name = "au",
 )
 
+bazel_dep(name = "rules_cc", version = "0.0.4")
+
 # GoogleTest is required for our publically available `//au:testing` target.  We
 # specify the current version we use here so this will participate in any users
 # BCR resolution, but it won't actually be pulled down to the users workspace if
@@ -33,6 +35,7 @@ bazel_dep(
 bazel_dep(name = "bazel_skylib", version = "1.8.1", dev_dependency = True)
 bazel_dep(name = "fmt", version = "11.0.2", dev_dependency = True)
 bazel_dep(name = "gcc_toolchain", version = "0.9.0", dev_dependency = True)
+bazel_dep(name = "platforms", version = "1.0.0", dev_dependency = True)
 bazel_dep(name = "rules_python", version = "1.6.0", dev_dependency = True)
 bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
 single_version_override(
