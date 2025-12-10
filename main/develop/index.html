@@ -2246,8 +2246,8 @@ target is <code>//release:au_hh_test</code>), you could write:</p>
 <h4 id="using-different-toolchains">Using different toolchains<a class="headerlink" href="#using-different-toolchains" title="Permanent link">&para;</a></h4>
 <p>Au comes pre-packaged with support for several different compiler toolchains.  To use a specific
 toolchain &mdash; say, <code>X</code> &mdash; pass it as a <code>--config=X</code> argument.  For example, here&rsquo;s how you would
-run all of the tests using gcc 10:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>bazel<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--config<span class="o">=</span>gcc14<span class="w"> </span>//...:all
+run all of the tests using gcc 15:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>bazel<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--config<span class="o">=</span>gcc15<span class="w"> </span>//...:all
 </code></pre></div>
 <p>Here are the possible values we support for <code>--config</code>:</p>
 <table>
@@ -2271,8 +2271,12 @@ run all of the tests using gcc 10:</p>
 <td>Clang 11</td>
 </tr>
 <tr>
-<td><code>gcc14</code></td>
-<td>gcc 14</td>
+<td><code>gcc12</code></td>
+<td>gcc 12</td>
+</tr>
+<tr>
+<td><code>gcc12</code></td>
+<td>gcc 15</td>
 </tr>
 </tbody>
 </table>
