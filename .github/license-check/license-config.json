@@ -20,7 +20,6 @@
       "MODULE.bazel",
       "REPO.bazel",
       "requirements.in",
-      "cmake/WORKSPACE",
       "cmake/*.cmake",
       "cmake/*.cmake.in"
     ],
