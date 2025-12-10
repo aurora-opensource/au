@@ -1,4 +1,4 @@
-# Copyright 2024 Aurora Operations, Inc.
+# Copyright 2025 Aurora Operations, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,4 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This file exists so that bazel will ignore this folder.
+ignore_directories([
+    "cmake",
+])
