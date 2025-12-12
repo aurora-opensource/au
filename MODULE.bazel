@@ -191,7 +191,7 @@ http_archive(
 
 # buildifier
 
-bazel_dep(name = "rules_go", version = "0.57.0", dev_dependency = True, repo_name = "io_bazel_rules_go")
+bazel_dep(name = "rules_go", version = "0.58.2", dev_dependency = True, repo_name = "io_bazel_rules_go")
 bazel_dep(name = "gazelle", version = "0.45.0", dev_dependency = True)
 
 # The Go SDK has an issue with `-strict-prototypes` and newer versions of clang.
