@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-36-g485fac3
+// Version identifier: 0.5.0-base-37-gc8d432a
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
