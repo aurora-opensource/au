@@ -701,7 +701,7 @@
     "@@toolchains_llvm+//toolchain/extensions:llvm.bzl%llvm": {
       "general": {
         "bzlTransitiveDigest": "AiWzZHmPNNPb4bkrkaCOabX0jcP1CcvPRAfPWDkE668=",
-        "usagesDigest": "FCCxxGhKZSg5idIqp4EtkUft/Se2GNA/ZFgNgtJc84c=",
+        "usagesDigest": "z27GQS2T2aYZ3e9luV17L93nb8F3GByg4Xu+l0/sAqU=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -852,7 +852,7 @@
               "sysroot": {}
             }
           },
-          "llvm_latest_llvm": {
+          "llvm_17_llvm": {
             "repoRuleId": "@@toolchains_llvm+//toolchain:rules.bzl%llvm",
             "attributes": {
               "alternative_llvm_sources": [],
@@ -871,7 +871,7 @@
               "urls": {}
             }
           },
-          "llvm_latest": {
+          "llvm_17": {
             "repoRuleId": "@@toolchains_llvm+//toolchain:rules.bzl%toolchain",
             "attributes": {
               "absolute_paths": false,
