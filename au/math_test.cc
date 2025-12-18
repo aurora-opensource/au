@@ -58,7 +58,7 @@ constexpr const T &std_clamp(const T &v, const T &lo, const T &hi) {
 
 }  // namespace
 
-TEST(abs, AlwaysReturnsNonnegativeVersionOfInput) {
+TEST(Abs, AlwaysReturnsNonnegativeVersionOfInput) {
     EXPECT_THAT(abs(meters(-1)), Eq(meters(1)));
     EXPECT_THAT(abs(meters(0)), Eq(meters(0)));
     EXPECT_THAT(abs(meters(1)), Eq(meters(1)));
@@ -68,32 +68,32 @@ TEST(abs, AlwaysReturnsNonnegativeVersionOfInput) {
     EXPECT_THAT(abs(radians(2.f)), Eq(radians(2.f)));
 }
 
-TEST(abs, FollowsSamePolicyAsStdAbsForInf) {
+TEST(Abs, FollowsSamePolicyAsStdAbsForInf) {
     EXPECT_THAT(abs(degrees(INFINITY)), Eq(degrees(std::abs(INFINITY))));
     EXPECT_THAT(abs(degrees(-INFINITY)), Eq(degrees(std::abs(-INFINITY))));
 }
 
-TEST(abs, SameAsStdAbsForNumericTypes) {
+TEST(Abs, SameAsStdAbsForNumericTypes) {
     EXPECT_THAT(abs(-1), Eq(1));
     EXPECT_THAT(abs(0), Eq(0));
     EXPECT_THAT(abs(1), Eq(1));
 }
 
-TEST(cbrt, OutputRepDependsOnInputRep) {
+TEST(Cbrt, OutputRepDependsOnInputRep) {
     EXPECT_THAT(cbrt(cubed(meters)(8)), QuantityEquivalent(meters(2.)));
     EXPECT_THAT(cbrt(cubed(meters)(8.)), QuantityEquivalent(meters(2.)));
     EXPECT_THAT(cbrt(cubed(meters)(8.f)), QuantityEquivalent(meters(2.f)));
     EXPECT_THAT(cbrt(cubed(meters)(8.L)), QuantityEquivalent(meters(2.L)));
 }
 
-TEST(cbrt, SameAsStdCbrtForNumericTypes) {
+TEST(Cbrt, SameAsStdCbrtForNumericTypes) {
     EXPECT_THAT(cbrt(1), Eq(std::cbrt(1)));
     EXPECT_THAT(cbrt(1.), Eq(std::cbrt(1.)));
     EXPECT_THAT(cbrt(1.f), Eq(std::cbrt(1.f)));
     EXPECT_THAT(cbrt(1.L), Eq(std::cbrt(1.L)));
 }
 
-TEST(cbrt, CanConvertIfConversionFactorRational) {
+TEST(Cbrt, CanConvertIfConversionFactorRational) {
     const auto geo_mean_length = cbrt(inches(1) * meters(1) * yards(1));
 
     // Using Quantity-equivalent Unit just retrieves the value stored in `geo_mean_length`.
@@ -109,7 +109,7 @@ TEST(cbrt, CanConvertIfConversionFactorRational) {
     EXPECT_THAT(radically_converted_value, DoubleNear(11.232841, 0.000001));
 }
 
-TEST(clamp, QuantityConsistentWithStdClampWhenTypesAreIdentical) {
+TEST(Clamp, QuantityConsistentWithStdClampWhenTypesAreIdentical) {
     auto expect_consistent_with_std_clamp = [](auto v, auto lo, auto hi) {
         const auto expected = ohms(std_clamp(v, lo, hi));
         const auto actual = clamp(ohms(v), ohms(lo), ohms(hi));
@@ -129,7 +129,7 @@ TEST(clamp, QuantityConsistentWithStdClampWhenTypesAreIdentical) {
     expect_consistent_with_std_clamp(2.0, 0.0, 1.0);
 }
 
-TEST(clamp, QuantityProducesResultsInCommonUnitOfInputs) {
+TEST(Clamp, QuantityProducesResultsInCommonUnitOfInputs) {
     EXPECT_THAT(clamp(kilo(meters)(2), milli(meters)(999), meters(20)),
                 SameTypeAndValue(milli(meters)(20'000)));
 
@@ -137,7 +137,7 @@ TEST(clamp, QuantityProducesResultsInCommonUnitOfInputs) {
                 SameTypeAndValue(meters(2'000)));
 }
 
-TEST(clamp, QuantityPointConsistentWithStdClampWhenTypesAreIdentical) {
+TEST(Clamp, QuantityPointConsistentWithStdClampWhenTypesAreIdentical) {
     auto expect_consistent_with_std_clamp = [](auto v, auto lo, auto hi) {
         const auto expected = meters_pt(std_clamp(v, lo, hi));
         const auto actual = clamp(meters_pt(v), meters_pt(lo), meters_pt(hi));
@@ -157,7 +157,7 @@ TEST(clamp, QuantityPointConsistentWithStdClampWhenTypesAreIdentical) {
     expect_consistent_with_std_clamp(2.0, 0.0, 1.0);
 }
 
-TEST(clamp, QuantityPointProducesResultsInCommonUnitOfInputs) {
+TEST(Clamp, QuantityPointProducesResultsInCommonUnitOfInputs) {
     EXPECT_THAT(clamp(kilo(meters_pt)(2), milli(meters_pt)(999), meters_pt(20)),
                 SameTypeAndValue(milli(meters_pt)(20'000)));
 
@@ -165,7 +165,7 @@ TEST(clamp, QuantityPointProducesResultsInCommonUnitOfInputs) {
                 SameTypeAndValue(meters_pt(2'000)));
 }
 
-TEST(clamp, QuantityPointTakesOffsetIntoAccount) {
+TEST(Clamp, QuantityPointTakesOffsetIntoAccount) {
     // Recall that 0 degrees Celsius is 273.15 Kelvins.  We know that `clamp` must take the origin
     // into account for this mixed result.  This means whatever unit we return must be at most 1/20
     // Kelvins, and must evenly divide 1/20 Kelvins.
@@ -175,31 +175,31 @@ TEST(clamp, QuantityPointTakesOffsetIntoAccount) {
     EXPECT_THAT(celsius_origin, Eq(centi(kelvins_pt)(273'15)));
 }
 
-TEST(clamp, SupportsZeroForLowerBoundaryArgument) {
+TEST(Clamp, SupportsZeroForLowerBoundaryArgument) {
     EXPECT_THAT(clamp(feet(-1), ZERO, inches(18)), SameTypeAndValue(inches(0)));
     EXPECT_THAT(clamp(feet(+1), ZERO, inches(18)), SameTypeAndValue(inches(12)));
     EXPECT_THAT(clamp(feet(+2), ZERO, inches(18)), SameTypeAndValue(inches(18)));
 }
 
-TEST(clamp, SupportsZeroForUpperBoundaryArgument) {
+TEST(Clamp, SupportsZeroForUpperBoundaryArgument) {
     EXPECT_THAT(clamp(feet(-2), inches(-18), ZERO), SameTypeAndValue(inches(-18)));
     EXPECT_THAT(clamp(feet(-1), inches(-18), ZERO), SameTypeAndValue(inches(-12)));
     EXPECT_THAT(clamp(feet(+1), inches(-18), ZERO), SameTypeAndValue(inches(0)));
 }
 
-TEST(clamp, SupportsZeroForValueArgument) {
+TEST(Clamp, SupportsZeroForValueArgument) {
     EXPECT_THAT(clamp(ZERO, inches(-18), inches(18)), SameTypeAndValue(inches(0)));
     EXPECT_THAT(clamp(ZERO, inches(24), inches(60)), SameTypeAndValue(inches(24)));
     EXPECT_THAT(clamp(ZERO, feet(2), inches(60)), SameTypeAndValue(inches(24)));
 }
 
-TEST(clamp, SupportsZeroForMultipleArguments) {
+TEST(Clamp, SupportsZeroForMultipleArguments) {
     EXPECT_THAT(clamp(ZERO, inches(-8), ZERO), SameTypeAndValue(inches(0)));
     EXPECT_THAT(clamp(ZERO, ZERO, feet(2)), SameTypeAndValue(feet(0)));
     EXPECT_THAT(clamp(feet(6), ZERO, ZERO), SameTypeAndValue(feet(0)));
 }
 
-TEST(hypot, QuantityConsistentWithStdHypotWhenTypesAreIdentical) {
+TEST(Hypot, QuantityConsistentWithStdHypotWhenTypesAreIdentical) {
     auto expect_consistent_with_std_hypot = [](auto u, auto v) {
         const auto expected = ohms(std::hypot(u, v));
         const auto actual = hypot(ohms(u), ohms(v));
@@ -221,14 +221,14 @@ TEST(hypot, QuantityConsistentWithStdHypotWhenTypesAreIdentical) {
     expect_consistent_with_std_hypot(4.0, 2.0);
 }
 
-TEST(hypot, QuantityProducesResultsInCommonUnitOfInputs) {
+TEST(Hypot, QuantityProducesResultsInCommonUnitOfInputs) {
     EXPECT_THAT(hypot(centi(meters)(30), milli(meters)(400)),
                 SameTypeAndValue(milli(meters)(500.0)));
 
     EXPECT_THAT(hypot(inches(5.f), feet(1.f)), SameTypeAndValue(inches(13.f)));
 }
 
-TEST(copysign, ReturnsSameTypesAsStdCopysignForSameUnitInputs) {
+TEST(Copysign, ReturnsSameTypesAsStdCopysignForSameUnitInputs) {
     auto expect_consistent_with_std_copysign = [](auto mag, auto raw_sgn) {
         for (const auto test_sgn : {-1, 0, +1}) {
             const auto sgn = static_cast<decltype(raw_sgn)>(test_sgn) * raw_sgn;
@@ -254,7 +254,7 @@ TEST(copysign, ReturnsSameTypesAsStdCopysignForSameUnitInputs) {
     expect_consistent_with_std_copysign(4., 3.l);
 }
 
-TEST(cos, TypeDependsOnInputType) {
+TEST(Cos, TypeDependsOnInputType) {
     // See: https://en.cppreference.com/w/cpp/numeric/math/cos
     StaticAssertTypeEq<decltype(cos(radians(0))), double>();
     StaticAssertTypeEq<decltype(cos(radians(0.))), double>();
@@ -270,19 +270,19 @@ TEST(cos, TypeDependsOnInputType) {
     StaticAssertTypeEq<decltype(cos(degrees(0.L))), long double>();
 }
 
-TEST(cos, SameAsStdCosForNumericTypes) {
+TEST(Cos, SameAsStdCosForNumericTypes) {
     EXPECT_THAT(cos(1), Eq(std::cos(1)));
     EXPECT_THAT(cos(1.), Eq(std::cos(1.)));
     EXPECT_THAT(cos(1.f), Eq(std::cos(1.f)));
     EXPECT_THAT(cos(1.L), Eq(std::cos(1.L)));
 }
 
-TEST(cos, GivesSameAnswersAsRawNumbersButInStrongTypes) {
+TEST(Cos, GivesSameAnswersAsRawNumbersButInStrongTypes) {
     EXPECT_THAT(cos(radians(1.23)), Eq(std::cos(1.23)));
     EXPECT_THAT(cos(radians(4.56f)), Eq(std::cos(4.56f)));
 }
 
-TEST(cos, GivesCorrectAnswersForInputsInDegrees) {
+TEST(Cos, GivesCorrectAnswersForInputsInDegrees) {
     constexpr auto TOL = 1e-15;
     EXPECT_THAT(cos(degrees(0)), DoubleNear(1.0, TOL));
     EXPECT_THAT(cos(degrees(45)), DoubleNear(std::sqrt(0.5), TOL));
@@ -311,14 +311,14 @@ auto expect_consistent_with(AuFunc au_func, StdFunc std_func) {
     return ExpectConsistentWith<AuFunc, StdFunc>{au_func, std_func};
 }
 
-TEST(fmod, SameAsStdFmodForNumericTypes) {
+TEST(Fmod, SameAsStdFmodForNumericTypes) {
     const auto a = 3.5;
     const auto b = 3;
 
     EXPECT_THAT(fmod(a, b), Eq(std::fmod(a, b)));
 }
 
-TEST(fmod, ReturnsSameTypesAsStdModForSameUnitInputs) {
+TEST(Fmod, ReturnsSameTypesAsStdModForSameUnitInputs) {
     const auto expect_consistent_with_std_fmod = expect_consistent_with(
         [](auto x, auto y) { return fmod(x, y); }, [](auto x, auto y) { return std::fmod(x, y); });
 
@@ -331,7 +331,7 @@ TEST(fmod, ReturnsSameTypesAsStdModForSameUnitInputs) {
     expect_consistent_with_std_fmod(meters(4.), meters(3.l));
 }
 
-TEST(fmod, MixedUnitsSupportedWithCasting) {
+TEST(Fmod, MixedUnitsSupportedWithCasting) {
     constexpr auto a = meters(1);
     constexpr auto b = centi(meters)(11);
     constexpr auto expected_result = centi(meters)(1);
@@ -339,16 +339,16 @@ TEST(fmod, MixedUnitsSupportedWithCasting) {
     EXPECT_THAT(fmod(a, b), IsNear(expected_result, make_quantity<Nano<Meters>>(1)));
 }
 
-TEST(fmod, HandlesIrrationalCommonUnit) {
+TEST(Fmod, HandlesIrrationalCommonUnit) {
     EXPECT_THAT(fmod(radians(1), degrees(57)), IsNear(degrees(0.2958), degrees(0.0001)));
 }
 
-TEST(remainder, SameAsStdRemainderForNumericTypes) {
+TEST(Remainder, SameAsStdRemainderForNumericTypes) {
     EXPECT_THAT(remainder(3.5, 3), Eq(std::remainder(3.5, 3)));
     EXPECT_THAT(remainder(2.5, 3), Eq(std::remainder(2.5, 3)));
 }
 
-TEST(remainder, ReturnsSameTypesAsStdRemainderForSameUnitInputs) {
+TEST(Remainder, ReturnsSameTypesAsStdRemainderForSameUnitInputs) {
     const auto expect_consistent_with_std_remainder =
         expect_consistent_with([](auto x, auto y) { return remainder(x, y); },
                                [](auto x, auto y) { return std::remainder(x, y); });
@@ -362,7 +362,7 @@ TEST(remainder, ReturnsSameTypesAsStdRemainderForSameUnitInputs) {
     expect_consistent_with_std_remainder(meters(4.), meters(3.l));
 }
 
-TEST(remainder, MixedUnitsSupportedWithCasting) {
+TEST(Remainder, MixedUnitsSupportedWithCasting) {
     constexpr auto a = meters(1);
     constexpr auto b = centi(meters)(11);
     constexpr auto expected_result = centi(meters)(1);
@@ -370,27 +370,27 @@ TEST(remainder, MixedUnitsSupportedWithCasting) {
     EXPECT_THAT(remainder(a, b), IsNear(expected_result, make_quantity<Nano<Meters>>(1)));
 }
 
-TEST(remainder, HandlesIrrationalCommonUnit) {
+TEST(Remainder, HandlesIrrationalCommonUnit) {
     EXPECT_THAT(remainder(radians(1), degrees(57)), IsNear(degrees(+0.2958), degrees(0.0001)));
     EXPECT_THAT(remainder(radians(1), degrees(58)), IsNear(degrees(-0.7042), degrees(0.0001)));
 }
 
-TEST(remainder, CenteredAroundZero) {
+TEST(Remainder, CenteredAroundZero) {
     EXPECT_THAT(remainder(degrees(90), revolutions(1)), IsNear(degrees(90), degrees(1e-9)));
     EXPECT_THAT(remainder(degrees(270), revolutions(1)), IsNear(degrees(-90), degrees(1e-9)));
 }
 
-TEST(max, ReturnsLarger) {
+TEST(Max, ReturnsLarger) {
     constexpr auto result = max(centi(meters)(1), inches(1));
     EXPECT_THAT(result, Eq(inches(1)));
 }
 
-TEST(max, HandlesDifferentOriginQuantityPoints) {
+TEST(Max, HandlesDifferentOriginQuantityPoints) {
     constexpr auto result = max(fahrenheit_pt(30), celsius_pt(0));
     EXPECT_THAT(result, Eq(celsius_pt(0)));
 }
 
-TEST(max, ReturnsByValueForSameExactQuantityType) {
+TEST(Max, ReturnsByValueForSameExactQuantityType) {
     // If two Quantity types are EXACTLY the same, we risk ambiguity with `std::max`.
     const auto a = meters(1);
     const auto b = meters(2);
@@ -400,12 +400,12 @@ TEST(max, ReturnsByValueForSameExactQuantityType) {
     EXPECT_THAT(&max_a_b, Ne(&b));
 }
 
-TEST(max, SupportsConstexprForSameExactQuantityType) {
+TEST(Max, SupportsConstexprForSameExactQuantityType) {
     constexpr auto result = max(meters(1), meters(2));
     EXPECT_THAT(result, Eq(meters(2)));
 }
 
-TEST(max, ReturnsByValueForSameExactQuantityPointType) {
+TEST(Max, ReturnsByValueForSameExactQuantityPointType) {
     // If two QuantityPoint types are EXACTLY the same, we risk ambiguity with `std::max`.
     const auto a = meters_pt(1);
     const auto b = meters_pt(2);
@@ -415,12 +415,12 @@ TEST(max, ReturnsByValueForSameExactQuantityPointType) {
     EXPECT_THAT(&max_a_b, Ne(&b));
 }
 
-TEST(max, SupportsConstexprForSameExactQuantityPointType) {
+TEST(Max, SupportsConstexprForSameExactQuantityPointType) {
     constexpr auto result = max(meters_pt(1), meters_pt(2));
     EXPECT_THAT(result, Eq(meters_pt(2)));
 }
 
-TEST(max, SameAsStdMaxForNumericTypes) {
+TEST(Max, SameAsStdMaxForNumericTypes) {
     const auto a = 2;
     const auto b = 3;
 
@@ -429,7 +429,7 @@ TEST(max, SameAsStdMaxForNumericTypes) {
     EXPECT_THAT(&b, Eq(&max_result));
 }
 
-TEST(max, SupportsZeroForFirstArgument) {
+TEST(Max, SupportsZeroForFirstArgument) {
     constexpr auto positive_result = max(ZERO, meters(8));
     EXPECT_THAT(positive_result, SameTypeAndValue(meters(8)));
 
@@ -437,7 +437,7 @@ TEST(max, SupportsZeroForFirstArgument) {
     EXPECT_THAT(negative_result, SameTypeAndValue(meters(0)));
 }
 
-TEST(max, SupportsZeroForSecondArgument) {
+TEST(Max, SupportsZeroForSecondArgument) {
     constexpr auto positive_result = max(meters(8), ZERO);
     EXPECT_THAT(positive_result, SameTypeAndValue(meters(8)));
 
@@ -445,17 +445,17 @@ TEST(max, SupportsZeroForSecondArgument) {
     EXPECT_THAT(negative_result, SameTypeAndValue(meters(0)));
 }
 
-TEST(min, ReturnsSmaller) {
+TEST(Min, ReturnsSmaller) {
     constexpr auto result = min(centi(meters)(1), inches(1));
     EXPECT_THAT(result, Eq(centi(meters)(1)));
 }
 
-TEST(min, HandlesDifferentOriginQuantityPoints) {
+TEST(Min, HandlesDifferentOriginQuantityPoints) {
     constexpr auto result = min(fahrenheit_pt(30), celsius_pt(0));
     EXPECT_THAT(result, Eq(fahrenheit_pt(30)));
 }
 
-TEST(min, ReturnsByValueForSameExactQuantityType) {
+TEST(Min, ReturnsByValueForSameExactQuantityType) {
     // If two Quantity types are EXACTLY the same, we risk ambiguity with `std::min`.
     const auto a = meters(1);
     const auto b = meters(2);
@@ -465,12 +465,12 @@ TEST(min, ReturnsByValueForSameExactQuantityType) {
     EXPECT_THAT(&min_a_b, Ne(&a));
 }
 
-TEST(min, SupportsConstexprForSameExactQuantityType) {
+TEST(Min, SupportsConstexprForSameExactQuantityType) {
     constexpr auto result = min(meters(1), meters(2));
     EXPECT_THAT(result, Eq(meters(1)));
 }
 
-TEST(min, ReturnsByValueForSameExactQuantityPointType) {
+TEST(Min, ReturnsByValueForSameExactQuantityPointType) {
     // If two QuantityPoint types are EXACTLY the same, we risk ambiguity with `std::min`.
     const auto a = meters_pt(1);
     const auto b = meters_pt(2);
@@ -480,12 +480,12 @@ TEST(min, ReturnsByValueForSameExactQuantityPointType) {
     EXPECT_THAT(&min_a_b, Ne(&a));
 }
 
-TEST(min, SupportsConstexprForSameExactQuantityPointType) {
+TEST(Min, SupportsConstexprForSameExactQuantityPointType) {
     constexpr auto result = min(meters_pt(1), meters_pt(2));
     EXPECT_THAT(result, Eq(meters_pt(1)));
 }
 
-TEST(min, SameAsStdMinForNumericTypes) {
+TEST(Min, SameAsStdMinForNumericTypes) {
     const auto a = 2;
     const auto b = 3;
 
@@ -494,7 +494,7 @@ TEST(min, SameAsStdMinForNumericTypes) {
     EXPECT_THAT(&a, Eq(&min_result));
 }
 
-TEST(min, SupportsZeroForFirstArgument) {
+TEST(Min, SupportsZeroForFirstArgument) {
     constexpr auto positive_result = min(ZERO, meters(8));
     EXPECT_THAT(positive_result, SameTypeAndValue(meters(0)));
 
@@ -502,7 +502,7 @@ TEST(min, SupportsZeroForFirstArgument) {
     EXPECT_THAT(negative_result, SameTypeAndValue(meters(-8)));
 }
 
-TEST(min, SupportsZeroForSecondArgument) {
+TEST(Min, SupportsZeroForSecondArgument) {
     constexpr auto positive_result = min(meters(8), ZERO);
     EXPECT_THAT(positive_result, SameTypeAndValue(meters(0)));
 
@@ -510,7 +510,7 @@ TEST(min, SupportsZeroForSecondArgument) {
     EXPECT_THAT(negative_result, SameTypeAndValue(meters(-8)));
 }
 
-TEST(int_pow, OutputRepMatchesInputRep) {
+TEST(IntPow, OutputRepMatchesInputRep) {
     EXPECT_THAT(int_pow<-1>(meters(2.)), QuantityEquivalent(pow<-1>(meters)(0.5)));
     EXPECT_THAT(int_pow<2>(meters(2.)), QuantityEquivalent(squared(meters)(4.)));
     EXPECT_THAT(int_pow<2>(meters(2)), QuantityEquivalent(squared(meters)(4)));
@@ -519,14 +519,14 @@ TEST(int_pow, OutputRepMatchesInputRep) {
     EXPECT_THAT(int_pow<2>(meters(2.L)), QuantityEquivalent(squared(meters)(4.L)));
 }
 
-TEST(int_pow, MixedUnitsSupportedWithCasting) {
+TEST(IntPow, MixedUnitsSupportedWithCasting) {
     constexpr auto cubic_inch = int_pow<3>(inches(1.0));
     constexpr auto expected_cm3 = cubed(centi(meters))(2.54 * 2.54 * 2.54);
 
     EXPECT_THAT(cubic_inch, IsNear(expected_cm3, nano(cubed(meters))(1.)));
 }
 
-TEST(sin, TypeDependsOnInputType) {
+TEST(Sin, TypeDependsOnInputType) {
     // See: https://en.cppreference.com/w/cpp/numeric/math/sin
     StaticAssertTypeEq<decltype(sin(radians(0))), double>();
     StaticAssertTypeEq<decltype(sin(radians(0.))), double>();
@@ -542,19 +542,19 @@ TEST(sin, TypeDependsOnInputType) {
     StaticAssertTypeEq<decltype(sin(degrees(0.L))), long double>();
 }
 
-TEST(sin, SameAsStdSinForNumericTypes) {
+TEST(Sin, SameAsStdSinForNumericTypes) {
     EXPECT_THAT(sin(1), Eq(std::sin(1)));
     EXPECT_THAT(sin(1.), Eq(std::sin(1.)));
     EXPECT_THAT(sin(1.f), Eq(std::sin(1.f)));
     EXPECT_THAT(sin(1.L), Eq(std::sin(1.L)));
 }
 
-TEST(sin, GivesSameAnswersAsRawNumbersButInStrongTypes) {
+TEST(Sin, GivesSameAnswersAsRawNumbersButInStrongTypes) {
     EXPECT_THAT(sin(radians(1.23)), Eq(std::sin(1.23)));
     EXPECT_THAT(sin(radians(4.56f)), Eq(std::sin(4.56f)));
 }
 
-TEST(sin, GivesCorrectAnswersForInputsInDegrees) {
+TEST(Sin, GivesCorrectAnswersForInputsInDegrees) {
     constexpr auto TOL = 1e-15;
     EXPECT_THAT(sin(degrees(0)), DoubleNear(0.0, TOL));
     EXPECT_THAT(sin(degrees(30)), DoubleNear(0.5, TOL));
@@ -562,37 +562,37 @@ TEST(sin, GivesCorrectAnswersForInputsInDegrees) {
     EXPECT_THAT(sin(degrees(90)), DoubleNear(1.0, TOL));
 }
 
-TEST(mean, QuantityMeanGivesCommonUnit) {
+TEST(Mean, QuantityMeanGivesCommonUnit) {
     EXPECT_THAT(mean(feet(1), inches(12), yards(2)), SameTypeAndValue(inches(32)));
 }
 
-TEST(mean, QuantityPointMeanGivesCommonUnit) {
+TEST(Mean, QuantityPointMeanGivesCommonUnit) {
     EXPECT_THAT(mean(meters_pt(2), centi(meters_pt)(150), milli(meters_pt)(2500)),
                 SameTypeAndValue(milli(meters_pt)(2000)));
 }
 
-TEST(sqrt, OutputRepDependsOnInputRep) {
+TEST(Sqrt, OutputRepDependsOnInputRep) {
     EXPECT_THAT(sqrt(squared(meters)(4)), QuantityEquivalent(meters(2.)));
     EXPECT_THAT(sqrt(squared(meters)(4.)), QuantityEquivalent(meters(2.)));
     EXPECT_THAT(sqrt(squared(meters)(4.f)), QuantityEquivalent(meters(2.f)));
     EXPECT_THAT(sqrt(squared(meters)(4.L)), QuantityEquivalent(meters(2.L)));
 }
 
-TEST(sqrt, MixedUnitsSupportedWithCasting) {
+TEST(Sqrt, MixedUnitsSupportedWithCasting) {
     constexpr auto x_in = inches(1);
     constexpr auto y_cm = centi(meters)(2.54);
 
     EXPECT_THAT(sqrt(x_in * y_cm.as(inches)), IsNear(x_in, nano(meters)(1)));
 }
 
-TEST(sqrt, SameAsStdSqrtForNumericTypes) {
+TEST(Sqrt, SameAsStdSqrtForNumericTypes) {
     EXPECT_THAT(sqrt(1), Eq(std::sqrt(1)));
     EXPECT_THAT(sqrt(1.), Eq(std::sqrt(1.)));
     EXPECT_THAT(sqrt(1.f), Eq(std::sqrt(1.f)));
     EXPECT_THAT(sqrt(1.L), Eq(std::sqrt(1.L)));
 }
 
-TEST(sqrt, CanConvertIfConversionFactorRational) {
+TEST(Sqrt, CanConvertIfConversionFactorRational) {
     const auto geo_mean_length = sqrt(inches(1) * meters(1));
 
     // Using Quantity-equivalent Unit just retrieves the value stored in `geo_mean_length`.
@@ -608,7 +608,7 @@ TEST(sqrt, CanConvertIfConversionFactorRational) {
     EXPECT_THAT(radically_converted_value, DoubleNear(6.274558, 0.000001));
 }
 
-TEST(tan, TypeDependsOnInputType) {
+TEST(Tan, TypeDependsOnInputType) {
     // See: https://en.cppreference.com/w/cpp/numeric/math/tan
     StaticAssertTypeEq<decltype(tan(radians(0))), double>();
     StaticAssertTypeEq<decltype(tan(radians(0.))), double>();
@@ -619,19 +619,19 @@ TEST(tan, TypeDependsOnInputType) {
     StaticAssertTypeEq<decltype(tan(degrees(0))), double>();
 }
 
-TEST(tan, SameAsStdTanForNumericTypes) {
+TEST(Tan, SameAsStdTanForNumericTypes) {
     EXPECT_THAT(tan(1), Eq(std::tan(1)));
     EXPECT_THAT(tan(1.), Eq(std::tan(1.)));
     EXPECT_THAT(tan(1.f), Eq(std::tan(1.f)));
     EXPECT_THAT(tan(1.L), Eq(std::tan(1.L)));
 }
 
-TEST(tan, GivesSameAnswersAsRawNumbersButInStrongTypes) {
+TEST(Tan, GivesSameAnswersAsRawNumbersButInStrongTypes) {
     EXPECT_THAT(tan(radians(1.23)), SameTypeAndValue(std::tan(1.23)));
     EXPECT_THAT(tan(radians(4.56f)), SameTypeAndValue(std::tan(4.56f)));
 }
 
-TEST(arccos, TypeDependsOnInputType) {
+TEST(Arccos, TypeDependsOnInputType) {
     // See: https://en.cppreference.com/w/cpp/numeric/math/acos
     StaticAssertTypeEq<decltype(arccos(0)), Quantity<Radians, double>>();
     StaticAssertTypeEq<decltype(arccos(0.)), Quantity<Radians, double>>();
@@ -639,12 +639,12 @@ TEST(arccos, TypeDependsOnInputType) {
     StaticAssertTypeEq<decltype(arccos(0.L)), Quantity<Radians, long double>>();
 }
 
-TEST(arccos, GivesSameAnswersAsRawNumbersButInStrongTypes) {
+TEST(Arccos, GivesSameAnswersAsRawNumbersButInStrongTypes) {
     EXPECT_THAT(arccos(0.123), SameTypeAndValue(radians(std::acos(0.123))));
     EXPECT_THAT(arccos(0.456f), SameTypeAndValue(radians(std::acos(0.456f))));
 }
 
-TEST(arcsin, TypeDependsOnInputType) {
+TEST(Arcsin, TypeDependsOnInputType) {
     // See: https://en.cppreference.com/w/cpp/numeric/math/asin
     StaticAssertTypeEq<decltype(arcsin(0)), Quantity<Radians, double>>();
     StaticAssertTypeEq<decltype(arcsin(0.)), Quantity<Radians, double>>();
@@ -652,17 +652,17 @@ TEST(arcsin, TypeDependsOnInputType) {
     StaticAssertTypeEq<decltype(arcsin(0.L)), Quantity<Radians, long double>>();
 }
 
-TEST(arcsin, GivesSameAnswersAsRawNumbersButInStrongTypes) {
+TEST(Arcsin, GivesSameAnswersAsRawNumbersButInStrongTypes) {
     EXPECT_THAT(arcsin(0.123), SameTypeAndValue(radians(std::asin(0.123))));
     EXPECT_THAT(arcsin(0.456f), SameTypeAndValue(radians(std::asin(0.456f))));
 }
 
-TEST(arcsin, ExampleFromReferenceDocs) {
+TEST(Arcsin, ExampleFromReferenceDocs) {
     constexpr auto TOL = degrees(1e-12);
     EXPECT_THAT(arcsin(0.5).as(degrees), IsNear(degrees(30.0), TOL));
 }
 
-TEST(arctan, TypeDependsOnInputType) {
+TEST(Arctan, TypeDependsOnInputType) {
     // See: https://en.cppreference.com/w/cpp/numeric/math/atan
     StaticAssertTypeEq<decltype(arctan(1)), Quantity<Radians, double>>();
     StaticAssertTypeEq<decltype(arctan(1.)), Quantity<Radians, double>>();
@@ -670,12 +670,12 @@ TEST(arctan, TypeDependsOnInputType) {
     StaticAssertTypeEq<decltype(arctan(1.L)), Quantity<Radians, long double>>();
 }
 
-TEST(arctan, GivesSameAnswersAsRawNumbersButInStrongTypes) {
+TEST(Arctan, GivesSameAnswersAsRawNumbersButInStrongTypes) {
     EXPECT_THAT(arctan(3), SameTypeAndValue(radians(std::atan(3))));
     EXPECT_THAT(arctan(-5.f), SameTypeAndValue(radians(std::atan(-5.f))));
 }
 
-TEST(arctan2, TypeDependsOnInputType) {
+TEST(Arctan2, TypeDependsOnInputType) {
     // See: https://en.cppreference.com/w/cpp/numeric/math/atan2
     StaticAssertTypeEq<decltype(arctan2(1, 0)), Quantity<Radians, double>>();
     StaticAssertTypeEq<decltype(arctan2(1., 0.)), Quantity<Radians, double>>();
@@ -689,12 +689,12 @@ TEST(arctan2, TypeDependsOnInputType) {
     StaticAssertTypeEq<decltype(arctan2(1, 0.L)), Quantity<Radians, long double>>();
 }
 
-TEST(arctan2, GivesSameAnswersAsRawNumbersButInStrongTypes) {
+TEST(Arctan2, GivesSameAnswersAsRawNumbersButInStrongTypes) {
     EXPECT_THAT(arctan2(3, -5), SameTypeAndValue(radians(std::atan2(3, -5))));
     EXPECT_THAT(arctan2(3.f, -5.f), SameTypeAndValue(radians(std::atan2(3.f, -5.f))));
 }
 
-TEST(arctan2, QuantityOverloadTypeDependsOnInputType) {
+TEST(Arctan2, QuantityOverloadTypeDependsOnInputType) {
     // See: https://en.cppreference.com/w/cpp/numeric/math/atan2
     StaticAssertTypeEq<decltype(arctan2(meters(1), meters(0))), Quantity<Radians, double>>();
     StaticAssertTypeEq<decltype(arctan2(meters(1.), meters(0.))), Quantity<Radians, double>>();
@@ -709,14 +709,14 @@ TEST(arctan2, QuantityOverloadTypeDependsOnInputType) {
     StaticAssertTypeEq<decltype(arctan2(meters(1), meters(0.L))), Quantity<Radians, long double>>();
 }
 
-TEST(arctan2, SupportsUnitsTypes) {
+TEST(Arctan2, SupportsUnitsTypes) {
     // 100" == 254 cm.
     const auto angle = arctan2(make_quantity<Inches>(100), make_quantity<Centi<Meters>>(254));
 
     EXPECT_THAT(angle, IsNear(degrees(45), pico(degrees)(1)));
 }
 
-TEST(isinf, TransparentlyActsOnSameAsValue) {
+TEST(Isinf, TransparentlyActsOnSameAsValue) {
     const std::vector<double> values{{
         0.,
         1.23,
@@ -732,13 +732,13 @@ TEST(isinf, TransparentlyActsOnSameAsValue) {
     }
 }
 
-TEST(isinf, UnqualifiedCallsGiveStdVersions) {
+TEST(Isinf, UnqualifiedCallsGiveStdVersions) {
     // This test exists to make sure we don't break code with unqualified isinf calls.
     const bool b = isinf(5.5);
     EXPECT_THAT(b, IsFalse());
 }
 
-TEST(isnan, TransparentlyActsOnSameAsValue) {
+TEST(Isnan, TransparentlyActsOnSameAsValue) {
     const std::vector<double> values{{
         0.,
         1.23,
@@ -754,13 +754,13 @@ TEST(isnan, TransparentlyActsOnSameAsValue) {
     }
 }
 
-TEST(isnan, UnqualifiedCallsGiveStdVersions) {
+TEST(Isnan, UnqualifiedCallsGiveStdVersions) {
     // This test exists to make sure we don't break code with unqualified isnan calls.
     const bool b = isnan(5.5);
     EXPECT_THAT(b, IsFalse());
 }
 
-TEST(numeric_limits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
+TEST(NumericLimits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
     // To validly extend std::numeric_limits<T>, we must define all members declared static
     // constexpr in the primary template, in such a way that they are usable as integral constant
     // expressions.
@@ -845,7 +845,7 @@ TEST(numeric_limits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
                 Eq(std::numeric_limits<float>::tinyness_before));
 }
 
-TEST(numeric_limits, ProvidesLimitsForQuantity) {
+TEST(NumericLimits, ProvidesLimitsForQuantity) {
     using nl1 = std::numeric_limits<Quantity<Meters, int>>;
     EXPECT_THAT(nl1::max(), Eq(meters(std::numeric_limits<int>::max())));
     EXPECT_THAT(nl1::lowest(), Eq(meters(std::numeric_limits<int>::lowest())));
@@ -868,7 +868,7 @@ TEST(numeric_limits, ProvidesLimitsForQuantity) {
     // for `isnan()`, which people could find via ADL.
 }
 
-TEST(numeric_limits, InsensitiveToCvQualificationForQuantity) {
+TEST(NumericLimits, InsensitiveToCvQualificationForQuantity) {
     using Q = Quantity<Degrees, float>;
 
     EXPECT_THAT(std::numeric_limits<Q>::max(), Eq(std::numeric_limits<const Q>::max()));

@@ -1197,12 +1197,12 @@ TEST(Quantity, CanIntegerDivideQuantitiesOfQuantityEquivalentUnits) {
     EXPECT_THAT(ratio, Eq(2));
 }
 
-TEST(mod, ComputesRemainderForSameUnits) {
+TEST(Mod, ComputesRemainderForSameUnits) {
     constexpr auto remainder = inches(50) % inches(12);
     EXPECT_THAT(remainder, QuantityEquivalent(inches(2)));
 }
 
-TEST(mod, ReturnsCommonUnitForDifferentInputUnits) {
+TEST(Mod, ReturnsCommonUnitForDifferentInputUnits) {
     EXPECT_THAT(inches(50) % feet(1), QuantityEquivalent(inches(2)));
     EXPECT_THAT(feet(4) % inches(10), QuantityEquivalent(inches(8)));
 }
