@@ -67,7 +67,7 @@ function make_command_from_bazel_run() {
     # A target that is simply fetched is a pre-built target.  Bazel 6.0.0 will complain if we use
     # `bazel run`, because `bazel run` uses `bazel build` under the hood, and there is nothing to
     # build.  So in this case, we simply execute the target directly.
-    QUERY_RESULT="$(bazel --nohome_rc query --noshow_progress "$TARGET" --output=location)"
+    QUERY_RESULT="$(bazel --nohome_rc query --noshow_progress $TARGET --output=location)"
     "${QUERY_RESULT%%:*}" "$@"
   fi
 
