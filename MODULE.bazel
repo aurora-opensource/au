@@ -96,19 +96,19 @@ register_toolchains(
 
 llvm_17 = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm", dev_dependency = True)
 llvm_17.toolchain(
-    name = "llvm_17",
+    name = "llvm_latest",
     cxx_standard = {"": "c++14"},
     extra_compile_flags = {"": EXTRA_COPTS},
     llvm_version = "17.0.6",
 )
 llvm_17.extra_target_compatible_with(
-    name = "llvm_17",
+    name = "llvm_latest",
     constraints = ["@//build/compiler:clang_17"],
 )
-use_repo(llvm_17, "llvm_17")
+use_repo(llvm_17, "llvm_latest")
 
 register_toolchains(
-    "@llvm_17//:all",
+    "@llvm_latest//:all",
     dev_dependency = True,
 )
 
