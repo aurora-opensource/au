@@ -760,89 +760,54 @@ TEST(Isnan, UnqualifiedCallsGiveStdVersions) {
     EXPECT_THAT(b, IsFalse());
 }
 
-TEST(NumericLimits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
+template <typename U, typename R>
+struct NumericLimits {
+    using Q = Quantity<U, R>;
+
     // To validly extend std::numeric_limits<T>, we must define all members declared static
     // constexpr in the primary template, in such a way that they are usable as integral constant
     // expressions.
     //
     // Source for rule: https://en.cppreference.com/w/cpp/language/extending_std
     // List of members: https://en.cppreference.com/w/cpp/types/numeric_limits
-    using meters_limits_int = std::numeric_limits<Quantity<Meters, int>>;
-    EXPECT_THAT(meters_limits_int::is_specialized, IsTrue());
-    EXPECT_THAT(meters_limits_int::is_signed, IsTrue());
-    EXPECT_THAT(meters_limits_int::is_integer, IsTrue());
-    EXPECT_THAT(meters_limits_int::is_exact, IsTrue());
-    EXPECT_THAT(meters_limits_int::has_infinity, IsFalse());
-    EXPECT_THAT(meters_limits_int::has_quiet_NaN, IsFalse());
-    EXPECT_THAT(meters_limits_int::has_signaling_NaN, IsFalse());
-    EXPECT_THAT(meters_limits_int::has_denorm, Eq(std::denorm_absent));
-    EXPECT_THAT(meters_limits_int::has_denorm_loss, IsFalse());
-    EXPECT_THAT(meters_limits_int::round_style, Eq(std::round_toward_zero));
-    EXPECT_THAT(meters_limits_int::is_iec559, IsFalse());
-    EXPECT_THAT(meters_limits_int::is_bounded, IsTrue());
-    EXPECT_THAT(meters_limits_int::is_modulo, Eq(std::numeric_limits<int>::is_modulo));
-    EXPECT_THAT(meters_limits_int::digits, Eq(std::numeric_limits<int>::digits));
-    EXPECT_THAT(meters_limits_int::digits10, Eq(std::numeric_limits<int>::digits10));
-    EXPECT_THAT(meters_limits_int::max_digits10, Eq(0));
-    EXPECT_THAT(meters_limits_int::radix, Eq(2));
-    EXPECT_THAT(meters_limits_int::min_exponent, Eq(0));
-    EXPECT_THAT(meters_limits_int::min_exponent10, Eq(0));
-    EXPECT_THAT(meters_limits_int::max_exponent, Eq(0));
-    EXPECT_THAT(meters_limits_int::max_exponent10, Eq(0));
-    EXPECT_THAT(meters_limits_int::traps, IsTrue());
-    EXPECT_THAT(meters_limits_int::tinyness_before, IsFalse());
+    static void parity() {
+        EXPECT_THAT(std::numeric_limits<Q>::is_specialized, IsTrue());
 
-    using radians_limits_uint32_t = std::numeric_limits<Quantity<Radians, uint32_t>>;
-    EXPECT_THAT(radians_limits_uint32_t::is_specialized, IsTrue());
-    EXPECT_THAT(radians_limits_uint32_t::is_signed, IsFalse());
-    EXPECT_THAT(radians_limits_uint32_t::is_integer, IsTrue());
-    EXPECT_THAT(radians_limits_uint32_t::is_exact, IsTrue());
-    EXPECT_THAT(radians_limits_uint32_t::has_infinity, IsFalse());
-    EXPECT_THAT(radians_limits_uint32_t::has_quiet_NaN, IsFalse());
-    EXPECT_THAT(radians_limits_uint32_t::has_signaling_NaN, IsFalse());
-    EXPECT_THAT(radians_limits_uint32_t::has_denorm, Eq(std::denorm_absent));
-    EXPECT_THAT(radians_limits_uint32_t::has_denorm_loss, IsFalse());
-    EXPECT_THAT(radians_limits_uint32_t::round_style, Eq(std::round_toward_zero));
-    EXPECT_THAT(radians_limits_uint32_t::is_iec559, IsFalse());
-    EXPECT_THAT(radians_limits_uint32_t::is_bounded, IsTrue());
-    EXPECT_THAT(radians_limits_uint32_t::is_modulo, IsTrue());
-    EXPECT_THAT(radians_limits_uint32_t::digits, Eq(std::numeric_limits<uint32_t>::digits));
-    EXPECT_THAT(radians_limits_uint32_t::digits10, Eq(std::numeric_limits<uint32_t>::digits10));
-    EXPECT_THAT(radians_limits_uint32_t::max_digits10, Eq(0));
-    EXPECT_THAT(radians_limits_uint32_t::radix, Eq(2));
-    EXPECT_THAT(radians_limits_uint32_t::min_exponent, Eq(0));
-    EXPECT_THAT(radians_limits_uint32_t::min_exponent10, Eq(0));
-    EXPECT_THAT(radians_limits_uint32_t::max_exponent, Eq(0));
-    EXPECT_THAT(radians_limits_uint32_t::max_exponent10, Eq(0));
-    EXPECT_THAT(radians_limits_uint32_t::traps, IsTrue());
-    EXPECT_THAT(radians_limits_uint32_t::tinyness_before, IsFalse());
+        EXPECT_THAT(std::numeric_limits<Q>::is_signed, Eq(std::numeric_limits<R>::is_signed));
+        EXPECT_THAT(std::numeric_limits<Q>::is_integer, Eq(std::numeric_limits<R>::is_integer));
+        EXPECT_THAT(std::numeric_limits<Q>::is_exact, Eq(std::numeric_limits<R>::is_exact));
+        EXPECT_THAT(std::numeric_limits<Q>::has_infinity, Eq(std::numeric_limits<R>::has_infinity));
+        EXPECT_THAT(std::numeric_limits<Q>::has_quiet_NaN,
+                    Eq(std::numeric_limits<R>::has_quiet_NaN));
+        EXPECT_THAT(std::numeric_limits<Q>::has_signaling_NaN,
+                    Eq(std::numeric_limits<R>::has_signaling_NaN));
+        EXPECT_THAT(std::numeric_limits<Q>::has_denorm, Eq(std::numeric_limits<R>::has_denorm));
+        EXPECT_THAT(std::numeric_limits<Q>::has_denorm_loss,
+                    Eq(std::numeric_limits<R>::has_denorm_loss));
+        EXPECT_THAT(std::numeric_limits<Q>::round_style, Eq(std::numeric_limits<R>::round_style));
+        EXPECT_THAT(std::numeric_limits<Q>::is_iec559, Eq(std::numeric_limits<R>::is_iec559));
+        EXPECT_THAT(std::numeric_limits<Q>::is_bounded, Eq(std::numeric_limits<R>::is_bounded));
+        EXPECT_THAT(std::numeric_limits<Q>::is_modulo, Eq(std::numeric_limits<R>::is_modulo));
+        EXPECT_THAT(std::numeric_limits<Q>::digits, Eq(std::numeric_limits<R>::digits));
+        EXPECT_THAT(std::numeric_limits<Q>::digits10, Eq(std::numeric_limits<R>::digits10));
+        EXPECT_THAT(std::numeric_limits<Q>::max_digits10, Eq(std::numeric_limits<R>::max_digits10));
+        EXPECT_THAT(std::numeric_limits<Q>::radix, Eq(std::numeric_limits<R>::radix));
+        EXPECT_THAT(std::numeric_limits<Q>::min_exponent, Eq(std::numeric_limits<R>::min_exponent));
+        EXPECT_THAT(std::numeric_limits<Q>::min_exponent10,
+                    Eq(std::numeric_limits<R>::min_exponent10));
+        EXPECT_THAT(std::numeric_limits<Q>::max_exponent, Eq(std::numeric_limits<R>::max_exponent));
+        EXPECT_THAT(std::numeric_limits<Q>::max_exponent10,
+                    Eq(std::numeric_limits<R>::max_exponent10));
+        EXPECT_THAT(std::numeric_limits<Q>::traps, Eq(std::numeric_limits<R>::traps));
+        EXPECT_THAT(std::numeric_limits<Q>::tinyness_before,
+                    Eq(std::numeric_limits<R>::tinyness_before));
+    }
+};
 
-    using celsius_limits_float = std::numeric_limits<Quantity<Celsius, float>>;
-    EXPECT_THAT(celsius_limits_float::is_specialized, IsTrue());
-    EXPECT_THAT(celsius_limits_float::is_signed, IsTrue());
-    EXPECT_THAT(celsius_limits_float::is_integer, IsFalse());
-    EXPECT_THAT(celsius_limits_float::is_exact, IsFalse());
-    EXPECT_THAT(celsius_limits_float::has_infinity, IsTrue());
-    EXPECT_THAT(celsius_limits_float::has_quiet_NaN, IsTrue());
-    EXPECT_THAT(celsius_limits_float::has_signaling_NaN, IsTrue());
-    EXPECT_THAT(celsius_limits_float::has_denorm, Eq(std::denorm_present));
-    EXPECT_THAT(celsius_limits_float::has_denorm_loss,
-                Eq(std::numeric_limits<float>::has_denorm_loss));
-    EXPECT_THAT(celsius_limits_float::round_style, Eq(std::round_to_nearest));
-    EXPECT_THAT(celsius_limits_float::is_iec559, IsTrue());
-    EXPECT_THAT(celsius_limits_float::is_bounded, IsTrue());
-    EXPECT_THAT(celsius_limits_float::is_modulo, IsFalse());
-    EXPECT_THAT(celsius_limits_float::digits, Eq(FLT_MANT_DIG));
-    EXPECT_THAT(celsius_limits_float::digits10, Eq(FLT_DIG));
-    EXPECT_THAT(celsius_limits_float::max_digits10, Eq(std::numeric_limits<float>::max_digits10));
-    EXPECT_THAT(celsius_limits_float::radix, Eq(FLT_RADIX));
-    EXPECT_THAT(celsius_limits_float::min_exponent, Eq(FLT_MIN_EXP));
-    EXPECT_THAT(celsius_limits_float::min_exponent10, Eq(FLT_MIN_10_EXP));
-    EXPECT_THAT(celsius_limits_float::max_exponent, Eq(FLT_MAX_EXP));
-    EXPECT_THAT(celsius_limits_float::max_exponent10, Eq(FLT_MAX_10_EXP));
-    EXPECT_THAT(celsius_limits_float::traps, IsFalse());
-    EXPECT_THAT(celsius_limits_float::tinyness_before,
-                Eq(std::numeric_limits<float>::tinyness_before));
+TEST(numeric_limits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
+    NumericLimits<Meters, int>::parity();
+    NumericLimits<Radians, uint32_t>::parity();
+    NumericLimits<Celsius, float>::parity();
 }
 
 TEST(NumericLimits, ProvidesLimitsForQuantity) {
