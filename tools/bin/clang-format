@@ -24,6 +24,7 @@ source "$SCRIPT_ROOT/../lib/command_from_bazel.sh"
 # Grab the list of repositories known to bazel
 bazel_repo_cmd=(
   "bazel"
+  "--quiet"
   "mod"
   "dump_repo_mapping"
   ""
@@ -38,4 +39,4 @@ jq_cmd=(
 
 llvm_repo=$("${bazel_repo_cmd[@]}" | "${jq_cmd[@]}")
 
-make_command_from_bazel_run fetch "@$llvm_repo//:bin/clang-format" "$@"
+make_command_from_bazel_run build "@$llvm_repo//:bin/clang-format" "$@"

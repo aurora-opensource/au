@@ -18,30 +18,58 @@ set -eou pipefail
 # In case users haven't set up `direnv`.
 export PATH="$PATH:./tools/bin"
 
-function wrap_bazel () {
-  COMMAND="$1"; shift
-  TARGET="$1"; shift
+function wrap_bazel() {
+  COMMAND="$1"
+  shift
+  TARGET="$1"
+  shift
 
-  bazel_opts=(
+  bazel_opts_startup=(
     "--nohome_rc"
-    "$COMMAND"
-    "--run_under=cd $PWD &&"
-    "$TARGET"
-    "--"
+    "--quiet"
   )
 
-  bazel "${bazel_opts[@]}" "$@"
+  bazel_opts=(
+    "--ui_event_filters=-info,-stdout,-stderr"
+    "--noshow_progress"
+    "--run_under=cd $PWD &&"
+    "$TARGET"
+  )
+
+  bazel "${bazel_opts_startup[@]}" "$COMMAND" "${bazel_opts[@]}" -- "$@"
 }
 
-function make_command_from_bazel_run () {
-  # We used to run the provided build command first, then do a bazel run on the
-  # target.  This was done try to minimize bazel output to the console when
-  # running a command.  If we allow the bazel output to go to the console as it
-  # would normally, it allows the user to see progress and the like.  Keeping
-  # this around in case we need to do fancy tricks to reduce bazel output again.
-  BUILD_CMD="$1"; shift
+function make_command_from_bazel_run() {
+  BUILD_CMD="$1"
+  shift
 
-  TARGET="$1"; shift
+  TARGET="$1"
+  shift
+
+  USER_MESSAGE="Building tool.  If curios to what's taking so long, you can Ctrl-C and run: bazel --nohome_rc $BUILD_CMD $TARGET"
+
+  # Write message, then run _building_ command.
+  # When done: back up; then, write spaces; then, back up again.
+  echo -n "$USER_MESSAGE" >&2
+  wrap_bazel "$BUILD_CMD" "$TARGET"
+  echo -n "$USER_MESSAGE" | sed 's/./\x08 \x08/g' >&2
+
+  # Run _real_ command.
+  if [ "$BUILD_CMD" == "fetch" ]; then
+    # With bzlmod, bazel fetch with a specific file in a module extension
+    # doesn't actually pull anything down, and query doesn't actually find it.
+    # With current versions of bazel, it looks like bazel build of the target
+    # file works, so try that.  Leaving this here for now in case I need to come
+    # back for it.
+    echo "ERROR: fetch with bzlmod may not work as expected..." >&2
+    exit 1
+
+    # A target that is simply fetched is a pre-built target.  Bazel 6.0.0 will complain if we use
+    # `bazel run`, because `bazel run` uses `bazel build` under the hood, and there is nothing to
+    # build.  So in this case, we simply execute the target directly.
+    QUERY_RESULT="$(bazel --nohome_rc query "$TARGET" --output=location)"
+    "${QUERY_RESULT%%:*}" "$@"
+  fi
 
   wrap_bazel run "$TARGET" "$@"
 }
