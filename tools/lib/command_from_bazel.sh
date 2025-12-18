@@ -21,6 +21,7 @@ export PATH="$PATH:./tools/bin"
 function wrap_bazel() {
   COMMAND="$1"
   shift
+
   TARGET="$1"
   shift
 
