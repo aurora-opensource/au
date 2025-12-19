@@ -804,9 +804,15 @@ struct NumericLimits {
     }
 };
 
-TEST(numeric_limits, MemberVariablesSetCorrectlyForQuantitySpecialization) {
+TEST(NumericLimits, MemberVariablesSetCorrectlyForQuantitySpecializationInt) {
     NumericLimits<Meters, int>::parity();
+}
+
+TEST(NumericLimits, MemberVariablesSetCorrectlyForQuantitySpecializationUint32T) {
     NumericLimits<Radians, uint32_t>::parity();
+}
+
+TEST(NumericLimits, MemberVariablesSetCorrectlyForQuantitySpecializationFloat) {
     NumericLimits<Celsius, float>::parity();
 }
 
