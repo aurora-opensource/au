@@ -47,7 +47,7 @@ function make_command_from_bazel_run() {
   TARGET="$1"
   shift
 
-  USER_MESSAGE="Building tool.  If curios to what's taking so long, you can Ctrl-C and run: bazel --nohome_rc $BUILD_CMD $TARGET"
+  USER_MESSAGE="Building tool.  If curious as to what's taking so long, you can Ctrl-C and run: bazel --nohome_rc $BUILD_CMD $TARGET"
 
   # Write message, then run _building_ command.
   # When done: back up; then, write spaces; then, back up again.
