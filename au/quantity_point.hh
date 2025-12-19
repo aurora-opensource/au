@@ -119,7 +119,10 @@ class QuantityPoint {
     constexpr explicit QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other) = delete;
 
     // Construct from another QuantityPoint with an explicit conversion risk policy.
-    template <typename OtherUnit, typename OtherRep, typename RiskPolicyT>
+    template <typename OtherUnit,
+              typename OtherRep,
+              typename RiskPolicyT,
+              std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
     constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other, RiskPolicyT policy)
         : QuantityPoint{other.template as<Rep>(Unit{}, policy)} {}
 

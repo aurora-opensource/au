@@ -163,7 +163,10 @@ class Quantity {
     explicit constexpr Quantity(Quantity<OtherUnit, OtherRep> other) = delete;
 
     // Constructor for another Quantity with an explicit conversion risk policy.
-    template <typename OtherUnit, typename OtherRep, typename RiskPolicyT>
+    template <typename OtherUnit,
+              typename OtherRep,
+              typename RiskPolicyT,
+              std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
     constexpr Quantity(Quantity<OtherUnit, OtherRep> other, RiskPolicyT policy)
         : value_{other.template in<Rep>(UnitT{}, policy)} {}
 
