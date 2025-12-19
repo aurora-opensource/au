@@ -13,11 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -euo pipefail
 
 # Unfortunately, we need to handle this dependency _outside_ of bazel, because
 # this is just a thin wrapper over a bazel command.  This method is not
 # bulletproof (no method is), but it should be good enough in practice.
-SCRIPT_ROOT=$(dirname $(readlink -f $0))
+SCRIPT_ROOT=$(dirname "$(readlink -f "$0")")
 source "$SCRIPT_ROOT/../lib/command_from_bazel.sh"
 
-make_command_from_bazel_run fetch @llvm_14_toolchain_llvm//:bin/clang-format "$@"
+# Grab the list of repositories known to bazel
+bazel_repo_cmd=(
+  "bazel"
+  "--quiet"
+  "mod"
+  "dump_repo_mapping"
+  ""
+)
+
+# Filter repositories to find the "greatest" llvm toolchain (e.g. "llvm_17").
+jq_cmd=(
+  "jq"
+  "--raw-output"
+  'keys | map(select(startswith("llvm_"))) | sort | reverse | .[0]'
+)
+
+llvm_repo=$("${bazel_repo_cmd[@]}" | "${jq_cmd[@]}")
+
+make_command_from_bazel_run build "@$llvm_repo//:bin/clang-format" "$@"
