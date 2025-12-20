@@ -20,7 +20,7 @@ namespace au {
 
 namespace detail {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/0.5.0/howto/new-units/).
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/0.5.1/howto/new-units/).
 template <typename T>
 struct SpeedOfLightLabel {
     static constexpr const char label[] = "c";

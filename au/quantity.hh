@@ -438,7 +438,7 @@ class Quantity {
             AreUnitsQuantityEquivalent<UnitT, OtherUnit>::value;
         static_assert(are_units_quantity_equivalent || !uses_integer_division,
                       "Integer division forbidden.  See "
-                      "<https://aurora-opensource.github.io/au/0.5.0/troubleshooting/"
+                      "<https://aurora-opensource.github.io/au/0.5.1/troubleshooting/"
                       "#integer-division-forbidden> for more details about the risks, "
                       "and your options to resolve this error.");
     }
@@ -462,14 +462,14 @@ class Quantity {
             (should_check_overflow && !is_overflow_risk_ok && is_truncation_risk_ok);
         static_assert(!is_overflow_only_unacceptable_risk,
                       "Overflow risk too high.  See <"
-                      "https://aurora-opensource.github.io/au/0.5.0/troubleshooting/#risk-too-high>"
+                      "https://aurora-opensource.github.io/au/0.5.1/troubleshooting/#risk-too-high>"
                       ".  Your \"risk set\" is `OVERFLOW_RISK`.");
 
         constexpr bool is_truncation_only_unacceptable_risk =
             (should_check_truncation && !is_truncation_risk_ok && is_overflow_risk_ok);
         static_assert(!is_truncation_only_unacceptable_risk,
                       "Truncation risk too high.  See <"
-                      "https://aurora-opensource.github.io/au/0.5.0/troubleshooting/#risk-too-high>"
+                      "https://aurora-opensource.github.io/au/0.5.1/troubleshooting/#risk-too-high>"
                       ".  Your \"risk set\" is `TRUNCATION_RISK`.");
 
         constexpr bool are_both_overflow_and_truncation_unacceptably_risky =
@@ -477,7 +477,7 @@ class Quantity {
             !is_truncation_risk_ok;
         static_assert(!are_both_overflow_and_truncation_unacceptably_risky,
                       "Both truncation and overflow risk too high.  See <"
-                      "https://aurora-opensource.github.io/au/0.5.0/troubleshooting/#risk-too-high>"
+                      "https://aurora-opensource.github.io/au/0.5.1/troubleshooting/#risk-too-high>"
                       ".  Your \"risk set\" is `OVERFLOW_RISK | TRUNCATION_RISK`.");
 
         return Op::apply_to(value_);
@@ -494,14 +494,14 @@ struct AssociatedUnit<Quantity<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Can't pass `Quantity` to a unit slot (see: "
-        "https://aurora-opensource.github.io/au/0.5.0/troubleshooting/#quantity-to-unit-slot)");
+        "https://aurora-opensource.github.io/au/0.5.1/troubleshooting/#quantity-to-unit-slot)");
 };
 template <typename U, typename R>
 struct AssociatedUnitForPoints<Quantity<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Can't pass `Quantity` to a unit slot for points (see: "
-        "https://aurora-opensource.github.io/au/0.5.0/troubleshooting/#quantity-to-unit-slot)");
+        "https://aurora-opensource.github.io/au/0.5.1/troubleshooting/#quantity-to-unit-slot)");
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
