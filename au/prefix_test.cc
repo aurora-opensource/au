@@ -48,7 +48,7 @@ TEST(PrefixApplier, ConvertsQuantityMakerToMakerOfCorrespondingPrefixedType) {
     constexpr auto d = inches(2);
     EXPECT_THAT(d.in(make_milli(inches)), SameTypeAndValue(2'000));
 
-    EXPECT_THAT(make_milli(inches)(5'777).coerce_in(inches), SameTypeAndValue(5));
+    EXPECT_THAT(make_milli(inches)(5'777).in(inches, ignore(TRUNCATION_RISK)), SameTypeAndValue(5));
 }
 
 TEST(PrefixApplier, ConvertsSingularNameForToCorrespondingPrefixedType) {

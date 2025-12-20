@@ -154,53 +154,21 @@ class QuantityPoint {
         return in_impl<Rep>(u, policy);
     }
 
-    // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
-    template <typename NewUnit>
-    constexpr auto coerce_as(NewUnit) const {
-        // Usage example: `p.coerce_as(new_units)`.
-        return as<Rep>(NewUnit{});
-    }
-    template <typename NewRep, typename NewUnit>
-    constexpr auto coerce_as(NewUnit) const {
-        // Usage example: `p.coerce_as<T>(new_units)`.
-        return as<NewRep>(NewUnit{});
-    }
-    template <typename NewUnit>
-    constexpr auto coerce_in(NewUnit) const {
-        // Usage example: `p.coerce_in(new_units)`.
-        return in<Rep>(NewUnit{});
-    }
-    template <typename NewRep, typename NewUnit>
-    constexpr auto coerce_in(NewUnit) const {
-        // Usage example: `p.coerce_in<T>(new_units)`.
-        return in<NewRep>(NewUnit{});
-    }
-
     // Direct access to the underlying value member, with any Point-equivalent Unit.
     //
-    // Mutable access, QuantityPointMaker input.
-    template <typename U>
-    Rep &data_in(const QuantityPointMaker<U> &) {
-        static_assert(AreUnitsPointEquivalent<U, Unit>::value,
+    // Mutable access:
+    template <typename UnitSlot>
+    constexpr Rep &data_in(UnitSlot) {
+        static_assert(AreUnitsPointEquivalent<AssociatedUnitForPointsT<UnitSlot>, Unit>::value,
                       "Can only access value via Point-equivalent unit");
-        return x_.data_in(QuantityMaker<U>{});
+        return x_.data_in(AssociatedUnitForPointsT<UnitSlot>{});
     }
-    // Mutable access, Unit input.
-    template <typename U>
-    Rep &data_in(const U &) {
-        return data_in(QuantityPointMaker<U>{});
-    }
-    // Const access, QuantityPointMaker input.
-    template <typename U>
-    const Rep &data_in(const QuantityPointMaker<U> &) const {
-        static_assert(AreUnitsPointEquivalent<U, Unit>::value,
+    // Const access:
+    template <typename UnitSlot>
+    constexpr const Rep &data_in(UnitSlot) const {
+        static_assert(AreUnitsPointEquivalent<AssociatedUnitForPointsT<UnitSlot>, Unit>::value,
                       "Can only access value via Point-equivalent unit");
-        return x_.data_in(QuantityMaker<U>{});
-    }
-    // Const access, Unit input.
-    template <typename U>
-    const Rep &data_in(const U &) const {
-        return data_in(QuantityPointMaker<U>{});
+        return x_.data_in(AssociatedUnitForPointsT<UnitSlot>{});
     }
 
     // Comparison operators.
@@ -301,14 +269,14 @@ struct AssociatedUnit<QuantityPoint<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Cannot pass QuantityPoint to a unit slot (see: "
-        "https://aurora-opensource.github.io/au/0.5.0/troubleshooting/#quantity-to-unit-slot)");
+        "https://aurora-opensource.github.io/au/0.5.1/troubleshooting/#quantity-to-unit-slot)");
 };
 template <typename U, typename R>
 struct AssociatedUnitForPoints<QuantityPoint<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Cannot pass QuantityPoint to a unit slot (see: "
-        "https://aurora-opensource.github.io/au/0.5.0/troubleshooting/#quantity-to-unit-slot)");
+        "https://aurora-opensource.github.io/au/0.5.1/troubleshooting/#quantity-to-unit-slot)");
 };
 
 // Type trait to detect whether two QuantityPoint types are equivalent.

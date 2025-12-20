@@ -354,64 +354,10 @@ To be concrete, here are the signatures of the functions that support the policy
     In most cases, prefer **not** to use the policy versions if possible, because you will get more
     safety checks.  The risks which the "base" versions warn about are real.
 
-    However, one place where it's _very safe_ to use the "coercing versions" is right after running
-    a _runtime conversion checker_.  These provide _exact_ conversion checks, even more accurate than
-    the default compile-time safety surface (although at the cost of runtime operations).  See the
-    [subsequent section](#runtime-conversion-checkers) for more details.
-
-### Forcing lossy conversions: `.coerce_as(unit)`, `.coerce_in(unit)` {#coerce}
-
-!!! warning
-    We are planning to deprecate these functions in the [0.6.0] release.  See [#481] to track the
-    progress.
-
-    In the meantime, here is how you convert.
-
-    First, figure out which conversion risks you are trying to override: **overflow**, or
-    **truncation**, or **both**.  (If you don't have an explicit `<Rep>` argument, you can simply
-    delete the `"coerce_"` word and compile, and the error message will tell you which one is
-    relevant.  Otherwise, you will need to use your knowledge of the types and units involved to
-    figure this out.)
-
-    Then, follow this table to rewrite your conversion, using the conversion risk you identified
-    above.
-
-    | "Coerce" version (dis-preferred; will be deprecated) | "Policy" version (preferred) |
-    |------------------------------------------------------|------------------------------|
-    | `q.coerce_as(unit)` | One of:<br>`q.as(unit, ignore(OVERFLOW_RISK))`<br>`q.as(unit, ignore(TRUNCATION_RISK))`<br>`q.as(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
-    | `q.coerce_as<T>(unit)` | One of:<br>`q.as<T>(unit, ignore(OVERFLOW_RISK))`<br>`q.as<T>(unit, ignore(TRUNCATION_RISK))`<br>`q.as<T>(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
-    | `q.coerce_in(unit)` | One of:<br>`q.in(unit, ignore(OVERFLOW_RISK))`<br>`q.in(unit, ignore(TRUNCATION_RISK))`<br>`q.in(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
-    | `q.coerce_in<T>(unit)` | One of:<br>`q.in<T>(unit, ignore(OVERFLOW_RISK))`<br>`q.in<T>(unit, ignore(TRUNCATION_RISK))`<br>`q.in<T>(unit, ignore(OVERFLOW_RISK | TRUNCATION_RISK))` |
-
-    These new versions are both more clear about their intent, and safer (because they only turn off
-    the safety checks that they need to).
-
-This function performs the exact same kind of unit conversion as if the string `coerce_` were
-removed.  However, it will ignore any safety checks for overflow or truncation.
-
-??? example "Example: forcing a conversion from inches to feet"
-    `inches(24).as(feet)` is not allowed.  This conversion will divide the underlying value, `24`,
-    by `12`.  While this particular value would produce an integer result, most other `int` values
-    would not.  Because our result uses `int` for storage --- same as the input --- we forbid this.
-
-    `inches(24).coerce_as(feet)` _is_ allowed.  The `coerce_` prefix has "forcing" semantics.  This
-    would produce `feet(2)`.  However, note that this operation uses integer division, which
-    truncates: so, for example, `inches(23).coerce_as(feet)` would produce `feet(1)`.
-
-These functions also support an explicit template parameter: so, `.coerce_as<T>(unit)` and
-`.coerce_in<T>(unit)`.  If you supply this parameter, it will be the rep of the result.
-
-??? example "Example: simultaneous unit and type conversion"
-    `inches(27.8).coerce_as<int>(feet)` will return `feet(2)`.
-
-!!! tip
-    In most cases, prefer **not** to use the "coercing versions" if possible, because you will get
-    more safety checks.  The risks which the "base" versions warn about are real.
-
-    However, one place where it's _very safe_ to use the "coercing versions" is right after running
-    a _runtime conversion checker_.  These provde _exact_ conversion checks, even more accurate than
-    the default compile-time safety surface (although at the cost of runtime operations).  See the
-    next section for more details.
+    However, one place where it's _very safe_ to use the policy-base versions is right after running
+    a _runtime conversion checker_.  These provide _exact_ conversion checks, even more accurate
+    than the default compile-time safety surface (although at the cost of runtime operations).  See
+    the [subsequent section](#runtime-conversion-checkers) for more details.
 
 ### Runtime conversion checkers {#runtime-conversion-checkers}
 
@@ -528,10 +474,9 @@ Here are the usage patterns, and their corresponding signatures.
 ### Dimensionless and unitless results: `as_raw_number` {#as-raw-number}
 
 Users may expect that the product of quantities such as `seconds` and `hertz` would completely
-cancel out, and produce a raw, simple C++ numeric type.  Currently, this is indeed the case, but we
-have also found that it makes the library harder to reason about.  Instead, we hope in the future to
-return a `Quantity` type _consistently_ from arithmetical operations on `Quantity` inputs (see
-[#185]).
+cancel out, and produce a raw, simple C++ numeric type.  While this was formerly the case, we found
+that it made the library harder to reason about consistently.  Instead, we return a `Quantity` type
+_consistently_ from arithmetical operations on `Quantity` inputs.
 
 In order to obtain that raw number robustly, both now and in the future, you can use the
 `as_raw_number` function, a callsite-readable way to "exit" the library.  This will also opt into
@@ -543,8 +488,7 @@ all mechanisms and safety features of the library.  In particular:
   represented exactly as a raw `int`), we will also fail to compile, unless users provide a second
   policy argument to override the safety check.
 
-Users should get in the habit of using `as_raw_number` whenever they really want a raw number.  This
-communicates intent, and also works both before and after [#185] is implemented.
+Users should use `as_raw_number` whenever they really want a raw number.  This communicates intent.
 
 Here are the available APIs:
 
@@ -908,7 +852,6 @@ the following conditions hold.
 - For _types_ `U1` and `U2`:
     - `AreQuantityTypesEquivalent<U1, U2>::value`
 
-[#185]: https://github.com/aurora-opensource/au/issues/185
 [#481]: https://github.com/aurora-opensource/au/issues/481
 [0.6.0]: https://github.com/aurora-opensource/au/milestone/9
 [integer division section]: ../troubleshooting.md#integer-division-forbidden

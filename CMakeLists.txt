@@ -26,9 +26,9 @@ cmake_minimum_required(VERSION 3.27...3.29)
 
 project(
    Au
-   VERSION 0.5.0
+   VERSION 0.5.1
    DESCRIPTION "A C++ quantities and units library, by Aurora Innovation"
-   HOMEPAGE_URL "https://aurora-opensource.github.io/au/0.5.0/"
+   HOMEPAGE_URL "https://aurora-opensource.github.io/au/0.5.1/"
    LANGUAGES CXX
 )
 
