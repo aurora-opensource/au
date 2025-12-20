@@ -1173,12 +1173,12 @@ struct OrderByUnitOrderTiebreaker
     : stdx::bool_constant<(UnitOrderTiebreaker<A>::value < UnitOrderTiebreaker<B>::value)> {};
 
 template <typename U>
-struct UnitAvoidance : std::integral_constant<int, 0> {};
+struct RenamedUnitAvoidance : std::integral_constant<int, 0> {};
 
 }  // namespace detail
 
 template <typename U>
-struct UnitOrderTiebreaker : detail::UnitAvoidance<U> {};
+struct UnitOrderTiebreaker : detail::RenamedUnitAvoidance<U> {};
 
 template <typename A, typename B>
 struct InOrderFor<UnitProduct, A, B>
