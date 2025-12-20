@@ -1,0 +1,3264 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++ units library, by Aurora">
+      
+      
+        <meta name="author" content="Au team">
+      
+      
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/0.5.1/alternatives/">
+      
+      
+        <link rel="prev" href="../troubleshooting/">
+      
+      
+        <link rel="next" href="../discussion/">
+      
+      
+      <link rel="icon" href="../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+    
+    
+      
+        <title>Comparison of Alternatives - The Au units library</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../tweaks.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#comparison-of-alternatives" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../assets/au-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            The Au units library
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Comparison of Alternatives
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../assets/au-logo.png" alt="logo">
+
+    </a>
+    The Au units library
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au documentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../develop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Development Setup
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../supported-compilers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Supported Compilers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Alternatives
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Alternatives
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Comparison of Alternatives
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Comparison of Alternatives
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#alternatives-considered-here" class="md-nav__link">
+    <span class="md-ellipsis">
+      Alternatives considered here
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detailed-comparison-matrices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Detailed comparison matrices
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Detailed comparison matrices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#obtaining-the-library" class="md-nav__link">
+    <span class="md-ellipsis">
+      Obtaining the library
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generic-developer-experience" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generic developer experience
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#library-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Library features
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Discussion
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Discussion
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Discussion Docs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Concepts
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Generic Concepts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/concepts/arithmetic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arithmetic Operations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/concepts/common_unit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Common Units
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/concepts/conversion_risks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/concepts/dimensionless/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dimensionless Units and Quantities
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/concepts/overflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overflow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/concepts/quantity_point/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quantity Point
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/concepts/truncation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Truncation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/concepts/zero/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zero
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Idioms
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            Idioms
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/idioms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au Idioms
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/idioms/unit-slots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Unit slots
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Implementation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            Implementation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Implementation Details
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/implementation/applying_magnitudes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Applying Magnitudes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussion/implementation/vector_space/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Vector Space Representations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Howto
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Howto
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    How-to guides
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/forward-declarations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Forward declarations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/new-constants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Defining new constants
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/new-dimensions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Defining new dimensions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/new-units/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Defining new units
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/quantity-template-parameters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quantity template parameters
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/upgrade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Upgrading Au
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_8" id="__nav_8_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Interop
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_8">
+            <span class="md-nav__icon md-icon"></span>
+            Interop
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/interop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inter-library Interoperation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../howto/interop/nholthaus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    nholthaus/units Interoperation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reference Docs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/constant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Constant
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/conversion_risk_policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risk Policies
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/corresponding_quantity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Corresponding Quantity
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/format/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Format
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/magnitude/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Magnitude
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/math/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Math functions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/powers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Powers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/prefix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Prefix
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/quantity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quantity
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/quantity_point/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    QuantityPoint
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/unit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Unit
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/zero/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zero
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_9_14" id="__nav_9_14_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Detail
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_14">
+            <span class="md-nav__icon md-icon"></span>
+            Detail
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/detail/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Implementation Details
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/detail/dimension/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dimension
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/detail/monovalue_types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Monovalue Types
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/detail/packs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Parameter packs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tutorial
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorial
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tutorials: home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/101-quantity-makers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 101: Quantity Makers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/102-api-types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 102: API Types
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/103-unit-conversions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 103: Unit Conversions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_5" id="__nav_10_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Exercise
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_5">
+            <span class="md-nav__icon md-icon"></span>
+            Exercise
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 101: Quantity Makers Exercise
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/exercise/102-api-types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 102: API Types Exercise
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 103: Unit Conversions Exercise
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="comparison-of-alternatives">Comparison of Alternatives<a class="headerlink" href="#comparison-of-alternatives" title="Permanent link">&para;</a></h1>
+<p>There are plenty of other open source C++ units libraries, many quite well established.  However,
+the tradeoffs required to use these libraries can be so significant that many people can&rsquo;t or won&rsquo;t
+use them.  For example: the compiler errors may be inscrutable or overwhelming; the compilation
+process may become unacceptably slow; or, the required C++ standard may simply be too new for
+a user.</p>
+<p>Au is an accessible, production-tested alternative.  We provide a number of rare or outright novel
+features, with a small compile time footprint &mdash; and we&rsquo;re compatible with every C++ version back
+to the mature and widely available C++14 standard. Key features include:</p>
+<ul>
+<li>Fully unit-safe APIs, on both entry and exit.</li>
+<li>The &ldquo;safety surface&rdquo;: conversions that adapt to the overflow risk based on both conversion
+  magnitude, and storage type.</li>
+<li>Highly composable &ldquo;quantity maker&rdquo; APIs make it easy to both compose new units, and apply unit
+  prefixes, on the fly.</li>
+<li>Human-readable and concise compiler errors, via strong typenames for units.</li>
+<li>The <code>Zero</code> type: novel, fluent handling of construction, comparison, and sign handling for
+  quantities.</li>
+<li>Ease of migration (both to and from Au): with minimal setup, we support bidirectional implicit
+  conversions with equivalent types from any other units library.</li>
+<li>Support for single-header-file delivery, but with easy customization of units and features to
+  include.</li>
+<li>Proven track record supporting embedded applications as first class citizens, via such features as
+  our safe handling of integer Rep, treating all Reps on equal footing, and our easy ability to
+  exclude expensive <code>&lt;iostream&gt;</code> support.</li>
+<li>Intelligent, unit-aware functions for rounding and computing inverses.</li>
+<li>Minimal friction by using a single, short namespace: everything&rsquo;s in <code>au::</code>.</li>
+</ul>
+<h2 id="alternatives-considered-here">Alternatives considered here<a class="headerlink" href="#alternatives-considered-here" title="Permanent link">&para;</a></h2>
+<p>We&rsquo;ll consider several of the most prominent alternatives in more detail.  While there are <a href="https://github.com/topics/dimensional-analysis?l=c%2B%2B">many
+more libraries</a>, the ones we consider here
+are included for being especially pioneering or popular (or both).  Here, we list those libraries,
+indicate which version we considered, and say a few words about why we included it in the analysis.</p>
+<ul>
+<li><a href="https://www.boost.org/doc/libs/1_82_0/doc/html/boost_units.html"><strong>Boost Units</strong></a> (version:
+  1.2, from Boost version 1.89.0)<ul>
+<li>One of the longest-standing C++ unit libraries, and the most prominent pre-C++14 option.</li>
+</ul>
+</li>
+<li><a href="https://github.com/nholthaus/units"><strong>nholthaus/units</strong></a> (version: 2.3.4)<ul>
+<li>Kicked off the revolution in modern (that is, post-C++11 watershed) units libraries.</li>
+<li>Its laser-sharp focus on accessibility and low friction have made it probably the most widely
+  used C++ units library to date.</li>
+</ul>
+</li>
+<li><a href="https://github.com/bernedom/SI"><strong>bernedom/SI</strong></a> (version: 2.5.4)<ul>
+<li>A newer, C++17-compatible offering with a large number of GitHub stars.</li>
+</ul>
+</li>
+<li><a href="https://github.com/mpusz/mp-units"><strong>mp-units</strong></a> (version: 2.4.0)<ul>
+<li>A library designed to take full advantage of ultra-modern (that is, post-C++20 watershed)
+  features, such as concepts and non-template type parameters (NTTPs).</li>
+<li>mp-units is leading the efforts towards a standard C++ units library, both by field testing
+  new API designs, and by coordinating with the authors of other leading units libraries.</li>
+</ul>
+</li>
+</ul>
+<h2 id="detailed-comparison-matrices">Detailed comparison matrices<a class="headerlink" href="#detailed-comparison-matrices" title="Permanent link">&para;</a></h2>
+<p>Here&rsquo;s a more detailed comparison to the alternatives listed above.  We&rsquo;ll use the following
+legend<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<style>
+td.na::before {
+    content: "(Not assessed)";
+}
+
+th.highlight {
+    background-color: #ccc;
+}
+
+span.criterion {
+    font-weight: bold;
+}
+
+.md-typeset details.criterion summary {
+    padding-left: 0.5rem;
+}
+
+details.criterion > summary::before {
+    display: none;
+}
+</style>
+
+<table>
+    <tr>
+        <th>Legend</th>
+        <td class="na"></td>
+        <td class="poor">Lacks feature /<br> poor support</td>
+        <td class="fair">Fair /<br> basic support</td>
+        <td class="good">Good /<br> solid support</td>
+        <td class="best"><b>Best support</b><br> (of libraries considered here)</td>
+    </tr>
+</table>
+
+<h3 id="obtaining-the-library">Obtaining the library<a class="headerlink" href="#obtaining-the-library" title="Permanent link">&para;</a></h3>
+<p>These are the first criteria to consider.  They will tell you whether you can even use the library
+at all, and if so, how hard it will be to obtain.</p>
+<table>
+    <tr>
+        <th></th>
+        <th>Boost</th>
+        <th>nholthaus</th>
+        <th>bernedom/SI</th>
+        <th>mp-units</th>
+        <th class="highlight">Au</th>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>C++ Version Compatibility</summary>
+                <p>The minimum C++ standard required to use the library.</p>
+            </details>
+        </td>
+        <td class="best">C++98</td>
+        <td class="good">C++14</td>
+        <td class="fair">C++17</td>
+        <td class="poor">C++20</td>
+        <td class="good">C++14</td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Ease of Acquisition</summary>
+                <p>Ease of including this library in projects using a wide variety of build environments</p>
+            </details>
+        </td>
+        <td class="fair">Part of boost</td>
+        <td class="good">Single, self-contained header</td>
+        <td class="fair">Available on conan</td>
+        <td class="fair">Available on conan and vcpkg</td>
+        <td class="best">
+            <ul>
+                <li class="check">Full support for bazel and CMake</li>
+                <li class="check">Available on conan and vcpkg, thanks to community support</li>
+                <li class="check">Supports single-header delivery, with features:
+                    <ul>
+                        <li class="check">Easy to customize units and I/O support</li>
+                        <li class="check">Version-stamped for full reproducibility</li>
+                    </ul>
+                </li>
+            </ul>
+        </td>
+    </tr>
+</table>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These ratings are written with <strong>all</strong> users and projects in mind.  Keep in mind that what
+matters for <em>you</em> is <strong>your</strong> project.</p>
+<p>For example: mp-units gets low accessibility ratings because of its steep C++20 minimum
+requirement, and its dependence on a package manager to make the installation easy.  However, if
+your project is <em>already</em> compatible with C++20, and <em>already</em> uses conan, then these &ldquo;low&rdquo;
+ratings would be completely irrelevant for you.</p>
+</div>
+<h3 id="generic-developer-experience">Generic developer experience<a class="headerlink" href="#generic-developer-experience" title="Permanent link">&para;</a></h3>
+<p>Next: how will this library change the generic developer experience?  Leaving aside any library
+features, conventions, or implementation strategies, there are two main impacts to developer
+experience.</p>
+<ol>
+<li>
+<p>Your program will take <strong>longer to compile</strong>, because the compiler is doing more work to produce
+   essentially the same program.</p>
+</li>
+<li>
+<p>You will get <strong>more compiler errors</strong> that developers will need to understand and fix.</p>
+</li>
+</ol>
+<p>These costs can bring significant benefits, but we still want them to be as small as possible.</p>
+<table>
+    <tr>
+        <th></th>
+        <th>Boost</th>
+        <th>nholthaus</th>
+        <th>bernedom/SI</th>
+        <th>mp-units</th>
+        <th class="highlight">Au</th>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Compilation Speed</summary>
+                <p>The extra time the library adds to compiling a translation unit, compared to no units library.</p>
+                <ul>
+                    <li><b>Poor:</b> typically adds several seconds per translation unit</li>
+                    <li><b>Fair:</b> enough that end users tend to notice</li>
+                    <li><b>Good:</b> not "subjectively noticeable"</li>
+                </ul>
+            </details>
+        </td>
+        <td class="na"></td>
+        <td class="poor">Very slow, but can be <i>greatly</i> improved by removing I/O support and most units</td>
+        <td class="na"></td>
+        <td class="na"></td>
+        <td class="good">
+            <ul>
+                <li class="check">Includes `fwd.hh` headers</li>
+                <li>Possibly "best" overall, but will need to assess all libraries on the same code</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Compiler Error Readability</summary>
+                <p>
+                    The ability to understand errors when the library catches a mistake it was
+                    designed to catch.
+                </p>
+                <ul>
+                    <li><b>Poor:</b> Excessively long, nested types</li>
+                    <li><b>Fair:</b> Short, but dimension names lacking</li>
+                    <li><b>Good:</b> Brief typenames with user-facing unit names</li>
+                </ul>
+            </details>
+        </td>
+        <td class="poor">
+            <a href="https://mpusz.github.io/wg21-papers/papers/1935R0_a_cpp_approach_to_physical_units.html#type-aliasing-issues">
+                Infamously challenging
+            </a>
+        </td>
+        <td class="fair">Positional dimensions</td>
+        <td class="fair">Alias for unit template</td>
+        <td class="good">
+            <ul>
+                <li class="check">Pioneered strong typedefs for units</li>
+                <li class="check"><a
+                href="https://mpusz.github.io/mp-units/2.0/users_guide/framework_basics/interface_introduction/?h=expression+tem#expression-templates">Expression
+                templates</a> produce very readable errors
+                </li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Strong unit typenames appear in errors</li>
+                <li class="check">Short namespace minimizes clutter</li>
+                <li class="check">
+                    Detailed <a
+                    href="https://aurora-opensource.github.io/au/main/troubleshooting/">troubleshooting
+                    guide</a>
+                </li>
+            </ul>
+        </td>
+    </tr>
+</table>
+
+<h3 id="library-features">Library features<a class="headerlink" href="#library-features" title="Permanent link">&para;</a></h3>
+<p>At this point, you&rsquo;ve assessed:</p>
+<ul>
+<li>whether you can use each library at all;</li>
+<li>how hard it will be to add to your project;</li>
+<li>and, what costs you&rsquo;ll pay in developer experience if you do.</li>
+</ul>
+<p>Now we&rsquo;re ready to compare the libraries &ldquo;as units libraries&rdquo; &mdash; that is, in terms of their core
+features.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The features are listed, <em>very</em> roughly, in order of importance.  Counting up the colors in each
+column won&rsquo;t give an accurate picture.  The rows near the top matter more &mdash; sometimes, <em>much</em>
+more &mdash; than the rows further down.</p>
+<p>Of course, what matters the most for <em>you</em> are <em>your</em> use cases and criteria!</p>
+</div>
+<table>
+    <tr>
+        <th></th>
+        <th>Boost</th>
+        <th>nholthaus</th>
+        <th>bernedom/SI</th>
+        <th>mp-units</th>
+        <th class="highlight">Au</th>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Conversion Safety</summary>
+                <p>Guarding against unit conversions that are likely to produce large errors.</p>
+                <p>
+                    (For example: we can convert an integer number of feet to inches, but not vice
+                    versa.)
+                </p>
+            </details>
+        </td>
+        <td class="good"></td>
+        <td class="poor">
+            Integer Reps <a href="https://github.com/nholthaus/units/issues/225">unsafe</a>
+        </td>
+        <td class="poor">
+            Integer Reps <a href="https://github.com/bernedom/SI/issues/122">unsafe</a>
+        </td>
+        <td class="good">
+            Policy <a
+            href="https://mpusz.github.io/units/framework/conversions_and_casting.html">consistent
+            with <code>std::chrono</code> library</a>
+        </td>
+        <td class="best">
+            Meets `std::chrono` baseline, plus:
+            <ul>
+                <li class="check">Automatically adapts to level of overflow risk</li>
+                <li class="check">Can separately opt out of checking for overflow and truncation</li>
+                <li class="check">Runtime conversion checkers</li>
+                <li class="check">Constants have perfect conversion policy</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Unit Safety</summary>
+                <p>
+                    The ability to judge the unit-correctness of every individual line of code
+                    by inspection, in isolation.
+                </p>
+                <ul>
+                    <li>
+                        <b>Fair:</b> can achieve indirectly, by casting to known type before
+                        retrieving value.
+                    </li>
+                    <li><b>Good:</b> provide unit-safe interfaces.</li>
+                </ul>
+            </details>
+        </td>
+        <td class="fair"></td>
+        <td class="fair"></td>
+        <td class="fair"></td>
+        <td class="good">Only contains unit-safe interfaces</td>
+        <td class="good">Only contains unit-safe interfaces</td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Low Friction</summary>
+                <p>How easy it is to develop with the library.  Criteria include:</p>
+                <ul>
+                    <li>Headers: few, or easily guessable</li>
+                    <li>Simple namespace structure</li>
+                    <li>Reasonable, safe implicit conversions</li>
+                </ul>
+            </details>
+        </td>
+        <td class="poor">
+            <ul>
+                <li class="x">Generally high learning curve</li>
+                <li class="x">
+                    No (<a
+                    href="https://www.boost.org/doc/libs/1_79_0/doc/html/boost_units/Quantities.html#boost_units.Quantities.Quantity_Construction_and_Conversion">non-trivial</a>)
+                    implicit conversions
+                </li>
+                <li class="x">Many headers; hard to guess</li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Single file is very easy</li>
+                <li class="check">User-friendly API typenames (<code>meter_t</code>, ...)</li>
+                <li class="x">
+                    Namespaces add verbosity, and friction (for example, <code>math::</code>
+                    namespace prevents <a href="https://abseil.io/tips/49">ADL</a>)
+                </li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Single, short namespace</li>
+                <li class="check">Implicit conversions</li>
+                <li>Multiple headers, but easy to guess (one per dimension)</li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Implicit conversions with good basic safety</li>
+                <li>
+                    <a
+                    href="https://mpusz.github.io/mp-units/2.0/users_guide/examples/hello_units/">Multiple
+                    headers</a>, one per system
+                </li>
+                <li class="x">Longer and more nested namespaces</li>
+            </ul>
+        </td>
+        <td class="best">
+            <ul>
+                <li class="check">Namespaces: just one, and it's short</li>
+                <li class="check">Includes: either single-header, or easily-guessable header per unit</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Composability</summary>
+                <p>
+                    The ability to fluently combine the abstractions for units and prefixes to form
+                    new units on the fly.
+                </p>
+            </details>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">
+                    Can compose units, prefixes, dimensions, and quantity (point) makers
+                </li>
+                <li class="x">
+                    Type names clunky to compose: must write <code>decltype</code>
+                </li>
+            </ul>
+        </td>
+        <td class="poor"><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">No</a></td>
+        <td class="poor">No</td>
+        <td class="best">
+            <ul>
+                <li class="check">Can compose units, prefixes, dimensions, and quantity types</li>
+                <li class="check">
+                    C++20's Non-type template parameters (NTTPs) enable composable <i>type names</i>
+                </li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">
+                    Can compose units, prefixes, dimensions, and quantity (point) makers
+                </li>
+                <li class="x">
+                    Type names clunky to compose: must write <code>decltype</code> or use traits
+                </li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Unit-aware I/O</summary>
+                <p>
+                    The ability to print quantities along with information about their units.
+                    Examples:
+                </p>
+                <ul>
+                    <li><code>&lt;iostream&gt;</code>, preferrably toggleable</li>
+                    <li>Unit labels available even without <code>&lt;iostream&gt;</code></li>
+                    <li><code>fmtlb</code> (<code>std::format</code> after C++20)</li>
+                </ul>
+            </details>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Toggleable <code>&lt;iostream&gt;</code> support</li>
+                <li class="check">
+                    Impressively configurable output (<code>format_mode</code>,
+                    <code>autoprefix_mode</code>)
+                </li>
+                <li class="x">No fmtlib support</li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Toggleable <code>&lt;iostream&gt;</code> support</li>
+                <li class="x">No fmtlib support</li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Toggleable <code>&lt;iostream&gt;</code> support</li>
+                <li class="check">Unit labels available even without <code>&lt;iostream&gt;</code></li>
+                <li class="x">No fmtlib support</li>
+            </ul>
+        </td>
+        <td class="best">
+            <ul>
+                <li class="check">Supports <code>&lt;iostream&gt;</code></li>
+                <li class="check">Unit labels available even without <code>&lt;iostream&gt;</code></li>
+                <li class="check">Supports <code>std::format</code></li>
+                <li class="check">Many customization options</li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Toggleable <code>&lt;iostream&gt;</code> support</li>
+                <li class="check">Unit labels available even without <code>&lt;iostream&gt;</code></li>
+                <li class="check">Supports <code>std::format</code></li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Mixed-Rep Support</summary>
+                <p>The ease of freely mixing different storage types ("Reps") in the same program.</p>
+            </details>
+        </td>
+        <td class="good"></td>
+        <td class="fair">Possible, but user-facing types use a global "preferred" Rep.</td>
+        <td class="good"></td>
+        <td class="good"></td>
+        <td class="good"></td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Unit-aware math</summary>
+                <p>
+                    Unit-aware versions of common mathematical functions (`max`, `abs`, `sin`,
+                    `round`, and so on).
+                </p>
+            </details>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Wide variety of functions</li>
+                <li class="x">
+                    <code>round</code>, <code>ceil</code>, and so on are not unit-safe
+                </li>
+            </ul>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">Wide variety of functions</li>
+                <li class="x">
+                    <code>round</code>, <code>ceil</code>, and so on are not unit-safe
+                </li>
+            </ul>
+        </td>
+        <td class="poor">No</td>
+        <td class="good">
+            <ul>
+                <li class="check">Wide variety of functions</li>
+                <li class="check">
+                    Unit-safe APIs for <code>round</code>, <code>ceil</code>, and so on
+                </li>
+                <li class="check">
+                    Smart, unit-aware inverse functions
+                </li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Wide variety of functions</li>
+                <li class="check">
+                    Unit-safe APIs for <code>round</code>, <code>ceil</code>, and so on
+                </li>
+                <li class="check">
+                    Smart, unit-aware inverse functions
+                </li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Generic Dimensions</summary>
+                <p>
+                    The ability to write (template) functions that operate on any dimensionally
+                    consistent inputs.
+                </p>
+                <p>
+                    (For example, a function that takes any length and time quantities, and returns
+                    the appropriate speed quantity.)
+                </p>
+            </details>
+        </td>
+        <td class="fair">
+            <a
+            href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#boost.units.usage.example">Generic
+            templates, constrained with traits</a>
+        </td>
+        <td class="fair">
+            <a
+            href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#nic-units.usage.example">Generic
+            templates, constrained with traits</a>
+        </td>
+        <td class="fair">Generic templates, constrained with traits</td>
+        <td class="best">Concepts excel here</td>
+        <td class="fair">
+            Currently clunky.  Could be better by adding concepts in extra
+            C++20-only file, without compromising C++14 support.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Extensibility</summary>
+                <p>How easy it is to add new units, dimensions, or systems.</p>
+            </details>
+        </td>
+        <td class="good">
+            <a
+            href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1935r2.html#comparison">Can
+            add new units and dimensions</a>
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">One-line macro defines new units</li>
+                <li class="x"><a href="https://github.com/nholthaus/units/issues/131">Can't add dimensions</a></li>
+            </ul>
+        </td>
+        <td class="good">Can add new units and dimensions</td>
+        <td class="best">Can even handle, e.g., systems of "natural" units</td>
+        <td class="good">
+            Can add <a href="https://aurora-opensource.github.io/au/main/howto/new-units/">new units</a>
+            and dimensions
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Ease of Migration</summary>
+                <p>
+                    Support for two migration use cases:
+                </p>
+                <ul>
+                    <li>From "no units" to this library</li>
+                    <li>Between this library and another units library (either direction)</li>
+                </ul>
+            </details>
+        </td>
+        <td class="fair">No interop with other units libraries</td>
+        <td class="fair">No interop with other units libraries</td>
+        <td class="fair">No interop with other units libraries</td>
+        <td class="good">
+            <ul>
+                <li class="check">
+                    <a href="https://mpusz.github.io/mp-units/2.1/users_guide/framework_basics/basic_concepts/#QuantityLike">
+                        <code>QuantityLike&lt;T&gt;</code> supports bidirectional conversions
+                    </a>
+                </li>
+                <li class="check">
+                    Can specify implicit or explicit
+                </li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">
+                    <a href="https://aurora-opensource.github.io/au/main/howto/interop/">
+                        <code>CorrespondingQuantity</code> supports bidirectional implicit conversions
+                    </a>
+                </li>
+                <li class="check">
+                    Supports <a
+                    href="https://aurora-opensource.github.io/au/main/reference/corresponding_quantity/#conversions">"two-hop"
+                    conversions</a>
+                </li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Point Types</summary>
+                <p>
+                    Support for "point-like" quantities, also known as
+                    <a href="http://videocortex.io/2018/Affine-Space-Types/">"affine space
+                    types"</a>.
+                </p>
+            </details>
+        </td>
+        <td class="good">
+            <a href="https://www.boost.org/doc/libs/1_65_0/doc/html/boost/units/absolute.html"><code>absolute</code>
+            wrapper</a> for unit
+        </td>
+        <td class="fair">
+            Optional "offset" for units, but <a
+            href="https://github.com/nholthaus/units/issues/240">can't distinguish quantity from
+            point</a>.
+        </td>
+        <td class="poor">None; would be hard to add, since units conflated with quantity type</td>
+        <td class="best">
+            <ul>
+                <li class="check">Custom origins really easy to use and compose</li>
+                <li class="check">Elegant `point` and `delta` modifiers on quantity spec</li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Maximally efficient common units</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Magnitudes</summary>
+                <p>
+                    The features of the representation for different units' sizes.  Key features
+                    include:
+                </p>
+                <ul>
+                    <li>Irrational numbers (such as \(\pi\))</li>
+                    <li>Powers (robust against overflow)</li>
+                    <li>Roots (exact representations)</li>
+                </ul>
+            </details>
+        </td>
+        <td class="fair">
+            Close: lacks only irrationals, basis, and instance arithmetic.  Ahead of its time!
+        </td>
+        <td class="fair">
+            Uses ratio plus "pi powers": good angle handling, but vulnerable to overflow
+        </td>
+        <td class="poor">`std::ratio` only, with no solution for pi</td>
+        <td class="good">
+            Full support for <a
+            href="https://mpusz.github.io/units/framework/magnitudes.html">Magnitudes</a>
+        </td>
+        <td class="good">
+            Formerly, Au alone was best, but we <a
+            href="https://github.com/mpusz/units/issues/300">shared</a> Magnitudes with mp-units
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Embedded Friendliness</summary>
+                <p>
+                    Support common embedded use cases.  Key examples include:
+                </p>
+                <ul>
+                    <li>
+                        Flexibility in the Rep (usually a variety of integral types, and perhaps
+                        <code>float</code>, but rarely <code>double</code>).
+                    </li>
+                    <li>The easy ability to exclude <code>&lt;iostream&gt;</code>.</li>
+                </ul>
+            </details>
+        </td>
+        <td class="good">Assumed to be good, based on mixed-Rep support</td>
+        <td class="fair">
+            Can trim by excluding <code>&lt;iostream&gt;</code>, but integer-Rep support is poor.
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check"><code>&lt;iostream&gt;</code> not automatically included</li>
+                <li class="check">Supports integral rep</li>
+                <li class="x">Integral rep conversions unsafe</li>
+            </ul>
+        </td>
+        <td class="good">Assumed to be good, based on mixed-Rep support</td>
+        <td class="best">
+            Best choice of all:
+            <ul>
+                <li class="check">No "preferred" Rep.</li>
+                <li class="check"><code>sizeof()</code>-friendly unit label representation</li>
+                <li class="check">Safe integer operations.</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Abbreviated construction</summary>
+                <p>
+                    The ability to construct a Quantity using the symbol for its unit.
+                </p>
+
+                <p>
+                    This is most commonly done with user-defined literals (UDLs), such as
+                    <code>3_m</code> for "3 meters", but there are other alternatives.
+                </p>
+            </details>
+        </td>
+        <td class="na"></td>
+        <td class="fair">User-defined literals (UDLs)</td>
+        <td class="fair">User-defined literals (UDLs)</td>
+        <td class="good">
+            Unit symbols
+        </td>
+        <td class="good">
+            <a href="https://aurora-opensource.github.io/au/main/reference/unit/#symbols">
+                Unit symbols
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Linear algebra</summary>
+                <p>
+                    Good interoperability with matrix and vector libraries, such as Eigen
+                </p>
+                <p>
+                    Most libraries can work with Eigen, but only if Eigen is patched: Quantity types
+                    break several of Eigen's deeply embedded assumptions.
+                </p>
+            </details>
+        </td>
+        <td class="fair"></td>
+        <td class="fair"></td>
+        <td class="fair"></td>
+        <td class="best">
+            Experimental support for <a
+            href="https://mpusz.github.io/mp-units/2.0/users_guide/framework_basics/character_of_a_quantity/">Quantity
+            Character</a>; can use matrix types as Rep
+        </td>
+        <td class="fair">
+            Planned to add: <a href="https://github.com/aurora-opensource/au/issues/70">#70</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Rep Variety</summary>
+                <p>The range of different storage types ("Reps") permitted.</p>
+                <ul>
+                    <li><b>Poor:</b> only 1 or 2 types</li>
+                    <li><b>Fair:</b> all built-in numeric types</li>
+                    <li><b>Good:</b> also support custom numeric types</li>
+                </ul>
+            </details>
+        </td>
+        <td class="good">Supports custom numeric types</td>
+        <td class="poor">
+            Effectively floating-point only (integer types <a
+            href="https://github.com/nholthaus/units/issues/225">unsafe</a>)
+        </td>
+        <td class="fair">
+            <ul>
+                <li class="check">No "default" rep</li>
+                <li class="x">
+                    Integer reps <a href="https://github.com/bernedom/SI/issues/122">unsafe</a>
+                </li>
+            </ul>
+        </td>
+        <td class="best">
+            Well defined
+            <a href="https://mpusz.github.io/units/reference/core/concepts.html#_CPPv4I0EN5units14RepresentationE">Representation
+            concept</a>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Mature support for <code>is_arithmetic</code> Rep</li>
+                <li class="check">Experimental support for custom Rep</li>
+                <li class="x">No constraints yet (<a
+                href="https://github.com/aurora-opensource/au/issues/52">#52</a>)</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Zero</summary>
+                <p>
+                    Quantity support for constructing from, and comparing with, <code>0</code>: the
+                    only number which is meaningful for every unit.  (Includes facilities for
+                    working with quantity signs.)
+                </p>
+            </details>
+        </td>
+        <td class="fair">
+            Guidance:
+            <a href="https://www.boost.org/doc/libs/1_81_0/doc/html/boost_units/FAQ.html#boost_units.FAQ.NoConstructorFromValueType">use
+            default constructor</a> to construct, but no special facility for comparison
+        </td>
+        <td class="fair">Supports <code>copysign()</code>, but no special construction or comparison</td>
+        <td class="poor">No special construction or comparison</td>
+        <td class="good">
+            <li class="check">
+                <a href="https://mpusz.github.io/mp-units/2.1/users_guide/framework_basics/quantity_arithmetics/?h=zero#comparison-against-zero">Special comparison functions</a>
+            </li>
+            <li><code>zero()</code> member</li>
+        </td>
+        <td class="best">
+            Can use <a
+            href="https://aurora-opensource.github.io/au/main/discussion/concepts/zero/"><code>ZERO</code></a>
+            to construct or compare any quantity
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Angles</summary>
+                <p>
+                    First-class support for angular quantities, including degrees and radians.
+                </p>
+            </details>
+        </td>
+        <td class="fair">
+            Curiously imprecise
+            <a href="https://github.com/boostorg/units/blob/45787015/include/boost/units/base_units/angle/degree.hpp#L17">pi
+            value </a>
+        </td>
+        <td class="good"></td>
+        <td class="fair">
+            <ul>
+                <li class="check">Supports degrees and radians</li>
+                <li class="x">pi represented as <code>std::ratio</code></li>
+            </ul>
+        </td>
+        <td class="best">Simultaneous support for both strongly-typed and "pure SI" angles</td>
+        <td class="good"></td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Physical constants</summary>
+                <ul>
+                    <li>How good is the core library support?</li>
+                    <li>Does the library include built-in constants?</li>
+                </ul>
+            </details>
+        </td>
+        <td class="fair">Includes built-in constants as quantities</td>
+        <td class="fair">Includes built-in constants as quantities</td>
+        <td class="poor"></td>
+        <td class="good">
+            <a
+            href="https://mpusz.github.io/mp-units/2.0/users_guide/framework_basics/faster_than_lightspeed_constants/">"Faster
+            than lightspeed" constants</a>
+        </td>
+        <td class="best">
+            <ul>
+                <li class="check">Constants as types</li>
+                <li class="check">Perfect conversion policy</li>
+                <li class="check">Implicit Quantity conversion</li>
+                <li class="check"><a href="https://aurora-opensource.github.io/au/main/reference/constant/#built-in">Includes</a> exact constants from SI 2019</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Non-linear scales (such as dB)</summary>
+                <p>Support for logarithmic "units", such as decibels or nepers</p>
+            </details>
+        </td>
+        <td class="poor"></td>
+        <td class="best"></td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="poor">
+            Plan to support someday; see
+            <a href="https://github.com/aurora-opensource/au/issues/41">#41</a>.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Quantity template parameters</summary>
+                <p>
+                    The ability to use quantity <i>values</i> as template parameters.
+                </p>
+            </details>
+        </td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="best">
+            <ul>
+                <li class="check">Supports all quantities</li>
+                <li class="check">Supports automatic conversions</li>
+                <li class="check">Supports quantity families via concepts</li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Supports integral rep</li>
+                <li class="check">Only library with pre-C++20 support</li>
+                <li class="x">User must provide exact unit and rep</li>
+                <li class="x">No floating point support</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Negative units</summary>
+                <p>
+                    Correctly supporting units, constants, and magnitudes that are negative: so,
+                    larger stored values correspond to smaller quantities.
+                </p>
+            </details>
+        </td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="best">
+            <ul>
+                <li class="check">Negative constants</li>
+                <li class="check">Negative units</li>
+                <li class="check">Negative magnitudes</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>"Kind" Types</summary>
+                <p>
+                    Any feature which supports robustly distinguishing between units that have the
+                    same dimension and magnitude.
+                </p>
+                <p>
+                    For example, "hertz" and "becquerel" both have the same dimension and magnitude
+                    as "inverse seconds", but some libraries may prevent users from mixing them.
+                </p>
+            </details>
+        </td>
+        <td class="na"></td>
+        <td class="poor"></td>
+        <td class="poor"></td>
+        <td class="best"></td>
+        <td class="poor">No plans at present to support.</td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Explicit Systems of Measurement</summary>
+                <p>
+                    Support for different systems, each with their own (possibly incompatible)
+                    collection of dimensions.
+                </p>
+            </details>
+        </td>
+        <td class="good"></td>
+        <td class="poor">Single, implicit global system</td>
+        <td class="poor"></td>
+        <td class="good"></td>
+        <td class="poor">
+            Single, implicit global system. (Intentional design tradeoff: reduces learning curve,
+            and makes compiler errors shorter.)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Abstract Units/Dimensions</summary>
+                <p>
+                    <li>
+                        Types that represent abstract units (clearly distinct from quantities of
+                        that unit).
+                    </li>
+                    <li>Types that represent abstract dimensions.</li>
+                    <li>The ability to do arithmetic with instances of these types.</li>
+                </p>
+            </details>
+        </td>
+        <td class="good"></td>
+        <td class="fair">Types exist, but conflated with quantity names</td>
+        <td class="poor">No separate types for units</td>
+        <td class="good">
+            <ul>
+                <li class="check">Types for units</li>
+                <li class="check">Types for dimensions</li>
+                <li class="check">
+                    Can do arithmetic (compound units on the fly; abstract dimensional analysis)
+                </li>
+            </ul>
+        </td>
+        <td class="good">
+            <ul>
+                <li class="check">Types for units</li>
+                <li class="check">Types for dimensions</li>
+                <li class="check">
+                    Can do arithmetic (compound units on the fly; abstract dimensional analysis)
+                </li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <details class="criterion">
+                <summary>Macro Usage</summary>
+                <p>
+                    Avoidance of macros, especially in user-facing code.
+                </p>
+            </details>
+        </td>
+        <td class="poor">Common in user-facing APIs</td>
+        <td class="poor">Common in user-facing APIs</td>
+        <td class="good">Very few, and confined to implementation helpers</td>
+        <td class="fair">
+            <ul>
+                <li>Very few, mostly implementation helpers</li>
+                <li>Only one user-facing macro for C++20 backwards compatibility</li>
+            </ul>
+        </td>
+        <td class="best">Zero user-facing macros; only two internal macros</td>
+    </tr>
+</table>
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Users may have expected a &ldquo;traffic light&rdquo; style, green/yellow/red color scheme.  However,
+these traditional color schemes have poor accessibility for colorblind readers.  The present color
+scheme was designed to be colorblind-friendly.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../troubleshooting/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Troubleshooting Guide">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Troubleshooting Guide
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../discussion/" class="md-footer__link md-footer__link--next" aria-label="Next: Discussion Docs">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Discussion Docs
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022, Aurora Operations, Inc. All rights reserved
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "toc.integrate"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.50899def.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2494 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++ units library, by Aurora">
+      
+      
+        <meta name="author" content="Au team">
+      
+      
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/0.5.1/discussion/concepts/conversion_risks/">
+      
+      
+        <link rel="prev" href="../common_unit/">
+      
+      
+        <link rel="next" href="../dimensionless/">
+      
+      
+      <link rel="icon" href="../../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+    
+    
+      
+        <title>Conversion Risks - The Au units library</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7e37652d.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../tweaks.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#conversion-risks" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../../assets/au-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            The Au units library
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Conversion Risks
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../../assets/au-logo.png" alt="logo">
+
+    </a>
+    The Au units library
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au documentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../develop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Development Setup
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../supported-compilers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Supported Compilers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Alternatives
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Alternatives
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../alternatives/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Comparison of Alternatives
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Discussion
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Discussion
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Discussion Docs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Concepts
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Generic Concepts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arithmetic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arithmetic Operations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../common_unit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Common Units
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risks
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risks
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-can-go-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      What can go wrong?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Default policies
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Default policies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overall-risk-versus-individual-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overall risk versus individual values
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opting-out-of-safety-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opting out of safety checks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#not-all-conversions-are-actually-possible" class="md-nav__link">
+    <span class="md-ellipsis">
+      Not all conversions are actually possible
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Runtime checks
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Runtime checks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#provided-checkers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provided checkers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-checked-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating checked helpers
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#takeaways" class="md-nav__link">
+    <span class="md-ellipsis">
+      Takeaways
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dimensionless/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dimensionless Units and Quantities
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overflow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quantity_point/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quantity Point
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../truncation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Truncation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../zero/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zero
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Idioms
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            Idioms
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../idioms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au Idioms
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../idioms/unit-slots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Unit slots
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Implementation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            Implementation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Implementation Details
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/applying_magnitudes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Applying Magnitudes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/vector_space/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Vector Space Representations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Howto
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Howto
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    How-to guides
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/forward-declarations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Forward declarations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/new-constants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Defining new constants
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/new-dimensions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Defining new dimensions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/new-units/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Defining new units
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/quantity-template-parameters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quantity template parameters
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/upgrade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Upgrading Au
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_8" id="__nav_8_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Interop
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_8">
+            <span class="md-nav__icon md-icon"></span>
+            Interop
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/interop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inter-library Interoperation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../howto/interop/nholthaus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    nholthaus/units Interoperation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reference Docs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/constant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Constant
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/conversion_risk_policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conversion Risk Policies
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/corresponding_quantity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Corresponding Quantity
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/format/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Format
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/magnitude/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Magnitude
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/math/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Math functions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/powers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Powers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/prefix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Prefix
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/quantity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quantity
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/quantity_point/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    QuantityPoint
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/unit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Unit
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/zero/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zero
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_9_14" id="__nav_9_14_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Detail
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_14">
+            <span class="md-nav__icon md-icon"></span>
+            Detail
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/detail/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Implementation Details
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/detail/dimension/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dimension
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/detail/monovalue_types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Monovalue Types
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/detail/packs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Parameter packs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tutorial
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorial
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tutorials: home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/101-quantity-makers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 101: Quantity Makers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/102-api-types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 102: API Types
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/103-unit-conversions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 103: Unit Conversions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_5" id="__nav_10_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Exercise
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_5">
+            <span class="md-nav__icon md-icon"></span>
+            Exercise
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 101: Quantity Makers Exercise
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/exercise/102-api-types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 102: API Types Exercise
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Au 103: Unit Conversions Exercise
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="conversion-risks">Conversion Risks<a class="headerlink" href="#conversion-risks" title="Permanent link">&para;</a></h1>
+<p>Unit conversions turn one <code>Quantity</code> into another, where both the unit and the representation type
+(the &ldquo;rep&rdquo;) might change.  Think of a &ldquo;unit conversion&rdquo; as being defined by three parameters:</p>
+<ol>
+<li>The <em>initial</em> <strong>rep</strong>.</li>
+<li>The <em>target</em> <strong>rep</strong>.</li>
+<li>The ratio between the <em>initial</em> and <em>target</em> <strong>units</strong>.</li>
+</ol>
+<p>Under the hood, we implement each conversion as a sequence of operations, including <code>static_cast</code>
+for changing the rep, and mathematical operations (mainly multiplying and dividing) for changing the
+value.  Each operation has an input type, and an output type (which might be the same as the input).</p>
+<h2 id="what-can-go-wrong">What can go wrong?<a class="headerlink" href="#what-can-go-wrong" title="Permanent link">&para;</a></h2>
+<p>On pen and paper, any unit conversion can be done exactly.  <em>In software</em>, this is not true.  Most
+representation types can only represent a limited range of numbers, and with only finite precision
+within that range.  This means that some conversions can produce grossly incorrect results!  In
+general, there are two main failure modes for an operation:</p>
+<ul>
+<li><strong><a href="../overflow/">Overflow</a></strong>: the result <em>exceeds the bounds</em> of the output type.</li>
+<li><strong><a href="../truncation/">Truncation</a></strong>: the output type has <em>insufficient precision</em> to represent the
+  result.</li>
+</ul>
+<p>Au accounts for these risks in our APIs.  For each conversion, we assess the overall risk in
+deciding whether to permit it <em>by default</em>.  We also let you opt out of individual named safety
+checks, for situations where you&rsquo;re confident it&rsquo;s okay.  Finally, we have efficient functions to
+check the lossiness of <em>individual values</em> at runtime, for the most granular control possible.</p>
+<h2 id="default-policies">Default policies<a class="headerlink" href="#default-policies" title="Permanent link">&para;</a></h2>
+<p>Any conversion has a set of input values that are lossy, and a set that aren&rsquo;t.  For example,
+imagine that we had <code>int x</code>:</p>
+<ul>
+<li><code>inches(x).as(feet)</code> would be lossy for any number that isn&rsquo;t an exact multiple of 12 (due to
+  truncation).</li>
+<li><code>feet(x).as(inches)</code> would be lossy for any number greater than <code>357913941</code>, or less than
+  <code>-357913941</code> (due to overflow).</li>
+</ul>
+<p>Au&rsquo;s task is to decide which unit conversions to allow, and which to turn into compiler errors.
+Because we must make this decision at compile time, <em>we don&rsquo;t know the actual input value</em>. All we
+can do is to assess the risk across the values that we expect to see most often.</p>
+<p>Notice how the above two examples present very different risk profiles.  For <code>inches(x).as(feet)</code>,
+11 out of every 12 values will be significantly lossy.  For <code>feet(x).as(inches)</code>, it&rsquo;s another
+story.  In practice, users are unlikely to use values greater than 357 million feet in most
+applications, since that&rsquo;s over &frac14; of the way to the moon!  As you might expect, Au forbids the
+first conversion but permits the second.</p>
+<p>In more detail, Au has separate risk checks for overflow and truncation.</p>
+<ul>
+<li>
+<p>The <strong>overflow check</strong> is an <a href="../overflow/#adapt">adaptive check</a> based on a single number: the
+  smallest input that would exceed the output range.</p>
+</li>
+<li>
+<p>The <strong>truncation check</strong> is based on whether truncation is possible for <em>any</em> input value, with
+  the caveat that we treat <a href="../truncation/#float">floating point as non-truncating</a>.</p>
+</li>
+</ul>
+<p>Au only permits conversions by default if they pass <em>both</em> checks.</p>
+<h3 id="overall-risk-versus-individual-values">Overall risk versus individual values<a class="headerlink" href="#overall-risk-versus-individual-values" title="Permanent link">&para;</a></h3>
+<p>It&rsquo;s critically important to understand that these policies are based on <em>risk</em>, which takes into
+account <em>all possible</em> input values (and, crudely, their relative likelihoods).  This is different
+from determining whether <em>a specific input value</em> will be lossy.  For example:</p>
+<table>
+<thead>
+<tr>
+<th>Conversion</th>
+<th>Policy</th>
+<th>Result (if allowed)</th>
+<th>Actually lossy?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>inches(24).as(feet)</code></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/274c.svg" title=":x:" /> Forbidden (truncation risk)</td>
+<td><code>feet(2)</code></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> No</td>
+</tr>
+<tr>
+<td><code>seconds(4u).as(nano(seconds))</code><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/274c.svg" title=":x:" /> Forbidden (overflow risk)</td>
+<td><code>nano(seconds(4'000'000'000u))</code></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> No</td>
+</tr>
+<tr>
+<td><code>seconds(9000u).as(micro(seconds))</code><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> Allowed</td>
+<td><code>micro(seconds(410'065'408u))</code></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/274c.svg" title=":x:" /> Yes (overflow)</td>
+</tr>
+</tbody>
+</table>
+<p>This shows that our default policy has two kinds of failure modes.</p>
+<p>The first is that <strong>allowed conversions can still be lossy</strong> for some input values.  Granted, this
+can only happen for cases that Au assesses to be low risk.  While practical experience has largely
+validated these policies, some applications may not be able to tolerate <em>any</em> risk of loss.  We&rsquo;ll
+explore the solution &mdash; namely, <em>runtime checking</em> &mdash; later on in more detail.</p>
+<p>The second is that we forbid some conversions that are actually perfectly fine, at least for certain
+values.  Or, certain use cases &mdash; for example, many embedded applications <em>expect and desire</em> the
+truncating properties of integer division.  The solution for these cases is to opt out of individual
+safety checks.  We&rsquo;ll dive into it now.</p>
+<h3 id="opting-out-of-safety-checks">Opting out of safety checks<a class="headerlink" href="#opting-out-of-safety-checks" title="Permanent link">&para;</a></h3>
+<p>When a conversion fails to compile, the error message will tell you what risk Au was concerned
+about.  You can then pass <code>ignore(X)</code> as a <em>second parameter to the conversion function</em>, and it
+will ignore the risk <code>X</code>.  There are two reasons to prefer this more granular opt-out mechanism to
+a blanket approach that turns off all safety checks:</p>
+<ol>
+<li>It&rsquo;s more <em>intent-based</em>: readers will better understand what risk you are ignoring.</li>
+<li>It&rsquo;s <em>safer</em>: you still have coverage for the other risk.</li>
+</ol>
+<p>Let&rsquo;s look at some more examples to make this clear.</p>
+<table>
+<thead>
+<tr>
+<th>Conversion</th>
+<th>Policy</th>
+<th>Result</th>
+<th>Actually lossy?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>inches(24).as(feet, ignore(TRUNCATION_RISK))</code></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> Allowed (by policy override)</td>
+<td><code>feet(2)</code></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> No</td>
+</tr>
+<tr>
+<td><code>seconds(4u).as(nano(seconds), ignore(OVERFLOW_RISK))</code><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> Allowed (by policy override)</td>
+<td><code>nano(seconds(4'000'000'000))</code></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> No</td>
+</tr>
+</tbody>
+</table>
+<p>Here, we have revisited the examples from the previous table, but thanks to our policy override,
+they are no longer forbidden.  We see that they do produce the correct results.  However, we
+emphasize that this is due to the <em>specific input values</em> that we used.  Very similar input values
+could easily produce grossly incorrect results:</p>
+<table>
+<thead>
+<tr>
+<th>Conversion</th>
+<th>Policy</th>
+<th>Result</th>
+<th>Actually lossy?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>inches(23).as(feet, ignore(TRUNCATION_RISK))</code></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> Allowed (by policy override)</td>
+<td><code>feet(1)</code></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/274c.svg" title=":x:" /> Yes (truncation)</td>
+</tr>
+<tr>
+<td><code>seconds(5u).as(nano(seconds), ignore(OVERFLOW_RISK))</code><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><img alt="👍" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f44d.svg" title=":thumbs_up:" /> Allowed (by policy override)</td>
+<td><code>nano(seconds(705'032'704u))</code></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/274c.svg" title=":x:" /> Yes (overflow)</td>
+</tr>
+</tbody>
+</table>
+<p>Use the opt-out tool wisely, and carefully consider whether it&rsquo;s the right solution for your use
+case.</p>
+<h3 id="not-all-conversions-are-actually-possible">Not all conversions are actually possible<a class="headerlink" href="#not-all-conversions-are-actually-possible" title="Permanent link">&para;</a></h3>
+<p>Opting out of safety checks is not sufficient to guarantee that Au will perform a conversion.  The
+opt-out removes one barrier.  If there are others, the conversion will still not happen.</p>
+<p>One common example is when users try to convert between two units with different dimensions.  This
+is a meaningless operation, and is always user error.  Au will not perform this conversion because
+it does not exist.</p>
+<p>Another example is when a conversion is meaningful in principle, but Au doesn&rsquo;t know how to
+implement it in the desired rep.  For example, <code>radians(1).as(degrees)</code> would require us to support
+irrational conversion factors in integral reps, which is very hard (although <a href="https://github.com/aurora-opensource/au/issues/453">#453</a> tracks one
+possible future solution).  In this case, if your architecture can tolerate floating point types
+such as <code>double</code>, you can write <code>radians(1.0).as&lt;int&gt;(degrees)</code> to obtain the answer.</p>
+<h2 id="runtime-checks">Runtime checks<a class="headerlink" href="#runtime-checks" title="Permanent link">&para;</a></h2>
+<p>Here, we address the second limitation: even conversions that Au considers low-risk can be lossy.
+If we tried to stick to compile time solutions, we would end up only allowing conversions where
+<em>no</em> input value is lossy.  In practice, this is incredibly restrictive.</p>
+<p>The alternative is to provide <em>runtime checkers</em>, which can efficiently and accurately assess
+whether any individual value will be lossy.</p>
+<p>Unlike the compile time approach, we will pay a runtime cost.  However, this cost can be extremely
+low &mdash; for example, the overflow checks simply compare to a single number that we compute for each
+conversion.  What&rsquo;s more, this cost doesn&rsquo;t usually <em>matter</em>, because unit conversions almost never
+occur in the performance-sensitive &ldquo;hot loops&rdquo; of well designed programs.</p>
+<p>A more serious issue is that you have to decide what to do if the check <em>fails</em>.  In general, there
+is no one-size-fits-all error handling mechanism that would be suitable for all clients of Au.  In
+general, you should use whatever error handling mechanism is appropriate for your project.</p>
+<h3 id="provided-checkers">Provided checkers<a class="headerlink" href="#provided-checkers" title="Permanent link">&para;</a></h3>
+<p>Au provides runtime checkers for overflow, truncation, and combined lossiness.  For a <code>Quantity q</code>,
+converting to a new unit <code>u</code>, we provide these signatures:</p>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Target rep</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Overflow</td>
+<td>same</td>
+<td><code>will_conversion_overflow(q, u)</code></td>
+</tr>
+<tr>
+<td>Overflow</td>
+<td>New rep <code>T</code></td>
+<td><code>will_conversion_overflow&lt;T&gt;(q, u)</code></td>
+</tr>
+<tr>
+<td>Truncation</td>
+<td>same</td>
+<td><code>will_conversion_truncate(q, u)</code></td>
+</tr>
+<tr>
+<td>Truncation</td>
+<td>New rep <code>T</code></td>
+<td><code>will_conversion_truncate&lt;T&gt;(q, u)</code></td>
+</tr>
+<tr>
+<td>Any lossiness</td>
+<td>same</td>
+<td><code>is_conversion_lossy(q, u)</code></td>
+</tr>
+<tr>
+<td>Any lossiness</td>
+<td>New rep <code>T</code></td>
+<td><code>is_conversion_lossy&lt;T&gt;(q, u)</code></td>
+</tr>
+</tbody>
+</table>
+<p>In general, <code>is_conversion_lossy</code> will return true if either <code>will_conversion_overflow</code> or
+<code>will_conversion_truncate</code> returns true.</p>
+<h3 id="creating-checked-helpers">Creating checked helpers<a class="headerlink" href="#creating-checked-helpers" title="Permanent link">&para;</a></h3>
+<p>In general, effective runtime checker use has two steps.  First, call the checker you&rsquo;re interested
+in. Then, if it passed, call the conversion function while <em>opting out of the risk check you already
+validated</em>.</p>
+<p>It&rsquo;s even better to combine these in a utility function.  For example, using C++17&rsquo;s
+<code>std::optional</code>, here&rsquo;s a function that returns the correct result for non-truncating inputs, or
+<code>std::nullopt</code> otherwise:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Target</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">TargetUnit</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">checked_conversion</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">Target</span><span class="w"> </span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">will_conversion_truncate</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">u</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="o">?</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nullopt</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_optional</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">TRUNCATION_RISK</span><span class="p">)));</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">}</span>
+</code></pre></div>
+<p><code>checked_conversion(inches(35), feet)</code> will produce <code>std::nullopt</code>, while
+<code>checked_conversion(inches(36), feet)</code> gives <code>std::make_optional(feet(3))</code>.</p>
+<h2 id="takeaways">Takeaways<a class="headerlink" href="#takeaways" title="Permanent link">&para;</a></h2>
+<p>By default, Au only permits a conversion if the risk is low, for both overflow and truncation.
+However, this is just a heuristic, based on <em>all inputs</em> for a conversion.  Almost every conversion
+has <em>some</em> inputs that go against this policy.</p>
+<p>If your conversion is forbidden, but you&rsquo;re confident it&rsquo;s OK for your inputs, you can <em>pass
+a second argument</em> to opt out of that safety check: usually, <code>ignore(OVERFLOW_RISK)</code> or
+<code>ignore(TRUNCATION_RISK)</code>.  This tool does a good job of communicating your intent, but be wary of
+using it too widely.  The risk checks are there for good reason, so make sure your use case really
+is OK.</p>
+<p>By contrast, if you can&rsquo;t tolerate any lossiness, Au provides <em>runtime checkers</em> that can quickly
+provide accurate answers for any individual value.  This adds runtime cost, but it&rsquo;s rarely
+important.  A harder problem is deciding what to do if the check fails.  We recommend using the
+runtime checkers as building blocks for a &ldquo;checked conversion&rdquo; utility, because this lets you use
+the error handling mechanism that&rsquo;s best for your project.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>In these docs, we assume that <code>unsigned int</code> values (such as <code>4u</code> and <code>9000u</code>) are 32 bits
+wide.  On architectures where this is not true, you could pattern-replace items such as <code>4u</code> with
+<code>uint32_t{4}</code> to reproduce the results in the tables.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../common_unit/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Common Units">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Common Units
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../dimensionless/" class="md-footer__link md-footer__link--next" aria-label="Next: Dimensionless Units and Quantities">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Dimensionless Units and Quantities
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022, Aurora Operations, Inc. All rights reserved
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.50899def.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      
+    
+  </body>
+</html>
