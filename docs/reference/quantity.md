@@ -564,10 +564,9 @@ Here are the usage patterns, and their corresponding signatures.
 ### Dimensionless and unitless results: `as_raw_number` {#as-raw-number}
 
 Users may expect that the product of quantities such as `seconds` and `hertz` would completely
-cancel out, and produce a raw, simple C++ numeric type.  Currently, this is indeed the case, but we
-have also found that it makes the library harder to reason about.  Instead, we hope in the future to
-return a `Quantity` type _consistently_ from arithmetical operations on `Quantity` inputs (see
-[#185]).
+cancel out, and produce a raw, simple C++ numeric type.  While this was formerly the case, we found
+that it made the library harder to reason about consistently.  Instead, we return a `Quantity` type
+_consistently_ from arithmetical operations on `Quantity` inputs.
 
 In order to obtain that raw number robustly, both now and in the future, you can use the
 `as_raw_number` function, a callsite-readable way to "exit" the library.  This will also opt into
@@ -579,8 +578,7 @@ all mechanisms and safety features of the library.  In particular:
   represented exactly as a raw `int`), we will also fail to compile, unless users provide a second
   policy argument to override the safety check.
 
-Users should get in the habit of using `as_raw_number` whenever they really want a raw number.  This
-communicates intent, and also works both before and after [#185] is implemented.
+Users should use `as_raw_number` whenever they really want a raw number.  This communicates intent.
 
 Here are the available APIs:
 
@@ -945,7 +943,6 @@ the following conditions hold.
     - `AreQuantityTypesEquivalent<U1, U2>::value`
 
 [#122]: https://github.com/aurora-opensource/au/issues/122
-[#185]: https://github.com/aurora-opensource/au/issues/185
 [#481]: https://github.com/aurora-opensource/au/issues/481
 [0.6.0]: https://github.com/aurora-opensource/au/milestone/9
 [integer division section]: ../troubleshooting.md#integer-division-forbidden
