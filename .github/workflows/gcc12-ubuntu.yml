@@ -25,4 +25,4 @@ jobs:
     uses: ./.github/workflows/build-and-test.yml
     with:
       config: gcc12
-      cpp20_extra_args: --test_tag_filters=-requires_std_format
+      cpp20_extra_args: --test_tag_filters=-requires_std_format --build_tag_filters=-requires_std_format
