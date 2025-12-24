@@ -25,8 +25,6 @@ on:
         type: string
         description: "Additional Bazel arguments for the C++20 test step (e.g., tag filters)"
 
-
-
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -38,9 +36,6 @@ jobs:
       - name: Build and test with -Wconversion (${{ inputs.config }})
         run: bazel test --config=${{ inputs.config }} --copt=-Werror --copt=-Wconversion --test_tag_filters=-no_wconversion --build_tag_filters=-no_wconversion //au/...:all
       - name: Build and test in C++20 mode (${{ inputs.config }})
-        # To opt out of tests requiring std::format, set cpp20_extra_args: --test_tag_filters=-requires_std_format
         run: bazel test --config=${{ inputs.config }} --copt=-Werror --copt=-std=c++20 ${{ inputs.cpp20_extra_args }} //...:all //au:cpp20_test //au:std_format_test
-
-
       - name: Build and test with -Wsign-conversion
         run: bazel build --config=${{ inputs.config }} --copt=-Werror --copt=-Wsign-conversion --test_tag_filters=-no_wsign_conversion --build_tag_filters=-no_wsign_conversion //au/...:all //release/...:all
