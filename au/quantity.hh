@@ -953,23 +953,21 @@ struct QuantityFormatter {
     template <typename FormatContext>
     constexpr auto format(const au::Quantity<U, R> &q, FormatContext &ctx) const {
         value_format.format(q.data_in(U{}), ctx);
-        auto out = ctx.out();
-        *out++ = ' ';
-        return write_and_pad(unit_label(U{}), sizeof(unit_label(U{})), ctx, out);
+        *ctx.out()++ = ' ';
+        return write_and_pad(unit_label(U{}), sizeof(unit_label(U{})), ctx);
     }
 
     template <typename FormatContext>
     constexpr auto write_and_pad(const char *data,
                                  std::size_t data_size,
-                                 FormatContext &ctx,
-                                 typename FormatContext::iterator out) const {
+                                 FormatContext &ctx) const {
         Formatter<const char *> unit_label_formatter{};
         unit_label_formatter.format(data, ctx);
         while (data_size <= min_label_width_) {
-            *out++ = ' ';
+            *ctx.out()++ = ' ';
             ++data_size;
         }
-        return out;
+        return ctx.out();
     }
 
     Formatter<R> value_format{};
