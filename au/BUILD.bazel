@@ -88,8 +88,8 @@ cc_test(
         ":quantity",
         ":testing",
         ":units",
-        "@googletest//:gtest_main",
         "@fmt",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -148,6 +148,22 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":quantity",
+    ],
+)
+
+cc_test(
+    name = "std_format_test",
+    size = "small",
+    srcs = ["std_format_test.cc"],
+    tags = [
+        "manual",
+        "requires_std_format",
+    ],
+    deps = [
+        ":prefix",
+        ":std_format",
+        ":units",
+        "@googletest//:gtest_main",
     ],
 )
 
