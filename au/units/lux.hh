@@ -19,8 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/lumens.hh"
-#include "au/units/meters.hh"
 
 namespace au {
 
@@ -32,7 +30,15 @@ struct LuxLabel {
 };
 template <typename T>
 constexpr const char LuxLabel<T>::label[];
-struct Lux : decltype(Lumens{} / squared(Meters{})), LuxLabel<void> {
+struct Lux
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, -2>,
+                         Pow<base_dim::Angle, 2>,
+                         base_dim::LuminousIntensity>>,
+      LuxLabel<void> {
     using LuxLabel<void>::label;
 };
 constexpr auto lux = QuantityMaker<Lux>{};

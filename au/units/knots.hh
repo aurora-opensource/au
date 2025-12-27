@@ -19,8 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/hours.hh"
-#include "au/units/nautical_miles.hh"
 
 namespace au {
 
@@ -32,7 +30,14 @@ struct KnotsLabel {
 };
 template <typename T>
 constexpr const char KnotsLabel<T>::label[];
-struct Knots : decltype(NauticalMiles{} / Hours{}), KnotsLabel<void> {
+struct Knots
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<base_dim::Length, Pow<base_dim::Time, -1>>,
+               Magnitude<Pow<Prime<2>, -2>, Pow<Prime<3>, -2>, Pow<Prime<5>, -2>, Prime<463>>>,
+      KnotsLabel<void> {
     using KnotsLabel<void>::label;
 };
 constexpr auto knot = SingularNameFor<Knots>{};

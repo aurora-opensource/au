@@ -19,7 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/feet.hh"
 
 namespace au {
 
@@ -31,7 +30,13 @@ struct FathomsLabel {
 };
 template <typename T>
 constexpr const char FathomsLabel<T>::label[];
-struct Fathoms : decltype(Feet{} * mag<6>()), FathomsLabel<void> {
+struct Fathoms
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Length, Magnitude<Pow<Prime<3>, 2>, Pow<Prime<5>, -4>, Prime<127>>>,
+      FathomsLabel<void> {
     using FathomsLabel<void>::label;
 };
 constexpr auto fathom = SingularNameFor<Fathoms>{};

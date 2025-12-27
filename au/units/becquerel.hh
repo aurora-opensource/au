@@ -19,7 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/seconds.hh"
 
 namespace au {
 
@@ -31,7 +30,13 @@ struct BecquerelLabel {
 };
 template <typename T>
 constexpr const char BecquerelLabel<T>::label[];
-struct Becquerel : UnitInverseT<Seconds>, BecquerelLabel<void> {
+struct Becquerel
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Time, -1>>>,
+      BecquerelLabel<void> {
     using BecquerelLabel<void>::label;
 };
 constexpr auto becquerel = QuantityMaker<Becquerel>{};

@@ -17,12 +17,8 @@
 #include "au/units/newtons_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
 
-#include "au/prefix.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/grams.hh"
-#include "au/units/meters.hh"
-#include "au/units/seconds.hh"
 
 namespace au {
 
@@ -34,7 +30,14 @@ struct NewtonsLabel {
 };
 template <typename T>
 constexpr const char NewtonsLabel<T>::label[];
-struct Newtons : decltype(Kilo<Grams>{} * Meters{} / squared(Seconds{})), NewtonsLabel<void> {
+struct Newtons
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<base_dim::Length, base_dim::Mass, Pow<base_dim::Time, -2>>,
+               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
+      NewtonsLabel<void> {
     using NewtonsLabel<void>::label;
 };
 constexpr auto newton = SingularNameFor<Newtons>{};

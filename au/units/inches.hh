@@ -17,10 +17,8 @@
 #include "au/units/inches_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
 
-#include "au/prefix.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/meters.hh"
 
 namespace au {
 
@@ -32,7 +30,13 @@ struct InchesLabel {
 };
 template <typename T>
 constexpr const char InchesLabel<T>::label[];
-struct Inches : decltype(Centi<Meters>{} * mag<254>() / mag<100>()), InchesLabel<void> {
+struct Inches
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Length, Magnitude<Pow<Prime<2>, -3>, Pow<Prime<5>, -4>, Prime<127>>>,
+      InchesLabel<void> {
     using InchesLabel<void>::label;
 };
 constexpr auto inch = SingularNameFor<Inches>{};

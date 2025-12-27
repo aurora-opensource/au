@@ -19,7 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/bits.hh"
 
 namespace au {
 
@@ -31,7 +30,13 @@ struct BytesLabel {
 };
 template <typename T>
 constexpr const char BytesLabel<T>::label[];
-struct Bytes : decltype(Bits{} * mag<8>()), BytesLabel<void> {
+struct Bytes
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Information, Magnitude<Pow<Prime<2>, 3>>>,
+      BytesLabel<void> {
     using BytesLabel<void>::label;
 };
 constexpr auto byte = SingularNameFor<Bytes>{};

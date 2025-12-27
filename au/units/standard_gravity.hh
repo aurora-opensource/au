@@ -19,8 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/meters.hh"
-#include "au/units/seconds.hh"
 
 namespace au {
 
@@ -33,7 +31,12 @@ struct StandardGravityLabel {
 template <typename T>
 constexpr const char StandardGravityLabel<T>::label[];
 struct StandardGravity
-    : decltype((Meters{} / squared(Seconds{})) * (mag<980'665>() / mag<100'000>())),
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<base_dim::Length, Pow<base_dim::Time, -2>>,
+               Magnitude<Pow<Prime<2>, -5>, Pow<Prime<5>, -4>, Prime<7>, Prime<28019>>>,
       StandardGravityLabel<void> {
     using StandardGravityLabel<void>::label;
 };

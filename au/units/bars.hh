@@ -17,10 +17,8 @@
 #include "au/units/bars_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
 
-#include "au/prefix.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/pascals.hh"
 
 namespace au {
 
@@ -32,7 +30,14 @@ struct BarsLabel {
 };
 template <typename T>
 constexpr const char BarsLabel<T>::label[];
-struct Bars : decltype(Kilo<Pascals>{} * mag<100>()), BarsLabel<void> {
+struct Bars
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, -1>, base_dim::Mass, Pow<base_dim::Time, -2>>,
+               Magnitude<Pow<Prime<2>, 8>, Pow<Prime<5>, 8>>>,
+      BarsLabel<void> {
     using BarsLabel<void>::label;
 };
 constexpr auto bar = SingularNameFor<Bars>{};

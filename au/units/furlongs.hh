@@ -19,7 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/miles.hh"
 
 namespace au {
 
@@ -31,7 +30,14 @@ struct FurlongsLabel {
 };
 template <typename T>
 constexpr const char FurlongsLabel<T>::label[];
-struct Furlongs : decltype(Miles{} / mag<8>()), FurlongsLabel<void> {
+struct Furlongs
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Length,
+               Magnitude<Prime<2>, Pow<Prime<3>, 2>, Pow<Prime<5>, -3>, Prime<11>, Prime<127>>>,
+      FurlongsLabel<void> {
     using FurlongsLabel<void>::label;
 };
 constexpr auto furlong = SingularNameFor<Furlongs>{};

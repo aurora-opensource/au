@@ -19,7 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/degrees.hh"
 
 namespace au {
 
@@ -31,7 +30,13 @@ struct RevolutionsLabel {
 };
 template <typename T>
 constexpr const char RevolutionsLabel<T>::label[];
-struct Revolutions : decltype(Degrees{} * mag<360>()), RevolutionsLabel<void> {
+struct Revolutions
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Angle, Magnitude<Prime<2>, Pi>>,
+      RevolutionsLabel<void> {
     using RevolutionsLabel<void>::label;
 };
 constexpr auto revolution = SingularNameFor<Revolutions>{};

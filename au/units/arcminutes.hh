@@ -19,7 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/degrees.hh"
 
 namespace au {
 
@@ -31,7 +30,13 @@ struct ArcminutesLabel {
 };
 template <typename T>
 constexpr const char ArcminutesLabel<T>::label[];
-struct Arcminutes : decltype(Degrees{} / mag<60>()), ArcminutesLabel<void> {
+struct Arcminutes
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Angle, Magnitude<Pow<Prime<2>, -4>, Pow<Prime<3>, -3>, Pi, Pow<Prime<5>, -2>>>,
+      ArcminutesLabel<void> {
     using ArcminutesLabel<void>::label;
 };
 constexpr auto arcminute = SingularNameFor<Arcminutes>{};

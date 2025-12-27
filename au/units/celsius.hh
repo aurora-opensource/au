@@ -21,7 +21,6 @@
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/kelvins.hh"
 
 namespace au {
 
@@ -33,9 +32,12 @@ struct CelsiusLabel {
 };
 template <typename T>
 constexpr const char CelsiusLabel<T>::label[];
-struct Celsius : Kelvins, CelsiusLabel<void> {
+struct Celsius : UnitImpl<Temperature>, CelsiusLabel<void> {
     using CelsiusLabel<void>::label;
-    static constexpr auto origin() { return centi(kelvins)(273'15); }
+    static constexpr auto origin() {
+        // 273.15 K = 27315 centi-kelvins
+        return make_quantity<Centi<UnitImpl<Temperature>>>(27315);
+    }
 };
 constexpr auto celsius_qty = QuantityMaker<Celsius>{};
 constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};

@@ -19,8 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/pounds_mass.hh"
-#include "au/units/standard_gravity.hh"
 
 namespace au {
 
@@ -32,7 +30,20 @@ struct PoundsForceLabel {
 };
 template <typename T>
 constexpr const char PoundsForceLabel<T>::label[];
-struct PoundsForce : decltype(PoundsMass{} * StandardGravity{}), PoundsForceLabel<void> {
+struct PoundsForce
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<base_dim::Length, base_dim::Mass, Pow<base_dim::Time, -2>>,
+               Magnitude<Pow<Prime<2>, -10>,
+                         Pow<Prime<5>, -9>,
+                         Pow<Prime<7>, 2>,
+                         Prime<11>,
+                         Prime<97>,
+                         Prime<6073>,
+                         Prime<28019>>>,
+      PoundsForceLabel<void> {
     using PoundsForceLabel<void>::label;
 };
 constexpr auto pound_force = SingularNameFor<PoundsForce>{};

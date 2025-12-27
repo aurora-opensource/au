@@ -19,7 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/yards.hh"
 
 namespace au {
 
@@ -31,7 +30,13 @@ struct FootballFieldsLabel {
 };
 template <typename T>
 constexpr const char FootballFieldsLabel<T>::label[];
-struct FootballFields : decltype(Yards{} * mag<100>()), FootballFieldsLabel<void> {
+struct FootballFields
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Length, Magnitude<Prime<2>, Pow<Prime<3>, 2>, Pow<Prime<5>, -2>, Prime<127>>>,
+      FootballFieldsLabel<void> {
     using FootballFieldsLabel<void>::label;
 };
 constexpr auto football_field = SingularNameFor<FootballFields>{};
