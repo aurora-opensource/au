@@ -14,6 +14,7 @@
 
 #include "au/units/grays.hh"
 
+#include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/grams.hh"
 #include "au/units/joules.hh"

@@ -23,6 +23,7 @@
 #include "au/units/miles.hh"
 #include "au/units/minutes.hh"
 #include "au/units/newtons.hh"
+#include "au/units/pascals.hh"
 #include "au/units/percent.hh"
 #include "au/units/pounds_force.hh"
 #include "au/units/revolutions.hh"

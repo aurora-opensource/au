@@ -24,6 +24,7 @@
 #include "au/quantity_point.hh"
 #include "au/unit_symbol.hh"
 #include "au/units/liters.hh"
+#include "au/units/meters.hh"
 #include "au/units/miles.hh"
 #include "au/units/webers.hh"
 #include "gmock/gmock.h"

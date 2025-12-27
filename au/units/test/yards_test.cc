@@ -15,6 +15,7 @@
 #include "au/units/yards.hh"
 
 #include "au/testing.hh"
+#include "au/units/feet.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

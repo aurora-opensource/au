@@ -14,6 +14,7 @@
 
 #include "au/units/grams.hh"
 
+#include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/pounds_mass.hh"
 #include "gmock/gmock.h"

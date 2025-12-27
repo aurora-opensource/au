@@ -14,7 +14,11 @@
 
 #include "au/units/newtons.hh"
 
+#include "au/prefix.hh"
 #include "au/testing.hh"
+#include "au/units/grams.hh"
+#include "au/units/meters.hh"
+#include "au/units/seconds.hh"
 #include "gtest/gtest.h"
 
 namespace au {

@@ -15,6 +15,7 @@
 #include "au/units/minutes.hh"
 
 #include "au/testing.hh"
+#include "au/units/seconds.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
