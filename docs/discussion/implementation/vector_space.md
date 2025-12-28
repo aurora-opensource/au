@@ -172,9 +172,9 @@ container type (in this case, `UnitProduct<...>`) unless we have to: after all, 
 user-friendly than `UnitProduct<Meters>`, let alone something awful like
 `UnitProduct<RatioPow<Meters, 1, 0>>`!  We support this use case with the following strategy:
 
-- **wrap-if-necessary** on the way **in** (via `AsPackT`)
+- **wrap-if-necessary** on the way **in** (via `AsPack`)
 
-- **unwrap-if-possible** on the way **out** (via `UnpackIfSoloT`)
+- **unwrap-if-possible** on the way **out** (via `UnpackIfSolo`)
 
 This was the only machinery we needed to add: apart from that, we were able to leverage our
 pre-existing [packs](../../reference/detail/packs.md) support to provide a fluent experience for
