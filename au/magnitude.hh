@@ -191,9 +191,11 @@ struct IsInteger : std::is_same<MagT, IntegerPartT<MagT>> {};
 // magnitude" is one that is related to both inputs, and symmetrical under a change in order (to
 // fulfill the requirements of a `std::common_type` specialization).
 template <typename... Ms>
-struct CommonMagnitude;
+struct CommonMagnitudeImpl;
 template <typename... Ms>
-using CommonMagnitudeT = typename CommonMagnitude<Ms...>::type;
+using CommonMagnitude = typename CommonMagnitudeImpl<Ms...>::type;
+template <typename... Ms>
+using CommonMagnitudeT = CommonMagnitude<Ms...>;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Value based interface for Magnitude.
@@ -865,55 +867,56 @@ using NegativePowers = MagQuotientT<M, NumeratorPartT<M>>;
 
 // 1-ary case: identity.
 template <typename M>
-struct CommonMagnitude<M> : stdx::type_identity<M> {};
+struct CommonMagnitudeImpl<M> : stdx::type_identity<M> {};
 
 // 2-ary base case: both Magnitudes null.
 template <>
-struct CommonMagnitude<Magnitude<>, Magnitude<>> : stdx::type_identity<Magnitude<>> {};
+struct CommonMagnitudeImpl<Magnitude<>, Magnitude<>> : stdx::type_identity<Magnitude<>> {};
 
 // 2-ary base case: only left Magnitude is null.
 template <typename Head, typename... Tail>
-struct CommonMagnitude<Magnitude<>, Magnitude<Head, Tail...>>
+struct CommonMagnitudeImpl<Magnitude<>, Magnitude<Head, Tail...>>
     : stdx::type_identity<detail::NegativePowers<Magnitude<Head, Tail...>>> {};
 
 // 2-ary base case: only right Magnitude is null.
 template <typename Head, typename... Tail>
-struct CommonMagnitude<Magnitude<Head, Tail...>, Magnitude<>>
+struct CommonMagnitudeImpl<Magnitude<Head, Tail...>, Magnitude<>>
     : stdx::type_identity<detail::NegativePowers<Magnitude<Head, Tail...>>> {};
 
 // 2-ary recursive case: two non-null Magnitudes.
 template <typename H1, typename... T1, typename H2, typename... T2>
-struct CommonMagnitude<Magnitude<H1, T1...>, Magnitude<H2, T2...>> :
+struct CommonMagnitudeImpl<Magnitude<H1, T1...>, Magnitude<H2, T2...>> :
 
     // If the bases for H1 and H2 are in-order, prepend H1-if-negative to the remainder.
     std::conditional<
         (InOrderFor<Magnitude, BaseT<H1>, BaseT<H2>>::value),
-        detail::PrependIfExpNegativeT<H1, CommonMagnitudeT<Magnitude<T1...>, Magnitude<H2, T2...>>>,
+        detail::PrependIfExpNegativeT<H1, CommonMagnitude<Magnitude<T1...>, Magnitude<H2, T2...>>>,
 
         // If the bases for H2 and H1 are in-order, prepend H2-if-negative to the remainder.
         std::conditional_t<
             (InOrderFor<Magnitude, BaseT<H2>, BaseT<H1>>::value),
             detail::PrependIfExpNegativeT<H2,
-                                          CommonMagnitudeT<Magnitude<T2...>, Magnitude<H1, T1...>>>,
+                                          CommonMagnitude<Magnitude<T2...>, Magnitude<H1, T1...>>>,
 
             // If we got here, the bases must be the same.  (We can assume that `InOrderFor` does
             // proper checking to guard against equivalent-but-not-identical bases, which would
             // violate total ordering.)
             std::conditional_t<
                 (std::ratio_subtract<ExpT<H1>, ExpT<H2>>::num < 0),
-                detail::PrependT<CommonMagnitudeT<Magnitude<T1...>, Magnitude<T2...>>, H1>,
-                detail::PrependT<CommonMagnitudeT<Magnitude<T1...>, Magnitude<T2...>>, H2>>>> {};
+                detail::PrependT<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H1>,
+                detail::PrependT<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H2>>>> {};
 
 // N-ary case: recurse.
 template <typename M1, typename M2, typename... Tail>
-struct CommonMagnitude<M1, M2, Tail...> : CommonMagnitude<M1, CommonMagnitudeT<M2, Tail...>> {};
+struct CommonMagnitudeImpl<M1, M2, Tail...>
+    : CommonMagnitudeImpl<M1, CommonMagnitude<M2, Tail...>> {};
 
 // Zero is always ignored.
 template <typename M>
-struct CommonMagnitude<M, Zero> : stdx::type_identity<M> {};
+struct CommonMagnitudeImpl<M, Zero> : stdx::type_identity<M> {};
 template <typename M>
-struct CommonMagnitude<Zero, M> : stdx::type_identity<M> {};
+struct CommonMagnitudeImpl<Zero, M> : stdx::type_identity<M> {};
 template <>
-struct CommonMagnitude<Zero, Zero> : stdx::type_identity<Zero> {};
+struct CommonMagnitudeImpl<Zero, Zero> : stdx::type_identity<Zero> {};
 
 }  // namespace  au
