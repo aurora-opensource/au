@@ -88,7 +88,7 @@ struct InvalidWrongMagType {
 template <typename UnitT>
 struct SomeUnitWrapper {};
 template <typename UnitT>
-struct AssociatedUnit<SomeUnitWrapper<UnitT>> : stdx::type_identity<UnitT> {};
+struct AssociatedUnitImpl<SomeUnitWrapper<UnitT>> : stdx::type_identity<UnitT> {};
 
 // Useful for testing parameter pack logic.
 template <typename... Units>

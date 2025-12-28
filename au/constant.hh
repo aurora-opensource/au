@@ -133,6 +133,6 @@ constexpr Zero make_constant(Zero) { return {}; }
 
 // Support using `Constant` in a unit slot.
 template <typename Unit>
-struct AssociatedUnit<Constant<Unit>> : stdx::type_identity<Unit> {};
+struct AssociatedUnitImpl<Constant<Unit>> : stdx::type_identity<Unit> {};
 
 }  // namespace au

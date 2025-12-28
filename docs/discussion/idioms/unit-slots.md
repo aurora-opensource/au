@@ -103,9 +103,9 @@ automatically: for example, you can't pass `meters` to a `QuantityPoint`'s unit 
 pass `meters_pt` to a `Quantity`'s unit slot.
 
 To get the associated unit for a type, use the
-[`AssociatedUnitT`](../../reference/unit.md#associated-unit) trait when you're dealing with
+[`AssociatedUnit`](../../reference/unit.md#associated-unit) trait when you're dealing with
 `Quantity`, and use the
-[`AssociatedUnitForPointsT`](../../reference/unit.md#associated-unit-for-points) trait when dealing
+[`AssociatedUnitForPoints`](../../reference/unit.md#associated-unit-for-points) trait when dealing
 with `QuantityPoint`.
 
 ## Examples: rounding to RPM
