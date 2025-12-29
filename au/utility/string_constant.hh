@@ -276,24 +276,41 @@ constexpr std::size_t IToA<N>::length;
 template <int64_t N>
 constexpr StringConstant<IToA<N>::length> IToA<N>::value;
 
-template <bool Enable>
-struct ParensIf;
+template <bool Enable, char Open = '(', char Close = ')'>
+struct WrapIf;
 
-template <>
-struct ParensIf<true> {
-    static constexpr StringConstant<1> open() { return as_string_constant("("); }
-    static constexpr StringConstant<1> close() { return as_string_constant(")"); }
+template <char Open, char Close>
+struct WrapIf<true, Open, Close> {
+    static constexpr StringConstant<1> open() {
+        const char arr[2] = {Open, '\0'};
+        return StringConstant<1>{arr};
+    }
+    static constexpr StringConstant<1> close() {
+        const char arr[2] = {Close, '\0'};
+        return StringConstant<1>{arr};
+    }
 };
 
-template <>
-struct ParensIf<false> {
+template <char Open, char Close>
+struct WrapIf<false, Open, Close> {
     static constexpr StringConstant<0> open() { return as_string_constant(""); }
     static constexpr StringConstant<0> close() { return as_string_constant(""); }
 };
 
+template <bool Enable, char Open = '(', char Close = ')', typename StringT>
+constexpr auto wrap_if(const StringT &s) {
+    return concatenate(
+        WrapIf<Enable, Open, Close>::open(), s, WrapIf<Enable, Open, Close>::close());
+}
+
 template <bool Enable, typename StringT>
 constexpr auto parens_if(const StringT &s) {
-    return concatenate(ParensIf<Enable>::open(), s, ParensIf<Enable>::close());
+    return wrap_if<Enable, '(', ')'>(s);
+}
+
+template <bool Enable, typename StringT>
+constexpr auto brackets_if(const StringT &s) {
+    return wrap_if<Enable, '[', ']'>(s);
 }
 
 template <std::size_t N>
