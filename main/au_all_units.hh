@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-42-g1b5ecca
+// Version identifier: 0.5.0-base-43-gea007cb
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -7600,21 +7600,23 @@ struct QuantityFormatter {
     template <typename FormatContext>
     constexpr auto format(const au::Quantity<U, R> &q, FormatContext &ctx) const {
         value_format.format(q.data_in(U{}), ctx);
-        *ctx.out()++ = ' ';
-        return write_and_pad(unit_label(U{}), sizeof(unit_label(U{})), ctx);
+        auto out = ctx.out();
+        *out++ = ' ';
+        return write_and_pad(unit_label(U{}), sizeof(unit_label(U{})), ctx, out);
     }
 
     template <typename FormatContext>
     constexpr auto write_and_pad(const char *data,
                                  std::size_t data_size,
-                                 FormatContext &ctx) const {
+                                 FormatContext &ctx,
+                                 typename FormatContext::iterator out) const {
         Formatter<const char *> unit_label_formatter{};
         unit_label_formatter.format(data, ctx);
         while (data_size <= min_label_width_) {
-            *ctx.out()++ = ' ';
+            *out++ = ' ';
             ++data_size;
         }
-        return ctx.out();
+        return out;
     }
 
     Formatter<R> value_format{};
