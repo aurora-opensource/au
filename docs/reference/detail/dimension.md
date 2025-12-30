@@ -24,9 +24,13 @@ which each carry their own dimension information.  The main situation where an e
 **Syntax:**
 
 - For _types_ `D1` and `D2`:
-    - `DimProductT<D1, D2>`
+    - `DimProduct<D1, D2>`
 - For _instances_ `d1` and `d2`:
     - `d1 * d2`
+
+!!! note
+    Older releases used `DimProductT` (with the `T` suffix) instead of `DimProduct`.  Prefer
+    `DimProduct`.  `DimProductT` is deprecated, and will be removed in future releases.
 
 ### Division
 
@@ -35,9 +39,13 @@ which each carry their own dimension information.  The main situation where an e
 **Syntax:**
 
 - For _types_ `D1` and `D2`:
-    - `DimQuotientT<D1, D2>`
+    - `DimQuotient<D1, D2>`
 - For _instances_ `d1` and `d2`:
     - `d1 / d2`
+
+!!! note
+    Older releases used `DimQuotientT` (with the `T` suffix) instead of `DimQuotient`.  Prefer
+    `DimQuotient`.  `DimQuotientT` is deprecated, and will be removed in future releases.
 
 ### Powers
 
@@ -46,9 +54,13 @@ which each carry their own dimension information.  The main situation where an e
 **Syntax:**
 
 - For a _type_ `D`, and an integral power `N`:
-    - `DimPowerT<D, N>`
+    - `DimPower<D, N>`
 - For an _instance_ `d`, and an integral power `N`:
     - `pow<N>(d)`
+
+!!! note
+    Older releases used `DimPowerT` (with the `T` suffix) instead of `DimPower`.  Prefer
+    `DimPower`.  `DimPowerT` is deprecated, and will be removed in future releases.
 
 ### Roots
 
@@ -57,7 +69,7 @@ which each carry their own dimension information.  The main situation where an e
 **Syntax:**
 
 - For a _type_ `D`, and an integral root `N`:
-    - `DimPowerT<D, 1, N>` (because the $N^\text{th}$ root is equivalent to the
+    - `DimPower<D, 1, N>` (because the $N^\text{th}$ root is equivalent to the
       $\left(\frac{1}{N}\right)^\text{th}$ power)
 - For an _instance_ `d`, and an integral root `N`:
     - `root<N>(d)`

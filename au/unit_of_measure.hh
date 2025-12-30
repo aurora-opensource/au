@@ -344,14 +344,20 @@ using UnitProductT =
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using UnitPowerT =
     UnpackIfSoloT<UnitProduct, PackPowerT<UnitProduct, AsPackT<UnitProduct, U>, ExpNum, ExpDen>>;
+template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
+using UnitPower = UnitPowerT<U, ExpNum, ExpDen>;
 
 // Compute the inverse of a unit.
 template <typename U>
 using UnitInverseT = UnitPowerT<U, -1>;
+template <typename U>
+using UnitInverse = UnitInverseT<U>;
 
 // Compute the quotient of two units.
 template <typename U1, typename U2>
 using UnitQuotientT = UnitProductT<U1, UnitInverseT<U2>>;
+template <typename U1, typename U2>
+using UnitQuotient = UnitQuotientT<U1, U2>;
 
 template <typename... Us>
 constexpr bool is_forward_declared_unit_valid(ForwardDeclareUnitProduct<Us...>) {

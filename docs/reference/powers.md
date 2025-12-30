@@ -68,8 +68,8 @@ expressed using more general unit power APIs.
 
 | Helper | Result |
 |--------|--------|
-| `Inverse<U>` | `UnitPowerT<U, -1>` |
-| `Squared<U>` | `UnitPowerT<U, 2>` |
-| `Cubed<U>` | `UnitPowerT<U, 3>` |
-| `Sqrt<U>` | `UnitPowerT<U, 1, 2>` |
-| `Cbrt<U>` | `UnitPowerT<U, 1, 3>` |
+| `Inverse<U>` | `UnitPower<U, -1>` |
+| `Squared<U>` | `UnitPower<U, 2>` |
+| `Cubed<U>` | `UnitPower<U, 3>` |
+| `Sqrt<U>` | `UnitPower<U, 1, 2>` |
+| `Cbrt<U>` | `UnitPower<U, 1, 3>` |

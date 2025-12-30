@@ -55,12 +55,23 @@ struct Magnitude {
 // Define readable operations for product, quotient, power, inverse on Magnitudes.
 template <typename... BPs>
 using MagProductT = PackProductT<Magnitude, BPs...>;
+template <typename... BPs>
+using MagProduct = MagProductT<BPs...>;
+
 template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using MagPowerT = PackPowerT<Magnitude, T, ExpNum, ExpDen>;
+template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
+using MagPower = MagPowerT<T, ExpNum, ExpDen>;
+
 template <typename T, typename U>
 using MagQuotientT = PackQuotientT<Magnitude, T, U>;
+template <typename T, typename U>
+using MagQuotient = MagQuotientT<T, U>;
+
 template <typename T>
 using MagInverseT = PackInverseT<Magnitude, T>;
+template <typename T>
+using MagInverse = MagInverseT<T>;
 
 // Enable negative magnitudes with a type representing (-1) that appears/disappears under powers.
 struct Negative {};
