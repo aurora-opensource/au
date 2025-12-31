@@ -321,9 +321,13 @@ magnitudes, by breaking them into the same kinds of pieces that a human reader w
 **Syntax:**
 
 - For a _type_ `M`:
-    - `IntegerPartT<M>`
+    - `IntegerPart<M>`
 - For an _instance_ `m`:
     - `integer_part(m)`
+
+!!! note
+    Older releases used `IntegerPartT` (with the `T` suffix) instead of `IntegerPart`.  Prefer
+    `IntegerPart`.  `IntegerPartT` is deprecated, and will be removed in future releases.
 
 ### Numerator (integer part)
 
@@ -335,9 +339,13 @@ For example, the "numerator" of $\frac{3\sqrt{3}}{5\pi}$ would be $3\sqrt{3}$.
 **Syntax:**
 
 - For a _type_ `M`:
-    - `NumeratorT<M>`
+    - `Numerator<M>`
 - For an _instance_ `m`:
     - `numerator(m)`
+
+!!! note
+    Older releases used `NumeratorT` (with the `T` suffix) instead of `Numerator`.  Prefer
+    `Numerator`.  `NumeratorT` is deprecated, and will be removed in future releases.
 
 ### Denominator (integer part)
 
@@ -349,9 +357,13 @@ For example, the "denominator" of $\frac{3\sqrt{3}}{5\pi}$ would be $5\pi$.
 **Syntax:**
 
 - For a _type_ `M`:
-    - `DenominatorT<M>`
+    - `Denominator<M>`
 - For an _instance_ `m`:
     - `denominator(m)`
+
+!!! note
+    Older releases used `DenominatorT` (with the `T` suffix) instead of `Denominator`.  Prefer
+    `Denominator`.  `DenominatorT` is deprecated, and will be removed in future releases.
 
 ### Absolute value
 
