@@ -641,8 +641,8 @@ implementation choice will be driven by convenience and simplicity.
 
     For example, consider `common_unit(meters, feet)`.  Recall that the type of `meters` is
     `QuantityMaker<Meters>`, and that of `feet` is `QuantityMaker<Feet>`.  In this case, the return
-    value is an instance of `CommonUnitT<Meters, Feet>`, _not_
-    `QuantityMaker<CommonUnitT<Meters, Feet>>`.
+    value is an instance of `CommonUnit<Meters, Feet>`, _not_
+    `QuantityMaker<CommonUnit<Meters, Feet>>`.
 
     If you want something that still computes the common unit, but preserves the _category_ of the
     inputs, see [`make_common(us...)`](#make-common).
@@ -650,7 +650,7 @@ implementation choice will be driven by convenience and simplicity.
 **Syntax:**
 
 - For _types_ `Us...`:
-    - `CommonUnitT<Us...>`
+    - `CommonUnit<Us...>`
 - For _instances_ `us...`:
     - `common_unit(us...)`
 
@@ -668,7 +668,7 @@ its value to the common point-unit should involve only:
 
 This helps us support the widest range of Rep types (in particular, unsigned integers).
 
-As with `CommonUnitT`, this isn't always possible: in particular, we can't do this for units with
+As with `CommonUnit`, this isn't always possible: in particular, we can't do this for units with
 irrational relative magnitudes or origin displacements.  However, we still provide _some_ answer,
 which is consistent with the above policy whenever it's achievable, and produces reasonable results
 in all other cases.
@@ -695,8 +695,8 @@ implicitly.  Then, the _common point unit_ is defined as the unit such that:
 
     For example, consider `common_unit(meters, feet)`.  Recall that the type of `meters` is
     `QuantityMaker<Meters>`, and that of `feet` is `QuantityMaker<Feet>`.  In this case, the return
-    value is an instance of `CommonUnitT<Meters, Feet>`, _not_
-    `QuantityMaker<CommonUnitT<Meters, Feet>>`.
+    value is an instance of `CommonUnit<Meters, Feet>`, _not_
+    `QuantityMaker<CommonUnit<Meters, Feet>>`.
 
     If you want something that still computes the common unit, but preserves the _category_ of the
     inputs, see [`make_common_point(us...)`](#make-common-point).
@@ -704,7 +704,7 @@ implicitly.  Then, the _common point unit_ is defined as the unit such that:
 **Syntax:**
 
 - For _types_ `Us...`:
-    - `CommonPointUnitT<Us...>`
+    - `CommonPointUnit<Us...>`
 - For _instances_ `us...`:
     - `common_point_unit(us...)`
 

@@ -860,7 +860,7 @@ More precisely, suppose we have instances of two `Quantity` types: `Quantity<U1,
 `Quantity<U2, R2> q2`.  Then `q1 % q2` is defined only when:
 
 1. `(R1{} % R2{})` is defined (that is, both `R1` and `R2` are integral types).
-2. `CommonUnitT<U1, U2>` is defined (that is, `U1` and `U2` have the same dimension).
+2. `CommonUnit<U1, U2>` is defined (that is, `U1` and `U2` have the same dimension).
 
 When these conditions hold, the result is equivalent to first converting `q1` and `q2` to their
 common unit, and then computing the remainder from performing integer division on their values.
