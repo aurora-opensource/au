@@ -63,7 +63,7 @@ struct ForwardDeclareUnitProduct {
 //
 // Machinery for forward-declaring a unit power.
 //
-// To use, make an alias with the same unit and power(s) that `UnitPowerT` would produce, in the
+// To use, make an alias with the same unit and power(s) that `UnitPower` would produce, in the
 // `_fwd.hh` file.  In the `.hh` file, call `is_forward_declared_unit_valid(...)` (defined in
 // `unit_of_measure.hh`) on that alias.
 //

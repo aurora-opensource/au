@@ -123,7 +123,7 @@ template <typename T, typename... Packs>
 using PrependToEach = typename PrependToEachImpl<T, Packs...>::type;
 template <template <class...> class Pack, typename T, typename... Ts>
 struct PrependToEachImpl<T, Pack<Ts...>> {
-    using type = Pack<detail::PrependT<Ts, T>...>;
+    using type = Pack<detail::Prepend<Ts, T>...>;
 };
 
 template <template <class...> class Tuple,

@@ -128,7 +128,7 @@ struct IsUnitlessUnit
 //
 // Useful in doing unit conversions.
 template <typename U1, typename U2>
-struct UnitRatioImpl : stdx::type_identity<MagQuotientT<detail::MagT<U1>, detail::MagT<U2>>> {
+struct UnitRatioImpl : stdx::type_identity<MagQuotient<detail::MagT<U1>, detail::MagT<U2>>> {
     static_assert(HasSameDimension<U1, U2>::value,
                   "Can only compute ratio of same-dimension units");
 };
@@ -185,7 +185,7 @@ using CommonUnitT = CommonUnit<Us...>;
 //
 // This helps us support the widest range of Rep types (in particular, unsigned integers).
 //
-// As with `CommonUnitT`, this isn't always possible: in particular, we can't do this for units with
+// As with `CommonUnit`, this isn't always possible: in particular, we can't do this for units with
 // irrational relative magnitudes or origin displacements.  However, we still provide _some_ answer,
 // which is consistent with the above policy whenever it's achievable, and produces reasonable
 // results in all other cases.
@@ -212,81 +212,81 @@ constexpr bool is_unit(T) {
 // `fits_in_unit_slot(T)`: check whether this value is valid for a unit slot.
 template <typename T>
 constexpr bool fits_in_unit_slot(T) {
-    return IsUnit<AssociatedUnitT<T>>::value;
+    return IsUnit<AssociatedUnit<T>>::value;
 }
 
 // Check whether the units associated with these objects have the same Dimension.
 template <typename... Us>
 constexpr bool has_same_dimension(Us...) {
-    return HasSameDimension<AssociatedUnitT<Us>...>::value;
+    return HasSameDimension<AssociatedUnit<Us>...>::value;
 }
 
 // Check whether two Unit types are exactly quantity-equivalent.
 template <typename U1, typename U2>
 constexpr bool are_units_quantity_equivalent(U1, U2) {
-    return AreUnitsQuantityEquivalent<AssociatedUnitT<U1>, AssociatedUnitT<U2>>::value;
+    return AreUnitsQuantityEquivalent<AssociatedUnit<U1>, AssociatedUnit<U2>>::value;
 }
 
 // Check whether two Unit types are exactly point-equivalent.
 template <typename U1, typename U2>
 constexpr bool are_units_point_equivalent(U1, U2) {
-    return AreUnitsPointEquivalent<AssociatedUnitT<U1>, AssociatedUnitT<U2>>::value;
+    return AreUnitsPointEquivalent<AssociatedUnit<U1>, AssociatedUnit<U2>>::value;
 }
 
 // Check whether this value is an instance of a dimensionless Unit.
 template <typename U>
 constexpr bool is_dimensionless(U) {
-    return IsDimensionless<AssociatedUnitT<U>>::value;
+    return IsDimensionless<AssociatedUnit<U>>::value;
 }
 
 // Type trait to detect whether a Unit is "the unitless unit".
 template <typename U>
 constexpr bool is_unitless_unit(U) {
-    return IsUnitlessUnit<AssociatedUnitT<U>>::value;
+    return IsUnitlessUnit<AssociatedUnit<U>>::value;
 }
 
 // A Magnitude representing the ratio of two same-dimensioned units.
 //
 // Useful in doing unit conversions.
 template <typename U1, typename U2>
-constexpr UnitRatioT<AssociatedUnitT<U1>, AssociatedUnitT<U2>> unit_ratio(U1, U2) {
+constexpr UnitRatio<AssociatedUnit<U1>, AssociatedUnit<U2>> unit_ratio(U1, U2) {
     return {};
 }
 
 // Type trait for the sign of a Unit (represented as a Magnitude).
 template <typename U>
-constexpr UnitSign<AssociatedUnitT<U>> unit_sign(U) {
+constexpr UnitSign<AssociatedUnit<U>> unit_sign(U) {
     return {};
 }
 
 template <typename U>
 constexpr auto associated_unit(U) {
-    return AssociatedUnitT<U>{};
+    return AssociatedUnit<U>{};
 }
 
 template <typename U>
 constexpr auto associated_unit_for_points(U) {
-    return AssociatedUnitForPointsT<U>{};
+    return AssociatedUnitForPoints<U>{};
 }
 
 template <typename... Us>
 constexpr auto common_unit(Us...) {
-    return CommonUnitT<AssociatedUnitT<Us>...>{};
+    return CommonUnit<AssociatedUnit<Us>...>{};
 }
 
 template <typename... Us>
 constexpr auto common_point_unit(Us...) {
-    return CommonPointUnitT<AssociatedUnitForPointsT<Us>...>{};
+    return CommonPointUnit<AssociatedUnitForPoints<Us>...>{};
 }
 
 template <template <class> class Utility, typename... Us>
 constexpr auto make_common(Utility<Us>...) {
-    return Utility<CommonUnitT<AssociatedUnitT<Us>...>>{};
+    return Utility<CommonUnit<AssociatedUnit<Us>...>>{};
 }
 
 template <template <class> class Utility, typename... Us>
 constexpr auto make_common_point(Utility<Us>...) {
-    return Utility<CommonPointUnitT<AssociatedUnitForPointsT<Us>...>>{};
+    return Utility<CommonPointUnit<AssociatedUnitForPoints<Us>...>>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -312,7 +312,7 @@ template <typename Unit, typename ScaleFactor>
 using ComputeScaledUnit = typename ComputeScaledUnitImpl<Unit, ScaleFactor>::type;
 template <typename Unit, typename ScaleFactor, typename OldScaleFactor>
 struct ComputeScaledUnitImpl<ScaledUnit<Unit, OldScaleFactor>, ScaleFactor>
-    : ComputeScaledUnitImpl<Unit, MagProductT<OldScaleFactor, ScaleFactor>> {};
+    : ComputeScaledUnitImpl<Unit, MagProduct<OldScaleFactor, ScaleFactor>> {};
 template <typename Unit>
 struct ComputeScaledUnitImpl<Unit, Magnitude<>> : stdx::type_identity<Unit> {};
 // Disambiguating specialization:
@@ -325,33 +325,33 @@ struct ScaledUnit : Unit {
     static_assert(IsValidPack<Magnitude, ScaleFactor>::value,
                   "Can only scale by a Magnitude<...> type");
     using Dim = detail::DimT<Unit>;
-    using Mag = MagProductT<detail::MagT<Unit>, ScaleFactor>;
+    using Mag = MagProduct<detail::MagT<Unit>, ScaleFactor>;
 };
 
 // Type template to hold the product of powers of Units.
 template <typename... UnitPows>
 struct UnitProductPack {
-    using Dim = DimProductT<detail::DimT<UnitPows>...>;
-    using Mag = MagProductT<detail::MagT<UnitPows>...>;
+    using Dim = DimProduct<detail::DimT<UnitPows>...>;
+    using Mag = MagProduct<detail::MagT<UnitPows>...>;
 };
 
 // Helper to make a canonicalized product of units.
 //
 // On the input side, we treat every input unit as a UnitProductPack.  Once we get our final result,
-// we simplify it using `UnpackIfSoloT`.  (The motivation is that we don't want to return, say,
+// we simplify it using `UnpackIfSolo`.  (The motivation is that we don't want to return, say,
 // `UnitProductPack<Meters>`; we'd rather just return `Meters`.)
 template <typename... UnitPows>
 using UnitProduct =
-    UnpackIfSoloT<UnitProductPack,
-                  PackProductT<UnitProductPack, AsPackT<UnitProductPack, UnitPows>...>>;
+    UnpackIfSolo<UnitProductPack,
+                 PackProductT<UnitProductPack, AsPack<UnitProductPack, UnitPows>...>>;
 template <typename... UnitPows>
 using UnitProductT = UnitProduct<UnitPows...>;
 
 // Raise a Unit to a (possibly rational) Power.
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using UnitPower =
-    UnpackIfSoloT<UnitProductPack,
-                  PackPowerT<UnitProductPack, AsPackT<UnitProductPack, U>, ExpNum, ExpDen>>;
+    UnpackIfSolo<UnitProductPack,
+                 PackPowerT<UnitProductPack, AsPack<UnitProductPack, U>, ExpNum, ExpDen>>;
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using UnitPowerT = UnitPower<U, ExpNum, ExpDen>;
 
@@ -363,20 +363,20 @@ using UnitInverseT = UnitInverse<U>;
 
 // Compute the quotient of two units.
 template <typename U1, typename U2>
-using UnitQuotient = UnitProductT<U1, UnitInverse<U2>>;
+using UnitQuotient = UnitProduct<U1, UnitInverse<U2>>;
 template <typename U1, typename U2>
 using UnitQuotientT = UnitQuotient<U1, U2>;
 
 template <typename... Us>
 constexpr bool is_forward_declared_unit_valid(ForwardDeclareUnitProduct<Us...>) {
     return std::is_same<typename ForwardDeclareUnitProduct<Us...>::unit_type,
-                        UnitProductT<Us...>>::value;
+                        UnitProduct<Us...>>::value;
 }
 
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen>
 constexpr bool is_forward_declared_unit_valid(ForwardDeclareUnitPow<U, ExpNum, ExpDen>) {
     return std::is_same<typename ForwardDeclareUnitPow<U, ExpNum, ExpDen>::unit_type,
-                        UnitPowerT<U, ExpNum, ExpDen>>::value;
+                        UnitPower<U, ExpNum, ExpDen>>::value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -390,7 +390,7 @@ constexpr ComputeScaledUnit<U, Magnitude<BPs...>> operator*(U, Magnitude<BPs...>
 
 // Scale this Unit by dividing by a Magnitude.
 template <typename U, typename = std::enable_if_t<IsUnit<U>::value>, typename... BPs>
-constexpr ComputeScaledUnit<U, MagInverseT<Magnitude<BPs...>>> operator/(U, Magnitude<BPs...>) {
+constexpr ComputeScaledUnit<U, MagInverse<Magnitude<BPs...>>> operator/(U, Magnitude<BPs...>) {
     return {};
 }
 
@@ -398,7 +398,7 @@ constexpr ComputeScaledUnit<U, MagInverseT<Magnitude<BPs...>>> operator/(U, Magn
 template <typename U1,
           typename U2,
           typename = std::enable_if_t<stdx::conjunction<IsUnit<U1>, IsUnit<U2>>::value>>
-constexpr UnitProductT<U1, U2> operator*(U1, U2) {
+constexpr UnitProduct<U1, U2> operator*(U1, U2) {
     return {};
 }
 
@@ -406,19 +406,19 @@ constexpr UnitProductT<U1, U2> operator*(U1, U2) {
 template <typename U1,
           typename U2,
           typename = std::enable_if_t<stdx::conjunction<IsUnit<U1>, IsUnit<U2>>::value>>
-constexpr UnitQuotientT<U1, U2> operator/(U1, U2) {
+constexpr UnitQuotient<U1, U2> operator/(U1, U2) {
     return {};
 }
 
 // Raise a Unit to an integral power.
 template <std::intmax_t Exp, typename U, typename = std::enable_if_t<IsUnit<U>::value>>
-constexpr UnitPowerT<U, Exp> pow(U) {
+constexpr UnitPower<U, Exp> pow(U) {
     return {};
 }
 
 // Take the Root (of some integral degree) of a Unit.
 template <std::intmax_t Deg, typename U, typename = std::enable_if_t<IsUnit<U>::value>>
-constexpr UnitPowerT<U, 1, Deg> root(U) {
+constexpr UnitPower<U, 1, Deg> root(U) {
     return {};
 }
 
@@ -445,7 +445,7 @@ struct SingularNameFor {
     // `radians / (meter * second)`.
     template <typename OtherUnit>
     constexpr auto operator*(SingularNameFor<OtherUnit>) const {
-        return SingularNameFor<UnitProductT<Unit, OtherUnit>>{};
+        return SingularNameFor<UnitProduct<Unit, OtherUnit>>{};
     }
 };
 
@@ -455,7 +455,7 @@ struct AssociatedUnitImpl<SingularNameFor<U>> : stdx::type_identity<U> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(SingularNameFor<Unit>) {
-    return SingularNameFor<UnitPowerT<Unit, Exp>>{};
+    return SingularNameFor<UnitPower<Unit, Exp>>{};
 }
 
 //
@@ -599,7 +599,7 @@ struct AreUnitsPointEquivalent
 //
 // To be well-formed, the units must be listed in the same order every time.  End users cannot be
 // responsible for this; thus, they should never name this type directly.  Rather, they should name
-// the `CommonUnitT` alias, which will handle the canonicalization.
+// the `CommonUnit` alias, which will handle the canonicalization.
 template <typename... Us>
 struct CommonUnitPack {
     static_assert(AreElementsInOrder<CommonUnitPack, CommonUnitPack<Us...>>::value,
@@ -607,8 +607,8 @@ struct CommonUnitPack {
     static_assert(HasSameDimension<Us...>::value,
                   "Common unit only meaningful if units have same dimension");
 
-    using Dim = CommonDimensionT<detail::DimT<Us>...>;
-    using Mag = CommonMagnitudeT<detail::MagT<Us>...>;
+    using Dim = CommonDimension<detail::DimT<Us>...>;
+    using Mag = CommonMagnitude<detail::MagT<Us>...>;
 };
 
 template <typename A, typename B>
@@ -671,8 +671,8 @@ struct IsFirstUnitRedundant
                          std::true_type,
                          std::conditional_t<AreUnitsQuantityEquivalent<U1, U2>::value,
                                             InOrderFor<Pack, U2, U1>,
-                                            stdx::conjunction<IsInteger<UnitRatioT<U1, U2>>,
-                                                              IsPositive<UnitRatioT<U1, U2>>>>> {};
+                                            stdx::conjunction<IsInteger<UnitRatio<U1, U2>>,
+                                                              IsPositive<UnitRatio<U1, U2>>>>> {};
 
 // Recursive case: eliminate first unit if it is redundant; else, keep it and eliminate any later
 // units that are redundant with it.
@@ -689,7 +689,7 @@ struct EliminateRedundantUnitsImpl<Pack<H, Ts...>>
           // To get that result, we first replace any units _that `H` makes redundant_ with `void`.
           // Then, we drop all `void`, before finally recursively eliminating any units that are
           // redundant among those that remain.
-          PrependT<
+          Prepend<
               EliminateRedundantUnits<DropAll<
                   void,
 
@@ -740,7 +740,7 @@ template <>
 struct SimplifyIfOnlyOneUnscaledUnitImpl<Zero, UnitList<Zero>> : stdx::type_identity<Zero> {};
 template <typename U, typename SoleUnscaledUnit>
 struct SimplifyIfOnlyOneUnscaledUnitImpl<U, UnitList<SoleUnscaledUnit>>
-    : stdx::type_identity<decltype(SoleUnscaledUnit{} * UnitRatioT<U, SoleUnscaledUnit>{})> {};
+    : stdx::type_identity<decltype(SoleUnscaledUnit{} * UnitRatio<U, SoleUnscaledUnit>{})> {};
 template <typename U, typename... Us>
 struct SimplifyIfOnlyOneUnscaledUnitImpl<U, UnitList<Us...>> : stdx::type_identity<U> {};
 
@@ -780,7 +780,7 @@ struct ComputeCommonUnit
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `CommonPointUnitT` helper implementation.
+// `CommonPointUnit` helper implementation.
 
 namespace detail {
 
@@ -848,7 +848,7 @@ struct OriginDisplacementUnit {
     static_assert(OriginOf<U1>::value() != OriginOf<U2>::value(),
                   "OriginDisplacementUnit must be an actual unit, so it must be nonzero.");
 
-    using Dim = CommonDimensionT<DimT<U1>, DimT<U2>>;
+    using Dim = CommonDimension<DimT<U1>, DimT<U2>>;
     using Mag = ValueDisplacementMagnitude<OriginOf<U1>, OriginOf<U2>>;
 };
 
@@ -863,8 +863,8 @@ using ComputeOriginDisplacementUnit =
 
 template <typename U1, typename U2>
 constexpr auto origin_displacement_unit(U1, U2) {
-    return ComputeOriginDisplacementUnit<AssociatedUnitForPointsT<U1>,
-                                         AssociatedUnitForPointsT<U2>>{};
+    return ComputeOriginDisplacementUnit<AssociatedUnitForPoints<U1>,
+                                         AssociatedUnitForPoints<U2>>{};
 }
 
 // MagTypeT<T> gives some measure of the size of the unit for this "quantity-alike" type.
@@ -894,11 +894,11 @@ constexpr typename UnitLabel<detail::OriginDisplacementUnit<U1, U2>>::LabelT
 //
 // To be well-formed, the units must be listed in the same order every time.  End users cannot be
 // responsible for this; thus, they should never name this type directly.  Rather, they should name
-// the `CommonPointUnitT` alias, which will handle the canonicalization.
+// the `CommonPointUnit` alias, which will handle the canonicalization.
 template <typename... Us>
 using CommonAmongUnitsAndOriginDisplacements =
-    CommonUnitT<Us...,
-                detail::ComputeOriginDisplacementUnit<detail::UnitOfLowestOrigin<Us...>, Us>...>;
+    CommonUnit<Us...,
+               detail::ComputeOriginDisplacementUnit<detail::UnitOfLowestOrigin<Us...>, Us>...>;
 template <typename... Us>
 struct CommonPointUnitPack : CommonAmongUnitsAndOriginDisplacements<Us...> {
     static_assert(AreElementsInOrder<CommonPointUnitPack, CommonPointUnitPack<Us...>>::value,
@@ -1039,8 +1039,8 @@ struct UnitLabel<RatioPow<Unit, N, D>>
 // Implementation for UnitProductPack: split into positive and negative powers.
 template <typename... Us>
 struct UnitLabel<UnitProductPack<Us...>>
-    : detail::QuotientLabeler<detail::NumeratorPartT<UnitProductPack<Us...>>,
-                              detail::DenominatorPartT<UnitProductPack<Us...>>,
+    : detail::QuotientLabeler<detail::NumeratorPart<UnitProductPack<Us...>>,
+                              detail::DenominatorPart<UnitProductPack<Us...>>,
                               void> {};
 
 // Implementation for ScaledUnit: scaling unit U by M gets label `"[M U]"`.
@@ -1083,7 +1083,7 @@ struct UnitLabel<CommonPointUnitPack<Us...>>
 
 template <typename Unit>
 constexpr const auto &unit_label(Unit) {
-    return detail::as_char_array(UnitLabel<AssociatedUnitT<Unit>>::value);
+    return detail::as_char_array(UnitLabel<AssociatedUnit<Unit>>::value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

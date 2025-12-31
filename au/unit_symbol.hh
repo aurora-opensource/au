@@ -44,7 +44,7 @@ struct SymbolFor : detail::MakesQuantityFromNumber<SymbolFor, Unit>,
 //
 template <typename UnitSlot>
 constexpr auto symbol_for(UnitSlot) {
-    return SymbolFor<AssociatedUnitT<UnitSlot>>{};
+    return SymbolFor<AssociatedUnit<UnitSlot>>{};
 }
 
 // Support using symbols in unit slot APIs (e.g., `v.in(m / s)`).

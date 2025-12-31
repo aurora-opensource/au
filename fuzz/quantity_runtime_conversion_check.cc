@@ -166,7 +166,7 @@ constexpr TestCategory categorize_testing_scenario() {
     }
 
     using Common = std::common_type_t<RepT, DestRepT>;
-    constexpr auto conversion_factor = UnitRatioT<UnitT, DestUnitT>{};
+    constexpr auto conversion_factor = UnitRatio<UnitT, DestUnitT>{};
 
     if (is_integer(conversion_factor) &&
         (get_value_result<Common>(conversion_factor).outcome != MagRepresentationOutcome::OK)) {
@@ -265,7 +265,7 @@ struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::INTEGRAL_TO_I
                                     const Quantity<DestUnitT, DestRepT> &destination,
                                     const Quantity<UnitT, RepT> &round_trip) {
         const bool expect_sign_flip =
-            std::is_same<Sign<UnitRatioT<UnitT, DestUnitT>>, Magnitude<Negative>>::value;
+            std::is_same<Sign<UnitRatio<UnitT, DestUnitT>>, Magnitude<Negative>>::value;
         const bool wrong_sign = (sign_flip(value, destination) != expect_sign_flip);
 
         const bool actual_loss = (value != round_trip) || wrong_sign;
@@ -355,7 +355,7 @@ struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_INTE
         }
 
         if (round_trip == value) {
-            using Op = ConversionForRepsAndFactor<RepT, DestRepT, UnitRatioT<UnitT, DestUnitT>>;
+            using Op = ConversionForRepsAndFactor<RepT, DestRepT, UnitRatio<UnitT, DestUnitT>>;
             const auto dest_value = FloatingPointPrefixPart<Op>::apply_to(value.in(UnitT{}));
             const bool definitely_truncates = (std::trunc(dest_value) != dest_value);
             std::ostringstream oss;
@@ -381,7 +381,7 @@ struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_INTE
         std::ostringstream oss;
         oss << "Distance was " << dist << " steps" << (dist >= MAX_DIST ? " (truncated)" : "");
 
-        if (std::is_same<Abs<UnitRatioT<UnitT, DestUnitT>>, Magnitude<>>::value) {
+        if (std::is_same<Abs<UnitRatio<UnitT, DestUnitT>>, Magnitude<>>::value) {
             oss << ".  Saw round trip error on conversion factor whose absolute value was 1.";
             return {
                 RoundTripResult::SIGNIFICANT_LOSS,
@@ -414,7 +414,7 @@ template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT, 
 struct NominalTestBodyImpl : LossChecker<RepT, UnitT, DestRepT, DestUnitT, Cat> {
     using LossChecker<RepT, UnitT, DestRepT, DestUnitT, Cat>::check_for_loss;
 
-    using Op = ConversionForRepsAndFactor<RepT, DestRepT, UnitRatioT<UnitT, DestUnitT>>;
+    using Op = ConversionForRepsAndFactor<RepT, DestRepT, UnitRatio<UnitT, DestUnitT>>;
 
     static void test(const Quantity<UnitT, RepT> &value) {
         const bool expect_loss = is_conversion_lossy<DestRepT>(value, DestUnitT{});

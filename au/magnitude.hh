@@ -77,15 +77,14 @@ using MagInverseT = MagInverse<T>;
 struct Negative {};
 template <typename... BPs, std::intmax_t ExpNum, std::intmax_t ExpDen>
 struct PackPower<Magnitude, Magnitude<Negative, BPs...>, std::ratio<ExpNum, ExpDen>>
-    : std::conditional<
-          (std::ratio<ExpNum, ExpDen>::num % 2 == 0),
+    : std::conditional<(std::ratio<ExpNum, ExpDen>::num % 2 == 0),
 
-          // Even powers of (-1) are 1 for any root.
-          PackPowerT<Magnitude, Magnitude<BPs...>, ExpNum, ExpDen>,
+                       // Even powers of (-1) are 1 for any root.
+                       PackPowerT<Magnitude, Magnitude<BPs...>, ExpNum, ExpDen>,
 
-          // At this point, we know we're taking the D'th root of (-1), which is (-1)
-          // if D is odd, and a hard compiler error if D is even.
-          MagProductT<Magnitude<Negative>, MagPowerT<Magnitude<BPs...>, ExpNum, ExpDen>>>
+                       // At this point, we know we're taking the D'th root of (-1), which is (-1)
+                       // if D is odd, and a hard compiler error if D is even.
+                       MagProduct<Magnitude<Negative>, MagPower<Magnitude<BPs...>, ExpNum, ExpDen>>>
 // Implement the hard error for raising to (odd / even) power:
 {
     static_assert(std::ratio<ExpNum, ExpDen>::den % 2 == 1,
@@ -93,7 +92,7 @@ struct PackPower<Magnitude, Magnitude<Negative, BPs...>, std::ratio<ExpNum, ExpD
 };
 template <typename... LeftBPs, typename... RightBPs>
 struct PackProduct<Magnitude, Magnitude<Negative, LeftBPs...>, Magnitude<Negative, RightBPs...>>
-    : stdx::type_identity<MagProductT<Magnitude<LeftBPs...>, Magnitude<RightBPs...>>> {};
+    : stdx::type_identity<MagProduct<Magnitude<LeftBPs...>, Magnitude<RightBPs...>>> {};
 
 // Define negation.
 template <typename... BPs>
@@ -180,7 +179,7 @@ template <typename MagT>
 using NumeratorT = typename NumeratorImpl<MagT>::type;
 
 template <typename MagT>
-using DenominatorT = NumeratorT<MagInverseT<Abs<MagT>>>;
+using DenominatorT = NumeratorT<MagInverse<Abs<MagT>>>;
 
 template <typename MagT>
 struct IsPositive : std::true_type {};
@@ -190,7 +189,7 @@ struct IsPositive<Magnitude<Negative, BPs...>> : std::false_type {};
 template <typename MagT>
 struct IsRational
     : std::is_same<MagT,
-                   MagQuotientT<IntegerPartT<NumeratorT<MagT>>, IntegerPartT<DenominatorT<MagT>>>> {
+                   MagQuotient<IntegerPartT<NumeratorT<MagT>>, IntegerPartT<DenominatorT<MagT>>>> {
 };
 
 template <typename MagT>
@@ -215,22 +214,22 @@ static constexpr auto ONE = Magnitude<>{};
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator*(Magnitude<BP1s...>, Magnitude<BP2s...>) {
-    return MagProductT<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
+    return MagProduct<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
 }
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator/(Magnitude<BP1s...>, Magnitude<BP2s...>) {
-    return MagQuotientT<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
+    return MagQuotient<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
 }
 
 template <int E, typename... BPs>
 constexpr auto pow(Magnitude<BPs...>) {
-    return MagPowerT<Magnitude<BPs...>, E>{};
+    return MagPower<Magnitude<BPs...>, E>{};
 }
 
 template <int N, typename... BPs>
 constexpr auto root(Magnitude<BPs...>) {
-    return MagPowerT<Magnitude<BPs...>, 1, N>{};
+    return MagPower<Magnitude<BPs...>, 1, N>{};
 }
 
 template <typename... BP1s, typename... BP2s>
@@ -293,7 +292,7 @@ constexpr T get_value(Magnitude<BPs...>);
 // Value-based interface around CommonMagnitude.
 template <typename... Ms>
 constexpr auto common_magnitude(Ms...) {
-    return CommonMagnitudeT<Ms...>{};
+    return CommonMagnitude<Ms...>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -307,31 +306,31 @@ namespace detail {
 
 // Helper to perform prime factorization.
 template <std::uintmax_t N>
-struct PrimeFactorization;
+struct PrimeFactorizationImpl;
 template <std::uintmax_t N>
-using PrimeFactorizationT = typename PrimeFactorization<N>::type;
+using PrimeFactorization = typename PrimeFactorizationImpl<N>::type;
 
 // Base case: factorization of 1.
 template <>
-struct PrimeFactorization<1u> : stdx::type_identity<Magnitude<>> {};
+struct PrimeFactorizationImpl<1u> : stdx::type_identity<Magnitude<>> {};
 
 template <std::uintmax_t N>
-struct PrimeFactorization {
+struct PrimeFactorizationImpl {
     static_assert(N > 0, "Can only factor positive integers");
 
     static constexpr std::uintmax_t base = find_prime_factor(N);
     static constexpr std::uintmax_t power = multiplicity(base, N);
     static constexpr std::uintmax_t remainder = N / int_pow(base, power);
 
-    using type = MagProductT<Magnitude<Pow<Prime<base>, static_cast<std::intmax_t>(power)>>,
-                             PrimeFactorizationT<remainder>>;
+    using type = MagProduct<Magnitude<Pow<Prime<base>, static_cast<std::intmax_t>(power)>>,
+                            PrimeFactorization<remainder>>;
 };
 
 }  // namespace detail
 
 template <std::uintmax_t N>
 constexpr auto mag() {
-    return detail::PrimeFactorizationT<N>{};
+    return detail::PrimeFactorization<N>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -343,16 +342,16 @@ struct IntegerPartOfBasePower : stdx::type_identity<Magnitude<>> {};
 // Raise B to the largest natural number power which won't exceed (N/D), or 0 if there isn't one.
 template <std::uintmax_t B, std::intmax_t N, std::intmax_t D>
 struct IntegerPartOfBasePower<Prime<B>, std::ratio<N, D>>
-    : stdx::type_identity<MagPowerT<Magnitude<Prime<B>>, ((N >= D) ? (N / D) : 0)>> {};
+    : stdx::type_identity<MagPower<Magnitude<Prime<B>>, ((N >= D) ? (N / D) : 0)>> {};
 
 template <typename... BPs>
 struct IntegerPartImpl<Magnitude<BPs...>>
     : stdx::type_identity<
-          MagProductT<typename IntegerPartOfBasePower<BaseT<BPs>, ExpT<BPs>>::type...>> {};
+          MagProduct<typename IntegerPartOfBasePower<Base<BPs>, Exp<BPs>>::type...>> {};
 
 template <typename... BPs>
 struct IntegerPartImpl<Magnitude<Negative, BPs...>>
-    : stdx::type_identity<MagProductT<Magnitude<Negative>, IntegerPartT<Magnitude<BPs...>>>> {};
+    : stdx::type_identity<MagProduct<Magnitude<Negative>, IntegerPartT<Magnitude<BPs...>>>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `abs()` implementation.
@@ -381,7 +380,7 @@ struct SignImpl<Magnitude<Negative, BPs...>> : stdx::type_identity<Magnitude<Neg
 template <typename... BPs>
 struct NumeratorImpl<Magnitude<BPs...>>
     : stdx::type_identity<
-          MagProductT<std::conditional_t<(ExpT<BPs>::num > 0), Magnitude<BPs>, Magnitude<>>...>> {};
+          MagProduct<std::conditional_t<(Exp<BPs>::num > 0), Magnitude<BPs>, Magnitude<>>...>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `get_value<T>(Magnitude)` implementation.
@@ -679,11 +678,10 @@ template <typename T, typename... BPs>
 struct GetValueResultImplForDefaultCase<T, Magnitude<BPs...>> {
     constexpr MagRepresentationOrError<T> operator()() {
         // Force the expression to be evaluated in a constexpr context.
-        constexpr auto widened_result =
-            product({base_power_value<RealPart<T>,
-                                      ExpT<BPs>::num,
-                                      static_cast<std::uintmax_t>(ExpT<BPs>::den)>(
-                BaseT<BPs>::value())...});
+        constexpr auto widened_result = product(
+            {base_power_value<RealPart<T>,
+                              Exp<BPs>::num,
+                              static_cast<std::uintmax_t>(Exp<BPs>::den)>(Base<BPs>::value())...});
 
         if ((widened_result.outcome != MagRepresentationOutcome::OK) ||
             !safe_to_cast_to<T>(widened_result.value)) {
@@ -864,16 +862,16 @@ constexpr const auto &mag_label(MagT) {
 namespace detail {
 // Helper: prepend a base power, but only if the Exp is negative.
 template <typename BP, typename MagT>
-struct PrependIfExpNegative;
+struct PrependIfExpNegativeImpl;
 template <typename BP, typename MagT>
-using PrependIfExpNegativeT = typename PrependIfExpNegative<BP, MagT>::type;
+using PrependIfExpNegative = typename PrependIfExpNegativeImpl<BP, MagT>::type;
 template <typename BP, typename... Ts>
-struct PrependIfExpNegative<BP, Magnitude<Ts...>>
-    : std::conditional<(ExpT<BP>::num < 0), Magnitude<BP, Ts...>, Magnitude<Ts...>> {};
+struct PrependIfExpNegativeImpl<BP, Magnitude<Ts...>>
+    : std::conditional<(Exp<BP>::num < 0), Magnitude<BP, Ts...>, Magnitude<Ts...>> {};
 
 // Remove all positive powers from M.
 template <typename M>
-using NegativePowers = MagQuotientT<M, NumeratorPartT<M>>;
+using NegativePowers = MagQuotient<M, NumeratorPart<M>>;
 }  // namespace detail
 
 // 1-ary case: identity.
@@ -900,22 +898,22 @@ struct CommonMagnitudeImpl<Magnitude<H1, T1...>, Magnitude<H2, T2...>> :
 
     // If the bases for H1 and H2 are in-order, prepend H1-if-negative to the remainder.
     std::conditional<
-        (InOrderFor<Magnitude, BaseT<H1>, BaseT<H2>>::value),
-        detail::PrependIfExpNegativeT<H1, CommonMagnitude<Magnitude<T1...>, Magnitude<H2, T2...>>>,
+        (InOrderFor<Magnitude, Base<H1>, Base<H2>>::value),
+        detail::PrependIfExpNegative<H1, CommonMagnitude<Magnitude<T1...>, Magnitude<H2, T2...>>>,
 
         // If the bases for H2 and H1 are in-order, prepend H2-if-negative to the remainder.
         std::conditional_t<
-            (InOrderFor<Magnitude, BaseT<H2>, BaseT<H1>>::value),
-            detail::PrependIfExpNegativeT<H2,
-                                          CommonMagnitude<Magnitude<T2...>, Magnitude<H1, T1...>>>,
+            (InOrderFor<Magnitude, Base<H2>, Base<H1>>::value),
+            detail::PrependIfExpNegative<H2,
+                                         CommonMagnitude<Magnitude<T2...>, Magnitude<H1, T1...>>>,
 
             // If we got here, the bases must be the same.  (We can assume that `InOrderFor` does
             // proper checking to guard against equivalent-but-not-identical bases, which would
             // violate total ordering.)
             std::conditional_t<
-                (std::ratio_subtract<ExpT<H1>, ExpT<H2>>::num < 0),
-                detail::PrependT<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H1>,
-                detail::PrependT<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H2>>>> {};
+                (std::ratio_subtract<Exp<H1>, Exp<H2>>::num < 0),
+                detail::Prepend<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H1>,
+                detail::Prepend<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H2>>>> {};
 
 // N-ary case: recurse.
 template <typename M1, typename M2, typename... Tail>

@@ -57,21 +57,21 @@ using DimInverseT = DimInverse<T>;
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator*(Dimension<BP1s...>, Dimension<BP2s...>) {
-    return DimProductT<Dimension<BP1s...>, Dimension<BP2s...>>{};
+    return DimProduct<Dimension<BP1s...>, Dimension<BP2s...>>{};
 }
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator/(Dimension<BP1s...>, Dimension<BP2s...>) {
-    return DimQuotientT<Dimension<BP1s...>, Dimension<BP2s...>>{};
+    return DimQuotient<Dimension<BP1s...>, Dimension<BP2s...>>{};
 }
 
 // Roots and powers for Dimension instances.
 template <std::intmax_t N, typename... BPs>
-constexpr DimPowerT<Dimension<BPs...>, N> pow(Dimension<BPs...>) {
+constexpr DimPower<Dimension<BPs...>, N> pow(Dimension<BPs...>) {
     return {};
 }
 template <std::intmax_t N, typename... BPs>
-constexpr DimPowerT<Dimension<BPs...>, 1, N> root(Dimension<BPs...>) {
+constexpr DimPower<Dimension<BPs...>, 1, N> root(Dimension<BPs...>) {
     return {};
 }
 

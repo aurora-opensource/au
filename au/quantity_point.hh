@@ -56,8 +56,8 @@ struct IntermediateRep;
 // to that difference.
 template <typename U1, typename U2>
 constexpr auto origin_displacement(U1, U2) {
-    return make_constant(detail::ComputeOriginDisplacementUnit<AssociatedUnitForPointsT<U1>,
-                                                               AssociatedUnitForPointsT<U2>>{});
+    return make_constant(detail::ComputeOriginDisplacementUnit<AssociatedUnitForPoints<U1>,
+                                                               AssociatedUnitForPoints<U2>>{});
 }
 
 template <typename U1, typename U2>
@@ -82,7 +82,7 @@ class QuantityPoint {
     //      OK : QuantityPoint<Celsius, int> -> QuantityPoint<Milli<Kelvins>, int>
     template <typename OtherUnit, typename OtherRep>
     static constexpr bool should_enable_implicit_construction_from() {
-        using Com = CommonUnitT<OtherUnit, detail::ComputeOriginDisplacementUnit<Unit, OtherUnit>>;
+        using Com = CommonUnit<OtherUnit, detail::ComputeOriginDisplacementUnit<Unit, OtherUnit>>;
         return std::is_convertible<Quantity<Com, OtherRep>, QuantityPoint::Diff>::value;
     }
 
@@ -132,12 +132,12 @@ class QuantityPoint {
 
     template <typename NewRep, typename NewUnit, typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
     constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in_impl<NewRep>(u, policy));
+        return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<NewRep>(u, policy));
     }
 
     template <typename NewUnit, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in_impl<Rep>(u, policy));
+        return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<Rep>(u, policy));
     }
 
     template <typename NewRep, typename NewUnit, typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
@@ -177,16 +177,16 @@ class QuantityPoint {
     // Mutable access:
     template <typename UnitSlot>
     constexpr Rep &data_in(UnitSlot) {
-        static_assert(AreUnitsPointEquivalent<AssociatedUnitForPointsT<UnitSlot>, Unit>::value,
+        static_assert(AreUnitsPointEquivalent<AssociatedUnitForPoints<UnitSlot>, Unit>::value,
                       "Can only access value via Point-equivalent unit");
-        return x_.data_in(AssociatedUnitForPointsT<UnitSlot>{});
+        return x_.data_in(AssociatedUnitForPoints<UnitSlot>{});
     }
     // Const access:
     template <typename UnitSlot>
     constexpr const Rep &data_in(UnitSlot) const {
-        static_assert(AreUnitsPointEquivalent<AssociatedUnitForPointsT<UnitSlot>, Unit>::value,
+        static_assert(AreUnitsPointEquivalent<AssociatedUnitForPoints<UnitSlot>, Unit>::value,
                       "Can only access value via Point-equivalent unit");
-        return x_.data_in(AssociatedUnitForPointsT<UnitSlot>{});
+        return x_.data_in(AssociatedUnitForPoints<UnitSlot>{});
     }
 
     // Comparison operators.
@@ -229,9 +229,9 @@ class QuantityPoint {
  private:
     template <typename OtherRep, typename OtherPointUnitSlot, typename RiskPolicyT>
     constexpr OtherRep in_impl(OtherPointUnitSlot, RiskPolicyT policy) const {
-        using OtherUnit = AssociatedUnitForPointsT<OtherPointUnitSlot>;
+        using OtherUnit = AssociatedUnitForPoints<OtherPointUnitSlot>;
         using OriginDisplacementUnit = detail::ComputeOriginDisplacementUnit<Unit, OtherUnit>;
-        using Common = CommonUnitT<Unit, OtherUnit, OriginDisplacementUnit>;
+        using Common = CommonUnit<Unit, OtherUnit, OriginDisplacementUnit>;
 
         using CalcRep = typename detail::IntermediateRep<Rep, OtherRep>::type;
 
@@ -315,13 +315,13 @@ namespace detail {
 template <typename X, typename Y, typename Func>
 constexpr auto using_common_point_unit(X x, Y y, Func f) {
     using R = std::common_type_t<typename X::Rep, typename Y::Rep>;
-    constexpr auto u = CommonPointUnitT<typename X::Unit, typename Y::Unit>{};
+    constexpr auto u = CommonPointUnit<typename X::Unit, typename Y::Unit>{};
     return f(rep_cast<R>(x).as(u), rep_cast<R>(y).as(u));
 }
 
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
 constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    using U = CommonPointUnitT<U1, U2>;
+    using U = CommonPointUnit<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
     return detail::SignAwareComparison<UnitSign<U>, Op>{}(
@@ -358,7 +358,7 @@ constexpr auto operator!=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
 
 namespace detail {
 // Another subtlety arises when we mix QuantityPoint and Quantity in adding or subtracting.  We
-// actually don't want to use `CommonPointUnitT`, because this is too restrictive if the units have
+// actually don't want to use `CommonPointUnit`, because this is too restrictive if the units have
 // different origins.  Imagine adding a `Quantity<Kelvins>` to a `QuantityPoint<Celsius>`---we
 // wouldn't want this to subdivide the unit of measure to satisfy an additive relative offset which
 // we will never actually use!

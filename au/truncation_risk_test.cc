@@ -33,7 +33,7 @@ template <typename T, typename M>
 using ValueTimesIntIsNotInteger = ValueTimesRatioIsNotInteger<T, M>;
 
 template <typename T, typename M>
-using ValueDivIntIsNotInteger = ValueTimesRatioIsNotInteger<T, MagInverseT<M>>;
+using ValueDivIntIsNotInteger = ValueTimesRatioIsNotInteger<T, MagInverse<M>>;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `TruncationRiskFor` section:

@@ -181,23 +181,23 @@ struct ImplicitRepPermitted : detail::ImplicitConversionPolicy<Rep, ScaleFactor,
 
 template <typename Rep, typename SourceUnitSlot, typename TargetUnitSlot>
 constexpr bool implicit_rep_permitted_from_source_to_target(SourceUnitSlot, TargetUnitSlot) {
-    using SourceUnit = AssociatedUnitT<SourceUnitSlot>;
-    using TargetUnit = AssociatedUnitT<TargetUnitSlot>;
+    using SourceUnit = AssociatedUnit<SourceUnitSlot>;
+    using TargetUnit = AssociatedUnit<TargetUnitSlot>;
     static_assert(HasSameDimension<SourceUnit, TargetUnit>::value,
                   "Can only convert same-dimension units");
 
-    return ImplicitRepPermitted<Rep, UnitRatioT<SourceUnit, TargetUnit>>::value;
+    return ImplicitRepPermitted<Rep, UnitRatio<SourceUnit, TargetUnit>>::value;
 }
 
 template <typename Unit, typename Rep>
 struct ConstructionPolicy {
-    // Note: it's tempting to use the UnitRatioT trait here, but we can't, because it produces a
+    // Note: it's tempting to use the UnitRatio trait here, but we can't, because it produces a
     // hard error for units with different dimensions.  This is for good reason: magnitude ratios
-    // are meaningless unless the dimension is the same.  UnitRatioT is the user-facing tool, so we
+    // are meaningless unless the dimension is the same.  UnitRatio is the user-facing tool, so we
     // build in this hard error for safety.  Here, we need a soft error, so we do the dimension
     // check manually below.
     template <typename SourceUnit>
-    using ScaleFactor = MagQuotientT<detail::MagT<SourceUnit>, detail::MagT<Unit>>;
+    using ScaleFactor = MagQuotient<detail::MagT<SourceUnit>, detail::MagT<Unit>>;
 
     template <typename SourceUnit, typename SourceRep>
     using PermitImplicitFrom = stdx::conjunction<

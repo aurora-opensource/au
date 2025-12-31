@@ -170,9 +170,9 @@ using NholthausUnitMagT = typename NholthausUnitMag<NholthausUnit>::type;
 // Implementation for derived units: apply top-level scaling factor to recursive result.
 template <class RationalScale, class BaseUnit, class PiPower, class X4>
 struct NholthausUnitMag<units::unit<RationalScale, BaseUnit, PiPower, X4>>
-    : stdx::type_identity<MagProductT<MagFromRatioT<RationalScale>,
-                                      MagPowerT<Magnitude<Pi>, PiPower::num, PiPower::den>,
-                                      NholthausUnitMagT<BaseUnit>>> {};
+    : stdx::type_identity<MagProduct<MagFromRatioT<RationalScale>,
+                                     MagPower<Magnitude<Pi>, PiPower::num, PiPower::den>,
+                                     NholthausUnitMagT<BaseUnit>>> {};
 
 // Implementation for base units: always 1 (i.e., the null Magnitude) by definition.
 template <class... Es>
@@ -186,7 +186,7 @@ struct AuUnit {
     using NU = NholthausUnit;
 
     // If you want to use only a subset of units, you can avoid depending on the Au analogues for
-    // all 9 nholthaus base units.  Simply delete the corresponding `UnitPowerT` from the
+    // all 9 nholthaus base units.  Simply delete the corresponding `UnitPower` from the
     // `decltype()` expression below.
     //
     // **NOTE:** For safety, if you do this, make sure that you also add a line like the following
@@ -194,15 +194,15 @@ struct AuUnit {
     //
     // static_assert(MoleExpT<NU>::num == 0, "Moles not supported");
 
-    using type = decltype(UnitPowerT<Meters, MeterExpT<NU>::num, MeterExpT<NU>::den>{} *
-                          UnitPowerT<Kilo<Grams>, KilogramExpT<NU>::num, KilogramExpT<NU>::den>{} *
-                          UnitPowerT<Seconds, SecondExpT<NU>::num, SecondExpT<NU>::den>{} *
-                          UnitPowerT<Radians, RadianExpT<NU>::num, RadianExpT<NU>::den>{} *
-                          UnitPowerT<Amperes, AmpExpT<NU>::num, AmpExpT<NU>::den>{} *
-                          UnitPowerT<Kelvins, KelvinExpT<NU>::num, KelvinExpT<NU>::den>{} *
-                          UnitPowerT<Bytes, ByteExpT<NU>::num, ByteExpT<NU>::den>{} *
-                          UnitPowerT<Candelas, CandelaExpT<NU>::num, CandelaExpT<NU>::den>{} *
-                          UnitPowerT<Moles, MoleExpT<NU>::num, MoleExpT<NU>::den>{} *
+    using type = decltype(UnitPower<Meters, MeterExpT<NU>::num, MeterExpT<NU>::den>{} *
+                          UnitPower<Kilo<Grams>, KilogramExpT<NU>::num, KilogramExpT<NU>::den>{} *
+                          UnitPower<Seconds, SecondExpT<NU>::num, SecondExpT<NU>::den>{} *
+                          UnitPower<Radians, RadianExpT<NU>::num, RadianExpT<NU>::den>{} *
+                          UnitPower<Amperes, AmpExpT<NU>::num, AmpExpT<NU>::den>{} *
+                          UnitPower<Kelvins, KelvinExpT<NU>::num, KelvinExpT<NU>::den>{} *
+                          UnitPower<Bytes, ByteExpT<NU>::num, ByteExpT<NU>::den>{} *
+                          UnitPower<Candelas, CandelaExpT<NU>::num, CandelaExpT<NU>::den>{} *
+                          UnitPower<Moles, MoleExpT<NU>::num, MoleExpT<NU>::den>{} *
                           NholthausUnitMagT<NU>{});
 };
 

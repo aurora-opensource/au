@@ -140,7 +140,7 @@ struct TruncationRiskForDivideIntegralByInteger
     : std::conditional<(get_value_result<T>(M{}).outcome ==
                         MagRepresentationOutcome::ERR_CANNOT_FIT),
                        ValueIsNotZero<T>,
-                       ValueTimesRatioIsNotInteger<T, MagInverseT<M>>> {};
+                       ValueTimesRatioIsNotInteger<T, MagInverse<M>>> {};
 
 template <typename T, typename M>
 struct TruncationRiskForDivideArithmeticByInteger
@@ -204,12 +204,12 @@ struct UpdateRiskImpl<DivideTypeByInteger<T, M>, Risk<RealPart<T>>>
 template <typename T, typename M1, typename M2>
 struct UpdateRiskImpl<MultiplyTypeBy<T, M1>, ValueTimesRatioIsNotInteger<RealPart<T>, M2>>
     : std::conditional<IsRational<M1>::value,
-                       ReduceValueTimesRatioIsNotInteger<RealPart<T>, MagProductT<M1, M2>>,
+                       ReduceValueTimesRatioIsNotInteger<RealPart<T>, MagProduct<M1, M2>>,
                        ValueIsNotZero<RealPart<T>>> {};
 
 template <typename T, typename M1, typename M2>
 struct UpdateRiskImpl<DivideTypeByInteger<T, M1>, ValueTimesRatioIsNotInteger<RealPart<T>, M2>>
-    : stdx::type_identity<ReduceValueTimesRatioIsNotInteger<RealPart<T>, MagQuotientT<M2, M1>>> {};
+    : stdx::type_identity<ReduceValueTimesRatioIsNotInteger<RealPart<T>, MagQuotient<M2, M1>>> {};
 
 //
 // `BiggestRiskImpl<Risk1, Risk2>` is a helper that computes the "biggest" risk between two risks.
@@ -296,14 +296,14 @@ struct ValueTimesRatioIsNotIntegerImplForFloatGeneric {
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForFloatDivideByInteger {
     static constexpr bool would_value_truncate(const T &value) {
-        const auto result = value / get_value<RealPart<T>>(MagInverseT<M>{});
+        const auto result = value / get_value<RealPart<T>>(MagInverse<M>{});
         return std::trunc(result) != result;
     }
 };
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForFloat
-    : std::conditional_t<IsInteger<MagInverseT<M>>::value,
+    : std::conditional_t<IsInteger<MagInverse<M>>::value,
                          ValueTimesRatioIsNotIntegerImplForFloatDivideByInteger<T, M>,
                          ValueTimesRatioIsNotIntegerImplForFloatGeneric<T, M>> {};
 

@@ -83,7 +83,7 @@ TEST(MakeConstant, MakesAdHocConstantFromQuantityMaker) {
     constexpr auto ad_hoc_c = make_constant(meters / second * mag<299'792'458>());
     EXPECT_THAT((1.0 * ad_hoc_c).in(meters / second), SameTypeAndValue(299'792'458.0));
 
-    auto foo = [](Quantity<UnitQuotientT<Meters, Seconds>, int> q) { std::cout << q << std::endl; };
+    auto foo = [](Quantity<UnitQuotient<Meters, Seconds>, int> q) { std::cout << q << std::endl; };
     foo(c);
 }
 
@@ -180,7 +180,7 @@ TEST(Constant, MakesScaledConstantWhenPreMultipliedByMagnitude) {
 }
 
 TEST(Constant, MakesScaledInverseConstantWhenDividedIntoMagnitude) {
-    StaticAssertTypeEq<decltype(PI / c), Constant<decltype(UnitInverseT<SpeedOfLight>{} * PI)>>();
+    StaticAssertTypeEq<decltype(PI / c), Constant<decltype(UnitInverse<SpeedOfLight>{} * PI)>>();
 }
 
 TEST(Constant, ChangesUnitsForQuantityWhenPostMultiplying) {
