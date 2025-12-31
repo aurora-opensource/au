@@ -54,10 +54,10 @@ class Quantity;
 // on an instance of that alias.
 //
 template <typename... UnitPowers>
-struct UnitProduct;
+struct UnitProductPack;
 template <typename... UnitPowers>
 struct ForwardDeclareUnitProduct {
-    using unit_type = UnitProduct<UnitPowers...>;
+    using unit_type = UnitProductPack<UnitPowers...>;
 };
 
 //

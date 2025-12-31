@@ -29,7 +29,7 @@ namespace detail {
 //
 // This includes:
 // - Direct Pow<B, N> or RatioPow<B, N, D> types
-// - UnitProduct<...> containing any powered units (recursively)
+// - UnitProductPack<...> containing any powered units (recursively)
 template <typename U>
 struct ContainsAnyPowers : std::false_type {};
 
@@ -40,7 +40,7 @@ template <typename B, std::intmax_t N, std::intmax_t D>
 struct ContainsAnyPowers<RatioPow<B, N, D>> : std::true_type {};
 
 template <typename... Us>
-struct ContainsAnyPowers<UnitProduct<Us...>> : stdx::disjunction<ContainsAnyPowers<Us>...> {};
+struct ContainsAnyPowers<UnitProductPack<Us...>> : stdx::disjunction<ContainsAnyPowers<Us>...> {};
 
 // Helper to generate labels for prefixed units.
 // Wraps unit label in brackets if the unit is a powered unit (Pow or RatioPow).
