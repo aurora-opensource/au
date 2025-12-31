@@ -344,6 +344,8 @@ template <typename... UnitPows>
 using UnitProductT =
     UnpackIfSoloT<UnitProductPack,
                   PackProductT<UnitProductPack, AsPackT<UnitProductPack, UnitPows>...>>;
+template <typename... UnitPows>
+using UnitProduct = UnitProductT<UnitPows...>;
 
 // Raise a Unit to a (possibly rational) Power.
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>

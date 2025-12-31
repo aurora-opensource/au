@@ -214,6 +214,11 @@ TEST(UnitProductT, CreatesPowForIntegerPowers) {
     StaticAssertTypeEq<UnitProductT<FeetSquared, UnitInverseT<Feet>>, Feet>();
 }
 
+TEST(UnitProduct, CanonicalizesOrdering) {
+    StaticAssertTypeEq<UnitProduct<Feet, Inches>, UnitProduct<Inches, Feet>>();
+    StaticAssertTypeEq<UnitProduct<Feet, Minutes>, UnitProduct<Minutes, Feet>>();
+}
+
 TEST(UnitPowerT, ProducesSimplifiedPowersOfAllExponents) {
     using Input = UnitProductT<Feet, Pow<Minutes, 3>, Pow<Inches, -6>, RatioPow<Yards, 3, 2>>;
 
