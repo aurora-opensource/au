@@ -70,7 +70,7 @@ constexpr auto map_to_au(T x) {
 }
 
 template <typename T>
-using MappedToAuT = decltype(map_to_au(std::declval<T>()));
+using MappedToAu = decltype(map_to_au(std::declval<T>()));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Testing for equivalence of result types.
@@ -109,7 +109,7 @@ using HasOp = stdx::experimental::is_detected<OpReturn, Op, T, U>;
 template <typename Op, typename DurationA, typename DurationB>
 ::testing::AssertionResult both_permit(DurationA a, DurationB b) {
     static_assert(HasOp<Op, DurationA, DurationB>::value, "Expected chrono lib to permit this op");
-    static_assert(HasOp<Op, MappedToAuT<DurationA>, MappedToAuT<DurationB>>::value,
+    static_assert(HasOp<Op, MappedToAu<DurationA>, MappedToAu<DurationB>>::value,
                   "AU library FORBIDS an operation which the CHRONO library PERMITS");
 
     constexpr Op op{};
@@ -142,7 +142,7 @@ template <typename Op, typename DurationA, typename DurationB, typename T>
 template <typename Op, typename DurationA, typename DurationB>
 bool both_forbid(DurationA, DurationB) {
     static_assert(!HasOp<Op, DurationA, DurationB>::value, "Expected chrono lib to forbid this op");
-    static_assert(!HasOp<Op, MappedToAuT<DurationA>, MappedToAuT<DurationB>>::value,
+    static_assert(!HasOp<Op, MappedToAu<DurationA>, MappedToAu<DurationB>>::value,
                   "AU library PERMITS an operation which the CHRONO library FORBIDS");
 
     return true;
@@ -154,7 +154,7 @@ template <typename Op, typename DurationA, typename DurationB>
 bool chrono_permits_but_au_forbids(DurationA, DurationB) {
     static_assert(HasOp<Op, DurationA, DurationB>::value, "Expected chrono lib to permit this op");
     static_assert(
-        !HasOp<Op, MappedToAuT<DurationA>, MappedToAuT<DurationB>>::value,
+        !HasOp<Op, MappedToAu<DurationA>, MappedToAu<DurationB>>::value,
         "AU library PERMITS an operation which the CHRONO library PERMITS, but AU should FORBID");
 
     return true;
