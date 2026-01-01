@@ -121,45 +121,45 @@ TEST(UnpackIfSolo, ReturnsEnclosedElementIfExactlyOne) {
     StaticAssertTypeEq<UnpackIfSolo<Pack, Pack<int, char>>, Pack<int, char>>();
 }
 
-TEST(PackProductT, UnaryProductIsIdentity) {
-    StaticAssertTypeEq<PackProductT<Pack, Pack<>>, Pack<>>();
-    StaticAssertTypeEq<PackProductT<Pack, Pack<B<3>>>, Pack<B<3>>>();
+TEST(PackProduct, UnaryProductIsIdentity) {
+    StaticAssertTypeEq<PackProduct<Pack, Pack<>>, Pack<>>();
+    StaticAssertTypeEq<PackProduct<Pack, Pack<B<3>>>, Pack<B<3>>>();
 }
 
-TEST(PackProductT, BinaryProductOfNullPacksIsNullPack) {
-    StaticAssertTypeEq<PackProductT<Pack, Pack<>, Pack<>>, Pack<>>();
+TEST(PackProduct, BinaryProductOfNullPacksIsNullPack) {
+    StaticAssertTypeEq<PackProduct<Pack, Pack<>, Pack<>>, Pack<>>();
 }
 
-TEST(PackProductT, BinaryProductOfNullPackWithNonNullPackGivesNonNullPack) {
-    StaticAssertTypeEq<PackProductT<Pack, Pack<>, Pack<B<2>, B<3>>>, Pack<B<2>, B<3>>>();
-    StaticAssertTypeEq<PackProductT<Pack, Pack<B<2>, B<3>>, Pack<>>, Pack<B<2>, B<3>>>();
+TEST(PackProduct, BinaryProductOfNullPackWithNonNullPackGivesNonNullPack) {
+    StaticAssertTypeEq<PackProduct<Pack, Pack<>, Pack<B<2>, B<3>>>, Pack<B<2>, B<3>>>();
+    StaticAssertTypeEq<PackProduct<Pack, Pack<B<2>, B<3>>, Pack<>>, Pack<B<2>, B<3>>>();
 }
 
-TEST(PackProductT, BinaryProductOfNonNullPackWithEarlierBasePrependsBase) {
-    StaticAssertTypeEq<PackProductT<Pack, Pack<B<1>>, Pack<B<2>, B<3>>>, Pack<B<1>, B<2>, B<3>>>();
-    StaticAssertTypeEq<PackProductT<Pack, Pack<B<2>>, Pack<B<1>, B<3>>>, Pack<B<1>, B<2>, B<3>>>();
+TEST(PackProduct, BinaryProductOfNonNullPackWithEarlierBasePrependsBase) {
+    StaticAssertTypeEq<PackProduct<Pack, Pack<B<1>>, Pack<B<2>, B<3>>>, Pack<B<1>, B<2>, B<3>>>();
+    StaticAssertTypeEq<PackProduct<Pack, Pack<B<2>>, Pack<B<1>, B<3>>>, Pack<B<1>, B<2>, B<3>>>();
 }
 
-TEST(PackProductT, BinaryProductWithSameHeadBaseAddsExponents) {
-    StaticAssertTypeEq<PackProductT<Pack, Pack<B<2>>, Pack<B<2>>>, Pack<Pow<B<2>, 2>>>();
+TEST(PackProduct, BinaryProductWithSameHeadBaseAddsExponents) {
+    StaticAssertTypeEq<PackProduct<Pack, Pack<B<2>>, Pack<B<2>>>, Pack<Pow<B<2>, 2>>>();
 
-    StaticAssertTypeEq<PackProductT<Pack, Pack<Pow<B<2>, -1>>, Pack<B<2>>>, Pack<>>();
+    StaticAssertTypeEq<PackProduct<Pack, Pack<Pow<B<2>, -1>>, Pack<B<2>>>, Pack<>>();
 
-    StaticAssertTypeEq<PackProductT<Pack, Pack<Pow<B<2>, 2>>, Pack<RatioPow<B<2>, -3, 4>>>,
+    StaticAssertTypeEq<PackProduct<Pack, Pack<Pow<B<2>, 2>>, Pack<RatioPow<B<2>, -3, 4>>>,
                        Pack<RatioPow<B<2>, 5, 4>>>();
 
-    StaticAssertTypeEq<PackProductT<Pack, Pack<RatioPow<B<2>, 7, 4>>, Pack<RatioPow<B<2>, -3, 4>>>,
+    StaticAssertTypeEq<PackProduct<Pack, Pack<RatioPow<B<2>, 7, 4>>, Pack<RatioPow<B<2>, -3, 4>>>,
                        Pack<B<2>>>();
 }
 
-TEST(PackProductT, NaryProductRecurses) {
-    StaticAssertTypeEq<PackProductT<Pack, Pack<B<7>>, Pack<B<2>>, Pack<B<5>>>,
+TEST(PackProduct, NaryProductRecurses) {
+    StaticAssertTypeEq<PackProduct<Pack, Pack<B<7>>, Pack<B<2>>, Pack<B<5>>>,
                        Pack<B<2>, B<5>, B<7>>>();
 }
 
-TEST(PackPowerT, MultipliesExponentsAndSimplifies) {
+TEST(PackPower, MultipliesExponentsAndSimplifies) {
     StaticAssertTypeEq<
-        PackPowerT<Pack, Pack<B<2>, Pow<B<3>, -3>, RatioPow<B<5>, -3, 2>, RatioPow<B<7>, 1, 2>>, 2>,
+        PackPower<Pack, Pack<B<2>, Pow<B<3>, -3>, RatioPow<B<5>, -3, 2>, RatioPow<B<7>, 1, 2>>, 2>,
         Pack<Pow<B<2>, 2>, Pow<B<3>, -6>, Pow<B<5>, -3>, B<7>>>();
 }
 
@@ -191,31 +191,31 @@ TEST(FlatDedupedTypeListT, DedupesAtAnyPosition) {
     StaticAssertTypeEq<FlatDedupedTypeListT<Pack, T, Pack<B<2>>, T, B<11>, T>, T>();
 }
 
-TEST(PackPowerT, SupportsRationalPowers) {
+TEST(PackPower, SupportsRationalPowers) {
     StaticAssertTypeEq<
-        PackPowerT<Pack, Pack<Pow<B<2>, 2>, Pow<B<3>, -6>, Pow<B<5>, -3>, B<7>>, 1, 2>,
+        PackPower<Pack, Pack<Pow<B<2>, 2>, Pow<B<3>, -6>, Pow<B<5>, -3>, B<7>>, 1, 2>,
         Pack<B<2>, Pow<B<3>, -3>, RatioPow<B<5>, -3, 2>, RatioPow<B<7>, 1, 2>>>();
 }
 
-TEST(PackPowerT, SupportsZeroPower) {
-    StaticAssertTypeEq<PackPowerT<Pack, Pack<Pow<B<2>, 2>, Pow<B<3>, -6>, Pow<B<5>, -3>, B<7>>, 0>,
+TEST(PackPower, SupportsZeroPower) {
+    StaticAssertTypeEq<PackPower<Pack, Pack<Pow<B<2>, 2>, Pow<B<3>, -6>, Pow<B<5>, -3>, B<7>>, 0>,
                        Pack<>>();
 }
 
-TEST(PackQuotientT, PackQuotientWithItselfIsNullPack) {
-    StaticAssertTypeEq<PackQuotientT<Pack, Pack<B<2>>, Pack<B<2>>>, Pack<>>();
+TEST(PackQuotient, PackQuotientWithItselfIsNullPack) {
+    StaticAssertTypeEq<PackQuotient<Pack, Pack<B<2>>, Pack<B<2>>>, Pack<>>();
 
     using ArbitraryPack = Pack<Pow<B<2>, 2>, RatioPow<Pie, 22, 7>, B<13>>;
-    StaticAssertTypeEq<PackQuotientT<Pack, ArbitraryPack, ArbitraryPack>, Pack<>>();
+    StaticAssertTypeEq<PackQuotient<Pack, ArbitraryPack, ArbitraryPack>, Pack<>>();
 }
 
-TEST(PackQuotientT, InverseOfProduct) {
-    using B2_B5 = PackProductT<Pack, Pack<B<2>>, Pack<B<5>>>;
-    StaticAssertTypeEq<PackQuotientT<Pack, B2_B5, Pack<B<2>>>, Pack<B<5>>>();
+TEST(PackQuotient, InverseOfProduct) {
+    using B2_B5 = PackProduct<Pack, Pack<B<2>>, Pack<B<5>>>;
+    StaticAssertTypeEq<PackQuotient<Pack, B2_B5, Pack<B<2>>>, Pack<B<5>>>();
 }
 
-TEST(PackInverseT, ProductWithOriginalIsNullPack) {
-    StaticAssertTypeEq<PackProductT<Pack, PackInverseT<Pack, Pack<B<2>>>, Pack<B<2>>>, Pack<>>();
+TEST(PackInverse, ProductWithOriginalIsNullPack) {
+    StaticAssertTypeEq<PackProduct<Pack, PackInverse<Pack, Pack<B<2>>>, Pack<B<2>>>, Pack<>>();
 }
 
 TEST(IsValidPack, FalseIfNotInstanceOfPack) {
