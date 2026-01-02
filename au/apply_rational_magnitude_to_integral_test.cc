@@ -78,7 +78,7 @@ constexpr void ensure_relevant_kind_of_magnitude(Magnitude<BPs...> m) {
 // replacement library.  This lets us get coverage from all of our old test cases.
 //
 template <typename T, typename MagT>
-struct MaxNonOverflowingValue : MaxGood<ConversionForRepsAndFactor<T, T, MagT>> {};
+struct MaxNonOverflowingValue : MaxGood<ConversionForRepsAndFactor<UseStaticCast, T, T, MagT>> {};
 
 enum class IsPromotable { NO, YES };
 enum class NumFitsInPromotedType { NO, YES };
@@ -100,7 +100,7 @@ struct TestSpec {
 // replacement library.  This lets us get coverage from all of our old test cases.
 //
 template <typename T, typename MagT>
-struct MinNonOverflowingValue : MinGood<ConversionForRepsAndFactor<T, T, MagT>> {};
+struct MinNonOverflowingValue : MinGood<ConversionForRepsAndFactor<UseStaticCast, T, T, MagT>> {};
 
 template <typename T, typename MagT>
 void validate_spec(TestSpec spec) {
