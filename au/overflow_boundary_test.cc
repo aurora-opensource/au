@@ -792,6 +792,606 @@ TEST(StaticCast, MaxGoodForComplexOfTProvidesAnswerAsT) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// `ImplicitConversion` section:
+
+//
+// `MinGood<ImplicitConversion>`:
+//
+
+TEST(ImplicitConversion, MinGoodIsLowestIfDestinationEqualsSource) {
+    EXPECT_THAT((MinGood<ImplicitConversion<int8_t, int8_t>>::value()),
+                Eq(std::numeric_limits<int8_t>::lowest()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<uint16_t, uint16_t>>::value()),
+                Eq(std::numeric_limits<uint16_t>::lowest()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<float, float>>::value()),
+                Eq(std::numeric_limits<float>::lowest()));
+}
+
+TEST(ImplicitConversion, MinGoodIsLowestIfCastWidens) {
+    EXPECT_THAT((MinGood<ImplicitConversion<int8_t, int16_t>>::value()),
+                Eq(std::numeric_limits<int8_t>::lowest()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<uint8_t, uint16_t>>::value()),
+                Eq(std::numeric_limits<uint8_t>::lowest()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<float, double>>::value()),
+                Eq(std::numeric_limits<float>::lowest()));
+}
+
+TEST(ImplicitConversion, MinGoodIsZeroFromAnySignedToAnyUnsigned) {
+    EXPECT_THAT((MinGood<ImplicitConversion<int8_t, uint64_t>>::value()),
+                SameTypeAndValue(int8_t{0}));
+    EXPECT_THAT((MinGood<ImplicitConversion<int16_t, uint8_t>>::value()),
+                SameTypeAndValue(int16_t{0}));
+    EXPECT_THAT((MinGood<ImplicitConversion<int32_t, uint32_t>>::value()),
+                SameTypeAndValue(int32_t{0}));
+}
+
+TEST(ImplicitConversion, MinGoodIsZeroFromAnyUnsignedToAnyArithmetic) {
+    EXPECT_THAT((MinGood<ImplicitConversion<uint8_t, int64_t>>::value()), Eq(uint8_t{0}));
+    EXPECT_THAT((MinGood<ImplicitConversion<uint16_t, uint8_t>>::value()), Eq(uint16_t{0}));
+    EXPECT_THAT((MinGood<ImplicitConversion<uint32_t, int16_t>>::value()), Eq(uint32_t{0}));
+    EXPECT_THAT((MinGood<ImplicitConversion<uint64_t, int64_t>>::value()), Eq(uint64_t{0}));
+    EXPECT_THAT((MinGood<ImplicitConversion<uint64_t, float>>::value()), Eq(uint64_t{0}));
+    EXPECT_THAT((MinGood<ImplicitConversion<uint8_t, double>>::value()), Eq(uint8_t{0}));
+}
+
+TEST(ImplicitConversion, MinGoodIsLowestInDestinationWhenNarrowingToSameFamily) {
+    EXPECT_THAT((MinGood<ImplicitConversion<int64_t, int32_t>>::value()),
+                SameTypeAndValue(static_cast<int64_t>(std::numeric_limits<int32_t>::lowest())));
+    EXPECT_THAT((MinGood<ImplicitConversion<double, float>>::value()),
+                SameTypeAndValue(static_cast<double>(std::numeric_limits<float>::lowest())));
+}
+
+TEST(ImplicitConversion, MinGoodIsZeroFromAnyFloatingPointToAnyUnsigned) {
+    EXPECT_THAT((MinGood<ImplicitConversion<double, uint8_t>>::value()), SameTypeAndValue(0.0));
+    EXPECT_THAT((MinGood<ImplicitConversion<float, uint64_t>>::value()), SameTypeAndValue(0.0f));
+}
+
+TEST(ImplicitConversion, MinGoodIsLowestInDestinationFromAnyFloatingPointToAnySigned) {
+    EXPECT_THAT((MinGood<ImplicitConversion<double, int32_t>>::value()),
+                SameTypeAndValue(static_cast<double>(std::numeric_limits<int32_t>::lowest())));
+    EXPECT_THAT((MinGood<ImplicitConversion<float, int64_t>>::value()),
+                SameTypeAndValue(static_cast<float>(std::numeric_limits<int64_t>::lowest())));
+}
+
+TEST(ImplicitConversion, MinGoodIsLowestFromAnySignedToAnyFloatingPoint) {
+    // We could imagine some hypothetical floating point and integral types for which this is not
+    // true.  But floating point is designed to cover a very wide range between its min and max
+    // values, and in practice, this is true for all commonly used floating point and integral
+    // types.
+    EXPECT_THAT((MinGood<ImplicitConversion<int8_t, double>>::value()),
+                Eq(std::numeric_limits<int8_t>::lowest()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<int64_t, float>>::value()),
+                Eq(std::numeric_limits<int64_t>::lowest()));
+}
+
+TEST(ImplicitConversion, MinGoodUnchangedWithExplicitLimitOfLowestInTargetType) {
+    // What all these test cases have in common is that the destination type is already the most
+    // constraining factor.  Therefore, the only way to add an _explicit_ limit, which nevertheless
+    // does _not_ constrain the answer, is to make that explicit limit equal to the implicit limit:
+    // that is, the lowest value of the destination type.
+
+    EXPECT_THAT((MinGood<ImplicitConversion<int8_t, int8_t>, ImplicitLimits<int8_t>>::value()),
+                Eq(MinGood<ImplicitConversion<int8_t, int8_t>>::value()));
+
+    EXPECT_THAT(
+        (MinGood<ImplicitConversion<uint16_t, uint16_t>, ImplicitLimits<uint16_t>>::value()),
+        Eq(MinGood<ImplicitConversion<uint16_t, uint16_t>>::value()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<float, float>, ImplicitLimits<float>>::value()),
+                Eq(MinGood<ImplicitConversion<float, float>>::value()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<uint32_t, int32_t>, ImplicitLimits<int32_t>>::value()),
+                Eq(MinGood<ImplicitConversion<uint32_t, int32_t>>::value()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<int64_t, uint64_t>, ImplicitLimits<uint64_t>>::value()),
+                Eq(MinGood<ImplicitConversion<int64_t, uint64_t>>::value()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<double, float>, ImplicitLimits<float>>::value()),
+                Eq(MinGood<ImplicitConversion<double, float>>::value()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<float, uint64_t>, ImplicitLimits<uint64_t>>::value()),
+                Eq(MinGood<ImplicitConversion<float, uint64_t>>::value()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<float, int64_t>, ImplicitLimits<int64_t>>::value()),
+                Eq(MinGood<ImplicitConversion<float, int64_t>>::value()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<float, int32_t>, ImplicitLimits<int32_t>>::value()),
+                Eq(MinGood<ImplicitConversion<float, int32_t>>::value()));
+
+    EXPECT_THAT(
+        (MinGood<ImplicitConversion<uint32_t, uint16_t>, ImplicitLimits<uint16_t>>::value()),
+        Eq(MinGood<ImplicitConversion<uint32_t, uint16_t>>::value()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<uint32_t, int8_t>, ImplicitLimits<int8_t>>::value()),
+                Eq(MinGood<ImplicitConversion<uint32_t, int8_t>>::value()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<int64_t, int32_t>, ImplicitLimits<int32_t>>::value()),
+                Eq(MinGood<ImplicitConversion<int64_t, int32_t>>::value()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<int64_t, uint32_t>, ImplicitLimits<uint32_t>>::value()),
+                Eq(MinGood<ImplicitConversion<int64_t, uint32_t>>::value()));
+}
+
+TEST(ImplicitConversion, MinGoodUnchangedWithExplicitLimitLessConstrainingThanExistingResult) {
+    // In these cases, we are applying a non-trivial lower limit (i.e., it is higher than the
+    // `lowest()` value), but it does not constrain the result enough to change it.
+
+    struct DoubleLimitTwiceFloatLowest : NoUpperLimit<double> {
+        static constexpr double lower() {
+            return static_cast<double>(std::numeric_limits<float>::lowest()) * 2.0;
+        }
+    };
+
+    EXPECT_THAT((MinGood<ImplicitConversion<float, double>, DoubleLimitTwiceFloatLowest>::value()),
+                Eq(MinGood<ImplicitConversion<float, double>>::value()));
+
+    EXPECT_THAT(
+        (MinGood<ImplicitConversion<int32_t, double>, DoubleLimitTwiceFloatLowest>::value()),
+        Eq(MinGood<ImplicitConversion<int32_t, double>>::value()));
+
+    EXPECT_THAT(
+        (MinGood<ImplicitConversion<uint16_t, double>, DoubleLimitTwiceFloatLowest>::value()),
+        Eq(MinGood<ImplicitConversion<uint16_t, double>>::value()));
+
+    struct FloatLimitHalfFloatLowest : NoUpperLimit<float> {
+        static constexpr float lower() { return std::numeric_limits<float>::lowest() / 2.0f; }
+    };
+
+    EXPECT_THAT((MinGood<ImplicitConversion<uint64_t, float>, FloatLimitHalfFloatLowest>::value()),
+                Eq(MinGood<ImplicitConversion<uint64_t, float>>::value()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<int64_t, float>, FloatLimitHalfFloatLowest>::value()),
+                Eq(MinGood<ImplicitConversion<int64_t, float>>::value()));
+
+    struct SignedLimitHalfInt64Lowest : NoUpperLimit<int64_t> {
+        static constexpr int64_t lower() { return std::numeric_limits<int64_t>::lowest() / 2; }
+    };
+
+    EXPECT_THAT(
+        (MinGood<ImplicitConversion<uint32_t, int64_t>, SignedLimitHalfInt64Lowest>::value()),
+        Eq(MinGood<ImplicitConversion<uint32_t, int64_t>>::value()));
+
+    EXPECT_THAT(
+        (MinGood<ImplicitConversion<int32_t, int64_t>, SignedLimitHalfInt64Lowest>::value()),
+        Eq(MinGood<ImplicitConversion<int32_t, int64_t>>::value()));
+}
+
+TEST(ImplicitConversion, MinGoodUnchangedForUnsignedDestinationAndExplicitLimitOfZero) {
+    EXPECT_THAT(
+        (MinGood<ImplicitConversion<uint8_t, uint16_t>, LowerLimitOfZero<uint16_t>>::value()),
+        Eq(MinGood<ImplicitConversion<uint8_t, uint16_t>>::value()));
+
+    EXPECT_THAT(
+        (MinGood<ImplicitConversion<int32_t, uint64_t>, LowerLimitOfZero<uint64_t>>::value()),
+        Eq(MinGood<ImplicitConversion<int32_t, uint64_t>>::value()));
+
+    EXPECT_THAT(
+        (MinGood<ImplicitConversion<double, uint32_t>, LowerLimitOfZero<uint32_t>>::value()),
+        Eq(MinGood<ImplicitConversion<double, uint32_t>>::value()));
+}
+
+TEST(ImplicitConversion, MinGoodCappedByExplicitFloatLimit) {
+    struct FloatLowerLimitMinusOne : NoUpperLimit<float> {
+        static constexpr float lower() { return -1.0f; }
+    };
+
+    EXPECT_THAT((MinGood<ImplicitConversion<int16_t, float>, FloatLowerLimitMinusOne>::value()),
+                SameTypeAndValue(int16_t{-1}));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<int64_t, float>, FloatLowerLimitMinusOne>::value()),
+                SameTypeAndValue(int64_t{-1}));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<float, float>, FloatLowerLimitMinusOne>::value()),
+                SameTypeAndValue(-1.0f));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<double, float>, FloatLowerLimitMinusOne>::value()),
+                SameTypeAndValue(-1.0));
+}
+
+TEST(ImplicitConversion, MinGoodCappedByExplicitDoubleLimit) {
+    struct DoubleLowerLimitMinusOne : NoUpperLimit<double> {
+        static constexpr double lower() { return -1.0; }
+    };
+
+    EXPECT_THAT((MinGood<ImplicitConversion<float, double>, DoubleLowerLimitMinusOne>::value()),
+                SameTypeAndValue(-1.0f));
+}
+
+TEST(ImplicitConversion, MinGoodCappedByExplicitI64Limit) {
+    struct I64LowerLimitMinusOne : NoUpperLimit<int64_t> {
+        static constexpr int64_t lower() { return -1; }
+    };
+
+    EXPECT_THAT((MinGood<ImplicitConversion<int32_t, int64_t>, I64LowerLimitMinusOne>::value()),
+                SameTypeAndValue(int32_t{-1}));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<int64_t, int64_t>, I64LowerLimitMinusOne>::value()),
+                SameTypeAndValue(int64_t{-1}));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<float, int64_t>, I64LowerLimitMinusOne>::value()),
+                SameTypeAndValue(-1.0f));
+}
+
+TEST(ImplicitConversion, MinGoodCappedByExplicitI16Limit) {
+    struct I16LowerLimitMinusOne : NoUpperLimit<int16_t> {
+        static constexpr int16_t lower() { return -1; }
+    };
+
+    EXPECT_THAT((MinGood<ImplicitConversion<int32_t, int16_t>, I16LowerLimitMinusOne>::value()),
+                SameTypeAndValue(int32_t{-1}));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<double, int16_t>, I16LowerLimitMinusOne>::value()),
+                SameTypeAndValue(-1.0));
+}
+
+TEST(ImplicitConversion, MinGoodForComplexOfTProvidesAnswerAsT) {
+    EXPECT_THAT((MinGood<ImplicitConversion<std::complex<float>, std::complex<double>>>::value()),
+                SameTypeAndValue(std::numeric_limits<float>::lowest()));
+
+    EXPECT_THAT((MinGood<ImplicitConversion<std::complex<double>, std::complex<float>>>::value()),
+                SameTypeAndValue(static_cast<double>(std::numeric_limits<float>::lowest())));
+}
+
+//
+// `MaxGood<ImplicitConversion>`:
+//
+
+TEST(ImplicitConversion, MaxGoodIsHighestIfDestinationEqualsSource) {
+    EXPECT_THAT((MaxGood<ImplicitConversion<int8_t, int8_t>>::value()),
+                Eq(std::numeric_limits<int8_t>::max()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint16_t, uint16_t>>::value()),
+                Eq(std::numeric_limits<uint16_t>::max()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<float, float>>::value()),
+                Eq(std::numeric_limits<float>::max()));
+}
+
+TEST(ImplicitConversion, MaxGoodIsHighestIfCastWidens) {
+    EXPECT_THAT((MaxGood<ImplicitConversion<int8_t, int16_t>>::value()),
+                Eq(std::numeric_limits<int8_t>::max()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint8_t, uint16_t>>::value()),
+                Eq(std::numeric_limits<uint8_t>::max()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<float, double>>::value()),
+                Eq(std::numeric_limits<float>::max()));
+}
+
+TEST(ImplicitConversion, MaxGoodIsHighestFromSignedToUnsignedOfSameSize) {
+    EXPECT_THAT((MaxGood<ImplicitConversion<int8_t, uint8_t>>::value()),
+                Eq(std::numeric_limits<int8_t>::max()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int16_t, uint16_t>>::value()),
+                Eq(std::numeric_limits<int16_t>::max()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int32_t, uint32_t>>::value()),
+                Eq(std::numeric_limits<int32_t>::max()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int64_t, uint64_t>>::value()),
+                Eq(std::numeric_limits<int64_t>::max()));
+}
+
+TEST(ImplicitConversion, MaxGoodIsHighestInDestinationFromUnsignedToSignedOfSameSize) {
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint8_t, int8_t>>::value()),
+                SameTypeAndValue(static_cast<uint8_t>(std::numeric_limits<int8_t>::max())));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint64_t, int64_t>>::value()),
+                SameTypeAndValue(static_cast<uint64_t>(std::numeric_limits<int64_t>::max())));
+}
+
+TEST(ImplicitConversion, MaxGoodIsHighestFromAnyIntToAnyLargerInt) {
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint8_t, int16_t>>::value()),
+                Eq(std::numeric_limits<uint8_t>::max()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int32_t, uint64_t>>::value()),
+                Eq(std::numeric_limits<int32_t>::max()));
+}
+
+TEST(ImplicitConversion, MaxGoodIsHighestInDestinationFromAnyIntToAnySmallerInt) {
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint16_t, uint8_t>>::value()),
+                SameTypeAndValue(static_cast<uint16_t>(std::numeric_limits<uint8_t>::max())));
+    EXPECT_THAT((MaxGood<ImplicitConversion<int32_t, uint16_t>>::value()),
+                SameTypeAndValue(static_cast<int32_t>(std::numeric_limits<uint16_t>::max())));
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint64_t, int32_t>>::value()),
+                SameTypeAndValue(static_cast<uint64_t>(std::numeric_limits<int32_t>::max())));
+}
+
+TEST(ImplicitConversion, MaxGoodIsHighestInDestinationWhenNarrowingToSameFamily) {
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint16_t, uint8_t>>::value()),
+                SameTypeAndValue(static_cast<uint16_t>(std::numeric_limits<uint8_t>::max())));
+    EXPECT_THAT((MaxGood<ImplicitConversion<int64_t, int32_t>>::value()),
+                SameTypeAndValue(static_cast<int64_t>(std::numeric_limits<int32_t>::max())));
+    EXPECT_THAT((MaxGood<ImplicitConversion<double, float>>::value()),
+                SameTypeAndValue(static_cast<double>(std::numeric_limits<float>::max())));
+}
+
+TEST(ImplicitConversion, MaxGoodIsHighestInDestinationFromAnyFloatingPointToAnySmallIntegral) {
+    // The precondition for this test is that the max for the (destination) integral type is
+    // _exactly_ representable in the (source) floating point type.  This helper will double check
+    // this assumption.
+    auto expect_max_good_is_exact_representation_of_destination_int_max = [](auto float_type_val,
+                                                                             auto int_type_val) {
+        using Float = decltype(float_type_val);
+        using Int = decltype(int_type_val);
+
+        constexpr auto expected = static_cast<Float>(std::numeric_limits<Int>::max());
+
+        ASSERT_THAT(static_cast<Int>(expected), Eq(std::numeric_limits<Int>::max()));
+        EXPECT_THAT((MaxGood<ImplicitConversion<Float, Int>>::value()), SameTypeAndValue(expected));
+    };
+
+    expect_max_good_is_exact_representation_of_destination_int_max(double{}, uint8_t{});
+    expect_max_good_is_exact_representation_of_destination_int_max(double{}, int8_t{});
+    expect_max_good_is_exact_representation_of_destination_int_max(double{}, uint16_t{});
+    expect_max_good_is_exact_representation_of_destination_int_max(double{}, int16_t{});
+    expect_max_good_is_exact_representation_of_destination_int_max(double{}, uint32_t{});
+    expect_max_good_is_exact_representation_of_destination_int_max(double{}, int32_t{});
+
+    expect_max_good_is_exact_representation_of_destination_int_max(float{}, uint8_t{});
+    expect_max_good_is_exact_representation_of_destination_int_max(float{}, int8_t{});
+    expect_max_good_is_exact_representation_of_destination_int_max(float{}, uint16_t{});
+    expect_max_good_is_exact_representation_of_destination_int_max(float{}, int16_t{});
+}
+
+TEST(ImplicitConversion, MaxGoodIsHighestRepresentableFloatBelowCastedIntMaxForTooBigInt) {
+    // `float` to 64-bit integer:
+    EXPECT_THAT((MaxGood<ImplicitConversion<float, int64_t>>::value()),
+                SameTypeAndValue(
+                    std::nextafter(static_cast<float>(std::numeric_limits<int64_t>::max()), 1.0f)));
+    EXPECT_THAT((MaxGood<ImplicitConversion<float, uint64_t>>::value()),
+                SameTypeAndValue(std::nextafter(
+                    static_cast<float>(std::numeric_limits<uint64_t>::max()), 1.0f)));
+
+    // `double` to 64-bit integer:
+    EXPECT_THAT((MaxGood<ImplicitConversion<double, int64_t>>::value()),
+                SameTypeAndValue(
+                    std::nextafter(static_cast<double>(std::numeric_limits<int64_t>::max()), 1.0)));
+    EXPECT_THAT((MaxGood<ImplicitConversion<double, uint64_t>>::value()),
+                SameTypeAndValue(std::nextafter(
+                    static_cast<double>(std::numeric_limits<uint64_t>::max()), 1.0)));
+}
+
+TEST(ImplicitConversion, MaxGoodIsHighestFromAnyIntegralToAnyFloatingPoint) {
+    // See comments in `MinGoodIsLowestFromAnySignedToAnyFloatingPoint` for more on the assumptions
+    // we're making here.
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int8_t, double>>::value()),
+                Eq(std::numeric_limits<int8_t>::max()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint8_t, double>>::value()),
+                Eq(std::numeric_limits<uint8_t>::max()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int64_t, float>>::value()),
+                Eq(std::numeric_limits<int64_t>::max()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint64_t, float>>::value()),
+                Eq(std::numeric_limits<uint64_t>::max()));
+}
+
+TEST(ImplicitConversion, MaxGoodUnchangedWithExplicitLimitOfHighestInTargetType) {
+    // What all these test cases have in common is that the destination type is already the most
+    // constraining factor.  Therefore, the only way to add an _explicit_ limit, which nevertheless
+    // does _not_ constrain the answer, is to make that explicit limit equal to the implicit limit:
+    // that is, the highest value of the destination type.
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int8_t, int8_t>, ImplicitLimits<int8_t>>::value()),
+                Eq(MaxGood<ImplicitConversion<int8_t, int8_t>>::value()));
+
+    EXPECT_THAT(
+        (MaxGood<ImplicitConversion<uint16_t, uint16_t>, ImplicitLimits<uint16_t>>::value()),
+        Eq(MaxGood<ImplicitConversion<uint16_t, uint16_t>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<float, float>, ImplicitLimits<float>>::value()),
+                Eq(MaxGood<ImplicitConversion<float, float>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint32_t, int32_t>, ImplicitLimits<int32_t>>::value()),
+                Eq(MaxGood<ImplicitConversion<uint32_t, int32_t>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<double, float>, ImplicitLimits<float>>::value()),
+                Eq(MaxGood<ImplicitConversion<double, float>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<float, uint64_t>, ImplicitLimits<uint64_t>>::value()),
+                Eq(MaxGood<ImplicitConversion<float, uint64_t>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<float, int64_t>, ImplicitLimits<int64_t>>::value()),
+                Eq(MaxGood<ImplicitConversion<float, int64_t>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<double, int32_t>, ImplicitLimits<int32_t>>::value()),
+                Eq(MaxGood<ImplicitConversion<double, int32_t>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<double, uint32_t>, ImplicitLimits<uint32_t>>::value()),
+                Eq(MaxGood<ImplicitConversion<double, uint32_t>>::value()));
+
+    EXPECT_THAT(
+        (MaxGood<ImplicitConversion<uint32_t, uint16_t>, ImplicitLimits<uint16_t>>::value()),
+        Eq(MaxGood<ImplicitConversion<uint32_t, uint16_t>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint32_t, int8_t>, ImplicitLimits<int8_t>>::value()),
+                Eq(MaxGood<ImplicitConversion<uint32_t, int8_t>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int64_t, int32_t>, ImplicitLimits<int32_t>>::value()),
+                Eq(MaxGood<ImplicitConversion<int64_t, int32_t>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int64_t, uint32_t>, ImplicitLimits<uint32_t>>::value()),
+                Eq(MaxGood<ImplicitConversion<int64_t, uint32_t>>::value()));
+}
+
+TEST(ImplicitConversion, MaxGoodUnchangedWithExplicitLimitLessConstrainingThanExistingResult) {
+    // In these cases, we are applying a non-trivial upper limit (i.e., it is lower than the
+    // `max()` value), but it does not constrain the result enough to change it.
+
+    struct DoubleLimitTwiceFloatMax : NoLowerLimit<double> {
+        static constexpr double upper() {
+            return static_cast<double>(std::numeric_limits<float>::max()) * 2.0;
+        }
+    };
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<float, double>, DoubleLimitTwiceFloatMax>::value()),
+                Eq(MaxGood<ImplicitConversion<float, double>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int32_t, double>, DoubleLimitTwiceFloatMax>::value()),
+                Eq(MaxGood<ImplicitConversion<int32_t, double>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint16_t, double>, DoubleLimitTwiceFloatMax>::value()),
+                Eq(MaxGood<ImplicitConversion<uint16_t, double>>::value()));
+
+    struct FloatLimitHalfFloatMax : NoLowerLimit<float> {
+        static constexpr float upper() { return std::numeric_limits<float>::max() / 2.0f; }
+    };
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint64_t, float>, FloatLimitHalfFloatMax>::value()),
+                Eq(MaxGood<ImplicitConversion<uint64_t, float>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int64_t, float>, FloatLimitHalfFloatMax>::value()),
+                Eq(MaxGood<ImplicitConversion<int64_t, float>>::value()));
+
+    struct SignedLimitHalfInt64Max : NoLowerLimit<int64_t> {
+        static constexpr int64_t upper() { return std::numeric_limits<int64_t>::max() / 2; }
+    };
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint32_t, int64_t>, SignedLimitHalfInt64Max>::value()),
+                Eq(MaxGood<ImplicitConversion<uint32_t, int64_t>>::value()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int32_t, int64_t>, SignedLimitHalfInt64Max>::value()),
+                Eq(MaxGood<ImplicitConversion<int32_t, int64_t>>::value()));
+
+    struct UnsignedLimitUint64MaxMinusTwo : NoLowerLimit<uint64_t> {
+        static constexpr uint64_t upper() { return std::numeric_limits<uint64_t>::max() - 2; }
+    };
+
+    EXPECT_THAT(
+        (MaxGood<ImplicitConversion<uint32_t, uint64_t>, UnsignedLimitUint64MaxMinusTwo>::value()),
+        Eq(MaxGood<ImplicitConversion<uint32_t, uint64_t>>::value()));
+
+    EXPECT_THAT(
+        (MaxGood<ImplicitConversion<int32_t, uint64_t>, UnsignedLimitUint64MaxMinusTwo>::value()),
+        Eq(MaxGood<ImplicitConversion<int32_t, uint64_t>>::value()));
+
+    EXPECT_THAT(
+        (MaxGood<ImplicitConversion<int64_t, uint64_t>, UnsignedLimitUint64MaxMinusTwo>::value()),
+        Eq(MaxGood<ImplicitConversion<int64_t, uint64_t>>::value()));
+}
+
+TEST(ImplicitConversion, MaxGoodCappedByExplicitFloatLimit) {
+    struct FloatUpperLimitOne : NoLowerLimit<float> {
+        static constexpr float upper() { return 1.0f; }
+    };
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int16_t, float>, FloatUpperLimitOne>::value()),
+                SameTypeAndValue(int16_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint16_t, float>, FloatUpperLimitOne>::value()),
+                SameTypeAndValue(uint16_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int64_t, float>, FloatUpperLimitOne>::value()),
+                SameTypeAndValue(int64_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint64_t, float>, FloatUpperLimitOne>::value()),
+                SameTypeAndValue(uint64_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<float, float>, FloatUpperLimitOne>::value()),
+                SameTypeAndValue(1.0f));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<double, float>, FloatUpperLimitOne>::value()),
+                SameTypeAndValue(1.0));
+}
+
+TEST(ImplicitConversion, MaxGoodCappedByExplicitDoubleLimit) {
+    struct DoubleUpperLimitOne : NoLowerLimit<double> {
+        static constexpr double upper() { return 1.0; }
+    };
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<float, double>, DoubleUpperLimitOne>::value()),
+                SameTypeAndValue(1.0f));
+}
+
+TEST(ImplicitConversion, MaxGoodCappedByExplicitU64Limit) {
+    struct U64UpperLimitOne : NoLowerLimit<uint64_t> {
+        static constexpr uint64_t upper() { return 1; }
+    };
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint32_t, uint64_t>, U64UpperLimitOne>::value()),
+                SameTypeAndValue(uint32_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int32_t, uint64_t>, U64UpperLimitOne>::value()),
+                SameTypeAndValue(int32_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint64_t, uint64_t>, U64UpperLimitOne>::value()),
+                SameTypeAndValue(uint64_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int64_t, uint64_t>, U64UpperLimitOne>::value()),
+                SameTypeAndValue(int64_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<float, uint64_t>, U64UpperLimitOne>::value()),
+                SameTypeAndValue(1.0f));
+}
+
+TEST(ImplicitConversion, MaxGoodCappedByExplicitI64Limit) {
+    struct I64UpperLimitOne : NoLowerLimit<int64_t> {
+        static constexpr int64_t upper() { return 1; }
+    };
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint32_t, int64_t>, I64UpperLimitOne>::value()),
+                SameTypeAndValue(uint32_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int32_t, int64_t>, I64UpperLimitOne>::value()),
+                SameTypeAndValue(int32_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint64_t, int64_t>, I64UpperLimitOne>::value()),
+                SameTypeAndValue(uint64_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int64_t, int64_t>, I64UpperLimitOne>::value()),
+                SameTypeAndValue(int64_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<float, int64_t>, I64UpperLimitOne>::value()),
+                SameTypeAndValue(1.0f));
+}
+
+TEST(ImplicitConversion, MaxGoodCappedByExplicitI16Limit) {
+    struct I16UpperLimitOne : NoLowerLimit<int16_t> {
+        static constexpr int16_t upper() { return 1; }
+    };
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int32_t, int16_t>, I16UpperLimitOne>::value()),
+                SameTypeAndValue(int32_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint32_t, int16_t>, I16UpperLimitOne>::value()),
+                SameTypeAndValue(uint32_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<double, int16_t>, I16UpperLimitOne>::value()),
+                SameTypeAndValue(1.0));
+}
+
+TEST(ImplicitConversion, MaxGoodCappedByExplicitU16Limit) {
+    struct U16UpperLimitOne : NoLowerLimit<uint16_t> {
+        static constexpr uint16_t upper() { return 1; }
+    };
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<int32_t, uint16_t>, U16UpperLimitOne>::value()),
+                SameTypeAndValue(int32_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<uint32_t, uint16_t>, U16UpperLimitOne>::value()),
+                SameTypeAndValue(uint32_t{1}));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<double, uint16_t>, U16UpperLimitOne>::value()),
+                SameTypeAndValue(1.0));
+}
+
+TEST(ImplicitConversion, MaxGoodForComplexOfTProvidesAnswerAsT) {
+    EXPECT_THAT((MaxGood<ImplicitConversion<std::complex<float>, std::complex<double>>>::value()),
+                SameTypeAndValue(std::numeric_limits<float>::max()));
+
+    EXPECT_THAT((MaxGood<ImplicitConversion<std::complex<double>, std::complex<float>>>::value()),
+                SameTypeAndValue(static_cast<double>(std::numeric_limits<float>::max())));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // `MultiplyTypeBy` section:
 
 //
@@ -1528,10 +2128,10 @@ TEST(OpSequence, MaxGoodForDivideThenNarrowIsScaledDownDestinationBoundIfDivisor
 }
 
 TEST(OpSequence, MaxGoodOfStaticCastSequenceIsMostConstrainingType) {
-    EXPECT_THAT(max_good_value(op_sequence(StaticCast<int64_t, float>{},
-                                           StaticCast<float, uint32_t>{},
-                                           StaticCast<uint32_t, int16_t>{},
-                                           StaticCast<int16_t, double>{})),
+    EXPECT_THAT(max_good_value(op_sequence(ImplicitConversion<int64_t, float>{},
+                                           ImplicitConversion<float, uint32_t>{},
+                                           ImplicitConversion<uint32_t, int16_t>{},
+                                           ImplicitConversion<int16_t, double>{})),
                 SameTypeAndValue(static_cast<int64_t>(std::numeric_limits<int16_t>::max())));
 }
 

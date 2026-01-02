@@ -620,6 +620,21 @@ struct MaxGoodImpl<StaticCast<T, U>, ULimit> : MaxGoodImplForStaticCastUsingReal
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// `ImplicitConversion<T, U>` implementation.
+
+//
+// `MinGood<ImplicitConversion<T, U>>` implementation.
+//
+template <typename T, typename U, typename ULimit>
+struct MinGoodImpl<ImplicitConversion<T, U>, ULimit> : MinGoodImpl<StaticCast<T, U>, ULimit> {};
+
+//
+// `MaxGood<ImplicitConversion<T, U>>` implementation.
+//
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImpl<ImplicitConversion<T, U>, ULimit> : MaxGoodImpl<StaticCast<T, U>, ULimit> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // `MultiplyTypeBy<T, M>` implementation.
 
 template <typename T, typename M>

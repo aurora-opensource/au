@@ -86,6 +86,12 @@ struct TruncationRiskForImpl<StaticCast<T, U>>
     : TruncationRiskForStaticCastAssumingScalar<RealPart<T>, RealPart<U>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// `TruncationRiskFor<ImplicitConversion<T, U>>` section:
+
+template <typename T, typename U>
+struct TruncationRiskForImpl<ImplicitConversion<T, U>> : TruncationRiskForImpl<StaticCast<T, U>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // `MultiplyTypeBy<T, M>` section:
 
 template <typename T, typename M>
@@ -187,11 +193,19 @@ template <template <class> class Risk, typename T, typename U>
 struct UpdateRiskImpl<StaticCast<T, U>, Risk<RealPart<U>>>
     : stdx::type_identity<Risk<RealPart<T>>> {};
 
+template <template <class> class Risk, typename T, typename U>
+struct UpdateRiskImpl<ImplicitConversion<T, U>, Risk<RealPart<U>>>
+    : UpdateRiskImpl<StaticCast<T, U>, Risk<RealPart<U>>> {};
+
 template <typename T, typename U, typename M>
 struct UpdateRiskImpl<StaticCast<T, U>, ValueTimesRatioIsNotInteger<RealPart<U>, M>>
     : std::conditional<stdx::conjunction<IsInteger<M>, std::is_integral<T>>::value,
                        NoTruncationRisk<RealPart<T>>,
                        ReduceValueTimesRatioIsNotInteger<RealPart<T>, M>> {};
+
+template <typename T, typename U, typename M>
+struct UpdateRiskImpl<ImplicitConversion<T, U>, ValueTimesRatioIsNotInteger<RealPart<U>, M>>
+    : UpdateRiskImpl<StaticCast<T, U>, ValueTimesRatioIsNotInteger<RealPart<U>, M>> {};
 
 template <template <class> class Risk, typename T, typename M>
 struct UpdateRiskImpl<MultiplyTypeBy<T, M>, Risk<RealPart<T>>>

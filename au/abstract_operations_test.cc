@@ -37,6 +37,20 @@ TEST(StaticCast, PerformsStaticCast) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// `ImplicitConversion` section:
+
+TEST(ImplicitConversion, HasExpectedInputAndOutputTypes) {
+    StaticAssertTypeEq<OpInput<ImplicitConversion<int16_t, double>>, int16_t>();
+    StaticAssertTypeEq<OpOutput<ImplicitConversion<int16_t, double>>, double>();
+}
+
+TEST(ImplicitConversion, PerformsImplicitConversion) {
+    EXPECT_THAT((ImplicitConversion<int16_t, double>::apply_to(int16_t{123})),
+                SameTypeAndValue(123.0));
+    EXPECT_THAT((ImplicitConversion<float, double>::apply_to(1.25f)), SameTypeAndValue(1.25));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // `MultiplyTypeBy` section:
 
 TEST(MultiplyTypeBy, InputTypeIsTypeParameter) {
