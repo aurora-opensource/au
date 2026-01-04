@@ -1,4 +1,4 @@
-// Copyright 2025 Aurora Operations, Inc.
+// Copyright 2026 Aurora Operations, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-43-gea007cb
+// Version identifier: 0.5.0-base-44-g13d8b41
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
