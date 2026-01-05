@@ -67,5 +67,29 @@ TEST(StdFormat, DocExamplesAreCorrect) {
     EXPECT_THAT(std::format("{:,<12.2f}", c.data_in(km / s)), StrEq("299792.46,,,"));
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// QuantityPoint formatting tests.
+
+TEST(StdFormatQuantityPoint, PrintsQuantityPointWithAtPrefixByDefault) {
+    EXPECT_THAT(std::format("{}", meters_pt(8.5)), StrEq("@(8.5 m)"));
+}
+
+TEST(StdFormatQuantityPoint, DefaultFormatAppliesToNumberPart) {
+    EXPECT_THAT(std::format("{:,<10}", meters_pt(8.5)), StrEq("@(8.5,,,,,,, m)"));
+    EXPECT_THAT(std::format("{:,>10}", meters_pt(8.5)), StrEq("@(,,,,,,,8.5 m)"));
+    EXPECT_THAT(std::format("{:,>8.2f}", meters_pt(0.1234)), StrEq("@(,,,,0.12 m)"));
+}
+
+TEST(StdFormatQuantityPoint, CanFormatUnitLabelWithUPrefix) {
+    EXPECT_THAT(std::format("{:U4}", meters_pt(8.5)), StrEq("@(8.5 m   )"));
+    //                                                  alignment: 1234
+}
+
+TEST(StdFormatQuantityPoint, CanFormatBothParts) {
+    EXPECT_THAT(std::format("{:U12;*>10.3f}", centi(meters_pt)(123.456789)),
+                StrEq("@(***123.457 cm          )"));
+    //                   alignment: 123456789012
+}
+
 }  // namespace
 }  // namespace au

@@ -1,7 +1,7 @@
 # Format
 
-Au supports string formatting using either the [{fmt}] library, or else [std::format] (available
-in C++20 or later).
+Au supports string formatting for both `Quantity` and `QuantityPoint` using either the [{fmt}]
+library, or else [std::format] (available in C++20 or later).
 
 ??? warning "Warning: if using {fmt}, ensure version is at least 9.0"
     If you are using the [{fmt}] library, **make sure that it is at least [version 9.0]** (July 5,
@@ -23,8 +23,8 @@ in C++20 or later).
 We can't provide fully seamless support out of the box without adding an external dependency --- and
 Au is committed to being a zero-dependency library.  What we _can_ do is to define the format string
 specification, and take the hard work out of implementing it.  To use it in your project, you'll
-create a single file, and write a single line of code.  Then, you'll include that file anywhere you
-want to format a `Quantity`.
+create a single file, and write a few lines of code.  Then, you'll include that file anywhere you
+want to format a `Quantity` or `QuantityPoint`.
 
 ## Setup
 
@@ -32,7 +32,7 @@ The setup depends on whether you are using `std::format`, or the [{fmt}] library
 
 ### Using `std::format`
 
-Include `"au/std_format.hh"`.
+Include `"au/std_format.hh"`.  This provides formatters for both `Quantity` and `QuantityPoint`.
 
 Note that this will not work unless you are building on a toolchain that fully supports
 `std::format` and the `<format>` header.
@@ -41,9 +41,9 @@ Note that this will not work unless you are building on a toolchain that fully s
 
 There are two steps to support formatting in your project:
 
-1. Create a file to hold the authoritative formatter definition.
+1. Create a file to hold the authoritative formatter definitions.
 
-2. Include this file anywhere you want to format a `Quantity`.
+2. Include this file anywhere you want to format a `Quantity` or `QuantityPoint`.
 
 Here are the contents of the file to create:
 
@@ -56,6 +56,10 @@ Here are the contents of the file to create:
 namespace fmt {
 template <typename U, typename R>
 struct formatter<::au::Quantity<U, R>> : ::au::QuantityFormatter<U, R, ::fmt::formatter> {};
+
+template <typename U, typename R>
+struct formatter<::au::QuantityPoint<U, R>>
+    : ::au::QuantityPointFormatter<U, R, ::fmt::formatter> {};
 }  // namespace fmt
 ```
 
@@ -70,6 +74,8 @@ struct formatter<::au::Quantity<U, R>> : ::au::QuantityFormatter<U, R, ::fmt::fo
     you can just use the file.  If not, you know you need to create it.
 
 ## Syntax
+
+### `Quantity` formatting
 
 Printing a `Quantity<U, R>` means printing its numeric value, followed by its unit label.  Au offers
 some degree of formatting control for each of these.
@@ -90,7 +96,22 @@ It may be easier to understand with several examples.
 | Neither | `{}` | `fmt::format("{}", meters(123.456))` | `"123.456 m"` |
 | Numeric value | `{:~^10.2f}` | `fmt::format("{:~^10.2f}", meters(123.456))` | `"~~123.46~~ m"` |
 | Unit label | `{:U5}` | `fmt::format("{:U5}", meters(123.456))` | `"123.456 m    "` |
-| Both | `{:U5;~^10.2f}` | `fmt::format("{:U5;~^10.2f}", meters(123.456))` | `"~~123.46~~ m    "` |
+| Both | `{:U5;~^10.2f}` | `fmt::format("{:U5;~^10.2f}", meters(123.456))` | `"~~123.46~~ m    "` |
+
+### `QuantityPoint` formatting
+
+`QuantityPoint` uses the same format syntax as `Quantity`, but wraps the output in `@(...)` to
+visually distinguish points (absolute values) from quantities (differences).  The `@` can be read as
+"at", indicating a position on a measurement scale rather than a difference between positions.
+
+| Specialize format for | Pattern | Example | Output |
+|-----------------------|---------|---------|--------|
+| Neither | `{}` | `fmt::format("{}", meters_pt(123.456))` | `"@(123.456 m)"` |
+| Numeric value | `{:~^10.2f}` | `fmt::format("{:~^10.2f}", meters_pt(123.456))` | `"@(~~123.46~~ m)"` |
+| Unit label | `{:U5}` | `fmt::format("{:U5}", meters_pt(123.456))` | `"@(123.456 m    )"` |
+| Both | `{:U5;~^10.2f}` | `fmt::format("{:U5;~^10.2f}", meters_pt(123.456))` | `"@(~~123.46~~ m    )"` |
+
+### Controlling overall width
 
 To target a specific and consistent overall width --- say, for aligning columnar output --- provide
 formatters for both the unit label and the numeric value, and choose a specific width for each.  The
