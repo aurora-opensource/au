@@ -1721,6 +1721,39 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#quantity-formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quantity formatting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantitypoint-formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QuantityPoint formatting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#controlling-overall-width" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Controlling overall width
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#specialized-use-cases" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2469,8 +2502,8 @@
 
 
 <h1 id="format">Format<a class="headerlink" href="#format" title="Permanent link">&para;</a></h1>
-<p>Au supports string formatting using either the <a href="https://github.com/fmtlib/fmt">{fmt}</a> library, or else <a href="https://en.cppreference.com/w/cpp/utility/format/format.html">std::format</a> (available
-in C++20 or later).</p>
+<p>Au supports string formatting for both <code>Quantity</code> and <code>QuantityPoint</code> using either the <a href="https://github.com/fmtlib/fmt">{fmt}</a>
+library, or else <a href="https://en.cppreference.com/w/cpp/utility/format/format.html">std::format</a> (available in C++20 or later).</p>
 <details class="warning">
 <summary>Warning: if using {fmt}, ensure version is at least 9.0</summary>
 <p>If you are using the <a href="https://github.com/fmtlib/fmt">{fmt}</a> library, <strong>make sure that it is at least <a href="https://github.com/fmtlib/fmt/releases/tag/9.0.0">version 9.0</a></strong> (July 5,
@@ -2489,22 +2522,22 @@ this vulnerability.</p>
 <p>We can&rsquo;t provide fully seamless support out of the box without adding an external dependency &mdash; and
 Au is committed to being a zero-dependency library.  What we <em>can</em> do is to define the format string
 specification, and take the hard work out of implementing it.  To use it in your project, you&rsquo;ll
-create a single file, and write a single line of code.  Then, you&rsquo;ll include that file anywhere you
-want to format a <code>Quantity</code>.</p>
+create a single file, and write a few lines of code.  Then, you&rsquo;ll include that file anywhere you
+want to format a <code>Quantity</code> or <code>QuantityPoint</code>.</p>
 <h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h2>
 <p>The setup depends on whether you are using <code>std::format</code>, or the <a href="https://github.com/fmtlib/fmt">{fmt}</a> library.</p>
 <h3 id="using-stdformat">Using <code>std::format</code><a class="headerlink" href="#using-stdformat" title="Permanent link">&para;</a></h3>
-<p>Include <code>"au/std_format.hh"</code>.</p>
+<p>Include <code>"au/std_format.hh"</code>.  This provides formatters for both <code>Quantity</code> and <code>QuantityPoint</code>.</p>
 <p>Note that this will not work unless you are building on a toolchain that fully supports
 <code>std::format</code> and the <code>&lt;format&gt;</code> header.</p>
 <h3 id="using-fmt">Using <code>{fmt}</code><a class="headerlink" href="#using-fmt" title="Permanent link">&para;</a></h3>
 <p>There are two steps to support formatting in your project:</p>
 <ol>
 <li>
-<p>Create a file to hold the authoritative formatter definition.</p>
+<p>Create a file to hold the authoritative formatter definitions.</p>
 </li>
 <li>
-<p>Include this file anywhere you want to format a <code>Quantity</code>.</p>
+<p>Include this file anywhere you want to format a <code>Quantity</code> or <code>QuantityPoint</code>.</p>
 </li>
 </ol>
 <p>Here are the contents of the file to create:</p>
@@ -2516,7 +2549,11 @@ want to format a <code>Quantity</code>.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">fmt</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="k">struct</span><span class="w"> </span><span class="nc">formatter</span><span class="o">&lt;::</span><span class="n">au</span><span class="o">::</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="o">::</span><span class="n">au</span><span class="o">::</span><span class="n">QuantityFormatter</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="o">::</span><span class="n">fmt</span><span class="o">::</span><span class="n">formatter</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{};</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">}</span><span class="w">  </span><span class="c1">// namespace fmt</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="k">struct</span><span class="w"> </span><span class="nc">formatter</span><span class="o">&lt;::</span><span class="n">au</span><span class="o">::</span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="o">::</span><span class="n">au</span><span class="o">::</span><span class="n">QuantityPointFormatter</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="o">::</span><span class="n">fmt</span><span class="o">::</span><span class="n">formatter</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">}</span><span class="w">  </span><span class="c1">// namespace fmt</span>
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Tip: finding the file in your project</p>
@@ -2529,6 +2566,7 @@ the authoritative definition.  Start by grepping your project for this string.  
 you can just use the file.  If not, you know you need to create it.</p>
 </div>
 <h2 id="syntax">Syntax<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
+<h3 id="quantity-formatting"><code>Quantity</code> formatting<a class="headerlink" href="#quantity-formatting" title="Permanent link">&para;</a></h3>
 <p>Printing a <code>Quantity&lt;U, R&gt;</code> means printing its numeric value, followed by its unit label.  Au offers
 some degree of formatting control for each of these.</p>
 <ul>
@@ -2574,10 +2612,51 @@ some degree of formatting control for each of these.</p>
 <td>Both</td>
 <td><code>{:U5;~^10.2f}</code></td>
 <td><code>fmt::format("{:U5;~^10.2f}", meters(123.456))</code></td>
-<td><code>"~~123.46~~ m    "</code></td>
+<td><code>"~~123.46~~ m    "</code></td>
 </tr>
 </tbody>
 </table>
+<h3 id="quantitypoint-formatting"><code>QuantityPoint</code> formatting<a class="headerlink" href="#quantitypoint-formatting" title="Permanent link">&para;</a></h3>
+<p><code>QuantityPoint</code> uses the same format syntax as <code>Quantity</code>, but wraps the output in <code>@(...)</code> to
+visually distinguish points (absolute values) from quantities (differences).  The <code>@</code> can be read as
+&ldquo;at&rdquo;, indicating a position on a measurement scale rather than a difference between positions.</p>
+<table>
+<thead>
+<tr>
+<th>Specialize format for</th>
+<th>Pattern</th>
+<th>Example</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Neither</td>
+<td><code>{}</code></td>
+<td><code>fmt::format("{}", meters_pt(123.456))</code></td>
+<td><code>"@(123.456 m)"</code></td>
+</tr>
+<tr>
+<td>Numeric value</td>
+<td><code>{:~^10.2f}</code></td>
+<td><code>fmt::format("{:~^10.2f}", meters_pt(123.456))</code></td>
+<td><code>"@(~~123.46~~ m)"</code></td>
+</tr>
+<tr>
+<td>Unit label</td>
+<td><code>{:U5}</code></td>
+<td><code>fmt::format("{:U5}", meters_pt(123.456))</code></td>
+<td><code>"@(123.456 m    )"</code></td>
+</tr>
+<tr>
+<td>Both</td>
+<td><code>{:U5;~^10.2f}</code></td>
+<td><code>fmt::format("{:U5;~^10.2f}", meters_pt(123.456))</code></td>
+<td><code>"@(~~123.46~~ m    )"</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="controlling-overall-width">Controlling overall width<a class="headerlink" href="#controlling-overall-width" title="Permanent link">&para;</a></h3>
 <p>To target a specific and consistent overall width &mdash; say, for aligning columnar output &mdash; provide
 formatters for both the unit label and the numeric value, and choose a specific width for each.  The
 overall width will be the sum of the widths of the two pieces, plus one space in between.</p>

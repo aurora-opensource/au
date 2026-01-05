@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-45-gb6f61d0
+// Version identifier: 0.5.0-base-46-g4f2cb33
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -7267,21 +7267,24 @@ struct QuantityFormatter {
     template <typename FormatContext>
     constexpr auto format(const au::Quantity<U, R> &q, FormatContext &ctx) const {
         value_format.format(q.data_in(U{}), ctx);
-        auto out = ctx.out();
-        *out++ = ' ';
-        return write_and_pad(unit_label(U{}), sizeof(unit_label(U{})), ctx, out);
+        Formatter<const char *>{}.format(" ", ctx);
+        return write_and_pad(unit_label(U{}), sizeof(unit_label(U{})), ctx);
     }
 
     template <typename FormatContext>
     constexpr auto write_and_pad(const char *data,
                                  std::size_t data_size,
                                  FormatContext &ctx,
-                                 typename FormatContext::iterator out) const {
+                                 char suffix = '\0') const {
         Formatter<const char *> unit_label_formatter{};
         unit_label_formatter.format(data, ctx);
+        auto out = ctx.out();
         while (data_size <= min_label_width_) {
             *out++ = ' ';
             ++data_size;
+        }
+        if (suffix != '\0') {
+            *out++ = suffix;
         }
         return out;
     }
@@ -8108,6 +8111,36 @@ struct IntermediateRep
     : IntermediateRepImpl<std::common_type_t<FromRep, ToRep>, std::is_signed<ToRep>::value> {};
 
 }  // namespace detail
+
+//
+// Formatter implementation for fmtlib or `std::format`.
+//
+// Works similarly to `QuantityFormatter`, but wraps the output in `@(...)` to indicate that this
+// is a point (absolute value) rather than a quantity (difference).
+//
+// To use with fmtlib, add this template specialization to a file that includes both
+// `"au/quantity_point.hh"`, and `"fmt/format.h"`:
+//
+//    namespace fmt {
+//    template <typename U, typename R>
+//    struct formatter<::au::QuantityPoint<U, R>>
+//        : ::au::QuantityPointFormatter<U, R, ::fmt::formatter> {};
+//    }  // namespace fmt
+//
+// Then, include that file any time you want to format a `QuantityPoint`.
+//
+template <typename U, typename R, template <class...> class Formatter>
+struct QuantityPointFormatter : QuantityFormatter<U, R, Formatter> {
+    template <typename FormatContext>
+    constexpr auto format(const au::QuantityPoint<U, R> &p, FormatContext &ctx) const {
+        auto const_char_formatter = Formatter<const char *>{};
+        const_char_formatter.format("@(", ctx);
+        this->value_format.format(p.data_in(U{}), ctx);
+        const_char_formatter.format(" ", ctx);
+        return this->write_and_pad(unit_label(U{}), sizeof(unit_label(U{})), ctx, ')');
+    }
+};
+
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
