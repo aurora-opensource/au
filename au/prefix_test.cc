@@ -25,11 +25,15 @@ using ::testing::StaticAssertTypeEq;
 
 struct Bytes : UnitImpl<Information> {};
 
-struct Inches : UnitImpl<Length> {};
+struct Inches : UnitImpl<Length> {
+    static constexpr const char label[] = "in";
+};
+constexpr const char Inches::label[];
 
 struct XeroxedBytes : Bytes {
     static constexpr const char label[] = "X";
 };
+constexpr const char XeroxedBytes::label[];
 
 TEST(PrefixApplier, ConvertsUnitToCorrespondingPrefixedType) {
     // Give it a different name to avoid any question of shadowing the globally defined `yotta`.
@@ -184,4 +188,28 @@ TEST(BinaryPrefixes, CorrectlyLabelUnits) {
     expect_label<Zebi<XeroxedBytes>>("ZiX");  // https://en.wikipedia.org/wiki/Zebibit
     expect_label<Yobi<XeroxedBytes>>("YiX");  // https://en.wikipedia.org/wiki/Yobibit
 }
+
+TEST(PrefixedPoweredUnitLabels, OmitsBracketsIfPrefixAppliesBeforeThePower) {
+    expect_label<UnitInverseT<Milli<XeroxedBytes>>>("mX^(-1)");
+    expect_label<UnitPowerT<Kilo<XeroxedBytes>, 2>>("kX^2");
+    expect_label<UnitPowerT<Mega<XeroxedBytes>, 3>>("MX^3");
+}
+
+TEST(PrefixedPoweredUnitLabels, IncludesBracketsIfPrefixAppliesAfterThePower) {
+    expect_label<Milli<UnitInverseT<XeroxedBytes>>>("m[X^(-1)]");
+    expect_label<Kilo<UnitPowerT<XeroxedBytes, 2>>>("k[X^2]");
+    expect_label<Mega<UnitPowerT<XeroxedBytes, 3>>>("M[X^3]");
+}
+
+TEST(PrefixedPoweredUnitLabels, IncludesBracketsForCompoundUnitsContainingPowers) {
+    using SquareInchesTimesXeroxedBytes = UnitProductT<UnitPowerT<Inches, 2>, XeroxedBytes>;
+    expect_label<Kilo<SquareInchesTimesXeroxedBytes>>("k[in^2 * X]");
+
+    using SquareInchesPerXeroxedByte = UnitQuotientT<UnitPowerT<Inches, 2>, XeroxedBytes>;
+    expect_label<Milli<SquareInchesPerXeroxedByte>>("m[in^2 / X]");
+
+    using XeroxedBytesPerSquareInch = UnitQuotientT<XeroxedBytes, UnitPowerT<Inches, 2>>;
+    expect_label<Gibi<XeroxedBytesPerSquareInch>>("Gi[X / in^2]");
+}
+
 }  // namespace au
