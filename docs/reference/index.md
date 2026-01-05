@@ -33,8 +33,8 @@ Here's a guide to the main reference pages.
 
 - **[Math functions](./math.md).**  We provide many common mathematical functions out of the box.
 
-- **[Format support](./format.md).**  Exercise fine-grained control over formatting quantities to
-  strings, using either the popular [{fmt}] library, or C++20's `std::format`.
+- **[Format support](./format.md).**  Exercise fine-grained control over formatting `Quantity` and
+  `QuantityPoint` to strings, using either the popular [{fmt}] library, or C++20's `std::format`.
 
 See the sidebar for the complete list of pages.
 

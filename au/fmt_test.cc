@@ -14,6 +14,7 @@
 
 #include "au/prefix.hh"
 #include "au/quantity.hh"
+#include "au/quantity_point.hh"
 #include "au/units/meters.hh"
 #include "au/units/seconds.hh"
 #include "fmt/format.h"
@@ -23,6 +24,10 @@
 namespace fmt {
 template <typename U, typename R>
 struct formatter<::au::Quantity<U, R>> : ::au::QuantityFormatter<U, R, ::fmt::formatter> {};
+
+template <typename U, typename R>
+struct formatter<::au::QuantityPoint<U, R>> : ::au::QuantityPointFormatter<U, R, ::fmt::formatter> {
+};
 }  // namespace fmt
 
 namespace au {
@@ -70,6 +75,30 @@ TEST(Fmt, DocExamplesAreCorrect) {
 
     constexpr auto c = 299'792.458 * km / s;
     EXPECT_THAT(fmt::format("{:,<12.2f}", c.data_in(km / s)), StrEq("299792.46,,,"));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// QuantityPoint formatting tests.
+
+TEST(FmtQuantityPoint, PrintsQuantityPointWithAtPrefixByDefault) {
+    EXPECT_THAT(fmt::format("{}", meters_pt(8.5)), StrEq("@(8.5 m)"));
+}
+
+TEST(FmtQuantityPoint, DefaultFormatAppliesToNumberPart) {
+    EXPECT_THAT(fmt::format("{:,<10}", meters_pt(8.5)), StrEq("@(8.5,,,,,,, m)"));
+    EXPECT_THAT(fmt::format("{:,>10}", meters_pt(8.5)), StrEq("@(,,,,,,,8.5 m)"));
+    EXPECT_THAT(fmt::format("{:,>8.2f}", meters_pt(0.1234)), StrEq("@(,,,,0.12 m)"));
+}
+
+TEST(FmtQuantityPoint, CanFormatUnitLabelWithUPrefix) {
+    EXPECT_THAT(fmt::format("{:U4}", meters_pt(8.5)), StrEq("@(8.5 m   )"));
+    //                                                  alignment: 1234
+}
+
+TEST(FmtQuantityPoint, CanFormatBothParts) {
+    EXPECT_THAT(fmt::format("{:U12;*>10.3f}", centi(meters_pt)(123.456789)),
+                StrEq("@(***123.457 cm          )"));
+    //                   alignment: 123456789012
 }
 
 }  // namespace
