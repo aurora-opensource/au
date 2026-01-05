@@ -423,4 +423,34 @@ struct IntermediateRep
     : IntermediateRepImpl<std::common_type_t<FromRep, ToRep>, std::is_signed<ToRep>::value> {};
 
 }  // namespace detail
+
+//
+// Formatter implementation for fmtlib or `std::format`.
+//
+// Works similarly to `QuantityFormatter`, but wraps the output in `@(...)` to indicate that this
+// is a point (absolute value) rather than a quantity (difference).
+//
+// To use with fmtlib, add this template specialization to a file that includes both
+// `"au/quantity_point.hh"`, and `"fmt/format.h"`:
+//
+//    namespace fmt {
+//    template <typename U, typename R>
+//    struct formatter<::au::QuantityPoint<U, R>>
+//        : ::au::QuantityPointFormatter<U, R, ::fmt::formatter> {};
+//    }  // namespace fmt
+//
+// Then, include that file any time you want to format a `QuantityPoint`.
+//
+template <typename U, typename R, template <class...> class Formatter>
+struct QuantityPointFormatter : QuantityFormatter<U, R, Formatter> {
+    template <typename FormatContext>
+    constexpr auto format(const au::QuantityPoint<U, R> &p, FormatContext &ctx) const {
+        auto const_char_formatter = Formatter<const char *>{};
+        const_char_formatter.format("@(", ctx);
+        this->value_format.format(p.data_in(U{}), ctx);
+        const_char_formatter.format(" ", ctx);
+        return this->write_and_pad(unit_label(U{}), sizeof(unit_label(U{})), ctx, ')');
+    }
+};
+
 }  // namespace au

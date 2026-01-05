@@ -17,8 +17,12 @@
 #include <format>
 
 #include "au/quantity.hh"
+#include "au/quantity_point.hh"
 
 namespace std {
 template <typename U, typename R>
 struct formatter<au::Quantity<U, R>> : ::au::QuantityFormatter<U, R, ::std::formatter> {};
+
+template <typename U, typename R>
+struct formatter<au::QuantityPoint<U, R>> : ::au::QuantityPointFormatter<U, R, ::std::formatter> {};
 }  // namespace std
