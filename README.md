@@ -20,6 +20,9 @@ https://github.com/aurora-opensource/au/actions/workflows/gcc12-ubuntu.yml)
 [![MSVC 2022 x64](
 https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml/badge.svg?branch=main&event=push)](
 https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml)
+[![MSVC 2025 x64](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2025-x64.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/msvc-2025-x64.yml)
 
 # Au: A C++14-compatible units library, by Aurora
 
