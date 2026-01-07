@@ -15,6 +15,8 @@
 #include "au/units/pounds_force.hh"
 
 #include "au/testing.hh"
+#include "au/units/pounds_mass.hh"
+#include "au/units/standard_gravity.hh"
 #include "gtest/gtest.h"
 
 namespace au {

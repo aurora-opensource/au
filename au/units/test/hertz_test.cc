@@ -15,6 +15,7 @@
 #include "au/units/hertz.hh"
 
 #include "au/testing.hh"
+#include "au/units/seconds.hh"
 #include "gtest/gtest.h"
 
 namespace au {

@@ -15,6 +15,8 @@
 #include "au/units/pascals.hh"
 
 #include "au/testing.hh"
+#include "au/units/meters.hh"
+#include "au/units/newtons.hh"
 #include "gtest/gtest.h"
 
 namespace au {

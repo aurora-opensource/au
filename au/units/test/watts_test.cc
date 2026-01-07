@@ -15,9 +15,11 @@
 #include "au/units/watts.hh"
 
 #include "au/testing.hh"
+#include "au/units/amperes.hh"
+#include "au/units/joules.hh"
 #include "au/units/ohms.hh"
+#include "au/units/seconds.hh"
 #include "au/units/volts.hh"
-#include "au/units/watts.hh"
 #include "gtest/gtest.h"
 
 namespace au {

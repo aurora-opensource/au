@@ -15,6 +15,7 @@
 #include "au/units/degrees.hh"
 
 #include "au/testing.hh"
+#include "au/units/radians.hh"
 #include "au/units/revolutions.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"

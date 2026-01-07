@@ -14,7 +14,9 @@
 
 #include "au/units/liters.hh"
 
+#include "au/prefix.hh"
 #include "au/testing.hh"
+#include "au/units/meters.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

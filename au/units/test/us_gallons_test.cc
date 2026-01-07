@@ -14,6 +14,7 @@
 
 #include "au/units/us_gallons.hh"
 
+#include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/inches.hh"
 #include "au/units/liters.hh"

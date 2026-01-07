@@ -14,6 +14,7 @@
 
 #include "au/units/bars.hh"
 
+#include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/pascals.hh"
 #include "gmock/gmock.h"
