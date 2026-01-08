@@ -2494,11 +2494,32 @@ a complete sample definition of a new Unit, with these features annotated and ex
 <p class="admonition-title">Note</p>
 <p>If you&rsquo;ve seen the unit definitions included in our library, you may notice they look a little
 different from the above.  That&rsquo;s because the library has different goals and constraints than
-end user projects have.</p>
-<p>For example, the library needs to be both C++14-compatible and header-only.  This forces us to
-define our labels in a more complicated way.  By contrast, your project is unlikely to have both
-these constraints.</p>
-<p>Prefer the simpler approach outlined in this page, instead of treating our library&rsquo;s source code
+end user projects have.  For example:</p>
+<ul>
+<li>
+<p>The library needs to be both C++14-compatible and header-only.  This forces us to define our
+  labels in a more complicated way.  By contrast, your project is unlikely to have both these
+  constraints.</p>
+</li>
+<li>
+<p>When we define our units, we directly write out the final complicated types for both dimension
+  and magnitude.</p>
+<ul>
+<li>
+<p>There are two problems with this for end user code.  First, it&rsquo;s dangerous for end users
+  to name these types directly: instead, always use helpers (such as <code>mag&lt;N&gt;()</code>) and
+  operations (<code>*</code>, <code>/</code>, etc.) to compose dimensions and magnitudes.  Second, it&rsquo;s better to
+  define one unit directly in terms of its relationship to some other specific unit.</p>
+</li>
+<li>
+<p>For Au itself, however, our robust test coverage makes us confident that we get these
+  details right &mdash; <em>and, crucially,</em> that the user-visible interfaces <em>won&rsquo;t break when you
+  upgrade to a new version</em> of Au.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Prefer the simpler approach outlined in this page</strong>, instead of treating our library&rsquo;s source code
 definitions as examples to follow.</p>
 </div>
 <p>Here are the features.</p>
