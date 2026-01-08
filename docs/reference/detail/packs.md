@@ -7,8 +7,8 @@ Products of base powers are the foundation for the Au library.  We use them for:
   - Making _compound_ Units (products of powers of units, e.g., $\text{m} \cdot \text{s}^{-2}$).
 
 We represent them as variadic parameter packs.  Each pack element represents a "base power": this is
-some "base", raised to some rational exponent.  For a base power `BP`, `BaseT<BP>` retrieves its
-base, and `ExpT<BP>` retrieves its exponent (as a `std::ratio`).
+some "base", raised to some rational exponent.  For a base power `BP`, `Base<BP>` retrieves its
+base, and `Exp<BP>` retrieves its exponent (as a `std::ratio`).
 
 !!! note
     This approach, with products of base powers, is known as the [_vector space
@@ -86,7 +86,7 @@ verifies that `T` is an instance of `Pack<...>`, and that its parameters satisfy
 conditions.  Specifically, those conditions are:
 
 - `AreBasesInOrder<Pack, T>`: assuming `T` is `Pack<BPs...>`, verifies that all consecutive elements
-  in `BaseT<BPs>...` are all properly ordered (according to `InOrderFor<Pack, ...>`, naturally).
+  in `Base<BPs>...` are all properly ordered (according to `InOrderFor<Pack, ...>`, naturally).
 
 - `AreAllPowersNonzero<Pack, T>`: assuming `T` is `Pack<BPs...>`, verifies that
   `Exp<BPs>::num` is nonzero for every element in `BPs`.
