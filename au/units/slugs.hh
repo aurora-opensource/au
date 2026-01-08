@@ -19,9 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/feet.hh"
-#include "au/units/pounds_force.hh"
-#include "au/units/seconds.hh"
 
 namespace au {
 
@@ -33,7 +30,22 @@ struct SlugsLabel {
 };
 template <typename T>
 constexpr const char SlugsLabel<T>::label[];
-struct Slugs : decltype(PoundsForce{} * squared(Seconds{}) / Feet{}), SlugsLabel<void> {
+struct Slugs
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Mass,
+               Magnitude<Pow<Prime<2>, -9>,
+                         Pow<Prime<3>, -1>,
+                         Pow<Prime<5>, -5>,
+                         Pow<Prime<7>, 2>,
+                         Prime<11>,
+                         Prime<97>,
+                         Pow<Prime<127>, -1>,
+                         Prime<6073>,
+                         Prime<28019>>>,
+      SlugsLabel<void> {
     using SlugsLabel<void>::label;
 };
 constexpr auto slug = SingularNameFor<Slugs>{};

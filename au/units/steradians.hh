@@ -19,7 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/radians.hh"
 
 namespace au {
 
@@ -31,7 +30,13 @@ struct SteradiansLabel {
 };
 template <typename T>
 constexpr const char SteradiansLabel<T>::label[];
-struct Steradians : decltype(squared(Radians{})), SteradiansLabel<void> {
+struct Steradians
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Angle, 2>>>,
+      SteradiansLabel<void> {
     using SteradiansLabel<void>::label;
 };
 constexpr auto steradian = SingularNameFor<Steradians>{};

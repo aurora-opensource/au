@@ -19,7 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/hours.hh"
 
 namespace au {
 
@@ -31,7 +30,13 @@ struct DaysLabel {
 };
 template <typename T>
 constexpr const char DaysLabel<T>::label[];
-struct Days : decltype(Hours{} * mag<24>()), DaysLabel<void> {
+struct Days
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Time, Magnitude<Pow<Prime<2>, 7>, Pow<Prime<3>, 3>, Pow<Prime<5>, 2>>>,
+      DaysLabel<void> {
     using DaysLabel<void>::label;
 };
 constexpr auto day = SingularNameFor<Days>{};

@@ -19,8 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/moles.hh"
-#include "au/units/seconds.hh"
 
 namespace au {
 
@@ -32,7 +30,13 @@ struct KatalsLabel {
 };
 template <typename T>
 constexpr const char KatalsLabel<T>::label[];
-struct Katals : decltype(Moles{} / Seconds{}), KatalsLabel<void> {
+struct Katals
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Time, -1>, base_dim::AmountOfSubstance>>,
+      KatalsLabel<void> {
     using KatalsLabel<void>::label;
 };
 constexpr auto katal = SingularNameFor<Katals>{};

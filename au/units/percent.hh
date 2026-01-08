@@ -19,7 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/unos.hh"
 
 namespace au {
 
@@ -31,7 +30,13 @@ struct PercentLabel {
 };
 template <typename T>
 constexpr const char PercentLabel<T>::label[];
-struct Percent : decltype(Unos{} / mag<100>()), PercentLabel<void> {
+struct Percent
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<>, Magnitude<Pow<Prime<2>, -2>, Pow<Prime<5>, -2>>>,
+      PercentLabel<void> {
     using PercentLabel<void>::label;
 };
 constexpr auto percent = QuantityMaker<Percent>{};

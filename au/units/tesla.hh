@@ -19,8 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/meters.hh"
-#include "au/units/webers.hh"
 
 namespace au {
 
@@ -32,7 +30,14 @@ struct TeslaLabel {
 };
 template <typename T>
 constexpr const char TeslaLabel<T>::label[];
-struct Tesla : decltype(Webers{} / squared(Meters{})), TeslaLabel<void> {
+struct Tesla
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<base_dim::Mass, Pow<base_dim::Time, -2>, Pow<base_dim::Current, -1>>,
+               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
+      TeslaLabel<void> {
     using TeslaLabel<void>::label;
 };
 constexpr auto tesla = QuantityMaker<Tesla>{};

@@ -20,8 +20,6 @@
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/meters.hh"
-#include "au/units/newtons.hh"
 
 namespace au {
 
@@ -33,7 +31,14 @@ struct PascalsLabel {
 };
 template <typename T>
 constexpr const char PascalsLabel<T>::label[];
-struct Pascals : decltype(Newtons{} / squared(Meters{})), PascalsLabel<void> {
+struct Pascals
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, -1>, base_dim::Mass, Pow<base_dim::Time, -2>>,
+               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
+      PascalsLabel<void> {
     using PascalsLabel<void>::label;
 };
 

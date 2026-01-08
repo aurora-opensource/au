@@ -17,7 +17,8 @@
 #include "au/units/us_gallons_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
 
-#include "au/units/inches.hh"
+#include "au/quantity.hh"
+#include "au/unit_symbol.hh"
 
 namespace au {
 
@@ -29,7 +30,19 @@ struct USGallonsLabel {
 };
 template <typename T>
 constexpr const char USGallonsLabel<T>::label[];
-struct USGallons : decltype(cubed(Inches{}) * mag<231>()), USGallonsLabel<void> {
+struct USGallons
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, 3>>,
+               Magnitude<Pow<Prime<2>, -9>,
+                         Prime<3>,
+                         Pow<Prime<5>, -12>,
+                         Prime<7>,
+                         Prime<11>,
+                         Pow<Prime<127>, 3>>>,
+      USGallonsLabel<void> {
     using USGallonsLabel<void>::label;
 };
 constexpr auto us_gallon = SingularNameFor<USGallons>{};

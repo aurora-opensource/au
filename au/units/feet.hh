@@ -19,7 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/inches.hh"
 
 namespace au {
 
@@ -31,7 +30,13 @@ struct FeetLabel {
 };
 template <typename T>
 constexpr const char FeetLabel<T>::label[];
-struct Feet : decltype(Inches{} * mag<12>()), FeetLabel<void> {
+struct Feet
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Length, Magnitude<Pow<Prime<2>, -1>, Prime<3>, Pow<Prime<5>, -4>, Prime<127>>>,
+      FeetLabel<void> {
     using FeetLabel<void>::label;
 };
 constexpr auto foot = SingularNameFor<Feet>{};

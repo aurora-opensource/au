@@ -19,7 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/ohms.hh"
 
 namespace au {
 
@@ -31,7 +30,17 @@ struct SiemensLabel {
 };
 template <typename T>
 constexpr const char SiemensLabel<T>::label[];
-struct Siemens : UnitInverseT<Ohms>, SiemensLabel<void> {
+struct Siemens
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, -2>,
+                         Pow<base_dim::Mass, -1>,
+                         Pow<base_dim::Time, 3>,
+                         Pow<base_dim::Current, 2>>,
+               Magnitude<Pow<Prime<2>, -3>, Pow<Prime<5>, -3>>>,
+      SiemensLabel<void> {
     using SiemensLabel<void>::label;
 };
 constexpr auto siemen = SingularNameFor<Siemens>{};

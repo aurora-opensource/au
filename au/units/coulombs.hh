@@ -19,8 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/amperes.hh"
-#include "au/units/seconds.hh"
 
 namespace au {
 
@@ -32,7 +30,13 @@ struct CoulombsLabel {
 };
 template <typename T>
 constexpr const char CoulombsLabel<T>::label[];
-struct Coulombs : decltype(Amperes{} * Seconds{}), CoulombsLabel<void> {
+struct Coulombs
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<base_dim::Time, base_dim::Current>>,
+      CoulombsLabel<void> {
     using CoulombsLabel<void>::label;
 };
 constexpr auto coulomb = SingularNameFor<Coulombs>{};

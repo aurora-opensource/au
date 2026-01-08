@@ -17,10 +17,8 @@
 #include "au/units/pounds_mass_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
 
-#include "au/prefix.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/grams.hh"
 
 namespace au {
 
@@ -32,7 +30,19 @@ struct PoundsMassLabel {
 };
 template <typename T>
 constexpr const char PoundsMassLabel<T>::label[];
-struct PoundsMass : decltype(Micro<Grams>{} * mag<453'592'370>()), PoundsMassLabel<void> {
+struct PoundsMass
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Mass,
+               Magnitude<Pow<Prime<2>, -5>,
+                         Pow<Prime<5>, -5>,
+                         Prime<7>,
+                         Prime<11>,
+                         Prime<97>,
+                         Prime<6073>>>,
+      PoundsMassLabel<void> {
     using PoundsMassLabel<void>::label;
 };
 constexpr auto pound_mass = SingularNameFor<PoundsMass>{};

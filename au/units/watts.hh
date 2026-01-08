@@ -19,8 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/joules.hh"
-#include "au/units/seconds.hh"
 
 namespace au {
 
@@ -32,7 +30,14 @@ struct WattsLabel {
 };
 template <typename T>
 constexpr const char WattsLabel<T>::label[];
-struct Watts : decltype(Joules{} / Seconds{}), WattsLabel<void> {
+struct Watts
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, 2>, base_dim::Mass, Pow<base_dim::Time, -3>>,
+               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
+      WattsLabel<void> {
     using WattsLabel<void>::label;
 };
 constexpr auto watt = SingularNameFor<Watts>{};

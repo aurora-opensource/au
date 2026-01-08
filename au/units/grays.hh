@@ -17,11 +17,8 @@
 #include "au/units/grays_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
 
-#include "au/prefix.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/grams.hh"
-#include "au/units/joules.hh"
 
 namespace au {
 
@@ -33,7 +30,13 @@ struct GraysLabel {
 };
 template <typename T>
 constexpr const char GraysLabel<T>::label[];
-struct Grays : decltype(Joules{} / Kilo<Grams>{}), GraysLabel<void> {
+struct Grays
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, 2>, Pow<base_dim::Time, -2>>>,
+      GraysLabel<void> {
     using GraysLabel<void>::label;
 };
 constexpr auto gray = SingularNameFor<Grays>{};

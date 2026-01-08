@@ -19,7 +19,6 @@
 
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
-#include "au/units/meters.hh"
 
 namespace au {
 
@@ -31,7 +30,13 @@ struct NauticalMilesLabel {
 };
 template <typename T>
 constexpr const char NauticalMilesLabel<T>::label[];
-struct NauticalMiles : decltype(Meters{} * mag<1'852>()), NauticalMilesLabel<void> {
+struct NauticalMiles
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Length, Magnitude<Pow<Prime<2>, 2>, Prime<463>>>,
+      NauticalMilesLabel<void> {
     using NauticalMilesLabel<void>::label;
 };
 constexpr auto nautical_mile = SingularNameFor<NauticalMiles>{};
