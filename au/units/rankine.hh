@@ -36,7 +36,8 @@ struct Rankine
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Temperature, Magnitude<Pow<Prime<3>, -2>, Prime<5>>>, RankineLabel<void> {
+    : UnitImpl<Temperature, Magnitude<Pow<Prime<3>, -2>, Prime<5>>>,
+      RankineLabel<void> {
     using RankineLabel<void>::label;
 };
 constexpr auto rankine = QuantityMaker<Rankine>{};
