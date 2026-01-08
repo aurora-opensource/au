@@ -128,26 +128,32 @@ struct IsUnitlessUnit
 //
 // Useful in doing unit conversions.
 template <typename U1, typename U2>
-struct UnitRatio : stdx::type_identity<MagQuotientT<detail::MagT<U1>, detail::MagT<U2>>> {
+struct UnitRatioImpl : stdx::type_identity<MagQuotientT<detail::MagT<U1>, detail::MagT<U2>>> {
     static_assert(HasSameDimension<U1, U2>::value,
                   "Can only compute ratio of same-dimension units");
 };
 template <typename U1, typename U2>
-using UnitRatioT = typename UnitRatio<U1, U2>::type;
+using UnitRatio = typename UnitRatioImpl<U1, U2>::type;
+template <typename U1, typename U2>
+using UnitRatioT = UnitRatio<U1, U2>;
 
 // The sign of a unit: almost always `mag<1>()`, but `-mag<1>()` for "negative" units.
 template <typename U>
 using UnitSign = Sign<detail::MagT<U>>;
 
 template <typename U>
-struct AssociatedUnit : stdx::type_identity<U> {};
+struct AssociatedUnitImpl : stdx::type_identity<U> {};
 template <typename U>
-using AssociatedUnitT = typename AssociatedUnit<U>::type;
+using AssociatedUnit = typename AssociatedUnitImpl<U>::type;
+template <typename U>
+using AssociatedUnitT = AssociatedUnit<U>;
 
 template <typename U>
-struct AssociatedUnitForPoints : stdx::type_identity<U> {};
+struct AssociatedUnitForPointsImpl : stdx::type_identity<U> {};
 template <typename U>
-using AssociatedUnitForPointsT = typename AssociatedUnitForPoints<U>::type;
+using AssociatedUnitForPoints = typename AssociatedUnitForPointsImpl<U>::type;
+template <typename U>
+using AssociatedUnitForPointsT = AssociatedUnitForPoints<U>;
 
 // `CommonUnitT`: the largest unit that evenly divides all input units.
 //
@@ -431,7 +437,7 @@ struct SingularNameFor {
 
 // Support `SingularNameFor` in (quantity) unit slots.
 template <typename U>
-struct AssociatedUnit<SingularNameFor<U>> : stdx::type_identity<U> {};
+struct AssociatedUnitImpl<SingularNameFor<U>> : stdx::type_identity<U> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(SingularNameFor<Unit>) {

@@ -473,9 +473,14 @@ as an inch.
 **Syntax:**
 
 - For _types_ `U1` and `U2`:
-    - `UnitRatioT<U1, U2>::value`
+    - `UnitRatio<U1, U2>::value`
 - For _instances_ `u1` and `u2`:
     - `unit_ratio(u1, u2)`
+
+!!! note
+    Formerly, this was `UnitRatioT`, not `UnitRatio` (note the extra `T` on the end).  `UnitRatioT`
+    currently still works, but it is deprecated, and will be removed in a future release.  Please
+    migrate all current instances of `UnitRatioT` to `UnitRatio`.
 
 ### Unit sign
 
@@ -559,9 +564,14 @@ The use case for this trait is to _implement_ the unit slot argument for a funct
 **Syntax:**
 
 - For a _type_ `U`:
-    - `AssociatedUnitT<U>`
+    - `AssociatedUnit<U>`
 - For an _instance_ `u`:
     - `associated_unit(u)`
+
+!!! note
+    Formerly, this was `AssociatedUnitT`, not `AssociatedUnit` (note the extra `T` on the end).
+    `AssociatedUnitT` currently still works, but it is deprecated, and will be removed in a future
+    release.  Please migrate all current instances of `AssociatedUnitT` to `AssociatedUnit`.
 
 ### Associated unit (for points) {#associated-unit-for-points}
 
@@ -589,9 +599,15 @@ associated with quantity points.
 **Syntax:**
 
 - For a _type_ `U`:
-    - `AssociatedUnitForPointsT<U>`
+    - `AssociatedUnitForPoints<U>`
 - For an _instance_ `u`:
     - `associated_unit_for_points(u)`
+
+!!! note
+    Formerly, this was `AssociatedUnitForPointsT`, not `AssociatedUnitForPoints` (note the extra `T`
+    on the end).  `AssociatedUnitForPointsT` currently still works, but it is deprecated, and will
+    be removed in a future release.  Please migrate all current instances of
+    `AssociatedUnitForPointsT` to `AssociatedUnitForPoints`.
 
 ### Common unit
 

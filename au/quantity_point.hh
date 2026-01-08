@@ -279,18 +279,18 @@ struct QuantityPointMaker {
 };
 
 template <typename U>
-struct AssociatedUnitForPoints<QuantityPointMaker<U>> : stdx::type_identity<U> {};
+struct AssociatedUnitForPointsImpl<QuantityPointMaker<U>> : stdx::type_identity<U> {};
 
 // Provide nicer error messages when users try passing a `QuantityPoint` to a unit slot.
 template <typename U, typename R>
-struct AssociatedUnit<QuantityPoint<U, R>> {
+struct AssociatedUnitImpl<QuantityPoint<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Cannot pass QuantityPoint to a unit slot (see: "
         "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
 };
 template <typename U, typename R>
-struct AssociatedUnitForPoints<QuantityPoint<U, R>> {
+struct AssociatedUnitForPointsImpl<QuantityPoint<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Cannot pass QuantityPoint to a unit slot (see: "
