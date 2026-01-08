@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-48-g9f92fcf
+// Version identifier: 0.5.0-base-49-g4921e30
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -9607,7 +9607,13 @@ struct MinutesLabel {
 };
 template <typename T>
 constexpr const char MinutesLabel<T>::label[];
-struct Minutes : decltype(Seconds{} * mag<60>()), MinutesLabel<void> {
+struct Minutes
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Time, Magnitude<Pow<Prime<2>, 2>, Prime<3>, Prime<5>>>,
+      MinutesLabel<void> {
     using MinutesLabel<void>::label;
 };
 constexpr auto minute = SingularNameFor<Minutes>{};
@@ -9631,7 +9637,13 @@ struct HoursLabel {
 };
 template <typename T>
 constexpr const char HoursLabel<T>::label[];
-struct Hours : decltype(Minutes{} * mag<60>()), HoursLabel<void> {
+struct Hours
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Time, Magnitude<Pow<Prime<2>, 4>, Pow<Prime<3>, 2>, Pow<Prime<5>, 2>>>,
+      HoursLabel<void> {
     using HoursLabel<void>::label;
 };
 constexpr auto hour = SingularNameFor<Hours>{};
