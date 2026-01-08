@@ -14,8 +14,10 @@
 
 #include "au/units/fahrenheit.hh"
 
+#include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/celsius.hh"
+#include "au/units/rankine.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -37,6 +39,14 @@ TEST(Fahrenheit, HasCorrectRelationshipsWithCelsius) {
 TEST(Fahrenheit, HasExpectedSymbol) {
     using symbols::degF_qty;
     EXPECT_THAT(5 * degF_qty, SameTypeAndValue(fahrenheit_qty(5)));
+}
+
+TEST(Fahrenheit, QuantityEquivalentToRankine) {
+    EXPECT_THAT(fahrenheit_qty(1), QuantityEquivalent(rankine(1)));
+}
+
+TEST(Fahrenheit, HasCorrectRelationshipWithRankine) {
+    EXPECT_THAT(centi(fahrenheit_pt)(0), Eq(centi(rankine_pt)(45967)));
 }
 
 }  // namespace au
