@@ -145,6 +145,8 @@ header_only_library(
     units/pounds_mass_fwd.hh
     units/radians.hh
     units/radians_fwd.hh
+    units/rankine.hh
+    units/rankine_fwd.hh
     units/revolutions.hh
     units/revolutions_fwd.hh
     units/seconds.hh
@@ -364,6 +366,7 @@ gtest_based_test(
     units/test/pounds_force_test.cc
     units/test/pounds_mass_test.cc
     units/test/radians_test.cc
+    units/test/rankine_test.cc
     units/test/revolutions_test.cc
     units/test/seconds_test.cc
     units/test/siemens_test.cc
