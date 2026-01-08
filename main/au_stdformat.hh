@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-51-g8deea57
+// Version identifier: 0.5.0-base-53-g6f338ab
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -1879,33 +1879,41 @@ struct RatioPow;
 // powers of a base type `B`, and `RatioPow<B, N, D>` can represent rational powers of `B` (where
 // the power is `(N/D)`).
 template <typename T>
-struct Base : stdx::type_identity<T> {};
+struct BaseImpl : stdx::type_identity<T> {};
 template <typename T>
-using BaseT = typename Base<T>::type;
+using Base = typename BaseImpl<T>::type;
+template <typename T>
+using BaseT = Base<T>;
 
 // Type trait for the rational exponent of a type, interpreted as a base power.
 template <typename T>
-struct Exp : stdx::type_identity<std::ratio<1>> {};
+struct ExpImpl : stdx::type_identity<std::ratio<1>> {};
 template <typename T>
-using ExpT = typename Exp<T>::type;
+using Exp = typename ExpImpl<T>::type;
+template <typename T>
+using ExpT = Exp<T>;
 
 // Type trait for treating an arbitrary type as a given type of pack.
 //
 // This should be the identity for anything that is already a pack of this type, and otherwise
 // should wrap it in this type of pack.
 template <template <class... Ts> class Pack, typename T>
-struct AsPack : stdx::type_identity<Pack<T>> {};
+struct AsPackImpl : stdx::type_identity<Pack<T>> {};
 template <template <class... Ts> class Pack, typename T>
-using AsPackT = typename AsPack<Pack, T>::type;
+using AsPack = typename AsPackImpl<Pack, T>::type;
+template <template <class... Ts> class Pack, typename T>
+using AsPackT = AsPack<Pack, T>;
 
 // Type trait to remove a Pack enclosing a single item.
 //
 // Defined only if T is Pack<Ts...> for some typelist.  Always the identity, unless sizeof...(Ts) is
 // exactly 1, in which case, it returns the (sole) element.
 template <template <class... Ts> class Pack, typename T>
-struct UnpackIfSolo;
+struct UnpackIfSoloImpl;
 template <template <class... Ts> class Pack, typename T>
-using UnpackIfSoloT = typename UnpackIfSolo<Pack, T>::type;
+using UnpackIfSolo = typename UnpackIfSoloImpl<Pack, T>::type;
+template <template <class... Ts> class Pack, typename T>
+using UnpackIfSoloT = UnpackIfSolo<Pack, T>;
 
 // Trait to define whether two types are in order, based on the total ordering for some pack.
 //
@@ -1952,9 +1960,11 @@ using SortAs = typename SortAsImpl<PackForOrdering, ListT>::type;
 // undefined.  (This precondition will automatically be satisfied if *every* instance of `List<...>`
 // arises as the result of a call to `FlatDedupedTypeListT<...>`.)
 template <template <class...> class List, typename... Ts>
-struct FlatDedupedTypeList;
+struct FlatDedupedTypeListImpl;
 template <template <class...> class List, typename... Ts>
-using FlatDedupedTypeListT = typename FlatDedupedTypeList<List, AsPackT<List, Ts>...>::type;
+using FlatDedupedTypeList = typename FlatDedupedTypeListImpl<List, AsPack<List, Ts>...>::type;
+template <template <class...> class List, typename... Ts>
+using FlatDedupedTypeListT = FlatDedupedTypeList<List, Ts...>;
 
 namespace detail {
 // Express a base power in its simplest form (base alone if power is 1, or Pow if exp is integral).
@@ -2089,39 +2099,39 @@ struct RatioPow {
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `BaseT` implementation.
+// `Base` implementation.
 
 template <typename T, std::intmax_t N>
-struct Base<Pow<T, N>> : stdx::type_identity<T> {};
+struct BaseImpl<Pow<T, N>> : stdx::type_identity<T> {};
 
 template <typename T, std::intmax_t N, std::intmax_t D>
-struct Base<RatioPow<T, N, D>> : stdx::type_identity<T> {};
+struct BaseImpl<RatioPow<T, N, D>> : stdx::type_identity<T> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `ExpT` implementation.
+// `Exp` implementation.
 
 template <typename T, std::intmax_t N>
-struct Exp<Pow<T, N>> : stdx::type_identity<std::ratio<N>> {};
+struct ExpImpl<Pow<T, N>> : stdx::type_identity<std::ratio<N>> {};
 
 template <typename T, std::intmax_t N, std::intmax_t D>
-struct Exp<RatioPow<T, N, D>> : stdx::type_identity<std::ratio<N, D>> {};
+struct ExpImpl<RatioPow<T, N, D>> : stdx::type_identity<std::ratio<N, D>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `AsPackT` implementation.
+// `AsPack` implementation.
 
 template <template <class... Ts> class Pack, typename... Ts>
-struct AsPack<Pack, Pack<Ts...>> : stdx::type_identity<Pack<Ts...>> {};
+struct AsPackImpl<Pack, Pack<Ts...>> : stdx::type_identity<Pack<Ts...>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `UnpackIfSoloT` implementation.
+// `UnpackIfSolo` implementation.
 
 // Null pack case: do not unpack.
 template <template <class... Ts> class Pack>
-struct UnpackIfSolo<Pack, Pack<>> : stdx::type_identity<Pack<>> {};
+struct UnpackIfSoloImpl<Pack, Pack<>> : stdx::type_identity<Pack<>> {};
 
 // Non-null pack case: unpack only if there is nothing after the head element.
 template <template <class... Ts> class Pack, typename T, typename... Ts>
-struct UnpackIfSolo<Pack, Pack<T, Ts...>>
+struct UnpackIfSoloImpl<Pack, Pack<T, Ts...>>
     : std::conditional<(sizeof...(Ts) == 0u), T, Pack<T, Ts...>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2254,20 +2264,20 @@ struct SortAsImpl<PackForOrdering, Pack<T, Ts...>>
 //
 // (We explicitly assumed that any `List<...>` inputs would already be in sorted order.)
 template <template <class...> class List, typename... Ts>
-struct FlatDedupedTypeList<List, List<Ts...>> : stdx::type_identity<List<Ts...>> {};
+struct FlatDedupedTypeListImpl<List, List<Ts...>> : stdx::type_identity<List<Ts...>> {};
 
 // 2-ary base case: if we exhaust elements in the second list, the first list is the answer.
 //
 // (Again: this relies on the explicit assumption that any `List<...>` inputs are already in order.)
 template <template <class...> class List, typename... Ts>
-struct FlatDedupedTypeList<List, List<Ts...>, List<>> : stdx::type_identity<List<Ts...>> {};
+struct FlatDedupedTypeListImpl<List, List<Ts...>, List<>> : stdx::type_identity<List<Ts...>> {};
 
 // 2-ary recursive case, single-element head.
 //
 // This use case also serves as the core "insertion logic", inserting `T` into the proper place
 // within `List<H, Ts...>`.
 template <template <class...> class List, typename T, typename H, typename... Ts>
-struct FlatDedupedTypeList<List, List<T>, List<H, Ts...>> :
+struct FlatDedupedTypeListImpl<List, List<T>, List<H, Ts...>> :
 
     // If the candidate element exactly equals the head, disregard it (de-dupe!).
     std::conditional<
@@ -2291,18 +2301,18 @@ template <template <class...> class List,
           typename... T1,
           typename H2,
           typename... T2>
-struct FlatDedupedTypeList<List, List<H1, N1, T1...>, List<H2, T2...>>
-    : FlatDedupedTypeList<List,
-                          // Put H2 first so we can use single-element-head case from above.
-                          FlatDedupedTypeListT<List, List<H2>, List<H1, N1, T1...>>,
-                          List<T2...>> {};
+struct FlatDedupedTypeListImpl<List, List<H1, N1, T1...>, List<H2, T2...>>
+    : FlatDedupedTypeListImpl<List,
+                              // Put H2 first so we can use single-element-head case from above.
+                              FlatDedupedTypeListT<List, List<H2>, List<H1, N1, T1...>>,
+                              List<T2...>> {};
 
 // N-ary case, multi-element head: peel off tail-of-head, and recurse.
 //
 // Note that this also handles the 2-ary case where the head list has more than one element.
 template <template <class...> class List, typename L1, typename L2, typename L3, typename... Ls>
-struct FlatDedupedTypeList<List, L1, L2, L3, Ls...>
-    : FlatDedupedTypeList<List, FlatDedupedTypeListT<List, L1, L2>, L3, Ls...> {};
+struct FlatDedupedTypeListImpl<List, L1, L2, L3, Ls...>
+    : FlatDedupedTypeListImpl<List, FlatDedupedTypeListT<List, L1, L2>, L3, Ls...> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `PackProductT` implementation.
@@ -4805,26 +4815,32 @@ struct IsUnitlessUnit
 //
 // Useful in doing unit conversions.
 template <typename U1, typename U2>
-struct UnitRatio : stdx::type_identity<MagQuotientT<detail::MagT<U1>, detail::MagT<U2>>> {
+struct UnitRatioImpl : stdx::type_identity<MagQuotientT<detail::MagT<U1>, detail::MagT<U2>>> {
     static_assert(HasSameDimension<U1, U2>::value,
                   "Can only compute ratio of same-dimension units");
 };
 template <typename U1, typename U2>
-using UnitRatioT = typename UnitRatio<U1, U2>::type;
+using UnitRatio = typename UnitRatioImpl<U1, U2>::type;
+template <typename U1, typename U2>
+using UnitRatioT = UnitRatio<U1, U2>;
 
 // The sign of a unit: almost always `mag<1>()`, but `-mag<1>()` for "negative" units.
 template <typename U>
 using UnitSign = Sign<detail::MagT<U>>;
 
 template <typename U>
-struct AssociatedUnit : stdx::type_identity<U> {};
+struct AssociatedUnitImpl : stdx::type_identity<U> {};
 template <typename U>
-using AssociatedUnitT = typename AssociatedUnit<U>::type;
+using AssociatedUnit = typename AssociatedUnitImpl<U>::type;
+template <typename U>
+using AssociatedUnitT = AssociatedUnit<U>;
 
 template <typename U>
-struct AssociatedUnitForPoints : stdx::type_identity<U> {};
+struct AssociatedUnitForPointsImpl : stdx::type_identity<U> {};
 template <typename U>
-using AssociatedUnitForPointsT = typename AssociatedUnitForPoints<U>::type;
+using AssociatedUnitForPoints = typename AssociatedUnitForPointsImpl<U>::type;
+template <typename U>
+using AssociatedUnitForPointsT = AssociatedUnitForPoints<U>;
 
 // `CommonUnitT`: the largest unit that evenly divides all input units.
 //
@@ -5108,7 +5124,7 @@ struct SingularNameFor {
 
 // Support `SingularNameFor` in (quantity) unit slots.
 template <typename U>
-struct AssociatedUnit<SingularNameFor<U>> : stdx::type_identity<U> {};
+struct AssociatedUnitImpl<SingularNameFor<U>> : stdx::type_identity<U> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(SingularNameFor<Unit>) {
@@ -6822,14 +6838,14 @@ class Quantity {
 
 // Give more readable error messages when passing `Quantity` to a unit slot.
 template <typename U, typename R>
-struct AssociatedUnit<Quantity<U, R>> {
+struct AssociatedUnitImpl<Quantity<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Can't pass `Quantity` to a unit slot (see: "
         "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
 };
 template <typename U, typename R>
-struct AssociatedUnitForPoints<Quantity<U, R>> {
+struct AssociatedUnitForPointsImpl<Quantity<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Can't pass `Quantity` to a unit slot for points (see: "
@@ -6982,7 +6998,7 @@ struct QuantityMaker {
 };
 
 template <typename U>
-struct AssociatedUnit<QuantityMaker<U>> : stdx::type_identity<U> {};
+struct AssociatedUnitImpl<QuantityMaker<U>> : stdx::type_identity<U> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(QuantityMaker<Unit>) {
@@ -7583,7 +7599,7 @@ constexpr auto symbol_for(UnitSlot) {
 
 // Support using symbols in unit slot APIs (e.g., `v.in(m / s)`).
 template <typename U>
-struct AssociatedUnit<SymbolFor<U>> : stdx::type_identity<U> {};
+struct AssociatedUnitImpl<SymbolFor<U>> : stdx::type_identity<U> {};
 
 }  // namespace au
 
@@ -7950,7 +7966,7 @@ constexpr Zero make_constant(Zero) { return {}; }
 
 // Support using `Constant` in a unit slot.
 template <typename Unit>
-struct AssociatedUnit<Constant<Unit>> : stdx::type_identity<Unit> {};
+struct AssociatedUnitImpl<Constant<Unit>> : stdx::type_identity<Unit> {};
 
 }  // namespace au
 
@@ -8214,18 +8230,18 @@ struct QuantityPointMaker {
 };
 
 template <typename U>
-struct AssociatedUnitForPoints<QuantityPointMaker<U>> : stdx::type_identity<U> {};
+struct AssociatedUnitForPointsImpl<QuantityPointMaker<U>> : stdx::type_identity<U> {};
 
 // Provide nicer error messages when users try passing a `QuantityPoint` to a unit slot.
 template <typename U, typename R>
-struct AssociatedUnit<QuantityPoint<U, R>> {
+struct AssociatedUnitImpl<QuantityPoint<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Cannot pass QuantityPoint to a unit slot (see: "
         "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
 };
 template <typename U, typename R>
-struct AssociatedUnitForPoints<QuantityPoint<U, R>> {
+struct AssociatedUnitForPointsImpl<QuantityPoint<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Cannot pass QuantityPoint to a unit slot (see: "

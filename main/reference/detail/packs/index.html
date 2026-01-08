@@ -2472,8 +2472,8 @@
 <li>Making <em>compound</em> Units (products of powers of units, e.g., <span class="arithmatex"><span class="MathJax_Preview">\text{m} \cdot \text{s}^{-2}</span><script type="math/tex">\text{m} \cdot \text{s}^{-2}</script></span>).</li>
 </ul>
 <p>We represent them as variadic parameter packs.  Each pack element represents a &ldquo;base power&rdquo;: this is
-some &ldquo;base&rdquo;, raised to some rational exponent.  For a base power <code>BP</code>, <code>BaseT&lt;BP&gt;</code> retrieves its
-base, and <code>ExpT&lt;BP&gt;</code> retrieves its exponent (as a <code>std::ratio</code>).</p>
+some &ldquo;base&rdquo;, raised to some rational exponent.  For a base power <code>BP</code>, <code>Base&lt;BP&gt;</code> retrieves its
+base, and <code>Exp&lt;BP&gt;</code> retrieves its exponent (as a <code>std::ratio</code>).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This approach, with products of base powers, is known as the <a href="../../../discussion/implementation/vector_space/"><em>vector space
@@ -2564,7 +2564,7 @@ conditions.  Specifically, those conditions are:</p>
 <ul>
 <li>
 <p><code>AreBasesInOrder&lt;Pack, T&gt;</code>: assuming <code>T</code> is <code>Pack&lt;BPs...&gt;</code>, verifies that all consecutive elements
-  in <code>BaseT&lt;BPs&gt;...</code> are all properly ordered (according to <code>InOrderFor&lt;Pack, ...&gt;</code>, naturally).</p>
+  in <code>Base&lt;BPs&gt;...</code> are all properly ordered (according to <code>InOrderFor&lt;Pack, ...&gt;</code>, naturally).</p>
 </li>
 <li>
 <p><code>AreAllPowersNonzero&lt;Pack, T&gt;</code>: assuming <code>T</code> is <code>Pack&lt;BPs...&gt;</code>, verifies that

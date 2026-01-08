@@ -2643,10 +2643,10 @@ user-friendly than <code>UnitProduct&lt;Meters&gt;</code>, let alone something a
 <code>UnitProduct&lt;RatioPow&lt;Meters, 1, 0&gt;&gt;</code>!  We support this use case with the following strategy:</p>
 <ul>
 <li>
-<p><strong>wrap-if-necessary</strong> on the way <strong>in</strong> (via <code>AsPackT</code>)</p>
+<p><strong>wrap-if-necessary</strong> on the way <strong>in</strong> (via <code>AsPack</code>)</p>
 </li>
 <li>
-<p><strong>unwrap-if-possible</strong> on the way <strong>out</strong> (via <code>UnpackIfSoloT</code>)</p>
+<p><strong>unwrap-if-possible</strong> on the way <strong>out</strong> (via <code>UnpackIfSolo</code>)</p>
 </li>
 </ul>
 <p>This was the only machinery we needed to add: apart from that, we were able to leverage our
