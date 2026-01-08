@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-50-gd9af094
+// Version identifier: 0.5.0-base-51-g8deea57
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -72,6 +72,7 @@
 //   pounds_force
 //   pounds_mass
 //   radians
+//   rankine
 //   revolutions
 //   seconds
 //   siemens
@@ -1748,6 +1749,12 @@ struct Feet;
 namespace au {
 
 struct Inches;
+
+}  // namespace au
+
+namespace au {
+
+struct Rankine;
 
 }  // namespace au
 
@@ -10251,18 +10258,18 @@ struct FahrenheitLabel {
 };
 template <typename T>
 constexpr const char FahrenheitLabel<T>::label[];
-struct Rankines
+struct Fahrenheit
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Temperature, Magnitude<Pow<Prime<3>, -2>, Prime<5>>> {};
-constexpr auto rankines = QuantityMaker<Rankines>{};
-struct Fahrenheit : Rankines, FahrenheitLabel<void> {
+    : UnitImpl<Temperature, Magnitude<Pow<Prime<3>, -2>, Prime<5>>>,
+      FahrenheitLabel<void> {
     using FahrenheitLabel<void>::label;
     static constexpr auto origin() {
         // 459.67 Rankines = 45967 centi-rankines
-        return make_quantity<Centi<Rankines>>(45967);
+        return make_quantity<Centi<UnitImpl<Temperature, Magnitude<Pow<Prime<3>, -2>, Prime<5>>>>>(
+            45967);
     }
 };
 constexpr auto fahrenheit_qty = QuantityMaker<Fahrenheit>{};
@@ -10394,6 +10401,36 @@ constexpr auto inches = QuantityMaker<Inches>{};
 
 namespace symbols {
 constexpr auto in = SymbolFor<Inches>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct RankineLabel {
+    static constexpr const char label[] = "degR";
+};
+template <typename T>
+constexpr const char RankineLabel<T>::label[];
+struct Rankine
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Temperature, Magnitude<Pow<Prime<3>, -2>, Prime<5>>>,
+      RankineLabel<void> {
+    using RankineLabel<void>::label;
+};
+constexpr auto rankine = QuantityMaker<Rankine>{};
+constexpr auto rankine_pt = QuantityPointMaker<Rankine>{};
+
+namespace symbols {
+constexpr auto degR = SymbolFor<Rankine>{};
 }
 }  // namespace au
 
