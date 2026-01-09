@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
@@ -3409,7 +3409,7 @@ as an inch.</p>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For <em>types</em> <code>U1</code> and <code>U2</code>:<ul>
-<li><code>UnitRatioT&lt;U1, U2&gt;::value</code></li>
+<li><code>UnitRatio&lt;U1, U2&gt;::value</code></li>
 </ul>
 </li>
 <li>For <em>instances</em> <code>u1</code> and <code>u2</code>:<ul>
@@ -3417,6 +3417,12 @@ as an inch.</p>
 </ul>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Formerly, this was <code>UnitRatioT</code>, not <code>UnitRatio</code> (note the extra <code>T</code> on the end).  <code>UnitRatioT</code>
+currently still works, but it is deprecated, and will be removed in a future release.  Please
+migrate all current instances of <code>UnitRatioT</code> to <code>UnitRatio</code>.</p>
+</div>
 <h3 id="unit-sign">Unit sign<a class="headerlink" href="#unit-sign" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> The <a href="../magnitude/">magnitude</a> representing the sign of the unit.  This takes the value
 <code>mag&lt;1&gt;()</code> if increases in the underlying stored value correspond to <em>increases</em> in the quantity,
@@ -3495,7 +3501,7 @@ a unit type itself.</p>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For a <em>type</em> <code>U</code>:<ul>
-<li><code>AssociatedUnitT&lt;U&gt;</code></li>
+<li><code>AssociatedUnit&lt;U&gt;</code></li>
 </ul>
 </li>
 <li>For an <em>instance</em> <code>u</code>:<ul>
@@ -3503,6 +3509,12 @@ a unit type itself.</p>
 </ul>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Formerly, this was <code>AssociatedUnitT</code>, not <code>AssociatedUnit</code> (note the extra <code>T</code> on the end).
+<code>AssociatedUnitT</code> currently still works, but it is deprecated, and will be removed in a future
+release.  Please migrate all current instances of <code>AssociatedUnitT</code> to <code>AssociatedUnit</code>.</p>
+</div>
 <h3 id="associated-unit-for-points">Associated unit (for points)<a class="headerlink" href="#associated-unit-for-points" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> The actual unit associated with a <a href="../../discussion/idioms/unit-slots/">unit slot</a> that
 is associated with a quantity point type. Here are a few examples.</p>
@@ -3523,7 +3535,7 @@ associated with quantity points.</p>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For a <em>type</em> <code>U</code>:<ul>
-<li><code>AssociatedUnitForPointsT&lt;U&gt;</code></li>
+<li><code>AssociatedUnitForPoints&lt;U&gt;</code></li>
 </ul>
 </li>
 <li>For an <em>instance</em> <code>u</code>:<ul>
@@ -3531,6 +3543,13 @@ associated with quantity points.</p>
 </ul>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Formerly, this was <code>AssociatedUnitForPointsT</code>, not <code>AssociatedUnitForPoints</code> (note the extra <code>T</code>
+on the end).  <code>AssociatedUnitForPointsT</code> currently still works, but it is deprecated, and will
+be removed in a future release.  Please migrate all current instances of
+<code>AssociatedUnitForPointsT</code> to <code>AssociatedUnitForPoints</code>.</p>
+</div>
 <h3 id="common-unit">Common unit<a class="headerlink" href="#common-unit" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> The largest unit that evenly divides its input units.  (Read more about the concept of
 <a href="../../discussion/concepts/common_unit/">common units</a>.)</p>
@@ -3790,10 +3809,10 @@ document.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to f
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       
