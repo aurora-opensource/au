@@ -66,15 +66,17 @@ constexpr DimPowerT<Dimension<BPs...>, 1, N> root(Dimension<BPs...>) {
 }
 
 template <typename... Dims>
-struct CommonDimension;
+struct CommonDimensionImpl;
 template <typename... Dims>
-using CommonDimensionT = typename CommonDimension<Dims...>::type;
+using CommonDimension = typename CommonDimensionImpl<Dims...>::type;
+template <typename... Dims>
+using CommonDimensionT = CommonDimension<Dims...>;
 
 template <typename... BaseDims>
-struct CommonDimension<Dimension<BaseDims...>> : stdx::type_identity<Dimension<BaseDims...>> {};
+struct CommonDimensionImpl<Dimension<BaseDims...>> : stdx::type_identity<Dimension<BaseDims...>> {};
 template <typename Head, typename... Tail>
-struct CommonDimension<Head, Tail...> : CommonDimension<Tail...> {
-    static_assert(std::is_same<Head, CommonDimensionT<Tail...>>::value,
+struct CommonDimensionImpl<Head, Tail...> : CommonDimensionImpl<Tail...> {
+    static_assert(std::is_same<Head, CommonDimension<Tail...>>::value,
                   "Common dimension only defined when all dimensions are identical");
 };
 
