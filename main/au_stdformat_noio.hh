@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-53-g6f338ab
+// Version identifier: 0.5.0-base-52-ga48d9c4
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -4814,32 +4814,26 @@ struct IsUnitlessUnit
 //
 // Useful in doing unit conversions.
 template <typename U1, typename U2>
-struct UnitRatioImpl : stdx::type_identity<MagQuotientT<detail::MagT<U1>, detail::MagT<U2>>> {
+struct UnitRatio : stdx::type_identity<MagQuotientT<detail::MagT<U1>, detail::MagT<U2>>> {
     static_assert(HasSameDimension<U1, U2>::value,
                   "Can only compute ratio of same-dimension units");
 };
 template <typename U1, typename U2>
-using UnitRatio = typename UnitRatioImpl<U1, U2>::type;
-template <typename U1, typename U2>
-using UnitRatioT = UnitRatio<U1, U2>;
+using UnitRatioT = typename UnitRatio<U1, U2>::type;
 
 // The sign of a unit: almost always `mag<1>()`, but `-mag<1>()` for "negative" units.
 template <typename U>
 using UnitSign = Sign<detail::MagT<U>>;
 
 template <typename U>
-struct AssociatedUnitImpl : stdx::type_identity<U> {};
+struct AssociatedUnit : stdx::type_identity<U> {};
 template <typename U>
-using AssociatedUnit = typename AssociatedUnitImpl<U>::type;
-template <typename U>
-using AssociatedUnitT = AssociatedUnit<U>;
+using AssociatedUnitT = typename AssociatedUnit<U>::type;
 
 template <typename U>
-struct AssociatedUnitForPointsImpl : stdx::type_identity<U> {};
+struct AssociatedUnitForPoints : stdx::type_identity<U> {};
 template <typename U>
-using AssociatedUnitForPoints = typename AssociatedUnitForPointsImpl<U>::type;
-template <typename U>
-using AssociatedUnitForPointsT = AssociatedUnitForPoints<U>;
+using AssociatedUnitForPointsT = typename AssociatedUnitForPoints<U>::type;
 
 // `CommonUnitT`: the largest unit that evenly divides all input units.
 //
@@ -5123,7 +5117,7 @@ struct SingularNameFor {
 
 // Support `SingularNameFor` in (quantity) unit slots.
 template <typename U>
-struct AssociatedUnitImpl<SingularNameFor<U>> : stdx::type_identity<U> {};
+struct AssociatedUnit<SingularNameFor<U>> : stdx::type_identity<U> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(SingularNameFor<Unit>) {
@@ -6837,14 +6831,14 @@ class Quantity {
 
 // Give more readable error messages when passing `Quantity` to a unit slot.
 template <typename U, typename R>
-struct AssociatedUnitImpl<Quantity<U, R>> {
+struct AssociatedUnit<Quantity<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Can't pass `Quantity` to a unit slot (see: "
         "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
 };
 template <typename U, typename R>
-struct AssociatedUnitForPointsImpl<Quantity<U, R>> {
+struct AssociatedUnitForPoints<Quantity<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Can't pass `Quantity` to a unit slot for points (see: "
@@ -6997,7 +6991,7 @@ struct QuantityMaker {
 };
 
 template <typename U>
-struct AssociatedUnitImpl<QuantityMaker<U>> : stdx::type_identity<U> {};
+struct AssociatedUnit<QuantityMaker<U>> : stdx::type_identity<U> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(QuantityMaker<Unit>) {
@@ -7618,7 +7612,7 @@ constexpr auto symbol_for(UnitSlot) {
 
 // Support using symbols in unit slot APIs (e.g., `v.in(m / s)`).
 template <typename U>
-struct AssociatedUnitImpl<SymbolFor<U>> : stdx::type_identity<U> {};
+struct AssociatedUnit<SymbolFor<U>> : stdx::type_identity<U> {};
 
 }  // namespace au
 
@@ -7941,7 +7935,7 @@ constexpr Zero make_constant(Zero) { return {}; }
 
 // Support using `Constant` in a unit slot.
 template <typename Unit>
-struct AssociatedUnitImpl<Constant<Unit>> : stdx::type_identity<Unit> {};
+struct AssociatedUnit<Constant<Unit>> : stdx::type_identity<Unit> {};
 
 }  // namespace au
 
@@ -8229,18 +8223,18 @@ struct QuantityPointMaker {
 };
 
 template <typename U>
-struct AssociatedUnitForPointsImpl<QuantityPointMaker<U>> : stdx::type_identity<U> {};
+struct AssociatedUnitForPoints<QuantityPointMaker<U>> : stdx::type_identity<U> {};
 
 // Provide nicer error messages when users try passing a `QuantityPoint` to a unit slot.
 template <typename U, typename R>
-struct AssociatedUnitImpl<QuantityPoint<U, R>> {
+struct AssociatedUnit<QuantityPoint<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Cannot pass QuantityPoint to a unit slot (see: "
         "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
 };
 template <typename U, typename R>
-struct AssociatedUnitForPointsImpl<QuantityPoint<U, R>> {
+struct AssociatedUnitForPoints<QuantityPoint<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Cannot pass QuantityPoint to a unit slot (see: "
