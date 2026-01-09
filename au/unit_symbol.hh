@@ -49,6 +49,6 @@ constexpr auto symbol_for(UnitSlot) {
 
 // Support using symbols in unit slot APIs (e.g., `v.in(m / s)`).
 template <typename U>
-struct AssociatedUnit<SymbolFor<U>> : stdx::type_identity<U> {};
+struct AssociatedUnitImpl<SymbolFor<U>> : stdx::type_identity<U> {};
 
 }  // namespace au
