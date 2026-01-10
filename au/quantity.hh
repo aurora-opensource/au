@@ -65,9 +65,12 @@ struct AreQuantityTypesEquivalent;
 //   - For Quantity -> T, define `T construct_from_value(R)`.
 template <typename T>
 struct CorrespondingQuantity {};
+
+namespace detail {
 template <typename T>
 using CorrespondingQuantityType =
     Quantity<typename CorrespondingQuantity<T>::Unit, typename CorrespondingQuantity<T>::Rep>;
+}  // namespace detail
 
 // Redirect various cvref-qualified specializations to the "main" specialization.
 //
@@ -89,7 +92,7 @@ struct CorrespondingQuantity<const T &> : CorrespondingQuantity<T> {};
 // `as_quantity()` is SFINAE-friendly: we can use it to constrain templates to types `T` which are
 // exactly equivalent to some Quantity type.
 template <typename T>
-constexpr auto as_quantity(T &&x) -> CorrespondingQuantityType<T> {
+constexpr auto as_quantity(T &&x) -> detail::CorrespondingQuantityType<T> {
     using Q = CorrespondingQuantity<T>;
     static_assert(IsUnit<typename Q::Unit>{}, "No Quantity corresponding to type");
 
@@ -177,7 +180,7 @@ class Quantity {
 
     // Implicit construction from any exactly-equivalent type.
     template <typename T,
-              std::enable_if_t<std::is_convertible<CorrespondingQuantityType<T>, Quantity>::value,
+              std::enable_if_t<std::is_convertible<detail::CorrespondingQuantityType<T>, Quantity>::value,
                                int> = 0>
     constexpr Quantity(T &&x) : Quantity{as_quantity(std::forward<T>(x))} {}
 
@@ -368,11 +371,11 @@ class Quantity {
 
     // Automatic conversion to any equivalent type that supports it.
     template <typename T,
-              std::enable_if_t<std::is_convertible<Quantity, CorrespondingQuantityType<T>>::value,
+              std::enable_if_t<std::is_convertible<Quantity, detail::CorrespondingQuantityType<T>>::value,
                                int> = 0>
     constexpr operator T() const {
         return CorrespondingQuantity<T>::construct_from_value(
-            CorrespondingQuantityType<T>{*this}.in(typename CorrespondingQuantity<T>::Unit{}));
+            detail::CorrespondingQuantityType<T>{*this}.in(typename CorrespondingQuantity<T>::Unit{}));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
