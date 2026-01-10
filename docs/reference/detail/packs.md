@@ -115,10 +115,10 @@ using PackProductT = /* (implementation; irrelevant here) */;
 
 // A _particular_ Pack (say, `Dimension`) would expose it to their users like this:
 template <typename... Dims>
-using DimProductT = PackProductT<Dimension, Dims...>;
+using DimProduct = PackProductT<Dimension, Dims...>;
 
 // End users would use the _latter_, e.g.:
-using Length = DimProductT<Speed, Time>;
+using Length = DimProduct<Speed, Time>;
 ```
 
 ### Supported algebraic operations

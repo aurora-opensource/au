@@ -278,9 +278,13 @@ In what follows, we'll use this convention:
 **Syntax:**
 
 - For _types_ `U1` and `U2`:
-    - `UnitQuotientT<U1, U2>`
+    - `UnitQuotient<U1, U2>`
 - For _instances_ `u1` and `u2`:
     - `u1 / u2`
+
+!!! note
+    Older releases used `UnitQuotientT` (with the `T` suffix) instead of `UnitQuotient`.  Prefer
+    `UnitQuotient`.  `UnitQuotientT` is deprecated, and will be removed in future releases.
 
 ### Powers
 
@@ -289,9 +293,13 @@ In what follows, we'll use this convention:
 **Syntax:**
 
 - For a _type_ `U`, and an integral power `N`:
-    - `UnitPowerT<U, N>`
+    - `UnitPower<U, N>`
 - For an _instance_ `u`, and an integral power `N`:
     - `pow<N>(u)`
+
+!!! note
+    Older releases used `UnitPowerT` (with the `T` suffix) instead of `UnitPower`.  Prefer
+    `UnitPower`.  `UnitPowerT` is deprecated, and will be removed in future releases.
 
 ### Roots
 
@@ -300,7 +308,7 @@ In what follows, we'll use this convention:
 **Syntax:**
 
 - For a _type_ `U`, and an integral root `N`:
-    - `UnitPowerT<U, 1, N>` (because the $N^\text{th}$ root is equivalent to the
+    - `UnitPower<U, 1, N>` (because the $N^\text{th}$ root is equivalent to the
       $\left(\frac{1}{N}\right)^\text{th}$ power)
 - For an _instance_ `u`, and an integral root `N`:
     - `root<N>(u)`
