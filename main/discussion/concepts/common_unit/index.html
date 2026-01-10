@@ -2583,32 +2583,32 @@ denote the same type.</p>
 <li>This is to keep compiler errors as concise and readable as possible.</li>
 </ul>
 </li>
-<li><strong>Flattening.</strong>  If an input unit is a <code>CommonUnit&lt;...&gt;</code> type, &ldquo;unpack&rdquo; it and replace it with
-   its constituent Units.<ul>
+<li><strong>Flattening.</strong>  If an input unit is a <code>CommonUnitPack&lt;...&gt;</code> type, &ldquo;unpack&rdquo; it and replace it
+   with its constituent Units.<ul>
 <li>To see why, let <code>c(...)</code> be &ldquo;the common unit&rdquo;, and <code>x</code>, <code>y</code>, and <code>z</code> be units.  We wouldn&rsquo;t
   want <code>c(x, c(y, z))</code> to be different from <code>c(x, y, z)</code>!</li>
 </ul>
 </li>
 <li><strong>Semantic.</strong>  Prefer user-meaningful units, because they show up in compiler errors. Thus, if
    any input unit is <em>equivalent</em> to the &ldquo;common unit&rdquo;, we&rsquo;ll prefer that input unit.<ul>
-<li>The common unit of <code>Inches</code> and <code>Feet</code> is just <code>Inches</code>, not <code>CommonUnit&lt;Inches, Feet&gt;</code>!</li>
+<li>The common unit of <code>Inches</code> and <code>Feet</code> is just <code>Inches</code>, not <code>CommonUnitPack&lt;Inches, Feet&gt;</code>!</li>
 </ul>
 </li>
 </ol>
 <h3 id="user-facing-types">User-facing types<a class="headerlink" href="#user-facing-types" title="Permanent link">&para;</a></h3>
 <p>There are two main abstractions for common units which users might encounter.</p>
 <ul>
-<li><strong><code>CommonUnit&lt;...&gt;</code></strong>.  This is a template that defines new units from old ones, just like
+<li><strong><code>CommonUnitPack&lt;...&gt;</code></strong>.  This is a template that defines new units from old ones, just like
   <code>UnitProduct&lt;...&gt;</code> or <code>ScaledUnit&lt;...&gt;</code>.<ul>
 <li>This should <em>rarely, if ever</em> be named in code.<ul>
 <li>In implementations, we need to do this, for example, for defining the <em>unit label</em> of
-  a <code>CommonUnit&lt;...&gt;</code>, or defining its ordering relative to other units.</li>
+  a <code>CommonUnitPack&lt;...&gt;</code>, or defining its ordering relative to other units.</li>
 <li>In end user code, this should probably <em>never</em> be named.</li>
-<li>In either case: <strong>never</strong> write <code>CommonUnit&lt;...&gt;</code> with <em>specific</em> template arguments!
+<li>In either case: <strong>never</strong> write <code>CommonUnitPack&lt;...&gt;</code> with <em>specific</em> template arguments!
   Only use it for matching.</li>
 </ul>
 </li>
-<li>Remember: <code>CommonUnit&lt;...&gt;</code> can arise only as <em>the result of some type computation</em>.</li>
+<li>Remember: <code>CommonUnitPack&lt;...&gt;</code> can arise only as <em>the result of some type computation</em>.</li>
 </ul>
 </li>
 <li><strong><code>CommonUnitT&lt;...&gt;</code></strong>.  This <em>computes</em> the common unit of the provided units.</li>
@@ -2616,14 +2616,15 @@ denote the same type.</p>
 <p>Let&rsquo;s clarify this relationship with an example.  Suppose you&rsquo;re writing a function based on two
 arbitrary (but same-dimension) units, <code>U1</code> and <code>U2</code>, and you need their &ldquo;common unit&rdquo;.</p>
 <ul>
-<li>What you would <em>write</em> is <code>CommonUnitT&lt;U1, U2&gt;</code>, <strong>not</strong> <code>CommonUnit&lt;U1, U2&gt;</code>.<ul>
+<li>What you would <em>write</em> is <code>CommonUnitT&lt;U1, U2&gt;</code>, <strong>not</strong> <code>CommonUnitPack&lt;U1, U2&gt;</code>.<ul>
 <li><code>CommonUnitT&lt;...&gt;</code> says &ldquo;<em>please calculate</em> the common unit&rdquo;.</li>
-<li><code>CommonUnit&lt;...&gt;</code> says &ldquo;<em>this is the result</em> of calculating the common unit&rdquo;.</li>
+<li><code>CommonUnitPack&lt;...&gt;</code> says &ldquo;<em>this is the result</em> of calculating the common unit&rdquo;.</li>
 </ul>
 </li>
 <li>What you <em>get</em> depends on the specific units.<ul>
-<li>For <code>CommonUnitT&lt;Inches, Meters&gt;</code>, the result might be <code>CommonUnit&lt;Inches, Meters&gt;</code>.<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>  This
-  is because the greatest common divisor for <code>Inches</code> and <code>Meters</code> is smaller than both of them.</li>
+<li>For <code>CommonUnitT&lt;Inches, Meters&gt;</code>, the result might be <code>CommonUnitPack&lt;Inches, Meters&gt;</code>.<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>
+  This is because the greatest common divisor for <code>Inches</code> and <code>Meters</code> is smaller than both of
+  them.</li>
 <li>For <code>CommonUnitT&lt;Inches, Feet&gt;</code>, the result would simply be <code>Inches</code>, because <code>Inches</code> is
   quantity-equivalent to this common unit (it evenly divides both <code>Inches</code> and <code>Feet</code>).</li>
 </ul>
@@ -2635,7 +2636,7 @@ arbitrary (but same-dimension) units, <code>U1</code> and <code>U2</code>, and y
 <ol>
 <li>
 <p><code>FlatDedupedTypeList</code>.  For a given variadic pack <code>List&lt;...&gt;</code> (which, for us, will be
-   <code>CommonUnit&lt;...&gt;</code>), <code>FlatDedupedTypeList&lt;List, Ts...&gt;</code> will produce a <code>List&lt;...&gt;</code>, whose
+   <code>CommonUnitPack&lt;...&gt;</code>), <code>FlatDedupedTypeList&lt;List, Ts...&gt;</code> will produce a <code>List&lt;...&gt;</code>, whose
    elements are <code>Ts...</code>, but sorted according to <code>InOrderFor&lt;List, ...&gt;</code>, and with duplicates
    removed.</p>
 <ul>
@@ -2644,12 +2645,12 @@ arbitrary (but same-dimension) units, <code>U1</code> and <code>U2</code>, and y
 </ul>
 </li>
 <li>
-<p><code>FirstQuantityEquivalentUnit</code>.  The above step produces a <code>CommonUnit&lt;...&gt;</code> specialization, which
-   itself meets <a href="../../../reference/unit/">the definition of a unit</a>.  But is it the unit we
+<p><code>FirstQuantityEquivalentUnit</code>.  The above step produces a <code>CommonUnitPack&lt;...&gt;</code> specialization,
+   which itself meets <a href="../../../reference/unit/">the definition of a unit</a>.  But is it the unit we
    really want to provide?  Not if there&rsquo;s a simpler one!
-   <code>FirstQuantityEquivalentUnit&lt;CommonUnit&lt;Us...&gt;&gt;</code> searches through the unit list <code>Us...</code>, and
-   returns the first quantity-equivalent one it finds. If no such unit is available, then we
-   fall back to returning <code>CommonUnit&lt;Us...&gt;</code>.</p>
+   <code>FirstQuantityEquivalentUnit&lt;CommonUnitPack&lt;Us...&gt;&gt;</code> searches through the unit list <code>Us...</code>,
+   and returns the first quantity-equivalent one it finds. If no such unit is available, then we
+   fall back to returning <code>CommonUnitPack&lt;Us...&gt;</code>.</p>
 </li>
 </ol>
 </details>
@@ -2673,7 +2674,7 @@ and <code>Kelvins</code>.</p>
 <p>Thus, what we&rsquo;ve been calling <code>CommonUnitT</code> is really more like <code>CommonQuantityUnitT</code> (although
 we&rsquo;ve kept the name short because <code>Quantity</code> is by far the typical use case).  For <code>QuantityPoint</code>
 operations, we have the <code>CommonPointUnitT&lt;Us...&gt;</code> alias, which typically creates some instance of
-<code>CommonPointUnit&lt;Us...&gt;</code> with the <code>Us...</code> in their canonical ordering.</p>
+<code>CommonPointUnitPack&lt;Us...&gt;</code> with the <code>Us...</code> in their canonical ordering.</p>
 <p>So: what <em>is</em> the &ldquo;common quantity <em>point</em> unit&rdquo;?  Well, we can start with the &ldquo;common <em>quantity</em>
 unit,&rdquo; but the origin adds a new complication.  We&rsquo;ll need to choose a convention.</p>
 <ul>

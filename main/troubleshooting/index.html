@@ -3475,7 +3475,7 @@ sufficient condition: for example, even <code>UnitInverseT&lt;Seconds&gt;</code>
 <summary>More background info on why this error exists</summary>
 <p>In case you want to understand more, here is the gist.</p>
 <p>Au is <em>heavily</em> based on <a href="../reference/detail/packs/">parameter packs</a>.  Some of these packs,
-such as <code>UnitProduct&lt;...&gt;</code> and <code>CommonUnit&lt;...&gt;</code>, take <em>units</em> as their arguments.</p>
+such as <code>UnitProduct&lt;...&gt;</code> and <code>CommonUnitPack&lt;...&gt;</code>, take <em>units</em> as their arguments.</p>
 <p>Every parameter pack needs an unambiguous canonical ordering for any possible set of input
 arguments.  Therefore, we need to create a <em>strict total ordering</em> for the (infinitely many!)
 unit types that could appear in these packs.  This ordering needs to be known <em>at compile time</em>.

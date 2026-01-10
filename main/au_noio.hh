@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-57-gbcc4d83
+// Version identifier: 0.5.0-base-58-g18dcfff
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -5304,8 +5304,8 @@ struct AreUnitsPointEquivalent
 // responsible for this; thus, they should never name this type directly.  Rather, they should name
 // the `CommonUnitT` alias, which will handle the canonicalization.
 template <typename... Us>
-struct CommonUnit {
-    static_assert(AreElementsInOrder<CommonUnit, CommonUnit<Us...>>::value,
+struct CommonUnitPack {
+    static_assert(AreElementsInOrder<CommonUnitPack, CommonUnitPack<Us...>>::value,
                   "Elements must be listed in ascending order");
     static_assert(HasSameDimension<Us...>::value,
                   "Common unit only meaningful if units have same dimension");
@@ -5315,7 +5315,7 @@ struct CommonUnit {
 };
 
 template <typename A, typename B>
-struct InOrderFor<CommonUnit, A, B> : InOrderFor<UnitProduct, A, B> {};
+struct InOrderFor<CommonUnitPack, A, B> : InOrderFor<UnitProduct, A, B> {};
 
 template <typename... Us>
 struct UnitList {};
@@ -5431,7 +5431,7 @@ struct DistinctUnscaledUnitsImpl : stdx::type_identity<UnitList<UnscaledUnit<U>>
 template <typename U>
 using DistinctUnscaledUnits = typename DistinctUnscaledUnitsImpl<U>::type;
 template <typename... Us>
-struct DistinctUnscaledUnitsImpl<CommonUnit<Us...>>
+struct DistinctUnscaledUnitsImpl<CommonUnitPack<Us...>>
     : stdx::type_identity<FlatDedupedTypeListT<UnitList, UnscaledUnit<Us>...>> {};
 
 template <typename U, typename DistinctUnits>
@@ -5467,8 +5467,8 @@ using CommonUnitLabel = FlatDedupedTypeListT<detail::CommonUnitLabelImpl, Us...>
 template <typename... Us>
 struct ComputeCommonUnitImpl
     : stdx::type_identity<detail::EliminateRedundantUnits<
-          FlatDedupedTypeListT<CommonUnit, detail::ReplaceCommonPointUnitWithCommonUnit<Us>...>>> {
-};
+          FlatDedupedTypeListT<CommonUnitPack,
+                               detail::ReplaceCommonPointUnitWithCommonUnit<Us>...>>> {};
 template <>
 struct ComputeCommonUnitImpl<> : stdx::type_identity<Zero> {};
 
@@ -5603,8 +5603,8 @@ using CommonAmongUnitsAndOriginDisplacements =
     CommonUnitT<Us...,
                 detail::ComputeOriginDisplacementUnit<detail::UnitOfLowestOrigin<Us...>, Us>...>;
 template <typename... Us>
-struct CommonPointUnit : CommonAmongUnitsAndOriginDisplacements<Us...> {
-    static_assert(AreElementsInOrder<CommonPointUnit, CommonPointUnit<Us...>>::value,
+struct CommonPointUnitPack : CommonAmongUnitsAndOriginDisplacements<Us...> {
+    static_assert(AreElementsInOrder<CommonPointUnitPack, CommonPointUnitPack<Us...>>::value,
                   "Elements must be listed in ascending order");
     static_assert(HasSameDimension<Us...>::value,
                   "Common unit only meaningful if units have same dimension");
@@ -5614,15 +5614,15 @@ struct CommonPointUnit : CommonAmongUnitsAndOriginDisplacements<Us...> {
 
 namespace detail {
 template <typename... Us>
-struct ReplaceCommonPointUnitWithCommonUnitImpl<CommonPointUnit<Us...>>
+struct ReplaceCommonPointUnitWithCommonUnitImpl<CommonPointUnitPack<Us...>>
     : stdx::type_identity<CommonAmongUnitsAndOriginDisplacements<Us...>> {};
 }  // namespace detail
 
 template <typename A, typename B>
-struct InOrderFor<CommonPointUnit, A, B> : InOrderFor<UnitProduct, A, B> {};
+struct InOrderFor<CommonPointUnitPack, A, B> : InOrderFor<UnitProduct, A, B> {};
 
 template <typename... Us>
-using ComputeCommonPointUnitImpl = FlatDedupedTypeListT<CommonPointUnit, Us...>;
+using ComputeCommonPointUnitImpl = FlatDedupedTypeListT<CommonPointUnitPack, Us...>;
 
 template <typename... Us>
 struct ComputeCommonPointUnit
@@ -5772,16 +5772,16 @@ template <typename U>
 constexpr typename UnitLabel<ScaledUnit<U, Magnitude<Negative>>>::LabelT
     UnitLabel<ScaledUnit<U, Magnitude<Negative>>>::value;
 
-// Implementation for CommonUnit: give size in terms of each constituent unit.
+// Implementation for CommonUnitPack: give size in terms of each constituent unit.
 template <typename... Us>
-struct UnitLabel<CommonUnit<Us...>>
+struct UnitLabel<CommonUnitPack<Us...>>
     : CommonUnitLabel<decltype(Us{} *
-                               (detail::MagT<CommonUnit<Us...>>{} / detail::MagT<Us>{}))...> {};
+                               (detail::MagT<CommonUnitPack<Us...>>{} / detail::MagT<Us>{}))...> {};
 
-// Implementation for CommonPointUnit: give size in terms of each constituent unit, taking any
+// Implementation for CommonPointUnitPack: give size in terms of each constituent unit, taking any
 // origin displacements into account.
 template <typename... Us>
-struct UnitLabel<CommonPointUnit<Us...>>
+struct UnitLabel<CommonPointUnitPack<Us...>>
     : UnitLabel<CommonAmongUnitsAndOriginDisplacements<Us...>> {};
 
 template <typename Unit>
@@ -5886,10 +5886,10 @@ template <typename B, std::intmax_t N, std::intmax_t D>
 struct CoarseUnitOrdering<RatioPow<B, N, D>> : std::integral_constant<int, 5> {};
 
 template <typename... Us>
-struct CoarseUnitOrdering<CommonUnit<Us...>> : std::integral_constant<int, 6> {};
+struct CoarseUnitOrdering<CommonUnitPack<Us...>> : std::integral_constant<int, 6> {};
 
 template <typename... Us>
-struct CoarseUnitOrdering<CommonPointUnit<Us...>> : std::integral_constant<int, 7> {};
+struct CoarseUnitOrdering<CommonPointUnitPack<Us...>> : std::integral_constant<int, 7> {};
 
 template <typename A, typename B>
 struct OrderByUnitOrderTiebreaker
