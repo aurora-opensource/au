@@ -27,6 +27,8 @@ cc_test(
         "nholthaus_units_example_usage.hh",
         "nholthaus_units_test.cc",
     ],
+    # The external nholthaus_units library has -Wconversion issues we can't fix.
+    tags = ["no_wconversion"],
     deps = [
         ":nholthaus_units",
         "//au",
