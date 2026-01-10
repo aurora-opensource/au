@@ -37,10 +37,9 @@ struct Dimension {
 
 // Define readable operations for product, quotient, power, inverse on Dimensions.
 template <typename... BPs>
-using DimProductT = PackProductT<Dimension, BPs...>;
+using DimProduct = PackProductT<Dimension, BPs...>;
 template <typename... BPs>
-using DimProduct = DimProductT<BPs...>;
-
+using DimProductT = DimProduct<BPs...>;
 template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using DimPowerT = PackPowerT<Dimension, T, ExpNum, ExpDen>;
 template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
