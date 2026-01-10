@@ -19,7 +19,7 @@
 # This workflow was added in response to issue #601, where `REPO.bazel`
 # using `ignore_directories` forced users to upgrade to Bazel 8+.
 
-name: bzlmod-client-build-and-test
+name: bazel-client-build-and-test
 
 on:
   push:
@@ -45,5 +45,5 @@ jobs:
           USE_BAZEL_VERSION: ${{ matrix.bazel_version }}
 
       - name: Run client executable
-        run: ./bazel-bin/test_au_client
+        run: bazelisk run //:test_au_client
         working-directory: bzlmod_test_client
