@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-56-g5af4034
+// Version identifier: 0.5.0-base-57-gbcc4d83
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -2879,13 +2879,23 @@ struct Dimension {
 
 // Define readable operations for product, quotient, power, inverse on Dimensions.
 template <typename... BPs>
-using DimProductT = PackProductT<Dimension, BPs...>;
+using DimProduct = PackProductT<Dimension, BPs...>;
+template <typename... BPs>
+using DimProductT = DimProduct<BPs...>;
 template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
-using DimPowerT = PackPowerT<Dimension, T, ExpNum, ExpDen>;
+using DimPower = PackPowerT<Dimension, T, ExpNum, ExpDen>;
+template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
+using DimPowerT = DimPower<T, ExpNum, ExpDen>;
+
 template <typename T, typename U>
-using DimQuotientT = PackQuotientT<Dimension, T, U>;
+using DimQuotient = PackQuotientT<Dimension, T, U>;
+template <typename T, typename U>
+using DimQuotientT = DimQuotient<T, U>;
+
 template <typename T>
-using DimInverseT = PackInverseT<Dimension, T>;
+using DimInverse = PackInverseT<Dimension, T>;
+template <typename T>
+using DimInverseT = DimInverse<T>;
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator*(Dimension<BP1s...>, Dimension<BP2s...>) {
@@ -3133,13 +3143,24 @@ struct Magnitude {
 
 // Define readable operations for product, quotient, power, inverse on Magnitudes.
 template <typename... BPs>
-using MagProductT = PackProductT<Magnitude, BPs...>;
+using MagProduct = PackProductT<Magnitude, BPs...>;
+template <typename... BPs>
+using MagProductT = MagProduct<BPs...>;
+
 template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
-using MagPowerT = PackPowerT<Magnitude, T, ExpNum, ExpDen>;
+using MagPower = PackPowerT<Magnitude, T, ExpNum, ExpDen>;
+template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
+using MagPowerT = MagPower<T, ExpNum, ExpDen>;
+
 template <typename T, typename U>
-using MagQuotientT = PackQuotientT<Magnitude, T, U>;
+using MagQuotient = PackQuotientT<Magnitude, T, U>;
+template <typename T, typename U>
+using MagQuotientT = MagQuotient<T, U>;
+
 template <typename T>
-using MagInverseT = PackInverseT<Magnitude, T>;
+using MagInverse = PackInverseT<Magnitude, T>;
+template <typename T>
+using MagInverseT = MagInverse<T>;
 
 // Enable negative magnitudes with a type representing (-1) that appears/disappears under powers.
 struct Negative {};
@@ -5372,16 +5393,22 @@ using UnitProductT =
 
 // Raise a Unit to a (possibly rational) Power.
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
-using UnitPowerT =
+using UnitPower =
     UnpackIfSoloT<UnitProduct, PackPowerT<UnitProduct, AsPackT<UnitProduct, U>, ExpNum, ExpDen>>;
+template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
+using UnitPowerT = UnitPower<U, ExpNum, ExpDen>;
 
 // Compute the inverse of a unit.
 template <typename U>
-using UnitInverseT = UnitPowerT<U, -1>;
+using UnitInverse = UnitPower<U, -1>;
+template <typename U>
+using UnitInverseT = UnitInverse<U>;
 
 // Compute the quotient of two units.
 template <typename U1, typename U2>
-using UnitQuotientT = UnitProductT<U1, UnitInverseT<U2>>;
+using UnitQuotient = UnitProductT<U1, UnitInverse<U2>>;
+template <typename U1, typename U2>
+using UnitQuotientT = UnitQuotient<U1, U2>;
 
 template <typename... Us>
 constexpr bool is_forward_declared_unit_valid(ForwardDeclareUnitProduct<Us...>) {

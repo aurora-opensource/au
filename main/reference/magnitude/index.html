@@ -2857,7 +2857,7 @@ In what follows, we&rsquo;ll use this convention:</p>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For <em>types</em> <code>M1</code> and <code>M2</code>:<ul>
-<li><code>MagProductT&lt;M1, M2&gt;</code></li>
+<li><code>MagProduct&lt;M1, M2&gt;</code></li>
 </ul>
 </li>
 <li>For <em>instances</em> <code>m1</code> and <code>m2</code>:<ul>
@@ -2865,12 +2865,17 @@ In what follows, we&rsquo;ll use this convention:</p>
 </ul>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Older releases used <code>MagProductT</code> (with the <code>T</code> suffix) instead of <code>MagProduct</code>.  Prefer
+<code>MagProduct</code>.  <code>MagProductT</code> is deprecated, and will be removed in future releases.</p>
+</div>
 <h3 id="division">Division<a class="headerlink" href="#division" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> The quotient of two <code>Magnitude</code> values.</p>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For <em>types</em> <code>M1</code> and <code>M2</code>:<ul>
-<li><code>MagQuotientT&lt;M1, M2&gt;</code></li>
+<li><code>MagQuotient&lt;M1, M2&gt;</code></li>
 </ul>
 </li>
 <li>For <em>instances</em> <code>m1</code> and <code>m2</code>:<ul>
@@ -2878,6 +2883,11 @@ In what follows, we&rsquo;ll use this convention:</p>
 </ul>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Older releases used <code>MagQuotientT</code> (with the <code>T</code> suffix) instead of <code>MagQuotient</code>.  Prefer
+<code>MagQuotient</code>.  <code>MagQuotientT</code> is deprecated, and will be removed in future releases.</p>
+</div>
 <h3 id="negation">Negation<a class="headerlink" href="#negation" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> The negative of a <code>Magnitude</code>.</p>
 <p><strong>Syntax:</strong></p>
@@ -2897,7 +2907,7 @@ In what follows, we&rsquo;ll use this convention:</p>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For a <em>type</em> <code>M</code>, and an integral power <code>N</code>:<ul>
-<li><code>MagPowerT&lt;M, N&gt;</code></li>
+<li><code>MagPower&lt;M, N&gt;</code></li>
 </ul>
 </li>
 <li>For an <em>instance</em> <code>m</code>, and an integral power <code>N</code>:<ul>
@@ -2905,12 +2915,17 @@ In what follows, we&rsquo;ll use this convention:</p>
 </ul>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Older releases used <code>MagPowerT</code> (with the <code>T</code> suffix) instead of <code>MagPower</code>.  Prefer
+<code>MagPower</code>.  <code>MagPowerT</code> is deprecated, and will be removed in future releases.</p>
+</div>
 <h3 id="roots">Roots<a class="headerlink" href="#roots" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> An integral root of a <code>Magnitude</code>.</p>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For a <em>type</em> <code>M</code>, and an integral root <code>N</code>:<ul>
-<li><code>MagPowerT&lt;M, 1, N&gt;</code> (because the <span class="arithmatex"><span class="MathJax_Preview">N^\text{th}</span><script type="math/tex">N^\text{th}</script></span> root is equivalent to the
+<li><code>MagPower&lt;M, 1, N&gt;</code> (because the <span class="arithmatex"><span class="MathJax_Preview">N^\text{th}</span><script type="math/tex">N^\text{th}</script></span> root is equivalent to the
   <span class="arithmatex"><span class="MathJax_Preview">\left(\frac{1}{N}\right)^\text{th}</span><script type="math/tex">\left(\frac{1}{N}\right)^\text{th}</script></span> power)</li>
 </ul>
 </li>

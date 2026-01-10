@@ -3208,7 +3208,7 @@ In what follows, we&rsquo;ll use this convention:</p>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For <em>types</em> <code>U1</code> and <code>U2</code>:<ul>
-<li><code>UnitQuotientT&lt;U1, U2&gt;</code></li>
+<li><code>UnitQuotient&lt;U1, U2&gt;</code></li>
 </ul>
 </li>
 <li>For <em>instances</em> <code>u1</code> and <code>u2</code>:<ul>
@@ -3216,12 +3216,17 @@ In what follows, we&rsquo;ll use this convention:</p>
 </ul>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Older releases used <code>UnitQuotientT</code> (with the <code>T</code> suffix) instead of <code>UnitQuotient</code>.  Prefer
+<code>UnitQuotient</code>.  <code>UnitQuotientT</code> is deprecated, and will be removed in future releases.</p>
+</div>
 <h3 id="powers">Powers<a class="headerlink" href="#powers" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> A unit raised to an integral power.</p>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For a <em>type</em> <code>U</code>, and an integral power <code>N</code>:<ul>
-<li><code>UnitPowerT&lt;U, N&gt;</code></li>
+<li><code>UnitPower&lt;U, N&gt;</code></li>
 </ul>
 </li>
 <li>For an <em>instance</em> <code>u</code>, and an integral power <code>N</code>:<ul>
@@ -3229,12 +3234,17 @@ In what follows, we&rsquo;ll use this convention:</p>
 </ul>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Older releases used <code>UnitPowerT</code> (with the <code>T</code> suffix) instead of <code>UnitPower</code>.  Prefer
+<code>UnitPower</code>.  <code>UnitPowerT</code> is deprecated, and will be removed in future releases.</p>
+</div>
 <h3 id="roots">Roots<a class="headerlink" href="#roots" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> An integral root of a unit.</p>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For a <em>type</em> <code>U</code>, and an integral root <code>N</code>:<ul>
-<li><code>UnitPowerT&lt;U, 1, N&gt;</code> (because the <span class="arithmatex"><span class="MathJax_Preview">N^\text{th}</span><script type="math/tex">N^\text{th}</script></span> root is equivalent to the
+<li><code>UnitPower&lt;U, 1, N&gt;</code> (because the <span class="arithmatex"><span class="MathJax_Preview">N^\text{th}</span><script type="math/tex">N^\text{th}</script></span> root is equivalent to the
   <span class="arithmatex"><span class="MathJax_Preview">\left(\frac{1}{N}\right)^\text{th}</span><script type="math/tex">\left(\frac{1}{N}\right)^\text{th}</script></span> power)</li>
 </ul>
 </li>
