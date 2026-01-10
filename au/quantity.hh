@@ -179,9 +179,10 @@ class Quantity {
     constexpr Quantity() noexcept = default;
 
     // Implicit construction from any exactly-equivalent type.
-    template <typename T,
-              std::enable_if_t<std::is_convertible<detail::CorrespondingQuantityType<T>, Quantity>::value,
-                               int> = 0>
+    template <
+        typename T,
+        std::enable_if_t<std::is_convertible<detail::CorrespondingQuantityType<T>, Quantity>::value,
+                         int> = 0>
     constexpr Quantity(T &&x) : Quantity{as_quantity(std::forward<T>(x))} {}
 
     // `q.as<Rep>(new_unit)`, or `q.as<Rep>(new_unit, risk_policy)`
@@ -370,12 +371,14 @@ class Quantity {
     }
 
     // Automatic conversion to any equivalent type that supports it.
-    template <typename T,
-              std::enable_if_t<std::is_convertible<Quantity, detail::CorrespondingQuantityType<T>>::value,
-                               int> = 0>
+    template <
+        typename T,
+        std::enable_if_t<std::is_convertible<Quantity, detail::CorrespondingQuantityType<T>>::value,
+                         int> = 0>
     constexpr operator T() const {
         return CorrespondingQuantity<T>::construct_from_value(
-            detail::CorrespondingQuantityType<T>{*this}.in(typename CorrespondingQuantity<T>::Unit{}));
+            detail::CorrespondingQuantityType<T>{*this}.in(
+                typename CorrespondingQuantity<T>::Unit{}));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
