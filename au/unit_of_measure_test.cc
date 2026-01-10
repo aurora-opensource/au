@@ -94,7 +94,7 @@ struct AssociatedUnitImpl<SomeUnitWrapper<UnitT>> : stdx::type_identity<UnitT> {
 template <typename... Units>
 struct SomePack {};
 template <typename A, typename B>
-struct InOrderFor<SomePack, A, B> : InOrderFor<CommonUnit, A, B> {};
+struct InOrderFor<SomePack, A, B> : InOrderFor<CommonUnitPack, A, B> {};
 
 struct UnlabeledUnit : UnitImpl<Length> {};
 
@@ -509,15 +509,15 @@ struct X : decltype(Inches{} * mag<3>()) {};
 struct Y : decltype(Inches{} * mag<5>()) {};
 struct Z : decltype(Inches{} * mag<7>()) {};
 
-TEST(CommonUnit, UnpacksTypesInNestedCommonUnit) {
+TEST(CommonUnitPack, UnpacksTypesInNestedCommonUnit) {
     using C1 = CommonUnitT<W, X>;
-    ASSERT_THAT((detail::IsPackOf<CommonUnit, C1>{}), IsTrue());
+    ASSERT_THAT((detail::IsPackOf<CommonUnitPack, C1>{}), IsTrue());
 
     using C2 = CommonUnitT<Y, Z>;
-    ASSERT_THAT((detail::IsPackOf<CommonUnit, C2>{}), IsTrue());
+    ASSERT_THAT((detail::IsPackOf<CommonUnitPack, C2>{}), IsTrue());
 
     using Common = CommonUnitT<C1, C2>;
-    ASSERT_THAT((detail::IsPackOf<CommonUnit, Common>{}), IsTrue());
+    ASSERT_THAT((detail::IsPackOf<CommonUnitPack, Common>{}), IsTrue());
 
     // Check that `c(c(w, x), c(y, z))` is the same as `c(w, x, y, z)`.
     StaticAssertTypeEq<Common, CommonUnitT<W, X, Y, Z>>();
@@ -567,15 +567,15 @@ TEST(CommonPointUnit, PrefersUnitFromListIfAnyIdentical) {
     StaticAssertTypeEq<CommonPointUnitT<Celsius, Milli<Kelvins>, Milli<Celsius>>, Milli<Kelvins>>();
 }
 
-TEST(CommonPointUnit, UnpacksTypesInNestedCommonUnit) {
+TEST(CommonPointUnitPack, UnpacksTypesInNestedCommonUnit) {
     using C1 = CommonPointUnitT<W, X>;
-    ASSERT_THAT((detail::IsPackOf<CommonPointUnit, C1>{}), IsTrue());
+    ASSERT_THAT((detail::IsPackOf<CommonPointUnitPack, C1>{}), IsTrue());
 
     using C2 = CommonPointUnitT<Y, Z>;
-    ASSERT_THAT((detail::IsPackOf<CommonPointUnit, C2>{}), IsTrue());
+    ASSERT_THAT((detail::IsPackOf<CommonPointUnitPack, C2>{}), IsTrue());
 
     using Common = CommonPointUnitT<C1, C2>;
-    ASSERT_THAT((detail::IsPackOf<CommonPointUnit, Common>{}), IsTrue());
+    ASSERT_THAT((detail::IsPackOf<CommonPointUnitPack, Common>{}), IsTrue());
 
     // Check that `c(c(w, x), c(y, z))` is the same as `c(w, x, y, z)`.
     StaticAssertTypeEq<Common, CommonPointUnitT<W, X, Y, Z>>();

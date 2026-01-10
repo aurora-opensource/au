@@ -1063,7 +1063,7 @@ sufficient condition: for example, even `UnitInverseT<Seconds>` and `Hertz` won'
     In case you want to understand more, here is the gist.
 
     Au is _heavily_ based on [parameter packs](./reference/detail/packs.md).  Some of these packs,
-    such as `UnitProduct<...>` and `CommonUnit<...>`, take _units_ as their arguments.
+    such as `UnitProduct<...>` and `CommonUnitPack<...>`, take _units_ as their arguments.
 
     Every parameter pack needs an unambiguous canonical ordering for any possible set of input
     arguments.  Therefore, we need to create a _strict total ordering_ for the (infinitely many!)
