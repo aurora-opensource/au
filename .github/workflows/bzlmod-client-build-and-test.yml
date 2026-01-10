@@ -1,0 +1,49 @@
+# Copyright 2026 Aurora Operations, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Test that external Bazel projects can consume Au as a dependency.
+# This workflow tests with multiple Bazel versions to ensure backward
+# compatibility.
+#
+# This workflow was added in response to issue #601, where `REPO.bazel`
+# using `ignore_directories` forced users to upgrade to Bazel 8+.
+
+name: bzlmod-client-build-and-test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  bzlmod-client-build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        bazel_version: ["7.6.1", "8.4.2"]
+
+    steps:
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b #v4.1.5
+
+      - name: Build client with Bazel ${{ matrix.bazel_version }}
+        run: bazelisk build //:test_au_client
+        working-directory: bzlmod_test_client
+        env:
+          USE_BAZEL_VERSION: ${{ matrix.bazel_version }}
+
+      - name: Run client executable
+        run: ./bazel-bin/test_au_client
+        working-directory: bzlmod_test_client
