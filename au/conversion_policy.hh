@@ -216,7 +216,7 @@ struct ConstructionPolicy {
     template <typename SourceUnit, typename SourceRep>
     using PermitImplicitFrom =
         stdx::conjunction<HasSameDimension<Unit, SourceUnit>,
-                          detail::ImplicitConversionPolicy<detail::UseStaticCast,
+                          detail::ImplicitConversionPolicy<detail::UseImplicitConversion,
                                                            Rep,
                                                            ScaleFactor<SourceUnit>,
                                                            SourceRep>>;
