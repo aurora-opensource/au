@@ -4,4 +4,5 @@ cmake/install*
 test_package/build*
 bzlmod_test_client/bazel-*
 bzlmod_test_client/MODULE.bazel.lock
+workspace_test_client/bazel-*
 Testing
