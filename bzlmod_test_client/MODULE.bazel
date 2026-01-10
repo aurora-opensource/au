@@ -21,9 +21,8 @@ module(
 
 bazel_dep(name = "rules_cc", version = "0.1.1")
 
-# Depend on Au from the Bazel Central Registry.
-# In CI, we override this to point to the local source for testing.
-bazel_dep(name = "au", version = "0.3.5")
+# The version here is ignored due to local_path_override below.
+bazel_dep(name = "au", version = "0.0.0")
 local_path_override(
     module_name = "au",
     path = "..",
