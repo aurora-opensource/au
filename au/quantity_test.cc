@@ -96,7 +96,7 @@ struct PerDay : decltype(UnitInverseT<Days>{}) {};
 constexpr auto per_day = QuantityMaker<PerDay>{};
 
 template <typename... Us>
-constexpr auto num_units_in_product(UnitProduct<Us...>) {
+constexpr auto num_units_in_product(UnitProductPack<Us...>) {
     return sizeof...(Us);
 }
 
@@ -673,14 +673,14 @@ TEST(Quantity, RatioOfEquivalentTypesIsScalar) {
 }
 
 TEST(Quantity, ProductOfInvertingUnitsIsScalar) {
-    // We pass `UnitProductT` to this function template, which ensures that we get a `UnitProduct`
-    // (note: NOT `UnitProductT`!) with the expected number of arguments.  Recall that
-    // `UnitProductT` is the user-facing "unit computation" interface, and `UnitProduct` is the
-    // named template which gets passed around the system.
+    // We pass `UnitProductT` to this function template, which ensures that we get a
+    // `UnitProductPack` (note: NOT `UnitProductT`!) with the expected number of arguments.  Recall
+    // that `UnitProductT` is the user-facing "unit computation" interface, and `UnitProductPack` is
+    // the named template which gets passed around the system.
     //
     // The point is to make sure that the product-unit of `Days` and `PerDay` does **not** reduce to
-    // something trivial, like `UnitProduct<>`.  Rather, it should be its own non-trivial
-    // unit---although, naturally, it must be **quantity-equivalent** to `UnitProduct<>`.
+    // something trivial, like `UnitProductPack<>`.  Rather, it should be its own non-trivial
+    // unit---although, naturally, it must be **quantity-equivalent** to `UnitProductPack<>`.
     ASSERT_THAT(num_units_in_product(UnitProductT<Days, PerDay>{}), Eq(2));
 
     EXPECT_THAT(days(3) * per_day(8), SameTypeAndValue(24));

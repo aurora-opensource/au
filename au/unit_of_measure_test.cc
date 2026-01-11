@@ -180,14 +180,14 @@ TEST(Pow, FunctionGivesUnitWhichIsEquivalentToManuallyComputedPower) {
     EXPECT_THAT(are_units_quantity_equivalent(cubic_inches, in * in * in), IsTrue());
 }
 
-TEST(UnitProduct, IsUnitlessUnitForNoInputs) {
-    StaticAssertTypeEq<DimT<UnitProduct<>>, Dimension<>>();
-    StaticAssertTypeEq<MagT<UnitProduct<>>, Magnitude<>>();
+TEST(UnitProductPack, IsUnitlessUnitForNoInputs) {
+    StaticAssertTypeEq<DimT<UnitProductPack<>>, Dimension<>>();
+    StaticAssertTypeEq<MagT<UnitProductPack<>>, Magnitude<>>();
 }
 
-TEST(UnitProduct, ExactlyCancellingInstancesYieldsNullPack) {
+TEST(UnitProductPack, ExactlyCancellingInstancesYieldsNullPack) {
     StaticAssertTypeEq<decltype(Feet{} * Inches{} / Minutes{} / Inches{} * Minutes{} / Feet{}),
-                       UnitProduct<>>();
+                       UnitProductPack<>>();
 }
 
 TEST(UnitProductT, IdentityForSingleUnit) {
@@ -679,7 +679,7 @@ TEST(UnitLabel, PrintsExponentForUnitPower) {
     EXPECT_THAT(unit_label(RatioPow<Feet, -22, 7>{}), StrEq("ft^(-22/7)"));
 }
 
-TEST(UnitLabel, EmptyForNullProduct) { EXPECT_THAT(unit_label<UnitProduct<>>(), StrEq("")); }
+TEST(UnitLabel, EmptyForNullProduct) { EXPECT_THAT(unit_label<UnitProductPack<>>(), StrEq("")); }
 
 TEST(UnitLabel, NonintrusivelyLabelableByTrait) {
     EXPECT_THAT(unit_label<TraitLabeledUnit>(), StrEq("TLU"));
@@ -725,7 +725,7 @@ TEST(UnitLabel, LabelsCommonUnitCorrectly) {
                       StrEq("EQUIV{[(1 / 5000) m], [(1 / 127) in]}")));
 }
 
-TEST(UnitLabel, CommonUnitLabelWorksWithUnitProduct) {
+TEST(UnitLabel, CommonUnitLabelWorksWithUnitProductPack) {
     using U = CommonUnitT<UnitQuotientT<Meters, Minutes>, UnitQuotientT<Inches, Minutes>>;
     EXPECT_THAT(unit_label(U{}),
                 AnyOf(StrEq("EQUIV{[(1 / 127) in / min], [(1 / 5000) m / min]}"),
@@ -751,7 +751,7 @@ TEST(UnitLabel, LabelsCommonPointUnitCorrectly) {
                       StrEq("EQUIV{[(1 / 5000) m], [(1 / 127) in]}")));
 }
 
-TEST(UnitLabel, CommonPointUnitLabelWorksWithUnitProduct) {
+TEST(UnitLabel, CommonPointUnitLabelWorksWithUnitProductPack) {
     using U = CommonPointUnitT<UnitQuotientT<Meters, Minutes>, UnitQuotientT<Inches, Minutes>>;
     EXPECT_THAT(unit_label(U{}),
                 AnyOf(StrEq("EQUIV{[(1 / 127) in / min], [(1 / 5000) m / min]}"),

@@ -84,21 +84,21 @@ We resolve this with a "warrant and check" approach, explained in the next secti
 ### Compound units
 
 The only way to forward declare a compound unit is to specify the exact types that go into the
-`UnitProduct<...>` template, and in the exact correct order.  We generally avoid having end users do
-this, both because it's hard to get right, and because it's an encapsulated implementation detail
-which could change.  However, for cases where the added speed from forward declaration really
+`UnitProductPack<...>` template, and in the exact correct order.  We generally avoid having end
+users do this, both because it's hard to get right, and because it's an encapsulated implementation
+detail which could change.  However, for cases where the added speed from forward declaration really
 matters, we can do the next best thing: make it easy to check that it's right.
 
 Here is a series of steps to follow to forward declare compound units.
 
-1.  **Find the types in `UnitProduct<...>`.**  One trick to do this is to assign an instance of the
-    compound unit type itself to another type, say, an `int`.  The _compiler error_ will contain the
-    correct type name.  Look for `UnitProduct<...>` in the error message.
+1.  **Find the types in `UnitProductPack<...>`.**  One trick to do this is to assign an instance of
+    the compound unit type itself to another type, say, an `int`.  The _compiler error_ will contain
+    the correct type name.  Look for `UnitProductPack<...>` in the error message.
 
 2.  **Forward declare the powers with `ForwardDeclareUnitPow<...>`.**  If any of the types in
-    `UnitProduct<...>` are instances of `Pow` or `RatioPow`, you'll want to make an alias for those
-    types.  If your compound unit is, say, the inverse cube of a unit, you can forward declare it
-    like this:
+    `UnitProductPack<...>` are instances of `Pow` or `RatioPow`, you'll want to make an alias for
+    those types.  If your compound unit is, say, the inverse cube of a unit, you can forward declare
+    it like this:
 
     ```cpp
     using InverseYourUnitsCubedFwd = au::ForwardDeclareUnitPow<YourUnits, -3>;
@@ -111,8 +111,8 @@ Here is a series of steps to follow to forward declare compound units.
 
 3.  **Forward declare the product itself with `ForwardDeclareUnitProduct<...>`.**  This is similar
     to the above.  For example, if the full product type from step 1 was
-    `UnitProduct<OtherUnits, Pow<YourUnits, -3>>`, you would forward declare it like this (using the
-    existing `InverseYourUnitsCubed` that you would have defined in step 2):
+    `UnitProductPack<OtherUnits, Pow<YourUnits, -3>>`, you would forward declare it like this (using
+    the existing `InverseYourUnitsCubed` that you would have defined in step 2):
 
     ```cpp
     using OtherUnitsPerYourUnitsCubedFwd = au::ForwardDeclareUnitProduct<OtherUnits, InverseYourUnitsCubed>;
@@ -141,11 +141,16 @@ Normally, we'd refer to our speed type as `QuantityD<UnitQuotientT<Kilo<Meters>,
 `UnitQuotientT` needs the full machinery of the library.  Instead, let's create an alias,
 `KilometersPerHour`, so we can write `QuantityD<KilometersPerHour>`.
 
-The first step is to find out which types go inside `UnitProduct<...>`, and in which order.  This
-[compiler explorer link](https://godbolt.org/z/cW3Gs7YzT) shows how to do this.  Note the
+The first step is to find out which types go inside `UnitProductPack<...>`, and in which order.
+This [compiler explorer link](https://godbolt.org/z/cW3Gs7YzT) shows how to do this.  Note the
 highlighted portion of the error message:
 
 ![Compiler error providing info for fwd decls](../assets/fwd_declare_compiler_error.png)
+
+!!! note
+    The screenshot is from an earlier version of software, where the unit product pack type name was
+    `UnitProduct<...>` rather than `UnitProductPack<...>`.  We will update both the link and the
+    screenshot in a follow-on PR.
 
 We can see that the types are `Kilo<Meters>` and `Pow<Hours, -1>`, in that order.  We'll need to
 start by defining an alias for the latter alone.  Then, we can define our `KilometersPerHour` alias,
