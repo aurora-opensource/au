@@ -82,24 +82,24 @@ using LooksLikeAuOrOtherQuantity = stdx::disjunction<IsAuType<T>, HasCorrespondi
 // `au::Quantity`, but also `au::QuantityPoint`, and "quantity-like" types from other libraries
 // (which we consider as "anything that has a `CorrespondingQuantity`".
 template <template <class...> class Op, typename... Ts>
-struct ResultIfNoneAreQuantity;
+struct ResultIfNoneAreQuantityImpl;
 template <template <class...> class Op, typename... Ts>
-using ResultIfNoneAreQuantityT = typename ResultIfNoneAreQuantity<Op, Ts...>::type;
+using ResultIfNoneAreQuantity = typename ResultIfNoneAreQuantityImpl<Op, Ts...>::type;
 
 // Default implementation where we know that none are quantities.
 template <bool AreAnyQuantity, template <class...> class Op, typename... Ts>
-struct ResultIfNoneAreQuantityImpl : stdx::type_identity<Op<Ts...>> {};
+struct ResultIfNoneAreQuantityHelper : stdx::type_identity<Op<Ts...>> {};
 
 // Implementation if any of the types are quantities.
 template <template <class...> class Op, typename... Ts>
-struct ResultIfNoneAreQuantityImpl<true, Op, Ts...> : stdx::type_identity<void> {};
+struct ResultIfNoneAreQuantityHelper<true, Op, Ts...> : stdx::type_identity<void> {};
 
 // The main implementation.
 template <template <class...> class Op, typename... Ts>
-struct ResultIfNoneAreQuantity
-    : ResultIfNoneAreQuantityImpl<stdx::disjunction<LooksLikeAuOrOtherQuantity<Ts>...>::value,
-                                  Op,
-                                  Ts...> {};
+struct ResultIfNoneAreQuantityImpl
+    : ResultIfNoneAreQuantityHelper<stdx::disjunction<LooksLikeAuOrOtherQuantity<Ts>...>::value,
+                                    Op,
+                                    Ts...> {};
 
 // The `std::is_empty` is a good way to catch all of the various unit and other monovalue types in
 // our library, which have little else in common.  It's also just intrinsically true that it
@@ -132,10 +132,10 @@ struct IsValidRep : stdx::negation<detail::IsKnownInvalidRep<T>> {};
 
 template <typename T, typename U>
 struct IsProductValidRep
-    : IsValidRep<detail::ResultIfNoneAreQuantityT<detail::ProductTypeOrVoid, T, U>> {};
+    : IsValidRep<detail::ResultIfNoneAreQuantity<detail::ProductTypeOrVoid, T, U>> {};
 
 template <typename T, typename U>
 struct IsQuotientValidRep
-    : IsValidRep<detail::ResultIfNoneAreQuantityT<detail::QuotientTypeOrVoid, T, U>> {};
+    : IsValidRep<detail::ResultIfNoneAreQuantity<detail::QuotientTypeOrVoid, T, U>> {};
 
 }  // namespace au

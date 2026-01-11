@@ -145,21 +145,21 @@ TEST(IsQuotientValidRep, TrueOnlyForSideWhereQuotientExists) {
 namespace detail {
 
 TEST(ResultIfNoneAreQuantity, GivesResultWhenNoneAreQuantity) {
-    StaticAssertTypeEq<int, ResultIfNoneAreQuantityT<std::common_type_t, int, int>>();
+    StaticAssertTypeEq<int, ResultIfNoneAreQuantity<std::common_type_t, int, int>>();
     StaticAssertTypeEq<std::tuple<int, double, float>,
-                       ResultIfNoneAreQuantityT<std::tuple, int, double, float>>();
+                       ResultIfNoneAreQuantity<std::tuple, int, double, float>>();
 }
 
 TEST(ResultIfNoneAreQuantity, GivesVoidWhenAnyIsQuantity) {
     StaticAssertTypeEq<void,
-                       ResultIfNoneAreQuantityT<std::common_type_t, int, Quantity<Miles, int>>>();
+                       ResultIfNoneAreQuantity<std::common_type_t, int, Quantity<Miles, int>>>();
     StaticAssertTypeEq<void,
-                       ResultIfNoneAreQuantityT<std::tuple, int, Quantity<Miles, int>, float>>();
+                       ResultIfNoneAreQuantity<std::tuple, int, Quantity<Miles, int>, float>>();
 }
 
 TEST(ResultIfNoneAreQuantity, GivesVoidWhenAnyIsCorrespondingQuantity) {
-    StaticAssertTypeEq<void, ResultIfNoneAreQuantityT<std::common_type_t, int, MyMeters>>();
-    StaticAssertTypeEq<void, ResultIfNoneAreQuantityT<std::tuple, int, std::chrono::nanoseconds>>();
+    StaticAssertTypeEq<void, ResultIfNoneAreQuantity<std::common_type_t, int, MyMeters>>();
+    StaticAssertTypeEq<void, ResultIfNoneAreQuantity<std::tuple, int, std::chrono::nanoseconds>>();
 }
 
 TEST(ProductTypeOrVoid, GivesProductTypeForArithmeticInputs) {

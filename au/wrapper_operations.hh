@@ -45,10 +45,10 @@ namespace detail {
 // idea, see: https://github.com/aurora-opensource/au/issues/52
 struct NoTypeMember {};
 template <typename T>
-struct TypeIdentityIfLooksLikeValidRep
+struct TypeIdentityIfLooksLikeValidRepImpl
     : std::conditional_t<std::is_arithmetic<T>::value, stdx::type_identity<T>, NoTypeMember> {};
 template <typename T>
-using TypeIdentityIfLooksLikeValidRepT = typename TypeIdentityIfLooksLikeValidRep<T>::type;
+using TypeIdentityIfLooksLikeValidRep = typename TypeIdentityIfLooksLikeValidRepImpl<T>::type;
 
 //
 // A mixin that enables turning a raw number into a Quantity by multiplying or dividing.
@@ -58,28 +58,28 @@ struct MakesQuantityFromNumber {
     // (N * W), for number N and wrapper W.
     template <typename T>
     friend constexpr auto operator*(T x, UnitWrapper<Unit>)
-        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
+        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRep<T>> {
         return make_quantity<Unit>(x);
     }
 
     // (W * N), for number N and wrapper W.
     template <typename T>
     friend constexpr auto operator*(UnitWrapper<Unit>, T x)
-        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
+        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRep<T>> {
         return make_quantity<Unit>(x);
     }
 
     // (N / W), for number N and wrapper W.
     template <typename T>
     friend constexpr auto operator/(T x, UnitWrapper<Unit>)
-        -> Quantity<UnitInverseT<Unit>, TypeIdentityIfLooksLikeValidRepT<T>> {
-        return make_quantity<UnitInverseT<Unit>>(x);
+        -> Quantity<UnitInverse<Unit>, TypeIdentityIfLooksLikeValidRep<T>> {
+        return make_quantity<UnitInverse<Unit>>(x);
     }
 
     // (W / N), for number N and wrapper W.
     template <typename T>
     friend constexpr auto operator/(UnitWrapper<Unit>, T x)
-        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
+        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRep<T>> {
         static_assert(!std::is_integral<T>::value,
                       "Dividing by an integer value disallowed: would almost always produce 0");
         return make_quantity<Unit>(T{1} / x);
@@ -94,19 +94,19 @@ struct ScalesQuantity {
     // (W * Q), for wrapper W and quantity Q.
     template <typename U, typename R>
     friend constexpr auto operator*(UnitWrapper<Unit>, Quantity<U, R> q) {
-        return make_quantity<UnitProductT<Unit, U>>(q.in(U{}));
+        return make_quantity<UnitProduct<Unit, U>>(q.in(U{}));
     }
 
     // (Q * W), for wrapper W and quantity Q.
     template <typename U, typename R>
     friend constexpr auto operator*(Quantity<U, R> q, UnitWrapper<Unit>) {
-        return make_quantity<UnitProductT<U, Unit>>(q.in(U{}));
+        return make_quantity<UnitProduct<U, Unit>>(q.in(U{}));
     }
 
     // (Q / W), for wrapper W and quantity Q.
     template <typename U, typename R>
     friend constexpr auto operator/(Quantity<U, R> q, UnitWrapper<Unit>) {
-        return make_quantity<UnitQuotientT<U, Unit>>(q.in(U{}));
+        return make_quantity<UnitQuotient<U, Unit>>(q.in(U{}));
     }
 
     // (W / Q), for wrapper W and quantity Q.
@@ -114,7 +114,7 @@ struct ScalesQuantity {
     friend constexpr auto operator/(UnitWrapper<Unit>, Quantity<U, R> q) {
         static_assert(!std::is_integral<R>::value,
                       "Dividing by an integer value disallowed: would almost always produce 0");
-        return make_quantity<UnitQuotientT<Unit, U>>(R{1} / q.in(U{}));
+        return make_quantity<UnitQuotient<Unit, U>>(R{1} / q.in(U{}));
     }
 };
 
@@ -129,15 +129,15 @@ template <template <typename U> class UnitWrapper,
 struct PrecomposesWith {
     // (U * O), for "main" wrapper U and "other" wrapper O.
     template <typename U>
-    friend constexpr ResultWrapper<UnitProductT<Unit, U>> operator*(UnitWrapper<Unit>,
-                                                                    OtherWrapper<U>) {
+    friend constexpr ResultWrapper<UnitProduct<Unit, U>> operator*(UnitWrapper<Unit>,
+                                                                   OtherWrapper<U>) {
         return {};
     }
 
     // (U / O), for "main" wrapper U and "other" wrapper O.
     template <typename U>
-    friend constexpr ResultWrapper<UnitQuotientT<Unit, U>> operator/(UnitWrapper<Unit>,
-                                                                     OtherWrapper<U>) {
+    friend constexpr ResultWrapper<UnitQuotient<Unit, U>> operator/(UnitWrapper<Unit>,
+                                                                    OtherWrapper<U>) {
         return {};
     }
 };
@@ -153,15 +153,15 @@ template <template <typename U> class UnitWrapper,
 struct PostcomposesWith {
     // (O * U), for "main" wrapper U and "other" wrapper O.
     template <typename U>
-    friend constexpr ResultWrapper<UnitProductT<U, Unit>> operator*(OtherWrapper<U>,
-                                                                    UnitWrapper<Unit>) {
+    friend constexpr ResultWrapper<UnitProduct<U, Unit>> operator*(OtherWrapper<U>,
+                                                                   UnitWrapper<Unit>) {
         return {};
     }
 
     // (O / U), for "main" wrapper U and "other" wrapper O.
     template <typename U>
-    friend constexpr ResultWrapper<UnitQuotientT<U, Unit>> operator/(OtherWrapper<U>,
-                                                                     UnitWrapper<Unit>) {
+    friend constexpr ResultWrapper<UnitQuotient<U, Unit>> operator/(OtherWrapper<U>,
+                                                                    UnitWrapper<Unit>) {
         return {};
     }
 };
@@ -207,7 +207,7 @@ struct CanScaleByMagnitude {
     // (M / W), for magnitude M and wrapper W.
     template <typename... BPs>
     friend constexpr auto operator/(Magnitude<BPs...> m, UnitWrapper<Unit>) {
-        return UnitWrapper<decltype(UnitInverseT<Unit>{} * m)>{};
+        return UnitWrapper<decltype(UnitInverse<Unit>{} * m)>{};
     }
 
     // (W / M), for magnitude M and wrapper W.
@@ -229,13 +229,13 @@ struct SupportsRationalPowers {
     // (W^N), for wrapper W and integer N.
     template <std::intmax_t N>
     friend constexpr auto pow(UnitWrapper<Unit>) {
-        return UnitWrapper<UnitPowerT<Unit, N>>{};
+        return UnitWrapper<UnitPower<Unit, N>>{};
     }
 
     // (W^(1/N)), for wrapper W and integer N.
     template <std::intmax_t N>
     friend constexpr auto root(UnitWrapper<Unit>) {
-        return UnitWrapper<UnitPowerT<Unit, 1, N>>{};
+        return UnitWrapper<UnitPower<Unit, 1, N>>{};
     }
 };
 

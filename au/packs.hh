@@ -135,16 +135,16 @@ using FlatDedupedTypeListT = FlatDedupedTypeList<List, Ts...>;
 namespace detail {
 // Express a base power in its simplest form (base alone if power is 1, or Pow if exp is integral).
 template <typename T>
-struct SimplifyBasePowers;
+struct SimplifyBasePowersImpl;
 template <typename T>
-using SimplifyBasePowersT = typename SimplifyBasePowers<T>::type;
+using SimplifyBasePowers = typename SimplifyBasePowersImpl<T>::type;
 }  // namespace detail
 
 // Compute the product between two power packs.
 template <template <class...> class Pack, typename... Ts>
 struct PackProduct;
 template <template <class...> class Pack, typename... Ts>
-using PackProductT = detail::SimplifyBasePowersT<typename PackProduct<Pack, Ts...>::type>;
+using PackProductT = detail::SimplifyBasePowers<typename PackProduct<Pack, Ts...>::type>;
 
 // Compute a rational power of a pack.
 template <template <class...> class Pack, typename T, typename E>
@@ -154,7 +154,7 @@ template <template <class...> class Pack,
           std::intmax_t ExpNum,
           std::intmax_t ExpDen = 1>
 using PackPowerT =
-    detail::SimplifyBasePowersT<typename PackPower<Pack, T, std::ratio<ExpNum, ExpDen>>::type>;
+    detail::SimplifyBasePowers<typename PackPower<Pack, T, std::ratio<ExpNum, ExpDen>>::type>;
 
 // Compute the inverse of a power pack.
 template <template <class...> class Pack, typename T>
@@ -167,15 +167,15 @@ using PackQuotientT = PackProductT<Pack, T, PackInverseT<Pack, U>>;
 namespace detail {
 // Pull out all of the elements in a Pack whose exponents are positive.
 template <typename T>
-struct NumeratorPart;
+struct NumeratorPartImpl;
 template <typename T>
-using NumeratorPartT = typename NumeratorPart<T>::type;
+using NumeratorPart = typename NumeratorPartImpl<T>::type;
 
 // Pull out all of the elements in a Pack whose exponents are negative.
 template <typename T>
-struct DenominatorPart;
+struct DenominatorPartImpl;
 template <typename T>
-using DenominatorPartT = typename DenominatorPart<T>::type;
+using DenominatorPart = typename DenominatorPartImpl<T>::type;
 }  // namespace detail
 
 // A validator for a pack of Base Powers.
@@ -188,7 +188,7 @@ template <template <class...> class Pack, typename T>
 struct IsValidPack;
 
 // Assuming that `T` is an instance of `Pack<BPs...>`, validates that every consecutive pair from
-// `BaseT<BPs>...` satisfies the strict total ordering `InOrderFor<Pack, ...>` for `Pack`.
+// `Base<BPs>...` satisfies the strict total ordering `InOrderFor<Pack, ...>` for `Pack`.
 template <template <class...> class Pack, typename T>
 struct AreBasesInOrder;
 
@@ -249,8 +249,8 @@ using MagT = typename MagImpl<U>::type;
 template <typename B, std::intmax_t N>
 struct Pow {
     // TODO(#40): Clean up relationship between Dim/Mag and Pow, if compile times are OK.
-    using Dim = PackPowerT<Dimension, AsPackT<Dimension, detail::DimT<B>>, N>;
-    using Mag = PackPowerT<Magnitude, AsPackT<Magnitude, detail::MagT<B>>, N>;
+    using Dim = PackPowerT<Dimension, AsPack<Dimension, detail::DimT<B>>, N>;
+    using Mag = PackPowerT<Magnitude, AsPack<Magnitude, detail::MagT<B>>, N>;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,8 +260,8 @@ struct Pow {
 template <typename B, std::intmax_t N, std::intmax_t D>
 struct RatioPow {
     // TODO(#40): Clean up relationship between Dim/Mag and RatioPow, if compile times are OK.
-    using Dim = PackPowerT<Dimension, AsPackT<Dimension, detail::DimT<B>>, N, D>;
-    using Mag = PackPowerT<Magnitude, AsPackT<Magnitude, detail::MagT<B>>, N, D>;
+    using Dim = PackPowerT<Dimension, AsPack<Dimension, detail::DimT<B>>, N, D>;
+    using Mag = PackPowerT<Magnitude, AsPack<Magnitude, detail::MagT<B>>, N, D>;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -351,14 +351,14 @@ namespace detail {
 template <typename T, typename U>
 struct LeadBasesInOrder;
 template <template <class...> class P, typename H1, typename... T1, typename H2, typename... T2>
-struct LeadBasesInOrder<P<H1, T1...>, P<H2, T2...>> : InOrderFor<P, BaseT<H1>, BaseT<H2>> {};
+struct LeadBasesInOrder<P<H1, T1...>, P<H2, T2...>> : InOrderFor<P, Base<H1>, Base<H2>> {};
 
 // Helper: check that the lead exponents are in order.
 template <typename T, typename U>
 struct LeadExpsInOrder;
 template <template <class...> class P, typename H1, typename... T1, typename H2, typename... T2>
 struct LeadExpsInOrder<P<H1, T1...>, P<H2, T2...>>
-    : stdx::bool_constant<(std::ratio_subtract<ExpT<H1>, ExpT<H2>>::num < 0)> {};
+    : stdx::bool_constant<(std::ratio_subtract<Exp<H1>, Exp<H2>>::num < 0)> {};
 
 // Helper: apply InStandardPackOrder to tails.
 template <typename T, typename U>
@@ -404,7 +404,7 @@ struct InsertUsingOrderingForImpl<PackForOrdering, T, Pack<U, Us...>>
     : std::conditional<
           InOrderFor<PackForOrdering, T, U>::value,
           Pack<T, U, Us...>,
-          detail::PrependT<InsertUsingOrderingFor<PackForOrdering, T, Pack<Us...>>, U>> {};
+          detail::Prepend<InsertUsingOrderingFor<PackForOrdering, T, Pack<Us...>>, U>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `SortAs` implementation.
@@ -457,7 +457,7 @@ struct FlatDedupedTypeListImpl<List, List<T>, List<H, Ts...>> :
                            // If we're here, we know the candidate comes after the head.  So, try
                            // inserting it (recursively) in the tail, and then prepend the old Head
                            // (because we know it comes first).
-                           detail::PrependT<FlatDedupedTypeListT<List, List<T>, List<Ts...>>, H>>> {
+                           detail::Prepend<FlatDedupedTypeListT<List, List<T>, List<Ts...>>, H>>> {
 };
 
 // 2-ary recursive case, multi-element head: insert head of second element, and recurse.
@@ -505,12 +505,12 @@ struct PackProduct<Pack, Pack<T, Ts...>, Pack<>> : stdx::type_identity<Pack<T, T
 
 namespace detail {
 template <typename B, typename E1, typename E2>
-struct ComputeRationalPower {
+struct ComputeRationalPowerImpl {
     using E = std::ratio_add<E1, E2>;
     using type = RatioPow<B, E::num, E::den>;
 };
 template <typename B, typename E1, typename E2>
-using ComputeRationalPowerT = typename ComputeRationalPower<B, E1, E2>::type;
+using ComputeRationalPower = typename ComputeRationalPowerImpl<B, E1, E2>::type;
 }  // namespace detail
 
 // 2-ary Recursive case: two non-null packs.
@@ -519,23 +519,22 @@ struct PackProduct<P, P<H1, T1...>, P<H2, T2...>> :
 
     // If the bases for H1 and H2 are in-order, prepend H1 to the product of the remainder.
     std::conditional<
-        (InOrderFor<P, BaseT<H1>, BaseT<H2>>::value),
-        detail::PrependT<PackProductT<P, P<T1...>, P<H2, T2...>>, H1>,
+        (InOrderFor<P, Base<H1>, Base<H2>>::value),
+        detail::Prepend<PackProductT<P, P<T1...>, P<H2, T2...>>, H1>,
 
         // If the bases for H2 and H1 are in-order, prepend H2 to the product of the remainder.
         std::conditional_t<
-            (InOrderFor<P, BaseT<H2>, BaseT<H1>>::value),
-            detail::PrependT<PackProductT<P, P<T2...>, P<H1, T1...>>, H2>,
+            (InOrderFor<P, Base<H2>, Base<H1>>::value),
+            detail::Prepend<PackProductT<P, P<T2...>, P<H1, T1...>>, H2>,
 
             // If the bases have the same position, assume they really _are_ the same (because
             // InOrderFor will verify this if it uses LexicographicTotalOrdering), and add the
             // exponents.  (If the exponents add to zero, omit the term.)
             std::conditional_t<
-                (std::ratio_add<ExpT<H1>, ExpT<H2>>::num == 0),
+                (std::ratio_add<Exp<H1>, Exp<H2>>::num == 0),
                 PackProductT<P, P<T1...>, P<T2...>>,
-                detail::PrependT<PackProductT<P, P<T2...>, P<T1...>>,
-                                 detail::ComputeRationalPowerT<BaseT<H1>, ExpT<H1>, ExpT<H2>>>>>> {
-};
+                detail::Prepend<PackProductT<P, P<T2...>, P<T1...>>,
+                                detail::ComputeRationalPower<Base<H1>, Exp<H1>, Exp<H2>>>>>> {};
 
 // N-ary case, N > 2: recurse.
 template <template <class...> class P,
@@ -551,14 +550,14 @@ struct PackProduct<P, P<T1s...>, P<T2s...>, P<T3s...>, Ps...>
 
 namespace detail {
 template <typename T, typename E>
-using MultiplyExpFor = std::ratio_multiply<ExpT<T>, E>;
+using MultiplyExpFor = std::ratio_multiply<Exp<T>, E>;
 }
 
 template <template <class...> class P, typename... Ts, typename E>
 struct PackPower<P, P<Ts...>, E>
     : std::conditional<(E::num == 0),
                        P<>,
-                       P<RatioPow<BaseT<Ts>,
+                       P<RatioPow<Base<Ts>,
                                   detail::MultiplyExpFor<Ts, E>::num,
                                   detail::MultiplyExpFor<Ts, E>::den>...>> {};
 
@@ -614,50 +613,51 @@ constexpr bool all_true(Predicates &&...values) {
 // `AreBasesInOrder` implementation.
 
 template <template <class...> class Pack, typename... Ts>
-struct AreBasesInOrder<Pack, Pack<Ts...>> : AreElementsInOrder<Pack, Pack<BaseT<Ts>...>> {};
+struct AreBasesInOrder<Pack, Pack<Ts...>> : AreElementsInOrder<Pack, Pack<Base<Ts>...>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `AreAllPowersNonzero` implementation.
 
 template <template <class...> class Pack, typename... Ts>
 struct AreAllPowersNonzero<Pack, Pack<Ts...>>
-    : stdx::bool_constant<detail::all_true((ExpT<Ts>::num != 0)...)> {};
+    : stdx::bool_constant<detail::all_true((Exp<Ts>::num != 0)...)> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `SimplifyBasePowersT` implementation.
+// `SimplifyBasePowers` implementation.
 
 namespace detail {
 // To simplify an individual base power, by default, do nothing.
 template <typename T>
-struct SimplifyBasePower : stdx::type_identity<T> {};
+struct SimplifyBasePowerImpl : stdx::type_identity<T> {};
 template <typename T>
-using SimplifyBasePowerT = typename SimplifyBasePower<T>::type;
+using SimplifyBasePower = typename SimplifyBasePowerImpl<T>::type;
 
 // To simplify an integer power of a base, give the base alone if the exponent is 1; otherwise, do
 // nothing.
 template <typename B, std::intmax_t N>
-struct SimplifyBasePower<Pow<B, N>> : std::conditional<(N == 1), B, Pow<B, N>> {};
+struct SimplifyBasePowerImpl<Pow<B, N>> : std::conditional<(N == 1), B, Pow<B, N>> {};
 
 // To simplify a rational power of a base, simplify the integer power if the exponent is an integer
 // (i.e., if its denominator is 1); else, do nothing.
 template <typename B, std::intmax_t N, std::intmax_t D>
-struct SimplifyBasePower<RatioPow<B, N, D>>
-    : std::conditional<(D == 1), SimplifyBasePowerT<Pow<B, N>>, RatioPow<B, N, D>> {};
+struct SimplifyBasePowerImpl<RatioPow<B, N, D>>
+    : std::conditional<(D == 1), SimplifyBasePower<Pow<B, N>>, RatioPow<B, N, D>> {};
 
 // To simplify the base powers in a pack, give the pack with each base power simplified.
 template <template <class...> class Pack, typename... BPs>
-struct SimplifyBasePowers<Pack<BPs...>> : stdx::type_identity<Pack<SimplifyBasePowerT<BPs>...>> {};
+struct SimplifyBasePowersImpl<Pack<BPs...>> : stdx::type_identity<Pack<SimplifyBasePower<BPs>...>> {
+};
 }  // namespace detail
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `NumeratorPartT` and `DenominatorPartT` implementation.
+// `NumeratorPart` and `DenominatorPart` implementation.
 
 namespace detail {
 template <typename BP>
-struct IsInNumerator : stdx::bool_constant<(ExpT<BP>::num > 0)> {};
+struct IsInNumerator : stdx::bool_constant<(Exp<BP>::num > 0)> {};
 
 template <typename BP>
-struct IsInDenominator : stdx::bool_constant<(ExpT<BP>::num < 0)> {};
+struct IsInDenominator : stdx::bool_constant<(Exp<BP>::num < 0)> {};
 
 // A generic helper for both numerator and denominator.
 template <template <class> class Pred, typename T>
@@ -671,14 +671,14 @@ struct PullOutMatchingPowers<Pred, Pack<>> : stdx::type_identity<Pack<>> {};
 template <template <class> class Pred, template <class...> class Pack, typename H, typename... Ts>
 struct PullOutMatchingPowers<Pred, Pack<H, Ts...>>
     : std::conditional<(Pred<H>::value),
-                       detail::PrependT<typename PullOutMatchingPowers<Pred, Pack<Ts...>>::type, H>,
+                       detail::Prepend<typename PullOutMatchingPowers<Pred, Pack<Ts...>>::type, H>,
                        typename PullOutMatchingPowers<Pred, Pack<Ts...>>::type> {};
 
 template <typename T>
-struct NumeratorPart : PullOutMatchingPowers<IsInNumerator, T> {};
+struct NumeratorPartImpl : PullOutMatchingPowers<IsInNumerator, T> {};
 
 template <template <class...> class Pack, typename... Ts>
-struct DenominatorPart<Pack<Ts...>>
+struct DenominatorPartImpl<Pack<Ts...>>
     : stdx::type_identity<
           PackInverseT<Pack, typename PullOutMatchingPowers<IsInDenominator, Pack<Ts...>>::type>> {
 };

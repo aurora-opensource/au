@@ -67,7 +67,7 @@ using ApplicationStrategyFor = typename ApplicationStrategyForImpl<T, Mag, MagKi
 
 template <typename T, typename Mag>
 struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::INTEGER_DIVIDE>>
-    : stdx::type_identity<DivideTypeByInteger<T, MagProductT<Sign<Mag>, DenominatorT<Mag>>>> {};
+    : stdx::type_identity<DivideTypeByInteger<T, MagProduct<Sign<Mag>, DenominatorT<Mag>>>> {};
 
 template <typename T, typename Mag>
 struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>

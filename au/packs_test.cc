@@ -71,54 +71,54 @@ template <typename A, typename B>
 struct InOrderFor<LexiPack, A, B> : LexicographicTotalOrdering<A, B, OrderByFirst, OrderBySecond> {
 };
 
-TEST(BaseT, IdentityForArbitraryTypes) {
-    StaticAssertTypeEq<BaseT<int>, int>();
-    StaticAssertTypeEq<BaseT<char>, char>();
+TEST(Base, IdentityForArbitraryTypes) {
+    StaticAssertTypeEq<Base<int>, int>();
+    StaticAssertTypeEq<Base<char>, char>();
 }
 
-TEST(BaseT, FirstArgumentOfPow) {
-    StaticAssertTypeEq<BaseT<Pow<int, 3>>, int>();
-    StaticAssertTypeEq<BaseT<Pow<char, -1>>, char>();
+TEST(Base, FirstArgumentOfPow) {
+    StaticAssertTypeEq<Base<Pow<int, 3>>, int>();
+    StaticAssertTypeEq<Base<Pow<char, -1>>, char>();
 }
 
-TEST(BaseT, FirstArgumentOfRatioPow) {
-    StaticAssertTypeEq<BaseT<RatioPow<int, 3, 2>>, int>();
-    StaticAssertTypeEq<BaseT<RatioPow<char, -1, 4>>, char>();
+TEST(Base, FirstArgumentOfRatioPow) {
+    StaticAssertTypeEq<Base<RatioPow<int, 3, 2>>, int>();
+    StaticAssertTypeEq<Base<RatioPow<char, -1, 4>>, char>();
 }
 
-TEST(ExpT, Ratio1ForArbitraryTypes) {
-    StaticAssertTypeEq<ExpT<int>, std::ratio<1>>();
-    StaticAssertTypeEq<ExpT<char>, std::ratio<1>>();
+TEST(Exp, Ratio1ForArbitraryTypes) {
+    StaticAssertTypeEq<Exp<int>, std::ratio<1>>();
+    StaticAssertTypeEq<Exp<char>, std::ratio<1>>();
 }
 
-TEST(ExpT, SecondArgumentOfPowAsRatio) {
-    StaticAssertTypeEq<ExpT<Pow<int, 3>>, std::ratio<3>>();
-    StaticAssertTypeEq<ExpT<Pow<char, -1>>, std::ratio<-1>>();
+TEST(Exp, SecondArgumentOfPowAsRatio) {
+    StaticAssertTypeEq<Exp<Pow<int, 3>>, std::ratio<3>>();
+    StaticAssertTypeEq<Exp<Pow<char, -1>>, std::ratio<-1>>();
 }
 
-TEST(ExpT, RatioOfFinalTwoArgumentsOfRatioPow) {
-    StaticAssertTypeEq<ExpT<RatioPow<int, 3, 2>>, std::ratio<3, 2>>();
-    StaticAssertTypeEq<ExpT<RatioPow<char, -1, 4>>, std::ratio<-1, 4>>();
+TEST(Exp, RatioOfFinalTwoArgumentsOfRatioPow) {
+    StaticAssertTypeEq<Exp<RatioPow<int, 3, 2>>, std::ratio<3, 2>>();
+    StaticAssertTypeEq<Exp<RatioPow<char, -1, 4>>, std::ratio<-1, 4>>();
 }
 
-TEST(AsPackT, IdentityForPackOfSameType) {
-    StaticAssertTypeEq<AsPackT<Pack, Pack<>>, Pack<>>();
-    StaticAssertTypeEq<AsPackT<Pack, Pack<int>>, Pack<int>>();
-    StaticAssertTypeEq<AsPackT<Pack, Pack<int, char>>, Pack<int, char>>();
+TEST(AsPack, IdentityForPackOfSameType) {
+    StaticAssertTypeEq<AsPack<Pack, Pack<>>, Pack<>>();
+    StaticAssertTypeEq<AsPack<Pack, Pack<int>>, Pack<int>>();
+    StaticAssertTypeEq<AsPack<Pack, Pack<int, char>>, Pack<int, char>>();
 }
 
-TEST(AsPackT, WrapsOtherTypes) {
-    StaticAssertTypeEq<AsPackT<Pack, int>, Pack<int>>();
-    StaticAssertTypeEq<AsPackT<Pack, char>, Pack<char>>();
+TEST(AsPack, WrapsOtherTypes) {
+    StaticAssertTypeEq<AsPack<Pack, int>, Pack<int>>();
+    StaticAssertTypeEq<AsPack<Pack, char>, Pack<char>>();
 }
 
-TEST(UnpackIfSoloT, ReturnsEnclosedElementIfExactlyOne) {
-    StaticAssertTypeEq<UnpackIfSoloT<Pack, Pack<>>, Pack<>>();
+TEST(UnpackIfSolo, ReturnsEnclosedElementIfExactlyOne) {
+    StaticAssertTypeEq<UnpackIfSolo<Pack, Pack<>>, Pack<>>();
 
-    StaticAssertTypeEq<UnpackIfSoloT<Pack, Pack<int>>, int>();
-    StaticAssertTypeEq<UnpackIfSoloT<Pack, Pack<char>>, char>();
+    StaticAssertTypeEq<UnpackIfSolo<Pack, Pack<int>>, int>();
+    StaticAssertTypeEq<UnpackIfSolo<Pack, Pack<char>>, char>();
 
-    StaticAssertTypeEq<UnpackIfSoloT<Pack, Pack<int, char>>, Pack<int, char>>();
+    StaticAssertTypeEq<UnpackIfSolo<Pack, Pack<int, char>>, Pack<int, char>>();
 }
 
 TEST(PackProductT, UnaryProductIsIdentity) {
@@ -280,7 +280,7 @@ TEST(InStandardPackOrder, IfLeadingBasesUnequalPicksWhicheverComesFirst) {
     EXPECT_THAT((InStandardPackOrder<Pack<B<2>>, Pack<RatioPow<B<3>, -1, 38>>>::value), IsTrue());
 }
 
-TEST(InStandardPackOrder, IfLeadingBasesEqualUsesSmallerExpToBreakTie) {
+TEST(InStandardPackOrder, IfLeadingBasesEqualUsesSmallerExpoBreakTie) {
     EXPECT_THAT((InStandardPackOrder<Pack<Pow<B<2>, -1>>, Pack<B<2>>>::value), IsTrue());
 
     EXPECT_THAT((InStandardPackOrder<Pack<B<2>>, Pack<RatioPow<B<2>, 11, 10>>>::value), IsTrue());
@@ -380,13 +380,13 @@ TEST(AreAllPowersNonzero, AllMustSatisfyForMultiElementPack) {
 
 namespace detail {
 
-TEST(SimplifyBasePowersT, SimplifiesEachIndividualBasePower) {
-    StaticAssertTypeEq<SimplifyBasePowersT<Pack<B<2>,                      // A. Leave alone.
-                                                Pow<B<3>, 1>,              // B. Reduce to base.
-                                                Pow<B<5>, 3>,              // C. Leave alone.
-                                                RatioPow<B<7>, 1, 1>,      // D. Reduce to base.
-                                                RatioPow<B<11>, -4, 1>,    // E. Reduce to int pow.
-                                                RatioPow<B<13>, -4, 5>>>,  // F. Leave alone.
+TEST(SimplifyBasePowers, SimplifiesEachIndividualBasePower) {
+    StaticAssertTypeEq<SimplifyBasePowers<Pack<B<2>,                      // A. Leave alone.
+                                               Pow<B<3>, 1>,              // B. Reduce to base.
+                                               Pow<B<5>, 3>,              // C. Leave alone.
+                                               RatioPow<B<7>, 1, 1>,      // D. Reduce to base.
+                                               RatioPow<B<11>, -4, 1>,    // E. Reduce to int pow.
+                                               RatioPow<B<13>, -4, 5>>>,  // F. Leave alone.
 
                        Pack<B<2>,                        // A. Unchanged.
                             B<3>,                        // B. Reduced to base.
@@ -396,32 +396,32 @@ TEST(SimplifyBasePowersT, SimplifiesEachIndividualBasePower) {
                             RatioPow<B<13>, -4, 5>>>();  // F. Unchanged.
 }
 
-TEST(NumeratorPartT, PullsOutPositivePowers) {
-    StaticAssertTypeEq<NumeratorPartT<Pack<>>, Pack<>>();
-    StaticAssertTypeEq<NumeratorPartT<Pack<B<2>>>, Pack<B<2>>>();
+TEST(NumeratorPart, PullsOutPositivePowers) {
+    StaticAssertTypeEq<NumeratorPart<Pack<>>, Pack<>>();
+    StaticAssertTypeEq<NumeratorPart<Pack<B<2>>>, Pack<B<2>>>();
 
-    StaticAssertTypeEq<NumeratorPartT<Pack<Pow<B<2>, 3>>>, Pack<Pow<B<2>, 3>>>();
-    StaticAssertTypeEq<NumeratorPartT<Pack<Pow<B<2>, -3>>>, Pack<>>();
+    StaticAssertTypeEq<NumeratorPart<Pack<Pow<B<2>, 3>>>, Pack<Pow<B<2>, 3>>>();
+    StaticAssertTypeEq<NumeratorPart<Pack<Pow<B<2>, -3>>>, Pack<>>();
 
-    StaticAssertTypeEq<NumeratorPartT<Pack<RatioPow<B<2>, 3, 2>>>, Pack<RatioPow<B<2>, 3, 2>>>();
-    StaticAssertTypeEq<NumeratorPartT<Pack<RatioPow<B<2>, -3, 2>>>, Pack<>>();
+    StaticAssertTypeEq<NumeratorPart<Pack<RatioPow<B<2>, 3, 2>>>, Pack<RatioPow<B<2>, 3, 2>>>();
+    StaticAssertTypeEq<NumeratorPart<Pack<RatioPow<B<2>, -3, 2>>>, Pack<>>();
 
-    StaticAssertTypeEq<NumeratorPartT<Pack<Pow<B<2>, 2>, Pow<B<3>, -6>, Pow<B<5>, -3>, B<7>>>,
+    StaticAssertTypeEq<NumeratorPart<Pack<Pow<B<2>, 2>, Pow<B<3>, -6>, Pow<B<5>, -3>, B<7>>>,
                        Pack<Pow<B<2>, 2>, B<7>>>();
 }
 
-TEST(DenominatorPartT, PullsOutAndInvertsNegativePowers) {
-    StaticAssertTypeEq<DenominatorPartT<Pack<>>, Pack<>>();
+TEST(DenominatorPart, PullsOutAndInvertsNegativePowers) {
+    StaticAssertTypeEq<DenominatorPart<Pack<>>, Pack<>>();
 
-    StaticAssertTypeEq<DenominatorPartT<Pack<Pow<B<2>, -1>>>, Pack<B<2>>>();
+    StaticAssertTypeEq<DenominatorPart<Pack<Pow<B<2>, -1>>>, Pack<B<2>>>();
 
-    StaticAssertTypeEq<DenominatorPartT<Pack<Pow<B<2>, 3>>>, Pack<>>();
-    StaticAssertTypeEq<DenominatorPartT<Pack<Pow<B<2>, -3>>>, Pack<Pow<B<2>, 3>>>();
+    StaticAssertTypeEq<DenominatorPart<Pack<Pow<B<2>, 3>>>, Pack<>>();
+    StaticAssertTypeEq<DenominatorPart<Pack<Pow<B<2>, -3>>>, Pack<Pow<B<2>, 3>>>();
 
-    StaticAssertTypeEq<DenominatorPartT<Pack<RatioPow<B<2>, 3, 2>>>, Pack<>>();
-    StaticAssertTypeEq<DenominatorPartT<Pack<RatioPow<B<2>, -3, 2>>>, Pack<RatioPow<B<2>, 3, 2>>>();
+    StaticAssertTypeEq<DenominatorPart<Pack<RatioPow<B<2>, 3, 2>>>, Pack<>>();
+    StaticAssertTypeEq<DenominatorPart<Pack<RatioPow<B<2>, -3, 2>>>, Pack<RatioPow<B<2>, 3, 2>>>();
 
-    StaticAssertTypeEq<DenominatorPartT<Pack<Pow<B<2>, 2>, Pow<B<3>, -6>, Pow<B<5>, -3>, B<7>>>,
+    StaticAssertTypeEq<DenominatorPart<Pack<Pow<B<2>, 2>, Pow<B<3>, -6>, Pow<B<5>, -3>, B<7>>>,
                        Pack<Pow<B<3>, 6>, Pow<B<5>, 3>>>();
 }
 

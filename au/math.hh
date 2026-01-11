@@ -88,7 +88,7 @@ constexpr T int_pow_impl(T x, int exp) {
 //
 // This risks breaking the correspondence between the Rep of our Quantity, and the output type of
 // `f()`.  For that correspondence to be _preserved_, we would need to make sure that
-// `f(RoundingRepT{})` returns the same type as `f(R{})`.  We believe this is always the case based
+// `f(RoundingRep{})` returns the same type as `f(R{})`.  We believe this is always the case based
 // on the documentation:
 //
 // https://en.cppreference.com/w/cpp/numeric/math/round
@@ -98,11 +98,11 @@ constexpr T int_pow_impl(T x, int exp) {
 // Both of these assumptions---that our RoundingRep is floating point, and that it doesn't change
 // the output Rep type---we verify via `static_assert`.
 template <typename Q, typename RoundingUnits>
-struct RoundingRep;
+struct RoundingRepImpl;
 template <typename Q, typename RoundingUnits>
-using RoundingRepT = typename RoundingRep<Q, RoundingUnits>::type;
+using RoundingRep = typename RoundingRepImpl<Q, RoundingUnits>::type;
 template <typename U, typename R, typename RoundingUnits>
-struct RoundingRep<Quantity<U, R>, RoundingUnits> {
+struct RoundingRepImpl<Quantity<U, R>, RoundingUnits> {
     using type = decltype(std::round(R{}));
 
     // Test our floating point assumption.
@@ -114,8 +114,8 @@ struct RoundingRep<Quantity<U, R>, RoundingUnits> {
     static_assert(std::is_same<decltype(std::ceil(type{})), decltype(std::ceil(R{}))>::value, "");
 };
 template <typename U, typename R, typename RoundingUnits>
-struct RoundingRep<QuantityPoint<U, R>, RoundingUnits>
-    : RoundingRep<Quantity<U, R>, RoundingUnits> {};
+struct RoundingRepImpl<QuantityPoint<U, R>, RoundingUnits>
+    : RoundingRepImpl<Quantity<U, R>, RoundingUnits> {};
 }  // namespace detail
 
 // The absolute value of a Quantity.
@@ -151,20 +151,20 @@ auto arctan2(T y, U x) {
 // arctan2() overload which supports same-dimensioned Quantity types.
 template <typename U1, typename R1, typename U2, typename R2>
 auto arctan2(Quantity<U1, R1> y, Quantity<U2, R2> x) {
-    constexpr auto common_unit = CommonUnitT<U1, U2>{};
+    constexpr auto common_unit = CommonUnit<U1, U2>{};
     return arctan2(y.in(common_unit), x.in(common_unit));
 }
 
 // Wrapper for std::cbrt() which handles Quantity types.
 template <typename U, typename R>
 auto cbrt(Quantity<U, R> q) {
-    return make_quantity<UnitPowerT<U, 1, 3>>(std::cbrt(q.in(U{})));
+    return make_quantity<UnitPower<U, 1, 3>>(std::cbrt(q.in(U{})));
 }
 
 // Clamp the first quantity to within the range of the second two.
 template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
 constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Quantity<UHi, RHi> hi) {
-    using U = CommonUnitT<UV, ULo, UHi>;
+    using U = CommonUnit<UV, ULo, UHi>;
     using R = std::common_type_t<RV, RLo, RHi>;
     using ResultT = Quantity<U, R>;
     return (v < lo) ? ResultT{lo} : (hi < v) ? ResultT{hi} : ResultT{v};
@@ -175,7 +175,7 @@ template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, ty
 constexpr auto clamp(QuantityPoint<UV, RV> v,
                      QuantityPoint<ULo, RLo> lo,
                      QuantityPoint<UHi, RHi> hi) {
-    using U = CommonPointUnitT<UV, ULo, UHi>;
+    using U = CommonPointUnit<UV, ULo, UHi>;
     using R = std::common_type_t<RV, RLo, RHi>;
     using ResultT = QuantityPoint<U, R>;
     return (v < lo) ? ResultT{lo} : (hi < v) ? ResultT{hi} : ResultT{v};
@@ -183,7 +183,7 @@ constexpr auto clamp(QuantityPoint<UV, RV> v,
 
 template <typename U1, typename R1, typename U2, typename R2>
 auto hypot(Quantity<U1, R1> x, Quantity<U2, R2> y) {
-    using U = CommonUnitT<U1, U2>;
+    using U = CommonUnit<U1, U2>;
     return make_quantity<U>(std::hypot(x.in(U{}), y.in(U{})));
 }
 
@@ -214,7 +214,7 @@ auto cos(Quantity<U, R> q) {
 // The floating point remainder of two values of the same dimension.
 template <typename U1, typename R1, typename U2, typename R2>
 auto fmod(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    using U = CommonUnitT<U1, U2>;
+    using U = CommonUnit<U1, U2>;
     using R = decltype(std::fmod(R1{}, R2{}));
     return make_quantity<U>(std::fmod(q1.template in<R>(U{}), q2.template in<R>(U{})));
 }
@@ -225,7 +225,7 @@ constexpr auto int_pow(Quantity<U, R> q) {
     static_assert((!std::is_integral<R>::value) || (Exp >= 0),
                   "Negative exponent on integral represented units are not supported.");
 
-    return make_quantity<UnitPowerT<U, Exp>>(detail::int_pow_impl(q.in(U{}), Exp));
+    return make_quantity<UnitPower<U, Exp>>(detail::int_pow_impl(q.in(U{}), Exp));
 }
 
 //
@@ -236,7 +236,7 @@ constexpr auto int_pow(Quantity<U, R> q) {
 template <typename TargetRep, typename TargetUnits, typename U, typename R>
 constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     using Rep = std::common_type_t<TargetRep, R>;
-    constexpr auto UNITY = make_constant(UnitProductT<>{});
+    constexpr auto UNITY = make_constant(UnitProduct<>{});
     return static_cast<TargetRep>(UNITY.in<Rep>(associated_unit(target_units) * U{}) / q.in(U{}));
 }
 
@@ -268,7 +268,7 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     // This will fail at compile time for types that can't hold 1'000'000.
     constexpr R threshold = 1'000'000;
 
-    constexpr auto UNITY = make_constant(UnitProductT<>{});
+    constexpr auto UNITY = make_constant(UnitProduct<>{});
 
     static_assert(
         UNITY.in<R>(associated_unit(TargetUnits{}) * U{}) >= threshold ||
@@ -286,7 +286,7 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
 //
 template <typename TargetUnits, typename U, typename R>
 constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnitT<TargetUnits>>(inverse_in(target_units, q));
+    return make_quantity<AssociatedUnit<TargetUnits>>(inverse_in(target_units, q));
 }
 
 //
@@ -296,7 +296,7 @@ constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
 //
 template <typename TargetRep, typename TargetUnits, typename U, typename R>
 constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnitT<TargetUnits>>(inverse_in<TargetRep>(target_units, q));
+    return make_quantity<AssociatedUnit<TargetUnits>>(inverse_in<TargetRep>(target_units, q));
 }
 
 //
@@ -339,13 +339,13 @@ constexpr bool isnan(QuantityPoint<U, R> p) {
 #if defined(__cpp_lib_interpolate) && __cpp_lib_interpolate >= 201902L
 template <typename U1, typename R1, typename U2, typename R2, typename T>
 constexpr auto lerp(Quantity<U1, R1> q1, Quantity<U2, R2> q2, T t) {
-    using U = CommonUnitT<U1, U2>;
+    using U = CommonUnit<U1, U2>;
     return make_quantity<U>(std::lerp(q1.in(U{}), q2.in(U{}), as_raw_number(t)));
 }
 
 template <typename U1, typename R1, typename U2, typename R2, typename T>
 constexpr auto lerp(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2, T t) {
-    using U = CommonPointUnitT<U1, U2>;
+    using U = CommonPointUnit<U1, U2>;
     return make_quantity_point<U>(std::lerp(p1.in(U{}), p2.in(U{}), as_raw_number(t)));
 }
 #endif
@@ -418,7 +418,7 @@ template <typename U0, typename R0, typename... Us, typename... Rs>
 constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs) {
     static_assert(sizeof...(qs) > 0, "mean() requires at least two inputs");
     using R = std::common_type_t<R0, Rs...>;
-    using Common = Quantity<CommonUnitT<U0, Us...>, R>;
+    using Common = Quantity<CommonUnit<U0, Us...>, R>;
     const auto base = Common{q0};
     Common diffs[] = {(Common{qs} - base)...};
     Common sum_diffs = diffs[0];
@@ -431,7 +431,7 @@ constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs) {
 template <typename U0, typename R0, typename... Us, typename... Rs>
 constexpr auto mean(QuantityPoint<U0, R0> p0, QuantityPoint<Us, Rs>... ps) {
     static_assert(sizeof...(ps) > 0, "mean() requires at least two inputs");
-    using U = CommonPointUnitT<U0, Us...>;
+    using U = CommonPointUnit<U0, Us...>;
     using R = std::common_type_t<R0, Rs...>;
     const auto base = QuantityPoint<U, R>{p0};
     Quantity<U, R> diffs[] = {(QuantityPoint<U, R>{ps} - base)...};
@@ -445,7 +445,7 @@ constexpr auto mean(QuantityPoint<U0, R0> p0, QuantityPoint<Us, Rs>... ps) {
 // The (zero-centered) floating point remainder of two values of the same dimension.
 template <typename U1, typename R1, typename U2, typename R2>
 auto remainder(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    using U = CommonUnitT<U1, U2>;
+    using U = CommonUnit<U1, U2>;
     using R = decltype(std::remainder(R1{}, R2{}));
     return make_quantity<U>(std::remainder(q1.template in<R>(U{}), q2.template in<R>(U{})));
 }
@@ -458,13 +458,13 @@ auto remainder(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
-    using OurRoundingRep = detail::RoundingRepT<Quantity<U, R>, RoundingUnits>;
+    using OurRoundingRep = detail::RoundingRep<Quantity<U, R>, RoundingUnits>;
     return std::round(q.template in<OurRoundingRep>(rounding_units));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    using OurRoundingRep = detail::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
+    using OurRoundingRep = detail::RoundingRep<QuantityPoint<U, R>, RoundingUnits>;
     return std::round(p.template in<OurRoundingRep>(rounding_units));
 }
 
@@ -493,13 +493,12 @@ auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnitT<RoundingUnits>>(round_in(rounding_units, q));
+    return make_quantity<AssociatedUnit<RoundingUnits>>(round_in(rounding_units, q));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
-        round_in(rounding_units, p));
+    return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(round_in(rounding_units, p));
 }
 
 //
@@ -511,12 +510,12 @@ auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnitT<RoundingUnits>>(round_in<OutputRep>(rounding_units, q));
+    return make_quantity<AssociatedUnit<RoundingUnits>>(round_in<OutputRep>(rounding_units, q));
 }
 // b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
+    return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(
         round_in<OutputRep>(rounding_units, p));
 }
 
@@ -528,13 +527,13 @@ auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
-    using OurRoundingRep = detail::RoundingRepT<Quantity<U, R>, RoundingUnits>;
+    using OurRoundingRep = detail::RoundingRep<Quantity<U, R>, RoundingUnits>;
     return std::floor(q.template in<OurRoundingRep>(rounding_units));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    using OurRoundingRep = detail::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
+    using OurRoundingRep = detail::RoundingRep<QuantityPoint<U, R>, RoundingUnits>;
     return std::floor(p.template in<OurRoundingRep>(rounding_units));
 }
 
@@ -562,13 +561,12 @@ auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnitT<RoundingUnits>>(floor_in(rounding_units, q));
+    return make_quantity<AssociatedUnit<RoundingUnits>>(floor_in(rounding_units, q));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
-        floor_in(rounding_units, p));
+    return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(floor_in(rounding_units, p));
 }
 
 //
@@ -580,12 +578,12 @@ auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnitT<RoundingUnits>>(floor_in<OutputRep>(rounding_units, q));
+    return make_quantity<AssociatedUnit<RoundingUnits>>(floor_in<OutputRep>(rounding_units, q));
 }
 // b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
+    return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(
         floor_in<OutputRep>(rounding_units, p));
 }
 
@@ -597,13 +595,13 @@ auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
-    using OurRoundingRep = detail::RoundingRepT<Quantity<U, R>, RoundingUnits>;
+    using OurRoundingRep = detail::RoundingRep<Quantity<U, R>, RoundingUnits>;
     return std::ceil(q.template in<OurRoundingRep>(rounding_units));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    using OurRoundingRep = detail::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
+    using OurRoundingRep = detail::RoundingRep<QuantityPoint<U, R>, RoundingUnits>;
     return std::ceil(p.template in<OurRoundingRep>(rounding_units));
 }
 
@@ -631,12 +629,12 @@ auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnitT<RoundingUnits>>(ceil_in(rounding_units, q));
+    return make_quantity<AssociatedUnit<RoundingUnits>>(ceil_in(rounding_units, q));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(ceil_in(rounding_units, p));
+    return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(ceil_in(rounding_units, p));
 }
 
 //
@@ -648,12 +646,12 @@ auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnitT<RoundingUnits>>(ceil_in<OutputRep>(rounding_units, q));
+    return make_quantity<AssociatedUnit<RoundingUnits>>(ceil_in<OutputRep>(rounding_units, q));
 }
 // b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
+    return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(
         ceil_in<OutputRep>(rounding_units, p));
 }
 
@@ -666,7 +664,7 @@ auto sin(Quantity<U, R> q) {
 // Wrapper for std::sqrt() which handles Quantity types.
 template <typename U, typename R>
 auto sqrt(Quantity<U, R> q) {
-    return make_quantity<UnitPowerT<U, 1, 2>>(std::sqrt(q.in(U{})));
+    return make_quantity<UnitPower<U, 1, 2>>(std::sqrt(q.in(U{})));
 }
 
 // Wrapper for std::tan() which accepts a strongly typed angle quantity.

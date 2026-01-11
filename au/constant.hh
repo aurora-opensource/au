@@ -125,7 +125,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 // Note that the argument is a _unit slot_, and thus can also accept things like `QuantityMaker` and
 // `SymbolFor` in addition to regular units.
 template <typename UnitSlot>
-constexpr Constant<AssociatedUnitT<UnitSlot>> make_constant(UnitSlot) {
+constexpr Constant<AssociatedUnit<UnitSlot>> make_constant(UnitSlot) {
     return {};
 }
 

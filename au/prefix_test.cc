@@ -190,25 +190,25 @@ TEST(BinaryPrefixes, CorrectlyLabelUnits) {
 }
 
 TEST(PrefixedPoweredUnitLabels, OmitsBracketsIfPrefixAppliesBeforeThePower) {
-    expect_label<UnitInverseT<Milli<XeroxedBytes>>>("mX^(-1)");
-    expect_label<UnitPowerT<Kilo<XeroxedBytes>, 2>>("kX^2");
-    expect_label<UnitPowerT<Mega<XeroxedBytes>, 3>>("MX^3");
+    expect_label<UnitInverse<Milli<XeroxedBytes>>>("mX^(-1)");
+    expect_label<UnitPower<Kilo<XeroxedBytes>, 2>>("kX^2");
+    expect_label<UnitPower<Mega<XeroxedBytes>, 3>>("MX^3");
 }
 
 TEST(PrefixedPoweredUnitLabels, IncludesBracketsIfPrefixAppliesAfterThePower) {
-    expect_label<Milli<UnitInverseT<XeroxedBytes>>>("m[X^(-1)]");
-    expect_label<Kilo<UnitPowerT<XeroxedBytes, 2>>>("k[X^2]");
-    expect_label<Mega<UnitPowerT<XeroxedBytes, 3>>>("M[X^3]");
+    expect_label<Milli<UnitInverse<XeroxedBytes>>>("m[X^(-1)]");
+    expect_label<Kilo<UnitPower<XeroxedBytes, 2>>>("k[X^2]");
+    expect_label<Mega<UnitPower<XeroxedBytes, 3>>>("M[X^3]");
 }
 
 TEST(PrefixedPoweredUnitLabels, IncludesBracketsForCompoundUnitsContainingPowers) {
-    using SquareInchesTimesXeroxedBytes = UnitProductT<UnitPowerT<Inches, 2>, XeroxedBytes>;
+    using SquareInchesTimesXeroxedBytes = UnitProduct<UnitPower<Inches, 2>, XeroxedBytes>;
     expect_label<Kilo<SquareInchesTimesXeroxedBytes>>("k[in^2 * X]");
 
-    using SquareInchesPerXeroxedByte = UnitQuotientT<UnitPowerT<Inches, 2>, XeroxedBytes>;
+    using SquareInchesPerXeroxedByte = UnitQuotient<UnitPower<Inches, 2>, XeroxedBytes>;
     expect_label<Milli<SquareInchesPerXeroxedByte>>("m[in^2 / X]");
 
-    using XeroxedBytesPerSquareInch = UnitQuotientT<XeroxedBytes, UnitPowerT<Inches, 2>>;
+    using XeroxedBytesPerSquareInch = UnitQuotient<XeroxedBytes, UnitPower<Inches, 2>>;
     expect_label<Gibi<XeroxedBytesPerSquareInch>>("Gi[X / in^2]");
 }
 

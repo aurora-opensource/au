@@ -22,9 +22,9 @@ namespace au {
 namespace detail {
 
 template <typename PackT, typename T>
-struct Prepend;
+struct PrependImpl;
 template <typename PackT, typename T>
-using PrependT = typename Prepend<PackT, T>::type;
+using Prepend = typename PrependImpl<PackT, T>::type;
 
 template <template <class> class Condition, template <class...> class Pack, typename... Ts>
 struct IncludeInPackIfImpl;
@@ -72,10 +72,10 @@ using PromotedType = typename PromotedTypeImpl<T>::type;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `Prepend` implementation.
+// `PrependImpl` implementation.
 
 template <template <typename...> class Pack, typename T, typename... Us>
-struct Prepend<Pack<Us...>, T> {
+struct PrependImpl<Pack<Us...>, T> {
     using type = Pack<T, Us...>;
 };
 
@@ -110,7 +110,7 @@ struct ListMatchingTypesImpl<Condition, GenericTypeList<>>
 template <template <class> class Condition, typename H, typename... Ts>
 struct ListMatchingTypesImpl<Condition, GenericTypeList<H, Ts...>>
     : std::conditional<Condition<H>::value,
-                       PrependT<ListMatchingTypes<Condition, GenericTypeList<Ts...>>, H>,
+                       Prepend<ListMatchingTypes<Condition, GenericTypeList<Ts...>>, H>,
                        ListMatchingTypes<Condition, GenericTypeList<Ts...>>> {};
 
 template <template <class> class Condition, template <class...> class Pack, typename... Ts>
@@ -130,7 +130,7 @@ template <typename T, template <class...> class Pack, typename H, typename... Ts
 struct DropAllImpl<T, Pack<H, Ts...>>
     : std::conditional<std::is_same<T, H>::value,
                        DropAll<T, Pack<Ts...>>,
-                       detail::PrependT<DropAll<T, Pack<Ts...>>, H>> {};
+                       detail::Prepend<DropAll<T, Pack<Ts...>>, H>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `FlattenAs` implementation.
