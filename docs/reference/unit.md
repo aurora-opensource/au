@@ -267,9 +267,13 @@ In what follows, we'll use this convention:
 **Syntax:**
 
 - For _types_ `U1` and `U2`:
-    - `UnitProductT<U1, U2>`
+    - `UnitProduct<U1, U2>`
 - For _instances_ `u1` and `u2`:
     - `u1 * u2`
+
+!!! note
+    Older releases used `UnitProductT` (with the `T` suffix) instead of `UnitProduct`.  Prefer
+    `UnitProduct`.  `UnitProductT` is deprecated, and will be removed in future releases.
 
 ### Division
 

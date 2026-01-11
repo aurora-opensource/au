@@ -341,9 +341,11 @@ struct UnitProductPack {
 // we simplify it using `UnpackIfSoloT`.  (The motivation is that we don't want to return, say,
 // `UnitProductPack<Meters>`; we'd rather just return `Meters`.)
 template <typename... UnitPows>
-using UnitProductT =
+using UnitProduct =
     UnpackIfSoloT<UnitProductPack,
                   PackProductT<UnitProductPack, AsPackT<UnitProductPack, UnitPows>...>>;
+template <typename... UnitPows>
+using UnitProductT = UnitProduct<UnitPows...>;
 
 // Raise a Unit to a (possibly rational) Power.
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
