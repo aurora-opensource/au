@@ -770,6 +770,40 @@ TEST(Quantity, CanCastToDifferentRep) {
     EXPECT_THAT(rep_cast<int>(inches(3.14)), SameTypeAndValue(inches(3)));
 }
 
+TEST(Quantity, AsRepChangesRepNotUnit) {
+    EXPECT_THAT(hours(25).as<double>(), SameTypeAndValue(hours(25.)));
+    EXPECT_THAT(inches(10).as<float>(), SameTypeAndValue(inches(10.0f)));
+}
+
+TEST(Quantity, AsRepAcceptsConversionRiskPolicyArgument) {
+    EXPECT_THAT(feet(3.14).as<int>(ignore(TRUNCATION_RISK)), SameTypeAndValue(feet(3)));
+
+    EXPECT_THAT(seconds(int16_t{2}).as<int8_t>(ignore(OVERFLOW_RISK)),
+                SameTypeAndValue(seconds(int8_t{2})));
+}
+
+TEST(Quantity, AsRepSupportsConstexpr) {
+    // Use a safe conversion (int to double) to test constexpr support.
+    constexpr auto one_foot_int = feet(1);
+    constexpr auto one_foot_double = one_foot_int.as<double>();
+    EXPECT_THAT(one_foot_double, SameTypeAndValue(feet(1.0)));
+}
+
+TEST(Quantity, AsRepProducesExpectedTypeAndValue) {
+    auto result = inches(5).as<double>();
+    StaticAssertTypeEq<decltype(result), Quantity<Inches, double>>();
+    EXPECT_THAT(result, SameTypeAndValue(inches(5.0)));
+}
+
+TEST(Quantity, AsRepWithIgnoreAllRisksIsEquivalentToRepCast) {
+    // .as<T>(ignore(ALL_RISKS)) should match rep_cast<T>() behavior.
+    constexpr auto dt = hours(25);
+    EXPECT_THAT(dt.as<float>(ignore(ALL_RISKS)), SameTypeAndValue(rep_cast<float>(dt)));
+
+    constexpr auto length = inches(3.14);
+    EXPECT_THAT(length.as<int>(ignore(ALL_RISKS)), SameTypeAndValue(rep_cast<int>(length)));
+}
+
 TEST(Quantity, UnitCastSupportsConstexprAndConst) {
     constexpr auto one_foot = feet(1);
     constexpr auto twelve_inches = one_foot.as(inches);

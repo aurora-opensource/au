@@ -876,13 +876,70 @@ common unit, and then computing the remainder from performing integer division o
     simplest unit in which we _can_ express it.  (Note that this is the same unit we would get from
     the operation of repeated [subtraction](#subtraction) as well, so this choice is consistent.)
 
-## `rep_cast`
+## Changing the representation type
+
+There are two ways to change the representation type of a `Quantity`, `q`, to some target type `T`.
+
+- `rep_cast<T>(q)` is forcing, like a `static_cast`
+- `q.as<T>()` guards against all conversion risks by default, and can take a [conversion risk
+  policy](./conversion_risk_policies.md) parameter to customize this behavior.
+
+We describe these in more detail below.
+
+### `rep_cast`
 
 `rep_cast` performs a `static_cast` on the underlying value of a `Quantity`.  It is used to change
 the rep.
 
 Given any `Quantity<U, R> q` whose rep is `R`, then `rep_cast<T>(q)` gives a `Quantity<U, T>`, whose
 underlying value is `static_cast<T>(q.in(U{}))`.
+
+### `.as<T>()` {#as-rep}
+
+This function produces a new `Quantity` with the same unit, but a different rep (storage type),
+performing a `static_cast` on the underlying value.
+
+??? example "Example: converting `feet(3)` to `float` storage type
+    Consider this quantity:
+
+    ```cpp
+    auto length = feet(3);
+    ```
+
+    Then `length.as<float>()` produces a value equivalent to `feet(3.0f)`: that is, it converts
+    a `Quantity<Feet, int>` to a `Quantity<Feet, float>`.
+
+The behavior of `q.as<T>()` is similar to `rep_cast<T>(q)`, except that it guards against
+[conversion risks](../discussion/concepts/conversion_risks.md) by default.  To customize this
+behavior, you can pass a [conversion risk policy](./conversion_risk_policies.md) as an argument.
+
+| Form | Description |
+|------|-------------|
+| `.as<T>()` | Change rep to `T`, with a risk policy of `check_for(ALL_RISKS)` |
+| `.as<T>(policy)` | Change rep to `T`, with the given risk policy |
+
+??? example "Example: truncating `feet(3.14)` to `int` storage"
+    Now consider this quantity:
+
+    ```cpp
+    auto length = feet(3.14);
+    ```
+
+    Suppose we want to convert the storage type to `int` --- a truncating operation.  The following
+    would fail to compile:
+
+    ```cpp
+    length.as<int>();
+    ```
+
+    The problem is that there is too much truncation risk.  If we're sure that we want this, then we
+    can provide a policy argument to override this risk check:
+
+    ```cpp
+    length.as<int>(ignore(TRUNCATION_RISK));
+    ```
+
+    This would produce a value equivalent to `feet(3)`.
 
 ## Templates and Traits
 
