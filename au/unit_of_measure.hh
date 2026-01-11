@@ -867,17 +867,6 @@ constexpr auto origin_displacement_unit(U1, U2) {
                                          AssociatedUnitForPoints<U2>>{};
 }
 
-// MagTypeT<T> gives some measure of the size of the unit for this "quantity-alike" type.
-//
-// Zero acts like a quantity in this context, and we treat it as if its unit's Magnitude is Zero.
-// This is specifically done for the `CommonPointUnit` implementation; there is no guarantee that
-template <typename QuantityOrZero>
-struct MagType : stdx::type_identity<MagT<typename QuantityOrZero::Unit>> {};
-template <typename QuantityOrZero>
-using MagTypeT = typename MagType<stdx::remove_cvref_t<QuantityOrZero>>::type;
-template <>
-struct MagType<Zero> : stdx::type_identity<Zero> {};
-
 }  // namespace detail
 
 template <typename U1, typename U2>
