@@ -2536,22 +2536,22 @@ individual units) &mdash; was around 500 ms.</p>
 <p>We resolve this with a &ldquo;warrant and check&rdquo; approach, explained in the next section.</p>
 <h3 id="compound-units">Compound units<a class="headerlink" href="#compound-units" title="Permanent link">&para;</a></h3>
 <p>The only way to forward declare a compound unit is to specify the exact types that go into the
-<code>UnitProduct&lt;...&gt;</code> template, and in the exact correct order.  We generally avoid having end users do
-this, both because it&rsquo;s hard to get right, and because it&rsquo;s an encapsulated implementation detail
-which could change.  However, for cases where the added speed from forward declaration really
+<code>UnitProductPack&lt;...&gt;</code> template, and in the exact correct order.  We generally avoid having end
+users do this, both because it&rsquo;s hard to get right, and because it&rsquo;s an encapsulated implementation
+detail which could change.  However, for cases where the added speed from forward declaration really
 matters, we can do the next best thing: make it easy to check that it&rsquo;s right.</p>
 <p>Here is a series of steps to follow to forward declare compound units.</p>
 <ol>
 <li>
-<p><strong>Find the types in <code>UnitProduct&lt;...&gt;</code>.</strong>  One trick to do this is to assign an instance of the
-    compound unit type itself to another type, say, an <code>int</code>.  The <em>compiler error</em> will contain the
-    correct type name.  Look for <code>UnitProduct&lt;...&gt;</code> in the error message.</p>
+<p><strong>Find the types in <code>UnitProductPack&lt;...&gt;</code>.</strong>  One trick to do this is to assign an instance of
+    the compound unit type itself to another type, say, an <code>int</code>.  The <em>compiler error</em> will contain
+    the correct type name.  Look for <code>UnitProductPack&lt;...&gt;</code> in the error message.</p>
 </li>
 <li>
 <p><strong>Forward declare the powers with <code>ForwardDeclareUnitPow&lt;...&gt;</code>.</strong>  If any of the types in
-    <code>UnitProduct&lt;...&gt;</code> are instances of <code>Pow</code> or <code>RatioPow</code>, you&rsquo;ll want to make an alias for those
-    types.  If your compound unit is, say, the inverse cube of a unit, you can forward declare it
-    like this:</p>
+    <code>UnitProductPack&lt;...&gt;</code> are instances of <code>Pow</code> or <code>RatioPow</code>, you&rsquo;ll want to make an alias for
+    those types.  If your compound unit is, say, the inverse cube of a unit, you can forward declare
+    it like this:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">using</span><span class="w"> </span><span class="n">InverseYourUnitsCubedFwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">ForwardDeclareUnitPow</span><span class="o">&lt;</span><span class="n">YourUnits</span><span class="p">,</span><span class="w"> </span><span class="mi">-3</span><span class="o">&gt;</span><span class="p">;</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">using</span><span class="w"> </span><span class="n">InverseYourUnitsCubed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">YourUnitsCubedFwd</span><span class="o">::</span><span class="n">unit_type</span><span class="p">;</span>
 </code></pre></div>
@@ -2562,8 +2562,8 @@ denominator for the power.  For example, to form a square root of the above unit
 <li>
 <p><strong>Forward declare the product itself with <code>ForwardDeclareUnitProduct&lt;...&gt;</code>.</strong>  This is similar
     to the above.  For example, if the full product type from step 1 was
-    <code>UnitProduct&lt;OtherUnits, Pow&lt;YourUnits, -3&gt;&gt;</code>, you would forward declare it like this (using the
-    existing <code>InverseYourUnitsCubed</code> that you would have defined in step 2):</p>
+    <code>UnitProductPack&lt;OtherUnits, Pow&lt;YourUnits, -3&gt;&gt;</code>, you would forward declare it like this (using
+    the existing <code>InverseYourUnitsCubed</code> that you would have defined in step 2):</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">using</span><span class="w"> </span><span class="n">OtherUnitsPerYourUnitsCubedFwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">ForwardDeclareUnitProduct</span><span class="o">&lt;</span><span class="n">OtherUnits</span><span class="p">,</span><span class="w"> </span><span class="n">InverseYourUnitsCubed</span><span class="o">&gt;</span><span class="p">;</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">using</span><span class="w"> </span><span class="n">OtherUnitsPerYourUnitsCubed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OtherUnitsPerYourUnitsCubedFwd</span><span class="o">::</span><span class="n">unit_type</span><span class="p">;</span>
 </code></pre></div>
@@ -2587,10 +2587,16 @@ Au&rsquo;s definitions.</p>
 <p>Normally, we&rsquo;d refer to our speed type as <code>QuantityD&lt;UnitQuotientT&lt;Kilo&lt;Meters&gt;, Hours&gt;&gt;</code>.  However,
 <code>UnitQuotientT</code> needs the full machinery of the library.  Instead, let&rsquo;s create an alias,
 <code>KilometersPerHour</code>, so we can write <code>QuantityD&lt;KilometersPerHour&gt;</code>.</p>
-<p>The first step is to find out which types go inside <code>UnitProduct&lt;...&gt;</code>, and in which order.  This
-<a href="https://godbolt.org/z/cW3Gs7YzT">compiler explorer link</a> shows how to do this.  Note the
+<p>The first step is to find out which types go inside <code>UnitProductPack&lt;...&gt;</code>, and in which order.
+This <a href="https://godbolt.org/z/cW3Gs7YzT">compiler explorer link</a> shows how to do this.  Note the
 highlighted portion of the error message:</p>
 <p><img alt="Compiler error providing info for fwd decls" src="../../assets/fwd_declare_compiler_error.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The screenshot is from an earlier version of software, where the unit product pack type name was
+<code>UnitProduct&lt;...&gt;</code> rather than <code>UnitProductPack&lt;...&gt;</code>.  We will update both the link and the
+screenshot in a follow-on PR.</p>
+</div>
 <p>We can see that the types are <code>Kilo&lt;Meters&gt;</code> and <code>Pow&lt;Hours, -1&gt;</code>, in that order.  We&rsquo;ll need to
 start by defining an alias for the latter alone.  Then, we can define our <code>KilometersPerHour</code> alias,
 and declare our function signature.  Here&rsquo;s what it looks like all together.</p>

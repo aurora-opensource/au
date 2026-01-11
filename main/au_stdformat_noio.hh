@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-59-gd6b2421
+// Version identifier: 0.5.0-base-61-g5109e50
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -129,10 +129,10 @@ class Quantity;
 // on an instance of that alias.
 //
 template <typename... UnitPowers>
-struct UnitProduct;
+struct UnitProductPack;
 template <typename... UnitPowers>
 struct ForwardDeclareUnitProduct {
-    using unit_type = UnitProduct<UnitPowers...>;
+    using unit_type = UnitProductPack<UnitPowers...>;
 };
 
 //
@@ -5042,24 +5042,28 @@ struct ScaledUnit : Unit {
 
 // Type template to hold the product of powers of Units.
 template <typename... UnitPows>
-struct UnitProduct {
+struct UnitProductPack {
     using Dim = DimProductT<detail::DimT<UnitPows>...>;
     using Mag = MagProductT<detail::MagT<UnitPows>...>;
 };
 
 // Helper to make a canonicalized product of units.
 //
-// On the input side, we treat every input unit as a UnitProduct.  Once we get our final result, we
-// simplify it using `UnpackIfSoloT`.  (The motivation is that we don't want to return, say,
-// `UnitProduct<Meters>`; we'd rather just return `Meters`.)
+// On the input side, we treat every input unit as a UnitProductPack.  Once we get our final result,
+// we simplify it using `UnpackIfSoloT`.  (The motivation is that we don't want to return, say,
+// `UnitProductPack<Meters>`; we'd rather just return `Meters`.)
 template <typename... UnitPows>
-using UnitProductT =
-    UnpackIfSoloT<UnitProduct, PackProductT<UnitProduct, AsPackT<UnitProduct, UnitPows>...>>;
+using UnitProduct =
+    UnpackIfSoloT<UnitProductPack,
+                  PackProductT<UnitProductPack, AsPackT<UnitProductPack, UnitPows>...>>;
+template <typename... UnitPows>
+using UnitProductT = UnitProduct<UnitPows...>;
 
 // Raise a Unit to a (possibly rational) Power.
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using UnitPower =
-    UnpackIfSoloT<UnitProduct, PackPowerT<UnitProduct, AsPackT<UnitProduct, U>, ExpNum, ExpDen>>;
+    UnpackIfSoloT<UnitProductPack,
+                  PackPowerT<UnitProductPack, AsPackT<UnitProductPack, U>, ExpNum, ExpDen>>;
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using UnitPowerT = UnitPower<U, ExpNum, ExpDen>;
 
@@ -5320,12 +5324,12 @@ struct CommonUnitPack {
 };
 
 template <typename A, typename B>
-struct InOrderFor<CommonUnitPack, A, B> : InOrderFor<UnitProduct, A, B> {};
+struct InOrderFor<CommonUnitPack, A, B> : InOrderFor<UnitProductPack, A, B> {};
 
 template <typename... Us>
 struct UnitList {};
 template <typename A, typename B>
-struct InOrderFor<UnitList, A, B> : InOrderFor<UnitProduct, A, B> {};
+struct InOrderFor<UnitList, A, B> : InOrderFor<UnitProductPack, A, B> {};
 
 namespace detail {
 // This machinery searches a unit list for one that "matches" a target unit.
@@ -5464,7 +5468,7 @@ using ReplaceCommonPointUnitWithCommonUnit =
 }  // namespace detail
 
 template <typename A, typename B>
-struct InOrderFor<detail::CommonUnitLabelImpl, A, B> : InOrderFor<UnitProduct, A, B> {};
+struct InOrderFor<detail::CommonUnitLabelImpl, A, B> : InOrderFor<UnitProductPack, A, B> {};
 
 template <typename... Us>
 using CommonUnitLabel = FlatDedupedTypeListT<detail::CommonUnitLabelImpl, Us...>;
@@ -5542,7 +5546,7 @@ struct CommonOrigin<Head, Tail...> :
 template <typename... Us>
 struct UnitOfLowestOriginImpl;
 template <typename... Us>
-using UnitOfLowestOrigin = typename SortAs<UnitProduct, UnitOfLowestOriginImpl<Us...>>::type;
+using UnitOfLowestOrigin = typename SortAs<UnitProductPack, UnitOfLowestOriginImpl<Us...>>::type;
 template <typename U>
 struct UnitOfLowestOriginImpl<U> : stdx::type_identity<U> {};
 template <typename U, typename U1, typename... Us>
@@ -5624,7 +5628,7 @@ struct ReplaceCommonPointUnitWithCommonUnitImpl<CommonPointUnitPack<Us...>>
 }  // namespace detail
 
 template <typename A, typename B>
-struct InOrderFor<CommonPointUnitPack, A, B> : InOrderFor<UnitProduct, A, B> {};
+struct InOrderFor<CommonPointUnitPack, A, B> : InOrderFor<UnitProductPack, A, B> {};
 
 template <typename... Us>
 using ComputeCommonPointUnitImpl = FlatDedupedTypeListT<CommonPointUnitPack, Us...>;
@@ -5678,7 +5682,7 @@ enum class ParensPolicy {
 template <typename T, ParensPolicy Policy = ParensPolicy::ADD_IF_MULITPLE>
 struct CompoundLabel;
 template <typename... Us, ParensPolicy Policy>
-struct CompoundLabel<UnitProduct<Us...>, Policy> {
+struct CompoundLabel<UnitProductPack<Us...>, Policy> {
     static constexpr auto value() {
         constexpr bool add_parens =
             (Policy == ParensPolicy::ADD_IF_MULITPLE) && (sizeof...(Us) > 1);
@@ -5701,31 +5705,31 @@ constexpr typename QuotientLabeler<N, D, T>::LabelT QuotientLabeler<N, D, T>::va
 
 // Special case for denominator of 1.
 template <typename N, typename T>
-struct QuotientLabeler<N, UnitProduct<>, T> {
+struct QuotientLabeler<N, UnitProductPack<>, T> {
     using LabelT = StringConstant<CompoundLabel<N, ParensPolicy::OMIT>::value().size()>;
     static constexpr LabelT value = CompoundLabel<N, ParensPolicy::OMIT>::value();
 };
 template <typename N, typename T>
-constexpr typename QuotientLabeler<N, UnitProduct<>, T>::LabelT
-    QuotientLabeler<N, UnitProduct<>, T>::value;
+constexpr typename QuotientLabeler<N, UnitProductPack<>, T>::LabelT
+    QuotientLabeler<N, UnitProductPack<>, T>::value;
 
 // Special case for numerator of 1.
 template <typename D, typename T>
-struct QuotientLabeler<UnitProduct<>, D, T> {
+struct QuotientLabeler<UnitProductPack<>, D, T> {
     using LabelT = StringConstant<CompoundLabel<D>::value().size() + 4>;
     static constexpr LabelT value = concatenate("1 / ", CompoundLabel<D>::value());
 };
 template <typename D, typename T>
-constexpr typename QuotientLabeler<UnitProduct<>, D, T>::LabelT
-    QuotientLabeler<UnitProduct<>, D, T>::value;
+constexpr typename QuotientLabeler<UnitProductPack<>, D, T>::LabelT
+    QuotientLabeler<UnitProductPack<>, D, T>::value;
 
 // Special case for numerator _and_ denominator of 1 (null product).
 template <typename T>
-struct QuotientLabeler<UnitProduct<>, UnitProduct<>, T> {
+struct QuotientLabeler<UnitProductPack<>, UnitProductPack<>, T> {
     static constexpr const char value[] = "";
 };
 template <typename T>
-constexpr const char QuotientLabeler<UnitProduct<>, UnitProduct<>, T>::value[];
+constexpr const char QuotientLabeler<UnitProductPack<>, UnitProductPack<>, T>::value[];
 }  // namespace detail
 
 // Unified implementation.
@@ -5744,11 +5748,11 @@ template <typename Unit, std::intmax_t N, std::intmax_t D>
 struct UnitLabel<RatioPow<Unit, N, D>>
     : detail::PowerLabeler<detail::ExpLabelForRatioPow<N, D>, Unit> {};
 
-// Implementation for UnitProduct: split into positive and negative powers.
+// Implementation for UnitProductPack: split into positive and negative powers.
 template <typename... Us>
-struct UnitLabel<UnitProduct<Us...>>
-    : detail::QuotientLabeler<detail::NumeratorPartT<UnitProduct<Us...>>,
-                              detail::DenominatorPartT<UnitProduct<Us...>>,
+struct UnitLabel<UnitProductPack<Us...>>
+    : detail::QuotientLabeler<detail::NumeratorPartT<UnitProductPack<Us...>>,
+                              detail::DenominatorPartT<UnitProductPack<Us...>>,
                               void> {};
 
 // Implementation for ScaledUnit: scaling unit U by M gets label `"[M U]"`.
@@ -5795,7 +5799,7 @@ constexpr const auto &unit_label(Unit) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `UnitProduct` implementation.
+// `UnitProductPack` implementation.
 //
 // It's just a standard pack product, so all we need to do is carefully define the total ordering.
 
@@ -5820,16 +5824,16 @@ template <typename U1, typename M1, typename U2, typename M2>
 struct OrderByScaledness<ScaledUnit<U1, M1>, ScaledUnit<U2, M2>>
     : LexicographicTotalOrdering<ScaledUnit<U1, M1>, ScaledUnit<U2, M2>, OrderByScaleFactor> {};
 
-// OrderAsUnitProduct<A, B> can only be true if both A and B are unit products, _and_ they are in
-// the standard pack order for unit products.  This default case handles the usual case where either
-// A or B (or both) is not a UnitProduct<...> in the first place.
+// OrderAsUnitProductPack<A, B> can only be true if both A and B are unit products, _and_ they are
+// in the standard pack order for unit products.  This default case handles the usual case where
+// either A or B (or both) is not a UnitProductPack<...> in the first place.
 template <typename A, typename B>
-struct OrderAsUnitProduct : std::false_type {};
+struct OrderAsUnitProductPack : std::false_type {};
 
-// This specialization handles the non-trivial case, where we do have two UnitProduct instances.
+// This specialization handles the non-trivial case, where we do have two UnitProductPack instances.
 template <typename... U1s, typename... U2s>
-struct OrderAsUnitProduct<UnitProduct<U1s...>, UnitProduct<U2s...>>
-    : InStandardPackOrder<UnitProduct<U1s...>, UnitProduct<U2s...>> {};
+struct OrderAsUnitProductPack<UnitProductPack<U1s...>, UnitProductPack<U2s...>>
+    : InStandardPackOrder<UnitProductPack<U1s...>, UnitProductPack<U2s...>> {};
 
 // OrderAsOriginDisplacementUnit<A, B> can only be true if both A and B are `OriginDisplacementUnit`
 // specializations, _and_ their first units are in order, or their first units are identical and
@@ -5843,14 +5847,14 @@ struct OrderByFirstInOriginDisplacementUnit;
 template <typename A1, typename A2, typename B1, typename B2>
 struct OrderByFirstInOriginDisplacementUnit<OriginDisplacementUnit<A1, A2>,
                                             OriginDisplacementUnit<B1, B2>>
-    : InOrderFor<UnitProduct, A1, B1> {};
+    : InOrderFor<UnitProductPack, A1, B1> {};
 
 template <typename A, typename B>
 struct OrderBySecondInOriginDisplacementUnit;
 template <typename A1, typename A2, typename B1, typename B2>
 struct OrderBySecondInOriginDisplacementUnit<OriginDisplacementUnit<A1, A2>,
                                              OriginDisplacementUnit<B1, B2>>
-    : InOrderFor<UnitProduct, A2, B2> {};
+    : InOrderFor<UnitProductPack, A2, B2> {};
 
 template <typename A1, typename A2, typename B1, typename B2>
 struct OrderAsOriginDisplacementUnit<OriginDisplacementUnit<A1, A2>, OriginDisplacementUnit<B1, B2>>
@@ -5864,10 +5868,11 @@ struct OrderByOrigin
     : stdx::bool_constant<(detail::OriginOf<A>::value() < detail::OriginOf<B>::value())> {};
 
 // "Unit avoidance" is a tiebreaker for quantity-equivalent units.  Anonymous units, such as
-// `UnitImpl<...>`, `ScaledUnit<...>`, and `UnitProduct<...>`, are more "avoidable" than units which
-// are none of these, because the latter are likely explicitly named and thus more user-facing.  The
-// relative ordering among these built-in template types is probably less important than the fact
-// that there _is_ a relative ordering among them (because we need to have a strict total ordering).
+// `UnitImpl<...>`, `ScaledUnit<...>`, and `UnitProductPack<...>`, are more "avoidable" than units
+// which are none of these, because the latter are likely explicitly named and thus more
+// user-facing.  The relative ordering among these built-in template types is probably less
+// important than the fact that there _is_ a relative ordering among them (because we need to have a
+// strict total ordering).
 template <typename T>
 struct CoarseUnitOrdering : std::integral_constant<int, 0> {};
 
@@ -5876,7 +5881,7 @@ struct OrderByCoarseUnitOrdering
     : stdx::bool_constant<(CoarseUnitOrdering<A>::value < CoarseUnitOrdering<B>::value)> {};
 
 template <typename... Ts>
-struct CoarseUnitOrdering<UnitProduct<Ts...>> : std::integral_constant<int, 1> {};
+struct CoarseUnitOrdering<UnitProductPack<Ts...>> : std::integral_constant<int, 1> {};
 
 template <typename... Ts>
 struct CoarseUnitOrdering<UnitImpl<Ts...>> : std::integral_constant<int, 2> {};
@@ -5909,7 +5914,7 @@ template <typename U>
 struct UnitOrderTiebreaker : detail::UnitAvoidance<U> {};
 
 template <typename A, typename B>
-struct InOrderFor<UnitProduct, A, B>
+struct InOrderFor<UnitProductPack, A, B>
     : LexicographicTotalOrdering<A,
                                  B,
                                  detail::OrderByCoarseUnitOrdering,
@@ -5917,7 +5922,7 @@ struct InOrderFor<UnitProduct, A, B>
                                  detail::OrderByMag,
                                  detail::OrderByScaleFactor,
                                  detail::OrderByOrigin,
-                                 detail::OrderAsUnitProduct,
+                                 detail::OrderAsUnitProductPack,
                                  detail::OrderAsOriginDisplacementUnit,
                                  detail::OrderByUnitOrderTiebreaker> {};
 
@@ -8507,7 +8512,7 @@ namespace detail {
 //
 // This includes:
 // - Direct Pow<B, N> or RatioPow<B, N, D> types
-// - UnitProduct<...> containing any powered units (recursively)
+// - UnitProductPack<...> containing any powered units (recursively)
 template <typename U>
 struct ContainsAnyPowers : std::false_type {};
 
@@ -8518,7 +8523,7 @@ template <typename B, std::intmax_t N, std::intmax_t D>
 struct ContainsAnyPowers<RatioPow<B, N, D>> : std::true_type {};
 
 template <typename... Us>
-struct ContainsAnyPowers<UnitProduct<Us...>> : stdx::disjunction<ContainsAnyPowers<Us>...> {};
+struct ContainsAnyPowers<UnitProductPack<Us...>> : stdx::disjunction<ContainsAnyPowers<Us>...> {};
 
 // Helper to generate labels for prefixed units.
 // Wraps unit label in brackets if the unit is a powered unit (Pow or RatioPow).
