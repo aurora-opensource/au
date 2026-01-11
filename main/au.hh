@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-66-g1e13ad8
+// Version identifier: 0.5.0-base-60-g601e276
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -89,7 +89,7 @@ struct ForwardDeclareUnitProduct {
 //
 // Machinery for forward-declaring a unit power.
 //
-// To use, make an alias with the same unit and power(s) that `UnitPower` would produce, in the
+// To use, make an alias with the same unit and power(s) that `UnitPowerT` would produce, in the
 // `_fwd.hh` file.  In the `.hh` file, call `is_forward_declared_unit_valid(...)` (defined in
 // `unit_of_measure.hh`) on that alias.
 //
@@ -286,9 +286,9 @@ namespace au {
 namespace detail {
 
 template <typename PackT, typename T>
-struct PrependImpl;
+struct Prepend;
 template <typename PackT, typename T>
-using Prepend = typename PrependImpl<PackT, T>::type;
+using PrependT = typename Prepend<PackT, T>::type;
 
 template <template <class> class Condition, template <class...> class Pack, typename... Ts>
 struct IncludeInPackIfImpl;
@@ -336,10 +336,10 @@ using PromotedType = typename PromotedTypeImpl<T>::type;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `PrependImpl` implementation.
+// `Prepend` implementation.
 
 template <template <typename...> class Pack, typename T, typename... Us>
-struct PrependImpl<Pack<Us...>, T> {
+struct Prepend<Pack<Us...>, T> {
     using type = Pack<T, Us...>;
 };
 
@@ -374,7 +374,7 @@ struct ListMatchingTypesImpl<Condition, GenericTypeList<>>
 template <template <class> class Condition, typename H, typename... Ts>
 struct ListMatchingTypesImpl<Condition, GenericTypeList<H, Ts...>>
     : std::conditional<Condition<H>::value,
-                       Prepend<ListMatchingTypes<Condition, GenericTypeList<Ts...>>, H>,
+                       PrependT<ListMatchingTypes<Condition, GenericTypeList<Ts...>>, H>,
                        ListMatchingTypes<Condition, GenericTypeList<Ts...>>> {};
 
 template <template <class> class Condition, template <class...> class Pack, typename... Ts>
@@ -394,7 +394,7 @@ template <typename T, template <class...> class Pack, typename H, typename... Ts
 struct DropAllImpl<T, Pack<H, Ts...>>
     : std::conditional<std::is_same<T, H>::value,
                        DropAll<T, Pack<Ts...>>,
-                       detail::Prepend<DropAll<T, Pack<Ts...>>, H>> {};
+                       detail::PrependT<DropAll<T, Pack<Ts...>>, H>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `FlattenAs` implementation.
@@ -1152,24 +1152,24 @@ using LooksLikeAuOrOtherQuantity = stdx::disjunction<IsAuType<T>, HasCorrespondi
 // `au::Quantity`, but also `au::QuantityPoint`, and "quantity-like" types from other libraries
 // (which we consider as "anything that has a `CorrespondingQuantity`".
 template <template <class...> class Op, typename... Ts>
-struct ResultIfNoneAreQuantityImpl;
+struct ResultIfNoneAreQuantity;
 template <template <class...> class Op, typename... Ts>
-using ResultIfNoneAreQuantity = typename ResultIfNoneAreQuantityImpl<Op, Ts...>::type;
+using ResultIfNoneAreQuantityT = typename ResultIfNoneAreQuantity<Op, Ts...>::type;
 
 // Default implementation where we know that none are quantities.
 template <bool AreAnyQuantity, template <class...> class Op, typename... Ts>
-struct ResultIfNoneAreQuantityHelper : stdx::type_identity<Op<Ts...>> {};
+struct ResultIfNoneAreQuantityImpl : stdx::type_identity<Op<Ts...>> {};
 
 // Implementation if any of the types are quantities.
 template <template <class...> class Op, typename... Ts>
-struct ResultIfNoneAreQuantityHelper<true, Op, Ts...> : stdx::type_identity<void> {};
+struct ResultIfNoneAreQuantityImpl<true, Op, Ts...> : stdx::type_identity<void> {};
 
 // The main implementation.
 template <template <class...> class Op, typename... Ts>
-struct ResultIfNoneAreQuantityImpl
-    : ResultIfNoneAreQuantityHelper<stdx::disjunction<LooksLikeAuOrOtherQuantity<Ts>...>::value,
-                                    Op,
-                                    Ts...> {};
+struct ResultIfNoneAreQuantity
+    : ResultIfNoneAreQuantityImpl<stdx::disjunction<LooksLikeAuOrOtherQuantity<Ts>...>::value,
+                                  Op,
+                                  Ts...> {};
 
 // The `std::is_empty` is a good way to catch all of the various unit and other monovalue types in
 // our library, which have little else in common.  It's also just intrinsically true that it
@@ -1202,11 +1202,11 @@ struct IsValidRep : stdx::negation<detail::IsKnownInvalidRep<T>> {};
 
 template <typename T, typename U>
 struct IsProductValidRep
-    : IsValidRep<detail::ResultIfNoneAreQuantity<detail::ProductTypeOrVoid, T, U>> {};
+    : IsValidRep<detail::ResultIfNoneAreQuantityT<detail::ProductTypeOrVoid, T, U>> {};
 
 template <typename T, typename U>
 struct IsQuotientValidRep
-    : IsValidRep<detail::ResultIfNoneAreQuantity<detail::QuotientTypeOrVoid, T, U>> {};
+    : IsValidRep<detail::ResultIfNoneAreQuantityT<detail::QuotientTypeOrVoid, T, U>> {};
 
 }  // namespace au
 
@@ -1968,47 +1968,47 @@ using FlatDedupedTypeListT = FlatDedupedTypeList<List, Ts...>;
 namespace detail {
 // Express a base power in its simplest form (base alone if power is 1, or Pow if exp is integral).
 template <typename T>
-struct SimplifyBasePowersImpl;
+struct SimplifyBasePowers;
 template <typename T>
-using SimplifyBasePowers = typename SimplifyBasePowersImpl<T>::type;
+using SimplifyBasePowersT = typename SimplifyBasePowers<T>::type;
 }  // namespace detail
 
 // Compute the product between two power packs.
 template <template <class...> class Pack, typename... Ts>
-struct PackProductImpl;
+struct PackProduct;
 template <template <class...> class Pack, typename... Ts>
-using PackProduct = detail::SimplifyBasePowers<typename PackProductImpl<Pack, Ts...>::type>;
+using PackProductT = detail::SimplifyBasePowersT<typename PackProduct<Pack, Ts...>::type>;
 
 // Compute a rational power of a pack.
 template <template <class...> class Pack, typename T, typename E>
-struct PackPowerImpl;
+struct PackPower;
 template <template <class...> class Pack,
           typename T,
           std::intmax_t ExpNum,
           std::intmax_t ExpDen = 1>
-using PackPower =
-    detail::SimplifyBasePowers<typename PackPowerImpl<Pack, T, std::ratio<ExpNum, ExpDen>>::type>;
+using PackPowerT =
+    detail::SimplifyBasePowersT<typename PackPower<Pack, T, std::ratio<ExpNum, ExpDen>>::type>;
 
 // Compute the inverse of a power pack.
 template <template <class...> class Pack, typename T>
-using PackInverse = PackPower<Pack, T, -1>;
+using PackInverseT = PackPowerT<Pack, T, -1>;
 
 // Compute the quotient of two power packs.
 template <template <class...> class Pack, typename T, typename U>
-using PackQuotient = PackProduct<Pack, T, PackInverse<Pack, U>>;
+using PackQuotientT = PackProductT<Pack, T, PackInverseT<Pack, U>>;
 
 namespace detail {
 // Pull out all of the elements in a Pack whose exponents are positive.
 template <typename T>
-struct NumeratorPartImpl;
+struct NumeratorPart;
 template <typename T>
-using NumeratorPart = typename NumeratorPartImpl<T>::type;
+using NumeratorPartT = typename NumeratorPart<T>::type;
 
 // Pull out all of the elements in a Pack whose exponents are negative.
 template <typename T>
-struct DenominatorPartImpl;
+struct DenominatorPart;
 template <typename T>
-using DenominatorPart = typename DenominatorPartImpl<T>::type;
+using DenominatorPartT = typename DenominatorPart<T>::type;
 }  // namespace detail
 
 // A validator for a pack of Base Powers.
@@ -2021,7 +2021,7 @@ template <template <class...> class Pack, typename T>
 struct IsValidPack;
 
 // Assuming that `T` is an instance of `Pack<BPs...>`, validates that every consecutive pair from
-// `Base<BPs>...` satisfies the strict total ordering `InOrderFor<Pack, ...>` for `Pack`.
+// `BaseT<BPs>...` satisfies the strict total ordering `InOrderFor<Pack, ...>` for `Pack`.
 template <template <class...> class Pack, typename T>
 struct AreBasesInOrder;
 
@@ -2082,8 +2082,8 @@ using MagT = typename MagImpl<U>::type;
 template <typename B, std::intmax_t N>
 struct Pow {
     // TODO(#40): Clean up relationship between Dim/Mag and Pow, if compile times are OK.
-    using Dim = PackPower<Dimension, AsPack<Dimension, detail::DimT<B>>, N>;
-    using Mag = PackPower<Magnitude, AsPack<Magnitude, detail::MagT<B>>, N>;
+    using Dim = PackPowerT<Dimension, AsPackT<Dimension, detail::DimT<B>>, N>;
+    using Mag = PackPowerT<Magnitude, AsPackT<Magnitude, detail::MagT<B>>, N>;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2093,8 +2093,8 @@ struct Pow {
 template <typename B, std::intmax_t N, std::intmax_t D>
 struct RatioPow {
     // TODO(#40): Clean up relationship between Dim/Mag and RatioPow, if compile times are OK.
-    using Dim = PackPower<Dimension, AsPack<Dimension, detail::DimT<B>>, N, D>;
-    using Mag = PackPower<Magnitude, AsPack<Magnitude, detail::MagT<B>>, N, D>;
+    using Dim = PackPowerT<Dimension, AsPackT<Dimension, detail::DimT<B>>, N, D>;
+    using Mag = PackPowerT<Magnitude, AsPackT<Magnitude, detail::MagT<B>>, N, D>;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2184,14 +2184,14 @@ namespace detail {
 template <typename T, typename U>
 struct LeadBasesInOrder;
 template <template <class...> class P, typename H1, typename... T1, typename H2, typename... T2>
-struct LeadBasesInOrder<P<H1, T1...>, P<H2, T2...>> : InOrderFor<P, Base<H1>, Base<H2>> {};
+struct LeadBasesInOrder<P<H1, T1...>, P<H2, T2...>> : InOrderFor<P, BaseT<H1>, BaseT<H2>> {};
 
 // Helper: check that the lead exponents are in order.
 template <typename T, typename U>
 struct LeadExpsInOrder;
 template <template <class...> class P, typename H1, typename... T1, typename H2, typename... T2>
 struct LeadExpsInOrder<P<H1, T1...>, P<H2, T2...>>
-    : stdx::bool_constant<(std::ratio_subtract<Exp<H1>, Exp<H2>>::num < 0)> {};
+    : stdx::bool_constant<(std::ratio_subtract<ExpT<H1>, ExpT<H2>>::num < 0)> {};
 
 // Helper: apply InStandardPackOrder to tails.
 template <typename T, typename U>
@@ -2237,7 +2237,7 @@ struct InsertUsingOrderingForImpl<PackForOrdering, T, Pack<U, Us...>>
     : std::conditional<
           InOrderFor<PackForOrdering, T, U>::value,
           Pack<T, U, Us...>,
-          detail::Prepend<InsertUsingOrderingFor<PackForOrdering, T, Pack<Us...>>, U>> {};
+          detail::PrependT<InsertUsingOrderingFor<PackForOrdering, T, Pack<Us...>>, U>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `SortAs` implementation.
@@ -2290,7 +2290,7 @@ struct FlatDedupedTypeListImpl<List, List<T>, List<H, Ts...>> :
                            // If we're here, we know the candidate comes after the head.  So, try
                            // inserting it (recursively) in the tail, and then prepend the old Head
                            // (because we know it comes first).
-                           detail::Prepend<FlatDedupedTypeListT<List, List<T>, List<Ts...>>, H>>> {
+                           detail::PrependT<FlatDedupedTypeListT<List, List<T>, List<Ts...>>, H>>> {
 };
 
 // 2-ary recursive case, multi-element head: insert head of second element, and recurse.
@@ -2314,60 +2314,61 @@ struct FlatDedupedTypeListImpl<List, L1, L2, L3, Ls...>
     : FlatDedupedTypeListImpl<List, FlatDedupedTypeListT<List, L1, L2>, L3, Ls...> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `PackProduct` implementation.
+// `PackProductT` implementation.
 
 // 0-ary case:
 template <template <class...> class Pack>
-struct PackProductImpl<Pack> : stdx::type_identity<Pack<>> {};
+struct PackProduct<Pack> : stdx::type_identity<Pack<>> {};
 
 // 1-ary case:
 template <template <class...> class Pack, typename... Ts>
-struct PackProductImpl<Pack, Pack<Ts...>> : stdx::type_identity<Pack<Ts...>> {};
+struct PackProduct<Pack, Pack<Ts...>> : stdx::type_identity<Pack<Ts...>> {};
 
 // 2-ary Base case: two null packs.
 template <template <class...> class Pack>
-struct PackProductImpl<Pack, Pack<>, Pack<>> : stdx::type_identity<Pack<>> {};
+struct PackProduct<Pack, Pack<>, Pack<>> : stdx::type_identity<Pack<>> {};
 
 // 2-ary Base case: only left pack is null.
 template <template <class...> class Pack, typename T, typename... Ts>
-struct PackProductImpl<Pack, Pack<>, Pack<T, Ts...>> : stdx::type_identity<Pack<T, Ts...>> {};
+struct PackProduct<Pack, Pack<>, Pack<T, Ts...>> : stdx::type_identity<Pack<T, Ts...>> {};
 
 // 2-ary Base case: only right pack is null.
 template <template <class...> class Pack, typename T, typename... Ts>
-struct PackProductImpl<Pack, Pack<T, Ts...>, Pack<>> : stdx::type_identity<Pack<T, Ts...>> {};
+struct PackProduct<Pack, Pack<T, Ts...>, Pack<>> : stdx::type_identity<Pack<T, Ts...>> {};
 
 namespace detail {
 template <typename B, typename E1, typename E2>
-struct ComputeRationalPowerImpl {
+struct ComputeRationalPower {
     using E = std::ratio_add<E1, E2>;
     using type = RatioPow<B, E::num, E::den>;
 };
 template <typename B, typename E1, typename E2>
-using ComputeRationalPower = typename ComputeRationalPowerImpl<B, E1, E2>::type;
+using ComputeRationalPowerT = typename ComputeRationalPower<B, E1, E2>::type;
 }  // namespace detail
 
 // 2-ary Recursive case: two non-null packs.
 template <template <class...> class P, typename H1, typename... T1, typename H2, typename... T2>
-struct PackProductImpl<P, P<H1, T1...>, P<H2, T2...>> :
+struct PackProduct<P, P<H1, T1...>, P<H2, T2...>> :
 
     // If the bases for H1 and H2 are in-order, prepend H1 to the product of the remainder.
     std::conditional<
-        (InOrderFor<P, Base<H1>, Base<H2>>::value),
-        detail::Prepend<PackProduct<P, P<T1...>, P<H2, T2...>>, H1>,
+        (InOrderFor<P, BaseT<H1>, BaseT<H2>>::value),
+        detail::PrependT<PackProductT<P, P<T1...>, P<H2, T2...>>, H1>,
 
         // If the bases for H2 and H1 are in-order, prepend H2 to the product of the remainder.
         std::conditional_t<
-            (InOrderFor<P, Base<H2>, Base<H1>>::value),
-            detail::Prepend<PackProduct<P, P<T2...>, P<H1, T1...>>, H2>,
+            (InOrderFor<P, BaseT<H2>, BaseT<H1>>::value),
+            detail::PrependT<PackProductT<P, P<T2...>, P<H1, T1...>>, H2>,
 
             // If the bases have the same position, assume they really _are_ the same (because
             // InOrderFor will verify this if it uses LexicographicTotalOrdering), and add the
             // exponents.  (If the exponents add to zero, omit the term.)
             std::conditional_t<
-                (std::ratio_add<Exp<H1>, Exp<H2>>::num == 0),
-                PackProduct<P, P<T1...>, P<T2...>>,
-                detail::Prepend<PackProduct<P, P<T2...>, P<T1...>>,
-                                detail::ComputeRationalPower<Base<H1>, Exp<H1>, Exp<H2>>>>>> {};
+                (std::ratio_add<ExpT<H1>, ExpT<H2>>::num == 0),
+                PackProductT<P, P<T1...>, P<T2...>>,
+                detail::PrependT<PackProductT<P, P<T2...>, P<T1...>>,
+                                 detail::ComputeRationalPowerT<BaseT<H1>, ExpT<H1>, ExpT<H2>>>>>> {
+};
 
 // N-ary case, N > 2: recurse.
 template <template <class...> class P,
@@ -2375,22 +2376,22 @@ template <template <class...> class P,
           typename... T2s,
           typename... T3s,
           typename... Ps>
-struct PackProductImpl<P, P<T1s...>, P<T2s...>, P<T3s...>, Ps...>
-    : PackProductImpl<P, P<T1s...>, PackProduct<P, P<T2s...>, P<T3s...>, Ps...>> {};
+struct PackProduct<P, P<T1s...>, P<T2s...>, P<T3s...>, Ps...>
+    : PackProduct<P, P<T1s...>, PackProductT<P, P<T2s...>, P<T3s...>, Ps...>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `PackPower` implementation.
+// `PackPowerT` implementation.
 
 namespace detail {
 template <typename T, typename E>
-using MultiplyExpFor = std::ratio_multiply<Exp<T>, E>;
+using MultiplyExpFor = std::ratio_multiply<ExpT<T>, E>;
 }
 
 template <template <class...> class P, typename... Ts, typename E>
-struct PackPowerImpl<P, P<Ts...>, E>
+struct PackPower<P, P<Ts...>, E>
     : std::conditional<(E::num == 0),
                        P<>,
-                       P<RatioPow<Base<Ts>,
+                       P<RatioPow<BaseT<Ts>,
                                   detail::MultiplyExpFor<Ts, E>::num,
                                   detail::MultiplyExpFor<Ts, E>::den>...>> {};
 
@@ -2446,51 +2447,50 @@ constexpr bool all_true(Predicates &&...values) {
 // `AreBasesInOrder` implementation.
 
 template <template <class...> class Pack, typename... Ts>
-struct AreBasesInOrder<Pack, Pack<Ts...>> : AreElementsInOrder<Pack, Pack<Base<Ts>...>> {};
+struct AreBasesInOrder<Pack, Pack<Ts...>> : AreElementsInOrder<Pack, Pack<BaseT<Ts>...>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `AreAllPowersNonzero` implementation.
 
 template <template <class...> class Pack, typename... Ts>
 struct AreAllPowersNonzero<Pack, Pack<Ts...>>
-    : stdx::bool_constant<detail::all_true((Exp<Ts>::num != 0)...)> {};
+    : stdx::bool_constant<detail::all_true((ExpT<Ts>::num != 0)...)> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `SimplifyBasePowers` implementation.
+// `SimplifyBasePowersT` implementation.
 
 namespace detail {
 // To simplify an individual base power, by default, do nothing.
 template <typename T>
-struct SimplifyBasePowerImpl : stdx::type_identity<T> {};
+struct SimplifyBasePower : stdx::type_identity<T> {};
 template <typename T>
-using SimplifyBasePower = typename SimplifyBasePowerImpl<T>::type;
+using SimplifyBasePowerT = typename SimplifyBasePower<T>::type;
 
 // To simplify an integer power of a base, give the base alone if the exponent is 1; otherwise, do
 // nothing.
 template <typename B, std::intmax_t N>
-struct SimplifyBasePowerImpl<Pow<B, N>> : std::conditional<(N == 1), B, Pow<B, N>> {};
+struct SimplifyBasePower<Pow<B, N>> : std::conditional<(N == 1), B, Pow<B, N>> {};
 
 // To simplify a rational power of a base, simplify the integer power if the exponent is an integer
 // (i.e., if its denominator is 1); else, do nothing.
 template <typename B, std::intmax_t N, std::intmax_t D>
-struct SimplifyBasePowerImpl<RatioPow<B, N, D>>
-    : std::conditional<(D == 1), SimplifyBasePower<Pow<B, N>>, RatioPow<B, N, D>> {};
+struct SimplifyBasePower<RatioPow<B, N, D>>
+    : std::conditional<(D == 1), SimplifyBasePowerT<Pow<B, N>>, RatioPow<B, N, D>> {};
 
 // To simplify the base powers in a pack, give the pack with each base power simplified.
 template <template <class...> class Pack, typename... BPs>
-struct SimplifyBasePowersImpl<Pack<BPs...>> : stdx::type_identity<Pack<SimplifyBasePower<BPs>...>> {
-};
+struct SimplifyBasePowers<Pack<BPs...>> : stdx::type_identity<Pack<SimplifyBasePowerT<BPs>...>> {};
 }  // namespace detail
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `NumeratorPart` and `DenominatorPart` implementation.
+// `NumeratorPartT` and `DenominatorPartT` implementation.
 
 namespace detail {
 template <typename BP>
-struct IsInNumerator : stdx::bool_constant<(Exp<BP>::num > 0)> {};
+struct IsInNumerator : stdx::bool_constant<(ExpT<BP>::num > 0)> {};
 
 template <typename BP>
-struct IsInDenominator : stdx::bool_constant<(Exp<BP>::num < 0)> {};
+struct IsInDenominator : stdx::bool_constant<(ExpT<BP>::num < 0)> {};
 
 // A generic helper for both numerator and denominator.
 template <template <class> class Pred, typename T>
@@ -2504,16 +2504,17 @@ struct PullOutMatchingPowers<Pred, Pack<>> : stdx::type_identity<Pack<>> {};
 template <template <class> class Pred, template <class...> class Pack, typename H, typename... Ts>
 struct PullOutMatchingPowers<Pred, Pack<H, Ts...>>
     : std::conditional<(Pred<H>::value),
-                       detail::Prepend<typename PullOutMatchingPowers<Pred, Pack<Ts...>>::type, H>,
+                       detail::PrependT<typename PullOutMatchingPowers<Pred, Pack<Ts...>>::type, H>,
                        typename PullOutMatchingPowers<Pred, Pack<Ts...>>::type> {};
 
 template <typename T>
-struct NumeratorPartImpl : PullOutMatchingPowers<IsInNumerator, T> {};
+struct NumeratorPart : PullOutMatchingPowers<IsInNumerator, T> {};
 
 template <template <class...> class Pack, typename... Ts>
-struct DenominatorPartImpl<Pack<Ts...>>
+struct DenominatorPart<Pack<Ts...>>
     : stdx::type_identity<
-          PackInverse<Pack, typename PullOutMatchingPowers<IsInDenominator, Pack<Ts...>>::type>> {};
+          PackInverseT<Pack, typename PullOutMatchingPowers<IsInDenominator, Pack<Ts...>>::type>> {
+};
 
 }  // namespace detail
 
@@ -2539,41 +2540,41 @@ struct Dimension {
 
 // Define readable operations for product, quotient, power, inverse on Dimensions.
 template <typename... BPs>
-using DimProduct = PackProduct<Dimension, BPs...>;
+using DimProduct = PackProductT<Dimension, BPs...>;
 template <typename... BPs>
 using DimProductT = DimProduct<BPs...>;
 template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
-using DimPower = PackPower<Dimension, T, ExpNum, ExpDen>;
+using DimPower = PackPowerT<Dimension, T, ExpNum, ExpDen>;
 template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using DimPowerT = DimPower<T, ExpNum, ExpDen>;
 
 template <typename T, typename U>
-using DimQuotient = PackQuotient<Dimension, T, U>;
+using DimQuotient = PackQuotientT<Dimension, T, U>;
 template <typename T, typename U>
 using DimQuotientT = DimQuotient<T, U>;
 
 template <typename T>
-using DimInverse = PackInverse<Dimension, T>;
+using DimInverse = PackInverseT<Dimension, T>;
 template <typename T>
 using DimInverseT = DimInverse<T>;
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator*(Dimension<BP1s...>, Dimension<BP2s...>) {
-    return DimProduct<Dimension<BP1s...>, Dimension<BP2s...>>{};
+    return DimProductT<Dimension<BP1s...>, Dimension<BP2s...>>{};
 }
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator/(Dimension<BP1s...>, Dimension<BP2s...>) {
-    return DimQuotient<Dimension<BP1s...>, Dimension<BP2s...>>{};
+    return DimQuotientT<Dimension<BP1s...>, Dimension<BP2s...>>{};
 }
 
 // Roots and powers for Dimension instances.
 template <std::intmax_t N, typename... BPs>
-constexpr DimPower<Dimension<BPs...>, N> pow(Dimension<BPs...>) {
+constexpr DimPowerT<Dimension<BPs...>, N> pow(Dimension<BPs...>) {
     return {};
 }
 template <std::intmax_t N, typename... BPs>
-constexpr DimPower<Dimension<BPs...>, 1, N> root(Dimension<BPs...>) {
+constexpr DimPowerT<Dimension<BPs...>, 1, N> root(Dimension<BPs...>) {
     return {};
 }
 
@@ -2803,45 +2804,46 @@ struct Magnitude {
 
 // Define readable operations for product, quotient, power, inverse on Magnitudes.
 template <typename... BPs>
-using MagProduct = PackProduct<Magnitude, BPs...>;
+using MagProduct = PackProductT<Magnitude, BPs...>;
 template <typename... BPs>
 using MagProductT = MagProduct<BPs...>;
 
 template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
-using MagPower = PackPower<Magnitude, T, ExpNum, ExpDen>;
+using MagPower = PackPowerT<Magnitude, T, ExpNum, ExpDen>;
 template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using MagPowerT = MagPower<T, ExpNum, ExpDen>;
 
 template <typename T, typename U>
-using MagQuotient = PackQuotient<Magnitude, T, U>;
+using MagQuotient = PackQuotientT<Magnitude, T, U>;
 template <typename T, typename U>
 using MagQuotientT = MagQuotient<T, U>;
 
 template <typename T>
-using MagInverse = PackInverse<Magnitude, T>;
+using MagInverse = PackInverseT<Magnitude, T>;
 template <typename T>
 using MagInverseT = MagInverse<T>;
 
 // Enable negative magnitudes with a type representing (-1) that appears/disappears under powers.
 struct Negative {};
 template <typename... BPs, std::intmax_t ExpNum, std::intmax_t ExpDen>
-struct PackPowerImpl<Magnitude, Magnitude<Negative, BPs...>, std::ratio<ExpNum, ExpDen>>
-    : std::conditional<(std::ratio<ExpNum, ExpDen>::num % 2 == 0),
+struct PackPower<Magnitude, Magnitude<Negative, BPs...>, std::ratio<ExpNum, ExpDen>>
+    : std::conditional<
+          (std::ratio<ExpNum, ExpDen>::num % 2 == 0),
 
-                       // Even powers of (-1) are 1 for any root.
-                       MagPower<Magnitude<BPs...>, ExpNum, ExpDen>,
+          // Even powers of (-1) are 1 for any root.
+          PackPowerT<Magnitude, Magnitude<BPs...>, ExpNum, ExpDen>,
 
-                       // At this point, we know we're taking the D'th root of (-1), which is (-1)
-                       // if D is odd, and a hard compiler error if D is even.
-                       MagProduct<Magnitude<Negative>, MagPower<Magnitude<BPs...>, ExpNum, ExpDen>>>
+          // At this point, we know we're taking the D'th root of (-1), which is (-1)
+          // if D is odd, and a hard compiler error if D is even.
+          MagProductT<Magnitude<Negative>, MagPowerT<Magnitude<BPs...>, ExpNum, ExpDen>>>
 // Implement the hard error for raising to (odd / even) power:
 {
     static_assert(std::ratio<ExpNum, ExpDen>::den % 2 == 1,
                   "Cannot take even root of negative magnitude");
 };
 template <typename... LeftBPs, typename... RightBPs>
-struct PackProductImpl<Magnitude, Magnitude<Negative, LeftBPs...>, Magnitude<Negative, RightBPs...>>
-    : stdx::type_identity<MagProduct<Magnitude<LeftBPs...>, Magnitude<RightBPs...>>> {};
+struct PackProduct<Magnitude, Magnitude<Negative, LeftBPs...>, Magnitude<Negative, RightBPs...>>
+    : stdx::type_identity<MagProductT<Magnitude<LeftBPs...>, Magnitude<RightBPs...>>> {};
 
 // Define negation.
 template <typename... BPs>
@@ -2910,9 +2912,7 @@ struct InOrderFor<Magnitude, A, B> : LexicographicTotalOrdering<A, B, detail::Or
 template <typename MagT>
 struct IntegerPartImpl;
 template <typename MagT>
-using IntegerPart = typename IntegerPartImpl<MagT>::type;
-template <typename MagT>
-using IntegerPartT = IntegerPart<MagT>;
+using IntegerPartT = typename IntegerPartImpl<MagT>::type;
 
 template <typename MagT>
 struct AbsImpl;
@@ -2927,14 +2927,10 @@ using Sign = typename SignImpl<MagT>::type;
 template <typename MagT>
 struct NumeratorImpl;
 template <typename MagT>
-using Numerator = typename NumeratorImpl<MagT>::type;
-template <typename MagT>
-using NumeratorT = Numerator<MagT>;
+using NumeratorT = typename NumeratorImpl<MagT>::type;
 
 template <typename MagT>
-using Denominator = Numerator<MagInverse<Abs<MagT>>>;
-template <typename MagT>
-using DenominatorT = Denominator<MagT>;
+using DenominatorT = NumeratorT<MagInverseT<Abs<MagT>>>;
 
 template <typename MagT>
 struct IsPositive : std::true_type {};
@@ -2944,10 +2940,11 @@ struct IsPositive<Magnitude<Negative, BPs...>> : std::false_type {};
 template <typename MagT>
 struct IsRational
     : std::is_same<MagT,
-                   MagQuotient<IntegerPart<Numerator<MagT>>, IntegerPart<Denominator<MagT>>>> {};
+                   MagQuotientT<IntegerPartT<NumeratorT<MagT>>, IntegerPartT<DenominatorT<MagT>>>> {
+};
 
 template <typename MagT>
-struct IsInteger : std::is_same<MagT, IntegerPart<MagT>> {};
+struct IsInteger : std::is_same<MagT, IntegerPartT<MagT>> {};
 
 // The "common magnitude" of two Magnitudes is the largest Magnitude that evenly divides both.
 //
@@ -2968,22 +2965,22 @@ static constexpr auto ONE = Magnitude<>{};
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator*(Magnitude<BP1s...>, Magnitude<BP2s...>) {
-    return MagProduct<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
+    return MagProductT<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
 }
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator/(Magnitude<BP1s...>, Magnitude<BP2s...>) {
-    return MagQuotient<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
+    return MagQuotientT<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
 }
 
 template <int E, typename... BPs>
 constexpr auto pow(Magnitude<BPs...>) {
-    return MagPower<Magnitude<BPs...>, E>{};
+    return MagPowerT<Magnitude<BPs...>, E>{};
 }
 
 template <int N, typename... BPs>
 constexpr auto root(Magnitude<BPs...>) {
-    return MagPower<Magnitude<BPs...>, 1, N>{};
+    return MagPowerT<Magnitude<BPs...>, 1, N>{};
 }
 
 template <typename... BP1s, typename... BP2s>
@@ -2998,7 +2995,7 @@ constexpr auto operator!=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
 
 template <typename... BPs>
 constexpr auto integer_part(Magnitude<BPs...>) {
-    return IntegerPart<Magnitude<BPs...>>{};
+    return IntegerPartT<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
@@ -3014,12 +3011,12 @@ constexpr auto sign(Magnitude<BPs...>) {
 
 template <typename... BPs>
 constexpr auto numerator(Magnitude<BPs...>) {
-    return Numerator<Magnitude<BPs...>>{};
+    return NumeratorT<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
 constexpr auto denominator(Magnitude<BPs...>) {
-    return Denominator<Magnitude<BPs...>>{};
+    return DenominatorT<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
@@ -3046,7 +3043,7 @@ constexpr T get_value(Magnitude<BPs...>);
 // Value-based interface around CommonMagnitude.
 template <typename... Ms>
 constexpr auto common_magnitude(Ms...) {
-    return CommonMagnitude<Ms...>{};
+    return CommonMagnitudeT<Ms...>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3060,31 +3057,31 @@ namespace detail {
 
 // Helper to perform prime factorization.
 template <std::uintmax_t N>
-struct PrimeFactorizationImpl;
+struct PrimeFactorization;
 template <std::uintmax_t N>
-using PrimeFactorization = typename PrimeFactorizationImpl<N>::type;
+using PrimeFactorizationT = typename PrimeFactorization<N>::type;
 
 // Base case: factorization of 1.
 template <>
-struct PrimeFactorizationImpl<1u> : stdx::type_identity<Magnitude<>> {};
+struct PrimeFactorization<1u> : stdx::type_identity<Magnitude<>> {};
 
 template <std::uintmax_t N>
-struct PrimeFactorizationImpl {
+struct PrimeFactorization {
     static_assert(N > 0, "Can only factor positive integers");
 
     static constexpr std::uintmax_t base = find_prime_factor(N);
     static constexpr std::uintmax_t power = multiplicity(base, N);
     static constexpr std::uintmax_t remainder = N / int_pow(base, power);
 
-    using type = MagProduct<Magnitude<Pow<Prime<base>, static_cast<std::intmax_t>(power)>>,
-                            PrimeFactorization<remainder>>;
+    using type = MagProductT<Magnitude<Pow<Prime<base>, static_cast<std::intmax_t>(power)>>,
+                             PrimeFactorizationT<remainder>>;
 };
 
 }  // namespace detail
 
 template <std::uintmax_t N>
 constexpr auto mag() {
-    return detail::PrimeFactorization<N>{};
+    return detail::PrimeFactorizationT<N>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3096,16 +3093,16 @@ struct IntegerPartOfBasePower : stdx::type_identity<Magnitude<>> {};
 // Raise B to the largest natural number power which won't exceed (N/D), or 0 if there isn't one.
 template <std::uintmax_t B, std::intmax_t N, std::intmax_t D>
 struct IntegerPartOfBasePower<Prime<B>, std::ratio<N, D>>
-    : stdx::type_identity<MagPower<Magnitude<Prime<B>>, ((N >= D) ? (N / D) : 0)>> {};
+    : stdx::type_identity<MagPowerT<Magnitude<Prime<B>>, ((N >= D) ? (N / D) : 0)>> {};
 
 template <typename... BPs>
 struct IntegerPartImpl<Magnitude<BPs...>>
     : stdx::type_identity<
-          MagProduct<typename IntegerPartOfBasePower<Base<BPs>, Exp<BPs>>::type...>> {};
+          MagProductT<typename IntegerPartOfBasePower<BaseT<BPs>, ExpT<BPs>>::type...>> {};
 
 template <typename... BPs>
 struct IntegerPartImpl<Magnitude<Negative, BPs...>>
-    : stdx::type_identity<MagProduct<Magnitude<Negative>, IntegerPart<Magnitude<BPs...>>>> {};
+    : stdx::type_identity<MagProductT<Magnitude<Negative>, IntegerPartT<Magnitude<BPs...>>>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `abs()` implementation.
@@ -3134,7 +3131,7 @@ struct SignImpl<Magnitude<Negative, BPs...>> : stdx::type_identity<Magnitude<Neg
 template <typename... BPs>
 struct NumeratorImpl<Magnitude<BPs...>>
     : stdx::type_identity<
-          MagProduct<std::conditional_t<(Exp<BPs>::num > 0), Magnitude<BPs>, Magnitude<>>...>> {};
+          MagProductT<std::conditional_t<(ExpT<BPs>::num > 0), Magnitude<BPs>, Magnitude<>>...>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `get_value<T>(Magnitude)` implementation.
@@ -3432,10 +3429,11 @@ template <typename T, typename... BPs>
 struct GetValueResultImplForDefaultCase<T, Magnitude<BPs...>> {
     constexpr MagRepresentationOrError<T> operator()() {
         // Force the expression to be evaluated in a constexpr context.
-        constexpr auto widened_result = product(
-            {base_power_value<RealPart<T>,
-                              Exp<BPs>::num,
-                              static_cast<std::uintmax_t>(Exp<BPs>::den)>(Base<BPs>::value())...});
+        constexpr auto widened_result =
+            product({base_power_value<RealPart<T>,
+                                      ExpT<BPs>::num,
+                                      static_cast<std::uintmax_t>(ExpT<BPs>::den)>(
+                BaseT<BPs>::value())...});
 
         if ((widened_result.outcome != MagRepresentationOutcome::OK) ||
             !safe_to_cast_to<T>(widened_result.value)) {
@@ -3573,9 +3571,9 @@ using ExtendedMagLabel =
 
 template <typename MagT>
 struct MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL> {
-    using LabelT = ExtendedMagLabel<3u, Numerator<MagT>, Denominator<MagT>>;
+    using LabelT = ExtendedMagLabel<3u, NumeratorT<MagT>, DenominatorT<MagT>>;
     static constexpr LabelT value = join_by(
-        " / ", MagnitudeLabel<Numerator<MagT>>::value, MagnitudeLabel<Denominator<MagT>>::value);
+        " / ", MagnitudeLabel<NumeratorT<MagT>>::value, MagnitudeLabel<DenominatorT<MagT>>::value);
 
     static constexpr const bool has_exposed_slash = true;
 };
@@ -3616,16 +3614,16 @@ constexpr const auto &mag_label(MagT) {
 namespace detail {
 // Helper: prepend a base power, but only if the Exp is negative.
 template <typename BP, typename MagT>
-struct PrependIfExpNegativeImpl;
+struct PrependIfExpNegative;
 template <typename BP, typename MagT>
-using PrependIfExpNegative = typename PrependIfExpNegativeImpl<BP, MagT>::type;
+using PrependIfExpNegativeT = typename PrependIfExpNegative<BP, MagT>::type;
 template <typename BP, typename... Ts>
-struct PrependIfExpNegativeImpl<BP, Magnitude<Ts...>>
-    : std::conditional<(Exp<BP>::num < 0), Magnitude<BP, Ts...>, Magnitude<Ts...>> {};
+struct PrependIfExpNegative<BP, Magnitude<Ts...>>
+    : std::conditional<(ExpT<BP>::num < 0), Magnitude<BP, Ts...>, Magnitude<Ts...>> {};
 
 // Remove all positive powers from M.
 template <typename M>
-using NegativePowers = MagQuotient<M, NumeratorPart<M>>;
+using NegativePowers = MagQuotientT<M, NumeratorPartT<M>>;
 }  // namespace detail
 
 // 1-ary case: identity.
@@ -3652,22 +3650,22 @@ struct CommonMagnitudeImpl<Magnitude<H1, T1...>, Magnitude<H2, T2...>> :
 
     // If the bases for H1 and H2 are in-order, prepend H1-if-negative to the remainder.
     std::conditional<
-        (InOrderFor<Magnitude, Base<H1>, Base<H2>>::value),
-        detail::PrependIfExpNegative<H1, CommonMagnitude<Magnitude<T1...>, Magnitude<H2, T2...>>>,
+        (InOrderFor<Magnitude, BaseT<H1>, BaseT<H2>>::value),
+        detail::PrependIfExpNegativeT<H1, CommonMagnitude<Magnitude<T1...>, Magnitude<H2, T2...>>>,
 
         // If the bases for H2 and H1 are in-order, prepend H2-if-negative to the remainder.
         std::conditional_t<
-            (InOrderFor<Magnitude, Base<H2>, Base<H1>>::value),
-            detail::PrependIfExpNegative<H2,
-                                         CommonMagnitude<Magnitude<T2...>, Magnitude<H1, T1...>>>,
+            (InOrderFor<Magnitude, BaseT<H2>, BaseT<H1>>::value),
+            detail::PrependIfExpNegativeT<H2,
+                                          CommonMagnitude<Magnitude<T2...>, Magnitude<H1, T1...>>>,
 
             // If we got here, the bases must be the same.  (We can assume that `InOrderFor` does
             // proper checking to guard against equivalent-but-not-identical bases, which would
             // violate total ordering.)
             std::conditional_t<
-                (std::ratio_subtract<Exp<H1>, Exp<H2>>::num < 0),
-                detail::Prepend<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H1>,
-                detail::Prepend<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H2>>>> {};
+                (std::ratio_subtract<ExpT<H1>, ExpT<H2>>::num < 0),
+                detail::PrependT<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H1>,
+                detail::PrependT<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H2>>>> {};
 
 // N-ary case: recurse.
 template <typename M1, typename M2, typename... Tail>
@@ -3871,8 +3869,8 @@ template <typename M>
 struct MagKindForImpl
     : std::conditional<
           stdx::conjunction<IsRational<M>,
-                            stdx::negation<std::is_same<Denominator<M>, Magnitude<>>>>::value,
-          std::conditional_t<std::is_same<Abs<Numerator<M>>, Magnitude<>>::value,
+                            stdx::negation<std::is_same<DenominatorT<M>, Magnitude<>>>>::value,
+          std::conditional_t<std::is_same<Abs<NumeratorT<M>>, Magnitude<>>::value,
                              MagKindHolder<MagKind::INTEGER_DIVIDE>,
                              MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>,
           MagKindHolder<MagKind::DEFAULT>> {};
@@ -3886,13 +3884,13 @@ using ApplicationStrategyFor = typename ApplicationStrategyForImpl<T, Mag, MagKi
 
 template <typename T, typename Mag>
 struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::INTEGER_DIVIDE>>
-    : stdx::type_identity<DivideTypeByInteger<T, MagProduct<Sign<Mag>, Denominator<Mag>>>> {};
+    : stdx::type_identity<DivideTypeByInteger<T, MagProductT<Sign<Mag>, DenominatorT<Mag>>>> {};
 
 template <typename T, typename Mag>
 struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>
     : std::conditional<
           std::is_integral<RealPart<T>>::value,
-          OpSequence<MultiplyTypeBy<T, Numerator<Mag>>, DivideTypeByInteger<T, Denominator<Mag>>>,
+          OpSequence<MultiplyTypeBy<T, NumeratorT<Mag>>, DivideTypeByInteger<T, DenominatorT<Mag>>>,
           MultiplyTypeBy<T, Mag>> {};
 
 //
@@ -4304,7 +4302,7 @@ struct LowestOfLimitsDividedByValue {
 template <typename T, typename M, typename Limits>
 struct ClampLowestOfLimitsTimesInverseValue {
     static constexpr T value() {
-        constexpr auto ABS_DIVISOR = MagInverse<Abs<M>>{};
+        constexpr auto ABS_DIVISOR = MagInverseT<Abs<M>>{};
 
         constexpr T RELEVANT_LIMIT = IsPositive<M>::value
                                          ? LowerLimit<T, Limits>::value()
@@ -4354,7 +4352,7 @@ struct HighestOfLimitsDividedByValue {
 template <typename T, typename M, typename Limits>
 struct ClampHighestOfLimitsTimesInverseValue {
     static constexpr T value() {
-        constexpr auto ABS_DIVISOR = MagInverse<Abs<M>>{};
+        constexpr auto ABS_DIVISOR = MagInverseT<Abs<M>>{};
 
         constexpr T RELEVANT_LIMIT = IsPositive<M>::value
                                          ? UpperLimit<T, Limits>::value()
@@ -4633,7 +4631,7 @@ struct MaxGoodImpl<MultiplyTypeBy<T, M>, Limits>
 
 template <typename T, typename M, typename Limits>
 struct MinGoodImplForDivideTypeByIntegerAssumingSigned
-    : stdx::type_identity<ClampLowestOfLimitsTimesInverseValue<T, MagInverse<M>, Limits>> {};
+    : stdx::type_identity<ClampLowestOfLimitsTimesInverseValue<T, MagInverseT<M>, Limits>> {};
 
 template <typename T, typename M, typename Limits>
 struct MinGoodImplForDivideTypeByIntegerUsingRealPart
@@ -4651,7 +4649,7 @@ struct MinGoodImpl<DivideTypeByInteger<T, M>, Limits>
 
 template <typename T, typename M, typename Limits>
 struct MaxGoodImplForDivideTypeByIntegerAssumingSignedTypeOrPositiveFactor
-    : stdx::type_identity<ClampHighestOfLimitsTimesInverseValue<T, MagInverse<M>, Limits>> {};
+    : stdx::type_identity<ClampHighestOfLimitsTimesInverseValue<T, MagInverseT<M>, Limits>> {};
 
 template <typename T, typename M, typename Limits>
 struct MaxGoodImplForDivideTypeByIntegerUsingRealPart
@@ -4842,7 +4840,7 @@ struct IsUnitlessUnit
 //
 // Useful in doing unit conversions.
 template <typename U1, typename U2>
-struct UnitRatioImpl : stdx::type_identity<MagQuotient<detail::MagT<U1>, detail::MagT<U2>>> {
+struct UnitRatioImpl : stdx::type_identity<MagQuotientT<detail::MagT<U1>, detail::MagT<U2>>> {
     static_assert(HasSameDimension<U1, U2>::value,
                   "Can only compute ratio of same-dimension units");
 };
@@ -4899,7 +4897,7 @@ using CommonUnitT = CommonUnit<Us...>;
 //
 // This helps us support the widest range of Rep types (in particular, unsigned integers).
 //
-// As with `CommonUnit`, this isn't always possible: in particular, we can't do this for units with
+// As with `CommonUnitT`, this isn't always possible: in particular, we can't do this for units with
 // irrational relative magnitudes or origin displacements.  However, we still provide _some_ answer,
 // which is consistent with the above policy whenever it's achievable, and produces reasonable
 // results in all other cases.
@@ -4926,81 +4924,81 @@ constexpr bool is_unit(T) {
 // `fits_in_unit_slot(T)`: check whether this value is valid for a unit slot.
 template <typename T>
 constexpr bool fits_in_unit_slot(T) {
-    return IsUnit<AssociatedUnit<T>>::value;
+    return IsUnit<AssociatedUnitT<T>>::value;
 }
 
 // Check whether the units associated with these objects have the same Dimension.
 template <typename... Us>
 constexpr bool has_same_dimension(Us...) {
-    return HasSameDimension<AssociatedUnit<Us>...>::value;
+    return HasSameDimension<AssociatedUnitT<Us>...>::value;
 }
 
 // Check whether two Unit types are exactly quantity-equivalent.
 template <typename U1, typename U2>
 constexpr bool are_units_quantity_equivalent(U1, U2) {
-    return AreUnitsQuantityEquivalent<AssociatedUnit<U1>, AssociatedUnit<U2>>::value;
+    return AreUnitsQuantityEquivalent<AssociatedUnitT<U1>, AssociatedUnitT<U2>>::value;
 }
 
 // Check whether two Unit types are exactly point-equivalent.
 template <typename U1, typename U2>
 constexpr bool are_units_point_equivalent(U1, U2) {
-    return AreUnitsPointEquivalent<AssociatedUnit<U1>, AssociatedUnit<U2>>::value;
+    return AreUnitsPointEquivalent<AssociatedUnitT<U1>, AssociatedUnitT<U2>>::value;
 }
 
 // Check whether this value is an instance of a dimensionless Unit.
 template <typename U>
 constexpr bool is_dimensionless(U) {
-    return IsDimensionless<AssociatedUnit<U>>::value;
+    return IsDimensionless<AssociatedUnitT<U>>::value;
 }
 
 // Type trait to detect whether a Unit is "the unitless unit".
 template <typename U>
 constexpr bool is_unitless_unit(U) {
-    return IsUnitlessUnit<AssociatedUnit<U>>::value;
+    return IsUnitlessUnit<AssociatedUnitT<U>>::value;
 }
 
 // A Magnitude representing the ratio of two same-dimensioned units.
 //
 // Useful in doing unit conversions.
 template <typename U1, typename U2>
-constexpr UnitRatio<AssociatedUnit<U1>, AssociatedUnit<U2>> unit_ratio(U1, U2) {
+constexpr UnitRatioT<AssociatedUnitT<U1>, AssociatedUnitT<U2>> unit_ratio(U1, U2) {
     return {};
 }
 
 // Type trait for the sign of a Unit (represented as a Magnitude).
 template <typename U>
-constexpr UnitSign<AssociatedUnit<U>> unit_sign(U) {
+constexpr UnitSign<AssociatedUnitT<U>> unit_sign(U) {
     return {};
 }
 
 template <typename U>
 constexpr auto associated_unit(U) {
-    return AssociatedUnit<U>{};
+    return AssociatedUnitT<U>{};
 }
 
 template <typename U>
 constexpr auto associated_unit_for_points(U) {
-    return AssociatedUnitForPoints<U>{};
+    return AssociatedUnitForPointsT<U>{};
 }
 
 template <typename... Us>
 constexpr auto common_unit(Us...) {
-    return CommonUnit<AssociatedUnit<Us>...>{};
+    return CommonUnitT<AssociatedUnitT<Us>...>{};
 }
 
 template <typename... Us>
 constexpr auto common_point_unit(Us...) {
-    return CommonPointUnit<AssociatedUnitForPoints<Us>...>{};
+    return CommonPointUnitT<AssociatedUnitForPointsT<Us>...>{};
 }
 
 template <template <class> class Utility, typename... Us>
 constexpr auto make_common(Utility<Us>...) {
-    return Utility<CommonUnit<AssociatedUnit<Us>...>>{};
+    return Utility<CommonUnitT<AssociatedUnitT<Us>...>>{};
 }
 
 template <template <class> class Utility, typename... Us>
 constexpr auto make_common_point(Utility<Us>...) {
-    return Utility<CommonPointUnit<AssociatedUnitForPoints<Us>...>>{};
+    return Utility<CommonPointUnitT<AssociatedUnitForPointsT<Us>...>>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -5026,7 +5024,7 @@ template <typename Unit, typename ScaleFactor>
 using ComputeScaledUnit = typename ComputeScaledUnitImpl<Unit, ScaleFactor>::type;
 template <typename Unit, typename ScaleFactor, typename OldScaleFactor>
 struct ComputeScaledUnitImpl<ScaledUnit<Unit, OldScaleFactor>, ScaleFactor>
-    : ComputeScaledUnitImpl<Unit, MagProduct<OldScaleFactor, ScaleFactor>> {};
+    : ComputeScaledUnitImpl<Unit, MagProductT<OldScaleFactor, ScaleFactor>> {};
 template <typename Unit>
 struct ComputeScaledUnitImpl<Unit, Magnitude<>> : stdx::type_identity<Unit> {};
 // Disambiguating specialization:
@@ -5039,33 +5037,31 @@ struct ScaledUnit : Unit {
     static_assert(IsValidPack<Magnitude, ScaleFactor>::value,
                   "Can only scale by a Magnitude<...> type");
     using Dim = detail::DimT<Unit>;
-    using Mag = MagProduct<detail::MagT<Unit>, ScaleFactor>;
+    using Mag = MagProductT<detail::MagT<Unit>, ScaleFactor>;
 };
 
 // Type template to hold the product of powers of Units.
 template <typename... UnitPows>
 struct UnitProductPack {
-    using Dim = DimProduct<detail::DimT<UnitPows>...>;
-    using Mag = MagProduct<detail::MagT<UnitPows>...>;
+    using Dim = DimProductT<detail::DimT<UnitPows>...>;
+    using Mag = MagProductT<detail::MagT<UnitPows>...>;
 };
 
 // Helper to make a canonicalized product of units.
 //
 // On the input side, we treat every input unit as a UnitProductPack.  Once we get our final result,
-// we simplify it using `UnpackIfSolo`.  (The motivation is that we don't want to return, say,
+// we simplify it using `UnpackIfSoloT`.  (The motivation is that we don't want to return, say,
 // `UnitProductPack<Meters>`; we'd rather just return `Meters`.)
 template <typename... UnitPows>
-using UnitProduct =
-    UnpackIfSolo<UnitProductPack,
-                 PackProduct<UnitProductPack, AsPack<UnitProductPack, UnitPows>...>>;
-template <typename... UnitPows>
-using UnitProductT = UnitProduct<UnitPows...>;
+using UnitProductT =
+    UnpackIfSoloT<UnitProductPack,
+                  PackProductT<UnitProductPack, AsPackT<UnitProductPack, UnitPows>...>>;
 
 // Raise a Unit to a (possibly rational) Power.
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using UnitPower =
-    UnpackIfSolo<UnitProductPack,
-                 PackPower<UnitProductPack, AsPack<UnitProductPack, U>, ExpNum, ExpDen>>;
+    UnpackIfSoloT<UnitProductPack,
+                  PackPowerT<UnitProductPack, AsPackT<UnitProductPack, U>, ExpNum, ExpDen>>;
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using UnitPowerT = UnitPower<U, ExpNum, ExpDen>;
 
@@ -5077,20 +5073,20 @@ using UnitInverseT = UnitInverse<U>;
 
 // Compute the quotient of two units.
 template <typename U1, typename U2>
-using UnitQuotient = UnitProduct<U1, UnitInverse<U2>>;
+using UnitQuotient = UnitProductT<U1, UnitInverse<U2>>;
 template <typename U1, typename U2>
 using UnitQuotientT = UnitQuotient<U1, U2>;
 
 template <typename... Us>
 constexpr bool is_forward_declared_unit_valid(ForwardDeclareUnitProduct<Us...>) {
     return std::is_same<typename ForwardDeclareUnitProduct<Us...>::unit_type,
-                        UnitProduct<Us...>>::value;
+                        UnitProductT<Us...>>::value;
 }
 
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen>
 constexpr bool is_forward_declared_unit_valid(ForwardDeclareUnitPow<U, ExpNum, ExpDen>) {
     return std::is_same<typename ForwardDeclareUnitPow<U, ExpNum, ExpDen>::unit_type,
-                        UnitPower<U, ExpNum, ExpDen>>::value;
+                        UnitPowerT<U, ExpNum, ExpDen>>::value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -5104,7 +5100,7 @@ constexpr ComputeScaledUnit<U, Magnitude<BPs...>> operator*(U, Magnitude<BPs...>
 
 // Scale this Unit by dividing by a Magnitude.
 template <typename U, typename = std::enable_if_t<IsUnit<U>::value>, typename... BPs>
-constexpr ComputeScaledUnit<U, MagInverse<Magnitude<BPs...>>> operator/(U, Magnitude<BPs...>) {
+constexpr ComputeScaledUnit<U, MagInverseT<Magnitude<BPs...>>> operator/(U, Magnitude<BPs...>) {
     return {};
 }
 
@@ -5112,7 +5108,7 @@ constexpr ComputeScaledUnit<U, MagInverse<Magnitude<BPs...>>> operator/(U, Magni
 template <typename U1,
           typename U2,
           typename = std::enable_if_t<stdx::conjunction<IsUnit<U1>, IsUnit<U2>>::value>>
-constexpr UnitProduct<U1, U2> operator*(U1, U2) {
+constexpr UnitProductT<U1, U2> operator*(U1, U2) {
     return {};
 }
 
@@ -5120,19 +5116,19 @@ constexpr UnitProduct<U1, U2> operator*(U1, U2) {
 template <typename U1,
           typename U2,
           typename = std::enable_if_t<stdx::conjunction<IsUnit<U1>, IsUnit<U2>>::value>>
-constexpr UnitQuotient<U1, U2> operator/(U1, U2) {
+constexpr UnitQuotientT<U1, U2> operator/(U1, U2) {
     return {};
 }
 
 // Raise a Unit to an integral power.
 template <std::intmax_t Exp, typename U, typename = std::enable_if_t<IsUnit<U>::value>>
-constexpr UnitPower<U, Exp> pow(U) {
+constexpr UnitPowerT<U, Exp> pow(U) {
     return {};
 }
 
 // Take the Root (of some integral degree) of a Unit.
 template <std::intmax_t Deg, typename U, typename = std::enable_if_t<IsUnit<U>::value>>
-constexpr UnitPower<U, 1, Deg> root(U) {
+constexpr UnitPowerT<U, 1, Deg> root(U) {
     return {};
 }
 
@@ -5159,7 +5155,7 @@ struct SingularNameFor {
     // `radians / (meter * second)`.
     template <typename OtherUnit>
     constexpr auto operator*(SingularNameFor<OtherUnit>) const {
-        return SingularNameFor<UnitProduct<Unit, OtherUnit>>{};
+        return SingularNameFor<UnitProductT<Unit, OtherUnit>>{};
     }
 };
 
@@ -5169,7 +5165,7 @@ struct AssociatedUnitImpl<SingularNameFor<U>> : stdx::type_identity<U> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(SingularNameFor<Unit>) {
-    return SingularNameFor<UnitPower<Unit, Exp>>{};
+    return SingularNameFor<UnitPowerT<Unit, Exp>>{};
 }
 
 //
@@ -5313,7 +5309,7 @@ struct AreUnitsPointEquivalent
 //
 // To be well-formed, the units must be listed in the same order every time.  End users cannot be
 // responsible for this; thus, they should never name this type directly.  Rather, they should name
-// the `CommonUnit` alias, which will handle the canonicalization.
+// the `CommonUnitT` alias, which will handle the canonicalization.
 template <typename... Us>
 struct CommonUnitPack {
     static_assert(AreElementsInOrder<CommonUnitPack, CommonUnitPack<Us...>>::value,
@@ -5321,8 +5317,8 @@ struct CommonUnitPack {
     static_assert(HasSameDimension<Us...>::value,
                   "Common unit only meaningful if units have same dimension");
 
-    using Dim = CommonDimension<detail::DimT<Us>...>;
-    using Mag = CommonMagnitude<detail::MagT<Us>...>;
+    using Dim = CommonDimensionT<detail::DimT<Us>...>;
+    using Mag = CommonMagnitudeT<detail::MagT<Us>...>;
 };
 
 template <typename A, typename B>
@@ -5385,8 +5381,8 @@ struct IsFirstUnitRedundant
                          std::true_type,
                          std::conditional_t<AreUnitsQuantityEquivalent<U1, U2>::value,
                                             InOrderFor<Pack, U2, U1>,
-                                            stdx::conjunction<IsInteger<UnitRatio<U1, U2>>,
-                                                              IsPositive<UnitRatio<U1, U2>>>>> {};
+                                            stdx::conjunction<IsInteger<UnitRatioT<U1, U2>>,
+                                                              IsPositive<UnitRatioT<U1, U2>>>>> {};
 
 // Recursive case: eliminate first unit if it is redundant; else, keep it and eliminate any later
 // units that are redundant with it.
@@ -5403,7 +5399,7 @@ struct EliminateRedundantUnitsImpl<Pack<H, Ts...>>
           // To get that result, we first replace any units _that `H` makes redundant_ with `void`.
           // Then, we drop all `void`, before finally recursively eliminating any units that are
           // redundant among those that remain.
-          Prepend<
+          PrependT<
               EliminateRedundantUnits<DropAll<
                   void,
 
@@ -5454,7 +5450,7 @@ template <>
 struct SimplifyIfOnlyOneUnscaledUnitImpl<Zero, UnitList<Zero>> : stdx::type_identity<Zero> {};
 template <typename U, typename SoleUnscaledUnit>
 struct SimplifyIfOnlyOneUnscaledUnitImpl<U, UnitList<SoleUnscaledUnit>>
-    : stdx::type_identity<decltype(SoleUnscaledUnit{} * UnitRatio<U, SoleUnscaledUnit>{})> {};
+    : stdx::type_identity<decltype(SoleUnscaledUnit{} * UnitRatioT<U, SoleUnscaledUnit>{})> {};
 template <typename U, typename... Us>
 struct SimplifyIfOnlyOneUnscaledUnitImpl<U, UnitList<Us...>> : stdx::type_identity<U> {};
 
@@ -5494,7 +5490,7 @@ struct ComputeCommonUnit
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `CommonPointUnit` helper implementation.
+// `CommonPointUnitT` helper implementation.
 
 namespace detail {
 
@@ -5562,7 +5558,7 @@ struct OriginDisplacementUnit {
     static_assert(OriginOf<U1>::value() != OriginOf<U2>::value(),
                   "OriginDisplacementUnit must be an actual unit, so it must be nonzero.");
 
-    using Dim = CommonDimension<DimT<U1>, DimT<U2>>;
+    using Dim = CommonDimensionT<DimT<U1>, DimT<U2>>;
     using Mag = ValueDisplacementMagnitude<OriginOf<U1>, OriginOf<U2>>;
 };
 
@@ -5577,9 +5573,20 @@ using ComputeOriginDisplacementUnit =
 
 template <typename U1, typename U2>
 constexpr auto origin_displacement_unit(U1, U2) {
-    return ComputeOriginDisplacementUnit<AssociatedUnitForPoints<U1>,
-                                         AssociatedUnitForPoints<U2>>{};
+    return ComputeOriginDisplacementUnit<AssociatedUnitForPointsT<U1>,
+                                         AssociatedUnitForPointsT<U2>>{};
 }
+
+// MagTypeT<T> gives some measure of the size of the unit for this "quantity-alike" type.
+//
+// Zero acts like a quantity in this context, and we treat it as if its unit's Magnitude is Zero.
+// This is specifically done for the `CommonPointUnit` implementation; there is no guarantee that
+template <typename QuantityOrZero>
+struct MagType : stdx::type_identity<MagT<typename QuantityOrZero::Unit>> {};
+template <typename QuantityOrZero>
+using MagTypeT = typename MagType<stdx::remove_cvref_t<QuantityOrZero>>::type;
+template <>
+struct MagType<Zero> : stdx::type_identity<Zero> {};
 
 }  // namespace detail
 
@@ -5597,11 +5604,11 @@ constexpr typename UnitLabel<detail::OriginDisplacementUnit<U1, U2>>::LabelT
 //
 // To be well-formed, the units must be listed in the same order every time.  End users cannot be
 // responsible for this; thus, they should never name this type directly.  Rather, they should name
-// the `CommonPointUnit` alias, which will handle the canonicalization.
+// the `CommonPointUnitT` alias, which will handle the canonicalization.
 template <typename... Us>
 using CommonAmongUnitsAndOriginDisplacements =
-    CommonUnit<Us...,
-               detail::ComputeOriginDisplacementUnit<detail::UnitOfLowestOrigin<Us...>, Us>...>;
+    CommonUnitT<Us...,
+                detail::ComputeOriginDisplacementUnit<detail::UnitOfLowestOrigin<Us...>, Us>...>;
 template <typename... Us>
 struct CommonPointUnitPack : CommonAmongUnitsAndOriginDisplacements<Us...> {
     static_assert(AreElementsInOrder<CommonPointUnitPack, CommonPointUnitPack<Us...>>::value,
@@ -5742,8 +5749,8 @@ struct UnitLabel<RatioPow<Unit, N, D>>
 // Implementation for UnitProductPack: split into positive and negative powers.
 template <typename... Us>
 struct UnitLabel<UnitProductPack<Us...>>
-    : detail::QuotientLabeler<detail::NumeratorPart<UnitProductPack<Us...>>,
-                              detail::DenominatorPart<UnitProductPack<Us...>>,
+    : detail::QuotientLabeler<detail::NumeratorPartT<UnitProductPack<Us...>>,
+                              detail::DenominatorPartT<UnitProductPack<Us...>>,
                               void> {};
 
 // Implementation for ScaledUnit: scaling unit U by M gets label `"[M U]"`.
@@ -5786,7 +5793,7 @@ struct UnitLabel<CommonPointUnitPack<Us...>>
 
 template <typename Unit>
 constexpr const auto &unit_label(Unit) {
-    return detail::as_char_array(UnitLabel<AssociatedUnit<Unit>>::value);
+    return detail::as_char_array(UnitLabel<AssociatedUnitT<Unit>>::value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6004,7 +6011,7 @@ struct TruncationRiskForMultiplyByIrrational
 
 template <typename T, typename M>
 struct TruncationRiskForMultiplyArithmeticByRationalNontrivialDenominator
-    : std::conditional<(get_value_result<RealPart<T>>(Denominator<M>{}).outcome ==
+    : std::conditional<(get_value_result<RealPart<T>>(DenominatorT<M>{}).outcome ==
                         MagRepresentationOutcome::ERR_CANNOT_FIT),
                        ValueIsNotZero<T>,
                        ValueTimesRatioIsNotInteger<T, M>> {};
@@ -6044,7 +6051,7 @@ struct TruncationRiskForDivideIntegralByInteger
     : std::conditional<(get_value_result<T>(M{}).outcome ==
                         MagRepresentationOutcome::ERR_CANNOT_FIT),
                        ValueIsNotZero<T>,
-                       ValueTimesRatioIsNotInteger<T, MagInverse<M>>> {};
+                       ValueTimesRatioIsNotInteger<T, MagInverseT<M>>> {};
 
 template <typename T, typename M>
 struct TruncationRiskForDivideArithmeticByInteger
@@ -6108,12 +6115,12 @@ struct UpdateRiskImpl<DivideTypeByInteger<T, M>, Risk<RealPart<T>>>
 template <typename T, typename M1, typename M2>
 struct UpdateRiskImpl<MultiplyTypeBy<T, M1>, ValueTimesRatioIsNotInteger<RealPart<T>, M2>>
     : std::conditional<IsRational<M1>::value,
-                       ReduceValueTimesRatioIsNotInteger<RealPart<T>, MagProduct<M1, M2>>,
+                       ReduceValueTimesRatioIsNotInteger<RealPart<T>, MagProductT<M1, M2>>,
                        ValueIsNotZero<RealPart<T>>> {};
 
 template <typename T, typename M1, typename M2>
 struct UpdateRiskImpl<DivideTypeByInteger<T, M1>, ValueTimesRatioIsNotInteger<RealPart<T>, M2>>
-    : stdx::type_identity<ReduceValueTimesRatioIsNotInteger<RealPart<T>, MagQuotient<M2, M1>>> {};
+    : stdx::type_identity<ReduceValueTimesRatioIsNotInteger<RealPart<T>, MagQuotientT<M2, M1>>> {};
 
 //
 // `BiggestRiskImpl<Risk1, Risk2>` is a helper that computes the "biggest" risk between two risks.
@@ -6130,7 +6137,7 @@ template <typename Risk>
 struct DenominatorOfRatioImpl : stdx::type_identity<Magnitude<>> {};
 template <typename T, typename M>
 struct DenominatorOfRatioImpl<ValueTimesRatioIsNotInteger<T, M>>
-    : stdx::type_identity<Denominator<M>> {};
+    : stdx::type_identity<DenominatorT<M>> {};
 template <typename Risk>
 using DenominatorOfRatio = typename DenominatorOfRatioImpl<Risk>::type;
 
@@ -6178,13 +6185,13 @@ struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorDoesNotFit {
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits {
     static constexpr bool would_value_truncate(const T &value) {
-        return (value % get_value<RealPart<T>>(Denominator<M>{})) != T{0};
+        return (value % get_value<RealPart<T>>(DenominatorT<M>{})) != T{0};
     }
 };
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForInt
-    : std::conditional_t<get_value_result<RealPart<T>>(Denominator<M>{}).outcome ==
+    : std::conditional_t<get_value_result<RealPart<T>>(DenominatorT<M>{}).outcome ==
                              MagRepresentationOutcome::ERR_CANNOT_FIT,
                          ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorDoesNotFit<T, M>,
                          ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits<T, M>> {};
@@ -6200,14 +6207,14 @@ struct ValueTimesRatioIsNotIntegerImplForFloatGeneric {
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForFloatDivideByInteger {
     static constexpr bool would_value_truncate(const T &value) {
-        const auto result = value / get_value<RealPart<T>>(MagInverse<M>{});
+        const auto result = value / get_value<RealPart<T>>(MagInverseT<M>{});
         return std::trunc(result) != result;
     }
 };
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForFloat
-    : std::conditional_t<IsInteger<MagInverse<M>>::value,
+    : std::conditional_t<IsInteger<MagInverseT<M>>::value,
                          ValueTimesRatioIsNotIntegerImplForFloatDivideByInteger<T, M>,
                          ValueTimesRatioIsNotIntegerImplForFloatGeneric<T, M>> {};
 
@@ -6378,23 +6385,23 @@ struct ImplicitRepPermitted : detail::ImplicitConversionPolicy<Rep, ScaleFactor,
 
 template <typename Rep, typename SourceUnitSlot, typename TargetUnitSlot>
 constexpr bool implicit_rep_permitted_from_source_to_target(SourceUnitSlot, TargetUnitSlot) {
-    using SourceUnit = AssociatedUnit<SourceUnitSlot>;
-    using TargetUnit = AssociatedUnit<TargetUnitSlot>;
+    using SourceUnit = AssociatedUnitT<SourceUnitSlot>;
+    using TargetUnit = AssociatedUnitT<TargetUnitSlot>;
     static_assert(HasSameDimension<SourceUnit, TargetUnit>::value,
                   "Can only convert same-dimension units");
 
-    return ImplicitRepPermitted<Rep, UnitRatio<SourceUnit, TargetUnit>>::value;
+    return ImplicitRepPermitted<Rep, UnitRatioT<SourceUnit, TargetUnit>>::value;
 }
 
 template <typename Unit, typename Rep>
 struct ConstructionPolicy {
-    // Note: it's tempting to use the UnitRatio trait here, but we can't, because it produces a
+    // Note: it's tempting to use the UnitRatioT trait here, but we can't, because it produces a
     // hard error for units with different dimensions.  This is for good reason: magnitude ratios
-    // are meaningless unless the dimension is the same.  UnitRatio is the user-facing tool, so we
+    // are meaningless unless the dimension is the same.  UnitRatioT is the user-facing tool, so we
     // build in this hard error for safety.  Here, we need a soft error, so we do the dimension
     // check manually below.
     template <typename SourceUnit>
-    using ScaleFactor = MagQuotient<detail::MagT<SourceUnit>, detail::MagT<Unit>>;
+    using ScaleFactor = MagQuotientT<detail::MagT<SourceUnit>, detail::MagT<Unit>>;
 
     template <typename SourceUnit, typename SourceRep>
     using PermitImplicitFrom = stdx::conjunction<
@@ -6489,7 +6496,7 @@ constexpr auto as_quantity(T &&x) -> detail::CorrespondingQuantityType<T> {
 // Identity for non-`Quantity` types.
 template <typename U, typename R, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
 constexpr R as_raw_number(Quantity<U, R> q, RiskPolicyT policy = RiskPolicyT{}) {
-    return q.in(UnitProduct<>{}, policy);
+    return q.in(UnitProductT<>{}, policy);
 }
 template <typename T>
 constexpr T as_raw_number(T x) {
@@ -6569,13 +6576,13 @@ class Quantity {
               typename NewUnitSlot,
               typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
     constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity<AssociatedUnit<NewUnitSlot>>(in_impl<NewRep>(u, policy));
+        return make_quantity<AssociatedUnitT<NewUnitSlot>>(in_impl<NewRep>(u, policy));
     }
 
     // `q.as(new_unit)`, or `q.as(new_unit, risk_policy)`
     template <typename NewUnitSlot, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity<AssociatedUnit<NewUnitSlot>>(in_impl<Rep>(u, policy));
+        return make_quantity<AssociatedUnitT<NewUnitSlot>>(in_impl<Rep>(u, policy));
     }
 
     // `q.in<Rep>(new_unit)`, or `q.in<Rep>(new_unit, risk_policy)`
@@ -6619,14 +6626,14 @@ class Quantity {
     // Mutable access:
     template <typename UnitSlot>
     constexpr Rep &data_in(UnitSlot) {
-        static_assert(AreUnitsQuantityEquivalent<AssociatedUnit<UnitSlot>, Unit>::value,
+        static_assert(AreUnitsQuantityEquivalent<AssociatedUnitT<UnitSlot>, Unit>::value,
                       "Can only access value via Quantity-equivalent unit");
         return value_;
     }
     // Const access:
     template <typename UnitSlot>
     constexpr const Rep &data_in(UnitSlot) const {
-        static_assert(AreUnitsQuantityEquivalent<AssociatedUnit<UnitSlot>, Unit>::value,
+        static_assert(AreUnitsQuantityEquivalent<AssociatedUnitT<UnitSlot>, Unit>::value,
                       "Can only access value via Quantity-equivalent unit");
         return value_;
     }
@@ -6678,23 +6685,23 @@ class Quantity {
     }
     template <typename T, typename = std::enable_if_t<IsQuotientValidRep<T, RepT>::value>>
     friend constexpr auto operator/(T s, Quantity a) {
-        warn_if_integer_division<UnitProduct<>, T>();
+        warn_if_integer_division<UnitProductT<>, T>();
         return make_quantity<decltype(pow<-1>(unit))>(s / a.value_);
     }
 
     // Multiplication for dimensioned quantities.
     template <typename OtherUnit, typename OtherRep>
     constexpr auto operator*(Quantity<OtherUnit, OtherRep> q) const {
-        return make_quantity_unless_unitless<UnitProduct<Unit, OtherUnit>>(value_ *
-                                                                           q.in(OtherUnit{}));
+        return make_quantity_unless_unitless<UnitProductT<Unit, OtherUnit>>(value_ *
+                                                                            q.in(OtherUnit{}));
     }
 
     // Division for dimensioned quantities.
     template <typename OtherUnit, typename OtherRep>
     constexpr auto operator/(Quantity<OtherUnit, OtherRep> q) const {
         warn_if_integer_division<OtherUnit, OtherRep>();
-        return make_quantity_unless_unitless<UnitQuotient<Unit, OtherUnit>>(value_ /
-                                                                            q.in(OtherUnit{}));
+        return make_quantity_unless_unitless<UnitQuotientT<Unit, OtherUnit>>(value_ /
+                                                                             q.in(OtherUnit{}));
     }
 
     // Short-hand addition and subtraction assignment.
@@ -6830,10 +6837,10 @@ class Quantity {
 
     template <typename OtherRep, typename OtherUnitSlot, typename RiskPolicyT>
     constexpr OtherRep in_impl(OtherUnitSlot, RiskPolicyT) const {
-        using OtherUnit = AssociatedUnit<OtherUnitSlot>;
+        using OtherUnit = AssociatedUnitT<OtherUnitSlot>;
         static_assert(IsUnit<OtherUnit>::value, "Invalid type passed to unit slot");
 
-        using Op = detail::ConversionForRepsAndFactor<Rep, OtherRep, UnitRatio<Unit, OtherUnit>>;
+        using Op = detail::ConversionForRepsAndFactor<Rep, OtherRep, UnitRatioT<Unit, OtherUnit>>;
 
         constexpr bool should_check_overflow =
             RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow);
@@ -6907,8 +6914,8 @@ constexpr AlwaysDivisibleQuantity<U, R> unblock_int_div(Quantity<U, R> q) {
 
 // Unblock integer division for any non-`Quantity` type.
 template <typename R>
-constexpr AlwaysDivisibleQuantity<UnitProduct<>, R> unblock_int_div(R x) {
-    return AlwaysDivisibleQuantity<UnitProduct<>, R>{make_quantity<UnitProduct<>>(x)};
+constexpr AlwaysDivisibleQuantity<UnitProductT<>, R> unblock_int_div(R x) {
+    return AlwaysDivisibleQuantity<UnitProductT<>, R>{make_quantity<UnitProductT<>>(x)};
 }
 
 template <typename U, typename R>
@@ -6917,20 +6924,20 @@ class AlwaysDivisibleQuantity {
     // Divide a `Quantity` by this always-divisible quantity type.
     template <typename U2, typename R2>
     friend constexpr auto operator/(Quantity<U2, R2> q2, AlwaysDivisibleQuantity q) {
-        return make_quantity<UnitQuotient<U2, U>>(q2.in(U2{}) / q.q_.in(U{}));
+        return make_quantity<UnitQuotientT<U2, U>>(q2.in(U2{}) / q.q_.in(U{}));
     }
 
     // Divide any non-`Quantity` by this always-divisible quantity type.
     template <typename T>
     friend constexpr auto operator/(T x, AlwaysDivisibleQuantity q) {
-        return make_quantity<UnitInverse<U>>(x / q.q_.in(U{}));
+        return make_quantity<UnitInverseT<U>>(x / q.q_.in(U{}));
     }
 
     template <typename UU, typename RR>
     friend constexpr AlwaysDivisibleQuantity<UU, RR> unblock_int_div(Quantity<UU, RR> q);
 
     template <typename RR>
-    friend constexpr AlwaysDivisibleQuantity<UnitProduct<>, RR> unblock_int_div(RR x);
+    friend constexpr AlwaysDivisibleQuantity<UnitProductT<>, RR> unblock_int_div(RR x);
 
  private:
     constexpr AlwaysDivisibleQuantity(Quantity<U, R> q) : q_{q} {}
@@ -6945,17 +6952,17 @@ class AlwaysDivisibleQuantity {
 // compiler error.
 template <typename U1, typename R1, typename U2, typename R2>
 constexpr auto divide_using_common_unit(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    using U = CommonUnit<U1, U2>;
+    using U = CommonUnitT<U1, U2>;
     return q1.as(U{}) / q2.as(U{});
 }
 
 // The modulo operator (i.e., the remainder of an integer division).
 //
 // Only defined whenever (R1{} % R2{}) is defined (i.e., for integral Reps), _and_
-// `CommonUnit<U1, U2>` is also defined.  We convert to that common unit to perform the operation.
+// `CommonUnitT<U1, U2>` is also defined.  We convert to that common unit to perform the operation.
 template <typename U1, typename R1, typename U2, typename R2>
 constexpr auto operator%(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    using U = CommonUnit<U1, U2>;
+    using U = CommonUnitT<U1, U2>;
     return make_quantity<U>(q1.in(U{}) % q2.in(U{}));
 }
 
@@ -7015,22 +7022,22 @@ struct QuantityMaker {
 
     template <typename DivisorUnit>
     constexpr auto operator/(SingularNameFor<DivisorUnit>) const {
-        return QuantityMaker<UnitQuotient<Unit, DivisorUnit>>{};
+        return QuantityMaker<UnitQuotientT<Unit, DivisorUnit>>{};
     }
 
     template <typename MultiplierUnit>
     friend constexpr auto operator*(SingularNameFor<MultiplierUnit>, QuantityMaker) {
-        return QuantityMaker<UnitProduct<MultiplierUnit, Unit>>{};
+        return QuantityMaker<UnitProductT<MultiplierUnit, Unit>>{};
     }
 
     template <typename OtherUnit>
     constexpr auto operator*(QuantityMaker<OtherUnit>) const {
-        return QuantityMaker<UnitProduct<Unit, OtherUnit>>{};
+        return QuantityMaker<UnitProductT<Unit, OtherUnit>>{};
     }
 
     template <typename OtherUnit>
     constexpr auto operator/(QuantityMaker<OtherUnit>) const {
-        return QuantityMaker<UnitQuotient<Unit, OtherUnit>>{};
+        return QuantityMaker<UnitQuotientT<Unit, OtherUnit>>{};
     }
 };
 
@@ -7039,12 +7046,12 @@ struct AssociatedUnitImpl<QuantityMaker<U>> : stdx::type_identity<U> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(QuantityMaker<Unit>) {
-    return QuantityMaker<UnitPower<Unit, Exp>>{};
+    return QuantityMaker<UnitPowerT<Unit, Exp>>{};
 }
 
 template <int N, typename Unit>
 constexpr auto root(QuantityMaker<Unit>) {
-    return QuantityMaker<UnitPower<Unit, 1, N>>{};
+    return QuantityMaker<UnitPowerT<Unit, 1, N>>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -7054,7 +7061,7 @@ constexpr auto root(QuantityMaker<Unit>) {
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
     using Op =
-        detail::ConversionForRepsAndFactor<R, R, UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
+        detail::ConversionForRepsAndFactor<R, R, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
     return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
@@ -7062,7 +7069,7 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::
-        ConversionForRepsAndFactor<R, TargetRep, UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
+        ConversionForRepsAndFactor<R, TargetRep, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
     return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
@@ -7070,7 +7077,7 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
     using Op =
-        detail::ConversionForRepsAndFactor<R, R, UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
+        detail::ConversionForRepsAndFactor<R, R, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
     return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
@@ -7078,7 +7085,7 @@ constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::
-        ConversionForRepsAndFactor<R, TargetRep, UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
+        ConversionForRepsAndFactor<R, TargetRep, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
     return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
@@ -7131,7 +7138,7 @@ constexpr auto using_common_type(T t, U u, Func f) {
 
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
 constexpr auto convert_and_compare(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    using U = CommonUnit<U1, U2>;
+    using U = CommonUnitT<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
     return detail::SignAwareComparison<UnitSign<U>, Op>{}(
@@ -7282,7 +7289,7 @@ template <typename U1, typename U2, typename R1, typename R2>
 struct CommonQuantity<Quantity<U1, R1>,
                       Quantity<U2, R2>,
                       std::enable_if_t<HasSameDimension<U1, U2>::value>>
-    : stdx::type_identity<Quantity<CommonUnit<U1, U2>, std::common_type_t<R1, R2>>> {};
+    : stdx::type_identity<Quantity<CommonUnitT<U1, U2>, std::common_type_t<R1, R2>>> {};
 
 //
 // Formatter implementation for fmtlib or `std::format`.
@@ -7390,7 +7397,7 @@ struct UnosLabel {
 };
 template <typename T>
 constexpr const char UnosLabel<T>::label[];
-struct Unos : UnitProduct<>, UnosLabel<void> {
+struct Unos : UnitProductT<>, UnosLabel<void> {
     using UnosLabel<void>::label;
 };
 constexpr auto unos = QuantityMaker<Unos>{};
@@ -7426,10 +7433,10 @@ namespace detail {
 // idea, see: https://github.com/aurora-opensource/au/issues/52
 struct NoTypeMember {};
 template <typename T>
-struct TypeIdentityIfLooksLikeValidRepImpl
+struct TypeIdentityIfLooksLikeValidRep
     : std::conditional_t<std::is_arithmetic<T>::value, stdx::type_identity<T>, NoTypeMember> {};
 template <typename T>
-using TypeIdentityIfLooksLikeValidRep = typename TypeIdentityIfLooksLikeValidRepImpl<T>::type;
+using TypeIdentityIfLooksLikeValidRepT = typename TypeIdentityIfLooksLikeValidRep<T>::type;
 
 //
 // A mixin that enables turning a raw number into a Quantity by multiplying or dividing.
@@ -7439,28 +7446,28 @@ struct MakesQuantityFromNumber {
     // (N * W), for number N and wrapper W.
     template <typename T>
     friend constexpr auto operator*(T x, UnitWrapper<Unit>)
-        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRep<T>> {
+        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
         return make_quantity<Unit>(x);
     }
 
     // (W * N), for number N and wrapper W.
     template <typename T>
     friend constexpr auto operator*(UnitWrapper<Unit>, T x)
-        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRep<T>> {
+        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
         return make_quantity<Unit>(x);
     }
 
     // (N / W), for number N and wrapper W.
     template <typename T>
     friend constexpr auto operator/(T x, UnitWrapper<Unit>)
-        -> Quantity<UnitInverse<Unit>, TypeIdentityIfLooksLikeValidRep<T>> {
-        return make_quantity<UnitInverse<Unit>>(x);
+        -> Quantity<UnitInverseT<Unit>, TypeIdentityIfLooksLikeValidRepT<T>> {
+        return make_quantity<UnitInverseT<Unit>>(x);
     }
 
     // (W / N), for number N and wrapper W.
     template <typename T>
     friend constexpr auto operator/(UnitWrapper<Unit>, T x)
-        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRep<T>> {
+        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRepT<T>> {
         static_assert(!std::is_integral<T>::value,
                       "Dividing by an integer value disallowed: would almost always produce 0");
         return make_quantity<Unit>(T{1} / x);
@@ -7475,19 +7482,19 @@ struct ScalesQuantity {
     // (W * Q), for wrapper W and quantity Q.
     template <typename U, typename R>
     friend constexpr auto operator*(UnitWrapper<Unit>, Quantity<U, R> q) {
-        return make_quantity<UnitProduct<Unit, U>>(q.in(U{}));
+        return make_quantity<UnitProductT<Unit, U>>(q.in(U{}));
     }
 
     // (Q * W), for wrapper W and quantity Q.
     template <typename U, typename R>
     friend constexpr auto operator*(Quantity<U, R> q, UnitWrapper<Unit>) {
-        return make_quantity<UnitProduct<U, Unit>>(q.in(U{}));
+        return make_quantity<UnitProductT<U, Unit>>(q.in(U{}));
     }
 
     // (Q / W), for wrapper W and quantity Q.
     template <typename U, typename R>
     friend constexpr auto operator/(Quantity<U, R> q, UnitWrapper<Unit>) {
-        return make_quantity<UnitQuotient<U, Unit>>(q.in(U{}));
+        return make_quantity<UnitQuotientT<U, Unit>>(q.in(U{}));
     }
 
     // (W / Q), for wrapper W and quantity Q.
@@ -7495,7 +7502,7 @@ struct ScalesQuantity {
     friend constexpr auto operator/(UnitWrapper<Unit>, Quantity<U, R> q) {
         static_assert(!std::is_integral<R>::value,
                       "Dividing by an integer value disallowed: would almost always produce 0");
-        return make_quantity<UnitQuotient<Unit, U>>(R{1} / q.in(U{}));
+        return make_quantity<UnitQuotientT<Unit, U>>(R{1} / q.in(U{}));
     }
 };
 
@@ -7510,15 +7517,15 @@ template <template <typename U> class UnitWrapper,
 struct PrecomposesWith {
     // (U * O), for "main" wrapper U and "other" wrapper O.
     template <typename U>
-    friend constexpr ResultWrapper<UnitProduct<Unit, U>> operator*(UnitWrapper<Unit>,
-                                                                   OtherWrapper<U>) {
+    friend constexpr ResultWrapper<UnitProductT<Unit, U>> operator*(UnitWrapper<Unit>,
+                                                                    OtherWrapper<U>) {
         return {};
     }
 
     // (U / O), for "main" wrapper U and "other" wrapper O.
     template <typename U>
-    friend constexpr ResultWrapper<UnitQuotient<Unit, U>> operator/(UnitWrapper<Unit>,
-                                                                    OtherWrapper<U>) {
+    friend constexpr ResultWrapper<UnitQuotientT<Unit, U>> operator/(UnitWrapper<Unit>,
+                                                                     OtherWrapper<U>) {
         return {};
     }
 };
@@ -7534,15 +7541,15 @@ template <template <typename U> class UnitWrapper,
 struct PostcomposesWith {
     // (O * U), for "main" wrapper U and "other" wrapper O.
     template <typename U>
-    friend constexpr ResultWrapper<UnitProduct<U, Unit>> operator*(OtherWrapper<U>,
-                                                                   UnitWrapper<Unit>) {
+    friend constexpr ResultWrapper<UnitProductT<U, Unit>> operator*(OtherWrapper<U>,
+                                                                    UnitWrapper<Unit>) {
         return {};
     }
 
     // (O / U), for "main" wrapper U and "other" wrapper O.
     template <typename U>
-    friend constexpr ResultWrapper<UnitQuotient<U, Unit>> operator/(OtherWrapper<U>,
-                                                                    UnitWrapper<Unit>) {
+    friend constexpr ResultWrapper<UnitQuotientT<U, Unit>> operator/(OtherWrapper<U>,
+                                                                     UnitWrapper<Unit>) {
         return {};
     }
 };
@@ -7588,7 +7595,7 @@ struct CanScaleByMagnitude {
     // (M / W), for magnitude M and wrapper W.
     template <typename... BPs>
     friend constexpr auto operator/(Magnitude<BPs...> m, UnitWrapper<Unit>) {
-        return UnitWrapper<decltype(UnitInverse<Unit>{} * m)>{};
+        return UnitWrapper<decltype(UnitInverseT<Unit>{} * m)>{};
     }
 
     // (W / M), for magnitude M and wrapper W.
@@ -7610,13 +7617,13 @@ struct SupportsRationalPowers {
     // (W^N), for wrapper W and integer N.
     template <std::intmax_t N>
     friend constexpr auto pow(UnitWrapper<Unit>) {
-        return UnitWrapper<UnitPower<Unit, N>>{};
+        return UnitWrapper<UnitPowerT<Unit, N>>{};
     }
 
     // (W^(1/N)), for wrapper W and integer N.
     template <std::intmax_t N>
     friend constexpr auto root(UnitWrapper<Unit>) {
-        return UnitWrapper<UnitPower<Unit, 1, N>>{};
+        return UnitWrapper<UnitPowerT<Unit, 1, N>>{};
     }
 };
 
@@ -7729,7 +7736,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 // Note that the argument is a _unit slot_, and thus can also accept things like `QuantityMaker` and
 // `SymbolFor` in addition to regular units.
 template <typename UnitSlot>
-constexpr Constant<AssociatedUnit<UnitSlot>> make_constant(UnitSlot) {
+constexpr Constant<AssociatedUnitT<UnitSlot>> make_constant(UnitSlot) {
     return {};
 }
 
@@ -7769,7 +7776,7 @@ struct SymbolFor : detail::MakesQuantityFromNumber<SymbolFor, Unit>,
 //
 template <typename UnitSlot>
 constexpr auto symbol_for(UnitSlot) {
-    return SymbolFor<AssociatedUnit<UnitSlot>>{};
+    return SymbolFor<AssociatedUnitT<UnitSlot>>{};
 }
 
 // Support using symbols in unit slot APIs (e.g., `v.in(m / s)`).
@@ -7815,8 +7822,8 @@ struct IntermediateRep;
 // to that difference.
 template <typename U1, typename U2>
 constexpr auto origin_displacement(U1, U2) {
-    return make_constant(detail::ComputeOriginDisplacementUnit<AssociatedUnitForPoints<U1>,
-                                                               AssociatedUnitForPoints<U2>>{});
+    return make_constant(detail::ComputeOriginDisplacementUnit<AssociatedUnitForPointsT<U1>,
+                                                               AssociatedUnitForPointsT<U2>>{});
 }
 
 template <typename U1, typename U2>
@@ -7841,7 +7848,7 @@ class QuantityPoint {
     //      OK : QuantityPoint<Celsius, int> -> QuantityPoint<Milli<Kelvins>, int>
     template <typename OtherUnit, typename OtherRep>
     static constexpr bool should_enable_implicit_construction_from() {
-        using Com = CommonUnit<OtherUnit, detail::ComputeOriginDisplacementUnit<Unit, OtherUnit>>;
+        using Com = CommonUnitT<OtherUnit, detail::ComputeOriginDisplacementUnit<Unit, OtherUnit>>;
         return std::is_convertible<Quantity<Com, OtherRep>, QuantityPoint::Diff>::value;
     }
 
@@ -7891,12 +7898,12 @@ class QuantityPoint {
 
     template <typename NewRep, typename NewUnit, typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
     constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<NewRep>(u, policy));
+        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in_impl<NewRep>(u, policy));
     }
 
     template <typename NewUnit, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<Rep>(u, policy));
+        return make_quantity_point<AssociatedUnitForPointsT<NewUnit>>(in_impl<Rep>(u, policy));
     }
 
     template <typename NewRep, typename NewUnit, typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
@@ -7936,16 +7943,16 @@ class QuantityPoint {
     // Mutable access:
     template <typename UnitSlot>
     constexpr Rep &data_in(UnitSlot) {
-        static_assert(AreUnitsPointEquivalent<AssociatedUnitForPoints<UnitSlot>, Unit>::value,
+        static_assert(AreUnitsPointEquivalent<AssociatedUnitForPointsT<UnitSlot>, Unit>::value,
                       "Can only access value via Point-equivalent unit");
-        return x_.data_in(AssociatedUnitForPoints<UnitSlot>{});
+        return x_.data_in(AssociatedUnitForPointsT<UnitSlot>{});
     }
     // Const access:
     template <typename UnitSlot>
     constexpr const Rep &data_in(UnitSlot) const {
-        static_assert(AreUnitsPointEquivalent<AssociatedUnitForPoints<UnitSlot>, Unit>::value,
+        static_assert(AreUnitsPointEquivalent<AssociatedUnitForPointsT<UnitSlot>, Unit>::value,
                       "Can only access value via Point-equivalent unit");
-        return x_.data_in(AssociatedUnitForPoints<UnitSlot>{});
+        return x_.data_in(AssociatedUnitForPointsT<UnitSlot>{});
     }
 
     // Comparison operators.
@@ -7988,9 +7995,9 @@ class QuantityPoint {
  private:
     template <typename OtherRep, typename OtherPointUnitSlot, typename RiskPolicyT>
     constexpr OtherRep in_impl(OtherPointUnitSlot, RiskPolicyT policy) const {
-        using OtherUnit = AssociatedUnitForPoints<OtherPointUnitSlot>;
+        using OtherUnit = AssociatedUnitForPointsT<OtherPointUnitSlot>;
         using OriginDisplacementUnit = detail::ComputeOriginDisplacementUnit<Unit, OtherUnit>;
-        using Common = CommonUnit<Unit, OtherUnit, OriginDisplacementUnit>;
+        using Common = CommonUnitT<Unit, OtherUnit, OriginDisplacementUnit>;
 
         using CalcRep = typename detail::IntermediateRep<Rep, OtherRep>::type;
 
@@ -8074,13 +8081,13 @@ namespace detail {
 template <typename X, typename Y, typename Func>
 constexpr auto using_common_point_unit(X x, Y y, Func f) {
     using R = std::common_type_t<typename X::Rep, typename Y::Rep>;
-    constexpr auto u = CommonPointUnit<typename X::Unit, typename Y::Unit>{};
+    constexpr auto u = CommonPointUnitT<typename X::Unit, typename Y::Unit>{};
     return f(rep_cast<R>(x).as(u), rep_cast<R>(y).as(u));
 }
 
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
 constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    using U = CommonPointUnit<U1, U2>;
+    using U = CommonPointUnitT<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
     return detail::SignAwareComparison<UnitSign<U>, Op>{}(
@@ -8117,7 +8124,7 @@ constexpr auto operator!=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
 
 namespace detail {
 // Another subtlety arises when we mix QuantityPoint and Quantity in adding or subtracting.  We
-// actually don't want to use `CommonPointUnit`, because this is too restrictive if the units have
+// actually don't want to use `CommonPointUnitT`, because this is too restrictive if the units have
 // different origins.  Imagine adding a `Quantity<Kelvins>` to a `QuantityPoint<Celsius>`---we
 // wouldn't want this to subdivide the unit of measure to satisfy an additive relative offset which
 // we will never actually use!
@@ -8902,7 +8909,7 @@ constexpr T int_pow_impl(T x, int exp) {
 //
 // This risks breaking the correspondence between the Rep of our Quantity, and the output type of
 // `f()`.  For that correspondence to be _preserved_, we would need to make sure that
-// `f(RoundingRep{})` returns the same type as `f(R{})`.  We believe this is always the case based
+// `f(RoundingRepT{})` returns the same type as `f(R{})`.  We believe this is always the case based
 // on the documentation:
 //
 // https://en.cppreference.com/w/cpp/numeric/math/round
@@ -8912,11 +8919,11 @@ constexpr T int_pow_impl(T x, int exp) {
 // Both of these assumptions---that our RoundingRep is floating point, and that it doesn't change
 // the output Rep type---we verify via `static_assert`.
 template <typename Q, typename RoundingUnits>
-struct RoundingRepImpl;
+struct RoundingRep;
 template <typename Q, typename RoundingUnits>
-using RoundingRep = typename RoundingRepImpl<Q, RoundingUnits>::type;
+using RoundingRepT = typename RoundingRep<Q, RoundingUnits>::type;
 template <typename U, typename R, typename RoundingUnits>
-struct RoundingRepImpl<Quantity<U, R>, RoundingUnits> {
+struct RoundingRep<Quantity<U, R>, RoundingUnits> {
     using type = decltype(std::round(R{}));
 
     // Test our floating point assumption.
@@ -8928,8 +8935,8 @@ struct RoundingRepImpl<Quantity<U, R>, RoundingUnits> {
     static_assert(std::is_same<decltype(std::ceil(type{})), decltype(std::ceil(R{}))>::value, "");
 };
 template <typename U, typename R, typename RoundingUnits>
-struct RoundingRepImpl<QuantityPoint<U, R>, RoundingUnits>
-    : RoundingRepImpl<Quantity<U, R>, RoundingUnits> {};
+struct RoundingRep<QuantityPoint<U, R>, RoundingUnits>
+    : RoundingRep<Quantity<U, R>, RoundingUnits> {};
 }  // namespace detail
 
 // The absolute value of a Quantity.
@@ -8965,20 +8972,20 @@ auto arctan2(T y, U x) {
 // arctan2() overload which supports same-dimensioned Quantity types.
 template <typename U1, typename R1, typename U2, typename R2>
 auto arctan2(Quantity<U1, R1> y, Quantity<U2, R2> x) {
-    constexpr auto common_unit = CommonUnit<U1, U2>{};
+    constexpr auto common_unit = CommonUnitT<U1, U2>{};
     return arctan2(y.in(common_unit), x.in(common_unit));
 }
 
 // Wrapper for std::cbrt() which handles Quantity types.
 template <typename U, typename R>
 auto cbrt(Quantity<U, R> q) {
-    return make_quantity<UnitPower<U, 1, 3>>(std::cbrt(q.in(U{})));
+    return make_quantity<UnitPowerT<U, 1, 3>>(std::cbrt(q.in(U{})));
 }
 
 // Clamp the first quantity to within the range of the second two.
 template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
 constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Quantity<UHi, RHi> hi) {
-    using U = CommonUnit<UV, ULo, UHi>;
+    using U = CommonUnitT<UV, ULo, UHi>;
     using R = std::common_type_t<RV, RLo, RHi>;
     using ResultT = Quantity<U, R>;
     return (v < lo) ? ResultT{lo} : (hi < v) ? ResultT{hi} : ResultT{v};
@@ -8989,7 +8996,7 @@ template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, ty
 constexpr auto clamp(QuantityPoint<UV, RV> v,
                      QuantityPoint<ULo, RLo> lo,
                      QuantityPoint<UHi, RHi> hi) {
-    using U = CommonPointUnit<UV, ULo, UHi>;
+    using U = CommonPointUnitT<UV, ULo, UHi>;
     using R = std::common_type_t<RV, RLo, RHi>;
     using ResultT = QuantityPoint<U, R>;
     return (v < lo) ? ResultT{lo} : (hi < v) ? ResultT{hi} : ResultT{v};
@@ -8997,7 +9004,7 @@ constexpr auto clamp(QuantityPoint<UV, RV> v,
 
 template <typename U1, typename R1, typename U2, typename R2>
 auto hypot(Quantity<U1, R1> x, Quantity<U2, R2> y) {
-    using U = CommonUnit<U1, U2>;
+    using U = CommonUnitT<U1, U2>;
     return make_quantity<U>(std::hypot(x.in(U{}), y.in(U{})));
 }
 
@@ -9028,7 +9035,7 @@ auto cos(Quantity<U, R> q) {
 // The floating point remainder of two values of the same dimension.
 template <typename U1, typename R1, typename U2, typename R2>
 auto fmod(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    using U = CommonUnit<U1, U2>;
+    using U = CommonUnitT<U1, U2>;
     using R = decltype(std::fmod(R1{}, R2{}));
     return make_quantity<U>(std::fmod(q1.template in<R>(U{}), q2.template in<R>(U{})));
 }
@@ -9039,7 +9046,7 @@ constexpr auto int_pow(Quantity<U, R> q) {
     static_assert((!std::is_integral<R>::value) || (Exp >= 0),
                   "Negative exponent on integral represented units are not supported.");
 
-    return make_quantity<UnitPower<U, Exp>>(detail::int_pow_impl(q.in(U{}), Exp));
+    return make_quantity<UnitPowerT<U, Exp>>(detail::int_pow_impl(q.in(U{}), Exp));
 }
 
 //
@@ -9050,7 +9057,7 @@ constexpr auto int_pow(Quantity<U, R> q) {
 template <typename TargetRep, typename TargetUnits, typename U, typename R>
 constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     using Rep = std::common_type_t<TargetRep, R>;
-    constexpr auto UNITY = make_constant(UnitProduct<>{});
+    constexpr auto UNITY = make_constant(UnitProductT<>{});
     return static_cast<TargetRep>(UNITY.in<Rep>(associated_unit(target_units) * U{}) / q.in(U{}));
 }
 
@@ -9082,7 +9089,7 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     // This will fail at compile time for types that can't hold 1'000'000.
     constexpr R threshold = 1'000'000;
 
-    constexpr auto UNITY = make_constant(UnitProduct<>{});
+    constexpr auto UNITY = make_constant(UnitProductT<>{});
 
     static_assert(
         UNITY.in<R>(associated_unit(TargetUnits{}) * U{}) >= threshold ||
@@ -9100,7 +9107,7 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
 //
 template <typename TargetUnits, typename U, typename R>
 constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnit<TargetUnits>>(inverse_in(target_units, q));
+    return make_quantity<AssociatedUnitT<TargetUnits>>(inverse_in(target_units, q));
 }
 
 //
@@ -9110,7 +9117,7 @@ constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
 //
 template <typename TargetRep, typename TargetUnits, typename U, typename R>
 constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnit<TargetUnits>>(inverse_in<TargetRep>(target_units, q));
+    return make_quantity<AssociatedUnitT<TargetUnits>>(inverse_in<TargetRep>(target_units, q));
 }
 
 //
@@ -9153,13 +9160,13 @@ constexpr bool isnan(QuantityPoint<U, R> p) {
 #if defined(__cpp_lib_interpolate) && __cpp_lib_interpolate >= 201902L
 template <typename U1, typename R1, typename U2, typename R2, typename T>
 constexpr auto lerp(Quantity<U1, R1> q1, Quantity<U2, R2> q2, T t) {
-    using U = CommonUnit<U1, U2>;
+    using U = CommonUnitT<U1, U2>;
     return make_quantity<U>(std::lerp(q1.in(U{}), q2.in(U{}), as_raw_number(t)));
 }
 
 template <typename U1, typename R1, typename U2, typename R2, typename T>
 constexpr auto lerp(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2, T t) {
-    using U = CommonPointUnit<U1, U2>;
+    using U = CommonPointUnitT<U1, U2>;
     return make_quantity_point<U>(std::lerp(p1.in(U{}), p2.in(U{}), as_raw_number(t)));
 }
 #endif
@@ -9232,7 +9239,7 @@ template <typename U0, typename R0, typename... Us, typename... Rs>
 constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs) {
     static_assert(sizeof...(qs) > 0, "mean() requires at least two inputs");
     using R = std::common_type_t<R0, Rs...>;
-    using Common = Quantity<CommonUnit<U0, Us...>, R>;
+    using Common = Quantity<CommonUnitT<U0, Us...>, R>;
     const auto base = Common{q0};
     Common diffs[] = {(Common{qs} - base)...};
     Common sum_diffs = diffs[0];
@@ -9245,7 +9252,7 @@ constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs) {
 template <typename U0, typename R0, typename... Us, typename... Rs>
 constexpr auto mean(QuantityPoint<U0, R0> p0, QuantityPoint<Us, Rs>... ps) {
     static_assert(sizeof...(ps) > 0, "mean() requires at least two inputs");
-    using U = CommonPointUnit<U0, Us...>;
+    using U = CommonPointUnitT<U0, Us...>;
     using R = std::common_type_t<R0, Rs...>;
     const auto base = QuantityPoint<U, R>{p0};
     Quantity<U, R> diffs[] = {(QuantityPoint<U, R>{ps} - base)...};
@@ -9259,7 +9266,7 @@ constexpr auto mean(QuantityPoint<U0, R0> p0, QuantityPoint<Us, Rs>... ps) {
 // The (zero-centered) floating point remainder of two values of the same dimension.
 template <typename U1, typename R1, typename U2, typename R2>
 auto remainder(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    using U = CommonUnit<U1, U2>;
+    using U = CommonUnitT<U1, U2>;
     using R = decltype(std::remainder(R1{}, R2{}));
     return make_quantity<U>(std::remainder(q1.template in<R>(U{}), q2.template in<R>(U{})));
 }
@@ -9272,13 +9279,13 @@ auto remainder(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
-    using OurRoundingRep = detail::RoundingRep<Quantity<U, R>, RoundingUnits>;
+    using OurRoundingRep = detail::RoundingRepT<Quantity<U, R>, RoundingUnits>;
     return std::round(q.template in<OurRoundingRep>(rounding_units));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    using OurRoundingRep = detail::RoundingRep<QuantityPoint<U, R>, RoundingUnits>;
+    using OurRoundingRep = detail::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
     return std::round(p.template in<OurRoundingRep>(rounding_units));
 }
 
@@ -9307,12 +9314,13 @@ auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnit<RoundingUnits>>(round_in(rounding_units, q));
+    return make_quantity<AssociatedUnitT<RoundingUnits>>(round_in(rounding_units, q));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(round_in(rounding_units, p));
+    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
+        round_in(rounding_units, p));
 }
 
 //
@@ -9324,12 +9332,12 @@ auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnit<RoundingUnits>>(round_in<OutputRep>(rounding_units, q));
+    return make_quantity<AssociatedUnitT<RoundingUnits>>(round_in<OutputRep>(rounding_units, q));
 }
 // b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(
+    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
         round_in<OutputRep>(rounding_units, p));
 }
 
@@ -9341,13 +9349,13 @@ auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
-    using OurRoundingRep = detail::RoundingRep<Quantity<U, R>, RoundingUnits>;
+    using OurRoundingRep = detail::RoundingRepT<Quantity<U, R>, RoundingUnits>;
     return std::floor(q.template in<OurRoundingRep>(rounding_units));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    using OurRoundingRep = detail::RoundingRep<QuantityPoint<U, R>, RoundingUnits>;
+    using OurRoundingRep = detail::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
     return std::floor(p.template in<OurRoundingRep>(rounding_units));
 }
 
@@ -9375,12 +9383,13 @@ auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnit<RoundingUnits>>(floor_in(rounding_units, q));
+    return make_quantity<AssociatedUnitT<RoundingUnits>>(floor_in(rounding_units, q));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(floor_in(rounding_units, p));
+    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
+        floor_in(rounding_units, p));
 }
 
 //
@@ -9392,12 +9401,12 @@ auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnit<RoundingUnits>>(floor_in<OutputRep>(rounding_units, q));
+    return make_quantity<AssociatedUnitT<RoundingUnits>>(floor_in<OutputRep>(rounding_units, q));
 }
 // b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(
+    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
         floor_in<OutputRep>(rounding_units, p));
 }
 
@@ -9409,13 +9418,13 @@ auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
-    using OurRoundingRep = detail::RoundingRep<Quantity<U, R>, RoundingUnits>;
+    using OurRoundingRep = detail::RoundingRepT<Quantity<U, R>, RoundingUnits>;
     return std::ceil(q.template in<OurRoundingRep>(rounding_units));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    using OurRoundingRep = detail::RoundingRep<QuantityPoint<U, R>, RoundingUnits>;
+    using OurRoundingRep = detail::RoundingRepT<QuantityPoint<U, R>, RoundingUnits>;
     return std::ceil(p.template in<OurRoundingRep>(rounding_units));
 }
 
@@ -9443,12 +9452,12 @@ auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnit<RoundingUnits>>(ceil_in(rounding_units, q));
+    return make_quantity<AssociatedUnitT<RoundingUnits>>(ceil_in(rounding_units, q));
 }
 // b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(ceil_in(rounding_units, p));
+    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(ceil_in(rounding_units, p));
 }
 
 //
@@ -9460,12 +9469,12 @@ auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 // a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    return make_quantity<AssociatedUnit<RoundingUnits>>(ceil_in<OutputRep>(rounding_units, q));
+    return make_quantity<AssociatedUnitT<RoundingUnits>>(ceil_in<OutputRep>(rounding_units, q));
 }
 // b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(
+    return make_quantity_point<AssociatedUnitForPointsT<RoundingUnits>>(
         ceil_in<OutputRep>(rounding_units, p));
 }
 
@@ -9478,7 +9487,7 @@ auto sin(Quantity<U, R> q) {
 // Wrapper for std::sqrt() which handles Quantity types.
 template <typename U, typename R>
 auto sqrt(Quantity<U, R> q) {
-    return make_quantity<UnitPower<U, 1, 2>>(std::sqrt(q.in(U{})));
+    return make_quantity<UnitPowerT<U, 1, 2>>(std::sqrt(q.in(U{})));
 }
 
 // Wrapper for std::tan() which accepts a strongly typed angle quantity.
