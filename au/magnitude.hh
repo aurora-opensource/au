@@ -161,7 +161,9 @@ struct InOrderFor<Magnitude, A, B> : LexicographicTotalOrdering<A, B, detail::Or
 template <typename MagT>
 struct IntegerPartImpl;
 template <typename MagT>
-using IntegerPartT = typename IntegerPartImpl<MagT>::type;
+using IntegerPart = typename IntegerPartImpl<MagT>::type;
+template <typename MagT>
+using IntegerPartT = IntegerPart<MagT>;
 
 template <typename MagT>
 struct AbsImpl;
@@ -176,10 +178,14 @@ using Sign = typename SignImpl<MagT>::type;
 template <typename MagT>
 struct NumeratorImpl;
 template <typename MagT>
-using NumeratorT = typename NumeratorImpl<MagT>::type;
+using Numerator = typename NumeratorImpl<MagT>::type;
+template <typename MagT>
+using NumeratorT = Numerator<MagT>;
 
 template <typename MagT>
-using DenominatorT = NumeratorT<MagInverse<Abs<MagT>>>;
+using Denominator = Numerator<MagInverse<Abs<MagT>>>;
+template <typename MagT>
+using DenominatorT = Denominator<MagT>;
 
 template <typename MagT>
 struct IsPositive : std::true_type {};
@@ -189,11 +195,10 @@ struct IsPositive<Magnitude<Negative, BPs...>> : std::false_type {};
 template <typename MagT>
 struct IsRational
     : std::is_same<MagT,
-                   MagQuotient<IntegerPartT<NumeratorT<MagT>>, IntegerPartT<DenominatorT<MagT>>>> {
-};
+                   MagQuotient<IntegerPart<Numerator<MagT>>, IntegerPart<Denominator<MagT>>>> {};
 
 template <typename MagT>
-struct IsInteger : std::is_same<MagT, IntegerPartT<MagT>> {};
+struct IsInteger : std::is_same<MagT, IntegerPart<MagT>> {};
 
 // The "common magnitude" of two Magnitudes is the largest Magnitude that evenly divides both.
 //
@@ -244,7 +249,7 @@ constexpr auto operator!=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
 
 template <typename... BPs>
 constexpr auto integer_part(Magnitude<BPs...>) {
-    return IntegerPartT<Magnitude<BPs...>>{};
+    return IntegerPart<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
@@ -260,12 +265,12 @@ constexpr auto sign(Magnitude<BPs...>) {
 
 template <typename... BPs>
 constexpr auto numerator(Magnitude<BPs...>) {
-    return NumeratorT<Magnitude<BPs...>>{};
+    return Numerator<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
 constexpr auto denominator(Magnitude<BPs...>) {
-    return DenominatorT<Magnitude<BPs...>>{};
+    return Denominator<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
@@ -351,7 +356,7 @@ struct IntegerPartImpl<Magnitude<BPs...>>
 
 template <typename... BPs>
 struct IntegerPartImpl<Magnitude<Negative, BPs...>>
-    : stdx::type_identity<MagProduct<Magnitude<Negative>, IntegerPartT<Magnitude<BPs...>>>> {};
+    : stdx::type_identity<MagProduct<Magnitude<Negative>, IntegerPart<Magnitude<BPs...>>>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `abs()` implementation.
@@ -819,9 +824,9 @@ using ExtendedMagLabel =
 
 template <typename MagT>
 struct MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL> {
-    using LabelT = ExtendedMagLabel<3u, NumeratorT<MagT>, DenominatorT<MagT>>;
+    using LabelT = ExtendedMagLabel<3u, Numerator<MagT>, Denominator<MagT>>;
     static constexpr LabelT value = join_by(
-        " / ", MagnitudeLabel<NumeratorT<MagT>>::value, MagnitudeLabel<DenominatorT<MagT>>::value);
+        " / ", MagnitudeLabel<Numerator<MagT>>::value, MagnitudeLabel<Denominator<MagT>>::value);
 
     static constexpr const bool has_exposed_slash = true;
 };

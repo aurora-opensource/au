@@ -100,7 +100,7 @@ struct TruncationRiskForMultiplyByIrrational
 
 template <typename T, typename M>
 struct TruncationRiskForMultiplyArithmeticByRationalNontrivialDenominator
-    : std::conditional<(get_value_result<RealPart<T>>(DenominatorT<M>{}).outcome ==
+    : std::conditional<(get_value_result<RealPart<T>>(Denominator<M>{}).outcome ==
                         MagRepresentationOutcome::ERR_CANNOT_FIT),
                        ValueIsNotZero<T>,
                        ValueTimesRatioIsNotInteger<T, M>> {};
@@ -226,7 +226,7 @@ template <typename Risk>
 struct DenominatorOfRatioImpl : stdx::type_identity<Magnitude<>> {};
 template <typename T, typename M>
 struct DenominatorOfRatioImpl<ValueTimesRatioIsNotInteger<T, M>>
-    : stdx::type_identity<DenominatorT<M>> {};
+    : stdx::type_identity<Denominator<M>> {};
 template <typename Risk>
 using DenominatorOfRatio = typename DenominatorOfRatioImpl<Risk>::type;
 
@@ -274,13 +274,13 @@ struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorDoesNotFit {
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits {
     static constexpr bool would_value_truncate(const T &value) {
-        return (value % get_value<RealPart<T>>(DenominatorT<M>{})) != T{0};
+        return (value % get_value<RealPart<T>>(Denominator<M>{})) != T{0};
     }
 };
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForInt
-    : std::conditional_t<get_value_result<RealPart<T>>(DenominatorT<M>{}).outcome ==
+    : std::conditional_t<get_value_result<RealPart<T>>(Denominator<M>{}).outcome ==
                              MagRepresentationOutcome::ERR_CANNOT_FIT,
                          ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorDoesNotFit<T, M>,
                          ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits<T, M>> {};
