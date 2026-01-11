@@ -171,8 +171,8 @@ expand the note below for further details.
     The unit of the return type depends on whether we are working with `Quantity` inputs, or
     `QuantityPoint`.
 
-    - For `Quantity`, the return type's unit is `CommonUnitT<UV, ULo, UHi>`.
-    - For `QuantityPoint`, the return type's unit is `CommonPointUnitT<UV, ULo, UHi>`: this is the
+    - For `Quantity`, the return type's unit is `CommonUnit<UV, ULo, UHi>`.
+    - For `QuantityPoint`, the return type's unit is `CommonPointUnit<UV, ULo, UHi>`: this is the
       [common point unit](../discussion/concepts/common_unit.md#common-quantity-point), which takes
       relative origin offsets into account.
 
