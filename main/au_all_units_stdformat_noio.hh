@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-58-g18dcfff
+// Version identifier: 0.5.0-base-59-gd6b2421
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -5207,7 +5207,7 @@ using AssociatedUnitForPoints = typename AssociatedUnitForPointsImpl<U>::type;
 template <typename U>
 using AssociatedUnitForPointsT = AssociatedUnitForPoints<U>;
 
-// `CommonUnitT`: the largest unit that evenly divides all input units.
+// `CommonUnit`: the largest unit that evenly divides all input units.
 //
 // A specialization will only exist if all input types are units.
 //
@@ -5222,9 +5222,11 @@ using AssociatedUnitForPointsT = AssociatedUnitForPoints<U>;
 template <typename... Us>
 struct ComputeCommonUnit;
 template <typename... Us>
-using CommonUnitT = typename ComputeCommonUnit<Us...>::type;
+using CommonUnit = typename ComputeCommonUnit<Us...>::type;
+template <typename... Us>
+using CommonUnitT = CommonUnit<Us...>;
 
-// `CommonPointUnitT`: the largest-magnitude, highest-origin unit which is "common" to the units of
+// `CommonPointUnit`: the largest-magnitude, highest-origin unit which is "common" to the units of
 // a collection of `QuantityPoint` instances.
 //
 // The key goal to keep in mind is that for a `QuantityPoint` of any unit `U` in `Us...`, converting
@@ -5246,7 +5248,9 @@ using CommonUnitT = typename ComputeCommonUnit<Us...>::type;
 template <typename... Us>
 struct ComputeCommonPointUnit;
 template <typename... Us>
-using CommonPointUnitT = typename ComputeCommonPointUnit<Us...>::type;
+using CommonPointUnit = typename ComputeCommonPointUnit<Us...>::type;
+template <typename... Us>
+using CommonPointUnitT = CommonPointUnit<Us...>;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Type traits (instance-based interface).

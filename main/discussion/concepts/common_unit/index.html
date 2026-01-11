@@ -2611,28 +2611,28 @@ denote the same type.</p>
 <li>Remember: <code>CommonUnitPack&lt;...&gt;</code> can arise only as <em>the result of some type computation</em>.</li>
 </ul>
 </li>
-<li><strong><code>CommonUnitT&lt;...&gt;</code></strong>.  This <em>computes</em> the common unit of the provided units.</li>
+<li><strong><code>CommonUnit&lt;...&gt;</code></strong>.  This <em>computes</em> the common unit of the provided units.</li>
 </ul>
 <p>Let&rsquo;s clarify this relationship with an example.  Suppose you&rsquo;re writing a function based on two
 arbitrary (but same-dimension) units, <code>U1</code> and <code>U2</code>, and you need their &ldquo;common unit&rdquo;.</p>
 <ul>
-<li>What you would <em>write</em> is <code>CommonUnitT&lt;U1, U2&gt;</code>, <strong>not</strong> <code>CommonUnitPack&lt;U1, U2&gt;</code>.<ul>
-<li><code>CommonUnitT&lt;...&gt;</code> says &ldquo;<em>please calculate</em> the common unit&rdquo;.</li>
+<li>What you would <em>write</em> is <code>CommonUnit&lt;U1, U2&gt;</code>, <strong>not</strong> <code>CommonUnitPack&lt;U1, U2&gt;</code>.<ul>
+<li><code>CommonUnit&lt;...&gt;</code> says &ldquo;<em>please calculate</em> the common unit&rdquo;.</li>
 <li><code>CommonUnitPack&lt;...&gt;</code> says &ldquo;<em>this is the result</em> of calculating the common unit&rdquo;.</li>
 </ul>
 </li>
 <li>What you <em>get</em> depends on the specific units.<ul>
-<li>For <code>CommonUnitT&lt;Inches, Meters&gt;</code>, the result might be <code>CommonUnitPack&lt;Inches, Meters&gt;</code>.<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>
+<li>For <code>CommonUnit&lt;Inches, Meters&gt;</code>, the result might be <code>CommonUnitPack&lt;Inches, Meters&gt;</code>.<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>
   This is because the greatest common divisor for <code>Inches</code> and <code>Meters</code> is smaller than both of
   them.</li>
-<li>For <code>CommonUnitT&lt;Inches, Feet&gt;</code>, the result would simply be <code>Inches</code>, because <code>Inches</code> is
+<li>For <code>CommonUnit&lt;Inches, Feet&gt;</code>, the result would simply be <code>Inches</code>, because <code>Inches</code> is
   quantity-equivalent to this common unit (it evenly divides both <code>Inches</code> and <code>Feet</code>).</li>
 </ul>
 </li>
 </ul>
 <details class="info">
 <summary>Implementation approach details (deep in the weeds)</summary>
-<p>There are two main tools we use to implement <code>CommonUnitT</code>.</p>
+<p>There are two main tools we use to implement <code>CommonUnit</code>.</p>
 <ol>
 <li>
 <p><code>FlatDedupedTypeList</code>.  For a given variadic pack <code>List&lt;...&gt;</code> (which, for us, will be
@@ -2671,9 +2671,9 @@ and <code>Kelvins</code>.</p>
   <code>Centi&lt;Kelvins&gt;</code> before we can subtract and/or compare them!</p>
 </li>
 </ul>
-<p>Thus, what we&rsquo;ve been calling <code>CommonUnitT</code> is really more like <code>CommonQuantityUnitT</code> (although
+<p>Thus, what we&rsquo;ve been calling <code>CommonUnit</code> is really more like <code>CommonQuantityUnit</code> (although
 we&rsquo;ve kept the name short because <code>Quantity</code> is by far the typical use case).  For <code>QuantityPoint</code>
-operations, we have the <code>CommonPointUnitT&lt;Us...&gt;</code> alias, which typically creates some instance of
+operations, we have the <code>CommonPointUnit&lt;Us...&gt;</code> alias, which typically creates some instance of
 <code>CommonPointUnitPack&lt;Us...&gt;</code> with the <code>Us...</code> in their canonical ordering.</p>
 <p>So: what <em>is</em> the &ldquo;common quantity <em>point</em> unit&rdquo;?  Well, we can start with the &ldquo;common <em>quantity</em>
 unit,&rdquo; but the origin adds a new complication.  We&rsquo;ll need to choose a convention.</p>

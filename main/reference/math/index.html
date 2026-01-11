@@ -2963,8 +2963,8 @@ above signatures, it will be <code>std::common_type_t&lt;RV, RLo, RHi&gt;</code>
 <p>The unit of the return type depends on whether we are working with <code>Quantity</code> inputs, or
 <code>QuantityPoint</code>.</p>
 <ul>
-<li>For <code>Quantity</code>, the return type&rsquo;s unit is <code>CommonUnitT&lt;UV, ULo, UHi&gt;</code>.</li>
-<li>For <code>QuantityPoint</code>, the return type&rsquo;s unit is <code>CommonPointUnitT&lt;UV, ULo, UHi&gt;</code>: this is the
+<li>For <code>Quantity</code>, the return type&rsquo;s unit is <code>CommonUnit&lt;UV, ULo, UHi&gt;</code>.</li>
+<li>For <code>QuantityPoint</code>, the return type&rsquo;s unit is <code>CommonPointUnit&lt;UV, ULo, UHi&gt;</code>: this is the
   <a href="../../discussion/concepts/common_unit/#common-quantity-point">common point unit</a>, which takes
   relative origin offsets into account.</li>
 </ul>

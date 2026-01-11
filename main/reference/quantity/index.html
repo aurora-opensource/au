@@ -3727,7 +3727,7 @@ between two <code>Quantity</code> types, not between a <code>Quantity</code> and
 <code>Quantity&lt;U2, R2&gt; q2</code>.  Then <code>q1 % q2</code> is defined only when:</p>
 <ol>
 <li><code>(R1{} % R2{})</code> is defined (that is, both <code>R1</code> and <code>R2</code> are integral types).</li>
-<li><code>CommonUnitT&lt;U1, U2&gt;</code> is defined (that is, <code>U1</code> and <code>U2</code> have the same dimension).</li>
+<li><code>CommonUnit&lt;U1, U2&gt;</code> is defined (that is, <code>U1</code> and <code>U2</code> have the same dimension).</li>
 </ol>
 <p>When these conditions hold, the result is equivalent to first converting <code>q1</code> and <code>q2</code> to their
 common unit, and then computing the remainder from performing integer division on their values.</p>

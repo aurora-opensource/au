@@ -3579,15 +3579,15 @@ be a different <em>category of thing</em> (i.e., always consistently a unit) tha
 be quantity makers, unit symbols, or so on).</p>
 <p>For example, consider <code>common_unit(meters, feet)</code>.  Recall that the type of <code>meters</code> is
 <code>QuantityMaker&lt;Meters&gt;</code>, and that of <code>feet</code> is <code>QuantityMaker&lt;Feet&gt;</code>.  In this case, the return
-value is an instance of <code>CommonUnitT&lt;Meters, Feet&gt;</code>, <em>not</em>
-<code>QuantityMaker&lt;CommonUnitT&lt;Meters, Feet&gt;&gt;</code>.</p>
+value is an instance of <code>CommonUnit&lt;Meters, Feet&gt;</code>, <em>not</em>
+<code>QuantityMaker&lt;CommonUnit&lt;Meters, Feet&gt;&gt;</code>.</p>
 <p>If you want something that still computes the common unit, but preserves the <em>category</em> of the
 inputs, see <a href="#make-common"><code>make_common(us...)</code></a>.</p>
 </details>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For <em>types</em> <code>Us...</code>:<ul>
-<li><code>CommonUnitT&lt;Us...&gt;</code></li>
+<li><code>CommonUnit&lt;Us...&gt;</code></li>
 </ul>
 </li>
 <li>For <em>instances</em> <code>us...</code>:<ul>
@@ -3606,7 +3606,7 @@ its value to the common point-unit should involve only:</p>
 <li>addition of a <em>non-negative integer</em></li>
 </ul>
 <p>This helps us support the widest range of Rep types (in particular, unsigned integers).</p>
-<p>As with <code>CommonUnitT</code>, this isn&rsquo;t always possible: in particular, we can&rsquo;t do this for units with
+<p>As with <code>CommonUnit</code>, this isn&rsquo;t always possible: in particular, we can&rsquo;t do this for units with
 irrational relative magnitudes or origin displacements.  However, we still provide <em>some</em> answer,
 which is consistent with the above policy whenever it&rsquo;s achievable, and produces reasonable results
 in all other cases.</p>
@@ -3634,15 +3634,15 @@ be a different <em>category of thing</em> (i.e., always consistently a unit) tha
 be quantity point makers, unit symbols, or so on).</p>
 <p>For example, consider <code>common_unit(meters, feet)</code>.  Recall that the type of <code>meters</code> is
 <code>QuantityMaker&lt;Meters&gt;</code>, and that of <code>feet</code> is <code>QuantityMaker&lt;Feet&gt;</code>.  In this case, the return
-value is an instance of <code>CommonUnitT&lt;Meters, Feet&gt;</code>, <em>not</em>
-<code>QuantityMaker&lt;CommonUnitT&lt;Meters, Feet&gt;&gt;</code>.</p>
+value is an instance of <code>CommonUnit&lt;Meters, Feet&gt;</code>, <em>not</em>
+<code>QuantityMaker&lt;CommonUnit&lt;Meters, Feet&gt;&gt;</code>.</p>
 <p>If you want something that still computes the common unit, but preserves the <em>category</em> of the
 inputs, see <a href="#make-common-point"><code>make_common_point(us...)</code></a>.</p>
 </details>
 <p><strong>Syntax:</strong></p>
 <ul>
 <li>For <em>types</em> <code>Us...</code>:<ul>
-<li><code>CommonPointUnitT&lt;Us...&gt;</code></li>
+<li><code>CommonPointUnit&lt;Us...&gt;</code></li>
 </ul>
 </li>
 <li>For <em>instances</em> <code>us...</code>:<ul>
