@@ -39,13 +39,13 @@ constexpr int B<N>::index;
 
 // Defining `pow<N>(Vector<...>)` is what unlocks `squared`, `cubed`, and `inverse`.
 template <std::intmax_t N, typename... BPs>
-constexpr PackPowerT<Vector, Vector<BPs...>, N> pow(Vector<BPs...>) {
+constexpr PackPower<Vector, Vector<BPs...>, N> pow(Vector<BPs...>) {
     return {};
 }
 
 // Defining `root<N>(Vector<...>)` is what unlocks `sqrt` and `cbrt`.
 template <std::intmax_t N, typename... BPs>
-constexpr PackPowerT<Vector, Vector<BPs...>, 1, N> root(Vector<BPs...>) {
+constexpr PackPower<Vector, Vector<BPs...>, 1, N> root(Vector<BPs...>) {
     return {};
 }
 

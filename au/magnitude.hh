@@ -54,33 +54,33 @@ struct Magnitude {
 
 // Define readable operations for product, quotient, power, inverse on Magnitudes.
 template <typename... BPs>
-using MagProduct = PackProductT<Magnitude, BPs...>;
+using MagProduct = PackProduct<Magnitude, BPs...>;
 template <typename... BPs>
 using MagProductT = MagProduct<BPs...>;
 
 template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
-using MagPower = PackPowerT<Magnitude, T, ExpNum, ExpDen>;
+using MagPower = PackPower<Magnitude, T, ExpNum, ExpDen>;
 template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using MagPowerT = MagPower<T, ExpNum, ExpDen>;
 
 template <typename T, typename U>
-using MagQuotient = PackQuotientT<Magnitude, T, U>;
+using MagQuotient = PackQuotient<Magnitude, T, U>;
 template <typename T, typename U>
 using MagQuotientT = MagQuotient<T, U>;
 
 template <typename T>
-using MagInverse = PackInverseT<Magnitude, T>;
+using MagInverse = PackInverse<Magnitude, T>;
 template <typename T>
 using MagInverseT = MagInverse<T>;
 
 // Enable negative magnitudes with a type representing (-1) that appears/disappears under powers.
 struct Negative {};
 template <typename... BPs, std::intmax_t ExpNum, std::intmax_t ExpDen>
-struct PackPower<Magnitude, Magnitude<Negative, BPs...>, std::ratio<ExpNum, ExpDen>>
+struct PackPowerImpl<Magnitude, Magnitude<Negative, BPs...>, std::ratio<ExpNum, ExpDen>>
     : std::conditional<(std::ratio<ExpNum, ExpDen>::num % 2 == 0),
 
                        // Even powers of (-1) are 1 for any root.
-                       PackPowerT<Magnitude, Magnitude<BPs...>, ExpNum, ExpDen>,
+                       MagPower<Magnitude<BPs...>, ExpNum, ExpDen>,
 
                        // At this point, we know we're taking the D'th root of (-1), which is (-1)
                        // if D is odd, and a hard compiler error if D is even.
@@ -91,7 +91,7 @@ struct PackPower<Magnitude, Magnitude<Negative, BPs...>, std::ratio<ExpNum, ExpD
                   "Cannot take even root of negative magnitude");
 };
 template <typename... LeftBPs, typename... RightBPs>
-struct PackProduct<Magnitude, Magnitude<Negative, LeftBPs...>, Magnitude<Negative, RightBPs...>>
+struct PackProductImpl<Magnitude, Magnitude<Negative, LeftBPs...>, Magnitude<Negative, RightBPs...>>
     : stdx::type_identity<MagProduct<Magnitude<LeftBPs...>, Magnitude<RightBPs...>>> {};
 
 // Define negation.

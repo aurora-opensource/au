@@ -343,7 +343,7 @@ struct UnitProductPack {
 template <typename... UnitPows>
 using UnitProduct =
     UnpackIfSolo<UnitProductPack,
-                 PackProductT<UnitProductPack, AsPack<UnitProductPack, UnitPows>...>>;
+                 PackProduct<UnitProductPack, AsPack<UnitProductPack, UnitPows>...>>;
 template <typename... UnitPows>
 using UnitProductT = UnitProduct<UnitPows...>;
 
@@ -351,7 +351,7 @@ using UnitProductT = UnitProduct<UnitPows...>;
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using UnitPower =
     UnpackIfSolo<UnitProductPack,
-                 PackPowerT<UnitProductPack, AsPack<UnitProductPack, U>, ExpNum, ExpDen>>;
+                 PackPower<UnitProductPack, AsPack<UnitProductPack, U>, ExpNum, ExpDen>>;
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using UnitPowerT = UnitPower<U, ExpNum, ExpDen>;
 
