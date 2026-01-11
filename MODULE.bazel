@@ -196,7 +196,7 @@ bazel_dep(name = "gazelle", version = "0.45.0", dev_dependency = True)
 
 # The Go SDK has an issue with `-strict-prototypes` and newer versions of clang.
 # Patch it until the fix is upstream.
-go_sdk = use_extension("@io_bazel_rules_go//go:extensions.bzl", "go_sdk")
+go_sdk = use_extension("@io_bazel_rules_go//go:extensions.bzl", "go_sdk", dev_dependency = True)
 go_sdk.download(
     patch_strip = 0,
     patches = ["//third_party/go_sdk:0001-Make-_cgo_yield-a-proper-prototype.patch"],

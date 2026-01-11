@@ -17,7 +17,7 @@
       ".clang-format",
       ".envrc",
       ".github/**/*.yml",
-      "MODULE.bazel",
+      "**/MODULE.bazel",
       "REPO.bazel",
       "requirements.in",
       "cmake/*.cmake",
