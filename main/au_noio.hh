@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-62-gfafc750
+// Version identifier: 0.5.0-base-63-g0d493b0
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -2910,7 +2910,9 @@ struct InOrderFor<Magnitude, A, B> : LexicographicTotalOrdering<A, B, detail::Or
 template <typename MagT>
 struct IntegerPartImpl;
 template <typename MagT>
-using IntegerPartT = typename IntegerPartImpl<MagT>::type;
+using IntegerPart = typename IntegerPartImpl<MagT>::type;
+template <typename MagT>
+using IntegerPartT = IntegerPart<MagT>;
 
 template <typename MagT>
 struct AbsImpl;
@@ -2925,10 +2927,14 @@ using Sign = typename SignImpl<MagT>::type;
 template <typename MagT>
 struct NumeratorImpl;
 template <typename MagT>
-using NumeratorT = typename NumeratorImpl<MagT>::type;
+using Numerator = typename NumeratorImpl<MagT>::type;
+template <typename MagT>
+using NumeratorT = Numerator<MagT>;
 
 template <typename MagT>
-using DenominatorT = NumeratorT<MagInverse<Abs<MagT>>>;
+using Denominator = Numerator<MagInverse<Abs<MagT>>>;
+template <typename MagT>
+using DenominatorT = Denominator<MagT>;
 
 template <typename MagT>
 struct IsPositive : std::true_type {};
@@ -2938,11 +2944,10 @@ struct IsPositive<Magnitude<Negative, BPs...>> : std::false_type {};
 template <typename MagT>
 struct IsRational
     : std::is_same<MagT,
-                   MagQuotient<IntegerPartT<NumeratorT<MagT>>, IntegerPartT<DenominatorT<MagT>>>> {
-};
+                   MagQuotient<IntegerPart<Numerator<MagT>>, IntegerPart<Denominator<MagT>>>> {};
 
 template <typename MagT>
-struct IsInteger : std::is_same<MagT, IntegerPartT<MagT>> {};
+struct IsInteger : std::is_same<MagT, IntegerPart<MagT>> {};
 
 // The "common magnitude" of two Magnitudes is the largest Magnitude that evenly divides both.
 //
@@ -2993,7 +2998,7 @@ constexpr auto operator!=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
 
 template <typename... BPs>
 constexpr auto integer_part(Magnitude<BPs...>) {
-    return IntegerPartT<Magnitude<BPs...>>{};
+    return IntegerPart<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
@@ -3009,12 +3014,12 @@ constexpr auto sign(Magnitude<BPs...>) {
 
 template <typename... BPs>
 constexpr auto numerator(Magnitude<BPs...>) {
-    return NumeratorT<Magnitude<BPs...>>{};
+    return Numerator<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
 constexpr auto denominator(Magnitude<BPs...>) {
-    return DenominatorT<Magnitude<BPs...>>{};
+    return Denominator<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
@@ -3100,7 +3105,7 @@ struct IntegerPartImpl<Magnitude<BPs...>>
 
 template <typename... BPs>
 struct IntegerPartImpl<Magnitude<Negative, BPs...>>
-    : stdx::type_identity<MagProduct<Magnitude<Negative>, IntegerPartT<Magnitude<BPs...>>>> {};
+    : stdx::type_identity<MagProduct<Magnitude<Negative>, IntegerPart<Magnitude<BPs...>>>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `abs()` implementation.
@@ -3568,9 +3573,9 @@ using ExtendedMagLabel =
 
 template <typename MagT>
 struct MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL> {
-    using LabelT = ExtendedMagLabel<3u, NumeratorT<MagT>, DenominatorT<MagT>>;
+    using LabelT = ExtendedMagLabel<3u, Numerator<MagT>, Denominator<MagT>>;
     static constexpr LabelT value = join_by(
-        " / ", MagnitudeLabel<NumeratorT<MagT>>::value, MagnitudeLabel<DenominatorT<MagT>>::value);
+        " / ", MagnitudeLabel<Numerator<MagT>>::value, MagnitudeLabel<Denominator<MagT>>::value);
 
     static constexpr const bool has_exposed_slash = true;
 };
@@ -3866,8 +3871,8 @@ template <typename M>
 struct MagKindForImpl
     : std::conditional<
           stdx::conjunction<IsRational<M>,
-                            stdx::negation<std::is_same<DenominatorT<M>, Magnitude<>>>>::value,
-          std::conditional_t<std::is_same<Abs<NumeratorT<M>>, Magnitude<>>::value,
+                            stdx::negation<std::is_same<Denominator<M>, Magnitude<>>>>::value,
+          std::conditional_t<std::is_same<Abs<Numerator<M>>, Magnitude<>>::value,
                              MagKindHolder<MagKind::INTEGER_DIVIDE>,
                              MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>,
           MagKindHolder<MagKind::DEFAULT>> {};
@@ -3881,13 +3886,13 @@ using ApplicationStrategyFor = typename ApplicationStrategyForImpl<T, Mag, MagKi
 
 template <typename T, typename Mag>
 struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::INTEGER_DIVIDE>>
-    : stdx::type_identity<DivideTypeByInteger<T, MagProduct<Sign<Mag>, DenominatorT<Mag>>>> {};
+    : stdx::type_identity<DivideTypeByInteger<T, MagProduct<Sign<Mag>, Denominator<Mag>>>> {};
 
 template <typename T, typename Mag>
 struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>
     : std::conditional<
           std::is_integral<RealPart<T>>::value,
-          OpSequence<MultiplyTypeBy<T, NumeratorT<Mag>>, DivideTypeByInteger<T, DenominatorT<Mag>>>,
+          OpSequence<MultiplyTypeBy<T, Numerator<Mag>>, DivideTypeByInteger<T, Denominator<Mag>>>,
           MultiplyTypeBy<T, Mag>> {};
 
 //
@@ -6010,7 +6015,7 @@ struct TruncationRiskForMultiplyByIrrational
 
 template <typename T, typename M>
 struct TruncationRiskForMultiplyArithmeticByRationalNontrivialDenominator
-    : std::conditional<(get_value_result<RealPart<T>>(DenominatorT<M>{}).outcome ==
+    : std::conditional<(get_value_result<RealPart<T>>(Denominator<M>{}).outcome ==
                         MagRepresentationOutcome::ERR_CANNOT_FIT),
                        ValueIsNotZero<T>,
                        ValueTimesRatioIsNotInteger<T, M>> {};
@@ -6136,7 +6141,7 @@ template <typename Risk>
 struct DenominatorOfRatioImpl : stdx::type_identity<Magnitude<>> {};
 template <typename T, typename M>
 struct DenominatorOfRatioImpl<ValueTimesRatioIsNotInteger<T, M>>
-    : stdx::type_identity<DenominatorT<M>> {};
+    : stdx::type_identity<Denominator<M>> {};
 template <typename Risk>
 using DenominatorOfRatio = typename DenominatorOfRatioImpl<Risk>::type;
 
@@ -6184,13 +6189,13 @@ struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorDoesNotFit {
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits {
     static constexpr bool would_value_truncate(const T &value) {
-        return (value % get_value<RealPart<T>>(DenominatorT<M>{})) != T{0};
+        return (value % get_value<RealPart<T>>(Denominator<M>{})) != T{0};
     }
 };
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForInt
-    : std::conditional_t<get_value_result<RealPart<T>>(DenominatorT<M>{}).outcome ==
+    : std::conditional_t<get_value_result<RealPart<T>>(Denominator<M>{}).outcome ==
                              MagRepresentationOutcome::ERR_CANNOT_FIT,
                          ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorDoesNotFit<T, M>,
                          ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits<T, M>> {};
