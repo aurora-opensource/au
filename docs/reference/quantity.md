@@ -880,19 +880,11 @@ common unit, and then computing the remainder from performing integer division o
 
 There are two ways to change the representation type of a `Quantity`, `q`, to some target type `T`.
 
-- `rep_cast<T>(q)` is forcing, like a `static_cast`
 - `q.as<T>()` guards against all conversion risks by default, and can take a [conversion risk
   policy](./conversion_risk_policies.md) parameter to customize this behavior.
+- `rep_cast<T>(q)` is forcing, like a `static_cast`
 
 We describe these in more detail below.
-
-### `rep_cast`
-
-`rep_cast` performs a `static_cast` on the underlying value of a `Quantity`.  It is used to change
-the rep.
-
-Given any `Quantity<U, R> q` whose rep is `R`, then `rep_cast<T>(q)` gives a `Quantity<U, T>`, whose
-underlying value is `static_cast<T>(q.in(U{}))`.
 
 ### `.as<T>()` {#as-rep}
 
@@ -909,9 +901,9 @@ performing a `static_cast` on the underlying value.
     Then `length.as<float>()` produces a value equivalent to `feet(3.0f)`: that is, it converts
     a `Quantity<Feet, int>` to a `Quantity<Feet, float>`.
 
-The behavior of `q.as<T>()` is similar to `rep_cast<T>(q)`, except that it guards against
-[conversion risks](../discussion/concepts/conversion_risks.md) by default.  To customize this
-behavior, you can pass a [conversion risk policy](./conversion_risk_policies.md) as an argument.
+`q.as<T>()` guards against [conversion risks](../discussion/concepts/conversion_risks.md) by
+default.  To customize this behavior, you can pass a [conversion risk
+policy](./conversion_risk_policies.md) as an argument.
 
 | Form | Description |
 |------|-------------|
@@ -940,6 +932,19 @@ behavior, you can pass a [conversion risk policy](./conversion_risk_policies.md)
     ```
 
     This would produce a value equivalent to `feet(3)`.
+
+### `rep_cast`
+
+`rep_cast` performs a `static_cast` on the underlying value of a `Quantity`.  It is used to change
+the rep.  A good rule of thumb is that in situations where you would be using `static_cast` if you
+had raw numeric types, `rep_cast` is a good replacement for `Quantity` types.
+
+Given any `Quantity<U, R> q` whose rep is `R`, then `rep_cast<T>(q)` gives a `Quantity<U, T>`, whose
+underlying value is `static_cast<T>(q.in(U{}))`.
+
+Unlike `.as<T>()`, `rep_cast` won't guard against [conversion
+risks](../discussion/concepts/conversion_risks.md); it will force the conversion through regardless.
+This cannot be customized.
 
 ## Templates and Traits
 

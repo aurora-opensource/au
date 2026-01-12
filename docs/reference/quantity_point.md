@@ -375,19 +375,11 @@ These functions also support an explicit template parameter: so, `.coerce_as<T>(
 There are two ways to change the representation type of a `QuantityPoint`, `p`, to some target type
 `T`.
 
-- `rep_cast<T>(p)` is forcing, like a `static_cast`
 - `p.as<T>()` guards against all conversion risks by default, and can take a [conversion risk
   policy](./conversion_risk_policies.md) parameter to customize this behavior.
+- `rep_cast<T>(p)` is forcing, like a `static_cast`
 
 We describe these in more detail below.
-
-### `rep_cast` {#rep-cast}
-
-`rep_cast` performs a `static_cast` on the underlying value of a `QuantityPoint`.  It is used to
-change the rep.
-
-Given any `QuantityPoint<U, R> p` whose rep is `R`, then `rep_cast<T>(p)` gives a `QuantityPoint<U,
-T>`, whose underlying value is `static_cast<T>(p.in(U{}))`.
 
 ### `.as<T>()` {#as-rep}
 
@@ -404,9 +396,9 @@ performing a `static_cast` on the underlying value.
     Then `point.as<float>()` produces a value equivalent to `meters_pt(3.0f)`: that is, it converts
     a `QuantityPoint<Meters, int>` to a `QuantityPoint<Meters, float>`.
 
-The behavior of `p.as<T>()` is similar to `rep_cast<T>(p)`, except that it guards against
-[conversion risks](../discussion/concepts/conversion_risks.md) by default.  To customize this
-behavior, you can pass a [conversion risk policy](./conversion_risk_policies.md) as an argument.
+`p.as<T>()` guards against [conversion risks](../discussion/concepts/conversion_risks.md) by
+default.  To customize this behavior, you can pass a [conversion risk
+policy](./conversion_risk_policies.md) as an argument.
 
 | Form | Description |
 |------|-------------|
@@ -435,6 +427,19 @@ behavior, you can pass a [conversion risk policy](./conversion_risk_policies.md)
     ```
 
     This would produce a value equivalent to `meters_pt(3)`.
+
+### `rep_cast` {#rep-cast}
+
+`rep_cast` performs a `static_cast` on the underlying value of a `QuantityPoint`.  It is used to
+change the rep.  A good rule of thumb is that in situations where you would be using `static_cast`
+if you had raw numeric types, `rep_cast` is a good replacement for `QuantityPoint` types.
+
+Given any `QuantityPoint<U, R> p` whose rep is `R`, then `rep_cast<T>(p)` gives a `QuantityPoint<U,
+T>`, whose underlying value is `static_cast<T>(p.in(U{}))`.
+
+Unlike `.as<T>()`, `rep_cast` won't guard against [conversion
+risks](../discussion/concepts/conversion_risks.md); it will force the conversion through regardless.
+This cannot be customized.
 
 ## Operations
 
