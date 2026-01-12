@@ -185,10 +185,19 @@ class Quantity {
                          int> = 0>
     constexpr Quantity(T &&x) : Quantity{as_quantity(std::forward<T>(x))} {}
 
+    // `q.as<Rep>()`, or `q.as<Rep>(risk_policy)`
+    template <typename NewRep,
+              typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
+              std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
+    constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
+        return make_quantity<Unit>(in_impl<NewRep>(Unit{}, policy));
+    }
+
     // `q.as<Rep>(new_unit)`, or `q.as<Rep>(new_unit, risk_policy)`
     template <typename NewRep,
               typename NewUnitSlot,
-              typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
+              typename RiskPolicyT = decltype(ignore(ALL_RISKS)),
+              std::enable_if_t<!IsConversionRiskPolicy<NewUnitSlot>::value, int> = 0>
     constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity<AssociatedUnit<NewUnitSlot>>(in_impl<NewRep>(u, policy));
     }

@@ -286,6 +286,38 @@ TEST(QuantityPoint, InWithExplicitRepCanProvideConversionPolicy) {
                 SameTypeAndValue(284));
 }
 
+TEST(QuantityPoint, AsRepChangesRepNotUnit) {
+    EXPECT_THAT(meters_pt(25).as<double>(), SameTypeAndValue(meters_pt(25.)));
+    EXPECT_THAT(celsius_pt(10).as<float>(), SameTypeAndValue(celsius_pt(10.0f)));
+}
+
+TEST(QuantityPoint, AsRepAcceptsConversionRiskPolicyArgument) {
+    EXPECT_THAT(meters_pt(3.14).as<int>(ignore(TRUNCATION_RISK)), SameTypeAndValue(meters_pt(3)));
+
+    EXPECT_THAT(celsius_pt(int16_t{20}).as<int8_t>(ignore(OVERFLOW_RISK)),
+                SameTypeAndValue(celsius_pt(int8_t{20})));
+}
+
+TEST(QuantityPoint, AsRepSupportsConstexpr) {
+    constexpr auto p_int = meters_pt(1);
+    constexpr auto p_double = p_int.as<double>();
+    EXPECT_THAT(p_double, SameTypeAndValue(meters_pt(1.0)));
+}
+
+TEST(QuantityPoint, AsRepProducesExpectedTypeAndValue) {
+    auto result = feet_pt(5).as<double>();
+    StaticAssertTypeEq<decltype(result), QuantityPoint<Feet, double>>();
+    EXPECT_THAT(result, SameTypeAndValue(feet_pt(5.0)));
+}
+
+TEST(QuantityPoint, AsRepWithIgnoreAllRisksIsEquivalentToRepCast) {
+    constexpr auto p = meters_pt(25);
+    EXPECT_THAT(p.as<float>(ignore(ALL_RISKS)), SameTypeAndValue(rep_cast<float>(p)));
+
+    constexpr auto length = feet_pt(3.14);
+    EXPECT_THAT(length.as<int>(ignore(ALL_RISKS)), SameTypeAndValue(rep_cast<int>(length)));
+}
+
 TEST(QuantityPoint, HandlesConversionWithSignedSourceAndUnsignedDestination) {
     EXPECT_THAT(celsius_pt(int16_t{-5}).coerce_as<uint16_t>(kelvins_pt),
                 SameTypeAndValue(kelvins_pt(uint16_t{268})));
