@@ -370,6 +370,77 @@ These functions also support an explicit template parameter: so, `.coerce_as<T>(
     Prefer **not** to use the "coercing versions" if possible, because you will get more safety
     checks.  The risks which the "base" versions warn about are real.
 
+## Changing the representation type
+
+There are two ways to change the representation type of a `QuantityPoint`, `p`, to some target type
+`T`.
+
+- `p.as<T>()` guards against all conversion risks by default, and can take a [conversion risk
+  policy](./conversion_risk_policies.md) parameter to customize this behavior.
+- `rep_cast<T>(p)` is forcing, like a `static_cast`
+
+We describe these in more detail below.
+
+### `.as<T>()` {#as-rep}
+
+This function produces a new `QuantityPoint` with the same unit, but a different rep (storage type),
+performing a `static_cast` on the underlying value.
+
+??? example "Example: converting `meters_pt(3)` to `float` storage type
+    Consider this quantity point:
+
+    ```cpp
+    auto point = meters_pt(3);
+    ```
+
+    Then `point.as<float>()` produces a value equivalent to `meters_pt(3.0f)`: that is, it converts
+    a `QuantityPoint<Meters, int>` to a `QuantityPoint<Meters, float>`.
+
+`p.as<T>()` guards against [conversion risks](../discussion/concepts/conversion_risks.md) by
+default.  To customize this behavior, you can pass a [conversion risk
+policy](./conversion_risk_policies.md) as an argument.
+
+| Form | Description |
+|------|-------------|
+| `.as<T>()` | Change rep to `T`, with a risk policy of `check_for(ALL_RISKS)` |
+| `.as<T>(policy)` | Change rep to `T`, with the given risk policy |
+
+??? example "Example: truncating `meters_pt(3.14)` to `int` storage"
+    Now consider this quantity point:
+
+    ```cpp
+    auto point = meters_pt(3.14);
+    ```
+
+    Suppose we want to convert the storage type to `int` --- a truncating operation.  The following
+    would fail to compile:
+
+    ```cpp
+    point.as<int>();
+    ```
+
+    The problem is that there is too much truncation risk.  If we're sure that we want this, then we
+    can provide a policy argument to override this risk check:
+
+    ```cpp
+    point.as<int>(ignore(TRUNCATION_RISK));
+    ```
+
+    This would produce a value equivalent to `meters_pt(3)`.
+
+### `rep_cast` {#rep-cast}
+
+`rep_cast` performs a `static_cast` on the underlying value of a `QuantityPoint`.  It is used to
+change the rep.  A good rule of thumb is that in situations where you would be using `static_cast`
+if you had raw numeric types, `rep_cast` is a good replacement for `QuantityPoint` types.
+
+Given any `QuantityPoint<U, R> p` whose rep is `R`, then `rep_cast<T>(p)` gives a `QuantityPoint<U,
+T>`, whose underlying value is `static_cast<T>(p.in(U{}))`.
+
+Unlike `.as<T>()`, `rep_cast` won't guard against [conversion
+risks](../discussion/concepts/conversion_risks.md); it will force the conversion through regardless.
+This cannot be customized.
+
 ## Operations
 
 Au includes as many common operations as possible.  Our goal is to avoid incentivizing users to
@@ -424,14 +495,6 @@ The input must be a `Quantity` which is [implicitly
 convertible](./quantity.md#implicit-from-quantity) to the `Unit` and `Rep` of the target
 `QuantityPoint` type.  These operations first perform that conversion, and then replace the target
 `QuantityPoint` with the result of that addition (for `+=`) or subtraction (for `-=`).
-
-## `rep_cast`
-
-`rep_cast` performs a `static_cast` on the underlying value of a `QuantityPoint`.  It is used to
-change the rep.
-
-Given any `QuantityPoint<U, R> p` whose rep is `R`, then `rep_cast<T>(p)` gives a `QuantityPoint<U,
-T>`, whose underlying value is `static_cast<T>(p.in(U{}))`.
 
 ## Templates and traits
 
