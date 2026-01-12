@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-66-g1e13ad8
+// Version identifier: 0.5.0-base-67-g089f98a
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -6564,10 +6564,19 @@ class Quantity {
                          int> = 0>
     constexpr Quantity(T &&x) : Quantity{as_quantity(std::forward<T>(x))} {}
 
+    // `q.as<Rep>()`, or `q.as<Rep>(risk_policy)`
+    template <typename NewRep,
+              typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
+              std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
+    constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
+        return make_quantity<Unit>(in_impl<NewRep>(Unit{}, policy));
+    }
+
     // `q.as<Rep>(new_unit)`, or `q.as<Rep>(new_unit, risk_policy)`
     template <typename NewRep,
               typename NewUnitSlot,
-              typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
+              typename RiskPolicyT = decltype(ignore(ALL_RISKS)),
+              std::enable_if_t<!IsConversionRiskPolicy<NewUnitSlot>::value, int> = 0>
     constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity<AssociatedUnit<NewUnitSlot>>(in_impl<NewRep>(u, policy));
     }
@@ -8118,11 +8127,24 @@ class QuantityPoint {
     // different decisions about what point is labeled as "0".
     constexpr QuantityPoint(Zero) = delete;
 
-    template <typename NewRep, typename NewUnit, typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
+    // `p.as<Rep>()`, or `p.as<Rep>(risk_policy)`
+    template <typename NewRep,
+              typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
+              std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
+    constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
+        return make_quantity_point<Unit>(in_impl<NewRep>(Unit{}, policy));
+    }
+
+    // `p.as<Rep>(new_unit)`, or `p.as<Rep>(new_unit, risk_policy)`
+    template <typename NewRep,
+              typename NewUnit,
+              typename RiskPolicyT = decltype(ignore(ALL_RISKS)),
+              std::enable_if_t<!IsConversionRiskPolicy<NewUnit>::value, int> = 0>
     constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<NewRep>(u, policy));
     }
 
+    // `p.as(new_unit)`, or `p.as(new_unit, risk_policy)`
     template <typename NewUnit, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<Rep>(u, policy));

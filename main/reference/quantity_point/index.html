@@ -2010,6 +2010,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#changing-the-representation-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changing the representation type
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Changing the representation type">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#as-rep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        .as&lt;T&gt;()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rep-cast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rep_cast
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#operations" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2067,17 +2106,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#rep_cast" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        rep_cast
-      
-    </span>
-  </a>
   
 </li>
       
@@ -3148,6 +3176,72 @@ which truncates: so, for example, <code>centi(meters_pt)(199).coerce_in(meters_p
 <p>Prefer <strong>not</strong> to use the &ldquo;coercing versions&rdquo; if possible, because you will get more safety
 checks.  The risks which the &ldquo;base&rdquo; versions warn about are real.</p>
 </div>
+<h2 id="changing-the-representation-type">Changing the representation type<a class="headerlink" href="#changing-the-representation-type" title="Permanent link">&para;</a></h2>
+<p>There are two ways to change the representation type of a <code>QuantityPoint</code>, <code>p</code>, to some target type
+<code>T</code>.</p>
+<ul>
+<li><code>p.as&lt;T&gt;()</code> guards against all conversion risks by default, and can take a <a href="../conversion_risk_policies/">conversion risk
+  policy</a> parameter to customize this behavior.</li>
+<li><code>rep_cast&lt;T&gt;(p)</code> is forcing, like a <code>static_cast</code></li>
+</ul>
+<p>We describe these in more detail below.</p>
+<h3 id="as-rep"><code>.as&lt;T&gt;()</code><a class="headerlink" href="#as-rep" title="Permanent link">&para;</a></h3>
+<p>This function produces a new <code>QuantityPoint</code> with the same unit, but a different rep (storage type),
+performing a <code>static_cast</code> on the underlying value.</p>
+<p>??? example &ldquo;Example: converting <code>meters_pt(3)</code> to <code>float</code> storage type
+    Consider this quantity point:</p>
+<div class="highlight"><pre><span></span><code>```cpp
+auto point = meters_pt(3);
+```
+
+Then `point.as&lt;float&gt;()` produces a value equivalent to `meters_pt(3.0f)`: that is, it converts
+a `QuantityPoint&lt;Meters, int&gt;` to a `QuantityPoint&lt;Meters, float&gt;`.
+</code></pre></div>
+<p><code>p.as&lt;T&gt;()</code> guards against <a href="../../discussion/concepts/conversion_risks/">conversion risks</a> by
+default.  To customize this behavior, you can pass a <a href="../conversion_risk_policies/">conversion risk
+policy</a> as an argument.</p>
+<table>
+<thead>
+<tr>
+<th>Form</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.as&lt;T&gt;()</code></td>
+<td>Change rep to <code>T</code>, with a risk policy of <code>check_for(ALL_RISKS)</code></td>
+</tr>
+<tr>
+<td><code>.as&lt;T&gt;(policy)</code></td>
+<td>Change rep to <code>T</code>, with the given risk policy</td>
+</tr>
+</tbody>
+</table>
+<details class="example">
+<summary>Example: truncating <code>meters_pt(3.14)</code> to <code>int</code> storage</summary>
+<p>Now consider this quantity point:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">point</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters_pt</span><span class="p">(</span><span class="mf">3.14</span><span class="p">);</span>
+</code></pre></div>
+<p>Suppose we want to convert the storage type to <code>int</code> &mdash; a truncating operation.  The following
+would fail to compile:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">point</span><span class="p">.</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span>
+</code></pre></div>
+<p>The problem is that there is too much truncation risk.  If we&rsquo;re sure that we want this, then we
+can provide a policy argument to override this risk check:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">point</span><span class="p">.</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ignore</span><span class="p">(</span><span class="n">TRUNCATION_RISK</span><span class="p">));</span>
+</code></pre></div>
+<p>This would produce a value equivalent to <code>meters_pt(3)</code>.</p>
+</details>
+<h3 id="rep-cast"><code>rep_cast</code><a class="headerlink" href="#rep-cast" title="Permanent link">&para;</a></h3>
+<p><code>rep_cast</code> performs a <code>static_cast</code> on the underlying value of a <code>QuantityPoint</code>.  It is used to
+change the rep.  A good rule of thumb is that in situations where you would be using <code>static_cast</code>
+if you had raw numeric types, <code>rep_cast</code> is a good replacement for <code>QuantityPoint</code> types.</p>
+<p>Given any <code>QuantityPoint&lt;U, R&gt; p</code> whose rep is <code>R</code>, then <code>rep_cast&lt;T&gt;(p)</code> gives a <code>QuantityPoint&lt;U,
+T&gt;</code>, whose underlying value is <code>static_cast&lt;T&gt;(p.in(U{}))</code>.</p>
+<p>Unlike <code>.as&lt;T&gt;()</code>, <code>rep_cast</code> won&rsquo;t guard against <a href="../../discussion/concepts/conversion_risks/">conversion
+risks</a>; it will force the conversion through regardless.
+This cannot be customized.</p>
 <h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
 <p>Au includes as many common operations as possible.  Our goal is to avoid incentivizing users to
 leave the safety of the library.</p>
@@ -3191,38 +3285,33 @@ a <code>QuantityPoint</code> &mdash; of this common unit and Rep, whose value is
 convertible</a> to the <code>Unit</code> and <code>Rep</code> of the target
 <code>QuantityPoint</code> type.  These operations first perform that conversion, and then replace the target
 <code>QuantityPoint</code> with the result of that addition (for <code>+=</code>) or subtraction (for <code>-=</code>).</p>
-<h2 id="rep_cast"><code>rep_cast</code><a class="headerlink" href="#rep_cast" title="Permanent link">&para;</a></h2>
-<p><code>rep_cast</code> performs a <code>static_cast</code> on the underlying value of a <code>QuantityPoint</code>.  It is used to
-change the rep.</p>
-<p>Given any <code>QuantityPoint&lt;U, R&gt; p</code> whose rep is <code>R</code>, then <code>rep_cast&lt;T&gt;(p)</code> gives a <code>QuantityPoint&lt;U,
-T&gt;</code>, whose underlying value is <code>static_cast&lt;T&gt;(p.in(U{}))</code>.</p>
 <h2 id="templates-and-traits">Templates and traits<a class="headerlink" href="#templates-and-traits" title="Permanent link">&para;</a></h2>
 <h3 id="matching-typename-u-typename-r">Matching: <code>typename U, typename R</code><a class="headerlink" href="#matching-typename-u-typename-r" title="Permanent link">&para;</a></h3>
 <p>To specialize a template to match any <code>QuantityPoint</code>, declare two template parameters: one for the
 unit, one for the rep.</p>
 <details class="example">
 <summary>Example: function template</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">refine_scale</span><span class="p">(</span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">U</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">10</span><span class="o">&gt;</span><span class="p">());</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">refine_scale</span><span class="p">(</span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">U</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">10</span><span class="o">&gt;</span><span class="p">());</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="p">}</span>
 </code></pre></div>
 <p>This function template will match any <code>QuantityPoint</code> specialization, and nothing else.</p>
 </details>
 <details class="example">
 <summary>Example: type template</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// First, we need to declare the generic type template.  It matches a single type, `T`.</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="p">;</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1">// Now we can declare a specialization that matches any `QuantityPoint`, by templating on its</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="c1">// unit and rep.</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="o">&lt;</span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">    </span><span class="c1">// Note: this example uses inline variables, a C++17 feature.  It&#39;s just for illustration.</span>
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">R</span><span class="p">);</span>
-<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="p">};</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// First, we need to declare the generic type template.  It matches a single type, `T`.</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="p">;</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="c1">// Now we can declare a specialization that matches any `QuantityPoint`, by templating on its</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="c1">// unit and rep.</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="o">&lt;</span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">    </span><span class="c1">// Note: this example uses inline variables, a C++17 feature.  It&#39;s just for illustration.</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">R</span><span class="p">);</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="p">};</span>
 </code></pre></div>
 <p>In this way, <code>Size&lt;T&gt;::value</code> will exist only when <code>T</code> is some <code>QuantityPoint</code> type (unless, of
 course, other specializations get defined elsewhere).</p>
