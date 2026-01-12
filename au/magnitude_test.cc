@@ -69,7 +69,7 @@ TEST(Magnitude, PowersBehaveCorrectly) {
 TEST(Magnitude, RootsBehaveCorrectly) { EXPECT_THAT(root<3>(mag<8>()), Eq(mag<2>())); }
 
 TEST(Magnitude, CanNegate) {
-    EXPECT_THAT(-mag<5>(), Eq(MagProductT<Magnitude<Negative>, decltype(mag<5>())>{}));
+    EXPECT_THAT(-mag<5>(), Eq(MagProduct<Magnitude<Negative>, decltype(mag<5>())>{}));
 }
 
 TEST(Magnitude, NegativeCancelsOutWhenRepeated) {
@@ -581,22 +581,22 @@ TEST(GetValueResult, GivesAppropriateErrorForNegativeNumberInUnsignedType) {
     EXPECT_THAT(get_value_result<uint64_t>(neg_5), NegativeNumberInUnsignedType());
 }
 
-TEST(PrimeFactorizationT, NullMagnitudeFor1) {
-    StaticAssertTypeEq<PrimeFactorizationT<1u>, Magnitude<>>();
+TEST(PrimeFactorization, NullMagnitudeFor1) {
+    StaticAssertTypeEq<PrimeFactorization<1u>, Magnitude<>>();
 }
 
-TEST(PrimeFactorizationT, FactorsInputs) {
-    StaticAssertTypeEq<PrimeFactorizationT<2u>, Magnitude<Prime<2u>>>();
-    StaticAssertTypeEq<PrimeFactorizationT<3u>, Magnitude<Prime<3u>>>();
-    StaticAssertTypeEq<PrimeFactorizationT<4u>, Magnitude<Pow<Prime<2u>, 2u>>>();
-    StaticAssertTypeEq<PrimeFactorizationT<5u>, Magnitude<Prime<5u>>>();
-    StaticAssertTypeEq<PrimeFactorizationT<6u>, Magnitude<Prime<2u>, Prime<3u>>>();
+TEST(PrimeFactorization, FactorsInputs) {
+    StaticAssertTypeEq<PrimeFactorization<2u>, Magnitude<Prime<2u>>>();
+    StaticAssertTypeEq<PrimeFactorization<3u>, Magnitude<Prime<3u>>>();
+    StaticAssertTypeEq<PrimeFactorization<4u>, Magnitude<Pow<Prime<2u>, 2u>>>();
+    StaticAssertTypeEq<PrimeFactorization<5u>, Magnitude<Prime<5u>>>();
+    StaticAssertTypeEq<PrimeFactorization<6u>, Magnitude<Prime<2u>, Prime<3u>>>();
 
-    StaticAssertTypeEq<PrimeFactorizationT<12u>, Magnitude<Pow<Prime<2u>, 2u>, Prime<3u>>>();
+    StaticAssertTypeEq<PrimeFactorization<12u>, Magnitude<Pow<Prime<2u>, 2u>, Prime<3u>>>();
 }
 
 TEST(DenominatorPart, OmitsSignForNegativeNumbers) {
-    StaticAssertTypeEq<DenominatorPartT<decltype(-mag<3>() / mag<7>())>, decltype(mag<7>())>();
+    StaticAssertTypeEq<DenominatorPart<decltype(-mag<3>() / mag<7>())>, decltype(mag<7>())>();
 }
 
 }  // namespace detail

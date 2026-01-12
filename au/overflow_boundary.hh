@@ -359,7 +359,7 @@ struct LowestOfLimitsDividedByValue {
 template <typename T, typename M, typename Limits>
 struct ClampLowestOfLimitsTimesInverseValue {
     static constexpr T value() {
-        constexpr auto ABS_DIVISOR = MagInverseT<Abs<M>>{};
+        constexpr auto ABS_DIVISOR = MagInverse<Abs<M>>{};
 
         constexpr T RELEVANT_LIMIT = IsPositive<M>::value
                                          ? LowerLimit<T, Limits>::value()
@@ -409,7 +409,7 @@ struct HighestOfLimitsDividedByValue {
 template <typename T, typename M, typename Limits>
 struct ClampHighestOfLimitsTimesInverseValue {
     static constexpr T value() {
-        constexpr auto ABS_DIVISOR = MagInverseT<Abs<M>>{};
+        constexpr auto ABS_DIVISOR = MagInverse<Abs<M>>{};
 
         constexpr T RELEVANT_LIMIT = IsPositive<M>::value
                                          ? UpperLimit<T, Limits>::value()
@@ -688,7 +688,7 @@ struct MaxGoodImpl<MultiplyTypeBy<T, M>, Limits>
 
 template <typename T, typename M, typename Limits>
 struct MinGoodImplForDivideTypeByIntegerAssumingSigned
-    : stdx::type_identity<ClampLowestOfLimitsTimesInverseValue<T, MagInverseT<M>, Limits>> {};
+    : stdx::type_identity<ClampLowestOfLimitsTimesInverseValue<T, MagInverse<M>, Limits>> {};
 
 template <typename T, typename M, typename Limits>
 struct MinGoodImplForDivideTypeByIntegerUsingRealPart
@@ -706,7 +706,7 @@ struct MinGoodImpl<DivideTypeByInteger<T, M>, Limits>
 
 template <typename T, typename M, typename Limits>
 struct MaxGoodImplForDivideTypeByIntegerAssumingSignedTypeOrPositiveFactor
-    : stdx::type_identity<ClampHighestOfLimitsTimesInverseValue<T, MagInverseT<M>, Limits>> {};
+    : stdx::type_identity<ClampHighestOfLimitsTimesInverseValue<T, MagInverse<M>, Limits>> {};
 
 template <typename T, typename M, typename Limits>
 struct MaxGoodImplForDivideTypeByIntegerUsingRealPart

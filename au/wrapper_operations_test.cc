@@ -94,35 +94,35 @@ TEST(ScalesQuantity, ChangesUnitsAndInvertsQuantityWhenDividing) {
 
 TEST(ComposesWith, ComposesWithSelf) {
     constexpr auto mol = UnitWrapper<Moles>{};
-    StaticAssertTypeEq<decltype(mol * mol), UnitWrapper<UnitProductT<Moles, Moles>>>();
-    StaticAssertTypeEq<decltype(mol / mol), UnitWrapper<UnitProductT<>>>();
+    StaticAssertTypeEq<decltype(mol * mol), UnitWrapper<UnitProduct<Moles, Moles>>>();
+    StaticAssertTypeEq<decltype(mol / mol), UnitWrapper<UnitProduct<>>>();
 }
 
 TEST(ComposesWith, ComposesWithOtherSpecializationsOfSameWrapper) {
     constexpr auto mol = UnitWrapper<Moles>{};
     constexpr auto L = UnitWrapper<Liters>{};
-    StaticAssertTypeEq<decltype(mol * L), UnitWrapper<UnitProductT<Moles, Liters>>>();
-    StaticAssertTypeEq<decltype(mol / L), UnitWrapper<UnitQuotientT<Moles, Liters>>>();
+    StaticAssertTypeEq<decltype(mol * L), UnitWrapper<UnitProduct<Moles, Liters>>>();
+    StaticAssertTypeEq<decltype(mol / L), UnitWrapper<UnitQuotient<Moles, Liters>>>();
 }
 
 TEST(ComposesWith, MakesScaledQuantityMakerWhenPreMultiplyingQuantityMaker) {
     constexpr auto L = UnitWrapper<Liters>{};
-    StaticAssertTypeEq<decltype(L * moles), QuantityMaker<UnitProductT<Moles, Liters>>>();
+    StaticAssertTypeEq<decltype(L * moles), QuantityMaker<UnitProduct<Moles, Liters>>>();
 }
 
 TEST(ComposesWith, MakesScaledQuantityMakerWhenPostMultiplyingQuantityMaker) {
     constexpr auto L = UnitWrapper<Liters>{};
-    StaticAssertTypeEq<decltype(moles * L), QuantityMaker<UnitProductT<Moles, Liters>>>();
+    StaticAssertTypeEq<decltype(moles * L), QuantityMaker<UnitProduct<Moles, Liters>>>();
 }
 
 TEST(ComposesWith, MakesScaledQuantityMakerWhenDividingIntoQuantityMaker) {
     constexpr auto L = UnitWrapper<Liters>{};
-    StaticAssertTypeEq<decltype(moles / L), QuantityMaker<UnitQuotientT<Moles, Liters>>>();
+    StaticAssertTypeEq<decltype(moles / L), QuantityMaker<UnitQuotient<Moles, Liters>>>();
 }
 
 TEST(ComposesWith, MakesScaledQuantityMakerWhenDividingQuantityMaker) {
     constexpr auto L = UnitWrapper<Liters>{};
-    StaticAssertTypeEq<decltype(L / moles), QuantityMaker<UnitQuotientT<Liters, Moles>>>();
+    StaticAssertTypeEq<decltype(L / moles), QuantityMaker<UnitQuotient<Liters, Moles>>>();
 }
 
 TEST(CanScaleByMagnitude, MakesScaledWrapperWhenPreMultiplyingByMagnitude) {

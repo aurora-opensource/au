@@ -110,7 +110,7 @@ constexpr auto as_quantity(T &&x) -> detail::CorrespondingQuantityType<T> {
 // Identity for non-`Quantity` types.
 template <typename U, typename R, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
 constexpr R as_raw_number(Quantity<U, R> q, RiskPolicyT policy = RiskPolicyT{}) {
-    return q.in(UnitProductT<>{}, policy);
+    return q.in(UnitProduct<>{}, policy);
 }
 template <typename T>
 constexpr T as_raw_number(T x) {
@@ -190,13 +190,13 @@ class Quantity {
               typename NewUnitSlot,
               typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
     constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity<AssociatedUnitT<NewUnitSlot>>(in_impl<NewRep>(u, policy));
+        return make_quantity<AssociatedUnit<NewUnitSlot>>(in_impl<NewRep>(u, policy));
     }
 
     // `q.as(new_unit)`, or `q.as(new_unit, risk_policy)`
     template <typename NewUnitSlot, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity<AssociatedUnitT<NewUnitSlot>>(in_impl<Rep>(u, policy));
+        return make_quantity<AssociatedUnit<NewUnitSlot>>(in_impl<Rep>(u, policy));
     }
 
     // `q.in<Rep>(new_unit)`, or `q.in<Rep>(new_unit, risk_policy)`
@@ -240,14 +240,14 @@ class Quantity {
     // Mutable access:
     template <typename UnitSlot>
     constexpr Rep &data_in(UnitSlot) {
-        static_assert(AreUnitsQuantityEquivalent<AssociatedUnitT<UnitSlot>, Unit>::value,
+        static_assert(AreUnitsQuantityEquivalent<AssociatedUnit<UnitSlot>, Unit>::value,
                       "Can only access value via Quantity-equivalent unit");
         return value_;
     }
     // Const access:
     template <typename UnitSlot>
     constexpr const Rep &data_in(UnitSlot) const {
-        static_assert(AreUnitsQuantityEquivalent<AssociatedUnitT<UnitSlot>, Unit>::value,
+        static_assert(AreUnitsQuantityEquivalent<AssociatedUnit<UnitSlot>, Unit>::value,
                       "Can only access value via Quantity-equivalent unit");
         return value_;
     }
@@ -299,23 +299,23 @@ class Quantity {
     }
     template <typename T, typename = std::enable_if_t<IsQuotientValidRep<T, RepT>::value>>
     friend constexpr auto operator/(T s, Quantity a) {
-        warn_if_integer_division<UnitProductT<>, T>();
+        warn_if_integer_division<UnitProduct<>, T>();
         return make_quantity<decltype(pow<-1>(unit))>(s / a.value_);
     }
 
     // Multiplication for dimensioned quantities.
     template <typename OtherUnit, typename OtherRep>
     constexpr auto operator*(Quantity<OtherUnit, OtherRep> q) const {
-        return make_quantity_unless_unitless<UnitProductT<Unit, OtherUnit>>(value_ *
-                                                                            q.in(OtherUnit{}));
+        return make_quantity_unless_unitless<UnitProduct<Unit, OtherUnit>>(value_ *
+                                                                           q.in(OtherUnit{}));
     }
 
     // Division for dimensioned quantities.
     template <typename OtherUnit, typename OtherRep>
     constexpr auto operator/(Quantity<OtherUnit, OtherRep> q) const {
         warn_if_integer_division<OtherUnit, OtherRep>();
-        return make_quantity_unless_unitless<UnitQuotientT<Unit, OtherUnit>>(value_ /
-                                                                             q.in(OtherUnit{}));
+        return make_quantity_unless_unitless<UnitQuotient<Unit, OtherUnit>>(value_ /
+                                                                            q.in(OtherUnit{}));
     }
 
     // Short-hand addition and subtraction assignment.
@@ -451,10 +451,10 @@ class Quantity {
 
     template <typename OtherRep, typename OtherUnitSlot, typename RiskPolicyT>
     constexpr OtherRep in_impl(OtherUnitSlot, RiskPolicyT) const {
-        using OtherUnit = AssociatedUnitT<OtherUnitSlot>;
+        using OtherUnit = AssociatedUnit<OtherUnitSlot>;
         static_assert(IsUnit<OtherUnit>::value, "Invalid type passed to unit slot");
 
-        using Op = detail::ConversionForRepsAndFactor<Rep, OtherRep, UnitRatioT<Unit, OtherUnit>>;
+        using Op = detail::ConversionForRepsAndFactor<Rep, OtherRep, UnitRatio<Unit, OtherUnit>>;
 
         constexpr bool should_check_overflow =
             RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow);
@@ -528,8 +528,8 @@ constexpr AlwaysDivisibleQuantity<U, R> unblock_int_div(Quantity<U, R> q) {
 
 // Unblock integer division for any non-`Quantity` type.
 template <typename R>
-constexpr AlwaysDivisibleQuantity<UnitProductT<>, R> unblock_int_div(R x) {
-    return AlwaysDivisibleQuantity<UnitProductT<>, R>{make_quantity<UnitProductT<>>(x)};
+constexpr AlwaysDivisibleQuantity<UnitProduct<>, R> unblock_int_div(R x) {
+    return AlwaysDivisibleQuantity<UnitProduct<>, R>{make_quantity<UnitProduct<>>(x)};
 }
 
 template <typename U, typename R>
@@ -538,20 +538,20 @@ class AlwaysDivisibleQuantity {
     // Divide a `Quantity` by this always-divisible quantity type.
     template <typename U2, typename R2>
     friend constexpr auto operator/(Quantity<U2, R2> q2, AlwaysDivisibleQuantity q) {
-        return make_quantity<UnitQuotientT<U2, U>>(q2.in(U2{}) / q.q_.in(U{}));
+        return make_quantity<UnitQuotient<U2, U>>(q2.in(U2{}) / q.q_.in(U{}));
     }
 
     // Divide any non-`Quantity` by this always-divisible quantity type.
     template <typename T>
     friend constexpr auto operator/(T x, AlwaysDivisibleQuantity q) {
-        return make_quantity<UnitInverseT<U>>(x / q.q_.in(U{}));
+        return make_quantity<UnitInverse<U>>(x / q.q_.in(U{}));
     }
 
     template <typename UU, typename RR>
     friend constexpr AlwaysDivisibleQuantity<UU, RR> unblock_int_div(Quantity<UU, RR> q);
 
     template <typename RR>
-    friend constexpr AlwaysDivisibleQuantity<UnitProductT<>, RR> unblock_int_div(RR x);
+    friend constexpr AlwaysDivisibleQuantity<UnitProduct<>, RR> unblock_int_div(RR x);
 
  private:
     constexpr AlwaysDivisibleQuantity(Quantity<U, R> q) : q_{q} {}
@@ -566,17 +566,17 @@ class AlwaysDivisibleQuantity {
 // compiler error.
 template <typename U1, typename R1, typename U2, typename R2>
 constexpr auto divide_using_common_unit(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    using U = CommonUnitT<U1, U2>;
+    using U = CommonUnit<U1, U2>;
     return q1.as(U{}) / q2.as(U{});
 }
 
 // The modulo operator (i.e., the remainder of an integer division).
 //
 // Only defined whenever (R1{} % R2{}) is defined (i.e., for integral Reps), _and_
-// `CommonUnitT<U1, U2>` is also defined.  We convert to that common unit to perform the operation.
+// `CommonUnit<U1, U2>` is also defined.  We convert to that common unit to perform the operation.
 template <typename U1, typename R1, typename U2, typename R2>
 constexpr auto operator%(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    using U = CommonUnitT<U1, U2>;
+    using U = CommonUnit<U1, U2>;
     return make_quantity<U>(q1.in(U{}) % q2.in(U{}));
 }
 
@@ -636,22 +636,22 @@ struct QuantityMaker {
 
     template <typename DivisorUnit>
     constexpr auto operator/(SingularNameFor<DivisorUnit>) const {
-        return QuantityMaker<UnitQuotientT<Unit, DivisorUnit>>{};
+        return QuantityMaker<UnitQuotient<Unit, DivisorUnit>>{};
     }
 
     template <typename MultiplierUnit>
     friend constexpr auto operator*(SingularNameFor<MultiplierUnit>, QuantityMaker) {
-        return QuantityMaker<UnitProductT<MultiplierUnit, Unit>>{};
+        return QuantityMaker<UnitProduct<MultiplierUnit, Unit>>{};
     }
 
     template <typename OtherUnit>
     constexpr auto operator*(QuantityMaker<OtherUnit>) const {
-        return QuantityMaker<UnitProductT<Unit, OtherUnit>>{};
+        return QuantityMaker<UnitProduct<Unit, OtherUnit>>{};
     }
 
     template <typename OtherUnit>
     constexpr auto operator/(QuantityMaker<OtherUnit>) const {
-        return QuantityMaker<UnitQuotientT<Unit, OtherUnit>>{};
+        return QuantityMaker<UnitQuotient<Unit, OtherUnit>>{};
     }
 };
 
@@ -660,12 +660,12 @@ struct AssociatedUnitImpl<QuantityMaker<U>> : stdx::type_identity<U> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(QuantityMaker<Unit>) {
-    return QuantityMaker<UnitPowerT<Unit, Exp>>{};
+    return QuantityMaker<UnitPower<Unit, Exp>>{};
 }
 
 template <int N, typename Unit>
 constexpr auto root(QuantityMaker<Unit>) {
-    return QuantityMaker<UnitPowerT<Unit, 1, N>>{};
+    return QuantityMaker<UnitPower<Unit, 1, N>>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -675,7 +675,7 @@ constexpr auto root(QuantityMaker<Unit>) {
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
     using Op =
-        detail::ConversionForRepsAndFactor<R, R, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
+        detail::ConversionForRepsAndFactor<R, R, UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
     return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
@@ -683,7 +683,7 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::
-        ConversionForRepsAndFactor<R, TargetRep, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
+        ConversionForRepsAndFactor<R, TargetRep, UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
     return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
@@ -691,7 +691,7 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
     using Op =
-        detail::ConversionForRepsAndFactor<R, R, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
+        detail::ConversionForRepsAndFactor<R, R, UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
     return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
@@ -699,7 +699,7 @@ constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::
-        ConversionForRepsAndFactor<R, TargetRep, UnitRatioT<U, AssociatedUnitT<TargetUnitSlot>>>;
+        ConversionForRepsAndFactor<R, TargetRep, UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
     return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
@@ -752,7 +752,7 @@ constexpr auto using_common_type(T t, U u, Func f) {
 
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
 constexpr auto convert_and_compare(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    using U = CommonUnitT<U1, U2>;
+    using U = CommonUnit<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
     return detail::SignAwareComparison<UnitSign<U>, Op>{}(
@@ -903,7 +903,7 @@ template <typename U1, typename U2, typename R1, typename R2>
 struct CommonQuantity<Quantity<U1, R1>,
                       Quantity<U2, R2>,
                       std::enable_if_t<HasSameDimension<U1, U2>::value>>
-    : stdx::type_identity<Quantity<CommonUnitT<U1, U2>, std::common_type_t<R1, R2>>> {};
+    : stdx::type_identity<Quantity<CommonUnit<U1, U2>, std::common_type_t<R1, R2>>> {};
 
 //
 // Formatter implementation for fmtlib or `std::format`.

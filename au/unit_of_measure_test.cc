@@ -70,7 +70,7 @@ struct UnitWithOrigin : decltype(One{} * mag<123>()) {
 };
 
 struct AdHocSpeedUnit {
-    using Dim = DimQuotientT<Length, Time>;
+    using Dim = DimQuotient<Length, Time>;
     using Mag = decltype(mag<1234>());
 };
 
@@ -94,7 +94,7 @@ struct AssociatedUnitImpl<SomeUnitWrapper<UnitT>> : stdx::type_identity<UnitT> {
 template <typename... Units>
 struct SomePack {};
 template <typename A, typename B>
-struct InOrderFor<SomePack, A, B> : InOrderFor<CommonUnit, A, B> {};
+struct InOrderFor<SomePack, A, B> : InOrderFor<CommonUnitPack, A, B> {};
 
 struct UnlabeledUnit : UnitImpl<Length> {};
 
@@ -105,8 +105,8 @@ MATCHER_P(QuantityEquivalentToUnit, target, "") {
 MATCHER_P(PointEquivalentToUnit, target, "") { return are_units_point_equivalent(arg, target); }
 
 TEST(Unit, ProductWithMagnitudeGivesSameDimensionAndMultipliesMagnitude) {
-    StaticAssertTypeEq<UnitRatioT<Yards, Feet>, decltype(mag<3>())>();
-    StaticAssertTypeEq<UnitRatioT<Yards, Inches>, decltype(mag<36>())>();
+    StaticAssertTypeEq<UnitRatio<Yards, Feet>, decltype(mag<3>())>();
+    StaticAssertTypeEq<UnitRatio<Yards, Inches>, decltype(mag<36>())>();
 }
 
 TEST(Unit, OriginRetainedForProductWithMagnitudeButNotWithUnit) {
@@ -161,15 +161,15 @@ TEST(Product, IsUnitWithProductOfMagnitudesAndDimensions) {
     constexpr auto foot_yards = Feet{} * Yards{};
     EXPECT_THAT(is_unit(foot_yards), IsTrue());
 
-    StaticAssertTypeEq<MagT<decltype(foot_yards)>, MagProductT<MagT<Feet>, MagT<Yards>>>();
-    StaticAssertTypeEq<DimT<decltype(foot_yards)>, DimProductT<DimT<Feet>, DimT<Yards>>>();
+    StaticAssertTypeEq<MagT<decltype(foot_yards)>, MagProduct<MagT<Feet>, MagT<Yards>>>();
+    StaticAssertTypeEq<DimT<decltype(foot_yards)>, DimProduct<DimT<Feet>, DimT<Yards>>>();
 }
 
 TEST(Quotient, IsUnitWithQuotientOfMagnitudesAndDimensions) {
     constexpr auto in_per_min = Inches{} / Minutes{};
     EXPECT_THAT(is_unit(in_per_min), IsTrue());
-    StaticAssertTypeEq<MagT<decltype(in_per_min)>, MagQuotientT<MagT<Inches>, MagT<Minutes>>>();
-    StaticAssertTypeEq<DimT<decltype(in_per_min)>, DimQuotientT<DimT<Inches>, DimT<Minutes>>>();
+    StaticAssertTypeEq<MagT<decltype(in_per_min)>, MagQuotient<MagT<Inches>, MagT<Minutes>>>();
+    StaticAssertTypeEq<DimT<decltype(in_per_min)>, DimQuotient<DimT<Inches>, DimT<Minutes>>>();
 }
 
 TEST(Pow, FunctionGivesUnitWhichIsEquivalentToManuallyComputedPower) {
@@ -180,83 +180,88 @@ TEST(Pow, FunctionGivesUnitWhichIsEquivalentToManuallyComputedPower) {
     EXPECT_THAT(are_units_quantity_equivalent(cubic_inches, in * in * in), IsTrue());
 }
 
-TEST(UnitProduct, IsUnitlessUnitForNoInputs) {
-    StaticAssertTypeEq<DimT<UnitProduct<>>, Dimension<>>();
-    StaticAssertTypeEq<MagT<UnitProduct<>>, Magnitude<>>();
+TEST(UnitProductPack, IsUnitlessUnitForNoInputs) {
+    StaticAssertTypeEq<DimT<UnitProductPack<>>, Dimension<>>();
+    StaticAssertTypeEq<MagT<UnitProductPack<>>, Magnitude<>>();
 }
 
-TEST(UnitProduct, ExactlyCancellingInstancesYieldsNullPack) {
+TEST(UnitProductPack, ExactlyCancellingInstancesYieldsNullPack) {
     StaticAssertTypeEq<decltype(Feet{} * Inches{} / Minutes{} / Inches{} * Minutes{} / Feet{}),
-                       UnitProduct<>>();
+                       UnitProductPack<>>();
 }
 
-TEST(UnitProductT, IdentityForSingleUnit) {
-    StaticAssertTypeEq<UnitProductT<Feet>, Feet>();
-    StaticAssertTypeEq<UnitProductT<Minutes>, Minutes>();
+TEST(UnitProduct, IdentityForSingleUnit) {
+    StaticAssertTypeEq<UnitProduct<Feet>, Feet>();
+    StaticAssertTypeEq<UnitProduct<Minutes>, Minutes>();
 }
 
-TEST(UnitProductT, ProductOfTwoUnitsIsUnitWithProductsOfDimAndMag) {
-    using FootInches = UnitProductT<Feet, Inches>;
+TEST(UnitProduct, ProductOfTwoUnitsIsUnitWithProductsOfDimAndMag) {
+    using FootInches = UnitProduct<Feet, Inches>;
     EXPECT_THAT(IsUnit<FootInches>::value, IsTrue());
-    StaticAssertTypeEq<DimT<FootInches>, DimProductT<DimT<Feet>, DimT<Inches>>>();
-    StaticAssertTypeEq<MagT<FootInches>, MagProductT<MagT<Feet>, MagT<Inches>>>();
+    StaticAssertTypeEq<DimT<FootInches>, DimProduct<DimT<Feet>, DimT<Inches>>>();
+    StaticAssertTypeEq<MagT<FootInches>, MagProduct<MagT<Feet>, MagT<Inches>>>();
 }
 
-TEST(UnitProductT, AchievesExactCancellations) {
-    using FootInchesPerFoot = UnitProductT<Feet, Inches, UnitInverseT<Feet>>;
+TEST(UnitProduct, AchievesExactCancellations) {
+    using FootInchesPerFoot = UnitProduct<Feet, Inches, UnitInverse<Feet>>;
     StaticAssertTypeEq<FootInchesPerFoot, Inches>();
 }
 
-TEST(UnitProductT, CreatesPowForIntegerPowers) {
-    using FeetSquared = UnitProductT<Feet, Feet>;
+TEST(UnitProduct, CreatesPowForIntegerPowers) {
+    using FeetSquared = UnitProduct<Feet, Feet>;
     StaticAssertTypeEq<FeetSquared, Pow<Feet, 2>>();
 
-    StaticAssertTypeEq<UnitProductT<FeetSquared, UnitInverseT<Feet>>, Feet>();
+    StaticAssertTypeEq<UnitProduct<FeetSquared, UnitInverse<Feet>>, Feet>();
 }
 
-TEST(UnitPowerT, ProducesSimplifiedPowersOfAllExponents) {
-    using Input = UnitProductT<Feet, Pow<Minutes, 3>, Pow<Inches, -6>, RatioPow<Yards, 3, 2>>;
+TEST(UnitProduct, CanonicalizesOrdering) {
+    StaticAssertTypeEq<UnitProduct<Feet, Inches>, UnitProduct<Inches, Feet>>();
+    StaticAssertTypeEq<UnitProduct<Feet, Minutes>, UnitProduct<Minutes, Feet>>();
+}
+
+TEST(UnitPower, ProducesSimplifiedPowersOfAllExponents) {
+    using Input = UnitProduct<Feet, Pow<Minutes, 3>, Pow<Inches, -6>, RatioPow<Yards, 3, 2>>;
 
     using ExpectedCbrtInput =
-        UnitProductT<RatioPow<Feet, 1, 3>, Minutes, Pow<Inches, -2>, RatioPow<Yards, 1, 2>>;
+        UnitProduct<RatioPow<Feet, 1, 3>, Minutes, Pow<Inches, -2>, RatioPow<Yards, 1, 2>>;
 
-    StaticAssertTypeEq<UnitPowerT<Input, 1, 3>, ExpectedCbrtInput>();
+    StaticAssertTypeEq<UnitPower<Input, 1, 3>, ExpectedCbrtInput>();
 }
 
-TEST(UnitQuotientT, InteractsAndCancelsAsExpected) {
-    StaticAssertTypeEq<UnitProductT<UnitQuotientT<Feet, Minutes>, Minutes>, Feet>();
+TEST(UnitQuotient, InteractsAndCancelsAsExpected) {
+    StaticAssertTypeEq<UnitProduct<UnitQuotient<Feet, Minutes>, Minutes>, Feet>();
 }
 
-TEST(UnitInverseT, CreatesAppropriateUnitPower) {
-    StaticAssertTypeEq<UnitInverseT<Feet>, Pow<Feet, -1>>();
-    StaticAssertTypeEq<UnitInverseT<UnitInverseT<Minutes>>, Minutes>();
+TEST(UnitInverse, CreatesAppropriateUnitPower) {
+    StaticAssertTypeEq<UnitInverse<Feet>, Pow<Feet, -1>>();
+    StaticAssertTypeEq<UnitInverse<UnitInverse<Minutes>>, Minutes>();
 }
 
-TEST(AssociatedUnitT, IsIdentityForUnits) { StaticAssertTypeEq<AssociatedUnitT<Feet>, Feet>(); }
+TEST(AssociatedUnit, IsIdentityForUnits) { StaticAssertTypeEq<AssociatedUnit<Feet>, Feet>(); }
 
-TEST(AssociatedUnitT, FunctionalInterfaceHandlesInstancesCorrectly) {
+TEST(AssociatedUnit, FunctionalInterfaceHandlesInstancesCorrectly) {
     StaticAssertTypeEq<decltype(associated_unit(Feet{} / Minutes{})),
                        decltype(Feet{} / Minutes{})>();
 }
 
-TEST(AssociatedUnitT, IsIdentityForTypeWithNoAssociatedUnit) {
+TEST(AssociatedUnit, IsIdentityForTypeWithNoAssociatedUnit) {
     // We might have returned `void`, but this would require depending on `IsUnit`, which could slow
-    // down `AssociatedUnitT` because it's used so widely.  It's simpler to think of it as a trait
+    // down `AssociatedUnit` because it's used so widely.  It's simpler to think of it as a trait
     // which "redirects" a type only when there is a definite, positive reason to do so.
-    StaticAssertTypeEq<AssociatedUnitT<double>, double>();
+    StaticAssertTypeEq<AssociatedUnit<double>, double>();
 }
 
-TEST(AssociatedUnitT, HandlesWrappersWhichHaveSpecializedAssociatedUnit) {
-    StaticAssertTypeEq<AssociatedUnitT<SomeUnitWrapper<Feet>>, Feet>();
+TEST(AssociatedUnit, HandlesWrappersWhichHaveSpecializedAssociatedUnit) {
+    StaticAssertTypeEq<AssociatedUnit<SomeUnitWrapper<Feet>>, Feet>();
 }
 
-TEST(AssociatedUnitT, SupportsSingularNameFor) {
-    StaticAssertTypeEq<AssociatedUnitT<SingularNameFor<Feet>>, Feet>();
+TEST(AssociatedUnit, SupportsSingularNameFor) {
+    StaticAssertTypeEq<AssociatedUnit<SingularNameFor<Feet>>, Feet>();
 }
 
-TEST(UnitInverseT, CommutesWithProduct) {
-    StaticAssertTypeEq<UnitInverseT<UnitProductT<Feet, Minutes>>,
-                       UnitProductT<UnitInverseT<Feet>, UnitInverseT<Minutes>>>();
+TEST(UnitInverse, CommutesWithProduct) {
+    StaticAssertTypeEq<UnitInverse<UnitProduct<Feet, Minutes>>,
+                       UnitProduct<UnitInverse<Feet>, UnitInverse<Minutes>>>();
 }
 
 TEST(Root, FunctionalInterfaceHandlesInstancesCorrectly) {
@@ -290,11 +295,10 @@ TEST(Cbrt, TakesThirdRoot) {
 TEST(IsDimensionless, PicksOutDimensionlessUnit) {
     EXPECT_THAT((IsDimensionless<Feet>::value), IsFalse());
 
-    EXPECT_THAT((IsDimensionless<UnitQuotientT<Inches, Yards>>::value), IsTrue());
+    EXPECT_THAT((IsDimensionless<UnitQuotient<Inches, Yards>>::value), IsTrue());
 
-    EXPECT_THAT(
-        (IsDimensionless<UnitQuotientT<AdHocSpeedUnit, UnitQuotientT<Feet, Minutes>>>::value),
-        IsTrue());
+    EXPECT_THAT((IsDimensionless<UnitQuotient<AdHocSpeedUnit, UnitQuotient<Feet, Minutes>>>::value),
+                IsTrue());
 }
 
 TEST(IsDimensionless, FunctionalInterfaceHandlesInstancesCorrectly) {
@@ -349,9 +353,9 @@ TEST(HasSameDimension, FunctionalInterfaceHandlesQuantityMakersCorrectly) {
 }
 
 TEST(UnitRatio, ComputesRatioForSameDimensionedUnits) {
-    StaticAssertTypeEq<UnitRatioT<Yards, Inches>, decltype(mag<36>())>();
-    StaticAssertTypeEq<UnitRatioT<Inches, Inches>, decltype(mag<1>())>();
-    StaticAssertTypeEq<UnitRatioT<Inches, Yards>, decltype(mag<1>() / mag<36>())>();
+    StaticAssertTypeEq<UnitRatio<Yards, Inches>, decltype(mag<36>())>();
+    StaticAssertTypeEq<UnitRatio<Inches, Inches>, decltype(mag<1>())>();
+    StaticAssertTypeEq<UnitRatio<Inches, Yards>, decltype(mag<1>() / mag<36>())>();
 }
 
 TEST(UnitRatio, FunctionalInterfaceHandlesInstancesCorrectly) {
@@ -447,47 +451,47 @@ TEST(DisplaceOrigin, DisplacesOrigin) {
 }
 
 TEST(CommonUnit, FindsCommonMagnitude) {
-    EXPECT_THAT((CommonUnitT<Feet, Feet>{}), QuantityEquivalentToUnit(Feet{}));
-    EXPECT_THAT((CommonUnitT<Feet, Inches>{}), QuantityEquivalentToUnit(Inches{}));
-    EXPECT_THAT((CommonUnitT<Inches, Feet>{}), QuantityEquivalentToUnit(Inches{}));
-    EXPECT_THAT((CommonUnitT<Inches, Inches>{}), QuantityEquivalentToUnit(Inches{}));
+    EXPECT_THAT((CommonUnit<Feet, Feet>{}), QuantityEquivalentToUnit(Feet{}));
+    EXPECT_THAT((CommonUnit<Feet, Inches>{}), QuantityEquivalentToUnit(Inches{}));
+    EXPECT_THAT((CommonUnit<Inches, Feet>{}), QuantityEquivalentToUnit(Inches{}));
+    EXPECT_THAT((CommonUnit<Inches, Inches>{}), QuantityEquivalentToUnit(Inches{}));
 }
 
 TEST(CommonUnit, IndependentOfOrderingAndRepetitions) {
-    using U = CommonUnitT<Feet, Yards, Inches>;
-    StaticAssertTypeEq<U, CommonUnitT<Yards, Feet, Inches>>();
-    StaticAssertTypeEq<U, CommonUnitT<Inches, Yards, Feet>>();
-    StaticAssertTypeEq<U, CommonUnitT<Feet, Yards, Feet, Feet, Inches, Yards>>();
+    using U = CommonUnit<Feet, Yards, Inches>;
+    StaticAssertTypeEq<U, CommonUnit<Yards, Feet, Inches>>();
+    StaticAssertTypeEq<U, CommonUnit<Inches, Yards, Feet>>();
+    StaticAssertTypeEq<U, CommonUnit<Feet, Yards, Feet, Feet, Inches, Yards>>();
 }
 
 TEST(CommonUnit, PrefersUnitFromListIfAnyIdentical) {
-    StaticAssertTypeEq<CommonUnitT<Feet, Feet>, Feet>();
-    StaticAssertTypeEq<CommonUnitT<Feet, Inches, Yards>, Inches>();
+    StaticAssertTypeEq<CommonUnit<Feet, Feet>, Feet>();
+    StaticAssertTypeEq<CommonUnit<Feet, Inches, Yards>, Inches>();
 }
 
 TEST(CommonUnit, DedupesUnitsMadeIdenticalAfterUnscalingSameScaledUnit) {
-    StaticAssertTypeEq<CommonUnitT<decltype(Feet{} * mag<3>()), decltype(Feet{} * mag<5>())>,
+    StaticAssertTypeEq<CommonUnit<decltype(Feet{} * mag<3>()), decltype(Feet{} * mag<5>())>,
                        Feet>();
 }
 
 TEST(CommonUnit, HandlesAndNeglectsZero) {
-    StaticAssertTypeEq<CommonUnitT<Yards, Zero, Feet>, Feet>();
-    StaticAssertTypeEq<CommonUnitT<Zero, Feet, Zero>, Feet>();
+    StaticAssertTypeEq<CommonUnit<Yards, Zero, Feet>, Feet>();
+    StaticAssertTypeEq<CommonUnit<Zero, Feet, Zero>, Feet>();
 }
 
 TEST(CommonUnit, ZeroIfAllInputsAreZero) {
-    StaticAssertTypeEq<CommonUnitT<>, Zero>();
-    StaticAssertTypeEq<CommonUnitT<Zero>, Zero>();
-    StaticAssertTypeEq<CommonUnitT<Zero, Zero>, Zero>();
-    StaticAssertTypeEq<CommonUnitT<Zero, Zero, Zero>, Zero>();
+    StaticAssertTypeEq<CommonUnit<>, Zero>();
+    StaticAssertTypeEq<CommonUnit<Zero>, Zero>();
+    StaticAssertTypeEq<CommonUnit<Zero, Zero>, Zero>();
+    StaticAssertTypeEq<CommonUnit<Zero, Zero, Zero>, Zero>();
 }
 
 TEST(CommonUnit, DownranksAnonymousScaledUnits) {
-    StaticAssertTypeEq<CommonUnitT<Yards, decltype(Feet{} * mag<3>())>, Yards>();
+    StaticAssertTypeEq<CommonUnit<Yards, decltype(Feet{} * mag<3>())>, Yards>();
 }
 
 TEST(CommonUnit, WhenCommonUnitLabelWouldBeIdenticalToSomeUnitJustUsesThatUnit) {
-    StaticAssertTypeEq<CommonUnitT<decltype(Feet{} * mag<6>()), decltype(Feet{} * mag<10>())>,
+    StaticAssertTypeEq<CommonUnit<decltype(Feet{} * mag<6>()), decltype(Feet{} * mag<10>())>,
                        decltype(Feet{} * mag<2>())>();
 }
 
@@ -509,18 +513,18 @@ struct X : decltype(Inches{} * mag<3>()) {};
 struct Y : decltype(Inches{} * mag<5>()) {};
 struct Z : decltype(Inches{} * mag<7>()) {};
 
-TEST(CommonUnit, UnpacksTypesInNestedCommonUnit) {
-    using C1 = CommonUnitT<W, X>;
-    ASSERT_THAT((detail::IsPackOf<CommonUnit, C1>{}), IsTrue());
+TEST(CommonUnitPack, UnpacksTypesInNestedCommonUnit) {
+    using C1 = CommonUnit<W, X>;
+    ASSERT_THAT((detail::IsPackOf<CommonUnitPack, C1>{}), IsTrue());
 
-    using C2 = CommonUnitT<Y, Z>;
-    ASSERT_THAT((detail::IsPackOf<CommonUnit, C2>{}), IsTrue());
+    using C2 = CommonUnit<Y, Z>;
+    ASSERT_THAT((detail::IsPackOf<CommonUnitPack, C2>{}), IsTrue());
 
-    using Common = CommonUnitT<C1, C2>;
-    ASSERT_THAT((detail::IsPackOf<CommonUnit, Common>{}), IsTrue());
+    using Common = CommonUnit<C1, C2>;
+    ASSERT_THAT((detail::IsPackOf<CommonUnitPack, Common>{}), IsTrue());
 
     // Check that `c(c(w, x), c(y, z))` is the same as `c(w, x, y, z)`.
-    StaticAssertTypeEq<Common, CommonUnitT<W, X, Y, Z>>();
+    StaticAssertTypeEq<Common, CommonUnit<W, X, Y, Z>>();
 }
 
 TEST(CommonUnit, CanCombineUnitsThatWouldBothBeAnonymousScaledUnits) {
@@ -528,25 +532,25 @@ TEST(CommonUnit, CanCombineUnitsThatWouldBothBeAnonymousScaledUnits) {
 }
 
 TEST(CommonUnit, SupportsUnitSlots) {
-    StaticAssertTypeEq<decltype(common_unit(feet, meters)), CommonUnitT<Feet, Meters>>();
+    StaticAssertTypeEq<decltype(common_unit(feet, meters)), CommonUnit<Feet, Meters>>();
 }
 
 TEST(CommonPointUnit, FindsCommonMagnitude) {
-    EXPECT_THAT((CommonPointUnitT<Feet, Feet>{}), PointEquivalentToUnit(Feet{}));
-    EXPECT_THAT((CommonPointUnitT<Feet, Inches>{}), PointEquivalentToUnit(Inches{}));
-    EXPECT_THAT((CommonPointUnitT<Inches, Feet>{}), PointEquivalentToUnit(Inches{}));
-    EXPECT_THAT((CommonPointUnitT<Inches, Inches>{}), PointEquivalentToUnit(Inches{}));
+    EXPECT_THAT((CommonPointUnit<Feet, Feet>{}), PointEquivalentToUnit(Feet{}));
+    EXPECT_THAT((CommonPointUnit<Feet, Inches>{}), PointEquivalentToUnit(Inches{}));
+    EXPECT_THAT((CommonPointUnit<Inches, Feet>{}), PointEquivalentToUnit(Inches{}));
+    EXPECT_THAT((CommonPointUnit<Inches, Inches>{}), PointEquivalentToUnit(Inches{}));
 }
 
 TEST(CommonPointUnit, HasMinimumOrigin) {
-    EXPECT_THAT(origin_displacement(CommonPointUnitT<Kelvins, Celsius>{}, Kelvins{}), Eq(ZERO));
-    EXPECT_THAT(origin_displacement(CommonPointUnitT<Fahrenheit, Celsius>{}, Fahrenheit{}),
+    EXPECT_THAT(origin_displacement(CommonPointUnit<Kelvins, Celsius>{}, Kelvins{}), Eq(ZERO));
+    EXPECT_THAT(origin_displacement(CommonPointUnit<Fahrenheit, Celsius>{}, Fahrenheit{}),
                 Eq(ZERO));
 }
 
 TEST(CommonPointUnit, TakesOriginMagnitudeIntoAccount) {
-    using CommonByQuantity = CommonUnitT<Kelvins, Celsius>;
-    using CommonByPoint = CommonPointUnitT<Kelvins, Celsius>;
+    using CommonByQuantity = CommonUnit<Kelvins, Celsius>;
+    using CommonByPoint = CommonPointUnit<Kelvins, Celsius>;
 
     EXPECT_THAT(unit_ratio(CommonByQuantity{}, CommonByPoint{}), Eq(mag<20>()));
 
@@ -556,34 +560,34 @@ TEST(CommonPointUnit, TakesOriginMagnitudeIntoAccount) {
 }
 
 TEST(CommonPointUnit, IndependentOfOrderingAndRepetitions) {
-    using U = CommonPointUnitT<Celsius, Kelvins, Fahrenheit>;
-    StaticAssertTypeEq<U, CommonPointUnitT<Kelvins, Celsius, Fahrenheit>>();
-    StaticAssertTypeEq<U, CommonPointUnitT<Fahrenheit, Kelvins, Celsius>>();
-    StaticAssertTypeEq<U, CommonPointUnitT<Kelvins, Celsius, Celsius, Fahrenheit, Kelvins>>();
+    using U = CommonPointUnit<Celsius, Kelvins, Fahrenheit>;
+    StaticAssertTypeEq<U, CommonPointUnit<Kelvins, Celsius, Fahrenheit>>();
+    StaticAssertTypeEq<U, CommonPointUnit<Fahrenheit, Kelvins, Celsius>>();
+    StaticAssertTypeEq<U, CommonPointUnit<Kelvins, Celsius, Celsius, Fahrenheit, Kelvins>>();
 }
 
 TEST(CommonPointUnit, PrefersUnitFromListIfAnyIdentical) {
-    StaticAssertTypeEq<CommonPointUnitT<Celsius, Celsius>, Celsius>();
-    StaticAssertTypeEq<CommonPointUnitT<Celsius, Milli<Kelvins>, Milli<Celsius>>, Milli<Kelvins>>();
+    StaticAssertTypeEq<CommonPointUnit<Celsius, Celsius>, Celsius>();
+    StaticAssertTypeEq<CommonPointUnit<Celsius, Milli<Kelvins>, Milli<Celsius>>, Milli<Kelvins>>();
 }
 
-TEST(CommonPointUnit, UnpacksTypesInNestedCommonUnit) {
-    using C1 = CommonPointUnitT<W, X>;
-    ASSERT_THAT((detail::IsPackOf<CommonPointUnit, C1>{}), IsTrue());
+TEST(CommonPointUnitPack, UnpacksTypesInNestedCommonUnit) {
+    using C1 = CommonPointUnit<W, X>;
+    ASSERT_THAT((detail::IsPackOf<CommonPointUnitPack, C1>{}), IsTrue());
 
-    using C2 = CommonPointUnitT<Y, Z>;
-    ASSERT_THAT((detail::IsPackOf<CommonPointUnit, C2>{}), IsTrue());
+    using C2 = CommonPointUnit<Y, Z>;
+    ASSERT_THAT((detail::IsPackOf<CommonPointUnitPack, C2>{}), IsTrue());
 
-    using Common = CommonPointUnitT<C1, C2>;
-    ASSERT_THAT((detail::IsPackOf<CommonPointUnit, Common>{}), IsTrue());
+    using Common = CommonPointUnit<C1, C2>;
+    ASSERT_THAT((detail::IsPackOf<CommonPointUnitPack, Common>{}), IsTrue());
 
     // Check that `c(c(w, x), c(y, z))` is the same as `c(w, x, y, z)`.
-    StaticAssertTypeEq<Common, CommonPointUnitT<W, X, Y, Z>>();
+    StaticAssertTypeEq<Common, CommonPointUnit<W, X, Y, Z>>();
 }
 
 TEST(CommonPointUnit, SupportsUnitSlots) {
     StaticAssertTypeEq<decltype(common_point_unit(kelvins_pt, celsius_pt)),
-                       CommonPointUnitT<Kelvins, Celsius>>();
+                       CommonPointUnit<Kelvins, Celsius>>();
 }
 
 TEST(MakeCommon, PreservesCategory) {
@@ -679,7 +683,7 @@ TEST(UnitLabel, PrintsExponentForUnitPower) {
     EXPECT_THAT(unit_label(RatioPow<Feet, -22, 7>{}), StrEq("ft^(-22/7)"));
 }
 
-TEST(UnitLabel, EmptyForNullProduct) { EXPECT_THAT(unit_label<UnitProduct<>>(), StrEq("")); }
+TEST(UnitLabel, EmptyForNullProduct) { EXPECT_THAT(unit_label<UnitProductPack<>>(), StrEq("")); }
 
 TEST(UnitLabel, NonintrusivelyLabelableByTrait) {
     EXPECT_THAT(unit_label<TraitLabeledUnit>(), StrEq("TLU"));
@@ -700,7 +704,7 @@ TEST(UnitLabel, NumeratorGetsParensIfMultipleInputs) {
 }
 
 TEST(UnitLabel, NumeratorIsOneIfAllPowersNegative) {
-    EXPECT_THAT(unit_label(UnitInverseT<decltype(Feet{} * Minutes{})>{}),
+    EXPECT_THAT(unit_label(UnitInverse<decltype(Feet{} * Minutes{})>{}),
                 AnyOf(StrEq("1 / (ft * min)"), StrEq("1 / (min * ft)")));
 }
 
@@ -719,14 +723,14 @@ TEST(UnitLabel, PowersAndProductsComposeNicely) {
 }
 
 TEST(UnitLabel, LabelsCommonUnitCorrectly) {
-    using U = CommonUnitT<Inches, Meters>;
+    using U = CommonUnit<Inches, Meters>;
     EXPECT_THAT(unit_label(U{}),
                 AnyOf(StrEq("EQUIV{[(1 / 127) in], [(1 / 5000) m]}"),
                       StrEq("EQUIV{[(1 / 5000) m], [(1 / 127) in]}")));
 }
 
-TEST(UnitLabel, CommonUnitLabelWorksWithUnitProduct) {
-    using U = CommonUnitT<UnitQuotientT<Meters, Minutes>, UnitQuotientT<Inches, Minutes>>;
+TEST(UnitLabel, CommonUnitLabelWorksWithUnitProductPack) {
+    using U = CommonUnit<UnitQuotient<Meters, Minutes>, UnitQuotient<Inches, Minutes>>;
     EXPECT_THAT(unit_label(U{}),
                 AnyOf(StrEq("EQUIV{[(1 / 127) in / min], [(1 / 5000) m / min]}"),
                       StrEq("EQUIV{[(1 / 5000) m / min], [(1 / 127) in / min]}")));
@@ -745,29 +749,28 @@ TEST(UnitLabel, ReducesToSingleUnitLabelIfAllUnitsAreTheSame) {
 }
 
 TEST(UnitLabel, LabelsCommonPointUnitCorrectly) {
-    using U = CommonPointUnitT<Inches, Meters>;
+    using U = CommonPointUnit<Inches, Meters>;
     EXPECT_THAT(unit_label(U{}),
                 AnyOf(StrEq("EQUIV{[(1 / 127) in], [(1 / 5000) m]}"),
                       StrEq("EQUIV{[(1 / 5000) m], [(1 / 127) in]}")));
 }
 
-TEST(UnitLabel, CommonPointUnitLabelWorksWithUnitProduct) {
-    using U = CommonPointUnitT<UnitQuotientT<Meters, Minutes>, UnitQuotientT<Inches, Minutes>>;
+TEST(UnitLabel, CommonPointUnitLabelWorksWithUnitProductPack) {
+    using U = CommonPointUnit<UnitQuotient<Meters, Minutes>, UnitQuotient<Inches, Minutes>>;
     EXPECT_THAT(unit_label(U{}),
                 AnyOf(StrEq("EQUIV{[(1 / 127) in / min], [(1 / 5000) m / min]}"),
                       StrEq("EQUIV{[(1 / 5000) m / min], [(1 / 127) in / min]}")));
 }
 
 TEST(UnitLabel, CommonPointUnitLabelTakesOriginOffsetIntoAccount) {
-    using U = CommonPointUnitT<Celsius, OffsetCelsius>;
+    using U = CommonPointUnit<Celsius, OffsetCelsius>;
     EXPECT_THAT(unit_label(U{}),
                 AnyOf(StrEq("EQUIV{[(1 / 3) deg_C], [(1 / 5) (@(0 offset_deg_C) - @(0 deg_C))]}"),
                       StrEq("EQUIV{[(1 / 5) (@(0 offset_deg_C) - @(0 deg_C))], [(1 / 3) deg_C]}")));
 }
 
 TEST(UnitLabel, CommonUnitOfCommonPointUnitsPerformsFlattening) {
-    using U =
-        CommonUnitT<CommonPointUnitT<Celsius, Kelvins>, CommonPointUnitT<Celsius, Fahrenheit>>;
+    using U = CommonUnit<CommonPointUnit<Celsius, Kelvins>, CommonPointUnit<Celsius, Fahrenheit>>;
 
     // When enumerating the possibilities, we know that anonymous ad hoc units (such as the unit for
     // the origin displacement from Kelvins to Celsius) will go last.  But we want to remain
@@ -804,7 +807,7 @@ struct UnitOrderTiebreaker<Trinches> : std::integral_constant<int, 1> {};
 TEST(UnitOrderTiebreaker, CanBreakTiesForDistinctButOtherwiseUnorderableUnits) {
     // The point of this test is that this line would fail to compile if not for the
     // `UnitOrderTiebreaker<Trinches>` specialization just above, whose value must not be `0`.
-    StaticAssertTypeEq<UnitProductT<Trinches, Quarterfeet>, UnitProductT<Quarterfeet, Trinches>>();
+    StaticAssertTypeEq<UnitProduct<Trinches, Quarterfeet>, UnitProduct<Quarterfeet, Trinches>>();
 }
 
 namespace detail {
@@ -820,7 +823,7 @@ TEST(UnitAvoidance, CanTemporarilyBreakTiesForDistinctButOtherwiseUnorderableUni
     //
     // This method of making distinct units orderable is deprecated, because it relies on end users
     // naming a type in our `detail::` namespace.
-    StaticAssertTypeEq<UnitProductT<Yards, Threet>, UnitProductT<Threet, Yards>>();
+    StaticAssertTypeEq<UnitProduct<Yards, Threet>, UnitProduct<Threet, Yards>>();
 }
 
 TEST(Origin, ZeroForUnitWithNoSpecifiedOrigin) {

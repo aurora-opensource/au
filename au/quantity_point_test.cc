@@ -151,7 +151,7 @@ TEST(QuantityPoint, IntermediateTypeIsSignedIfExplicitRepIsSigned) {
 }
 
 TEST(QuantityPoint, CanConstructExpected) {
-    using Com = CommonPointUnitT<Kelvins, Celsius>;
+    using Com = CommonPointUnit<Kelvins, Celsius>;
     QuantityPointI<Com> pt{celsius_pt(0)};
     EXPECT_THAT(pt, Eq((kelvins_pt / mag<20>())(273'15 / 5)));
 }

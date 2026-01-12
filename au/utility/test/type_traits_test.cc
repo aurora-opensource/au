@@ -30,8 +30,8 @@ template <typename... Ts>
 struct Pack;
 
 TEST(Prepend, PrependsToPack) {
-    StaticAssertTypeEq<PrependT<Pack<>, int>, Pack<int>>();
-    StaticAssertTypeEq<PrependT<Pack<double, char>, int>, Pack<int, double, char>>();
+    StaticAssertTypeEq<Prepend<Pack<>, int>, Pack<int>>();
+    StaticAssertTypeEq<Prepend<Pack<double, char>, int>, Pack<int, double, char>>();
 }
 
 TEST(SameTypeIgnoringCvref, IgnoresCvrefQualifiers) {

@@ -69,7 +69,7 @@ static constexpr QuantityMaker<Meters> meters{};
 static_assert(are_units_quantity_equivalent(Centi<Meters>{} * mag<254>(), Inches{} * mag<100>()),
               "Double-check this ad hoc definition of meters");
 
-struct Unos : decltype(UnitProductT<>{}) {};
+struct Unos : decltype(UnitProduct<>{}) {};
 constexpr auto unos = QuantityMaker<Unos>{};
 
 struct Percent : decltype(Unos{} / mag<100>()) {};
@@ -92,11 +92,11 @@ constexpr auto hertz = QuantityMaker<Hertz>{};
 struct Days : decltype(Hours{} * mag<24>()) {};
 constexpr auto days = QuantityMaker<Days>{};
 
-struct PerDay : decltype(UnitInverseT<Days>{}) {};
+struct PerDay : decltype(UnitInverse<Days>{}) {};
 constexpr auto per_day = QuantityMaker<PerDay>{};
 
 template <typename... Us>
-constexpr auto num_units_in_product(UnitProduct<Us...>) {
+constexpr auto num_units_in_product(UnitProductPack<Us...>) {
     return sizeof...(Us);
 }
 
@@ -164,19 +164,19 @@ TEST(QuantityMaker, CreatesAppropriateQuantityIfCalled) {
 }
 
 TEST(QuantityMaker, CanBeMultipliedBySingularUnitToGetMakerOfProductUnit) {
-    StaticAssertTypeEq<decltype(hour * feet), QuantityMaker<UnitProductT<Feet, Hours>>>();
+    StaticAssertTypeEq<decltype(hour * feet), QuantityMaker<UnitProduct<Feet, Hours>>>();
 }
 
 TEST(QuantityMaker, CanMultiplyByOtherMakerToGetMakerOfProductUnit) {
-    StaticAssertTypeEq<decltype(hours * feet), QuantityMaker<UnitProductT<Feet, Hours>>>();
+    StaticAssertTypeEq<decltype(hours * feet), QuantityMaker<UnitProduct<Feet, Hours>>>();
 }
 
 TEST(QuantityMaker, CanDivideBySingularUnitToGetMakerOfQuotientUnit) {
-    StaticAssertTypeEq<decltype(feet / hour), QuantityMaker<UnitQuotientT<Feet, Hours>>>();
+    StaticAssertTypeEq<decltype(feet / hour), QuantityMaker<UnitQuotient<Feet, Hours>>>();
 }
 
 TEST(QuantityMaker, CanDivideByOtherMakerToGetMakerOfQuotientUnit) {
-    StaticAssertTypeEq<decltype(feet / hours), QuantityMaker<UnitQuotientT<Feet, Hours>>>();
+    StaticAssertTypeEq<decltype(feet / hours), QuantityMaker<UnitQuotient<Feet, Hours>>>();
 }
 
 TEST(QuantityMaker, CanTakePowerToGetMakerOfPowerUnit) {
@@ -193,7 +193,7 @@ TEST(QuantityMaker, CanDivideByMagnitudeToGetMakerOfDescaledUnit) {
 
 TEST(QuantityMaker, CanMultiplyByMultipleSingularUnits) {
     StaticAssertTypeEq<decltype(mile * minute * days),
-                       QuantityMaker<UnitProductT<Miles, Minutes, Days>>>();
+                       QuantityMaker<UnitProduct<Miles, Minutes, Days>>>();
 }
 
 TEST(Quantity, CanRetrieveInDifferentUnitsWithSameDimension) {
@@ -673,15 +673,15 @@ TEST(Quantity, RatioOfEquivalentTypesIsScalar) {
 }
 
 TEST(Quantity, ProductOfInvertingUnitsIsScalar) {
-    // We pass `UnitProductT` to this function template, which ensures that we get a `UnitProduct`
-    // (note: NOT `UnitProductT`!) with the expected number of arguments.  Recall that
-    // `UnitProductT` is the user-facing "unit computation" interface, and `UnitProduct` is the
-    // named template which gets passed around the system.
+    // We pass `UnitProduct` to this function template, which ensures that we get a
+    // `UnitProductPack` (note: NOT `UnitProduct`!) with the expected number of arguments.  Recall
+    // that `UnitProduct` is the user-facing "unit computation" interface, and `UnitProductPack` is
+    // the named template which gets passed around the system.
     //
     // The point is to make sure that the product-unit of `Days` and `PerDay` does **not** reduce to
-    // something trivial, like `UnitProduct<>`.  Rather, it should be its own non-trivial
-    // unit---although, naturally, it must be **quantity-equivalent** to `UnitProduct<>`.
-    ASSERT_THAT(num_units_in_product(UnitProductT<Days, PerDay>{}), Eq(2));
+    // something trivial, like `UnitProductPack<>`.  Rather, it should be its own non-trivial
+    // unit---although, naturally, it must be **quantity-equivalent** to `UnitProductPack<>`.
+    ASSERT_THAT(num_units_in_product(UnitProduct<Days, PerDay>{}), Eq(2));
 
     EXPECT_THAT(days(3) * per_day(8), SameTypeAndValue(24));
 }
@@ -916,7 +916,7 @@ TEST(QuantityNTTP, CanConvertFromNttpToAnyCompatibleQuantityType) {
 
 TEST(Quantity, CommonTypeRespectsImplicitRepSafetyChecks) {
     // The following test should fail to compile.  Uncomment both lines to check.
-    // constexpr auto feeters = QuantityMaker<CommonUnitT<Meters, Feet>>{};
+    // constexpr auto feeters = QuantityMaker<CommonUnit<Meters, Feet>>{};
     // EXPECT_THAT(meters(uint16_t{53}), Ne(feeters(uint16_t{714})));
 
     // Why the above values?  The common unit of Meters and Feet (herein called the "Feeter") is
@@ -933,7 +933,7 @@ TEST(Quantity, CommonTypeRespectsImplicitRepSafetyChecks) {
 }
 
 TEST(QuantityMaker, ProvidesAssociatedUnit) {
-    StaticAssertTypeEq<AssociatedUnitT<QuantityMaker<Hours>>, Hours>();
+    StaticAssertTypeEq<AssociatedUnit<QuantityMaker<Hours>>, Hours>();
 }
 
 TEST(AsRawNumber, ExtractsRawNumberForUnitlessQuantity) {

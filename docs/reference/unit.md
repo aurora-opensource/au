@@ -267,9 +267,13 @@ In what follows, we'll use this convention:
 **Syntax:**
 
 - For _types_ `U1` and `U2`:
-    - `UnitProductT<U1, U2>`
+    - `UnitProduct<U1, U2>`
 - For _instances_ `u1` and `u2`:
     - `u1 * u2`
+
+!!! note
+    Older releases used `UnitProductT` (with the `T` suffix) instead of `UnitProduct`.  Prefer
+    `UnitProduct`.  `UnitProductT` is deprecated, and will be removed in future releases.
 
 ### Division
 
@@ -278,9 +282,13 @@ In what follows, we'll use this convention:
 **Syntax:**
 
 - For _types_ `U1` and `U2`:
-    - `UnitQuotientT<U1, U2>`
+    - `UnitQuotient<U1, U2>`
 - For _instances_ `u1` and `u2`:
     - `u1 / u2`
+
+!!! note
+    Older releases used `UnitQuotientT` (with the `T` suffix) instead of `UnitQuotient`.  Prefer
+    `UnitQuotient`.  `UnitQuotientT` is deprecated, and will be removed in future releases.
 
 ### Powers
 
@@ -289,9 +297,13 @@ In what follows, we'll use this convention:
 **Syntax:**
 
 - For a _type_ `U`, and an integral power `N`:
-    - `UnitPowerT<U, N>`
+    - `UnitPower<U, N>`
 - For an _instance_ `u`, and an integral power `N`:
     - `pow<N>(u)`
+
+!!! note
+    Older releases used `UnitPowerT` (with the `T` suffix) instead of `UnitPower`.  Prefer
+    `UnitPower`.  `UnitPowerT` is deprecated, and will be removed in future releases.
 
 ### Roots
 
@@ -300,7 +312,7 @@ In what follows, we'll use this convention:
 **Syntax:**
 
 - For a _type_ `U`, and an integral root `N`:
-    - `UnitPowerT<U, 1, N>` (because the $N^\text{th}$ root is equivalent to the
+    - `UnitPower<U, 1, N>` (because the $N^\text{th}$ root is equivalent to the
       $\left(\frac{1}{N}\right)^\text{th}$ power)
 - For an _instance_ `u`, and an integral root `N`:
     - `root<N>(u)`
@@ -633,8 +645,8 @@ implementation choice will be driven by convenience and simplicity.
 
     For example, consider `common_unit(meters, feet)`.  Recall that the type of `meters` is
     `QuantityMaker<Meters>`, and that of `feet` is `QuantityMaker<Feet>`.  In this case, the return
-    value is an instance of `CommonUnitT<Meters, Feet>`, _not_
-    `QuantityMaker<CommonUnitT<Meters, Feet>>`.
+    value is an instance of `CommonUnit<Meters, Feet>`, _not_
+    `QuantityMaker<CommonUnit<Meters, Feet>>`.
 
     If you want something that still computes the common unit, but preserves the _category_ of the
     inputs, see [`make_common(us...)`](#make-common).
@@ -642,7 +654,7 @@ implementation choice will be driven by convenience and simplicity.
 **Syntax:**
 
 - For _types_ `Us...`:
-    - `CommonUnitT<Us...>`
+    - `CommonUnit<Us...>`
 - For _instances_ `us...`:
     - `common_unit(us...)`
 
@@ -660,7 +672,7 @@ its value to the common point-unit should involve only:
 
 This helps us support the widest range of Rep types (in particular, unsigned integers).
 
-As with `CommonUnitT`, this isn't always possible: in particular, we can't do this for units with
+As with `CommonUnit`, this isn't always possible: in particular, we can't do this for units with
 irrational relative magnitudes or origin displacements.  However, we still provide _some_ answer,
 which is consistent with the above policy whenever it's achievable, and produces reasonable results
 in all other cases.
@@ -687,8 +699,8 @@ implicitly.  Then, the _common point unit_ is defined as the unit such that:
 
     For example, consider `common_unit(meters, feet)`.  Recall that the type of `meters` is
     `QuantityMaker<Meters>`, and that of `feet` is `QuantityMaker<Feet>`.  In this case, the return
-    value is an instance of `CommonUnitT<Meters, Feet>`, _not_
-    `QuantityMaker<CommonUnitT<Meters, Feet>>`.
+    value is an instance of `CommonUnit<Meters, Feet>`, _not_
+    `QuantityMaker<CommonUnit<Meters, Feet>>`.
 
     If you want something that still computes the common unit, but preserves the _category_ of the
     inputs, see [`make_common_point(us...)`](#make-common-point).
@@ -696,7 +708,7 @@ implicitly.  Then, the _common point unit_ is defined as the unit such that:
 **Syntax:**
 
 - For _types_ `Us...`:
-    - `CommonPointUnitT<Us...>`
+    - `CommonPointUnit<Us...>`
 - For _instances_ `us...`:
     - `common_point_unit(us...)`
 

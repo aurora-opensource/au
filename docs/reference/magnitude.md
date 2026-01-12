@@ -188,9 +188,13 @@ In what follows, we'll use this convention:
 **Syntax:**
 
 - For _types_ `M1` and `M2`:
-    - `MagProductT<M1, M2>`
+    - `MagProduct<M1, M2>`
 - For _instances_ `m1` and `m2`:
     - `m1 * m2`
+
+!!! note
+    Older releases used `MagProductT` (with the `T` suffix) instead of `MagProduct`.  Prefer
+    `MagProduct`.  `MagProductT` is deprecated, and will be removed in future releases.
 
 ### Division
 
@@ -199,9 +203,13 @@ In what follows, we'll use this convention:
 **Syntax:**
 
 - For _types_ `M1` and `M2`:
-    - `MagQuotientT<M1, M2>`
+    - `MagQuotient<M1, M2>`
 - For _instances_ `m1` and `m2`:
     - `m1 / m2`
+
+!!! note
+    Older releases used `MagQuotientT` (with the `T` suffix) instead of `MagQuotient`.  Prefer
+    `MagQuotient`.  `MagQuotientT` is deprecated, and will be removed in future releases.
 
 ### Negation
 
@@ -222,9 +230,13 @@ In what follows, we'll use this convention:
 **Syntax:**
 
 - For a _type_ `M`, and an integral power `N`:
-    - `MagPowerT<M, N>`
+    - `MagPower<M, N>`
 - For an _instance_ `m`, and an integral power `N`:
     - `pow<N>(m)`
+
+!!! note
+    Older releases used `MagPowerT` (with the `T` suffix) instead of `MagPower`.  Prefer
+    `MagPower`.  `MagPowerT` is deprecated, and will be removed in future releases.
 
 ### Roots
 
@@ -233,7 +245,7 @@ In what follows, we'll use this convention:
 **Syntax:**
 
 - For a _type_ `M`, and an integral root `N`:
-    - `MagPowerT<M, 1, N>` (because the $N^\text{th}$ root is equivalent to the
+    - `MagPower<M, 1, N>` (because the $N^\text{th}$ root is equivalent to the
       $\left(\frac{1}{N}\right)^\text{th}$ power)
 - For an _instance_ `m`, and an integral root `N`:
     - `root<N>(m)`
@@ -309,9 +321,13 @@ magnitudes, by breaking them into the same kinds of pieces that a human reader w
 **Syntax:**
 
 - For a _type_ `M`:
-    - `IntegerPartT<M>`
+    - `IntegerPart<M>`
 - For an _instance_ `m`:
     - `integer_part(m)`
+
+!!! note
+    Older releases used `IntegerPartT` (with the `T` suffix) instead of `IntegerPart`.  Prefer
+    `IntegerPart`.  `IntegerPartT` is deprecated, and will be removed in future releases.
 
 ### Numerator (integer part)
 
@@ -323,9 +339,13 @@ For example, the "numerator" of $\frac{3\sqrt{3}}{5\pi}$ would be $3\sqrt{3}$.
 **Syntax:**
 
 - For a _type_ `M`:
-    - `NumeratorT<M>`
+    - `Numerator<M>`
 - For an _instance_ `m`:
     - `numerator(m)`
+
+!!! note
+    Older releases used `NumeratorT` (with the `T` suffix) instead of `Numerator`.  Prefer
+    `Numerator`.  `NumeratorT` is deprecated, and will be removed in future releases.
 
 ### Denominator (integer part)
 
@@ -337,9 +357,13 @@ For example, the "denominator" of $\frac{3\sqrt{3}}{5\pi}$ would be $5\pi$.
 **Syntax:**
 
 - For a _type_ `M`:
-    - `DenominatorT<M>`
+    - `Denominator<M>`
 - For an _instance_ `m`:
     - `denominator(m)`
+
+!!! note
+    Older releases used `DenominatorT` (with the `T` suffix) instead of `Denominator`.  Prefer
+    `Denominator`.  `DenominatorT` is deprecated, and will be removed in future releases.
 
 ### Absolute value
 

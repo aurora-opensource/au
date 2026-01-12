@@ -29,7 +29,7 @@ struct UnosLabel {
 };
 template <typename T>
 constexpr const char UnosLabel<T>::label[];
-struct Unos : UnitProductT<>, UnosLabel<void> {
+struct Unos : UnitProduct<>, UnosLabel<void> {
     using UnosLabel<void>::label;
 };
 constexpr auto unos = QuantityMaker<Unos>{};

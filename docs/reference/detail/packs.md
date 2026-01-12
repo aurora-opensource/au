@@ -111,22 +111,22 @@ Let's take the "pack product" operation as an example, using `Dimension` as our 
 ```cpp
 // The `//au:packs` library provides this:
 template <template <class...> typename Pack, typename... Ts>
-using PackProductT = /* (implementation; irrelevant here) */;
+using PackProduct = /* (implementation; irrelevant here) */;
 
 // A _particular_ Pack (say, `Dimension`) would expose it to their users like this:
 template <typename... Dims>
-using DimProductT = PackProductT<Dimension, Dims...>;
+using DimProduct = PackProduct<Dimension, Dims...>;
 
 // End users would use the _latter_, e.g.:
-using Length = DimProductT<Speed, Time>;
+using Length = DimProduct<Speed, Time>;
 ```
 
 ### Supported algebraic operations
 
 Here are the operations we support:
 
-- `PackProductT<Pack, Ps...>`: the product of arbitrarily many (0 or more) `Pack<...>` instances,
+- `PackProduct<Pack, Ps...>`: the product of arbitrarily many (0 or more) `Pack<...>` instances,
   `Ps...`.
-- `PackQuotientT<Pack, P1, P2>`: the quotient `P1 / P2`.
-- `PackPowerT<Pack, P, N, D=1>`: raise the Pack `P` to the rational power `N / D`.
-- `PackInverseT<Pack, P>`: the Pack that gives the null pack when multiplied with the Pack `P`.
+- `PackQuotient<Pack, P1, P2>`: the quotient `P1 / P2`.
+- `PackPower<Pack, P, N, D=1>`: raise the Pack `P` to the rational power `N / D`.
+- `PackInverse<Pack, P>`: the Pack that gives the null pack when multiplied with the Pack `P`.

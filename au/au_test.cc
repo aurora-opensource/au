@@ -54,7 +54,7 @@ TEST(Conversions, SupportIntMHzToU32Hz) {
 }
 
 TEST(CommonUnit, HandlesPrefixesReasonably) {
-    StaticAssertTypeEq<CommonUnitT<Kilo<Meters>, Meters>, Meters>();
+    StaticAssertTypeEq<CommonUnit<Kilo<Meters>, Meters>, Meters>();
 }
 
 template <typename U, typename R>

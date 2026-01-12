@@ -52,8 +52,8 @@ template <typename M>
 struct MagKindForImpl
     : std::conditional<
           stdx::conjunction<IsRational<M>,
-                            stdx::negation<std::is_same<DenominatorT<M>, Magnitude<>>>>::value,
-          std::conditional_t<std::is_same<Abs<NumeratorT<M>>, Magnitude<>>::value,
+                            stdx::negation<std::is_same<Denominator<M>, Magnitude<>>>>::value,
+          std::conditional_t<std::is_same<Abs<Numerator<M>>, Magnitude<>>::value,
                              MagKindHolder<MagKind::INTEGER_DIVIDE>,
                              MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>,
           MagKindHolder<MagKind::DEFAULT>> {};
@@ -67,13 +67,13 @@ using ApplicationStrategyFor = typename ApplicationStrategyForImpl<T, Mag, MagKi
 
 template <typename T, typename Mag>
 struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::INTEGER_DIVIDE>>
-    : stdx::type_identity<DivideTypeByInteger<T, MagProductT<Sign<Mag>, DenominatorT<Mag>>>> {};
+    : stdx::type_identity<DivideTypeByInteger<T, MagProduct<Sign<Mag>, Denominator<Mag>>>> {};
 
 template <typename T, typename Mag>
 struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>
     : std::conditional<
           std::is_integral<RealPart<T>>::value,
-          OpSequence<MultiplyTypeBy<T, NumeratorT<Mag>>, DivideTypeByInteger<T, DenominatorT<Mag>>>,
+          OpSequence<MultiplyTypeBy<T, Numerator<Mag>>, DivideTypeByInteger<T, Denominator<Mag>>>,
           MultiplyTypeBy<T, Mag>> {};
 
 //

@@ -88,62 +88,63 @@ should it have?
 
 2. **Deduplication.**  Any given input unit can appear at most once in the resulting unit type.
     - This is to keep compiler errors as concise and readable as possible.
-3. **Flattening.**  If an input unit is a `CommonUnit<...>` type, "unpack" it and replace it with
-   its constituent Units.
+3. **Flattening.**  If an input unit is a `CommonUnitPack<...>` type, "unpack" it and replace it
+   with its constituent Units.
     - To see why, let `c(...)` be "the common unit", and `x`, `y`, and `z` be units.  We wouldn't
       want `c(x, c(y, z))` to be different from `c(x, y, z)`!
 4. **Semantic.**  Prefer user-meaningful units, because they show up in compiler errors. Thus, if
    any input unit is _equivalent_ to the "common unit", we'll prefer that input unit.
-    - The common unit of `Inches` and `Feet` is just `Inches`, not `CommonUnit<Inches, Feet>`!
+    - The common unit of `Inches` and `Feet` is just `Inches`, not `CommonUnitPack<Inches, Feet>`!
 
 ### User-facing types
 
 There are two main abstractions for common units which users might encounter.
 
-- **`CommonUnit<...>`**.  This is a template that defines new units from old ones, just like
+- **`CommonUnitPack<...>`**.  This is a template that defines new units from old ones, just like
   `UnitProduct<...>` or `ScaledUnit<...>`.
     - This should _rarely, if ever_ be named in code.
         - In implementations, we need to do this, for example, for defining the _unit label_ of
-          a `CommonUnit<...>`, or defining its ordering relative to other units.
+          a `CommonUnitPack<...>`, or defining its ordering relative to other units.
         - In end user code, this should probably _never_ be named.
-        - In either case: **never** write `CommonUnit<...>` with _specific_ template arguments!
+        - In either case: **never** write `CommonUnitPack<...>` with _specific_ template arguments!
           Only use it for matching.
-    - Remember: `CommonUnit<...>` can arise only as _the result of some type computation_.
-- **`CommonUnitT<...>`**.  This _computes_ the common unit of the provided units.
+    - Remember: `CommonUnitPack<...>` can arise only as _the result of some type computation_.
+- **`CommonUnit<...>`**.  This _computes_ the common unit of the provided units.
 
 Let's clarify this relationship with an example.  Suppose you're writing a function based on two
 arbitrary (but same-dimension) units, `U1` and `U2`, and you need their "common unit".
 
-- What you would _write_ is `CommonUnitT<U1, U2>`, **not** `CommonUnit<U1, U2>`.
-    - `CommonUnitT<...>` says "_please calculate_ the common unit".
-    - `CommonUnit<...>` says "_this is the result_ of calculating the common unit".
+- What you would _write_ is `CommonUnit<U1, U2>`, **not** `CommonUnitPack<U1, U2>`.
+    - `CommonUnit<...>` says "_please calculate_ the common unit".
+    - `CommonUnitPack<...>` says "_this is the result_ of calculating the common unit".
 - What you _get_ depends on the specific units.
-    - For `CommonUnitT<Inches, Meters>`, the result might be `CommonUnit<Inches, Meters>`.[^1]  This
-      is because the greatest common divisor for `Inches` and `Meters` is smaller than both of them.
-    - For `CommonUnitT<Inches, Feet>`, the result would simply be `Inches`, because `Inches` is
+    - For `CommonUnit<Inches, Meters>`, the result might be `CommonUnitPack<Inches, Meters>`.[^1]
+      This is because the greatest common divisor for `Inches` and `Meters` is smaller than both of
+      them.
+    - For `CommonUnit<Inches, Feet>`, the result would simply be `Inches`, because `Inches` is
       quantity-equivalent to this common unit (it evenly divides both `Inches` and `Feet`).
 
-[^1]:  It might also be `CommonUnit<Meters, Inches>`.  The ordering is deterministic, but
+[^1]:  It might also be `CommonUnitPack<Meters, Inches>`.  The ordering is deterministic, but
 unspecified.
 
 ??? info "Implementation approach details (deep in the weeds)"
 
-    There are two main tools we use to implement `CommonUnitT`.
+    There are two main tools we use to implement `CommonUnit`.
 
     1. `FlatDedupedTypeList`.  For a given variadic pack `List<...>` (which, for us, will be
-       `CommonUnit<...>`), `FlatDedupedTypeList<List, Ts...>` will produce a `List<...>`, whose
+       `CommonUnitPack<...>`), `FlatDedupedTypeList<List, Ts...>` will produce a `List<...>`, whose
        elements are `Ts...`, but sorted according to `InOrderFor<List, ...>`, and with duplicates
        removed.
 
         - If any of the `Ts` are already `List<Us...>`, we effectively "unpack" it, replacing it with
           `Us...`.  This is the "flat" part in `FlatDedupedTypeList`.
 
-    2. `FirstQuantityEquivalentUnit`.  The above step produces a `CommonUnit<...>` specialization, which
-       itself meets [the definition of a unit](../../reference/unit.md).  But is it the unit we
+    2. `FirstQuantityEquivalentUnit`.  The above step produces a `CommonUnitPack<...>` specialization,
+       which itself meets [the definition of a unit](../../reference/unit.md).  But is it the unit we
        really want to provide?  Not if there's a simpler one!
-       `FirstQuantityEquivalentUnit<CommonUnit<Us...>>` searches through the unit list `Us...`, and
-       returns the first quantity-equivalent one it finds. If no such unit is available, then we
-       fall back to returning `CommonUnit<Us...>`.
+       `FirstQuantityEquivalentUnit<CommonUnitPack<Us...>>` searches through the unit list `Us...`,
+       and returns the first quantity-equivalent one it finds. If no such unit is available, then we
+       fall back to returning `CommonUnitPack<Us...>`.
 
 ## Changes for `QuantityPoint` {#common-quantity-point}
 
@@ -160,10 +161,10 @@ and `Kelvins`.
   of 273.15 `Kelvins`.  This additive offset means that we'll need to convert both to
   `Centi<Kelvins>` before we can subtract and/or compare them!
 
-Thus, what we've been calling `CommonUnitT` is really more like `CommonQuantityUnitT` (although
+Thus, what we've been calling `CommonUnit` is really more like `CommonQuantityUnit` (although
 we've kept the name short because `Quantity` is by far the typical use case).  For `QuantityPoint`
-operations, we have the `CommonPointUnitT<Us...>` alias, which typically creates some instance of
-`CommonPointUnit<Us...>` with the `Us...` in their canonical ordering.
+operations, we have the `CommonPointUnit<Us...>` alias, which typically creates some instance of
+`CommonPointUnitPack<Us...>` with the `Us...` in their canonical ordering.
 
 So: what _is_ the "common quantity _point_ unit"?  Well, we can start with the "common _quantity_
 unit," but the origin adds a new complication.  We'll need to choose a convention.
