@@ -71,6 +71,44 @@ TEST(TruncationRiskFor, StaticCastArithFloatToArithIntRisksNonIntegerValues) {
 }
 
 //
+// `ImplicitConversion` section:
+//
+
+TEST(TruncationRiskFor, ImplicitConversionArithToArithFloatAssumedToNeverTruncate) {
+    StaticAssertTypeEq<TruncationRiskFor<ImplicitConversion<int16_t, float>>,
+                       NoTruncationRisk<int16_t>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<ImplicitConversion<uint16_t, double>>,
+                       NoTruncationRisk<uint16_t>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<ImplicitConversion<float, double>>,
+                       NoTruncationRisk<float>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<ImplicitConversion<long double, float>>,
+                       NoTruncationRisk<long double>>();
+}
+
+TEST(TruncationRiskFor, ImplicitConversionArithIntToArithAssumedToNeverTruncate) {
+    StaticAssertTypeEq<TruncationRiskFor<ImplicitConversion<int, int16_t>>,
+                       NoTruncationRisk<int>>();
+    StaticAssertTypeEq<TruncationRiskFor<ImplicitConversion<int16_t, int>>,
+                       NoTruncationRisk<int16_t>>();
+    StaticAssertTypeEq<TruncationRiskFor<ImplicitConversion<int, int8_t>>, NoTruncationRisk<int>>();
+    StaticAssertTypeEq<TruncationRiskFor<ImplicitConversion<uint8_t, int>>,
+                       NoTruncationRisk<uint8_t>>();
+    StaticAssertTypeEq<TruncationRiskFor<ImplicitConversion<uint64_t, float>>,
+                       NoTruncationRisk<uint64_t>>();
+}
+
+TEST(TruncationRiskFor, ImplicitConversionArithFloatToArithIntRisksNonIntegerValues) {
+    StaticAssertTypeEq<TruncationRiskFor<ImplicitConversion<float, int>>,
+                       ValueIsNotInteger<float>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<ImplicitConversion<double, uint16_t>>,
+                       ValueIsNotInteger<double>>();
+}
+
+//
 // `MultiplyTypeBy` section:
 //
 

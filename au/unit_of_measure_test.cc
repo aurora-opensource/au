@@ -683,7 +683,10 @@ TEST(UnitLabel, PrintsExponentForUnitPower) {
     EXPECT_THAT(unit_label(RatioPow<Feet, -22, 7>{}), StrEq("ft^(-22/7)"));
 }
 
-TEST(UnitLabel, EmptyForNullProduct) { EXPECT_THAT(unit_label<UnitProductPack<>>(), StrEq("")); }
+TEST(UnitLabel, EmptyForNullProduct) {
+    EXPECT_THAT(unit_label<UnitProductPack<>>(), StrEq(""));
+    EXPECT_THAT(sizeof(unit_label<UnitProductPack<>>()), Eq(1u));
+}
 
 TEST(UnitLabel, NonintrusivelyLabelableByTrait) {
     EXPECT_THAT(unit_label<TraitLabeledUnit>(), StrEq("TLU"));

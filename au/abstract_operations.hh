@@ -39,6 +39,12 @@ template <typename T, typename U>
 struct StaticCast;
 
 //
+// `ImplicitConversion<T, U>` represents an operation that implicitly converts from `T` to `U`.
+//
+template <typename T, typename U>
+struct ImplicitConversion;
+
+//
 // `MultiplyTypeBy<T, M>` represents an operation that multiplies a value of type `T` by the
 // magnitude `M`.
 //
@@ -88,6 +94,21 @@ struct OpOutputImpl<StaticCast<T, U>> : stdx::type_identity<U> {};
 template <typename T, typename U>
 struct StaticCast {
     static constexpr U apply_to(T value) { return static_cast<U>(value); }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `ImplicitConversion<T, U>` implementation.
+
+// `OpInput` and `OpOutput`:
+template <typename T, typename U>
+struct OpInputImpl<ImplicitConversion<T, U>> : stdx::type_identity<T> {};
+template <typename T, typename U>
+struct OpOutputImpl<ImplicitConversion<T, U>> : stdx::type_identity<U> {};
+
+// `ImplicitConversion<T, U>` operation:
+template <typename T, typename U>
+struct ImplicitConversion {
+    static constexpr U apply_to(T value) { return value; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
