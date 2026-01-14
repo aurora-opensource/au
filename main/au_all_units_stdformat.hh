@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-70-g27dd349
+// Version identifier: 0.5.0-base-71-gfaf272a
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -4049,6 +4049,12 @@ template <typename T, typename U>
 struct StaticCast;
 
 //
+// `ImplicitConversion<T, U>` represents an operation that implicitly converts from `T` to `U`.
+//
+template <typename T, typename U>
+struct ImplicitConversion;
+
+//
 // `MultiplyTypeBy<T, M>` represents an operation that multiplies a value of type `T` by the
 // magnitude `M`.
 //
@@ -4098,6 +4104,21 @@ struct OpOutputImpl<StaticCast<T, U>> : stdx::type_identity<U> {};
 template <typename T, typename U>
 struct StaticCast {
     static constexpr U apply_to(T value) { return static_cast<U>(value); }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `ImplicitConversion<T, U>` implementation.
+
+// `OpInput` and `OpOutput`:
+template <typename T, typename U>
+struct OpInputImpl<ImplicitConversion<T, U>> : stdx::type_identity<T> {};
+template <typename T, typename U>
+struct OpOutputImpl<ImplicitConversion<T, U>> : stdx::type_identity<U> {};
+
+// `ImplicitConversion<T, U>` operation:
+template <typename T, typename U>
+struct ImplicitConversion {
+    static constexpr U apply_to(T value) { return value; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4904,6 +4925,21 @@ struct MaxGoodImplForStaticCastUsingRealPart
 template <typename T, typename U, typename ULimit>
 struct MaxGoodImpl<StaticCast<T, U>, ULimit> : MaxGoodImplForStaticCastUsingRealPart<T, U, ULimit> {
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `ImplicitConversion<T, U>` implementation.
+
+//
+// `MinGood<ImplicitConversion<T, U>>` implementation.
+//
+template <typename T, typename U, typename ULimit>
+struct MinGoodImpl<ImplicitConversion<T, U>, ULimit> : MinGoodImpl<StaticCast<T, U>, ULimit> {};
+
+//
+// `MaxGood<ImplicitConversion<T, U>>` implementation.
+//
+template <typename T, typename U, typename ULimit>
+struct MaxGoodImpl<ImplicitConversion<T, U>, ULimit> : MaxGoodImpl<StaticCast<T, U>, ULimit> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `MultiplyTypeBy<T, M>` implementation.
@@ -6331,6 +6367,12 @@ struct TruncationRiskForImpl<StaticCast<T, U>>
     : TruncationRiskForStaticCastAssumingScalar<RealPart<T>, RealPart<U>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// `TruncationRiskFor<ImplicitConversion<T, U>>` section:
+
+template <typename T, typename U>
+struct TruncationRiskForImpl<ImplicitConversion<T, U>> : TruncationRiskForImpl<StaticCast<T, U>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // `MultiplyTypeBy<T, M>` section:
 
 template <typename T, typename M>
@@ -6432,11 +6474,19 @@ template <template <class> class Risk, typename T, typename U>
 struct UpdateRiskImpl<StaticCast<T, U>, Risk<RealPart<U>>>
     : stdx::type_identity<Risk<RealPart<T>>> {};
 
+template <template <class> class Risk, typename T, typename U>
+struct UpdateRiskImpl<ImplicitConversion<T, U>, Risk<RealPart<U>>>
+    : UpdateRiskImpl<StaticCast<T, U>, Risk<RealPart<U>>> {};
+
 template <typename T, typename U, typename M>
 struct UpdateRiskImpl<StaticCast<T, U>, ValueTimesRatioIsNotInteger<RealPart<U>, M>>
     : std::conditional<stdx::conjunction<IsInteger<M>, std::is_integral<T>>::value,
                        NoTruncationRisk<RealPart<T>>,
                        ReduceValueTimesRatioIsNotInteger<RealPart<T>, M>> {};
+
+template <typename T, typename U, typename M>
+struct UpdateRiskImpl<ImplicitConversion<T, U>, ValueTimesRatioIsNotInteger<RealPart<U>, M>>
+    : UpdateRiskImpl<StaticCast<T, U>, ValueTimesRatioIsNotInteger<RealPart<U>, M>> {};
 
 template <template <class> class Risk, typename T, typename M>
 struct UpdateRiskImpl<MultiplyTypeBy<T, M>, Risk<RealPart<T>>>
