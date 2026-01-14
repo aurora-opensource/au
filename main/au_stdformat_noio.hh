@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-68-gd826f5e
+// Version identifier: 0.5.0-base-69-ga7bc968
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -8520,37 +8520,49 @@ namespace au {
 
 namespace detail {
 
-// Trait to detect if a unit contains a Pow or RatioPow (i.e., has a non-trivial exponent).
-// When applying a prefix to such a unit, we need brackets to disambiguate.
-//
-// This includes:
-// - Direct Pow<B, N> or RatioPow<B, N, D> types
-// - UnitProductPack<...> containing any powered units (recursively)
+// Trait to detect if a type is a Pow or RatioPow (i.e., has a non-trivial exponent).
 template <typename U>
-struct ContainsAnyPowers : std::false_type {};
+struct HasExplicitPower : std::false_type {};
 
 template <typename B, std::intmax_t N>
-struct ContainsAnyPowers<Pow<B, N>> : std::true_type {};
+struct HasExplicitPower<Pow<B, N>> : std::true_type {};
 
 template <typename B, std::intmax_t N, std::intmax_t D>
-struct ContainsAnyPowers<RatioPow<B, N, D>> : std::true_type {};
+struct HasExplicitPower<RatioPow<B, N, D>> : std::true_type {};
 
-template <typename... Us>
-struct ContainsAnyPowers<UnitProductPack<Us...>> : stdx::disjunction<ContainsAnyPowers<Us>...> {};
+// Helper to check if the first element of a UnitProductPack has an explicit power.
+// Returns false for empty packs (which represent "1" in the numerator).
+template <typename Pack>
+struct FirstInPackHasExplicitPower : std::false_type {};
+
+template <typename H, typename... Ts>
+struct FirstInPackHasExplicitPower<UnitProductPack<H, Ts...>> : HasExplicitPower<H> {};
+
+// Trait to detect if the first element in the numerator has an explicit power.
+// When applying a prefix to such a unit, we need brackets to disambiguate.
+template <typename U>
+struct FirstInNumeratorHasPower : HasExplicitPower<U> {};
+
+template <typename H, typename... Ts>
+struct FirstInNumeratorHasPower<UnitProductPack<H, Ts...>>
+    : FirstInPackHasExplicitPower<NumeratorPart<UnitProductPack<H, Ts...>>> {};
+
+template <>
+struct FirstInNumeratorHasPower<UnitProductPack<>> : std::false_type {};
 
 // Helper to generate labels for prefixed units.
-// Wraps unit label in brackets if the unit is a powered unit (Pow or RatioPow).
+// Wraps unit label in brackets if the first element in the numerator has an explicit power.
 // This disambiguates labels like "m[X^(-1)]" (milli of per-X) from "mX^(-1)" (per milli-X).
 template <std::size_t PrefixLen, typename U>
 struct PrefixedUnitLabel {
     static constexpr std::size_t UNIT_LABEL_SIZE = concatenate(unit_label<U>()).size();
-    static constexpr std::size_t BRACKETS_SIZE = ContainsAnyPowers<U>::value ? 2 : 0;
+    static constexpr std::size_t BRACKETS_SIZE = FirstInNumeratorHasPower<U>::value ? 2 : 0;
     using LabelT = StringConstant<PrefixLen + UNIT_LABEL_SIZE + BRACKETS_SIZE>;
 };
 
 template <std::size_t N, typename U>
 constexpr auto make_prefixed_unit_label(const StringConstant<N> &prefix, U) {
-    return concatenate(prefix, brackets_if<ContainsAnyPowers<U>::value>(unit_label<U>()));
+    return concatenate(prefix, brackets_if<FirstInNumeratorHasPower<U>::value>(unit_label<U>()));
 }
 
 }  // namespace detail
