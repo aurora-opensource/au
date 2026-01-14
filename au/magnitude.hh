@@ -797,12 +797,12 @@ constexpr MagLabelCategory categorize_mag_label(Magnitude<BPs...> m) {
 
 template <typename MagT, MagLabelCategory Category>
 struct MagnitudeLabelImplementation {
-    static constexpr const char value[] = "(UNLABELED SCALE FACTOR)";
+    static constexpr const char value[25] = "(UNLABELED SCALE FACTOR)";
 
     static constexpr const bool has_exposed_slash = false;
 };
 template <typename MagT, MagLabelCategory Category>
-constexpr const char MagnitudeLabelImplementation<MagT, Category>::value[];
+constexpr const char MagnitudeLabelImplementation<MagT, Category>::value[25];
 template <typename MagT, MagLabelCategory Category>
 constexpr const bool MagnitudeLabelImplementation<MagT, Category>::has_exposed_slash;
 

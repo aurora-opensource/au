@@ -108,6 +108,7 @@ TEST(MagnitudeLabel, HandlesRationals) {
 TEST(MagnitudeLabel, DefaultsToUnlabeledForFactorTooBig) {
     // Someday, we'll find a better way to handle this; this just unblocks the first implementation.
     EXPECT_THAT(mag_label(pow<24>(mag<10>())), StrEq("(UNLABELED SCALE FACTOR)"));
+    EXPECT_THAT(sizeof(mag_label(pow<24>(mag<10>()))), Eq(25u));
 
     // However, we do want to reliably indicate the presence/absence of a sign.
     EXPECT_THAT(mag_label(-pow<24>(mag<10>())), StrEq("-(UNLABELED SCALE FACTOR)"));

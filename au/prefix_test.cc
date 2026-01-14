@@ -201,15 +201,20 @@ TEST(PrefixedPoweredUnitLabels, IncludesBracketsIfPrefixAppliesAfterThePower) {
     expect_label<Mega<UnitPower<XeroxedBytes, 3>>>("M[X^3]");
 }
 
-TEST(PrefixedPoweredUnitLabels, IncludesBracketsForCompoundUnitsContainingPowers) {
+TEST(PrefixedPoweredUnitLabels, IncludesBracketsIfFirstNumeratorElementHasPower) {
     using SquareInchesTimesXeroxedBytes = UnitProduct<UnitPower<Inches, 2>, XeroxedBytes>;
     expect_label<Kilo<SquareInchesTimesXeroxedBytes>>("k[in^2 * X]");
 
     using SquareInchesPerXeroxedByte = UnitQuotient<UnitPower<Inches, 2>, XeroxedBytes>;
     expect_label<Milli<SquareInchesPerXeroxedByte>>("m[in^2 / X]");
+}
 
+TEST(PrefixedPoweredUnitLabels, OmitsBracketsIfFirstNumeratorElementHasNoPower) {
     using XeroxedBytesPerSquareInch = UnitQuotient<XeroxedBytes, UnitPower<Inches, 2>>;
-    expect_label<Gibi<XeroxedBytesPerSquareInch>>("Gi[X / in^2]");
+    expect_label<Gibi<XeroxedBytesPerSquareInch>>("GiX / in^2");
+
+    using XeroxedBytesTimesInches = UnitProduct<XeroxedBytes, Inches>;
+    expect_label<Kilo<XeroxedBytesTimesInches>>("kin * X");
 }
 
 }  // namespace au
