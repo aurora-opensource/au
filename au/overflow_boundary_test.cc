@@ -1588,10 +1588,10 @@ TEST(OpSequence, MaxGoodForDivideThenNarrowIsScaledDownDestinationBoundIfDivisor
 }
 
 TEST(OpSequence, MaxGoodOfStaticCastSequenceIsMostConstrainingType) {
-    EXPECT_THAT(max_good_value(op_sequence(ImplicitConversion<int64_t, float>{},
-                                           ImplicitConversion<float, uint32_t>{},
-                                           ImplicitConversion<uint32_t, int16_t>{},
-                                           ImplicitConversion<int16_t, double>{})),
+    EXPECT_THAT(max_good_value(op_sequence(StaticCast<int64_t, float>{},
+                                           StaticCast<float, uint32_t>{},
+                                           StaticCast<uint32_t, int16_t>{},
+                                           StaticCast<int16_t, double>{})),
                 SameTypeAndValue(static_cast<int64_t>(std::numeric_limits<int16_t>::max())));
 }
 
