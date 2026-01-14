@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-69-ga7bc968
+// Version identifier: 0.5.0-base-70-g27dd349
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -3547,12 +3547,12 @@ constexpr MagLabelCategory categorize_mag_label(Magnitude<BPs...> m) {
 
 template <typename MagT, MagLabelCategory Category>
 struct MagnitudeLabelImplementation {
-    static constexpr const char value[] = "(UNLABELED SCALE FACTOR)";
+    static constexpr const char value[25] = "(UNLABELED SCALE FACTOR)";
 
     static constexpr const bool has_exposed_slash = false;
 };
 template <typename MagT, MagLabelCategory Category>
-constexpr const char MagnitudeLabelImplementation<MagT, Category>::value[];
+constexpr const char MagnitudeLabelImplementation<MagT, Category>::value[25];
 template <typename MagT, MagLabelCategory Category>
 constexpr const bool MagnitudeLabelImplementation<MagT, Category>::has_exposed_slash;
 
@@ -4779,10 +4779,10 @@ constexpr const auto &unit_label(Unit = Unit{});
 // The dummy template parameter exists to enable `au` to be a header-only library.
 template <typename T = void>
 struct DefaultUnitLabel {
-    static constexpr const char value[] = "[UNLABELED UNIT]";
+    static constexpr const char value[17] = "[UNLABELED UNIT]";
 };
 template <typename T>
-constexpr const char DefaultUnitLabel<T>::value[];
+constexpr const char DefaultUnitLabel<T>::value[17];
 
 namespace detail {
 // To preserve support for C++14, we need to _name the type_ of the member variable.  However, the
@@ -5718,10 +5718,10 @@ constexpr typename QuotientLabeler<UnitProductPack<>, D, T>::LabelT
 // Special case for numerator _and_ denominator of 1 (null product).
 template <typename T>
 struct QuotientLabeler<UnitProductPack<>, UnitProductPack<>, T> {
-    static constexpr const char value[] = "";
+    static constexpr const char value[1] = "";
 };
 template <typename T>
-constexpr const char QuotientLabeler<UnitProductPack<>, UnitProductPack<>, T>::value[];
+constexpr const char QuotientLabeler<UnitProductPack<>, UnitProductPack<>, T>::value[1];
 }  // namespace detail
 
 // Unified implementation.
