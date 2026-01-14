@@ -119,7 +119,7 @@ class CastLikeOpTest : public ::testing::Test {
     using Op = typename T::template Convert<Src, Dst>;
 };
 
-TYPED_TEST_SUITE(CastLikeOpTest, CastLikeOps);
+TYPED_TEST_SUITE(CastLikeOpTest, CastLikeOps, );
 
 // Convenience alias to make tests more concise.
 template <typename Fixture, typename Src, typename Dst>
