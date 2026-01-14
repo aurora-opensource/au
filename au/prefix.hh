@@ -44,10 +44,6 @@ struct FirstInPackHasExplicitPower<UnitProductPack<H, Ts...>> : HasExplicitPower
 
 // Trait to detect if the first element in the numerator has an explicit power.
 // When applying a prefix to such a unit, we need brackets to disambiguate.
-//
-// The prefix attaches to the first element in the label string. For a compound unit like "X / in^2",
-// the prefix attaches to "X" (e.g., "kX / in^2"), which is unambiguous. But for "in^2 * X", we need
-// brackets (e.g., "k[in^2 * X]") because "kin^2 * X" would be ambiguous.
 template <typename U>
 struct FirstInNumeratorHasPower : HasExplicitPower<U> {};
 
