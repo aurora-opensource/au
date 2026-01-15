@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-74-gbd5183c
+// Version identifier: 0.5.0-base-75-g371ba27
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -6832,7 +6832,7 @@ struct ConstructionPolicy {
     template <typename SourceUnit, typename SourceRep>
     using PermitImplicitFrom =
         stdx::conjunction<HasSameDimension<Unit, SourceUnit>,
-                          detail::ImplicitConversionPolicy<detail::UseStaticCast,
+                          detail::ImplicitConversionPolicy<detail::UseImplicitConversion,
                                                            Rep,
                                                            ScaleFactor<SourceUnit>,
                                                            SourceRep>>;
@@ -6970,7 +6970,8 @@ class Quantity {
               typename OtherRep,
               typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>>
     constexpr Quantity(Quantity<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
-        : Quantity{other.template as<Rep>(UnitT{})} {}
+        : value_{other.template in_impl<detail::UseImplicitConversion, Rep>(
+              UnitT{}, check_for(ALL_RISKS))} {}
 
     // EXPLICIT constructor for another Quantity of the same Dimension.
     template <typename OtherUnit,
@@ -7005,7 +7006,7 @@ class Quantity {
               typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
     constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity<Unit>(in_impl<NewRep>(Unit{}, policy));
+        return make_quantity<Unit>(in_impl<detail::UseStaticCast, NewRep>(Unit{}, policy));
     }
 
     // `q.as<Rep>(new_unit)`, or `q.as<Rep>(new_unit, risk_policy)`
@@ -7014,13 +7015,15 @@ class Quantity {
               typename RiskPolicyT = decltype(ignore(ALL_RISKS)),
               std::enable_if_t<!IsConversionRiskPolicy<NewUnitSlot>::value, int> = 0>
     constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity<AssociatedUnit<NewUnitSlot>>(in_impl<NewRep>(u, policy));
+        return make_quantity<AssociatedUnit<NewUnitSlot>>(
+            in_impl<detail::UseStaticCast, NewRep>(u, policy));
     }
 
     // `q.as(new_unit)`, or `q.as(new_unit, risk_policy)`
     template <typename NewUnitSlot, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity<AssociatedUnit<NewUnitSlot>>(in_impl<Rep>(u, policy));
+        return make_quantity<AssociatedUnit<NewUnitSlot>>(
+            in_impl<detail::UseStaticCast, Rep>(u, policy));
     }
 
     // `q.in<Rep>(new_unit)`, or `q.in<Rep>(new_unit, risk_policy)`
@@ -7028,13 +7031,13 @@ class Quantity {
               typename NewUnitSlot,
               typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
     constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return in_impl<NewRep>(u, policy);
+        return in_impl<detail::UseStaticCast, NewRep>(u, policy);
     }
 
     // `q.in(new_unit)`, or `q.in(new_unit, risk_policy)`
     template <typename NewUnitSlot, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return in_impl<Rep>(u, policy);
+        return in_impl<detail::UseStaticCast, Rep>(u, policy);
     }
 
     // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
@@ -7259,6 +7262,9 @@ class Quantity {
     }
 #endif
 
+    template <typename OtherUnit, typename OtherRep>
+    friend class Quantity;
+
  private:
     template <typename OtherUnit, typename OtherRep>
     static constexpr void warn_if_integer_division() {
@@ -7273,15 +7279,16 @@ class Quantity {
                       "and your options to resolve this error.");
     }
 
-    template <typename OtherRep, typename OtherUnitSlot, typename RiskPolicyT>
+    template <typename CastStrategy,
+              typename OtherRep,
+              typename OtherUnitSlot,
+              typename RiskPolicyT>
     constexpr OtherRep in_impl(OtherUnitSlot, RiskPolicyT) const {
         using OtherUnit = AssociatedUnit<OtherUnitSlot>;
         static_assert(IsUnit<OtherUnit>::value, "Invalid type passed to unit slot");
 
-        using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
-                                                      Rep,
-                                                      OtherRep,
-                                                      UnitRatio<Unit, OtherUnit>>;
+        using Op = detail::
+            ConversionForRepsAndFactor<CastStrategy, Rep, OtherRep, UnitRatio<Unit, OtherUnit>>;
 
         constexpr bool should_check_overflow =
             RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow);
@@ -8426,7 +8433,7 @@ class QuantityPoint {
     constexpr friend bool operator<(QuantityPoint a, QuantityPoint b) { return a.x_ < b.x_; }
 
     // Subtraction between two QuantityPoint types.
-    constexpr friend Diff operator-(QuantityPoint a, QuantityPoint b) { return a.x_ - b.x_; }
+    constexpr friend auto operator-(QuantityPoint a, QuantityPoint b) { return a.x_ - b.x_; }
 
     // Left and right addition of a Diff.
     constexpr friend auto operator+(Diff d, QuantityPoint p) { return QuantityPoint{d + p.x_}; }
@@ -8463,8 +8470,8 @@ class QuantityPoint {
 
         using CalcRep = typename detail::IntermediateRep<Rep, OtherRep>::type;
 
-        Quantity<Common, CalcRep> intermediate_result =
-            x_.template as<CalcRep>(Common{}, policy) + origin_displacement(OtherUnit{}, unit);
+        Quantity<Common, CalcRep> intermediate_result = rep_cast<CalcRep>(
+            x_.template as<CalcRep>(Common{}, policy) + origin_displacement(OtherUnit{}, unit));
         return intermediate_result.template in<OtherRep>(OtherUnit{}, policy);
     }
 
