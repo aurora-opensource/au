@@ -25,11 +25,19 @@ namespace detail {
 // `ConversionForRepsAndFactor<OldRep, NewRep, Factor>` is the operation that takes a value of
 // `OldRep`, and produces the product of that value with magnitude `Factor` in the type `NewRep`.
 //
-template <typename OldRep, typename NewRep, typename Factor>
+template <typename CastType, typename OldRep, typename NewRep, typename Factor>
 struct ConversionForRepsAndFactorImpl;
-template <typename OldRep, typename NewRep, typename Factor>
+template <typename CastType, typename OldRep, typename NewRep, typename Factor>
 using ConversionForRepsAndFactor =
-    typename ConversionForRepsAndFactorImpl<OldRep, NewRep, Factor>::type;
+    typename ConversionForRepsAndFactorImpl<CastType, OldRep, NewRep, Factor>::type;
+
+// Provide `UseStaticCast` as the first parameter to `ConversionForRepsAndFactor` to use
+// `static_cast` to convert between representations.
+struct UseStaticCast {};
+
+// Provide `UseImplicitConversion` as the first parameter to `ConversionForRepsAndFactor` to use
+// implicit conversions to convert between representations.
+struct UseImplicitConversion {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation details (`conversion_strategy.hh`):
@@ -96,21 +104,38 @@ struct ConversionRepImpl
                        PromotedType<std::common_type_t<OldRep, NewRep>>> {};
 
 //
-// `StaticCastSequence<T, U>` is the sequence of operations that gets us from `T` to `U`.
+// `CastStep<CastType, T, U>` is a single step of casting from type `T` to type `U`, using the
+// appropriate operation based on `CastType`.
 //
-// Normally, of course, this is just `StaticCast<T, U>`.  But we have weird edge cases like going
-// from `double` to `std::complex<int>`, which require an intermediate step of static casting to
-// `int`.
-//
+template <typename CastType, typename T, typename U>
+struct CastStepImpl;
+template <typename CastType, typename T, typename U>
+using CastStep = typename CastStepImpl<CastType, T, U>::type;
 
 template <typename T, typename U>
-struct StaticCastSequenceImpl
-    : std::conditional<stdx::conjunction<IsRealToComplex<T, U>,
-                                         stdx::negation<std::is_same<T, RealPart<U>>>>::value,
-                       OpSequence<StaticCast<T, RealPart<U>>, StaticCast<RealPart<U>, U>>,
-                       StaticCast<T, U>> {};
+struct CastStepImpl<UseStaticCast, T, U> : stdx::type_identity<StaticCast<T, U>> {};
+
 template <typename T, typename U>
-using StaticCastSequence = typename StaticCastSequenceImpl<T, U>::type;
+struct CastStepImpl<UseImplicitConversion, T, U> : stdx::type_identity<ImplicitConversion<T, U>> {};
+
+//
+// `CastSequence<CastType, T, U>` is the sequence of operations that gets us from `T` to `U`, using
+// `CastStep<CastType, T, U>` for each step.
+//
+// Normally, of course, this is just a single step of `CastStep<CastType, T, U>`.  But we have weird
+// edge cases like going from `double` to `std::complex<int>`, which require an intermediate step of
+// casting to `int`.
+//
+
+template <typename CastType, typename T, typename U>
+struct CastSequenceImpl
+    : std::conditional<
+          stdx::conjunction<IsRealToComplex<T, U>,
+                            stdx::negation<std::is_same<T, RealPart<U>>>>::value,
+          OpSequence<CastStep<CastType, T, RealPart<U>>, CastStep<CastType, RealPart<U>, U>>,
+          CastStep<CastType, T, U>> {};
+template <typename CastType, typename T, typename U>
+using CastSequence = typename CastSequenceImpl<CastType, T, U>::type;
 
 //
 // `FullConversionImpl<OldRep, ConversionRepT, NewRep, Factor>` should resolve to the most efficient
@@ -118,30 +143,34 @@ using StaticCastSequence = typename StaticCastSequenceImpl<T, U>::type;
 // where `ConversionRepT` is the promoted type of the common type of `OldRep` and `NewRep`.
 //
 
-template <typename OldRep, typename ConversionRepT, typename NewRep, typename Factor>
+template <typename CastType,
+          typename OldRep,
+          typename ConversionRepT,
+          typename NewRep,
+          typename Factor>
 struct FullConversionImpl
-    : stdx::type_identity<OpSequence<StaticCastSequence<OldRep, ConversionRepT>,
+    : stdx::type_identity<OpSequence<CastSequence<CastType, OldRep, ConversionRepT>,
                                      ApplicationStrategyFor<ConversionRepT, Factor>,
-                                     StaticCastSequence<ConversionRepT, NewRep>>> {};
+                                     CastSequence<CastType, ConversionRepT, NewRep>>> {};
 
-template <typename OldRepIsConversionRep, typename NewRep, typename Factor>
-struct FullConversionImpl<OldRepIsConversionRep, OldRepIsConversionRep, NewRep, Factor>
+template <typename CastType, typename OldRepIsConversionRep, typename NewRep, typename Factor>
+struct FullConversionImpl<CastType, OldRepIsConversionRep, OldRepIsConversionRep, NewRep, Factor>
     : stdx::type_identity<OpSequence<ApplicationStrategyFor<OldRepIsConversionRep, Factor>,
-                                     StaticCastSequence<OldRepIsConversionRep, NewRep>>> {};
+                                     CastSequence<CastType, OldRepIsConversionRep, NewRep>>> {};
 
-template <typename OldRep, typename NewRepIsConversionRep, typename Factor>
-struct FullConversionImpl<OldRep, NewRepIsConversionRep, NewRepIsConversionRep, Factor>
-    : stdx::type_identity<OpSequence<StaticCastSequence<OldRep, NewRepIsConversionRep>,
+template <typename CastType, typename OldRep, typename NewRepIsConversionRep, typename Factor>
+struct FullConversionImpl<CastType, OldRep, NewRepIsConversionRep, NewRepIsConversionRep, Factor>
+    : stdx::type_identity<OpSequence<CastSequence<CastType, OldRep, NewRepIsConversionRep>,
                                      ApplicationStrategyFor<NewRepIsConversionRep, Factor>>> {};
 
-template <typename Rep, typename Factor>
-struct FullConversionImpl<Rep, Rep, Rep, Factor>
+template <typename CastType, typename Rep, typename Factor>
+struct FullConversionImpl<CastType, Rep, Rep, Rep, Factor>
     : stdx::type_identity<ApplicationStrategyFor<Rep, Factor>> {};
 
 // To implement `ConversionForRepsAndFactor`, delegate to `FullConversionImpl`.
-template <typename OldRep, typename NewRep, typename Factor>
+template <typename CastType, typename OldRep, typename NewRep, typename Factor>
 struct ConversionForRepsAndFactorImpl
-    : FullConversionImpl<OldRep, ConversionRep<OldRep, NewRep>, NewRep, Factor> {};
+    : FullConversionImpl<CastType, OldRep, ConversionRep<OldRep, NewRep>, NewRep, Factor> {};
 
 }  // namespace detail
 }  // namespace au

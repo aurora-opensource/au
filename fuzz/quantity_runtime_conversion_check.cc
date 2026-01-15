@@ -355,7 +355,10 @@ struct LossChecker<RepT, UnitT, DestRepT, DestUnitT, TestCategory::FLOAT_TO_INTE
         }
 
         if (round_trip == value) {
-            using Op = ConversionForRepsAndFactor<RepT, DestRepT, UnitRatio<UnitT, DestUnitT>>;
+            using Op = ConversionForRepsAndFactor<UseStaticCast,
+                                                  RepT,
+                                                  DestRepT,
+                                                  UnitRatio<UnitT, DestUnitT>>;
             const auto dest_value = FloatingPointPrefixPart<Op>::apply_to(value.in(UnitT{}));
             const bool definitely_truncates = (std::trunc(dest_value) != dest_value);
             std::ostringstream oss;
@@ -414,7 +417,8 @@ template <typename RepT, typename UnitT, typename DestRepT, typename DestUnitT, 
 struct NominalTestBodyImpl : LossChecker<RepT, UnitT, DestRepT, DestUnitT, Cat> {
     using LossChecker<RepT, UnitT, DestRepT, DestUnitT, Cat>::check_for_loss;
 
-    using Op = ConversionForRepsAndFactor<RepT, DestRepT, UnitRatio<UnitT, DestUnitT>>;
+    using Op =
+        ConversionForRepsAndFactor<UseStaticCast, RepT, DestRepT, UnitRatio<UnitT, DestUnitT>>;
 
     static void test(const Quantity<UnitT, RepT> &value) {
         const bool expect_loss = is_conversion_lossy<DestRepT>(value, DestUnitT{});

@@ -46,7 +46,7 @@ struct NewOverflowChecker {
 
 template <typename Mag, typename T, bool is_T_integral>
 struct ApplyMagnitudeImpl {
-    using Op = ConversionForRepsAndFactor<T, T, Mag>;
+    using Op = ConversionForRepsAndFactor<UseStaticCast, T, T, Mag>;
     constexpr T operator()(const T &x) { return Op::apply_to(x); }
 
     static constexpr bool would_overflow(const T &x) {
