@@ -12,14 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Ignore `cmake/` to prevent Bazel from finding BUILD files in `cmake/build/`
-# (created by CMake builds with FetchContent dependencies like `googletest`).
-#
-# NOTE: `.bazelignore` only works when Au is the main workspace (i.e., local
-# development).  Users who depend on Au via bzlmod should not encounter this
-# issue, because Bazel fetches a fresh copy of the repo without `cmake/build/`.
-# In the unlikely event that a user does encounter this issue, they can add
-# the appropriate path to their own `.bazelignore` file.
-cmake
-bzlmod_test_client
-workspace_test_client
+# This file exists for compatibility with legacy WORKSPACE-based Bazel projects
+# that depend on Au via local_repository or http_archive. Au itself uses bzlmod
+# (MODULE.bazel) for dependency management.
+
+workspace(name = "au")
