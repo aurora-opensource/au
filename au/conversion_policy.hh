@@ -163,21 +163,35 @@ struct PermitAsCarveOutForIntegerPromotion
                         std::is_integral<SourceRep>,
                         std::is_assignable<Rep &, SourceRep>> {};
 
-template <typename Rep, typename ScaleFactor, typename SourceRep>
+template <typename CastStrategy, typename Rep, typename ScaleFactor, typename SourceRep>
 struct PassesConversionRiskCheck
     : stdx::disjunction<
           PermitAsCarveOutForIntegerPromotion<Rep, ScaleFactor, SourceRep>,
-          ConversionRiskAcceptablyLow<ConversionForRepsAndFactor<SourceRep, Rep, ScaleFactor>>> {};
+          ConversionRiskAcceptablyLow<
+              ConversionForRepsAndFactor<CastStrategy, SourceRep, Rep, ScaleFactor>>> {};
 
-template <typename Rep, typename ScaleFactor, typename SourceRep>
+template <typename CastStrategy, typename Rep, typename ScaleFactor, typename SourceRep>
 using ImplicitConversionPolicy =
-    stdx::conjunction<PassesConversionRiskCheck<Rep, ScaleFactor, SourceRep>,
+    stdx::conjunction<PassesConversionRiskCheck<CastStrategy, Rep, ScaleFactor, SourceRep>,
                       stdx::negation<SettingPureRealFromMixedReal<Rep, SourceRep>>>;
 
 }  // namespace detail
 
 template <typename Rep, typename ScaleFactor>
-struct ImplicitRepPermitted : detail::ImplicitConversionPolicy<Rep, ScaleFactor, Rep> {};
+struct ImplicitRepPermitted
+    : detail::ImplicitConversionPolicy<
+
+          // NOTE: pardon the confusing terminology!  Seeing `ImplicitConversionPolicy`, one might
+          // expect to see `UseImplicitConversion` rather than `UseStaticCast` (because of the word
+          // "implicit" showing up in both cases).  But this template (`ImplicitRepPermitted`)
+          // applies to our `.in` and `.as` functions, which always use `static_cast`.  The
+          // "implicit conversion" referred to by `UseImplicitConversion` is only used for the
+          // (implicit) _constructor_.
+          detail::UseStaticCast,
+
+          Rep,
+          ScaleFactor,
+          Rep> {};
 
 template <typename Rep, typename SourceUnitSlot, typename TargetUnitSlot>
 constexpr bool implicit_rep_permitted_from_source_to_target(SourceUnitSlot, TargetUnitSlot) {
@@ -200,9 +214,12 @@ struct ConstructionPolicy {
     using ScaleFactor = MagQuotient<detail::MagT<SourceUnit>, detail::MagT<Unit>>;
 
     template <typename SourceUnit, typename SourceRep>
-    using PermitImplicitFrom = stdx::conjunction<
-        HasSameDimension<Unit, SourceUnit>,
-        detail::ImplicitConversionPolicy<Rep, ScaleFactor<SourceUnit>, SourceRep>>;
+    using PermitImplicitFrom =
+        stdx::conjunction<HasSameDimension<Unit, SourceUnit>,
+                          detail::ImplicitConversionPolicy<detail::UseStaticCast,
+                                                           Rep,
+                                                           ScaleFactor<SourceUnit>,
+                                                           SourceRep>>;
 };
 
 }  // namespace au

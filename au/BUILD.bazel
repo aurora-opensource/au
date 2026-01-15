@@ -452,6 +452,8 @@ cc_test(
     srcs = ["no_wconversion_test.cc"],
     tags = ["no_wconversion"],
     deps = [
+        ":chrono_interop",
+        ":chrono_policy_validation",
         ":quantity",
         ":testing",
         ":units",
@@ -577,10 +579,20 @@ cc_library(
 cc_test(
     name = "quantity_test",
     size = "small",
-    srcs = [
-        "quantity_chrono_policy_correspondence_test.cc",
-        "quantity_test.cc",
+    srcs = ["quantity_test.cc"],
+    deps = [
+        ":prefix",
+        ":quantity",
+        ":testing",
+        "@googletest//:gtest_main",
     ],
+)
+
+cc_test(
+    name = "quantity_chrono_policy_correspondence_test",
+    size = "small",
+    srcs = ["quantity_chrono_policy_correspondence_test.cc"],
+    tags = ["no_wconversion"],
     deps = [
         ":chrono_policy_validation",
         ":prefix",

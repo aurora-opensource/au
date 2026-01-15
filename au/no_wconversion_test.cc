@@ -12,15 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+
+#include "au/chrono_interop.hh"
+#include "au/chrono_policy_validation.hh"
 #include "au/quantity.hh"
 #include "au/testing.hh"
 #include "au/units/feet.hh"
+#include "au/units/hertz.hh"
 #include "au/units/hours.hh"
 #include "au/units/miles.hh"
+#include "au/units/seconds.hh"
 #include "au/units/yards.hh"
 #include "gtest/gtest.h"
 
 namespace au {
+
+using namespace std::chrono_literals;
+
+using ::testing::IsTrue;
 
 // This file is for any tests which would fail if `-Wconversion` were enabled.
 //
@@ -117,6 +127,16 @@ TEST(QuantityShorthandMultiplicationAndDivisionAssignment, RespectUnderlyingType
     expect_shorthand_assignment_models_underlying_types(2, 3);
     // expect_shorthand_assignment_models_underlying_types(2, 3.f);
     // expect_shorthand_assignment_models_underlying_types(2, 3.);
+}
+
+TEST(DurationQuantity, InterconvertsWithIndirectlyEquivalentChronoDuration) {
+    constexpr QuantityD<Seconds> from_chrono = as_quantity(1234ms);
+    EXPECT_THAT(from_chrono, SameTypeAndValue(seconds(1.234)));
+}
+
+TEST(Conversions, SupportIntMHzToU32Hz) {
+    constexpr QuantityU32<Hertz> freq = mega(hertz)(40);
+    EXPECT_THAT(freq, SameTypeAndValue(hertz(40'000'000u)));
 }
 
 }  // namespace au
