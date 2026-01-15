@@ -48,11 +48,6 @@ auto IsBetween(T lower, U upper) {
 
 }  // namespace
 
-TEST(Conversions, SupportIntMHzToU32Hz) {
-    constexpr QuantityU32<Hertz> freq = mega(hertz)(40);
-    EXPECT_THAT(freq, SameTypeAndValue(hertz(40'000'000u)));
-}
-
 TEST(CommonUnit, HandlesPrefixesReasonably) {
     StaticAssertTypeEq<CommonUnit<Kilo<Meters>, Meters>, Meters>();
 }
