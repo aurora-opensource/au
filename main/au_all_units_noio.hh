@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-71-gfaf272a
+// Version identifier: 0.5.0-base-72-g210dd1f
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -4204,11 +4204,19 @@ namespace detail {
 // `ConversionForRepsAndFactor<OldRep, NewRep, Factor>` is the operation that takes a value of
 // `OldRep`, and produces the product of that value with magnitude `Factor` in the type `NewRep`.
 //
-template <typename OldRep, typename NewRep, typename Factor>
+template <typename CastType, typename OldRep, typename NewRep, typename Factor>
 struct ConversionForRepsAndFactorImpl;
-template <typename OldRep, typename NewRep, typename Factor>
+template <typename CastType, typename OldRep, typename NewRep, typename Factor>
 using ConversionForRepsAndFactor =
-    typename ConversionForRepsAndFactorImpl<OldRep, NewRep, Factor>::type;
+    typename ConversionForRepsAndFactorImpl<CastType, OldRep, NewRep, Factor>::type;
+
+// Provide `UseStaticCast` as the first parameter to `ConversionForRepsAndFactor` to use
+// `static_cast` to convert between representations.
+struct UseStaticCast {};
+
+// Provide `UseImplicitConversion` as the first parameter to `ConversionForRepsAndFactor` to use
+// implicit conversions to convert between representations.
+struct UseImplicitConversion {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation details (`conversion_strategy.hh`):
@@ -4275,21 +4283,38 @@ struct ConversionRepImpl
                        PromotedType<std::common_type_t<OldRep, NewRep>>> {};
 
 //
-// `StaticCastSequence<T, U>` is the sequence of operations that gets us from `T` to `U`.
+// `CastStep<CastType, T, U>` is a single step of casting from type `T` to type `U`, using the
+// appropriate operation based on `CastType`.
 //
-// Normally, of course, this is just `StaticCast<T, U>`.  But we have weird edge cases like going
-// from `double` to `std::complex<int>`, which require an intermediate step of static casting to
-// `int`.
-//
+template <typename CastType, typename T, typename U>
+struct CastStepImpl;
+template <typename CastType, typename T, typename U>
+using CastStep = typename CastStepImpl<CastType, T, U>::type;
 
 template <typename T, typename U>
-struct StaticCastSequenceImpl
-    : std::conditional<stdx::conjunction<IsRealToComplex<T, U>,
-                                         stdx::negation<std::is_same<T, RealPart<U>>>>::value,
-                       OpSequence<StaticCast<T, RealPart<U>>, StaticCast<RealPart<U>, U>>,
-                       StaticCast<T, U>> {};
+struct CastStepImpl<UseStaticCast, T, U> : stdx::type_identity<StaticCast<T, U>> {};
+
 template <typename T, typename U>
-using StaticCastSequence = typename StaticCastSequenceImpl<T, U>::type;
+struct CastStepImpl<UseImplicitConversion, T, U> : stdx::type_identity<ImplicitConversion<T, U>> {};
+
+//
+// `CastSequence<CastType, T, U>` is the sequence of operations that gets us from `T` to `U`, using
+// `CastStep<CastType, T, U>` for each step.
+//
+// Normally, of course, this is just a single step of `CastStep<CastType, T, U>`.  But we have weird
+// edge cases like going from `double` to `std::complex<int>`, which require an intermediate step of
+// casting to `int`.
+//
+
+template <typename CastType, typename T, typename U>
+struct CastSequenceImpl
+    : std::conditional<
+          stdx::conjunction<IsRealToComplex<T, U>,
+                            stdx::negation<std::is_same<T, RealPart<U>>>>::value,
+          OpSequence<CastStep<CastType, T, RealPart<U>>, CastStep<CastType, RealPart<U>, U>>,
+          CastStep<CastType, T, U>> {};
+template <typename CastType, typename T, typename U>
+using CastSequence = typename CastSequenceImpl<CastType, T, U>::type;
 
 //
 // `FullConversionImpl<OldRep, ConversionRepT, NewRep, Factor>` should resolve to the most efficient
@@ -4297,30 +4322,34 @@ using StaticCastSequence = typename StaticCastSequenceImpl<T, U>::type;
 // where `ConversionRepT` is the promoted type of the common type of `OldRep` and `NewRep`.
 //
 
-template <typename OldRep, typename ConversionRepT, typename NewRep, typename Factor>
+template <typename CastType,
+          typename OldRep,
+          typename ConversionRepT,
+          typename NewRep,
+          typename Factor>
 struct FullConversionImpl
-    : stdx::type_identity<OpSequence<StaticCastSequence<OldRep, ConversionRepT>,
+    : stdx::type_identity<OpSequence<CastSequence<CastType, OldRep, ConversionRepT>,
                                      ApplicationStrategyFor<ConversionRepT, Factor>,
-                                     StaticCastSequence<ConversionRepT, NewRep>>> {};
+                                     CastSequence<CastType, ConversionRepT, NewRep>>> {};
 
-template <typename OldRepIsConversionRep, typename NewRep, typename Factor>
-struct FullConversionImpl<OldRepIsConversionRep, OldRepIsConversionRep, NewRep, Factor>
+template <typename CastType, typename OldRepIsConversionRep, typename NewRep, typename Factor>
+struct FullConversionImpl<CastType, OldRepIsConversionRep, OldRepIsConversionRep, NewRep, Factor>
     : stdx::type_identity<OpSequence<ApplicationStrategyFor<OldRepIsConversionRep, Factor>,
-                                     StaticCastSequence<OldRepIsConversionRep, NewRep>>> {};
+                                     CastSequence<CastType, OldRepIsConversionRep, NewRep>>> {};
 
-template <typename OldRep, typename NewRepIsConversionRep, typename Factor>
-struct FullConversionImpl<OldRep, NewRepIsConversionRep, NewRepIsConversionRep, Factor>
-    : stdx::type_identity<OpSequence<StaticCastSequence<OldRep, NewRepIsConversionRep>,
+template <typename CastType, typename OldRep, typename NewRepIsConversionRep, typename Factor>
+struct FullConversionImpl<CastType, OldRep, NewRepIsConversionRep, NewRepIsConversionRep, Factor>
+    : stdx::type_identity<OpSequence<CastSequence<CastType, OldRep, NewRepIsConversionRep>,
                                      ApplicationStrategyFor<NewRepIsConversionRep, Factor>>> {};
 
-template <typename Rep, typename Factor>
-struct FullConversionImpl<Rep, Rep, Rep, Factor>
+template <typename CastType, typename Rep, typename Factor>
+struct FullConversionImpl<CastType, Rep, Rep, Rep, Factor>
     : stdx::type_identity<ApplicationStrategyFor<Rep, Factor>> {};
 
 // To implement `ConversionForRepsAndFactor`, delegate to `FullConversionImpl`.
-template <typename OldRep, typename NewRep, typename Factor>
+template <typename CastType, typename OldRep, typename NewRep, typename Factor>
 struct ConversionForRepsAndFactorImpl
-    : FullConversionImpl<OldRep, ConversionRep<OldRep, NewRep>, NewRep, Factor> {};
+    : FullConversionImpl<CastType, OldRep, ConversionRep<OldRep, NewRep>, NewRep, Factor> {};
 
 }  // namespace detail
 }  // namespace au
@@ -6749,21 +6778,35 @@ struct PermitAsCarveOutForIntegerPromotion
                         std::is_integral<SourceRep>,
                         std::is_assignable<Rep &, SourceRep>> {};
 
-template <typename Rep, typename ScaleFactor, typename SourceRep>
+template <typename CastStrategy, typename Rep, typename ScaleFactor, typename SourceRep>
 struct PassesConversionRiskCheck
     : stdx::disjunction<
           PermitAsCarveOutForIntegerPromotion<Rep, ScaleFactor, SourceRep>,
-          ConversionRiskAcceptablyLow<ConversionForRepsAndFactor<SourceRep, Rep, ScaleFactor>>> {};
+          ConversionRiskAcceptablyLow<
+              ConversionForRepsAndFactor<CastStrategy, SourceRep, Rep, ScaleFactor>>> {};
 
-template <typename Rep, typename ScaleFactor, typename SourceRep>
+template <typename CastStrategy, typename Rep, typename ScaleFactor, typename SourceRep>
 using ImplicitConversionPolicy =
-    stdx::conjunction<PassesConversionRiskCheck<Rep, ScaleFactor, SourceRep>,
+    stdx::conjunction<PassesConversionRiskCheck<CastStrategy, Rep, ScaleFactor, SourceRep>,
                       stdx::negation<SettingPureRealFromMixedReal<Rep, SourceRep>>>;
 
 }  // namespace detail
 
 template <typename Rep, typename ScaleFactor>
-struct ImplicitRepPermitted : detail::ImplicitConversionPolicy<Rep, ScaleFactor, Rep> {};
+struct ImplicitRepPermitted
+    : detail::ImplicitConversionPolicy<
+
+          // NOTE: pardon the confusing terminology!  Seeing `ImplicitConversionPolicy`, one might
+          // expect to see `UseImplicitConversion` rather than `UseStaticCast` (because of the word
+          // "implicit" showing up in both cases).  But this template (`ImplicitRepPermitted`)
+          // applies to our `.in` and `.as` functions, which always use `static_cast`.  The
+          // "implicit conversion" referred to by `UseImplicitConversion` is only used for the
+          // (implicit) _constructor_.
+          detail::UseStaticCast,
+
+          Rep,
+          ScaleFactor,
+          Rep> {};
 
 template <typename Rep, typename SourceUnitSlot, typename TargetUnitSlot>
 constexpr bool implicit_rep_permitted_from_source_to_target(SourceUnitSlot, TargetUnitSlot) {
@@ -6786,9 +6829,12 @@ struct ConstructionPolicy {
     using ScaleFactor = MagQuotient<detail::MagT<SourceUnit>, detail::MagT<Unit>>;
 
     template <typename SourceUnit, typename SourceRep>
-    using PermitImplicitFrom = stdx::conjunction<
-        HasSameDimension<Unit, SourceUnit>,
-        detail::ImplicitConversionPolicy<Rep, ScaleFactor<SourceUnit>, SourceRep>>;
+    using PermitImplicitFrom =
+        stdx::conjunction<HasSameDimension<Unit, SourceUnit>,
+                          detail::ImplicitConversionPolicy<detail::UseStaticCast,
+                                                           Rep,
+                                                           ScaleFactor<SourceUnit>,
+                                                           SourceRep>>;
 };
 
 }  // namespace au
@@ -7231,7 +7277,10 @@ class Quantity {
         using OtherUnit = AssociatedUnit<OtherUnitSlot>;
         static_assert(IsUnit<OtherUnit>::value, "Invalid type passed to unit slot");
 
-        using Op = detail::ConversionForRepsAndFactor<Rep, OtherRep, UnitRatio<Unit, OtherUnit>>;
+        using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
+                                                      Rep,
+                                                      OtherRep,
+                                                      UnitRatio<Unit, OtherUnit>>;
 
         constexpr bool should_check_overflow =
             RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow);
@@ -7451,32 +7500,40 @@ constexpr auto root(QuantityMaker<Unit>) {
 // Check conversion for overflow (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
-    using Op =
-        detail::ConversionForRepsAndFactor<R, R, UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
+    using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
+                                                  R,
+                                                  R,
+                                                  UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
     return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
 // Check conversion for overflow (new rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
-    using Op = detail::
-        ConversionForRepsAndFactor<R, TargetRep, UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
+    using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
+                                                  R,
+                                                  TargetRep,
+                                                  UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
     return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
 // Check conversion for truncation (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
-    using Op =
-        detail::ConversionForRepsAndFactor<R, R, UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
+    using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
+                                                  R,
+                                                  R,
+                                                  UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
     return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
 // Check conversion for truncation (new rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
 constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
-    using Op = detail::
-        ConversionForRepsAndFactor<R, TargetRep, UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
+    using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
+                                                  R,
+                                                  TargetRep,
+                                                  UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
     return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
