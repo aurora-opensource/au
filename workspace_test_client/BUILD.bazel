@@ -21,3 +21,13 @@ cc_binary(
         "@au//au:units",
     ],
 )
+
+cc_test(
+    name = "au_testing_test",
+    srcs = ["au_testing_test.cc"],
+    deps = [
+        "@au//au:testing",
+        "@au//au:units",
+        "@com_google_googletest//:gtest_main",  # Note: different name than @googletest
+    ],
+)

@@ -83,3 +83,12 @@ jobs:
       - name: Run client executable
         run: ./bazel-bin/test_au_client
         working-directory: workspace_test_client
+
+      # Test au:testing target with googletest. This verifies that WORKSPACE
+      # consumers can use @au//au:testing when they define googletest with
+      # a different name (e.g., @com_google_googletest) by using repo_mapping.
+      - name: Test au:testing consumption
+        run: bazelisk test ${{ matrix.extra_flags }} //:au_testing_test
+        working-directory: workspace_test_client
+        env:
+          USE_BAZEL_VERSION: ${{ matrix.bazel_version }}

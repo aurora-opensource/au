@@ -125,6 +125,31 @@ to your `deps` attribute, and include the appropriate files.
 | `@au//au:std_format` | `"au/std_format.hh"` | `std::format` support[^1] |
 | `@au//au:testing` | `"au/testing.hh"` | Utilities for writing googletest tests<br>_Note:_ `testonly = True` |
 
+??? note "For legacy WORKSPACE users: `@au//au:testing` and googletest"
+    **This note applies only to legacy WORKSPACE users.**  If you use bzlmod, you can ignore this.
+
+    The `@au//au:testing` target depends on googletest via the `@googletest` repository name.  If
+    your WORKSPACE defines googletest with a different name (such as `@com_google_googletest`),
+    you'll need to add a `repo_mapping` to your Au dependency:
+
+    ```python
+    http_archive(
+        name = "au",
+        # ... other fields ...
+        repo_mapping = {"@googletest": "@com_google_googletest"},  # Map to your googletest name
+    )
+    ```
+
+    Or for `local_repository`:
+
+    ```python
+    local_repository(
+        name = "au",
+        path = "path/to/au",
+        repo_mapping = {"@googletest": "@com_google_googletest"},  # Map to your googletest name
+    )
+    ```
+
 #### CMake
 
 There are two ways to include the Au library in your CMake project.
