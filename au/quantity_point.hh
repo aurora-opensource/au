@@ -211,7 +211,7 @@ class QuantityPoint {
     constexpr friend bool operator<(QuantityPoint a, QuantityPoint b) { return a.x_ < b.x_; }
 
     // Subtraction between two QuantityPoint types.
-    constexpr friend Diff operator-(QuantityPoint a, QuantityPoint b) { return a.x_ - b.x_; }
+    constexpr friend auto operator-(QuantityPoint a, QuantityPoint b) { return a.x_ - b.x_; }
 
     // Left and right addition of a Diff.
     constexpr friend auto operator+(Diff d, QuantityPoint p) { return QuantityPoint{d + p.x_}; }
@@ -248,8 +248,8 @@ class QuantityPoint {
 
         using CalcRep = typename detail::IntermediateRep<Rep, OtherRep>::type;
 
-        Quantity<Common, CalcRep> intermediate_result =
-            x_.template as<CalcRep>(Common{}, policy) + origin_displacement(OtherUnit{}, unit);
+        Quantity<Common, CalcRep> intermediate_result = rep_cast<CalcRep>(
+            x_.template as<CalcRep>(Common{}, policy) + origin_displacement(OtherUnit{}, unit));
         return intermediate_result.template in<OtherRep>(OtherUnit{}, policy);
     }
 
