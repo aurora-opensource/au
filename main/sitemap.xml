@@ -2,218 +2,218 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://aurora-opensource.github.io/au/main/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/develop/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/install/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/supported-compilers/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/troubleshooting/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/alternatives/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/concepts/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/concepts/arithmetic/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/concepts/common_unit/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/concepts/conversion_risks/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/concepts/dimensionless/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/concepts/overflow/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/concepts/quantity_point/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/concepts/truncation/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/concepts/zero/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/idioms/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/idioms/unit-slots/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/implementation/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/implementation/applying_magnitudes/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/implementation/vector_space/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/forward-declarations/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/new-constants/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/new-dimensions/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/new-units/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/quantity-template-parameters/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/upgrade/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/interop/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/interop/nholthaus/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/constant/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/conversion_risk_policies/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/corresponding_quantity/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/format/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/magnitude/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/math/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/powers/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/prefix/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/quantity/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/quantity_point/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/unit/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/zero/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/detail/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/detail/dimension/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/detail/monovalue_types/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/detail/packs/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/101-quantity-makers/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/102-api-types/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/103-unit-conversions/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/exercise/101-quantity-makers/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/exercise/102-api-types/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/tutorial/exercise/103-unit-conversions/</loc>
-         <lastmod>2026-01-15</lastmod>
+         <lastmod>2026-01-16</lastmod>
     </url>
 </urlset>
