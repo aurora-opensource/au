@@ -113,6 +113,31 @@ Here are the instructions for each installation method we support.
         - `strip_prefix`: write `"au-0.3.5"`, except use your ID from step 1 instead of `0.3.5`.
         - `urls`: This should be a list, whose only entry is the URL you formed in step 2.
 
+??? note "For legacy WORKSPACE users: `@au//au:testing` and googletest"
+    **This note applies only to legacy WORKSPACE users.**  If you use bzlmod, you can ignore this.
+
+    The `@au//au:testing` target depends on googletest via the `@googletest` repository name.  If
+    your WORKSPACE defines googletest with a different name (such as `@com_google_googletest`),
+    you'll need to add a `repo_mapping` to your Au dependency:
+
+    ```python
+    http_archive(
+        name = "au",
+        # ... other fields ...
+        repo_mapping = {"@googletest": "@com_google_googletest"},  # Map to your googletest name
+    )
+    ```
+
+    Or for `local_repository`:
+
+    ```python
+    local_repository(
+        name = "au",
+        path = "path/to/au",
+        repo_mapping = {"@googletest": "@com_google_googletest"},  # Map to your googletest name
+    )
+    ```
+
 At this point, the Au library is installed, and you can use it in your project!
 
 Here are the headers provided by each Au target.  To use, add the entry from the "Dependency" column
