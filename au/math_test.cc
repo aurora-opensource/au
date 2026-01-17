@@ -1208,4 +1208,295 @@ TEST(InverseAs, HandlesConversionsBetweenOverflowSafetySurfaceAndRepresentableLi
     // and/or "Value outside range of destination type".)  Uncomment to check:
     // inverse_as(pico(seconds), hertz(10))
 }
+
+TEST(IntRoundIn, SupportsConstexpr) {
+    constexpr auto result = int_round_in(meters, milli(meters)(1'500));
+    EXPECT_THAT(result, SameTypeAndValue(2));
+}
+
+TEST(IntRoundIn, RoundsHalfAwayFromZero) {
+    EXPECT_THAT(int_round_in(meters, milli(meters)(-1'500)), SameTypeAndValue(-2));
+    EXPECT_THAT(int_round_in(meters, milli(meters)(-500)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_round_in(meters, milli(meters)(500)), SameTypeAndValue(1));
+    EXPECT_THAT(int_round_in(meters, milli(meters)(1'500)), SameTypeAndValue(2));
+}
+
+TEST(IntRoundIn, RoundsToNearestWhenUnambiguous) {
+    EXPECT_THAT(int_round_in(meters, milli(meters)(-501)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_round_in(meters, milli(meters)(-499)), SameTypeAndValue(0));
+    EXPECT_THAT(int_round_in(meters, milli(meters)(499)), SameTypeAndValue(0));
+    EXPECT_THAT(int_round_in(meters, milli(meters)(501)), SameTypeAndValue(1));
+}
+
+TEST(IntRoundIn, ScalesUpByIntegerFactor) {
+    EXPECT_THAT(int_round_in(milli(meters), meters(3)), SameTypeAndValue(3'000));
+}
+
+TEST(IntRoundIn, ScalesDownByIntegerFactor) {
+    EXPECT_THAT(int_round_in(meters, milli(meters)(2'700)), SameTypeAndValue(3));
+}
+
+TEST(IntRoundIn, HandlesRationalConversionFactor) {
+    // 1 foot == (381 / 1250) meters
+    EXPECT_THAT(int_round_in(meters, feet(1)), SameTypeAndValue(0));
+    EXPECT_THAT(int_round_in(meters, feet(2)), SameTypeAndValue(1));
+    EXPECT_THAT(int_round_in(meters, feet(5)), SameTypeAndValue(2));
+}
+
+TEST(IntRoundIn, SupportsUnsignedTypes) {
+    EXPECT_THAT(int_round_in(meters, milli(meters)(1'499u)), SameTypeAndValue(1u));
+    EXPECT_THAT(int_round_in(meters, milli(meters)(1'500u)), SameTypeAndValue(2u));
+}
+
+TEST(IntRoundIn, SupportsInt64) {
+    constexpr int64_t large_value = 9'000'000'000'000'000'500LL;
+    EXPECT_THAT(int_round_in(kilo(meters), meters(large_value)),
+                SameTypeAndValue(int64_t{9'000'000'000'000'001LL}));
+}
+
+TEST(IntRoundIn, QuantityPointBasicRounding) {
+    EXPECT_THAT(int_round_in(meters_pt, milli(meters_pt)(1'499)), SameTypeAndValue(1));
+    EXPECT_THAT(int_round_in(meters_pt, milli(meters_pt)(1'500)), SameTypeAndValue(2));
+}
+
+TEST(IntRoundIn, QuantityPointWithNontrivialOffset) {
+    // 273'150 mK == 0 degrees Celsius
+    EXPECT_THAT(int_round_in(celsius_pt, milli(kelvins_pt)(273'150)), SameTypeAndValue(0));
+    EXPECT_THAT(int_round_in(celsius_pt, milli(kelvins_pt)(273'649)), SameTypeAndValue(0));
+    EXPECT_THAT(int_round_in(celsius_pt, milli(kelvins_pt)(273'650)), SameTypeAndValue(1));
+}
+
+TEST(IntRoundAs, SupportsConstexpr) {
+    constexpr auto result = int_round_as(meters, milli(meters)(1'500));
+    EXPECT_THAT(result, SameTypeAndValue(meters(2)));
+}
+
+TEST(IntRoundAs, ReturnsQuantityWithTargetUnit) {
+    const auto result = int_round_as(kilo(meters), meters(2'500));
+    EXPECT_THAT(result, SameTypeAndValue(kilo(meters)(3)));
+}
+
+TEST(IntRoundAs, RoundsHalfAwayFromZero) {
+    EXPECT_THAT(int_round_as(meters, milli(meters)(-500)), SameTypeAndValue(meters(-1)));
+    EXPECT_THAT(int_round_as(meters, milli(meters)(500)), SameTypeAndValue(meters(1)));
+}
+
+TEST(IntRoundAs, RoundsToNearestWhenUnambiguous) {
+    EXPECT_THAT(int_round_as(meters, milli(meters)(499)), SameTypeAndValue(meters(0)));
+    EXPECT_THAT(int_round_as(meters, milli(meters)(501)), SameTypeAndValue(meters(1)));
+}
+
+TEST(IntRoundAs, HandlesRationalConversionFactor) {
+    // 1 foot == (381 / 1250) meters
+    EXPECT_THAT(int_round_as(meters, feet(1)), SameTypeAndValue(meters(0)));
+    EXPECT_THAT(int_round_as(meters, feet(2)), SameTypeAndValue(meters(1)));
+}
+
+TEST(IntRoundAs, SupportsUnsignedTypes) {
+    EXPECT_THAT(int_round_as(meters, milli(meters)(1'500u)), SameTypeAndValue(meters(2u)));
+}
+
+TEST(IntRoundAs, QuantityPointReturnsQuantityPointWithTargetUnit) {
+    const auto result = int_round_as(kilo(meters_pt), meters_pt(2'500));
+    EXPECT_THAT(result, SameTypeAndValue(kilo(meters_pt)(3)));
+}
+
+TEST(IntRoundAs, QuantityPointWithNontrivialOffset) {
+    // 273'150 mK == 0 degrees Celsius
+    EXPECT_THAT(int_round_as(celsius_pt, milli(kelvins_pt)(273'150)),
+                SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(int_round_as(celsius_pt, milli(kelvins_pt)(273'650)),
+                SameTypeAndValue(celsius_pt(1)));
+}
+
+TEST(IntFloorIn, SupportsConstexpr) {
+    constexpr auto result = int_floor_in(meters, milli(meters)(1'999));
+    EXPECT_THAT(result, SameTypeAndValue(1));
+}
+
+TEST(IntFloorIn, ReturnsLargestIntegerNotGreaterThanInput) {
+    EXPECT_THAT(int_floor_in(meters, milli(meters)(-1'001)), SameTypeAndValue(-2));
+    EXPECT_THAT(int_floor_in(meters, milli(meters)(-1'000)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_floor_in(meters, milli(meters)(-999)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_floor_in(meters, milli(meters)(-1)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_floor_in(meters, milli(meters)(1'000)), SameTypeAndValue(1));
+    EXPECT_THAT(int_floor_in(meters, milli(meters)(1'001)), SameTypeAndValue(1));
+    EXPECT_THAT(int_floor_in(meters, milli(meters)(1'999)), SameTypeAndValue(1));
+}
+
+TEST(IntFloorIn, ScalesUpByIntegerFactor) {
+    EXPECT_THAT(int_floor_in(milli(meters), meters(3)), SameTypeAndValue(3'000));
+}
+
+TEST(IntFloorIn, ScalesDownByIntegerFactor) {
+    EXPECT_THAT(int_floor_in(meters, milli(meters)(2'999)), SameTypeAndValue(2));
+    EXPECT_THAT(int_floor_in(meters, milli(meters)(3'000)), SameTypeAndValue(3));
+}
+
+TEST(IntFloorIn, HandlesRationalConversionFactor) {
+    // 1 foot == (381 / 1250) meters
+    EXPECT_THAT(int_floor_in(meters, feet(-1)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_floor_in(meters, feet(3)), SameTypeAndValue(0));
+    EXPECT_THAT(int_floor_in(meters, feet(4)), SameTypeAndValue(1));
+}
+
+TEST(IntFloorIn, SupportsUnsignedTypes) {
+    EXPECT_THAT(int_floor_in(meters, milli(meters)(1'999u)), SameTypeAndValue(1u));
+}
+
+TEST(IntFloorIn, SupportsInt64) {
+    constexpr int64_t large_value = 9'000'000'000'000'000'999LL;
+    EXPECT_THAT(int_floor_in(kilo(meters), meters(large_value)),
+                SameTypeAndValue(int64_t{9'000'000'000'000'000LL}));
+}
+
+TEST(IntFloorIn, QuantityPointBasicFloor) {
+    EXPECT_THAT(int_floor_in(meters_pt, milli(meters_pt)(1'999)), SameTypeAndValue(1));
+    EXPECT_THAT(int_floor_in(meters_pt, milli(meters_pt)(2'000)), SameTypeAndValue(2));
+}
+
+TEST(IntFloorIn, QuantityPointWithNontrivialOffset) {
+    // 273'150 mK == 0 degrees Celsius
+    EXPECT_THAT(int_floor_in(celsius_pt, milli(kelvins_pt)(273'149)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_floor_in(celsius_pt, milli(kelvins_pt)(273'150)), SameTypeAndValue(0));
+    EXPECT_THAT(int_floor_in(celsius_pt, milli(kelvins_pt)(274'149)), SameTypeAndValue(0));
+    EXPECT_THAT(int_floor_in(celsius_pt, milli(kelvins_pt)(274'150)), SameTypeAndValue(1));
+}
+
+TEST(IntFloorAs, SupportsConstexpr) {
+    constexpr auto result = int_floor_as(meters, milli(meters)(1'999));
+    EXPECT_THAT(result, SameTypeAndValue(meters(1)));
+}
+
+TEST(IntFloorAs, ReturnsQuantityWithTargetUnit) {
+    const auto result = int_floor_as(kilo(meters), meters(2'999));
+    EXPECT_THAT(result, SameTypeAndValue(kilo(meters)(2)));
+}
+
+TEST(IntFloorAs, ReturnsLargestIntegerNotGreaterThanInput) {
+    EXPECT_THAT(int_floor_as(meters, milli(meters)(-1'001)), SameTypeAndValue(meters(-2)));
+    EXPECT_THAT(int_floor_as(meters, milli(meters)(-1)), SameTypeAndValue(meters(-1)));
+    EXPECT_THAT(int_floor_as(meters, milli(meters)(1'999)), SameTypeAndValue(meters(1)));
+}
+
+TEST(IntFloorAs, HandlesRationalConversionFactor) {
+    // 1 foot == (381 / 1250) meters
+    EXPECT_THAT(int_floor_as(meters, feet(3)), SameTypeAndValue(meters(0)));
+    EXPECT_THAT(int_floor_as(meters, feet(4)), SameTypeAndValue(meters(1)));
+}
+
+TEST(IntFloorAs, SupportsUnsignedTypes) {
+    EXPECT_THAT(int_floor_as(meters, milli(meters)(1'999u)), SameTypeAndValue(meters(1u)));
+}
+
+TEST(IntFloorAs, QuantityPointReturnsQuantityPointWithTargetUnit) {
+    const auto result = int_floor_as(kilo(meters_pt), meters_pt(2'999));
+    EXPECT_THAT(result, SameTypeAndValue(kilo(meters_pt)(2)));
+}
+
+TEST(IntFloorAs, QuantityPointWithNontrivialOffset) {
+    // 273'150 mK == 0 degrees Celsius
+    EXPECT_THAT(int_floor_as(celsius_pt, milli(kelvins_pt)(273'149)),
+                SameTypeAndValue(celsius_pt(-1)));
+    EXPECT_THAT(int_floor_as(celsius_pt, milli(kelvins_pt)(274'149)),
+                SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(int_floor_as(celsius_pt, milli(kelvins_pt)(274'150)),
+                SameTypeAndValue(celsius_pt(1)));
+}
+
+TEST(IntCeilIn, SupportsConstexpr) {
+    constexpr auto result = int_ceil_in(meters, milli(meters)(1'001));
+    EXPECT_THAT(result, SameTypeAndValue(2));
+}
+
+TEST(IntCeilIn, ReturnsSmallestIntegerNotLessThanInput) {
+    EXPECT_THAT(int_ceil_in(meters, milli(meters)(-1'999)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_ceil_in(meters, milli(meters)(-1'001)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_ceil_in(meters, milli(meters)(-1'000)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_ceil_in(meters, milli(meters)(-999)), SameTypeAndValue(0));
+    EXPECT_THAT(int_ceil_in(meters, milli(meters)(1'001)), SameTypeAndValue(2));
+    EXPECT_THAT(int_ceil_in(meters, milli(meters)(1'999)), SameTypeAndValue(2));
+    EXPECT_THAT(int_ceil_in(meters, milli(meters)(2'000)), SameTypeAndValue(2));
+}
+
+TEST(IntCeilIn, ScalesUpByIntegerFactor) {
+    EXPECT_THAT(int_ceil_in(milli(meters), meters(3)), SameTypeAndValue(3'000));
+}
+
+TEST(IntCeilIn, ScalesDownByIntegerFactor) {
+    EXPECT_THAT(int_ceil_in(meters, milli(meters)(3'000)), SameTypeAndValue(3));
+    EXPECT_THAT(int_ceil_in(meters, milli(meters)(3'001)), SameTypeAndValue(4));
+}
+
+TEST(IntCeilIn, HandlesRationalConversionFactor) {
+    // 1 foot == (381 / 1250) meters
+    EXPECT_THAT(int_ceil_in(meters, feet(-4)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_ceil_in(meters, feet(3)), SameTypeAndValue(1));
+    EXPECT_THAT(int_ceil_in(meters, feet(4)), SameTypeAndValue(2));
+}
+
+TEST(IntCeilIn, SupportsUnsignedTypes) {
+    EXPECT_THAT(int_ceil_in(meters, milli(meters)(1'001u)), SameTypeAndValue(2u));
+}
+
+TEST(IntCeilIn, SupportsInt64) {
+    constexpr int64_t large_value = 9'000'000'000'000'000'001LL;
+    EXPECT_THAT(int_ceil_in(kilo(meters), meters(large_value)),
+                SameTypeAndValue(int64_t{9'000'000'000'000'001LL}));
+}
+
+TEST(IntCeilIn, QuantityPointBasicCeil) {
+    EXPECT_THAT(int_ceil_in(meters_pt, milli(meters_pt)(1'000)), SameTypeAndValue(1));
+    EXPECT_THAT(int_ceil_in(meters_pt, milli(meters_pt)(1'001)), SameTypeAndValue(2));
+}
+
+TEST(IntCeilIn, QuantityPointWithNontrivialOffset) {
+    // 273'150 mK == 0 degrees Celsius
+    EXPECT_THAT(int_ceil_in(celsius_pt, milli(kelvins_pt)(272'150)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_ceil_in(celsius_pt, milli(kelvins_pt)(273'149)), SameTypeAndValue(0));
+    EXPECT_THAT(int_ceil_in(celsius_pt, milli(kelvins_pt)(273'150)), SameTypeAndValue(0));
+    EXPECT_THAT(int_ceil_in(celsius_pt, milli(kelvins_pt)(273'151)), SameTypeAndValue(1));
+}
+
+TEST(IntCeilAs, SupportsConstexpr) {
+    constexpr auto result = int_ceil_as(meters, milli(meters)(1'001));
+    EXPECT_THAT(result, SameTypeAndValue(meters(2)));
+}
+
+TEST(IntCeilAs, ReturnsQuantityWithTargetUnit) {
+    const auto result = int_ceil_as(kilo(meters), meters(3'001));
+    EXPECT_THAT(result, SameTypeAndValue(kilo(meters)(4)));
+}
+
+TEST(IntCeilAs, ReturnsSmallestIntegerNotLessThanInput) {
+    EXPECT_THAT(int_ceil_as(meters, milli(meters)(-1'999)), SameTypeAndValue(meters(-1)));
+    EXPECT_THAT(int_ceil_as(meters, milli(meters)(-999)), SameTypeAndValue(meters(0)));
+    EXPECT_THAT(int_ceil_as(meters, milli(meters)(1'001)), SameTypeAndValue(meters(2)));
+}
+
+TEST(IntCeilAs, HandlesRationalConversionFactor) {
+    // 1 foot == (381 / 1250) meters
+    EXPECT_THAT(int_ceil_as(meters, feet(3)), SameTypeAndValue(meters(1)));
+    EXPECT_THAT(int_ceil_as(meters, feet(4)), SameTypeAndValue(meters(2)));
+}
+
+TEST(IntCeilAs, SupportsUnsignedTypes) {
+    EXPECT_THAT(int_ceil_as(meters, milli(meters)(1'001u)), SameTypeAndValue(meters(2u)));
+}
+
+TEST(IntCeilAs, QuantityPointReturnsQuantityPointWithTargetUnit) {
+    const auto result = int_ceil_as(kilo(meters_pt), meters_pt(3'001));
+    EXPECT_THAT(result, SameTypeAndValue(kilo(meters_pt)(4)));
+}
+
+TEST(IntCeilAs, QuantityPointWithNontrivialOffset) {
+    // 273'150 mK == 0 degrees Celsius
+    EXPECT_THAT(int_ceil_as(celsius_pt, milli(kelvins_pt)(273'149)),
+                SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(int_ceil_as(celsius_pt, milli(kelvins_pt)(273'150)),
+                SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(int_ceil_as(celsius_pt, milli(kelvins_pt)(273'151)),
+                SameTypeAndValue(celsius_pt(1)));
+}
+
 }  // namespace au
