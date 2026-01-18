@@ -698,8 +698,11 @@ advantages.  First, the computation stays purely in the integer domain, rather t
 floating point and back.  Second, these functions are `constexpr` compatible.
 
 !!! note
-    The input `Quantity` must have an integral rep.  Calling these functions with a floating point
-    rep will produce a compiler error.
+    The output type (for `int_round_in`) or rep (for `int_round_as`) must be integral.
+
+    - For _unit-only_ versions, this means the input must have an integral rep.
+    - For _explicit-Rep_ versions, this means the output type or rep (which you explicitly specify)
+      must be integral.
 
 When the input is exactly halfway between two adjacent integer values, these functions round **away
 from zero**.  For example, `0.5` rounds to `1`, and `-0.5` rounds to `-1`.
@@ -711,6 +714,9 @@ from zero**.  For example, `0.5` rounds to `1`, and `-0.5` rounds to `-1`.
 // int_round_as(): return a Quantity or QuantityPoint (depending on the input type)
 //
 
+// 1. Unit-only version (uses same Rep as input).  Typical callsites look like:
+//    `int_round_as(units, quantity)`
+
 // a) For `Quantity` inputs
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q);
@@ -719,10 +725,24 @@ constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 
+// 2. Explicit-Rep version (uses explicitly provided output Rep).  Typical callsites look like:
+//    `int_round_as<Type>(units, quantity)`
+
+// a) For `Quantity` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
 
 //
 // int_round_in(): return a raw number
 //
+
+// 1. Unit-only version (output is Rep of input).  Typical callsites look like:
+//    `int_round_in(units, quantity)`
 
 // a) For `Quantity` inputs
 template <typename RoundingUnits, typename U, typename R>
@@ -730,6 +750,17 @@ constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q);
 
 // b) For `QuantityPoint` inputs
 template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
+// 2. Explicit-Rep version (output is explicitly provided type).  Typical callsites look like:
+//    `int_round_in<Type>(units, quantity)`
+
+// a) For `Quantity` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 ```
 
@@ -748,8 +779,11 @@ advantages.  First, the computation stays purely in the integer domain, rather t
 floating point and back.  Second, these functions are `constexpr` compatible.
 
 !!! note
-    The input `Quantity` must have an integral rep.  Calling these functions with a floating point
-    rep will produce a compiler error.
+    The output type (for `int_floor_in`) or rep (for `int_floor_as`) must be integral.
+
+    - For _unit-only_ versions, this means the input must have an integral rep.
+    - For _explicit-Rep_ versions, this means the output type or rep (which you explicitly specify)
+      must be integral.
 
 **Signatures:**
 
@@ -757,6 +791,9 @@ floating point and back.  Second, these functions are `constexpr` compatible.
 //
 // int_floor_as(): return a Quantity or QuantityPoint (depending on the input type)
 //
+
+// 1. Unit-only version (uses same Rep as input).  Typical callsites look like:
+//    `int_floor_as(units, quantity)`
 
 // a) For `Quantity` inputs
 template <typename RoundingUnits, typename U, typename R>
@@ -766,10 +803,24 @@ constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 
+// 2. Explicit-Rep version (uses explicitly provided output Rep).  Typical callsites look like:
+//    `int_floor_as<Type>(units, quantity)`
+
+// a) For `Quantity` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
 
 //
 // int_floor_in(): return a raw number
 //
+
+// 1. Unit-only version (output is Rep of input).  Typical callsites look like:
+//    `int_floor_in(units, quantity)`
 
 // a) For `Quantity` inputs
 template <typename RoundingUnits, typename U, typename R>
@@ -777,6 +828,17 @@ constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q);
 
 // b) For `QuantityPoint` inputs
 template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
+// 2. Explicit-Rep version (output is explicitly provided type).  Typical callsites look like:
+//    `int_floor_in<Type>(units, quantity)`
+
+// a) For `Quantity` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 ```
 
@@ -795,8 +857,11 @@ First, the computation stays purely in the integer domain, rather than convertin
 and back.  Second, these functions are `constexpr` compatible.
 
 !!! note
-    The input `Quantity` must have an integral rep.  Calling these functions with a floating point
-    rep will produce a compiler error.
+    The output type (for `int_ceil_in`) or rep (for `int_ceil_as`) must be integral.
+
+    - For _unit-only_ versions, this means the input must have an integral rep.
+    - For _explicit-Rep_ versions, this means the output type or rep (which you explicitly specify)
+      must be integral.
 
 **Signatures:**
 
@@ -804,6 +869,9 @@ and back.  Second, these functions are `constexpr` compatible.
 //
 // int_ceil_as(): return a Quantity or QuantityPoint (depending on the input type)
 //
+
+// 1. Unit-only version (uses same Rep as input).  Typical callsites look like:
+//    `int_ceil_as(units, quantity)`
 
 // a) For `Quantity` inputs
 template <typename RoundingUnits, typename U, typename R>
@@ -813,10 +881,24 @@ constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 
+// 2. Explicit-Rep version (uses explicitly provided output Rep).  Typical callsites look like:
+//    `int_ceil_as<Type>(units, quantity)`
+
+// a) For `Quantity` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
 
 //
 // int_ceil_in(): return a raw number
 //
+
+// 1. Unit-only version (output is Rep of input).  Typical callsites look like:
+//    `int_ceil_in(units, quantity)`
 
 // a) For `Quantity` inputs
 template <typename RoundingUnits, typename U, typename R>
@@ -824,6 +906,17 @@ constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q);
 
 // b) For `QuantityPoint` inputs
 template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
+// 2. Explicit-Rep version (output is explicitly provided type).  Typical callsites look like:
+//    `int_ceil_in<Type>(units, quantity)`
+
+// a) For `Quantity` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
+constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 ```
 
