@@ -106,6 +106,24 @@ TEST(Magnitude, OrderingWithZero) {
     EXPECT_THAT(-mag<1>(), Lt(ZERO));
 }
 
+TEST(Magnitude, EqualityWithZero) {
+    // Zero is never equal to any magnitude.
+    EXPECT_THAT(ZERO == mag<1>(), IsFalse());
+    EXPECT_THAT(ZERO == mag<1>() / mag<1000>(), IsFalse());
+    EXPECT_THAT(ZERO == -mag<1>(), IsFalse());
+
+    EXPECT_THAT(ZERO != mag<1>(), IsTrue());
+    EXPECT_THAT(ZERO != mag<1>() / mag<1000>(), IsTrue());
+    EXPECT_THAT(ZERO != -mag<1>(), IsTrue());
+
+    // Magnitude vs Zero (operands reversed).
+    EXPECT_THAT(mag<1>() == ZERO, IsFalse());
+    EXPECT_THAT(-mag<1>() == ZERO, IsFalse());
+
+    EXPECT_THAT(mag<1>() != ZERO, IsTrue());
+    EXPECT_THAT(-mag<1>() != ZERO, IsTrue());
+}
+
 TEST(Magnitude, ProductBehavesCorrectly) {
     EXPECT_THAT(mag<4>() * mag<6>(), Eq(mag<24>()));
     EXPECT_THAT(mag<142857>() * mag<7>(), Eq(mag<999999>()));
@@ -449,6 +467,167 @@ TEST(Magnitude, ModuloSatisfiesDivisionInvariant) {
     constexpr auto a4 = mag<14>() * PI;
     constexpr auto b4 = mag<3>() * PI;
     EXPECT_THAT(mag<4>() * b4 + (a4 % b4), Eq(a4));
+}
+
+TEST(MagTrunc, IdentityForPositiveIntegers) {
+    EXPECT_THAT(mag_trunc(mag<1>()), Eq(mag<1>()));
+    EXPECT_THAT(mag_trunc(mag<5>()), Eq(mag<5>()));
+    EXPECT_THAT(mag_trunc(mag<1000>()), Eq(mag<1000>()));
+}
+
+TEST(MagTrunc, IdentityForNegativeIntegers) {
+    EXPECT_THAT(mag_trunc(-mag<1>()), Eq(-mag<1>()));
+    EXPECT_THAT(mag_trunc(-mag<5>()), Eq(-mag<5>()));
+    EXPECT_THAT(mag_trunc(-mag<1000>()), Eq(-mag<1000>()));
+}
+
+TEST(MagTrunc, TruncatesPositiveFractionsTowardZero) {
+    EXPECT_THAT(mag_trunc(mag<7>() / mag<3>()), Eq(mag<2>()));
+    EXPECT_THAT(mag_trunc(mag<5>() / mag<2>()), Eq(mag<2>()));
+    EXPECT_THAT(mag_trunc(mag<11>() / mag<4>()), Eq(mag<2>()));
+}
+
+TEST(MagTrunc, TruncatesNegativeFractionsTowardZero) {
+    EXPECT_THAT(mag_trunc(-mag<7>() / mag<3>()), Eq(-mag<2>()));
+    EXPECT_THAT(mag_trunc(-mag<5>() / mag<2>()), Eq(-mag<2>()));
+    EXPECT_THAT(mag_trunc(-mag<11>() / mag<4>()), Eq(-mag<2>()));
+}
+
+TEST(MagTrunc, ZeroInputReturnsZero) { StaticAssertTypeEq<decltype(mag_trunc(ZERO)), Zero>(); }
+
+TEST(MagTrunc, SmallFractionsTruncateToZero) {
+    StaticAssertTypeEq<decltype(mag_trunc(mag<1>() / mag<3>())), Zero>();
+    StaticAssertTypeEq<decltype(mag_trunc(mag<1>() / mag<2>())), Zero>();
+    StaticAssertTypeEq<decltype(mag_trunc(mag<2>() / mag<3>())), Zero>();
+}
+
+TEST(MagTrunc, SmallNegativeFractionsTruncateToZero) {
+    StaticAssertTypeEq<decltype(mag_trunc(-mag<1>() / mag<3>())), Zero>();
+    StaticAssertTypeEq<decltype(mag_trunc(-mag<1>() / mag<2>())), Zero>();
+    StaticAssertTypeEq<decltype(mag_trunc(-mag<2>() / mag<3>())), Zero>();
+}
+
+TEST(MagFloor, IdentityForPositiveIntegers) {
+    EXPECT_THAT(mag_floor(mag<1>()), Eq(mag<1>()));
+    EXPECT_THAT(mag_floor(mag<5>()), Eq(mag<5>()));
+    EXPECT_THAT(mag_floor(mag<1000>()), Eq(mag<1000>()));
+}
+
+TEST(MagFloor, IdentityForNegativeIntegers) {
+    EXPECT_THAT(mag_floor(-mag<1>()), Eq(-mag<1>()));
+    EXPECT_THAT(mag_floor(-mag<5>()), Eq(-mag<5>()));
+    EXPECT_THAT(mag_floor(-mag<1000>()), Eq(-mag<1000>()));
+}
+
+TEST(MagFloor, FloorsPositiveFractions) {
+    EXPECT_THAT(mag_floor(mag<7>() / mag<3>()), Eq(mag<2>()));
+    EXPECT_THAT(mag_floor(mag<5>() / mag<2>()), Eq(mag<2>()));
+    EXPECT_THAT(mag_floor(mag<11>() / mag<4>()), Eq(mag<2>()));
+}
+
+TEST(MagFloor, FloorsNegativeFractionsAwayFromZero) {
+    EXPECT_THAT(mag_floor(-mag<7>() / mag<3>()), Eq(-mag<3>()));
+    EXPECT_THAT(mag_floor(-mag<5>() / mag<2>()), Eq(-mag<3>()));
+    EXPECT_THAT(mag_floor(-mag<11>() / mag<4>()), Eq(-mag<3>()));
+}
+
+TEST(MagFloor, ZeroInputReturnsZero) { StaticAssertTypeEq<decltype(mag_floor(ZERO)), Zero>(); }
+
+TEST(MagFloor, SmallPositiveFractionsFloorToZero) {
+    StaticAssertTypeEq<decltype(mag_floor(mag<1>() / mag<3>())), Zero>();
+    StaticAssertTypeEq<decltype(mag_floor(mag<1>() / mag<2>())), Zero>();
+    StaticAssertTypeEq<decltype(mag_floor(mag<2>() / mag<3>())), Zero>();
+}
+
+TEST(MagFloor, SmallNegativeFractionsFloorToMinusOne) {
+    EXPECT_THAT(mag_floor(-mag<1>() / mag<3>()), Eq(-mag<1>()));
+    EXPECT_THAT(mag_floor(-mag<1>() / mag<2>()), Eq(-mag<1>()));
+    EXPECT_THAT(mag_floor(-mag<2>() / mag<3>()), Eq(-mag<1>()));
+}
+
+TEST(MagCeil, IdentityForPositiveIntegers) {
+    EXPECT_THAT(mag_ceil(mag<1>()), Eq(mag<1>()));
+    EXPECT_THAT(mag_ceil(mag<5>()), Eq(mag<5>()));
+    EXPECT_THAT(mag_ceil(mag<1000>()), Eq(mag<1000>()));
+}
+
+TEST(MagCeil, IdentityForNegativeIntegers) {
+    EXPECT_THAT(mag_ceil(-mag<1>()), Eq(-mag<1>()));
+    EXPECT_THAT(mag_ceil(-mag<5>()), Eq(-mag<5>()));
+    EXPECT_THAT(mag_ceil(-mag<1000>()), Eq(-mag<1000>()));
+}
+
+TEST(MagCeil, CeilsPositiveFractionsAwayFromZero) {
+    EXPECT_THAT(mag_ceil(mag<7>() / mag<3>()), Eq(mag<3>()));
+    EXPECT_THAT(mag_ceil(mag<5>() / mag<2>()), Eq(mag<3>()));
+    EXPECT_THAT(mag_ceil(mag<11>() / mag<4>()), Eq(mag<3>()));
+}
+
+TEST(MagCeil, CeilsNegativeFractionsTowardZero) {
+    EXPECT_THAT(mag_ceil(-mag<7>() / mag<3>()), Eq(-mag<2>()));
+    EXPECT_THAT(mag_ceil(-mag<5>() / mag<2>()), Eq(-mag<2>()));
+    EXPECT_THAT(mag_ceil(-mag<11>() / mag<4>()), Eq(-mag<2>()));
+}
+
+TEST(MagCeil, ZeroInputReturnsZero) { StaticAssertTypeEq<decltype(mag_ceil(ZERO)), Zero>(); }
+
+TEST(MagCeil, SmallPositiveFractionsCeilToOne) {
+    EXPECT_THAT(mag_ceil(mag<1>() / mag<3>()), Eq(mag<1>()));
+    EXPECT_THAT(mag_ceil(mag<1>() / mag<2>()), Eq(mag<1>()));
+    EXPECT_THAT(mag_ceil(mag<2>() / mag<3>()), Eq(mag<1>()));
+}
+
+TEST(MagCeil, SmallNegativeFractionsCeilToZero) {
+    StaticAssertTypeEq<decltype(mag_ceil(-mag<1>() / mag<3>())), Zero>();
+    StaticAssertTypeEq<decltype(mag_ceil(-mag<1>() / mag<2>())), Zero>();
+    StaticAssertTypeEq<decltype(mag_ceil(-mag<2>() / mag<3>())), Zero>();
+}
+
+TEST(MagRound, IdentityForPositiveIntegers) {
+    EXPECT_THAT(mag_round(mag<1>()), Eq(mag<1>()));
+    EXPECT_THAT(mag_round(mag<5>()), Eq(mag<5>()));
+    EXPECT_THAT(mag_round(mag<1000>()), Eq(mag<1000>()));
+}
+
+TEST(MagRound, IdentityForNegativeIntegers) {
+    EXPECT_THAT(mag_round(-mag<1>()), Eq(-mag<1>()));
+    EXPECT_THAT(mag_round(-mag<5>()), Eq(-mag<5>()));
+    EXPECT_THAT(mag_round(-mag<1000>()), Eq(-mag<1000>()));
+}
+
+TEST(MagRound, RoundsPositiveFractionsToNearestInteger) {
+    EXPECT_THAT(mag_round(mag<7>() / mag<3>()), Eq(mag<2>()));
+    EXPECT_THAT(mag_round(mag<8>() / mag<3>()), Eq(mag<3>()));
+    EXPECT_THAT(mag_round(mag<11>() / mag<4>()), Eq(mag<3>()));
+    EXPECT_THAT(mag_round(mag<9>() / mag<4>()), Eq(mag<2>()));
+}
+
+TEST(MagRound, RoundsNegativeFractionsToNearestInteger) {
+    EXPECT_THAT(mag_round(-mag<7>() / mag<3>()), Eq(-mag<2>()));
+    EXPECT_THAT(mag_round(-mag<8>() / mag<3>()), Eq(-mag<3>()));
+    EXPECT_THAT(mag_round(-mag<11>() / mag<4>()), Eq(-mag<3>()));
+    EXPECT_THAT(mag_round(-mag<9>() / mag<4>()), Eq(-mag<2>()));
+}
+
+TEST(MagRound, HalfValuesRoundAwayFromZero) {
+    EXPECT_THAT(mag_round(mag<5>() / mag<2>()), Eq(mag<3>()));
+    EXPECT_THAT(mag_round(mag<7>() / mag<2>()), Eq(mag<4>()));
+    EXPECT_THAT(mag_round(-mag<5>() / mag<2>()), Eq(-mag<3>()));
+    EXPECT_THAT(mag_round(-mag<7>() / mag<2>()), Eq(-mag<4>()));
+}
+
+TEST(MagRound, ZeroInputReturnsZero) { StaticAssertTypeEq<decltype(mag_round(ZERO)), Zero>(); }
+
+TEST(MagRound, SmallPositiveFractionsRoundToZeroOrOne) {
+    StaticAssertTypeEq<decltype(mag_round(mag<1>() / mag<3>())), Zero>();
+    EXPECT_THAT(mag_round(mag<1>() / mag<2>()), Eq(mag<1>()));
+    EXPECT_THAT(mag_round(mag<2>() / mag<3>()), Eq(mag<1>()));
+}
+
+TEST(MagRound, SmallNegativeFractionsRoundToZeroOrMinusOne) {
+    StaticAssertTypeEq<decltype(mag_round(-mag<1>() / mag<3>())), Zero>();
+    EXPECT_THAT(mag_round(-mag<1>() / mag<2>()), Eq(-mag<1>()));
+    EXPECT_THAT(mag_round(-mag<2>() / mag<3>()), Eq(-mag<1>()));
 }
 
 TEST(Magnitude, PowersBehaveCorrectly) {
