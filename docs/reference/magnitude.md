@@ -160,6 +160,48 @@ Note that this function's return value also depends on _whether we can compute_ 
 whether it is representable.   For example, `representable_in<double>(sqrt(mag<2>()))` is currently
 `false`, because we haven't yet added support for computing rational base powers.
 
+## Compile-time arithmetic limitations
+
+Some `Magnitude` operations need to perform arithmetic at compile time to compute their results.  For
+example, to compare two magnitudes, we need to determine which one is larger.  It is extremely hard,
+if not impossible, to do this for _all_ magnitudes, which may involve arbitrary rational powers, and
+even transcendental numbers.  However, others can easily be computed using only 64-bit integer
+operations.
+
+We provide support for the subset of inputs where we can confidently produce exact answers, and
+guard other inputs behind compile-time errors.  This enables many practical use cases, while
+conservatively avoiding producing an incorrect program.
+
+Our concrete policy is to support only operations where we can produce exact answers using only
+64-bit integer arithmetic.  This does _not_ mean that we only support exact integer magnitudes.
+These operations are _binary_, so the feasibility depends on the _relationship_ between the two
+inputs.
+
+??? example
+    Suppose we had this variable:
+
+    ```cpp
+    constexpr auto PI = Magnitude<Pi>{};
+    ```
+
+    Here are some examples of comparisons that would or would not be supported.
+
+    - `PI > mag<3>()` would **not** be supported: it would result in a compiler error.
+        - **Reason:** We cannot use the exact value of $\pi$ in computations; we only have access to
+          the nearest representable floating point number.  Floating point arithmetic is inexact, so
+          this does not meet our criteria.
+    - `PI > (mag<3>() * PI / mag<2>())` **would** be supported, and would evaluate to `false`.
+        - **Reason:** Regardless of the exact value of $\pi$, we can see that $\pi$ cancels out, so
+          this comparison is equivalent to checking whether $1 > \frac{3}{2}$, which we can convert
+          to $2 > 3$.  This can be seen to be `false` using only integer arithmetic.
+
+When an operation cannot be computed --- either because the relationship involves irrational
+factors, or because the integers involved are too large --- you will get a **compile-time error**
+with a message explaining the problem.
+
+!!! note
+    Operations subject to this limitation will be marked with † in their documentation.
+
 ## Operations
 
 These are the operations which `Magnitude` supports.  Because it is a [monovalue
@@ -180,6 +222,29 @@ In what follows, we'll use this convention:
 - For _instances_ `m1` and `m2`:
     - `m1 == m2` (equality comparison)
     - `m1 != m2` (inequality comparison)
+
+### Ordering comparison †
+
+**Result:** A `bool` indicating the relative ordering of two `Magnitude` values.
+
+Unlike equality comparison (which simply checks whether two types are the same), ordering comparison
+computes which magnitude is larger.
+
+† _This feature is subject to [compile-time arithmetic
+limitations](#compile-time-arithmetic-limitations)._
+
+**Syntax:**
+
+- For _instances_ `m1` and `m2`:
+    - `m1 < m2`
+    - `m1 > m2`
+    - `m1 <= m2`
+    - `m1 >= m2`
+
+`Zero` can also be compared with any `Magnitude`:
+
+- `ZERO < m` is `true` when `m` is positive
+- `ZERO > m` is `true` when `m` is negative
 
 ### Multiplication
 

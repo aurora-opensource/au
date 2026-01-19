@@ -51,6 +51,57 @@ TEST(Magnitude, SupportsEqualityComparison) {
     EXPECT_THAT(mag_1, Ne(mag_2));
 }
 
+TEST(Magnitude, SupportsOrderingComparison) {
+    // Basic ordering.
+    EXPECT_TRUE(mag<1>() < mag<2>());
+    EXPECT_TRUE(mag<2>() > mag<1>());
+    EXPECT_TRUE(mag<1>() <= mag<2>());
+    EXPECT_TRUE(mag<2>() >= mag<1>());
+
+    // Equal magnitudes.
+    EXPECT_TRUE(mag<5>() <= mag<5>());
+    EXPECT_TRUE(mag<5>() >= mag<5>());
+    EXPECT_FALSE(mag<5>() < mag<5>());
+    EXPECT_FALSE(mag<5>() > mag<5>());
+
+    // Ratios.
+    EXPECT_TRUE(mag<1>() / mag<3>() < mag<1>() / mag<2>());
+    EXPECT_TRUE(mag<2>() / mag<5>() < mag<3>() / mag<5>());
+}
+
+TEST(Magnitude, OrderingHandlesNegativeMagnitudes) {
+    // Negative vs positive.
+    EXPECT_TRUE(-mag<5>() < mag<1>());
+    EXPECT_TRUE(mag<1>() > -mag<5>());
+
+    // Both negative: more negative is less.
+    EXPECT_TRUE(-mag<10>() < -mag<5>());
+    EXPECT_TRUE(-mag<5>() > -mag<10>());
+
+    // Negative ratios.
+    EXPECT_TRUE(-mag<2>() / mag<3>() < -mag<1>() / mag<3>());
+}
+
+TEST(Magnitude, OrderingWithZero) {
+    // Zero is less than positive magnitudes.
+    EXPECT_TRUE(ZERO < mag<1>());
+    EXPECT_TRUE(ZERO < mag<1>() / mag<1000>());
+    EXPECT_FALSE(ZERO > mag<1>());
+    EXPECT_TRUE(ZERO <= mag<1>());
+    EXPECT_FALSE(ZERO >= mag<1>());
+
+    // Zero is greater than negative magnitudes.
+    EXPECT_TRUE(ZERO > -mag<1>());
+    EXPECT_TRUE(ZERO > -mag<1000>());
+    EXPECT_FALSE(ZERO < -mag<1>());
+    EXPECT_TRUE(ZERO >= -mag<1>());
+    EXPECT_FALSE(ZERO <= -mag<1>());
+
+    // Magnitude vs Zero.
+    EXPECT_TRUE(mag<1>() > ZERO);
+    EXPECT_TRUE(-mag<1>() < ZERO);
+}
+
 TEST(Magnitude, ProductBehavesCorrectly) {
     EXPECT_THAT(mag<4>() * mag<6>(), Eq(mag<24>()));
     EXPECT_THAT(mag<142857>() * mag<7>(), Eq(mag<999999>()));
