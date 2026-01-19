@@ -276,6 +276,56 @@ limitations](#compile-time-arithmetic-limitations)._
     Older releases used `MagQuotientT` (with the `T` suffix) instead of `MagQuotient`.  Prefer
     `MagQuotient`.  `MagQuotientT` is deprecated, and will be removed in future releases.
 
+### Addition †
+
+**Result:** The sum of two `Magnitude` values.
+
+This operation also supports `Zero` as both an input and an output.
+
+† _This feature is subject to [compile-time arithmetic
+limitations](#compile-time-arithmetic-limitations)._
+
+**Syntax:**
+
+- For _instances_ `m1` and `m2`:
+    - `m1 + m2`
+
+`Zero` is the identity element:
+
+- `ZERO + m` equals `m`
+- `m + ZERO` equals `m`
+
+If the sum is zero, the result type is `Zero`:
+
+- `m + (-m)` has type `Zero`
+
+### Subtraction †
+
+**Result:** The difference of two `Magnitude` values.
+
+This operation also supports `Zero` as both an input and an output.
+
+† _This feature is subject to [compile-time arithmetic
+limitations](#compile-time-arithmetic-limitations)._
+
+**Syntax:**
+
+- For _instances_ `m1` and `m2`:
+    - `m1 - m2`
+
+When the operands are equal, the result type is `Zero`:
+
+- `m - m` has type `Zero`
+
+When the result is negative, the return type is a negative `Magnitude`:
+
+- `mag<3>() - mag<5>()` equals `-mag<2>()`
+
+`Zero` interactions:
+
+- `m - ZERO` equals `m`
+- `ZERO - m` equals `-m`
+
 ### Negation
 
 **Result:** The negative of a `Magnitude`.

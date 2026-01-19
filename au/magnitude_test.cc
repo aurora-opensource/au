@@ -116,6 +116,209 @@ TEST(Magnitude, QuotientBehavesCorrectly) {
     EXPECT_THAT(mag<10>() / mag<6>(), Eq(mag<5>() / mag<3>()));
 }
 
+TEST(Magnitude, AdditionOfIntegersWorks) {
+    EXPECT_THAT(mag<2>() + mag<3>(), Eq(mag<5>()));
+    EXPECT_THAT(mag<100>() + mag<200>(), Eq(mag<300>()));
+    EXPECT_THAT(mag<1>() + mag<1>(), Eq(mag<2>()));
+}
+
+TEST(Magnitude, AdditionOfFractionsWorks) {
+    EXPECT_THAT(mag<1>() / mag<2>() + mag<1>() / mag<3>(), Eq(mag<5>() / mag<6>()));
+
+    EXPECT_THAT(mag<1>() / mag<4>() + mag<1>() / mag<4>(), Eq(mag<1>() / mag<2>()));
+
+    EXPECT_THAT(mag<2>() / mag<3>() + mag<1>() / mag<6>(), Eq(mag<5>() / mag<6>()));
+}
+
+TEST(Magnitude, AdditionWithZeroIsIdentity) {
+    EXPECT_THAT(ZERO + mag<5>(), Eq(mag<5>()));
+    EXPECT_THAT(mag<5>() + ZERO, Eq(mag<5>()));
+
+    EXPECT_THAT(ZERO + mag<1>() / mag<3>(), Eq(mag<1>() / mag<3>()));
+    EXPECT_THAT(mag<1>() / mag<3>() + ZERO, Eq(mag<1>() / mag<3>()));
+
+    EXPECT_THAT(ZERO + (-mag<7>()), Eq(-mag<7>()));
+    EXPECT_THAT((-mag<7>()) + ZERO, Eq(-mag<7>()));
+}
+
+TEST(Magnitude, AdditionOfNegativesWorks) {
+    EXPECT_THAT((-mag<2>()) + (-mag<3>()), Eq(-mag<5>()));
+
+    EXPECT_THAT(mag<5>() + (-mag<3>()), Eq(mag<2>()));
+
+    EXPECT_THAT((-mag<3>()) + mag<5>(), Eq(mag<2>()));
+
+    EXPECT_THAT(mag<3>() + (-mag<5>()), Eq(-mag<2>()));
+
+    EXPECT_THAT((-mag<5>()) + mag<3>(), Eq(-mag<2>()));
+}
+
+TEST(Magnitude, AdditionYieldingZeroReturnsZero) {
+    StaticAssertTypeEq<decltype(mag<5>() + (-mag<5>())), Zero>();
+
+    StaticAssertTypeEq<decltype(mag<1>() / mag<3>() + (-mag<1>() / mag<3>())), Zero>();
+}
+
+TEST(Magnitude, CanAddMagnitudesWithIrrationalCommonFactor) {
+    EXPECT_THAT(mag<2>() * PI + mag<3>() * PI, Eq(mag<5>() * PI));
+}
+
+TEST(Magnitude, SubtractionOfIntegersWorks) {
+    EXPECT_THAT(mag<5>() - mag<3>(), Eq(mag<2>()));
+    EXPECT_THAT(mag<300>() - mag<100>(), Eq(mag<200>()));
+}
+
+TEST(Magnitude, SubtractionOfFractionsWorks) {
+    EXPECT_THAT(mag<1>() / mag<2>() - mag<1>() / mag<3>(), Eq(mag<1>() / mag<6>()));
+
+    EXPECT_THAT(mag<5>() / mag<6>() - mag<1>() / mag<3>(), Eq(mag<1>() / mag<2>()));
+
+    EXPECT_THAT(mag<3>() / mag<4>() - mag<1>() / mag<4>(), Eq(mag<1>() / mag<2>()));
+}
+
+TEST(Magnitude, SubtractionReturnsZeroWhenOperandsAreEqual) {
+    StaticAssertTypeEq<decltype(mag<5>() - mag<5>()), Zero>();
+    StaticAssertTypeEq<decltype(mag<1>() / mag<3>() - mag<1>() / mag<3>()), Zero>();
+    StaticAssertTypeEq<decltype((-mag<7>()) - (-mag<7>())), Zero>();
+}
+
+TEST(Magnitude, SubtractionReturnsNegativeWhenAppropriate) {
+    EXPECT_THAT(mag<3>() - mag<5>(), Eq(-mag<2>()));
+
+    EXPECT_THAT(mag<1>() / mag<4>() - mag<3>() / mag<4>(), Eq(-mag<1>() / mag<2>()));
+}
+
+TEST(Magnitude, SubtractionWithZeroWorks) {
+    EXPECT_THAT(mag<5>() - ZERO, Eq(mag<5>()));
+    EXPECT_THAT((-mag<7>()) - ZERO, Eq(-mag<7>()));
+    EXPECT_THAT(mag<1>() / mag<3>() - ZERO, Eq(mag<1>() / mag<3>()));
+
+    EXPECT_THAT(ZERO - mag<5>(), Eq(-mag<5>()));
+    EXPECT_THAT(ZERO - (-mag<7>()), Eq(mag<7>()));
+    EXPECT_THAT(ZERO - mag<1>() / mag<3>(), Eq(-mag<1>() / mag<3>()));
+}
+
+TEST(Magnitude, SubtractionOfNegativesWorks) {
+    EXPECT_THAT((-mag<2>()) - (-mag<3>()), Eq(mag<1>()));
+
+    EXPECT_THAT(mag<5>() - (-mag<3>()), Eq(mag<8>()));
+
+    EXPECT_THAT((-mag<3>()) - mag<5>(), Eq(-mag<8>()));
+
+    EXPECT_THAT((-mag<5>()) - (-mag<3>()), Eq(-mag<2>()));
+}
+
+TEST(Magnitude, CanSubtractMagnitudesWithIrrationalCommonFactor) {
+    EXPECT_THAT(PI - mag<2>() * PI, Eq(-PI));
+}
+
+TEST(Magnitude, AdditionOfLargePositives) {
+    constexpr auto two_to_63 = pow<63>(mag<2>());
+    constexpr auto two_to_62 = pow<62>(mag<2>());
+    EXPECT_THAT(two_to_63 + two_to_62, Eq(mag<3>() * two_to_62));
+
+    EXPECT_THAT(two_to_63 + two_to_63, Eq(pow<64>(mag<2>())));
+
+    EXPECT_THAT(two_to_63 + mag<1>(), Eq(two_to_63 + mag<1>()));
+}
+
+TEST(Magnitude, AdditionOfExtremelyLargePositivesWithLargeCommonFactorIsOk) {
+    constexpr auto two_to_123456 = pow<123456>(mag<2>());
+    constexpr auto two_to_123458 = pow<123458>(mag<2>());
+
+    EXPECT_THAT(two_to_123456 + two_to_123458, Eq(mag<5>() * pow<123456>(mag<2>())));
+}
+
+TEST(Magnitude, AdditionOfLargeNegatives) {
+    constexpr auto two_to_63 = pow<63>(mag<2>());
+    constexpr auto two_to_62 = pow<62>(mag<2>());
+
+    EXPECT_THAT((-two_to_63) + (-two_to_62), Eq(-(mag<3>() * two_to_62)));
+
+    EXPECT_THAT((-two_to_63) + (-two_to_63), Eq(-pow<64>(mag<2>())));
+}
+
+TEST(Magnitude, AdditionOfLargePositiveAndSmallNegative) {
+    constexpr auto two_to_63 = pow<63>(mag<2>());
+
+    EXPECT_THAT(two_to_63 + (-mag<1>()), Eq(two_to_63 - mag<1>()));
+
+    EXPECT_THAT(two_to_63 + (-pow<62>(mag<2>())), Eq(pow<62>(mag<2>())));
+}
+
+TEST(Magnitude, AdditionOfLargeNegativeAndSmallPositive) {
+    constexpr auto two_to_63 = pow<63>(mag<2>());
+
+    EXPECT_THAT((-two_to_63) + mag<1>(), Eq(-(two_to_63 - mag<1>())));
+
+    EXPECT_THAT((-two_to_63) + pow<62>(mag<2>()), Eq(-pow<62>(mag<2>())));
+}
+
+TEST(Magnitude, AdditionOfLargeMagnitudesYieldingZero) {
+    constexpr auto two_to_63 = pow<63>(mag<2>());
+
+    StaticAssertTypeEq<decltype(two_to_63 + (-two_to_63)), Zero>();
+
+    StaticAssertTypeEq<decltype((-two_to_63) + two_to_63), Zero>();
+}
+
+TEST(Magnitude, SubtractionOfLargePositives) {
+    constexpr auto two_to_63 = pow<63>(mag<2>());
+    constexpr auto two_to_62 = pow<62>(mag<2>());
+
+    EXPECT_THAT(two_to_63 - two_to_62, Eq(two_to_62));
+
+    EXPECT_THAT(two_to_62 - two_to_63, Eq(-two_to_62));
+
+    EXPECT_THAT(two_to_63 - mag<1>(), Eq(two_to_63 - mag<1>()));
+}
+
+TEST(Magnitude, SubtractionOfLargeNegatives) {
+    constexpr auto two_to_63 = pow<63>(mag<2>());
+    constexpr auto two_to_62 = pow<62>(mag<2>());
+
+    EXPECT_THAT((-two_to_63) - (-two_to_62), Eq(-two_to_62));
+
+    EXPECT_THAT((-two_to_62) - (-two_to_63), Eq(two_to_62));
+}
+
+TEST(Magnitude, SubtractionOfLargePositiveAndLargeNegative) {
+    constexpr auto two_to_63 = pow<63>(mag<2>());
+    constexpr auto two_to_62 = pow<62>(mag<2>());
+
+    EXPECT_THAT(two_to_63 - (-two_to_62), Eq(mag<3>() * two_to_62));
+
+    EXPECT_THAT(two_to_63 - (-two_to_63), Eq(pow<64>(mag<2>())));
+}
+
+TEST(Magnitude, SubtractionOfLargeNegativeAndLargePositive) {
+    constexpr auto two_to_63 = pow<63>(mag<2>());
+    constexpr auto two_to_62 = pow<62>(mag<2>());
+
+    EXPECT_THAT((-two_to_63) - two_to_62, Eq(-(mag<3>() * two_to_62)));
+
+    EXPECT_THAT((-two_to_63) - two_to_63, Eq(-pow<64>(mag<2>())));
+}
+
+TEST(Magnitude, SubtractionOfLargeMagnitudesYieldingZero) {
+    constexpr auto two_to_63 = pow<63>(mag<2>());
+
+    StaticAssertTypeEq<decltype(two_to_63 - two_to_63), Zero>();
+
+    StaticAssertTypeEq<decltype((-two_to_63) - (-two_to_63)), Zero>();
+}
+
+TEST(Magnitude, LargeFractionArithmetic) {
+    constexpr auto large_half = pow<62>(mag<2>());
+
+    EXPECT_THAT(large_half + large_half / mag<2>(), Eq(mag<3>() * pow<61>(mag<2>())));
+
+    EXPECT_THAT(large_half - large_half / mag<2>(), Eq(pow<61>(mag<2>())));
+
+    EXPECT_THAT(large_half / mag<3>() + large_half / mag<3>(),
+                Eq(mag<2>() * large_half / mag<3>()));
+}
+
 TEST(Magnitude, PowersBehaveCorrectly) {
     EXPECT_THAT(pow<3>(mag<2>()), Eq(mag<8>()));
     EXPECT_THAT(pow<-2>(mag<5>()), Eq(mag<1>() / mag<25>()));
