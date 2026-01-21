@@ -108,7 +108,9 @@ to extract that represented value, and store it in a more conventional numeric t
 or `double`.
 
 To extract the value of a `Magnitude` instance `m` into a given numeric type `T`, call
-`get_value<T>(m)`.  Here are some important aspects of this utility.
+`get_value<T>(m)`.  This also works with [`Zero`](./zero.md): `get_value<T>(ZERO)` returns `T{0}`.
+
+Here are some important aspects of this utility.
 
 1. The computation takes place completely at compile time.
 2. The computation takes place in the widest type of the same kind.  (That is, when `T` is floating
