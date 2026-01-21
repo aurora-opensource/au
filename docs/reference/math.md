@@ -437,7 +437,7 @@ passing `y` and `x`, we first convert them to their common unit, and pass their 
 
 ### Rounding functions
 
-#### `round_as`, `round_in`
+#### `round_as`, `round_in` {#round}
 
 Round a `Quantity` to the nearest integer value, using units that are specified explicitly at the
 callsite.
@@ -516,7 +516,12 @@ The policy for the rep is consistent with
 [`std::round`](https://en.cppreference.com/w/cpp/numeric/math/round).  The output rep is the same as
 the return type of applying `std::round` to the input rep.
 
-#### `ceil_in`, `ceil_as`
+!!! tip
+    If you need to round a `Quantity` with integral rep, and you want to stay in the integer domain
+    or need `constexpr` compatibility, consider using [`int_round_in` and
+    `int_round_as`](#int_round) instead.
+
+#### `ceil_in`, `ceil_as` {#ceil}
 
 Round a `Quantity` up to the smallest integer value which is at least as big as that quantity, using
 units that are specified explicitly at the callsite.
@@ -594,7 +599,12 @@ The policy for the rep is consistent with
 [`std::ceil`](https://en.cppreference.com/w/cpp/numeric/math/ceil).  The output rep is the same as
 the return type of applying `std::ceil` to the input rep.
 
-#### `floor_in`, `floor_as`
+!!! tip
+    If you need to ceil a `Quantity` with integral rep, and you want to stay in the integer domain
+    or need `constexpr` compatibility, consider using [`int_ceil_in` and
+    `int_ceil_as`](#int_ceil) instead.
+
+#### `floor_in`, `floor_as` {#floor}
 
 Round a `Quantity` down to the largest integer value which is no bigger than that quantity, using
 the units that are specified explicitly at the callsite.
@@ -671,6 +681,155 @@ units.  We return the largest such quantity which is no larger than the original
 The policy for the rep is consistent with
 [`std::floor`](https://en.cppreference.com/w/cpp/numeric/math/floor).  The output rep is the same as
 the return type of applying `std::floor` to the input rep.
+
+!!! tip
+    If you need to floor a `Quantity` with integral rep, and you want to stay in the integer domain
+    or need `constexpr` compatibility, consider using [`int_floor_in` and
+    `int_floor_as`](#int_floor) instead.
+
+#### `int_round_in`, `int_round_as` {#int_round}
+
+Round a `Quantity` with integral rep to the nearest integer value in the specified units, without
+leaving the integer domain.
+
+The name `int_round` is shorthand for "integer-domain `round`".  These functions are similar to
+[`round_in` and `round_as`](#round), but they do not call `std::round`.  This provides two
+advantages.  First, the computation stays purely in the integer domain, rather than converting to
+floating point and back.  Second, these functions are `constexpr` compatible.
+
+!!! note
+    The input `Quantity` must have an integral rep.  Calling these functions with a floating point
+    rep will produce a compiler error.
+
+When the input is exactly halfway between two adjacent integer values, these functions round **away
+from zero**.  For example, `0.5` rounds to `1`, and `-0.5` rounds to `-1`.
+
+**Signatures:**
+
+```cpp
+//
+// int_round_as(): return a Quantity or QuantityPoint (depending on the input type)
+//
+
+// a) For `Quantity` inputs
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
+
+//
+// int_round_in(): return a raw number
+//
+
+// a) For `Quantity` inputs
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+```
+
+**Returns:** The nearest integer value in the specified units.  For `int_round_as`, the result is
+a `Quantity` or `QuantityPoint` (depending on the input type).  For `int_round_in`, the result is
+a raw integer of the same type as the input's rep.
+
+#### `int_floor_in`, `int_floor_as` {#int_floor}
+
+Round a `Quantity` with integral rep down to the largest integer value which is no bigger than
+that quantity, without leaving the integer domain.
+
+The name `int_floor` is shorthand for "integer-domain `floor`".  These functions are similar to
+[`floor_in` and `floor_as`](#floor), but they do not call `std::floor`.  This provides two
+advantages.  First, the computation stays purely in the integer domain, rather than converting to
+floating point and back.  Second, these functions are `constexpr` compatible.
+
+!!! note
+    The input `Quantity` must have an integral rep.  Calling these functions with a floating point
+    rep will produce a compiler error.
+
+**Signatures:**
+
+```cpp
+//
+// int_floor_as(): return a Quantity or QuantityPoint (depending on the input type)
+//
+
+// a) For `Quantity` inputs
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
+
+//
+// int_floor_in(): return a raw number
+//
+
+// a) For `Quantity` inputs
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+```
+
+**Returns:** The largest integer value in the specified units which is no larger than the input.
+For `int_floor_as`, the result is a `Quantity` or `QuantityPoint` (depending on the input type).
+For `int_floor_in`, the result is a raw integer of the same type as the input's rep.
+
+#### `int_ceil_in`, `int_ceil_as` {#int_ceil}
+
+Round a `Quantity` with integral rep up to the smallest integer value which is at least as big as
+that quantity, without leaving the integer domain.
+
+The name `int_ceil` is shorthand for "integer-domain `ceil`".  These functions are similar to
+[`ceil_in` and `ceil_as`](#ceil), but they do not call `std::ceil`.  This provides two advantages.
+First, the computation stays purely in the integer domain, rather than converting to floating point
+and back.  Second, these functions are `constexpr` compatible.
+
+!!! note
+    The input `Quantity` must have an integral rep.  Calling these functions with a floating point
+    rep will produce a compiler error.
+
+**Signatures:**
+
+```cpp
+//
+// int_ceil_as(): return a Quantity or QuantityPoint (depending on the input type)
+//
+
+// a) For `Quantity` inputs
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
+
+//
+// int_ceil_in(): return a raw number
+//
+
+// a) For `Quantity` inputs
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q);
+
+// b) For `QuantityPoint` inputs
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+```
+
+**Returns:** The smallest integer value in the specified units which is no smaller than the input.
+For `int_ceil_as`, the result is a `Quantity` or `QuantityPoint` (depending on the input type).
+For `int_ceil_in`, the result is a raw integer of the same type as the input's rep.
 
 ### Inverse functions
 
