@@ -692,10 +692,10 @@ the return type of applying `std::floor` to the input rep.
 Round a `Quantity` with integral rep to the nearest integer value in the specified units, without
 leaving the integer domain.
 
-These functions are similar to [`round_in` and `round_as`](#round), but they do not call
-`std::round`.  This provides two advantages.  First, the computation stays purely in the
-integer domain, rather than converting to floating point and back.  Second, these functions are
-`constexpr` compatible.
+The name `int_round` is shorthand for "integer-domain `round`".  These functions are similar to
+[`round_in` and `round_as`](#round), but they do not call `std::round`.  This provides two
+advantages.  First, the computation stays purely in the integer domain, rather than converting to
+floating point and back.  Second, these functions are `constexpr` compatible.
 
 !!! note
     The input `Quantity` must have an integral rep.  Calling these functions with a floating point
@@ -742,10 +742,10 @@ a raw integer of the same type as the input's rep.
 Round a `Quantity` with integral rep down to the largest integer value which is no bigger than
 that quantity, without leaving the integer domain.
 
-These functions are similar to [`floor_in` and `floor_as`](#floor), but they do not call
-`std::floor`.  This provides two advantages.  First, the computation stays purely in the
-integer domain, rather than converting to floating point and back.  Second, these functions are
-`constexpr` compatible.
+The name `int_floor` is shorthand for "integer-domain `floor`".  These functions are similar to
+[`floor_in` and `floor_as`](#floor), but they do not call `std::floor`.  This provides two
+advantages.  First, the computation stays purely in the integer domain, rather than converting to
+floating point and back.  Second, these functions are `constexpr` compatible.
 
 !!! note
     The input `Quantity` must have an integral rep.  Calling these functions with a floating point
@@ -789,10 +789,10 @@ For `int_floor_in`, the result is a raw integer of the same type as the input's 
 Round a `Quantity` with integral rep up to the smallest integer value which is at least as big as
 that quantity, without leaving the integer domain.
 
-These functions are similar to [`ceil_in` and `ceil_as`](#ceil), but they do not call
-`std::ceil`.  This provides two advantages.  First, the computation stays purely in the
-integer domain, rather than converting to floating point and back.  Second, these functions are
-`constexpr` compatible.
+The name `int_ceil` is shorthand for "integer-domain `ceil`".  These functions are similar to
+[`ceil_in` and `ceil_as`](#ceil), but they do not call `std::ceil`.  This provides two advantages.
+First, the computation stays purely in the integer domain, rather than converting to floating point
+and back.  Second, these functions are `constexpr` compatible.
 
 !!! note
     The input `Quantity` must have an integral rep.  Calling these functions with a floating point
