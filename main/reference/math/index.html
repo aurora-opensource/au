@@ -1978,7 +1978,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#round_as-round_in" class="md-nav__link">
+  <a href="#round" class="md-nav__link">
     <span class="md-ellipsis">
       
         round_as, round_in
@@ -1989,7 +1989,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ceil_in-ceil_as" class="md-nav__link">
+  <a href="#ceil" class="md-nav__link">
     <span class="md-ellipsis">
       
         ceil_in, ceil_as
@@ -2000,10 +2000,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#floor_in-floor_as" class="md-nav__link">
+  <a href="#floor" class="md-nav__link">
     <span class="md-ellipsis">
       
         floor_in, floor_as
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#int_round" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        int_round_in, int_round_as
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#int_floor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        int_floor_in, int_floor_as
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#int_ceil" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        int_ceil_in, int_ceil_as
       
     </span>
   </a>
@@ -3208,7 +3241,7 @@ a hard compiler error.  We convert them to their common unit, if necessary, befo
 <p><strong>Returns:</strong> <code>radians(std::atan2(y, x))</code>.  If the inputs are <code>Quantity</code> types, then instead of
 passing <code>y</code> and <code>x</code>, we first convert them to their common unit, and pass their values in that unit.</p>
 <h3 id="rounding-functions">Rounding functions<a class="headerlink" href="#rounding-functions" title="Permanent link">&para;</a></h3>
-<h4 id="round_as-round_in"><code>round_as</code>, <code>round_in</code><a class="headerlink" href="#round_as-round_in" title="Permanent link">&para;</a></h4>
+<h4 id="round"><code>round_as</code>, <code>round_in</code><a class="headerlink" href="#round" title="Permanent link">&para;</a></h4>
 <p>Round a <code>Quantity</code> to the nearest integer value, using units that are specified explicitly at the
 callsite.</p>
 <p>These functions are intended as unit-aware analogues to
@@ -3278,7 +3311,13 @@ the original input quantity.</p>
 <p>The policy for the rep is consistent with
 <a href="https://en.cppreference.com/w/cpp/numeric/math/round"><code>std::round</code></a>.  The output rep is the same as
 the return type of applying <code>std::round</code> to the input rep.</p>
-<h4 id="ceil_in-ceil_as"><code>ceil_in</code>, <code>ceil_as</code><a class="headerlink" href="#ceil_in-ceil_as" title="Permanent link">&para;</a></h4>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you need to round a <code>Quantity</code> with integral rep, and you want to stay in the integer domain
+or need <code>constexpr</code> compatibility, consider using <a href="#int_round"><code>int_round_in</code> and
+<code>int_round_as</code></a> instead.</p>
+</div>
+<h4 id="ceil"><code>ceil_in</code>, <code>ceil_as</code><a class="headerlink" href="#ceil" title="Permanent link">&para;</a></h4>
 <p>Round a <code>Quantity</code> up to the smallest integer value which is at least as big as that quantity, using
 units that are specified explicitly at the callsite.</p>
 <p>These functions are intended as unit-aware analogues to
@@ -3347,7 +3386,13 @@ units.  We return the smallest such quantity which is no smaller than the origin
 <p>The policy for the rep is consistent with
 <a href="https://en.cppreference.com/w/cpp/numeric/math/ceil"><code>std::ceil</code></a>.  The output rep is the same as
 the return type of applying <code>std::ceil</code> to the input rep.</p>
-<h4 id="floor_in-floor_as"><code>floor_in</code>, <code>floor_as</code><a class="headerlink" href="#floor_in-floor_as" title="Permanent link">&para;</a></h4>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you need to ceil a <code>Quantity</code> with integral rep, and you want to stay in the integer domain
+or need <code>constexpr</code> compatibility, consider using <a href="#int_ceil"><code>int_ceil_in</code> and
+<code>int_ceil_as</code></a> instead.</p>
+</div>
+<h4 id="floor"><code>floor_in</code>, <code>floor_as</code><a class="headerlink" href="#floor" title="Permanent link">&para;</a></h4>
 <p>Round a <code>Quantity</code> down to the largest integer value which is no bigger than that quantity, using
 the units that are specified explicitly at the callsite.</p>
 <p>These functions are intended as unit-aware analogues to
@@ -3416,6 +3461,137 @@ units.  We return the largest such quantity which is no larger than the original
 <p>The policy for the rep is consistent with
 <a href="https://en.cppreference.com/w/cpp/numeric/math/floor"><code>std::floor</code></a>.  The output rep is the same as
 the return type of applying <code>std::floor</code> to the input rep.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you need to floor a <code>Quantity</code> with integral rep, and you want to stay in the integer domain
+or need <code>constexpr</code> compatibility, consider using <a href="#int_floor"><code>int_floor_in</code> and
+<code>int_floor_as</code></a> instead.</p>
+</div>
+<h4 id="int_round"><code>int_round_in</code>, <code>int_round_as</code><a class="headerlink" href="#int_round" title="Permanent link">&para;</a></h4>
+<p>Round a <code>Quantity</code> with integral rep to the nearest integer value in the specified units, without
+leaving the integer domain.</p>
+<p>The name <code>int_round</code> is shorthand for &ldquo;integer-domain <code>round</code>&rdquo;.  These functions are similar to
+<a href="#round"><code>round_in</code> and <code>round_as</code></a>, but they do not call <code>std::round</code>.  This provides two
+advantages.  First, the computation stays purely in the integer domain, rather than converting to
+floating point and back.  Second, these functions are <code>constexpr</code> compatible.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The input <code>Quantity</code> must have an integral rep.  Calling these functions with a floating point
+rep will produce a compiler error.</p>
+</div>
+<p>When the input is exactly halfway between two adjacent integer values, these functions round <strong>away
+from zero</strong>.  For example, <code>0.5</code> rounds to <code>1</code>, and <code>-0.5</code> rounds to <code>-1</code>.</p>
+<p><strong>Signatures:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1">//</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="c1">// int_round_as(): return a Quantity or QuantityPoint (depending on the input type)</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="c1">//</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="c1">// a) For `Quantity` inputs</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">RoundingUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">int_round_as</span><span class="p">(</span><span class="n">RoundingUnits</span><span class="w"> </span><span class="n">rounding_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="c1">// b) For `QuantityPoint` inputs</span>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">RoundingUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">int_round_as</span><span class="p">(</span><span class="n">RoundingUnits</span><span class="w"> </span><span class="n">rounding_units</span><span class="p">,</span><span class="w"> </span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="c1">//</span>
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a><span class="c1">// int_round_in(): return a raw number</span>
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="c1">//</span>
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a><span class="c1">// a) For `Quantity` inputs</span>
+<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">RoundingUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">int_round_in</span><span class="p">(</span><span class="n">RoundingUnits</span><span class="w"> </span><span class="n">rounding_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a>
+<a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a><span class="c1">// b) For `QuantityPoint` inputs</span>
+<a id="__codelineno-16-23" name="__codelineno-16-23" href="#__codelineno-16-23"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">RoundingUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-16-24" name="__codelineno-16-24" href="#__codelineno-16-24"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">int_round_in</span><span class="p">(</span><span class="n">RoundingUnits</span><span class="w"> </span><span class="n">rounding_units</span><span class="p">,</span><span class="w"> </span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+</code></pre></div>
+<p><strong>Returns:</strong> The nearest integer value in the specified units.  For <code>int_round_as</code>, the result is
+a <code>Quantity</code> or <code>QuantityPoint</code> (depending on the input type).  For <code>int_round_in</code>, the result is
+a raw integer of the same type as the input&rsquo;s rep.</p>
+<h4 id="int_floor"><code>int_floor_in</code>, <code>int_floor_as</code><a class="headerlink" href="#int_floor" title="Permanent link">&para;</a></h4>
+<p>Round a <code>Quantity</code> with integral rep down to the largest integer value which is no bigger than
+that quantity, without leaving the integer domain.</p>
+<p>The name <code>int_floor</code> is shorthand for &ldquo;integer-domain <code>floor</code>&rdquo;.  These functions are similar to
+<a href="#floor"><code>floor_in</code> and <code>floor_as</code></a>, but they do not call <code>std::floor</code>.  This provides two
+advantages.  First, the computation stays purely in the integer domain, rather than converting to
+floating point and back.  Second, these functions are <code>constexpr</code> compatible.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The input <code>Quantity</code> must have an integral rep.  Calling these functions with a floating point
+rep will produce a compiler error.</p>
+</div>
+<p><strong>Signatures:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1">//</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="c1">// int_floor_as(): return a Quantity or QuantityPoint (depending on the input type)</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="c1">//</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="c1">// a) For `Quantity` inputs</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">RoundingUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">int_floor_as</span><span class="p">(</span><span class="n">RoundingUnits</span><span class="w"> </span><span class="n">rounding_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="c1">// b) For `QuantityPoint` inputs</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">RoundingUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">int_floor_as</span><span class="p">(</span><span class="n">RoundingUnits</span><span class="w"> </span><span class="n">rounding_units</span><span class="p">,</span><span class="w"> </span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a><span class="c1">//</span>
+<a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a><span class="c1">// int_floor_in(): return a raw number</span>
+<a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a><span class="c1">//</span>
+<a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>
+<a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a><span class="c1">// a) For `Quantity` inputs</span>
+<a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">RoundingUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">int_floor_in</span><span class="p">(</span><span class="n">RoundingUnits</span><span class="w"> </span><span class="n">rounding_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a>
+<a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a><span class="c1">// b) For `QuantityPoint` inputs</span>
+<a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">RoundingUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">int_floor_in</span><span class="p">(</span><span class="n">RoundingUnits</span><span class="w"> </span><span class="n">rounding_units</span><span class="p">,</span><span class="w"> </span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+</code></pre></div>
+<p><strong>Returns:</strong> The largest integer value in the specified units which is no larger than the input.
+For <code>int_floor_as</code>, the result is a <code>Quantity</code> or <code>QuantityPoint</code> (depending on the input type).
+For <code>int_floor_in</code>, the result is a raw integer of the same type as the input&rsquo;s rep.</p>
+<h4 id="int_ceil"><code>int_ceil_in</code>, <code>int_ceil_as</code><a class="headerlink" href="#int_ceil" title="Permanent link">&para;</a></h4>
+<p>Round a <code>Quantity</code> with integral rep up to the smallest integer value which is at least as big as
+that quantity, without leaving the integer domain.</p>
+<p>The name <code>int_ceil</code> is shorthand for &ldquo;integer-domain <code>ceil</code>&rdquo;.  These functions are similar to
+<a href="#ceil"><code>ceil_in</code> and <code>ceil_as</code></a>, but they do not call <code>std::ceil</code>.  This provides two advantages.
+First, the computation stays purely in the integer domain, rather than converting to floating point
+and back.  Second, these functions are <code>constexpr</code> compatible.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The input <code>Quantity</code> must have an integral rep.  Calling these functions with a floating point
+rep will produce a compiler error.</p>
+</div>
+<p><strong>Signatures:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1">//</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="c1">// int_ceil_as(): return a Quantity or QuantityPoint (depending on the input type)</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="c1">//</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="c1">// a) For `Quantity` inputs</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">RoundingUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">int_ceil_as</span><span class="p">(</span><span class="n">RoundingUnits</span><span class="w"> </span><span class="n">rounding_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="c1">// b) For `QuantityPoint` inputs</span>
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">RoundingUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">int_ceil_as</span><span class="p">(</span><span class="n">RoundingUnits</span><span class="w"> </span><span class="n">rounding_units</span><span class="p">,</span><span class="w"> </span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>
+<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="c1">//</span>
+<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="c1">// int_ceil_in(): return a raw number</span>
+<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a><span class="c1">//</span>
+<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>
+<a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a><span class="c1">// a) For `Quantity` inputs</span>
+<a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">RoundingUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">int_ceil_in</span><span class="p">(</span><span class="n">RoundingUnits</span><span class="w"> </span><span class="n">rounding_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a>
+<a id="__codelineno-18-22" name="__codelineno-18-22" href="#__codelineno-18-22"></a><span class="c1">// b) For `QuantityPoint` inputs</span>
+<a id="__codelineno-18-23" name="__codelineno-18-23" href="#__codelineno-18-23"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">RoundingUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-18-24" name="__codelineno-18-24" href="#__codelineno-18-24"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">int_ceil_in</span><span class="p">(</span><span class="n">RoundingUnits</span><span class="w"> </span><span class="n">rounding_units</span><span class="p">,</span><span class="w"> </span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+</code></pre></div>
+<p><strong>Returns:</strong> The smallest integer value in the specified units which is no smaller than the input.
+For <code>int_ceil_as</code>, the result is a <code>Quantity</code> or <code>QuantityPoint</code> (depending on the input type).
+For <code>int_ceil_in</code>, the result is a raw integer of the same type as the input&rsquo;s rep.</p>
 <h3 id="inverse-functions">Inverse functions<a class="headerlink" href="#inverse-functions" title="Permanent link">&para;</a></h3>
 <h4 id="inverse_as-inverse_in"><code>inverse_as</code>, <code>inverse_in</code><a class="headerlink" href="#inverse_as-inverse_in" title="Permanent link">&para;</a></h4>
 <p>A unit-aware computation of <span class="arithmatex"><span class="MathJax_Preview">1 / x</span><script type="math/tex">1 / x</script></span>.</p>
@@ -3468,59 +3644,59 @@ all without ever leaving the integer domain.</p>
 <p>As with all other library functions, you can circumvent the safety checks by using one of the
 &ldquo;explicit-rep&rdquo; versions, which are forcing in the same way as <code>static_cast</code>.</p>
 <p><strong>Signatures:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1">//</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="c1">// inverse_as(): return a Quantity</span>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="c1">//</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
-<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="c1">// 1. Unit-only version (including safety checks).  Typical callsites look like:</span>
-<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="c1">//    `inverse_as(units, quantity)`</span>
-<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">inverse_as</span><span class="p">(</span><span class="n">TargetUnits</span><span class="w"> </span><span class="n">target_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
-<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>
-<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="c1">// 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:</span>
-<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="c1">//    `inverse_as&lt;Type&gt;(units, quantity)`</span>
-<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetRep</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">inverse_as</span><span class="p">(</span><span class="n">TargetUnits</span><span class="w"> </span><span class="n">target_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
-<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>
-<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>
-<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="c1">//</span>
-<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a><span class="c1">// inverse_in(): return a raw number</span>
-<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a><span class="c1">//</span>
-<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>
-<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a><span class="c1">// 1. Unit-only version (including safety checks).  Typical callsites look like:</span>
-<a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a><span class="c1">//    `inverse_in(units, quantity)`</span>
-<a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-16-23" name="__codelineno-16-23" href="#__codelineno-16-23"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">inverse_in</span><span class="p">(</span><span class="n">TargetUnits</span><span class="w"> </span><span class="n">target_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
-<a id="__codelineno-16-24" name="__codelineno-16-24" href="#__codelineno-16-24"></a>
-<a id="__codelineno-16-25" name="__codelineno-16-25" href="#__codelineno-16-25"></a><span class="c1">// 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:</span>
-<a id="__codelineno-16-26" name="__codelineno-16-26" href="#__codelineno-16-26"></a><span class="c1">//    `inverse_in&lt;Type&gt;(units, quantity)`</span>
-<a id="__codelineno-16-27" name="__codelineno-16-27" href="#__codelineno-16-27"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetRep</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-16-28" name="__codelineno-16-28" href="#__codelineno-16-28"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">inverse_in</span><span class="p">(</span><span class="n">TargetUnits</span><span class="w"> </span><span class="n">target_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1">//</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="c1">// inverse_as(): return a Quantity</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="c1">//</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="c1">// 1. Unit-only version (including safety checks).  Typical callsites look like:</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="c1">//    `inverse_as(units, quantity)`</span>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">inverse_as</span><span class="p">(</span><span class="n">TargetUnits</span><span class="w"> </span><span class="n">target_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="c1">// 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="c1">//    `inverse_as&lt;Type&gt;(units, quantity)`</span>
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetRep</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">inverse_as</span><span class="p">(</span><span class="n">TargetUnits</span><span class="w"> </span><span class="n">target_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>
+<a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>
+<a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a><span class="c1">//</span>
+<a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a><span class="c1">// inverse_in(): return a raw number</span>
+<a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a><span class="c1">//</span>
+<a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a>
+<a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a><span class="c1">// 1. Unit-only version (including safety checks).  Typical callsites look like:</span>
+<a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a><span class="c1">//    `inverse_in(units, quantity)`</span>
+<a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-19-23" name="__codelineno-19-23" href="#__codelineno-19-23"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">inverse_in</span><span class="p">(</span><span class="n">TargetUnits</span><span class="w"> </span><span class="n">target_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<a id="__codelineno-19-24" name="__codelineno-19-24" href="#__codelineno-19-24"></a>
+<a id="__codelineno-19-25" name="__codelineno-19-25" href="#__codelineno-19-25"></a><span class="c1">// 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:</span>
+<a id="__codelineno-19-26" name="__codelineno-19-26" href="#__codelineno-19-26"></a><span class="c1">//    `inverse_in&lt;Type&gt;(units, quantity)`</span>
+<a id="__codelineno-19-27" name="__codelineno-19-27" href="#__codelineno-19-27"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetRep</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnits</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-19-28" name="__codelineno-19-28" href="#__codelineno-19-28"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">inverse_in</span><span class="p">(</span><span class="n">TargetUnits</span><span class="w"> </span><span class="n">target_units</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
 </code></pre></div>
 <p><strong>Returns:</strong> The inverse of the input <code>Quantity</code>, expressed in the requested units.</p>
 <h3 id="special-values-and-language-features">Special values and language features<a class="headerlink" href="#special-values-and-language-features" title="Permanent link">&para;</a></h3>
 <h4 id="isinf"><code>isinf</code><a class="headerlink" href="#isinf" title="Permanent link">&para;</a></h4>
 <p>Indicates whether the underlying value of a <code>Quantity</code> is an infinity value (positive or negative).</p>
 <p><strong>Signature:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1">// 1. `Quantity` inputs</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isinf</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
-<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
-<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="c1">// 2. `QuantityPoint` inputs</span>
-<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isinf</span><span class="p">(</span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1">// 1. `Quantity` inputs</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isinf</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="c1">// 2. `QuantityPoint` inputs</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isinf</span><span class="p">(</span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
 </code></pre></div>
 <p><strong>Returns:</strong> <code>true</code> if <code>q</code> is infinite; <code>false</code> otherwise.</p>
 <h4 id="isnan"><code>isnan</code><a class="headerlink" href="#isnan" title="Permanent link">&para;</a></h4>
 <p>Indicates whether the underlying value of a <code>Quantity</code> is a NaN (&ldquo;not-a-number&rdquo;) value.</p>
 <p><strong>Signature:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1">// 1. `Quantity` inputs</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isnan</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
-<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="c1">// 2. `QuantityPoint` inputs</span>
-<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isnan</span><span class="p">(</span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1">// 1. `Quantity` inputs</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isnan</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="c1">// 2. `QuantityPoint` inputs</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isnan</span><span class="p">(</span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
 </code></pre></div>
 <p><strong>Returns:</strong> <code>true</code> if <code>q</code> is NaN; <code>false</code> otherwise.</p>
 <h4 id="stdnumeric_limits-specializations"><code>std::numeric_limits</code> specializations<a class="headerlink" href="#stdnumeric_limits-specializations" title="Permanent link">&para;</a></h4>
@@ -3534,7 +3710,7 @@ example, <code>std::numeric_limits&lt;Quantity&lt;Hours, int&gt;&gt;::max()</cod
 <p>Be careful about using these limits in the presence of <strong>different</strong> Units of the same
 <strong>Dimension</strong>.  Comparison operations will <em>compile</em>, but may not do what you expect.  Consider
 this example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">seconds</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">Hours</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">max</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">seconds</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">Hours</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">max</span><span class="p">()</span>
 </code></pre></div>
 <p>Clearly, we&rsquo;d want this to be <code>true</code>&hellip; but, in converting both sides to their common type, we&rsquo;d
 end up multiplying the max-int on the right by 3600.  What answer would we get for the
@@ -3552,8 +3728,8 @@ inputs.</p>
 <p>As with the <a href="../quantity/#mod">integer modulus</a>, we first express the inputs in their <a href="../../discussion/concepts/common_unit/">common
 unit</a>.</p>
 <p><strong>Signature:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U2</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R2</span><span class="o">&gt;</span>
-<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">fmod</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U1</span><span class="p">,</span><span class="w"> </span><span class="n">R1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q1</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U2</span><span class="p">,</span><span class="w"> </span><span class="n">R2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q2</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U2</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R2</span><span class="o">&gt;</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">fmod</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U1</span><span class="p">,</span><span class="w"> </span><span class="n">R1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q1</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U2</span><span class="p">,</span><span class="w"> </span><span class="n">R2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q2</span><span class="p">);</span>
 </code></pre></div>
 <p><strong>Returns:</strong> The remainder of <code>q1 / q2</code>, in the type <code>Quantity&lt;U, R&gt;</code>, where <code>U</code> is the common unit
 of <code>U1</code> and <code>U2</code>, and <code>R</code> is the common type of <code>R1</code> and <code>R2</code>.</p>
@@ -3563,8 +3739,8 @@ with the given side lengths.</p>
 <p>As with many math functions, we first express the inputs in their <a href="../../discussion/concepts/common_unit/">common
 unit</a>.</p>
 <p><strong>Signature:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U2</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R2</span><span class="o">&gt;</span>
-<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">hypot</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U1</span><span class="p">,</span><span class="w"> </span><span class="n">R1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q1</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U2</span><span class="p">,</span><span class="w"> </span><span class="n">R2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q2</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U2</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R2</span><span class="o">&gt;</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">hypot</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U1</span><span class="p">,</span><span class="w"> </span><span class="n">R1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q1</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U2</span><span class="p">,</span><span class="w"> </span><span class="n">R2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q2</span><span class="p">);</span>
 </code></pre></div>
 <p><strong>Returns:</strong> The hypotenuse length, in the type <code>Quantity&lt;U, R&gt;</code>, where <code>U</code> is the common unit of
 <code>U1</code> and <code>U2</code>, and <code>R</code> is the common type of <code>R1</code> and <code>R2</code>.</p>
@@ -3574,8 +3750,8 @@ the two inputs.</p>
 <p>As with the <a href="../quantity/#mod">integer modulus</a>, we first express the inputs in their <a href="../../discussion/concepts/common_unit/">common
 unit</a>.</p>
 <p><strong>Signature:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U2</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R2</span><span class="o">&gt;</span>
-<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">remainder</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U1</span><span class="p">,</span><span class="w"> </span><span class="n">R1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q1</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U2</span><span class="p">,</span><span class="w"> </span><span class="n">R2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q2</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U2</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R2</span><span class="o">&gt;</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">remainder</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U1</span><span class="p">,</span><span class="w"> </span><span class="n">R1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q1</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U2</span><span class="p">,</span><span class="w"> </span><span class="n">R2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q2</span><span class="p">);</span>
 </code></pre></div>
 <p><strong>Returns:</strong> The remainder of <code>q1 / q2</code>, in the type <code>Quantity&lt;U, R&gt;</code>, where <code>U</code> is the common unit
 of <code>U1</code> and <code>U2</code>, and <code>R</code> is the common type of <code>R1</code> and <code>R2</code>.</p>

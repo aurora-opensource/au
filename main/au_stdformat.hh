@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-78-g5fc7a18
+// Version identifier: 0.5.0-base-79-g5aa4a15
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -9725,6 +9725,128 @@ template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(
         ceil_in<OutputRep>(rounding_units, p));
+}
+
+//
+// Rounding function that does not leave the integral domain.  Does not use `std::round`.
+//
+// This is the "Unit-only" format (i.e., `int_round_in(rounding_units, q)`).
+//
+// (a) Version for Quantity.
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+    static_assert(std::is_integral<R>::value, "int_round_as requires integral Rep type");
+
+    auto trunced = q.as(rounding_units, ignore(TRUNCATION_RISK));
+    trunced.data_in(rounding_units) +=
+        (q - trunced).in(rounding_units / mag<2>(), ignore(TRUNCATION_RISK));
+    return trunced;
+}
+// (b) Version for QuantityPoint.
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    static_assert(std::is_integral<R>::value, "int_round_as requires integral Rep type");
+
+    constexpr auto target = associated_unit_for_points(rounding_units);
+    auto trunced = p.as(target, ignore(TRUNCATION_RISK));
+    trunced.data_in(target) += (p - trunced).in(target / mag<2>(), ignore(TRUNCATION_RISK));
+    return trunced;
+}
+
+//
+// Version of `int_round_as` with raw number outputs.
+//
+// This is the "Units-only" format (i.e., `int_round_in(rounding_units, q)`).
+//
+// (a) Version for Quantity.
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+    return int_round_as(rounding_units, q).in(rounding_units);
+}
+// (b) Version for QuantityPoint.
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    return int_round_as(rounding_units, p).in(associated_unit_for_points(rounding_units));
+}
+
+//
+// Floor function that does not leave the integral domain.  Does not use `std::floor`.
+//
+// This is the "Unit-only" format (i.e., `int_floor_in(rounding_units, q)`).
+//
+// (a) Version for Quantity.
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+    static_assert(std::is_integral<R>::value, "int_floor_as requires integral Rep type");
+
+    auto trunced = q.as(rounding_units, ignore(TRUNCATION_RISK));
+    trunced.data_in(rounding_units) -= R{trunced > q};
+    return trunced;
+}
+// (b) Version for QuantityPoint.
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    static_assert(std::is_integral<R>::value, "int_floor_as requires integral Rep type");
+
+    auto trunced = p.as(rounding_units, ignore(TRUNCATION_RISK));
+    trunced.data_in(rounding_units) -= R{trunced > p};
+    return trunced;
+}
+
+//
+// Version of `int_floor_as` with raw number outputs.
+//
+// This is the "Units-only" format (i.e., `int_floor_in(rounding_units, q)`).
+//
+// (a) Version for Quantity.
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+    return int_floor_as(rounding_units, q).in(rounding_units);
+}
+// (b) Version for QuantityPoint.
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    return int_floor_as(rounding_units, p).in(associated_unit_for_points(rounding_units));
+}
+
+//
+// Ceil function that does not leave the integral domain.  Does not use `std::ceil`.
+//
+// This is the "Unit-only" format (i.e., `int_ceil_in(rounding_units, q)`).
+//
+// (a) Version for Quantity.
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+    static_assert(std::is_integral<R>::value, "int_ceil_as requires integral Rep type");
+
+    auto trunced = q.as(rounding_units, ignore(TRUNCATION_RISK));
+    trunced.data_in(rounding_units) += R{trunced < q};
+    return trunced;
+}
+// (b) Version for QuantityPoint.
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    static_assert(std::is_integral<R>::value, "int_ceil_as requires integral Rep type");
+
+    auto trunced = p.as(rounding_units, ignore(TRUNCATION_RISK));
+    trunced.data_in(rounding_units) += R{trunced < p};
+    return trunced;
+}
+
+//
+// Version of `int_ceil_as` with raw number outputs.
+//
+// This is the "Units-only" format (i.e., `int_ceil_in(rounding_units, q)`).
+//
+// (a) Version for Quantity.
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+    return int_ceil_as(rounding_units, q).in(rounding_units);
+}
+// (b) Version for QuantityPoint.
+template <typename RoundingUnits, typename U, typename R>
+constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+    return int_ceil_as(rounding_units, p).in(associated_unit_for_points(rounding_units));
 }
 
 // Wrapper for std::sin() which accepts a strongly typed angle quantity.
