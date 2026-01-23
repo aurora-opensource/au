@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-82-g4812569
+// Version identifier: 0.5.0-base-83-g8ae4715
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -3209,6 +3209,10 @@ constexpr auto mag();
 template <typename T, typename... BPs>
 constexpr bool representable_in(Magnitude<BPs...> m);
 
+// Get the value of this Magnitude in a "traditional" numeric type T.
+template <typename T, typename... BPs>
+constexpr T get_value(Magnitude<BPs...>);
+
 // A base type for prime numbers.
 template <std::uintmax_t N>
 struct Prime {
@@ -3383,6 +3387,101 @@ constexpr auto operator==(Magnitude<BP1s...>, Magnitude<BP2s...>) {
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator!=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
     return !(m1 == m2);
+}
+
+namespace detail {
+
+// Compare absolute values of two magnitudes.
+//
+// Returns:
+//   -1 if |m1| < |m2|
+//    0 if |m1| == |m2|
+//   +1 if |m1| > |m2|
+template <typename M1, typename M2>
+constexpr int compare_absolute_magnitudes(M1, M2) {
+    using AbsM1OverM2 = Abs<MagQuotient<M1, M2>>;
+    (void)AssertMagnitudeU64RationalCompatible<AbsM1OverM2>{};
+
+    constexpr auto lhs = get_value<std::uint64_t>(Numerator<AbsM1OverM2>{});
+    constexpr auto rhs = get_value<std::uint64_t>(Denominator<AbsM1OverM2>{});
+    return (lhs > rhs) - (lhs < rhs);
+}
+
+}  // namespace detail
+
+// Comparison operators for Magnitude types.
+//
+// These will only be defined for the subset of Magnitudes where this is easy to compute.
+template <typename... BP1s, typename... BP2s>
+constexpr bool operator<(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+    constexpr bool m1_positive = is_positive(m1);
+    constexpr bool m2_positive = is_positive(m2);
+
+    if (!m1_positive && m2_positive) {
+        return true;
+    }
+    if (m1_positive && !m2_positive) {
+        return false;
+    }
+
+    constexpr int abs_cmp = detail::compare_absolute_magnitudes(m1, m2);
+    return m1_positive ? (abs_cmp < 0) : (abs_cmp > 0);
+}
+
+template <typename... BP1s, typename... BP2s>
+constexpr bool operator>(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+    return m2 < m1;
+}
+
+template <typename... BP1s, typename... BP2s>
+constexpr bool operator<=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+    return !(m2 < m1);
+}
+
+template <typename... BP1s, typename... BP2s>
+constexpr bool operator>=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+    return !(m1 < m2);
+}
+
+// Zero/Magnitude comparisons: Zero is less than any positive magnitude, greater than any negative.
+template <typename... BPs>
+constexpr bool operator<(Zero, Magnitude<BPs...>) {
+    return IsPositive<Magnitude<BPs...>>::value;
+}
+
+template <typename... BPs>
+constexpr bool operator>(Zero, Magnitude<BPs...>) {
+    return !IsPositive<Magnitude<BPs...>>::value;
+}
+
+template <typename... BPs>
+constexpr bool operator<=(Zero, Magnitude<BPs...>) {
+    return IsPositive<Magnitude<BPs...>>::value;
+}
+
+template <typename... BPs>
+constexpr bool operator>=(Zero, Magnitude<BPs...>) {
+    return !IsPositive<Magnitude<BPs...>>::value;
+}
+
+template <typename... BPs>
+constexpr bool operator<(Magnitude<BPs...>, Zero) {
+    return !IsPositive<Magnitude<BPs...>>::value;
+}
+
+template <typename... BPs>
+constexpr bool operator>(Magnitude<BPs...>, Zero) {
+    return IsPositive<Magnitude<BPs...>>::value;
+}
+
+template <typename... BPs>
+constexpr bool operator<=(Magnitude<BPs...>, Zero) {
+    return !IsPositive<Magnitude<BPs...>>::value;
+}
+
+template <typename... BPs>
+constexpr bool operator>=(Magnitude<BPs...>, Zero) {
+    return IsPositive<Magnitude<BPs...>>::value;
 }
 
 template <typename... BPs>

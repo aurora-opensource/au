@@ -1765,6 +1765,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#compile-time-arithmetic-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compile-time arithmetic limitations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#operations" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1781,6 +1792,17 @@
     <span class="md-ellipsis">
       
         Equality comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ordering-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ordering comparison †
       
     </span>
   </a>
@@ -2830,6 +2852,47 @@ runtime performance.</p>
 <p>Note that this function&rsquo;s return value also depends on <em>whether we can compute</em> the value, not just
 whether it is representable.   For example, <code>representable_in&lt;double&gt;(sqrt(mag&lt;2&gt;()))</code> is currently
 <code>false</code>, because we haven&rsquo;t yet added support for computing rational base powers.</p>
+<h2 id="compile-time-arithmetic-limitations">Compile-time arithmetic limitations<a class="headerlink" href="#compile-time-arithmetic-limitations" title="Permanent link">&para;</a></h2>
+<p>Some <code>Magnitude</code> operations need to perform arithmetic at compile time to compute their results.  For
+example, to compare two magnitudes, we need to determine which one is larger.  It is extremely hard,
+if not impossible, to do this for <em>all</em> magnitudes, which may involve arbitrary rational powers, and
+even transcendental numbers.  However, others can easily be computed using only 64-bit integer
+operations.</p>
+<p>We provide support for the subset of inputs where we can confidently produce exact answers, and
+guard other inputs behind compile-time errors.  This enables many practical use cases, while
+conservatively avoiding producing an incorrect program.</p>
+<p>Our concrete policy is to support only operations where we can produce exact answers using only
+64-bit integer arithmetic.  This does <em>not</em> mean that we only support exact integer magnitudes.
+These operations are <em>binary</em>, so the feasibility depends on the <em>relationship</em> between the two
+inputs.</p>
+<details class="example">
+<summary>Example</summary>
+<p>Suppose we had this variable:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">PI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Magnitude</span><span class="o">&lt;</span><span class="n">Pi</span><span class="o">&gt;</span><span class="p">{};</span>
+</code></pre></div>
+<p>Here are some examples of comparisons that would or would not be supported.</p>
+<ul>
+<li><code>PI &gt; mag&lt;3&gt;()</code> would <strong>not</strong> be supported: it would result in a compiler error.<ul>
+<li><strong>Reason:</strong> We cannot use the exact value of <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> in computations; we only have access to
+  the nearest representable floating point number.  Floating point arithmetic is inexact, so
+  this does not meet our criteria.</li>
+</ul>
+</li>
+<li><code>PI &gt; (mag&lt;3&gt;() * PI / mag&lt;2&gt;())</code> <strong>would</strong> be supported, and would evaluate to <code>false</code>.<ul>
+<li><strong>Reason:</strong> Regardless of the exact value of <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span>, we can see that <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> cancels out, so
+  this comparison is equivalent to checking whether <span class="arithmatex"><span class="MathJax_Preview">1 &gt; \frac{3}{2}</span><script type="math/tex">1 > \frac{3}{2}</script></span>, which we can convert
+  to <span class="arithmatex"><span class="MathJax_Preview">2 &gt; 3</span><script type="math/tex">2 > 3</script></span>.  This can be seen to be <code>false</code> using only integer arithmetic.</li>
+</ul>
+</li>
+</ul>
+</details>
+<p>When an operation cannot be computed &mdash; either because the relationship involves irrational
+factors, or because the integers involved are too large &mdash; you will get a <strong>compile-time error</strong>
+with a message explaining the problem.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Operations subject to this limitation will be marked with † in their documentation.</p>
+</div>
 <h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
 <p>These are the operations which <code>Magnitude</code> supports.  Because it is a <a href="../detail/monovalue_types/">monovalue
 type</a>, the value can take the form of either a <em>type</em> or an <em>instance</em>.
@@ -2851,6 +2914,27 @@ In what follows, we&rsquo;ll use this convention:</p>
 <li><code>m1 != m2</code> (inequality comparison)</li>
 </ul>
 </li>
+</ul>
+<h3 id="ordering-comparison">Ordering comparison †<a class="headerlink" href="#ordering-comparison" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A <code>bool</code> indicating the relative ordering of two <code>Magnitude</code> values.</p>
+<p>Unlike equality comparison (which simply checks whether two types are the same), ordering comparison
+computes which magnitude is larger.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>instances</em> <code>m1</code> and <code>m2</code>:<ul>
+<li><code>m1 &lt; m2</code></li>
+<li><code>m1 &gt; m2</code></li>
+<li><code>m1 &lt;= m2</code></li>
+<li><code>m1 &gt;= m2</code></li>
+</ul>
+</li>
+</ul>
+<p><code>Zero</code> can also be compared with any <code>Magnitude</code>:</p>
+<ul>
+<li><code>ZERO &lt; m</code> is <code>true</code> when <code>m</code> is positive</li>
+<li><code>ZERO &gt; m</code> is <code>true</code> when <code>m</code> is negative</li>
 </ul>
 <h3 id="multiplication">Multiplication<a class="headerlink" href="#multiplication" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> The product of two <code>Magnitude</code> values.</p>
