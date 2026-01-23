@@ -293,6 +293,8 @@ struct QuantityPointMaker {
 
 template <typename U>
 struct AssociatedUnitForPointsImpl<QuantityPointMaker<U>> : stdx::type_identity<U> {};
+template <typename U>
+struct AppropriateAssociatedUnitImpl<QuantityPoint, U> : AssociatedUnitForPointsImpl<U> {};
 
 // Provide nicer error messages when users try passing a `QuantityPoint` to a unit slot.
 template <typename U, typename R>

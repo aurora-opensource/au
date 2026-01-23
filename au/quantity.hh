@@ -676,6 +676,8 @@ struct QuantityMaker {
 
 template <typename U>
 struct AssociatedUnitImpl<QuantityMaker<U>> : stdx::type_identity<U> {};
+template <typename U>
+struct AppropriateAssociatedUnitImpl<Quantity, U> : AssociatedUnitImpl<U> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(QuantityMaker<Unit>) {

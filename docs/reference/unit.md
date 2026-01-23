@@ -621,6 +621,26 @@ associated with quantity points.
     be removed in a future release.  Please migrate all current instances of
     `AssociatedUnitForPointsT` to `AssociatedUnitForPoints`.
 
+### Appropriate associated unit {#appropriate-associated-unit}
+
+**Result:** The appropriate associated unit for a given quantity type and unit slot.
+
+This trait selects between `AssociatedUnit` and `AssociatedUnitForPoints` based on the quantity type
+template parameter.  Specifically:
+
+- `AppropriateAssociatedUnit<Quantity, U>` gives `AssociatedUnit<U>`
+- `AppropriateAssociatedUnit<QuantityPoint, U>` gives `AssociatedUnitForPoints<U>`
+
+The use case for this trait is to enable consolidated implementations of functions that work with
+both `Quantity` and `QuantityPoint`, where the correct associated unit type must be selected based
+on which quantity type is being used.
+
+**Syntax:**
+
+- For a quantity type template `QType` (either `Quantity` or `QuantityPoint`) and a unit slot
+  type `U`:
+    - `AppropriateAssociatedUnit<QType, U>`
+
 ### Common unit
 
 **Result:** The largest unit that evenly divides its input units.  (Read more about the concept of

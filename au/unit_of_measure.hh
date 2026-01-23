@@ -155,6 +155,11 @@ using AssociatedUnitForPoints = typename AssociatedUnitForPointsImpl<U>::type;
 template <typename U>
 using AssociatedUnitForPointsT = AssociatedUnitForPoints<U>;
 
+template <template <class, class> class QType, typename U>
+struct AppropriateAssociatedUnitImpl;
+template <template <class, class> class QType, typename U>
+using AppropriateAssociatedUnit = typename AppropriateAssociatedUnitImpl<QType, U>::type;
+
 // `CommonUnit`: the largest unit that evenly divides all input units.
 //
 // A specialization will only exist if all input types are units.
