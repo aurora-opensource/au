@@ -2266,6 +2266,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#appropriate-associated-unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Appropriate associated unit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#common-unit" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3565,6 +3576,25 @@ on the end).  <code>AssociatedUnitForPointsT</code> currently still works, but i
 be removed in a future release.  Please migrate all current instances of
 <code>AssociatedUnitForPointsT</code> to <code>AssociatedUnitForPoints</code>.</p>
 </div>
+<h3 id="appropriate-associated-unit">Appropriate associated unit<a class="headerlink" href="#appropriate-associated-unit" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The appropriate associated unit for a given quantity type and unit slot.</p>
+<p>This trait selects between <code>AssociatedUnit</code> and <code>AssociatedUnitForPoints</code> based on the quantity type
+template parameter.  Specifically:</p>
+<ul>
+<li><code>AppropriateAssociatedUnit&lt;Quantity, U&gt;</code> gives <code>AssociatedUnit&lt;U&gt;</code></li>
+<li><code>AppropriateAssociatedUnit&lt;QuantityPoint, U&gt;</code> gives <code>AssociatedUnitForPoints&lt;U&gt;</code></li>
+</ul>
+<p>The use case for this trait is to enable consolidated implementations of functions that work with
+both <code>Quantity</code> and <code>QuantityPoint</code>, where the correct associated unit type must be selected based
+on which quantity type is being used.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a quantity type template <code>QType</code> (either <code>Quantity</code> or <code>QuantityPoint</code>) and a unit slot
+  type <code>U</code>:<ul>
+<li><code>AppropriateAssociatedUnit&lt;QType, U&gt;</code></li>
+</ul>
+</li>
+</ul>
 <h3 id="common-unit">Common unit<a class="headerlink" href="#common-unit" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> The largest unit that evenly divides its input units.  (Read more about the concept of
 <a href="../../discussion/concepts/common_unit/">common units</a>.)</p>

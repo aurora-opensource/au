@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-81-gbb40f2c
+// Version identifier: 0.5.0-base-82-g4812569
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -4982,6 +4982,11 @@ using AssociatedUnitForPoints = typename AssociatedUnitForPointsImpl<U>::type;
 template <typename U>
 using AssociatedUnitForPointsT = AssociatedUnitForPoints<U>;
 
+template <template <class, class> class QType, typename U>
+struct AppropriateAssociatedUnitImpl;
+template <template <class, class> class QType, typename U>
+using AppropriateAssociatedUnit = typename AppropriateAssociatedUnitImpl<QType, U>::type;
+
 // `CommonUnit`: the largest unit that evenly divides all input units.
 //
 // A specialization will only exist if all input types are units.
@@ -7199,6 +7204,8 @@ struct QuantityMaker {
 
 template <typename U>
 struct AssociatedUnitImpl<QuantityMaker<U>> : stdx::type_identity<U> {};
+template <typename U>
+struct AppropriateAssociatedUnitImpl<Quantity, U> : AssociatedUnitImpl<U> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(QuantityMaker<Unit>) {
@@ -8320,6 +8327,8 @@ struct QuantityPointMaker {
 
 template <typename U>
 struct AssociatedUnitForPointsImpl<QuantityPointMaker<U>> : stdx::type_identity<U> {};
+template <typename U>
+struct AppropriateAssociatedUnitImpl<QuantityPoint, U> : AssociatedUnitForPointsImpl<U> {};
 
 // Provide nicer error messages when users try passing a `QuantityPoint` to a unit slot.
 template <typename U, typename R>
@@ -9621,25 +9630,25 @@ auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 //
 // This is the "Unit-only" format (i.e., `int_round_in(rounding_units, q)`).
 //
+// Common implementation helper:
+template <typename RoundingUnits, template <class, class> class QType, typename U, typename R>
+constexpr auto int_round_as_impl(RoundingUnits, QType<U, R> val) {
+    static_assert(std::is_integral<R>::value, "int_round_as requires integral Rep type");
+
+    constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
+    auto trunced = val.as(target, ignore(TRUNCATION_RISK));
+    trunced.data_in(target) += (val - trunced).in(target / mag<2>(), ignore(TRUNCATION_RISK));
+    return trunced;
+}
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    static_assert(std::is_integral<R>::value, "int_round_as requires integral Rep type");
-
-    auto trunced = q.as(rounding_units, ignore(TRUNCATION_RISK));
-    trunced.data_in(rounding_units) +=
-        (q - trunced).in(rounding_units / mag<2>(), ignore(TRUNCATION_RISK));
-    return trunced;
+    return int_round_as_impl(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    static_assert(std::is_integral<R>::value, "int_round_as requires integral Rep type");
-
-    constexpr auto target = associated_unit_for_points(rounding_units);
-    auto trunced = p.as(target, ignore(TRUNCATION_RISK));
-    trunced.data_in(target) += (p - trunced).in(target / mag<2>(), ignore(TRUNCATION_RISK));
-    return trunced;
+    return int_round_as_impl(rounding_units, p);
 }
 
 //
@@ -9647,26 +9656,31 @@ constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p)
 //
 // This is the "Explicit-Rep" format (e.g., `int_round_as<int>(rounding_units, q)`).
 //
+// Common implementation helper:
+template <typename OutputRep,
+          typename RoundingUnits,
+          template <class, class>
+          class QType,
+          typename U,
+          typename R>
+constexpr auto int_round_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
+    static_assert(std::is_integral<OutputRep>::value, "int_round_as output must be integral");
+
+    constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
+    auto trunced = val.template as<OutputRep>(target, ignore(TRUNCATION_RISK));
+    trunced.data_in(target) +=
+        (val - trunced).template in<OutputRep>(target / mag<2>(), ignore(TRUNCATION_RISK));
+    return trunced;
+}
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    static_assert(std::is_integral<OutputRep>::value, "int_round_as output must be integral");
-
-    auto trunced = q.template as<OutputRep>(rounding_units, ignore(TRUNCATION_RISK));
-    trunced.data_in(rounding_units) +=
-        (q - trunced).template in<OutputRep>(rounding_units / mag<2>(), ignore(TRUNCATION_RISK));
-    return trunced;
+    return int_round_as_explicit_rep_impl<OutputRep>(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    static_assert(std::is_integral<OutputRep>::value, "int_round_as output must be integral");
-
-    constexpr auto target = associated_unit_for_points(rounding_units);
-    auto trunced = p.template as<OutputRep>(target, ignore(TRUNCATION_RISK));
-    trunced.data_in(target) +=
-        (p - trunced).template in<OutputRep>(target / mag<2>(), ignore(TRUNCATION_RISK));
-    return trunced;
+    return int_round_as_explicit_rep_impl<OutputRep>(rounding_units, p);
 }
 
 //
@@ -9706,23 +9720,25 @@ constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p)
 //
 // This is the "Unit-only" format (i.e., `int_floor_in(rounding_units, q)`).
 //
+// Common implementation helper:
+template <typename RoundingUnits, template <class, class> class QType, typename U, typename R>
+constexpr auto int_floor_as_impl(RoundingUnits, QType<U, R> val) {
+    static_assert(std::is_integral<R>::value, "int_floor_as requires integral Rep type");
+
+    constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
+    auto trunced = val.as(target, ignore(TRUNCATION_RISK));
+    trunced.data_in(target) -= R{trunced > val};
+    return trunced;
+}
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    static_assert(std::is_integral<R>::value, "int_floor_as requires integral Rep type");
-
-    auto trunced = q.as(rounding_units, ignore(TRUNCATION_RISK));
-    trunced.data_in(rounding_units) -= R{trunced > q};
-    return trunced;
+    return int_floor_as_impl(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    static_assert(std::is_integral<R>::value, "int_floor_as requires integral Rep type");
-
-    auto trunced = p.as(rounding_units, ignore(TRUNCATION_RISK));
-    trunced.data_in(rounding_units) -= R{trunced > p};
-    return trunced;
+    return int_floor_as_impl(rounding_units, p);
 }
 
 //
@@ -9730,23 +9746,30 @@ constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p)
 //
 // This is the "Explicit-Rep" format (e.g., `int_floor_as<int>(rounding_units, q)`).
 //
+// Common implementation helper:
+template <typename OutputRep,
+          typename RoundingUnits,
+          template <class, class>
+          class QType,
+          typename U,
+          typename R>
+constexpr auto int_floor_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
+    static_assert(std::is_integral<OutputRep>::value, "int_floor_as output must be integral");
+
+    constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
+    auto trunced = val.template as<OutputRep>(target, ignore(TRUNCATION_RISK));
+    trunced.data_in(target) -= OutputRep{trunced > val};
+    return trunced;
+}
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    static_assert(std::is_integral<OutputRep>::value, "int_floor_as output must be integral");
-
-    auto trunced = q.template as<OutputRep>(rounding_units, ignore(TRUNCATION_RISK));
-    trunced.data_in(rounding_units) -= OutputRep{trunced > q};
-    return trunced;
+    return int_floor_as_explicit_rep_impl<OutputRep>(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    static_assert(std::is_integral<OutputRep>::value, "int_floor_as output must be integral");
-
-    auto trunced = p.template as<OutputRep>(rounding_units, ignore(TRUNCATION_RISK));
-    trunced.data_in(rounding_units) -= OutputRep{trunced > p};
-    return trunced;
+    return int_floor_as_explicit_rep_impl<OutputRep>(rounding_units, p);
 }
 
 //
@@ -9786,23 +9809,25 @@ constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p)
 //
 // This is the "Unit-only" format (i.e., `int_ceil_in(rounding_units, q)`).
 //
+// Common implementation helper:
+template <typename RoundingUnits, template <class, class> class QType, typename U, typename R>
+constexpr auto int_ceil_as_impl(RoundingUnits, QType<U, R> val) {
+    static_assert(std::is_integral<R>::value, "int_ceil_as requires integral Rep type");
+
+    constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
+    auto trunced = val.as(target, ignore(TRUNCATION_RISK));
+    trunced.data_in(target) += R{trunced < val};
+    return trunced;
+}
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    static_assert(std::is_integral<R>::value, "int_ceil_as requires integral Rep type");
-
-    auto trunced = q.as(rounding_units, ignore(TRUNCATION_RISK));
-    trunced.data_in(rounding_units) += R{trunced < q};
-    return trunced;
+    return int_ceil_as_impl(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    static_assert(std::is_integral<R>::value, "int_ceil_as requires integral Rep type");
-
-    auto trunced = p.as(rounding_units, ignore(TRUNCATION_RISK));
-    trunced.data_in(rounding_units) += R{trunced < p};
-    return trunced;
+    return int_ceil_as_impl(rounding_units, p);
 }
 
 //
@@ -9810,23 +9835,30 @@ constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) 
 //
 // This is the "Explicit-Rep" format (e.g., `int_ceil_as<int>(rounding_units, q)`).
 //
+// Common implementation helper:
+template <typename OutputRep,
+          typename RoundingUnits,
+          template <class, class>
+          class QType,
+          typename U,
+          typename R>
+constexpr auto int_ceil_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
+    static_assert(std::is_integral<OutputRep>::value, "int_ceil_as output must be integral");
+
+    constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
+    auto trunced = val.template as<OutputRep>(target, ignore(TRUNCATION_RISK));
+    trunced.data_in(target) += OutputRep{trunced < val};
+    return trunced;
+}
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
-    static_assert(std::is_integral<OutputRep>::value, "int_ceil_as output must be integral");
-
-    auto trunced = q.template as<OutputRep>(rounding_units, ignore(TRUNCATION_RISK));
-    trunced.data_in(rounding_units) += OutputRep{trunced < q};
-    return trunced;
+    return int_ceil_as_explicit_rep_impl<OutputRep>(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
-    static_assert(std::is_integral<OutputRep>::value, "int_ceil_as output must be integral");
-
-    auto trunced = p.template as<OutputRep>(rounding_units, ignore(TRUNCATION_RISK));
-    trunced.data_in(rounding_units) += OutputRep{trunced < p};
-    return trunced;
+    return int_ceil_as_explicit_rep_impl<OutputRep>(rounding_units, p);
 }
 
 //
