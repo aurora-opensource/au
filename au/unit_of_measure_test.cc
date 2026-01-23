@@ -15,9 +15,9 @@
 #include "au/unit_of_measure.hh"
 
 #include "au/constant.hh"
+#include "au/prefix.hh"
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
-#include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/fahrenheit.hh"
 #include "au/units/feet.hh"
