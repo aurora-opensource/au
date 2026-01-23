@@ -16,6 +16,8 @@
 
 #include "au/constant.hh"
 #include "au/prefix.hh"
+#include "au/quantity.hh"
+#include "au/quantity_point.hh"
 #include "au/testing.hh"
 #include "au/units/fahrenheit.hh"
 #include "au/units/feet.hh"
@@ -257,6 +259,17 @@ TEST(AssociatedUnit, HandlesWrappersWhichHaveSpecializedAssociatedUnit) {
 
 TEST(AssociatedUnit, SupportsSingularNameFor) {
     StaticAssertTypeEq<AssociatedUnit<SingularNameFor<Feet>>, Feet>();
+}
+
+TEST(AppropriateAssociatedUnit, GivesAssociatedUnitForQuantity) {
+    StaticAssertTypeEq<AppropriateAssociatedUnit<Quantity, Feet>, Feet>();
+    StaticAssertTypeEq<AppropriateAssociatedUnit<Quantity, QuantityMaker<Feet>>, Feet>();
+}
+
+TEST(AppropriateAssociatedUnit, GivesAssociatedUnitForPointsForQuantityPoint) {
+    StaticAssertTypeEq<AppropriateAssociatedUnit<QuantityPoint, Kelvins>, Kelvins>();
+    StaticAssertTypeEq<AppropriateAssociatedUnit<QuantityPoint, QuantityPointMaker<Kelvins>>,
+                       Kelvins>();
 }
 
 TEST(UnitInverse, CommutesWithProduct) {
