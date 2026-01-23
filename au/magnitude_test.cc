@@ -600,5 +600,58 @@ TEST(DenominatorPart, OmitsSignForNegativeNumbers) {
     StaticAssertTypeEq<DenominatorPart<decltype(-mag<3>() / mag<7>())>, decltype(mag<7>())>();
 }
 
+template <typename T>
+constexpr bool is_magnitude_u64_rational_compatible(T) {
+    return detail::IsMagnitudeU64RationalCompatibleHelper<T>::is_rational() &&
+           detail::IsMagnitudeU64RationalCompatibleHelper<T>::numerator_fits() &&
+           detail::IsMagnitudeU64RationalCompatibleHelper<T>::denominator_fits();
+}
+
+TEST(IsMagnitudeU64RationalCompatible, TrueForReasonablySizedIntegers) {
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(mag<1>()), IsTrue());
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(mag<1000>()), IsTrue());
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(pow<63>(mag<2>())), IsTrue());
+}
+
+TEST(IsMagnitudeU64RationalCompatible, FalseForTooLargeIntegers) {
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(pow<64>(mag<2>())), IsFalse());
+}
+
+TEST(IsMagnitudeU64RationalCompatible, TrueForRationalsWithReasonablySizedNumeratorAndDenominator) {
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(mag<5>() / mag<7>()), IsTrue());
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(mag<1>() / mag<1000>()), IsTrue());
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(pow<32>(mag<2>() / mag<3>())), IsTrue());
+}
+
+TEST(IsMagnitudeU64RationalCompatible, FalseWhenDenominatorTooLarge) {
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(mag<5>() / pow<64>(mag<2>())), IsFalse());
+}
+
+TEST(IsMagnitudeU64RationalCompatible, TrueForNegatives) {
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(-mag<5>()), IsTrue());
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(-mag<5>() / mag<7>()), IsTrue());
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(-pow<63>(mag<2>()) / pow<32>(mag<3>())),
+                IsTrue());
+}
+
+TEST(IsMagnitudeU64RationalCompatible, TrueForZero) {
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(ZERO), IsTrue());
+}
+
+TEST(IsMagnitudeU64RationalCompatible, FalseForIrrationals) {
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(Magnitude<Pi>{}), IsFalse());
+    EXPECT_THAT(is_magnitude_u64_rational_compatible(sqrt(mag<2>())), IsFalse());
+}
+
+TEST(AssertMagnitudeU64RationalCompatible, NoCompilerErrorForKnownValidInput) {
+    (void)AssertMagnitudeU64RationalCompatible<decltype(mag<1>())>{};
+    (void)AssertMagnitudeU64RationalCompatible<decltype(mag<1000>())>{};
+    (void)AssertMagnitudeU64RationalCompatible<decltype(pow<63>(mag<2>()))>{};
+    (void)AssertMagnitudeU64RationalCompatible<decltype(mag<5>() / mag<7>())>{};
+    (void)AssertMagnitudeU64RationalCompatible<decltype(pow<32>(mag<2>() / mag<3>()))>{};
+    (void)AssertMagnitudeU64RationalCompatible<decltype(-mag<5>())>{};
+    (void)AssertMagnitudeU64RationalCompatible<decltype(-pow<63>(mag<2>()) / pow<32>(mag<3>()))>{};
+    (void)AssertMagnitudeU64RationalCompatible<Zero>{};
+}
 }  // namespace detail
 }  // namespace au
