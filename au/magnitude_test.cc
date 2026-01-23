@@ -25,10 +25,14 @@ namespace au {
 using ::testing::DoubleEq;
 using ::testing::Eq;
 using ::testing::FloatEq;
+using ::testing::Ge;
+using ::testing::Gt;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
 using ::testing::Le;
+using ::testing::Lt;
 using ::testing::Ne;
+using ::testing::Not;
 using ::testing::StaticAssertTypeEq;
 using ::testing::StrEq;
 
@@ -49,6 +53,57 @@ TEST(Magnitude, SupportsEqualityComparison) {
     EXPECT_THAT(mag_2, Eq(mag_2));
 
     EXPECT_THAT(mag_1, Ne(mag_2));
+}
+
+TEST(Magnitude, SupportsOrderingComparison) {
+    // Basic ordering.
+    EXPECT_THAT(mag<1>(), Lt(mag<2>()));
+    EXPECT_THAT(mag<2>(), Gt(mag<1>()));
+    EXPECT_THAT(mag<1>(), Le(mag<2>()));
+    EXPECT_THAT(mag<2>(), Ge(mag<1>()));
+
+    // Equal magnitudes.
+    EXPECT_THAT(mag<5>(), Le(mag<5>()));
+    EXPECT_THAT(mag<5>(), Ge(mag<5>()));
+    EXPECT_THAT(mag<5>(), Not(Lt(mag<5>())));
+    EXPECT_THAT(mag<5>(), Not(Gt(mag<5>())));
+
+    // Ratios.
+    EXPECT_THAT(mag<1>() / mag<3>(), Lt(mag<1>() / mag<2>()));
+    EXPECT_THAT(mag<2>() / mag<5>(), Lt(mag<3>() / mag<5>()));
+}
+
+TEST(Magnitude, OrderingHandlesNegativeMagnitudes) {
+    // Negative vs positive.
+    EXPECT_THAT(-mag<5>(), Lt(mag<1>()));
+    EXPECT_THAT(mag<1>(), Gt(-mag<5>()));
+
+    // Both negative: more negative is less.
+    EXPECT_THAT(-mag<10>(), Lt(-mag<5>()));
+    EXPECT_THAT(-mag<5>(), Gt(-mag<10>()));
+
+    // Negative ratios.
+    EXPECT_THAT(-mag<2>() / mag<3>(), Lt(-mag<1>() / mag<3>()));
+}
+
+TEST(Magnitude, OrderingWithZero) {
+    // Zero is less than positive magnitudes.
+    EXPECT_THAT(ZERO, Lt(mag<1>()));
+    EXPECT_THAT(ZERO, Lt(mag<1>() / mag<1000>()));
+    EXPECT_THAT(ZERO, Not(Gt(mag<1>())));
+    EXPECT_THAT(ZERO, Le(mag<1>()));
+    EXPECT_THAT(ZERO, Not(Ge(mag<1>())));
+
+    // Zero is greater than negative magnitudes.
+    EXPECT_THAT(ZERO, Gt(-mag<1>()));
+    EXPECT_THAT(ZERO, Gt(-mag<1000>()));
+    EXPECT_THAT(ZERO, Not(Lt(-mag<1>())));
+    EXPECT_THAT(ZERO, Ge(-mag<1>()));
+    EXPECT_THAT(ZERO, Not(Le(-mag<1>())));
+
+    // Magnitude vs Zero.
+    EXPECT_THAT(mag<1>(), Gt(ZERO));
+    EXPECT_THAT(-mag<1>(), Lt(ZERO));
 }
 
 TEST(Magnitude, ProductBehavesCorrectly) {
