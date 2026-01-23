@@ -1266,6 +1266,64 @@ TEST(IntRoundIn, QuantityPointWithNontrivialOffset) {
     EXPECT_THAT(int_round_in(celsius_pt, milli(kelvins_pt)(273'650)), SameTypeAndValue(1));
 }
 
+TEST(IntRoundIn, ExplicitRepSupportsConstexpr) {
+    constexpr auto result = int_round_in<int>(meters, milli(meters)(1'500));
+    EXPECT_THAT(result, SameTypeAndValue(2));
+}
+
+TEST(IntRoundIn, ExplicitRepRoundsHalfAwayFromZero) {
+    EXPECT_THAT(int_round_in<int>(meters, milli(meters)(-1'500)), SameTypeAndValue(-2));
+    EXPECT_THAT(int_round_in<int>(meters, milli(meters)(-500)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_round_in<int>(meters, milli(meters)(500)), SameTypeAndValue(1));
+    EXPECT_THAT(int_round_in<int>(meters, milli(meters)(1'500)), SameTypeAndValue(2));
+}
+
+TEST(IntRoundIn, ExplicitRepRoundsToNearestWhenUnambiguous) {
+    EXPECT_THAT(int_round_in<int>(meters, milli(meters)(-501)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_round_in<int>(meters, milli(meters)(-499)), SameTypeAndValue(0));
+    EXPECT_THAT(int_round_in<int>(meters, milli(meters)(499)), SameTypeAndValue(0));
+    EXPECT_THAT(int_round_in<int>(meters, milli(meters)(501)), SameTypeAndValue(1));
+}
+
+TEST(IntRoundIn, ExplicitRepAcceptsFloatingPointInput) {
+    EXPECT_THAT(int_round_in<int>(meters, meters(-1.5)), SameTypeAndValue(-2));
+
+    EXPECT_THAT(int_round_in<int>(meters, meters(1.4)), SameTypeAndValue(1));
+    EXPECT_THAT(int_round_in<int>(meters, meters(1.5)), SameTypeAndValue(2));
+    EXPECT_THAT(int_round_in<int>(meters, meters(1.6)), SameTypeAndValue(2));
+}
+
+TEST(IntRoundIn, ExplicitRepAcceptsFloatInput) {
+    EXPECT_THAT(int_round_in<int>(meters, meters(1.5f)), SameTypeAndValue(2));
+    EXPECT_THAT(int_round_in<int>(meters, meters(2.5f)), SameTypeAndValue(3));
+}
+
+TEST(IntRoundIn, ExplicitRepHandlesRationalConversionFactor) {
+    // 1 foot == (381 / 1250) meters
+    EXPECT_THAT(int_round_in<int>(meters, feet(1.0)), SameTypeAndValue(0));
+    EXPECT_THAT(int_round_in<int>(meters, feet(1.7)), SameTypeAndValue(1));
+}
+
+TEST(IntRoundIn, ExplicitRepSupportsInt64Output) {
+    EXPECT_THAT(int_round_in<int64_t>(meters, meters(1.5)), SameTypeAndValue(int64_t{2}));
+}
+
+TEST(IntRoundIn, ExplicitRepSupportsUnsignedOutput) {
+    EXPECT_THAT(int_round_in<unsigned>(meters, meters(1.5)), SameTypeAndValue(2u));
+}
+
+TEST(IntRoundIn, ExplicitRepQuantityPointAcceptsFloatingPointInput) {
+    EXPECT_THAT(int_round_in<int>(meters_pt, meters_pt(1.4)), SameTypeAndValue(1));
+    EXPECT_THAT(int_round_in<int>(meters_pt, meters_pt(1.5)), SameTypeAndValue(2));
+}
+
+TEST(IntRoundIn, ExplicitRepQuantityPointWithNontrivialOffset) {
+    // 273.15 K == 0 degrees Celsius
+    EXPECT_THAT(int_round_in<int>(celsius_pt, kelvins_pt(273.15)), SameTypeAndValue(0));
+    EXPECT_THAT(int_round_in<int>(celsius_pt, kelvins_pt(273.64)), SameTypeAndValue(0));
+    EXPECT_THAT(int_round_in<int>(celsius_pt, kelvins_pt(273.65)), SameTypeAndValue(1));
+}
+
 TEST(IntRoundAs, SupportsConstexpr) {
     constexpr auto result = int_round_as(meters, milli(meters)(1'500));
     EXPECT_THAT(result, SameTypeAndValue(meters(2)));
@@ -1307,6 +1365,38 @@ TEST(IntRoundAs, QuantityPointWithNontrivialOffset) {
                 SameTypeAndValue(celsius_pt(0)));
     EXPECT_THAT(int_round_as(celsius_pt, milli(kelvins_pt)(273'650)),
                 SameTypeAndValue(celsius_pt(1)));
+}
+
+TEST(IntRoundAs, ExplicitRepSupportsConstexpr) {
+    constexpr auto result = int_round_as<int>(meters, milli(meters)(1'500));
+    EXPECT_THAT(result, SameTypeAndValue(meters(2)));
+}
+
+TEST(IntRoundAs, ExplicitRepReturnsQuantityWithTargetUnitAndRep) {
+    const auto result = int_round_as<int64_t>(kilo(meters), meters(2'500));
+    EXPECT_THAT(result, SameTypeAndValue(kilo(meters)(int64_t{3})));
+}
+
+TEST(IntRoundAs, ExplicitRepAcceptsFloatingPointInput) {
+    EXPECT_THAT(int_round_as<int>(meters, meters(1.4)), SameTypeAndValue(meters(1)));
+    EXPECT_THAT(int_round_as<int>(meters, meters(1.5)), SameTypeAndValue(meters(2)));
+    EXPECT_THAT(int_round_as<int>(meters, meters(-1.5)), SameTypeAndValue(meters(-2)));
+}
+
+TEST(IntRoundAs, ExplicitRepHandlesRationalConversionFactor) {
+    // 1 foot == (381 / 1250) meters
+    EXPECT_THAT(int_round_as<int>(meters, feet(1.7)), SameTypeAndValue(meters(1)));
+}
+
+TEST(IntRoundAs, ExplicitRepQuantityPointAcceptsFloatingPointInput) {
+    EXPECT_THAT(int_round_as<int>(meters_pt, meters_pt(1.4)), SameTypeAndValue(meters_pt(1)));
+    EXPECT_THAT(int_round_as<int>(meters_pt, meters_pt(1.5)), SameTypeAndValue(meters_pt(2)));
+}
+
+TEST(IntRoundAs, ExplicitRepQuantityPointWithNontrivialOffset) {
+    // 273.15 K == 0 degrees Celsius
+    EXPECT_THAT(int_round_as<int>(celsius_pt, kelvins_pt(273.15)), SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(int_round_as<int>(celsius_pt, kelvins_pt(273.65)), SameTypeAndValue(celsius_pt(1)));
 }
 
 TEST(IntFloorIn, SupportsConstexpr) {
@@ -1363,6 +1453,58 @@ TEST(IntFloorIn, QuantityPointWithNontrivialOffset) {
     EXPECT_THAT(int_floor_in(celsius_pt, milli(kelvins_pt)(274'150)), SameTypeAndValue(1));
 }
 
+TEST(IntFloorIn, ExplicitRepSupportsConstexpr) {
+    constexpr auto result = int_floor_in<int>(meters, milli(meters)(1'999));
+    EXPECT_THAT(result, SameTypeAndValue(1));
+}
+
+TEST(IntFloorIn, ExplicitRepReturnsLargestIntegerNotGreaterThanInput) {
+    EXPECT_THAT(int_floor_in<int>(meters, milli(meters)(-1'001)), SameTypeAndValue(-2));
+    EXPECT_THAT(int_floor_in<int>(meters, milli(meters)(-1'000)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_floor_in<int>(meters, milli(meters)(1'000)), SameTypeAndValue(1));
+    EXPECT_THAT(int_floor_in<int>(meters, milli(meters)(1'999)), SameTypeAndValue(1));
+}
+
+TEST(IntFloorIn, ExplicitRepAcceptsFloatingPointInput) {
+    EXPECT_THAT(int_floor_in<int>(meters, meters(-1.1)), SameTypeAndValue(-2));
+    EXPECT_THAT(int_floor_in<int>(meters, meters(-1.0)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_floor_in<int>(meters, meters(1.0)), SameTypeAndValue(1));
+    EXPECT_THAT(int_floor_in<int>(meters, meters(1.9)), SameTypeAndValue(1));
+}
+
+TEST(IntFloorIn, ExplicitRepAcceptsFloatInput) {
+    EXPECT_THAT(int_floor_in<int>(meters, meters(1.9f)), SameTypeAndValue(1));
+    EXPECT_THAT(int_floor_in<int>(meters, meters(2.0f)), SameTypeAndValue(2));
+}
+
+TEST(IntFloorIn, ExplicitRepHandlesRationalConversionFactor) {
+    // 1 foot == (381 / 1250) meters
+    EXPECT_THAT(int_floor_in<int>(meters, feet(-0.1)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_floor_in<int>(meters, feet(3.2)), SameTypeAndValue(0));
+    EXPECT_THAT(int_floor_in<int>(meters, feet(3.3)), SameTypeAndValue(1));
+}
+
+TEST(IntFloorIn, ExplicitRepSupportsInt64Output) {
+    EXPECT_THAT(int_floor_in<int64_t>(meters, meters(1.9)), SameTypeAndValue(int64_t{1}));
+}
+
+TEST(IntFloorIn, ExplicitRepSupportsUnsignedOutput) {
+    EXPECT_THAT(int_floor_in<unsigned>(meters, meters(1.9)), SameTypeAndValue(1u));
+}
+
+TEST(IntFloorIn, ExplicitRepQuantityPointAcceptsFloatingPointInput) {
+    EXPECT_THAT(int_floor_in<int>(meters_pt, meters_pt(1.9)), SameTypeAndValue(1));
+    EXPECT_THAT(int_floor_in<int>(meters_pt, meters_pt(2.0)), SameTypeAndValue(2));
+}
+
+TEST(IntFloorIn, ExplicitRepQuantityPointWithNontrivialOffset) {
+    // 273.15 K == 0 degrees Celsius
+    EXPECT_THAT(int_floor_in<int>(celsius_pt, kelvins_pt(273.14)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_floor_in<int>(celsius_pt, kelvins_pt(273.15)), SameTypeAndValue(0));
+    EXPECT_THAT(int_floor_in<int>(celsius_pt, kelvins_pt(274.14)), SameTypeAndValue(0));
+    EXPECT_THAT(int_floor_in<int>(celsius_pt, kelvins_pt(274.15)), SameTypeAndValue(1));
+}
+
 TEST(IntFloorAs, SupportsConstexpr) {
     constexpr auto result = int_floor_as(meters, milli(meters)(1'999));
     EXPECT_THAT(result, SameTypeAndValue(meters(1)));
@@ -1402,6 +1544,40 @@ TEST(IntFloorAs, QuantityPointWithNontrivialOffset) {
                 SameTypeAndValue(celsius_pt(0)));
     EXPECT_THAT(int_floor_as(celsius_pt, milli(kelvins_pt)(274'150)),
                 SameTypeAndValue(celsius_pt(1)));
+}
+
+TEST(IntFloorAs, ExplicitRepSupportsConstexpr) {
+    constexpr auto result = int_floor_as<int>(meters, milli(meters)(1'999));
+    EXPECT_THAT(result, SameTypeAndValue(meters(1)));
+}
+
+TEST(IntFloorAs, ExplicitRepReturnsQuantityWithTargetUnitAndRep) {
+    const auto result = int_floor_as<int64_t>(kilo(meters), meters(2'999));
+    EXPECT_THAT(result, SameTypeAndValue(kilo(meters)(int64_t{2})));
+}
+
+TEST(IntFloorAs, ExplicitRepAcceptsFloatingPointInput) {
+    EXPECT_THAT(int_floor_as<int>(meters, meters(-1.1)), SameTypeAndValue(meters(-2)));
+    EXPECT_THAT(int_floor_as<int>(meters, meters(1.9)), SameTypeAndValue(meters(1)));
+}
+
+TEST(IntFloorAs, ExplicitRepHandlesRationalConversionFactor) {
+    // 1 foot == (381 / 1250) meters
+    EXPECT_THAT(int_floor_as<int>(meters, feet(3.2)), SameTypeAndValue(meters(0)));
+    EXPECT_THAT(int_floor_as<int>(meters, feet(3.3)), SameTypeAndValue(meters(1)));
+}
+
+TEST(IntFloorAs, ExplicitRepQuantityPointAcceptsFloatingPointInput) {
+    EXPECT_THAT(int_floor_as<int>(meters_pt, meters_pt(1.9)), SameTypeAndValue(meters_pt(1)));
+    EXPECT_THAT(int_floor_as<int>(meters_pt, meters_pt(2.0)), SameTypeAndValue(meters_pt(2)));
+}
+
+TEST(IntFloorAs, ExplicitRepQuantityPointWithNontrivialOffset) {
+    // 273.15 K == 0 degrees Celsius
+    EXPECT_THAT(int_floor_as<int>(celsius_pt, kelvins_pt(273.14)),
+                SameTypeAndValue(celsius_pt(-1)));
+    EXPECT_THAT(int_floor_as<int>(celsius_pt, kelvins_pt(274.14)), SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(int_floor_as<int>(celsius_pt, kelvins_pt(274.15)), SameTypeAndValue(celsius_pt(1)));
 }
 
 TEST(IntCeilIn, SupportsConstexpr) {
@@ -1458,6 +1634,58 @@ TEST(IntCeilIn, QuantityPointWithNontrivialOffset) {
     EXPECT_THAT(int_ceil_in(celsius_pt, milli(kelvins_pt)(273'151)), SameTypeAndValue(1));
 }
 
+TEST(IntCeilIn, ExplicitRepSupportsConstexpr) {
+    constexpr auto result = int_ceil_in<int>(meters, milli(meters)(1'001));
+    EXPECT_THAT(result, SameTypeAndValue(2));
+}
+
+TEST(IntCeilIn, ExplicitRepReturnsSmallestIntegerNotLessThanInput) {
+    EXPECT_THAT(int_ceil_in<int>(meters, milli(meters)(-1'001)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_ceil_in<int>(meters, milli(meters)(-1'000)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_ceil_in<int>(meters, milli(meters)(1'000)), SameTypeAndValue(1));
+    EXPECT_THAT(int_ceil_in<int>(meters, milli(meters)(1'001)), SameTypeAndValue(2));
+}
+
+TEST(IntCeilIn, ExplicitRepAcceptsFloatingPointInput) {
+    EXPECT_THAT(int_ceil_in<int>(meters, meters(-1.1)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_ceil_in<int>(meters, meters(-1.0)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_ceil_in<int>(meters, meters(1.0)), SameTypeAndValue(1));
+    EXPECT_THAT(int_ceil_in<int>(meters, meters(1.1)), SameTypeAndValue(2));
+}
+
+TEST(IntCeilIn, ExplicitRepAcceptsFloatInput) {
+    EXPECT_THAT(int_ceil_in<int>(meters, meters(1.0f)), SameTypeAndValue(1));
+    EXPECT_THAT(int_ceil_in<int>(meters, meters(1.1f)), SameTypeAndValue(2));
+}
+
+TEST(IntCeilIn, ExplicitRepHandlesRationalConversionFactor) {
+    // 1 foot == (381 / 1250) meters
+    EXPECT_THAT(int_ceil_in<int>(meters, feet(-3.3)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_ceil_in<int>(meters, feet(3.2)), SameTypeAndValue(1));
+    EXPECT_THAT(int_ceil_in<int>(meters, feet(3.3)), SameTypeAndValue(2));
+}
+
+TEST(IntCeilIn, ExplicitRepSupportsInt64Output) {
+    EXPECT_THAT(int_ceil_in<int64_t>(meters, meters(1.1)), SameTypeAndValue(int64_t{2}));
+}
+
+TEST(IntCeilIn, ExplicitRepSupportsUnsignedOutput) {
+    EXPECT_THAT(int_ceil_in<unsigned>(meters, meters(1.1)), SameTypeAndValue(2u));
+}
+
+TEST(IntCeilIn, ExplicitRepQuantityPointAcceptsFloatingPointInput) {
+    EXPECT_THAT(int_ceil_in<int>(meters_pt, meters_pt(1.0)), SameTypeAndValue(1));
+    EXPECT_THAT(int_ceil_in<int>(meters_pt, meters_pt(1.1)), SameTypeAndValue(2));
+}
+
+TEST(IntCeilIn, ExplicitRepQuantityPointWithNontrivialOffset) {
+    // 273.15 K == 0 degrees Celsius
+    EXPECT_THAT(int_ceil_in<int>(celsius_pt, kelvins_pt(272.15)), SameTypeAndValue(-1));
+    EXPECT_THAT(int_ceil_in<int>(celsius_pt, kelvins_pt(273.14)), SameTypeAndValue(0));
+    EXPECT_THAT(int_ceil_in<int>(celsius_pt, kelvins_pt(273.15)), SameTypeAndValue(0));
+    EXPECT_THAT(int_ceil_in<int>(celsius_pt, kelvins_pt(273.16)), SameTypeAndValue(1));
+}
+
 TEST(IntCeilAs, SupportsConstexpr) {
     constexpr auto result = int_ceil_as(meters, milli(meters)(1'001));
     EXPECT_THAT(result, SameTypeAndValue(meters(2)));
@@ -1497,6 +1725,39 @@ TEST(IntCeilAs, QuantityPointWithNontrivialOffset) {
                 SameTypeAndValue(celsius_pt(0)));
     EXPECT_THAT(int_ceil_as(celsius_pt, milli(kelvins_pt)(273'151)),
                 SameTypeAndValue(celsius_pt(1)));
+}
+
+TEST(IntCeilAs, ExplicitRepSupportsConstexpr) {
+    constexpr auto result = int_ceil_as<int>(meters, milli(meters)(1'001));
+    EXPECT_THAT(result, SameTypeAndValue(meters(2)));
+}
+
+TEST(IntCeilAs, ExplicitRepReturnsQuantityWithTargetUnitAndRep) {
+    const auto result = int_ceil_as<int64_t>(kilo(meters), meters(3'001));
+    EXPECT_THAT(result, SameTypeAndValue(kilo(meters)(int64_t{4})));
+}
+
+TEST(IntCeilAs, ExplicitRepAcceptsFloatingPointInput) {
+    EXPECT_THAT(int_ceil_as<int>(meters, meters(-1.1)), SameTypeAndValue(meters(-1)));
+    EXPECT_THAT(int_ceil_as<int>(meters, meters(1.1)), SameTypeAndValue(meters(2)));
+}
+
+TEST(IntCeilAs, ExplicitRepHandlesRationalConversionFactor) {
+    // 1 foot == (381 / 1250) meters
+    EXPECT_THAT(int_ceil_as<int>(meters, feet(3.2)), SameTypeAndValue(meters(1)));
+    EXPECT_THAT(int_ceil_as<int>(meters, feet(3.3)), SameTypeAndValue(meters(2)));
+}
+
+TEST(IntCeilAs, ExplicitRepQuantityPointAcceptsFloatingPointInput) {
+    EXPECT_THAT(int_ceil_as<int>(meters_pt, meters_pt(1.0)), SameTypeAndValue(meters_pt(1)));
+    EXPECT_THAT(int_ceil_as<int>(meters_pt, meters_pt(1.1)), SameTypeAndValue(meters_pt(2)));
+}
+
+TEST(IntCeilAs, ExplicitRepQuantityPointWithNontrivialOffset) {
+    // 273.15 K == 0 degrees Celsius
+    EXPECT_THAT(int_ceil_as<int>(celsius_pt, kelvins_pt(273.14)), SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(int_ceil_as<int>(celsius_pt, kelvins_pt(273.15)), SameTypeAndValue(celsius_pt(0)));
+    EXPECT_THAT(int_ceil_as<int>(celsius_pt, kelvins_pt(273.16)), SameTypeAndValue(celsius_pt(1)));
 }
 
 }  // namespace au
