@@ -448,8 +448,8 @@ idea of providing the same (single-argument) API as `std::round` for `Quantity`,
 has no single well-defined result: it depends on the units.  (For example, `std::round(height)` is
 an intrinsically ill-formed concept: what is an "integer height"?)
 
-As with everything else in the library, `"as"` is a word that means "return a `Quantity`", and
-`"in"` is a word that means "return a raw number".
+As with everything else in the library, `"as"` is a word that means "return a strong type from the
+library", and `"in"` is a word that means "return a raw number".
 
 **Signatures:**
 
@@ -469,6 +469,10 @@ auto round_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 
+// c) For `Constant` inputs †
+template <typename RoundingUnits, typename Unit>
+constexpr auto round_as(RoundingUnits rounding_units, Constant<Unit> c);
+
 // 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:
 //    `round_as<Type>(units, quantity)`
 
@@ -479,6 +483,9 @@ auto round_as(RoundingUnits rounding_units, Quantity<U, R> q);
 // b) For `QuantityPoint` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
+
+// (No explicit-rep version for `Constant`: since the result is another `Constant`, no rep is
+// needed.)
 
 
 //
@@ -496,6 +503,8 @@ auto round_in(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 
+// (No unit-only version for `Constant`: since `Constant` has no rep, we need an explicit type.)
+
 // 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:
 //    `round_in<Type>(units, quantity)`
 
@@ -506,15 +515,29 @@ auto round_in(RoundingUnits rounding_units, Quantity<U, R> q);
 // b) For `QuantityPoint` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> q);
+
+// c) For `Constant` inputs †
+template <typename OutputRep, typename RoundingUnits, typename Unit>
+constexpr auto round_in(RoundingUnits rounding_units, Constant<Unit> c);
 ```
 
-**Returns:** A `Quantity` or `QuantityPoint` (depending on the input type), expressed in the
-requested units, which has an integer value in those units. We return the nearest such quantity to
-the original input quantity.
+† _`Constant` support is subject to [compile-time arithmetic
+limitations](./magnitude.md#compile-time-arithmetic-limitations)._
 
-The policy for the rep is consistent with
-[`std::round`](https://en.cppreference.com/w/cpp/numeric/math/round).  The output rep is the same as
-the return type of applying `std::round` to the input rep.
+**Returns:** The nearest value, which is an integer in the requested units, to the input.
+
+- For functions ending in `_as`, this will be the same Au type category (i.e., `Quantity`,
+  `QuantityPoint`, or `Constant`) as the input.
+- For functions ending in `_in`, this will be a raw number.
+
+For the "explicit rep" versions, the provided type will be the _rep_ of the return value for `_as`
+functions, and will be the _type_ of the return value for `_in` functions (since they return raw
+numbers).
+
+For "unit-only" versions, the policy for the rep is consistent with
+[`std::round`](https://en.cppreference.com/w/cpp/numeric/math/round).  The output rep (`_as`
+functions) or type (`_in` functions) is the same as the return type of applying `std::round` to the
+input rep.
 
 !!! tip
     If you need to round a `Quantity` with integral rep, and you want to stay in the integer domain
@@ -532,8 +555,8 @@ idea of providing the same (single-argument) API as `std::ceil` for `Quantity`, 
 has no single well-defined result: it depends on the units.  (For example, `std::ceil(height)` is an
 intrinsically ill-formed concept: what is an "integer height"?)
 
-As with everything else in the library, `"as"` is a word that means "return a `Quantity`", and
-`"in"` is a word that means "return a raw number".
+As with everything else in the library, `"as"` is a word that means "return a strong type from the
+library", and `"in"` is a word that means "return a raw number".
 
 **Signatures:**
 
@@ -553,6 +576,10 @@ auto ceil_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 
+// c) For `Constant` inputs †
+template <typename RoundingUnits, typename Unit>
+constexpr auto ceil_as(RoundingUnits rounding_units, Constant<Unit> c);
+
 // 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:
 //    `ceil_as<Type>(units, quantity)`
 
@@ -563,6 +590,9 @@ auto ceil_as(RoundingUnits rounding_units, Quantity<U, R> q);
 // b) For `QuantityPoint` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
+
+// (No explicit-rep version for `Constant`: since the result is another `Constant`, no rep is
+// needed.)
 
 
 //
@@ -580,6 +610,8 @@ auto ceil_in(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 
+// (No unit-only version for `Constant`: since `Constant` has no rep, we need an explicit type.)
+
 // 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:
 //    `ceil_in<Type>(units, quantity)`
 
@@ -590,14 +622,30 @@ auto ceil_in(RoundingUnits rounding_units, Quantity<U, R> q);
 // b) For `QuantityPoint` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> q);
+
+// c) For `Constant` inputs †
+template <typename OutputRep, typename RoundingUnits, typename Unit>
+constexpr auto ceil_in(RoundingUnits rounding_units, Constant<Unit> c);
 ```
 
-**Returns:** A `Quantity`, expressed in the requested units, which has an integer value in those
-units.  We return the smallest such quantity which is no smaller than the original input quantity.
+† _`Constant` support is subject to [compile-time arithmetic
+limitations](./magnitude.md#compile-time-arithmetic-limitations)._
 
-The policy for the rep is consistent with
-[`std::ceil`](https://en.cppreference.com/w/cpp/numeric/math/ceil).  The output rep is the same as
-the return type of applying `std::ceil` to the input rep.
+**Returns:** The smallest value, which is an integer in the requested units, that is at least as
+large as the input.
+
+- For functions ending in `_as`, this will be the same Au type category (i.e., `Quantity`,
+  `QuantityPoint`, or `Constant`) as the input.
+- For functions ending in `_in`, this will be a raw number.
+
+For the "explicit rep" versions, the provided type will be the _rep_ of the return value for `_as`
+functions, and will be the _type_ of the return value for `_in` functions (since they return raw
+numbers).
+
+For "unit-only" versions, the policy for the rep is consistent with
+[`std::ceil`](https://en.cppreference.com/w/cpp/numeric/math/ceil).  The output rep (`_as`
+functions) or type (`_in` functions) is the same as the return type of applying `std::ceil` to the
+input rep.
 
 !!! tip
     If you need to ceil a `Quantity` with integral rep, and you want to stay in the integer domain
@@ -615,8 +663,8 @@ idea of providing the same (single-argument) API as `std::floor` for `Quantity`,
 has no single well-defined result: it depends on the units.  (For example, `std::floor(height)` is an
 intrinsically ill-formed concept: what is an "integer height"?)
 
-As with everything else in the library, `"as"` is a word that means "return a `Quantity`", and
-`"in"` is a word that means "return a raw number".
+As with everything else in the library, `"as"` is a word that means "return a strong type from the
+library", and `"in"` is a word that means "return a raw number".
 
 **Signatures:**
 
@@ -636,6 +684,10 @@ auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 
+// c) For `Constant` inputs †
+template <typename RoundingUnits, typename Unit>
+constexpr auto floor_as(RoundingUnits rounding_units, Constant<Unit> c);
+
 // 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:
 //    `floor_as<Type>(units, quantity)`
 
@@ -646,6 +698,9 @@ auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q);
 // b) For `QuantityPoint` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
+
+// (No explicit-rep version for `Constant`: since the result is another `Constant`, no rep is
+// needed.)
 
 
 //
@@ -663,6 +718,8 @@ auto floor_in(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 
+// (No unit-only version for `Constant`: since `Constant` has no rep, we need an explicit type.)
+
 // 2. Explicit-rep version (overriding; ignores safety checks).  Typical callsites look like:
 //    `floor_in<Type>(units, quantity)`
 
@@ -673,14 +730,30 @@ auto floor_in(RoundingUnits rounding_units, Quantity<U, R> q);
 // b) For `QuantityPoint` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> q);
+
+// c) For `Constant` inputs †
+template <typename OutputRep, typename RoundingUnits, typename Unit>
+constexpr auto floor_in(RoundingUnits rounding_units, Constant<Unit> c);
 ```
 
-**Returns:** A `Quantity`, expressed in the requested units, which has an integer value in those
-units.  We return the largest such quantity which is no larger than the original input quantity.
+† _`Constant` support is subject to [compile-time arithmetic
+limitations](./magnitude.md#compile-time-arithmetic-limitations)._
 
-The policy for the rep is consistent with
-[`std::floor`](https://en.cppreference.com/w/cpp/numeric/math/floor).  The output rep is the same as
-the return type of applying `std::floor` to the input rep.
+**Returns:** The largest value, which is an integer in the requested units, that is no larger than
+the input.
+
+- For functions ending in `_as`, this will be the same Au type category (i.e., `Quantity`,
+  `QuantityPoint`, or `Constant`) as the input.
+- For functions ending in `_in`, this will be a raw number.
+
+For the "explicit rep" versions, the provided type will be the _rep_ of the return value for `_as`
+functions, and will be the _type_ of the return value for `_in` functions (since they return raw
+numbers).
+
+For "unit-only" versions, the policy for the rep is consistent with
+[`std::floor`](https://en.cppreference.com/w/cpp/numeric/math/floor).  The output rep (`_as`
+functions) or type (`_in` functions) is the same as the return type of applying `std::floor` to the
+input rep.
 
 !!! tip
     If you need to floor a `Quantity` with integral rep, and you want to stay in the integer domain
@@ -696,16 +769,6 @@ The name `int_round` is shorthand for "integer-domain `round`".  These functions
 [`round_in` and `round_as`](#round), but they do not call `std::round`.  This provides two
 advantages.  First, the computation stays purely in the integer domain, rather than converting to
 floating point and back.  Second, these functions are `constexpr` compatible.
-
-!!! note
-    The output type (for `int_round_in`) or rep (for `int_round_as`) must be integral.
-
-    - For _unit-only_ versions, this means the input must have an integral rep.
-    - For _explicit-Rep_ versions, this means the output type or rep (which you explicitly specify)
-      must be integral.
-
-When the input is exactly halfway between two adjacent integer values, these functions round **away
-from zero**.  For example, `0.5` rounds to `1`, and `-0.5` rounds to `-1`.
 
 **Signatures:**
 
@@ -725,6 +788,10 @@ constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 
+// c) For `Constant` inputs †
+template <typename RoundingUnits, typename Unit>
+constexpr auto int_round_as(RoundingUnits rounding_units, Constant<Unit> c);
+
 // 2. Explicit-Rep version (uses explicitly provided output Rep).  Typical callsites look like:
 //    `int_round_as<Type>(units, quantity)`
 
@@ -735,6 +802,9 @@ constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q);
 // b) For `QuantityPoint` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
+// (No explicit-rep version for `Constant`: since the result is another `Constant`, no rep is
+// needed.)
 
 
 //
@@ -752,6 +822,8 @@ constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 
+// (No unit-only version for `Constant`: since `Constant` has no rep, we need an explicit type.)
+
 // 2. Explicit-Rep version (output is explicitly provided type).  Typical callsites look like:
 //    `int_round_in<Type>(units, quantity)`
 
@@ -762,11 +834,29 @@ constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q);
 // b) For `QuantityPoint` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
+// c) For `Constant` inputs †
+template <typename OutputRep, typename RoundingUnits, typename Unit>
+constexpr auto int_round_in(RoundingUnits rounding_units, Constant<Unit> c);
 ```
 
-**Returns:** The nearest integer value in the specified units.  For `int_round_as`, the result is
-a `Quantity` or `QuantityPoint` (depending on the input type).  For `int_round_in`, the result is
-a raw integer of the same type as the input's rep.
+† _`Constant` support is subject to [compile-time arithmetic
+limitations](./magnitude.md#compile-time-arithmetic-limitations)._
+
+**Returns:** The nearest value, which is an integer in the requested units, to the input.  When the
+input is exactly halfway between two adjacent integer values, these functions round **away from
+zero** (e.g., `0.5` rounds to `1`, and `-0.5` rounds to `-1`).
+
+- For functions ending in `_as`, this will be the same Au type category (i.e., `Quantity`,
+  `QuantityPoint`, or `Constant`) as the input.
+- For functions ending in `_in`, this will be a raw number.
+
+For the "explicit rep" versions, the provided type will be the _rep_ of the return value for `_as`
+functions, and will be the _type_ of the return value for `_in` functions (since they return raw
+numbers).  This type must be integral (although the input rep can be any type).
+
+For "unit-only" versions, the output rep (`_as` functions) or type (`_in` functions) is the same as
+the input's rep, which must be integral.
 
 #### `int_floor_in`, `int_floor_as` {#int_floor}
 
@@ -777,13 +867,6 @@ The name `int_floor` is shorthand for "integer-domain `floor`".  These functions
 [`floor_in` and `floor_as`](#floor), but they do not call `std::floor`.  This provides two
 advantages.  First, the computation stays purely in the integer domain, rather than converting to
 floating point and back.  Second, these functions are `constexpr` compatible.
-
-!!! note
-    The output type (for `int_floor_in`) or rep (for `int_floor_as`) must be integral.
-
-    - For _unit-only_ versions, this means the input must have an integral rep.
-    - For _explicit-Rep_ versions, this means the output type or rep (which you explicitly specify)
-      must be integral.
 
 **Signatures:**
 
@@ -803,6 +886,10 @@ constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 
+// c) For `Constant` inputs †
+template <typename RoundingUnits, typename Unit>
+constexpr auto int_floor_as(RoundingUnits rounding_units, Constant<Unit> c);
+
 // 2. Explicit-Rep version (uses explicitly provided output Rep).  Typical callsites look like:
 //    `int_floor_as<Type>(units, quantity)`
 
@@ -813,6 +900,8 @@ constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q);
 // b) For `QuantityPoint` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
+// (No explicit-rep version for `Constant`: since the result is another `Constant`, no rep is needed.)
 
 
 //
@@ -830,6 +919,8 @@ constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 
+// (No unit-only version for `Constant`: since `Constant` has no rep, we need an explicit type.)
+
 // 2. Explicit-Rep version (output is explicitly provided type).  Typical callsites look like:
 //    `int_floor_in<Type>(units, quantity)`
 
@@ -840,11 +931,28 @@ constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q);
 // b) For `QuantityPoint` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
+// c) For `Constant` inputs †
+template <typename OutputRep, typename RoundingUnits, typename Unit>
+constexpr auto int_floor_in(RoundingUnits rounding_units, Constant<Unit> c);
 ```
 
-**Returns:** The largest integer value in the specified units which is no larger than the input.
-For `int_floor_as`, the result is a `Quantity` or `QuantityPoint` (depending on the input type).
-For `int_floor_in`, the result is a raw integer of the same type as the input's rep.
+† _`Constant` support is subject to [compile-time arithmetic
+limitations](./magnitude.md#compile-time-arithmetic-limitations)._
+
+**Returns:** The largest value, which is an integer in the requested units, that is no larger than
+the input.
+
+- For functions ending in `_as`, this will be the same Au type category (i.e., `Quantity`,
+  `QuantityPoint`, or `Constant`) as the input.
+- For functions ending in `_in`, this will be a raw number.
+
+For the "explicit rep" versions, the provided type will be the _rep_ of the return value for `_as`
+functions, and will be the _type_ of the return value for `_in` functions (since they return raw
+numbers).  This type must be integral (although the input rep can be any type).
+
+For "unit-only" versions, the output rep (`_as` functions) or type (`_in` functions) is the same as
+the input's rep, which must be integral.
 
 #### `int_ceil_in`, `int_ceil_as` {#int_ceil}
 
@@ -855,13 +963,6 @@ The name `int_ceil` is shorthand for "integer-domain `ceil`".  These functions a
 [`ceil_in` and `ceil_as`](#ceil), but they do not call `std::ceil`.  This provides two advantages.
 First, the computation stays purely in the integer domain, rather than converting to floating point
 and back.  Second, these functions are `constexpr` compatible.
-
-!!! note
-    The output type (for `int_ceil_in`) or rep (for `int_ceil_as`) must be integral.
-
-    - For _unit-only_ versions, this means the input must have an integral rep.
-    - For _explicit-Rep_ versions, this means the output type or rep (which you explicitly specify)
-      must be integral.
 
 **Signatures:**
 
@@ -881,6 +982,10 @@ constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 
+// c) For `Constant` inputs †
+template <typename RoundingUnits, typename Unit>
+constexpr auto int_ceil_as(RoundingUnits rounding_units, Constant<Unit> c);
+
 // 2. Explicit-Rep version (uses explicitly provided output Rep).  Typical callsites look like:
 //    `int_ceil_as<Type>(units, quantity)`
 
@@ -891,6 +996,9 @@ constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q);
 // b) For `QuantityPoint` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
+// (No explicit-rep version for `Constant`: since the result is another `Constant`, no rep is
+// needed.)
 
 
 //
@@ -908,6 +1016,8 @@ constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 
+// (No unit-only version for `Constant`: since `Constant` has no rep, we need an explicit type.)
+
 // 2. Explicit-Rep version (output is explicitly provided type).  Typical callsites look like:
 //    `int_ceil_in<Type>(units, quantity)`
 
@@ -918,11 +1028,28 @@ constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q);
 // b) For `QuantityPoint` inputs
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p);
+
+// c) For `Constant` inputs †
+template <typename OutputRep, typename RoundingUnits, typename Unit>
+constexpr auto int_ceil_in(RoundingUnits rounding_units, Constant<Unit> c);
 ```
 
-**Returns:** The smallest integer value in the specified units which is no smaller than the input.
-For `int_ceil_as`, the result is a `Quantity` or `QuantityPoint` (depending on the input type).
-For `int_ceil_in`, the result is a raw integer of the same type as the input's rep.
+† _`Constant` support is subject to [compile-time arithmetic
+limitations](./magnitude.md#compile-time-arithmetic-limitations)._
+
+**Returns:** The smallest value, which is an integer in the requested units, that is at least as
+large as the input.
+
+- For functions ending in `_as`, this will be the same Au type category (i.e., `Quantity`,
+  `QuantityPoint`, or `Constant`) as the input.
+- For functions ending in `_in`, this will be a raw number.
+
+For the "explicit rep" versions, the provided type will be the _rep_ of the return value for `_as`
+functions, and will be the _type_ of the return value for `_in` functions (since they return raw
+numbers).  This type must be integral (although the input rep can be any type).
+
+For "unit-only" versions, the output rep (`_as` functions) or type (`_in` functions) is the same as
+the input's rep, which must be integral.
 
 ### Inverse functions
 
