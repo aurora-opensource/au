@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-80-g24c5585
+// Version identifier: 0.5.0-base-81-gbb40f2c
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -3205,6 +3205,10 @@ constexpr const auto &mag_label(MagT = MagT{});
 template <std::uintmax_t N>
 constexpr auto mag();
 
+// Check whether a Magnitude is representable in type T.
+template <typename T, typename... BPs>
+constexpr bool representable_in(Magnitude<BPs...> m);
+
 // A base type for prime numbers.
 template <std::uintmax_t N>
 struct Prime {
@@ -3288,6 +3292,51 @@ struct IsRational
 
 template <typename MagT>
 struct IsInteger : std::is_same<MagT, IntegerPart<MagT>> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Validation utilities for rational Magnitude arithmetic operations.
+//
+// Many common mathematical operations (comparison, addition, etc.) are not feasible in _general_
+// for magnitudes.  However, we _can_ support them for _specific subsets_ of magnitudes, the
+// simplest being purely rational magnitudes, whose absolute numerator and denominator fit in a
+// 64-bit integer.  We have decided to provide these operations for _this subset only_, as it
+// satisfies many practical use cases.
+
+namespace detail {
+template <typename MagT>
+struct IsMagnitudeU64RationalCompatibleHelper {
+    static constexpr bool is_rational() { return IsRational<MagT>::value; }
+    static constexpr bool numerator_fits() {
+        return representable_in<std::uint64_t>(Abs<Numerator<MagT>>{});
+    }
+    static constexpr bool denominator_fits() {
+        return representable_in<std::uint64_t>(Denominator<MagT>{});
+    }
+};
+template <>
+struct IsMagnitudeU64RationalCompatibleHelper<Zero> {
+    static constexpr bool is_rational() { return true; }
+    static constexpr bool numerator_fits() { return true; }
+    static constexpr bool denominator_fits() { return true; }
+};
+
+template <typename MagT>
+struct IsMagnitudeU64RationalCompatible : IsMagnitudeU64RationalCompatibleHelper<MagT> {
+    using IsMagnitudeU64RationalCompatibleHelper<MagT>::is_rational;
+    using IsMagnitudeU64RationalCompatibleHelper<MagT>::numerator_fits;
+    using IsMagnitudeU64RationalCompatibleHelper<MagT>::denominator_fits;
+};
+
+// Instantiating this struct will produce clear compiler errors if the Magnitude doesn't meet the
+// requirements for arithmetic operations.
+template <typename MagT>
+struct AssertMagnitudeU64RationalCompatible {
+    using Check = IsMagnitudeU64RationalCompatible<MagT>;
+    static_assert(Check::is_rational(), "Mag must be purely rational");
+    static_assert(Check::numerator_fits(), "Mag numerator too large to fit in uint64_t");
+    static_assert(Check::denominator_fits(), "Mag denominator too large to fit in uint64_t");
+};
+}  // namespace detail
 
 // The "common magnitude" of two Magnitudes is the largest Magnitude that evenly divides both.
 //
