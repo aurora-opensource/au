@@ -63,6 +63,10 @@ inline constexpr bool operator!=(Zero, Zero) { return false; }
 inline constexpr bool operator>(Zero, Zero) { return false; }
 inline constexpr bool operator<(Zero, Zero) { return false; }
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+inline constexpr std::strong_ordering operator<=>(Zero, Zero) { return 0 <=> 0; }
+#endif
+
 // Implementation helper for "a type where value() returns 0".
 template <typename T>
 struct ValueOfZero {

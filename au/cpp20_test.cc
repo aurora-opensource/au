@@ -15,6 +15,7 @@
 #include <compare>
 
 #include "au/constants/speed_of_light.hh"
+#include "au/magnitude.hh"
 #include "au/math.hh"
 #include "au/prefix.hh"
 #include "au/quantity.hh"
@@ -62,6 +63,31 @@ TEST(Quantity, SpaceshipCorrectForMixedSignUnits) {
 TEST(QuantityPoint, SupportsSpaceship) {
     EXPECT_THAT(FooPt{meters_pt(5)}, Lt(FooPt{meters_pt(6)}));
 }
+
+TEST(Magnitude, SupportsSpaceship) {
+    EXPECT_THAT(mag<3>() <=> mag<3>(), Eq(3 <=> 3));
+
+    EXPECT_THAT(mag<2>() <=> mag<5>(), Eq(2 <=> 5));
+    EXPECT_THAT(mag<5>() <=> mag<2>(), Eq(5 <=> 2));
+
+    EXPECT_THAT((mag<1>() / mag<2>()) <=> mag<1>(), Eq(1 <=> 2));
+    EXPECT_THAT(mag<3>() <=> (mag<3>() / mag<2>()), Eq(6 <=> 3));
+
+    EXPECT_THAT((-mag<3>()) <=> mag<2>(), Eq(-3 <=> 2));
+    EXPECT_THAT(mag<2>() <=> (-mag<3>()), Eq(2 <=> -3));
+    EXPECT_THAT((-mag<5>()) <=> (-mag<2>()), Eq(-5 <=> -2));
+    EXPECT_THAT((-mag<2>()) <=> (-mag<5>()), Eq(-2 <=> -5));
+}
+
+TEST(Magnitude, SpaceshipWorksWithZero) {
+    EXPECT_THAT(ZERO <=> mag<1>(), Eq(0 <=> 1));
+    EXPECT_THAT(mag<1>() <=> ZERO, Eq(1 <=> 0));
+
+    EXPECT_THAT(ZERO <=> (-mag<1>()), Eq(0 <=> -1));
+    EXPECT_THAT((-mag<1>()) <=> ZERO, Eq(-1 <=> 0));
+}
+
+TEST(Zero, SupportsSpaceship) { EXPECT_THAT(ZERO <=> ZERO, Eq(0 <=> 0)); }
 
 TEST(Lerp, QuantityConsistentWithStdLerpWhenTypesAreIdentical) {
     auto expect_consistent_with_std_lerp = [](auto a, auto b, auto t) {
