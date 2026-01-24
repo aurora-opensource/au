@@ -167,4 +167,13 @@ constexpr bool operator>=(Constant<U1> lhs, Constant<U2> rhs) {
     return !(lhs < rhs);
 }
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+template <typename U1, typename U2>
+constexpr std::strong_ordering operator<=>(Constant<U1>, Constant<U2>) {
+    using SignU2 = Sign<detail::MagT<U2>>;
+    using AbsU2 = decltype(U2{} * SignU2{});
+    return UnitRatio<U1, AbsU2>{} <=> SignU2{};
+}
+#endif
+
 }  // namespace au
