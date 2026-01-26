@@ -219,7 +219,7 @@ TEST(Magnitude, AdditionOfLargePositives) {
 
     EXPECT_THAT(two_to_63 + two_to_63, Eq(pow<64>(mag<2>())));
 
-    EXPECT_THAT(two_to_63 + mag<1>(), Eq(two_to_63 + mag<1>()));
+    EXPECT_THAT(two_to_63 + mag<1>(), Eq(mag<9'223'372'036'854'775'809u>()));
 }
 
 TEST(Magnitude, AdditionOfExtremelyLargePositivesWithLargeCommonFactorIsOk) {
@@ -241,7 +241,7 @@ TEST(Magnitude, AdditionOfLargeNegatives) {
 TEST(Magnitude, AdditionOfLargePositiveAndSmallNegative) {
     constexpr auto two_to_63 = pow<63>(mag<2>());
 
-    EXPECT_THAT(two_to_63 + (-mag<1>()), Eq(two_to_63 - mag<1>()));
+    EXPECT_THAT(two_to_63 + (-mag<1>()), Eq(mag<9'223'372'036'854'775'807>()));
 
     EXPECT_THAT(two_to_63 + (-pow<62>(mag<2>())), Eq(pow<62>(mag<2>())));
 }
@@ -249,7 +249,7 @@ TEST(Magnitude, AdditionOfLargePositiveAndSmallNegative) {
 TEST(Magnitude, AdditionOfLargeNegativeAndSmallPositive) {
     constexpr auto two_to_63 = pow<63>(mag<2>());
 
-    EXPECT_THAT((-two_to_63) + mag<1>(), Eq(-(two_to_63 - mag<1>())));
+    EXPECT_THAT((-two_to_63) + mag<1>(), Eq(-mag<9'223'372'036'854'775'807>()));
 
     EXPECT_THAT((-two_to_63) + pow<62>(mag<2>()), Eq(-pow<62>(mag<2>())));
 }
@@ -270,7 +270,7 @@ TEST(Magnitude, SubtractionOfLargePositives) {
 
     EXPECT_THAT(two_to_62 - two_to_63, Eq(-two_to_62));
 
-    EXPECT_THAT(two_to_63 - mag<1>(), Eq(two_to_63 - mag<1>()));
+    EXPECT_THAT(two_to_63 - mag<1>(), Eq(mag<9'223'372'036'854'775'807>()));
 }
 
 TEST(Magnitude, SubtractionOfLargeNegatives) {
