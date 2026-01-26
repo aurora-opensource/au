@@ -259,6 +259,11 @@ limitations](#compile-time-arithmetic-limitations)._
 - For _instances_ `m1` and `m2`:
     - `m1 * m2`
 
+`Zero` is an absorbing element:
+
+- `ZERO * m` equals `ZERO`
+- `m * ZERO` equals `ZERO`
+
 !!! note
     Older releases used `MagProductT` (with the `T` suffix) instead of `MagProduct`.  Prefer
     `MagProduct`.  `MagProductT` is deprecated, and will be removed in future releases.
@@ -273,6 +278,10 @@ limitations](#compile-time-arithmetic-limitations)._
     - `MagQuotient<M1, M2>`
 - For _instances_ `m1` and `m2`:
     - `m1 / m2`
+
+`Zero` divided by any magnitude is `Zero`:
+
+- `ZERO / m` equals `ZERO`
 
 !!! note
     Older releases used `MagQuotientT` (with the `T` suffix) instead of `MagQuotient`.  Prefer
@@ -327,6 +336,48 @@ When the result is negative, the return type is a negative `Magnitude`:
 
 - `m - ZERO` equals `m`
 - `ZERO - m` equals `-m`
+
+### Modulo †
+
+**Result:** The remainder after dividing one `Magnitude` by another.
+
+This operation uses **truncated division** semantics (matching C++ `%`): the result has the same sign
+as the dividend (first operand).
+
+This operation also supports `Zero` as both an input and an output.
+
+† _This feature is subject to [compile-time arithmetic
+limitations](#compile-time-arithmetic-limitations)._
+
+**Syntax:**
+
+- For _instances_ `m1` and `m2`:
+    - `m1 % m2`
+
+When the dividend is exactly divisible by the divisor, the result type is `Zero`:
+
+- `mag<6>() % mag<3>()` has type `Zero`
+
+When the dividend is `Zero`, the result is `Zero`:
+
+- `ZERO % m` has type `Zero`
+
+Sign convention examples (result sign matches dividend):
+
+- `mag<7>() % mag<3>()` equals `mag<1>()`
+- `(-mag<7>()) % mag<3>()` equals `-mag<1>()`
+- `mag<7>() % (-mag<3>())` equals `mag<1>()`
+- `(-mag<7>()) % (-mag<3>())` equals `-mag<1>()`
+
+Irrational common factors are handled correctly:
+
+- `(mag<14>() * PI) % (mag<3>() * PI)` equals `mag<2>() * PI`
+
+When the divisor is `Zero`, the operation produces a **compile-time error** (since division by zero is
+undefined).
+
+The result satisfies the **division invariant**: for any magnitudes `a` and `b` (with `b` nonzero),
+if `q` is the truncated quotient, then `q * b + (a % b)` equals `a`.
 
 ### Negation
 

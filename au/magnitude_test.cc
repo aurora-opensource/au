@@ -116,6 +116,17 @@ TEST(Magnitude, QuotientBehavesCorrectly) {
     EXPECT_THAT(mag<10>() / mag<6>(), Eq(mag<5>() / mag<3>()));
 }
 
+TEST(Magnitude, MultiplicationWithZeroReturnsZero) {
+    StaticAssertTypeEq<decltype(ZERO * mag<5>()), Zero>();
+    StaticAssertTypeEq<decltype(mag<5>() * ZERO), Zero>();
+    StaticAssertTypeEq<decltype(ZERO * PI), Zero>();
+}
+
+TEST(Magnitude, DivisionOfZeroByMagnitudeReturnsZero) {
+    StaticAssertTypeEq<decltype(ZERO / mag<5>()), Zero>();
+    StaticAssertTypeEq<decltype(ZERO / PI), Zero>();
+}
+
 TEST(Magnitude, AdditionOfIntegersWorks) {
     EXPECT_THAT(mag<2>() + mag<3>(), Eq(mag<5>()));
     EXPECT_THAT(mag<100>() + mag<200>(), Eq(mag<300>()));
@@ -317,6 +328,127 @@ TEST(Magnitude, LargeFractionArithmetic) {
 
     EXPECT_THAT(large_half / mag<3>() + large_half / mag<3>(),
                 Eq(mag<2>() * large_half / mag<3>()));
+}
+
+TEST(Magnitude, ModuloOfIntegersWorks) {
+    EXPECT_THAT(mag<7>() % mag<3>(), Eq(mag<1>()));
+    EXPECT_THAT(mag<10>() % mag<4>(), Eq(mag<2>()));
+    EXPECT_THAT(mag<17>() % mag<5>(), Eq(mag<2>()));
+}
+
+TEST(Magnitude, ModuloOfFractionsWorks) {
+    EXPECT_THAT(mag<7>() / mag<2>() % (mag<3>() / mag<2>()), Eq(mag<1>() / mag<2>()));
+
+    EXPECT_THAT(mag<5>() / mag<3>() % (mag<1>() / mag<2>()), Eq(mag<1>() / mag<6>()));
+}
+
+TEST(Magnitude, ModuloReturnsZeroWhenExactlyDivisible) {
+    StaticAssertTypeEq<decltype(mag<6>() % mag<3>()), Zero>();
+    StaticAssertTypeEq<decltype(mag<12>() % mag<4>()), Zero>();
+    StaticAssertTypeEq<decltype(mag<1>() / mag<2>() % (mag<1>() / mag<4>())), Zero>();
+}
+
+TEST(Magnitude, ModuloWithZeroDividendReturnsZero) {
+    StaticAssertTypeEq<decltype(ZERO % mag<5>()), Zero>();
+    StaticAssertTypeEq<decltype(ZERO % (mag<3>() / mag<7>())), Zero>();
+    StaticAssertTypeEq<decltype(ZERO % (-mag<5>())), Zero>();
+}
+
+TEST(Magnitude, ModuloWithIrrationalCommonFactorWorks) {
+    EXPECT_THAT(mag<14>() * PI % (mag<3>() * PI), Eq(mag<2>() * PI));
+
+    EXPECT_THAT(mag<5>() * sqrt(mag<2>()) % (mag<2>() * sqrt(mag<2>())), Eq(sqrt(mag<2>())));
+}
+
+TEST(Magnitude, ModuloPositiveDividendPositiveDivisor) {
+    EXPECT_THAT(mag<7>() % mag<3>(), Eq(mag<1>()));
+}
+
+TEST(Magnitude, ModuloNegativeDividendPositiveDivisor) {
+    EXPECT_THAT((-mag<7>()) % mag<3>(), Eq(-mag<1>()));
+
+    EXPECT_THAT((-mag<10>()) % mag<4>(), Eq(-mag<2>()));
+}
+
+TEST(Magnitude, ModuloPositiveDividendNegativeDivisor) {
+    EXPECT_THAT(mag<7>() % (-mag<3>()), Eq(mag<1>()));
+
+    EXPECT_THAT(mag<10>() % (-mag<4>()), Eq(mag<2>()));
+}
+
+TEST(Magnitude, ModuloNegativeDividendNegativeDivisor) {
+    EXPECT_THAT((-mag<7>()) % (-mag<3>()), Eq(-mag<1>()));
+
+    EXPECT_THAT((-mag<10>()) % (-mag<4>()), Eq(-mag<2>()));
+}
+
+TEST(Magnitude, ModuloSignConventionWithFractions) {
+    EXPECT_THAT((-mag<7>() / mag<2>()) % (mag<3>() / mag<2>()), Eq(-mag<1>() / mag<2>()));
+
+    EXPECT_THAT((mag<7>() / mag<2>()) % (-mag<3>() / mag<2>()), Eq(mag<1>() / mag<2>()));
+}
+
+TEST(Magnitude, ModuloSignConventionWithIrrationalFactor) {
+    EXPECT_THAT((-mag<14>()) * PI % (mag<3>() * PI), Eq((-mag<2>()) * PI));
+
+    EXPECT_THAT(mag<14>() * PI % ((-mag<3>()) * PI), Eq(mag<2>() * PI));
+}
+
+TEST(Magnitude, ModuloOfLargeMagnitudesWorks) {
+    constexpr auto two_to_62 = pow<62>(mag<2>());
+    constexpr auto two_to_60 = pow<60>(mag<2>());
+
+    StaticAssertTypeEq<decltype(two_to_62 % two_to_60), Zero>();
+
+    EXPECT_THAT((two_to_62 + two_to_60) % (mag<3>() * two_to_60), Eq(mag<2>() * two_to_60));
+}
+
+TEST(Magnitude, ModuloWithLargeCommonIrrationalFactorIsOk) {
+    constexpr auto large_pi = pow<1000>(mag<2>()) * PI;
+
+    EXPECT_THAT(mag<5>() * large_pi % (mag<3>() * large_pi), Eq(mag<2>() * large_pi));
+}
+
+TEST(Magnitude, ModuloWhenDividendSmallerThanDivisor) {
+    EXPECT_THAT(mag<2>() % mag<7>(), Eq(mag<2>()));
+    EXPECT_THAT(mag<1>() / mag<3>() % mag<1>(), Eq(mag<1>() / mag<3>()));
+
+    EXPECT_THAT((-mag<2>()) % mag<7>(), Eq(-mag<2>()));
+    EXPECT_THAT(mag<2>() % (-mag<7>()), Eq(mag<2>()));
+}
+
+TEST(Magnitude, ModuloOfMagnitudeByItselfIsZero) {
+    StaticAssertTypeEq<decltype(mag<7>() % mag<7>()), Zero>();
+    StaticAssertTypeEq<decltype((-mag<7>()) % (-mag<7>())), Zero>();
+    StaticAssertTypeEq<decltype(PI % PI), Zero>();
+    StaticAssertTypeEq<decltype((mag<3>() / mag<5>()) % (mag<3>() / mag<5>())), Zero>();
+}
+
+TEST(Magnitude, IntegerModuloByOneIsZero) {
+    StaticAssertTypeEq<decltype(mag<7>() % mag<1>()), Zero>();
+    StaticAssertTypeEq<decltype((-mag<7>()) % mag<1>()), Zero>();
+}
+
+TEST(Magnitude, FractionModuloByOneReturnsFraction) {
+    StaticAssertTypeEq<decltype((mag<8>() / mag<5>()) % mag<1>()), decltype(mag<3>() / mag<5>())>();
+}
+
+TEST(Magnitude, ModuloSatisfiesDivisionInvariant) {
+    constexpr auto a1 = mag<17>();
+    constexpr auto b1 = mag<5>();
+    EXPECT_THAT(mag<3>() * b1 + (a1 % b1), Eq(a1));
+
+    constexpr auto a2 = -mag<17>();
+    constexpr auto b2 = mag<5>();
+    EXPECT_THAT((-mag<3>()) * b2 + (a2 % b2), Eq(a2));
+
+    constexpr auto a3 = mag<7>() / mag<2>();
+    constexpr auto b3 = mag<3>() / mag<2>();
+    EXPECT_THAT(mag<2>() * b3 + (a3 % b3), Eq(a3));
+
+    constexpr auto a4 = mag<14>() * PI;
+    constexpr auto b4 = mag<3>() * PI;
+    EXPECT_THAT(mag<4>() * b4 + (a4 % b4), Eq(a4));
 }
 
 TEST(Magnitude, PowersBehaveCorrectly) {
