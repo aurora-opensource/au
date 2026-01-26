@@ -1854,6 +1854,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#modulo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modulo †
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#negation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2972,6 +2983,11 @@ limitations</a>.</em></p>
 </ul>
 </li>
 </ul>
+<p><code>Zero</code> is an absorbing element:</p>
+<ul>
+<li><code>ZERO * m</code> equals <code>ZERO</code></li>
+<li><code>m * ZERO</code> equals <code>ZERO</code></li>
+</ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Older releases used <code>MagProductT</code> (with the <code>T</code> suffix) instead of <code>MagProduct</code>.  Prefer
@@ -2989,6 +3005,10 @@ limitations</a>.</em></p>
 <li><code>m1 / m2</code></li>
 </ul>
 </li>
+</ul>
+<p><code>Zero</code> divided by any magnitude is <code>Zero</code>:</p>
+<ul>
+<li><code>ZERO / m</code> equals <code>ZERO</code></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -3041,6 +3061,43 @@ limitations</a>.</em></p>
 <li><code>m - ZERO</code> equals <code>m</code></li>
 <li><code>ZERO - m</code> equals <code>-m</code></li>
 </ul>
+<h3 id="modulo">Modulo †<a class="headerlink" href="#modulo" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The remainder after dividing one <code>Magnitude</code> by another.</p>
+<p>This operation uses <strong>truncated division</strong> semantics (matching C++ <code>%</code>): the result has the same sign
+as the dividend (first operand).</p>
+<p>This operation also supports <code>Zero</code> as both an input and an output.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>instances</em> <code>m1</code> and <code>m2</code>:<ul>
+<li><code>m1 % m2</code></li>
+</ul>
+</li>
+</ul>
+<p>When the dividend is exactly divisible by the divisor, the result type is <code>Zero</code>:</p>
+<ul>
+<li><code>mag&lt;6&gt;() % mag&lt;3&gt;()</code> has type <code>Zero</code></li>
+</ul>
+<p>When the dividend is <code>Zero</code>, the result is <code>Zero</code>:</p>
+<ul>
+<li><code>ZERO % m</code> has type <code>Zero</code></li>
+</ul>
+<p>Sign convention examples (result sign matches dividend):</p>
+<ul>
+<li><code>mag&lt;7&gt;() % mag&lt;3&gt;()</code> equals <code>mag&lt;1&gt;()</code></li>
+<li><code>(-mag&lt;7&gt;()) % mag&lt;3&gt;()</code> equals <code>-mag&lt;1&gt;()</code></li>
+<li><code>mag&lt;7&gt;() % (-mag&lt;3&gt;())</code> equals <code>mag&lt;1&gt;()</code></li>
+<li><code>(-mag&lt;7&gt;()) % (-mag&lt;3&gt;())</code> equals <code>-mag&lt;1&gt;()</code></li>
+</ul>
+<p>Irrational common factors are handled correctly:</p>
+<ul>
+<li><code>(mag&lt;14&gt;() * PI) % (mag&lt;3&gt;() * PI)</code> equals <code>mag&lt;2&gt;() * PI</code></li>
+</ul>
+<p>When the divisor is <code>Zero</code>, the operation produces a <strong>compile-time error</strong> (since division by zero is
+undefined).</p>
+<p>The result satisfies the <strong>division invariant</strong>: for any magnitudes <code>a</code> and <code>b</code> (with <code>b</code> nonzero),
+if <code>q</code> is the truncated quotient, then <code>q * b + (a % b)</code> equals <code>a</code>.</p>
 <h3 id="negation">Negation<a class="headerlink" href="#negation" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> The negative of a <code>Magnitude</code>.</p>
 <p><strong>Syntax:</strong></p>

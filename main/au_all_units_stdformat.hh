@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-86-g96da5f0
+// Version identifier: 0.5.0-base-87-g2ea880e
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -3362,7 +3362,7 @@ template <typename... Ms>
 using CommonMagnitudeT = CommonMagnitude<Ms...>;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Value based interface for Magnitude.
+// Value based interface for Magnitude (and Zero).
 
 static constexpr auto ONE = Magnitude<>{};
 
@@ -3370,10 +3370,22 @@ template <typename... BP1s, typename... BP2s>
 constexpr auto operator*(Magnitude<BP1s...>, Magnitude<BP2s...>) {
     return MagProduct<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
 }
+template <typename... BPs>
+constexpr Zero operator*(Zero, Magnitude<BPs...>) {
+    return {};
+}
+template <typename... BPs>
+constexpr Zero operator*(Magnitude<BPs...>, Zero) {
+    return {};
+}
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator/(Magnitude<BP1s...>, Magnitude<BP2s...>) {
     return MagQuotient<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
+}
+template <typename... BPs>
+constexpr Zero operator/(Zero, Magnitude<BPs...>) {
+    return {};
 }
 
 template <int E, typename... BPs>
@@ -3492,7 +3504,29 @@ constexpr bool operator>=(Magnitude<BPs...>, Zero) {
 }
 
 //
-// Addition and subtraction of Magnitudes (and Zero).
+// Rounding helpers for Magnitudes: versions of trunc, round, ceil, floor.
+//
+// Again, these are only defined for the subset of Magnitudes where this is easy to compute.
+//
+
+// `mag_trunc(m)`: truncates `m` toward zero.
+template <typename... BPs>
+constexpr auto mag_trunc(Magnitude<BPs...> m) {
+    using AbsMag = Abs<Magnitude<BPs...>>;
+    (void)detail::AssertMagnitudeU64RationalCompatible<AbsMag>{};
+
+    constexpr auto abs_quotient = get_value<std::uint64_t>(Numerator<AbsMag>{}) /
+                                  get_value<std::uint64_t>(Denominator<AbsMag>{});
+
+    return std::conditional_t<abs_quotient == 0u,
+                              Zero,
+                              // The extra `== 0u` avoids asking the compiler for `mag<0>()`.
+                              // Note that it will never be used anyway.
+                              decltype(sign(m) * mag<abs_quotient + (abs_quotient == 0u)>())>{};
+}
+
+//
+// Addition, subtraction, and mod for Magnitudes (and Zero).
 //
 // Again, these are only defined for the subset of Magnitudes where this is easy to compute.
 //
@@ -3561,6 +3595,20 @@ template <typename... BPs>
 constexpr auto operator-(Magnitude<BPs...> m, Zero) {
     return m;
 }
+
+// Mod:
+template <typename... BP1s, typename... BP2s>
+constexpr auto operator%(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+    return m1 - mag_trunc(m1 / m2) * m2;
+}
+template <typename... BPs>
+constexpr Zero operator%(Zero, Magnitude<BPs...>) {
+    return {};
+}
+
+//
+// Value-based interface for Magnitude type traits.
+//
 
 template <typename... BPs>
 constexpr auto integer_part(Magnitude<BPs...>) {
