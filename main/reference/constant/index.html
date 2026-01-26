@@ -1842,6 +1842,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#zero" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#quantitypointmakeru-deleted" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3213,6 +3224,26 @@ scaled by that magnitude.</p>
 <tr>
 <td><code>Magnitude&lt;BPs...&gt; / Constant&lt;Unit&gt;</code></td>
 <td><code>Constant&lt;decltype(UnitInverseT&lt;Unit&gt;{} * m)&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="zero"><code>Zero</code><a class="headerlink" href="#zero" title="Permanent link">&para;</a></h4>
+<p>Multiplying <code>Constant&lt;Unit&gt;</code> with <a href="../zero/"><code>Zero</code></a> produces <code>Zero</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Resulting Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Constant&lt;Unit&gt; * Zero</code></td>
+<td><code>Zero</code></td>
+</tr>
+<tr>
+<td><code>Zero * Constant&lt;Unit&gt;</code></td>
+<td><code>Zero</code></td>
 </tr>
 </tbody>
 </table>

@@ -1944,6 +1944,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_valuetzero" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_value&lt;T&gt;(ZERO)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#io" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2490,6 +2518,16 @@ a constructor which takes <code>Zero</code>.</p>
 <p>This is explicitly deleted.  There is no unambiguous notion of which point is labeled as &ldquo;0&rdquo;; it
 depends on the choice of units.  Therefore, we delete this constructor to prevent users from relying
 on this dubious notion.</p>
+<h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
+<h3 id="get_valuetzero"><code>get_value&lt;T&gt;(ZERO)</code><a class="headerlink" href="#get_valuetzero" title="Permanent link">&para;</a></h3>
+<p><code>Zero</code> can be passed to <a href="../magnitude/#extracting-values"><code>get_value</code></a>, just like a <code>Magnitude</code>.
+The result is always <code>T{0}</code> for any numeric type <code>T</code>.</p>
+<details class="example">
+<summary>Example</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">get_value</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ZERO</span><span class="p">);</span><span class="w">  </span><span class="c1">// Returns 0.0</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">get_value</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ZERO</span><span class="p">);</span><span class="w">     </span><span class="c1">// Returns 0</span>
+</code></pre></div>
+</details>
 <h2 id="io">I/O<a class="headerlink" href="#io" title="Permanent link">&para;</a></h2>
 <p>If you include I/O support, then <code>Zero</code> will be streamed as <code>"0"</code>.</p>
 

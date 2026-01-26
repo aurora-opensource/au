@@ -2827,7 +2827,8 @@ no computations we can perform at runtime; everything happens at compile time.  
 to extract that represented value, and store it in a more conventional numeric type, such as <code>int</code>
 or <code>double</code>.</p>
 <p>To extract the value of a <code>Magnitude</code> instance <code>m</code> into a given numeric type <code>T</code>, call
-<code>get_value&lt;T&gt;(m)</code>.  Here are some important aspects of this utility.</p>
+<code>get_value&lt;T&gt;(m)</code>.  This also works with <a href="../zero/"><code>Zero</code></a>: <code>get_value&lt;T&gt;(ZERO)</code> returns <code>T{0}</code>.</p>
+<p>Here are some important aspects of this utility.</p>
 <ol>
 <li>The computation takes place completely at compile time.</li>
 <li>The computation takes place in the widest type of the same kind.  (That is, when <code>T</code> is floating

@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-85-gbfd8b7a
+// Version identifier: 0.5.0-base-86-g96da5f0
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -3211,6 +3211,12 @@ constexpr bool representable_in(Magnitude<BPs...> m);
 // Get the value of this Magnitude in a "traditional" numeric type T.
 template <typename T, typename... BPs>
 constexpr T get_value(Magnitude<BPs...>);
+
+// Let `Zero` "act like" a `Magnitude` for purposes of `get_value`.
+template <typename T>
+constexpr T get_value(Zero) {
+    return T{0};
+}
 
 // A base type for prime numbers.
 template <std::uintmax_t N>
@@ -8284,6 +8290,10 @@ struct CanScaleByMagnitude {
     friend constexpr auto operator/(UnitWrapper<Unit>, Magnitude<BPs...> m) {
         return UnitWrapper<decltype(Unit{} / m)>{};
     }
+
+    // (0 * W) and (W * 0), for wrapper W.
+    friend constexpr Zero operator*(Zero, UnitWrapper<Unit>) { return {}; }
+    friend constexpr Zero operator*(UnitWrapper<Unit>, Zero) { return {}; }
 
     friend constexpr auto operator-(UnitWrapper<Unit>) {
         return UnitWrapper<decltype(Unit{} * (-mag<1>()))>{};
