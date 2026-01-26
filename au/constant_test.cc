@@ -32,8 +32,14 @@ namespace au {
 
 using ::testing::AnyOf;
 using ::testing::Eq;
+using ::testing::Ge;
+using ::testing::Gt;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
+using ::testing::Le;
+using ::testing::Lt;
+using ::testing::Ne;
+using ::testing::Not;
 using ::testing::StaticAssertTypeEq;
 using ::testing::StrEq;
 
@@ -334,6 +340,92 @@ TEST(MakeConstant, IdentityForZero) { EXPECT_THAT(make_constant(ZERO), SameTypeA
 TEST(CanStoreValueIn, ChecksRangeOfTypeForIntegers) {
     EXPECT_THAT(decltype(c)::can_store_value_in<int32_t>(meters / second), IsTrue());
     EXPECT_THAT(decltype(c)::can_store_value_in<int16_t>(meters / second), IsFalse());
+}
+
+TEST(Constant, SupportsEqualityComparison) {
+    constexpr auto one_meter = make_constant(meters);
+    constexpr auto another_meter = make_constant(meters);
+
+    EXPECT_THAT(one_meter, Eq(another_meter));
+    EXPECT_THAT(one_meter, Not(Ne(another_meter)));
+}
+
+TEST(Constant, EqualityComparisonWorksWithDifferentButEquivalentUnits) {
+    constexpr auto one_revolution = make_constant(revolutions);
+    constexpr auto three_sixty_degrees = make_constant(degrees * mag<360>());
+
+    EXPECT_THAT(one_revolution, Eq(three_sixty_degrees));
+    EXPECT_THAT(one_revolution, Not(Ne(three_sixty_degrees)));
+}
+
+TEST(Constant, InequalityComparisonDetectsDifferentValues) {
+    constexpr auto one_degree = make_constant(degrees);
+    constexpr auto one_revolution = make_constant(revolutions);
+
+    EXPECT_THAT(one_degree, Not(Eq(one_revolution)));
+    EXPECT_THAT(one_degree, Ne(one_revolution));
+}
+
+TEST(Constant, SupportsOrderingComparison) {
+    constexpr auto one_meter = make_constant(meters);
+    constexpr auto one_kilometer = make_constant(kilo(meters));
+
+    EXPECT_THAT(one_meter, Lt(one_kilometer));
+    EXPECT_THAT(one_meter, Le(one_kilometer));
+    EXPECT_THAT(one_meter, Not(Gt(one_kilometer)));
+    EXPECT_THAT(one_meter, Not(Ge(one_kilometer)));
+
+    EXPECT_THAT(one_kilometer, Gt(one_meter));
+    EXPECT_THAT(one_kilometer, Ge(one_meter));
+    EXPECT_THAT(one_kilometer, Not(Lt(one_meter)));
+    EXPECT_THAT(one_kilometer, Not(Le(one_meter)));
+}
+
+TEST(Constant, OrderingWithEqualConstants) {
+    constexpr auto c1 = make_constant(meters);
+    constexpr auto c2 = make_constant(meters);
+
+    EXPECT_THAT(c1, Le(c2));
+    EXPECT_THAT(c1, Ge(c2));
+    EXPECT_THAT(c1, Not(Lt(c2)));
+    EXPECT_THAT(c1, Not(Gt(c2)));
+}
+
+TEST(Constant, OrderingWorksWithCompatibleUnits) {
+    constexpr auto one_degree = make_constant(degrees);
+    constexpr auto one_revolution = make_constant(revolutions);
+
+    EXPECT_THAT(one_degree, Lt(one_revolution));
+    EXPECT_THAT(one_degree, Le(one_revolution));
+    EXPECT_THAT(one_degree, Not(Gt(one_revolution)));
+    EXPECT_THAT(one_degree, Not(Ge(one_revolution)));
+}
+
+TEST(Constant, OrderingWorksWithNegativeConstants) {
+    constexpr auto neg_c = -c;
+
+    EXPECT_THAT(neg_c, Lt(c));
+    EXPECT_THAT(neg_c, Le(c));
+    EXPECT_THAT(neg_c, Not(Gt(c)));
+    EXPECT_THAT(neg_c, Not(Ge(c)));
+
+    EXPECT_THAT(c, Gt(neg_c));
+    EXPECT_THAT(c, Ge(neg_c));
+    EXPECT_THAT(c, Not(Lt(neg_c)));
+    EXPECT_THAT(c, Not(Le(neg_c)));
+}
+
+TEST(Constant, OrderingWorksWithScaledConstants) {
+    constexpr auto half_c = c / mag<2>();
+    constexpr auto double_c = c * mag<2>();
+
+    EXPECT_THAT(half_c, Lt(c));
+    EXPECT_THAT(c, Lt(double_c));
+    EXPECT_THAT(half_c, Lt(double_c));
+
+    EXPECT_THAT(double_c, Gt(c));
+    EXPECT_THAT(c, Gt(half_c));
+    EXPECT_THAT(double_c, Gt(half_c));
 }
 
 }  // namespace

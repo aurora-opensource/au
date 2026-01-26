@@ -319,10 +319,32 @@ This provides great flexibility and confidence in passing `Constant` values to A
 
 ## Operations
 
-Each operation with a `Constant` consists in multiplying or dividing with some other family of
-types.
+### Comparison †
 
-### Raw numeric type `T`
+Two `Constant` instances can be compared if they have the same dimension.  The result indicates
+which constant is larger.
+
+† _This feature is subject to the same [compile-time arithmetic
+limitations](./magnitude.md#compile-time-arithmetic-limitations) as `Magnitude` ordering, because
+the comparison is built on `Magnitude` comparison._
+
+**Syntax:**
+
+For instances `c1` and `c2`:
+
+- `c1 == c2`
+- `c1 != c2`
+- `c1 < c2`
+- `c1 > c2`
+- `c1 <= c2`
+- `c1 >= c2`
+
+### Multiplication and division
+
+Each of the following operations with a `Constant` consists in multiplying or dividing with some
+other family of types.
+
+#### Raw numeric type `T`
 
 Multiplying or dividing `Constant<Unit>` with a raw numeric type `T` produces a `Quantity` whose rep
 is `T`, and whose unit is derived from `Unit`.
@@ -337,7 +359,7 @@ In the following table, we will use `x` to represent the value that was stored i
 | `T * Constant<Unit>` | `Quantity<Unit, T>` | `x` | |
 | `T / Constant<Unit>` | `Quantity<UnitInverseT<Unit>, T>` | `x` | |
 
-### `Quantity<U, R>`
+#### `Quantity<U, R>`
 
 Multiplying or dividing `Constant<Unit>` with a `Quantity<U, R>` produces a `Quantity` whose rep is
 `R`, and whose unit is derived from `Unit` and `U`.
@@ -352,7 +374,7 @@ that is, if the input quantity was `q`, then `x` is `q.in(U{})`.
 | `Quantity<U, R> * Constant<Unit>` | `Quantity<UnitProductT<U, Unit>, R>` | `x` | |
 | `Quantity<U, R> / Constant<Unit>` | `Quantity<UnitQuotientT<U, Unit>, R>` | `x` | |
 
-### `Constant<U>`
+#### `Constant<U>`
 
 Constants compose: the product or quotient of two `Constant` instances is a new `Constant` instance.
 
@@ -361,7 +383,7 @@ Constants compose: the product or quotient of two `Constant` instances is a new 
 | `Constant<Unit> * Constant<U>` | `Constant<UnitProductT<Unit, U>>` |
 | `Constant<Unit> / Constant<U>` | `Constant<UnitQuotientT<Unit, U>>` |
 
-### `QuantityMaker<U>`
+#### `QuantityMaker<U>`
 
 Multiplying or dividing `Constant<Unit>` with a `QuantityMaker<U>` produces a new `QuantityMaker`
 whose unit is derived from `Unit` and `U`.
@@ -373,7 +395,7 @@ whose unit is derived from `Unit` and `U`.
 | `QuantityMaker<U> * Constant<Unit>` | `QuantityMaker<UnitProductT<U, Unit>>` |
 | `QuantityMaker<U> / Constant<Unit>` | `QuantityMaker<UnitQuotientT<U, Unit>>` |
 
-### `SingularNameFor<U>`
+#### `SingularNameFor<U>`
 
 Multiplying or dividing `Constant<Unit>` with a `SingularNameFor<U>` produces a new
 `SingularNameFor` whose unit is derived from `Unit` and `U`.
@@ -385,7 +407,7 @@ Multiplying or dividing `Constant<Unit>` with a `SingularNameFor<U>` produces a 
 | `SingularNameFor<U> * Constant<Unit>` | `SingularNameFor<UnitProductT<U, Unit>>` |
 | `SingularNameFor<U> / Constant<Unit>` | `SingularNameFor<UnitQuotientT<U, Unit>>` |
 
-### `Magnitude<BPs...>`
+#### `Magnitude<BPs...>`
 
 Multiplying or dividing `Constant<Unit>` with a `Magnitude` produces a new `Constant` which is
 scaled by that magnitude.
@@ -399,12 +421,12 @@ In the following table, let `m` be an instance of `Magnitude<BPs...>`.
 | `Magnitude<BPs...> * Constant<Unit>` | `Constant<decltype(Unit{} * m)>` |
 | `Magnitude<BPs...> / Constant<Unit>` | `Constant<decltype(UnitInverseT<Unit>{} * m)>` |
 
-### `QuantityPointMaker<U>` (deleted)
+#### `QuantityPointMaker<U>` (deleted)
 
 Multiplying or dividing `Constant<Unit>` with a `QuantityPointMaker<U>` is explicitly deleted,
 because quantity points do not support multiplication.
 
-### `QuantityPoint<U, R>` (deleted)
+#### `QuantityPoint<U, R>` (deleted)
 
 Multiplying or dividing `Constant<Unit>` with a `QuantityPoint<U, R>` is explicitly deleted,
 because quantity points do not support multiplication.
