@@ -1753,6 +1753,29 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison †
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiplication-and-division" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiplication and division
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multiplication and division">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#raw-numeric-type-t" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1837,6 +1860,11 @@
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -2979,9 +3007,26 @@ it would work for <em>this specific value</em> (which is <code>1</code>), this q
 too dangerous for <code>int</code> in general.</p>
 </div>
 <h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
-<p>Each operation with a <code>Constant</code> consists in multiplying or dividing with some other family of
-types.</p>
-<h3 id="raw-numeric-type-t">Raw numeric type <code>T</code><a class="headerlink" href="#raw-numeric-type-t" title="Permanent link">&para;</a></h3>
+<h3 id="comparison">Comparison †<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h3>
+<p>Two <code>Constant</code> instances can be compared if they have the same dimension.  The result indicates
+which constant is larger.</p>
+<p>† <em>This feature is subject to the same <a href="../magnitude/#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a> as <code>Magnitude</code> ordering, because
+the comparison is built on <code>Magnitude</code> comparison.</em></p>
+<p><strong>Syntax:</strong></p>
+<p>For instances <code>c1</code> and <code>c2</code>:</p>
+<ul>
+<li><code>c1 == c2</code></li>
+<li><code>c1 != c2</code></li>
+<li><code>c1 &lt; c2</code></li>
+<li><code>c1 &gt; c2</code></li>
+<li><code>c1 &lt;= c2</code></li>
+<li><code>c1 &gt;= c2</code></li>
+</ul>
+<h3 id="multiplication-and-division">Multiplication and division<a class="headerlink" href="#multiplication-and-division" title="Permanent link">&para;</a></h3>
+<p>Each of the following operations with a <code>Constant</code> consists in multiplying or dividing with some
+other family of types.</p>
+<h4 id="raw-numeric-type-t">Raw numeric type <code>T</code><a class="headerlink" href="#raw-numeric-type-t" title="Permanent link">&para;</a></h4>
 <p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a raw numeric type <code>T</code> produces a <code>Quantity</code> whose rep
 is <code>T</code>, and whose unit is derived from <code>Unit</code>.</p>
 <p>In the following table, we will use <code>x</code> to represent the value that was stored in the input of type
@@ -3022,7 +3067,7 @@ is <code>T</code>, and whose unit is derived from <code>Unit</code>.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="quantityu-r"><code>Quantity&lt;U, R&gt;</code><a class="headerlink" href="#quantityu-r" title="Permanent link">&para;</a></h3>
+<h4 id="quantityu-r"><code>Quantity&lt;U, R&gt;</code><a class="headerlink" href="#quantityu-r" title="Permanent link">&para;</a></h4>
 <p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>Quantity&lt;U, R&gt;</code> produces a <code>Quantity</code> whose rep is
 <code>R</code>, and whose unit is derived from <code>Unit</code> and <code>U</code>.</p>
 <p>In the following table, we will use <code>x</code> to represent the underlying value in the input quantity &mdash;
@@ -3063,7 +3108,7 @@ that is, if the input quantity was <code>q</code>, then <code>x</code> is <code>
 </tr>
 </tbody>
 </table>
-<h3 id="constantu"><code>Constant&lt;U&gt;</code><a class="headerlink" href="#constantu" title="Permanent link">&para;</a></h3>
+<h4 id="constantu"><code>Constant&lt;U&gt;</code><a class="headerlink" href="#constantu" title="Permanent link">&para;</a></h4>
 <p>Constants compose: the product or quotient of two <code>Constant</code> instances is a new <code>Constant</code> instance.</p>
 <table>
 <thead>
@@ -3083,7 +3128,7 @@ that is, if the input quantity was <code>q</code>, then <code>x</code> is <code>
 </tr>
 </tbody>
 </table>
-<h3 id="quantitymakeru"><code>QuantityMaker&lt;U&gt;</code><a class="headerlink" href="#quantitymakeru" title="Permanent link">&para;</a></h3>
+<h4 id="quantitymakeru"><code>QuantityMaker&lt;U&gt;</code><a class="headerlink" href="#quantitymakeru" title="Permanent link">&para;</a></h4>
 <p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>QuantityMaker&lt;U&gt;</code> produces a new <code>QuantityMaker</code>
 whose unit is derived from <code>Unit</code> and <code>U</code>.</p>
 <table>
@@ -3112,7 +3157,7 @@ whose unit is derived from <code>Unit</code> and <code>U</code>.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="singularnameforu"><code>SingularNameFor&lt;U&gt;</code><a class="headerlink" href="#singularnameforu" title="Permanent link">&para;</a></h3>
+<h4 id="singularnameforu"><code>SingularNameFor&lt;U&gt;</code><a class="headerlink" href="#singularnameforu" title="Permanent link">&para;</a></h4>
 <p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>SingularNameFor&lt;U&gt;</code> produces a new
 <code>SingularNameFor</code> whose unit is derived from <code>Unit</code> and <code>U</code>.</p>
 <table>
@@ -3141,7 +3186,7 @@ whose unit is derived from <code>Unit</code> and <code>U</code>.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="magnitudebps"><code>Magnitude&lt;BPs...&gt;</code><a class="headerlink" href="#magnitudebps" title="Permanent link">&para;</a></h3>
+<h4 id="magnitudebps"><code>Magnitude&lt;BPs...&gt;</code><a class="headerlink" href="#magnitudebps" title="Permanent link">&para;</a></h4>
 <p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>Magnitude</code> produces a new <code>Constant</code> which is
 scaled by that magnitude.</p>
 <p>In the following table, let <code>m</code> be an instance of <code>Magnitude&lt;BPs...&gt;</code>.</p>
@@ -3171,10 +3216,10 @@ scaled by that magnitude.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="quantitypointmakeru-deleted"><code>QuantityPointMaker&lt;U&gt;</code> (deleted)<a class="headerlink" href="#quantitypointmakeru-deleted" title="Permanent link">&para;</a></h3>
+<h4 id="quantitypointmakeru-deleted"><code>QuantityPointMaker&lt;U&gt;</code> (deleted)<a class="headerlink" href="#quantitypointmakeru-deleted" title="Permanent link">&para;</a></h4>
 <p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>QuantityPointMaker&lt;U&gt;</code> is explicitly deleted,
 because quantity points do not support multiplication.</p>
-<h3 id="quantitypointu-r-deleted"><code>QuantityPoint&lt;U, R&gt;</code> (deleted)<a class="headerlink" href="#quantitypointu-r-deleted" title="Permanent link">&para;</a></h3>
+<h4 id="quantitypointu-r-deleted"><code>QuantityPoint&lt;U, R&gt;</code> (deleted)<a class="headerlink" href="#quantitypointu-r-deleted" title="Permanent link">&para;</a></h4>
 <p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>QuantityPoint&lt;U, R&gt;</code> is explicitly deleted,
 because quantity points do not support multiplication.</p>
 

@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-83-g8ae4715
+// Version identifier: 0.5.0-base-84-ge83c87a
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -8355,6 +8355,38 @@ constexpr Zero make_constant(Zero) { return {}; }
 // Support using `Constant` in a unit slot.
 template <typename Unit>
 struct AssociatedUnitImpl<Constant<Unit>> : stdx::type_identity<Unit> {};
+
+// Relational operators.
+//
+// Note that these inherit the limitations of the Magnitude comparisons: they will not work for
+// every combination of Constant.  We decided that supporting many common use cases was worth this
+// tradeoff.
+template <typename U1, typename U2>
+constexpr bool operator==(Constant<U1>, Constant<U2>) {
+    return UnitRatio<U1, U2>{} == mag<1>();
+}
+template <typename U1, typename U2>
+constexpr bool operator<(Constant<U1>, Constant<U2>) {
+    using SignU2 = Sign<detail::MagT<U2>>;
+    using AbsU2 = decltype(U2{} * SignU2{});
+    return UnitRatio<U1, AbsU2>{} < SignU2{};
+}
+template <typename U1, typename U2>
+constexpr bool operator!=(Constant<U1> lhs, Constant<U2> rhs) {
+    return !(lhs == rhs);
+}
+template <typename U1, typename U2>
+constexpr bool operator<=(Constant<U1> lhs, Constant<U2> rhs) {
+    return (lhs < rhs) || (lhs == rhs);
+}
+template <typename U1, typename U2>
+constexpr bool operator>(Constant<U1> lhs, Constant<U2> rhs) {
+    return !(lhs <= rhs);
+}
+template <typename U1, typename U2>
+constexpr bool operator>=(Constant<U1> lhs, Constant<U2> rhs) {
+    return !(lhs < rhs);
+}
 
 }  // namespace au
 
