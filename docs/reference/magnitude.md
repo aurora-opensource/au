@@ -225,6 +225,11 @@ In what follows, we'll use this convention:
     - `m1 == m2` (equality comparison)
     - `m1 != m2` (inequality comparison)
 
+`Zero` is never equal to any `Magnitude`:
+
+- `ZERO == m` is always `false`
+- `ZERO != m` is always `true`
+
 ### Ordering comparison †
 
 **Result:** A `bool` indicating the relative ordering of two `Magnitude` values.
@@ -426,6 +431,95 @@ if `q` is the truncated quotient, then `q * b + (a % b)` equals `a`.
 
 Magnitudes support all of the [power helpers](./powers.md#helpers).  So, for example, for
 a magnitude instance `m`, you can write `sqrt(m)` as a more readable alternative to `root<2>(m)`.
+
+### Rounding helpers
+
+These operations round a `Magnitude` to an integer `Magnitude`.  They all support `Zero` as both an
+input and an output.
+
+These features are generally subject to [compile-time arithmetic
+limitations](#compile-time-arithmetic-limitations).  We will include a warning
+directly in the subsection for each affected feature below.
+
+#### Truncation †
+
+**Result:** The integer part of a `Magnitude`, truncating toward zero.
+
+† _This feature is subject to [compile-time arithmetic
+limitations](#compile-time-arithmetic-limitations)._
+
+**Syntax:**
+
+- For an _instance_ `m`:
+    - `mag_trunc(m)`
+
+**Examples:**
+
+- `mag_trunc(mag<7>() / mag<3>())` equals `mag<2>()` (since $\frac{7}{3} \approx 2.33$)
+- `mag_trunc(-mag<7>() / mag<3>())` equals `-mag<2>()` (truncates toward zero)
+- `mag_trunc(mag<1>() / mag<3>())` has type `Zero` (since $\frac{1}{3} \approx 0.33$)
+- `mag_trunc(ZERO)` has type `Zero`
+
+#### Floor †
+
+**Result:** The largest integer `Magnitude` less than or equal to the input.
+
+† _This feature is subject to [compile-time arithmetic
+limitations](#compile-time-arithmetic-limitations)._
+
+**Syntax:**
+
+- For an _instance_ `m`:
+    - `mag_floor(m)`
+
+**Examples:**
+
+- `mag_floor(mag<7>() / mag<3>())` equals `mag<2>()` (since $\lfloor 2.33 \rfloor = 2$)
+- `mag_floor(-mag<7>() / mag<3>())` equals `-mag<3>()` (since $\lfloor -2.33 \rfloor = -3$)
+- `mag_floor(mag<1>() / mag<2>())` has type `Zero` (since $\lfloor 0.5 \rfloor = 0$)
+- `mag_floor(-mag<1>() / mag<2>())` equals `-mag<1>()` (since $\lfloor -0.5 \rfloor = -1$)
+- `mag_floor(ZERO)` has type `Zero`
+
+#### Ceiling †
+
+**Result:** The smallest integer `Magnitude` greater than or equal to the input.
+
+† _This feature is subject to [compile-time arithmetic
+limitations](#compile-time-arithmetic-limitations)._
+
+**Syntax:**
+
+- For an _instance_ `m`:
+    - `mag_ceil(m)`
+
+**Examples:**
+
+- `mag_ceil(mag<7>() / mag<3>())` equals `mag<3>()` (since $\lceil 2.33 \rceil = 3$)
+- `mag_ceil(-mag<7>() / mag<3>())` equals `-mag<2>()` (since $\lceil -2.33 \rceil = -2$)
+- `mag_ceil(mag<1>() / mag<2>())` equals `mag<1>()` (since $\lceil 0.5 \rceil = 1$)
+- `mag_ceil(-mag<1>() / mag<2>())` has type `Zero` (since $\lceil -0.5 \rceil = 0$)
+- `mag_ceil(ZERO)` has type `Zero`
+
+#### Rounding †
+
+**Result:** The nearest integer `Magnitude` to the input, with half-values rounding away from zero.
+
+† _This feature is subject to [compile-time arithmetic
+limitations](#compile-time-arithmetic-limitations)._
+
+**Syntax:**
+
+- For an _instance_ `m`:
+    - `mag_round(m)`
+
+**Examples:**
+
+- `mag_round(mag<7>() / mag<3>())` equals `mag<2>()` (since $2.33$ is closer to $2$)
+- `mag_round(mag<8>() / mag<3>())` equals `mag<3>()` (since $2.67$ is closer to $3$)
+- `mag_round(mag<5>() / mag<2>())` equals `mag<3>()` (since $2.5$ rounds away from zero)
+- `mag_round(-mag<5>() / mag<2>())` equals `-mag<3>()` (since $-2.5$ rounds away from zero)
+- `mag_round(mag<1>() / mag<3>())` has type `Zero` (since $0.33$ rounds to $0$)
+- `mag_round(ZERO)` has type `Zero`
 
 ## Traits
 

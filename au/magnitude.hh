@@ -312,10 +312,26 @@ template <typename... BP1s, typename... BP2s>
 constexpr auto operator==(Magnitude<BP1s...>, Magnitude<BP2s...>) {
     return std::is_same<Magnitude<BP1s...>, Magnitude<BP2s...>>::value;
 }
+template <typename... BPs>
+constexpr auto operator==(Zero, Magnitude<BPs...>) {
+    return false;
+}
+template <typename... BPs>
+constexpr auto operator==(Magnitude<BPs...>, Zero) {
+    return false;
+}
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator!=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
     return !(m1 == m2);
+}
+template <typename... BPs>
+constexpr auto operator!=(Zero, Magnitude<BPs...>) {
+    return true;
+}
+template <typename... BPs>
+constexpr auto operator!=(Magnitude<BPs...>, Zero) {
+    return true;
 }
 
 namespace detail {
@@ -434,6 +450,38 @@ constexpr auto mag_trunc(Magnitude<BPs...> m) {
                               // Note that it will never be used anyway.
                               decltype(sign(m) * mag<abs_quotient + (abs_quotient == 0u)>())>{};
 }
+
+// `mag_floor(m)`: rounds `m` down toward negative infinity.
+template <typename... BPs>
+constexpr auto mag_floor(Magnitude<BPs...> m) {
+    constexpr auto trunced = mag_trunc(m);
+    return std::conditional_t<(is_positive(m) || (m == trunced)),
+                              decltype(trunced),
+                              decltype(trunced - Magnitude<>{})>{};
+}
+
+// `mag_ceil(m)`: rounds `m` up toward positive infinity.
+template <typename... BPs>
+constexpr auto mag_ceil(Magnitude<BPs...> m) {
+    constexpr auto trunced = mag_trunc(m);
+    return std::conditional_t<(!is_positive(m) || (m == trunced)),
+                              decltype(trunced),
+                              decltype(trunced + Magnitude<>{})>{};
+}
+
+// `mag_round(m)`: rounds `m` to the nearest integer, rounding halfway cases away from zero.
+template <typename... BPs>
+constexpr auto mag_round(Magnitude<BPs...> m) {
+    constexpr auto trunced = mag_trunc(m);
+    return trunced + std::conditional_t<abs(m - trunced) >= Magnitude<Pow<Prime<2>, -1>>{},
+                                        Sign<Magnitude<BPs...>>,
+                                        Zero>{};
+}
+
+constexpr Zero mag_trunc(Zero) { return {}; }
+constexpr Zero mag_floor(Zero) { return {}; }
+constexpr Zero mag_ceil(Zero) { return {}; }
+constexpr Zero mag_round(Zero) { return {}; }
 
 //
 // Addition, subtraction, and mod for Magnitudes (and Zero).
