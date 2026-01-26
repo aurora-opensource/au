@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-84-ge83c87a
+// Version identifier: 0.5.0-base-85-gbfd8b7a
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -3142,6 +3142,77 @@ constexpr bool operator<=(Magnitude<BPs...>, Zero) {
 template <typename... BPs>
 constexpr bool operator>=(Magnitude<BPs...>, Zero) {
     return IsPositive<Magnitude<BPs...>>::value;
+}
+
+//
+// Addition and subtraction of Magnitudes (and Zero).
+//
+// Again, these are only defined for the subset of Magnitudes where this is easy to compute.
+//
+
+// Addition:
+template <typename... BP1s, typename... BP2s>
+constexpr auto operator+(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+    constexpr auto sgn1 = sign(m1);
+    constexpr auto sgn2 = sign(m2);
+
+    constexpr auto abs_common = Abs<CommonMagnitude<Magnitude<BP1s...>, Magnitude<BP2s...>>>{};
+    constexpr auto abs_num1 = abs(m1) / abs_common;
+    constexpr auto abs_num2 = abs(m2) / abs_common;
+
+    // These `get_value` calls automatically check that individual _inputs_ fit in `uint64_t`.
+    constexpr auto abs_num1_u64 = get_value<std::uint64_t>(abs_num1);
+    constexpr auto abs_num2_u64 = get_value<std::uint64_t>(abs_num2);
+
+    // Biggest absolute input determines overall sign.
+    //
+    // Note that when the magnitudes are equal, either the choice doesn't matter (when the inputs
+    // have the same sign), or the outcome should just be `Zero`.  In the latter case, we rely on
+    // the explicit `Negative` overloads below being a better match.
+    constexpr auto sgn =
+        std::conditional_t<(abs_num1_u64 > abs_num2_u64), decltype(sgn1), decltype(sgn2)>{};
+
+    // Here, we are taking advantage of modular arithmetic on unsigned integers.  This actually does
+    // handle all the signs correctly, although it may not be obvious at first glance.
+    constexpr auto num1_u64 = is_positive(sgn1) ? abs_num1_u64 : -abs_num1_u64;
+    constexpr auto num2_u64 = is_positive(sgn2) ? abs_num2_u64 : -abs_num2_u64;
+    constexpr auto abs_sum_u64 = is_positive(sgn) ? (num1_u64 + num2_u64) : -(num1_u64 + num2_u64);
+
+    // Here is where we guard against overflow in the _output_.
+    static_assert((sgn1 != sgn2) || abs_sum_u64 >= abs_num1_u64,
+                  "Magnitude addition overflowed uint64_t");
+
+    return sgn * mag<abs_sum_u64>() * abs_common;
+}
+template <typename... BPs>
+constexpr Zero operator+(Magnitude<Negative, BPs...>, Magnitude<BPs...>) {
+    return {};
+}
+template <typename... BPs>
+constexpr Zero operator+(Magnitude<BPs...>, Magnitude<Negative, BPs...>) {
+    return {};
+}
+template <typename... BPs>
+constexpr auto operator+(Zero, Magnitude<BPs...> m) {
+    return m;
+}
+template <typename... BPs>
+constexpr auto operator+(Magnitude<BPs...> m, Zero) {
+    return m;
+}
+
+// Subtraction:
+template <typename... BP1s, typename... BP2s>
+constexpr auto operator-(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+    return m1 + (-m2);
+}
+template <typename... BPs>
+constexpr auto operator-(Zero, Magnitude<BPs...> m) {
+    return -m;
+}
+template <typename... BPs>
+constexpr auto operator-(Magnitude<BPs...> m, Zero) {
+    return m;
 }
 
 template <typename... BPs>
