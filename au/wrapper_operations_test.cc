@@ -135,6 +135,16 @@ TEST(CanScaleByMagnitude, MakesScaledWrapperWhenPostMultiplyingByMagnitude) {
     StaticAssertTypeEq<decltype(mol * mag<3>()), UnitWrapper<decltype(Moles{} * mag<3>())>>();
 }
 
+TEST(CanScaleByMagnitude, CanPreMultiplyByZero) {
+    constexpr auto mol = UnitWrapper<Moles>{};
+    StaticAssertTypeEq<decltype(ZERO * mol), Zero>();
+}
+
+TEST(CanScaleByMagnitude, CanPostMultiplyByZero) {
+    constexpr auto mol = UnitWrapper<Moles>{};
+    StaticAssertTypeEq<decltype(mol * ZERO), Zero>();
+}
+
 TEST(CanScaleByMagnitude, MakesScaledWrapperOfInverseUnitWhenDividingIntoMagnitude) {
     constexpr auto mol = UnitWrapper<Moles>{};
     StaticAssertTypeEq<decltype(PI / mol), UnitWrapper<decltype(inverse(Moles{}) * PI)>>();

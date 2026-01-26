@@ -542,6 +542,10 @@ TEST(GetValue, SupportsIntegerOutputForIntegerMagnitude) {
     EXPECT_THAT(get_value<double>(m), SameTypeAndValue(412.));
 }
 
+TEST(GetValue, SupportsZero) {
+    EXPECT_THAT(get_value<std::size_t>(ZERO), SameTypeAndValue(std::size_t{0}));
+}
+
 TEST(GetValue, SupportsNegativePowersOfIntegerBase) {
     constexpr auto m = pow<-3>(mag<2>());
     EXPECT_THAT(get_value<float>(m), SameTypeAndValue(0.125f));
