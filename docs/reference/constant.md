@@ -421,6 +421,15 @@ In the following table, let `m` be an instance of `Magnitude<BPs...>`.
 | `Magnitude<BPs...> * Constant<Unit>` | `Constant<decltype(Unit{} * m)>` |
 | `Magnitude<BPs...> / Constant<Unit>` | `Constant<decltype(UnitInverseT<Unit>{} * m)>` |
 
+#### `Zero`
+
+Multiplying `Constant<Unit>` with [`Zero`](./zero.md) produces `Zero`.
+
+| Operation | Resulting Type |
+| --------- | -------------- |
+| `Constant<Unit> * Zero` | `Zero` |
+| `Zero * Constant<Unit>` | `Zero` |
+
 #### `QuantityPointMaker<U>` (deleted)
 
 Multiplying or dividing `Constant<Unit>` with a `QuantityPointMaker<U>` is explicitly deleted,

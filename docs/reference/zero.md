@@ -34,6 +34,19 @@ This is explicitly deleted.  There is no unambiguous notion of which point is la
 depends on the choice of units.  Therefore, we delete this constructor to prevent users from relying
 on this dubious notion.
 
+## Operations
+
+### `get_value<T>(ZERO)`
+
+`Zero` can be passed to [`get_value`](./magnitude.md#extracting-values), just like a `Magnitude`.
+The result is always `T{0}` for any numeric type `T`.
+
+??? example
+    ```cpp
+    get_value<double>(ZERO);  // Returns 0.0
+    get_value<int>(ZERO);     // Returns 0
+    ```
+
 ## I/O
 
 If you include I/O support, then `Zero` will be streamed as `"0"`.

@@ -124,6 +124,12 @@ constexpr bool representable_in(Magnitude<BPs...> m);
 template <typename T, typename... BPs>
 constexpr T get_value(Magnitude<BPs...>);
 
+// Let `Zero` "act like" a `Magnitude` for purposes of `get_value`.
+template <typename T>
+constexpr T get_value(Zero) {
+    return T{0};
+}
+
 // A base type for prime numbers.
 template <std::uintmax_t N>
 struct Prime {

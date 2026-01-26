@@ -216,6 +216,10 @@ struct CanScaleByMagnitude {
         return UnitWrapper<decltype(Unit{} / m)>{};
     }
 
+    // (0 * W) and (W * 0), for wrapper W.
+    friend constexpr Zero operator*(Zero, UnitWrapper<Unit>) { return {}; }
+    friend constexpr Zero operator*(UnitWrapper<Unit>, Zero) { return {}; }
+
     friend constexpr auto operator-(UnitWrapper<Unit>) {
         return UnitWrapper<decltype(Unit{} * (-mag<1>()))>{};
     }
