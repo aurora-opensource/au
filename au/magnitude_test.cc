@@ -108,20 +108,20 @@ TEST(Magnitude, OrderingWithZero) {
 
 TEST(Magnitude, EqualityWithZero) {
     // Zero is never equal to any magnitude.
-    EXPECT_THAT(ZERO == mag<1>(), IsFalse());
-    EXPECT_THAT(ZERO == mag<1>() / mag<1000>(), IsFalse());
-    EXPECT_THAT(ZERO == -mag<1>(), IsFalse());
+    EXPECT_THAT(ZERO, Not(Eq(mag<1>())));
+    EXPECT_THAT(ZERO, Not(Eq(mag<1>() / mag<1000>())));
+    EXPECT_THAT(ZERO, Not(Eq(-mag<1>())));
 
-    EXPECT_THAT(ZERO != mag<1>(), IsTrue());
-    EXPECT_THAT(ZERO != mag<1>() / mag<1000>(), IsTrue());
-    EXPECT_THAT(ZERO != -mag<1>(), IsTrue());
+    EXPECT_THAT(ZERO, Ne(mag<1>()));
+    EXPECT_THAT(ZERO, Ne(mag<1>() / mag<1000>()));
+    EXPECT_THAT(ZERO, Ne(-mag<1>()));
 
     // Magnitude vs Zero (operands reversed).
-    EXPECT_THAT(mag<1>() == ZERO, IsFalse());
-    EXPECT_THAT(-mag<1>() == ZERO, IsFalse());
+    EXPECT_THAT(mag<1>(), Not(Eq(ZERO)));
+    EXPECT_THAT(-mag<1>(), Not(Eq(ZERO)));
 
-    EXPECT_THAT(mag<1>() != ZERO, IsTrue());
-    EXPECT_THAT(-mag<1>() != ZERO, IsTrue());
+    EXPECT_THAT(mag<1>(), Ne(ZERO));
+    EXPECT_THAT(-mag<1>(), Ne(ZERO));
 }
 
 TEST(Magnitude, ProductBehavesCorrectly) {
