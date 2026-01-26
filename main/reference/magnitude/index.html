@@ -1908,6 +1908,67 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#rounding-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rounding helpers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rounding helpers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#truncation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Truncation †
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#floor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Floor †
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ceiling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ceiling †
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rounding †
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2949,6 +3010,11 @@ In what follows, we&rsquo;ll use this convention:</p>
 </ul>
 </li>
 </ul>
+<p><code>Zero</code> is never equal to any <code>Magnitude</code>:</p>
+<ul>
+<li><code>ZERO == m</code> is always <code>false</code></li>
+<li><code>ZERO != m</code> is always <code>true</code></li>
+</ul>
 <h3 id="ordering-comparison">Ordering comparison †<a class="headerlink" href="#ordering-comparison" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> A <code>bool</code> indicating the relative ordering of two <code>Magnitude</code> values.</p>
 <p>Unlike equality comparison (which simply checks whether two types are the same), ordering comparison
@@ -3152,6 +3218,88 @@ the result cannot be represented as a <code>Magnitude</code>.</p>
 <h3 id="helpers-for-powers-and-roots">Helpers for powers and roots<a class="headerlink" href="#helpers-for-powers-and-roots" title="Permanent link">&para;</a></h3>
 <p>Magnitudes support all of the <a href="../powers/#helpers">power helpers</a>.  So, for example, for
 a magnitude instance <code>m</code>, you can write <code>sqrt(m)</code> as a more readable alternative to <code>root&lt;2&gt;(m)</code>.</p>
+<h3 id="rounding-helpers">Rounding helpers<a class="headerlink" href="#rounding-helpers" title="Permanent link">&para;</a></h3>
+<p>These operations round a <code>Magnitude</code> to an integer <code>Magnitude</code>.  They all support <code>Zero</code> as both an
+input and an output.</p>
+<p>These features are generally subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.  We will include a warning
+directly in the subsection for each affected feature below.</p>
+<h4 id="truncation">Truncation †<a class="headerlink" href="#truncation" title="Permanent link">&para;</a></h4>
+<p><strong>Result:</strong> The integer part of a <code>Magnitude</code>, truncating toward zero.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>mag_trunc(m)</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>mag_trunc(mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>mag&lt;2&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\frac{7}{3} \approx 2.33</span><script type="math/tex">\frac{7}{3} \approx 2.33</script></span>)</li>
+<li><code>mag_trunc(-mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>-mag&lt;2&gt;()</code> (truncates toward zero)</li>
+<li><code>mag_trunc(mag&lt;1&gt;() / mag&lt;3&gt;())</code> has type <code>Zero</code> (since <span class="arithmatex"><span class="MathJax_Preview">\frac{1}{3} \approx 0.33</span><script type="math/tex">\frac{1}{3} \approx 0.33</script></span>)</li>
+<li><code>mag_trunc(ZERO)</code> has type <code>Zero</code></li>
+</ul>
+<h4 id="floor">Floor †<a class="headerlink" href="#floor" title="Permanent link">&para;</a></h4>
+<p><strong>Result:</strong> The largest integer <code>Magnitude</code> less than or equal to the input.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>mag_floor(m)</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>mag_floor(mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>mag&lt;2&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lfloor 2.33 \rfloor = 2</span><script type="math/tex">\lfloor 2.33 \rfloor = 2</script></span>)</li>
+<li><code>mag_floor(-mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>-mag&lt;3&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lfloor -2.33 \rfloor = -3</span><script type="math/tex">\lfloor -2.33 \rfloor = -3</script></span>)</li>
+<li><code>mag_floor(mag&lt;1&gt;() / mag&lt;2&gt;())</code> has type <code>Zero</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lfloor 0.5 \rfloor = 0</span><script type="math/tex">\lfloor 0.5 \rfloor = 0</script></span>)</li>
+<li><code>mag_floor(-mag&lt;1&gt;() / mag&lt;2&gt;())</code> equals <code>-mag&lt;1&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lfloor -0.5 \rfloor = -1</span><script type="math/tex">\lfloor -0.5 \rfloor = -1</script></span>)</li>
+<li><code>mag_floor(ZERO)</code> has type <code>Zero</code></li>
+</ul>
+<h4 id="ceiling">Ceiling †<a class="headerlink" href="#ceiling" title="Permanent link">&para;</a></h4>
+<p><strong>Result:</strong> The smallest integer <code>Magnitude</code> greater than or equal to the input.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>mag_ceil(m)</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>mag_ceil(mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>mag&lt;3&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lceil 2.33 \rceil = 3</span><script type="math/tex">\lceil 2.33 \rceil = 3</script></span>)</li>
+<li><code>mag_ceil(-mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>-mag&lt;2&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lceil -2.33 \rceil = -2</span><script type="math/tex">\lceil -2.33 \rceil = -2</script></span>)</li>
+<li><code>mag_ceil(mag&lt;1&gt;() / mag&lt;2&gt;())</code> equals <code>mag&lt;1&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lceil 0.5 \rceil = 1</span><script type="math/tex">\lceil 0.5 \rceil = 1</script></span>)</li>
+<li><code>mag_ceil(-mag&lt;1&gt;() / mag&lt;2&gt;())</code> has type <code>Zero</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lceil -0.5 \rceil = 0</span><script type="math/tex">\lceil -0.5 \rceil = 0</script></span>)</li>
+<li><code>mag_ceil(ZERO)</code> has type <code>Zero</code></li>
+</ul>
+<h4 id="rounding">Rounding †<a class="headerlink" href="#rounding" title="Permanent link">&para;</a></h4>
+<p><strong>Result:</strong> The nearest integer <code>Magnitude</code> to the input, with half-values rounding away from zero.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>mag_round(m)</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>mag_round(mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>mag&lt;2&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">2.33</span><script type="math/tex">2.33</script></span> is closer to <span class="arithmatex"><span class="MathJax_Preview">2</span><script type="math/tex">2</script></span>)</li>
+<li><code>mag_round(mag&lt;8&gt;() / mag&lt;3&gt;())</code> equals <code>mag&lt;3&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">2.67</span><script type="math/tex">2.67</script></span> is closer to <span class="arithmatex"><span class="MathJax_Preview">3</span><script type="math/tex">3</script></span>)</li>
+<li><code>mag_round(mag&lt;5&gt;() / mag&lt;2&gt;())</code> equals <code>mag&lt;3&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">2.5</span><script type="math/tex">2.5</script></span> rounds away from zero)</li>
+<li><code>mag_round(-mag&lt;5&gt;() / mag&lt;2&gt;())</code> equals <code>-mag&lt;3&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">-2.5</span><script type="math/tex">-2.5</script></span> rounds away from zero)</li>
+<li><code>mag_round(mag&lt;1&gt;() / mag&lt;3&gt;())</code> has type <code>Zero</code> (since <span class="arithmatex"><span class="MathJax_Preview">0.33</span><script type="math/tex">0.33</script></span> rounds to <span class="arithmatex"><span class="MathJax_Preview">0</span><script type="math/tex">0</script></span>)</li>
+<li><code>mag_round(ZERO)</code> has type <code>Zero</code></li>
+</ul>
 <h2 id="traits">Traits<a class="headerlink" href="#traits" title="Permanent link">&para;</a></h2>
 <p>These traits provide information, at compile time, about the number represented by a <code>Magnitude</code>.</p>
 <h3 id="is-integer">Is Integer?<a class="headerlink" href="#is-integer" title="Permanent link">&para;</a></h3>
