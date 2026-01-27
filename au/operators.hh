@@ -14,6 +14,10 @@
 
 #pragma once
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
+#endif
+
 #include "au/stdx/type_traits.hh"
 #include "au/stdx/utility.hh"
 

@@ -18,6 +18,10 @@
 #include <limits>
 #include <utility>
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
+#endif
+
 #include "au/fwd.hh"
 #include "au/packs.hh"
 #include "au/power_aliases.hh"
@@ -390,10 +394,8 @@ constexpr bool operator>=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename... BP1s, typename... BP2s>
-constexpr std::strong_ordering operator<=>(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
-    return (m1 < m2)   ? std::strong_ordering::less
-           : (m1 > m2) ? std::strong_ordering::greater
-                       : std::strong_ordering::equal;
+constexpr auto operator<=>(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+    return ((m1 > m2) - (m1 < m2)) <=> 0;
 }
 #endif
 
@@ -440,12 +442,12 @@ constexpr bool operator>=(Magnitude<BPs...>, Zero) {
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename... BPs>
-constexpr std::strong_ordering operator<=>(Zero, Magnitude<BPs...> m) {
-    return is_positive(m) ? std::strong_ordering::less : std::strong_ordering::greater;
+constexpr auto operator<=>(Zero, Magnitude<BPs...> m) {
+    return 0 <=> get_value<int>(sign(m));
 }
 template <typename... BPs>
-constexpr std::strong_ordering operator<=>(Magnitude<BPs...> m, Zero z) {
-    return 0 <=> (z <=> m);
+constexpr auto operator<=>(Magnitude<BPs...> m, Zero) {
+    return get_value<int>(sign(m)) <=> 0;
 }
 #endif
 
