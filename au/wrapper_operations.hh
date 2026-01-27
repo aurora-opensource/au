@@ -220,6 +220,8 @@ struct CanScaleByMagnitude {
     friend constexpr Zero operator*(Zero, UnitWrapper<Unit>) { return {}; }
     friend constexpr Zero operator*(UnitWrapper<Unit>, Zero) { return {}; }
 
+    // Unary Plus and Negation.
+    friend constexpr auto operator+(UnitWrapper<Unit> u) { return u; }
     friend constexpr auto operator-(UnitWrapper<Unit>) {
         return UnitWrapper<decltype(Unit{} * (-mag<1>()))>{};
     }

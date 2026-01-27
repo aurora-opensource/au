@@ -178,6 +178,11 @@ TEST(CanScaleByMagnitude, SupportsNegation) {
     StaticAssertTypeEq<decltype(-mol), UnitWrapper<decltype(Moles{} * (-mag<1>()))>>();
 }
 
+TEST(CanScaleByMagnitude, SupportsUnaryPlus) {
+    constexpr auto mol = UnitWrapper<Moles>{};
+    StaticAssertTypeEq<decltype(+mol), UnitWrapper<Moles>>();
+}
+
 TEST(ForbidsComposingWith, FailsToCompileWhenMultiplyingOrDividingWithForbiddenWrapper) {
     // Uncomment each line below individually to verify.
 
