@@ -14,6 +14,8 @@
 
 #include "au/math.hh"
 
+#include <string>
+
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/celsius.hh"
@@ -33,6 +35,7 @@
 
 namespace au {
 
+using ::testing::AllOf;
 using ::testing::DoubleNear;
 using ::testing::Eq;
 using ::testing::IsFalse;
@@ -54,6 +57,39 @@ constexpr const T &std_clamp(const T &v, const T &lo, const T &hi, Compare comp)
 template <class T>
 constexpr const T &std_clamp(const T &v, const T &lo, const T &hi) {
     return std_clamp(v, lo, hi, std::less<void>{});
+}
+
+// Constants for testing Constant support in rounding functions.
+constexpr auto SEVEN_THIRDS_METERS = make_constant(meters * mag<7>() / mag<3>());
+constexpr auto FIVE_HALVES_METERS = make_constant(meters * mag<5>() / mag<2>());
+
+// Matcher for label strings.
+MATCHER_P(LabelIs, expected, "") {
+    *result_listener << "which is \"" << arg << "\"";
+    return arg == expected;
+}
+
+// Type trait to check if a type is a Constant.
+template <typename T>
+struct IsConstantType : std::false_type {};
+template <typename U>
+struct IsConstantType<Constant<U>> : std::true_type {};
+
+MATCHER(IsConstant, "is a Constant") {
+    return IsConstantType<stdx::remove_cvref_t<decltype(arg)>>::value;
+}
+
+// Checks that arg is a Constant, and applies the inner matcher to its unit label.
+template <typename InnerMatcher>
+auto IsConstantWithUnitMatching(InnerMatcher m) {
+    return ::testing::AllOf(IsConstant(),
+                            ::testing::ResultOf(
+                                "unit label",
+                                [](const auto &c) {
+                                    using Unit = AssociatedUnit<stdx::remove_cvref_t<decltype(c)>>;
+                                    return std::string(unit_label<Unit>());
+                                },
+                                m));
 }
 
 }  // namespace
@@ -953,6 +989,22 @@ TEST(RoundAs, SupportsQuantityPointWithNontrivialOffset) {
     EXPECT_THAT(round_as<int>(celsius_pt, fahrenheit_pt(33.0)), SameTypeAndValue(celsius_pt(1)));
 }
 
+TEST(RoundAs, ConstantSupportsConstexpr) {
+    constexpr auto result = round_as(meters, SEVEN_THIRDS_METERS);
+    EXPECT_THAT(result, AllOf(Eq(meters(2)), IsConstantWithUnitMatching(LabelIs("[2 m]"))));
+}
+
+TEST(RoundAs, ConstantRoundsToZero) {
+    EXPECT_THAT(round_as(kilo(meters), SEVEN_THIRDS_METERS), SameTypeAndValue(ZERO));
+}
+
+TEST(RoundAs, ConstantRoundsHalfAwayFromZero) {
+    EXPECT_THAT(round_as(meters, FIVE_HALVES_METERS),
+                AllOf(Eq(meters(3)), IsConstantWithUnitMatching(LabelIs("[3 m]"))));
+    EXPECT_THAT(round_as(meters, -FIVE_HALVES_METERS),
+                AllOf(Eq(meters(-3)), IsConstantWithUnitMatching(LabelIs("[-3 m]"))));
+}
+
 TEST(RoundIn, SameAsRoundAs) {
     EXPECT_THAT(round_in(kilo(meters), meters(754)), SameTypeAndValue(1.0));
     EXPECT_THAT(round_in(kilo(meters), meters(754.28)), SameTypeAndValue(1.0));
@@ -968,6 +1020,31 @@ TEST(RoundIn, SameAsRoundAs) {
 TEST(RoundIn, SupportsDifferentOutputTypes) {
     EXPECT_THAT(round_in<long double>(kilo(meters), meters(754.28f)), SameTypeAndValue(1.0L));
     EXPECT_THAT(round_in<long double>(kilo(meters_pt), meters_pt(754.28f)), SameTypeAndValue(1.0L));
+}
+
+TEST(RoundIn, ConstantRequiresExplicitRep) {
+    EXPECT_THAT(round_in<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(2));
+    EXPECT_THAT(round_in<std::size_t>(meters, SEVEN_THIRDS_METERS),
+                SameTypeAndValue(std::size_t{2}));
+}
+
+TEST(RoundIn, ConstantRoundsToNearestInteger) {
+    EXPECT_THAT(round_in<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(2));
+}
+
+TEST(RoundIn, ConstantRoundsHalfAwayFromZero) {
+    EXPECT_THAT(round_in<int>(meters, FIVE_HALVES_METERS), SameTypeAndValue(3));
+    EXPECT_THAT(round_in<int>(meters, -FIVE_HALVES_METERS), SameTypeAndValue(-3));
+}
+
+TEST(RoundIn, ConstantSupportsConstexpr) {
+    constexpr int result = round_in<int>(meters, SEVEN_THIRDS_METERS);
+    EXPECT_THAT(result, SameTypeAndValue(2));
+}
+
+TEST(RoundIn, ConstantSupportsZeroOutcome) {
+    constexpr int result = round_in<int>(kilo(meters), SEVEN_THIRDS_METERS);
+    EXPECT_THAT(result, SameTypeAndValue(0));
 }
 
 TEST(FloorAs, SameAsStdFloorForSameUnits) {
@@ -1053,6 +1130,20 @@ TEST(FloorAs, SupportsQuantityPointWithNontrivialOffset) {
     EXPECT_THAT(floor_as<int>(celsius_pt, fahrenheit_pt(34.0)), SameTypeAndValue(celsius_pt(1)));
 }
 
+TEST(FloorAs, ConstantSupportsConstexpr) {
+    constexpr auto result = floor_as(meters, SEVEN_THIRDS_METERS);
+    EXPECT_THAT(result, AllOf(Eq(meters(2)), IsConstantWithUnitMatching(LabelIs("[2 m]"))));
+}
+
+TEST(FloorAs, ConstantReturnsLargestIntegerNotGreaterThanInput) {
+    EXPECT_THAT(floor_as(meters, SEVEN_THIRDS_METERS),
+                AllOf(Eq(meters(2)), IsConstantWithUnitMatching(LabelIs("[2 m]"))));
+    EXPECT_THAT(floor_as(meters, FIVE_HALVES_METERS),
+                AllOf(Eq(meters(2)), IsConstantWithUnitMatching(LabelIs("[2 m]"))));
+    EXPECT_THAT(floor_as(meters, -FIVE_HALVES_METERS),
+                AllOf(Eq(meters(-3)), IsConstantWithUnitMatching(LabelIs("[-3 m]"))));
+}
+
 TEST(FloorIn, SameAsFloorAs) {
     EXPECT_THAT(floor_in(kilo(meters), meters(1154)), SameTypeAndValue(1.0));
     EXPECT_THAT(floor_in(kilo(meters), meters(1154.28)), SameTypeAndValue(1.0));
@@ -1069,6 +1160,23 @@ TEST(FloorIn, SupportsDifferentOutputTypes) {
     EXPECT_THAT(floor_in<long double>(kilo(meters), meters(1154.28f)), SameTypeAndValue(1.0L));
     EXPECT_THAT(floor_in<long double>(kilo(meters_pt), meters_pt(1154.28f)),
                 SameTypeAndValue(1.0L));
+}
+
+TEST(FloorIn, ConstantRequiresExplicitRep) {
+    EXPECT_THAT(floor_in<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(2));
+    EXPECT_THAT(floor_in<std::size_t>(meters, SEVEN_THIRDS_METERS),
+                SameTypeAndValue(std::size_t{2}));
+}
+
+TEST(FloorIn, ConstantReturnsLargestIntegerNotGreaterThanInput) {
+    EXPECT_THAT(floor_in<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(2));
+    EXPECT_THAT(floor_in<int>(meters, FIVE_HALVES_METERS), SameTypeAndValue(2));
+    EXPECT_THAT(floor_in<int>(meters, -FIVE_HALVES_METERS), SameTypeAndValue(-3));
+}
+
+TEST(FloorIn, ConstantSupportsConstexpr) {
+    constexpr int result = floor_in<int>(meters, SEVEN_THIRDS_METERS);
+    EXPECT_THAT(result, SameTypeAndValue(2));
 }
 
 TEST(CeilAs, SameAsStdCeilForSameUnits) {
@@ -1152,6 +1260,20 @@ TEST(CeilAs, SupportsQuantityPointWithNontrivialOffset) {
     EXPECT_THAT(ceil_as<int>(celsius_pt, fahrenheit_pt(33.0)), SameTypeAndValue(celsius_pt(1)));
 }
 
+TEST(CeilAs, ConstantSupportsConstexpr) {
+    constexpr auto result = ceil_as(meters, SEVEN_THIRDS_METERS);
+    EXPECT_THAT(result, AllOf(Eq(meters(3)), IsConstantWithUnitMatching(LabelIs("[3 m]"))));
+}
+
+TEST(CeilAs, ConstantReturnsSmallestIntegerNotLessThanInput) {
+    EXPECT_THAT(ceil_as(meters, SEVEN_THIRDS_METERS),
+                AllOf(Eq(meters(3)), IsConstantWithUnitMatching(LabelIs("[3 m]"))));
+    EXPECT_THAT(ceil_as(meters, FIVE_HALVES_METERS),
+                AllOf(Eq(meters(3)), IsConstantWithUnitMatching(LabelIs("[3 m]"))));
+    EXPECT_THAT(ceil_as(meters, -FIVE_HALVES_METERS),
+                AllOf(Eq(meters(-2)), IsConstantWithUnitMatching(LabelIs("[-2 m]"))));
+}
+
 TEST(CeilIn, SameAsCeilAs) {
     EXPECT_THAT(ceil_in(kilo(meters), meters(354)), SameTypeAndValue(1.0));
     EXPECT_THAT(ceil_in(kilo(meters), meters(354.28)), SameTypeAndValue(1.0));
@@ -1167,6 +1289,23 @@ TEST(CeilIn, SameAsCeilAs) {
 TEST(CeilIn, SupportsDifferentOutputTypes) {
     EXPECT_THAT(ceil_in<long double>(kilo(meters), meters(354.28f)), SameTypeAndValue(1.0L));
     EXPECT_THAT(ceil_in<long double>(kilo(meters_pt), meters_pt(354.28f)), SameTypeAndValue(1.0L));
+}
+
+TEST(CeilIn, ConstantRequiresExplicitRep) {
+    EXPECT_THAT(ceil_in<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(3));
+    EXPECT_THAT(ceil_in<std::size_t>(meters, SEVEN_THIRDS_METERS),
+                SameTypeAndValue(std::size_t{3}));
+}
+
+TEST(CeilIn, ConstantReturnsSmallestIntegerNotLessThanInput) {
+    EXPECT_THAT(ceil_in<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(3));
+    EXPECT_THAT(ceil_in<int>(meters, FIVE_HALVES_METERS), SameTypeAndValue(3));
+    EXPECT_THAT(ceil_in<int>(meters, -FIVE_HALVES_METERS), SameTypeAndValue(-2));
+}
+
+TEST(CeilIn, ConstantSupportsConstexpr) {
+    constexpr int result = ceil_in<int>(meters, SEVEN_THIRDS_METERS);
+    EXPECT_THAT(result, SameTypeAndValue(3));
 }
 
 TEST(InverseAs, HandlesIntegerRepCorrectly) {
@@ -1324,6 +1463,17 @@ TEST(IntRoundIn, ExplicitRepQuantityPointWithNontrivialOffset) {
     EXPECT_THAT(int_round_in<int>(celsius_pt, kelvins_pt(273.65)), SameTypeAndValue(1));
 }
 
+TEST(IntRoundIn, ConstantRequiresExplicitRep) {
+    EXPECT_THAT(int_round_in<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(2));
+    EXPECT_THAT(int_round_in<std::size_t>(meters, SEVEN_THIRDS_METERS),
+                SameTypeAndValue(std::size_t{2}));
+}
+
+TEST(IntRoundIn, ConstantRoundsHalfAwayFromZero) {
+    EXPECT_THAT(int_round_in<int>(meters, FIVE_HALVES_METERS), SameTypeAndValue(3));
+    EXPECT_THAT(int_round_in<int>(meters, -FIVE_HALVES_METERS), SameTypeAndValue(-3));
+}
+
 TEST(IntRoundAs, SupportsConstexpr) {
     constexpr auto result = int_round_as(meters, milli(meters)(1'500));
     EXPECT_THAT(result, SameTypeAndValue(meters(2)));
@@ -1397,6 +1547,15 @@ TEST(IntRoundAs, ExplicitRepQuantityPointWithNontrivialOffset) {
     // 273.15 K == 0 degrees Celsius
     EXPECT_THAT(int_round_as<int>(celsius_pt, kelvins_pt(273.15)), SameTypeAndValue(celsius_pt(0)));
     EXPECT_THAT(int_round_as<int>(celsius_pt, kelvins_pt(273.65)), SameTypeAndValue(celsius_pt(1)));
+}
+
+TEST(IntRoundAs, ConstantBehavesIdenticallyToRoundAs) {
+    EXPECT_THAT(int_round_as(meters, SEVEN_THIRDS_METERS),
+                AllOf(Eq(meters(2)), IsConstantWithUnitMatching(LabelIs("[2 m]"))));
+    EXPECT_THAT(int_round_as(meters, FIVE_HALVES_METERS),
+                AllOf(Eq(meters(3)), IsConstantWithUnitMatching(LabelIs("[3 m]"))));
+    EXPECT_THAT(int_round_as(meters, -FIVE_HALVES_METERS),
+                AllOf(Eq(meters(-3)), IsConstantWithUnitMatching(LabelIs("[-3 m]"))));
 }
 
 TEST(IntFloorIn, SupportsConstexpr) {
@@ -1505,6 +1664,17 @@ TEST(IntFloorIn, ExplicitRepQuantityPointWithNontrivialOffset) {
     EXPECT_THAT(int_floor_in<int>(celsius_pt, kelvins_pt(274.15)), SameTypeAndValue(1));
 }
 
+TEST(IntFloorIn, ConstantRequiresExplicitRep) {
+    EXPECT_THAT(int_floor_in<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(2));
+    EXPECT_THAT(int_floor_in<std::size_t>(meters, SEVEN_THIRDS_METERS),
+                SameTypeAndValue(std::size_t{2}));
+}
+
+TEST(IntFloorIn, ConstantReturnsLargestIntegerNotGreaterThanInput) {
+    EXPECT_THAT(int_floor_in<int>(meters, FIVE_HALVES_METERS), SameTypeAndValue(2));
+    EXPECT_THAT(int_floor_in<int>(meters, -FIVE_HALVES_METERS), SameTypeAndValue(-3));
+}
+
 TEST(IntFloorAs, SupportsConstexpr) {
     constexpr auto result = int_floor_as(meters, milli(meters)(1'999));
     EXPECT_THAT(result, SameTypeAndValue(meters(1)));
@@ -1578,6 +1748,15 @@ TEST(IntFloorAs, ExplicitRepQuantityPointWithNontrivialOffset) {
                 SameTypeAndValue(celsius_pt(-1)));
     EXPECT_THAT(int_floor_as<int>(celsius_pt, kelvins_pt(274.14)), SameTypeAndValue(celsius_pt(0)));
     EXPECT_THAT(int_floor_as<int>(celsius_pt, kelvins_pt(274.15)), SameTypeAndValue(celsius_pt(1)));
+}
+
+TEST(IntFloorAs, ConstantBehavesIdenticallyToFloorAs) {
+    EXPECT_THAT(int_floor_as(meters, SEVEN_THIRDS_METERS),
+                AllOf(Eq(meters(2)), IsConstantWithUnitMatching(LabelIs("[2 m]"))));
+    EXPECT_THAT(int_floor_as(meters, FIVE_HALVES_METERS),
+                AllOf(Eq(meters(2)), IsConstantWithUnitMatching(LabelIs("[2 m]"))));
+    EXPECT_THAT(int_floor_as(meters, -FIVE_HALVES_METERS),
+                AllOf(Eq(meters(-3)), IsConstantWithUnitMatching(LabelIs("[-3 m]"))));
 }
 
 TEST(IntCeilIn, SupportsConstexpr) {
@@ -1686,6 +1865,17 @@ TEST(IntCeilIn, ExplicitRepQuantityPointWithNontrivialOffset) {
     EXPECT_THAT(int_ceil_in<int>(celsius_pt, kelvins_pt(273.16)), SameTypeAndValue(1));
 }
 
+TEST(IntCeilIn, ConstantRequiresExplicitRep) {
+    EXPECT_THAT(int_ceil_in<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(3));
+    EXPECT_THAT(int_ceil_in<std::size_t>(meters, SEVEN_THIRDS_METERS),
+                SameTypeAndValue(std::size_t{3}));
+}
+
+TEST(IntCeilIn, ConstantReturnsSmallestIntegerNotLessThanInput) {
+    EXPECT_THAT(int_ceil_in<int>(meters, FIVE_HALVES_METERS), SameTypeAndValue(3));
+    EXPECT_THAT(int_ceil_in<int>(meters, -FIVE_HALVES_METERS), SameTypeAndValue(-2));
+}
+
 TEST(IntCeilAs, SupportsConstexpr) {
     constexpr auto result = int_ceil_as(meters, milli(meters)(1'001));
     EXPECT_THAT(result, SameTypeAndValue(meters(2)));
@@ -1758,6 +1948,15 @@ TEST(IntCeilAs, ExplicitRepQuantityPointWithNontrivialOffset) {
     EXPECT_THAT(int_ceil_as<int>(celsius_pt, kelvins_pt(273.14)), SameTypeAndValue(celsius_pt(0)));
     EXPECT_THAT(int_ceil_as<int>(celsius_pt, kelvins_pt(273.15)), SameTypeAndValue(celsius_pt(0)));
     EXPECT_THAT(int_ceil_as<int>(celsius_pt, kelvins_pt(273.16)), SameTypeAndValue(celsius_pt(1)));
+}
+
+TEST(IntCeilAs, ConstantBehavesIdenticallyToCeilAs) {
+    EXPECT_THAT(int_ceil_as(meters, SEVEN_THIRDS_METERS),
+                AllOf(Eq(meters(3)), IsConstantWithUnitMatching(LabelIs("[3 m]"))));
+    EXPECT_THAT(int_ceil_as(meters, FIVE_HALVES_METERS),
+                AllOf(Eq(meters(3)), IsConstantWithUnitMatching(LabelIs("[3 m]"))));
+    EXPECT_THAT(int_ceil_as(meters, -FIVE_HALVES_METERS),
+                AllOf(Eq(meters(-2)), IsConstantWithUnitMatching(LabelIs("[-2 m]"))));
 }
 
 }  // namespace au

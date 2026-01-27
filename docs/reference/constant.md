@@ -339,6 +339,73 @@ For instances `c1` and `c2`:
 - `c1 <= c2`
 - `c1 >= c2`
 
+### Rounding †
+
+`Constant` can be passed to the rounding functions.  The `_as` functions return a new `Constant`,
+while the `_in` functions return a raw numeric value of an explicitly specified type.
+
+† _This feature is subject to the same [compile-time arithmetic
+limitations](./magnitude.md#compile-time-arithmetic-limitations) as `Magnitude` rounding, because
+the computation is built on `Magnitude` rounding._
+
+**Syntax:**
+
+For a `Constant` instance `c` and a unit `u`:
+
+**`_as` functions** (return a `Constant` with a unit quantity-equivalent to `u`):
+
+- `round_as(u, c)` — rounds `c` to the nearest integer in unit `u`
+- `floor_as(u, c)` — rounds `c` down to the largest integer not greater than `c` in unit `u`
+- `ceil_as(u, c)` — rounds `c` up to the smallest integer not less than `c` in unit `u`
+- `int_round_as(u, c)` — same as `round_as(u, c)` for `Constant` inputs
+- `int_floor_as(u, c)` — same as `floor_as(u, c)` for `Constant` inputs
+- `int_ceil_as(u, c)` — same as `ceil_as(u, c)` for `Constant` inputs
+
+**`_in` functions** (return a raw numeric value; explicit `Rep` required):
+
+- `round_in<T>(u, c)` — rounds `c` to the nearest integer in unit `u`, returning type `T`
+- `floor_in<T>(u, c)` — rounds `c` down, returning type `T`
+- `ceil_in<T>(u, c)` — rounds `c` up, returning type `T`
+- `int_round_in<T>(u, c)` — same as `round_in<T>(u, c)` for `Constant` inputs
+- `int_floor_in<T>(u, c)` — same as `floor_in<T>(u, c)` for `Constant` inputs
+- `int_ceil_in<T>(u, c)` — same as `ceil_in<T>(u, c)` for `Constant` inputs
+
+!!! note
+    Pay attention to the peculiar pattern of presence and absence of the explicit `Rep` in these
+    functions.  In particular, an explicit rep is _required_ for the `_in` functions, but
+    _forbidden_ for the `_as` functions!
+
+    This is a simple consequence of the fact that `Constant` _has_ no rep.  The type itself
+    represents only a single, specific value (that is, it is a [monovalue
+    type](./detail/monovalue_types.md)).
+
+    Here is the pattern to remember:
+
+    - The `_in` functions require an explicit rep because the input `Constant` has no rep, so we
+      would have no idea what rep to use "by default".
+
+    - The `_as` functions forbid an explicit rep because the output is another `Constant`, and thus
+      no rep would even be possible.
+
+??? example "Example: using `int_ceil_in` for array dimensions"
+    Suppose you have a constant representing a key length in bits, and you need to determine the
+    number of bytes required to store it.  Let's say the key length is _not_ an even multiple of
+    8 bits, so you couldn't just write `MAX_KEY_LEN.in<std::size_t>(bytes)`: the `Constant` would
+    detect the truncation, and produce a compile-time error!  What we really need is the smallest
+    number of _whole bytes_ that can hold this many bits.  We can achieve this with `int_ceil_in`:
+
+    ```cpp
+    constexpr auto MAX_KEY_LEN = make_constant(bits * mag<250>());
+    constexpr auto bytes_needed = int_ceil_in<std::size_t>(bytes, MAX_KEY_LEN);
+    std::array<uint8_t, bytes_needed> key_storage;  // Array of 32 bytes
+    ```
+
+    In this particular case, we could just as well have used `ceil_in` as `int_ceil_in`: for
+    `Constant`, they are identical.  However, using `int_ceil_in` makes us agnostic as to whether
+    `MAX_KEY_LEN` is a `Constant` or a `Quantity`.  Recall that the `ceil_in` family of functions
+    for `Quantity` are based on `std::ceil`, which is not `constexpr` compatible.  The `int_ceil_in`
+    family, by contrast, is `constexpr` for all its inputs, and uses only integer-domain math.
+
 ### Multiplication and division
 
 Each of the following operations with a `Constant` consists in multiplying or dividing with some
