@@ -18,13 +18,14 @@
 #include <array>
 #include <chrono>
 #include <cmath>
+#include <compare>
 #include <cstdint>
 #include <limits>
 #include <ratio>
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-89-g7a7850d
+// Version identifier: 0.5.0-base-90-g289cb47
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -1018,6 +1019,9 @@ struct IsQuotientValidRep
 
 }  // namespace au
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#endif
+
 
 // This file provides alternatives to certain standard library function objects for comparison and
 // arithmetic: `std::less<void>`, `std::plus<void>`, etc.
@@ -1275,6 +1279,9 @@ struct Hours;
 }  // namespace au
 
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#endif
+
 
 namespace au {
 
@@ -1319,6 +1326,10 @@ inline constexpr bool operator<=(Zero, Zero) { return true; }
 inline constexpr bool operator!=(Zero, Zero) { return false; }
 inline constexpr bool operator>(Zero, Zero) { return false; }
 inline constexpr bool operator<(Zero, Zero) { return false; }
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+inline constexpr auto operator<=>(Zero, Zero) { return 0 <=> 0; }
+#endif
 
 // Implementation helper for "a type where value() returns 0".
 template <typename T>
@@ -2773,6 +2784,9 @@ constexpr T int_pow(T base, std::uintmax_t exp) {
 }  // namespace au
 
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#endif
+
 
 // "Magnitude" is a collection of templated types, representing positive real numbers.
 //
@@ -3136,6 +3150,13 @@ constexpr bool operator>=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
     return !(m1 < m2);
 }
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+template <typename... BP1s, typename... BP2s>
+constexpr auto operator<=>(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+    return ((m1 > m2) - (m1 < m2)) <=> 0;
+}
+#endif
+
 // Zero/Magnitude comparisons: Zero is less than any positive magnitude, greater than any negative.
 template <typename... BPs>
 constexpr bool operator<(Zero, Magnitude<BPs...>) {
@@ -3176,6 +3197,17 @@ template <typename... BPs>
 constexpr bool operator>=(Magnitude<BPs...>, Zero) {
     return IsPositive<Magnitude<BPs...>>::value;
 }
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+template <typename... BPs>
+constexpr auto operator<=>(Zero, Magnitude<BPs...> m) {
+    return 0 <=> get_value<int>(sign(m));
+}
+template <typename... BPs>
+constexpr auto operator<=>(Magnitude<BPs...> m, Zero) {
+    return get_value<int>(sign(m)) <=> 0;
+}
+#endif
 
 //
 // Rounding helpers for Magnitudes: versions of trunc, round, ceil, floor.
@@ -6826,6 +6858,9 @@ struct ConstructionPolicy {
 }  // namespace au
 
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#endif
+
 
 namespace au {
 
@@ -8360,6 +8395,9 @@ constexpr auto A = SymbolFor<Amperes>{};
 }
 
 }  // namespace au
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#endif
 
 
 namespace au {

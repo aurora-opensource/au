@@ -1966,6 +1966,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#addition-and-subtraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Addition and subtraction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2528,6 +2550,20 @@ The result is always <code>T{0}</code> for any numeric type <code>T</code>.</p>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">get_value</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ZERO</span><span class="p">);</span><span class="w">     </span><span class="c1">// Returns 0</span>
 </code></pre></div>
 </details>
+<h3 id="addition-and-subtraction">Addition and subtraction<a class="headerlink" href="#addition-and-subtraction" title="Permanent link">&para;</a></h3>
+<p><code>ZERO + ZERO</code> and <code>ZERO - ZERO</code> both yield <code>ZERO</code>.</p>
+<h3 id="comparison">Comparison<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h3>
+<p><code>ZERO</code> can be compared to <code>ZERO</code>.  <code>ZERO OP ZERO</code> yields the same result as <code>0 OP 0</code>, whenever <code>OP</code>
+is any of the following comparison operators:</p>
+<ul>
+<li><code>==</code></li>
+<li><code>!=</code></li>
+<li><code>&lt;</code></li>
+<li><code>&lt;=</code></li>
+<li><code>&gt;</code></li>
+<li><code>&gt;=</code></li>
+<li><code>&lt;=&gt;</code> <em>(C++20 or later)</em></li>
+</ul>
 <h2 id="io">I/O<a class="headerlink" href="#io" title="Permanent link">&para;</a></h2>
 <p>If you include I/O support, then <code>Zero</code> will be streamed as <code>"0"</code>.</p>
 

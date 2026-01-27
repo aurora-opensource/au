@@ -3028,6 +3028,7 @@ limitations</a>.</em></p>
 <li><code>m1 &gt; m2</code></li>
 <li><code>m1 &lt;= m2</code></li>
 <li><code>m1 &gt;= m2</code></li>
+<li><code>m1 &lt;=&gt; m2</code> <em>(C++20 or later)</em></li>
 </ul>
 </li>
 </ul>
@@ -3035,6 +3036,14 @@ limitations</a>.</em></p>
 <ul>
 <li><code>ZERO &lt; m</code> is <code>true</code> when <code>m</code> is positive</li>
 <li><code>ZERO &gt; m</code> is <code>true</code> when <code>m</code> is negative</li>
+<li><code>ZERO &lt;=&gt; m</code> is less than <code>0</code> when <code>m</code> is positive, and greater than <code>0</code> when <code>m</code> is negative
+  <em>(C++20 or later)</em></li>
+</ul>
+<p>These <code>Magnitude</code>/<code>Zero</code> comparisons work in either direction.  <code>m OP ZERO</code> is the opposite of
+<code>ZERO OP m</code>, for any ordering comparison operator <code>OP</code>, where by &ldquo;opposite&rdquo; we mean:</p>
+<ul>
+<li><code>!b</code> for a <code>bool</code> result <code>b</code></li>
+<li>&ldquo;Negation&rdquo; (conceptually) for a three-way comparison (<code>&lt;=&gt;</code>) result^[1]</li>
 </ul>
 <h3 id="multiplication">Multiplication<a class="headerlink" href="#multiplication" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> The product of two <code>Magnitude</code> values.</p>
