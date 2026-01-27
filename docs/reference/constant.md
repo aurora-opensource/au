@@ -375,8 +375,11 @@ For a `Constant` instance `c` and a unit `u`:
     functions.  In particular, an explicit rep is _required_ for the `_in` functions, but
     _forbidden_ for the `_as` functions!
 
-    This is a simple consequence of the fact that `Constant` _has_ no rep: it represents a single
-    abstract value.
+    This is a simple consequence of the fact that `Constant` _has_ no rep.  The type itself
+    represents only a single, specific value (that is, it is a [monovalue
+    type](./detail/monovalue_types.md)).
+
+    Here is the pattern to remember:
 
     - The `_in` functions require an explicit rep because the input `Constant` has no rep, so we
       would have no idea what rep to use "by default".
