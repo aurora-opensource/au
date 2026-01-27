@@ -1764,6 +1764,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#rounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rounding †
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#multiplication-and-division" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3034,6 +3045,69 @@ the comparison is built on <code>Magnitude</code> comparison.</em></p>
 <li><code>c1 &lt;= c2</code></li>
 <li><code>c1 &gt;= c2</code></li>
 </ul>
+<h3 id="rounding">Rounding †<a class="headerlink" href="#rounding" title="Permanent link">&para;</a></h3>
+<p><code>Constant</code> can be passed to the rounding functions.  The <code>_as</code> functions return a new <code>Constant</code>,
+while the <code>_in</code> functions return a raw numeric value of an explicitly specified type.</p>
+<p>† <em>This feature is subject to the same <a href="../magnitude/#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a> as <code>Magnitude</code> rounding, because
+the computation is built on <code>Magnitude</code> rounding.</em></p>
+<p><strong>Syntax:</strong></p>
+<p>For a <code>Constant</code> instance <code>c</code> and a unit <code>u</code>:</p>
+<p><strong><code>_as</code> functions</strong> (return a <code>Constant</code> with a unit quantity-equivalent to <code>u</code>):</p>
+<ul>
+<li><code>round_as(u, c)</code> — rounds <code>c</code> to the nearest integer in unit <code>u</code></li>
+<li><code>floor_as(u, c)</code> — rounds <code>c</code> down to the largest integer not greater than <code>c</code> in unit <code>u</code></li>
+<li><code>ceil_as(u, c)</code> — rounds <code>c</code> up to the smallest integer not less than <code>c</code> in unit <code>u</code></li>
+<li><code>int_round_as(u, c)</code> — same as <code>round_as(u, c)</code> for <code>Constant</code> inputs</li>
+<li><code>int_floor_as(u, c)</code> — same as <code>floor_as(u, c)</code> for <code>Constant</code> inputs</li>
+<li><code>int_ceil_as(u, c)</code> — same as <code>ceil_as(u, c)</code> for <code>Constant</code> inputs</li>
+</ul>
+<p><strong><code>_in</code> functions</strong> (return a raw numeric value; explicit <code>Rep</code> required):</p>
+<ul>
+<li><code>round_in&lt;T&gt;(u, c)</code> — rounds <code>c</code> to the nearest integer in unit <code>u</code>, returning type <code>T</code></li>
+<li><code>floor_in&lt;T&gt;(u, c)</code> — rounds <code>c</code> down, returning type <code>T</code></li>
+<li><code>ceil_in&lt;T&gt;(u, c)</code> — rounds <code>c</code> up, returning type <code>T</code></li>
+<li><code>int_round_in&lt;T&gt;(u, c)</code> — same as <code>round_in&lt;T&gt;(u, c)</code> for <code>Constant</code> inputs</li>
+<li><code>int_floor_in&lt;T&gt;(u, c)</code> — same as <code>floor_in&lt;T&gt;(u, c)</code> for <code>Constant</code> inputs</li>
+<li><code>int_ceil_in&lt;T&gt;(u, c)</code> — same as <code>ceil_in&lt;T&gt;(u, c)</code> for <code>Constant</code> inputs</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Pay attention to the peculiar pattern of presence and absence of the explicit <code>Rep</code> in these
+functions.  In particular, an explicit rep is <em>required</em> for the <code>_in</code> functions, but
+<em>forbidden</em> for the <code>_as</code> functions!</p>
+<p>This is a simple consequence of the fact that <code>Constant</code> <em>has</em> no rep.  The type itself
+represents only a single, specific value (that is, it is a <a href="../detail/monovalue_types/">monovalue
+type</a>).</p>
+<p>Here is the pattern to remember:</p>
+<ul>
+<li>
+<p>The <code>_in</code> functions require an explicit rep because the input <code>Constant</code> has no rep, so we
+  would have no idea what rep to use &ldquo;by default&rdquo;.</p>
+</li>
+<li>
+<p>The <code>_as</code> functions forbid an explicit rep because the output is another <code>Constant</code>, and thus
+  no rep would even be possible.</p>
+</li>
+</ul>
+</div>
+<details class="example">
+<summary>Example: using <code>int_ceil_in</code> for array dimensions</summary>
+<p>Suppose you have a constant representing a key length in bits, and you need to determine the
+number of bytes required to store it.  Let&rsquo;s say the key length is <em>not</em> an even multiple of
+8 bits, so you couldn&rsquo;t just write <code>MAX_KEY_LEN.in&lt;std::size_t&gt;(bytes)</code>: the <code>Constant</code> would
+detect the truncation, and produce a compile-time error!  What we really need is the smallest
+number of <em>whole bytes</em> that can hold this many bits.  We can achieve this with <code>int_ceil_in</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">MAX_KEY_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">bits</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">250</span><span class="o">&gt;</span><span class="p">());</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">bytes_needed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">int_ceil_in</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bytes</span><span class="p">,</span><span class="w"> </span><span class="n">MAX_KEY_LEN</span><span class="p">);</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">uint8_t</span><span class="p">,</span><span class="w"> </span><span class="n">bytes_needed</span><span class="o">&gt;</span><span class="w"> </span><span class="n">key_storage</span><span class="p">;</span><span class="w">  </span><span class="c1">// Array of 32 bytes</span>
+</code></pre></div>
+<p>In this particular case, we could just as well have used <code>ceil_in</code> as <code>int_ceil_in</code>: for
+<code>Constant</code>, they are identical.  However, using <code>int_ceil_in</code> makes us agnostic as to whether
+<code>MAX_KEY_LEN</code> is a <code>Constant</code> or a <code>Quantity</code>.  Recall that the <code>ceil_in</code> family of functions
+for <code>Quantity</code> are based on <code>std::ceil</code>, which is not <code>constexpr</code> compatible.  The <code>int_ceil_in</code>
+family, by contrast, is <code>constexpr</code> for all its inputs, and uses only integer-domain math.</p>
+</details>
 <h3 id="multiplication-and-division">Multiplication and division<a class="headerlink" href="#multiplication-and-division" title="Permanent link">&para;</a></h3>
 <p>Each of the following operations with a <code>Constant</code> consists in multiplying or dividing with some
 other family of types.</p>

@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-88-g65b7447
+// Version identifier: 0.5.0-base-89-g7a7850d
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -9922,6 +9922,11 @@ template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return static_cast<OutputRep>(round_in(rounding_units, p));
 }
+// c) Version for Constant.
+template <typename OutputRep, typename RoundingUnits, typename U>
+constexpr auto round_in(RoundingUnits rounding_units, Constant<U> c) {
+    return get_value<OutputRep>(mag_round(unit_ratio(c, rounding_units)));
+}
 
 //
 // The integral-valued Quantity or QuantityPoint, in this unit, nearest to the input.
@@ -9937,6 +9942,11 @@ auto round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
 template <typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(round_in(rounding_units, p));
+}
+// c) Version for Constant.
+template <typename RoundingUnits, typename U>
+constexpr auto round_as(RoundingUnits rounding_units, Constant<U> c) {
+    return mag_round(unit_ratio(c, rounding_units)) * make_constant(rounding_units);
 }
 
 //
@@ -9990,6 +10000,11 @@ template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return static_cast<OutputRep>(floor_in(rounding_units, p));
 }
+// c) Version for Constant.
+template <typename OutputRep, typename RoundingUnits, typename U>
+constexpr auto floor_in(RoundingUnits rounding_units, Constant<U> c) {
+    return get_value<OutputRep>(mag_floor(unit_ratio(c, rounding_units)));
+}
 
 //
 // The largest integral-valued Quantity or QuantityPoint, in this unit, not greater than the input.
@@ -10005,6 +10020,11 @@ auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
 template <typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(floor_in(rounding_units, p));
+}
+// c) Version for Constant.
+template <typename RoundingUnits, typename U>
+constexpr auto floor_as(RoundingUnits rounding_units, Constant<U> c) {
+    return mag_floor(unit_ratio(c, rounding_units)) * make_constant(rounding_units);
 }
 
 //
@@ -10058,6 +10078,11 @@ template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return static_cast<OutputRep>(ceil_in(rounding_units, p));
 }
+// c) Version for Constant.
+template <typename OutputRep, typename RoundingUnits, typename U>
+constexpr auto ceil_in(RoundingUnits rounding_units, Constant<U> c) {
+    return get_value<OutputRep>(mag_ceil(unit_ratio(c, rounding_units)));
+}
 
 //
 // The smallest integral-valued Quantity or QuantityPoint, in this unit, not less than the input.
@@ -10073,6 +10098,11 @@ auto ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
 template <typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(ceil_in(rounding_units, p));
+}
+// c) Version for Constant.
+template <typename RoundingUnits, typename U>
+constexpr auto ceil_as(RoundingUnits rounding_units, Constant<U> c) {
+    return mag_ceil(unit_ratio(c, rounding_units)) * make_constant(rounding_units);
 }
 
 //
@@ -10117,6 +10147,11 @@ constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_round_as_impl(rounding_units, p);
+}
+// (c) Version for Constant.
+template <typename RoundingUnits, typename U>
+constexpr auto int_round_as(RoundingUnits rounding_units, Constant<U> c) {
+    return round_as(rounding_units, c);  // For `Constant`, identical to `round_as`.
 }
 
 //
@@ -10182,6 +10217,11 @@ template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_round_as<OutputRep>(rounding_units, p).in(rounding_units);
 }
+// (c) Version for Constant.
+template <typename OutputRep, typename RoundingUnits, typename U>
+constexpr auto int_round_in(RoundingUnits rounding_units, Constant<U> c) {
+    return round_in<OutputRep>(rounding_units, c);  // For `Constant`, identical to `round_in`.
+}
 
 //
 // Floor function that does not leave the integral domain.  Does not use `std::floor`.
@@ -10207,6 +10247,11 @@ constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_floor_as_impl(rounding_units, p);
+}
+// (c) Version for Constant.
+template <typename RoundingUnits, typename U>
+constexpr auto int_floor_as(RoundingUnits rounding_units, Constant<U> c) {
+    return floor_as(rounding_units, c);  // For `Constant`, identical to `floor_as`.
 }
 
 //
@@ -10271,6 +10316,11 @@ template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_floor_as<OutputRep>(rounding_units, p).in(rounding_units);
 }
+// (c) Version for Constant.
+template <typename OutputRep, typename RoundingUnits, typename U>
+constexpr auto int_floor_in(RoundingUnits rounding_units, Constant<U> c) {
+    return floor_in<OutputRep>(rounding_units, c);  // For `Constant`, identical to `floor_in`.
+}
 
 //
 // Ceil function that does not leave the integral domain.  Does not use `std::ceil`.
@@ -10296,6 +10346,11 @@ constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
 template <typename RoundingUnits, typename U, typename R>
 constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_ceil_as_impl(rounding_units, p);
+}
+// (c) Version for Constant.
+template <typename RoundingUnits, typename U>
+constexpr auto int_ceil_as(RoundingUnits rounding_units, Constant<U> c) {
+    return ceil_as(rounding_units, c);  // For `Constant`, identical to `ceil_as`.
 }
 
 //
@@ -10359,6 +10414,11 @@ constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_ceil_as<OutputRep>(rounding_units, p).in(rounding_units);
+}
+// (c) Version for Constant.
+template <typename OutputRep, typename RoundingUnits, typename U>
+constexpr auto int_ceil_in(RoundingUnits rounding_units, Constant<U> c) {
+    return ceil_in<OutputRep>(rounding_units, c);  // For `Constant`, identical to `ceil_in`.
 }
 
 // Wrapper for std::sin() which accepts a strongly typed angle quantity.
