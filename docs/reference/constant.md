@@ -356,10 +356,10 @@ returns a new `Constant` representing the negation.
 constexpr auto c = SPEED_OF_LIGHT;
 
 // Unary plus returns the same constant.
-constexpr auto pos_c = +c;  // Same as c
+constexpr auto pos_c = +c;
 
 // Unary minus negates the constant.
-constexpr auto neg_c = -c;  // Represents -299,792,458 m/s
+constexpr auto neg_c = -c;
 ```
 
 ### Rounding †
