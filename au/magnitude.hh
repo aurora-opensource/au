@@ -18,6 +18,10 @@
 #include <limits>
 #include <utility>
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
+#endif
+
 #include "au/fwd.hh"
 #include "au/packs.hh"
 #include "au/power_aliases.hh"
@@ -388,6 +392,13 @@ constexpr bool operator>=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
     return !(m1 < m2);
 }
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+template <typename... BP1s, typename... BP2s>
+constexpr auto operator<=>(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+    return ((m1 > m2) - (m1 < m2)) <=> 0;
+}
+#endif
+
 // Zero/Magnitude comparisons: Zero is less than any positive magnitude, greater than any negative.
 template <typename... BPs>
 constexpr bool operator<(Zero, Magnitude<BPs...>) {
@@ -428,6 +439,17 @@ template <typename... BPs>
 constexpr bool operator>=(Magnitude<BPs...>, Zero) {
     return IsPositive<Magnitude<BPs...>>::value;
 }
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+template <typename... BPs>
+constexpr auto operator<=>(Zero, Magnitude<BPs...> m) {
+    return 0 <=> get_value<int>(sign(m));
+}
+template <typename... BPs>
+constexpr auto operator<=>(Magnitude<BPs...> m, Zero) {
+    return get_value<int>(sign(m)) <=> 0;
+}
+#endif
 
 //
 // Rounding helpers for Magnitudes: versions of trunc, round, ceil, floor.

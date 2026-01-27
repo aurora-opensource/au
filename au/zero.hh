@@ -17,6 +17,10 @@
 #include <chrono>
 #include <type_traits>
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
+#endif
+
 #include "au/fwd.hh"
 
 namespace au {
@@ -62,6 +66,10 @@ inline constexpr bool operator<=(Zero, Zero) { return true; }
 inline constexpr bool operator!=(Zero, Zero) { return false; }
 inline constexpr bool operator>(Zero, Zero) { return false; }
 inline constexpr bool operator<(Zero, Zero) { return false; }
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+inline constexpr auto operator<=>(Zero, Zero) { return 0 <=> 0; }
+#endif
 
 // Implementation helper for "a type where value() returns 0".
 template <typename T>

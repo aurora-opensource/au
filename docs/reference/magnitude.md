@@ -247,11 +247,26 @@ limitations](#compile-time-arithmetic-limitations)._
     - `m1 > m2`
     - `m1 <= m2`
     - `m1 >= m2`
+    - `m1 <=> m2` _(C++20 or later)_
 
 `Zero` can also be compared with any `Magnitude`:
 
 - `ZERO < m` is `true` when `m` is positive
 - `ZERO > m` is `true` when `m` is negative
+- `ZERO <=> m` is less than `0` when `m` is positive, and greater than `0` when `m` is negative
+  _(C++20 or later)_
+
+These `Magnitude`/`Zero` comparisons work in either direction.  `m OP ZERO` is the opposite of
+`ZERO OP m`, for any ordering comparison operator `OP`, where by "opposite" we mean:
+
+- `!b` for a `bool` result `b`
+- "Negation" (conceptually) for a three-way comparison (`<=>`) result^[1]
+
+[^1]: The three-way comparison operator `<=>` result is meant to be compared to `0`.  Signed
+integers are a natural model for this.  If we were using _actual_ signed integers, then we could map
+a result onto its "opposite" by simply negating it: that is, we would like to think of this as
+`-(a <=> b)`.  The correct incantation for this in C++ --- `0 <=> (a <=> b)` --- is more
+complicated, but it's still useful to think of it as essentially just negation.
 
 ### Multiplication
 

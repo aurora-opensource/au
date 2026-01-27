@@ -16,6 +16,10 @@
 
 #include <utility>
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
+#endif
+
 #include "au/conversion_policy.hh"
 #include "au/conversion_strategy.hh"
 #include "au/fwd.hh"

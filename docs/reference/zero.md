@@ -47,6 +47,23 @@ The result is always `T{0}` for any numeric type `T`.
     get_value<int>(ZERO);     // Returns 0
     ```
 
+### Addition and subtraction
+
+`ZERO + ZERO` and `ZERO - ZERO` both yield `ZERO`.
+
+### Comparison
+
+`ZERO` can be compared to `ZERO`.  `ZERO OP ZERO` yields the same result as `0 OP 0`, whenever `OP`
+is any of the following comparison operators:
+
+- `==`
+- `!=`
+- `<`
+- `<=`
+- `>`
+- `>=`
+- `<=>` _(C++20 or later)_
+
 ## I/O
 
 If you include I/O support, then `Zero` will be streamed as `"0"`.
