@@ -1274,7 +1274,7 @@ struct U64MagSumImpl {
         const int overflows[] = {(IsPositive<Ms>::value ? 0 : -1)...};
 
         U64SumResult result = {0u, 0};
-        for (auto i = 0u; i < sizeof...(Ms); ++i) {
+        for (std::size_t i = 0u; i < sizeof...(Ms); ++i) {
             std::uint64_t old_sum = result.sum;
             result.sum += (overflows[i] >= 0) ? abs_values[i] : -abs_values[i];
             result.overflow += overflows[i] + (result.sum < old_sum);
