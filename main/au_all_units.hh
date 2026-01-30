@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-90-g289cb47
+// Version identifier: 0.5.0-base-91-g1420d2d
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -3374,6 +3374,19 @@ using CommonMagnitude = typename CommonMagnitudeImpl<Ms...>::type;
 template <typename... Ms>
 using CommonMagnitudeT = CommonMagnitude<Ms...>;
 
+// The sum of arbitrarily many `Magnitude` and/or `Zero` types.
+//
+// We only support this when it is "easy" to compute, where "easy" is defined as:
+// 1) all inputs being expressible as integer multiples of some common factor;
+// 2) each such integer's absolute value fitting in a `uint64_t`;
+// 3) *and*, the absolute value of the sum also fitting in a `uint64_t`.
+//
+// For all other cases, we currently produce a compile time error.
+template <typename... Ms>
+struct MagSumImpl;
+template <typename... Ms>
+using MagSum = typename MagSumImpl<Ms...>::type;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Value based interface for Magnitude (and Zero).
 
@@ -3612,45 +3625,8 @@ constexpr Zero mag_round(Zero) { return {}; }
 
 // Addition:
 template <typename... BP1s, typename... BP2s>
-constexpr auto operator+(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
-    constexpr auto sgn1 = sign(m1);
-    constexpr auto sgn2 = sign(m2);
-
-    constexpr auto abs_common = Abs<CommonMagnitude<Magnitude<BP1s...>, Magnitude<BP2s...>>>{};
-    constexpr auto abs_num1 = abs(m1) / abs_common;
-    constexpr auto abs_num2 = abs(m2) / abs_common;
-
-    // These `get_value` calls automatically check that individual _inputs_ fit in `uint64_t`.
-    constexpr auto abs_num1_u64 = get_value<std::uint64_t>(abs_num1);
-    constexpr auto abs_num2_u64 = get_value<std::uint64_t>(abs_num2);
-
-    // Biggest absolute input determines overall sign.
-    //
-    // Note that when the magnitudes are equal, either the choice doesn't matter (when the inputs
-    // have the same sign), or the outcome should just be `Zero`.  In the latter case, we rely on
-    // the explicit `Negative` overloads below being a better match.
-    constexpr auto sgn =
-        std::conditional_t<(abs_num1_u64 > abs_num2_u64), decltype(sgn1), decltype(sgn2)>{};
-
-    // Here, we are taking advantage of modular arithmetic on unsigned integers.  This actually does
-    // handle all the signs correctly, although it may not be obvious at first glance.
-    constexpr auto num1_u64 = is_positive(sgn1) ? abs_num1_u64 : -abs_num1_u64;
-    constexpr auto num2_u64 = is_positive(sgn2) ? abs_num2_u64 : -abs_num2_u64;
-    constexpr auto abs_sum_u64 = is_positive(sgn) ? (num1_u64 + num2_u64) : -(num1_u64 + num2_u64);
-
-    // Here is where we guard against overflow in the _output_.
-    static_assert((sgn1 != sgn2) || abs_sum_u64 >= abs_num1_u64,
-                  "Magnitude addition overflowed uint64_t");
-
-    return sgn * mag<abs_sum_u64>() * abs_common;
-}
-template <typename... BPs>
-constexpr Zero operator+(Magnitude<Negative, BPs...>, Magnitude<BPs...>) {
-    return {};
-}
-template <typename... BPs>
-constexpr Zero operator+(Magnitude<BPs...>, Magnitude<Negative, BPs...>) {
-    return {};
+constexpr auto operator+(Magnitude<BP1s...>, Magnitude<BP2s...>) {
+    return MagSum<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
 }
 template <typename... BPs>
 constexpr auto operator+(Zero, Magnitude<BPs...> m) {
@@ -4374,6 +4350,82 @@ template <typename M>
 struct CommonMagnitudeImpl<Zero, M> : stdx::type_identity<M> {};
 template <>
 struct CommonMagnitudeImpl<Zero, Zero> : stdx::type_identity<Zero> {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `MagSum` implementation.
+
+namespace detail {
+
+// `U64MagSum<Ms...>` is the `Magnitude` (or `Zero`) equal to the sum of the Magnitudes `Ms...`, as
+// long as these preconditions are met:
+//
+// 1. The absolute value of each member of `Ms...` fits in a `std::uint64_t`.
+// 2. The absolute value of the sum of all members of `Ms...` fits in a `std::uint64_t`.
+template <typename... Ms>
+struct U64MagSumImpl {
+    struct U64SumResult {
+        std::uint64_t sum = 0u;
+        int overflow = 0;
+    };
+
+    static constexpr U64SumResult compute() {
+        const std::uint64_t abs_values[] = {get_value<std::uint64_t>(Abs<Ms>{})...};
+        const int overflows[] = {(IsPositive<Ms>::value ? 0 : -1)...};
+
+        U64SumResult result = {0u, 0};
+        for (std::size_t i = 0u; i < sizeof...(Ms); ++i) {
+            std::uint64_t old_sum = result.sum;
+            result.sum += (overflows[i] >= 0) ? abs_values[i] : -abs_values[i];
+            result.overflow += overflows[i] + (result.sum < old_sum);
+        }
+
+        return result;
+    }
+    static constexpr std::uint64_t sum = compute().sum;
+    static constexpr int overflow = compute().overflow;
+
+    static_assert((overflow == 0) || (overflow == -1 && sum > 0u),
+                  "Magnitude sum overflowed uint64_t");
+
+    using Sign = std::conditional_t<(overflow == -1), Magnitude<Negative>, Magnitude<>>;
+
+    using AbsMag = std::conditional_t<(overflow == 0) && (sum == 0u),
+                                      Zero,
+                                      // The surprising `sum == 0u` avoids asking for `mag<0>()`.
+                                      // It's fine, because it can never actually be used.
+                                      decltype(mag<(overflow == -1 ? -sum : sum) + (sum == 0u)>())>;
+
+    using type = decltype(Sign{} * AbsMag{});
+};
+template <typename... Ms>
+using U64MagSum = typename U64MagSumImpl<Ms...>::type;
+
+template <typename... Ms>
+constexpr std::uint64_t U64MagSumImpl<Ms...>::sum;
+
+template <typename... Ms>
+constexpr int U64MagSumImpl<Ms...>::overflow;
+
+template <typename... Ms>
+struct MagSumImplHelper {
+    using Common = CommonMagnitude<Ms...>;
+    using type = decltype(Common{} * U64MagSum<decltype(Ms{} / Common{})...>{});
+};
+
+// The sum of no things is nothing.
+template <>
+struct MagSumImplHelper<> : stdx::type_identity<Zero> {};
+
+// Keep stripping off zeros until we find at least one nonzero element, so that the common magnitude
+// machinery can find something meaningful and avoid dividing by zero.  (Zeros in the middle will be
+// automatically handled correctly as long as there are nonzero elements.)
+template <typename... Ms>
+struct MagSumImplHelper<Zero, Ms...> : MagSumImplHelper<Ms...> {};
+
+}  // namespace detail
+
+template <typename... Ms>
+struct MagSumImpl : detail::MagSumImplHelper<Ms...> {};
 
 }  // namespace  au
 
