@@ -340,6 +340,18 @@ struct UnitProductPack {
     using Mag = MagProduct<detail::MagT<UnitPows>...>;
 };
 
+// Type template to hold a sum of Units (of the same dimension).
+template <typename... Units>
+struct UnitSumPack;
+template <typename U, typename... Us>
+struct UnitSumPack<U, Us...> {
+    static_assert(HasSameDimension<U, Us...>::value, "All units in a sum must have same dimension");
+    using Dim = detail::DimT<U>;
+    using Mag = MagSum<detail::MagT<U>, detail::MagT<Us>...>;
+
+    static_assert(!std::is_same<Mag, Zero>::value, "Improper zero-magnitude unit formed");
+};
+
 // Helper to make a canonicalized product of units.
 //
 // On the input side, we treat every input unit as a UnitProductPack.  Once we get our final result,
@@ -1012,6 +1024,64 @@ struct QuotientLabeler<UnitProductPack<>, UnitProductPack<>, T> {
 };
 template <typename T>
 constexpr const char QuotientLabeler<UnitProductPack<>, UnitProductPack<>, T>::value[1];
+
+enum class SumTermPosition {
+    FIRST,
+    SUBSEQUENT,
+};
+
+// Sign label (if necessary) for a unit in a sum, adding spaces for later terms.
+template <SumTermPosition Pos, typename M>
+struct SignLabel;
+template <>
+struct SignLabel<SumTermPosition::FIRST, Magnitude<>> {
+    static constexpr auto value() { return as_string_constant(""); }
+};
+template <>
+struct SignLabel<SumTermPosition::SUBSEQUENT, Magnitude<>> {
+    static constexpr auto value() { return as_string_constant(" + "); }
+};
+template <SumTermPosition Pos>
+struct SignLabel<Pos, Magnitude<Negative>> {
+    static constexpr auto value() {
+        return wrap_if<Pos == SumTermPosition::SUBSEQUENT, ' ', ' '>("-");
+    }
+};
+
+// Coefficient label (if necessary) for a term in the sum.
+template <typename Coeff>
+struct CoefficientLabel {
+    using MagLab = MagnitudeLabel<Coeff>;
+    static constexpr auto value() {
+        return concatenate(parens_if<MagLab::has_exposed_slash>(MagLab::value), " ");
+    }
+};
+template <>
+struct CoefficientLabel<Magnitude<>> {
+    static constexpr auto value() { return as_string_constant(""); }
+};
+
+// Labeler for a single term in a sum: sign + coefficient + "core" label.
+template <SumTermPosition Pos, typename U>
+struct SumTermLabeler {
+    using Coeff = MagProduct<UnitSign<U>, UnitRatio<U, UnscaledUnit<U>>>;
+    static constexpr auto value() {
+        return concatenate(SignLabel<Pos, UnitSign<U>>::value(),
+                           CoefficientLabel<Coeff>::value(),
+                           as_string_constant(unit_label<UnscaledUnit<U>>()));
+    }
+};
+
+// The implementation for UnitSumPack labels.
+template <typename U, typename... Us>
+struct SumPackLabeler {
+    static constexpr auto value() {
+        return concatenate("(",
+                           SumTermLabeler<SumTermPosition::FIRST, U>::value(),
+                           SumTermLabeler<SumTermPosition::SUBSEQUENT, Us>::value()...,
+                           ")");
+    }
+};
 }  // namespace detail
 
 // Unified implementation.
@@ -1036,6 +1106,15 @@ struct UnitLabel<UnitProductPack<Us...>>
     : detail::QuotientLabeler<detail::NumeratorPart<UnitProductPack<Us...>>,
                               detail::DenominatorPart<UnitProductPack<Us...>>,
                               void> {};
+
+// Implementation for UnitSumPack: join with + or - based on sign.
+template <typename U, typename... Us>
+struct UnitLabel<UnitSumPack<U, Us...>> {
+    using LabelT = detail::StringConstant<detail::SumPackLabeler<U, Us...>::value().size()>;
+    static constexpr LabelT value = detail::SumPackLabeler<U, Us...>::value();
+};
+template <typename U, typename... Us>
+constexpr typename UnitLabel<UnitSumPack<U, Us...>>::LabelT UnitLabel<UnitSumPack<U, Us...>>::value;
 
 // Implementation for ScaledUnit: scaling unit U by M gets label `"[M U]"`.
 template <typename U, typename M>
