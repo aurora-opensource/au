@@ -1216,6 +1216,60 @@ TEST(IsMagnitudeU64RationalCompatible, FalseForIrrationals) {
     EXPECT_THAT(is_magnitude_u64_rational_compatible(sqrt(mag<2>())), IsFalse());
 }
 
+TEST(MagSum, SumsArbitraryNumberOfMagnitudes) {
+    StaticAssertTypeEq<MagSum<decltype(mag<1>()), decltype(mag<2>()), decltype(mag<3>())>,
+                       decltype(mag<6>())>();
+
+    StaticAssertTypeEq<
+        MagSum<decltype(mag<10>()), decltype(mag<20>()), decltype(mag<30>()), decltype(mag<40>())>,
+        decltype(mag<100>())>();
+}
+
+TEST(MagSum, HandlesNegativeMagnitudes) {
+    StaticAssertTypeEq<MagSum<decltype(mag<5>()), decltype(-mag<3>())>, decltype(mag<2>())>();
+
+    StaticAssertTypeEq<MagSum<decltype(-mag<5>()), decltype(mag<3>())>, decltype(-mag<2>())>();
+
+    StaticAssertTypeEq<MagSum<decltype(mag<10>()), decltype(-mag<3>()), decltype(-mag<2>())>,
+                       decltype(mag<5>())>();
+}
+
+TEST(MagSum, ProducesZeroWhenInputsCancelOut) {
+    StaticAssertTypeEq<MagSum<decltype(mag<5>()), decltype(-mag<5>())>, Zero>();
+
+    StaticAssertTypeEq<MagSum<decltype(mag<10>()), decltype(-mag<3>()), decltype(-mag<7>())>,
+                       Zero>();
+}
+
+TEST(MagSum, HandlesFractions) {
+    StaticAssertTypeEq<MagSum<decltype(mag<1>() / mag<6>()),
+                              decltype(mag<1>() / mag<3>()),
+                              decltype(mag<1>() / mag<2>())>,
+                       decltype(mag<1>())>();
+}
+
+TEST(MagSum, IgnoresZeroInputs) {
+    StaticAssertTypeEq<MagSum<Zero, decltype(mag<5>())>, decltype(mag<5>())>();
+    StaticAssertTypeEq<MagSum<decltype(mag<5>()), Zero>, decltype(mag<5>())>();
+    StaticAssertTypeEq<MagSum<Zero, decltype(mag<5>()), Zero>, decltype(mag<5>())>();
+    StaticAssertTypeEq<MagSum<Zero, Zero, decltype(mag<5>())>, decltype(mag<5>())>();
+    StaticAssertTypeEq<MagSum<decltype(mag<2>()), Zero, decltype(mag<3>())>, decltype(mag<5>())>();
+    StaticAssertTypeEq<MagSum<Zero>, Zero>();
+    StaticAssertTypeEq<MagSum<Zero, Zero>, Zero>();
+    StaticAssertTypeEq<MagSum<Zero, Zero, Zero>, Zero>();
+}
+
+TEST(MagSum, ResultIsIndependentOfInputOrder) {
+    // A binary fold could only handle this in certain orders; N-ary handles all orders.
+    using One = decltype(mag<1>());
+    using TwoTo63 = decltype(pow<63>(mag<2>()));
+    using NegTwo = decltype(-mag<2>());
+
+    // 1 + 2^63 + 2^63 - 2 = 2^64 - 1
+    using Expected = decltype(mag<-uint64_t{1}>());
+    StaticAssertTypeEq<MagSum<One, TwoTo63, TwoTo63, NegTwo>, Expected>();
+}
+
 TEST(AssertMagnitudeU64RationalCompatible, NoCompilerErrorForKnownValidInput) {
     (void)AssertMagnitudeU64RationalCompatible<decltype(mag<1>())>{};
     (void)AssertMagnitudeU64RationalCompatible<decltype(mag<1000>())>{};
