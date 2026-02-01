@@ -163,6 +163,10 @@ TEST(PackPower, MultipliesExponentsAndSimplifies) {
         Pack<Pow<B<2>, 2>, Pow<B<3>, -6>, Pow<B<5>, -3>, B<7>>>();
 }
 
+TEST(FlatDedupedTypeList, EmptyInputsYieldsEmptyPack) {
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack>, Pack<>>();
+}
+
 TEST(FlatDedupedTypeListT, OrdersAsExpected) {
     StaticAssertTypeEq<FlatDedupedTypeListT<Pack, Pack<B<2>>>, Pack<B<2>>>();
 

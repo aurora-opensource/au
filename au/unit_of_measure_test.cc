@@ -264,6 +264,125 @@ TEST(UnitSumPack, ComplexMixedScalesAndSigns) {
                 StrEq("(-2 ft + (3 / 4) in + m)"));
 }
 
+TEST(UnitSum, EmptyUnitSumIsZero) { StaticAssertTypeEq<UnitSum<>, Zero>(); }
+
+TEST(UnitSum, ZeroWhenSingleUnitCancelsItself) {
+    using NegFeet = decltype(Feet{} * (-mag<1>()));
+    StaticAssertTypeEq<UnitSum<Feet, NegFeet>, Zero>();
+}
+
+TEST(UnitSum, ZeroWhenMultipleUnitsAllCancel) {
+    using NegFeet = decltype(Feet{} * (-mag<1>()));
+    using NegInches = decltype(Inches{} * (-mag<1>()));
+    StaticAssertTypeEq<UnitSum<Feet, Inches, NegFeet, NegInches>, Zero>();
+}
+
+TEST(UnitSum, SingleUnitReturnedDirectly) { StaticAssertTypeEq<UnitSum<Feet>, Feet>(); }
+
+TEST(UnitSum, SingleUnitWithCoefficientReturnedAsScaledUnit) {
+    using TwoFeet = decltype(Feet{} * mag<2>());
+    StaticAssertTypeEq<UnitSum<TwoFeet>, TwoFeet>();
+}
+
+TEST(UnitSum, SameUnscaledUnitsCollectIntoSingleScaledUnit) {
+    using TwoFeet = decltype(Feet{} * mag<2>());
+    StaticAssertTypeEq<UnitSum<Feet, Feet>, TwoFeet>();
+}
+
+TEST(UnitSum, DifferentScalesOfSameUnitCombine) {
+    using TwoFeet = decltype(Feet{} * mag<2>());
+    using ThreeFeet = decltype(Feet{} * mag<3>());
+    using FiveFeet = decltype(Feet{} * mag<5>());
+    StaticAssertTypeEq<UnitSum<TwoFeet, ThreeFeet>, FiveFeet>();
+}
+
+TEST(UnitSum, MultipleUnscaledUnitsCancelToLeaveSingleUnit) {
+    using NegInches = decltype(Inches{} * (-mag<1>()));
+    StaticAssertTypeEq<UnitSum<Inches, Feet, NegInches>, Feet>();
+}
+
+TEST(UnitSum, CollectsLikeTerms) {
+    using TwoFeet = decltype(Feet{} * mag<2>());
+    using ThreeFeet = decltype(Feet{} * mag<3>());
+    using ThreeInches = decltype(Inches{} * mag<3>());
+
+    ASSERT_THAT((InOrderFor<UnitSumPack, Inches, Feet>::value), IsTrue());
+    StaticAssertTypeEq<UnitSum<TwoFeet, ThreeInches, Feet>, UnitSumPack<ThreeInches, ThreeFeet>>();
+}
+
+TEST(UnitSum, PositiveCoefficientsBeforeNegative) {
+    using NegInches = decltype(Inches{} * (-mag<1>()));
+
+    ASSERT_THAT((InOrderFor<UnitSumPack, Inches, Feet>::value), IsTrue());
+    StaticAssertTypeEq<UnitSum<NegInches, Feet>, UnitSumPack<Feet, NegInches>>();
+}
+
+TEST(UnitSum, PositiveCoefficientsBeforeNegativeWithMultipleUnits) {
+    using NegFeet = decltype(Feet{} * (-mag<1>()));
+    using NegMeters = decltype(Meters{} * (-mag<1>()));
+
+    ASSERT_THAT((InOrderFor<UnitSumPack, Inches, Yards>::value), IsTrue());
+    ASSERT_THAT((InOrderFor<UnitSumPack, Meters, Feet>::value), IsTrue());
+    StaticAssertTypeEq<UnitSum<NegFeet, Inches, NegMeters, Yards>,
+                       UnitSumPack<Inches, Yards, NegMeters, NegFeet>>();
+}
+
+TEST(UnitSum, OutputIsIndependentOfInputOrder) {
+    StaticAssertTypeEq<UnitSum<Inches, Feet, Meters>, UnitSum<Meters, Inches, Feet>>();
+    StaticAssertTypeEq<UnitSum<Feet, Meters, Inches>, UnitSum<Inches, Meters, Feet>>();
+}
+
+TEST(UnitSum, OutputIsIndependentOfInputOrderWithNegatives) {
+    using NegFeet = decltype(Feet{} * (-mag<1>()));
+    using NegInches = decltype(Inches{} * (-mag<1>()));
+    using NegMeters = decltype(Meters{} * (-mag<1>()));
+
+    StaticAssertTypeEq<UnitSum<NegInches, NegFeet, NegMeters>,
+                       UnitSum<NegMeters, NegInches, NegFeet>>();
+}
+
+TEST(UnitSum, MixedSignsWithProperOrdering) {
+    using NegFeet = decltype(Feet{} * (-mag<1>()));
+    using NegMeters = decltype(Meters{} * (-mag<1>()));
+
+    ASSERT_THAT((InOrderFor<UnitSumPack, Inches, Yards>::value), IsTrue());
+    ASSERT_THAT((InOrderFor<UnitSumPack, Meters, Feet>::value), IsTrue());
+    StaticAssertTypeEq<UnitSum<NegFeet, Inches, NegMeters, Yards>,
+                       UnitSumPack<Inches, Yards, NegMeters, NegFeet>>();
+}
+
+TEST(UnitSum, FractionalCoefficientsWork) {
+    using HalfFeet = decltype(Feet{} / mag<2>());
+    using QuarterFeet = decltype(Feet{} / mag<4>());
+    using ThreeQuartersFeet = decltype(Feet{} * mag<3>() / mag<4>());
+    StaticAssertTypeEq<UnitSum<HalfFeet, QuarterFeet>, ThreeQuartersFeet>();
+}
+
+TEST(UnitSum, PartialCancellationLeavesRemainder) {
+    using ThreeFeet = decltype(Feet{} * mag<3>());
+    using NegTwoFeet = decltype(Feet{} * (-mag<2>()));
+    StaticAssertTypeEq<UnitSum<ThreeFeet, NegTwoFeet>, Feet>();
+}
+
+TEST(UnitSum, UnwrapsUnitSumPackArguments) {
+    using Sum1 = UnitSum<Feet, Inches>;
+    using Sum2 = UnitSum<Meters, Yards>;
+    StaticAssertTypeEq<UnitSum<Sum1, Sum2>, UnitSum<Feet, Inches, Meters, Yards>>();
+}
+
+TEST(UnitSum, UnwrapsAndCollectsLikeTerms) {
+    using TwoFeet = decltype(Feet{} * mag<2>());
+    using ThreeFeet = decltype(Feet{} * mag<3>());
+    using Sum1 = UnitSum<TwoFeet, Inches>;
+    StaticAssertTypeEq<UnitSum<Sum1, Feet>, UnitSum<ThreeFeet, Inches>>();
+}
+
+TEST(UnitSum, UnwrapsAndCancels) {
+    using NegFeet = decltype(Feet{} * (-mag<1>()));
+    using Sum1 = UnitSum<Feet, Inches>;
+    StaticAssertTypeEq<UnitSum<Sum1, NegFeet>, Inches>();
+}
+
 TEST(UnitProduct, IdentityForSingleUnit) {
     StaticAssertTypeEq<UnitProduct<Feet>, Feet>();
     StaticAssertTypeEq<UnitProduct<Minutes>, Minutes>();
