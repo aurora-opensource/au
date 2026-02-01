@@ -523,5 +523,174 @@ TEST(Constant, OrderingWorksWithScaledConstants) {
     EXPECT_THAT(double_c, Gt(half_c));
 }
 
+TEST(ConstantAddition, SameConstantsDoubleTheValue) {
+    constexpr auto one_foot = make_constant(feet);
+    constexpr auto result = one_foot + one_foot;
+    EXPECT_THAT(result,
+                AllOf(Eq(make_constant(feet * mag<2>())), ConstantLabelIs(StrEq("[2 ft]"))));
+}
+
+TEST(ConstantAddition, ResultTypeIsConstantOfUnitSum) {
+    using OneFoot = Constant<Feet>;
+    using OneInch = Constant<Inches>;
+    using ResultUnit = UnitSum<Feet, Inches>;
+    StaticAssertTypeEq<decltype(OneFoot{} + OneInch{}), Constant<ResultUnit>>();
+}
+
+TEST(ConstantAddition, DifferentUnitsProduceUnitSum) {
+    constexpr auto one_foot = make_constant(feet);
+    constexpr auto one_inch = make_constant(inches);
+    constexpr auto result = one_foot + one_inch;
+    EXPECT_THAT(
+        result,
+        AllOf(Eq(inches(13)), ConstantLabelIs(AnyOf(StrEq("(ft + in)"), StrEq("(in + ft)")))));
+}
+
+TEST(ConstantAddition, DifferentScalesOfSameUnitCombine) {
+    constexpr auto two_feet = make_constant(feet * mag<2>());
+    constexpr auto three_feet = make_constant(feet * mag<3>());
+    constexpr auto result = two_feet + three_feet;
+    EXPECT_THAT(result,
+                AllOf(Eq(make_constant(feet * mag<5>())), ConstantLabelIs(StrEq("[5 ft]"))));
+}
+
+TEST(ConstantAddition, OppositeConstantsCancelToZero) {
+    constexpr auto one_foot = make_constant(feet);
+    constexpr auto neg_foot = -one_foot;
+    StaticAssertTypeEq<decltype(one_foot + neg_foot), Zero>();
+}
+
+TEST(ConstantAddition, PartialCancellationLeavesRemainder) {
+    constexpr auto three_feet = make_constant(feet * mag<3>());
+    constexpr auto neg_two_feet = make_constant(feet * (-mag<2>()));
+    constexpr auto result = three_feet + neg_two_feet;
+    EXPECT_THAT(result, AllOf(Eq(make_constant(feet)), ConstantLabelIs(StrEq("ft"))));
+}
+
+TEST(ConstantAddition, AddingZeroReturnsOriginal) {
+    StaticAssertTypeEq<decltype(Constant<Feet>{} + ZERO), Constant<Feet>>();
+}
+
+TEST(ConstantAddition, ZeroPlusConstantReturnsConstant) {
+    StaticAssertTypeEq<decltype(ZERO + Constant<Feet>{}), Constant<Feet>>();
+}
+
+TEST(ConstantAddition, MultipleUnitsCollectLikeTerms) {
+    constexpr auto two_feet = make_constant(feet * mag<2>());
+    constexpr auto one_inch = make_constant(inches);
+    constexpr auto one_foot = make_constant(feet);
+    constexpr auto result = two_feet + one_inch + one_foot;
+
+    EXPECT_THAT(
+        result,
+        AllOf(Eq(inches(37)), ConstantLabelIs(AnyOf(StrEq("(in + 3 ft)"), StrEq("(3 ft + in)")))));
+}
+
+TEST(ConstantSubtraction, SameConstantsYieldZero) {
+    constexpr auto one_foot = make_constant(feet);
+    StaticAssertTypeEq<decltype(one_foot - one_foot), Zero>();
+}
+
+TEST(ConstantSubtraction, ResultTypeIsConstantOfUnitSum) {
+    using OneFoot = Constant<Feet>;
+    using OneInch = Constant<Inches>;
+    using NegInch = decltype(Inches{} * (-mag<1>()));
+    using ResultUnit = UnitSum<Feet, NegInch>;
+    StaticAssertTypeEq<decltype(OneFoot{} - OneInch{}), Constant<ResultUnit>>();
+}
+
+TEST(ConstantSubtraction, DifferentUnitsProduceUnitSum) {
+    constexpr auto one_foot = make_constant(feet);
+    constexpr auto one_inch = make_constant(inches);
+    constexpr auto result = one_foot - one_inch;
+
+    EXPECT_THAT(result, AllOf(Eq(inches(11)), ConstantLabelIs(StrEq("(ft - in)"))));
+}
+
+TEST(ConstantSubtraction, DifferentScalesOfSameUnitCombine) {
+    constexpr auto five_feet = make_constant(feet * mag<5>());
+    constexpr auto two_feet = make_constant(feet * mag<2>());
+    constexpr auto result = five_feet - two_feet;
+    EXPECT_THAT(result,
+                AllOf(Eq(make_constant(feet * mag<3>())), ConstantLabelIs(StrEq("[3 ft]"))));
+}
+
+TEST(ConstantSubtraction, SubtractingZeroReturnsOriginal) {
+    StaticAssertTypeEq<decltype(Constant<Feet>{} - ZERO), Constant<Feet>>();
+}
+
+TEST(ConstantSubtraction, ZeroMinusConstantReturnsNegative) {
+    StaticAssertTypeEq<decltype(ZERO - Constant<Feet>{}), decltype(-Constant<Feet>{})>();
+}
+
+TEST(ConstantSubtraction, SubtractingNegativeAdds) {
+    constexpr auto one_foot = make_constant(feet);
+    constexpr auto neg_foot = -one_foot;
+    constexpr auto result = one_foot - neg_foot;
+    EXPECT_THAT(result,
+                AllOf(Eq(make_constant(feet * mag<2>())), ConstantLabelIs(StrEq("[2 ft]"))));
+}
+
+TEST(ConstantSubtraction, ResultCanBeNegative) {
+    constexpr auto two_feet = make_constant(feet * mag<2>());
+    constexpr auto five_feet = make_constant(feet * mag<5>());
+    constexpr auto result = two_feet - five_feet;
+    EXPECT_THAT(result,
+                AllOf(Eq(make_constant(feet * (-mag<3>()))), ConstantLabelIs(StrEq("[-3 ft]"))));
+}
+
+TEST(ConstantAddition, FractionalCoefficientsWork) {
+    constexpr auto half_foot = make_constant(feet / mag<2>());
+    constexpr auto quarter_foot = make_constant(feet / mag<4>());
+    constexpr auto result = half_foot + quarter_foot;
+    EXPECT_THAT(result,
+                AllOf(Eq(make_constant(feet * mag<3>() / mag<4>())),
+                      ConstantLabelIs(StrEq("[(3 / 4) ft]"))));
+}
+
+TEST(ConstantAddition, CommutativeProperty) {
+    constexpr auto one_foot = make_constant(feet);
+    constexpr auto one_meter = make_constant(meters);
+    EXPECT_THAT(one_foot + one_meter, Eq(one_meter + one_foot));
+}
+
+TEST(ConstantSubtraction, AntiCommutativeProperty) {
+    constexpr auto one_foot = make_constant(feet);
+    constexpr auto one_meter = make_constant(meters);
+    EXPECT_THAT(one_foot - one_meter, Eq(-(one_meter - one_foot)));
+}
+
+TEST(ConstantAddition, NegativeFirstTermShowsMinusPrefix) {
+    constexpr auto neg_foot = make_constant(feet * (-mag<1>()));
+    constexpr auto one_inch = make_constant(inches);
+
+    // Positive coefficients come before negative, so result is (in + (-ft)) = (in - ft).
+    constexpr auto result = neg_foot + one_inch;
+    EXPECT_THAT(result, ConstantLabelIs(StrEq("(in - ft)")));
+}
+
+TEST(ConstantAddition, BothNegativeShowsMinusSigns) {
+    constexpr auto neg_foot = make_constant(feet * (-mag<1>()));
+    constexpr auto neg_inch = make_constant(inches * (-mag<1>()));
+
+    // Both negative, order depends on InOrderFor.
+    constexpr auto result = neg_foot + neg_inch;
+    EXPECT_THAT(result, ConstantLabelIs(AnyOf(StrEq("(-in - ft)"), StrEq("(-ft - in)"))));
+}
+
+TEST(ConstantAddition, ScaledUnitsShowScaleInLabel) {
+    constexpr auto two_feet = make_constant(feet * mag<2>());
+    constexpr auto three_inches = make_constant(inches * mag<3>());
+    constexpr auto result = two_feet + three_inches;
+    EXPECT_THAT(result, ConstantLabelIs(AnyOf(StrEq("(2 ft + 3 in)"), StrEq("(3 in + 2 ft)"))));
+}
+
+TEST(ConstantSubtraction, NegativeFractionalScaleShowsCorrectly) {
+    constexpr auto one_foot = make_constant(feet);
+    constexpr auto three_quarters_inch = make_constant(inches * mag<3>() / mag<4>());
+    constexpr auto result = one_foot - three_quarters_inch;
+    EXPECT_THAT(result, ConstantLabelIs(StrEq("(ft - (3 / 4) in)")));
+}
+
 }  // namespace
 }  // namespace au
