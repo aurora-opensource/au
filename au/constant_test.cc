@@ -161,6 +161,16 @@ TEST(Constant, CanNegate) {
     EXPECT_THAT(stream_to_string(0.75 * double_neg_c), StrEq("0.75 c"));
 }
 
+TEST(Constant, UnaryPlusReturnsConstantUnchanged) {
+    constexpr auto pos_c = +c;
+    StaticAssertTypeEq<decltype(pos_c), decltype(c)>();
+    EXPECT_THAT(pos_c, Eq(c));
+
+    constexpr auto pos_neg_c = +(-c);
+    EXPECT_THAT(pos_neg_c, Eq(-c));
+    EXPECT_THAT(stream_to_string(0.75 * pos_neg_c), StrEq("0.75 [-c]"));
+}
+
 TEST(Constant, MakesQuantityWhenPostMultiplyingNumericValue) {
     EXPECT_THAT(3.f * c, SameTypeAndValue(speed_of_light(3.f)));
 }

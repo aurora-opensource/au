@@ -340,6 +340,29 @@ For instances `c1` and `c2`:
 - `c1 >= c2`
 - `c1 <=> c2` _(C++20 or later)_
 
+### Unary `+` and `-`
+
+For a `Constant` instance `c`, you can apply a "unary plus" (`+c`) or "unary minus" (`-c`).  The
+unary plus returns the constant unchanged (it is the identity operation), while the unary minus
+returns a new `Constant` representing the negation.
+
+**Syntax:**
+
+- `+c` returns `c` (same type and value)
+- `-c` returns a `Constant` with the negated value
+
+**Example:**
+
+```cpp
+constexpr auto c = SPEED_OF_LIGHT;
+
+// Unary plus returns the same constant.
+constexpr auto pos_c = +c;
+
+// Unary minus negates the constant.
+constexpr auto neg_c = -c;
+```
+
 ### Rounding †
 
 `Constant` can be passed to the rounding functions.  The `_as` functions return a new `Constant`,
