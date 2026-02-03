@@ -19,6 +19,8 @@
 #include "au/chrono_interop.hh"
 #include "au/testing.hh"
 #include "au/units/degrees.hh"
+#include "au/units/feet.hh"
+#include "au/units/inches.hh"
 #include "au/units/joules.hh"
 #include "au/units/meters.hh"
 #include "au/units/newtons.hh"
@@ -44,6 +46,22 @@ using ::testing::StaticAssertTypeEq;
 using ::testing::StrEq;
 
 namespace {
+
+template <typename U>
+std::string constant_label_for(Constant<U>) {
+    return unit_label(U{});
+}
+
+// Matcher for checking the unit label of a Constant.
+// Usage: EXPECT_THAT(my_constant, ConstantLabelIs(StrEq("[21 in]")));
+MATCHER_P(ConstantLabelIs,
+          inner_matcher,
+          "is a Constant whose unit label " +
+              ::testing::DescribeMatcher<std::string>(inner_matcher)) {
+    const std::string label(constant_label_for(arg));
+    *result_listener << "whose unit label is \"" << label << "\"";
+    return ::testing::SafeMatcherCast<std::string>(inner_matcher).Matches(label);
+}
 
 constexpr auto PI = Magnitude<Pi>{};
 constexpr auto m = symbol_for(meters);
@@ -343,6 +361,73 @@ TEST(Constant, SupportsModWithQuantity) {
     constexpr auto half_rev = make_constant(revolutions / mag<2>());
     EXPECT_THAT(half_rev % degrees(100), SameTypeAndValue(degrees(80)));
     EXPECT_THAT(degrees(300) % half_rev, SameTypeAndValue(degrees(120)));
+}
+
+TEST(Constant, ModResultIsIntegerMultipleOfCommonUnitWhenRatioIsExactInteger) {
+    // 5 feet = 60 inches; 60 % 7 = 4
+    constexpr auto five_feet = make_constant(feet * mag<5>());
+    constexpr auto seven_inches = make_constant(inches * mag<7>());
+    constexpr auto result = five_feet % seven_inches;
+
+    EXPECT_THAT(result, AllOf(Eq(inches(4)), ConstantLabelIs(StrEq("[4 in]"))));
+}
+
+TEST(Constant, ModResultIsIntegerMultipleOfCommonUnitWhenRatioIsExactInverseInteger) {
+    // 57 inches % 3 feet = 57 inches % 36 inches = 21 inches
+    constexpr auto fifty_seven_inches = make_constant(inches * mag<57>());
+    constexpr auto three_feet = make_constant(feet * mag<3>());
+    constexpr auto result = fifty_seven_inches % three_feet;
+
+    EXPECT_THAT(result, AllOf(Eq(inches(21)), ConstantLabelIs(StrEq("[21 in]"))));
+}
+
+TEST(Constant, ModResultIsIntegerMultipleOfCommonUnitWhenRatioIsRational) {
+    // The common unit of feet and meters is (1/1250) meters = (1/381) feet.
+    //
+    // 3 meters = 3750 common units; 5 feet = 1905 common units.
+    //
+    // 3750 % 1905 = 1845 common units
+    constexpr auto three_meters = make_constant(meters * mag<3>());
+    constexpr auto five_feet = make_constant(feet * mag<5>());
+    constexpr auto result = three_meters % five_feet;
+
+    EXPECT_THAT(result,
+                AllOf(
+
+                    // Use well-tested `Quantity` results, with exact integer math, to be confident
+                    // that `Constant` produces the correct quantity.
+                    Eq(three_meters.as<int>() % five_feet.as<int>()),
+
+                    // We don't want to depend on which order the EQUIV label shows the units.
+                    ConstantLabelIs(AnyOf(StrEq("[1845 EQUIV{[(1 / 1250) m], [(1 / 381) ft]}]"),
+                                          StrEq("[1845 EQUIV{[(1 / 381) ft], [(1 / 1250) m]}]")))));
+}
+
+TEST(Constant, ModWithFractionalScaledUnits) {
+    // Denominators 7 and 5 are coprime with each other, and with all factors of 12, so the common
+    // unit must be (1/35) inches.
+    //
+    // Input values are:
+    // (12/7) * (12 * 35 units) = 720 units
+    //  (8/5) * ( 1 * 35 units) = 56 units
+    //
+    // Overall, 720 % 56 = 48, and "units" is most economically expressed as (1/35) inches.
+    constexpr auto twelve_sevenths_feet = make_constant(feet * mag<12>() / mag<7>());
+    constexpr auto eight_fifths_inches = make_constant(inches * mag<8>() / mag<5>());
+    constexpr auto result = twelve_sevenths_feet % eight_fifths_inches;
+
+    EXPECT_THAT(result,
+                AllOf(Eq((inches / mag<35>())(48)), ConstantLabelIs(StrEq("[(48 / 35) in]"))));
+}
+
+TEST(Constant, ModReturnsZeroWhenEvenlyDivisible) {
+    StaticAssertTypeEq<decltype(make_constant(feet * mag<21>()) % make_constant(inches * mag<7>())),
+                       Zero>();
+}
+
+TEST(Constant, ModWithZeroDividendReturnsZero) {
+    constexpr auto result = make_constant(ZERO) % make_constant(feet);
+    EXPECT_THAT(result, Eq(ZERO));
 }
 
 TEST(MakeConstant, IdentityForZero) { EXPECT_THAT(make_constant(ZERO), SameTypeAndValue(ZERO)); }

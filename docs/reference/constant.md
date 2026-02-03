@@ -533,3 +533,44 @@ because quantity points do not support multiplication.
 
 [0.6.0]: https://github.com/aurora-opensource/au/milestone/9
 [#481]: https://github.com/aurora-opensource/au/issues/481
+
+### Modulo †
+
+The modulo operator computes the remainder after dividing one `Constant` by another, returning
+another `Constant` (or `Zero`).  The operands must have the same dimension.
+
+The result is well defined, independently of the units of the inputs --- that is, it is a sensible
+"pure quantity" operation.  For positive inputs, we can define it as the result of continually
+subtracting the second argument from the first, until what remains is less than the second argument.
+(This is not how we actually _implement_ it, but it is useful for understanding the semantics.)  If
+either or both of the inputs is signed, the result follows the same sign rules as the built-in C++
+`%` operator, since this is a C++ library.
+
+This operator interacts with `Zero` in several ways.
+
+- When the second argument exactly divides the first (no remainder), the result is `Zero`.
+- `Zero` may be provided as the first argument, in which case the result is always `Zero`.
+- `Zero` may **not** be provided as the second argument, because division by zero is undefined.
+
+† _This feature is subject to the same [compile-time arithmetic
+limitations](./magnitude.md#compile-time-arithmetic-limitations) as `Magnitude` modulo, because the
+computation is built on `Magnitude` modulo._
+
+**Syntax:**
+
+For `Constant` instances `c1` and `c2` with the same dimension:
+
+- `c1 % c2`
+
+**Result:** A new `Constant` representing the remainder.  The result's unit is based on the common
+unit of the inputs, which generally produces human-friendly labels.
+
+**Example:**
+
+```cpp
+constexpr auto five_feet = make_constant(feet * mag<5>());
+constexpr auto seven_inches = make_constant(inches * mag<7>());
+
+// 5 feet = 60 inches; 60 % 7 = 4
+constexpr auto result = five_feet % seven_inches;  // Constant representing 4 inches
+```
