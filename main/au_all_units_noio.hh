@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-93-g05f4e4e
+// Version identifier: 0.5.0-base-94-g2a7ac86
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -8665,6 +8665,37 @@ constexpr std::strong_ordering operator<=>(Constant<U1>, Constant<U2>) {
     return UnitRatio<U1, AbsU2>{} <=> SignU2{};
 }
 #endif
+
+// Arithmetic operators.
+//
+// Note that these inherit the limitations of the Magnitude comparisons: they will not work for
+// every combination of Constant.  Again, we decided that supporting many common use cases was worth
+// this tradeoff.
+
+// Mod (%) for `Constant`.
+template <typename U1, typename U2>
+constexpr auto operator%(Constant<U1>, Constant<U2>) {
+    // This slightly complicated dance tends to produce more intuitive, human-friendly labels.
+    //
+    // The basic idea for `%` with `Constant` is to perform the operation in the constants' common
+    // unit.  But those constants' units may be scaled, and the scale factor is _part of the unit_
+    // as far as the _library_ is concerned.  Human readers, on the other hand, tend to look at the
+    // _unscaled_ unit.
+    //
+    // To bridge this gap, we make the actual constant (which determines the label) from the common
+    // unit among all _unscaled_ input units.  Everything else is applied as a multiplicative
+    // magnitude against this.
+    using U = CommonUnit<U1, U2>;
+    using CommonUnscaled = CommonUnit<detail::UnscaledUnit<U1>, detail::UnscaledUnit<U2>>;
+    return make_constant(CommonUnscaled{}) * (UnitRatio<U1, U>{} % UnitRatio<U2, U>{}) *
+           UnitRatio<U, CommonUnscaled>{};
+}
+
+// Arithmetic operators mixing `Constant` with `Zero`.
+template <typename U>
+constexpr Zero operator%(Zero, Constant<U>) {
+    return {};
+}
 
 }  // namespace au
 

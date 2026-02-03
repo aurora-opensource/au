@@ -1901,6 +1901,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#modulo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modulo †
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3357,6 +3368,38 @@ because quantity points do not support multiplication.</p>
 <h4 id="quantitypointu-r-deleted"><code>QuantityPoint&lt;U, R&gt;</code> (deleted)<a class="headerlink" href="#quantitypointu-r-deleted" title="Permanent link">&para;</a></h4>
 <p>Multiplying or dividing <code>Constant&lt;Unit&gt;</code> with a <code>QuantityPoint&lt;U, R&gt;</code> is explicitly deleted,
 because quantity points do not support multiplication.</p>
+<h3 id="modulo">Modulo †<a class="headerlink" href="#modulo" title="Permanent link">&para;</a></h3>
+<p>The modulo operator computes the remainder after dividing one <code>Constant</code> by another, returning
+another <code>Constant</code> (or <code>Zero</code>).  The operands must have the same dimension.</p>
+<p>The result is well defined, independently of the units of the inputs &mdash; that is, it is a sensible
+&ldquo;pure quantity&rdquo; operation.  For positive inputs, we can define it as the result of continually
+subtracting the second argument from the first, until what remains is less than the second argument.
+(This is not how we actually <em>implement</em> it, but it is useful for understanding the semantics.)  If
+either or both of the inputs is signed, the result follows the same sign rules as the built-in C++
+<code>%</code> operator, since this is a C++ library.</p>
+<p>This operator interacts with <code>Zero</code> in several ways.</p>
+<ul>
+<li>When the second argument exactly divides the first (no remainder), the result is <code>Zero</code>.</li>
+<li><code>Zero</code> may be provided as the first argument, in which case the result is always <code>Zero</code>.</li>
+<li><code>Zero</code> may <strong>not</strong> be provided as the second argument, because division by zero is undefined.</li>
+</ul>
+<p>† <em>This feature is subject to the same <a href="../magnitude/#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a> as <code>Magnitude</code> modulo, because the
+computation is built on <code>Magnitude</code> modulo.</em></p>
+<p><strong>Syntax:</strong></p>
+<p>For <code>Constant</code> instances <code>c1</code> and <code>c2</code> with the same dimension:</p>
+<ul>
+<li><code>c1 % c2</code></li>
+</ul>
+<p><strong>Result:</strong> A new <code>Constant</code> representing the remainder.  The result&rsquo;s unit is based on the common
+unit of the inputs, which generally produces human-friendly labels.</p>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">five_feet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">feet</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">5</span><span class="o">&gt;</span><span class="p">());</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">seven_inches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">inches</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">7</span><span class="o">&gt;</span><span class="p">());</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1">// 5 feet = 60 inches; 60 % 7 = 4</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">five_feet</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">seven_inches</span><span class="p">;</span><span class="w">  </span><span class="c1">// Constant representing 4 inches</span>
+</code></pre></div>
 
 
 
