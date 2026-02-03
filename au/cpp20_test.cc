@@ -89,6 +89,34 @@ TEST(Magnitude, SpaceshipWorksWithZero) {
 
 TEST(Zero, SupportsSpaceship) { EXPECT_THAT(ZERO <=> ZERO, Eq(0 <=> 0)); }
 
+TEST(Constant, SupportsSpaceship) {
+    constexpr auto one_meter = make_constant(meters);
+    constexpr auto one_kilometer = make_constant(kilo(meters));
+
+    EXPECT_THAT(one_meter <=> one_meter, Eq(1 <=> 1));
+    EXPECT_THAT(one_meter <=> one_kilometer, Eq(1 <=> 1000));
+    EXPECT_THAT(one_kilometer <=> one_meter, Eq(1000 <=> 1));
+}
+
+TEST(Constant, SpaceshipWorksWithNegativeConstants) {
+    constexpr auto c = SPEED_OF_LIGHT;
+    constexpr auto neg_c = -c;
+
+    EXPECT_THAT(neg_c <=> c, Eq(-1 <=> 1));
+    EXPECT_THAT(c <=> neg_c, Eq(1 <=> -1));
+    EXPECT_THAT(neg_c <=> neg_c, Eq(-1 <=> -1));
+}
+
+TEST(Constant, SpaceshipWorksWithScaledConstants) {
+    constexpr auto c = SPEED_OF_LIGHT;
+    constexpr auto half_c = c / mag<2>();
+    constexpr auto double_c = c * mag<2>();
+
+    EXPECT_THAT(half_c <=> c, Eq(1 <=> 2));
+    EXPECT_THAT(c <=> double_c, Eq(1 <=> 2));
+    EXPECT_THAT(half_c <=> double_c, Eq(1 <=> 4));
+}
+
 TEST(Lerp, QuantityConsistentWithStdLerpWhenTypesAreIdentical) {
     auto expect_consistent_with_std_lerp = [](auto a, auto b, auto t) {
         const auto expected = meters(std::lerp(a, b, t));
