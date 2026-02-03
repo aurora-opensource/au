@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-92-gd866dcf
+// Version identifier: 0.5.0-base-93-g05f4e4e
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -8120,6 +8120,8 @@ struct CanScaleByMagnitude {
     friend constexpr Zero operator*(Zero, UnitWrapper<Unit>) { return {}; }
     friend constexpr Zero operator*(UnitWrapper<Unit>, Zero) { return {}; }
 
+    // Unary Plus and Negation.
+    friend constexpr auto operator+(UnitWrapper<Unit> u) { return u; }
     friend constexpr auto operator-(UnitWrapper<Unit>) {
         return UnitWrapper<decltype(Unit{} * (-mag<1>()))>{};
     }

@@ -1764,6 +1764,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#unary-and-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unary + and -
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#rounding" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3046,6 +3057,24 @@ the comparison is built on <code>Magnitude</code> comparison.</em></p>
 <li><code>c1 &gt;= c2</code></li>
 <li><code>c1 &lt;=&gt; c2</code> <em>(C++20 or later)</em></li>
 </ul>
+<h3 id="unary-and-">Unary <code>+</code> and <code>-</code><a class="headerlink" href="#unary-and-" title="Permanent link">&para;</a></h3>
+<p>For a <code>Constant</code> instance <code>c</code>, you can apply a &ldquo;unary plus&rdquo; (<code>+c</code>) or &ldquo;unary minus&rdquo; (<code>-c</code>).  The
+unary plus returns the constant unchanged (it is the identity operation), while the unary minus
+returns a new <code>Constant</code> representing the negation.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li><code>+c</code> returns <code>c</code> (same type and value)</li>
+<li><code>-c</code> returns a <code>Constant</code> with the negated value</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SPEED_OF_LIGHT</span><span class="p">;</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1">// Unary plus returns the same constant.</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">pos_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">+</span><span class="n">c</span><span class="p">;</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="c1">// Unary minus negates the constant.</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">neg_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="rounding">Rounding †<a class="headerlink" href="#rounding" title="Permanent link">&para;</a></h3>
 <p><code>Constant</code> can be passed to the rounding functions.  The <code>_as</code> functions return a new <code>Constant</code>,
 while the <code>_in</code> functions return a raw numeric value of an explicitly specified type.</p>
@@ -3099,9 +3128,9 @@ number of bytes required to store it.  Let&rsquo;s say the key length is <em>not
 8 bits, so you couldn&rsquo;t just write <code>MAX_KEY_LEN.in&lt;std::size_t&gt;(bytes)</code>: the <code>Constant</code> would
 detect the truncation, and produce a compile-time error!  What we really need is the smallest
 number of <em>whole bytes</em> that can hold this many bits.  We can achieve this with <code>int_ceil_in</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">MAX_KEY_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">bits</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">250</span><span class="o">&gt;</span><span class="p">());</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">bytes_needed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">int_ceil_in</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bytes</span><span class="p">,</span><span class="w"> </span><span class="n">MAX_KEY_LEN</span><span class="p">);</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">uint8_t</span><span class="p">,</span><span class="w"> </span><span class="n">bytes_needed</span><span class="o">&gt;</span><span class="w"> </span><span class="n">key_storage</span><span class="p">;</span><span class="w">  </span><span class="c1">// Array of 32 bytes</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">MAX_KEY_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">bits</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">250</span><span class="o">&gt;</span><span class="p">());</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">bytes_needed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">int_ceil_in</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bytes</span><span class="p">,</span><span class="w"> </span><span class="n">MAX_KEY_LEN</span><span class="p">);</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">uint8_t</span><span class="p">,</span><span class="w"> </span><span class="n">bytes_needed</span><span class="o">&gt;</span><span class="w"> </span><span class="n">key_storage</span><span class="p">;</span><span class="w">  </span><span class="c1">// Array of 32 bytes</span>
 </code></pre></div>
 <p>In this particular case, we could just as well have used <code>ceil_in</code> as <code>int_ceil_in</code>: for
 <code>Constant</code>, they are identical.  However, using <code>int_ceil_in</code> makes us agnostic as to whether
