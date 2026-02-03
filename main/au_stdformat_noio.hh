@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-91-g1420d2d
+// Version identifier: 0.5.0-base-92-gd866dcf
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -8407,6 +8407,9 @@ constexpr auto h = SymbolFor<Hours>{};
 }
 }  // namespace au
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#endif
+
 
 namespace au {
 
@@ -8554,6 +8557,15 @@ template <typename U1, typename U2>
 constexpr bool operator>=(Constant<U1> lhs, Constant<U2> rhs) {
     return !(lhs < rhs);
 }
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+template <typename U1, typename U2>
+constexpr std::strong_ordering operator<=>(Constant<U1>, Constant<U2>) {
+    using SignU2 = Sign<detail::MagT<U2>>;
+    using AbsU2 = decltype(U2{} * SignU2{});
+    return UnitRatio<U1, AbsU2>{} <=> SignU2{};
+}
+#endif
 
 }  // namespace au
 
