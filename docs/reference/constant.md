@@ -338,6 +338,7 @@ For instances `c1` and `c2`:
 - `c1 > c2`
 - `c1 <= c2`
 - `c1 >= c2`
+- `c1 <=> c2` _(C++20 or later)_
 
 ### Unary `+` and `-`
 
