@@ -63,33 +63,31 @@ constexpr const T &std_clamp(const T &v, const T &lo, const T &hi) {
 constexpr auto SEVEN_THIRDS_METERS = make_constant(meters * mag<7>() / mag<3>());
 constexpr auto FIVE_HALVES_METERS = make_constant(meters * mag<5>() / mag<2>());
 
-// Matcher for label strings.
-MATCHER_P(LabelIs, expected, "") {
-    *result_listener << "which is \"" << arg << "\"";
-    return arg == expected;
-}
-
 // Type trait to check if a type is a Constant.
 template <typename T>
 struct IsConstantType : std::false_type {};
 template <typename U>
 struct IsConstantType<Constant<U>> : std::true_type {};
 
-MATCHER(IsConstant, "is a Constant") {
-    return IsConstantType<stdx::remove_cvref_t<decltype(arg)>>::value;
+// Matches a unit by its label.
+MATCHER_P(LabelIs, expected, "") {
+    const auto label = std::string{unit_label(arg)};
+    *result_listener << "which has label \"" << label << "\"";
+    return label == expected;
 }
 
-// Checks that arg is a Constant, and applies the inner matcher to its unit label.
+// Checks that arg is a Constant, and applies the inner matcher to its unit.
 template <typename InnerMatcher>
 auto IsConstantWithUnitMatching(InnerMatcher m) {
-    return ::testing::AllOf(IsConstant(),
-                            ::testing::ResultOf(
-                                "unit label",
-                                [](const auto &c) {
-                                    using Unit = AssociatedUnit<stdx::remove_cvref_t<decltype(c)>>;
-                                    return std::string(unit_label<Unit>());
-                                },
-                                m));
+    return ::testing::AllOf(
+        ::testing::ResultOf(
+            "is Constant",
+            [](const auto &c) { return IsConstantType<stdx::remove_cvref_t<decltype(c)>>::value; },
+            ::testing::IsTrue()),
+        ::testing::ResultOf(
+            "unit",
+            [](const auto &c) { return AssociatedUnitT<stdx::remove_cvref_t<decltype(c)>>{}; },
+            m));
 }
 
 }  // namespace
