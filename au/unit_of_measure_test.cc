@@ -192,6 +192,78 @@ TEST(UnitProductPack, ExactlyCancellingInstancesYieldsNullPack) {
                        UnitProductPack<>>();
 }
 
+TEST(UnitSumPack, HasDimensionThatMatchesAllInputs) {
+    StaticAssertTypeEq<DimT<UnitSumPack<Feet, Inches>>, Length>();
+    StaticAssertTypeEq<DimT<UnitSumPack<Meters, Feet, Inches>>, Length>();
+}
+
+TEST(UnitSumPack, HasMagnitudeThatIsSumOfInputMagnitudes) {
+    StaticAssertTypeEq<MagT<UnitSumPack<Feet, Inches>>,
+                       MagProduct<MagT<Inches>, Magnitude<Prime<13>>>>();
+}
+
+TEST(UnitSumPack, IsAUnit) {
+    EXPECT_THAT((IsUnit<UnitSumPack<Feet, Inches>>::value), IsTrue());
+    EXPECT_THAT((IsUnit<UnitSumPack<Meters, Feet, Inches>>::value), IsTrue());
+}
+
+TEST(UnitSumPack, PositiveUnitsJoinedWithPlus) {
+    EXPECT_THAT(unit_label(UnitSumPack<Feet, Inches>{}), StrEq("(ft + in)"));
+}
+
+TEST(UnitSumPack, ThreePositiveUnitsJoinedWithPlus) {
+    EXPECT_THAT(unit_label(UnitSumPack<Meters, Feet, Inches>{}), StrEq("(m + ft + in)"));
+}
+
+TEST(UnitSumPack, NegativeUnitAfterPositiveUsesMinusSign) {
+    using NegInches = ScaledUnit<Inches, Magnitude<Negative>>;
+    EXPECT_THAT(unit_label(UnitSumPack<Feet, NegInches>{}), StrEq("(ft - in)"));
+}
+
+TEST(UnitSumPack, NegativeUnitAtStartGetsMinusPrefix) {
+    using NegFeet = ScaledUnit<Feet, Magnitude<Negative>>;
+    EXPECT_THAT(unit_label(UnitSumPack<NegFeet, Inches>{}), StrEq("(-ft + in)"));
+}
+
+TEST(UnitSumPack, MultipleNegativeUnitsShowMinusSigns) {
+    using NegFeet = ScaledUnit<Feet, Magnitude<Negative>>;
+    using NegInches = ScaledUnit<Inches, Magnitude<Negative>>;
+    EXPECT_THAT(unit_label(UnitSumPack<NegFeet, NegInches>{}), StrEq("(-ft - in)"));
+}
+
+TEST(UnitSumPack, MixedSignsShowAppropriateOperators) {
+    using NegFeet = ScaledUnit<Feet, Magnitude<Negative>>;
+    EXPECT_THAT(unit_label(UnitSumPack<Meters, NegFeet, Inches>{}), StrEq("(m - ft + in)"));
+}
+
+TEST(UnitSumPack, PositiveScaledUnitShowsScaleInLabel) {
+    using TwoFeet = decltype(Feet{} * mag<2>());
+    EXPECT_THAT(unit_label(UnitSumPack<TwoFeet, Inches>{}), StrEq("(2 ft + in)"));
+}
+
+TEST(UnitSumPack, NegativeScaledUnitShowsScaleWithoutSign) {
+    using NegTwoFeet = decltype(Feet{} * (-mag<2>()));
+    EXPECT_THAT(unit_label(UnitSumPack<NegTwoFeet, Inches>{}), StrEq("(-2 ft + in)"));
+}
+
+TEST(UnitSumPack, FractionalScaleShowsInLabel) {
+    using ThreeQuartersInches = decltype(Inches{} * mag<3>() / mag<4>());
+    EXPECT_THAT(unit_label(UnitSumPack<Feet, ThreeQuartersInches>{}), StrEq("(ft + (3 / 4) in)"));
+}
+
+TEST(UnitSumPack, NegativeFractionalScaleShowsCorrectly) {
+    using NegThreeQuartersInches = decltype(Inches{} * (-mag<3>()) / mag<4>());
+    EXPECT_THAT(unit_label(UnitSumPack<Feet, NegThreeQuartersInches>{}),
+                StrEq("(ft - (3 / 4) in)"));
+}
+
+TEST(UnitSumPack, ComplexMixedScalesAndSigns) {
+    using NegTwoFeet = decltype(Feet{} * (-mag<2>()));
+    using ThreeQuartersInches = decltype(Inches{} * mag<3>() / mag<4>());
+    EXPECT_THAT(unit_label(UnitSumPack<NegTwoFeet, ThreeQuartersInches, Meters>{}),
+                StrEq("(-2 ft + (3 / 4) in + m)"));
+}
+
 TEST(UnitProduct, IdentityForSingleUnit) {
     StaticAssertTypeEq<UnitProduct<Feet>, Feet>();
     StaticAssertTypeEq<UnitProduct<Minutes>, Minutes>();
