@@ -203,8 +203,8 @@ TEST(UnitSumPack, HasMagnitudeThatIsSumOfInputMagnitudes) {
 }
 
 TEST(UnitSumPack, IsAUnit) {
-    EXPECT_TRUE((IsUnit<UnitSumPack<Feet, Inches>>::value));
-    EXPECT_TRUE((IsUnit<UnitSumPack<Meters, Feet, Inches>>::value));
+    EXPECT_THAT((IsUnit<UnitSumPack<Feet, Inches>>::value), IsTrue());
+    EXPECT_THAT((IsUnit<UnitSumPack<Meters, Feet, Inches>>::value), IsTrue());
 }
 
 TEST(UnitSumPack, PositiveUnitsJoinedWithPlus) {
