@@ -574,3 +574,47 @@ constexpr auto seven_inches = make_constant(inches * mag<7>());
 // 5 feet = 60 inches; 60 % 7 = 4
 constexpr auto result = five_feet % seven_inches;  // Constant representing 4 inches
 ```
+
+### Addition and subtraction †
+
+Two `Constant` instances of the same dimension can be added or subtracted, producing a new
+`Constant`.  Like other `Constant` operations, this is performed purely at compile time.
+
+!!! warning
+    Unlike "core" operations, such as powers and products, `Constant` is not fully closed under
+    addition and subtraction.  If the inputs completely additively cancel, the result will either be
+    `Zero`, or else a compile time error.
+
+    Users should generally avoid forming this kind of `Constant`.
+
+`Constant` also interacts with `Zero` for addition and subtraction:
+
+- Adding `Zero` to a `Constant` (in either order) returns the original `Constant`.
+- Subtracting `Zero` from a `Constant` returns the original `Constant`.
+- Subtracting a `Constant` from `Zero` returns the negation of that `Constant`.
+
+† _This feature is subject to the same [compile-time arithmetic
+limitations](./magnitude.md#compile-time-arithmetic-limitations) as `Magnitude` arithmetic, because
+the computation is built on `Magnitude` operations._
+
+**Syntax:**
+
+For `Constant` instances `c1` and `c2` with the same dimension:
+
+- `c1 + c2`
+- `c1 - c2`
+
+**Result:** Whenever the result is nonzero, a new `Constant` representing the sum or difference.
+
+**Example:**
+
+```cpp
+constexpr auto one_foot = make_constant(feet);
+constexpr auto one_inch = make_constant(inches);
+
+// Sum of 1 foot and 1 inch
+constexpr auto sum = one_foot + one_inch;  // Constant representing (ft + in)
+
+// Difference
+constexpr auto diff = one_foot - one_inch;  // Constant representing (ft - in)
+```
