@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-97-gfe4ede1
+// Version identifier: 0.5.0-base-98-gcd25d11
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -10486,6 +10486,37 @@ constexpr auto operator%(Constant<U1>, Constant<U2>) {
 template <typename U>
 constexpr Zero operator%(Zero, Constant<U>) {
     return {};
+}
+
+// Addition (+) for `Constant`.
+template <typename U1, typename U2>
+constexpr auto operator+(Constant<U1>, Constant<U2>) {
+    return make_constant(UnitSum<U1, U2>{});
+}
+
+// Subtraction (-) for `Constant`.
+template <typename U1, typename U2>
+constexpr auto operator-(Constant<U1>, Constant<U2>) {
+    using NegU2 = decltype(U2{} * Magnitude<Negative>{});
+    return make_constant(UnitSum<U1, NegU2>{});
+}
+
+// Arithmetic operators mixing `Constant` with `Zero`.
+template <typename U>
+constexpr Constant<U> operator+(Constant<U>, Zero) {
+    return {};
+}
+template <typename U>
+constexpr Constant<U> operator+(Zero, Constant<U>) {
+    return {};
+}
+template <typename U>
+constexpr Constant<U> operator-(Constant<U>, Zero) {
+    return {};
+}
+template <typename U>
+constexpr auto operator-(Zero, Constant<U>) {
+    return -Constant<U>{};
 }
 
 }  // namespace au

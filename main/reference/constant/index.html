@@ -1912,6 +1912,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#addition-and-subtraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Addition and subtraction †
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3399,6 +3410,42 @@ unit of the inputs, which generally produces human-friendly labels.</p>
 <a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
 <a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1">// 5 feet = 60 inches; 60 % 7 = 4</span>
 <a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">five_feet</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">seven_inches</span><span class="p">;</span><span class="w">  </span><span class="c1">// Constant representing 4 inches</span>
+</code></pre></div>
+<h3 id="addition-and-subtraction">Addition and subtraction †<a class="headerlink" href="#addition-and-subtraction" title="Permanent link">&para;</a></h3>
+<p>Two <code>Constant</code> instances of the same dimension can be added or subtracted, producing a new
+<code>Constant</code>.  Like other <code>Constant</code> operations, this is performed purely at compile time.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Unlike &ldquo;core&rdquo; operations, such as powers and products, <code>Constant</code> is not fully closed under
+addition and subtraction.  If the inputs completely additively cancel, the result will either be
+<code>Zero</code>, or else a compile time error.</p>
+<p>Users should generally avoid forming this kind of <code>Constant</code>.</p>
+</div>
+<p><code>Constant</code> also interacts with <code>Zero</code> for addition and subtraction:</p>
+<ul>
+<li>Adding <code>Zero</code> to a <code>Constant</code> (in either order) returns the original <code>Constant</code>.</li>
+<li>Subtracting <code>Zero</code> from a <code>Constant</code> returns the original <code>Constant</code>.</li>
+<li>Subtracting a <code>Constant</code> from <code>Zero</code> returns the negation of that <code>Constant</code>.</li>
+</ul>
+<p>† <em>This feature is subject to the same <a href="../magnitude/#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a> as <code>Magnitude</code> arithmetic, because
+the computation is built on <code>Magnitude</code> operations.</em></p>
+<p><strong>Syntax:</strong></p>
+<p>For <code>Constant</code> instances <code>c1</code> and <code>c2</code> with the same dimension:</p>
+<ul>
+<li><code>c1 + c2</code></li>
+<li><code>c1 - c2</code></li>
+</ul>
+<p><strong>Result:</strong> Whenever the result is nonzero, a new <code>Constant</code> representing the sum or difference.</p>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">one_foot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">feet</span><span class="p">);</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">one_inch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">inches</span><span class="p">);</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1">// Sum of 1 foot and 1 inch</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">one_foot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">one_inch</span><span class="p">;</span><span class="w">  </span><span class="c1">// Constant representing (ft + in)</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="c1">// Difference</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">diff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">one_foot</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">one_inch</span><span class="p">;</span><span class="w">  </span><span class="c1">// Constant representing (ft - in)</span>
 </code></pre></div>
 
 
