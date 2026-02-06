@@ -426,6 +426,10 @@ struct SortAsImpl<PackForOrdering, Pack<T, Ts...>>
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `FlatDedupedTypeListT` implementation.
 
+// 0-ary trivial case:
+template <template <class...> class List>
+struct FlatDedupedTypeListImpl<List> : stdx::type_identity<List<>> {};
+
 // 1-ary Base case: a list with a single element is already done.
 //
 // (We explicitly assumed that any `List<...>` inputs would already be in sorted order.)
