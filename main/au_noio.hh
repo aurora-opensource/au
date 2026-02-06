@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-96-g7bfb4ab
+// Version identifier: 0.5.0-base-97-gfe4ede1
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -2268,6 +2268,10 @@ struct SortAsImpl<PackForOrdering, Pack<T, Ts...>>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `FlatDedupedTypeListT` implementation.
+
+// 0-ary trivial case:
+template <template <class...> class List>
+struct FlatDedupedTypeListImpl<List> : stdx::type_identity<List<>> {};
 
 // 1-ary Base case: a list with a single element is already done.
 //
@@ -5958,6 +5962,85 @@ using ReplaceCommonPointUnitWithCommonUnit =
 template <typename A, typename B>
 struct InOrderFor<detail::CommonUnitLabelImpl, A, B> : InOrderFor<UnitProductPack, A, B> {};
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `UnitSum` helper implementation.
+
+namespace detail {
+
+// Compute the coefficient for a unit in a sum: the ratio of the unit to its unscaled version.
+template <typename U>
+using UnitCoefficient = UnitRatio<U, UnscaledUnit<U>>;
+
+// Given a list of distinct unscaled units, and a list of input units, compute the sum of
+// coefficients for each unscaled unit.
+template <typename DistinctUnscaled, typename... Us>
+struct ComputeCoefficientSumsImpl;
+template <typename DistinctUnscaled, typename... Us>
+using ComputeCoefficientSums = typename ComputeCoefficientSumsImpl<DistinctUnscaled, Us...>::type;
+
+template <template <class...> class Pack, typename... Unscaled, typename... Us>
+struct ComputeCoefficientSumsImpl<Pack<Unscaled...>, Us...> {
+    // For each unscaled unit, sum coefficients from all matching input units.
+    template <typename Target>
+    using CoeffSum = MagSum<std::conditional_t<std::is_same<UnscaledUnit<Us>, Target>::value,
+                                               UnitCoefficient<Us>,
+                                               Zero>...>;
+
+    // Produce the scaled unit (or Zero if coefficient is zero).
+    template <typename Target>
+    using ScaledResult = std::conditional_t<std::is_same<CoeffSum<Target>, Zero>::value,
+                                            Zero,
+                                            ComputeScaledUnit<Target, CoeffSum<Target>>>;
+
+    using type = Pack<ScaledResult<Unscaled>...>;
+};
+
+// Filter out Zero entries from a Pack.
+template <typename T>
+struct IsNonzero : stdx::negation<std::is_same<T, Zero>> {};
+
+template <typename UL>
+struct FilterOutZeroImpl;
+template <typename UL>
+using FilterOutZero = typename FilterOutZeroImpl<UL>::type;
+template <template <class...> class Pack, typename... Us>
+struct FilterOutZeroImpl<Pack<Us...>> {
+    using type = IncludeInPackIf<IsNonzero, Pack, Us...>;
+};
+
+// Convert a pack to `UnitSumPack`, mapping 0-ary results onto `Zero`, and unpacking 1-ary.
+template <typename UL>
+struct AsUnitSumPackImpl;
+template <typename UL>
+using AsSortedUnitSumPack = typename AsUnitSumPackImpl<SortAs<UnitSumPack, UL>>::type;
+template <template <class...> class Pack>
+struct AsUnitSumPackImpl<Pack<>> : stdx::type_identity<Zero> {};
+template <template <class...> class Pack, typename U>
+struct AsUnitSumPackImpl<Pack<U>> : stdx::type_identity<U> {};
+template <template <class...> class Pack, typename U, typename... Us>
+struct AsUnitSumPackImpl<Pack<U, Us...>> : stdx::type_identity<UnitSumPack<U, Us...>> {};
+
+// Helper to apply UnitSumImpl to a flattened UnitSumPack.
+template <typename FlatPack>
+struct CollectLikeTermsImpl;
+template <typename... Us>
+struct CollectLikeTermsImpl<UnitSumPack<Us...>>
+    : stdx::type_identity<AsSortedUnitSumPack<FilterOutZero<
+          ComputeCoefficientSums<FlatDedupedTypeList<UnitList, UnscaledUnit<Us>...>, Us...>>>> {};
+
+// Main implementation: first flatten any UnitSumPack arguments, then collect like terms.
+template <typename... Us>
+struct UnitSumImpl : CollectLikeTermsImpl<FlattenAs<UnitSumPack, Us...>> {};
+
+}  // namespace detail
+
+// Helper to make a canonicalized sum of units.
+//
+// Collects like terms (same unscaled unit), filters zeros, and sorts with positive coefficients
+// first. Returns Zero if all terms cancel, the single unit if only one remains, or a UnitSumPack.
+template <typename... Us>
+using UnitSum = typename detail::UnitSumImpl<Us...>::type;
+
 template <typename... Us>
 using CommonUnitLabel = FlatDedupedTypeListT<detail::CommonUnitLabelImpl, Us...>;
 
@@ -6469,6 +6552,25 @@ struct InOrderFor<UnitProductPack, A, B>
                                  detail::OrderAsUnitProductPack,
                                  detail::OrderAsOriginDisplacementUnit,
                                  detail::OrderByUnitOrderTiebreaker> {};
+
+namespace detail {
+// Order by sign: positive coefficients come before negative.
+template <typename A, typename B>
+struct OrderByPositiveCoefficient
+    : stdx::bool_constant<(IsPositive<MagT<A>>::value && !IsPositive<MagT<B>>::value)> {};
+
+// Order by unscaled unit, using UnitProductPack ordering.
+template <typename A, typename B>
+struct OrderByUnscaledUnit : InOrderFor<UnitProductPack, UnscaledUnit<A>, UnscaledUnit<B>> {};
+}  // namespace detail
+
+template <typename A, typename B>
+struct InOrderFor<UnitSumPack, A, B>
+    : LexicographicTotalOrdering<A,
+                                 B,
+                                 detail::OrderByPositiveCoefficient,
+                                 detail::OrderByUnscaledUnit,
+                                 detail::OrderByMag> {};
 
 }  // namespace au
 
