@@ -65,6 +65,8 @@ header_only_library(
     units/arcminutes_fwd.hh
     units/arcseconds.hh
     units/arcseconds_fwd.hh
+    units/astronomical_units.hh
+    units/astronomical_units_fwd.hh
     units/bars.hh
     units/bars_fwd.hh
     units/becquerel.hh
@@ -326,6 +328,7 @@ gtest_based_test(
     units/test/amperes_test.cc
     units/test/arcminutes_test.cc
     units/test/arcseconds_test.cc
+    units/test/astronomical_units_test.cc
     units/test/bars_test.cc
     units/test/becquerel_test.cc
     units/test/bits_test.cc
