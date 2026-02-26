@@ -126,7 +126,8 @@ TEST(ConversionRisk, ButAlsoCheckingForWorksWithAnyStartingPolicy) {
     EXPECT_THAT(from_ignore_all.should_check(detail::ConversionRisk::Overflow), IsTrue());
     EXPECT_THAT(from_ignore_all.should_check(detail::ConversionRisk::Truncation), IsFalse());
 
-    constexpr auto from_check_overflow = check_for(OVERFLOW_RISK).but_also_checking_for(TRUNCATION_RISK);
+    constexpr auto from_check_overflow =
+        check_for(OVERFLOW_RISK).but_also_checking_for(TRUNCATION_RISK);
     EXPECT_THAT(from_check_overflow.should_check(detail::ConversionRisk::Overflow), IsTrue());
     EXPECT_THAT(from_check_overflow.should_check(detail::ConversionRisk::Truncation), IsTrue());
 }
