@@ -1010,9 +1010,9 @@ struct GetValueResultImplForDefaultCase<T, Magnitude<BPs...>> {
         if ((widened_result.outcome != MagRepresentationOutcome::OK) ||
             !safe_to_cast_to<T>(widened_result.value)) {
             return {MagRepresentationOutcome::ERR_CANNOT_FIT};
+        } else {
+            return {MagRepresentationOutcome::OK, static_cast<T>(widened_result.value)};
         }
-
-        return {MagRepresentationOutcome::OK, static_cast<T>(widened_result.value)};
     }
 };
 
