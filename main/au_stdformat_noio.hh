@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-99-g105a114
+// Version identifier: 0.5.0-base-100-gaae90e0
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -3773,9 +3773,9 @@ struct GetValueResultImplForDefaultCase<T, Magnitude<BPs...>> {
         if ((widened_result.outcome != MagRepresentationOutcome::OK) ||
             !safe_to_cast_to<T>(widened_result.value)) {
             return {MagRepresentationOutcome::ERR_CANNOT_FIT};
+        } else {
+            return {MagRepresentationOutcome::OK, static_cast<T>(widened_result.value)};
         }
-
-        return {MagRepresentationOutcome::OK, static_cast<T>(widened_result.value)};
     }
 };
 
