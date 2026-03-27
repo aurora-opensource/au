@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-100-gaae90e0
+// Version identifier: 0.5.0-base-101-gcab03c7
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -6934,6 +6934,20 @@ template <uint8_t RiskFlags>
 struct CheckTheseRisks<RiskSet<RiskFlags>> {
     constexpr bool should_check(ConversionRisk risk) const {
         return (RiskFlags & static_cast<uint8_t>(risk)) != 0u;
+    }
+
+    // Remove risks from the checked set.
+    template <uint8_t OtherFlags>
+    constexpr CheckTheseRisks<RiskSet<RiskFlags & ~OtherFlags>> but_ignoring(
+        RiskSet<OtherFlags>) const {
+        return {};
+    }
+
+    // Add risks to the checked set.
+    template <uint8_t OtherFlags>
+    constexpr CheckTheseRisks<RiskSet<RiskFlags | OtherFlags>> but_also_checking_for(
+        RiskSet<OtherFlags>) const {
+        return {};
     }
 };
 

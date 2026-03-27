@@ -1635,6 +1635,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#modifying-existing-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modifying Existing Policies
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2461,6 +2472,64 @@ functions:</p>
 </ul>
 <p>In practice, <code>ignore()</code> is used very commonly, and <code>check_for()</code> is used very rarely, mostly
 internally to the library.</p>
+<h2 id="modifying-existing-policies">Modifying Existing Policies<a class="headerlink" href="#modifying-existing-policies" title="Permanent link">&para;</a></h2>
+<p>Sometimes you have an existing policy and need to adjust which risks it checks for.  For example,
+suppose you wrote a conversion function that handled overflow via clamping, and also supported
+arbitrary policy parameter inputs.  You would want to remove <code>OVERFLOW_RISK</code> from the set of checks
+in that policy, because you&rsquo;ll be handling overflow manually.</p>
+<p>Two member functions support modifying an existing policy, <code>policy</code>, by adding or removing risks
+from it:</p>
+<ul>
+<li><code>policy.but_ignoring(RISK_SET)</code><ul>
+<li>Returns a new policy that no longer checks for any risks in <code>RISK_SET</code>, but otherwise checks
+  for the same risks as <code>policy</code>.</li>
+</ul>
+</li>
+<li><code>policy.but_also_checking_for(RISK_SET)</code><ul>
+<li>Returns a new policy that additionally checks for all risks in <code>RISK_SET</code>, on top of whatever
+  risks <code>policy</code> already checks.</li>
+</ul>
+</li>
+</ul>
+<details class="example">
+<summary>Example: clamped conversion</summary>
+<p>Suppose we want a &ldquo;clamped&rdquo; unit conversion: one that automatically clamps out-of-range values
+to the nearest representable value, instead of overflowing.  We want to let the user pass their
+own policy to control truncation checking, but whatever that policy is, we need to tweak it and
+disable overflow checking since we&rsquo;re handling overflow ourselves.  It might look something like
+this<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">UnitSlot</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Policy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">check_for</span><span class="p">(</span><span class="n">ALL_RISKS</span><span class="p">))</span><span class="o">&gt;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">clamped_convert_to</span><span class="p">(</span><span class="n">UnitSlot</span><span class="w"> </span><span class="n">unit</span><span class="p">,</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">Policy</span><span class="w"> </span><span class="n">policy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{})</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">ResultLimits</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">AssociatedUnitT</span><span class="o">&lt;</span><span class="n">UnitSlot</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">will_conversion_overflow</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">unit</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">               </span><span class="o">?</span><span class="w"> </span><span class="p">(</span><span class="n">q</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ZERO</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">ResultLimits</span><span class="o">::</span><span class="n">max</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">ResultLimits</span><span class="o">::</span><span class="n">lowest</span><span class="p">())</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">               </span><span class="o">:</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="k">template</span><span class="w"> </span><span class="n">as</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span><span class="w"> </span><span class="n">policy</span><span class="p">.</span><span class="n">but_ignoring</span><span class="p">(</span><span class="n">OVERFLOW_RISK</span><span class="p">))</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="c1">//                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span>
+</code></pre></div>
+<p>Consider this example callsite:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>auto length = clamped_convert_to&lt;int&gt;(inches, yards(3.14), ignore(TRUNCATION_RISK));
+</code></pre></div>
+<p>The user opted out of truncation risk checking at the <em>callsite</em>, because they wanted to
+represent the <code>double</code> input in <code>int</code>, which requires truncation.  Additionally, <em>inside</em> the
+function, we further opt out of overflow risk, because we have already handled any inputs that
+would actually overflow.  The member functions that modify existing policies are the only way to
+robustly support this kind of use case.</p>
+</details>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>For clarity, note that this function is for illustration purposes only.  It would not
+handle cases where <strong>all</strong> of the following are true: (a) the initial rep is an integral type,
+(b) the final rep is <em>also</em> integral, <em>and</em> &#40;c) the conversion factor is rational, but neither
+integer nor inverse-integer (such as between feet and meters).  In these cases, the clamped
+answer wouldn&rsquo;t be at the limits of the type, because of the subsequent division by the
+denominator.  However, note that after <a href="https://github.com/aurora-opensource/au/issues/453">#453</a> is resolved, this caveat goes away, and the
+function would work correctly in all cases.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
