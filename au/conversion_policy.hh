@@ -67,6 +67,20 @@ struct CheckTheseRisks<RiskSet<RiskFlags>> {
     constexpr bool should_check(ConversionRisk risk) const {
         return (RiskFlags & static_cast<uint8_t>(risk)) != 0u;
     }
+
+    // Remove risks from the checked set.
+    template <uint8_t OtherFlags>
+    constexpr CheckTheseRisks<RiskSet<RiskFlags & ~OtherFlags>> but_ignoring(
+        RiskSet<OtherFlags>) const {
+        return {};
+    }
+
+    // Add risks to the checked set.
+    template <uint8_t OtherFlags>
+    constexpr CheckTheseRisks<RiskSet<RiskFlags | OtherFlags>> but_also_checking_for(
+        RiskSet<OtherFlags>) const {
+        return {};
+    }
 };
 
 constexpr auto OVERFLOW_RISK = RiskSet<static_cast<uint8_t>(ConversionRisk::Overflow)>{};
