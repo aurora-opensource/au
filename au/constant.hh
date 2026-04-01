@@ -122,6 +122,26 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
         return as<typename CorrespondingQuantity<T>::Rep>(
             typename CorrespondingQuantity<T>::Unit{});
     }
+
+    // Comparison with Zero.
+    //
+    // A Constant represents a value of 1 in its unit, which is never zero.
+    friend constexpr bool operator==(Constant, Zero) { return false; }
+    friend constexpr bool operator!=(Constant, Zero) { return true; }
+    friend constexpr bool operator<(Constant, Zero) { return !is_positive(); }
+    friend constexpr bool operator<=(Constant, Zero) { return !is_positive(); }
+    friend constexpr bool operator>(Constant, Zero) { return is_positive(); }
+    friend constexpr bool operator>=(Constant, Zero) { return is_positive(); }
+
+    friend constexpr bool operator==(Zero, Constant) { return false; }
+    friend constexpr bool operator!=(Zero, Constant) { return true; }
+    friend constexpr bool operator<(Zero, Constant) { return is_positive(); }
+    friend constexpr bool operator<=(Zero, Constant) { return is_positive(); }
+    friend constexpr bool operator>(Zero, Constant) { return !is_positive(); }
+    friend constexpr bool operator>=(Zero, Constant) { return !is_positive(); }
+
+ private:
+    static constexpr bool is_positive() { return IsPositive<detail::MagT<Unit>>::value; }
 };
 
 // Make a constant from the given unit.
