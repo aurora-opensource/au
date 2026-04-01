@@ -510,6 +510,52 @@ TEST(Constant, OrderingWorksWithNegativeConstants) {
     EXPECT_THAT(c, Not(Le(neg_c)));
 }
 
+TEST(Constant, EqualityComparisonWithZero) {
+    constexpr auto one_meter = make_constant(meters);
+
+    EXPECT_THAT(one_meter == ZERO, IsFalse());
+    EXPECT_THAT(ZERO == one_meter, IsFalse());
+    EXPECT_THAT(one_meter != ZERO, IsTrue());
+    EXPECT_THAT(ZERO != one_meter, IsTrue());
+}
+
+TEST(Constant, EqualityComparisonWithZeroForNegativeConstant) {
+    constexpr auto neg_meter = -make_constant(meters);
+
+    EXPECT_THAT(neg_meter == ZERO, IsFalse());
+    EXPECT_THAT(ZERO == neg_meter, IsFalse());
+    EXPECT_THAT(neg_meter != ZERO, IsTrue());
+    EXPECT_THAT(ZERO != neg_meter, IsTrue());
+}
+
+TEST(Constant, OrderingComparisonWithZero) {
+    constexpr auto one_meter = make_constant(meters);
+
+    EXPECT_THAT(one_meter > ZERO, IsTrue());
+    EXPECT_THAT(one_meter >= ZERO, IsTrue());
+    EXPECT_THAT(one_meter < ZERO, IsFalse());
+    EXPECT_THAT(one_meter <= ZERO, IsFalse());
+
+    EXPECT_THAT(ZERO < one_meter, IsTrue());
+    EXPECT_THAT(ZERO <= one_meter, IsTrue());
+    EXPECT_THAT(ZERO > one_meter, IsFalse());
+    EXPECT_THAT(ZERO >= one_meter, IsFalse());
+}
+
+TEST(Constant, OrderingComparisonWithZeroForNegativeConstant) {
+    constexpr auto neg_meter = -make_constant(meters);
+
+    EXPECT_THAT(neg_meter < ZERO, IsTrue());
+    EXPECT_THAT(neg_meter <= ZERO, IsTrue());
+    EXPECT_THAT(neg_meter > ZERO, IsFalse());
+    EXPECT_THAT(neg_meter >= ZERO, IsFalse());
+
+    EXPECT_THAT(ZERO > neg_meter, IsTrue());
+    EXPECT_THAT(ZERO >= neg_meter, IsTrue());
+    EXPECT_THAT(ZERO < neg_meter, IsFalse());
+    EXPECT_THAT(ZERO <= neg_meter, IsFalse());
+}
+
 TEST(Constant, OrderingWorksWithScaledConstants) {
     constexpr auto half_c = c / mag<2>();
     constexpr auto double_c = c * mag<2>();
