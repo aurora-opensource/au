@@ -439,7 +439,7 @@ TEST(CanStoreValueIn, ChecksRangeOfTypeForIntegers) {
 
 TEST(CanStoreValueIn, ReturnsFalseRatherThanHardErrorForDifferentDimensions) {
     constexpr bool result = Constant<Meters>::can_store_value_in<long>(Nano<Seconds>{});
-    EXPECT_FALSE(result);
+    EXPECT_THAT(result, IsFalse());
 }
 
 TEST(Constant, SupportsEqualityComparison) {
