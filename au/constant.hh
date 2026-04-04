@@ -109,8 +109,8 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // Static function to check whether this constant can be exactly-represented in the given rep
     // `T` and unit `OtherUnit`.
     template <typename T, typename OtherUnit>
-    static constexpr bool can_store_value_in(OtherUnit other) {
-        return representable_in<T>(unit_ratio(Unit{}, other));
+    static constexpr bool can_store_value_in(OtherUnit) {
+        return detail::IsUnitRatioRepresentableIn<T, Unit, AssociatedUnit<OtherUnit>>::value;
     }
 
     // Implicitly convert to type with an exactly corresponding quantity that passes safety checks.

@@ -437,6 +437,11 @@ TEST(CanStoreValueIn, ChecksRangeOfTypeForIntegers) {
     EXPECT_THAT(decltype(c)::can_store_value_in<int16_t>(meters / second), IsFalse());
 }
 
+TEST(CanStoreValueIn, ReturnsFalseRatherThanHardErrorForDifferentDimensions) {
+    constexpr bool result = Constant<Meters>::can_store_value_in<long>(Nano<Seconds>{});
+    EXPECT_FALSE(result);
+}
+
 TEST(Constant, SupportsEqualityComparison) {
     constexpr auto one_meter = make_constant(meters);
     constexpr auto another_meter = make_constant(meters);
