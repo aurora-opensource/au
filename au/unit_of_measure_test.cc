@@ -25,6 +25,7 @@
 #include "au/units/kelvins.hh"
 #include "au/units/meters.hh"
 #include "au/units/minutes.hh"
+#include "au/units/hertz.hh"
 #include "au/units/yards.hh"
 #include "au/utility/type_traits.hh"
 #include "gmock/gmock.h"
@@ -1140,6 +1141,26 @@ TEST(SimplifyIfOnlyOneUnscaledUnit, IdentityForNonCommonUnit) {
     StaticAssertTypeEq<SimplifyIfOnlyOneUnscaledUnit<Feet>, Feet>();
     StaticAssertTypeEq<SimplifyIfOnlyOneUnscaledUnit<decltype(Feet{} * mag<3>())>,
                        decltype(Feet{} * mag<3>())>();
+}
+
+TEST(IsUnitRatioRepresentableIn, TrueForIdentityRatio) {
+    EXPECT_THAT((IsUnitRatioRepresentableIn<int, Meters, Meters>::value), IsTrue());
+}
+
+TEST(IsUnitRatioRepresentableIn, TrueForRepresentableRatio) {
+    EXPECT_THAT((IsUnitRatioRepresentableIn<int, Feet, Inches>::value), IsTrue());
+}
+
+TEST(IsUnitRatioRepresentableIn, FalseForNonRepresentableRatio) {
+    EXPECT_THAT((IsUnitRatioRepresentableIn<int, Inches, Feet>::value), IsFalse());
+}
+
+TEST(IsUnitRatioRepresentableIn, FalseForOverflowingRatio) {
+    EXPECT_THAT((IsUnitRatioRepresentableIn<int, Tera<Hertz>, Hertz>::value), IsFalse());
+}
+
+TEST(IsUnitRatioRepresentableIn, FalseRatherThanHardErrorForDifferentDimensions) {
+    EXPECT_THAT((IsUnitRatioRepresentableIn<int, Meters, Minutes>::value), IsFalse());
 }
 
 }  // namespace detail
