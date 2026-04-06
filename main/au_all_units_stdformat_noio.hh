@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-102-g19fe0e5
+// Version identifier: 0.5.0-base-103-g860ae5f
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -6017,6 +6017,15 @@ constexpr auto pow(SingularNameFor<Unit>) {
 template <typename U>
 struct UnitOrderTiebreaker;
 
+// Library-internal helper to check representability of ratio between two units in a numeric type.
+//
+// This will return `false` (rather than producing a compiler error) if the units don't have the
+// same dimension.
+namespace detail {
+template <typename T, typename U1, typename U2>
+struct IsUnitRatioRepresentableIn;
+}  // namespace detail
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation details below
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6919,6 +6928,24 @@ struct InOrderFor<UnitSumPack, A, B>
                                  detail::OrderByPositiveCoefficient,
                                  detail::OrderByUnscaledUnit,
                                  detail::OrderByMag> {};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// `IsUnitRatioRepresentableIn` implementation.
+
+namespace detail {
+// Helper simply delegates to `representable_in` in the usual case.
+template <typename T, typename U1, typename U2, bool SameDim = HasSameDimension<U1, U2>::value>
+struct IsUnitRatioRepresentableInImpl
+    : stdx::bool_constant<representable_in<T>(UnitRatio<U1, U2>{})> {};
+
+// If dimensions differ, just return false.
+template <typename T, typename U1, typename U2>
+struct IsUnitRatioRepresentableInImpl<T, U1, U2, false> : std::false_type {};
+
+// Delegate to the appropriate helper.
+template <typename T, typename U1, typename U2>
+struct IsUnitRatioRepresentableIn : IsUnitRatioRepresentableInImpl<T, U1, U2> {};
+}  // namespace detail
 
 }  // namespace au
 
@@ -10443,8 +10470,8 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // Static function to check whether this constant can be exactly-represented in the given rep
     // `T` and unit `OtherUnit`.
     template <typename T, typename OtherUnit>
-    static constexpr bool can_store_value_in(OtherUnit other) {
-        return representable_in<T>(unit_ratio(Unit{}, other));
+    static constexpr bool can_store_value_in(OtherUnit) {
+        return detail::IsUnitRatioRepresentableIn<T, Unit, AssociatedUnit<OtherUnit>>::value;
     }
 
     // Implicitly convert to type with an exactly corresponding quantity that passes safety checks.
