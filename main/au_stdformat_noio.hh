@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-103-g860ae5f
+// Version identifier: 0.5.0-base-104-g40dd705
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -3770,12 +3770,12 @@ struct GetValueResultImplForDefaultCase<T, Magnitude<BPs...>> {
                               Exp<BPs>::num,
                               static_cast<std::uintmax_t>(Exp<BPs>::den)>(Base<BPs>::value())...});
 
-        if ((widened_result.outcome != MagRepresentationOutcome::OK) ||
-            !safe_to_cast_to<T>(widened_result.value)) {
-            return {MagRepresentationOutcome::ERR_CANNOT_FIT};
-        } else {
-            return {MagRepresentationOutcome::OK, static_cast<T>(widened_result.value)};
-        }
+        constexpr bool will_fit = widened_result.outcome == MagRepresentationOutcome::OK &&
+                                  safe_to_cast_to<T>(widened_result.value);
+
+        return will_fit ? MagRepresentationOrError<T>{MagRepresentationOutcome::OK,
+                                                      static_cast<T>(widened_result.value)}
+                        : MagRepresentationOrError<T>{MagRepresentationOutcome::ERR_CANNOT_FIT};
     }
 };
 
