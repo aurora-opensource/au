@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "au/config.hh"
 #include "au/magnitude.hh"
 
 namespace au {
@@ -93,7 +94,7 @@ struct OpOutputImpl<StaticCast<T, U>> : stdx::type_identity<U> {};
 // `StaticCast<T, U>` operation:
 template <typename T, typename U>
 struct StaticCast {
-    static constexpr U apply_to(T value) { return static_cast<U>(value); }
+    static AU_DEVICE_FUNC constexpr U apply_to(T value) { return static_cast<U>(value); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,7 +109,7 @@ struct OpOutputImpl<ImplicitConversion<T, U>> : stdx::type_identity<U> {};
 // `ImplicitConversion<T, U>` operation:
 template <typename T, typename U>
 struct ImplicitConversion {
-    static constexpr U apply_to(T value) { return value; }
+    static AU_DEVICE_FUNC constexpr U apply_to(T value) { return value; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +124,7 @@ struct OpOutputImpl<MultiplyTypeBy<T, M>> : stdx::type_identity<T> {};
 // `MultiplyTypeBy<T, M>` operation:
 template <typename T, typename Mag>
 struct MultiplyTypeBy {
-    static constexpr T apply_to(T value) {
+    static AU_DEVICE_FUNC constexpr T apply_to(T value) {
         return static_cast<T>(value * get_value<RealPart<T>>(Mag{}));
     }
 };
@@ -139,7 +140,7 @@ struct OpOutputImpl<DivideTypeByInteger<T, M>> : stdx::type_identity<T> {};
 
 template <typename T, typename M, MagRepresentationOutcome MagOutcome>
 struct DivideTypeByIntegerImpl {
-    static constexpr T apply_to(T value) {
+    static AU_DEVICE_FUNC constexpr T apply_to(T value) {
         static_assert(MagOutcome == MagRepresentationOutcome::OK, "Internal library error");
         return static_cast<T>(value / get_value<RealPart<T>>(M{}));
     }
@@ -148,7 +149,7 @@ struct DivideTypeByIntegerImpl {
 template <typename T, typename M>
 struct DivideTypeByIntegerImpl<T, M, MagRepresentationOutcome::ERR_CANNOT_FIT> {
     // If a number is too big to fit in the type, then dividing by it should produce 0.
-    static constexpr T apply_to(T) { return T{0}; }
+    static AU_DEVICE_FUNC constexpr T apply_to(T) { return T{0}; }
 };
 
 template <typename T, typename M>
@@ -175,12 +176,14 @@ struct OpOutputImpl<OpSequenceImpl<OnlyOp>> : stdx::type_identity<OpOutput<OnlyO
 
 template <typename Op>
 struct OpSequenceImpl<Op> {
-    static constexpr auto apply_to(OpInput<OpSequenceImpl> value) { return Op::apply_to(value); }
+    static AU_DEVICE_FUNC constexpr auto apply_to(OpInput<OpSequenceImpl> value) {
+        return Op::apply_to(value);
+    }
 };
 
 template <typename Op, typename... Ops>
 struct OpSequenceImpl<Op, Ops...> {
-    static constexpr auto apply_to(OpInput<OpSequenceImpl> value) {
+    static AU_DEVICE_FUNC constexpr auto apply_to(OpInput<OpSequenceImpl> value) {
         return OpSequenceImpl<Ops...>::apply_to(Op::apply_to(value));
     }
 };

@@ -94,6 +94,12 @@ cc_test(
 )
 
 cc_library(
+    name = "config",
+    hdrs = ["config.hh"],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "fwd",
     hdrs = ["fwd.hh"],
     visibility = ["//visibility:public"],
@@ -792,7 +798,10 @@ cc_test(
 cc_library(
     name = "zero",
     hdrs = ["zero.hh"],
-    deps = [":fwd"],
+    deps = [
+        ":config",
+        ":fwd",
+    ],
 )
 
 cc_test(

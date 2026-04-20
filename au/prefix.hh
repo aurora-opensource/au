@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "au/config.hh"
 #include "au/fwd.hh"
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
@@ -75,33 +76,33 @@ template <template <class U> class Prefix>
 struct PrefixApplier {
     // Applying a Prefix to a Unit instance, creates an instance of the Prefixed Unit.
     template <typename U>
-    constexpr auto operator()(U) const {
+    AU_DEVICE_FUNC constexpr auto operator()(U) const {
         return Prefix<U>{};
     }
 
     // Applying a Prefix to a QuantityMaker instance, creates a maker for the Prefixed Unit.
     template <typename U>
-    constexpr auto operator()(QuantityMaker<U>) const {
+    AU_DEVICE_FUNC constexpr auto operator()(QuantityMaker<U>) const {
         return QuantityMaker<Prefix<U>>{};
     }
 
     // Applying a Prefix to a QuantityPointMaker instance, changes it to make the Prefixed Unit.
     template <typename U>
-    constexpr auto operator()(QuantityPointMaker<U>) const {
+    AU_DEVICE_FUNC constexpr auto operator()(QuantityPointMaker<U>) const {
         return QuantityPointMaker<Prefix<U>>{};
     }
 
     // Applying a Prefix to a SingularNameFor instance, creates a singularly-named instance of the
     // Prefixed Unit.
     template <typename U>
-    constexpr auto operator()(SingularNameFor<U>) const {
+    AU_DEVICE_FUNC constexpr auto operator()(SingularNameFor<U>) const {
         return SingularNameFor<Prefix<U>>{};
     }
 
     // Applying a Prefix to a SymbolFor instance, creates a symbolically-named instance of the
     // Prefixed unit.
     template <typename U>
-    constexpr auto operator()(SymbolFor<U>) const {
+    AU_DEVICE_FUNC constexpr auto operator()(SymbolFor<U>) const {
         return SymbolFor<Prefix<U>>{};
     }
 };

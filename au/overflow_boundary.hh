@@ -17,6 +17,7 @@
 #include <limits>
 #include <type_traits>
 
+#include "au/config.hh"
 #include "au/abstract_operations.hh"
 #include "au/magnitude.hh"
 #include "au/operators.hh"
@@ -102,7 +103,7 @@ struct MaxValueChecker;
 // `would_value_overflow<Op>(x)` checks whether the value `x` would exceed the bounds of the
 // operation at any stage.
 template <typename Op>
-constexpr bool would_value_overflow(const OpInput<Op> &x) {
+AU_DEVICE_FUNC constexpr bool would_value_overflow(const OpInput<Op> &x) {
     return MinValueChecker<Op>::is_too_small(x) || MaxValueChecker<Op>::is_too_large(x);
 }
 
@@ -782,22 +783,26 @@ struct CanOverflowAbove : stdx::bool_constant<(MaxGood<Op>::value() < MaxPossibl
 
 template <typename Op, bool IsOverflowPossible>
 struct MinValueCheckerImpl {
-    static constexpr bool is_too_small(const OpInput<Op> &x) { return x < MinGood<Op>::value(); }
+    static AU_DEVICE_FUNC constexpr bool is_too_small(const OpInput<Op> &x) {
+        return x < MinGood<Op>::value();
+    }
 };
 template <typename Op>
 struct MinValueCheckerImpl<Op, false> {
-    static constexpr bool is_too_small(const OpInput<Op> &) { return false; }
+    static AU_DEVICE_FUNC constexpr bool is_too_small(const OpInput<Op> &) { return false; }
 };
 template <typename Op>
 struct MinValueChecker : MinValueCheckerImpl<Op, CanOverflowBelow<Op>::value> {};
 
 template <typename Op, bool IsOverflowPossible>
 struct MaxValueCheckerImpl {
-    static constexpr bool is_too_large(const OpInput<Op> &x) { return x > MaxGood<Op>::value(); }
+    static AU_DEVICE_FUNC constexpr bool is_too_large(const OpInput<Op> &x) {
+        return x > MaxGood<Op>::value();
+    }
 };
 template <typename Op>
 struct MaxValueCheckerImpl<Op, false> {
-    static constexpr bool is_too_large(const OpInput<Op> &) { return false; }
+    static AU_DEVICE_FUNC constexpr bool is_too_large(const OpInput<Op> &) { return false; }
 };
 template <typename Op>
 struct MaxValueChecker : MaxValueCheckerImpl<Op, CanOverflowAbove<Op>::value> {};
