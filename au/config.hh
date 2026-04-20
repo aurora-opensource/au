@@ -1,4 +1,4 @@
-// Copyright 2022 Aurora Operations, Inc.
+// Copyright 2026 Aurora Operations, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,20 +14,14 @@
 
 #pragma once
 
-#include <utility>
+//
+// Device/GPU support (CUDA, HIP)
+//
+// The AU_DEVICE_FUNC macro marks functions as callable from both host and device.
+//
 
-#include "au/config.hh"
-
-namespace au {
-namespace stdx {
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/utility/functional/identity)
-struct identity {
-    template <class T>
-    AU_DEVICE_FUNC constexpr T &&operator()(T &&t) const noexcept {
-        return std::forward<T>(t);
-    }
-};
-
-}  // namespace stdx
-}  // namespace au
+#if defined(__CUDACC__) || defined(__HIPCC__)
+#define AU_DEVICE_FUNC __host__ __device__
+#else
+#define AU_DEVICE_FUNC
+#endif

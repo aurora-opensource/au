@@ -19,6 +19,7 @@
 #include <limits>
 #include <type_traits>
 
+#include "au/config.hh"
 #include "au/constant.hh"
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
@@ -63,7 +64,7 @@ auto in_radians(Quantity<U, R> q) {
 }
 
 template <typename T>
-constexpr T int_pow_impl(T x, int exp) {
+AU_DEVICE_FUNC constexpr T int_pow_impl(T x, int exp) {
     if (exp < 0) {
         return T{1} / int_pow_impl(x, -exp);
     }
@@ -163,7 +164,7 @@ auto cbrt(Quantity<U, R> q) {
 
 // Clamp the first quantity to within the range of the second two.
 template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
-constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Quantity<UHi, RHi> hi) {
+AU_DEVICE_FUNC constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Quantity<UHi, RHi> hi) {
     using U = CommonUnit<UV, ULo, UHi>;
     using R = std::common_type_t<RV, RLo, RHi>;
     using ResultT = Quantity<U, R>;
@@ -172,7 +173,7 @@ constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Quantity<UHi, RH
 
 // Clamp the first point to within the range of the second two.
 template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
-constexpr auto clamp(QuantityPoint<UV, RV> v,
+AU_DEVICE_FUNC constexpr auto clamp(QuantityPoint<UV, RV> v,
                      QuantityPoint<ULo, RLo> lo,
                      QuantityPoint<UHi, RHi> hi) {
     using U = CommonPointUnit<UV, ULo, UHi>;
@@ -189,19 +190,19 @@ auto hypot(Quantity<U1, R1> x, Quantity<U2, R2> y) {
 
 // Copysign where the magnitude has units.
 template <typename U, typename R, typename T>
-constexpr auto copysign(Quantity<U, R> mag, T sgn) {
+AU_DEVICE_FUNC constexpr auto copysign(Quantity<U, R> mag, T sgn) {
     return make_quantity<U>(std::copysign(mag.in(U{}), sgn));
 }
 
 // Copysign where the sign has units.
 template <typename T, typename U, typename R>
-constexpr auto copysign(T mag, Quantity<U, R> sgn) {
+AU_DEVICE_FUNC constexpr auto copysign(T mag, Quantity<U, R> sgn) {
     return std::copysign(mag, sgn.in(U{}));
 }
 
 // Copysign where both the magnitude and sign have units (disambiguates between the above).
 template <typename U1, typename R1, typename U2, typename R2>
-constexpr auto copysign(Quantity<U1, R1> mag, Quantity<U2, R2> sgn) {
+AU_DEVICE_FUNC constexpr auto copysign(Quantity<U1, R1> mag, Quantity<U2, R2> sgn) {
     return make_quantity<U1>(std::copysign(mag.in(U1{}), sgn.in(U2{})));
 }
 
@@ -221,7 +222,7 @@ auto fmod(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 
 // Raise a Quantity to an integer power.
 template <int Exp, typename U, typename R>
-constexpr auto int_pow(Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_pow(Quantity<U, R> q) {
     static_assert((!std::is_integral<R>::value) || (Exp >= 0),
                   "Negative exponent on integral represented units are not supported.");
 
@@ -234,7 +235,7 @@ constexpr auto int_pow(Quantity<U, R> q) {
 // This is the "explicit Rep" format, which is semantically equivalent to a `static_cast`.
 //
 template <typename TargetRep, typename TargetUnits, typename U, typename R>
-constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     using Rep = std::common_type_t<TargetRep, R>;
     constexpr auto UNITY = make_constant(UnitProduct<>{});
     return static_cast<TargetRep>(UNITY.in<Rep>(associated_unit(target_units) * U{}) / q.in(U{}));
@@ -248,7 +249,7 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
 // in this case, the library will know to divide into 1'000'000 instead of dividing into 1.)
 //
 template <typename TargetUnits, typename U, typename R>
-constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     // The policy here is similar to our overflow policy, in that we try to avoid "bad outcomes"
     // when users store values less than 1000.  (The thinking, here as there, is that values _more_
     // than 1000 would tend to be stored in the next SI-prefixed unit up, e.g., 1 km instead of 1000
@@ -285,7 +286,7 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
 // (See `inverse_in()` comment above for how this inverse is "smart".)
 //
 template <typename TargetUnits, typename U, typename R>
-constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
     return make_quantity<AssociatedUnit<TargetUnits>>(inverse_in(target_units, q));
 }
 
@@ -295,7 +296,7 @@ constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
 // This is the "explicit Rep" format, which is semantically equivalent to a `static_cast`.
 //
 template <typename TargetRep, typename TargetUnits, typename U, typename R>
-constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
     return make_quantity<AssociatedUnit<TargetUnits>>(inverse_in<TargetRep>(target_units, q));
 }
 
@@ -303,13 +304,13 @@ constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
 // Check whether the value stored is (positive or negative) infinity.
 //
 template <typename U, typename R>
-constexpr bool isinf(Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr bool isinf(Quantity<U, R> q) {
     return std::isinf(q.in(U{}));
 }
 
 // Overload of `isinf` for `QuantityPoint`.
 template <typename U, typename R>
-constexpr bool isinf(QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr bool isinf(QuantityPoint<U, R> p) {
     return std::isinf(p.in(U{}));
 }
 
@@ -317,13 +318,13 @@ constexpr bool isinf(QuantityPoint<U, R> p) {
 // Check whether the value stored is "not a number" (NaN).
 //
 template <typename U, typename R>
-constexpr bool isnan(Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr bool isnan(Quantity<U, R> q) {
     return std::isnan(q.in(U{}));
 }
 
 // Overload of `isnan` for `QuantityPoint`.
 template <typename U, typename R>
-constexpr bool isnan(QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr bool isnan(QuantityPoint<U, R> p) {
     return std::isnan(p.in(U{}));
 }
 
@@ -338,13 +339,13 @@ constexpr bool isnan(QuantityPoint<U, R> p) {
 //
 #if defined(__cpp_lib_interpolate) && __cpp_lib_interpolate >= 201902L
 template <typename U1, typename R1, typename U2, typename R2, typename T>
-constexpr auto lerp(Quantity<U1, R1> q1, Quantity<U2, R2> q2, T t) {
+AU_DEVICE_FUNC constexpr auto lerp(Quantity<U1, R1> q1, Quantity<U2, R2> q2, T t) {
     using U = CommonUnit<U1, U2>;
     return make_quantity<U>(std::lerp(q1.in(U{}), q2.in(U{}), as_raw_number(t)));
 }
 
 template <typename U1, typename R1, typename U2, typename R2, typename T>
-constexpr auto lerp(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2, T t) {
+AU_DEVICE_FUNC constexpr auto lerp(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2, T t) {
     using U = CommonPointUnit<U1, U2>;
     return make_quantity_point<U>(std::lerp(p1.in(U{}), p2.in(U{}), as_raw_number(t)));
 }
@@ -354,7 +355,7 @@ namespace detail {
 // We can't use lambdas in `constexpr` contexts until C++17, so we make a manual function object.
 struct StdMaxByValue {
     template <typename T>
-    constexpr auto operator()(T a, T b) const {
+    AU_DEVICE_FUNC constexpr auto operator()(T a, T b) const {
         return std::max(a, b);
     }
 };
@@ -364,7 +365,7 @@ struct StdMaxByValue {
 //
 // Unlike std::max, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto max(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr auto max(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::using_common_type(q1, q2, detail::StdMaxByValue{});
 }
 
@@ -372,13 +373,13 @@ constexpr auto max(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 //
 // Unlike std::max, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto max(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto max(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::using_common_point_unit(p1, p2, detail::StdMaxByValue{});
 }
 
 // Overload to resolve ambiguity with `std::max` for identical `QuantityPoint` types.
 template <typename U, typename R>
-constexpr auto max(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
+AU_DEVICE_FUNC constexpr auto max(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
     return std::max(a, b);
 }
 
@@ -386,7 +387,7 @@ namespace detail {
 // We can't use lambdas in `constexpr` contexts until C++17, so we make a manual function object.
 struct StdMinByValue {
     template <typename T>
-    constexpr auto operator()(T a, T b) const {
+    AU_DEVICE_FUNC constexpr auto operator()(T a, T b) const {
         return std::min(a, b);
     }
 };
@@ -396,7 +397,7 @@ struct StdMinByValue {
 //
 // Unlike std::min, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto min(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr auto min(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::using_common_type(q1, q2, detail::StdMinByValue{});
 }
 
@@ -404,18 +405,18 @@ constexpr auto min(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 //
 // Unlike std::min, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto min(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto min(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::using_common_point_unit(p1, p2, detail::StdMinByValue{});
 }
 
 // Overload to resolve ambiguity with `std::min` for identical `QuantityPoint` types.
 template <typename U, typename R>
-constexpr auto min(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
+AU_DEVICE_FUNC constexpr auto min(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
     return std::min(a, b);
 }
 
 template <typename U0, typename R0, typename... Us, typename... Rs>
-constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs) {
+AU_DEVICE_FUNC constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs) {
     static_assert(sizeof...(qs) > 0, "mean() requires at least two inputs");
     using R = std::common_type_t<R0, Rs...>;
     using Common = Quantity<CommonUnit<U0, Us...>, R>;
@@ -429,7 +430,7 @@ constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs) {
 }
 
 template <typename U0, typename R0, typename... Us, typename... Rs>
-constexpr auto mean(QuantityPoint<U0, R0> p0, QuantityPoint<Us, Rs>... ps) {
+AU_DEVICE_FUNC constexpr auto mean(QuantityPoint<U0, R0> p0, QuantityPoint<Us, Rs>... ps) {
     static_assert(sizeof...(ps) > 0, "mean() requires at least two inputs");
     using U = CommonPointUnit<U0, Us...>;
     using R = std::common_type_t<R0, Rs...>;
@@ -486,7 +487,7 @@ auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 }
 // c) Version for Constant.
 template <typename OutputRep, typename RoundingUnits, typename U>
-constexpr auto round_in(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto round_in(RoundingUnits rounding_units, Constant<U> c) {
     return get_value<OutputRep>(mag_round(unit_ratio(c, rounding_units)));
 }
 
@@ -507,7 +508,7 @@ auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 }
 // c) Version for Constant.
 template <typename RoundingUnits, typename U>
-constexpr auto round_as(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto round_as(RoundingUnits rounding_units, Constant<U> c) {
     return mag_round(unit_ratio(c, rounding_units)) * make_constant(rounding_units);
 }
 
@@ -564,7 +565,7 @@ auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 }
 // c) Version for Constant.
 template <typename OutputRep, typename RoundingUnits, typename U>
-constexpr auto floor_in(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto floor_in(RoundingUnits rounding_units, Constant<U> c) {
     return get_value<OutputRep>(mag_floor(unit_ratio(c, rounding_units)));
 }
 
@@ -585,7 +586,7 @@ auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 }
 // c) Version for Constant.
 template <typename RoundingUnits, typename U>
-constexpr auto floor_as(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto floor_as(RoundingUnits rounding_units, Constant<U> c) {
     return mag_floor(unit_ratio(c, rounding_units)) * make_constant(rounding_units);
 }
 
@@ -642,7 +643,7 @@ auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 }
 // c) Version for Constant.
 template <typename OutputRep, typename RoundingUnits, typename U>
-constexpr auto ceil_in(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto ceil_in(RoundingUnits rounding_units, Constant<U> c) {
     return get_value<OutputRep>(mag_ceil(unit_ratio(c, rounding_units)));
 }
 
@@ -663,7 +664,7 @@ auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 }
 // c) Version for Constant.
 template <typename RoundingUnits, typename U>
-constexpr auto ceil_as(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto ceil_as(RoundingUnits rounding_units, Constant<U> c) {
     return mag_ceil(unit_ratio(c, rounding_units)) * make_constant(rounding_units);
 }
 
@@ -692,7 +693,7 @@ auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 //
 // Common implementation helper:
 template <typename RoundingUnits, template <class, class> class QType, typename U, typename R>
-constexpr auto int_round_as_impl(RoundingUnits, QType<U, R> val) {
+AU_DEVICE_FUNC constexpr auto int_round_as_impl(RoundingUnits, QType<U, R> val) {
     static_assert(std::is_integral<R>::value, "int_round_as requires integral Rep type");
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
@@ -702,17 +703,17 @@ constexpr auto int_round_as_impl(RoundingUnits, QType<U, R> val) {
 }
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_round_as_impl(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_round_as_impl(rounding_units, p);
 }
 // (c) Version for Constant.
 template <typename RoundingUnits, typename U>
-constexpr auto int_round_as(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto int_round_as(RoundingUnits rounding_units, Constant<U> c) {
     return round_as(rounding_units, c);  // For `Constant`, identical to `round_as`.
 }
 
@@ -728,7 +729,7 @@ template <typename OutputRep,
           class QType,
           typename U,
           typename R>
-constexpr auto int_round_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
+AU_DEVICE_FUNC constexpr auto int_round_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
     static_assert(std::is_integral<OutputRep>::value, "int_round_as output must be integral");
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
@@ -739,12 +740,12 @@ constexpr auto int_round_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
 }
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_round_as_explicit_rep_impl<OutputRep>(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_round_as_explicit_rep_impl<OutputRep>(rounding_units, p);
 }
 
@@ -755,12 +756,12 @@ constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p)
 //
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_round_as(rounding_units, q).in(rounding_units);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_round_as(rounding_units, p).in(associated_unit_for_points(rounding_units));
 }
 
@@ -771,17 +772,17 @@ constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p)
 //
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_round_as<OutputRep>(rounding_units, q).in(rounding_units);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_round_as<OutputRep>(rounding_units, p).in(rounding_units);
 }
 // (c) Version for Constant.
 template <typename OutputRep, typename RoundingUnits, typename U>
-constexpr auto int_round_in(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto int_round_in(RoundingUnits rounding_units, Constant<U> c) {
     return round_in<OutputRep>(rounding_units, c);  // For `Constant`, identical to `round_in`.
 }
 
@@ -792,7 +793,7 @@ constexpr auto int_round_in(RoundingUnits rounding_units, Constant<U> c) {
 //
 // Common implementation helper:
 template <typename RoundingUnits, template <class, class> class QType, typename U, typename R>
-constexpr auto int_floor_as_impl(RoundingUnits, QType<U, R> val) {
+AU_DEVICE_FUNC constexpr auto int_floor_as_impl(RoundingUnits, QType<U, R> val) {
     static_assert(std::is_integral<R>::value, "int_floor_as requires integral Rep type");
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
@@ -802,17 +803,17 @@ constexpr auto int_floor_as_impl(RoundingUnits, QType<U, R> val) {
 }
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_floor_as_impl(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_floor_as_impl(rounding_units, p);
 }
 // (c) Version for Constant.
 template <typename RoundingUnits, typename U>
-constexpr auto int_floor_as(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto int_floor_as(RoundingUnits rounding_units, Constant<U> c) {
     return floor_as(rounding_units, c);  // For `Constant`, identical to `floor_as`.
 }
 
@@ -828,7 +829,7 @@ template <typename OutputRep,
           class QType,
           typename U,
           typename R>
-constexpr auto int_floor_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
+AU_DEVICE_FUNC constexpr auto int_floor_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
     static_assert(std::is_integral<OutputRep>::value, "int_floor_as output must be integral");
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
@@ -838,12 +839,12 @@ constexpr auto int_floor_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
 }
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_floor_as_explicit_rep_impl<OutputRep>(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_floor_as_explicit_rep_impl<OutputRep>(rounding_units, p);
 }
 
@@ -854,12 +855,12 @@ constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p)
 //
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_floor_as(rounding_units, q).in(rounding_units);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_floor_as(rounding_units, p).in(associated_unit_for_points(rounding_units));
 }
 
@@ -870,17 +871,17 @@ constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p)
 //
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_floor_as<OutputRep>(rounding_units, q).in(rounding_units);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_floor_as<OutputRep>(rounding_units, p).in(rounding_units);
 }
 // (c) Version for Constant.
 template <typename OutputRep, typename RoundingUnits, typename U>
-constexpr auto int_floor_in(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto int_floor_in(RoundingUnits rounding_units, Constant<U> c) {
     return floor_in<OutputRep>(rounding_units, c);  // For `Constant`, identical to `floor_in`.
 }
 
@@ -891,7 +892,7 @@ constexpr auto int_floor_in(RoundingUnits rounding_units, Constant<U> c) {
 //
 // Common implementation helper:
 template <typename RoundingUnits, template <class, class> class QType, typename U, typename R>
-constexpr auto int_ceil_as_impl(RoundingUnits, QType<U, R> val) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as_impl(RoundingUnits, QType<U, R> val) {
     static_assert(std::is_integral<R>::value, "int_ceil_as requires integral Rep type");
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
@@ -901,17 +902,17 @@ constexpr auto int_ceil_as_impl(RoundingUnits, QType<U, R> val) {
 }
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_ceil_as_impl(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_ceil_as_impl(rounding_units, p);
 }
 // (c) Version for Constant.
 template <typename RoundingUnits, typename U>
-constexpr auto int_ceil_as(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as(RoundingUnits rounding_units, Constant<U> c) {
     return ceil_as(rounding_units, c);  // For `Constant`, identical to `ceil_as`.
 }
 
@@ -927,7 +928,7 @@ template <typename OutputRep,
           class QType,
           typename U,
           typename R>
-constexpr auto int_ceil_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
     static_assert(std::is_integral<OutputRep>::value, "int_ceil_as output must be integral");
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
@@ -937,12 +938,12 @@ constexpr auto int_ceil_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
 }
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_ceil_as_explicit_rep_impl<OutputRep>(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_ceil_as_explicit_rep_impl<OutputRep>(rounding_units, p);
 }
 
@@ -953,12 +954,12 @@ constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) 
 //
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_ceil_as(rounding_units, q).in(rounding_units);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_ceil_as(rounding_units, p).in(associated_unit_for_points(rounding_units));
 }
 
@@ -969,17 +970,17 @@ constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) 
 //
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_ceil_as<OutputRep>(rounding_units, q).in(rounding_units);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_ceil_as<OutputRep>(rounding_units, p).in(rounding_units);
 }
 // (c) Version for Constant.
 template <typename OutputRep, typename RoundingUnits, typename U>
-constexpr auto int_ceil_in(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto int_ceil_in(RoundingUnits rounding_units, Constant<U> c) {
     return ceil_in<OutputRep>(rounding_units, c);  // For `Constant`, identical to `ceil_in`.
 }
 

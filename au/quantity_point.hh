@@ -18,6 +18,7 @@
 #include <compare>
 #endif
 
+#include "au/config.hh"
 #include "au/constant.hh"
 #include "au/fwd.hh"
 #include "au/quantity.hh"
@@ -42,7 +43,7 @@ namespace au {
 
 // Make a Quantity of the given Unit, which has this value as measured in the Unit.
 template <typename UnitT, typename T>
-constexpr auto make_quantity_point(T value) {
+AU_DEVICE_FUNC constexpr auto make_quantity_point(T value) {
     return QuantityPointMaker<UnitT>{}(value);
 }
 
@@ -59,7 +60,7 @@ struct IntermediateRep;
 // "origin" of another unit of the same Dimension _is_ meaningful.  This type trait provides access
 // to that difference.
 template <typename U1, typename U2>
-constexpr auto origin_displacement(U1, U2) {
+AU_DEVICE_FUNC constexpr auto origin_displacement(U1, U2) {
     return make_constant(detail::ComputeOriginDisplacementUnit<AssociatedUnitForPoints<U1>,
                                                                AssociatedUnitForPoints<U2>>{});
 }
@@ -107,12 +108,12 @@ class QuantityPoint {
     // The default constructor produces a QuantityPoint whose value is default constructed.  It
     // exists to give you an object you can assign to.  The main motivating factor for including
     // this is to support `std::atomic`, which requires its types to be default-constructible.
-    constexpr QuantityPoint() noexcept : x_{} {}
+    AU_DEVICE_FUNC constexpr QuantityPoint() noexcept : x_{} {}
 
     template <typename OtherUnit,
               typename OtherRep,
               typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>>
-    constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
+    AU_DEVICE_FUNC constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
         : QuantityPoint{other.template as<Rep>(unit)} {}
 
     template <typename OtherUnit,
@@ -127,7 +128,7 @@ class QuantityPoint {
               typename OtherRep,
               typename RiskPolicyT,
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
-    constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other, RiskPolicyT policy)
+    AU_DEVICE_FUNC constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other, RiskPolicyT policy)
         : QuantityPoint{other.template as<Rep>(Unit{}, policy)} {}
 
     // The notion of "0" is *not* unambiguous for point types, because different scales can make
@@ -138,7 +139,7 @@ class QuantityPoint {
     template <typename NewRep,
               typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
-    constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity_point<Unit>(in_impl<NewRep>(Unit{}, policy));
     }
 
@@ -147,23 +148,23 @@ class QuantityPoint {
               typename NewUnit,
               typename RiskPolicyT = decltype(ignore(ALL_RISKS)),
               std::enable_if_t<!IsConversionRiskPolicy<NewUnit>::value, int> = 0>
-    constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<NewRep>(u, policy));
     }
 
     // `p.as(new_unit)`, or `p.as(new_unit, risk_policy)`
     template <typename NewUnit, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
-    constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<Rep>(u, policy));
     }
 
     template <typename NewRep, typename NewUnit, typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
-    constexpr NewRep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr NewRep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<NewRep>(u, policy);
     }
 
     template <typename NewUnit, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
-    constexpr Rep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr Rep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<Rep>(u, policy);
     }
 
@@ -193,45 +194,45 @@ class QuantityPoint {
     //
     // Mutable access:
     template <typename UnitSlot>
-    constexpr Rep &data_in(UnitSlot) {
+    AU_DEVICE_FUNC constexpr Rep &data_in(UnitSlot) {
         static_assert(AreUnitsPointEquivalent<AssociatedUnitForPoints<UnitSlot>, Unit>::value,
                       "Can only access value via Point-equivalent unit");
         return x_.data_in(AssociatedUnitForPoints<UnitSlot>{});
     }
     // Const access:
     template <typename UnitSlot>
-    constexpr const Rep &data_in(UnitSlot) const {
+    AU_DEVICE_FUNC constexpr const Rep &data_in(UnitSlot) const {
         static_assert(AreUnitsPointEquivalent<AssociatedUnitForPoints<UnitSlot>, Unit>::value,
                       "Can only access value via Point-equivalent unit");
         return x_.data_in(AssociatedUnitForPoints<UnitSlot>{});
     }
 
     // Comparison operators.
-    constexpr friend bool operator==(QuantityPoint a, QuantityPoint b) { return a.x_ == b.x_; }
-    constexpr friend bool operator!=(QuantityPoint a, QuantityPoint b) { return a.x_ != b.x_; }
-    constexpr friend bool operator>=(QuantityPoint a, QuantityPoint b) { return a.x_ >= b.x_; }
-    constexpr friend bool operator>(QuantityPoint a, QuantityPoint b) { return a.x_ > b.x_; }
-    constexpr friend bool operator<=(QuantityPoint a, QuantityPoint b) { return a.x_ <= b.x_; }
-    constexpr friend bool operator<(QuantityPoint a, QuantityPoint b) { return a.x_ < b.x_; }
+    AU_DEVICE_FUNC constexpr friend bool operator==(QuantityPoint a, QuantityPoint b) { return a.x_ == b.x_; }
+    AU_DEVICE_FUNC constexpr friend bool operator!=(QuantityPoint a, QuantityPoint b) { return a.x_ != b.x_; }
+    AU_DEVICE_FUNC constexpr friend bool operator>=(QuantityPoint a, QuantityPoint b) { return a.x_ >= b.x_; }
+    AU_DEVICE_FUNC constexpr friend bool operator>(QuantityPoint a, QuantityPoint b) { return a.x_ > b.x_; }
+    AU_DEVICE_FUNC constexpr friend bool operator<=(QuantityPoint a, QuantityPoint b) { return a.x_ <= b.x_; }
+    AU_DEVICE_FUNC constexpr friend bool operator<(QuantityPoint a, QuantityPoint b) { return a.x_ < b.x_; }
 
     // Subtraction between two QuantityPoint types.
-    constexpr friend auto operator-(QuantityPoint a, QuantityPoint b) { return a.x_ - b.x_; }
+    AU_DEVICE_FUNC constexpr friend auto operator-(QuantityPoint a, QuantityPoint b) { return a.x_ - b.x_; }
 
     // Left and right addition of a Diff.
-    constexpr friend auto operator+(Diff d, QuantityPoint p) { return QuantityPoint{d + p.x_}; }
-    constexpr friend auto operator+(QuantityPoint p, Diff d) { return QuantityPoint{p.x_ + d}; }
+    AU_DEVICE_FUNC constexpr friend auto operator+(Diff d, QuantityPoint p) { return QuantityPoint{d + p.x_}; }
+    AU_DEVICE_FUNC constexpr friend auto operator+(QuantityPoint p, Diff d) { return QuantityPoint{p.x_ + d}; }
 
     // Right subtraction of a Diff.
-    constexpr friend auto operator-(QuantityPoint p, Diff d) { return QuantityPoint{p.x_ - d}; }
+    AU_DEVICE_FUNC constexpr friend auto operator-(QuantityPoint p, Diff d) { return QuantityPoint{p.x_ - d}; }
 
     // Short-hand addition assignment.
-    constexpr QuantityPoint &operator+=(Diff diff) {
+    AU_DEVICE_FUNC constexpr QuantityPoint &operator+=(Diff diff) {
         x_ += diff;
         return *this;
     }
 
     // Short-hand subtraction assignment.
-    constexpr QuantityPoint &operator-=(Diff diff) {
+    AU_DEVICE_FUNC constexpr QuantityPoint &operator-=(Diff diff) {
         x_ -= diff;
         return *this;
     }
@@ -245,7 +246,7 @@ class QuantityPoint {
 
  private:
     template <typename OtherRep, typename OtherPointUnitSlot, typename RiskPolicyT>
-    constexpr OtherRep in_impl(OtherPointUnitSlot, RiskPolicyT policy) const {
+    AU_DEVICE_FUNC constexpr OtherRep in_impl(OtherPointUnitSlot, RiskPolicyT policy) const {
         using OtherUnit = AssociatedUnitForPoints<OtherPointUnitSlot>;
         using OriginDisplacementUnit = detail::ComputeOriginDisplacementUnit<Unit, OtherUnit>;
         using Common = CommonUnit<Unit, OtherUnit, OriginDisplacementUnit>;
@@ -257,7 +258,7 @@ class QuantityPoint {
         return intermediate_result.template in<OtherRep>(OtherUnit{}, policy);
     }
 
-    constexpr explicit QuantityPoint(Diff x) : x_{x} {}
+    AU_DEVICE_FUNC constexpr explicit QuantityPoint(Diff x) : x_{x} {}
 
     Diff x_;
 };
@@ -267,30 +268,30 @@ struct QuantityPointMaker {
     static constexpr auto unit = Unit{};
 
     template <typename T>
-    constexpr auto operator()(T value) const {
+    AU_DEVICE_FUNC constexpr auto operator()(T value) const {
         return QuantityPoint<Unit, T>{make_quantity<Unit>(value)};
     }
 
     template <typename U, typename R>
-    constexpr void operator()(Quantity<U, R>) const {
+    AU_DEVICE_FUNC constexpr void operator()(Quantity<U, R>) const {
         constexpr bool is_not_a_quantity = detail::AlwaysFalse<U, R>::value;
         static_assert(is_not_a_quantity, "Input to QuantityPointMaker is a Quantity");
     }
 
     template <typename U, typename R>
-    constexpr void operator()(QuantityPoint<U, R>) const {
+    AU_DEVICE_FUNC constexpr void operator()(QuantityPoint<U, R>) const {
         constexpr bool is_not_already_a_quantity_point = detail::AlwaysFalse<U, R>::value;
         static_assert(is_not_already_a_quantity_point,
                       "Input to QuantityPointMaker is already a QuantityPoint");
     }
 
     template <typename... BPs>
-    constexpr auto operator*(Magnitude<BPs...> m) const {
+    AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BPs...> m) const {
         return QuantityPointMaker<decltype(unit * m)>{};
     }
 
     template <typename... BPs>
-    constexpr auto operator/(Magnitude<BPs...> m) const {
+    AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BPs...> m) const {
         return QuantityPointMaker<decltype(unit / m)>{};
     }
 };
@@ -326,20 +327,20 @@ struct AreQuantityPointTypesEquivalent<QuantityPoint<U1, R1>, QuantityPoint<U2, 
 
 // Cast QuantityPoint to a different underlying type.
 template <typename NewRep, typename Unit, typename Rep>
-constexpr auto rep_cast(QuantityPoint<Unit, Rep> q) {
+AU_DEVICE_FUNC constexpr auto rep_cast(QuantityPoint<Unit, Rep> q) {
     return q.template as<NewRep>(Unit{});
 }
 
 namespace detail {
 template <typename X, typename Y, typename Func>
-constexpr auto using_common_point_unit(X x, Y y, Func f) {
+AU_DEVICE_FUNC constexpr auto using_common_point_unit(X x, Y y, Func f) {
     using R = std::common_type_t<typename X::Rep, typename Y::Rep>;
     constexpr auto u = CommonPointUnit<typename X::Unit, typename Y::Unit>{};
     return f(rep_cast<R>(x).as(u), rep_cast<R>(y).as(u));
 }
 
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
-constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     using U = CommonPointUnit<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
@@ -351,27 +352,27 @@ constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R
 
 // Comparison functions for compatible QuantityPoint types.
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator<(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator<(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::convert_and_compare<detail::Less>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator>(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator>(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::convert_and_compare<detail::Greater>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator<=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator<=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::convert_and_compare<detail::LessEqual>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator>=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator>=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::convert_and_compare<detail::GreaterEqual>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator==(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator==(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::convert_and_compare<detail::Equal>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator!=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator!=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::convert_and_compare<detail::NotEqual>(p1, p2);
 }
 
@@ -388,35 +389,35 @@ namespace detail {
 // This utility should be used for every overload below which combines a `QuantityPoint` with a
 // `Quantity`.
 template <typename Target, typename U>
-constexpr auto borrow_origin(U u) {
+AU_DEVICE_FUNC constexpr auto borrow_origin(U u) {
     return Target{} * unit_ratio(u, Target{});
 }
 }  // namespace detail
 
 // Addition and subtraction functions for compatible QuantityPoint types.
 template <typename UnitP, typename UnitQ, typename RepP, typename RepQ>
-constexpr auto operator+(QuantityPoint<UnitP, RepP> p, Quantity<UnitQ, RepQ> q) {
+AU_DEVICE_FUNC constexpr auto operator+(QuantityPoint<UnitP, RepP> p, Quantity<UnitQ, RepQ> q) {
     constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
     return detail::using_common_point_unit(p, q.as(new_unit_q), detail::plus);
 }
 template <typename UnitQ, typename UnitP, typename RepQ, typename RepP>
-constexpr auto operator+(Quantity<UnitQ, RepQ> q, QuantityPoint<UnitP, RepP> p) {
+AU_DEVICE_FUNC constexpr auto operator+(Quantity<UnitQ, RepQ> q, QuantityPoint<UnitP, RepP> p) {
     constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
     return detail::using_common_point_unit(q.as(new_unit_q), p, detail::plus);
 }
 template <typename UnitP, typename UnitQ, typename R1, typename RepQ>
-constexpr auto operator-(QuantityPoint<UnitP, R1> p, Quantity<UnitQ, RepQ> q) {
+AU_DEVICE_FUNC constexpr auto operator-(QuantityPoint<UnitP, R1> p, Quantity<UnitQ, RepQ> q) {
     constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
     return detail::using_common_point_unit(p, q.as(new_unit_q), detail::minus);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator-(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator-(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::using_common_point_unit(p1, p2, detail::minus);
 }
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename U1, typename R1, typename U2, typename R2>
-constexpr auto operator<=>(const QuantityPoint<U1, R1> &lhs, const QuantityPoint<U2, R2> &rhs) {
+AU_DEVICE_FUNC constexpr auto operator<=>(const QuantityPoint<U1, R1> &lhs, const QuantityPoint<U2, R2> &rhs) {
     return detail::convert_and_compare<detail::ThreeWayCompare>(lhs, rhs);
 }
 #endif

@@ -16,6 +16,7 @@
 
 #include <limits>
 
+#include "au/config.hh"
 #include "au/conversion_strategy.hh"
 #include "au/magnitude.hh"
 #include "au/operators.hh"
@@ -52,32 +53,36 @@ struct RiskSet {
     static_assert(RiskFlags <= 3u, "Invalid risk flags");
 
     template <uint8_t OtherFlags>
-    constexpr RiskSet<RiskFlags | OtherFlags> operator|(RiskSet<OtherFlags>) const {
+    AU_DEVICE_FUNC constexpr RiskSet<RiskFlags | OtherFlags> operator|(RiskSet<OtherFlags>) const {
         return {};
     }
 
-    constexpr uint8_t flags() const { return RiskFlags; }
+    AU_DEVICE_FUNC constexpr uint8_t flags() const { return RiskFlags; }
 
-    friend constexpr CheckTheseRisks<RiskSet<RiskFlags>> check_for(RiskSet) { return {}; }
-    friend constexpr CheckTheseRisks<RiskSet<3u - RiskFlags>> ignore(RiskSet) { return {}; }
+    friend AU_DEVICE_FUNC constexpr CheckTheseRisks<RiskSet<RiskFlags>> check_for(RiskSet) {
+        return {};
+    }
+    friend AU_DEVICE_FUNC constexpr CheckTheseRisks<RiskSet<3u - RiskFlags>> ignore(RiskSet) {
+        return {};
+    }
 };
 
 template <uint8_t RiskFlags>
 struct CheckTheseRisks<RiskSet<RiskFlags>> {
-    constexpr bool should_check(ConversionRisk risk) const {
+    AU_DEVICE_FUNC constexpr bool should_check(ConversionRisk risk) const {
         return (RiskFlags & static_cast<uint8_t>(risk)) != 0u;
     }
 
     // Remove risks from the checked set.
     template <uint8_t OtherFlags>
-    constexpr CheckTheseRisks<RiskSet<RiskFlags & ~OtherFlags>> but_ignoring(
+    AU_DEVICE_FUNC constexpr CheckTheseRisks<RiskSet<RiskFlags & ~OtherFlags>> but_ignoring(
         RiskSet<OtherFlags>) const {
         return {};
     }
 
     // Add risks to the checked set.
     template <uint8_t OtherFlags>
-    constexpr CheckTheseRisks<RiskSet<RiskFlags | OtherFlags>> but_also_checking_for(
+    AU_DEVICE_FUNC constexpr CheckTheseRisks<RiskSet<RiskFlags | OtherFlags>> but_also_checking_for(
         RiskSet<OtherFlags>) const {
         return {};
     }
@@ -122,7 +127,7 @@ struct SettingPureRealFromMixedReal
                         std::is_same<Rep, RealPart<Rep>>> {};
 
 template <typename T>
-constexpr bool meets_threshold(T x) {
+AU_DEVICE_FUNC constexpr bool meets_threshold(T x) {
     constexpr auto threshold_result = get_value_result<T>(OVERFLOW_THRESHOLD);
     static_assert(threshold_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT ||
                       threshold_result.outcome == MagRepresentationOutcome::OK,
@@ -208,7 +213,8 @@ struct ImplicitRepPermitted
           Rep> {};
 
 template <typename Rep, typename SourceUnitSlot, typename TargetUnitSlot>
-constexpr bool implicit_rep_permitted_from_source_to_target(SourceUnitSlot, TargetUnitSlot) {
+AU_DEVICE_FUNC constexpr bool implicit_rep_permitted_from_source_to_target(SourceUnitSlot,
+                                                                           TargetUnitSlot) {
     using SourceUnit = AssociatedUnit<SourceUnitSlot>;
     using TargetUnit = AssociatedUnit<TargetUnitSlot>;
     static_assert(HasSameDimension<SourceUnit, TargetUnit>::value,

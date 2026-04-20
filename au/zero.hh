@@ -21,6 +21,7 @@
 #include <compare>
 #endif
 
+#include "au/config.hh"
 #include "au/fwd.hh"
 
 namespace au {
@@ -40,13 +41,13 @@ namespace au {
 struct Zero {
     // Implicit conversion to arithmetic types.
     template <typename T, typename Enable = std::enable_if_t<std::is_arithmetic<T>::value>>
-    constexpr operator T() const {
+    AU_DEVICE_FUNC constexpr operator T() const {
         return 0;
     }
 
     // Implicit conversion to chrono durations.
     template <typename Rep, typename Period>
-    constexpr operator std::chrono::duration<Rep, Period>() const {
+    AU_DEVICE_FUNC constexpr operator std::chrono::duration<Rep, Period>() const {
         return std::chrono::duration<Rep, Period>{0};
     }
 };
@@ -58,23 +59,23 @@ struct Zero {
 static constexpr auto ZERO = Zero{};
 
 // Addition, subtraction, and comparison of Zero are well defined.
-inline constexpr Zero operator+(Zero, Zero) { return ZERO; }
-inline constexpr Zero operator-(Zero, Zero) { return ZERO; }
-inline constexpr bool operator==(Zero, Zero) { return true; }
-inline constexpr bool operator>=(Zero, Zero) { return true; }
-inline constexpr bool operator<=(Zero, Zero) { return true; }
-inline constexpr bool operator!=(Zero, Zero) { return false; }
-inline constexpr bool operator>(Zero, Zero) { return false; }
-inline constexpr bool operator<(Zero, Zero) { return false; }
+inline AU_DEVICE_FUNC constexpr Zero operator+(Zero, Zero) { return ZERO; }
+inline AU_DEVICE_FUNC constexpr Zero operator-(Zero, Zero) { return ZERO; }
+inline AU_DEVICE_FUNC constexpr bool operator==(Zero, Zero) { return true; }
+inline AU_DEVICE_FUNC constexpr bool operator>=(Zero, Zero) { return true; }
+inline AU_DEVICE_FUNC constexpr bool operator<=(Zero, Zero) { return true; }
+inline AU_DEVICE_FUNC constexpr bool operator!=(Zero, Zero) { return false; }
+inline AU_DEVICE_FUNC constexpr bool operator>(Zero, Zero) { return false; }
+inline AU_DEVICE_FUNC constexpr bool operator<(Zero, Zero) { return false; }
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
-inline constexpr auto operator<=>(Zero, Zero) { return 0 <=> 0; }
+inline AU_DEVICE_FUNC constexpr auto operator<=>(Zero, Zero) { return 0 <=> 0; }
 #endif
 
 // Implementation helper for "a type where value() returns 0".
 template <typename T>
 struct ValueOfZero {
-    static constexpr T value() { return ZERO; }
+    static AU_DEVICE_FUNC constexpr T value() { return ZERO; }
 };
 
 }  // namespace au
