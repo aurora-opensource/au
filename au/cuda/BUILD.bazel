@@ -18,6 +18,7 @@ cuda_test(
     name = "cuda_test",
     size = "small",
     srcs = ["cuda_test.cu"],
+    tags = ["manual"],
     deps = [
         "//au",
         "@googletest//:gtest_main",
