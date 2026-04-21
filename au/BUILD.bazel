@@ -13,7 +13,6 @@
 # limitations under the License.
 
 load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
-load("@rules_cuda//cuda:defs.bzl", "cuda_test")
 
 ################################################################################
 # Public libraries and tests
@@ -803,20 +802,6 @@ cc_test(
     deps = [
         ":testing",
         ":zero",
-        "@googletest//:gtest_main",
-    ],
-)
-
-################################################################################
-# CUDA compilation test
-
-cuda_test(
-    name = "cuda_test",
-    size = "small",
-    srcs = ["cuda_test.cu"],
-    tags = ["cuda"],
-    deps = [
-        ":au",
         "@googletest//:gtest_main",
     ],
 )

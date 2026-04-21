@@ -226,8 +226,11 @@ bazel_dep(name = "rules_shell", version = "0.6.1", dev_dependency = True)
 
 # CUDA toolchain configuration.
 cuda = use_extension("@rules_cuda//cuda:extensions.bzl", "toolchain", dev_dependency = True)
-cuda.local_toolchain()
-use_repo(cuda, "local_cuda")
+cuda.toolkit(
+    name = "cuda",
+    toolkit_path = "",
+)
+use_repo(cuda, "cuda")
 
 http_archive(
     name = "com_github_bazelbuild_buildtools",

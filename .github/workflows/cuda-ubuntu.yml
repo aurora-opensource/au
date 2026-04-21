@@ -38,4 +38,4 @@ jobs:
         run: nvcc --version
 
       - name: Build and test CUDA target
-        run: bazel test //au:cuda_test
+        run: bazel test //au/cuda:cuda_test
