@@ -36,6 +36,7 @@ bazel_dep(name = "bazel_skylib", version = "1.8.1", dev_dependency = True)
 bazel_dep(name = "fmt", version = "11.0.2", dev_dependency = True)
 bazel_dep(name = "gcc_toolchain", version = "0.9.0", dev_dependency = True)
 bazel_dep(name = "platforms", version = "1.0.0", dev_dependency = True)
+bazel_dep(name = "rules_cuda", version = "0.3.0", dev_dependency = True)
 bazel_dep(name = "rules_python", version = "1.6.0", dev_dependency = True)
 bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
 single_version_override(
@@ -222,6 +223,11 @@ use_repo(
 
 bazel_dep(name = "rules_proto", version = "7.1.0", dev_dependency = True)
 bazel_dep(name = "rules_shell", version = "0.6.1", dev_dependency = True)
+
+# CUDA toolchain configuration.
+cuda = use_extension("@rules_cuda//cuda:extensions.bzl", "toolchain", dev_dependency = True)
+cuda.local_toolchain()
+use_repo(cuda, "local_cuda")
 
 http_archive(
     name = "com_github_bazelbuild_buildtools",

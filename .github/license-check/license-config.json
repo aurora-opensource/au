@@ -37,8 +37,9 @@
   },
   {
     "include": [
-      "**/*.hh",
       "**/*.cc",
+      "**/*.cu",
+      "**/*.hh",
       "docs/assets/hrh4.js"
     ],
     "exclude": [
