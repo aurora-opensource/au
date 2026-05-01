@@ -32,6 +32,7 @@ jobs:
         id: cuda-toolkit
         with:
           cuda: "12.6.3"
+          method: network
 
       - name: Verify CUDA installation
         run: nvcc --version
