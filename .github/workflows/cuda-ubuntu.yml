@@ -37,4 +37,4 @@ jobs:
         run: nvcc --version
 
       - name: Build and test CUDA target
-        run: bazel test //au/cuda:cuda_test --config=gcc --action_env=PATH=/usr/bin:/bin:$PATH
+        run: bazel test //au/cuda:cuda_test --config=gcc12 --action_env=PATH=/usr/bin:/bin:$PATH
