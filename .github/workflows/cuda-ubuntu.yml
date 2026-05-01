@@ -37,4 +37,4 @@ jobs:
         run: nvcc --version
 
       - name: Build and test CUDA target
-        run: bazel test //au/cuda:cuda_test --config=gcc
+        run: bazel test //au/cuda:cuda_test --noincompatible_enable_cc_toolchain_resolution
