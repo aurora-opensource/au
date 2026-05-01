@@ -927,7 +927,8 @@ struct BasePowerValueImpl<T, N, D, B, SignOfExponent::POSITIVE_SIGN> {
 };
 
 template <typename T, std::size_t N>
-AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> product(const MagRepresentationOrError<T> (&values)[N]) {
+AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> product(
+    const MagRepresentationOrError<T> (&values)[N]) {
     for (const auto &x : values) {
         if (x.outcome != MagRepresentationOutcome::OK) {
             return x;
@@ -1054,7 +1055,8 @@ constexpr bool is_exactly_lowest_of_signed_integral(Magnitude<BPs...>) {
 }
 
 template <typename T, typename... BPs>
-AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> get_value_result(Magnitude<Negative, BPs...> m) {
+AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> get_value_result(
+    Magnitude<Negative, BPs...> m) {
     if (std::is_unsigned<T>::value) {
         return {MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE};
     }

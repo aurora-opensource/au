@@ -84,12 +84,16 @@ struct CmpEqualImpl<T, U, std::enable_if_t<std::is_signed<T>::value == std::is_s
 
 template <typename T, typename U>
 struct CmpEqualImpl<T, U, std::enable_if_t<std::is_signed<T>::value && !std::is_signed<U>::value>> {
-    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) { return t < 0 ? false : std::make_unsigned_t<T>(t) == u; }
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
+        return t < 0 ? false : std::make_unsigned_t<T>(t) == u;
+    }
 };
 
 template <typename T, typename U>
 struct CmpEqualImpl<T, U, std::enable_if_t<!std::is_signed<T>::value && std::is_signed<U>::value>> {
-    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) { return u < 0 ? false : t == std::make_unsigned_t<U>(u); }
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
+        return u < 0 ? false : t == std::make_unsigned_t<U>(u);
+    }
 };
 
 template <typename T, typename U>
@@ -99,12 +103,16 @@ struct CmpLessImpl<T, U, std::enable_if_t<std::is_signed<T>::value == std::is_si
 
 template <typename T, typename U>
 struct CmpLessImpl<T, U, std::enable_if_t<std::is_signed<T>::value && !std::is_signed<U>::value>> {
-    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) { return t < 0 ? true : std::make_unsigned_t<T>(t) < u; }
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
+        return t < 0 ? true : std::make_unsigned_t<T>(t) < u;
+    }
 };
 
 template <typename T, typename U>
 struct CmpLessImpl<T, U, std::enable_if_t<!std::is_signed<T>::value && std::is_signed<U>::value>> {
-    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) { return u < 0 ? false : t < std::make_unsigned_t<U>(u); }
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
+        return u < 0 ? false : t < std::make_unsigned_t<U>(u);
+    }
 };
 
 }  // namespace stdx

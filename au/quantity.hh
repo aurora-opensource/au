@@ -591,10 +591,12 @@ class AlwaysDivisibleQuantity {
     }
 
     template <typename UU, typename RR>
-    friend AU_DEVICE_FUNC constexpr AlwaysDivisibleQuantity<UU, RR> unblock_int_div(Quantity<UU, RR> q);
+    friend AU_DEVICE_FUNC constexpr AlwaysDivisibleQuantity<UU, RR> unblock_int_div(
+        Quantity<UU, RR> q);
 
     template <typename RR>
-    friend AU_DEVICE_FUNC constexpr AlwaysDivisibleQuantity<UnitProduct<>, RR> unblock_int_div(RR x);
+    friend AU_DEVICE_FUNC constexpr AlwaysDivisibleQuantity<UnitProduct<>, RR> unblock_int_div(
+        RR x);
 
  private:
     AU_DEVICE_FUNC constexpr AlwaysDivisibleQuantity(Quantity<U, R> q) : q_{q} {}

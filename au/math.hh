@@ -164,7 +164,9 @@ auto cbrt(Quantity<U, R> q) {
 
 // Clamp the first quantity to within the range of the second two.
 template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
-AU_DEVICE_FUNC constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Quantity<UHi, RHi> hi) {
+AU_DEVICE_FUNC constexpr auto clamp(Quantity<UV, RV> v,
+                                    Quantity<ULo, RLo> lo,
+                                    Quantity<UHi, RHi> hi) {
     using U = CommonUnit<UV, ULo, UHi>;
     using R = std::common_type_t<RV, RLo, RHi>;
     using ResultT = Quantity<U, R>;
@@ -174,8 +176,8 @@ AU_DEVICE_FUNC constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Q
 // Clamp the first point to within the range of the second two.
 template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
 AU_DEVICE_FUNC constexpr auto clamp(QuantityPoint<UV, RV> v,
-                     QuantityPoint<ULo, RLo> lo,
-                     QuantityPoint<UHi, RHi> hi) {
+                                    QuantityPoint<ULo, RLo> lo,
+                                    QuantityPoint<UHi, RHi> hi) {
     using U = CommonPointUnit<UV, ULo, UHi>;
     using R = std::common_type_t<RV, RLo, RHi>;
     using ResultT = QuantityPoint<U, R>;

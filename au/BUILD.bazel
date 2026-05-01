@@ -676,6 +676,7 @@ cc_library(
         "stdx/*.hh",
         "stdx/experimental/*.hh",
     ]),
+    deps = [":config"],
 )
 
 cc_test(

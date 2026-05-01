@@ -17,8 +17,8 @@
 #include <limits>
 #include <type_traits>
 
-#include "au/config.hh"
 #include "au/abstract_operations.hh"
+#include "au/config.hh"
 #include "au/magnitude.hh"
 #include "au/operators.hh"
 #include "au/stdx/type_traits.hh"

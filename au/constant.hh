@@ -142,7 +142,9 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     AU_DEVICE_FUNC friend constexpr bool operator>=(Zero, Constant) { return !is_positive(); }
 
  private:
-    AU_DEVICE_FUNC static constexpr bool is_positive() { return IsPositive<detail::MagT<Unit>>::value; }
+    AU_DEVICE_FUNC static constexpr bool is_positive() {
+        return IsPositive<detail::MagT<Unit>>::value;
+    }
 };
 
 // Make a constant from the given unit.

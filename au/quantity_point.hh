@@ -113,7 +113,8 @@ class QuantityPoint {
     template <typename OtherUnit,
               typename OtherRep,
               typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>>
-    AU_DEVICE_FUNC constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
+    AU_DEVICE_FUNC constexpr QuantityPoint(
+        QuantityPoint<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
         : QuantityPoint{other.template as<Rep>(unit)} {}
 
     template <typename OtherUnit,
@@ -128,7 +129,8 @@ class QuantityPoint {
               typename OtherRep,
               typename RiskPolicyT,
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
-    AU_DEVICE_FUNC constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other, RiskPolicyT policy)
+    AU_DEVICE_FUNC constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other,
+                                           RiskPolicyT policy)
         : QuantityPoint{other.template as<Rep>(Unit{}, policy)} {}
 
     // The notion of "0" is *not* unambiguous for point types, because different scales can make
@@ -208,22 +210,42 @@ class QuantityPoint {
     }
 
     // Comparison operators.
-    AU_DEVICE_FUNC constexpr friend bool operator==(QuantityPoint a, QuantityPoint b) { return a.x_ == b.x_; }
-    AU_DEVICE_FUNC constexpr friend bool operator!=(QuantityPoint a, QuantityPoint b) { return a.x_ != b.x_; }
-    AU_DEVICE_FUNC constexpr friend bool operator>=(QuantityPoint a, QuantityPoint b) { return a.x_ >= b.x_; }
-    AU_DEVICE_FUNC constexpr friend bool operator>(QuantityPoint a, QuantityPoint b) { return a.x_ > b.x_; }
-    AU_DEVICE_FUNC constexpr friend bool operator<=(QuantityPoint a, QuantityPoint b) { return a.x_ <= b.x_; }
-    AU_DEVICE_FUNC constexpr friend bool operator<(QuantityPoint a, QuantityPoint b) { return a.x_ < b.x_; }
+    AU_DEVICE_FUNC constexpr friend bool operator==(QuantityPoint a, QuantityPoint b) {
+        return a.x_ == b.x_;
+    }
+    AU_DEVICE_FUNC constexpr friend bool operator!=(QuantityPoint a, QuantityPoint b) {
+        return a.x_ != b.x_;
+    }
+    AU_DEVICE_FUNC constexpr friend bool operator>=(QuantityPoint a, QuantityPoint b) {
+        return a.x_ >= b.x_;
+    }
+    AU_DEVICE_FUNC constexpr friend bool operator>(QuantityPoint a, QuantityPoint b) {
+        return a.x_ > b.x_;
+    }
+    AU_DEVICE_FUNC constexpr friend bool operator<=(QuantityPoint a, QuantityPoint b) {
+        return a.x_ <= b.x_;
+    }
+    AU_DEVICE_FUNC constexpr friend bool operator<(QuantityPoint a, QuantityPoint b) {
+        return a.x_ < b.x_;
+    }
 
     // Subtraction between two QuantityPoint types.
-    AU_DEVICE_FUNC constexpr friend auto operator-(QuantityPoint a, QuantityPoint b) { return a.x_ - b.x_; }
+    AU_DEVICE_FUNC constexpr friend auto operator-(QuantityPoint a, QuantityPoint b) {
+        return a.x_ - b.x_;
+    }
 
     // Left and right addition of a Diff.
-    AU_DEVICE_FUNC constexpr friend auto operator+(Diff d, QuantityPoint p) { return QuantityPoint{d + p.x_}; }
-    AU_DEVICE_FUNC constexpr friend auto operator+(QuantityPoint p, Diff d) { return QuantityPoint{p.x_ + d}; }
+    AU_DEVICE_FUNC constexpr friend auto operator+(Diff d, QuantityPoint p) {
+        return QuantityPoint{d + p.x_};
+    }
+    AU_DEVICE_FUNC constexpr friend auto operator+(QuantityPoint p, Diff d) {
+        return QuantityPoint{p.x_ + d};
+    }
 
     // Right subtraction of a Diff.
-    AU_DEVICE_FUNC constexpr friend auto operator-(QuantityPoint p, Diff d) { return QuantityPoint{p.x_ - d}; }
+    AU_DEVICE_FUNC constexpr friend auto operator-(QuantityPoint p, Diff d) {
+        return QuantityPoint{p.x_ - d};
+    }
 
     // Short-hand addition assignment.
     AU_DEVICE_FUNC constexpr QuantityPoint &operator+=(Diff diff) {
@@ -340,7 +362,8 @@ AU_DEVICE_FUNC constexpr auto using_common_point_unit(X x, Y y, Func f) {
 }
 
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1,
+                                                  QuantityPoint<U2, R2> p2) {
     using U = CommonPointUnit<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
@@ -417,7 +440,8 @@ AU_DEVICE_FUNC constexpr auto operator-(QuantityPoint<U1, R1> p1, QuantityPoint<
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename U1, typename R1, typename U2, typename R2>
-AU_DEVICE_FUNC constexpr auto operator<=>(const QuantityPoint<U1, R1> &lhs, const QuantityPoint<U2, R2> &rhs) {
+AU_DEVICE_FUNC constexpr auto operator<=>(const QuantityPoint<U1, R1> &lhs,
+                                          const QuantityPoint<U2, R2> &rhs) {
     return detail::convert_and_compare<detail::ThreeWayCompare>(lhs, rhs);
 }
 #endif

@@ -385,13 +385,9 @@ __device__ double test_quantity_point_clamp() {
 // SECTION 6: au/constant.hh - Constants
 // =============================================================================
 
-__device__ double test_constant_as() {
-    return SPEED_OF_LIGHT.as<double>().in(meters / second);
-}
+__device__ double test_constant_as() { return SPEED_OF_LIGHT.as<double>().in(meters / second); }
 
-__device__ double test_constant_in() {
-    return SPEED_OF_LIGHT.in<double>(meters / second);
-}
+__device__ double test_constant_in() { return SPEED_OF_LIGHT.in<double>(meters / second); }
 
 __device__ bool test_constant_comparison_with_zero() {
     return (SPEED_OF_LIGHT != ZERO) && (SPEED_OF_LIGHT > ZERO);
@@ -430,29 +426,17 @@ __device__ double test_math_int_pow() {
 // SECTION 8: au/operators.hh - Comparison operator functors
 // =============================================================================
 
-__device__ bool test_operators_equal() {
-    return detail::Equal{}(5, 5);
-}
+__device__ bool test_operators_equal() { return detail::Equal{}(5, 5); }
 
-__device__ bool test_operators_not_equal() {
-    return detail::NotEqual{}(5, 3);
-}
+__device__ bool test_operators_not_equal() { return detail::NotEqual{}(5, 3); }
 
-__device__ bool test_operators_less() {
-    return detail::Less{}(3, 5);
-}
+__device__ bool test_operators_less() { return detail::Less{}(3, 5); }
 
-__device__ bool test_operators_less_equal() {
-    return detail::LessEqual{}(3, 5);
-}
+__device__ bool test_operators_less_equal() { return detail::LessEqual{}(3, 5); }
 
-__device__ bool test_operators_greater() {
-    return detail::Greater{}(5, 3);
-}
+__device__ bool test_operators_greater() { return detail::Greater{}(5, 3); }
 
-__device__ bool test_operators_greater_equal() {
-    return detail::GreaterEqual{}(5, 3);
-}
+__device__ bool test_operators_greater_equal() { return detail::GreaterEqual{}(5, 3); }
 
 __device__ double test_operators_plus() {
     return detail::plus(meters(3.0), meters(2.0)).in(meters);
@@ -466,41 +450,25 @@ __device__ double test_operators_minus() {
 // SECTION 9: au/stdx/functional.hh - Identity
 // =============================================================================
 
-__device__ double test_stdx_identity() {
-    return stdx::identity{}(5.0);
-}
+__device__ double test_stdx_identity() { return stdx::identity{}(5.0); }
 
 // =============================================================================
 // SECTION 10: au/stdx/utility.hh - Safe integer comparisons
 // =============================================================================
 
-__device__ bool test_stdx_cmp_equal() {
-    return stdx::cmp_equal(5, 5);
-}
+__device__ bool test_stdx_cmp_equal() { return stdx::cmp_equal(5, 5); }
 
-__device__ bool test_stdx_cmp_not_equal() {
-    return stdx::cmp_not_equal(5, 3);
-}
+__device__ bool test_stdx_cmp_not_equal() { return stdx::cmp_not_equal(5, 3); }
 
-__device__ bool test_stdx_cmp_less() {
-    return stdx::cmp_less(3, 5);
-}
+__device__ bool test_stdx_cmp_less() { return stdx::cmp_less(3, 5); }
 
-__device__ bool test_stdx_cmp_greater() {
-    return stdx::cmp_greater(5, 3);
-}
+__device__ bool test_stdx_cmp_greater() { return stdx::cmp_greater(5, 3); }
 
-__device__ bool test_stdx_cmp_less_equal() {
-    return stdx::cmp_less_equal(3, 5);
-}
+__device__ bool test_stdx_cmp_less_equal() { return stdx::cmp_less_equal(3, 5); }
 
-__device__ bool test_stdx_cmp_greater_equal() {
-    return stdx::cmp_greater_equal(5, 3);
-}
+__device__ bool test_stdx_cmp_greater_equal() { return stdx::cmp_greater_equal(5, 3); }
 
-__device__ bool test_stdx_in_range() {
-    return stdx::in_range<unsigned char>(100);
-}
+__device__ bool test_stdx_in_range() { return stdx::in_range<unsigned char>(100); }
 
 // =============================================================================
 // SECTION 11: au/prefix.hh - SI prefixes

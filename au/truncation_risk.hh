@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include "au/config.hh"
 #include "au/abstract_operations.hh"
+#include "au/config.hh"
 
 namespace au {
 namespace detail {
@@ -283,7 +283,9 @@ struct TruncationRiskForImpl<OpSequenceImpl<Op, Ops...>>
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorDoesNotFit {
-    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &value) { return value != T{0}; }
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &value) {
+        return value != T{0};
+    }
 };
 
 template <typename T, typename M>
