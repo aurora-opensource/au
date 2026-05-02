@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-105-g07fd295
+// Version identifier: 0.5.0-base-106-g2503803
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -339,6 +339,18 @@ template <typename U>
 struct Kibi;
 
 }  // namespace au
+
+//
+// Device/GPU support (CUDA, HIP)
+//
+// The AU_DEVICE_FUNC macro marks functions as callable from both host and device.
+//
+
+#if defined(__CUDACC__) || defined(__HIPCC__)
+#define AU_DEVICE_FUNC __host__ __device__
+#else
+#define AU_DEVICE_FUNC
+#endif
 
 
 
@@ -801,6 +813,7 @@ constexpr uint64_t pow_mod(uint64_t base, uint64_t exp, uint64_t n) {
 }  // namespace au
 
 
+
 namespace au {
 namespace stdx {
 
@@ -810,13 +823,13 @@ namespace stdx {
 template <typename T, typename U, typename Enable = void>
 struct CmpEqualImpl;
 template <class T, class U>
-constexpr bool cmp_equal(T t, U u) noexcept {
+AU_DEVICE_FUNC constexpr bool cmp_equal(T t, U u) noexcept {
     return CmpEqualImpl<T, U>{}(t, u);
 }
 
 // Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
 template <class T, class U>
-constexpr bool cmp_not_equal(T t, U u) noexcept {
+AU_DEVICE_FUNC constexpr bool cmp_not_equal(T t, U u) noexcept {
     return !cmp_equal(t, u);
 }
 
@@ -826,31 +839,31 @@ constexpr bool cmp_not_equal(T t, U u) noexcept {
 template <typename T, typename U, typename Enable = void>
 struct CmpLessImpl;
 template <class T, class U>
-constexpr bool cmp_less(T t, U u) noexcept {
+AU_DEVICE_FUNC constexpr bool cmp_less(T t, U u) noexcept {
     return CmpLessImpl<T, U>{}(t, u);
 }
 
 // Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
 template <class T, class U>
-constexpr bool cmp_greater(T t, U u) noexcept {
+AU_DEVICE_FUNC constexpr bool cmp_greater(T t, U u) noexcept {
     return cmp_less(u, t);
 }
 
 // Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
 template <class T, class U>
-constexpr bool cmp_less_equal(T t, U u) noexcept {
+AU_DEVICE_FUNC constexpr bool cmp_less_equal(T t, U u) noexcept {
     return !cmp_greater(t, u);
 }
 
 // Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
 template <class T, class U>
-constexpr bool cmp_greater_equal(T t, U u) noexcept {
+AU_DEVICE_FUNC constexpr bool cmp_greater_equal(T t, U u) noexcept {
     return !cmp_less(t, u);
 }
 
 // Source: adapted from (https://en.cppreference.com/w/cpp/utility/in_range).
 template <class R, class T>
-constexpr bool in_range(T t) noexcept {
+AU_DEVICE_FUNC constexpr bool in_range(T t) noexcept {
     return cmp_greater_equal(t, std::numeric_limits<R>::min()) &&
            cmp_less_equal(t, std::numeric_limits<R>::max());
 }
@@ -861,32 +874,40 @@ constexpr bool in_range(T t) noexcept {
 
 template <typename T, typename U>
 struct CmpEqualImpl<T, U, std::enable_if_t<std::is_signed<T>::value == std::is_signed<U>::value>> {
-    constexpr bool operator()(T t, U u) { return t == u; }
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) { return t == u; }
 };
 
 template <typename T, typename U>
 struct CmpEqualImpl<T, U, std::enable_if_t<std::is_signed<T>::value && !std::is_signed<U>::value>> {
-    constexpr bool operator()(T t, U u) { return t < 0 ? false : std::make_unsigned_t<T>(t) == u; }
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
+        return t < 0 ? false : std::make_unsigned_t<T>(t) == u;
+    }
 };
 
 template <typename T, typename U>
 struct CmpEqualImpl<T, U, std::enable_if_t<!std::is_signed<T>::value && std::is_signed<U>::value>> {
-    constexpr bool operator()(T t, U u) { return u < 0 ? false : t == std::make_unsigned_t<U>(u); }
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
+        return u < 0 ? false : t == std::make_unsigned_t<U>(u);
+    }
 };
 
 template <typename T, typename U>
 struct CmpLessImpl<T, U, std::enable_if_t<std::is_signed<T>::value == std::is_signed<U>::value>> {
-    constexpr bool operator()(T t, U u) { return t < u; }
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) { return t < u; }
 };
 
 template <typename T, typename U>
 struct CmpLessImpl<T, U, std::enable_if_t<std::is_signed<T>::value && !std::is_signed<U>::value>> {
-    constexpr bool operator()(T t, U u) { return t < 0 ? true : std::make_unsigned_t<T>(t) < u; }
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
+        return t < 0 ? true : std::make_unsigned_t<T>(t) < u;
+    }
 };
 
 template <typename T, typename U>
 struct CmpLessImpl<T, U, std::enable_if_t<!std::is_signed<T>::value && std::is_signed<U>::value>> {
-    constexpr bool operator()(T t, U u) { return u < 0 ? false : t < std::make_unsigned_t<U>(u); }
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
+        return u < 0 ? false : t < std::make_unsigned_t<U>(u);
+    }
 };
 
 }  // namespace stdx
@@ -943,13 +964,14 @@ using detected_or_t = typename detected_or<Default, Op, Args...>::type;
 }  // namespace au
 
 
+
 namespace au {
 namespace stdx {
 
 // Source: adapted from (https://en.cppreference.com/w/cpp/utility/functional/identity)
 struct identity {
     template <class T>
-    constexpr T &&operator()(T &&t) const noexcept {
+    AU_DEVICE_FUNC constexpr T &&operator()(T &&t) const noexcept {
         return std::forward<T>(t);
     }
 };
@@ -1123,17 +1145,17 @@ using ComparisonCategory =
 
 struct Equal {
     template <typename T, typename U>
-    constexpr bool operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
         return op_impl(ComparisonCategory<T, U>{}, a, b);
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a == b;
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
         return stdx::cmp_equal(a, b);
     }
 };
@@ -1141,17 +1163,17 @@ constexpr auto equal = Equal{};
 
 struct NotEqual {
     template <typename T, typename U>
-    constexpr bool operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
         return op_impl(ComparisonCategory<T, U>{}, a, b);
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a != b;
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
         return stdx::cmp_not_equal(a, b);
     }
 };
@@ -1159,17 +1181,17 @@ constexpr auto not_equal = NotEqual{};
 
 struct Greater {
     template <typename T, typename U>
-    constexpr bool operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
         return op_impl(ComparisonCategory<T, U>{}, a, b);
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a > b;
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
         return stdx::cmp_greater(a, b);
     }
 };
@@ -1177,17 +1199,17 @@ constexpr auto greater = Greater{};
 
 struct Less {
     template <typename T, typename U>
-    constexpr bool operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
         return op_impl(ComparisonCategory<T, U>{}, a, b);
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a < b;
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
         return stdx::cmp_less(a, b);
     }
 };
@@ -1195,17 +1217,17 @@ constexpr auto less = Less{};
 
 struct GreaterEqual {
     template <typename T, typename U>
-    constexpr bool operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
         return op_impl(ComparisonCategory<T, U>{}, a, b);
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a >= b;
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
         return stdx::cmp_greater_equal(a, b);
     }
 };
@@ -1213,17 +1235,17 @@ constexpr auto greater_equal = GreaterEqual{};
 
 struct LessEqual {
     template <typename T, typename U>
-    constexpr bool operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
         return op_impl(ComparisonCategory<T, U>{}, a, b);
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a <= b;
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
         return stdx::cmp_less_equal(a, b);
     }
 };
@@ -1232,7 +1254,7 @@ constexpr auto less_equal = LessEqual{};
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 struct ThreeWayCompare {
     template <typename T, typename U>
-    constexpr auto operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr auto operator()(const T &a, const U &b) const {
         // Note that we do not need special treatment for the case where `T` and `U` are both
         // integral types, because the C++ language already prohibits narrowing conversions (such as
         // `int` to `uint`) for `operator<=>`.  We can rely on this implicit warning to induce users
@@ -1249,7 +1271,7 @@ constexpr auto three_way_compare = ThreeWayCompare{};
 
 struct Plus {
     template <typename T, typename U>
-    constexpr auto operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr auto operator()(const T &a, const U &b) const {
         return a + b;
     }
 };
@@ -1257,7 +1279,7 @@ constexpr auto plus = Plus{};
 
 struct Minus {
     template <typename T, typename U>
-    constexpr auto operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr auto operator()(const T &a, const U &b) const {
         return a - b;
     }
 };
@@ -1839,13 +1861,13 @@ namespace au {
 struct Zero {
     // Implicit conversion to arithmetic types.
     template <typename T, typename Enable = std::enable_if_t<std::is_arithmetic<T>::value>>
-    constexpr operator T() const {
+    AU_DEVICE_FUNC constexpr operator T() const {
         return 0;
     }
 
     // Implicit conversion to chrono durations.
     template <typename Rep, typename Period>
-    constexpr operator std::chrono::duration<Rep, Period>() const {
+    AU_DEVICE_FUNC constexpr operator std::chrono::duration<Rep, Period>() const {
         return std::chrono::duration<Rep, Period>{0};
     }
 };
@@ -1857,23 +1879,23 @@ struct Zero {
 static constexpr auto ZERO = Zero{};
 
 // Addition, subtraction, and comparison of Zero are well defined.
-inline constexpr Zero operator+(Zero, Zero) { return ZERO; }
-inline constexpr Zero operator-(Zero, Zero) { return ZERO; }
-inline constexpr bool operator==(Zero, Zero) { return true; }
-inline constexpr bool operator>=(Zero, Zero) { return true; }
-inline constexpr bool operator<=(Zero, Zero) { return true; }
-inline constexpr bool operator!=(Zero, Zero) { return false; }
-inline constexpr bool operator>(Zero, Zero) { return false; }
-inline constexpr bool operator<(Zero, Zero) { return false; }
+inline AU_DEVICE_FUNC constexpr Zero operator+(Zero, Zero) { return ZERO; }
+inline AU_DEVICE_FUNC constexpr Zero operator-(Zero, Zero) { return ZERO; }
+inline AU_DEVICE_FUNC constexpr bool operator==(Zero, Zero) { return true; }
+inline AU_DEVICE_FUNC constexpr bool operator>=(Zero, Zero) { return true; }
+inline AU_DEVICE_FUNC constexpr bool operator<=(Zero, Zero) { return true; }
+inline AU_DEVICE_FUNC constexpr bool operator!=(Zero, Zero) { return false; }
+inline AU_DEVICE_FUNC constexpr bool operator>(Zero, Zero) { return false; }
+inline AU_DEVICE_FUNC constexpr bool operator<(Zero, Zero) { return false; }
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
-inline constexpr auto operator<=>(Zero, Zero) { return 0 <=> 0; }
+inline AU_DEVICE_FUNC constexpr auto operator<=>(Zero, Zero) { return 0 <=> 0; }
 #endif
 
 // Implementation helper for "a type where value() returns 0".
 template <typename T>
 struct ValueOfZero {
-    static constexpr T value() { return ZERO; }
+    static AU_DEVICE_FUNC constexpr T value() { return ZERO; }
 };
 
 }  // namespace au
@@ -3240,7 +3262,7 @@ constexpr T get_value(Magnitude<BPs...>);
 
 // Let `Zero` "act like" a `Magnitude` for purposes of `get_value`.
 template <typename T>
-constexpr T get_value(Zero) {
+AU_DEVICE_FUNC constexpr T get_value(Zero) {
     return T{0};
 }
 
@@ -3249,7 +3271,7 @@ template <std::uintmax_t N>
 struct Prime {
     static_assert(detail::is_prime(N), "Prime<N> requires that N is prime");
 
-    static constexpr std::uintmax_t value() { return N; }
+    static AU_DEVICE_FUNC constexpr std::uintmax_t value() { return N; }
 };
 
 // A base type for pi.
@@ -3260,7 +3282,9 @@ struct Pi {
     // architectures at all, that's enough to give confidence in this value.
     //
     // Source for value: http://www.pi-world-ranking-list.com/lists/details/hogg.html
-    static constexpr long double value() { return 3.14159265358979323846264338327950288419716939L; }
+    static AU_DEVICE_FUNC constexpr long double value() {
+        return 3.14159265358979323846264338327950288419716939L;
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3849,7 +3873,7 @@ using Widen = std::conditional_t<
     T>;
 
 template <typename T>
-constexpr MagRepresentationOrError<T> checked_int_pow(T base, std::uintmax_t exp) {
+AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> checked_int_pow(T base, std::uintmax_t exp) {
     MagRepresentationOrError<T> result = {MagRepresentationOutcome::OK, T{1}};
     while (exp > 0u) {
         if (exp % 2u == 1u) {
@@ -3877,7 +3901,7 @@ using IsKnownToBeInteger = stdx::bool_constant<(std::numeric_limits<T>::is_speci
 
 template <typename T>
 struct NontrivialRootForInt {
-    constexpr MagRepresentationOrError<T> operator()(T, std::uintmax_t) const {
+    AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> operator()(T, std::uintmax_t) const {
         // There exist input values where a valid answer exists.  If this were a fully general root
         // finding function, we would want to support them.  However, those situations can't arise
         // in this instance.  We would never take a non-trivial root that returns an integer,
@@ -3898,7 +3922,7 @@ struct NontrivialRootImpl
 };
 
 template <typename T>
-constexpr MagRepresentationOrError<T> root(T x, std::uintmax_t n) {
+AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> root(T x, std::uintmax_t n) {
     // The "zeroth root" would be mathematically undefined.
     if (n == 0) {
         return {MagRepresentationOutcome::ERR_INVALID_ROOT};
@@ -3919,7 +3943,7 @@ constexpr MagRepresentationOrError<T> root(T x, std::uintmax_t n) {
 
 template <typename T>
 struct GeneralNontrivialRoot {
-    constexpr MagRepresentationOrError<T> operator()(T x, std::uintmax_t n) const {
+    AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> operator()(T x, std::uintmax_t n) const {
         // Handle negative numbers: only odd roots are allowed.
         if (x < 0) {
             if (n % 2 == 0) {
@@ -3998,7 +4022,7 @@ template <typename T, std::uintmax_t N, std::uintmax_t D, typename B, SignOfExpo
 struct BasePowerValueImpl;
 
 template <typename T, std::intmax_t N, std::uintmax_t D, typename B>
-constexpr MagRepresentationOrError<Widen<T>> base_power_value(B base) {
+AU_DEVICE_FUNC constexpr MagRepresentationOrError<Widen<T>> base_power_value(B base) {
     return BasePowerValueImpl<T,
                               static_cast<std::uintmax_t>(N < 0 ? -N : N),
                               D,
@@ -4009,7 +4033,7 @@ constexpr MagRepresentationOrError<Widen<T>> base_power_value(B base) {
 
 template <typename T, std::uintmax_t N, std::uintmax_t D, typename B>
 struct BasePowerValueImpl<T, N, D, B, SignOfExponent::NEGATIVE_SIGN> {
-    constexpr MagRepresentationOrError<Widen<T>> operator()(B base) const {
+    AU_DEVICE_FUNC constexpr MagRepresentationOrError<Widen<T>> operator()(B base) const {
         const auto inverse_result =
             BasePowerValueImpl<T, N, D, B, SignOfExponent::POSITIVE_SIGN>{}(base);
         if (inverse_result.outcome != MagRepresentationOutcome::OK) {
@@ -4024,7 +4048,7 @@ struct BasePowerValueImpl<T, N, D, B, SignOfExponent::NEGATIVE_SIGN> {
 
 template <typename T, std::uintmax_t N, std::uintmax_t D, typename B>
 struct BasePowerValueImpl<T, N, D, B, SignOfExponent::POSITIVE_SIGN> {
-    constexpr MagRepresentationOrError<Widen<T>> operator()(B base) const {
+    AU_DEVICE_FUNC constexpr MagRepresentationOrError<Widen<T>> operator()(B base) const {
         const auto power_result = checked_int_pow(static_cast<Widen<T>>(base), N);
         if (power_result.outcome != MagRepresentationOutcome::OK) {
             return {power_result.outcome};
@@ -4034,7 +4058,8 @@ struct BasePowerValueImpl<T, N, D, B, SignOfExponent::POSITIVE_SIGN> {
 };
 
 template <typename T, std::size_t N>
-constexpr MagRepresentationOrError<T> product(const MagRepresentationOrError<T> (&values)[N]) {
+AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> product(
+    const MagRepresentationOrError<T> (&values)[N]) {
     for (const auto &x : values) {
         if (x.outcome != MagRepresentationOutcome::OK) {
             return x;
@@ -4052,7 +4077,7 @@ constexpr MagRepresentationOrError<T> product(const MagRepresentationOrError<T> 
 }
 
 template <std::size_t N>
-constexpr bool all(const bool (&values)[N]) {
+AU_DEVICE_FUNC constexpr bool all(const bool (&values)[N]) {
     for (const auto &x : values) {
         if (!x) {
             return false;
@@ -4078,7 +4103,7 @@ using RealPart = typename RealPartImpl<T>::type;
 template <typename Target, typename Enable = void>
 struct SafeCastingChecker {
     template <typename T>
-    constexpr bool operator()(T x) {
+    AU_DEVICE_FUNC constexpr bool operator()(T x) {
         return stdx::cmp_less_equal(std::numeric_limits<RealPart<Target>>::lowest(), x) &&
                stdx::cmp_greater_equal(std::numeric_limits<RealPart<Target>>::max(), x);
     }
@@ -4087,7 +4112,7 @@ struct SafeCastingChecker {
 template <typename Target>
 struct SafeCastingChecker<Target, std::enable_if_t<std::is_integral<Target>::value>> {
     template <typename T>
-    constexpr bool operator()(T x) {
+    AU_DEVICE_FUNC constexpr bool operator()(T x) {
         return std::is_integral<T>::value &&
                stdx::cmp_less_equal(std::numeric_limits<RealPart<Target>>::lowest(), x) &&
                stdx::cmp_greater_equal(std::numeric_limits<RealPart<Target>>::max(), x);
@@ -4095,13 +4120,13 @@ struct SafeCastingChecker<Target, std::enable_if_t<std::is_integral<Target>::val
 };
 
 template <typename T, typename InputT>
-constexpr bool safe_to_cast_to(InputT x) {
+AU_DEVICE_FUNC constexpr bool safe_to_cast_to(InputT x) {
     return SafeCastingChecker<T>{}(x);
 }
 
 template <typename T, typename MagT>
 struct GetValueResultImplForNonIntegerInIntegralType {
-    constexpr MagRepresentationOrError<T> operator()() {
+    AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> operator()() {
         return {MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE};
     }
 };
@@ -4110,7 +4135,7 @@ template <typename T, typename MagT>
 struct GetValueResultImplForDefaultCase;
 template <typename T, typename... BPs>
 struct GetValueResultImplForDefaultCase<T, Magnitude<BPs...>> {
-    constexpr MagRepresentationOrError<T> operator()() {
+    AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> operator()() {
         // Force the expression to be evaluated in a constexpr context.
         constexpr auto widened_result = product(
             {base_power_value<RealPart<T>,
@@ -4134,14 +4159,14 @@ struct GetValueResultImpl
           GetValueResultImplForDefaultCase<T, MagT>> {};
 
 template <typename T, typename... BPs>
-constexpr MagRepresentationOrError<T> get_value_result(Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> get_value_result(Magnitude<BPs...>) {
     constexpr auto result = GetValueResultImpl<T, Magnitude<BPs...>>{}();
     return result;
 }
 
 // This simple overload avoids edge cases with creating and passing zero-sized arrays.
 template <typename T>
-constexpr MagRepresentationOrError<T> get_value_result(Magnitude<>) {
+AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> get_value_result(Magnitude<>) {
     return {MagRepresentationOutcome::OK, static_cast<T>(1)};
 }
 
@@ -4161,7 +4186,8 @@ constexpr bool is_exactly_lowest_of_signed_integral(Magnitude<BPs...>) {
 }
 
 template <typename T, typename... BPs>
-constexpr MagRepresentationOrError<T> get_value_result(Magnitude<Negative, BPs...> m) {
+AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> get_value_result(
+    Magnitude<Negative, BPs...> m) {
     if (std::is_unsigned<T>::value) {
         return {MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE};
     }
@@ -4186,7 +4212,7 @@ constexpr bool representable_in(Magnitude<BPs...> m) {
 }
 
 template <typename T, typename... BPs>
-constexpr T get_value(Magnitude<BPs...> m) {
+AU_DEVICE_FUNC constexpr T get_value(Magnitude<BPs...> m) {
     using namespace detail;
 
     constexpr auto result = get_value_result<T>(m);
@@ -4518,7 +4544,7 @@ struct OpOutputImpl<StaticCast<T, U>> : stdx::type_identity<U> {};
 // `StaticCast<T, U>` operation:
 template <typename T, typename U>
 struct StaticCast {
-    static constexpr U apply_to(T value) { return static_cast<U>(value); }
+    static AU_DEVICE_FUNC constexpr U apply_to(T value) { return static_cast<U>(value); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4533,7 +4559,7 @@ struct OpOutputImpl<ImplicitConversion<T, U>> : stdx::type_identity<U> {};
 // `ImplicitConversion<T, U>` operation:
 template <typename T, typename U>
 struct ImplicitConversion {
-    static constexpr U apply_to(T value) { return value; }
+    static AU_DEVICE_FUNC constexpr U apply_to(T value) { return value; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4548,7 +4574,7 @@ struct OpOutputImpl<MultiplyTypeBy<T, M>> : stdx::type_identity<T> {};
 // `MultiplyTypeBy<T, M>` operation:
 template <typename T, typename Mag>
 struct MultiplyTypeBy {
-    static constexpr T apply_to(T value) {
+    static AU_DEVICE_FUNC constexpr T apply_to(T value) {
         return static_cast<T>(value * get_value<RealPart<T>>(Mag{}));
     }
 };
@@ -4564,7 +4590,7 @@ struct OpOutputImpl<DivideTypeByInteger<T, M>> : stdx::type_identity<T> {};
 
 template <typename T, typename M, MagRepresentationOutcome MagOutcome>
 struct DivideTypeByIntegerImpl {
-    static constexpr T apply_to(T value) {
+    static AU_DEVICE_FUNC constexpr T apply_to(T value) {
         static_assert(MagOutcome == MagRepresentationOutcome::OK, "Internal library error");
         return static_cast<T>(value / get_value<RealPart<T>>(M{}));
     }
@@ -4573,7 +4599,7 @@ struct DivideTypeByIntegerImpl {
 template <typename T, typename M>
 struct DivideTypeByIntegerImpl<T, M, MagRepresentationOutcome::ERR_CANNOT_FIT> {
     // If a number is too big to fit in the type, then dividing by it should produce 0.
-    static constexpr T apply_to(T) { return T{0}; }
+    static AU_DEVICE_FUNC constexpr T apply_to(T) { return T{0}; }
 };
 
 template <typename T, typename M>
@@ -4600,12 +4626,14 @@ struct OpOutputImpl<OpSequenceImpl<OnlyOp>> : stdx::type_identity<OpOutput<OnlyO
 
 template <typename Op>
 struct OpSequenceImpl<Op> {
-    static constexpr auto apply_to(OpInput<OpSequenceImpl> value) { return Op::apply_to(value); }
+    static AU_DEVICE_FUNC constexpr auto apply_to(OpInput<OpSequenceImpl> value) {
+        return Op::apply_to(value);
+    }
 };
 
 template <typename Op, typename... Ops>
 struct OpSequenceImpl<Op, Ops...> {
-    static constexpr auto apply_to(OpInput<OpSequenceImpl> value) {
+    static AU_DEVICE_FUNC constexpr auto apply_to(OpInput<OpSequenceImpl> value) {
         return OpSequenceImpl<Ops...>::apply_to(Op::apply_to(value));
     }
 };
@@ -4853,7 +4881,7 @@ struct MaxValueChecker;
 // `would_value_overflow<Op>(x)` checks whether the value `x` would exceed the bounds of the
 // operation at any stage.
 template <typename Op>
-constexpr bool would_value_overflow(const OpInput<Op> &x) {
+AU_DEVICE_FUNC constexpr bool would_value_overflow(const OpInput<Op> &x) {
     return MinValueChecker<Op>::is_too_small(x) || MaxValueChecker<Op>::is_too_large(x);
 }
 
@@ -5533,22 +5561,26 @@ struct CanOverflowAbove : stdx::bool_constant<(MaxGood<Op>::value() < MaxPossibl
 
 template <typename Op, bool IsOverflowPossible>
 struct MinValueCheckerImpl {
-    static constexpr bool is_too_small(const OpInput<Op> &x) { return x < MinGood<Op>::value(); }
+    static AU_DEVICE_FUNC constexpr bool is_too_small(const OpInput<Op> &x) {
+        return x < MinGood<Op>::value();
+    }
 };
 template <typename Op>
 struct MinValueCheckerImpl<Op, false> {
-    static constexpr bool is_too_small(const OpInput<Op> &) { return false; }
+    static AU_DEVICE_FUNC constexpr bool is_too_small(const OpInput<Op> &) { return false; }
 };
 template <typename Op>
 struct MinValueChecker : MinValueCheckerImpl<Op, CanOverflowBelow<Op>::value> {};
 
 template <typename Op, bool IsOverflowPossible>
 struct MaxValueCheckerImpl {
-    static constexpr bool is_too_large(const OpInput<Op> &x) { return x > MaxGood<Op>::value(); }
+    static AU_DEVICE_FUNC constexpr bool is_too_large(const OpInput<Op> &x) {
+        return x > MaxGood<Op>::value();
+    }
 };
 template <typename Op>
 struct MaxValueCheckerImpl<Op, false> {
-    static constexpr bool is_too_large(const OpInput<Op> &) { return false; }
+    static AU_DEVICE_FUNC constexpr bool is_too_large(const OpInput<Op> &) { return false; }
 };
 template <typename Op>
 struct MaxValueChecker : MaxValueCheckerImpl<Op, CanOverflowAbove<Op>::value> {};
@@ -6965,7 +6997,7 @@ struct TruncationRiskClass {
 
 template <typename T>
 struct NoTruncationRisk : TruncationRiskClass<0> {
-    static constexpr bool would_value_truncate(const T &) { return false; }
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &) { return false; }
 };
 
 template <typename T, typename M>
@@ -6979,12 +7011,12 @@ using ValueIsNotInteger = ValueTimesRatioIsNotInteger<T, Magnitude<>>;
 
 template <typename T>
 struct ValueIsNotZero : TruncationRiskClass<20> {
-    static constexpr bool would_value_truncate(const T &x) { return x != T{0}; }
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &x) { return x != T{0}; }
 };
 
 template <typename T>
 struct CannotAssessTruncationRiskFor : TruncationRiskClass<1000> {
-    static constexpr bool would_value_truncate(const T &) { return true; }
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &) { return true; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -7216,12 +7248,14 @@ struct TruncationRiskForImpl<OpSequenceImpl<Op, Ops...>>
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorDoesNotFit {
-    static constexpr bool would_value_truncate(const T &value) { return value != T{0}; }
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &value) {
+        return value != T{0};
+    }
 };
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits {
-    static constexpr bool would_value_truncate(const T &value) {
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &value) {
         return (value % get_value<RealPart<T>>(Denominator<M>{})) != T{0};
     }
 };
@@ -7235,7 +7269,7 @@ struct ValueTimesRatioIsNotIntegerImplForInt
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForFloatGeneric {
-    static constexpr bool would_value_truncate(const T &value) {
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &value) {
         const auto result = value * get_value<RealPart<T>>(M{});
         return std::trunc(result) != result;
     }
@@ -7243,7 +7277,7 @@ struct ValueTimesRatioIsNotIntegerImplForFloatGeneric {
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForFloatDivideByInteger {
-    static constexpr bool would_value_truncate(const T &value) {
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &value) {
         const auto result = value / get_value<RealPart<T>>(MagInverse<M>{});
         return std::trunc(result) != result;
     }
@@ -7293,32 +7327,36 @@ struct RiskSet {
     static_assert(RiskFlags <= 3u, "Invalid risk flags");
 
     template <uint8_t OtherFlags>
-    constexpr RiskSet<RiskFlags | OtherFlags> operator|(RiskSet<OtherFlags>) const {
+    AU_DEVICE_FUNC constexpr RiskSet<RiskFlags | OtherFlags> operator|(RiskSet<OtherFlags>) const {
         return {};
     }
 
-    constexpr uint8_t flags() const { return RiskFlags; }
+    AU_DEVICE_FUNC constexpr uint8_t flags() const { return RiskFlags; }
 
-    friend constexpr CheckTheseRisks<RiskSet<RiskFlags>> check_for(RiskSet) { return {}; }
-    friend constexpr CheckTheseRisks<RiskSet<3u - RiskFlags>> ignore(RiskSet) { return {}; }
+    friend AU_DEVICE_FUNC constexpr CheckTheseRisks<RiskSet<RiskFlags>> check_for(RiskSet) {
+        return {};
+    }
+    friend AU_DEVICE_FUNC constexpr CheckTheseRisks<RiskSet<3u - RiskFlags>> ignore(RiskSet) {
+        return {};
+    }
 };
 
 template <uint8_t RiskFlags>
 struct CheckTheseRisks<RiskSet<RiskFlags>> {
-    constexpr bool should_check(ConversionRisk risk) const {
+    AU_DEVICE_FUNC constexpr bool should_check(ConversionRisk risk) const {
         return (RiskFlags & static_cast<uint8_t>(risk)) != 0u;
     }
 
     // Remove risks from the checked set.
     template <uint8_t OtherFlags>
-    constexpr CheckTheseRisks<RiskSet<RiskFlags & ~OtherFlags>> but_ignoring(
+    AU_DEVICE_FUNC constexpr CheckTheseRisks<RiskSet<RiskFlags & ~OtherFlags>> but_ignoring(
         RiskSet<OtherFlags>) const {
         return {};
     }
 
     // Add risks to the checked set.
     template <uint8_t OtherFlags>
-    constexpr CheckTheseRisks<RiskSet<RiskFlags | OtherFlags>> but_also_checking_for(
+    AU_DEVICE_FUNC constexpr CheckTheseRisks<RiskSet<RiskFlags | OtherFlags>> but_also_checking_for(
         RiskSet<OtherFlags>) const {
         return {};
     }
@@ -7363,7 +7401,7 @@ struct SettingPureRealFromMixedReal
                         std::is_same<Rep, RealPart<Rep>>> {};
 
 template <typename T>
-constexpr bool meets_threshold(T x) {
+AU_DEVICE_FUNC constexpr bool meets_threshold(T x) {
     constexpr auto threshold_result = get_value_result<T>(OVERFLOW_THRESHOLD);
     static_assert(threshold_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT ||
                       threshold_result.outcome == MagRepresentationOutcome::OK,
@@ -7449,7 +7487,8 @@ struct ImplicitRepPermitted
           Rep> {};
 
 template <typename Rep, typename SourceUnitSlot, typename TargetUnitSlot>
-constexpr bool implicit_rep_permitted_from_source_to_target(SourceUnitSlot, TargetUnitSlot) {
+AU_DEVICE_FUNC constexpr bool implicit_rep_permitted_from_source_to_target(SourceUnitSlot,
+                                                                           TargetUnitSlot) {
     using SourceUnit = AssociatedUnit<SourceUnitSlot>;
     using TargetUnit = AssociatedUnit<TargetUnitSlot>;
     static_assert(HasSameDimension<SourceUnit, TargetUnit>::value,
@@ -7490,12 +7529,12 @@ namespace au {
 // Make a Quantity of the given Unit, which has this value as measured in the Unit.
 //
 template <typename UnitT, typename T>
-constexpr auto make_quantity(T value) {
+AU_DEVICE_FUNC constexpr auto make_quantity(T value) {
     return QuantityMaker<UnitT>{}(value);
 }
 
 template <typename Unit, typename T>
-constexpr auto make_quantity_unless_unitless(T value) {
+AU_DEVICE_FUNC constexpr auto make_quantity_unless_unitless(T value) {
     return std::conditional_t<IsUnitlessUnit<Unit>::value, stdx::identity, QuantityMaker<Unit>>{}(
         value);
 }
@@ -7549,7 +7588,7 @@ struct CorrespondingQuantity<const T &> : CorrespondingQuantity<T> {};
 // `as_quantity()` is SFINAE-friendly: we can use it to constrain templates to types `T` which are
 // exactly equivalent to some Quantity type.
 template <typename T>
-constexpr auto as_quantity(T &&x) -> detail::CorrespondingQuantityType<T> {
+AU_DEVICE_FUNC constexpr auto as_quantity(T &&x) -> detail::CorrespondingQuantityType<T> {
     using Q = CorrespondingQuantity<T>;
     static_assert(IsUnit<typename Q::Unit>{}, "No Quantity corresponding to type");
 
@@ -7566,11 +7605,11 @@ constexpr auto as_quantity(T &&x) -> detail::CorrespondingQuantityType<T> {
 //
 // Identity for non-`Quantity` types.
 template <typename U, typename R, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
-constexpr R as_raw_number(Quantity<U, R> q, RiskPolicyT policy = RiskPolicyT{}) {
+AU_DEVICE_FUNC constexpr R as_raw_number(Quantity<U, R> q, RiskPolicyT policy = RiskPolicyT{}) {
     return q.in(UnitProduct<>{}, policy);
 }
 template <typename T>
-constexpr T as_raw_number(T x) {
+AU_DEVICE_FUNC constexpr T as_raw_number(T x) {
     return x;
 }
 
@@ -7611,7 +7650,8 @@ class Quantity {
     template <typename OtherUnit,
               typename OtherRep,
               typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>>
-    constexpr Quantity(Quantity<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
+    AU_DEVICE_FUNC constexpr Quantity(
+        Quantity<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
         : value_{other.template in_impl<detail::UseImplicitConversion, Rep>(
               UnitT{}, check_for(ALL_RISKS))} {}
 
@@ -7628,26 +7668,26 @@ class Quantity {
               typename OtherRep,
               typename RiskPolicyT,
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
-    constexpr Quantity(Quantity<OtherUnit, OtherRep> other, RiskPolicyT policy)
+    AU_DEVICE_FUNC constexpr Quantity(Quantity<OtherUnit, OtherRep> other, RiskPolicyT policy)
         : value_{other.template in<Rep>(UnitT{}, policy)} {}
 
     // Construct this Quantity with a value of exactly Zero.
-    constexpr Quantity(Zero) : value_{0} {}
+    AU_DEVICE_FUNC constexpr Quantity(Zero) : value_{0} {}
 
-    constexpr Quantity() noexcept = default;
+    AU_DEVICE_FUNC constexpr Quantity() noexcept = default;
 
     // Implicit construction from any exactly-equivalent type.
     template <
         typename T,
         std::enable_if_t<std::is_convertible<detail::CorrespondingQuantityType<T>, Quantity>::value,
                          int> = 0>
-    constexpr Quantity(T &&x) : Quantity{as_quantity(std::forward<T>(x))} {}
+    AU_DEVICE_FUNC constexpr Quantity(T &&x) : Quantity{as_quantity(std::forward<T>(x))} {}
 
     // `q.as<Rep>()`, or `q.as<Rep>(risk_policy)`
     template <typename NewRep,
               typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
-    constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity<Unit>(in_impl<detail::UseStaticCast, NewRep>(Unit{}, policy));
     }
 
@@ -7656,14 +7696,14 @@ class Quantity {
               typename NewUnitSlot,
               typename RiskPolicyT = decltype(ignore(ALL_RISKS)),
               std::enable_if_t<!IsConversionRiskPolicy<NewUnitSlot>::value, int> = 0>
-    constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity<AssociatedUnit<NewUnitSlot>>(
             in_impl<detail::UseStaticCast, NewRep>(u, policy));
     }
 
     // `q.as(new_unit)`, or `q.as(new_unit, risk_policy)`
     template <typename NewUnitSlot, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
-    constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity<AssociatedUnit<NewUnitSlot>>(
             in_impl<detail::UseStaticCast, Rep>(u, policy));
     }
@@ -7672,13 +7712,13 @@ class Quantity {
     template <typename NewRep,
               typename NewUnitSlot,
               typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
-    constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<detail::UseStaticCast, NewRep>(u, policy);
     }
 
     // `q.in(new_unit)`, or `q.in(new_unit, risk_policy)`
     template <typename NewUnitSlot, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
-    constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<detail::UseStaticCast, Rep>(u, policy);
     }
 
@@ -7708,14 +7748,14 @@ class Quantity {
     //
     // Mutable access:
     template <typename UnitSlot>
-    constexpr Rep &data_in(UnitSlot) {
+    AU_DEVICE_FUNC constexpr Rep &data_in(UnitSlot) {
         static_assert(AreUnitsQuantityEquivalent<AssociatedUnit<UnitSlot>, Unit>::value,
                       "Can only access value via Quantity-equivalent unit");
         return value_;
     }
     // Const access:
     template <typename UnitSlot>
-    constexpr const Rep &data_in(UnitSlot) const {
+    AU_DEVICE_FUNC constexpr const Rep &data_in(UnitSlot) const {
         static_assert(AreUnitsQuantityEquivalent<AssociatedUnit<UnitSlot>, Unit>::value,
                       "Can only access value via Quantity-equivalent unit");
         return value_;
@@ -7729,76 +7769,92 @@ class Quantity {
     friend struct QuantityMaker<UnitT>;
 
     // Comparison operators.
-    friend constexpr bool operator==(Quantity a, Quantity b) { return Eq{}(a.value_, b.value_); }
-    friend constexpr bool operator!=(Quantity a, Quantity b) { return Ne{}(a.value_, b.value_); }
-    friend constexpr bool operator<(Quantity a, Quantity b) { return Lt{}(a.value_, b.value_); }
-    friend constexpr bool operator<=(Quantity a, Quantity b) { return Le{}(a.value_, b.value_); }
-    friend constexpr bool operator>(Quantity a, Quantity b) { return Gt{}(a.value_, b.value_); }
-    friend constexpr bool operator>=(Quantity a, Quantity b) { return Ge{}(a.value_, b.value_); }
+    friend AU_DEVICE_FUNC constexpr bool operator==(Quantity a, Quantity b) {
+        return Eq{}(a.value_, b.value_);
+    }
+    friend AU_DEVICE_FUNC constexpr bool operator!=(Quantity a, Quantity b) {
+        return Ne{}(a.value_, b.value_);
+    }
+    friend AU_DEVICE_FUNC constexpr bool operator<(Quantity a, Quantity b) {
+        return Lt{}(a.value_, b.value_);
+    }
+    friend AU_DEVICE_FUNC constexpr bool operator<=(Quantity a, Quantity b) {
+        return Le{}(a.value_, b.value_);
+    }
+    friend AU_DEVICE_FUNC constexpr bool operator>(Quantity a, Quantity b) {
+        return Gt{}(a.value_, b.value_);
+    }
+    friend AU_DEVICE_FUNC constexpr bool operator>=(Quantity a, Quantity b) {
+        return Ge{}(a.value_, b.value_);
+    }
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
     using Twc = detail::SignAwareComparison<Sign, detail::ThreeWayCompare>;
-    friend constexpr auto operator<=>(Quantity a, Quantity b) { return Twc{}(a.value_, b.value_); }
+    friend AU_DEVICE_FUNC constexpr auto operator<=>(Quantity a, Quantity b) {
+        return Twc{}(a.value_, b.value_);
+    }
 #endif
 
     // Addition and subtraction for like quantities.
-    friend constexpr Quantity<UnitT, decltype(std::declval<RepT>() + std::declval<RepT>())>
+    friend AU_DEVICE_FUNC constexpr Quantity<UnitT,
+                                             decltype(std::declval<RepT>() + std::declval<RepT>())>
     operator+(Quantity a, Quantity b) {
         return make_quantity<UnitT>(a.value_ + b.value_);
     }
-    friend constexpr Quantity<UnitT, decltype(std::declval<RepT>() - std::declval<RepT>())>
+    friend AU_DEVICE_FUNC constexpr Quantity<UnitT,
+                                             decltype(std::declval<RepT>() - std::declval<RepT>())>
     operator-(Quantity a, Quantity b) {
         return make_quantity<UnitT>(a.value_ - b.value_);
     }
 
     // Scalar multiplication.
     template <typename T, typename = std::enable_if_t<IsProductValidRep<RepT, T>::value>>
-    friend constexpr auto operator*(Quantity a, T s) {
+    friend AU_DEVICE_FUNC constexpr auto operator*(Quantity a, T s) {
         return make_quantity<UnitT>(a.value_ * s);
     }
     template <typename T, typename = std::enable_if_t<IsProductValidRep<T, RepT>::value>>
-    friend constexpr auto operator*(T s, Quantity a) {
+    friend AU_DEVICE_FUNC constexpr auto operator*(T s, Quantity a) {
         return make_quantity<UnitT>(s * a.value_);
     }
 
     // Scalar division.
     template <typename T, typename = std::enable_if_t<IsQuotientValidRep<RepT, T>::value>>
-    friend constexpr auto operator/(Quantity a, T s) {
+    friend AU_DEVICE_FUNC constexpr auto operator/(Quantity a, T s) {
         return make_quantity<UnitT>(a.value_ / s);
     }
     template <typename T, typename = std::enable_if_t<IsQuotientValidRep<T, RepT>::value>>
-    friend constexpr auto operator/(T s, Quantity a) {
+    friend AU_DEVICE_FUNC constexpr auto operator/(T s, Quantity a) {
         warn_if_integer_division<UnitProduct<>, T>();
         return make_quantity<decltype(pow<-1>(unit))>(s / a.value_);
     }
 
     // Multiplication for dimensioned quantities.
     template <typename OtherUnit, typename OtherRep>
-    constexpr auto operator*(Quantity<OtherUnit, OtherRep> q) const {
+    AU_DEVICE_FUNC constexpr auto operator*(Quantity<OtherUnit, OtherRep> q) const {
         return make_quantity_unless_unitless<UnitProduct<Unit, OtherUnit>>(value_ *
                                                                            q.in(OtherUnit{}));
     }
 
     // Division for dimensioned quantities.
     template <typename OtherUnit, typename OtherRep>
-    constexpr auto operator/(Quantity<OtherUnit, OtherRep> q) const {
+    AU_DEVICE_FUNC constexpr auto operator/(Quantity<OtherUnit, OtherRep> q) const {
         warn_if_integer_division<OtherUnit, OtherRep>();
         return make_quantity_unless_unitless<UnitQuotient<Unit, OtherUnit>>(value_ /
                                                                             q.in(OtherUnit{}));
     }
 
     // Short-hand addition and subtraction assignment.
-    constexpr Quantity &operator+=(Quantity other) {
+    AU_DEVICE_FUNC constexpr Quantity &operator+=(Quantity other) {
         value_ += other.value_;
         return *this;
     }
-    constexpr Quantity &operator-=(Quantity other) {
+    AU_DEVICE_FUNC constexpr Quantity &operator-=(Quantity other) {
         value_ -= other.value_;
         return *this;
     }
 
     template <typename T>
-    constexpr void perform_shorthand_checks() {
+    AU_DEVICE_FUNC constexpr void perform_shorthand_checks() {
         static_assert(
             IsValidRep<T>::value,
             "This overload is only for scalar mult/div-assignment with raw numeric types");
@@ -7810,7 +7866,7 @@ class Quantity {
 
     // Short-hand multiplication assignment.
     template <typename T>
-    constexpr Quantity &operator*=(T s) {
+    AU_DEVICE_FUNC constexpr Quantity &operator*=(T s) {
         perform_shorthand_checks<T>();
 
         value_ *= s;
@@ -7819,7 +7875,7 @@ class Quantity {
 
     // Short-hand division assignment.
     template <typename T>
-    constexpr Quantity &operator/=(T s) {
+    AU_DEVICE_FUNC constexpr Quantity &operator/=(T s) {
         perform_shorthand_checks<T>();
 
         value_ /= s;
@@ -7827,15 +7883,17 @@ class Quantity {
     }
 
     // Modulo operator (defined only for integral rep).
-    friend constexpr Quantity operator%(Quantity a, Quantity b) { return {a.value_ % b.value_}; }
+    friend AU_DEVICE_FUNC constexpr Quantity operator%(Quantity a, Quantity b) {
+        return {a.value_ % b.value_};
+    }
 
     // Unary plus and minus.
-    constexpr Quantity operator+() const { return {+value_}; }
-    constexpr Quantity operator-() const { return {-value_}; }
+    AU_DEVICE_FUNC constexpr Quantity operator+() const { return {+value_}; }
+    AU_DEVICE_FUNC constexpr Quantity operator-() const { return {-value_}; }
 
     // Automatic conversion to Rep for Unitless type.
     template <typename U = UnitT, typename = std::enable_if_t<IsUnitlessUnit<U>::value>>
-    constexpr operator Rep() const {
+    AU_DEVICE_FUNC constexpr operator Rep() const {
         return value_;
     }
 
@@ -7844,7 +7902,7 @@ class Quantity {
         typename T,
         std::enable_if_t<std::is_convertible<Quantity, detail::CorrespondingQuantityType<T>>::value,
                          int> = 0>
-    constexpr operator T() const {
+    AU_DEVICE_FUNC constexpr operator T() const {
         return CorrespondingQuantity<T>::construct_from_value(
             detail::CorrespondingQuantityType<T>{*this}.in(
                 typename CorrespondingQuantity<T>::Unit{}));
@@ -7860,23 +7918,23 @@ class Quantity {
         ENUM_VALUES_ARE_UNUSED
     };
 
-    constexpr Quantity(NTTP val) : value_{static_cast<Rep>(val)} {
+    AU_DEVICE_FUNC constexpr Quantity(NTTP val) : value_{static_cast<Rep>(val)} {
         static_assert(std::is_integral<Rep>::value,
                       "NTTP functionality only works when rep is built-in integral type");
     }
 
-    constexpr operator NTTP() const {
+    AU_DEVICE_FUNC constexpr operator NTTP() const {
         static_assert(std::is_integral<Rep>::value,
                       "NTTP functionality only works when rep is built-in integral type");
         return static_cast<NTTP>(value_);
     }
 
     template <typename C, C x = C::ENUM_VALUES_ARE_UNUSED>
-    constexpr operator C() const = delete;
+    AU_DEVICE_FUNC constexpr operator C() const = delete;
     // If you got here ^^^, then you need to do your unit conversion **manually**.  Check the type
     // of the template parameter, and convert it to that same unit and rep.
 
-    friend constexpr Quantity from_nttp(NTTP val) { return val; }
+    friend AU_DEVICE_FUNC constexpr Quantity from_nttp(NTTP val) { return val; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Hidden friends for select math functions.
@@ -7890,16 +7948,16 @@ class Quantity {
     // Note, too, that we use the Walter Brown implementation for min/max, where min prefers `a`,
     // max prefers `b`, and they never return the same input (although this matters less when we're
     // returning by value).
-    friend constexpr Quantity min(Quantity a, Quantity b) { return b < a ? b : a; }
-    friend constexpr Quantity max(Quantity a, Quantity b) { return b < a ? a : b; }
-    friend constexpr Quantity clamp(Quantity v, Quantity lo, Quantity hi) {
+    friend AU_DEVICE_FUNC constexpr Quantity min(Quantity a, Quantity b) { return b < a ? b : a; }
+    friend AU_DEVICE_FUNC constexpr Quantity max(Quantity a, Quantity b) { return b < a ? a : b; }
+    friend AU_DEVICE_FUNC constexpr Quantity clamp(Quantity v, Quantity lo, Quantity hi) {
         return (v < lo) ? lo : ((hi < v) ? hi : v);
     }
 
 #if defined(__cpp_lib_interpolate) && __cpp_lib_interpolate >= 201902L
     // `std::lerp` requires C++20 support.
     template <typename T>
-    friend constexpr auto lerp(Quantity a, Quantity b, T t) {
+    friend AU_DEVICE_FUNC constexpr auto lerp(Quantity a, Quantity b, T t) {
         return make_quantity<UnitT>(std::lerp(a.in(unit), b.in(unit), as_raw_number(t)));
     }
 #endif
@@ -7909,7 +7967,7 @@ class Quantity {
 
  private:
     template <typename OtherUnit, typename OtherRep>
-    static constexpr void warn_if_integer_division() {
+    static AU_DEVICE_FUNC constexpr void warn_if_integer_division() {
         constexpr bool uses_integer_division =
             (std::is_integral<Rep>::value && std::is_integral<OtherRep>::value);
         constexpr bool are_units_quantity_equivalent =
@@ -7925,7 +7983,7 @@ class Quantity {
               typename OtherRep,
               typename OtherUnitSlot,
               typename RiskPolicyT>
-    constexpr OtherRep in_impl(OtherUnitSlot, RiskPolicyT) const {
+    AU_DEVICE_FUNC constexpr OtherRep in_impl(OtherUnitSlot, RiskPolicyT) const {
         using OtherUnit = AssociatedUnit<OtherUnitSlot>;
         static_assert(IsUnit<OtherUnit>::value, "Invalid type passed to unit slot");
 
@@ -7965,7 +8023,7 @@ class Quantity {
         return Op::apply_to(value_);
     }
 
-    constexpr Quantity(Rep value) : value_{value} {}
+    AU_DEVICE_FUNC constexpr Quantity(Rep value) : value_{value} {}
 
     Rep value_{};
 };
@@ -7998,13 +8056,13 @@ class AlwaysDivisibleQuantity;
 
 // Unblock integer divisoin for a `Quantity`.
 template <typename U, typename R>
-constexpr AlwaysDivisibleQuantity<U, R> unblock_int_div(Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr AlwaysDivisibleQuantity<U, R> unblock_int_div(Quantity<U, R> q) {
     return AlwaysDivisibleQuantity<U, R>{q};
 }
 
 // Unblock integer division for any non-`Quantity` type.
 template <typename R>
-constexpr AlwaysDivisibleQuantity<UnitProduct<>, R> unblock_int_div(R x) {
+AU_DEVICE_FUNC constexpr AlwaysDivisibleQuantity<UnitProduct<>, R> unblock_int_div(R x) {
     return AlwaysDivisibleQuantity<UnitProduct<>, R>{make_quantity<UnitProduct<>>(x)};
 }
 
@@ -8013,24 +8071,26 @@ class AlwaysDivisibleQuantity {
  public:
     // Divide a `Quantity` by this always-divisible quantity type.
     template <typename U2, typename R2>
-    friend constexpr auto operator/(Quantity<U2, R2> q2, AlwaysDivisibleQuantity q) {
+    friend AU_DEVICE_FUNC constexpr auto operator/(Quantity<U2, R2> q2, AlwaysDivisibleQuantity q) {
         return make_quantity<UnitQuotient<U2, U>>(q2.in(U2{}) / q.q_.in(U{}));
     }
 
     // Divide any non-`Quantity` by this always-divisible quantity type.
     template <typename T>
-    friend constexpr auto operator/(T x, AlwaysDivisibleQuantity q) {
+    friend AU_DEVICE_FUNC constexpr auto operator/(T x, AlwaysDivisibleQuantity q) {
         return make_quantity<UnitInverse<U>>(x / q.q_.in(U{}));
     }
 
     template <typename UU, typename RR>
-    friend constexpr AlwaysDivisibleQuantity<UU, RR> unblock_int_div(Quantity<UU, RR> q);
+    friend AU_DEVICE_FUNC constexpr AlwaysDivisibleQuantity<UU, RR> unblock_int_div(
+        Quantity<UU, RR> q);
 
     template <typename RR>
-    friend constexpr AlwaysDivisibleQuantity<UnitProduct<>, RR> unblock_int_div(RR x);
+    friend AU_DEVICE_FUNC constexpr AlwaysDivisibleQuantity<UnitProduct<>, RR> unblock_int_div(
+        RR x);
 
  private:
-    constexpr AlwaysDivisibleQuantity(Quantity<U, R> q) : q_{q} {}
+    AU_DEVICE_FUNC constexpr AlwaysDivisibleQuantity(Quantity<U, R> q) : q_{q} {}
 
     Quantity<U, R> q_;
 };
@@ -8041,7 +8101,7 @@ class AlwaysDivisibleQuantity {
 // dividing them.  When they have different dimension, the operation is undefined, and we'll get a
 // compiler error.
 template <typename U1, typename R1, typename U2, typename R2>
-constexpr auto divide_using_common_unit(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr auto divide_using_common_unit(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     using U = CommonUnit<U1, U2>;
     return q1.as(U{}) / q2.as(U{});
 }
@@ -8051,7 +8111,7 @@ constexpr auto divide_using_common_unit(Quantity<U1, R1> q1, Quantity<U2, R2> q2
 // Only defined whenever (R1{} % R2{}) is defined (i.e., for integral Reps), _and_
 // `CommonUnit<U1, U2>` is also defined.  We convert to that common unit to perform the operation.
 template <typename U1, typename R1, typename U2, typename R2>
-constexpr auto operator%(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr auto operator%(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     using U = CommonUnit<U1, U2>;
     return make_quantity<U>(q1.in(U{}) % q2.in(U{}));
 }
@@ -8066,7 +8126,7 @@ struct AreQuantityTypesEquivalent<Quantity<U1, R1>, Quantity<U2, R2>>
 
 // Cast Quantity to a different underlying type.
 template <typename NewRep, typename Unit, typename Rep>
-constexpr auto rep_cast(Quantity<Unit, Rep> q) {
+AU_DEVICE_FUNC constexpr auto rep_cast(Quantity<Unit, Rep> q) {
     return q.template as<NewRep>(Unit{});
 }
 
@@ -8074,7 +8134,7 @@ constexpr auto rep_cast(Quantity<Unit, Rep> q) {
 //
 // Casting Zero to any "Rep" is trivial, because it has no Rep, and is already consistent with all.
 template <typename NewRep>
-constexpr auto rep_cast(Zero z) {
+AU_DEVICE_FUNC constexpr auto rep_cast(Zero z) {
     return z;
 }
 
@@ -8084,49 +8144,49 @@ struct QuantityMaker {
     static constexpr auto unit = Unit{};
 
     template <typename T>
-    constexpr Quantity<Unit, T> operator()(T value) const {
+    AU_DEVICE_FUNC constexpr Quantity<Unit, T> operator()(T value) const {
         return {value};
     }
 
     template <typename U, typename R>
-    constexpr void operator()(Quantity<U, R>) const {
+    AU_DEVICE_FUNC constexpr void operator()(Quantity<U, R>) const {
         constexpr bool is_not_already_a_quantity = detail::AlwaysFalse<U, R>::value;
         static_assert(is_not_already_a_quantity, "Input to QuantityMaker is already a Quantity");
     }
 
     template <typename U, typename R>
-    constexpr void operator()(QuantityPoint<U, R>) const {
+    AU_DEVICE_FUNC constexpr void operator()(QuantityPoint<U, R>) const {
         constexpr bool is_not_a_quantity_point = detail::AlwaysFalse<U, R>::value;
         static_assert(is_not_a_quantity_point, "Input to QuantityMaker is a QuantityPoint");
     }
 
     template <typename... BPs>
-    constexpr auto operator*(Magnitude<BPs...> m) const {
+    AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BPs...> m) const {
         return QuantityMaker<decltype(unit * m)>{};
     }
 
     template <typename... BPs>
-    constexpr auto operator/(Magnitude<BPs...> m) const {
+    AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BPs...> m) const {
         return QuantityMaker<decltype(unit / m)>{};
     }
 
     template <typename DivisorUnit>
-    constexpr auto operator/(SingularNameFor<DivisorUnit>) const {
+    AU_DEVICE_FUNC constexpr auto operator/(SingularNameFor<DivisorUnit>) const {
         return QuantityMaker<UnitQuotient<Unit, DivisorUnit>>{};
     }
 
     template <typename MultiplierUnit>
-    friend constexpr auto operator*(SingularNameFor<MultiplierUnit>, QuantityMaker) {
+    friend AU_DEVICE_FUNC constexpr auto operator*(SingularNameFor<MultiplierUnit>, QuantityMaker) {
         return QuantityMaker<UnitProduct<MultiplierUnit, Unit>>{};
     }
 
     template <typename OtherUnit>
-    constexpr auto operator*(QuantityMaker<OtherUnit>) const {
+    AU_DEVICE_FUNC constexpr auto operator*(QuantityMaker<OtherUnit>) const {
         return QuantityMaker<UnitProduct<Unit, OtherUnit>>{};
     }
 
     template <typename OtherUnit>
-    constexpr auto operator/(QuantityMaker<OtherUnit>) const {
+    AU_DEVICE_FUNC constexpr auto operator/(QuantityMaker<OtherUnit>) const {
         return QuantityMaker<UnitQuotient<Unit, OtherUnit>>{};
     }
 };
@@ -8137,12 +8197,12 @@ template <typename U>
 struct AppropriateAssociatedUnitImpl<Quantity, U> : AssociatedUnitImpl<U> {};
 
 template <int Exp, typename Unit>
-constexpr auto pow(QuantityMaker<Unit>) {
+AU_DEVICE_FUNC constexpr auto pow(QuantityMaker<Unit>) {
     return QuantityMaker<UnitPower<Unit, Exp>>{};
 }
 
 template <int N, typename Unit>
-constexpr auto root(QuantityMaker<Unit>) {
+AU_DEVICE_FUNC constexpr auto root(QuantityMaker<Unit>) {
     return QuantityMaker<UnitPower<Unit, 1, N>>{};
 }
 
@@ -8151,7 +8211,7 @@ constexpr auto root(QuantityMaker<Unit>) {
 
 // Check conversion for overflow (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
-constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
+AU_DEVICE_FUNC constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
                                                   R,
                                                   R,
@@ -8161,7 +8221,7 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
 
 // Check conversion for overflow (new rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
-constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
+AU_DEVICE_FUNC constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
                                                   R,
                                                   TargetRep,
@@ -8171,7 +8231,7 @@ constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
 
 // Check conversion for truncation (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
-constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
+AU_DEVICE_FUNC constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
                                                   R,
                                                   R,
@@ -8181,7 +8241,7 @@ constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
 
 // Check conversion for truncation (new rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
-constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
+AU_DEVICE_FUNC constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
                                                   R,
                                                   TargetRep,
@@ -8191,13 +8251,13 @@ constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
 
 // Check for any lossiness in conversion (no change of rep).
 template <typename U, typename R, typename TargetUnitSlot>
-constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit) {
+AU_DEVICE_FUNC constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit) {
     return will_conversion_truncate(q, target_unit) || will_conversion_overflow(q, target_unit);
 }
 
 // Check for any lossiness in conversion (new rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
-constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit) {
+AU_DEVICE_FUNC constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit) {
     return will_conversion_truncate<TargetRep>(q, target_unit) ||
            will_conversion_overflow<TargetRep>(q, target_unit);
 }
@@ -8217,7 +8277,7 @@ namespace detail {
 // We would have liked this to just be a simple lambda, but some old compilers sometimes struggle
 // with understanding that the lambda implementation of this can be constexpr.
 template <typename TargetUnit, typename U, typename R>
-constexpr auto cast_to_common_type(Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto cast_to_common_type(Quantity<U, R> q) {
     // When we perform a unit conversion to U, we need to make sure the library permits this
     // conversion *implicitly* for a rep R.  The form `rep_cast<R>(q).as(U{})` achieves
     // this.  First, we cast the Rep to R (which will typically be the wider of the input Reps).
@@ -8227,7 +8287,7 @@ constexpr auto cast_to_common_type(Quantity<U, R> q) {
 }
 
 template <typename T, typename U, typename Func>
-constexpr auto using_common_type(T t, U u, Func f) {
+AU_DEVICE_FUNC constexpr auto using_common_type(T t, U u, Func f) {
     using C = std::common_type_t<T, U>;
     static_assert(
         std::is_same<typename C::Rep, std::common_type_t<typename T::Rep, typename U::Rep>>::value,
@@ -8237,7 +8297,7 @@ constexpr auto using_common_type(T t, U u, Func f) {
 }
 
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
-constexpr auto convert_and_compare(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr auto convert_and_compare(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     using U = CommonUnit<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
@@ -8249,105 +8309,121 @@ constexpr auto convert_and_compare(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 
 // Comparison functions for compatible Quantity types.
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr bool operator==(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr bool operator==(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::convert_and_compare<detail::Equal>(q1, q2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr bool operator!=(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr bool operator!=(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::convert_and_compare<detail::NotEqual>(q1, q2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr bool operator<(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr bool operator<(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::convert_and_compare<detail::Less>(q1, q2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr bool operator<=(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr bool operator<=(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::convert_and_compare<detail::LessEqual>(q1, q2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr bool operator>(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr bool operator>(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::convert_and_compare<detail::Greater>(q1, q2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr bool operator>=(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr bool operator>=(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::convert_and_compare<detail::GreaterEqual>(q1, q2);
 }
 
 // Addition and subtraction functions for compatible Quantity types.
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator+(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr auto operator+(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::using_common_type(q1, q2, detail::plus);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator-(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr auto operator-(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::using_common_type(q1, q2, detail::minus);
 }
 
 // Mixed-type operations with a left-Quantity, and right-Quantity-equivalent.
 template <typename U, typename R, typename QLike>
-constexpr auto operator+(Quantity<U, R> q1, QLike q2) -> decltype(q1 + as_quantity(q2)) {
+AU_DEVICE_FUNC constexpr auto operator+(Quantity<U, R> q1, QLike q2)
+    -> decltype(q1 + as_quantity(q2)) {
     return q1 + as_quantity(q2);
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator-(Quantity<U, R> q1, QLike q2) -> decltype(q1 - as_quantity(q2)) {
+AU_DEVICE_FUNC constexpr auto operator-(Quantity<U, R> q1, QLike q2)
+    -> decltype(q1 - as_quantity(q2)) {
     return q1 - as_quantity(q2);
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator==(Quantity<U, R> q1, QLike q2) -> decltype(q1 == as_quantity(q2)) {
+AU_DEVICE_FUNC constexpr auto operator==(Quantity<U, R> q1, QLike q2)
+    -> decltype(q1 == as_quantity(q2)) {
     return q1 == as_quantity(q2);
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator!=(Quantity<U, R> q1, QLike q2) -> decltype(q1 != as_quantity(q2)) {
+AU_DEVICE_FUNC constexpr auto operator!=(Quantity<U, R> q1, QLike q2)
+    -> decltype(q1 != as_quantity(q2)) {
     return q1 != as_quantity(q2);
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator<(Quantity<U, R> q1, QLike q2) -> decltype(q1 < as_quantity(q2)) {
+AU_DEVICE_FUNC constexpr auto operator<(Quantity<U, R> q1, QLike q2)
+    -> decltype(q1 < as_quantity(q2)) {
     return q1 < as_quantity(q2);
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator<=(Quantity<U, R> q1, QLike q2) -> decltype(q1 <= as_quantity(q2)) {
+AU_DEVICE_FUNC constexpr auto operator<=(Quantity<U, R> q1, QLike q2)
+    -> decltype(q1 <= as_quantity(q2)) {
     return q1 <= as_quantity(q2);
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator>(Quantity<U, R> q1, QLike q2) -> decltype(q1 > as_quantity(q2)) {
+AU_DEVICE_FUNC constexpr auto operator>(Quantity<U, R> q1, QLike q2)
+    -> decltype(q1 > as_quantity(q2)) {
     return q1 > as_quantity(q2);
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator>=(Quantity<U, R> q1, QLike q2) -> decltype(q1 >= as_quantity(q2)) {
+AU_DEVICE_FUNC constexpr auto operator>=(Quantity<U, R> q1, QLike q2)
+    -> decltype(q1 >= as_quantity(q2)) {
     return q1 >= as_quantity(q2);
 }
 
 // Mixed-type operations with a left-Quantity-equivalent, and right-Quantity.
 template <typename U, typename R, typename QLike>
-constexpr auto operator+(QLike q1, Quantity<U, R> q2) -> decltype(as_quantity(q1) + q2) {
+AU_DEVICE_FUNC constexpr auto operator+(QLike q1, Quantity<U, R> q2)
+    -> decltype(as_quantity(q1) + q2) {
     return as_quantity(q1) + q2;
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator-(QLike q1, Quantity<U, R> q2) -> decltype(as_quantity(q1) - q2) {
+AU_DEVICE_FUNC constexpr auto operator-(QLike q1, Quantity<U, R> q2)
+    -> decltype(as_quantity(q1) - q2) {
     return as_quantity(q1) - q2;
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator==(QLike q1, Quantity<U, R> q2) -> decltype(as_quantity(q1) == q2) {
+AU_DEVICE_FUNC constexpr auto operator==(QLike q1, Quantity<U, R> q2)
+    -> decltype(as_quantity(q1) == q2) {
     return as_quantity(q1) == q2;
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator!=(QLike q1, Quantity<U, R> q2) -> decltype(as_quantity(q1) != q2) {
+AU_DEVICE_FUNC constexpr auto operator!=(QLike q1, Quantity<U, R> q2)
+    -> decltype(as_quantity(q1) != q2) {
     return as_quantity(q1) != q2;
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator<(QLike q1, Quantity<U, R> q2) -> decltype(as_quantity(q1) < q2) {
+AU_DEVICE_FUNC constexpr auto operator<(QLike q1, Quantity<U, R> q2)
+    -> decltype(as_quantity(q1) < q2) {
     return as_quantity(q1) < q2;
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator<=(QLike q1, Quantity<U, R> q2) -> decltype(as_quantity(q1) <= q2) {
+AU_DEVICE_FUNC constexpr auto operator<=(QLike q1, Quantity<U, R> q2)
+    -> decltype(as_quantity(q1) <= q2) {
     return as_quantity(q1) <= q2;
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator>(QLike q1, Quantity<U, R> q2) -> decltype(as_quantity(q1) > q2) {
+AU_DEVICE_FUNC constexpr auto operator>(QLike q1, Quantity<U, R> q2)
+    -> decltype(as_quantity(q1) > q2) {
     return as_quantity(q1) > q2;
 }
 template <typename U, typename R, typename QLike>
-constexpr auto operator>=(QLike q1, Quantity<U, R> q2) -> decltype(as_quantity(q1) >= q2) {
+AU_DEVICE_FUNC constexpr auto operator>=(QLike q1, Quantity<U, R> q2)
+    -> decltype(as_quantity(q1) >= q2) {
     return as_quantity(q1) >= q2;
 }
 
@@ -8355,7 +8431,7 @@ namespace detail {
 template <typename Op>
 struct SignAwareComparison<Magnitude<>, Op> {
     template <typename T1, typename T2>
-    constexpr auto operator()(const T1 &lhs, const T2 &rhs) const {
+    AU_DEVICE_FUNC constexpr auto operator()(const T1 &lhs, const T2 &rhs) const {
         return Op{}(lhs, rhs);
     }
 };
@@ -8363,7 +8439,7 @@ struct SignAwareComparison<Magnitude<>, Op> {
 template <typename Op>
 struct SignAwareComparison<Magnitude<Negative>, Op> {
     template <typename T1, typename T2>
-    constexpr auto operator()(const T1 &lhs, const T2 &rhs) const {
+    AU_DEVICE_FUNC constexpr auto operator()(const T1 &lhs, const T2 &rhs) const {
         return Op{}(rhs, lhs);
     }
 };
@@ -8371,7 +8447,8 @@ struct SignAwareComparison<Magnitude<Negative>, Op> {
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename U1, typename R1, typename U2, typename R2>
-constexpr auto operator<=>(const Quantity<U1, R1> &lhs, const Quantity<U2, R2> &rhs) {
+AU_DEVICE_FUNC constexpr auto operator<=>(const Quantity<U1, R1> &lhs,
+                                          const Quantity<U2, R2> &rhs) {
     return detail::convert_and_compare<detail::ThreeWayCompare>(lhs, rhs);
 }
 #endif
@@ -10403,7 +10480,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
                   detail::CanScaleByMagnitude<Constant, Unit> {
     // Convert this constant to a Quantity of the given rep.
     template <typename T>
-    constexpr auto as() const {
+    AU_DEVICE_FUNC constexpr auto as() const {
         return make_quantity<Unit>(static_cast<T>(1));
     }
 
@@ -10415,13 +10492,13 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 
     // Convert this constant to a Quantity of the given unit and rep.
     template <typename T, typename OtherUnit>
-    constexpr auto as(OtherUnit u) const {
+    AU_DEVICE_FUNC constexpr auto as(OtherUnit u) const {
         return as<T>(u, check_for(ALL_RISKS));
     }
 
     // Convert this constant to a Quantity of the given unit and rep, following this risk policy.
     template <typename T, typename OtherUnit, typename RiskPolicyT>
-    constexpr auto as(OtherUnit, RiskPolicyT) const {
+    AU_DEVICE_FUNC constexpr auto as(OtherUnit, RiskPolicyT) const {
         constexpr auto this_value = make_quantity<Unit>(static_cast<T>(1));
 
         constexpr bool has_unacceptable_overflow =
@@ -10445,19 +10522,19 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 
     // Get the value of this constant in the given unit and rep.
     template <typename T, typename OtherUnit>
-    constexpr auto in(OtherUnit u) const {
+    AU_DEVICE_FUNC constexpr auto in(OtherUnit u) const {
         return in<T>(u, check_for(ALL_RISKS));
     }
 
     // Get the value of this constant in the given unit and rep, following this risk policy.
     template <typename T, typename OtherUnit, typename RiskPolicyT>
-    constexpr auto in(OtherUnit u, RiskPolicyT policy) const {
+    AU_DEVICE_FUNC constexpr auto in(OtherUnit u, RiskPolicyT policy) const {
         return as<T>(u, policy).in(u);
     }
 
     // Implicitly convert to any quantity type which passes safety checks.
     template <typename U, typename R>
-    constexpr operator Quantity<U, R>() const {
+    AU_DEVICE_FUNC constexpr operator Quantity<U, R>() const {
         return as<R>(U{});
     }
 
@@ -10473,7 +10550,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
         typename T,
         typename = std::enable_if_t<can_store_value_in<typename CorrespondingQuantity<T>::Rep>(
             typename CorrespondingQuantity<T>::Unit{})>>
-    constexpr operator T() const {
+    AU_DEVICE_FUNC constexpr operator T() const {
         return as<typename CorrespondingQuantity<T>::Rep>(
             typename CorrespondingQuantity<T>::Unit{});
     }
@@ -10481,22 +10558,24 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // Comparison with Zero.
     //
     // A Constant represents a value of 1 in its unit, which is never zero.
-    friend constexpr bool operator==(Constant, Zero) { return false; }
-    friend constexpr bool operator!=(Constant, Zero) { return true; }
-    friend constexpr bool operator<(Constant, Zero) { return !is_positive(); }
-    friend constexpr bool operator<=(Constant, Zero) { return !is_positive(); }
-    friend constexpr bool operator>(Constant, Zero) { return is_positive(); }
-    friend constexpr bool operator>=(Constant, Zero) { return is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator==(Constant, Zero) { return false; }
+    AU_DEVICE_FUNC friend constexpr bool operator!=(Constant, Zero) { return true; }
+    AU_DEVICE_FUNC friend constexpr bool operator<(Constant, Zero) { return !is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator<=(Constant, Zero) { return !is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator>(Constant, Zero) { return is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator>=(Constant, Zero) { return is_positive(); }
 
-    friend constexpr bool operator==(Zero, Constant) { return false; }
-    friend constexpr bool operator!=(Zero, Constant) { return true; }
-    friend constexpr bool operator<(Zero, Constant) { return is_positive(); }
-    friend constexpr bool operator<=(Zero, Constant) { return is_positive(); }
-    friend constexpr bool operator>(Zero, Constant) { return !is_positive(); }
-    friend constexpr bool operator>=(Zero, Constant) { return !is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator==(Zero, Constant) { return false; }
+    AU_DEVICE_FUNC friend constexpr bool operator!=(Zero, Constant) { return true; }
+    AU_DEVICE_FUNC friend constexpr bool operator<(Zero, Constant) { return is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator<=(Zero, Constant) { return is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator>(Zero, Constant) { return !is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator>=(Zero, Constant) { return !is_positive(); }
 
  private:
-    static constexpr bool is_positive() { return IsPositive<detail::MagT<Unit>>::value; }
+    AU_DEVICE_FUNC static constexpr bool is_positive() {
+        return IsPositive<detail::MagT<Unit>>::value;
+    }
 };
 
 // Make a constant from the given unit.
@@ -10504,11 +10583,11 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 // Note that the argument is a _unit slot_, and thus can also accept things like `QuantityMaker` and
 // `SymbolFor` in addition to regular units.
 template <typename UnitSlot>
-constexpr Constant<AssociatedUnit<UnitSlot>> make_constant(UnitSlot) {
+AU_DEVICE_FUNC constexpr Constant<AssociatedUnit<UnitSlot>> make_constant(UnitSlot) {
     return {};
 }
 
-constexpr Zero make_constant(Zero) { return {}; }
+AU_DEVICE_FUNC constexpr Zero make_constant(Zero) { return {}; }
 
 // Support using `Constant` in a unit slot.
 template <typename Unit>
@@ -10520,35 +10599,35 @@ struct AssociatedUnitImpl<Constant<Unit>> : stdx::type_identity<Unit> {};
 // every combination of Constant.  We decided that supporting many common use cases was worth this
 // tradeoff.
 template <typename U1, typename U2>
-constexpr bool operator==(Constant<U1>, Constant<U2>) {
+AU_DEVICE_FUNC constexpr bool operator==(Constant<U1>, Constant<U2>) {
     return UnitRatio<U1, U2>{} == mag<1>();
 }
 template <typename U1, typename U2>
-constexpr bool operator<(Constant<U1>, Constant<U2>) {
+AU_DEVICE_FUNC constexpr bool operator<(Constant<U1>, Constant<U2>) {
     using SignU2 = Sign<detail::MagT<U2>>;
     using AbsU2 = decltype(U2{} * SignU2{});
     return UnitRatio<U1, AbsU2>{} < SignU2{};
 }
 template <typename U1, typename U2>
-constexpr bool operator!=(Constant<U1> lhs, Constant<U2> rhs) {
+AU_DEVICE_FUNC constexpr bool operator!=(Constant<U1> lhs, Constant<U2> rhs) {
     return !(lhs == rhs);
 }
 template <typename U1, typename U2>
-constexpr bool operator<=(Constant<U1> lhs, Constant<U2> rhs) {
+AU_DEVICE_FUNC constexpr bool operator<=(Constant<U1> lhs, Constant<U2> rhs) {
     return (lhs < rhs) || (lhs == rhs);
 }
 template <typename U1, typename U2>
-constexpr bool operator>(Constant<U1> lhs, Constant<U2> rhs) {
+AU_DEVICE_FUNC constexpr bool operator>(Constant<U1> lhs, Constant<U2> rhs) {
     return !(lhs <= rhs);
 }
 template <typename U1, typename U2>
-constexpr bool operator>=(Constant<U1> lhs, Constant<U2> rhs) {
+AU_DEVICE_FUNC constexpr bool operator>=(Constant<U1> lhs, Constant<U2> rhs) {
     return !(lhs < rhs);
 }
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename U1, typename U2>
-constexpr std::strong_ordering operator<=>(Constant<U1>, Constant<U2>) {
+AU_DEVICE_FUNC constexpr std::strong_ordering operator<=>(Constant<U1>, Constant<U2>) {
     using SignU2 = Sign<detail::MagT<U2>>;
     using AbsU2 = decltype(U2{} * SignU2{});
     return UnitRatio<U1, AbsU2>{} <=> SignU2{};
@@ -10563,7 +10642,7 @@ constexpr std::strong_ordering operator<=>(Constant<U1>, Constant<U2>) {
 
 // Mod (%) for `Constant`.
 template <typename U1, typename U2>
-constexpr auto operator%(Constant<U1>, Constant<U2>) {
+AU_DEVICE_FUNC constexpr auto operator%(Constant<U1>, Constant<U2>) {
     // This slightly complicated dance tends to produce more intuitive, human-friendly labels.
     //
     // The basic idea for `%` with `Constant` is to perform the operation in the constants' common
@@ -10582,38 +10661,38 @@ constexpr auto operator%(Constant<U1>, Constant<U2>) {
 
 // Arithmetic operators mixing `Constant` with `Zero`.
 template <typename U>
-constexpr Zero operator%(Zero, Constant<U>) {
+AU_DEVICE_FUNC constexpr Zero operator%(Zero, Constant<U>) {
     return {};
 }
 
 // Addition (+) for `Constant`.
 template <typename U1, typename U2>
-constexpr auto operator+(Constant<U1>, Constant<U2>) {
+AU_DEVICE_FUNC constexpr auto operator+(Constant<U1>, Constant<U2>) {
     return make_constant(UnitSum<U1, U2>{});
 }
 
 // Subtraction (-) for `Constant`.
 template <typename U1, typename U2>
-constexpr auto operator-(Constant<U1>, Constant<U2>) {
+AU_DEVICE_FUNC constexpr auto operator-(Constant<U1>, Constant<U2>) {
     using NegU2 = decltype(U2{} * Magnitude<Negative>{});
     return make_constant(UnitSum<U1, NegU2>{});
 }
 
 // Arithmetic operators mixing `Constant` with `Zero`.
 template <typename U>
-constexpr Constant<U> operator+(Constant<U>, Zero) {
+AU_DEVICE_FUNC constexpr Constant<U> operator+(Constant<U>, Zero) {
     return {};
 }
 template <typename U>
-constexpr Constant<U> operator+(Zero, Constant<U>) {
+AU_DEVICE_FUNC constexpr Constant<U> operator+(Zero, Constant<U>) {
     return {};
 }
 template <typename U>
-constexpr Constant<U> operator-(Constant<U>, Zero) {
+AU_DEVICE_FUNC constexpr Constant<U> operator-(Constant<U>, Zero) {
     return {};
 }
 template <typename U>
-constexpr auto operator-(Zero, Constant<U>) {
+AU_DEVICE_FUNC constexpr auto operator-(Zero, Constant<U>) {
     return -Constant<U>{};
 }
 
@@ -10807,7 +10886,7 @@ namespace au {
 
 // Make a Quantity of the given Unit, which has this value as measured in the Unit.
 template <typename UnitT, typename T>
-constexpr auto make_quantity_point(T value) {
+AU_DEVICE_FUNC constexpr auto make_quantity_point(T value) {
     return QuantityPointMaker<UnitT>{}(value);
 }
 
@@ -10824,7 +10903,7 @@ struct IntermediateRep;
 // "origin" of another unit of the same Dimension _is_ meaningful.  This type trait provides access
 // to that difference.
 template <typename U1, typename U2>
-constexpr auto origin_displacement(U1, U2) {
+AU_DEVICE_FUNC constexpr auto origin_displacement(U1, U2) {
     return make_constant(detail::ComputeOriginDisplacementUnit<AssociatedUnitForPoints<U1>,
                                                                AssociatedUnitForPoints<U2>>{});
 }
@@ -10872,12 +10951,13 @@ class QuantityPoint {
     // The default constructor produces a QuantityPoint whose value is default constructed.  It
     // exists to give you an object you can assign to.  The main motivating factor for including
     // this is to support `std::atomic`, which requires its types to be default-constructible.
-    constexpr QuantityPoint() noexcept : x_{} {}
+    AU_DEVICE_FUNC constexpr QuantityPoint() noexcept : x_{} {}
 
     template <typename OtherUnit,
               typename OtherRep,
               typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>>
-    constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
+    AU_DEVICE_FUNC constexpr QuantityPoint(
+        QuantityPoint<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
         : QuantityPoint{other.template as<Rep>(unit)} {}
 
     template <typename OtherUnit,
@@ -10892,7 +10972,8 @@ class QuantityPoint {
               typename OtherRep,
               typename RiskPolicyT,
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
-    constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other, RiskPolicyT policy)
+    AU_DEVICE_FUNC constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other,
+                                           RiskPolicyT policy)
         : QuantityPoint{other.template as<Rep>(Unit{}, policy)} {}
 
     // The notion of "0" is *not* unambiguous for point types, because different scales can make
@@ -10903,7 +10984,7 @@ class QuantityPoint {
     template <typename NewRep,
               typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
-    constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity_point<Unit>(in_impl<NewRep>(Unit{}, policy));
     }
 
@@ -10912,23 +10993,23 @@ class QuantityPoint {
               typename NewUnit,
               typename RiskPolicyT = decltype(ignore(ALL_RISKS)),
               std::enable_if_t<!IsConversionRiskPolicy<NewUnit>::value, int> = 0>
-    constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<NewRep>(u, policy));
     }
 
     // `p.as(new_unit)`, or `p.as(new_unit, risk_policy)`
     template <typename NewUnit, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
-    constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<Rep>(u, policy));
     }
 
     template <typename NewRep, typename NewUnit, typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
-    constexpr NewRep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr NewRep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<NewRep>(u, policy);
     }
 
     template <typename NewUnit, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
-    constexpr Rep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+    AU_DEVICE_FUNC constexpr Rep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<Rep>(u, policy);
     }
 
@@ -10958,45 +11039,65 @@ class QuantityPoint {
     //
     // Mutable access:
     template <typename UnitSlot>
-    constexpr Rep &data_in(UnitSlot) {
+    AU_DEVICE_FUNC constexpr Rep &data_in(UnitSlot) {
         static_assert(AreUnitsPointEquivalent<AssociatedUnitForPoints<UnitSlot>, Unit>::value,
                       "Can only access value via Point-equivalent unit");
         return x_.data_in(AssociatedUnitForPoints<UnitSlot>{});
     }
     // Const access:
     template <typename UnitSlot>
-    constexpr const Rep &data_in(UnitSlot) const {
+    AU_DEVICE_FUNC constexpr const Rep &data_in(UnitSlot) const {
         static_assert(AreUnitsPointEquivalent<AssociatedUnitForPoints<UnitSlot>, Unit>::value,
                       "Can only access value via Point-equivalent unit");
         return x_.data_in(AssociatedUnitForPoints<UnitSlot>{});
     }
 
     // Comparison operators.
-    constexpr friend bool operator==(QuantityPoint a, QuantityPoint b) { return a.x_ == b.x_; }
-    constexpr friend bool operator!=(QuantityPoint a, QuantityPoint b) { return a.x_ != b.x_; }
-    constexpr friend bool operator>=(QuantityPoint a, QuantityPoint b) { return a.x_ >= b.x_; }
-    constexpr friend bool operator>(QuantityPoint a, QuantityPoint b) { return a.x_ > b.x_; }
-    constexpr friend bool operator<=(QuantityPoint a, QuantityPoint b) { return a.x_ <= b.x_; }
-    constexpr friend bool operator<(QuantityPoint a, QuantityPoint b) { return a.x_ < b.x_; }
+    AU_DEVICE_FUNC constexpr friend bool operator==(QuantityPoint a, QuantityPoint b) {
+        return a.x_ == b.x_;
+    }
+    AU_DEVICE_FUNC constexpr friend bool operator!=(QuantityPoint a, QuantityPoint b) {
+        return a.x_ != b.x_;
+    }
+    AU_DEVICE_FUNC constexpr friend bool operator>=(QuantityPoint a, QuantityPoint b) {
+        return a.x_ >= b.x_;
+    }
+    AU_DEVICE_FUNC constexpr friend bool operator>(QuantityPoint a, QuantityPoint b) {
+        return a.x_ > b.x_;
+    }
+    AU_DEVICE_FUNC constexpr friend bool operator<=(QuantityPoint a, QuantityPoint b) {
+        return a.x_ <= b.x_;
+    }
+    AU_DEVICE_FUNC constexpr friend bool operator<(QuantityPoint a, QuantityPoint b) {
+        return a.x_ < b.x_;
+    }
 
     // Subtraction between two QuantityPoint types.
-    constexpr friend auto operator-(QuantityPoint a, QuantityPoint b) { return a.x_ - b.x_; }
+    AU_DEVICE_FUNC constexpr friend auto operator-(QuantityPoint a, QuantityPoint b) {
+        return a.x_ - b.x_;
+    }
 
     // Left and right addition of a Diff.
-    constexpr friend auto operator+(Diff d, QuantityPoint p) { return QuantityPoint{d + p.x_}; }
-    constexpr friend auto operator+(QuantityPoint p, Diff d) { return QuantityPoint{p.x_ + d}; }
+    AU_DEVICE_FUNC constexpr friend auto operator+(Diff d, QuantityPoint p) {
+        return QuantityPoint{d + p.x_};
+    }
+    AU_DEVICE_FUNC constexpr friend auto operator+(QuantityPoint p, Diff d) {
+        return QuantityPoint{p.x_ + d};
+    }
 
     // Right subtraction of a Diff.
-    constexpr friend auto operator-(QuantityPoint p, Diff d) { return QuantityPoint{p.x_ - d}; }
+    AU_DEVICE_FUNC constexpr friend auto operator-(QuantityPoint p, Diff d) {
+        return QuantityPoint{p.x_ - d};
+    }
 
     // Short-hand addition assignment.
-    constexpr QuantityPoint &operator+=(Diff diff) {
+    AU_DEVICE_FUNC constexpr QuantityPoint &operator+=(Diff diff) {
         x_ += diff;
         return *this;
     }
 
     // Short-hand subtraction assignment.
-    constexpr QuantityPoint &operator-=(Diff diff) {
+    AU_DEVICE_FUNC constexpr QuantityPoint &operator-=(Diff diff) {
         x_ -= diff;
         return *this;
     }
@@ -11010,7 +11111,7 @@ class QuantityPoint {
 
  private:
     template <typename OtherRep, typename OtherPointUnitSlot, typename RiskPolicyT>
-    constexpr OtherRep in_impl(OtherPointUnitSlot, RiskPolicyT policy) const {
+    AU_DEVICE_FUNC constexpr OtherRep in_impl(OtherPointUnitSlot, RiskPolicyT policy) const {
         using OtherUnit = AssociatedUnitForPoints<OtherPointUnitSlot>;
         using OriginDisplacementUnit = detail::ComputeOriginDisplacementUnit<Unit, OtherUnit>;
         using Common = CommonUnit<Unit, OtherUnit, OriginDisplacementUnit>;
@@ -11022,7 +11123,7 @@ class QuantityPoint {
         return intermediate_result.template in<OtherRep>(OtherUnit{}, policy);
     }
 
-    constexpr explicit QuantityPoint(Diff x) : x_{x} {}
+    AU_DEVICE_FUNC constexpr explicit QuantityPoint(Diff x) : x_{x} {}
 
     Diff x_;
 };
@@ -11032,30 +11133,30 @@ struct QuantityPointMaker {
     static constexpr auto unit = Unit{};
 
     template <typename T>
-    constexpr auto operator()(T value) const {
+    AU_DEVICE_FUNC constexpr auto operator()(T value) const {
         return QuantityPoint<Unit, T>{make_quantity<Unit>(value)};
     }
 
     template <typename U, typename R>
-    constexpr void operator()(Quantity<U, R>) const {
+    AU_DEVICE_FUNC constexpr void operator()(Quantity<U, R>) const {
         constexpr bool is_not_a_quantity = detail::AlwaysFalse<U, R>::value;
         static_assert(is_not_a_quantity, "Input to QuantityPointMaker is a Quantity");
     }
 
     template <typename U, typename R>
-    constexpr void operator()(QuantityPoint<U, R>) const {
+    AU_DEVICE_FUNC constexpr void operator()(QuantityPoint<U, R>) const {
         constexpr bool is_not_already_a_quantity_point = detail::AlwaysFalse<U, R>::value;
         static_assert(is_not_already_a_quantity_point,
                       "Input to QuantityPointMaker is already a QuantityPoint");
     }
 
     template <typename... BPs>
-    constexpr auto operator*(Magnitude<BPs...> m) const {
+    AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BPs...> m) const {
         return QuantityPointMaker<decltype(unit * m)>{};
     }
 
     template <typename... BPs>
-    constexpr auto operator/(Magnitude<BPs...> m) const {
+    AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BPs...> m) const {
         return QuantityPointMaker<decltype(unit / m)>{};
     }
 };
@@ -11091,20 +11192,21 @@ struct AreQuantityPointTypesEquivalent<QuantityPoint<U1, R1>, QuantityPoint<U2, 
 
 // Cast QuantityPoint to a different underlying type.
 template <typename NewRep, typename Unit, typename Rep>
-constexpr auto rep_cast(QuantityPoint<Unit, Rep> q) {
+AU_DEVICE_FUNC constexpr auto rep_cast(QuantityPoint<Unit, Rep> q) {
     return q.template as<NewRep>(Unit{});
 }
 
 namespace detail {
 template <typename X, typename Y, typename Func>
-constexpr auto using_common_point_unit(X x, Y y, Func f) {
+AU_DEVICE_FUNC constexpr auto using_common_point_unit(X x, Y y, Func f) {
     using R = std::common_type_t<typename X::Rep, typename Y::Rep>;
     constexpr auto u = CommonPointUnit<typename X::Unit, typename Y::Unit>{};
     return f(rep_cast<R>(x).as(u), rep_cast<R>(y).as(u));
 }
 
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
-constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1,
+                                                  QuantityPoint<U2, R2> p2) {
     using U = CommonPointUnit<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
@@ -11116,27 +11218,27 @@ constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R
 
 // Comparison functions for compatible QuantityPoint types.
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator<(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator<(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::convert_and_compare<detail::Less>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator>(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator>(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::convert_and_compare<detail::Greater>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator<=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator<=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::convert_and_compare<detail::LessEqual>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator>=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator>=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::convert_and_compare<detail::GreaterEqual>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator==(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator==(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::convert_and_compare<detail::Equal>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator!=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator!=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::convert_and_compare<detail::NotEqual>(p1, p2);
 }
 
@@ -11153,35 +11255,36 @@ namespace detail {
 // This utility should be used for every overload below which combines a `QuantityPoint` with a
 // `Quantity`.
 template <typename Target, typename U>
-constexpr auto borrow_origin(U u) {
+AU_DEVICE_FUNC constexpr auto borrow_origin(U u) {
     return Target{} * unit_ratio(u, Target{});
 }
 }  // namespace detail
 
 // Addition and subtraction functions for compatible QuantityPoint types.
 template <typename UnitP, typename UnitQ, typename RepP, typename RepQ>
-constexpr auto operator+(QuantityPoint<UnitP, RepP> p, Quantity<UnitQ, RepQ> q) {
+AU_DEVICE_FUNC constexpr auto operator+(QuantityPoint<UnitP, RepP> p, Quantity<UnitQ, RepQ> q) {
     constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
     return detail::using_common_point_unit(p, q.as(new_unit_q), detail::plus);
 }
 template <typename UnitQ, typename UnitP, typename RepQ, typename RepP>
-constexpr auto operator+(Quantity<UnitQ, RepQ> q, QuantityPoint<UnitP, RepP> p) {
+AU_DEVICE_FUNC constexpr auto operator+(Quantity<UnitQ, RepQ> q, QuantityPoint<UnitP, RepP> p) {
     constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
     return detail::using_common_point_unit(q.as(new_unit_q), p, detail::plus);
 }
 template <typename UnitP, typename UnitQ, typename R1, typename RepQ>
-constexpr auto operator-(QuantityPoint<UnitP, R1> p, Quantity<UnitQ, RepQ> q) {
+AU_DEVICE_FUNC constexpr auto operator-(QuantityPoint<UnitP, R1> p, Quantity<UnitQ, RepQ> q) {
     constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
     return detail::using_common_point_unit(p, q.as(new_unit_q), detail::minus);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto operator-(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator-(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::using_common_point_unit(p1, p2, detail::minus);
 }
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename U1, typename R1, typename U2, typename R2>
-constexpr auto operator<=>(const QuantityPoint<U1, R1> &lhs, const QuantityPoint<U2, R2> &rhs) {
+AU_DEVICE_FUNC constexpr auto operator<=>(const QuantityPoint<U1, R1> &lhs,
+                                          const QuantityPoint<U2, R2> &rhs) {
     return detail::convert_and_compare<detail::ThreeWayCompare>(lhs, rhs);
 }
 #endif
@@ -11352,33 +11455,33 @@ template <template <class U> class Prefix>
 struct PrefixApplier {
     // Applying a Prefix to a Unit instance, creates an instance of the Prefixed Unit.
     template <typename U>
-    constexpr auto operator()(U) const {
+    AU_DEVICE_FUNC constexpr auto operator()(U) const {
         return Prefix<U>{};
     }
 
     // Applying a Prefix to a QuantityMaker instance, creates a maker for the Prefixed Unit.
     template <typename U>
-    constexpr auto operator()(QuantityMaker<U>) const {
+    AU_DEVICE_FUNC constexpr auto operator()(QuantityMaker<U>) const {
         return QuantityMaker<Prefix<U>>{};
     }
 
     // Applying a Prefix to a QuantityPointMaker instance, changes it to make the Prefixed Unit.
     template <typename U>
-    constexpr auto operator()(QuantityPointMaker<U>) const {
+    AU_DEVICE_FUNC constexpr auto operator()(QuantityPointMaker<U>) const {
         return QuantityPointMaker<Prefix<U>>{};
     }
 
     // Applying a Prefix to a SingularNameFor instance, creates a singularly-named instance of the
     // Prefixed Unit.
     template <typename U>
-    constexpr auto operator()(SingularNameFor<U>) const {
+    AU_DEVICE_FUNC constexpr auto operator()(SingularNameFor<U>) const {
         return SingularNameFor<Prefix<U>>{};
     }
 
     // Applying a Prefix to a SymbolFor instance, creates a symbolically-named instance of the
     // Prefixed unit.
     template <typename U>
-    constexpr auto operator()(SymbolFor<U>) const {
+    AU_DEVICE_FUNC constexpr auto operator()(SymbolFor<U>) const {
         return SymbolFor<Prefix<U>>{};
     }
 };
@@ -11846,7 +11949,7 @@ auto in_radians(Quantity<U, R> q) {
 }
 
 template <typename T>
-constexpr T int_pow_impl(T x, int exp) {
+AU_DEVICE_FUNC constexpr T int_pow_impl(T x, int exp) {
     if (exp < 0) {
         return T{1} / int_pow_impl(x, -exp);
     }
@@ -11946,7 +12049,9 @@ auto cbrt(Quantity<U, R> q) {
 
 // Clamp the first quantity to within the range of the second two.
 template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
-constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Quantity<UHi, RHi> hi) {
+AU_DEVICE_FUNC constexpr auto clamp(Quantity<UV, RV> v,
+                                    Quantity<ULo, RLo> lo,
+                                    Quantity<UHi, RHi> hi) {
     using U = CommonUnit<UV, ULo, UHi>;
     using R = std::common_type_t<RV, RLo, RHi>;
     using ResultT = Quantity<U, R>;
@@ -11955,9 +12060,9 @@ constexpr auto clamp(Quantity<UV, RV> v, Quantity<ULo, RLo> lo, Quantity<UHi, RH
 
 // Clamp the first point to within the range of the second two.
 template <typename UV, typename ULo, typename UHi, typename RV, typename RLo, typename RHi>
-constexpr auto clamp(QuantityPoint<UV, RV> v,
-                     QuantityPoint<ULo, RLo> lo,
-                     QuantityPoint<UHi, RHi> hi) {
+AU_DEVICE_FUNC constexpr auto clamp(QuantityPoint<UV, RV> v,
+                                    QuantityPoint<ULo, RLo> lo,
+                                    QuantityPoint<UHi, RHi> hi) {
     using U = CommonPointUnit<UV, ULo, UHi>;
     using R = std::common_type_t<RV, RLo, RHi>;
     using ResultT = QuantityPoint<U, R>;
@@ -11972,19 +12077,19 @@ auto hypot(Quantity<U1, R1> x, Quantity<U2, R2> y) {
 
 // Copysign where the magnitude has units.
 template <typename U, typename R, typename T>
-constexpr auto copysign(Quantity<U, R> mag, T sgn) {
+AU_DEVICE_FUNC constexpr auto copysign(Quantity<U, R> mag, T sgn) {
     return make_quantity<U>(std::copysign(mag.in(U{}), sgn));
 }
 
 // Copysign where the sign has units.
 template <typename T, typename U, typename R>
-constexpr auto copysign(T mag, Quantity<U, R> sgn) {
+AU_DEVICE_FUNC constexpr auto copysign(T mag, Quantity<U, R> sgn) {
     return std::copysign(mag, sgn.in(U{}));
 }
 
 // Copysign where both the magnitude and sign have units (disambiguates between the above).
 template <typename U1, typename R1, typename U2, typename R2>
-constexpr auto copysign(Quantity<U1, R1> mag, Quantity<U2, R2> sgn) {
+AU_DEVICE_FUNC constexpr auto copysign(Quantity<U1, R1> mag, Quantity<U2, R2> sgn) {
     return make_quantity<U1>(std::copysign(mag.in(U1{}), sgn.in(U2{})));
 }
 
@@ -12004,7 +12109,7 @@ auto fmod(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 
 // Raise a Quantity to an integer power.
 template <int Exp, typename U, typename R>
-constexpr auto int_pow(Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_pow(Quantity<U, R> q) {
     static_assert((!std::is_integral<R>::value) || (Exp >= 0),
                   "Negative exponent on integral represented units are not supported.");
 
@@ -12017,7 +12122,7 @@ constexpr auto int_pow(Quantity<U, R> q) {
 // This is the "explicit Rep" format, which is semantically equivalent to a `static_cast`.
 //
 template <typename TargetRep, typename TargetUnits, typename U, typename R>
-constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     using Rep = std::common_type_t<TargetRep, R>;
     constexpr auto UNITY = make_constant(UnitProduct<>{});
     return static_cast<TargetRep>(UNITY.in<Rep>(associated_unit(target_units) * U{}) / q.in(U{}));
@@ -12031,7 +12136,7 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
 // in this case, the library will know to divide into 1'000'000 instead of dividing into 1.)
 //
 template <typename TargetUnits, typename U, typename R>
-constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
     // The policy here is similar to our overflow policy, in that we try to avoid "bad outcomes"
     // when users store values less than 1000.  (The thinking, here as there, is that values _more_
     // than 1000 would tend to be stored in the next SI-prefixed unit up, e.g., 1 km instead of 1000
@@ -12068,7 +12173,7 @@ constexpr auto inverse_in(TargetUnits target_units, Quantity<U, R> q) {
 // (See `inverse_in()` comment above for how this inverse is "smart".)
 //
 template <typename TargetUnits, typename U, typename R>
-constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
     return make_quantity<AssociatedUnit<TargetUnits>>(inverse_in(target_units, q));
 }
 
@@ -12078,7 +12183,7 @@ constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
 // This is the "explicit Rep" format, which is semantically equivalent to a `static_cast`.
 //
 template <typename TargetRep, typename TargetUnits, typename U, typename R>
-constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
     return make_quantity<AssociatedUnit<TargetUnits>>(inverse_in<TargetRep>(target_units, q));
 }
 
@@ -12086,13 +12191,13 @@ constexpr auto inverse_as(TargetUnits target_units, Quantity<U, R> q) {
 // Check whether the value stored is (positive or negative) infinity.
 //
 template <typename U, typename R>
-constexpr bool isinf(Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr bool isinf(Quantity<U, R> q) {
     return std::isinf(q.in(U{}));
 }
 
 // Overload of `isinf` for `QuantityPoint`.
 template <typename U, typename R>
-constexpr bool isinf(QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr bool isinf(QuantityPoint<U, R> p) {
     return std::isinf(p.in(U{}));
 }
 
@@ -12100,13 +12205,13 @@ constexpr bool isinf(QuantityPoint<U, R> p) {
 // Check whether the value stored is "not a number" (NaN).
 //
 template <typename U, typename R>
-constexpr bool isnan(Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr bool isnan(Quantity<U, R> q) {
     return std::isnan(q.in(U{}));
 }
 
 // Overload of `isnan` for `QuantityPoint`.
 template <typename U, typename R>
-constexpr bool isnan(QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr bool isnan(QuantityPoint<U, R> p) {
     return std::isnan(p.in(U{}));
 }
 
@@ -12121,13 +12226,13 @@ constexpr bool isnan(QuantityPoint<U, R> p) {
 //
 #if defined(__cpp_lib_interpolate) && __cpp_lib_interpolate >= 201902L
 template <typename U1, typename R1, typename U2, typename R2, typename T>
-constexpr auto lerp(Quantity<U1, R1> q1, Quantity<U2, R2> q2, T t) {
+AU_DEVICE_FUNC constexpr auto lerp(Quantity<U1, R1> q1, Quantity<U2, R2> q2, T t) {
     using U = CommonUnit<U1, U2>;
     return make_quantity<U>(std::lerp(q1.in(U{}), q2.in(U{}), as_raw_number(t)));
 }
 
 template <typename U1, typename R1, typename U2, typename R2, typename T>
-constexpr auto lerp(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2, T t) {
+AU_DEVICE_FUNC constexpr auto lerp(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2, T t) {
     using U = CommonPointUnit<U1, U2>;
     return make_quantity_point<U>(std::lerp(p1.in(U{}), p2.in(U{}), as_raw_number(t)));
 }
@@ -12137,7 +12242,7 @@ namespace detail {
 // We can't use lambdas in `constexpr` contexts until C++17, so we make a manual function object.
 struct StdMaxByValue {
     template <typename T>
-    constexpr auto operator()(T a, T b) const {
+    AU_DEVICE_FUNC constexpr auto operator()(T a, T b) const {
         return std::max(a, b);
     }
 };
@@ -12147,7 +12252,7 @@ struct StdMaxByValue {
 //
 // Unlike std::max, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto max(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr auto max(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::using_common_type(q1, q2, detail::StdMaxByValue{});
 }
 
@@ -12155,13 +12260,13 @@ constexpr auto max(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 //
 // Unlike std::max, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto max(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto max(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::using_common_point_unit(p1, p2, detail::StdMaxByValue{});
 }
 
 // Overload to resolve ambiguity with `std::max` for identical `QuantityPoint` types.
 template <typename U, typename R>
-constexpr auto max(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
+AU_DEVICE_FUNC constexpr auto max(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
     return std::max(a, b);
 }
 
@@ -12169,7 +12274,7 @@ namespace detail {
 // We can't use lambdas in `constexpr` contexts until C++17, so we make a manual function object.
 struct StdMinByValue {
     template <typename T>
-    constexpr auto operator()(T a, T b) const {
+    AU_DEVICE_FUNC constexpr auto operator()(T a, T b) const {
         return std::min(a, b);
     }
 };
@@ -12179,7 +12284,7 @@ struct StdMinByValue {
 //
 // Unlike std::min, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto min(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr auto min(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
     return detail::using_common_type(q1, q2, detail::StdMinByValue{});
 }
 
@@ -12187,18 +12292,18 @@ constexpr auto min(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 //
 // Unlike std::min, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
-constexpr auto min(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto min(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
     return detail::using_common_point_unit(p1, p2, detail::StdMinByValue{});
 }
 
 // Overload to resolve ambiguity with `std::min` for identical `QuantityPoint` types.
 template <typename U, typename R>
-constexpr auto min(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
+AU_DEVICE_FUNC constexpr auto min(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
     return std::min(a, b);
 }
 
 template <typename U0, typename R0, typename... Us, typename... Rs>
-constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs) {
+AU_DEVICE_FUNC constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs) {
     static_assert(sizeof...(qs) > 0, "mean() requires at least two inputs");
     using R = std::common_type_t<R0, Rs...>;
     using Common = Quantity<CommonUnit<U0, Us...>, R>;
@@ -12212,7 +12317,7 @@ constexpr auto mean(Quantity<U0, R0> q0, Quantity<Us, Rs>... qs) {
 }
 
 template <typename U0, typename R0, typename... Us, typename... Rs>
-constexpr auto mean(QuantityPoint<U0, R0> p0, QuantityPoint<Us, Rs>... ps) {
+AU_DEVICE_FUNC constexpr auto mean(QuantityPoint<U0, R0> p0, QuantityPoint<Us, Rs>... ps) {
     static_assert(sizeof...(ps) > 0, "mean() requires at least two inputs");
     using U = CommonPointUnit<U0, Us...>;
     using R = std::common_type_t<R0, Rs...>;
@@ -12269,7 +12374,7 @@ auto round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 }
 // c) Version for Constant.
 template <typename OutputRep, typename RoundingUnits, typename U>
-constexpr auto round_in(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto round_in(RoundingUnits rounding_units, Constant<U> c) {
     return get_value<OutputRep>(mag_round(unit_ratio(c, rounding_units)));
 }
 
@@ -12290,7 +12395,7 @@ auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 }
 // c) Version for Constant.
 template <typename RoundingUnits, typename U>
-constexpr auto round_as(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto round_as(RoundingUnits rounding_units, Constant<U> c) {
     return mag_round(unit_ratio(c, rounding_units)) * make_constant(rounding_units);
 }
 
@@ -12347,7 +12452,7 @@ auto floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 }
 // c) Version for Constant.
 template <typename OutputRep, typename RoundingUnits, typename U>
-constexpr auto floor_in(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto floor_in(RoundingUnits rounding_units, Constant<U> c) {
     return get_value<OutputRep>(mag_floor(unit_ratio(c, rounding_units)));
 }
 
@@ -12368,7 +12473,7 @@ auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 }
 // c) Version for Constant.
 template <typename RoundingUnits, typename U>
-constexpr auto floor_as(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto floor_as(RoundingUnits rounding_units, Constant<U> c) {
     return mag_floor(unit_ratio(c, rounding_units)) * make_constant(rounding_units);
 }
 
@@ -12425,7 +12530,7 @@ auto ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 }
 // c) Version for Constant.
 template <typename OutputRep, typename RoundingUnits, typename U>
-constexpr auto ceil_in(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto ceil_in(RoundingUnits rounding_units, Constant<U> c) {
     return get_value<OutputRep>(mag_ceil(unit_ratio(c, rounding_units)));
 }
 
@@ -12446,7 +12551,7 @@ auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 }
 // c) Version for Constant.
 template <typename RoundingUnits, typename U>
-constexpr auto ceil_as(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto ceil_as(RoundingUnits rounding_units, Constant<U> c) {
     return mag_ceil(unit_ratio(c, rounding_units)) * make_constant(rounding_units);
 }
 
@@ -12475,7 +12580,7 @@ auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
 //
 // Common implementation helper:
 template <typename RoundingUnits, template <class, class> class QType, typename U, typename R>
-constexpr auto int_round_as_impl(RoundingUnits, QType<U, R> val) {
+AU_DEVICE_FUNC constexpr auto int_round_as_impl(RoundingUnits, QType<U, R> val) {
     static_assert(std::is_integral<R>::value, "int_round_as requires integral Rep type");
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
@@ -12485,17 +12590,17 @@ constexpr auto int_round_as_impl(RoundingUnits, QType<U, R> val) {
 }
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_round_as_impl(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_round_as_impl(rounding_units, p);
 }
 // (c) Version for Constant.
 template <typename RoundingUnits, typename U>
-constexpr auto int_round_as(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto int_round_as(RoundingUnits rounding_units, Constant<U> c) {
     return round_as(rounding_units, c);  // For `Constant`, identical to `round_as`.
 }
 
@@ -12511,7 +12616,7 @@ template <typename OutputRep,
           class QType,
           typename U,
           typename R>
-constexpr auto int_round_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
+AU_DEVICE_FUNC constexpr auto int_round_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
     static_assert(std::is_integral<OutputRep>::value, "int_round_as output must be integral");
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
@@ -12522,12 +12627,12 @@ constexpr auto int_round_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
 }
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_round_as_explicit_rep_impl<OutputRep>(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_round_as_explicit_rep_impl<OutputRep>(rounding_units, p);
 }
 
@@ -12538,12 +12643,12 @@ constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p)
 //
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_round_as(rounding_units, q).in(rounding_units);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_round_as(rounding_units, p).in(associated_unit_for_points(rounding_units));
 }
 
@@ -12554,17 +12659,17 @@ constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p)
 //
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_round_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_round_as<OutputRep>(rounding_units, q).in(rounding_units);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_round_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_round_as<OutputRep>(rounding_units, p).in(rounding_units);
 }
 // (c) Version for Constant.
 template <typename OutputRep, typename RoundingUnits, typename U>
-constexpr auto int_round_in(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto int_round_in(RoundingUnits rounding_units, Constant<U> c) {
     return round_in<OutputRep>(rounding_units, c);  // For `Constant`, identical to `round_in`.
 }
 
@@ -12575,7 +12680,7 @@ constexpr auto int_round_in(RoundingUnits rounding_units, Constant<U> c) {
 //
 // Common implementation helper:
 template <typename RoundingUnits, template <class, class> class QType, typename U, typename R>
-constexpr auto int_floor_as_impl(RoundingUnits, QType<U, R> val) {
+AU_DEVICE_FUNC constexpr auto int_floor_as_impl(RoundingUnits, QType<U, R> val) {
     static_assert(std::is_integral<R>::value, "int_floor_as requires integral Rep type");
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
@@ -12585,17 +12690,17 @@ constexpr auto int_floor_as_impl(RoundingUnits, QType<U, R> val) {
 }
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_floor_as_impl(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_floor_as_impl(rounding_units, p);
 }
 // (c) Version for Constant.
 template <typename RoundingUnits, typename U>
-constexpr auto int_floor_as(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto int_floor_as(RoundingUnits rounding_units, Constant<U> c) {
     return floor_as(rounding_units, c);  // For `Constant`, identical to `floor_as`.
 }
 
@@ -12611,7 +12716,7 @@ template <typename OutputRep,
           class QType,
           typename U,
           typename R>
-constexpr auto int_floor_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
+AU_DEVICE_FUNC constexpr auto int_floor_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
     static_assert(std::is_integral<OutputRep>::value, "int_floor_as output must be integral");
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
@@ -12621,12 +12726,12 @@ constexpr auto int_floor_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
 }
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_floor_as_explicit_rep_impl<OutputRep>(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_floor_as_explicit_rep_impl<OutputRep>(rounding_units, p);
 }
 
@@ -12637,12 +12742,12 @@ constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p)
 //
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_floor_as(rounding_units, q).in(rounding_units);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_floor_as(rounding_units, p).in(associated_unit_for_points(rounding_units));
 }
 
@@ -12653,17 +12758,17 @@ constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p)
 //
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_floor_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_floor_as<OutputRep>(rounding_units, q).in(rounding_units);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_floor_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_floor_as<OutputRep>(rounding_units, p).in(rounding_units);
 }
 // (c) Version for Constant.
 template <typename OutputRep, typename RoundingUnits, typename U>
-constexpr auto int_floor_in(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto int_floor_in(RoundingUnits rounding_units, Constant<U> c) {
     return floor_in<OutputRep>(rounding_units, c);  // For `Constant`, identical to `floor_in`.
 }
 
@@ -12674,7 +12779,7 @@ constexpr auto int_floor_in(RoundingUnits rounding_units, Constant<U> c) {
 //
 // Common implementation helper:
 template <typename RoundingUnits, template <class, class> class QType, typename U, typename R>
-constexpr auto int_ceil_as_impl(RoundingUnits, QType<U, R> val) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as_impl(RoundingUnits, QType<U, R> val) {
     static_assert(std::is_integral<R>::value, "int_ceil_as requires integral Rep type");
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
@@ -12684,17 +12789,17 @@ constexpr auto int_ceil_as_impl(RoundingUnits, QType<U, R> val) {
 }
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_ceil_as_impl(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_ceil_as_impl(rounding_units, p);
 }
 // (c) Version for Constant.
 template <typename RoundingUnits, typename U>
-constexpr auto int_ceil_as(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as(RoundingUnits rounding_units, Constant<U> c) {
     return ceil_as(rounding_units, c);  // For `Constant`, identical to `ceil_as`.
 }
 
@@ -12710,7 +12815,7 @@ template <typename OutputRep,
           class QType,
           typename U,
           typename R>
-constexpr auto int_ceil_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
     static_assert(std::is_integral<OutputRep>::value, "int_ceil_as output must be integral");
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
@@ -12720,12 +12825,12 @@ constexpr auto int_ceil_as_explicit_rep_impl(RoundingUnits, QType<U, R> val) {
 }
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_ceil_as_explicit_rep_impl<OutputRep>(rounding_units, q);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_ceil_as_explicit_rep_impl<OutputRep>(rounding_units, p);
 }
 
@@ -12736,12 +12841,12 @@ constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) 
 //
 // (a) Version for Quantity.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_ceil_as(rounding_units, q).in(rounding_units);
 }
 // (b) Version for QuantityPoint.
 template <typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_ceil_as(rounding_units, p).in(associated_unit_for_points(rounding_units));
 }
 
@@ -12752,17 +12857,17 @@ constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) 
 //
 // (a) Version for Quantity.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
+AU_DEVICE_FUNC constexpr auto int_ceil_in(RoundingUnits rounding_units, Quantity<U, R> q) {
     return int_ceil_as<OutputRep>(rounding_units, q).in(rounding_units);
 }
 // (b) Version for QuantityPoint.
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
-constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
+AU_DEVICE_FUNC constexpr auto int_ceil_in(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_ceil_as<OutputRep>(rounding_units, p).in(rounding_units);
 }
 // (c) Version for Constant.
 template <typename OutputRep, typename RoundingUnits, typename U>
-constexpr auto int_ceil_in(RoundingUnits rounding_units, Constant<U> c) {
+AU_DEVICE_FUNC constexpr auto int_ceil_in(RoundingUnits rounding_units, Constant<U> c) {
     return ceil_in<OutputRep>(rounding_units, c);  // For `Constant`, identical to `ceil_in`.
 }
 
