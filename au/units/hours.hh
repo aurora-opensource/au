@@ -16,7 +16,7 @@
 
 #include "au/units/hours_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Hours
       HoursLabel<void> {
     using HoursLabel<void>::label;
 };
-constexpr auto hour = SingularNameFor<Hours>{};
-constexpr auto hours = QuantityMaker<Hours>{};
+AU_DEVICE_VAR constexpr auto hour = SingularNameFor<Hours>{};
+AU_DEVICE_VAR constexpr auto hours = QuantityMaker<Hours>{};
 
 namespace symbols {
-constexpr auto h = SymbolFor<Hours>{};
+AU_DEVICE_VAR constexpr auto h = SymbolFor<Hours>{};
 }
 }  // namespace au

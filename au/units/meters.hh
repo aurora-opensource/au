@@ -16,7 +16,7 @@
 
 #include "au/units/meters_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
 #include "au/unit_symbol.hh"
@@ -34,11 +34,11 @@ constexpr const char MetersLabel<T>::label[];
 struct Meters : UnitImpl<Length>, MetersLabel<void> {
     using MetersLabel<void>::label;
 };
-constexpr auto meter = SingularNameFor<Meters>{};
-constexpr auto meters = QuantityMaker<Meters>{};
-constexpr auto meters_pt = QuantityPointMaker<Meters>{};
+AU_DEVICE_VAR constexpr auto meter = SingularNameFor<Meters>{};
+AU_DEVICE_VAR constexpr auto meters = QuantityMaker<Meters>{};
+AU_DEVICE_VAR constexpr auto meters_pt = QuantityPointMaker<Meters>{};
 
 namespace symbols {
-constexpr auto m = SymbolFor<Meters>{};
+AU_DEVICE_VAR constexpr auto m = SymbolFor<Meters>{};
 }
 }  // namespace au

@@ -16,7 +16,7 @@
 
 #include "au/units/moles_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -33,10 +33,10 @@ constexpr const char MolesLabel<T>::label[];
 struct Moles : UnitImpl<AmountOfSubstance>, MolesLabel<void> {
     using MolesLabel<void>::label;
 };
-constexpr auto mole = SingularNameFor<Moles>{};
-constexpr auto moles = QuantityMaker<Moles>{};
+AU_DEVICE_VAR constexpr auto mole = SingularNameFor<Moles>{};
+AU_DEVICE_VAR constexpr auto moles = QuantityMaker<Moles>{};
 
 namespace symbols {
-constexpr auto mol = SymbolFor<Moles>{};
+AU_DEVICE_VAR constexpr auto mol = SymbolFor<Moles>{};
 }
 }  // namespace au

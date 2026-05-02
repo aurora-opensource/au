@@ -16,7 +16,7 @@
 
 #include "au/units/farads_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -43,10 +43,10 @@ struct Farads
       FaradsLabel<void> {
     using FaradsLabel<void>::label;
 };
-constexpr auto farad = SingularNameFor<Farads>{};
-constexpr auto farads = QuantityMaker<Farads>{};
+AU_DEVICE_VAR constexpr auto farad = SingularNameFor<Farads>{};
+AU_DEVICE_VAR constexpr auto farads = QuantityMaker<Farads>{};
 
 namespace symbols {
-constexpr auto F = SymbolFor<Farads>{};
+AU_DEVICE_VAR constexpr auto F = SymbolFor<Farads>{};
 }
 }  // namespace au

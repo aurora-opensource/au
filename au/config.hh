@@ -17,11 +17,14 @@
 //
 // Device/GPU support (CUDA, HIP)
 //
-// The AU_DEVICE_FUNC macro marks functions as callable from both host and device.
+// AU_DEVICE_FUNC: marks functions as callable from both host and device.
+// AU_DEVICE_VAR: marks constexpr variables as accessible from device code.
 //
 
 #if defined(__CUDACC__) || defined(__HIPCC__)
 #define AU_DEVICE_FUNC __host__ __device__
+#define AU_DEVICE_VAR __device__
 #else
 #define AU_DEVICE_FUNC
+#define AU_DEVICE_VAR
 #endif

@@ -16,7 +16,7 @@
 
 #include "au/units/days_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Days
       DaysLabel<void> {
     using DaysLabel<void>::label;
 };
-constexpr auto day = SingularNameFor<Days>{};
-constexpr auto days = QuantityMaker<Days>{};
+AU_DEVICE_VAR constexpr auto day = SingularNameFor<Days>{};
+AU_DEVICE_VAR constexpr auto days = QuantityMaker<Days>{};
 
 namespace symbols {
-constexpr auto d = SymbolFor<Days>{};
+AU_DEVICE_VAR constexpr auto d = SymbolFor<Days>{};
 }
 }  // namespace au

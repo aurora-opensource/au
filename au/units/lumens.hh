@@ -16,7 +16,7 @@
 
 #include "au/units/lumens_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Lumens
       LumensLabel<void> {
     using LumensLabel<void>::label;
 };
-constexpr auto lumen = SingularNameFor<Lumens>{};
-constexpr auto lumens = QuantityMaker<Lumens>{};
+AU_DEVICE_VAR constexpr auto lumen = SingularNameFor<Lumens>{};
+AU_DEVICE_VAR constexpr auto lumens = QuantityMaker<Lumens>{};
 
 namespace symbols {
-constexpr auto lm = SymbolFor<Lumens>{};
+AU_DEVICE_VAR constexpr auto lm = SymbolFor<Lumens>{};
 }
 }  // namespace au

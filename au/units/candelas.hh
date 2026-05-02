@@ -16,7 +16,7 @@
 
 #include "au/units/candelas_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -33,10 +33,10 @@ constexpr const char CandelasLabel<T>::label[];
 struct Candelas : UnitImpl<LuminousIntensity>, CandelasLabel<void> {
     using CandelasLabel<void>::label;
 };
-constexpr auto candela = SingularNameFor<Candelas>{};
-constexpr auto candelas = QuantityMaker<Candelas>{};
+AU_DEVICE_VAR constexpr auto candela = SingularNameFor<Candelas>{};
+AU_DEVICE_VAR constexpr auto candelas = QuantityMaker<Candelas>{};
 
 namespace symbols {
-constexpr auto cd = SymbolFor<Candelas>{};
+AU_DEVICE_VAR constexpr auto cd = SymbolFor<Candelas>{};
 }
 }  // namespace au

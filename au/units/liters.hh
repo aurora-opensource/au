@@ -16,7 +16,7 @@
 
 #include "au/units/liters_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -40,10 +40,10 @@ struct Liters
       LitersLabel<void> {
     using LitersLabel<void>::label;
 };
-constexpr auto liter = SingularNameFor<Liters>{};
-constexpr auto liters = QuantityMaker<Liters>{};
+AU_DEVICE_VAR constexpr auto liter = SingularNameFor<Liters>{};
+AU_DEVICE_VAR constexpr auto liters = QuantityMaker<Liters>{};
 
 namespace symbols {
-constexpr auto L = SymbolFor<Liters>{};
+AU_DEVICE_VAR constexpr auto L = SymbolFor<Liters>{};
 }
 }  // namespace au

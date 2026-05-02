@@ -16,7 +16,7 @@
 
 #include "au/units/celsius_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/prefix.hh"
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
@@ -39,14 +39,14 @@ struct Celsius : UnitImpl<Temperature>, CelsiusLabel<void> {
         return make_quantity<Centi<UnitImpl<Temperature>>>(27315);
     }
 };
-constexpr auto celsius_qty = QuantityMaker<Celsius>{};
-constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
+AU_DEVICE_VAR constexpr auto celsius_qty = QuantityMaker<Celsius>{};
+AU_DEVICE_VAR constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
 
 [[deprecated(
     "`celsius()` is ambiguous.  Use `celsius_pt()` for _points_, or `celsius_qty()` for "
     "_quantities_")]] constexpr auto celsius = QuantityMaker<Celsius>{};
 
 namespace symbols {
-constexpr auto degC_qty = SymbolFor<Celsius>{};
+AU_DEVICE_VAR constexpr auto degC_qty = SymbolFor<Celsius>{};
 }
 }  // namespace au

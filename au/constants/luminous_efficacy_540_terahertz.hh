@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "au/config.hh"
 #include "au/constant.hh"
 #include "au/units/lumens.hh"
 #include "au/units/watts.hh"
@@ -33,7 +34,7 @@ struct LuminousEfficacy540TerahertzUnit : decltype((Lumens{} / Watts{}) * mag<68
 };
 }  // namespace detail
 
-constexpr auto LUMINOUS_EFFICACY_540_TERAHERTZ =
+AU_DEVICE_VAR constexpr auto LUMINOUS_EFFICACY_540_TERAHERTZ =
     make_constant(detail::LuminousEfficacy540TerahertzUnit{});
 
 }  // namespace au

@@ -16,7 +16,7 @@
 
 #include "au/units/pounds_force_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -46,10 +46,10 @@ struct PoundsForce
       PoundsForceLabel<void> {
     using PoundsForceLabel<void>::label;
 };
-constexpr auto pound_force = SingularNameFor<PoundsForce>{};
-constexpr auto pounds_force = QuantityMaker<PoundsForce>{};
+AU_DEVICE_VAR constexpr auto pound_force = SingularNameFor<PoundsForce>{};
+AU_DEVICE_VAR constexpr auto pounds_force = QuantityMaker<PoundsForce>{};
 
 namespace symbols {
-constexpr auto lbf = SymbolFor<PoundsForce>{};
+AU_DEVICE_VAR constexpr auto lbf = SymbolFor<PoundsForce>{};
 }
 }  // namespace au

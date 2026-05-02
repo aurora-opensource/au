@@ -16,7 +16,7 @@
 
 #include "au/units/bytes_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Bytes
       BytesLabel<void> {
     using BytesLabel<void>::label;
 };
-constexpr auto byte = SingularNameFor<Bytes>{};
-constexpr auto bytes = QuantityMaker<Bytes>{};
+AU_DEVICE_VAR constexpr auto byte = SingularNameFor<Bytes>{};
+AU_DEVICE_VAR constexpr auto bytes = QuantityMaker<Bytes>{};
 
 namespace symbols {
-constexpr auto B = SymbolFor<Bytes>{};
+AU_DEVICE_VAR constexpr auto B = SymbolFor<Bytes>{};
 }
 }  // namespace au

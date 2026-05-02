@@ -514,6 +514,25 @@ __device__ bool test_is_conversion_lossy() {
 }
 
 // =============================================================================
+// SECTION 13: Risk policy constants
+// =============================================================================
+
+__device__ int test_risk_policy_overflow_risk() {
+    auto q = meters(5.5);
+    return q.as<int>(meters, OVERFLOW_RISK).in(meters);
+}
+
+__device__ int test_risk_policy_truncation_risk() {
+    auto q = meters(5.5);
+    return q.as<int>(meters, TRUNCATION_RISK).in(meters);
+}
+
+__device__ int test_risk_policy_all_risks() {
+    auto q = meters(5.5);
+    return q.as<int>(meters, ALL_RISKS).in(meters);
+}
+
+// =============================================================================
 // Host-side sanity check
 // =============================================================================
 

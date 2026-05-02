@@ -16,7 +16,7 @@
 
 #include "au/units/pascals_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
 #include "au/unit_symbol.hh"
@@ -42,10 +42,10 @@ struct Pascals
     using PascalsLabel<void>::label;
 };
 
-constexpr auto pascals = QuantityMaker<Pascals>{};
+AU_DEVICE_VAR constexpr auto pascals = QuantityMaker<Pascals>{};
 constexpr QuantityPointMaker<Pascals> pascals_pt{};
 
 namespace symbols {
-constexpr auto Pa = SymbolFor<Pascals>{};
+AU_DEVICE_VAR constexpr auto Pa = SymbolFor<Pascals>{};
 }
 }  // namespace au

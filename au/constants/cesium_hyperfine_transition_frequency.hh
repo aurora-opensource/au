@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "au/config.hh"
 #include "au/constant.hh"
 #include "au/units/hertz.hh"
 
@@ -32,7 +33,7 @@ struct CesiumHyperfineTransitionFrequencyUnit : decltype(Hertz{} * mag<9'192'631
 };
 }  // namespace detail
 
-constexpr auto CESIUM_HYPERFINE_TRANSITION_FREQUENCY =
+AU_DEVICE_VAR constexpr auto CESIUM_HYPERFINE_TRANSITION_FREQUENCY =
     make_constant(detail::CesiumHyperfineTransitionFrequencyUnit{});
 
 }  // namespace au

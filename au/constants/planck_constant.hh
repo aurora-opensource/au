@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "au/config.hh"
 #include "au/constant.hh"
 #include "au/units/joules.hh"
 #include "au/units/seconds.hh"
@@ -34,6 +35,6 @@ struct PlanckConstantUnit
 };
 }  // namespace detail
 
-constexpr auto PLANCK_CONSTANT = make_constant(detail::PlanckConstantUnit{});
+AU_DEVICE_VAR constexpr auto PLANCK_CONSTANT = make_constant(detail::PlanckConstantUnit{});
 
 }  // namespace au

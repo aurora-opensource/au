@@ -16,7 +16,7 @@
 
 #include "au/units/yards_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -40,10 +40,10 @@ struct Yards
       YardsLabel<void> {
     using YardsLabel<void>::label;
 };
-constexpr auto yard = SingularNameFor<Yards>{};
-constexpr auto yards = QuantityMaker<Yards>{};
+AU_DEVICE_VAR constexpr auto yard = SingularNameFor<Yards>{};
+AU_DEVICE_VAR constexpr auto yards = QuantityMaker<Yards>{};
 
 namespace symbols {
-constexpr auto yd = SymbolFor<Yards>{};
+AU_DEVICE_VAR constexpr auto yd = SymbolFor<Yards>{};
 }
 }  // namespace au

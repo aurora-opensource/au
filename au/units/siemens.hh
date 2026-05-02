@@ -16,7 +16,7 @@
 
 #include "au/units/siemens_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -43,10 +43,10 @@ struct Siemens
       SiemensLabel<void> {
     using SiemensLabel<void>::label;
 };
-constexpr auto siemen = SingularNameFor<Siemens>{};
-constexpr auto siemens = QuantityMaker<Siemens>{};
+AU_DEVICE_VAR constexpr auto siemen = SingularNameFor<Siemens>{};
+AU_DEVICE_VAR constexpr auto siemens = QuantityMaker<Siemens>{};
 
 namespace symbols {
-constexpr auto S = SymbolFor<Siemens>{};
+AU_DEVICE_VAR constexpr auto S = SymbolFor<Siemens>{};
 }
 }  // namespace au

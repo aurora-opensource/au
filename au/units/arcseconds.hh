@@ -16,7 +16,7 @@
 
 #include "au/units/arcseconds_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,11 +39,11 @@ struct Arcseconds
       ArcsecondsLabel<void> {
     using ArcsecondsLabel<void>::label;
 };
-constexpr auto arcsecond = SingularNameFor<Arcseconds>{};
-constexpr auto arcseconds = QuantityMaker<Arcseconds>{};
+AU_DEVICE_VAR constexpr auto arcsecond = SingularNameFor<Arcseconds>{};
+AU_DEVICE_VAR constexpr auto arcseconds = QuantityMaker<Arcseconds>{};
 
 namespace symbols {
-constexpr auto as = SymbolFor<Arcseconds>{};
+AU_DEVICE_VAR constexpr auto as = SymbolFor<Arcseconds>{};
 }
 
 }  // namespace au
