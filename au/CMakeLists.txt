@@ -24,6 +24,7 @@ header_only_library(
     abstract_operations.hh
     au.hh
     chrono_interop.hh
+    config.hh
     constant.hh
     conversion_policy.hh
     conversion_strategy.hh

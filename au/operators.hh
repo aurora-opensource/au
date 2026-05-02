@@ -18,6 +18,7 @@
 #include <compare>
 #endif
 
+#include "au/config.hh"
 #include "au/stdx/type_traits.hh"
 #include "au/stdx/utility.hh"
 
@@ -61,17 +62,17 @@ using ComparisonCategory =
 
 struct Equal {
     template <typename T, typename U>
-    constexpr bool operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
         return op_impl(ComparisonCategory<T, U>{}, a, b);
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a == b;
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
         return stdx::cmp_equal(a, b);
     }
 };
@@ -79,17 +80,17 @@ constexpr auto equal = Equal{};
 
 struct NotEqual {
     template <typename T, typename U>
-    constexpr bool operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
         return op_impl(ComparisonCategory<T, U>{}, a, b);
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a != b;
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
         return stdx::cmp_not_equal(a, b);
     }
 };
@@ -97,17 +98,17 @@ constexpr auto not_equal = NotEqual{};
 
 struct Greater {
     template <typename T, typename U>
-    constexpr bool operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
         return op_impl(ComparisonCategory<T, U>{}, a, b);
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a > b;
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
         return stdx::cmp_greater(a, b);
     }
 };
@@ -115,17 +116,17 @@ constexpr auto greater = Greater{};
 
 struct Less {
     template <typename T, typename U>
-    constexpr bool operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
         return op_impl(ComparisonCategory<T, U>{}, a, b);
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a < b;
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
         return stdx::cmp_less(a, b);
     }
 };
@@ -133,17 +134,17 @@ constexpr auto less = Less{};
 
 struct GreaterEqual {
     template <typename T, typename U>
-    constexpr bool operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
         return op_impl(ComparisonCategory<T, U>{}, a, b);
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a >= b;
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
         return stdx::cmp_greater_equal(a, b);
     }
 };
@@ -151,17 +152,17 @@ constexpr auto greater_equal = GreaterEqual{};
 
 struct LessEqual {
     template <typename T, typename U>
-    constexpr bool operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
         return op_impl(ComparisonCategory<T, U>{}, a, b);
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
         return a <= b;
     }
 
     template <typename T, typename U>
-    constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
         return stdx::cmp_less_equal(a, b);
     }
 };
@@ -170,7 +171,7 @@ constexpr auto less_equal = LessEqual{};
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 struct ThreeWayCompare {
     template <typename T, typename U>
-    constexpr auto operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr auto operator()(const T &a, const U &b) const {
         // Note that we do not need special treatment for the case where `T` and `U` are both
         // integral types, because the C++ language already prohibits narrowing conversions (such as
         // `int` to `uint`) for `operator<=>`.  We can rely on this implicit warning to induce users
@@ -187,7 +188,7 @@ constexpr auto three_way_compare = ThreeWayCompare{};
 
 struct Plus {
     template <typename T, typename U>
-    constexpr auto operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr auto operator()(const T &a, const U &b) const {
         return a + b;
     }
 };
@@ -195,7 +196,7 @@ constexpr auto plus = Plus{};
 
 struct Minus {
     template <typename T, typename U>
-    constexpr auto operator()(const T &a, const U &b) const {
+    AU_DEVICE_FUNC constexpr auto operator()(const T &a, const U &b) const {
         return a - b;
     }
 };

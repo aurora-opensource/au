@@ -18,6 +18,7 @@
 #include <compare>
 #endif
 
+#include "au/config.hh"
 #include "au/fwd.hh"
 #include "au/quantity.hh"
 #include "au/stdx/type_traits.hh"
@@ -48,7 +49,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
                   detail::CanScaleByMagnitude<Constant, Unit> {
     // Convert this constant to a Quantity of the given rep.
     template <typename T>
-    constexpr auto as() const {
+    AU_DEVICE_FUNC constexpr auto as() const {
         return make_quantity<Unit>(static_cast<T>(1));
     }
 
@@ -60,13 +61,13 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 
     // Convert this constant to a Quantity of the given unit and rep.
     template <typename T, typename OtherUnit>
-    constexpr auto as(OtherUnit u) const {
+    AU_DEVICE_FUNC constexpr auto as(OtherUnit u) const {
         return as<T>(u, check_for(ALL_RISKS));
     }
 
     // Convert this constant to a Quantity of the given unit and rep, following this risk policy.
     template <typename T, typename OtherUnit, typename RiskPolicyT>
-    constexpr auto as(OtherUnit, RiskPolicyT) const {
+    AU_DEVICE_FUNC constexpr auto as(OtherUnit, RiskPolicyT) const {
         constexpr auto this_value = make_quantity<Unit>(static_cast<T>(1));
 
         constexpr bool has_unacceptable_overflow =
@@ -90,19 +91,19 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 
     // Get the value of this constant in the given unit and rep.
     template <typename T, typename OtherUnit>
-    constexpr auto in(OtherUnit u) const {
+    AU_DEVICE_FUNC constexpr auto in(OtherUnit u) const {
         return in<T>(u, check_for(ALL_RISKS));
     }
 
     // Get the value of this constant in the given unit and rep, following this risk policy.
     template <typename T, typename OtherUnit, typename RiskPolicyT>
-    constexpr auto in(OtherUnit u, RiskPolicyT policy) const {
+    AU_DEVICE_FUNC constexpr auto in(OtherUnit u, RiskPolicyT policy) const {
         return as<T>(u, policy).in(u);
     }
 
     // Implicitly convert to any quantity type which passes safety checks.
     template <typename U, typename R>
-    constexpr operator Quantity<U, R>() const {
+    AU_DEVICE_FUNC constexpr operator Quantity<U, R>() const {
         return as<R>(U{});
     }
 
@@ -118,7 +119,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
         typename T,
         typename = std::enable_if_t<can_store_value_in<typename CorrespondingQuantity<T>::Rep>(
             typename CorrespondingQuantity<T>::Unit{})>>
-    constexpr operator T() const {
+    AU_DEVICE_FUNC constexpr operator T() const {
         return as<typename CorrespondingQuantity<T>::Rep>(
             typename CorrespondingQuantity<T>::Unit{});
     }
@@ -126,22 +127,24 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // Comparison with Zero.
     //
     // A Constant represents a value of 1 in its unit, which is never zero.
-    friend constexpr bool operator==(Constant, Zero) { return false; }
-    friend constexpr bool operator!=(Constant, Zero) { return true; }
-    friend constexpr bool operator<(Constant, Zero) { return !is_positive(); }
-    friend constexpr bool operator<=(Constant, Zero) { return !is_positive(); }
-    friend constexpr bool operator>(Constant, Zero) { return is_positive(); }
-    friend constexpr bool operator>=(Constant, Zero) { return is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator==(Constant, Zero) { return false; }
+    AU_DEVICE_FUNC friend constexpr bool operator!=(Constant, Zero) { return true; }
+    AU_DEVICE_FUNC friend constexpr bool operator<(Constant, Zero) { return !is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator<=(Constant, Zero) { return !is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator>(Constant, Zero) { return is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator>=(Constant, Zero) { return is_positive(); }
 
-    friend constexpr bool operator==(Zero, Constant) { return false; }
-    friend constexpr bool operator!=(Zero, Constant) { return true; }
-    friend constexpr bool operator<(Zero, Constant) { return is_positive(); }
-    friend constexpr bool operator<=(Zero, Constant) { return is_positive(); }
-    friend constexpr bool operator>(Zero, Constant) { return !is_positive(); }
-    friend constexpr bool operator>=(Zero, Constant) { return !is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator==(Zero, Constant) { return false; }
+    AU_DEVICE_FUNC friend constexpr bool operator!=(Zero, Constant) { return true; }
+    AU_DEVICE_FUNC friend constexpr bool operator<(Zero, Constant) { return is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator<=(Zero, Constant) { return is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator>(Zero, Constant) { return !is_positive(); }
+    AU_DEVICE_FUNC friend constexpr bool operator>=(Zero, Constant) { return !is_positive(); }
 
  private:
-    static constexpr bool is_positive() { return IsPositive<detail::MagT<Unit>>::value; }
+    AU_DEVICE_FUNC static constexpr bool is_positive() {
+        return IsPositive<detail::MagT<Unit>>::value;
+    }
 };
 
 // Make a constant from the given unit.
@@ -149,11 +152,11 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 // Note that the argument is a _unit slot_, and thus can also accept things like `QuantityMaker` and
 // `SymbolFor` in addition to regular units.
 template <typename UnitSlot>
-constexpr Constant<AssociatedUnit<UnitSlot>> make_constant(UnitSlot) {
+AU_DEVICE_FUNC constexpr Constant<AssociatedUnit<UnitSlot>> make_constant(UnitSlot) {
     return {};
 }
 
-constexpr Zero make_constant(Zero) { return {}; }
+AU_DEVICE_FUNC constexpr Zero make_constant(Zero) { return {}; }
 
 // Support using `Constant` in a unit slot.
 template <typename Unit>
@@ -165,35 +168,35 @@ struct AssociatedUnitImpl<Constant<Unit>> : stdx::type_identity<Unit> {};
 // every combination of Constant.  We decided that supporting many common use cases was worth this
 // tradeoff.
 template <typename U1, typename U2>
-constexpr bool operator==(Constant<U1>, Constant<U2>) {
+AU_DEVICE_FUNC constexpr bool operator==(Constant<U1>, Constant<U2>) {
     return UnitRatio<U1, U2>{} == mag<1>();
 }
 template <typename U1, typename U2>
-constexpr bool operator<(Constant<U1>, Constant<U2>) {
+AU_DEVICE_FUNC constexpr bool operator<(Constant<U1>, Constant<U2>) {
     using SignU2 = Sign<detail::MagT<U2>>;
     using AbsU2 = decltype(U2{} * SignU2{});
     return UnitRatio<U1, AbsU2>{} < SignU2{};
 }
 template <typename U1, typename U2>
-constexpr bool operator!=(Constant<U1> lhs, Constant<U2> rhs) {
+AU_DEVICE_FUNC constexpr bool operator!=(Constant<U1> lhs, Constant<U2> rhs) {
     return !(lhs == rhs);
 }
 template <typename U1, typename U2>
-constexpr bool operator<=(Constant<U1> lhs, Constant<U2> rhs) {
+AU_DEVICE_FUNC constexpr bool operator<=(Constant<U1> lhs, Constant<U2> rhs) {
     return (lhs < rhs) || (lhs == rhs);
 }
 template <typename U1, typename U2>
-constexpr bool operator>(Constant<U1> lhs, Constant<U2> rhs) {
+AU_DEVICE_FUNC constexpr bool operator>(Constant<U1> lhs, Constant<U2> rhs) {
     return !(lhs <= rhs);
 }
 template <typename U1, typename U2>
-constexpr bool operator>=(Constant<U1> lhs, Constant<U2> rhs) {
+AU_DEVICE_FUNC constexpr bool operator>=(Constant<U1> lhs, Constant<U2> rhs) {
     return !(lhs < rhs);
 }
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename U1, typename U2>
-constexpr std::strong_ordering operator<=>(Constant<U1>, Constant<U2>) {
+AU_DEVICE_FUNC constexpr std::strong_ordering operator<=>(Constant<U1>, Constant<U2>) {
     using SignU2 = Sign<detail::MagT<U2>>;
     using AbsU2 = decltype(U2{} * SignU2{});
     return UnitRatio<U1, AbsU2>{} <=> SignU2{};
@@ -208,7 +211,7 @@ constexpr std::strong_ordering operator<=>(Constant<U1>, Constant<U2>) {
 
 // Mod (%) for `Constant`.
 template <typename U1, typename U2>
-constexpr auto operator%(Constant<U1>, Constant<U2>) {
+AU_DEVICE_FUNC constexpr auto operator%(Constant<U1>, Constant<U2>) {
     // This slightly complicated dance tends to produce more intuitive, human-friendly labels.
     //
     // The basic idea for `%` with `Constant` is to perform the operation in the constants' common
@@ -227,38 +230,38 @@ constexpr auto operator%(Constant<U1>, Constant<U2>) {
 
 // Arithmetic operators mixing `Constant` with `Zero`.
 template <typename U>
-constexpr Zero operator%(Zero, Constant<U>) {
+AU_DEVICE_FUNC constexpr Zero operator%(Zero, Constant<U>) {
     return {};
 }
 
 // Addition (+) for `Constant`.
 template <typename U1, typename U2>
-constexpr auto operator+(Constant<U1>, Constant<U2>) {
+AU_DEVICE_FUNC constexpr auto operator+(Constant<U1>, Constant<U2>) {
     return make_constant(UnitSum<U1, U2>{});
 }
 
 // Subtraction (-) for `Constant`.
 template <typename U1, typename U2>
-constexpr auto operator-(Constant<U1>, Constant<U2>) {
+AU_DEVICE_FUNC constexpr auto operator-(Constant<U1>, Constant<U2>) {
     using NegU2 = decltype(U2{} * Magnitude<Negative>{});
     return make_constant(UnitSum<U1, NegU2>{});
 }
 
 // Arithmetic operators mixing `Constant` with `Zero`.
 template <typename U>
-constexpr Constant<U> operator+(Constant<U>, Zero) {
+AU_DEVICE_FUNC constexpr Constant<U> operator+(Constant<U>, Zero) {
     return {};
 }
 template <typename U>
-constexpr Constant<U> operator+(Zero, Constant<U>) {
+AU_DEVICE_FUNC constexpr Constant<U> operator+(Zero, Constant<U>) {
     return {};
 }
 template <typename U>
-constexpr Constant<U> operator-(Constant<U>, Zero) {
+AU_DEVICE_FUNC constexpr Constant<U> operator-(Constant<U>, Zero) {
     return {};
 }
 template <typename U>
-constexpr auto operator-(Zero, Constant<U>) {
+AU_DEVICE_FUNC constexpr auto operator-(Zero, Constant<U>) {
     return -Constant<U>{};
 }
 

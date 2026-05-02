@@ -15,6 +15,7 @@
 #pragma once
 
 #include "au/abstract_operations.hh"
+#include "au/config.hh"
 
 namespace au {
 namespace detail {
@@ -31,7 +32,7 @@ struct TruncationRiskClass {
 
 template <typename T>
 struct NoTruncationRisk : TruncationRiskClass<0> {
-    static constexpr bool would_value_truncate(const T &) { return false; }
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &) { return false; }
 };
 
 template <typename T, typename M>
@@ -45,12 +46,12 @@ using ValueIsNotInteger = ValueTimesRatioIsNotInteger<T, Magnitude<>>;
 
 template <typename T>
 struct ValueIsNotZero : TruncationRiskClass<20> {
-    static constexpr bool would_value_truncate(const T &x) { return x != T{0}; }
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &x) { return x != T{0}; }
 };
 
 template <typename T>
 struct CannotAssessTruncationRiskFor : TruncationRiskClass<1000> {
-    static constexpr bool would_value_truncate(const T &) { return true; }
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &) { return true; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -282,12 +283,14 @@ struct TruncationRiskForImpl<OpSequenceImpl<Op, Ops...>>
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorDoesNotFit {
-    static constexpr bool would_value_truncate(const T &value) { return value != T{0}; }
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &value) {
+        return value != T{0};
+    }
 };
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits {
-    static constexpr bool would_value_truncate(const T &value) {
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &value) {
         return (value % get_value<RealPart<T>>(Denominator<M>{})) != T{0};
     }
 };
@@ -301,7 +304,7 @@ struct ValueTimesRatioIsNotIntegerImplForInt
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForFloatGeneric {
-    static constexpr bool would_value_truncate(const T &value) {
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &value) {
         const auto result = value * get_value<RealPart<T>>(M{});
         return std::trunc(result) != result;
     }
@@ -309,7 +312,7 @@ struct ValueTimesRatioIsNotIntegerImplForFloatGeneric {
 
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForFloatDivideByInteger {
-    static constexpr bool would_value_truncate(const T &value) {
+    static AU_DEVICE_FUNC constexpr bool would_value_truncate(const T &value) {
         const auto result = value / get_value<RealPart<T>>(MagInverse<M>{});
         return std::trunc(result) != result;
     }
