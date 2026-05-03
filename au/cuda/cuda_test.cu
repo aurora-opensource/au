@@ -518,18 +518,18 @@ __device__ bool test_is_conversion_lossy() {
 // =============================================================================
 
 __device__ int test_risk_policy_overflow_risk() {
-    auto q = meters(5.5);
-    return q.as<int>(meters, ignore(OVERFLOW_RISK)).in(meters);
+    auto q = giga(hertz)(1);
+    return q.in(hertz, ignore(OVERFLOW_RISK));
 }
 
 __device__ int test_risk_policy_truncation_risk() {
-    auto q = meters(5.5);
-    return q.as<int>(meters, ignore(TRUNCATION_RISK)).in(meters);
+    auto q = meters(500);
+    return q.in(kilo(meters), ignore(TRUNCATION_RISK));
 }
 
 __device__ int test_risk_policy_all_risks() {
-    auto q = meters(5.5);
-    return q.as<int>(meters, ignore(ALL_RISKS)).in(meters);
+    auto q = giga(hertz)(1);
+    return q.in(hertz * mag<3>() / mag<2>(), ignore(ALL_RISKS));
 }
 
 // =============================================================================

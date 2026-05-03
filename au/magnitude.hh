@@ -656,7 +656,7 @@ struct PrimeFactorizationImpl {
 }  // namespace detail
 
 template <std::uintmax_t N>
-constexpr auto mag() {
+AU_DEVICE_FUNC constexpr auto mag() {
     return detail::PrimeFactorization<N>{};
 }
 
