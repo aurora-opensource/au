@@ -575,14 +575,22 @@ bool host_test_zero() {
     return sum == ZERO;
 }
 
-// These tests verify AU_DEVICE_VAR variables are accessible from both host and device code.
-// Using volatile pointers prevents the compiler from optimizing away the address-of operations.
-// If AU_DEVICE_VAR were simply `__device__`, host_test would fail to compile because
-// __device__ variables only exist in device memory.
-const void *volatile host_address_of_kilo = &kilo;
-const void *volatile host_address_of_speed_of_light = &SPEED_OF_LIGHT;
-const void *volatile host_address_of_zero = &ZERO;
+// Taking the address of AU_DEVICE_VAR variables forces the compiler to materialize them.
+// If AU_DEVICE_VAR were simply `__device__`, this would fail to compile from host code
+// because __device__ variables only exist in device memory.
+// We return the pointer to prevent the compiler from optimizing away the address-taking.
+const void *host_test_address_of_device_var() {
+    const void *p1 = &kilo;
+    const void *p2 = &SPEED_OF_LIGHT;
+    const void *p3 = &ZERO;
+    // Return one of the pointers to prevent optimization
+    return (p1 < p2) ? ((p2 < p3) ? p3 : p2) : ((p1 < p3) ? p3 : p1);
+}
 
-__device__ const void *volatile device_address_of_kilo = &kilo;
-__device__ const void *volatile device_address_of_speed_of_light = &SPEED_OF_LIGHT;
-__device__ const void *volatile device_address_of_zero = &ZERO;
+__device__ const void *device_test_address_of_device_var() {
+    const void *p1 = &kilo;
+    const void *p2 = &SPEED_OF_LIGHT;
+    const void *p3 = &ZERO;
+    // Return one of the pointers to prevent optimization
+    return (p1 < p2) ? ((p2 < p3) ? p3 : p2) : ((p1 < p3) ? p3 : p1);
+}
