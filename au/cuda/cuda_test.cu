@@ -578,16 +578,19 @@ bool host_test_zero() {
 // Taking the address of AU_DEVICE_VAR variables forces the compiler to materialize them.
 // If AU_DEVICE_VAR were simply `__device__`, this would fail to compile from host code
 // because __device__ variables only exist in device memory.
-bool host_test_address_of_device_var() {
+// We return the pointer to prevent the compiler from optimizing away the address-taking.
+const void *host_test_address_of_device_var() {
     const void *p1 = &kilo;
     const void *p2 = &SPEED_OF_LIGHT;
     const void *p3 = &ZERO;
-    return p1 != nullptr && p2 != nullptr && p3 != nullptr;
+    // Return one of the pointers to prevent optimization
+    return (p1 < p2) ? ((p2 < p3) ? p3 : p2) : ((p1 < p3) ? p3 : p1);
 }
 
-__device__ bool device_test_address_of_device_var() {
+__device__ const void *device_test_address_of_device_var() {
     const void *p1 = &kilo;
     const void *p2 = &SPEED_OF_LIGHT;
     const void *p3 = &ZERO;
-    return p1 != nullptr && p2 != nullptr && p3 != nullptr;
+    // Return one of the pointers to prevent optimization
+    return (p1 < p2) ? ((p2 < p3) ? p3 : p2) : ((p1 < p3) ? p3 : p1);
 }
