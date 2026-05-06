@@ -16,7 +16,7 @@
 
 #include "au/units/pounds_mass_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -45,10 +45,10 @@ struct PoundsMass
       PoundsMassLabel<void> {
     using PoundsMassLabel<void>::label;
 };
-constexpr auto pound_mass = SingularNameFor<PoundsMass>{};
-constexpr auto pounds_mass = QuantityMaker<PoundsMass>{};
+AU_DEVICE_VAR constexpr auto pound_mass = SingularNameFor<PoundsMass>{};
+AU_DEVICE_VAR constexpr auto pounds_mass = QuantityMaker<PoundsMass>{};
 
 namespace symbols {
-constexpr auto lb = SymbolFor<PoundsMass>{};
+AU_DEVICE_VAR constexpr auto lb = SymbolFor<PoundsMass>{};
 }
 }  // namespace au

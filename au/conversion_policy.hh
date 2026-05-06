@@ -88,14 +88,16 @@ struct CheckTheseRisks<RiskSet<RiskFlags>> {
     }
 };
 
-constexpr auto OVERFLOW_RISK = RiskSet<static_cast<uint8_t>(ConversionRisk::Overflow)>{};
-constexpr auto TRUNCATION_RISK = RiskSet<static_cast<uint8_t>(ConversionRisk::Truncation)>{};
+AU_DEVICE_VAR constexpr auto OVERFLOW_RISK =
+    RiskSet<static_cast<uint8_t>(ConversionRisk::Overflow)>{};
+AU_DEVICE_VAR constexpr auto TRUNCATION_RISK =
+    RiskSet<static_cast<uint8_t>(ConversionRisk::Truncation)>{};
 
 }  // namespace detail
 
-constexpr auto OVERFLOW_RISK = detail::OVERFLOW_RISK;
-constexpr auto TRUNCATION_RISK = detail::TRUNCATION_RISK;
-constexpr auto ALL_RISKS = OVERFLOW_RISK | TRUNCATION_RISK;
+AU_DEVICE_VAR constexpr auto OVERFLOW_RISK = detail::OVERFLOW_RISK;
+AU_DEVICE_VAR constexpr auto TRUNCATION_RISK = detail::TRUNCATION_RISK;
+AU_DEVICE_VAR constexpr auto ALL_RISKS = OVERFLOW_RISK | TRUNCATION_RISK;
 
 // `IsConversionRiskPolicy<T>` checks whether `T` is a conversion risk policy type.  For now, this
 // boils down to being a specialization of `CheckTheseRisks` on some `RiskSet`.

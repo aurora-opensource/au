@@ -16,7 +16,7 @@
 
 #include "au/units/nautical_miles_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct NauticalMiles
       NauticalMilesLabel<void> {
     using NauticalMilesLabel<void>::label;
 };
-constexpr auto nautical_mile = SingularNameFor<NauticalMiles>{};
-constexpr auto nautical_miles = QuantityMaker<NauticalMiles>{};
+AU_DEVICE_VAR constexpr auto nautical_mile = SingularNameFor<NauticalMiles>{};
+AU_DEVICE_VAR constexpr auto nautical_miles = QuantityMaker<NauticalMiles>{};
 
 namespace symbols {
-constexpr auto nmi = SymbolFor<NauticalMiles>{};
+AU_DEVICE_VAR constexpr auto nmi = SymbolFor<NauticalMiles>{};
 }
 }  // namespace au

@@ -16,7 +16,7 @@
 
 #include "au/units/degrees_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Degrees
       DegreesLabel<void> {
     using DegreesLabel<void>::label;
 };
-constexpr auto degree = SingularNameFor<Degrees>{};
-constexpr auto degrees = QuantityMaker<Degrees>{};
+AU_DEVICE_VAR constexpr auto degree = SingularNameFor<Degrees>{};
+AU_DEVICE_VAR constexpr auto degrees = QuantityMaker<Degrees>{};
 
 namespace symbols {
-constexpr auto deg = SymbolFor<Degrees>{};
+AU_DEVICE_VAR constexpr auto deg = SymbolFor<Degrees>{};
 }
 }  // namespace au

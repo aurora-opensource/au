@@ -16,7 +16,7 @@
 
 #include "au/units/bits_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -33,10 +33,10 @@ constexpr const char BitsLabel<T>::label[];
 struct Bits : UnitImpl<Information>, BitsLabel<void> {
     using BitsLabel<void>::label;
 };
-constexpr auto bit = SingularNameFor<Bits>{};
-constexpr auto bits = QuantityMaker<Bits>{};
+AU_DEVICE_VAR constexpr auto bit = SingularNameFor<Bits>{};
+AU_DEVICE_VAR constexpr auto bits = QuantityMaker<Bits>{};
 
 namespace symbols {
-constexpr auto b = SymbolFor<Bits>{};
+AU_DEVICE_VAR constexpr auto b = SymbolFor<Bits>{};
 }
 }  // namespace au

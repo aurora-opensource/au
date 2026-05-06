@@ -16,7 +16,7 @@
 
 #include "au/units/ohms_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -43,10 +43,10 @@ struct Ohms
       OhmsLabel<void> {
     using OhmsLabel<void>::label;
 };
-constexpr auto ohm = SingularNameFor<Ohms>{};
-constexpr auto ohms = QuantityMaker<Ohms>{};
+AU_DEVICE_VAR constexpr auto ohm = SingularNameFor<Ohms>{};
+AU_DEVICE_VAR constexpr auto ohms = QuantityMaker<Ohms>{};
 
 namespace symbols {
-constexpr auto ohm = SymbolFor<Ohms>{};
+AU_DEVICE_VAR constexpr auto ohm = SymbolFor<Ohms>{};
 }
 }  // namespace au

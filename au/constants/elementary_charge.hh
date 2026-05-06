@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "au/config.hh"
 #include "au/constant.hh"
 #include "au/units/coulombs.hh"
 
@@ -32,6 +33,6 @@ struct ElementaryChargeUnit : decltype(Coulombs{} * mag<1'602'176'634>() * pow<-
 };
 }  // namespace detail
 
-constexpr auto ELEMENTARY_CHARGE = make_constant(detail::ElementaryChargeUnit{});
+AU_DEVICE_VAR constexpr auto ELEMENTARY_CHARGE = make_constant(detail::ElementaryChargeUnit{});
 
 }  // namespace au

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "au/config.hh"
 #include "au/constant.hh"
 #include "au/units/moles.hh"
 
@@ -32,6 +33,6 @@ struct AvogadroConstantUnit : decltype(inverse(Moles{}) * mag<602'214'076>() * p
 };
 }  // namespace detail
 
-constexpr auto AVOGADRO_CONSTANT = make_constant(detail::AvogadroConstantUnit{});
+AU_DEVICE_VAR constexpr auto AVOGADRO_CONSTANT = make_constant(detail::AvogadroConstantUnit{});
 
 }  // namespace au

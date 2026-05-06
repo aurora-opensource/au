@@ -16,7 +16,7 @@
 
 #include "au/units/miles_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -41,10 +41,10 @@ struct Miles
       MilesLabel<void> {
     using MilesLabel<void>::label;
 };
-constexpr auto mile = SingularNameFor<Miles>{};
-constexpr auto miles = QuantityMaker<Miles>{};
+AU_DEVICE_VAR constexpr auto mile = SingularNameFor<Miles>{};
+AU_DEVICE_VAR constexpr auto miles = QuantityMaker<Miles>{};
 
 namespace symbols {
-constexpr auto mi = SymbolFor<Miles>{};
+AU_DEVICE_VAR constexpr auto mi = SymbolFor<Miles>{};
 }
 }  // namespace au

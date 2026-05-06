@@ -16,7 +16,7 @@
 
 #include "au/units/rankine_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
 #include "au/unit_symbol.hh"
@@ -40,10 +40,10 @@ struct Rankine
       RankineLabel<void> {
     using RankineLabel<void>::label;
 };
-constexpr auto rankine = QuantityMaker<Rankine>{};
-constexpr auto rankine_pt = QuantityPointMaker<Rankine>{};
+AU_DEVICE_VAR constexpr auto rankine = QuantityMaker<Rankine>{};
+AU_DEVICE_VAR constexpr auto rankine_pt = QuantityPointMaker<Rankine>{};
 
 namespace symbols {
-constexpr auto degR = SymbolFor<Rankine>{};
+AU_DEVICE_VAR constexpr auto degR = SymbolFor<Rankine>{};
 }
 }  // namespace au

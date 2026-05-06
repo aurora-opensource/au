@@ -16,7 +16,7 @@
 
 #include "au/units/grays_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Grays
       GraysLabel<void> {
     using GraysLabel<void>::label;
 };
-constexpr auto gray = SingularNameFor<Grays>{};
-constexpr auto grays = QuantityMaker<Grays>{};
+AU_DEVICE_VAR constexpr auto gray = SingularNameFor<Grays>{};
+AU_DEVICE_VAR constexpr auto grays = QuantityMaker<Grays>{};
 
 namespace symbols {
-constexpr auto Gy = SymbolFor<Grays>{};
+AU_DEVICE_VAR constexpr auto Gy = SymbolFor<Grays>{};
 }
 }  // namespace au

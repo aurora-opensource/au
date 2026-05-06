@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "au/config.hh"
 #include "au/constant.hh"
 #include "au/units/joules.hh"
 #include "au/units/seconds.hh"
@@ -34,6 +35,7 @@ struct ReducedPlanckConstantUnit : decltype(Joules{} * Seconds{} * mag<662'607'0
 };
 }  // namespace detail
 
-constexpr auto REDUCED_PLANCK_CONSTANT = make_constant(detail::ReducedPlanckConstantUnit{});
+AU_DEVICE_VAR constexpr auto REDUCED_PLANCK_CONSTANT =
+    make_constant(detail::ReducedPlanckConstantUnit{});
 
 }  // namespace au

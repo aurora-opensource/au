@@ -16,7 +16,7 @@
 
 #include "au/units/astronomical_units_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -45,10 +45,10 @@ struct AstronomicalUnits
       AstronomicalUnitsLabel<void> {
     using AstronomicalUnitsLabel<void>::label;
 };
-constexpr auto astronomical_unit = SingularNameFor<AstronomicalUnits>{};
-constexpr auto astronomical_units = QuantityMaker<AstronomicalUnits>{};
+AU_DEVICE_VAR constexpr auto astronomical_unit = SingularNameFor<AstronomicalUnits>{};
+AU_DEVICE_VAR constexpr auto astronomical_units = QuantityMaker<AstronomicalUnits>{};
 
 namespace symbols {
-constexpr auto AU = SymbolFor<AstronomicalUnits>{};
+AU_DEVICE_VAR constexpr auto AU = SymbolFor<AstronomicalUnits>{};
 }
 }  // namespace au

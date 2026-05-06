@@ -16,7 +16,7 @@
 
 #include "au/units/fahrenheit_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/prefix.hh"
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
@@ -46,14 +46,14 @@ struct Fahrenheit
             45967);
     }
 };
-constexpr auto fahrenheit_qty = QuantityMaker<Fahrenheit>{};
-constexpr auto fahrenheit_pt = QuantityPointMaker<Fahrenheit>{};
+AU_DEVICE_VAR constexpr auto fahrenheit_qty = QuantityMaker<Fahrenheit>{};
+AU_DEVICE_VAR constexpr auto fahrenheit_pt = QuantityPointMaker<Fahrenheit>{};
 
 [[deprecated(
     "`fahrenheit()` is ambiguous.  Use `fahrenheit_pt()` for _points_, or `fahrenheit_qty()` for "
     "_quantities_")]] constexpr auto fahrenheit = QuantityMaker<Fahrenheit>{};
 
 namespace symbols {
-constexpr auto degF_qty = SymbolFor<Fahrenheit>{};
+AU_DEVICE_VAR constexpr auto degF_qty = SymbolFor<Fahrenheit>{};
 }
 }  // namespace au

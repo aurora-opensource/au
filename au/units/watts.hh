@@ -16,7 +16,7 @@
 
 #include "au/units/watts_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -40,10 +40,10 @@ struct Watts
       WattsLabel<void> {
     using WattsLabel<void>::label;
 };
-constexpr auto watt = SingularNameFor<Watts>{};
-constexpr auto watts = QuantityMaker<Watts>{};
+AU_DEVICE_VAR constexpr auto watt = SingularNameFor<Watts>{};
+AU_DEVICE_VAR constexpr auto watts = QuantityMaker<Watts>{};
 
 namespace symbols {
-constexpr auto W = SymbolFor<Watts>{};
+AU_DEVICE_VAR constexpr auto W = SymbolFor<Watts>{};
 }
 }  // namespace au

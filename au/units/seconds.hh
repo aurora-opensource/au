@@ -16,7 +16,7 @@
 
 #include "au/units/seconds_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -33,10 +33,10 @@ constexpr const char SecondsLabel<T>::label[];
 struct Seconds : UnitImpl<Time>, SecondsLabel<void> {
     using SecondsLabel<void>::label;
 };
-constexpr auto second = SingularNameFor<Seconds>{};
-constexpr auto seconds = QuantityMaker<Seconds>{};
+AU_DEVICE_VAR constexpr auto second = SingularNameFor<Seconds>{};
+AU_DEVICE_VAR constexpr auto seconds = QuantityMaker<Seconds>{};
 
 namespace symbols {
-constexpr auto s = SymbolFor<Seconds>{};
+AU_DEVICE_VAR constexpr auto s = SymbolFor<Seconds>{};
 }
 }  // namespace au
