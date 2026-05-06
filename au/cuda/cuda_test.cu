@@ -533,12 +533,44 @@ __device__ int test_risk_policy_all_risks() {
 }
 
 // =============================================================================
-// Host-side sanity check
+// Host-side tests
 // =============================================================================
+// These tests verify that AU_DEVICE_VAR-annotated variables are accessible from host code.
+// This is critical because __device__ alone would make variables device-only.
+// By gating AU_DEVICE_VAR on __CUDA_ARCH__, we ensure variables work in both passes.
 
-bool host_test() {
+bool host_test_quantity_operations() {
     auto q = meters(5.0);
     auto t = seconds(2.0);
     auto v = q / t;
     return v.in(meters / second) == 2.5;
+}
+
+bool host_test_prefixes() {
+    auto q1 = kilo(meters)(5.0);
+    auto q2 = milli(meters)(5000.0);
+    auto q3 = centi(meters)(500.0);
+    auto q4 = micro(meters)(5000000.0);
+    return q1.in(meters) == 5000.0 && q2.in(meters) == 5.0 && q3.in(meters) == 5.0 &&
+           q4.in(meters) == 5.0;
+}
+
+bool host_test_constants() { return SPEED_OF_LIGHT.in<double>(meters / second) > 0.0; }
+
+bool host_test_risk_policies() {
+    auto q1 = giga(hertz)(1);
+    auto result1 = q1.in(hertz, ignore(OVERFLOW_RISK));
+
+    auto q2 = meters(500);
+    auto result2 = q2.in(kilo(meters), ignore(TRUNCATION_RISK));
+
+    auto q3 = giga(hertz)(1);
+    auto result3 = q3.in(hertz * mag<3>() / mag<2>(), ignore(ALL_RISKS));
+
+    return result1 > 0 && result2 >= 0 && result3 > 0;
+}
+
+bool host_test_zero() {
+    auto sum = ZERO + ZERO;
+    return sum == ZERO;
 }
