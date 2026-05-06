@@ -56,7 +56,7 @@ struct Zero {
 //
 // This exists purely for convenience, so people don't have to call the initializer.  i.e., it lets
 // us write `ZERO` instead of `Zero{}`.
-static constexpr auto ZERO = Zero{};
+AU_DEVICE_VAR constexpr auto ZERO = Zero{};
 
 // Addition, subtraction, and comparison of Zero are well defined.
 inline AU_DEVICE_FUNC constexpr Zero operator+(Zero, Zero) { return ZERO; }
