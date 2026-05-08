@@ -43,7 +43,7 @@ struct Pascals
 };
 
 AU_DEVICE_VAR constexpr auto pascals = QuantityMaker<Pascals>{};
-constexpr QuantityPointMaker<Pascals> pascals_pt{};
+AU_DEVICE_VAR constexpr auto pascals_pt = QuantityPointMaker<Pascals>{};
 
 namespace symbols {
 AU_DEVICE_VAR constexpr auto Pa = SymbolFor<Pascals>{};

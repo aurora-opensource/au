@@ -44,7 +44,7 @@ AU_DEVICE_VAR constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
 
 [[deprecated(
     "`celsius()` is ambiguous.  Use `celsius_pt()` for _points_, or `celsius_qty()` for "
-    "_quantities_")]] constexpr auto celsius = QuantityMaker<Celsius>{};
+    "_quantities_")]] AU_DEVICE_VAR constexpr auto celsius = QuantityMaker<Celsius>{};
 
 namespace symbols {
 AU_DEVICE_VAR constexpr auto degC_qty = SymbolFor<Celsius>{};

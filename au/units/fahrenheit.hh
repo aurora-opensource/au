@@ -51,7 +51,7 @@ AU_DEVICE_VAR constexpr auto fahrenheit_pt = QuantityPointMaker<Fahrenheit>{};
 
 [[deprecated(
     "`fahrenheit()` is ambiguous.  Use `fahrenheit_pt()` for _points_, or `fahrenheit_qty()` for "
-    "_quantities_")]] constexpr auto fahrenheit = QuantityMaker<Fahrenheit>{};
+    "_quantities_")]] AU_DEVICE_VAR constexpr auto fahrenheit = QuantityMaker<Fahrenheit>{};
 
 namespace symbols {
 AU_DEVICE_VAR constexpr auto degF_qty = SymbolFor<Fahrenheit>{};
