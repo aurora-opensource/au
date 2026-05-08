@@ -1208,6 +1208,12 @@ features.
                 <li>Only one user-facing macro for C++20 backwards compatibility</li>
             </ul>
         </td>
-        <td class="best">Zero user-facing macros; only two internal macros</td>
+        <td class="good">
+            <ul>
+                <li class="check">No user-facing macros</li>
+                <li>Internal macros only where no viable alternative exists (CUDA/HIP support,
+                    C++ feature detection)</li>
+            </ul>
+        </td>
     </tr>
 </table>
