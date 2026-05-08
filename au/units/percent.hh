@@ -16,7 +16,7 @@
 
 #include "au/units/percent_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,9 +39,9 @@ struct Percent
       PercentLabel<void> {
     using PercentLabel<void>::label;
 };
-constexpr auto percent = QuantityMaker<Percent>{};
+AU_DEVICE_VAR constexpr auto percent = QuantityMaker<Percent>{};
 
 namespace symbols {
-constexpr auto pct = SymbolFor<Percent>{};
+AU_DEVICE_VAR constexpr auto pct = SymbolFor<Percent>{};
 }
 }  // namespace au

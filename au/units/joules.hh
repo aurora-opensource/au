@@ -16,7 +16,7 @@
 
 #include "au/units/joules_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -40,10 +40,10 @@ struct Joules
       JoulesLabel<void> {
     using JoulesLabel<void>::label;
 };
-constexpr auto joule = SingularNameFor<Joules>{};
-constexpr auto joules = QuantityMaker<Joules>{};
+AU_DEVICE_VAR constexpr auto joule = SingularNameFor<Joules>{};
+AU_DEVICE_VAR constexpr auto joules = QuantityMaker<Joules>{};
 
 namespace symbols {
-constexpr auto J = SymbolFor<Joules>{};
+AU_DEVICE_VAR constexpr auto J = SymbolFor<Joules>{};
 }
 }  // namespace au

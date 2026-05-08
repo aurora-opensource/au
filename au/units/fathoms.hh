@@ -16,7 +16,7 @@
 
 #include "au/units/fathoms_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Fathoms
       FathomsLabel<void> {
     using FathomsLabel<void>::label;
 };
-constexpr auto fathom = SingularNameFor<Fathoms>{};
-constexpr auto fathoms = QuantityMaker<Fathoms>{};
+AU_DEVICE_VAR constexpr auto fathom = SingularNameFor<Fathoms>{};
+AU_DEVICE_VAR constexpr auto fathoms = QuantityMaker<Fathoms>{};
 
 namespace symbols {
-constexpr auto ftm = SymbolFor<Fathoms>{};
+AU_DEVICE_VAR constexpr auto ftm = SymbolFor<Fathoms>{};
 }
 }  // namespace au

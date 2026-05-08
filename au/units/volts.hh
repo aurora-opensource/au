@@ -16,7 +16,7 @@
 
 #include "au/units/volts_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -43,10 +43,10 @@ struct Volts
       VoltsLabel<void> {
     using VoltsLabel<void>::label;
 };
-constexpr auto volt = SingularNameFor<Volts>{};
-constexpr auto volts = QuantityMaker<Volts>{};
+AU_DEVICE_VAR constexpr auto volt = SingularNameFor<Volts>{};
+AU_DEVICE_VAR constexpr auto volts = QuantityMaker<Volts>{};
 
 namespace symbols {
-constexpr auto V = SymbolFor<Volts>{};
+AU_DEVICE_VAR constexpr auto V = SymbolFor<Volts>{};
 }
 }  // namespace au

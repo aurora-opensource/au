@@ -16,7 +16,7 @@
 
 #include "au/units/slugs_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -48,10 +48,10 @@ struct Slugs
       SlugsLabel<void> {
     using SlugsLabel<void>::label;
 };
-constexpr auto slug = SingularNameFor<Slugs>{};
-constexpr auto slugs = QuantityMaker<Slugs>{};
+AU_DEVICE_VAR constexpr auto slug = SingularNameFor<Slugs>{};
+AU_DEVICE_VAR constexpr auto slugs = QuantityMaker<Slugs>{};
 
 namespace symbols {
-constexpr auto slug = SymbolFor<Slugs>{};
+AU_DEVICE_VAR constexpr auto slug = SymbolFor<Slugs>{};
 }
 }  // namespace au

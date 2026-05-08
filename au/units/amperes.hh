@@ -16,7 +16,7 @@
 
 #include "au/units/amperes_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -33,11 +33,11 @@ constexpr const char AmperesLabel<T>::label[];
 struct Amperes : UnitImpl<Current>, AmperesLabel<void> {
     using AmperesLabel<void>::label;
 };
-constexpr auto ampere = SingularNameFor<Amperes>{};
-constexpr auto amperes = QuantityMaker<Amperes>{};
+AU_DEVICE_VAR constexpr auto ampere = SingularNameFor<Amperes>{};
+AU_DEVICE_VAR constexpr auto amperes = QuantityMaker<Amperes>{};
 
 namespace symbols {
-constexpr auto A = SymbolFor<Amperes>{};
+AU_DEVICE_VAR constexpr auto A = SymbolFor<Amperes>{};
 }
 
 }  // namespace au

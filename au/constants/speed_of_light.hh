@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "au/config.hh"
 #include "au/constant.hh"
 #include "au/units/meters.hh"
 #include "au/units/seconds.hh"
@@ -33,6 +34,6 @@ struct SpeedOfLightUnit : decltype(Meters{} / Seconds{} * mag<299'792'458>()),
 };
 }  // namespace detail
 
-constexpr auto SPEED_OF_LIGHT = make_constant(detail::SpeedOfLightUnit{});
+AU_DEVICE_VAR constexpr auto SPEED_OF_LIGHT = make_constant(detail::SpeedOfLightUnit{});
 
 }  // namespace au

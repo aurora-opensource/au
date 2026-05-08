@@ -16,7 +16,7 @@
 
 #include "au/units/hertz_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,9 +39,9 @@ struct Hertz
       HertzLabel<void> {
     using HertzLabel<void>::label;
 };
-constexpr auto hertz = QuantityMaker<Hertz>{};
+AU_DEVICE_VAR constexpr auto hertz = QuantityMaker<Hertz>{};
 
 namespace symbols {
-constexpr auto Hz = SymbolFor<Hertz>{};
+AU_DEVICE_VAR constexpr auto Hz = SymbolFor<Hertz>{};
 }
 }  // namespace au

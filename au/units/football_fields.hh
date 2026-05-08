@@ -16,7 +16,7 @@
 
 #include "au/units/football_fields_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct FootballFields
       FootballFieldsLabel<void> {
     using FootballFieldsLabel<void>::label;
 };
-constexpr auto football_field = SingularNameFor<FootballFields>{};
-constexpr auto football_fields = QuantityMaker<FootballFields>{};
+AU_DEVICE_VAR constexpr auto football_field = SingularNameFor<FootballFields>{};
+AU_DEVICE_VAR constexpr auto football_fields = QuantityMaker<FootballFields>{};
 
 namespace symbols {
-constexpr auto ftbl_fld = SymbolFor<FootballFields>{};
+AU_DEVICE_VAR constexpr auto ftbl_fld = SymbolFor<FootballFields>{};
 }
 }  // namespace au

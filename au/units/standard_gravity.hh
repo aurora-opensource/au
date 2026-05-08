@@ -16,7 +16,7 @@
 
 #include "au/units/standard_gravity_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -40,9 +40,9 @@ struct StandardGravity
       StandardGravityLabel<void> {
     using StandardGravityLabel<void>::label;
 };
-constexpr auto standard_gravity = QuantityMaker<StandardGravity>{};
+AU_DEVICE_VAR constexpr auto standard_gravity = QuantityMaker<StandardGravity>{};
 
 namespace symbols {
-constexpr auto g_0 = SymbolFor<StandardGravity>{};
+AU_DEVICE_VAR constexpr auto g_0 = SymbolFor<StandardGravity>{};
 }
 }  // namespace au

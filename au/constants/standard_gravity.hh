@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "au/config.hh"
 #include "au/constant.hh"
 #include "au/units/standard_gravity.hh"
 
 namespace au {
 
-constexpr auto STANDARD_GRAVITY = make_constant(StandardGravity{});
+AU_DEVICE_VAR constexpr auto STANDARD_GRAVITY = make_constant(StandardGravity{});
 
 }  // namespace au

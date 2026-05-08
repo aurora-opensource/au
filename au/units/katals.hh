@@ -16,7 +16,7 @@
 
 #include "au/units/katals_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Katals
       KatalsLabel<void> {
     using KatalsLabel<void>::label;
 };
-constexpr auto katal = SingularNameFor<Katals>{};
-constexpr auto katals = QuantityMaker<Katals>{};
+AU_DEVICE_VAR constexpr auto katal = SingularNameFor<Katals>{};
+AU_DEVICE_VAR constexpr auto katals = QuantityMaker<Katals>{};
 
 namespace symbols {
-constexpr auto kat = SymbolFor<Katals>{};
+AU_DEVICE_VAR constexpr auto kat = SymbolFor<Katals>{};
 }
 }  // namespace au

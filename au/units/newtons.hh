@@ -16,7 +16,7 @@
 
 #include "au/units/newtons_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -40,10 +40,10 @@ struct Newtons
       NewtonsLabel<void> {
     using NewtonsLabel<void>::label;
 };
-constexpr auto newton = SingularNameFor<Newtons>{};
-constexpr auto newtons = QuantityMaker<Newtons>{};
+AU_DEVICE_VAR constexpr auto newton = SingularNameFor<Newtons>{};
+AU_DEVICE_VAR constexpr auto newtons = QuantityMaker<Newtons>{};
 
 namespace symbols {
-constexpr auto N = SymbolFor<Newtons>{};
+AU_DEVICE_VAR constexpr auto N = SymbolFor<Newtons>{};
 }
 }  // namespace au

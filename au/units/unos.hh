@@ -16,7 +16,7 @@
 
 #include "au/units/unos_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 
 namespace au {
@@ -32,6 +32,6 @@ constexpr const char UnosLabel<T>::label[];
 struct Unos : UnitProduct<>, UnosLabel<void> {
     using UnosLabel<void>::label;
 };
-constexpr auto unos = QuantityMaker<Unos>{};
+AU_DEVICE_VAR constexpr auto unos = QuantityMaker<Unos>{};
 
 }  // namespace au

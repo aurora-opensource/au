@@ -16,7 +16,7 @@
 
 #include "au/units/henries_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -43,10 +43,10 @@ struct Henries
       HenriesLabel<void> {
     using HenriesLabel<void>::label;
 };
-constexpr auto henry = SingularNameFor<Henries>{};
-constexpr auto henries = QuantityMaker<Henries>{};
+AU_DEVICE_VAR constexpr auto henry = SingularNameFor<Henries>{};
+AU_DEVICE_VAR constexpr auto henries = QuantityMaker<Henries>{};
 
 namespace symbols {
-constexpr auto H = SymbolFor<Henries>{};
+AU_DEVICE_VAR constexpr auto H = SymbolFor<Henries>{};
 }
 }  // namespace au

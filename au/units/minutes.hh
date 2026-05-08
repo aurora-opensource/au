@@ -16,7 +16,7 @@
 
 #include "au/units/minutes_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Minutes
       MinutesLabel<void> {
     using MinutesLabel<void>::label;
 };
-constexpr auto minute = SingularNameFor<Minutes>{};
-constexpr auto minutes = QuantityMaker<Minutes>{};
+AU_DEVICE_VAR constexpr auto minute = SingularNameFor<Minutes>{};
+AU_DEVICE_VAR constexpr auto minutes = QuantityMaker<Minutes>{};
 
 namespace symbols {
-constexpr auto min = SymbolFor<Minutes>{};
+AU_DEVICE_VAR constexpr auto min = SymbolFor<Minutes>{};
 }
 }  // namespace au

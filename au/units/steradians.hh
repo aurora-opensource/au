@@ -16,7 +16,7 @@
 
 #include "au/units/steradians_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Steradians
       SteradiansLabel<void> {
     using SteradiansLabel<void>::label;
 };
-constexpr auto steradian = SingularNameFor<Steradians>{};
-constexpr auto steradians = QuantityMaker<Steradians>{};
+AU_DEVICE_VAR constexpr auto steradian = SingularNameFor<Steradians>{};
+AU_DEVICE_VAR constexpr auto steradians = QuantityMaker<Steradians>{};
 
 namespace symbols {
-constexpr auto sr = SymbolFor<Steradians>{};
+AU_DEVICE_VAR constexpr auto sr = SymbolFor<Steradians>{};
 }
 }  // namespace au

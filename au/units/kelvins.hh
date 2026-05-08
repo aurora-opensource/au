@@ -16,7 +16,7 @@
 
 #include "au/units/kelvins_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/quantity_point.hh"
 #include "au/unit_symbol.hh"
@@ -34,11 +34,11 @@ constexpr const char KelvinsLabel<T>::label[];
 struct Kelvins : UnitImpl<Temperature>, KelvinsLabel<void> {
     using KelvinsLabel<void>::label;
 };
-constexpr auto kelvin = SingularNameFor<Kelvins>{};
-constexpr auto kelvins = QuantityMaker<Kelvins>{};
-constexpr auto kelvins_pt = QuantityPointMaker<Kelvins>{};
+AU_DEVICE_VAR constexpr auto kelvin = SingularNameFor<Kelvins>{};
+AU_DEVICE_VAR constexpr auto kelvins = QuantityMaker<Kelvins>{};
+AU_DEVICE_VAR constexpr auto kelvins_pt = QuantityPointMaker<Kelvins>{};
 
 namespace symbols {
-constexpr auto K = SymbolFor<Kelvins>{};
+AU_DEVICE_VAR constexpr auto K = SymbolFor<Kelvins>{};
 }
 }  // namespace au

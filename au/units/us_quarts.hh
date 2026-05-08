@@ -16,7 +16,7 @@
 
 #include "au/units/us_quarts_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -45,11 +45,11 @@ struct USQuarts
       USQuartsLabel<void> {
     using USQuartsLabel<void>::label;
 };
-constexpr auto us_quart = SingularNameFor<USQuarts>{};
-constexpr auto us_quarts = QuantityMaker<USQuarts>{};
+AU_DEVICE_VAR constexpr auto us_quart = SingularNameFor<USQuarts>{};
+AU_DEVICE_VAR constexpr auto us_quarts = QuantityMaker<USQuarts>{};
 
 namespace symbols {
-constexpr auto US_qt = SymbolFor<USQuarts>{};
+AU_DEVICE_VAR constexpr auto US_qt = SymbolFor<USQuarts>{};
 }
 
 }  // namespace au

@@ -17,11 +17,26 @@
 //
 // Device/GPU support (CUDA, HIP)
 //
-// The AU_DEVICE_FUNC macro marks functions as callable from both host and device.
+// AU_DEVICE_FUNC: marks functions as callable from both host and device.
+// AU_DEVICE_VAR: marks constexpr variables as accessible from device code.
+//
+// Note: AU_DEVICE_FUNC uses __CUDACC__ / __HIPCC__ (compiler detection) because functions need
+// the annotation during both host and device compilation passes.
+//
+// AU_DEVICE_VAR uses __CUDA_ARCH__ / __HIP_DEVICE_COMPILE__ (device pass detection) because
+// __device__ on a variable makes it device-only, which would break host code. By only applying
+// __device__ during the device compilation pass, the same variable is visible to both host and
+// device code.
 //
 
 #if defined(__CUDACC__) || defined(__HIPCC__)
 #define AU_DEVICE_FUNC __host__ __device__
 #else
 #define AU_DEVICE_FUNC
+#endif
+
+#if defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__)
+#define AU_DEVICE_VAR __device__
+#else
+#define AU_DEVICE_VAR
 #endif

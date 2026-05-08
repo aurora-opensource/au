@@ -16,7 +16,7 @@
 
 #include "au/units/coulombs_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Coulombs
       CoulombsLabel<void> {
     using CoulombsLabel<void>::label;
 };
-constexpr auto coulomb = SingularNameFor<Coulombs>{};
-constexpr auto coulombs = QuantityMaker<Coulombs>{};
+AU_DEVICE_VAR constexpr auto coulomb = SingularNameFor<Coulombs>{};
+AU_DEVICE_VAR constexpr auto coulombs = QuantityMaker<Coulombs>{};
 
 namespace symbols {
-constexpr auto C = SymbolFor<Coulombs>{};
+AU_DEVICE_VAR constexpr auto C = SymbolFor<Coulombs>{};
 }
 }  // namespace au

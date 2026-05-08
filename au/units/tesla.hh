@@ -16,7 +16,7 @@
 
 #include "au/units/tesla_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -40,9 +40,9 @@ struct Tesla
       TeslaLabel<void> {
     using TeslaLabel<void>::label;
 };
-constexpr auto tesla = QuantityMaker<Tesla>{};
+AU_DEVICE_VAR constexpr auto tesla = QuantityMaker<Tesla>{};
 
 namespace symbols {
-constexpr auto T = SymbolFor<Tesla>{};
+AU_DEVICE_VAR constexpr auto T = SymbolFor<Tesla>{};
 }
 }  // namespace au

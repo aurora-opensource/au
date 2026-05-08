@@ -16,7 +16,7 @@
 
 #include "au/units/grams_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -33,10 +33,10 @@ constexpr const char GramsLabel<T>::label[];
 struct Grams : UnitImpl<Mass>, GramsLabel<void> {
     using GramsLabel<void>::label;
 };
-constexpr auto gram = SingularNameFor<Grams>{};
-constexpr auto grams = QuantityMaker<Grams>{};
+AU_DEVICE_VAR constexpr auto gram = SingularNameFor<Grams>{};
+AU_DEVICE_VAR constexpr auto grams = QuantityMaker<Grams>{};
 
 namespace symbols {
-constexpr auto g = SymbolFor<Grams>{};
+AU_DEVICE_VAR constexpr auto g = SymbolFor<Grams>{};
 }
 }  // namespace au

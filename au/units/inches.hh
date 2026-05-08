@@ -16,7 +16,7 @@
 
 #include "au/units/inches_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Inches
       InchesLabel<void> {
     using InchesLabel<void>::label;
 };
-constexpr auto inch = SingularNameFor<Inches>{};
-constexpr auto inches = QuantityMaker<Inches>{};
+AU_DEVICE_VAR constexpr auto inch = SingularNameFor<Inches>{};
+AU_DEVICE_VAR constexpr auto inches = QuantityMaker<Inches>{};
 
 namespace symbols {
-constexpr auto in = SymbolFor<Inches>{};
+AU_DEVICE_VAR constexpr auto in = SymbolFor<Inches>{};
 }
 }  // namespace au

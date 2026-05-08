@@ -16,7 +16,7 @@
 
 #include "au/units/lux_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -41,9 +41,9 @@ struct Lux
       LuxLabel<void> {
     using LuxLabel<void>::label;
 };
-constexpr auto lux = QuantityMaker<Lux>{};
+AU_DEVICE_VAR constexpr auto lux = QuantityMaker<Lux>{};
 
 namespace symbols {
-constexpr auto lx = SymbolFor<Lux>{};
+AU_DEVICE_VAR constexpr auto lx = SymbolFor<Lux>{};
 }
 }  // namespace au

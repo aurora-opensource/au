@@ -16,7 +16,7 @@
 
 #include "au/units/knots_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -40,10 +40,10 @@ struct Knots
       KnotsLabel<void> {
     using KnotsLabel<void>::label;
 };
-constexpr auto knot = SingularNameFor<Knots>{};
-constexpr auto knots = QuantityMaker<Knots>{};
+AU_DEVICE_VAR constexpr auto knot = SingularNameFor<Knots>{};
+AU_DEVICE_VAR constexpr auto knots = QuantityMaker<Knots>{};
 
 namespace symbols {
-constexpr auto kn = SymbolFor<Knots>{};
+AU_DEVICE_VAR constexpr auto kn = SymbolFor<Knots>{};
 }
 }  // namespace au

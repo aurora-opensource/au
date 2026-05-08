@@ -16,7 +16,7 @@
 
 #include "au/units/us_gallons_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -45,11 +45,11 @@ struct USGallons
       USGallonsLabel<void> {
     using USGallonsLabel<void>::label;
 };
-constexpr auto us_gallon = SingularNameFor<USGallons>{};
-constexpr auto us_gallons = QuantityMaker<USGallons>{};
+AU_DEVICE_VAR constexpr auto us_gallon = SingularNameFor<USGallons>{};
+AU_DEVICE_VAR constexpr auto us_gallons = QuantityMaker<USGallons>{};
 
 namespace symbols {
-constexpr auto US_gal = SymbolFor<USGallons>{};
+AU_DEVICE_VAR constexpr auto US_gal = SymbolFor<USGallons>{};
 }
 
 }  // namespace au

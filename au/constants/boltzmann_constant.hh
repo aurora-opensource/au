@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "au/config.hh"
 #include "au/constant.hh"
 #include "au/units/joules.hh"
 #include "au/units/kelvins.hh"
@@ -34,6 +35,6 @@ struct BoltzmannConstantUnit
 };
 }  // namespace detail
 
-constexpr auto BOLTZMANN_CONSTANT = make_constant(detail::BoltzmannConstantUnit{});
+AU_DEVICE_VAR constexpr auto BOLTZMANN_CONSTANT = make_constant(detail::BoltzmannConstantUnit{});
 
 }  // namespace au

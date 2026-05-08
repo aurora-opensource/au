@@ -16,7 +16,7 @@
 
 #include "au/units/bars_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -40,10 +40,10 @@ struct Bars
       BarsLabel<void> {
     using BarsLabel<void>::label;
 };
-constexpr auto bar = SingularNameFor<Bars>{};
-constexpr auto bars = QuantityMaker<Bars>{};
+AU_DEVICE_VAR constexpr auto bar = SingularNameFor<Bars>{};
+AU_DEVICE_VAR constexpr auto bars = QuantityMaker<Bars>{};
 
 namespace symbols {
-constexpr auto bar = SymbolFor<Bars>{};
+AU_DEVICE_VAR constexpr auto bar = SymbolFor<Bars>{};
 }  // namespace symbols
 }  // namespace au

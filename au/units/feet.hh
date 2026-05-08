@@ -16,7 +16,7 @@
 
 #include "au/units/feet_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Feet
       FeetLabel<void> {
     using FeetLabel<void>::label;
 };
-constexpr auto foot = SingularNameFor<Feet>{};
-constexpr auto feet = QuantityMaker<Feet>{};
+AU_DEVICE_VAR constexpr auto foot = SingularNameFor<Feet>{};
+AU_DEVICE_VAR constexpr auto feet = QuantityMaker<Feet>{};
 
 namespace symbols {
-constexpr auto ft = SymbolFor<Feet>{};
+AU_DEVICE_VAR constexpr auto ft = SymbolFor<Feet>{};
 }
 }  // namespace au

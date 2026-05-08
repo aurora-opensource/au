@@ -16,7 +16,7 @@
 
 #include "au/units/revolutions_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,10 +39,10 @@ struct Revolutions
       RevolutionsLabel<void> {
     using RevolutionsLabel<void>::label;
 };
-constexpr auto revolution = SingularNameFor<Revolutions>{};
-constexpr auto revolutions = QuantityMaker<Revolutions>{};
+AU_DEVICE_VAR constexpr auto revolution = SingularNameFor<Revolutions>{};
+AU_DEVICE_VAR constexpr auto revolutions = QuantityMaker<Revolutions>{};
 
 namespace symbols {
-constexpr auto rev = SymbolFor<Revolutions>{};
+AU_DEVICE_VAR constexpr auto rev = SymbolFor<Revolutions>{};
 }
 }  // namespace au

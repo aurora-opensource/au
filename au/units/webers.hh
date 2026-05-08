@@ -16,7 +16,7 @@
 
 #include "au/units/webers_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -43,10 +43,10 @@ struct Webers
       WebersLabel<void> {
     using WebersLabel<void>::label;
 };
-constexpr auto weber = SingularNameFor<Webers>{};
-constexpr auto webers = QuantityMaker<Webers>{};
+AU_DEVICE_VAR constexpr auto weber = SingularNameFor<Webers>{};
+AU_DEVICE_VAR constexpr auto webers = QuantityMaker<Webers>{};
 
 namespace symbols {
-constexpr auto Wb = SymbolFor<Webers>{};
+AU_DEVICE_VAR constexpr auto Wb = SymbolFor<Webers>{};
 }
 }  // namespace au

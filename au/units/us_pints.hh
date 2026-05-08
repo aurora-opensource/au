@@ -16,7 +16,7 @@
 
 #include "au/units/us_pints_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -45,11 +45,11 @@ struct USPints
       USPintsLabel<void> {
     using USPintsLabel<void>::label;
 };
-constexpr auto us_pint = SingularNameFor<USPints>{};
-constexpr auto us_pints = QuantityMaker<USPints>{};
+AU_DEVICE_VAR constexpr auto us_pint = SingularNameFor<USPints>{};
+AU_DEVICE_VAR constexpr auto us_pints = QuantityMaker<USPints>{};
 
 namespace symbols {
-constexpr auto US_pt = SymbolFor<USPints>{};
+AU_DEVICE_VAR constexpr auto US_pt = SymbolFor<USPints>{};
 }
 
 }  // namespace au

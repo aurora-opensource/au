@@ -16,7 +16,7 @@
 
 #include "au/units/becquerel_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -39,9 +39,9 @@ struct Becquerel
       BecquerelLabel<void> {
     using BecquerelLabel<void>::label;
 };
-constexpr auto becquerel = QuantityMaker<Becquerel>{};
+AU_DEVICE_VAR constexpr auto becquerel = QuantityMaker<Becquerel>{};
 
 namespace symbols {
-constexpr auto Bq = SymbolFor<Becquerel>{};
+AU_DEVICE_VAR constexpr auto Bq = SymbolFor<Becquerel>{};
 }
 }  // namespace au

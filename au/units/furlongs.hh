@@ -16,7 +16,7 @@
 
 #include "au/units/furlongs_fwd.hh"
 // Keep corresponding `_fwd.hh` file on top.
-
+#include "au/config.hh"
 #include "au/quantity.hh"
 #include "au/unit_symbol.hh"
 
@@ -40,10 +40,10 @@ struct Furlongs
       FurlongsLabel<void> {
     using FurlongsLabel<void>::label;
 };
-constexpr auto furlong = SingularNameFor<Furlongs>{};
-constexpr auto furlongs = QuantityMaker<Furlongs>{};
+AU_DEVICE_VAR constexpr auto furlong = SingularNameFor<Furlongs>{};
+AU_DEVICE_VAR constexpr auto furlongs = QuantityMaker<Furlongs>{};
 
 namespace symbols {
-constexpr auto fur = SymbolFor<Furlongs>{};
+AU_DEVICE_VAR constexpr auto fur = SymbolFor<Furlongs>{};
 }
 }  // namespace au
