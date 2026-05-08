@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-106-g2503803
+// Version identifier: 0.5.0-base-107-g9e127b2
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -284,13 +284,28 @@ struct Kibi;
 //
 // Device/GPU support (CUDA, HIP)
 //
-// The AU_DEVICE_FUNC macro marks functions as callable from both host and device.
+// AU_DEVICE_FUNC: marks functions as callable from both host and device.
+// AU_DEVICE_VAR: marks constexpr variables as accessible from device code.
+//
+// Note: AU_DEVICE_FUNC uses __CUDACC__ / __HIPCC__ (compiler detection) because functions need
+// the annotation during both host and device compilation passes.
+//
+// AU_DEVICE_VAR uses __CUDA_ARCH__ / __HIP_DEVICE_COMPILE__ (device pass detection) because
+// __device__ on a variable makes it device-only, which would break host code. By only applying
+// __device__ during the device compilation pass, the same variable is visible to both host and
+// device code.
 //
 
 #if defined(__CUDACC__) || defined(__HIPCC__)
 #define AU_DEVICE_FUNC __host__ __device__
 #else
 #define AU_DEVICE_FUNC
+#endif
+
+#if defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__)
+#define AU_DEVICE_VAR __device__
+#else
+#define AU_DEVICE_VAR
 #endif
 
 
@@ -1529,7 +1544,7 @@ struct Zero {
 //
 // This exists purely for convenience, so people don't have to call the initializer.  i.e., it lets
 // us write `ZERO` instead of `Zero{}`.
-static constexpr auto ZERO = Zero{};
+AU_DEVICE_VAR constexpr auto ZERO = Zero{};
 
 // Addition, subtraction, and comparison of Zero are well defined.
 inline AU_DEVICE_FUNC constexpr Zero operator+(Zero, Zero) { return ZERO; }
@@ -3440,7 +3455,7 @@ struct PrimeFactorizationImpl {
 }  // namespace detail
 
 template <std::uintmax_t N>
-constexpr auto mag() {
+AU_DEVICE_FUNC constexpr auto mag() {
     return detail::PrimeFactorization<N>{};
 }
 
@@ -7015,14 +7030,16 @@ struct CheckTheseRisks<RiskSet<RiskFlags>> {
     }
 };
 
-constexpr auto OVERFLOW_RISK = RiskSet<static_cast<uint8_t>(ConversionRisk::Overflow)>{};
-constexpr auto TRUNCATION_RISK = RiskSet<static_cast<uint8_t>(ConversionRisk::Truncation)>{};
+AU_DEVICE_VAR constexpr auto OVERFLOW_RISK =
+    RiskSet<static_cast<uint8_t>(ConversionRisk::Overflow)>{};
+AU_DEVICE_VAR constexpr auto TRUNCATION_RISK =
+    RiskSet<static_cast<uint8_t>(ConversionRisk::Truncation)>{};
 
 }  // namespace detail
 
-constexpr auto OVERFLOW_RISK = detail::OVERFLOW_RISK;
-constexpr auto TRUNCATION_RISK = detail::TRUNCATION_RISK;
-constexpr auto ALL_RISKS = OVERFLOW_RISK | TRUNCATION_RISK;
+AU_DEVICE_VAR constexpr auto OVERFLOW_RISK = detail::OVERFLOW_RISK;
+AU_DEVICE_VAR constexpr auto TRUNCATION_RISK = detail::TRUNCATION_RISK;
+AU_DEVICE_VAR constexpr auto ALL_RISKS = OVERFLOW_RISK | TRUNCATION_RISK;
 
 // `IsConversionRiskPolicy<T>` checks whether `T` is a conversion risk policy type.  For now, this
 // boils down to being a specialization of `CheckTheseRisks` on some `RiskSet`.
@@ -8448,7 +8465,6 @@ struct SupportsRationalPowers {
 
 // Keep corresponding `_fwd.hh` file on top.
 
-
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
@@ -8462,7 +8478,7 @@ constexpr const char UnosLabel<T>::label[];
 struct Unos : UnitProduct<>, UnosLabel<void> {
     using UnosLabel<void>::label;
 };
-constexpr auto unos = QuantityMaker<Unos>{};
+AU_DEVICE_VAR constexpr auto unos = QuantityMaker<Unos>{};
 
 }  // namespace au
 
@@ -8505,7 +8521,6 @@ struct AssociatedUnitImpl<SymbolFor<U>> : stdx::type_identity<U> {};
 
 // Keep corresponding `_fwd.hh` file on top.
 
-
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
@@ -8519,16 +8534,15 @@ constexpr const char RadiansLabel<T>::label[];
 struct Radians : UnitImpl<Angle>, RadiansLabel<void> {
     using RadiansLabel<void>::label;
 };
-constexpr auto radian = SingularNameFor<Radians>{};
-constexpr auto radians = QuantityMaker<Radians>{};
+AU_DEVICE_VAR constexpr auto radian = SingularNameFor<Radians>{};
+AU_DEVICE_VAR constexpr auto radians = QuantityMaker<Radians>{};
 
 namespace symbols {
-constexpr auto rad = SymbolFor<Radians>{};
+AU_DEVICE_VAR constexpr auto rad = SymbolFor<Radians>{};
 }
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
-
 
 namespace au {
 
@@ -8543,16 +8557,15 @@ constexpr const char CandelasLabel<T>::label[];
 struct Candelas : UnitImpl<LuminousIntensity>, CandelasLabel<void> {
     using CandelasLabel<void>::label;
 };
-constexpr auto candela = SingularNameFor<Candelas>{};
-constexpr auto candelas = QuantityMaker<Candelas>{};
+AU_DEVICE_VAR constexpr auto candela = SingularNameFor<Candelas>{};
+AU_DEVICE_VAR constexpr auto candelas = QuantityMaker<Candelas>{};
 
 namespace symbols {
-constexpr auto cd = SymbolFor<Candelas>{};
+AU_DEVICE_VAR constexpr auto cd = SymbolFor<Candelas>{};
 }
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
-
 
 namespace au {
 
@@ -8567,16 +8580,15 @@ constexpr const char MolesLabel<T>::label[];
 struct Moles : UnitImpl<AmountOfSubstance>, MolesLabel<void> {
     using MolesLabel<void>::label;
 };
-constexpr auto mole = SingularNameFor<Moles>{};
-constexpr auto moles = QuantityMaker<Moles>{};
+AU_DEVICE_VAR constexpr auto mole = SingularNameFor<Moles>{};
+AU_DEVICE_VAR constexpr auto moles = QuantityMaker<Moles>{};
 
 namespace symbols {
-constexpr auto mol = SymbolFor<Moles>{};
+AU_DEVICE_VAR constexpr auto mol = SymbolFor<Moles>{};
 }
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
-
 
 namespace au {
 
@@ -8591,17 +8603,16 @@ constexpr const char AmperesLabel<T>::label[];
 struct Amperes : UnitImpl<Current>, AmperesLabel<void> {
     using AmperesLabel<void>::label;
 };
-constexpr auto ampere = SingularNameFor<Amperes>{};
-constexpr auto amperes = QuantityMaker<Amperes>{};
+AU_DEVICE_VAR constexpr auto ampere = SingularNameFor<Amperes>{};
+AU_DEVICE_VAR constexpr auto amperes = QuantityMaker<Amperes>{};
 
 namespace symbols {
-constexpr auto A = SymbolFor<Amperes>{};
+AU_DEVICE_VAR constexpr auto A = SymbolFor<Amperes>{};
 }
 
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
-
 
 namespace au {
 
@@ -8616,16 +8627,15 @@ constexpr const char GramsLabel<T>::label[];
 struct Grams : UnitImpl<Mass>, GramsLabel<void> {
     using GramsLabel<void>::label;
 };
-constexpr auto gram = SingularNameFor<Grams>{};
-constexpr auto grams = QuantityMaker<Grams>{};
+AU_DEVICE_VAR constexpr auto gram = SingularNameFor<Grams>{};
+AU_DEVICE_VAR constexpr auto grams = QuantityMaker<Grams>{};
 
 namespace symbols {
-constexpr auto g = SymbolFor<Grams>{};
+AU_DEVICE_VAR constexpr auto g = SymbolFor<Grams>{};
 }
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
-
 
 namespace au {
 
@@ -8640,16 +8650,15 @@ constexpr const char SecondsLabel<T>::label[];
 struct Seconds : UnitImpl<Time>, SecondsLabel<void> {
     using SecondsLabel<void>::label;
 };
-constexpr auto second = SingularNameFor<Seconds>{};
-constexpr auto seconds = QuantityMaker<Seconds>{};
+AU_DEVICE_VAR constexpr auto second = SingularNameFor<Seconds>{};
+AU_DEVICE_VAR constexpr auto seconds = QuantityMaker<Seconds>{};
 
 namespace symbols {
-constexpr auto s = SymbolFor<Seconds>{};
+AU_DEVICE_VAR constexpr auto s = SymbolFor<Seconds>{};
 }
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
-
 
 namespace au {
 
@@ -8670,16 +8679,15 @@ struct Minutes
       MinutesLabel<void> {
     using MinutesLabel<void>::label;
 };
-constexpr auto minute = SingularNameFor<Minutes>{};
-constexpr auto minutes = QuantityMaker<Minutes>{};
+AU_DEVICE_VAR constexpr auto minute = SingularNameFor<Minutes>{};
+AU_DEVICE_VAR constexpr auto minutes = QuantityMaker<Minutes>{};
 
 namespace symbols {
-constexpr auto min = SymbolFor<Minutes>{};
+AU_DEVICE_VAR constexpr auto min = SymbolFor<Minutes>{};
 }
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
-
 
 namespace au {
 
@@ -8700,11 +8708,11 @@ struct Hours
       HoursLabel<void> {
     using HoursLabel<void>::label;
 };
-constexpr auto hour = SingularNameFor<Hours>{};
-constexpr auto hours = QuantityMaker<Hours>{};
+AU_DEVICE_VAR constexpr auto hour = SingularNameFor<Hours>{};
+AU_DEVICE_VAR constexpr auto hours = QuantityMaker<Hours>{};
 
 namespace symbols {
-constexpr auto h = SymbolFor<Hours>{};
+AU_DEVICE_VAR constexpr auto h = SymbolFor<Hours>{};
 }
 }  // namespace au
 
@@ -8956,7 +8964,6 @@ AU_DEVICE_FUNC constexpr auto operator-(Zero, Constant<U>) {
 
 // Keep corresponding `_fwd.hh` file on top.
 
-
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
@@ -8970,11 +8977,11 @@ constexpr const char BitsLabel<T>::label[];
 struct Bits : UnitImpl<Information>, BitsLabel<void> {
     using BitsLabel<void>::label;
 };
-constexpr auto bit = SingularNameFor<Bits>{};
-constexpr auto bits = QuantityMaker<Bits>{};
+AU_DEVICE_VAR constexpr auto bit = SingularNameFor<Bits>{};
+AU_DEVICE_VAR constexpr auto bits = QuantityMaker<Bits>{};
 
 namespace symbols {
-constexpr auto b = SymbolFor<Bits>{};
+AU_DEVICE_VAR constexpr auto b = SymbolFor<Bits>{};
 }
 }  // namespace au
 
@@ -9458,7 +9465,6 @@ struct QuantityPointFormatter : QuantityFormatter<U, R, Formatter> {
 
 // Keep corresponding `_fwd.hh` file on top.
 
-
 namespace au {
 
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
@@ -9472,17 +9478,16 @@ constexpr const char KelvinsLabel<T>::label[];
 struct Kelvins : UnitImpl<Temperature>, KelvinsLabel<void> {
     using KelvinsLabel<void>::label;
 };
-constexpr auto kelvin = SingularNameFor<Kelvins>{};
-constexpr auto kelvins = QuantityMaker<Kelvins>{};
-constexpr auto kelvins_pt = QuantityPointMaker<Kelvins>{};
+AU_DEVICE_VAR constexpr auto kelvin = SingularNameFor<Kelvins>{};
+AU_DEVICE_VAR constexpr auto kelvins = QuantityMaker<Kelvins>{};
+AU_DEVICE_VAR constexpr auto kelvins_pt = QuantityPointMaker<Kelvins>{};
 
 namespace symbols {
-constexpr auto K = SymbolFor<Kelvins>{};
+AU_DEVICE_VAR constexpr auto K = SymbolFor<Kelvins>{};
 }
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
-
 
 namespace au {
 
@@ -9497,12 +9502,12 @@ constexpr const char MetersLabel<T>::label[];
 struct Meters : UnitImpl<Length>, MetersLabel<void> {
     using MetersLabel<void>::label;
 };
-constexpr auto meter = SingularNameFor<Meters>{};
-constexpr auto meters = QuantityMaker<Meters>{};
-constexpr auto meters_pt = QuantityPointMaker<Meters>{};
+AU_DEVICE_VAR constexpr auto meter = SingularNameFor<Meters>{};
+AU_DEVICE_VAR constexpr auto meters = QuantityMaker<Meters>{};
+AU_DEVICE_VAR constexpr auto meters_pt = QuantityPointMaker<Meters>{};
 
 namespace symbols {
-constexpr auto m = SymbolFor<Meters>{};
+AU_DEVICE_VAR constexpr auto m = SymbolFor<Meters>{};
 }
 }  // namespace au
 
@@ -9604,7 +9609,7 @@ struct Quetta : decltype(U{} * pow<30>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Quetta<U>::LabelT Quetta<U>::label;
-constexpr auto quetta = PrefixApplier<Quetta>{};
+AU_DEVICE_VAR constexpr auto quetta = PrefixApplier<Quetta>{};
 
 template <typename U>
 struct Ronna : decltype(U{} * pow<27>(mag<10>())) {
@@ -9614,7 +9619,7 @@ struct Ronna : decltype(U{} * pow<27>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Ronna<U>::LabelT Ronna<U>::label;
-constexpr auto ronna = PrefixApplier<Ronna>{};
+AU_DEVICE_VAR constexpr auto ronna = PrefixApplier<Ronna>{};
 
 template <typename U>
 struct Yotta : decltype(U{} * pow<24>(mag<10>())) {
@@ -9624,7 +9629,7 @@ struct Yotta : decltype(U{} * pow<24>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Yotta<U>::LabelT Yotta<U>::label;
-constexpr auto yotta = PrefixApplier<Yotta>{};
+AU_DEVICE_VAR constexpr auto yotta = PrefixApplier<Yotta>{};
 
 template <typename U>
 struct Zetta : decltype(U{} * pow<21>(mag<10>())) {
@@ -9634,7 +9639,7 @@ struct Zetta : decltype(U{} * pow<21>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Zetta<U>::LabelT Zetta<U>::label;
-constexpr auto zetta = PrefixApplier<Zetta>{};
+AU_DEVICE_VAR constexpr auto zetta = PrefixApplier<Zetta>{};
 
 template <typename U>
 struct Exa : decltype(U{} * pow<18>(mag<10>())) {
@@ -9644,7 +9649,7 @@ struct Exa : decltype(U{} * pow<18>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Exa<U>::LabelT Exa<U>::label;
-constexpr auto exa = PrefixApplier<Exa>{};
+AU_DEVICE_VAR constexpr auto exa = PrefixApplier<Exa>{};
 
 template <typename U>
 struct Peta : decltype(U{} * pow<15>(mag<10>())) {
@@ -9654,7 +9659,7 @@ struct Peta : decltype(U{} * pow<15>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Peta<U>::LabelT Peta<U>::label;
-constexpr auto peta = PrefixApplier<Peta>{};
+AU_DEVICE_VAR constexpr auto peta = PrefixApplier<Peta>{};
 
 template <typename U>
 struct Tera : decltype(U{} * pow<12>(mag<10>())) {
@@ -9664,7 +9669,7 @@ struct Tera : decltype(U{} * pow<12>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Tera<U>::LabelT Tera<U>::label;
-constexpr auto tera = PrefixApplier<Tera>{};
+AU_DEVICE_VAR constexpr auto tera = PrefixApplier<Tera>{};
 
 template <typename U>
 struct Giga : decltype(U{} * pow<9>(mag<10>())) {
@@ -9674,7 +9679,7 @@ struct Giga : decltype(U{} * pow<9>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Giga<U>::LabelT Giga<U>::label;
-constexpr auto giga = PrefixApplier<Giga>{};
+AU_DEVICE_VAR constexpr auto giga = PrefixApplier<Giga>{};
 
 template <typename U>
 struct Mega : decltype(U{} * pow<6>(mag<10>())) {
@@ -9684,7 +9689,7 @@ struct Mega : decltype(U{} * pow<6>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Mega<U>::LabelT Mega<U>::label;
-constexpr auto mega = PrefixApplier<Mega>{};
+AU_DEVICE_VAR constexpr auto mega = PrefixApplier<Mega>{};
 
 template <typename U>
 struct Kilo : decltype(U{} * pow<3>(mag<10>())) {
@@ -9694,7 +9699,7 @@ struct Kilo : decltype(U{} * pow<3>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Kilo<U>::LabelT Kilo<U>::label;
-constexpr auto kilo = PrefixApplier<Kilo>{};
+AU_DEVICE_VAR constexpr auto kilo = PrefixApplier<Kilo>{};
 
 template <typename U>
 struct Hecto : decltype(U{} * pow<2>(mag<10>())) {
@@ -9704,7 +9709,7 @@ struct Hecto : decltype(U{} * pow<2>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Hecto<U>::LabelT Hecto<U>::label;
-constexpr auto hecto = PrefixApplier<Hecto>{};
+AU_DEVICE_VAR constexpr auto hecto = PrefixApplier<Hecto>{};
 
 template <typename U>
 struct Deka : decltype(U{} * pow<1>(mag<10>())) {
@@ -9714,7 +9719,7 @@ struct Deka : decltype(U{} * pow<1>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Deka<U>::LabelT Deka<U>::label;
-constexpr auto deka = PrefixApplier<Deka>{};
+AU_DEVICE_VAR constexpr auto deka = PrefixApplier<Deka>{};
 
 template <typename U>
 struct Deci : decltype(U{} * pow<-1>(mag<10>())) {
@@ -9724,7 +9729,7 @@ struct Deci : decltype(U{} * pow<-1>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Deci<U>::LabelT Deci<U>::label;
-constexpr auto deci = PrefixApplier<Deci>{};
+AU_DEVICE_VAR constexpr auto deci = PrefixApplier<Deci>{};
 
 template <typename U>
 struct Centi : decltype(U{} * pow<-2>(mag<10>())) {
@@ -9734,7 +9739,7 @@ struct Centi : decltype(U{} * pow<-2>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Centi<U>::LabelT Centi<U>::label;
-constexpr auto centi = PrefixApplier<Centi>{};
+AU_DEVICE_VAR constexpr auto centi = PrefixApplier<Centi>{};
 
 template <typename U>
 struct Milli : decltype(U{} * pow<-3>(mag<10>())) {
@@ -9744,7 +9749,7 @@ struct Milli : decltype(U{} * pow<-3>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Milli<U>::LabelT Milli<U>::label;
-constexpr auto milli = PrefixApplier<Milli>{};
+AU_DEVICE_VAR constexpr auto milli = PrefixApplier<Milli>{};
 
 template <typename U>
 struct Micro : decltype(U{} * pow<-6>(mag<10>())) {
@@ -9754,7 +9759,7 @@ struct Micro : decltype(U{} * pow<-6>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Micro<U>::LabelT Micro<U>::label;
-constexpr auto micro = PrefixApplier<Micro>{};
+AU_DEVICE_VAR constexpr auto micro = PrefixApplier<Micro>{};
 
 template <typename U>
 struct Nano : decltype(U{} * pow<-9>(mag<10>())) {
@@ -9764,7 +9769,7 @@ struct Nano : decltype(U{} * pow<-9>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Nano<U>::LabelT Nano<U>::label;
-constexpr auto nano = PrefixApplier<Nano>{};
+AU_DEVICE_VAR constexpr auto nano = PrefixApplier<Nano>{};
 
 template <typename U>
 struct Pico : decltype(U{} * pow<-12>(mag<10>())) {
@@ -9774,7 +9779,7 @@ struct Pico : decltype(U{} * pow<-12>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Pico<U>::LabelT Pico<U>::label;
-constexpr auto pico = PrefixApplier<Pico>{};
+AU_DEVICE_VAR constexpr auto pico = PrefixApplier<Pico>{};
 
 template <typename U>
 struct Femto : decltype(U{} * pow<-15>(mag<10>())) {
@@ -9784,7 +9789,7 @@ struct Femto : decltype(U{} * pow<-15>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Femto<U>::LabelT Femto<U>::label;
-constexpr auto femto = PrefixApplier<Femto>{};
+AU_DEVICE_VAR constexpr auto femto = PrefixApplier<Femto>{};
 
 template <typename U>
 struct Atto : decltype(U{} * pow<-18>(mag<10>())) {
@@ -9794,7 +9799,7 @@ struct Atto : decltype(U{} * pow<-18>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Atto<U>::LabelT Atto<U>::label;
-constexpr auto atto = PrefixApplier<Atto>{};
+AU_DEVICE_VAR constexpr auto atto = PrefixApplier<Atto>{};
 
 template <typename U>
 struct Zepto : decltype(U{} * pow<-21>(mag<10>())) {
@@ -9804,7 +9809,7 @@ struct Zepto : decltype(U{} * pow<-21>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Zepto<U>::LabelT Zepto<U>::label;
-constexpr auto zepto = PrefixApplier<Zepto>{};
+AU_DEVICE_VAR constexpr auto zepto = PrefixApplier<Zepto>{};
 
 template <typename U>
 struct Yocto : decltype(U{} * pow<-24>(mag<10>())) {
@@ -9814,7 +9819,7 @@ struct Yocto : decltype(U{} * pow<-24>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Yocto<U>::LabelT Yocto<U>::label;
-constexpr auto yocto = PrefixApplier<Yocto>{};
+AU_DEVICE_VAR constexpr auto yocto = PrefixApplier<Yocto>{};
 
 template <typename U>
 struct Ronto : decltype(U{} * pow<-27>(mag<10>())) {
@@ -9824,7 +9829,7 @@ struct Ronto : decltype(U{} * pow<-27>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Ronto<U>::LabelT Ronto<U>::label;
-constexpr auto ronto = PrefixApplier<Ronto>{};
+AU_DEVICE_VAR constexpr auto ronto = PrefixApplier<Ronto>{};
 
 template <typename U>
 struct Quecto : decltype(U{} * pow<-30>(mag<10>())) {
@@ -9834,7 +9839,7 @@ struct Quecto : decltype(U{} * pow<-30>(mag<10>())) {
 };
 template <typename U>
 constexpr typename Quecto<U>::LabelT Quecto<U>::label;
-constexpr auto quecto = PrefixApplier<Quecto>{};
+AU_DEVICE_VAR constexpr auto quecto = PrefixApplier<Quecto>{};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Binary Prefixes.
@@ -9847,7 +9852,7 @@ struct Yobi : decltype(U{} * pow<80>(mag<2>())) {
 };
 template <typename U>
 constexpr typename Yobi<U>::LabelT Yobi<U>::label;
-constexpr auto yobi = PrefixApplier<Yobi>{};
+AU_DEVICE_VAR constexpr auto yobi = PrefixApplier<Yobi>{};
 
 template <typename U>
 struct Zebi : decltype(U{} * pow<70>(mag<2>())) {
@@ -9857,7 +9862,7 @@ struct Zebi : decltype(U{} * pow<70>(mag<2>())) {
 };
 template <typename U>
 constexpr typename Zebi<U>::LabelT Zebi<U>::label;
-constexpr auto zebi = PrefixApplier<Zebi>{};
+AU_DEVICE_VAR constexpr auto zebi = PrefixApplier<Zebi>{};
 
 template <typename U>
 struct Exbi : decltype(U{} * pow<60>(mag<2>())) {
@@ -9867,7 +9872,7 @@ struct Exbi : decltype(U{} * pow<60>(mag<2>())) {
 };
 template <typename U>
 constexpr typename Exbi<U>::LabelT Exbi<U>::label;
-constexpr auto exbi = PrefixApplier<Exbi>{};
+AU_DEVICE_VAR constexpr auto exbi = PrefixApplier<Exbi>{};
 
 template <typename U>
 struct Pebi : decltype(U{} * pow<50>(mag<2>())) {
@@ -9877,7 +9882,7 @@ struct Pebi : decltype(U{} * pow<50>(mag<2>())) {
 };
 template <typename U>
 constexpr typename Pebi<U>::LabelT Pebi<U>::label;
-constexpr auto pebi = PrefixApplier<Pebi>{};
+AU_DEVICE_VAR constexpr auto pebi = PrefixApplier<Pebi>{};
 
 template <typename U>
 struct Tebi : decltype(U{} * pow<40>(mag<2>())) {
@@ -9887,7 +9892,7 @@ struct Tebi : decltype(U{} * pow<40>(mag<2>())) {
 };
 template <typename U>
 constexpr typename Tebi<U>::LabelT Tebi<U>::label;
-constexpr auto tebi = PrefixApplier<Tebi>{};
+AU_DEVICE_VAR constexpr auto tebi = PrefixApplier<Tebi>{};
 
 template <typename U>
 struct Gibi : decltype(U{} * pow<30>(mag<2>())) {
@@ -9897,7 +9902,7 @@ struct Gibi : decltype(U{} * pow<30>(mag<2>())) {
 };
 template <typename U>
 constexpr typename Gibi<U>::LabelT Gibi<U>::label;
-constexpr auto gibi = PrefixApplier<Gibi>{};
+AU_DEVICE_VAR constexpr auto gibi = PrefixApplier<Gibi>{};
 
 template <typename U>
 struct Mebi : decltype(U{} * pow<20>(mag<2>())) {
@@ -9907,7 +9912,7 @@ struct Mebi : decltype(U{} * pow<20>(mag<2>())) {
 };
 template <typename U>
 constexpr typename Mebi<U>::LabelT Mebi<U>::label;
-constexpr auto mebi = PrefixApplier<Mebi>{};
+AU_DEVICE_VAR constexpr auto mebi = PrefixApplier<Mebi>{};
 
 template <typename U>
 struct Kibi : decltype(U{} * pow<10>(mag<2>())) {
@@ -9917,7 +9922,7 @@ struct Kibi : decltype(U{} * pow<10>(mag<2>())) {
 };
 template <typename U>
 constexpr typename Kibi<U>::LabelT Kibi<U>::label;
-constexpr auto kibi = PrefixApplier<Kibi>{};
+AU_DEVICE_VAR constexpr auto kibi = PrefixApplier<Kibi>{};
 
 }  // namespace au
 
