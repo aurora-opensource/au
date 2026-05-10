@@ -75,6 +75,7 @@ Here are the configurations that have Best Effort Support status.
 |----------|----------|--------|
 | Windows Server 2022 | MSVC 2022 x64 | [![MSVC 2022 x64]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml) |
 | Windows Server 2025 | MSVC 2025 x64 | [![MSVC 2025 x64]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2025-x64.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/msvc-2025-x64.yml) |
+| Ubuntu | CUDA (nvcc) | [![cuda-ubuntu]( https://github.com/aurora-opensource/au/actions/workflows/cuda-ubuntu.yml/badge.svg?branch=main&event=push)]( https://github.com/aurora-opensource/au/actions/workflows/cuda-ubuntu.yml) |
 
 ### Assumed support
 

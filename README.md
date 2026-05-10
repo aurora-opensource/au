@@ -23,6 +23,10 @@ https://github.com/aurora-opensource/au/actions/workflows/msvc-2022-x64.yml)
 [![MSVC 2025 x64](
 https://github.com/aurora-opensource/au/actions/workflows/msvc-2025-x64.yml/badge.svg?branch=main&event=push)](
 https://github.com/aurora-opensource/au/actions/workflows/msvc-2025-x64.yml)
+<br>
+[![cuda-ubuntu](
+https://github.com/aurora-opensource/au/actions/workflows/cuda-ubuntu.yml/badge.svg?branch=main&event=push)](
+https://github.com/aurora-opensource/au/actions/workflows/cuda-ubuntu.yml)
 
 # Au: A C++14-compatible units library, by Aurora
 
@@ -55,8 +59,9 @@ surface" that protects conversions against overflow, unit-aware rounding and inv
 many more.
 
 Forged in the crucible of Aurora's diverse, demanding use cases, Au has a proven track record of
-usability and reliability. This **includes embedded support**: Aurora's embedded teams have been
-first class customers since the library's inception.
+usability and reliability. This **includes embedded and GPU support**: Aurora's embedded teams have
+been first class customers since the library's inception, and Au now also works out of the box with
+CUDA.
 
 To learn more about our place in the C++ units library ecosystem, see our [detailed library
 comparison](https://aurora-opensource.github.io/au/main/alternatives/).
