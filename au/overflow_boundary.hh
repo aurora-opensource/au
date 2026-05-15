@@ -737,6 +737,7 @@ struct MaxGoodImpl<DivideTypeByInteger<T, M>, Limits>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `ScaleByRational<T, Num, Den>` implementation.
+
 template <typename Num, typename Den>
 struct IsMagnifyingOrNegativeRational {
     using M = MagProductT<Num, MagInverseT<Den>>;

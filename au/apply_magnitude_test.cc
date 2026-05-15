@@ -298,6 +298,15 @@ TEST(WouldOverflow, UsesNumeratorWhenApplyingRationalMagnitudeToIntegralType) {
     }
 }
 
+TEST(WouldOverflow, NegativeRational) {
+    {
+        using ApplyNegativeFraction = ApplyMagnitudeT<int32_t, decltype(-mag<2>() / mag<3>())>;
+
+        EXPECT_THAT(ApplyNegativeFraction::would_overflow(2'147'483'647), IsTrue());
+        EXPECT_THAT(ApplyNegativeFraction::would_overflow(-2'147'483'648), IsTrue());
+    }
+}
+
 TEST(WouldOverflow, UsesFullValueWhenApplyingRationalMagnitudeToFloatingPointType) {
     {
         using ApplyThreeHalvesToF = ApplyMagnitudeT<float, decltype(mag<3>() / mag<2>())>;

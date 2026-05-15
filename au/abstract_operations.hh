@@ -199,12 +199,17 @@ struct OpSequenceImpl<Op, Ops...> {
 // `ScaleByRational<T, Num, Den>` implementation.
 //
 // Modular decomposition avoids the intermediate `value * Num` overflow that occurs with
-// (Num*T)/Den. GCD reduction of Num and Den maximises the safe input range.
+// (Num*T)/Den. GCD reduction of Num and Den maximizes the safe input range.
+
+namespace internal {
 
 template <typename T>
 AU_DEVICE_FUNC constexpr T au_gcd(T a, T b) {
+    // Rely on truncation towards zero to make this work for negative numbers as well.
     return b == T{0} ? a : au_gcd(b, a % b);
 }
+
+}  // namespace internal
 
 template <typename T, typename Num, typename Den, bool IsIntegral>
 struct ScaleByRationalImpl;
@@ -216,11 +221,11 @@ struct OpOutputImpl<ScaleByRational<T, Num, Den>> : stdx::type_identity<T> {};
 
 template <typename T, typename Num, typename Den>
 struct ScaleByRationalImpl<T, Num, Den, true> {
-    static AU_DEVICE_FUNC constexpr T apply(T value) {
+    static AU_DEVICE_FUNC constexpr T apply_to(T value) {
         using RealT = RealPart<T>;
         constexpr auto p_raw = get_value<RealT>(Num{});
         constexpr auto q_raw = get_value<RealT>(Den{});
-        constexpr auto g = au_gcd(p_raw, q_raw);
+        constexpr auto g = internal::au_gcd(p_raw, q_raw);
 
         constexpr auto p = p_raw / g;
         constexpr auto q = q_raw / g;
@@ -231,7 +236,7 @@ struct ScaleByRationalImpl<T, Num, Den, true> {
 
 template <typename T, typename Num, typename Den>
 struct ScaleByRationalImpl<T, Num, Den, false> {
-    static AU_DEVICE_FUNC constexpr T apply(T value) {
+    static AU_DEVICE_FUNC constexpr T apply_to(T value) {
         return static_cast<T>(
             value * get_value<RealPart<T>>(MagProductT<Num, MagInverseT<Den>>{})
         );
@@ -244,7 +249,7 @@ struct ScaleByRational {
         return ScaleByRationalImpl<
             T, Num, Den,
             std::is_integral<RealPart<T>>::value
-        >::apply(value);
+        >::apply_to(value);
     }
 };
 

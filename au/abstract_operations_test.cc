@@ -14,10 +14,11 @@
 
 #include "au/abstract_operations.hh"
 
+#include <limits>
+
 #include "au/testing.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include <limits>
 
 using ::testing::StaticAssertTypeEq;
 

@@ -225,11 +225,13 @@ struct UpdateRiskImpl<ScaleByRational<T, Num, Den>, Risk<RealPart<T>>>
     : stdx::type_identity<Risk<RealPart<T>>> {};
 
 template <typename T, typename Num, typename Den, typename M>
-struct UpdateRiskImpl<ScaleByRational<T, Num, Den>, ValueTimesRatioIsNotInteger<RealPart<T>, M>>
-    : std::conditional<IsRational<MagProductT<Num, MagInverseT<Den>>>::value,
-                       ReduceValueTimesRatioIsNotInteger<RealPart<T>,
-                                                        MagProductT<MagProductT<Num, MagInverseT<Den>>, M>>,
-                       ValueIsNotZero<RealPart<T>>> {};
+struct UpdateRiskImpl<ScaleByRational<T, Num, Den>, ValueTimesRatioIsNotInteger<RealPart<T>, M>> {
+    using ScaleMag = MagProductT<Num, MagInverseT<Den>>;
+    using type = typename std::conditional<IsRational<ScaleMag>::value,
+                                           ReduceValueTimesRatioIsNotInteger<RealPart<T>,
+                                                                             MagProductT<ScaleMag, M>>,
+                                           ValueIsNotZero<RealPart<T>>>::type;
+};
 
 template <typename T, typename M1, typename M2>
 struct UpdateRiskImpl<MultiplyTypeBy<T, M1>, ValueTimesRatioIsNotInteger<RealPart<T>, M2>>
