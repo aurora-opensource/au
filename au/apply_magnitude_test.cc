@@ -270,19 +270,17 @@ TEST(WouldOverflow, AlwaysFalseForIntegerDivide) {
 
 TEST(WouldOverflow, UsesNumeratorWhenApplyingRationalMagnitudeToIntegralType) {
     {
-        using ApplyTwoThirdsToI32 = ApplyMagnitudeT<int32_t, decltype(mag<2>() / mag<3>())>;
+        using ApplyFractionToI32 = ApplyMagnitudeT<int32_t, decltype(mag<46341>() / mag<46342>())>;
 
-        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(2'147'483'647), IsTrue());
-        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(1'073'741'824), IsTrue());
-
-        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(1'073'741'823), IsFalse());
-        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(1), IsFalse());
-        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(0), IsFalse());
-        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(-1), IsFalse());
-        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(-1'073'741'824), IsFalse());
-
-        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(-1'073'741'825), IsTrue());
-        EXPECT_THAT(ApplyTwoThirdsToI32::would_overflow(-2'147'483'648), IsTrue());
+        EXPECT_THAT(ApplyFractionToI32::would_overflow(2'147'483'647), IsTrue());
+        EXPECT_THAT(ApplyFractionToI32::would_overflow(46'341), IsTrue());
+        EXPECT_THAT(ApplyFractionToI32::would_overflow(46'340), IsFalse());
+        EXPECT_THAT(ApplyFractionToI32::would_overflow(1), IsFalse());
+        EXPECT_THAT(ApplyFractionToI32::would_overflow(0), IsFalse());
+        EXPECT_THAT(ApplyFractionToI32::would_overflow(-1), IsFalse());
+        EXPECT_THAT(ApplyFractionToI32::would_overflow(-46'340), IsFalse());
+        EXPECT_THAT(ApplyFractionToI32::would_overflow(-46'341), IsTrue());
+        EXPECT_THAT(ApplyFractionToI32::would_overflow(-2'147'483'648), IsTrue());
     }
 
     {
@@ -294,10 +292,18 @@ TEST(WouldOverflow, UsesNumeratorWhenApplyingRationalMagnitudeToIntegralType) {
 
         EXPECT_THAT(ApplyRoughlyOneThirdToU8::would_overflow(255), IsTrue());
         EXPECT_THAT(ApplyRoughlyOneThirdToU8::would_overflow(22), IsTrue());
-
         EXPECT_THAT(ApplyRoughlyOneThirdToU8::would_overflow(21), IsFalse());
         EXPECT_THAT(ApplyRoughlyOneThirdToU8::would_overflow(1), IsFalse());
         EXPECT_THAT(ApplyRoughlyOneThirdToU8::would_overflow(0), IsFalse());
+    }
+}
+
+TEST(WouldOverflow, NegativeRational) {
+    {
+        using ApplyNegativeFraction = ApplyMagnitudeT<int32_t, decltype(-mag<2>() / mag<3>())>;
+
+        EXPECT_THAT(ApplyNegativeFraction::would_overflow(2'147'483'647), IsTrue());
+        EXPECT_THAT(ApplyNegativeFraction::would_overflow(-2'147'483'648), IsTrue());
     }
 }
 

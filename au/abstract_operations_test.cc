@@ -14,6 +14,8 @@
 
 #include "au/abstract_operations.hh"
 
+#include <limits>
+
 #include "au/testing.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -144,6 +146,34 @@ TEST(OpSequence, EliminatesRedundantOperations) {
                    OpSequence<MultiplyTypeBy<float, decltype(mag<2>())>>,
                    OpSequence<>>,
         OpSequence<StaticCast<int, float>, MultiplyTypeBy<float, decltype(mag<2>())>>>();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `ScaleByRational` section:
+
+TEST(ScaleByRational, HasExpectedInputAndOutputTypes) {
+    StaticAssertTypeEq<OpInput<ScaleByRational<int64_t, decltype(mag<9>()), decltype(mag<10>())>>,
+                       int64_t>();
+    StaticAssertTypeEq<OpOutput<ScaleByRational<int64_t, decltype(mag<9>()), decltype(mag<10>())>>,
+                       int64_t>();
+}
+
+TEST(ScaleByRational, NoOverflowForNegativeInt64NearBoundary) {
+    using Num = decltype(mag<9>());
+    using Den = decltype(mag<10>());
+
+    EXPECT_EQ((ScaleByRational<int64_t, Num, Den>::apply_to(-2000000000000000000LL)),
+              -1800000000000000000LL);
+}
+
+TEST(ScaleByRational, NoOverflowForInt64Min) {
+    using Num = decltype(mag<9>());
+    using Den = decltype(mag<10>());
+
+    const int64_t result =
+        ScaleByRational<int64_t, Num, Den>::apply_to(std::numeric_limits<int64_t>::min());
+
+    EXPECT_EQ(result, -8301034833169298227LL);
 }
 
 }  // namespace

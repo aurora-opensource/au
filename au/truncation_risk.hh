@@ -135,6 +135,10 @@ template <typename T, typename M>
 struct TruncationRiskForImpl<MultiplyTypeBy<T, M>>
     : TruncationRiskForMultiplyByAssumingScalar<RealPart<T>, M> {};
 
+template <typename T, typename Num, typename Den>
+struct TruncationRiskForImpl<ScaleByRational<T, Num, Den>>
+    : TruncationRiskForImpl<MultiplyTypeBy<T, MagProductT<Num, MagInverseT<Den>>>> {};
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `DivideTypeByInteger<T, M>` section:
 
@@ -215,6 +219,19 @@ struct UpdateRiskImpl<MultiplyTypeBy<T, M>, Risk<RealPart<T>>>
 template <template <class> class Risk, typename T, typename M>
 struct UpdateRiskImpl<DivideTypeByInteger<T, M>, Risk<RealPart<T>>>
     : stdx::type_identity<Risk<RealPart<T>>> {};
+
+template <template <class> class Risk, typename T, typename Num, typename Den>
+struct UpdateRiskImpl<ScaleByRational<T, Num, Den>, Risk<RealPart<T>>>
+    : stdx::type_identity<Risk<RealPart<T>>> {};
+
+template <typename T, typename Num, typename Den, typename M>
+struct UpdateRiskImpl<ScaleByRational<T, Num, Den>, ValueTimesRatioIsNotInteger<RealPart<T>, M>> {
+    using ScaleMag = MagProductT<Num, MagInverseT<Den>>;
+    using type = typename std::conditional<IsRational<ScaleMag>::value,
+                                           ReduceValueTimesRatioIsNotInteger<RealPart<T>,
+                                                                             MagProductT<ScaleMag, M>>,
+                                           ValueIsNotZero<RealPart<T>>>::type;
+};
 
 template <typename T, typename M1, typename M2>
 struct UpdateRiskImpl<MultiplyTypeBy<T, M1>, ValueTimesRatioIsNotInteger<RealPart<T>, M2>>
