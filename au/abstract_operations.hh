@@ -221,8 +221,6 @@ struct ScaleByRational {
             constexpr auto g = au_gcd(p_raw, q_raw);
             constexpr auto p = p_raw / g;
             constexpr auto q = q_raw / g;
-            static_assert(q <= 1 || p <= std::numeric_limits<RealPart<T>>::max() / (q - 1),
-                          "p*(q-1) overflows T; unit ratio cannot be applied to this integral type");
             return static_cast<T>(p * (value / q) + p * (value % q) / q);
         } else {
             return static_cast<T>(

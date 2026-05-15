@@ -750,6 +750,21 @@ struct IsMagnifyingOrNegativeRational {
          P_RESULT.value > Q_RESULT.value);
 };
 
+// Return true when the intermediate modular remainder Num * (value % Den)
+// overflows type T for some values within T's range.
+template <typename T, typename Num, typename Den>
+struct IsScaleByRationalIntermediateOverflowPossible {
+    using M = MagProductT<Num, MagInverseT<Den>>;
+    using P = NumeratorT<M>;
+    using Q = DenominatorT<M>;
+    static constexpr auto P_RESULT = get_value_result<T>(P{});
+    static constexpr auto Q_RESULT = get_value_result<T>(Q{});
+    static constexpr bool value =
+        (Q_RESULT.outcome != MagRepresentationOutcome::OK) ||
+        (Q_RESULT.value > T{1} && P_RESULT.outcome == MagRepresentationOutcome::OK &&
+         P_RESULT.value > std::numeric_limits<T>::max() / (Q_RESULT.value - T{1}));
+};
+
 template <typename T, typename Limits>
 struct ScaleByRationalAtLowerLimit {
     static constexpr T value() { return LowerLimit<T, Limits>::value(); }
@@ -758,6 +773,24 @@ struct ScaleByRationalAtLowerLimit {
 template <typename T, typename Limits>
 struct ScaleByRationalAtUpperLimit {
     static constexpr T value() { return UpperLimit<T, Limits>::value(); }
+};
+
+template <typename T, typename Num, typename Den, typename Limits>
+struct ScaleByRationalNarrowMinBound {
+    using M = MagProductT<Num, MagInverseT<Den>>;
+    using P = NumeratorT<M>;
+    static constexpr T value() {
+        return std::numeric_limits<T>::lowest() / get_value<T>(P{});
+    }
+};
+
+template <typename T, typename Num, typename Den, typename Limits>
+struct ScaleByRationalNarrowMaxBound {
+    using M = MagProductT<Num, MagInverseT<Den>>;
+    using P = NumeratorT<M>;
+    static constexpr T value() {
+        return std::numeric_limits<T>::max() / get_value<T>(P{});
+    }
 };
 
 template <typename T, typename Num, typename Den, typename Limits>
@@ -770,7 +803,9 @@ struct MinGoodImpl<ScaleByRational<T, Num, Den>, Limits> {
         IsMagnifyingOrNegativeRational<Num, Den>::value,
         typename MinGoodImpl<OpSequence<MultiplyTypeBy<RT, P>, DivideTypeByInteger<RT, Q>>,
                              Limits>::type,
-        ScaleByRationalAtLowerLimit<RT, Limits>>;
+        std::conditional_t<IsScaleByRationalIntermediateOverflowPossible<RT, Num, Den>::value,
+                           ScaleByRationalNarrowMinBound<RT, Num, Den, Limits>,
+                           ScaleByRationalAtLowerLimit<RT, Limits>>>;
 };
 
 template <typename T, typename Num, typename Den, typename Limits>
@@ -783,7 +818,9 @@ struct MaxGoodImpl<ScaleByRational<T, Num, Den>, Limits> {
         IsMagnifyingOrNegativeRational<Num, Den>::value,
         typename MaxGoodImpl<OpSequence<MultiplyTypeBy<RT, P>, DivideTypeByInteger<RT, Q>>,
                              Limits>::type,
-        ScaleByRationalAtUpperLimit<RT, Limits>>;
+        std::conditional_t<IsScaleByRationalIntermediateOverflowPossible<RT, Num, Den>::value,
+                           ScaleByRationalNarrowMaxBound<RT, Num, Den, Limits>,
+                           ScaleByRationalAtUpperLimit<RT, Limits>>>;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
