@@ -205,7 +205,7 @@ TEST(MaxNonOverflowingValue, IsMaxTDividedByNWhenTIsNotPromotableAndDenomOverflo
             {IsPromotable::NO, NumFitsInPromotedType::YES, DenFitsInPromotedType::NO},
             huge_denom,
             max_int);
-        EXPECT_THAT(max_int, Eq(std::numeric_limits<int>::max() / 3));
+        EXPECT_THAT(max_int, Eq(std::numeric_limits<int>::max()));
     }
 
     {
@@ -214,7 +214,7 @@ TEST(MaxNonOverflowingValue, IsMaxTDividedByNWhenTIsNotPromotableAndDenomOverflo
             {IsPromotable::NO, NumFitsInPromotedType::YES, DenFitsInPromotedType::NO},
             huge_denom,
             max_u64);
-        EXPECT_THAT(max_u64, Eq(std::numeric_limits<uint64_t>::max() / 3));
+        EXPECT_THAT(max_u64, Eq(std::numeric_limits<uint64_t>::max()));
     }
 }
 
@@ -239,7 +239,7 @@ TEST(MaxNonOverflowingValue,
 
         ASSERT_THAT((std::is_same<PromotedType<uint16_t>, int32_t>::value), IsTrue())
             << "This test will fail on architectures where uint16_t is not promoted to `int32_t`";
-        EXPECT_THAT(max_u16, Eq(2'147));
+        EXPECT_THAT(max_u16, Eq(std::numeric_limits<uint16_t>::max()));
     }
 }
 
@@ -262,7 +262,7 @@ TEST(MaxNonOverflowingValue,
             {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::YES},
             mag<1'000'000>() / pow<6>(mag<11>()),
             max_u16);
-        EXPECT_THAT(max_u16, Eq(2'147));
+        EXPECT_THAT(max_u16, Eq(std::numeric_limits<uint16_t>::max()));
     }
 }
 
@@ -339,7 +339,7 @@ TEST(MinNonOverflowingValue, IsMinTDividedByNWhenTIsNotPromotableAndDenomOverflo
             {IsPromotable::NO, NumFitsInPromotedType::YES, DenFitsInPromotedType::NO},
             huge_denom,
             min_int);
-        EXPECT_THAT(min_int, Eq(std::numeric_limits<int>::lowest() / 3));
+        EXPECT_THAT(min_int, Eq(std::numeric_limits<int>::lowest()));
     }
 
     {
@@ -348,7 +348,7 @@ TEST(MinNonOverflowingValue, IsMinTDividedByNWhenTIsNotPromotableAndDenomOverflo
             {IsPromotable::NO, NumFitsInPromotedType::YES, DenFitsInPromotedType::NO},
             huge_denom,
             min_i64);
-        EXPECT_THAT(min_i64, Eq(std::numeric_limits<int64_t>::lowest() / 3));
+        EXPECT_THAT(min_i64, Eq(std::numeric_limits<int64_t>::lowest()));
     }
 }
 
@@ -372,7 +372,7 @@ TEST(MinNonOverflowingValue,
 
         ASSERT_THAT((std::is_same<PromotedType<int16_t>, int32_t>::value), IsTrue())
             << "This test will fail on architectures where `int16_t` is not promoted to `int32_t`";
-        EXPECT_THAT(min_i16, Eq(-2'147));
+        EXPECT_THAT(min_i16, Eq(std::numeric_limits<int16_t>::lowest()));
     }
 }
 
@@ -394,7 +394,7 @@ TEST(MinNonOverflowingValue,
             {IsPromotable::YES, NumFitsInPromotedType::YES, DenFitsInPromotedType::YES},
             mag<1'000'000>() / pow<6>(mag<11>()),
             min_i16);
-        EXPECT_THAT(min_i16, Eq(-2'147));
+        EXPECT_THAT(min_i16, Eq(std::numeric_limits<int16_t>::lowest()));
     }
 }
 

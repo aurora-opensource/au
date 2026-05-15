@@ -78,6 +78,13 @@ struct OpSequenceImpl;
 template <typename... Ops>
 using OpSequence = FlattenAs<OpSequenceImpl, Ops...>;
 
+//
+// `ScaleByRational<T, Num, Den>` represents an operation that scales a value of type `T` by the
+// rational number `Num/Den`, taking care to avoid overflow if possible.
+//
+template <typename T, typename Num, typename Den>
+struct ScaleByRational;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // IMPLEMENTATION DETAILS (`abstract_operations.hh`):
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -185,6 +192,42 @@ template <typename Op, typename... Ops>
 struct OpSequenceImpl<Op, Ops...> {
     static AU_DEVICE_FUNC constexpr auto apply_to(OpInput<OpSequenceImpl> value) {
         return OpSequenceImpl<Ops...>::apply_to(Op::apply_to(value));
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `ScaleByRational<T, Num, Den>` implementation.
+//
+// Modular decomposition avoids the intermediate `value * numerator` overflow that afflicts the
+// naive multiply-then-divide approach.  GCD reduction of p and q maximises the safe input range.
+
+template <typename T>
+AU_DEVICE_FUNC constexpr T au_gcd(T a, T b) {
+    return b == T{0} ? a : au_gcd(b, a % b);
+}
+
+template <typename T, typename Num, typename Den>
+struct OpInputImpl<ScaleByRational<T, Num, Den>> : stdx::type_identity<T> {};
+template <typename T, typename Num, typename Den>
+struct OpOutputImpl<ScaleByRational<T, Num, Den>> : stdx::type_identity<T> {};
+
+template <typename T, typename Num, typename Den>
+struct ScaleByRational {
+
+    static AU_DEVICE_FUNC constexpr T apply_to(T value) {
+        if constexpr (std::is_integral<RealPart<T>>::value) {
+            constexpr auto p_raw = get_value<RealPart<T>>(Num{});
+            constexpr auto q_raw = get_value<RealPart<T>>(Den{});
+            constexpr auto g = au_gcd(p_raw, q_raw);
+            constexpr auto p = p_raw / g;
+            constexpr auto q = q_raw / g;
+            static_assert(q <= 1 || p <= std::numeric_limits<RealPart<T>>::max() / (q - 1),
+                          "p*(q-1) overflows T; unit ratio cannot be applied to this integral type");
+            return static_cast<T>(p * (value / q) + p * (value % q) / q);
+        } else {
+            return static_cast<T>(
+                value * get_value<RealPart<T>>(MagProductT<Num, MagInverseT<Den>>{}));
+        }
     }
 };
 

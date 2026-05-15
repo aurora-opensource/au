@@ -736,6 +736,57 @@ struct MaxGoodImpl<DivideTypeByInteger<T, M>, Limits>
     : MaxGoodImplForDivideTypeByIntegerUsingRealPart<RealPart<T>, M, Limits> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// `ScaleByRational<T, Num, Den>` implementation.
+template <typename Num, typename Den>
+struct IsMagnifyingOrNegativeRational {
+    using M = MagProductT<Num, MagInverseT<Den>>;
+    using P = NumeratorT<M>;
+    using Q = DenominatorT<M>;
+    static constexpr auto P_RESULT = get_value_result<uintmax_t>(P{});
+    static constexpr auto Q_RESULT = get_value_result<uintmax_t>(Q{});
+    static constexpr bool value =
+        (P_RESULT.outcome != MagRepresentationOutcome::OK) ||
+        (Q_RESULT.outcome == MagRepresentationOutcome::OK &&
+         P_RESULT.value > Q_RESULT.value);
+};
+
+template <typename T, typename Limits>
+struct ScaleByRationalAtLowerLimit {
+    static constexpr T value() { return LowerLimit<T, Limits>::value(); }
+};
+
+template <typename T, typename Limits>
+struct ScaleByRationalAtUpperLimit {
+    static constexpr T value() { return UpperLimit<T, Limits>::value(); }
+};
+
+template <typename T, typename Num, typename Den, typename Limits>
+struct MinGoodImpl<ScaleByRational<T, Num, Den>, Limits> {
+    using RT = RealPart<T>;
+    using M = MagProductT<Num, MagInverseT<Den>>;
+    using P = NumeratorT<M>;
+    using Q = DenominatorT<M>;
+    using type = std::conditional_t<
+        IsMagnifyingOrNegativeRational<Num, Den>::value,
+        typename MinGoodImpl<OpSequence<MultiplyTypeBy<RT, P>, DivideTypeByInteger<RT, Q>>,
+                             Limits>::type,
+        ScaleByRationalAtLowerLimit<RT, Limits>>;
+};
+
+template <typename T, typename Num, typename Den, typename Limits>
+struct MaxGoodImpl<ScaleByRational<T, Num, Den>, Limits> {
+    using RT = RealPart<T>;
+    using M = MagProductT<Num, MagInverseT<Den>>;
+    using P = NumeratorT<M>;
+    using Q = DenominatorT<M>;
+    using type = std::conditional_t<
+        IsMagnifyingOrNegativeRational<Num, Den>::value,
+        typename MaxGoodImpl<OpSequence<MultiplyTypeBy<RT, P>, DivideTypeByInteger<RT, Q>>,
+                             Limits>::type,
+        ScaleByRationalAtUpperLimit<RT, Limits>>;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // `OpSequence<Ops...>` implementation.
 
 //
