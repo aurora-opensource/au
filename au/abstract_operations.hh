@@ -198,13 +198,16 @@ struct OpSequenceImpl<Op, Ops...> {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `ScaleByRational<T, Num, Den>` implementation.
 //
-// Modular decomposition avoids the intermediate `value * numerator` overflow that afflicts the
-// naive multiply-then-divide approach.  GCD reduction of p and q maximises the safe input range.
+// Modular decomposition avoids the intermediate `value * Num` overflow that occurs with
+// (Num*T)/Den. GCD reduction of Num and Den maximises the safe input range.
 
 template <typename T>
 AU_DEVICE_FUNC constexpr T au_gcd(T a, T b) {
     return b == T{0} ? a : au_gcd(b, a % b);
 }
+
+template <typename T, typename Num, typename Den, bool IsIntegral>
+struct ScaleByRationalImpl;
 
 template <typename T, typename Num, typename Den>
 struct OpInputImpl<ScaleByRational<T, Num, Den>> : stdx::type_identity<T> {};
@@ -212,20 +215,36 @@ template <typename T, typename Num, typename Den>
 struct OpOutputImpl<ScaleByRational<T, Num, Den>> : stdx::type_identity<T> {};
 
 template <typename T, typename Num, typename Den>
-struct ScaleByRational {
+struct ScaleByRationalImpl<T, Num, Den, true> {
+    static AU_DEVICE_FUNC constexpr T apply(T value) {
+        using RealT = RealPart<T>;
+        constexpr auto p_raw = get_value<RealT>(Num{});
+        constexpr auto q_raw = get_value<RealT>(Den{});
+        constexpr auto g = au_gcd(p_raw, q_raw);
 
+        constexpr auto p = p_raw / g;
+        constexpr auto q = q_raw / g;
+
+        return static_cast<T>(p * (value / q) + (p * (value % q)) / q);
+    }
+};
+
+template <typename T, typename Num, typename Den>
+struct ScaleByRationalImpl<T, Num, Den, false> {
+    static AU_DEVICE_FUNC constexpr T apply(T value) {
+        return static_cast<T>(
+            value * get_value<RealPart<T>>(MagProductT<Num, MagInverseT<Den>>{})
+        );
+    }
+};
+
+template <typename T, typename Num, typename Den>
+struct ScaleByRational {
     static AU_DEVICE_FUNC constexpr T apply_to(T value) {
-        if constexpr (std::is_integral<RealPart<T>>::value) {
-            constexpr auto p_raw = get_value<RealPart<T>>(Num{});
-            constexpr auto q_raw = get_value<RealPart<T>>(Den{});
-            constexpr auto g = au_gcd(p_raw, q_raw);
-            constexpr auto p = p_raw / g;
-            constexpr auto q = q_raw / g;
-            return static_cast<T>(p * (value / q) + p * (value % q) / q);
-        } else {
-            return static_cast<T>(
-                value * get_value<RealPart<T>>(MagProductT<Num, MagInverseT<Den>>{}));
-        }
+        return ScaleByRationalImpl<
+            T, Num, Den,
+            std::is_integral<RealPart<T>>::value
+        >::apply(value);
     }
 };
 
