@@ -121,6 +121,14 @@ constexpr const auto &mag_label(MagT = MagT{});
 template <std::uintmax_t N>
 constexpr auto mag();
 
+// A user-defined literal for Magnitude, which is equivalent to `mag<N>()`.
+//
+// To use, add `using namespace ::au::au_literals;`.
+namespace au_literals {
+template <char... Cs>
+constexpr auto operator""_mag();
+}  // namespace au_literals
+
 // Check whether a Magnitude is representable in type T.
 template <typename T, typename... BPs>
 constexpr bool representable_in(Magnitude<BPs...> m);
@@ -659,6 +667,30 @@ template <std::uintmax_t N>
 AU_DEVICE_FUNC constexpr auto mag() {
     return detail::PrimeFactorization<N>{};
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// User-defined literal for magnitude.
+
+namespace detail {
+template <char... Cs>
+constexpr std::uintmax_t parse_magnitude_integer() {
+    constexpr char digits[] = {Cs...};
+    std::uintmax_t result = 0u;
+    for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
+        if (digits[i] >= '0' && digits[i] <= '9') {
+            result = result * 10u + static_cast<std::uintmax_t>(digits[i] - '0');
+        }
+    }
+    return result;
+}
+}  // namespace detail
+
+namespace au_literals {
+template <char... Cs>
+constexpr auto operator""_mag() {
+    return mag<detail::parse_magnitude_integer<Cs...>()>();
+}
+}  // namespace au_literals
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `integer_part()` implementation.
