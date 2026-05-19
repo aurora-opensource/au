@@ -11,13 +11,15 @@ a corollary, any unit can be scaled by a `Magnitude` to make a new unit of the s
 
 ## Forming magnitudes
 
-There are 3 **valid** ways for end users to form a `Magnitude` instance.
+There are 4 **valid** ways for end users to form a `Magnitude` instance.
 
 1. :heavy_check_mark: Using the `mag<N>()` helper to form the canonical representation of the
    integer `N`.
-2. :heavy_check_mark: Writing `Magnitude<MyConstant>{}`, where `MyConstant` is a valid _irrational
+2. :heavy_check_mark: Using the `_mag` user-defined literal.  For example, `123_mag` is equivalent
+   to `mag<123>()`.  (Requires `using namespace ::au::au_literals;`.)
+3. :heavy_check_mark: Writing `Magnitude<MyConstant>{}`, where `MyConstant` is a valid _irrational
    magnitude base_.  (See the _custom bases_ section below for more details.)
-3. :heavy_check_mark: Forming products, quotients, powers, and roots of other valid `Magnitude`
+4. :heavy_check_mark: Forming products, quotients, powers, and roots of other valid `Magnitude`
    instances.
 
 The following is a **valid, but dis-preferred way** to form a `Magnitude`.
@@ -36,7 +38,7 @@ The following are **not valid** ways to form a `Magnitude`.
     - **Explanation:** Do not supply integer bases manually.  Integers are represented by their
       prime factorization, which is performed automatically.  Instead, form integers, rationals, and
       their powers only by starting with valid `Magnitude` instances, and performing arithmetic
-      operations as in option 3 above.
+      operations as in option 4 above.
 
 Below, we give more details on several concepts mentioned above.
 
@@ -51,6 +53,21 @@ integer `N`.
 
     `mag<N>()` automatically performs the prime factorization of `N`, and constructs a well-formed
     `Magnitude`.
+
+### `_mag` literal
+
+`_mag` is a user-defined literal (UDL) that provides a more concise alternative to `mag<N>()`.  For
+example, `123_mag` produces the exact same type and value as `mag<123>()`.  It also supports digit
+separators: `1'000'000_mag` is equivalent to `mag<1000000>()`.
+
+To use it, add the following to your file:
+
+```cpp
+using namespace ::au::au_literals;
+```
+
+As with any `using namespace` directive, avoid placing this at file scope in a header file; prefer
+`.cc` files, or scope it to a function or block.
 
 ### Custom bases
 

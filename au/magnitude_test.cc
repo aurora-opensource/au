@@ -998,6 +998,23 @@ TEST(CommonMagnitude, CommonMagOfNegAndNegIsNeg) {
 
 }  // namespace
 
+namespace au_literals {
+
+TEST(MagnitudeUDL, ProducesSameTypeAndValueAsMagFunction) {
+    EXPECT_THAT(1_mag, SameTypeAndValue(mag<1>()));
+    EXPECT_THAT(2_mag, SameTypeAndValue(mag<2>()));
+    EXPECT_THAT(18_mag, SameTypeAndValue(mag<18>()));
+    EXPECT_THAT(123_mag, SameTypeAndValue(mag<123>()));
+    EXPECT_THAT(1'000'000_mag, SameTypeAndValue(mag<1'000'000>()));
+}
+
+TEST(MagnitudeUDL, WorksInConstexprContext) {
+    constexpr auto m = 42_mag;
+    EXPECT_THAT(m, SameTypeAndValue(mag<42>()));
+}
+
+}  // namespace au_literals
+
 namespace detail {
 
 MATCHER(CannotFit, "") {
