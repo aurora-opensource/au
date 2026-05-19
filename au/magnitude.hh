@@ -672,8 +672,25 @@ AU_DEVICE_FUNC constexpr auto mag() {
 // User-defined literal for magnitude.
 
 namespace detail {
+constexpr bool is_valid_magnitude_digit(char c) {
+    return (c >= '0' && c <= '9') || c == '\'';
+}
+
+template <char... Cs>
+constexpr bool all_valid_magnitude_digits() {
+    constexpr char digits[] = {Cs...};
+    for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
+        if (!is_valid_magnitude_digit(digits[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
 template <char... Cs>
 constexpr std::uintmax_t parse_magnitude_integer() {
+    static_assert(all_valid_magnitude_digits<Cs...>(),
+                  "_mag literals must contain only decimal digits (and optional ' separators)");
     constexpr char digits[] = {Cs...};
     std::uintmax_t result = 0u;
     for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
