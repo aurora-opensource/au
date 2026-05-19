@@ -672,9 +672,7 @@ AU_DEVICE_FUNC constexpr auto mag() {
 // User-defined literal for magnitude.
 
 namespace detail {
-constexpr bool is_valid_magnitude_digit(char c) {
-    return (c >= '0' && c <= '9') || c == '\'';
-}
+constexpr bool is_valid_magnitude_digit(char c) { return (c >= '0' && c <= '9') || c == '\''; }
 
 template <char... Cs>
 constexpr bool all_valid_magnitude_digits() {
