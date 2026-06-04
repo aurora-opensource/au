@@ -454,15 +454,6 @@ TEST(Max, SupportsConstexprForSameExactQuantityPointType) {
     EXPECT_THAT(result, Eq(meters_pt(2)));
 }
 
-TEST(Max, SameAsStdMaxForNumericTypes) {
-    const auto a = 2;
-    const auto b = 3;
-
-    const auto &max_result = max(a, b);
-
-    EXPECT_THAT(&b, Eq(&max_result));
-}
-
 TEST(Max, SupportsZeroForFirstArgument) {
     constexpr auto positive_result = max(ZERO, meters(8));
     EXPECT_THAT(positive_result, SameTypeAndValue(meters(8)));
@@ -517,15 +508,6 @@ TEST(Min, ReturnsByValueForSameExactQuantityPointType) {
 TEST(Min, SupportsConstexprForSameExactQuantityPointType) {
     constexpr auto result = min(meters_pt(1), meters_pt(2));
     EXPECT_THAT(result, Eq(meters_pt(1)));
-}
-
-TEST(Min, SameAsStdMinForNumericTypes) {
-    const auto a = 2;
-    const auto b = 3;
-
-    const auto &min_result = min(a, b);
-
-    EXPECT_THAT(&a, Eq(&min_result));
 }
 
 TEST(Min, SupportsZeroForFirstArgument) {

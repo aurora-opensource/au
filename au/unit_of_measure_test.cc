@@ -464,6 +464,21 @@ TEST(AppropriateAssociatedUnit, GivesAssociatedUnitForPointsForQuantityPoint) {
                        Kelvins>();
 }
 
+TEST(AppropriateCommonUnit, GivesCommonUnitForQuantity) {
+    StaticAssertTypeEq<AppropriateCommonUnit<Quantity, Feet, Inches>,
+                       CommonUnit<Feet, Inches>>();
+}
+
+TEST(AppropriateCommonUnit, GivesCommonPointUnitForQuantityPoint) {
+    StaticAssertTypeEq<AppropriateCommonUnit<QuantityPoint, Kelvins, Fahrenheit>,
+                       CommonPointUnit<Kelvins, Fahrenheit>>();
+}
+
+TEST(AppropriateCommonUnit, HandlesMoreThanTwoUnits) {
+    StaticAssertTypeEq<AppropriateCommonUnit<Quantity, Feet, Inches, Yards>,
+                       CommonUnit<Feet, Inches, Yards>>();
+}
+
 TEST(UnitInverse, CommutesWithProduct) {
     StaticAssertTypeEq<UnitInverse<UnitProduct<Feet, Minutes>>,
                        UnitProduct<UnitInverse<Feet>, UnitInverse<Minutes>>>();
