@@ -59,14 +59,15 @@ TEST(MultiplyTypeBy, InputTypeIsTypeParameter) {
                        uint32_t>();
 }
 
-TEST(MultiplyTypeBy, OutputTypeIsTypeParameter) {
-    StaticAssertTypeEq<OpOutput<MultiplyTypeBy<int16_t, decltype(mag<2>())>>, int16_t>();
+TEST(MultiplyTypeBy, OutputTypeIsResultOfMultiplication) {
+    StaticAssertTypeEq<OpOutput<MultiplyTypeBy<int16_t, decltype(mag<2>())>>,
+                       PromotedType<int16_t>>();
     StaticAssertTypeEq<OpOutput<MultiplyTypeBy<double, decltype(mag<3>() / mag<4>())>>, double>();
 }
 
 TEST(MultiplyTypeBy, IntegerTypeCanBeMultipliedByIntegerMag) {
     EXPECT_THAT((MultiplyTypeBy<int16_t, decltype(mag<2>())>::apply_to(int16_t{3})),
-                SameTypeAndValue(int16_t{6}));
+                SameTypeAndValue(PromotedType<int16_t>{6}));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,15 +79,16 @@ TEST(DivideTypeByInteger, InputTypeIsTypeParameter) {
                        uint32_t>();
 }
 
-TEST(DivideTypeByInteger, OutputTypeIsTypeParameter) {
-    StaticAssertTypeEq<OpOutput<DivideTypeByInteger<int16_t, decltype(mag<2>())>>, int16_t>();
+TEST(DivideTypeByInteger, OutputTypeIsResultOfDivision) {
+    StaticAssertTypeEq<OpOutput<DivideTypeByInteger<int16_t, decltype(mag<2>())>>,
+                       PromotedType<int16_t>>();
     StaticAssertTypeEq<OpOutput<DivideTypeByInteger<double, decltype(mag<3>() / mag<4>())>>,
                        double>();
 }
 
 TEST(DivideTypeByInteger, IntegerTypeCanBeDividedByIntegerMag) {
     EXPECT_THAT((DivideTypeByInteger<uint16_t, decltype(mag<3>())>::apply_to(uint16_t{16})),
-                SameTypeAndValue(uint16_t{5}));
+                SameTypeAndValue(PromotedType<uint16_t>{5}));
 }
 
 TEST(DivideTypeByInteger, IntegerTypeDividedByIntegerTooBigToRepresentGivesZero) {
@@ -96,7 +98,7 @@ TEST(DivideTypeByInteger, IntegerTypeDividedByIntegerTooBigToRepresentGivesZero)
 
 TEST(DivideTypeByInteger, IntegerTypeDividedByIntegerMagGreaterThanDividendGivesZero) {
     EXPECT_THAT((DivideTypeByInteger<uint8_t, decltype(mag<2>())>::apply_to(uint8_t{1})),
-                SameTypeAndValue(uint8_t{0}));
+                SameTypeAndValue(PromotedType<uint8_t>{0}));
 
     EXPECT_THAT((DivideTypeByInteger<int, decltype(mag<2025>())>::apply_to(int{2024})),
                 SameTypeAndValue(int{0}));

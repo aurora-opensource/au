@@ -197,12 +197,17 @@ struct CommonTypeButPreserveIntSignednessImpl
 // `PromotedType<T>` implementation.
 
 template <typename T>
-struct PromotedTypeImpl {
+struct PromotedArithmeticTypeImpl {
     using type = decltype(std::declval<T>() * std::declval<T>());
 
-    static_assert(std::is_same<type, typename PromotedTypeImpl<type>::type>::value,
+    static_assert(std::is_same<type, typename PromotedArithmeticTypeImpl<type>::type>::value,
                   "We explicitly assume that promoted types are not again promotable");
 };
+
+template <typename T>
+struct PromotedTypeImpl : std::conditional_t<std::is_arithmetic<T>::value,
+                                             PromotedArithmeticTypeImpl<T>,
+                                             stdx::type_identity<T>> {};
 
 }  // namespace detail
 }  // namespace au

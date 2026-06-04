@@ -55,12 +55,12 @@ struct ImplicitLimits {
 };
 
 template <typename T, typename M>
-MultiplyTypeBy<T, M> multiply_type_by(M) {
+constexpr MultiplyTypeBy<T, M> multiply_type_by(M) {
     return MultiplyTypeBy<T, M>{};
 }
 
 template <typename T, typename M>
-DivideTypeByInteger<T, M> divide_type_by_integer(M) {
+constexpr DivideTypeByInteger<T, M> divide_type_by_integer(M) {
     return DivideTypeByInteger<T, M>{};
 }
 
@@ -87,6 +87,12 @@ auto max_good_value(Op, Limits) {
 template <typename... Ops>
 auto op_sequence(Ops...) {
     return OpSequence<Ops...>{};
+}
+
+// Helper to create a StaticCast from the output of an operation to a destination type.
+template <typename Dest, typename Op>
+auto static_cast_output_type_to(Op) {
+    return StaticCast<OpOutput<Op>, Dest>{};
 }
 
 template <typename Op>
@@ -1530,14 +1536,14 @@ TEST(OpSequence, MinGoodForSequenceOfSingleOpIsMinGoodForThatOp) {
 }
 
 TEST(OpSequence, MinGoodForDivideThenNarrowIsLimitsOfTypeIfDivisorIsBigEnough) {
-    EXPECT_THAT(min_good_value(op_sequence(divide_type_by_integer<int16_t>(mag<1000>()),
-                                           StaticCast<int16_t, int8_t>{})),
+    constexpr auto div_op = divide_type_by_integer<int16_t>(mag<1000>());
+    EXPECT_THAT(min_good_value(op_sequence(div_op, static_cast_output_type_to<int8_t>(div_op))),
                 SameTypeAndValue(std::numeric_limits<int16_t>::min()));
 }
 
 TEST(OpSequence, MinGoodForDivideThenNarrowIsScaledUpDestinationBoundIfDivisorIsSmallEnough) {
-    EXPECT_THAT(min_good_value(op_sequence(divide_type_by_integer<int16_t>(mag<10>()),
-                                           StaticCast<int16_t, int8_t>{})),
+    constexpr auto div_op = divide_type_by_integer<int16_t>(mag<10>());
+    EXPECT_THAT(min_good_value(op_sequence(div_op, static_cast_output_type_to<int8_t>(div_op))),
                 SameTypeAndValue(int16_t{-1280}));
 }
 
@@ -1550,11 +1556,12 @@ TEST(OpSequence, MinGoodOfStaticCastSequenceIsMostConstrainingType) {
 }
 
 TEST(OpSequence, MinGoodIsZeroIfUnsignedTypeFoundOnBothSidesOfNegativeMultiplication) {
+    constexpr auto mul_op = multiply_type_by<int16_t>(-mag<1>() / mag<234>());
     EXPECT_THAT(min_good_value(op_sequence(StaticCast<int64_t, float>{},
                                            StaticCast<float, uint32_t>{},
                                            StaticCast<uint32_t, int16_t>{},
-                                           multiply_type_by<int16_t>(-mag<1>() / mag<234>()),
-                                           StaticCast<int16_t, double>{},
+                                           mul_op,
+                                           static_cast_output_type_to<double>(mul_op),
                                            StaticCast<double, uint8_t>{},
                                            StaticCast<uint8_t, int32_t>{})),
                 SameTypeAndValue(int64_t{0}));
@@ -1576,14 +1583,14 @@ TEST(OpSequence, MaxGoodForSequenceOfSingleOpIsMaxGoodForThatOp) {
 }
 
 TEST(OpSequence, MaxGoodForDivideThenNarrowIsLimitsOfTypeIfDivisorIsBigEnough) {
-    EXPECT_THAT(max_good_value(op_sequence(divide_type_by_integer<uint16_t>(mag<1000>()),
-                                           StaticCast<uint16_t, uint8_t>{})),
+    constexpr auto div_op = divide_type_by_integer<uint16_t>(mag<1000>());
+    EXPECT_THAT(max_good_value(op_sequence(div_op, static_cast_output_type_to<uint8_t>(div_op))),
                 SameTypeAndValue(std::numeric_limits<uint16_t>::max()));
 }
 
 TEST(OpSequence, MaxGoodForDivideThenNarrowIsScaledDownDestinationBoundIfDivisorIsSmallEnough) {
-    EXPECT_THAT(max_good_value(op_sequence(divide_type_by_integer<uint16_t>(mag<10>()),
-                                           StaticCast<uint16_t, uint8_t>{})),
+    constexpr auto div_op = divide_type_by_integer<uint16_t>(mag<10>());
+    EXPECT_THAT(max_good_value(op_sequence(div_op, static_cast_output_type_to<uint8_t>(div_op))),
                 SameTypeAndValue(uint16_t{2550}));
 }
 
@@ -1596,11 +1603,12 @@ TEST(OpSequence, MaxGoodOfStaticCastSequenceIsMostConstrainingType) {
 }
 
 TEST(OpSequence, MaxGoodIsZeroIfUnsignedTypeFoundOnBothSidesOfNegativeMultiplication) {
+    constexpr auto div_op = divide_type_by_integer<int16_t>(-mag<234>());
     EXPECT_THAT(max_good_value(op_sequence(StaticCast<int64_t, float>{},
                                            StaticCast<float, uint32_t>{},
                                            StaticCast<uint32_t, int16_t>{},
-                                           divide_type_by_integer<int16_t>(-mag<234>()),
-                                           StaticCast<int16_t, double>{},
+                                           div_op,
+                                           static_cast_output_type_to<double>(div_op),
                                            StaticCast<double, uint8_t>{},
                                            StaticCast<uint8_t, int32_t>{})),
                 SameTypeAndValue(int64_t{0}));
