@@ -465,8 +465,7 @@ TEST(AppropriateAssociatedUnit, GivesAssociatedUnitForPointsForQuantityPoint) {
 }
 
 TEST(AppropriateCommonUnit, GivesCommonUnitForQuantity) {
-    StaticAssertTypeEq<AppropriateCommonUnit<Quantity, Feet, Inches>,
-                       CommonUnit<Feet, Inches>>();
+    StaticAssertTypeEq<AppropriateCommonUnit<Quantity, Feet, Inches>, CommonUnit<Feet, Inches>>();
 }
 
 TEST(AppropriateCommonUnit, GivesCommonPointUnitForQuantityPoint) {
