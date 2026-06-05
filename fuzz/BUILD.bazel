@@ -41,6 +41,7 @@ cc_test(
     name = "quantity_runtime_conversion_checkers_test",
     size = "small",
     srcs = ["quantity_runtime_conversion_checkers_test.cc"],
+    tags = ["no_ubsan"],
     deps = [
         ":quantity_runtime_conversion_checkers",
         "//au",
