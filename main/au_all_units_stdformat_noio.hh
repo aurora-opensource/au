@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-110-g0456c20
+// Version identifier: 0.5.0-base-111-gc86fc7a
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -5834,6 +5834,11 @@ using CommonPointUnit = typename ComputeCommonPointUnit<Us...>::type;
 template <typename... Us>
 using CommonPointUnitT = CommonPointUnit<Us...>;
 
+template <template <class, class> class QType, typename... Us>
+struct AppropriateCommonUnitImpl;
+template <template <class, class> class QType, typename... Us>
+using AppropriateCommonUnit = typename AppropriateCommonUnitImpl<QType, Us...>::type;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Type traits (instance-based interface).
 
@@ -8259,6 +8264,8 @@ template <typename U>
 struct AssociatedUnitImpl<QuantityMaker<U>> : stdx::type_identity<U> {};
 template <typename U>
 struct AppropriateAssociatedUnitImpl<Quantity, U> : AssociatedUnitImpl<U> {};
+template <typename... Us>
+struct AppropriateCommonUnitImpl<Quantity, Us...> : ComputeCommonUnit<Us...> {};
 
 template <int Exp, typename Unit>
 AU_DEVICE_FUNC constexpr auto pow(QuantityMaker<Unit>) {
@@ -11161,6 +11168,8 @@ template <typename U>
 struct AssociatedUnitForPointsImpl<QuantityPointMaker<U>> : stdx::type_identity<U> {};
 template <typename U>
 struct AppropriateAssociatedUnitImpl<QuantityPoint, U> : AssociatedUnitForPointsImpl<U> {};
+template <typename... Us>
+struct AppropriateCommonUnitImpl<QuantityPoint, Us...> : ComputeCommonPointUnit<Us...> {};
 
 // Provide nicer error messages when users try passing a `QuantityPoint` to a unit slot.
 template <typename U, typename R>
@@ -11929,8 +11938,6 @@ using std::fmod;
 using std::hypot;
 using std::isinf;
 using std::isnan;
-using std::max;
-using std::min;
 using std::remainder;
 using std::sin;
 using std::sqrt;
@@ -12246,10 +12253,14 @@ AU_DEVICE_FUNC constexpr auto lerp(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R
 
 namespace detail {
 // We can't use lambdas in `constexpr` contexts until C++17, so we make a manual function object.
-struct StdMaxByValue {
-    template <typename T>
-    AU_DEVICE_FUNC constexpr auto operator()(T a, T b) const {
-        return std::max(a, b);
+struct MaxByValue {
+    template <template <class, class> class Q, typename U1, typename R1, typename U2, typename R2>
+    AU_DEVICE_FUNC constexpr auto operator()(Q<U1, R1> q1, Q<U2, R2> q2) const {
+        using U = AppropriateCommonUnit<Q, U1, U2>;
+        using R = std::common_type_t<R1, R2>;
+        const auto qc1 = q1.template as<R>(U{});
+        const auto qc2 = q2.template as<R>(U{});
+        return (qc2 < qc1) ? qc1 : qc2;
     }
 };
 }  // namespace detail
@@ -12259,7 +12270,7 @@ struct StdMaxByValue {
 // Unlike std::max, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto max(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, detail::StdMaxByValue{});
+    return detail::MaxByValue{}(q1, q2);
 }
 
 // The maximum of two point values of the same dimension.
@@ -12267,21 +12278,28 @@ AU_DEVICE_FUNC constexpr auto max(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 // Unlike std::max, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto max(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    return detail::using_common_point_unit(p1, p2, detail::StdMaxByValue{});
+    return detail::MaxByValue{}(p1, p2);
 }
 
-// Overload to resolve ambiguity with `std::max` for identical `QuantityPoint` types.
+// Overload to resolve ambiguity for identical `QuantityPoint` types.
+//
+// This only happens in very rare cases: where both `au::max` and `std::max` are visible, and we
+// make an unqualified `max` call.
 template <typename U, typename R>
 AU_DEVICE_FUNC constexpr auto max(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
-    return std::max(a, b);
+    return detail::MaxByValue{}(a, b);
 }
 
 namespace detail {
 // We can't use lambdas in `constexpr` contexts until C++17, so we make a manual function object.
-struct StdMinByValue {
-    template <typename T>
-    AU_DEVICE_FUNC constexpr auto operator()(T a, T b) const {
-        return std::min(a, b);
+struct MinByValue {
+    template <template <class, class> class Q, typename U1, typename R1, typename U2, typename R2>
+    AU_DEVICE_FUNC constexpr auto operator()(Q<U1, R1> q1, Q<U2, R2> q2) const {
+        using U = AppropriateCommonUnit<Q, U1, U2>;
+        using R = std::common_type_t<R1, R2>;
+        const auto qc1 = q1.template as<R>(U{});
+        const auto qc2 = q2.template as<R>(U{});
+        return (qc2 < qc1) ? qc2 : qc1;
     }
 };
 }  // namespace detail
@@ -12291,7 +12309,7 @@ struct StdMinByValue {
 // Unlike std::min, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto min(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
-    return detail::using_common_type(q1, q2, detail::StdMinByValue{});
+    return detail::MinByValue{}(q1, q2);
 }
 
 // The minimum of two point values of the same dimension.
@@ -12299,13 +12317,16 @@ AU_DEVICE_FUNC constexpr auto min(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
 // Unlike std::min, returns by value rather than by reference, because the types might differ.
 template <typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto min(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
-    return detail::using_common_point_unit(p1, p2, detail::StdMinByValue{});
+    return detail::MinByValue{}(p1, p2);
 }
 
-// Overload to resolve ambiguity with `std::min` for identical `QuantityPoint` types.
+// Overload to resolve ambiguity for identical `QuantityPoint` types.
+//
+// This only happens in very rare cases: where both `au::min` and `std::min` are visible, and we
+// make an unqualified `min` call.
 template <typename U, typename R>
 AU_DEVICE_FUNC constexpr auto min(QuantityPoint<U, R> a, QuantityPoint<U, R> b) {
-    return std::min(a, b);
+    return detail::MinByValue{}(a, b);
 }
 
 template <typename U0, typename R0, typename... Us, typename... Rs>
