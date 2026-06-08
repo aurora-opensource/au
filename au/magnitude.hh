@@ -630,6 +630,31 @@ constexpr auto common_magnitude(Ms...) {
     return CommonMagnitude<Ms...>{};
 }
 
+// `ScalarOf<T>` extracts the scalar type from `T` using a prioritized set of probes.
+//
+// This is designed for ODR safety.  Every probe tests an intrinsic property of `T`, so the answer
+// is the same in every translation unit.  Users can specialize `ScalarOfTrait<T>`for types that
+// don't match any probe.  Conflicting specializations could produce ODR violations, but not if used
+// correctly:
+//
+//   - For types that don't match any probes, users must grep their codebase for `ScalarOfTrait`
+//     to find the file that includes the specialization, and include it, creating a new file only
+//     if none already exists.
+//
+//   - For types that _do_ match one of the probes, users are not motivated to specialize in the
+//     first place.
+//
+// Auto-detection priority:
+//   1. is_arithmetic<T>  -> T itself
+//   2. T::Scalar         -> T::Scalar           (Eigen convention)
+//   3. T::value_type     -> T::value_type       (STL convention)
+//   4. .real() member    -> decltype(t.real())  (std::complex convention)
+//   5. none              -> empty (no ::type member; user must specialize)
+template <typename T, typename Enable = void>
+struct ScalarOfTrait;
+template <typename T>
+using ScalarOf = typename ScalarOfTrait<T>::type;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation details below.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1002,17 +1027,84 @@ AU_DEVICE_FUNC constexpr bool all(const bool (&values)[N]) {
     return true;
 }
 
-// `RealPart<T>` is `T` itself, unless that type has a `.real()` member.
 template <typename T>
 using TypeOfRealMember = decltype(std::declval<T>().real());
+
+// Detection aliases for ScalarOf probes.
 template <typename T>
-// `RealPartImpl` is basically equivalent to the `detected_or<T, TypeOfRealMember, T>` part at the
-// end.  But we special-case `is_arithmetic` to get a fast short-circuit for the overwhelmingly most
-// common case.
-struct RealPartImpl : std::conditional<std::is_arithmetic<T>::value,
-                                       T,
-                                       stdx::experimental::detected_or_t<T, TypeOfRealMember, T>> {
-};
+using ScalarMember = typename T::Scalar;
+
+template <typename T>
+using ValueTypeMember = typename T::value_type;
+
+struct EmptyType {};
+
+template <typename T>
+using TypeMemberOf = typename T::type;
+
+// DetectedIdentity<Detect, T>: has ::type = Detect<T> when Detect<T> is well-formed.
+// Otherwise empty.  The bool-specialization avoids instantiating Detect<T> on the miss path.
+template <template <typename> class Detect,
+          typename T,
+          bool = stdx::experimental::is_detected<Detect, T>::value>
+struct DetectedIdentity : EmptyType {};
+template <template <typename> class Detect, typename T>
+struct DetectedIdentity<Detect, T, true> : stdx::type_identity<Detect<T>> {};
+
+// Individual scalar type probes.  Each is a single-parameter template so it can be
+// passed to FirstValidTrait.
+template <typename T, bool = std::is_arithmetic<T>::value>
+struct ScalarForArithmeticImpl : EmptyType {};
+template <typename T>
+struct ScalarForArithmeticImpl<T, true> : stdx::type_identity<T> {};
+template <typename T>
+struct ScalarForArithmetic : ScalarForArithmeticImpl<T> {};
+
+template <typename T>
+struct ScalarForScalarMember : DetectedIdentity<ScalarMember, T> {};
+
+template <typename T>
+struct ScalarForValueType : DetectedIdentity<ValueTypeMember, T> {};
+
+template <typename T>
+struct ScalarForRealMember : DetectedIdentity<TypeOfRealMember, T> {};
+
+// FirstValidTrait<T, Trait1, Trait2, ...>: inherits from the first Trait<T> that defines ::type.
+// Short-circuits: later traits are never instantiated if an earlier one matches.
+template <typename T, template <typename> class... Traits>
+struct FirstValidTrait : EmptyType {};
+
+template <bool Found, typename Candidate, typename T, template <typename> class... Rest>
+struct FirstValidTraitDispatch;
+template <typename Candidate, typename T, template <typename> class... Rest>
+struct FirstValidTraitDispatch<true, Candidate, T, Rest...> : Candidate {};
+template <typename Candidate, typename T, template <typename> class... Rest>
+struct FirstValidTraitDispatch<false, Candidate, T, Rest...> : FirstValidTrait<T, Rest...> {};
+
+template <typename T, template <typename> class First, template <typename> class... Rest>
+struct FirstValidTrait<T, First, Rest...>
+    : FirstValidTraitDispatch<stdx::experimental::is_detected<TypeMemberOf, First<T>>::value,
+                              First<T>,
+                              T,
+                              Rest...> {};
+
+}  // namespace detail
+
+// ScalarOf: default implementation uses FirstValidTrait to short-circuit through probes.
+template <typename T, typename Enable>
+struct ScalarOfTrait : detail::FirstValidTrait<T,
+                                                 detail::ScalarForArithmetic,
+                                                 detail::ScalarForScalarMember,
+                                                 detail::ScalarForValueType,
+                                                 detail::ScalarForRealMember> {};
+
+namespace detail {
+
+// RealPart<T>: prefers ScalarOf<T> if available, falls back to T itself.
+template <typename T>
+struct RealPartImpl : std::conditional_t<stdx::experimental::is_detected<ScalarOf, T>::value,
+                                         ScalarOfTrait<T>,
+                                         stdx::type_identity<T>> {};
 template <typename T>
 using RealPart = typename RealPartImpl<T>::type;
 
