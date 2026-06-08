@@ -583,17 +583,17 @@ TEST(Min, SupportsZeroForSecondArgument) {
 
 // Hidden friend overload (same unit, same rep).
 TEST(Max, PrefersSecondArgForSameTypeQuantity) {
-    using LN = LabeledNumber<int>;
-    const auto a = meters(LN{5, 'a'});
-    const auto b = meters(LN{5, 'b'});
+    using Ln = LabeledNumber<int>;
+    const auto a = meters(Ln{5, 'a'});
+    const auto b = meters(Ln{5, 'b'});
     EXPECT_THAT(max(a, b).data_in(meters).label, Eq('b'));
 }
 
 // Same-type QuantityPoint disambiguation overload (goes through MaxByValue).
 TEST(Max, PrefersSecondArgForSameTypeQuantityPoint) {
-    using LN = LabeledNumber<int>;
-    const auto a = meters_pt(LN{5, 'a'});
-    const auto b = meters_pt(LN{5, 'b'});
+    using Ln = LabeledNumber<int>;
+    const auto a = meters_pt(Ln{5, 'a'});
+    const auto b = meters_pt(Ln{5, 'b'});
     EXPECT_THAT(max(a, b).data_in(meters_pt).label, Eq('b'));
 }
 
@@ -606,17 +606,17 @@ TEST(Max, PrefersSecondArgWithZero) {
 
 // Hidden friend overload (same unit, same rep).
 TEST(Min, PrefersFirstArgForSameTypeQuantity) {
-    using LN = LabeledNumber<int>;
-    const auto a = meters(LN{5, 'a'});
-    const auto b = meters(LN{5, 'b'});
+    using Ln = LabeledNumber<int>;
+    const auto a = meters(Ln{5, 'a'});
+    const auto b = meters(Ln{5, 'b'});
     EXPECT_THAT(min(a, b).data_in(Meters{}).label, Eq('a'));
 }
 
 // Same-type QuantityPoint disambiguation overload (goes through MinByValue).
 TEST(Min, PrefersFirstArgForSameTypeQuantityPoint) {
-    using LN = LabeledNumber<int>;
-    const auto a = meters_pt(LN{5, 'a'});
-    const auto b = meters_pt(LN{5, 'b'});
+    using Ln = LabeledNumber<int>;
+    const auto a = meters_pt(Ln{5, 'a'});
+    const auto b = meters_pt(Ln{5, 'b'});
     EXPECT_THAT(min(a, b).data_in(Meters{}).label, Eq('a'));
 }
 
