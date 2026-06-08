@@ -633,7 +633,7 @@ constexpr auto common_magnitude(Ms...) {
 // `ScalarOf<T>` extracts the scalar type from `T` using a prioritized set of probes.
 //
 // This is designed for ODR safety.  Every probe tests an intrinsic property of `T`, so the answer
-// is the same in every translation unit.  Users can specialize `ScalarOfTrait<T>`for types that
+// is the same in every translation unit.  Users can specialize `ScalarOfTrait<T>` for types that
 // don't match any probe.  Conflicting specializations could produce ODR violations, but not if used
 // correctly:
 //
