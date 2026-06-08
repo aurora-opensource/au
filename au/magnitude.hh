@@ -1093,10 +1093,10 @@ struct FirstValidTrait<T, First, Rest...>
 // ScalarOf: default implementation uses FirstValidTrait to short-circuit through probes.
 template <typename T, typename Enable>
 struct ScalarOfTrait : detail::FirstValidTrait<T,
-                                                 detail::ScalarForArithmetic,
-                                                 detail::ScalarForScalarMember,
-                                                 detail::ScalarForValueType,
-                                                 detail::ScalarForRealMember> {};
+                                               detail::ScalarForArithmetic,
+                                               detail::ScalarForScalarMember,
+                                               detail::ScalarForValueType,
+                                               detail::ScalarForRealMember> {};
 
 namespace detail {
 
