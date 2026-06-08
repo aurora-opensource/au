@@ -704,6 +704,8 @@ template <typename U>
 struct AssociatedUnitImpl<QuantityMaker<U>> : stdx::type_identity<U> {};
 template <typename U>
 struct AppropriateAssociatedUnitImpl<Quantity, U> : AssociatedUnitImpl<U> {};
+template <typename... Us>
+struct AppropriateCommonUnitImpl<Quantity, Us...> : ComputeCommonUnit<Us...> {};
 
 template <int Exp, typename Unit>
 AU_DEVICE_FUNC constexpr auto pow(QuantityMaker<Unit>) {

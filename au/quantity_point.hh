@@ -322,6 +322,8 @@ template <typename U>
 struct AssociatedUnitForPointsImpl<QuantityPointMaker<U>> : stdx::type_identity<U> {};
 template <typename U>
 struct AppropriateAssociatedUnitImpl<QuantityPoint, U> : AssociatedUnitForPointsImpl<U> {};
+template <typename... Us>
+struct AppropriateCommonUnitImpl<QuantityPoint, Us...> : ComputeCommonPointUnit<Us...> {};
 
 // Provide nicer error messages when users try passing a `QuantityPoint` to a unit slot.
 template <typename U, typename R>

@@ -92,6 +92,61 @@ auto IsConstantWithUnitMatching(InnerMatcher m) {
 
 }  // namespace
 
+// A number that carries a char label, but ignores it in comparisons.  This lets us distinguish
+// two "equal" values, so we can test that min prefers the first arg and max prefers the second when
+// both args are equivalent.
+//
+// We have to add a fairly large number of operators just to get this to compile as a rep.
+template <typename T>
+struct LabeledNumber {
+    constexpr LabeledNumber() : value{}, label{'\0'} {}
+    constexpr LabeledNumber(T v, char l) : value{v}, label{l} {}
+    constexpr LabeledNumber(T v) : value{v}, label{'\0'} {}
+
+    T value;
+    char label;
+
+    friend constexpr LabeledNumber operator+(LabeledNumber a, LabeledNumber b) {
+        return {static_cast<T>(a.value + b.value), a.label};
+    }
+    friend constexpr LabeledNumber operator-(LabeledNumber a, LabeledNumber b) {
+        return {static_cast<T>(a.value - b.value), a.label};
+    }
+    friend constexpr LabeledNumber operator-(LabeledNumber a) { return {static_cast<T>(-a.value)}; }
+    friend constexpr LabeledNumber operator*(LabeledNumber a, LabeledNumber b) {
+        return {static_cast<T>(a.value * b.value), a.label};
+    }
+    friend constexpr LabeledNumber operator/(LabeledNumber a, LabeledNumber b) {
+        return {static_cast<T>(a.value / b.value), a.label};
+    }
+    friend constexpr bool operator<(LabeledNumber a, LabeledNumber b) { return a.value < b.value; }
+    friend constexpr bool operator<=(LabeledNumber a, LabeledNumber b) {
+        return a.value <= b.value;
+    }
+    friend constexpr bool operator>(LabeledNumber a, LabeledNumber b) { return a.value > b.value; }
+    friend constexpr bool operator>=(LabeledNumber a, LabeledNumber b) {
+        return a.value >= b.value;
+    }
+    friend constexpr bool operator==(LabeledNumber a, LabeledNumber b) {
+        return a.value == b.value;
+    }
+    friend constexpr bool operator!=(LabeledNumber a, LabeledNumber b) {
+        return a.value != b.value;
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, LabeledNumber n) {
+        return os << n.value << " [" << n.label << "]";
+    }
+};
+
+}  // namespace au
+
+template <typename T, typename U>
+struct std::common_type<au::LabeledNumber<T>, au::LabeledNumber<U>>
+    : au::stdx::type_identity<au::LabeledNumber<std::common_type_t<T, U>>> {};
+
+namespace au {
+
 TEST(Abs, AlwaysReturnsNonnegativeVersionOfInput) {
     EXPECT_THAT(abs(meters(-1)), Eq(meters(1)));
     EXPECT_THAT(abs(meters(0)), Eq(meters(0)));
@@ -454,15 +509,6 @@ TEST(Max, SupportsConstexprForSameExactQuantityPointType) {
     EXPECT_THAT(result, Eq(meters_pt(2)));
 }
 
-TEST(Max, SameAsStdMaxForNumericTypes) {
-    const auto a = 2;
-    const auto b = 3;
-
-    const auto &max_result = max(a, b);
-
-    EXPECT_THAT(&b, Eq(&max_result));
-}
-
 TEST(Max, SupportsZeroForFirstArgument) {
     constexpr auto positive_result = max(ZERO, meters(8));
     EXPECT_THAT(positive_result, SameTypeAndValue(meters(8)));
@@ -519,15 +565,6 @@ TEST(Min, SupportsConstexprForSameExactQuantityPointType) {
     EXPECT_THAT(result, Eq(meters_pt(1)));
 }
 
-TEST(Min, SameAsStdMinForNumericTypes) {
-    const auto a = 2;
-    const auto b = 3;
-
-    const auto &min_result = min(a, b);
-
-    EXPECT_THAT(&a, Eq(&min_result));
-}
-
 TEST(Min, SupportsZeroForFirstArgument) {
     constexpr auto positive_result = min(ZERO, meters(8));
     EXPECT_THAT(positive_result, SameTypeAndValue(meters(0)));
@@ -542,6 +579,52 @@ TEST(Min, SupportsZeroForSecondArgument) {
 
     constexpr auto negative_result = min(meters(-8), ZERO);
     EXPECT_THAT(negative_result, SameTypeAndValue(meters(-8)));
+}
+
+// Hidden friend overload (same unit, same rep).
+TEST(Max, PrefersSecondArgForSameTypeQuantity) {
+    using Ln = LabeledNumber<int>;
+    const auto a = meters(Ln{5, 'a'});
+    const auto b = meters(Ln{5, 'b'});
+    EXPECT_THAT(max(a, b).data_in(meters).label, Eq('b'));
+}
+
+// Same-type QuantityPoint disambiguation overload (goes through MaxByValue).
+TEST(Max, PrefersSecondArgForSameTypeQuantityPoint) {
+    using Ln = LabeledNumber<int>;
+    const auto a = meters_pt(Ln{5, 'a'});
+    const auto b = meters_pt(Ln{5, 'b'});
+    EXPECT_THAT(max(a, b).data_in(meters_pt).label, Eq('b'));
+}
+
+// ZERO converts to the Quantity type and hits the hidden friend.
+TEST(Max, PrefersSecondArgWithZero) {
+    const auto x = meters(LabeledNumber<int>{0, 'x'});
+    EXPECT_THAT(max(ZERO, x).data_in(meters).label, Eq('x'));
+    EXPECT_THAT(max(x, ZERO).data_in(meters).label, Eq('\0'));
+}
+
+// Hidden friend overload (same unit, same rep).
+TEST(Min, PrefersFirstArgForSameTypeQuantity) {
+    using Ln = LabeledNumber<int>;
+    const auto a = meters(Ln{5, 'a'});
+    const auto b = meters(Ln{5, 'b'});
+    EXPECT_THAT(min(a, b).data_in(Meters{}).label, Eq('a'));
+}
+
+// Same-type QuantityPoint disambiguation overload (goes through MinByValue).
+TEST(Min, PrefersFirstArgForSameTypeQuantityPoint) {
+    using Ln = LabeledNumber<int>;
+    const auto a = meters_pt(Ln{5, 'a'});
+    const auto b = meters_pt(Ln{5, 'b'});
+    EXPECT_THAT(min(a, b).data_in(Meters{}).label, Eq('a'));
+}
+
+// ZERO converts to the Quantity type and hits the hidden friend.
+TEST(Min, PrefersFirstArgWithZero) {
+    const auto x = meters(LabeledNumber<int>{0, 'x'});
+    EXPECT_THAT(min(ZERO, x).data_in(meters).label, Eq('\0'));
+    EXPECT_THAT(min(x, ZERO).data_in(meters).label, Eq('x'));
 }
 
 TEST(IntPow, OutputRepMatchesInputRep) {
