@@ -153,7 +153,9 @@ struct DivideTypeByIntegerImpl {
 template <typename T, typename M>
 struct DivideTypeByIntegerImpl<T, M, MagRepresentationOutcome::ERR_CANNOT_FIT> {
     // If a number is too big to fit in the type, then dividing by it should produce 0.
-    static AU_DEVICE_FUNC constexpr T apply_to(T) { return T{0}; }
+    static AU_DEVICE_FUNC constexpr OpOutput<DivideTypeByInteger<T, M>> apply_to(T) {
+        return OpOutput<DivideTypeByInteger<T, M>>{0};
+    }
 };
 
 template <typename T, typename M>

@@ -93,7 +93,7 @@ TEST(DivideTypeByInteger, IntegerTypeCanBeDividedByIntegerMag) {
 
 TEST(DivideTypeByInteger, IntegerTypeDividedByIntegerTooBigToRepresentGivesZero) {
     EXPECT_THAT((DivideTypeByInteger<uint8_t, decltype(mag<256>())>::apply_to(uint8_t{1})),
-                SameTypeAndValue(uint8_t{0}));
+                SameTypeAndValue(PromotedType<uint8_t>{0}));
 }
 
 TEST(DivideTypeByInteger, IntegerTypeDividedByIntegerMagGreaterThanDividendGivesZero) {
