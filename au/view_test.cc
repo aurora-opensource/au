@@ -56,7 +56,7 @@ TEST(View, CopyAssignmentWritesThroughRatherThanRebinding) {
 TEST(View, ElementAccessReturnsViewOfElement) {
     std::array<double, 3> arr = {1.0, 2.0, 3.0};
     View<std::array<double, 3>> v{arr};
-    auto elem = v[1];
+    auto elem = v[1u];
     StaticAssertTypeEq<decltype(elem), View<double>>();
     EXPECT_THAT(static_cast<double>(elem), Eq(2.0));
 }
@@ -64,8 +64,8 @@ TEST(View, ElementAccessReturnsViewOfElement) {
 TEST(View, ElementAccessWritesThrough) {
     std::array<double, 3> arr = {1.0, 2.0, 3.0};
     View<std::array<double, 3>> v{arr};
-    v[1] = 42.0;
-    EXPECT_THAT(arr[1], Eq(42.0));
+    v[1u] = 42.0;
+    EXPECT_THAT(arr[1u], Eq(42.0));
 }
 
 TEST(View, AdditionDereferencesAndReturnsValue) {
