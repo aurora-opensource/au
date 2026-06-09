@@ -74,10 +74,9 @@ TEST(View, AdditionDereferencesAndReturnsValue) {
     View<double> va{a};
     View<double> vb{b};
 
-    StaticAssertTypeEq<decltype(va + vb), double>();
-    EXPECT_THAT(va + vb, Eq(4.0));
-    EXPECT_THAT(va + 10.0, Eq(11.5));
-    EXPECT_THAT(10.0 + va, Eq(11.5));
+    EXPECT_THAT(va + vb, SameTypeAndValue(4.0));
+    EXPECT_THAT(va + 10.0, SameTypeAndValue(11.5));
+    EXPECT_THAT(10.0 + va, SameTypeAndValue(11.5));
 }
 
 TEST(View, SubtractionDereferencesAndReturnsValue) {
@@ -86,25 +85,25 @@ TEST(View, SubtractionDereferencesAndReturnsValue) {
     View<double> va{a};
     View<double> vb{b};
 
-    EXPECT_THAT(va - vb, Eq(3.0));
-    EXPECT_THAT(va - 1.0, Eq(4.0));
-    EXPECT_THAT(10.0 - va, Eq(5.0));
+    EXPECT_THAT(va - vb, SameTypeAndValue(3.0));
+    EXPECT_THAT(va - 1.0, SameTypeAndValue(4.0));
+    EXPECT_THAT(10.0 - va, SameTypeAndValue(5.0));
 }
 
 TEST(View, ScalarMultiplicationWorks) {
     double x = 3.0;
     View<double> v{x};
 
-    EXPECT_THAT(v * 2.0, Eq(6.0));
-    EXPECT_THAT(2.0 * v, Eq(6.0));
+    EXPECT_THAT(v * 2.0, SameTypeAndValue(6.0));
+    EXPECT_THAT(2.0 * v, SameTypeAndValue(6.0));
 }
 
 TEST(View, ScalarDivisionWorks) {
     double x = 6.0;
     View<double> v{x};
 
-    EXPECT_THAT(v / 2.0, Eq(3.0));
-    EXPECT_THAT(12.0 / v, Eq(2.0));
+    EXPECT_THAT(v / 2.0, SameTypeAndValue(3.0));
+    EXPECT_THAT(12.0 / v, SameTypeAndValue(2.0));
 }
 
 TEST(View, CompoundAdditionWritesThrough) {
