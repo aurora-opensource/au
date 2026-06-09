@@ -74,6 +74,7 @@ TEST(View, AdditionDereferencesAndReturnsValue) {
     View<double> va{a};
     View<double> vb{b};
 
+    StaticAssertTypeEq<decltype(va + vb), double>();
     EXPECT_THAT(va + vb, Eq(4.0));
     EXPECT_THAT(va + 10.0, Eq(11.5));
     EXPECT_THAT(10.0 + va, Eq(11.5));
