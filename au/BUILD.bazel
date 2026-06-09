@@ -594,6 +594,26 @@ cc_test(
     ],
 )
 
+cc_library(
+    name = "view",
+    hdrs = ["view.hh"],
+    deps = [
+        ":magnitude",
+        ":stdx",
+    ],
+)
+
+cc_test(
+    name = "view_test",
+    size = "small",
+    srcs = ["view_test.cc"],
+    deps = [
+        ":testing",
+        ":view",
+        "@googletest//:gtest_main",
+    ],
+)
+
 cc_test(
     name = "quantity_chrono_policy_correspondence_test",
     size = "small",

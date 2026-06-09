@@ -34,6 +34,15 @@ build:gcc --config=gcc15
 # Compile with clang by default
 build --config=clang
 
+# Sanitizer configs.
+build:asan --copt=-fsanitize=address --linkopt=-fsanitize=address
+build:asan --copt=-fno-omit-frame-pointer
+build:asan --test_env=ASAN_OPTIONS=detect_stack_use_after_return=1
+build:ubsan --copt=-fsanitize=undefined --linkopt=-fsanitize=undefined
+build:ubsan --copt=-fno-omit-frame-pointer
+build:ubsan --copt=-fno-sanitize-recover=undefined
+build:ubsan --copt=-fno-sanitize=vptr --linkopt=-fno-sanitize=vptr
+
 # Show test output when there are errors.
 # Making this true by default significantly improves developer experience.
 test --test_output=errors

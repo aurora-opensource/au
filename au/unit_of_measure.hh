@@ -205,6 +205,11 @@ using CommonPointUnit = typename ComputeCommonPointUnit<Us...>::type;
 template <typename... Us>
 using CommonPointUnitT = CommonPointUnit<Us...>;
 
+template <template <class, class> class QType, typename... Us>
+struct AppropriateCommonUnitImpl;
+template <template <class, class> class QType, typename... Us>
+using AppropriateCommonUnit = typename AppropriateCommonUnitImpl<QType, Us...>::type;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Type traits (instance-based interface).
 
