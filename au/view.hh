@@ -144,8 +144,8 @@ struct RealPartImpl<View<R>> : RealPartImpl<R> {};
 
 // ScalarOfTrait for View delegates to the underlying type.
 template <typename R>
-struct ScalarOfTrait<View<R>, std::enable_if_t<
-    stdx::experimental::is_detected<ScalarOf, R>::value>> : ScalarOfTrait<R> {};
+struct ScalarOfTrait<View<R>, std::enable_if_t<stdx::experimental::is_detected<ScalarOf, R>::value>>
+    : ScalarOfTrait<R> {};
 
 // Helper to create a view of a value.
 template <typename R>
