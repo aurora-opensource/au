@@ -808,7 +808,8 @@ AU_DEVICE_FUNC constexpr auto using_common_type(T t, U u, Func f) {
 }
 
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto convert_and_compare(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr auto convert_and_compare(const Quantity<U1, R1> &q1,
+                                                  const Quantity<U2, R2> &q2) {
     using U = CommonUnit<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
