@@ -45,6 +45,7 @@ header_only_library(
     truncation_risk.hh
     unit_of_measure.hh
     unit_symbol.hh
+    view.hh
     wrapper_operations.hh
     zero.hh
     constants/avogadro_constant.hh
@@ -564,6 +565,15 @@ gtest_based_test(
   DEPS
     au
     testing
+)
+
+gtest_based_test(
+    NAME view_test
+    SRCS
+      view_test.cc
+    DEPS
+      au
+      testing
 )
 
 gtest_based_test(
