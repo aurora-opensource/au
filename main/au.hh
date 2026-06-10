@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-113-g8feb26e
+// Version identifier: 0.5.0-base-114-gff03474
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -489,12 +489,17 @@ struct CommonTypeButPreserveIntSignednessImpl
 // `PromotedType<T>` implementation.
 
 template <typename T>
-struct PromotedTypeImpl {
+struct PromotedArithmeticTypeImpl {
     using type = decltype(std::declval<T>() * std::declval<T>());
 
-    static_assert(std::is_same<type, typename PromotedTypeImpl<type>::type>::value,
+    static_assert(std::is_same<type, typename PromotedArithmeticTypeImpl<type>::type>::value,
                   "We explicitly assume that promoted types are not again promotable");
 };
+
+template <typename T>
+struct PromotedTypeImpl : std::conditional_t<std::is_arithmetic<T>::value,
+                                             PromotedArithmeticTypeImpl<T>,
+                                             stdx::type_identity<T>> {};
 
 }  // namespace detail
 }  // namespace au
@@ -4306,20 +4311,12 @@ struct ImplicitConversion;
 // `MultiplyTypeBy<T, M>` represents an operation that multiplies a value of type `T` by the
 // magnitude `M`.
 //
-// Note that this operation does *not* model integer promotion.  It will always force the result to
-// be `T`.  To model integer promotion, form a compound operation with `OpSequence` that includes
-// appropriate `StaticCast`.
-//
 template <typename T, typename M>
 struct MultiplyTypeBy;
 
 //
 // `DivideTypeByInteger<T, M>` represents an operation that divides a value of type `T` by the
 // magnitude `M`.
-//
-// Note that this operation does *not* model integer promotion.  It will always force the result to
-// be `T`.  To model integer promotion, form a compound operation with `OpSequence` that includes
-// appropriate `StaticCast`.
 //
 template <typename T, typename M>
 struct DivideTypeByInteger;
@@ -4376,14 +4373,25 @@ struct ImplicitConversion {
 template <typename T, typename M>
 struct OpInputImpl<MultiplyTypeBy<T, M>> : stdx::type_identity<T> {};
 template <typename T, typename M>
-struct OpOutputImpl<MultiplyTypeBy<T, M>> : stdx::type_identity<T> {};
+struct OpOutputImpl<MultiplyTypeBy<T, M>>
+    : stdx::type_identity<decltype(std::declval<T>() * std::declval<RealPart<T>>())> {};
+
+// Identity magnitude preserves type.
+template <typename T>
+struct OpOutputImpl<MultiplyTypeBy<T, Magnitude<>>> : stdx::type_identity<T> {};
 
 // `MultiplyTypeBy<T, M>` operation:
 template <typename T, typename Mag>
 struct MultiplyTypeBy {
-    static AU_DEVICE_FUNC constexpr T apply_to(T value) {
-        return static_cast<T>(value * get_value<RealPart<T>>(Mag{}));
+    static AU_DEVICE_FUNC constexpr OpOutput<MultiplyTypeBy<T, Mag>> apply_to(T value) {
+        return value * get_value<RealPart<T>>(Mag{});
     }
+};
+
+// Specialization for identity magnitude: just return the value unchanged.
+template <typename T>
+struct MultiplyTypeBy<T, Magnitude<>> {
+    static AU_DEVICE_FUNC constexpr T apply_to(T value) { return value; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4393,20 +4401,23 @@ struct MultiplyTypeBy {
 template <typename T, typename M>
 struct OpInputImpl<DivideTypeByInteger<T, M>> : stdx::type_identity<T> {};
 template <typename T, typename M>
-struct OpOutputImpl<DivideTypeByInteger<T, M>> : stdx::type_identity<T> {};
+struct OpOutputImpl<DivideTypeByInteger<T, M>>
+    : stdx::type_identity<decltype(std::declval<T>() / std::declval<RealPart<T>>())> {};
 
 template <typename T, typename M, MagRepresentationOutcome MagOutcome>
 struct DivideTypeByIntegerImpl {
-    static AU_DEVICE_FUNC constexpr T apply_to(T value) {
+    static AU_DEVICE_FUNC constexpr OpOutput<DivideTypeByInteger<T, M>> apply_to(T value) {
         static_assert(MagOutcome == MagRepresentationOutcome::OK, "Internal library error");
-        return static_cast<T>(value / get_value<RealPart<T>>(M{}));
+        return value / get_value<RealPart<T>>(M{});
     }
 };
 
 template <typename T, typename M>
 struct DivideTypeByIntegerImpl<T, M, MagRepresentationOutcome::ERR_CANNOT_FIT> {
     // If a number is too big to fit in the type, then dividing by it should produce 0.
-    static AU_DEVICE_FUNC constexpr T apply_to(T) { return T{0}; }
+    static AU_DEVICE_FUNC constexpr OpOutput<DivideTypeByInteger<T, M>> apply_to(T) {
+        return OpOutput<DivideTypeByInteger<T, M>>{0};
+    }
 };
 
 template <typename T, typename M>
