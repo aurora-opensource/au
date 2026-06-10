@@ -24,7 +24,7 @@
 
 namespace test_types {
 
-template <typename T, int N>
+template <typename T, std::size_t N>
 struct Vec {
     T data[N];
 
@@ -35,21 +35,21 @@ struct Vec {
 
     friend constexpr Vec operator+(Vec a, Vec b) {
         Vec r{};
-        for (int i = 0; i < N; ++i) {
+        for (auto i = 0u; i < N; ++i) {
             r.data[i] = a.data[i] + b.data[i];
         }
         return r;
     }
     friend constexpr Vec operator-(Vec a, Vec b) {
         Vec r{};
-        for (int i = 0; i < N; ++i) {
+        for (auto i = 0u; i < N; ++i) {
             r.data[i] = a.data[i] - b.data[i];
         }
         return r;
     }
     friend constexpr Vec operator*(Vec a, T s) {
         Vec r{};
-        for (int i = 0; i < N; ++i) {
+        for (auto i = 0u; i < N; ++i) {
             r.data[i] = a.data[i] * s;
         }
         return r;
@@ -57,7 +57,7 @@ struct Vec {
     friend constexpr Vec operator*(T s, Vec a) { return a * s; }
     friend constexpr Vec operator/(Vec a, T s) {
         Vec r{};
-        for (int i = 0; i < N; ++i) {
+        for (auto i = 0u; i < N; ++i) {
             r.data[i] = a.data[i] / s;
         }
         return r;
@@ -68,7 +68,7 @@ struct Vec {
 
 namespace au {
 
-template <typename T, int N>
+template <typename T, std::size_t N>
 struct ScalarOfTrait<test_types::Vec<T, N>> : stdx::type_identity<T> {};
 
 using ::testing::DoubleEq;
