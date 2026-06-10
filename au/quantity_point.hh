@@ -222,22 +222,19 @@ class QuantityPoint {
                                                     const QuantityPoint &b) {
         return a.x_ >= b.x_;
     }
-    AU_DEVICE_FUNC constexpr friend bool operator>(const QuantityPoint &a,
-                                                   const QuantityPoint &b) {
+    AU_DEVICE_FUNC constexpr friend bool operator>(const QuantityPoint &a, const QuantityPoint &b) {
         return a.x_ > b.x_;
     }
     AU_DEVICE_FUNC constexpr friend bool operator<=(const QuantityPoint &a,
                                                     const QuantityPoint &b) {
         return a.x_ <= b.x_;
     }
-    AU_DEVICE_FUNC constexpr friend bool operator<(const QuantityPoint &a,
-                                                   const QuantityPoint &b) {
+    AU_DEVICE_FUNC constexpr friend bool operator<(const QuantityPoint &a, const QuantityPoint &b) {
         return a.x_ < b.x_;
     }
 
     // Subtraction between two QuantityPoint types.
-    AU_DEVICE_FUNC constexpr friend auto operator-(const QuantityPoint &a,
-                                                   const QuantityPoint &b) {
+    AU_DEVICE_FUNC constexpr friend auto operator-(const QuantityPoint &a, const QuantityPoint &b) {
         return a.x_ - b.x_;
     }
 
