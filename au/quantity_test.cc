@@ -1396,6 +1396,7 @@ TEST(QuantityMutableView, ElementAssignmentModifiesOriginal) {
 TEST(QuantityPassthrough, AssignmentToElementDoesNotCompile) {
     auto q = meters(make_vec(1.0, 2.0, 3.0));
     static_assert(!std::is_assignable<decltype(q[0]), decltype(meters(10.0))>::value, "");
+    static_assert(!std::is_assignable<decltype(q(0)), decltype(meters(10.0))>::value, "");
 }
 
 }  // namespace au

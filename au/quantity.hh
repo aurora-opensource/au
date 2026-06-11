@@ -287,7 +287,7 @@ class Quantity {
     }
 
     // Return a mutable view of this Quantity.
-    AU_DEVICE_FUNC constexpr Quantity<UnitT, View<RepT>> mutable_view() {
+    AU_DEVICE_FUNC constexpr Quantity<UnitT, View<RepT>> mutable_view() & {
         return make_quantity<UnitT>(make_view(value_));
     }
 
