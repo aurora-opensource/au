@@ -210,40 +210,44 @@ class QuantityPoint {
     }
 
     // Comparison operators.
-    AU_DEVICE_FUNC constexpr friend bool operator==(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend bool operator==(const QuantityPoint &a,
+                                                    const QuantityPoint &b) {
         return a.x_ == b.x_;
     }
-    AU_DEVICE_FUNC constexpr friend bool operator!=(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend bool operator!=(const QuantityPoint &a,
+                                                    const QuantityPoint &b) {
         return a.x_ != b.x_;
     }
-    AU_DEVICE_FUNC constexpr friend bool operator>=(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend bool operator>=(const QuantityPoint &a,
+                                                    const QuantityPoint &b) {
         return a.x_ >= b.x_;
     }
-    AU_DEVICE_FUNC constexpr friend bool operator>(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend bool operator>(const QuantityPoint &a, const QuantityPoint &b) {
         return a.x_ > b.x_;
     }
-    AU_DEVICE_FUNC constexpr friend bool operator<=(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend bool operator<=(const QuantityPoint &a,
+                                                    const QuantityPoint &b) {
         return a.x_ <= b.x_;
     }
-    AU_DEVICE_FUNC constexpr friend bool operator<(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend bool operator<(const QuantityPoint &a, const QuantityPoint &b) {
         return a.x_ < b.x_;
     }
 
     // Subtraction between two QuantityPoint types.
-    AU_DEVICE_FUNC constexpr friend auto operator-(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend auto operator-(const QuantityPoint &a, const QuantityPoint &b) {
         return a.x_ - b.x_;
     }
 
     // Left and right addition of a Diff.
-    AU_DEVICE_FUNC constexpr friend auto operator+(Diff d, QuantityPoint p) {
+    AU_DEVICE_FUNC constexpr friend auto operator+(const Diff &d, const QuantityPoint &p) {
         return QuantityPoint{d + p.x_};
     }
-    AU_DEVICE_FUNC constexpr friend auto operator+(QuantityPoint p, Diff d) {
+    AU_DEVICE_FUNC constexpr friend auto operator+(const QuantityPoint &p, const Diff &d) {
         return QuantityPoint{p.x_ + d};
     }
 
     // Right subtraction of a Diff.
-    AU_DEVICE_FUNC constexpr friend auto operator-(QuantityPoint p, Diff d) {
+    AU_DEVICE_FUNC constexpr friend auto operator-(const QuantityPoint &p, const Diff &d) {
         return QuantityPoint{p.x_ - d};
     }
 
@@ -364,8 +368,8 @@ AU_DEVICE_FUNC constexpr auto using_common_point_unit(X x, Y y, Func f) {
 }
 
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1,
-                                                  QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto convert_and_compare(const QuantityPoint<U1, R1> &p1,
+                                                  const QuantityPoint<U2, R2> &p2) {
     using U = CommonPointUnit<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
@@ -377,27 +381,33 @@ AU_DEVICE_FUNC constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1,
 
 // Comparison functions for compatible QuantityPoint types.
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator<(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator<(const QuantityPoint<U1, R1> &p1,
+                                        const QuantityPoint<U2, R2> &p2) {
     return detail::convert_and_compare<detail::Less>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator>(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator>(const QuantityPoint<U1, R1> &p1,
+                                        const QuantityPoint<U2, R2> &p2) {
     return detail::convert_and_compare<detail::Greater>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator<=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator<=(const QuantityPoint<U1, R1> &p1,
+                                         const QuantityPoint<U2, R2> &p2) {
     return detail::convert_and_compare<detail::LessEqual>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator>=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator>=(const QuantityPoint<U1, R1> &p1,
+                                         const QuantityPoint<U2, R2> &p2) {
     return detail::convert_and_compare<detail::GreaterEqual>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator==(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator==(const QuantityPoint<U1, R1> &p1,
+                                         const QuantityPoint<U2, R2> &p2) {
     return detail::convert_and_compare<detail::Equal>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator!=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator!=(const QuantityPoint<U1, R1> &p1,
+                                         const QuantityPoint<U2, R2> &p2) {
     return detail::convert_and_compare<detail::NotEqual>(p1, p2);
 }
 
@@ -421,22 +431,26 @@ AU_DEVICE_FUNC constexpr auto borrow_origin(U u) {
 
 // Addition and subtraction functions for compatible QuantityPoint types.
 template <typename UnitP, typename UnitQ, typename RepP, typename RepQ>
-AU_DEVICE_FUNC constexpr auto operator+(QuantityPoint<UnitP, RepP> p, Quantity<UnitQ, RepQ> q) {
+AU_DEVICE_FUNC constexpr auto operator+(const QuantityPoint<UnitP, RepP> &p,
+                                        const Quantity<UnitQ, RepQ> &q) {
     constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
     return detail::using_common_point_unit(p, q.as(new_unit_q), detail::plus);
 }
 template <typename UnitQ, typename UnitP, typename RepQ, typename RepP>
-AU_DEVICE_FUNC constexpr auto operator+(Quantity<UnitQ, RepQ> q, QuantityPoint<UnitP, RepP> p) {
+AU_DEVICE_FUNC constexpr auto operator+(const Quantity<UnitQ, RepQ> &q,
+                                        const QuantityPoint<UnitP, RepP> &p) {
     constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
     return detail::using_common_point_unit(q.as(new_unit_q), p, detail::plus);
 }
 template <typename UnitP, typename UnitQ, typename R1, typename RepQ>
-AU_DEVICE_FUNC constexpr auto operator-(QuantityPoint<UnitP, R1> p, Quantity<UnitQ, RepQ> q) {
+AU_DEVICE_FUNC constexpr auto operator-(const QuantityPoint<UnitP, R1> &p,
+                                        const Quantity<UnitQ, RepQ> &q) {
     constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
     return detail::using_common_point_unit(p, q.as(new_unit_q), detail::minus);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator-(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator-(const QuantityPoint<U1, R1> &p1,
+                                        const QuantityPoint<U2, R2> &p2) {
     return detail::using_common_point_unit(p1, p2, detail::minus);
 }
 
