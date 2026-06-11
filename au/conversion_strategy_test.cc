@@ -72,13 +72,12 @@ TEST(ConversionForRepsAndFactor, SameRepForPromotingTypeHasCastAtBeginningAndEnd
                                   ImplicitConversion<Promoted, T>>>();
 }
 
-TEST(ConversionForRepsAndFactor, ApplyingNontrivialRationalToIntegralTypeIsMultiplyThenDivide) {
+TEST(ConversionForRepsAndFactor, ApplyingNontrivialRationalToIntegralIsScaleByRational) {
     StaticAssertTypeEq<
         CastStrategyIndependentConversionForRepsAndFactor<uint64_t,
                                                           uint64_t,
                                                           decltype(mag<3>() / mag<4>())>,
-        OpSequence<MultiplyTypeBy<uint64_t, decltype(mag<3>())>,
-                   DivideTypeByInteger<uint64_t, decltype(mag<4>())>>>();
+        ScaleByRational<uint64_t, decltype(mag<3>()), decltype(mag<4>())>>();
 }
 
 TEST(ConversionForRepsAndFactor, ApplyingNontrivialRationalToFloatingPointIsSingleMultiply) {
@@ -90,13 +89,12 @@ TEST(ConversionForRepsAndFactor, ApplyingNontrivialRationalToFloatingPointIsSing
 }
 
 TEST(ConversionForRepsAndFactor,
-     ApplyingNontrivialRationalToComplexIntegralTypeIsMultiplyThenDivide) {
+     ApplyingNontrivialRationalToComplexIntegralTypeIsScaleByRational) {
     StaticAssertTypeEq<
         CastStrategyIndependentConversionForRepsAndFactor<std::complex<int>,
                                                           std::complex<int>,
                                                           decltype(mag<3>() / mag<4>())>,
-        OpSequence<MultiplyTypeBy<std::complex<int>, decltype(mag<3>())>,
-                   DivideTypeByInteger<std::complex<int>, decltype(mag<4>())>>>();
+        ScaleByRational<std::complex<int>, decltype(mag<3>()), decltype(mag<4>())>>();
 }
 
 TEST(ConversionForRepsAndFactor, WhenTargetIsPromotedTypeSkipFinalStaticCast) {

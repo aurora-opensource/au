@@ -70,6 +70,13 @@ struct OpSequenceImpl;
 template <typename... Ops>
 using OpSequence = FlattenAs<OpSequenceImpl, Ops...>;
 
+//
+// `ScaleByRational<T, Num, Den>` represents an operation that scales a value of type `T` by the
+// rational number `Num/Den`, taking care to avoid overflow if possible.
+//
+template <typename T, typename Num, typename Den>
+struct ScaleByRational;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // IMPLEMENTATION DETAILS (`abstract_operations.hh`):
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -191,6 +198,64 @@ template <typename Op, typename... Ops>
 struct OpSequenceImpl<Op, Ops...> {
     static AU_DEVICE_FUNC constexpr auto apply_to(const OpInput<OpSequenceImpl> &value) {
         return OpSequenceImpl<Ops...>::apply_to(Op::apply_to(value));
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `ScaleByRational<T, Num, Den>` implementation.
+//
+// Modular decomposition avoids the intermediate `value * Num` overflow that occurs with
+// (Num*T)/Den. GCD reduction of Num and Den maximizes the safe input range.
+
+namespace internal {
+
+template <typename T>
+AU_DEVICE_FUNC constexpr T au_gcd(T a, T b) {
+    // Rely on truncation towards zero to make this work for negative numbers as well.
+    return b == T{0} ? a : au_gcd(b, a % b);
+}
+
+}  // namespace internal
+
+template <typename T, typename Num, typename Den, bool IsIntegral>
+struct ScaleByRationalImpl;
+
+template <typename T, typename Num, typename Den>
+struct OpInputImpl<ScaleByRational<T, Num, Den>> : stdx::type_identity<T> {};
+template <typename T, typename Num, typename Den>
+struct OpOutputImpl<ScaleByRational<T, Num, Den>> : stdx::type_identity<T> {};
+
+template <typename T, typename Num, typename Den>
+struct ScaleByRationalImpl<T, Num, Den, true> {
+    static AU_DEVICE_FUNC constexpr T apply_to(T value) {
+        using RealT = RealPart<T>;
+        constexpr auto p_raw = get_value<RealT>(Num{});
+        constexpr auto q_raw = get_value<RealT>(Den{});
+        constexpr auto g = internal::au_gcd(p_raw, q_raw);
+
+        constexpr auto p = p_raw / g;
+        constexpr auto q = q_raw / g;
+
+        return static_cast<T>(p * (value / q) + (p * (value % q)) / q);
+    }
+};
+
+template <typename T, typename Num, typename Den>
+struct ScaleByRationalImpl<T, Num, Den, false> {
+    static AU_DEVICE_FUNC constexpr T apply_to(T value) {
+        return static_cast<T>(
+            value * get_value<RealPart<T>>(MagProductT<Num, MagInverseT<Den>>{})
+        );
+    }
+};
+
+template <typename T, typename Num, typename Den>
+struct ScaleByRational {
+    static AU_DEVICE_FUNC constexpr T apply_to(T value) {
+        return ScaleByRationalImpl<
+            T, Num, Den,
+            std::is_integral<RealPart<T>>::value
+        >::apply_to(value);
     }
 };
 

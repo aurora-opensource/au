@@ -81,7 +81,7 @@ template <typename T, typename Mag>
 struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>
     : std::conditional<
           std::is_integral<RealPart<T>>::value,
-          OpSequence<MultiplyTypeBy<T, Numerator<Mag>>, DivideTypeByInteger<T, Denominator<Mag>>>,
+          ScaleByRational<T, NumeratorT<Mag>, DenominatorT<Mag>>,
           MultiplyTypeBy<T, Mag>> {};
 
 //
