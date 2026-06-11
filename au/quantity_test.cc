@@ -22,7 +22,54 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+namespace test_types {
+
+template <typename T, std::size_t N>
+struct Vec {
+    T data[N];
+
+    constexpr T &operator[](int i) { return data[i]; }
+    constexpr const T &operator[](int i) const { return data[i]; }
+    constexpr T &operator()(int i) { return data[i]; }
+    constexpr const T &operator()(int i) const { return data[i]; }
+
+    friend constexpr Vec operator+(Vec a, Vec b) {
+        Vec r{};
+        for (auto i = 0u; i < N; ++i) {
+            r.data[i] = a.data[i] + b.data[i];
+        }
+        return r;
+    }
+    friend constexpr Vec operator-(Vec a, Vec b) {
+        Vec r{};
+        for (auto i = 0u; i < N; ++i) {
+            r.data[i] = a.data[i] - b.data[i];
+        }
+        return r;
+    }
+    friend constexpr Vec operator*(Vec a, T s) {
+        Vec r{};
+        for (auto i = 0u; i < N; ++i) {
+            r.data[i] = a.data[i] * s;
+        }
+        return r;
+    }
+    friend constexpr Vec operator*(T s, Vec a) { return a * s; }
+    friend constexpr Vec operator/(Vec a, T s) {
+        Vec r{};
+        for (auto i = 0u; i < N; ++i) {
+            r.data[i] = a.data[i] / s;
+        }
+        return r;
+    }
+};
+
+}  // namespace test_types
+
 namespace au {
+
+template <typename T, std::size_t N>
+struct ScalarOfTrait<test_types::Vec<T, N>> : stdx::type_identity<T> {};
 
 using ::testing::DoubleEq;
 using ::testing::DoubleNear;
@@ -705,7 +752,8 @@ TEST(Quantity, ShortHandAdditionAssignmentWorks) {
 
 TEST(Quantity, ShortHandAdditionHasReferenceCharacter) {
     auto d = feet(1);
-    d += feet(1234) = feet(3);
+    auto e = feet(1234);
+    d += e = feet(3);
     EXPECT_THAT(d, Eq(feet(4)));
 }
 
@@ -717,7 +765,8 @@ TEST(Quantity, ShortHandSubtractionAssignmentWorks) {
 
 TEST(Quantity, ShortHandSubtractionHasReferenceCharacter) {
     auto d = feet(4);
-    d -= feet(1234) = feet(3);
+    auto e = feet(1234);
+    d -= e = feet(3);
     EXPECT_THAT(d, Eq(feet(1)));
 }
 
@@ -1257,6 +1306,97 @@ TEST(Zero, AssignableToArbitraryQuantities) {
 
     constexpr Quantity<Hours, int> zero_hours = ZERO;
     EXPECT_THAT(zero_hours, QuantityEquivalent(hours(0)));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Passthrough element access tests.
+
+template <typename... Ts>
+constexpr test_types::Vec<std::common_type_t<Ts...>, sizeof...(Ts)> make_vec(Ts... args) {
+    return {{static_cast<std::common_type_t<Ts...>>(args)...}};
+}
+
+TEST(QuantityPassthrough, OperatorBracketReturnsQuantityWithSameUnit) {
+    auto v = meters(make_vec(1.0, 2.0, 3.0));
+
+    EXPECT_THAT(v[0], SameTypeAndValue(meters(1.0)));
+    EXPECT_THAT(v[1], SameTypeAndValue(meters(2.0)));
+    EXPECT_THAT(v[2], SameTypeAndValue(meters(3.0)));
+}
+
+TEST(QuantityPassthrough, OperatorBracketWorksWithIntRep) {
+    auto arr = inches(make_vec(10, 20, 30, 40));
+
+    EXPECT_THAT(arr[0], SameTypeAndValue(inches(10)));
+    EXPECT_THAT(arr[1], SameTypeAndValue(inches(20)));
+    EXPECT_THAT(arr[2], SameTypeAndValue(inches(30)));
+    EXPECT_THAT(arr[3], SameTypeAndValue(inches(40)));
+}
+
+TEST(QuantityPassthrough, OperatorBracketReturnsCorrectType) {
+    auto v = meters(make_vec(1.0, 2.0));
+
+    auto elem = v[0];
+
+    StaticAssertTypeEq<decltype(elem), Quantity<Meters, double>>();
+}
+
+TEST(QuantityPassthrough, OperatorParenWorksForVectorSingleIndex) {
+    auto v = meters(make_vec(1.0, 2.0, 3.0));
+
+    EXPECT_THAT(v(0), SameTypeAndValue(meters(1.0)));
+    EXPECT_THAT(v(1), SameTypeAndValue(meters(2.0)));
+    EXPECT_THAT(v(2), SameTypeAndValue(meters(3.0)));
+}
+
+TEST(QuantityPassthrough, QuantityArithmeticWorksWithVectorRep) {
+    constexpr auto q1 = meters(make_vec(1.0, 2.0, 3.0));
+    constexpr auto q2 = meters(make_vec(4.0, 5.0, 6.0));
+
+    constexpr auto sum = q1 + q2;
+    EXPECT_THAT(sum[0], SameTypeAndValue(meters(5.0)));
+    EXPECT_THAT(sum[1], SameTypeAndValue(meters(7.0)));
+    EXPECT_THAT(sum[2], SameTypeAndValue(meters(9.0)));
+
+    constexpr auto diff = q2 - q1;
+    EXPECT_THAT(diff[0], SameTypeAndValue(meters(3.0)));
+    EXPECT_THAT(diff[1], SameTypeAndValue(meters(3.0)));
+    EXPECT_THAT(diff[2], SameTypeAndValue(meters(3.0)));
+
+    constexpr auto scaled = q1 * 2.0;
+    EXPECT_THAT(scaled[0], SameTypeAndValue(meters(2.0)));
+    EXPECT_THAT(scaled[1], SameTypeAndValue(meters(4.0)));
+    EXPECT_THAT(scaled[2], SameTypeAndValue(meters(6.0)));
+}
+
+TEST(QuantityMutableView, ReturnsQuantityOfView) {
+    auto q = meters(make_vec(1.0, 2.0, 3.0));
+
+    auto view = q.mutable_view();
+
+    StaticAssertTypeEq<decltype(view), Quantity<Meters, View<test_types::Vec<double, 3>>>>();
+}
+
+TEST(QuantityMutableView, ElementAccessReturnsQuantityOfView) {
+    auto q = meters(make_vec(1.0, 2.0, 3.0));
+
+    auto elem = q.mutable_view()[0];
+
+    StaticAssertTypeEq<decltype(elem), Quantity<Meters, View<double>>>();
+}
+
+TEST(QuantityMutableView, ElementAssignmentModifiesOriginal) {
+    auto q = meters(make_vec(1.0, 2.0, 3.0));
+
+    q.mutable_view()[0] = meters(10.0);
+
+    EXPECT_THAT(q[0], SameTypeAndValue(meters(10.0)));
+}
+
+TEST(QuantityPassthrough, AssignmentToElementDoesNotCompile) {
+    auto q = meters(make_vec(1.0, 2.0, 3.0));
+    static_assert(!std::is_assignable<decltype(q[0]), decltype(meters(10.0))>::value, "");
+    static_assert(!std::is_assignable<decltype(q(0)), decltype(meters(10.0))>::value, "");
 }
 
 }  // namespace au

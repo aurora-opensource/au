@@ -30,6 +30,7 @@
 #include "au/truncation_risk.hh"
 #include "au/unit_of_measure.hh"
 #include "au/utility/type_traits.hh"
+#include "au/view.hh"
 #include "au/zero.hh"
 
 namespace au {
@@ -184,6 +185,8 @@ class Quantity {
     AU_DEVICE_FUNC constexpr Quantity(Zero) : value_{0} {}
 
     AU_DEVICE_FUNC constexpr Quantity() noexcept = default;
+    AU_DEVICE_FUNC constexpr Quantity(const Quantity &) = default;
+    AU_DEVICE_FUNC constexpr Quantity(Quantity &&) = default;
 
     // Implicit construction from any exactly-equivalent type.
     template <
@@ -270,6 +273,24 @@ class Quantity {
         return value_;
     }
 
+    // Passthrough element access for vector/matrix rep types.
+    template <typename R = Rep, typename I>
+    AU_DEVICE_FUNC constexpr auto operator[](I i) const
+        -> decltype(make_quantity<UnitT>(std::declval<const R &>()[i])) {
+        return make_quantity<UnitT>(value_[i]);
+    }
+
+    template <typename R = Rep, typename... Is>
+    AU_DEVICE_FUNC constexpr auto operator()(Is... is) const
+        -> decltype(make_quantity<UnitT>(std::declval<const R &>()(is...))) {
+        return make_quantity<UnitT>(value_(is...));
+    }
+
+    // Return a mutable view of this Quantity.
+    AU_DEVICE_FUNC constexpr Quantity<UnitT, View<RepT>> mutable_view() & {
+        return make_quantity<UnitT>(make_view(value_));
+    }
+
     // Permit this factory functor to access our private constructor.
     //
     // We allow this because it explicitly names the unit at the callsite, even if people refer to
@@ -352,12 +373,59 @@ class Quantity {
                                                                             q.in(OtherUnit{}));
     }
 
-    // Short-hand addition and subtraction assignment.
-    AU_DEVICE_FUNC constexpr Quantity &operator+=(Quantity other) {
+    // Copy and move assignment: lvalue-only.
+    //
+    // Ref-qualifying as `&` prevents silent no-ops like `q[0] = meters(10)`, where operator[]
+    // returns by value and the assignment would modify a temporary.  The `&&`-qualified overloads
+    // below re-enable rvalue assignment specifically for View reps, where it writes through.
+    AU_DEVICE_FUNC constexpr Quantity &operator=(const Quantity &) & = default;
+    AU_DEVICE_FUNC constexpr Quantity &operator=(Quantity &&) & = default;
+
+    // Cross-unit assignment: lvalue-only.
+    template <typename OtherUnit,
+              typename OtherRep,
+              typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>>
+    AU_DEVICE_FUNC constexpr Quantity &operator=(Quantity<OtherUnit, OtherRep> other) & {
+        value_ = other.template in_impl<detail::UseImplicitConversion, detail::UnderlyingType<Rep>>(
+            Unit{}, check_for(ALL_RISKS));
+        return *this;
+    }
+
+    // Rvalue assignment overloads for View reps (write-through semantics).
+    template <typename R = Rep, std::enable_if_t<IsView<R>::value, int> = 0>
+    AU_DEVICE_FUNC constexpr Quantity &operator=(const Quantity &other) && {
+        value_ = other.value_;
+        return *this;
+    }
+    template <typename OtherUnit,
+              typename OtherRep,
+              typename R = Rep,
+              typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>,
+              std::enable_if_t<IsView<R>::value, int> = 0>
+    AU_DEVICE_FUNC constexpr Quantity &operator=(Quantity<OtherUnit, OtherRep> other) && {
+        value_ = other.template in_impl<detail::UseImplicitConversion, detail::UnderlyingType<Rep>>(
+            Unit{}, check_for(ALL_RISKS));
+        return *this;
+    }
+
+    // Short-hand addition and subtraction assignment: lvalue-only by default.
+    AU_DEVICE_FUNC constexpr Quantity &operator+=(Quantity other) & {
         value_ += other.value_;
         return *this;
     }
-    AU_DEVICE_FUNC constexpr Quantity &operator-=(Quantity other) {
+    AU_DEVICE_FUNC constexpr Quantity &operator-=(Quantity other) & {
+        value_ -= other.value_;
+        return *this;
+    }
+
+    // Support short-hand addition and subtraction on rvalues for view rep types only.
+    template <typename R = Rep, std::enable_if_t<IsView<R>::value, int> = 0>
+    AU_DEVICE_FUNC constexpr Quantity &operator+=(Quantity other) && {
+        value_ += other.value_;
+        return *this;
+    }
+    template <typename R = Rep, std::enable_if_t<IsView<R>::value, int> = 0>
+    AU_DEVICE_FUNC constexpr Quantity &operator-=(Quantity other) && {
         value_ -= other.value_;
         return *this;
     }
@@ -373,18 +441,32 @@ class Quantity {
                       "We don't support compound mult/div of integral types by floating point");
     }
 
-    // Short-hand multiplication assignment.
+    // Short-hand multiplication assignment: most types lvalue-only; view types support rvalues.
     template <typename T>
-    AU_DEVICE_FUNC constexpr Quantity &operator*=(T s) {
+    AU_DEVICE_FUNC constexpr Quantity &operator*=(T s) & {
+        perform_shorthand_checks<T>();
+
+        value_ *= s;
+        return *this;
+    }
+    template <typename T, typename R = Rep, std::enable_if_t<IsView<R>::value, int> = 0>
+    AU_DEVICE_FUNC constexpr Quantity &operator*=(T s) && {
         perform_shorthand_checks<T>();
 
         value_ *= s;
         return *this;
     }
 
-    // Short-hand division assignment.
+    // Short-hand division assignment: most types lvalue-only; view types support rvalues.
     template <typename T>
-    AU_DEVICE_FUNC constexpr Quantity &operator/=(T s) {
+    AU_DEVICE_FUNC constexpr Quantity &operator/=(T s) & {
+        perform_shorthand_checks<T>();
+
+        value_ /= s;
+        return *this;
+    }
+    template <typename T, typename R = Rep, std::enable_if_t<IsView<R>::value, int> = 0>
+    AU_DEVICE_FUNC constexpr Quantity &operator/=(T s) && {
         perform_shorthand_checks<T>();
 
         value_ /= s;
