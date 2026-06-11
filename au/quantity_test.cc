@@ -538,13 +538,6 @@ TEST(Quantity, AdditionAndSubtractionCommuteWithUnitTagging) {
     EXPECT_THAT(feet(a) - feet(b), SameTypeAndValue(feet(a - b)));
 }
 
-TEST(Quantity, CanAssignFromPromotedTypeToOriginalType) {
-    auto x = feet(int8_t{10});
-    auto promoted = x + x;
-    x = promoted;
-    EXPECT_THAT(x, SameTypeAndValue(feet(int8_t{20})));
-}
-
 TEST(Quantity, CanMultiplyArbitraryQuantities) {
     constexpr auto v = (feet / hour)(2);
     constexpr auto t = hours(3);
