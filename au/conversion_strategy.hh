@@ -190,7 +190,7 @@ struct ConversionForRepsAndFactorImpl
 // Identity factor: just cast, no arithmetic.
 template <typename CastType, typename OldRep, typename NewRep>
 struct ConversionForRepsAndFactorImpl<CastType, OldRep, NewRep, Magnitude<>>
-    : stdx::type_identity<CastSequence<CastType, OldRep, NewRep>> {};
+    : FullConversionImpl<CastType, OldRep, ConversionRep<OldRep, NewRep>, NewRep, Magnitude<>> {};
 
 // Specialization for `void`: apply the conversion factor with proper promotion,
 // but don't add a final cast to force a specific output type.
