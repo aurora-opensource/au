@@ -578,6 +578,7 @@ cc_library(
         ":truncation_risk",
         ":unit_of_measure",
         ":utility",
+        ":view",
         ":zero",
     ],
 )
