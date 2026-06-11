@@ -1160,10 +1160,8 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
 
             std::string reason{};
             if (is_lossy) {
-                const bool truncates =
-                    will_conversion_truncate<uint16_t>(original, target_units);
-                const bool overflows =
-                    will_conversion_overflow<uint16_t>(original, target_units);
+                const bool truncates = will_conversion_truncate<uint16_t>(original, target_units);
+                const bool overflows = will_conversion_overflow<uint16_t>(original, target_units);
                 ASSERT_THAT(truncates || overflows, IsTrue());
                 reason = std::string{" ("} + [&] {
                     if (truncates && overflows) {
