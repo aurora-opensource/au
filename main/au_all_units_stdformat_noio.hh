@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-114-gff03474
+// Version identifier: 0.5.0-base-115-gf6ba8cf
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -4695,7 +4695,7 @@ struct OpOutputImpl<StaticCast<T, U>> : stdx::type_identity<U> {};
 // `StaticCast<T, U>` operation:
 template <typename T, typename U>
 struct StaticCast {
-    static AU_DEVICE_FUNC constexpr U apply_to(T value) { return static_cast<U>(value); }
+    static AU_DEVICE_FUNC constexpr U apply_to(const T &value) { return static_cast<U>(value); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4710,7 +4710,7 @@ struct OpOutputImpl<ImplicitConversion<T, U>> : stdx::type_identity<U> {};
 // `ImplicitConversion<T, U>` operation:
 template <typename T, typename U>
 struct ImplicitConversion {
-    static AU_DEVICE_FUNC constexpr U apply_to(T value) { return value; }
+    static AU_DEVICE_FUNC constexpr U apply_to(const T &value) { return value; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4730,7 +4730,7 @@ struct OpOutputImpl<MultiplyTypeBy<T, Magnitude<>>> : stdx::type_identity<T> {};
 // `MultiplyTypeBy<T, M>` operation:
 template <typename T, typename Mag>
 struct MultiplyTypeBy {
-    static AU_DEVICE_FUNC constexpr OpOutput<MultiplyTypeBy<T, Mag>> apply_to(T value) {
+    static AU_DEVICE_FUNC constexpr OpOutput<MultiplyTypeBy<T, Mag>> apply_to(const T &value) {
         return value * get_value<RealPart<T>>(Mag{});
     }
 };
@@ -4738,7 +4738,7 @@ struct MultiplyTypeBy {
 // Specialization for identity magnitude: just return the value unchanged.
 template <typename T>
 struct MultiplyTypeBy<T, Magnitude<>> {
-    static AU_DEVICE_FUNC constexpr T apply_to(T value) { return value; }
+    static AU_DEVICE_FUNC constexpr T apply_to(const T &value) { return value; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4753,7 +4753,7 @@ struct OpOutputImpl<DivideTypeByInteger<T, M>>
 
 template <typename T, typename M, MagRepresentationOutcome MagOutcome>
 struct DivideTypeByIntegerImpl {
-    static AU_DEVICE_FUNC constexpr OpOutput<DivideTypeByInteger<T, M>> apply_to(T value) {
+    static AU_DEVICE_FUNC constexpr OpOutput<DivideTypeByInteger<T, M>> apply_to(const T &value) {
         static_assert(MagOutcome == MagRepresentationOutcome::OK, "Internal library error");
         return value / get_value<RealPart<T>>(M{});
     }
@@ -4762,7 +4762,7 @@ struct DivideTypeByIntegerImpl {
 template <typename T, typename M>
 struct DivideTypeByIntegerImpl<T, M, MagRepresentationOutcome::ERR_CANNOT_FIT> {
     // If a number is too big to fit in the type, then dividing by it should produce 0.
-    static AU_DEVICE_FUNC constexpr OpOutput<DivideTypeByInteger<T, M>> apply_to(T) {
+    static AU_DEVICE_FUNC constexpr OpOutput<DivideTypeByInteger<T, M>> apply_to(const T &) {
         return OpOutput<DivideTypeByInteger<T, M>>{0};
     }
 };
@@ -4791,14 +4791,14 @@ struct OpOutputImpl<OpSequenceImpl<OnlyOp>> : stdx::type_identity<OpOutput<OnlyO
 
 template <typename Op>
 struct OpSequenceImpl<Op> {
-    static AU_DEVICE_FUNC constexpr auto apply_to(OpInput<OpSequenceImpl> value) {
+    static AU_DEVICE_FUNC constexpr auto apply_to(const OpInput<OpSequenceImpl> &value) {
         return Op::apply_to(value);
     }
 };
 
 template <typename Op, typename... Ops>
 struct OpSequenceImpl<Op, Ops...> {
-    static AU_DEVICE_FUNC constexpr auto apply_to(OpInput<OpSequenceImpl> value) {
+    static AU_DEVICE_FUNC constexpr auto apply_to(const OpInput<OpSequenceImpl> &value) {
         return OpSequenceImpl<Ops...>::apply_to(Op::apply_to(value));
     }
 };
@@ -7970,32 +7970,32 @@ class Quantity {
     // Addition and subtraction for like quantities.
     friend AU_DEVICE_FUNC constexpr Quantity<UnitT,
                                              decltype(std::declval<RepT>() + std::declval<RepT>())>
-    operator+(Quantity a, Quantity b) {
+    operator+(const Quantity &a, const Quantity &b) {
         return make_quantity<UnitT>(a.value_ + b.value_);
     }
     friend AU_DEVICE_FUNC constexpr Quantity<UnitT,
                                              decltype(std::declval<RepT>() - std::declval<RepT>())>
-    operator-(Quantity a, Quantity b) {
+    operator-(const Quantity &a, const Quantity &b) {
         return make_quantity<UnitT>(a.value_ - b.value_);
     }
 
     // Scalar multiplication.
     template <typename T, typename = std::enable_if_t<IsProductValidRep<RepT, T>::value>>
-    friend AU_DEVICE_FUNC constexpr auto operator*(Quantity a, T s) {
+    friend AU_DEVICE_FUNC constexpr auto operator*(const Quantity &a, T s) {
         return make_quantity<UnitT>(a.value_ * s);
     }
     template <typename T, typename = std::enable_if_t<IsProductValidRep<T, RepT>::value>>
-    friend AU_DEVICE_FUNC constexpr auto operator*(T s, Quantity a) {
+    friend AU_DEVICE_FUNC constexpr auto operator*(T s, const Quantity &a) {
         return make_quantity<UnitT>(s * a.value_);
     }
 
     // Scalar division.
     template <typename T, typename = std::enable_if_t<IsQuotientValidRep<RepT, T>::value>>
-    friend AU_DEVICE_FUNC constexpr auto operator/(Quantity a, T s) {
+    friend AU_DEVICE_FUNC constexpr auto operator/(const Quantity &a, T s) {
         return make_quantity<UnitT>(a.value_ / s);
     }
     template <typename T, typename = std::enable_if_t<IsQuotientValidRep<T, RepT>::value>>
-    friend AU_DEVICE_FUNC constexpr auto operator/(T s, Quantity a) {
+    friend AU_DEVICE_FUNC constexpr auto operator/(T s, const Quantity &a) {
         warn_if_integer_division<UnitProduct<>, T>();
         return make_quantity<decltype(pow<-1>(unit))>(s / a.value_);
     }
@@ -8471,7 +8471,8 @@ AU_DEVICE_FUNC constexpr auto using_common_type(T t, U u, Func f) {
 }
 
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto convert_and_compare(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr auto convert_and_compare(const Quantity<U1, R1> &q1,
+                                                  const Quantity<U2, R2> &q2) {
     using U = CommonUnit<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
@@ -8483,37 +8484,37 @@ AU_DEVICE_FUNC constexpr auto convert_and_compare(Quantity<U1, R1> q1, Quantity<
 
 // Comparison functions for compatible Quantity types.
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr bool operator==(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr bool operator==(const Quantity<U1, R1> &q1, const Quantity<U2, R2> &q2) {
     return detail::convert_and_compare<detail::Equal>(q1, q2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr bool operator!=(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr bool operator!=(const Quantity<U1, R1> &q1, const Quantity<U2, R2> &q2) {
     return detail::convert_and_compare<detail::NotEqual>(q1, q2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr bool operator<(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr bool operator<(const Quantity<U1, R1> &q1, const Quantity<U2, R2> &q2) {
     return detail::convert_and_compare<detail::Less>(q1, q2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr bool operator<=(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr bool operator<=(const Quantity<U1, R1> &q1, const Quantity<U2, R2> &q2) {
     return detail::convert_and_compare<detail::LessEqual>(q1, q2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr bool operator>(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr bool operator>(const Quantity<U1, R1> &q1, const Quantity<U2, R2> &q2) {
     return detail::convert_and_compare<detail::Greater>(q1, q2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr bool operator>=(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr bool operator>=(const Quantity<U1, R1> &q1, const Quantity<U2, R2> &q2) {
     return detail::convert_and_compare<detail::GreaterEqual>(q1, q2);
 }
 
 // Addition and subtraction functions for compatible Quantity types.
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator+(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr auto operator+(const Quantity<U1, R1> &q1, const Quantity<U2, R2> &q2) {
     return detail::using_common_type(q1, q2, detail::plus);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator-(Quantity<U1, R1> q1, Quantity<U2, R2> q2) {
+AU_DEVICE_FUNC constexpr auto operator-(const Quantity<U1, R1> &q1, const Quantity<U2, R2> &q2) {
     return detail::using_common_type(q1, q2, detail::minus);
 }
 
@@ -11158,40 +11159,44 @@ class QuantityPoint {
     }
 
     // Comparison operators.
-    AU_DEVICE_FUNC constexpr friend bool operator==(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend bool operator==(const QuantityPoint &a,
+                                                    const QuantityPoint &b) {
         return a.x_ == b.x_;
     }
-    AU_DEVICE_FUNC constexpr friend bool operator!=(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend bool operator!=(const QuantityPoint &a,
+                                                    const QuantityPoint &b) {
         return a.x_ != b.x_;
     }
-    AU_DEVICE_FUNC constexpr friend bool operator>=(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend bool operator>=(const QuantityPoint &a,
+                                                    const QuantityPoint &b) {
         return a.x_ >= b.x_;
     }
-    AU_DEVICE_FUNC constexpr friend bool operator>(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend bool operator>(const QuantityPoint &a, const QuantityPoint &b) {
         return a.x_ > b.x_;
     }
-    AU_DEVICE_FUNC constexpr friend bool operator<=(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend bool operator<=(const QuantityPoint &a,
+                                                    const QuantityPoint &b) {
         return a.x_ <= b.x_;
     }
-    AU_DEVICE_FUNC constexpr friend bool operator<(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend bool operator<(const QuantityPoint &a, const QuantityPoint &b) {
         return a.x_ < b.x_;
     }
 
     // Subtraction between two QuantityPoint types.
-    AU_DEVICE_FUNC constexpr friend auto operator-(QuantityPoint a, QuantityPoint b) {
+    AU_DEVICE_FUNC constexpr friend auto operator-(const QuantityPoint &a, const QuantityPoint &b) {
         return a.x_ - b.x_;
     }
 
     // Left and right addition of a Diff.
-    AU_DEVICE_FUNC constexpr friend auto operator+(Diff d, QuantityPoint p) {
+    AU_DEVICE_FUNC constexpr friend auto operator+(const Diff &d, const QuantityPoint &p) {
         return QuantityPoint{d + p.x_};
     }
-    AU_DEVICE_FUNC constexpr friend auto operator+(QuantityPoint p, Diff d) {
+    AU_DEVICE_FUNC constexpr friend auto operator+(const QuantityPoint &p, const Diff &d) {
         return QuantityPoint{p.x_ + d};
     }
 
     // Right subtraction of a Diff.
-    AU_DEVICE_FUNC constexpr friend auto operator-(QuantityPoint p, Diff d) {
+    AU_DEVICE_FUNC constexpr friend auto operator-(const QuantityPoint &p, const Diff &d) {
         return QuantityPoint{p.x_ - d};
     }
 
@@ -11312,8 +11317,8 @@ AU_DEVICE_FUNC constexpr auto using_common_point_unit(X x, Y y, Func f) {
 }
 
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1,
-                                                  QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto convert_and_compare(const QuantityPoint<U1, R1> &p1,
+                                                  const QuantityPoint<U2, R2> &p2) {
     using U = CommonPointUnit<U1, U2>;
     using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
     using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
@@ -11325,27 +11330,33 @@ AU_DEVICE_FUNC constexpr auto convert_and_compare(QuantityPoint<U1, R1> p1,
 
 // Comparison functions for compatible QuantityPoint types.
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator<(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator<(const QuantityPoint<U1, R1> &p1,
+                                        const QuantityPoint<U2, R2> &p2) {
     return detail::convert_and_compare<detail::Less>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator>(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator>(const QuantityPoint<U1, R1> &p1,
+                                        const QuantityPoint<U2, R2> &p2) {
     return detail::convert_and_compare<detail::Greater>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator<=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator<=(const QuantityPoint<U1, R1> &p1,
+                                         const QuantityPoint<U2, R2> &p2) {
     return detail::convert_and_compare<detail::LessEqual>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator>=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator>=(const QuantityPoint<U1, R1> &p1,
+                                         const QuantityPoint<U2, R2> &p2) {
     return detail::convert_and_compare<detail::GreaterEqual>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator==(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator==(const QuantityPoint<U1, R1> &p1,
+                                         const QuantityPoint<U2, R2> &p2) {
     return detail::convert_and_compare<detail::Equal>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator!=(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator!=(const QuantityPoint<U1, R1> &p1,
+                                         const QuantityPoint<U2, R2> &p2) {
     return detail::convert_and_compare<detail::NotEqual>(p1, p2);
 }
 
@@ -11369,22 +11380,26 @@ AU_DEVICE_FUNC constexpr auto borrow_origin(U u) {
 
 // Addition and subtraction functions for compatible QuantityPoint types.
 template <typename UnitP, typename UnitQ, typename RepP, typename RepQ>
-AU_DEVICE_FUNC constexpr auto operator+(QuantityPoint<UnitP, RepP> p, Quantity<UnitQ, RepQ> q) {
+AU_DEVICE_FUNC constexpr auto operator+(const QuantityPoint<UnitP, RepP> &p,
+                                        const Quantity<UnitQ, RepQ> &q) {
     constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
     return detail::using_common_point_unit(p, q.as(new_unit_q), detail::plus);
 }
 template <typename UnitQ, typename UnitP, typename RepQ, typename RepP>
-AU_DEVICE_FUNC constexpr auto operator+(Quantity<UnitQ, RepQ> q, QuantityPoint<UnitP, RepP> p) {
+AU_DEVICE_FUNC constexpr auto operator+(const Quantity<UnitQ, RepQ> &q,
+                                        const QuantityPoint<UnitP, RepP> &p) {
     constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
     return detail::using_common_point_unit(q.as(new_unit_q), p, detail::plus);
 }
 template <typename UnitP, typename UnitQ, typename R1, typename RepQ>
-AU_DEVICE_FUNC constexpr auto operator-(QuantityPoint<UnitP, R1> p, Quantity<UnitQ, RepQ> q) {
+AU_DEVICE_FUNC constexpr auto operator-(const QuantityPoint<UnitP, R1> &p,
+                                        const Quantity<UnitQ, RepQ> &q) {
     constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
     return detail::using_common_point_unit(p, q.as(new_unit_q), detail::minus);
 }
 template <typename U1, typename U2, typename R1, typename R2>
-AU_DEVICE_FUNC constexpr auto operator-(QuantityPoint<U1, R1> p1, QuantityPoint<U2, R2> p2) {
+AU_DEVICE_FUNC constexpr auto operator-(const QuantityPoint<U1, R1> &p1,
+                                        const QuantityPoint<U2, R2> &p2) {
     return detail::using_common_point_unit(p1, p2, detail::minus);
 }
 
