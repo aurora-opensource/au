@@ -23,10 +23,11 @@ namespace detail {
 
 //
 // `ConversionForRepsAndFactor<CastType, OldRep, NewRep, Factor>` is the operation that takes a
-// value of `OldRep`, and produces the product of that value with magnitude `Factor` in the type
-// `NewRep`, using casting operations according to `CastType` (`static_cast` or implicit
-// conversions).
-//
+// value of `OldRep`, and produces the product of that value with magnitude `Factor`.
+// If `NewRep` is `void`, the operation omits the final cast and returns the “natural” result type
+// of applying the conversion factor (after any required promotion).
+// Otherwise, the result is cast to `NewRep`, using casting operations according to `CastType`
+// (`static_cast` or implicit conversions).
 template <typename CastType, typename OldRep, typename NewRep, typename Factor>
 struct ConversionForRepsAndFactorImpl;
 template <typename CastType, typename OldRep, typename NewRep, typename Factor>
