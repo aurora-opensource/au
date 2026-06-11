@@ -178,11 +178,15 @@ struct ConversionRiskAcceptablyLow
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion
     : stdx::conjunction<std::is_same<Abs<ScaleFactor>, Magnitude<>>,
-                        std::is_same<SourceRep, PromotedType<Rep>>,
-                        stdx::disjunction<IsPositive<ScaleFactor>, std::is_signed<Rep>>,
                         std::is_integral<Rep>,
                         std::is_integral<SourceRep>,
+                        std::is_same<SourceRep, PromotedType<Rep>>,
+                        stdx::disjunction<IsPositive<ScaleFactor>, std::is_signed<Rep>>,
                         std::is_assignable<Rep &, SourceRep>> {};
+// `void` means "no explicit rep" (the implicit-rep `.in()`/`.as()` path).  The carve-out is
+// irrelevant there, but `in_impl` checks it unconditionally, so we need a valid instantiation.
+template <typename ScaleFactor, typename SourceRep>
+struct PermitAsCarveOutForIntegerPromotion<void, ScaleFactor, SourceRep> : std::false_type {};
 
 template <typename CastStrategy, typename Rep, typename ScaleFactor, typename SourceRep>
 struct PassesConversionRiskCheck

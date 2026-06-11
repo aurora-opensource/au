@@ -22,8 +22,10 @@ namespace au {
 namespace detail {
 
 //
-// `ConversionForRepsAndFactor<OldRep, NewRep, Factor>` is the operation that takes a value of
-// `OldRep`, and produces the product of that value with magnitude `Factor` in the type `NewRep`.
+// `ConversionForRepsAndFactor<CastType, OldRep, NewRep, Factor>` is the operation that takes a
+// value of `OldRep`, and produces the product of that value with magnitude `Factor` in the type
+// `NewRep`, using casting operations according to `CastType` (`static_cast` or implicit
+// conversions).
 //
 template <typename CastType, typename OldRep, typename NewRep, typename Factor>
 struct ConversionForRepsAndFactorImpl;
@@ -79,10 +81,11 @@ struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::INTEGER_DIVIDE>
 
 template <typename T, typename Mag>
 struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>
-    : std::conditional<
-          std::is_integral<RealPart<T>>::value,
-          OpSequence<MultiplyTypeBy<T, Numerator<Mag>>, DivideTypeByInteger<T, Denominator<Mag>>>,
-          MultiplyTypeBy<T, Mag>> {};
+    : std::conditional<std::is_integral<RealPart<T>>::value,
+                       OpSequence<MultiplyTypeBy<T, Numerator<Mag>>,
+                                  DivideTypeByInteger<OpOutput<MultiplyTypeBy<T, Numerator<Mag>>>,
+                                                      Denominator<Mag>>>,
+                       MultiplyTypeBy<T, Mag>> {};
 
 //
 // `ConversionRep<OldRep, NewRep>` is the rep we should use when applying the conversion factor.
@@ -138,10 +141,15 @@ template <typename CastType, typename T, typename U>
 using CastSequence = typename CastSequenceImpl<CastType, T, U>::type;
 
 //
-// `FullConversionImpl<OldRep, ConversionRepT, NewRep, Factor>` should resolve to the most efficient
-// sequence of operations for a conversion from `OldRep` to `NewRep`, with a magnitude `Factor`,
-// where `ConversionRepT` is the promoted type of the common type of `OldRep` and `NewRep`.
+// `FullConversionImpl<CastType, OldRep, ConversionRepT, NewRep, Factor>` should resolve to the most
+// efficient sequence of operations for a conversion from `OldRep` to `NewRep`, with a magnitude
+// `Factor`, where `ConversionRepT` is the promoted type of the common type of `OldRep` and
+// `NewRep`.  `CastType` discriminates between `static_cast` and implicit conversions.
 //
+
+// Helper to get the output type after applying the conversion factor.
+template <typename Rep, typename Factor>
+using ApplicationOutputFor = OpOutput<ApplicationStrategyFor<Rep, Factor>>;
 
 template <typename CastType,
           typename OldRep,
@@ -149,28 +157,55 @@ template <typename CastType,
           typename NewRep,
           typename Factor>
 struct FullConversionImpl
-    : stdx::type_identity<OpSequence<CastSequence<CastType, OldRep, ConversionRepT>,
-                                     ApplicationStrategyFor<ConversionRepT, Factor>,
-                                     CastSequence<CastType, ConversionRepT, NewRep>>> {};
+    : stdx::type_identity<OpSequence<
+          CastSequence<CastType, OldRep, ConversionRepT>,
+          ApplicationStrategyFor<ConversionRepT, Factor>,
+          CastSequence<CastType, ApplicationOutputFor<ConversionRepT, Factor>, NewRep>>> {};
 
 template <typename CastType, typename OldRepIsConversionRep, typename NewRep, typename Factor>
 struct FullConversionImpl<CastType, OldRepIsConversionRep, OldRepIsConversionRep, NewRep, Factor>
-    : stdx::type_identity<OpSequence<ApplicationStrategyFor<OldRepIsConversionRep, Factor>,
-                                     CastSequence<CastType, OldRepIsConversionRep, NewRep>>> {};
+    : stdx::type_identity<OpSequence<
+          ApplicationStrategyFor<OldRepIsConversionRep, Factor>,
+          CastSequence<CastType, ApplicationOutputFor<OldRepIsConversionRep, Factor>, NewRep>>> {};
 
 template <typename CastType, typename OldRep, typename NewRepIsConversionRep, typename Factor>
 struct FullConversionImpl<CastType, OldRep, NewRepIsConversionRep, NewRepIsConversionRep, Factor>
     : stdx::type_identity<OpSequence<CastSequence<CastType, OldRep, NewRepIsConversionRep>,
                                      ApplicationStrategyFor<NewRepIsConversionRep, Factor>>> {};
 
+// When OldRep == ConversionRep == NewRep and the application output matches Rep, no cast needed.
 template <typename CastType, typename Rep, typename Factor>
 struct FullConversionImpl<CastType, Rep, Rep, Rep, Factor>
-    : stdx::type_identity<ApplicationStrategyFor<Rep, Factor>> {};
+    : std::conditional<std::is_same<ApplicationOutputFor<Rep, Factor>, Rep>::value,
+                       ApplicationStrategyFor<Rep, Factor>,
+                       OpSequence<ApplicationStrategyFor<Rep, Factor>,
+                                  CastSequence<CastType, ApplicationOutputFor<Rep, Factor>, Rep>>> {
+};
 
 // To implement `ConversionForRepsAndFactor`, delegate to `FullConversionImpl`.
 template <typename CastType, typename OldRep, typename NewRep, typename Factor>
 struct ConversionForRepsAndFactorImpl
     : FullConversionImpl<CastType, OldRep, ConversionRep<OldRep, NewRep>, NewRep, Factor> {};
+
+// Identity factor: just cast, no arithmetic.
+template <typename CastType, typename OldRep, typename NewRep>
+struct ConversionForRepsAndFactorImpl<CastType, OldRep, NewRep, Magnitude<>>
+    : stdx::type_identity<CastSequence<CastType, OldRep, NewRep>> {};
+
+// Specialization for `void`: apply the conversion factor with proper promotion,
+// but don't add a final cast to force a specific output type.
+template <typename CastType, typename OldRep, typename Factor>
+struct ConversionForRepsAndFactorImpl<CastType, OldRep, void, Factor>
+    : FullConversionImpl<CastType,
+                         OldRep,
+                         PromotedType<OldRep>,
+                         ApplicationOutputFor<PromotedType<OldRep>, Factor>,
+                         Factor> {};
+
+// Identity factor, implicit rep: no conversion at all.
+template <typename CastType, typename OldRep>
+struct ConversionForRepsAndFactorImpl<CastType, OldRep, void, Magnitude<>>
+    : FullConversionImpl<CastType, OldRep, OldRep, OldRep, Magnitude<>> {};
 
 }  // namespace detail
 }  // namespace au
