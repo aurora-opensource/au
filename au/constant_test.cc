@@ -18,6 +18,8 @@
 
 #include "au/chrono_interop.hh"
 #include "au/testing.hh"
+#include "au/units/bits.hh"
+#include "au/units/bytes.hh"
 #include "au/units/degrees.hh"
 #include "au/units/feet.hh"
 #include "au/units/inches.hh"
@@ -311,6 +313,31 @@ TEST(Constant, ImplicitlyConvertsToAppropriateQuantityTypes) {
     {
         // constexpr Quantity<decltype(Meters{} / Seconds{}), int16_t> v = c;
         // (void)c;
+    }
+}
+
+TEST(Constant, OutputHasProvidedRep) {
+    constexpr auto X = make_constant(bytes * mag<10>());
+    EXPECT_THAT(X.as<uint8_t>(bits), SameTypeAndValue(bits(uint8_t{80})));
+    EXPECT_THAT(X.as<int8_t>(bits), SameTypeAndValue(bits(int8_t{80})));
+}
+
+TEST(Constant, InOutputTypeIsProvidedRep) {
+    constexpr auto X = make_constant(bytes * mag<10>());
+    EXPECT_THAT(X.in<uint8_t>(bits), SameTypeAndValue(uint8_t{80}));
+    EXPECT_THAT(X.in<int8_t>(bits), SameTypeAndValue(int8_t{80}));
+}
+
+TEST(Constant, OverflowCheckUsesExplicitRep) {
+    // 40 bytes = 320 bits: fits in int (the promoted type) but overflows uint8_t.
+    // The explicit-rep check in Constant::as correctly catches this.
+    constexpr auto X = make_constant(bytes * mag<40>());
+    EXPECT_THAT(X.can_store_value_in<uint8_t>(bits), IsFalse());
+    EXPECT_THAT(X.can_store_value_in<uint16_t>(bits), IsTrue());
+
+    // The following must not compile.  Uncomment inside the scope to check.
+    {
+        // X.as<uint8_t>(bits);
     }
 }
 

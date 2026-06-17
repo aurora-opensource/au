@@ -139,4 +139,14 @@ TEST(Conversions, SupportIntMHzToU32Hz) {
     EXPECT_THAT(freq, SameTypeAndValue(hertz(40'000'000u)));
 }
 
+TEST(Quantity, CanAssignFromPromotedTypeToOriginalType) {
+    // `int8_t + int8_t` promotes to `int`, just as it would without Au.
+    // Assigning back narrows, which is the same `-Wconversion` behavior as raw integers.
+    auto x = feet(int8_t{10});
+    auto promoted = x + x;
+    EXPECT_THAT(promoted, SameTypeAndValue(feet(int{20})));
+    x = promoted;
+    EXPECT_THAT(x, SameTypeAndValue(feet(int8_t{20})));
+}
+
 }  // namespace au

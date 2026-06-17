@@ -72,15 +72,15 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 
         constexpr bool has_unacceptable_overflow =
             RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow) &&
-            will_conversion_overflow(this_value, OtherUnit{});
+            will_conversion_overflow<T>(this_value, OtherUnit{});
         static_assert(!has_unacceptable_overflow, "Constant conversion known to overflow");
 
         constexpr bool has_unacceptable_truncation =
             RiskPolicyT{}.should_check(detail::ConversionRisk::Truncation) &&
-            will_conversion_truncate(this_value, OtherUnit{});
+            will_conversion_truncate<T>(this_value, OtherUnit{});
         static_assert(!has_unacceptable_truncation, "Constant conversion known to truncate");
 
-        return this_value.as(OtherUnit{}, ignore(ALL_RISKS));
+        return this_value.template as<T>(OtherUnit{}, ignore(ALL_RISKS));
     }
 
     // Get the value of this constant in the given unit and rep, ignoring safety checks.

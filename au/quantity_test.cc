@@ -595,10 +595,9 @@ TEST(Quantity, SupportsConvertingUnitsForComplexQuantity) {
 }
 
 TEST(Quantity, ConvertingByNegativeOneCanBeDoneImplicitly) {
-    // Use `int8_t`, because it's a type that requires the special carve-out.
     constexpr auto neginches = inches * (-mag<1>());
     constexpr auto q = inches(int8_t{-10});
-    EXPECT_THAT(q.as(neginches), SameTypeAndValue(neginches(int8_t{10})));
+    EXPECT_THAT(q.as(neginches), SameTypeAndValue(neginches(detail::PromotedType<int8_t>{10})));
 }
 
 TEST(Quantity, AsCanExplicitlyOptOutOfOverflowRiskCheck) {
@@ -650,7 +649,7 @@ TEST(Quantity, InCanExplicitlyOptOutOfTruncationRiskCheckForExplicitRep) {
 }
 
 TEST(Quantity, IgnoringOverflowRiskCanProduceOverflow) {
-    EXPECT_THAT(seconds(uint8_t{1}).as(milli(seconds), ignore(OVERFLOW_RISK)),
+    EXPECT_THAT(seconds(uint8_t{1}).as<uint8_t>(milli(seconds), ignore(OVERFLOW_RISK)),
                 SameTypeAndValue(milli(seconds)(uint8_t{1'000 % 256})));
 }
 
@@ -1057,14 +1056,22 @@ TEST(WillConversionOverflow, SensitiveToTypeBoundariesForPureIntegerMultiply) {
     }
 
     {
-        auto will_m_to_mm_overflow_u8 = [](uint8_t x) {
+        auto will_m_to_mm_overflow_u8_implicit = [](uint8_t x) {
             return will_conversion_overflow(meters(x), milli(meters));
         };
+        auto will_m_to_mm_overflow_u8_explicit = [](uint8_t x) {
+            return will_conversion_overflow<uint8_t>(meters(x), milli(meters));
+        };
 
-        EXPECT_THAT(will_m_to_mm_overflow_u8(255), IsTrue());
+        // Implicit rep promotes to int, so no overflow.
+        EXPECT_THAT(will_m_to_mm_overflow_u8_implicit(255), IsFalse());
+        EXPECT_THAT(will_m_to_mm_overflow_u8_implicit(1), IsFalse());
+        EXPECT_THAT(will_m_to_mm_overflow_u8_implicit(0), IsFalse());
 
-        EXPECT_THAT(will_m_to_mm_overflow_u8(1), IsTrue());
-        EXPECT_THAT(will_m_to_mm_overflow_u8(0), IsFalse());
+        // Explicit uint8_t rep: 255 * 1000 and 1 * 1000 both overflow uint8_t.
+        EXPECT_THAT(will_m_to_mm_overflow_u8_explicit(255), IsTrue());
+        EXPECT_THAT(will_m_to_mm_overflow_u8_explicit(1), IsTrue());
+        EXPECT_THAT(will_m_to_mm_overflow_u8_explicit(0), IsFalse());
     }
 
     {
@@ -1178,7 +1185,7 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
             const bool did_value_change = (original != round_trip);
 
             // Function under test:
-            const bool is_lossy = is_conversion_lossy(original, target_units);
+            const bool is_lossy = is_conversion_lossy<uint16_t>(original, target_units);
 
             // In order for the test to be valid, we assume the second "leg" of the round-trip
             // conversion never introduces any **new** lossiness.  (It's OK for it to be lossy, but
@@ -1188,14 +1195,15 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
             // fundamentally, "lossiness" is all about destroying the information you need to
             // recover the original value.
             if (!is_lossy) {
-                const bool is_inverse_lossy = is_conversion_lossy(converted, source_units);
+                const bool is_inverse_lossy =
+                    is_conversion_lossy<uint16_t>(converted, source_units);
                 ASSERT_THAT(is_inverse_lossy, IsFalse());
             }
 
             std::string reason{};
             if (is_lossy) {
-                const bool truncates = will_conversion_truncate(original, target_units);
-                const bool overflows = will_conversion_overflow(original, target_units);
+                const bool truncates = will_conversion_truncate<uint16_t>(original, target_units);
+                const bool overflows = will_conversion_overflow<uint16_t>(original, target_units);
                 ASSERT_THAT(truncates || overflows, IsTrue());
                 reason = std::string{" ("} + [&] {
                     if (truncates && overflows) {

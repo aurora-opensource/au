@@ -217,7 +217,7 @@ class Quantity {
     template <typename NewUnitSlot, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     AU_DEVICE_FUNC constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity<AssociatedUnit<NewUnitSlot>>(
-            in_impl<detail::UseStaticCast, Rep>(u, policy));
+            in_impl<detail::UseStaticCast, void>(u, policy));
     }
 
     // `q.in<Rep>(new_unit)`, or `q.in<Rep>(new_unit, risk_policy)`
@@ -231,7 +231,7 @@ class Quantity {
     // `q.in(new_unit)`, or `q.in(new_unit, risk_policy)`
     template <typename NewUnitSlot, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     AU_DEVICE_FUNC constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return in_impl<detail::UseStaticCast, Rep>(u, policy);
+        return in_impl<detail::UseStaticCast, void>(u, policy);
     }
 
     // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
@@ -574,7 +574,7 @@ class Quantity {
               typename OtherRep,
               typename OtherUnitSlot,
               typename RiskPolicyT>
-    AU_DEVICE_FUNC constexpr OtherRep in_impl(OtherUnitSlot, RiskPolicyT) const {
+    AU_DEVICE_FUNC constexpr auto in_impl(OtherUnitSlot, RiskPolicyT) const {
         using OtherUnit = AssociatedUnit<OtherUnitSlot>;
         static_assert(IsUnit<OtherUnit>::value, "Invalid type passed to unit slot");
 
@@ -583,7 +583,11 @@ class Quantity {
 
         constexpr bool should_check_overflow =
             RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow);
-        constexpr bool is_overflow_risk_ok = detail::OverflowRiskAcceptablyLow<Op>::value;
+        constexpr bool is_overflow_risk_ok = stdx::disjunction<
+            detail::OverflowRiskAcceptablyLow<Op>,
+            detail::PermitAsCarveOutForIntegerPromotion<OtherRep,
+                                                        UnitRatio<Unit, OtherUnit>,
+                                                        Rep>>::value;
 
         constexpr bool should_check_truncation =
             RiskPolicyT{}.should_check(detail::ConversionRisk::Truncation);
@@ -802,17 +806,17 @@ AU_DEVICE_FUNC constexpr auto root(QuantityMaker<Unit>) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Runtime conversion checkers
 
-// Check conversion for overflow (no change of rep).
+// Check conversion for overflow (implicit rep).
 template <typename U, typename R, typename TargetUnitSlot>
 AU_DEVICE_FUNC constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
                                                   R,
-                                                  R,
+                                                  void,
                                                   UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
     return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
-// Check conversion for overflow (new rep).
+// Check conversion for overflow (explicit rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
 AU_DEVICE_FUNC constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
@@ -822,17 +826,17 @@ AU_DEVICE_FUNC constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetU
     return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
-// Check conversion for truncation (no change of rep).
+// Check conversion for truncation (implicit rep).
 template <typename U, typename R, typename TargetUnitSlot>
 AU_DEVICE_FUNC constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
                                                   R,
-                                                  R,
+                                                  void,
                                                   UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
     return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
-// Check conversion for truncation (new rep).
+// Check conversion for truncation (explicit rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
 AU_DEVICE_FUNC constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
@@ -842,7 +846,7 @@ AU_DEVICE_FUNC constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetU
     return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
-// Check for any lossiness in conversion (no change of rep).
+// Check for any lossiness in conversion (implicit rep).
 template <typename U, typename R, typename TargetUnitSlot>
 AU_DEVICE_FUNC constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit) {
     return will_conversion_truncate(q, target_unit) || will_conversion_overflow(q, target_unit);
