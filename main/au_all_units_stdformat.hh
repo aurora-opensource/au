@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-116-gd1b8836
+// Version identifier: 0.5.0-base-117-g8cd8105
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -6210,8 +6210,14 @@ namespace au {
 namespace detail {
 
 //
-// `ConversionForRepsAndFactor<OldRep, NewRep, Factor>` is the operation that takes a value of
-// `OldRep`, and produces the product of that value with magnitude `Factor` in the type `NewRep`.
+// `ConversionForRepsAndFactor<CastType, OldRep, NewRep, Factor>` is the operation that takes a
+// value of `OldRep`, and produces the product of that value with magnitude `Factor`.
+//
+// If `NewRep` is `void`, the operation omits the final cast and returns the "natural" result type
+// of applying the conversion factor (after any required promotion).
+//
+// Otherwise, the result is cast to `NewRep`, using casting operations according to `CastType`
+// (`static_cast` or implicit conversions).
 //
 template <typename CastType, typename OldRep, typename NewRep, typename Factor>
 struct ConversionForRepsAndFactorImpl;
@@ -6267,10 +6273,11 @@ struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::INTEGER_DIVIDE>
 
 template <typename T, typename Mag>
 struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>
-    : std::conditional<
-          std::is_integral<RealPart<T>>::value,
-          OpSequence<MultiplyTypeBy<T, Numerator<Mag>>, DivideTypeByInteger<T, Denominator<Mag>>>,
-          MultiplyTypeBy<T, Mag>> {};
+    : std::conditional<std::is_integral<RealPart<T>>::value,
+                       OpSequence<MultiplyTypeBy<T, Numerator<Mag>>,
+                                  DivideTypeByInteger<OpOutput<MultiplyTypeBy<T, Numerator<Mag>>>,
+                                                      Denominator<Mag>>>,
+                       MultiplyTypeBy<T, Mag>> {};
 
 //
 // `ConversionRep<OldRep, NewRep>` is the rep we should use when applying the conversion factor.
@@ -6326,10 +6333,15 @@ template <typename CastType, typename T, typename U>
 using CastSequence = typename CastSequenceImpl<CastType, T, U>::type;
 
 //
-// `FullConversionImpl<OldRep, ConversionRepT, NewRep, Factor>` should resolve to the most efficient
-// sequence of operations for a conversion from `OldRep` to `NewRep`, with a magnitude `Factor`,
-// where `ConversionRepT` is the promoted type of the common type of `OldRep` and `NewRep`.
+// `FullConversionImpl<CastType, OldRep, ConversionRepT, NewRep, Factor>` should resolve to the most
+// efficient sequence of operations for a conversion from `OldRep` to `NewRep`, with a magnitude
+// `Factor`, where `ConversionRepT` is the promoted type of the common type of `OldRep` and
+// `NewRep`.  `CastType` discriminates between `static_cast` and implicit conversions.
 //
+
+// Helper to get the output type after applying the conversion factor.
+template <typename Rep, typename Factor>
+using ApplicationOutputFor = OpOutput<ApplicationStrategyFor<Rep, Factor>>;
 
 template <typename CastType,
           typename OldRep,
@@ -6337,28 +6349,55 @@ template <typename CastType,
           typename NewRep,
           typename Factor>
 struct FullConversionImpl
-    : stdx::type_identity<OpSequence<CastSequence<CastType, OldRep, ConversionRepT>,
-                                     ApplicationStrategyFor<ConversionRepT, Factor>,
-                                     CastSequence<CastType, ConversionRepT, NewRep>>> {};
+    : stdx::type_identity<OpSequence<
+          CastSequence<CastType, OldRep, ConversionRepT>,
+          ApplicationStrategyFor<ConversionRepT, Factor>,
+          CastSequence<CastType, ApplicationOutputFor<ConversionRepT, Factor>, NewRep>>> {};
 
 template <typename CastType, typename OldRepIsConversionRep, typename NewRep, typename Factor>
 struct FullConversionImpl<CastType, OldRepIsConversionRep, OldRepIsConversionRep, NewRep, Factor>
-    : stdx::type_identity<OpSequence<ApplicationStrategyFor<OldRepIsConversionRep, Factor>,
-                                     CastSequence<CastType, OldRepIsConversionRep, NewRep>>> {};
+    : stdx::type_identity<OpSequence<
+          ApplicationStrategyFor<OldRepIsConversionRep, Factor>,
+          CastSequence<CastType, ApplicationOutputFor<OldRepIsConversionRep, Factor>, NewRep>>> {};
 
 template <typename CastType, typename OldRep, typename NewRepIsConversionRep, typename Factor>
 struct FullConversionImpl<CastType, OldRep, NewRepIsConversionRep, NewRepIsConversionRep, Factor>
     : stdx::type_identity<OpSequence<CastSequence<CastType, OldRep, NewRepIsConversionRep>,
                                      ApplicationStrategyFor<NewRepIsConversionRep, Factor>>> {};
 
+// When OldRep == ConversionRep == NewRep and the application output matches Rep, no cast needed.
 template <typename CastType, typename Rep, typename Factor>
 struct FullConversionImpl<CastType, Rep, Rep, Rep, Factor>
-    : stdx::type_identity<ApplicationStrategyFor<Rep, Factor>> {};
+    : std::conditional<std::is_same<ApplicationOutputFor<Rep, Factor>, Rep>::value,
+                       ApplicationStrategyFor<Rep, Factor>,
+                       OpSequence<ApplicationStrategyFor<Rep, Factor>,
+                                  CastSequence<CastType, ApplicationOutputFor<Rep, Factor>, Rep>>> {
+};
 
 // To implement `ConversionForRepsAndFactor`, delegate to `FullConversionImpl`.
 template <typename CastType, typename OldRep, typename NewRep, typename Factor>
 struct ConversionForRepsAndFactorImpl
     : FullConversionImpl<CastType, OldRep, ConversionRep<OldRep, NewRep>, NewRep, Factor> {};
+
+// Identity factor: just cast, no arithmetic.
+template <typename CastType, typename OldRep, typename NewRep>
+struct ConversionForRepsAndFactorImpl<CastType, OldRep, NewRep, Magnitude<>>
+    : FullConversionImpl<CastType, OldRep, ConversionRep<OldRep, NewRep>, NewRep, Magnitude<>> {};
+
+// Specialization for `void`: apply the conversion factor with proper promotion,
+// but don't add a final cast to force a specific output type.
+template <typename CastType, typename OldRep, typename Factor>
+struct ConversionForRepsAndFactorImpl<CastType, OldRep, void, Factor>
+    : FullConversionImpl<CastType,
+                         OldRep,
+                         PromotedType<OldRep>,
+                         ApplicationOutputFor<PromotedType<OldRep>, Factor>,
+                         Factor> {};
+
+// Identity factor, implicit rep: no conversion at all.
+template <typename CastType, typename OldRep>
+struct ConversionForRepsAndFactorImpl<CastType, OldRep, void, Magnitude<>>
+    : FullConversionImpl<CastType, OldRep, OldRep, OldRep, Magnitude<>> {};
 
 }  // namespace detail
 }  // namespace au
@@ -7761,11 +7800,15 @@ struct ConversionRiskAcceptablyLow
 template <typename Rep, typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion
     : stdx::conjunction<std::is_same<Abs<ScaleFactor>, Magnitude<>>,
-                        std::is_same<SourceRep, PromotedType<Rep>>,
-                        stdx::disjunction<IsPositive<ScaleFactor>, std::is_signed<Rep>>,
                         std::is_integral<Rep>,
                         std::is_integral<SourceRep>,
+                        std::is_same<SourceRep, PromotedType<Rep>>,
+                        stdx::disjunction<IsPositive<ScaleFactor>, std::is_signed<Rep>>,
                         std::is_assignable<Rep &, SourceRep>> {};
+// `void` means "no explicit rep" (the implicit-rep `.in()`/`.as()` path).  The carve-out is
+// irrelevant there, but `in_impl` checks it unconditionally, so we need a valid instantiation.
+template <typename ScaleFactor, typename SourceRep>
+struct PermitAsCarveOutForIntegerPromotion<void, ScaleFactor, SourceRep> : std::false_type {};
 
 template <typename CastStrategy, typename Rep, typename ScaleFactor, typename SourceRep>
 struct PassesConversionRiskCheck
@@ -8018,7 +8061,7 @@ class Quantity {
     template <typename NewUnitSlot, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     AU_DEVICE_FUNC constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity<AssociatedUnit<NewUnitSlot>>(
-            in_impl<detail::UseStaticCast, Rep>(u, policy));
+            in_impl<detail::UseStaticCast, void>(u, policy));
     }
 
     // `q.in<Rep>(new_unit)`, or `q.in<Rep>(new_unit, risk_policy)`
@@ -8032,7 +8075,7 @@ class Quantity {
     // `q.in(new_unit)`, or `q.in(new_unit, risk_policy)`
     template <typename NewUnitSlot, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     AU_DEVICE_FUNC constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return in_impl<detail::UseStaticCast, Rep>(u, policy);
+        return in_impl<detail::UseStaticCast, void>(u, policy);
     }
 
     // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
@@ -8375,7 +8418,7 @@ class Quantity {
               typename OtherRep,
               typename OtherUnitSlot,
               typename RiskPolicyT>
-    AU_DEVICE_FUNC constexpr OtherRep in_impl(OtherUnitSlot, RiskPolicyT) const {
+    AU_DEVICE_FUNC constexpr auto in_impl(OtherUnitSlot, RiskPolicyT) const {
         using OtherUnit = AssociatedUnit<OtherUnitSlot>;
         static_assert(IsUnit<OtherUnit>::value, "Invalid type passed to unit slot");
 
@@ -8384,7 +8427,11 @@ class Quantity {
 
         constexpr bool should_check_overflow =
             RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow);
-        constexpr bool is_overflow_risk_ok = detail::OverflowRiskAcceptablyLow<Op>::value;
+        constexpr bool is_overflow_risk_ok = stdx::disjunction<
+            detail::OverflowRiskAcceptablyLow<Op>,
+            detail::PermitAsCarveOutForIntegerPromotion<OtherRep,
+                                                        UnitRatio<Unit, OtherUnit>,
+                                                        Rep>>::value;
 
         constexpr bool should_check_truncation =
             RiskPolicyT{}.should_check(detail::ConversionRisk::Truncation);
@@ -8603,17 +8650,17 @@ AU_DEVICE_FUNC constexpr auto root(QuantityMaker<Unit>) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Runtime conversion checkers
 
-// Check conversion for overflow (no change of rep).
+// Check conversion for overflow (implicit rep).
 template <typename U, typename R, typename TargetUnitSlot>
 AU_DEVICE_FUNC constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
                                                   R,
-                                                  R,
+                                                  void,
                                                   UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
     return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
-// Check conversion for overflow (new rep).
+// Check conversion for overflow (explicit rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
 AU_DEVICE_FUNC constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
@@ -8623,17 +8670,17 @@ AU_DEVICE_FUNC constexpr bool will_conversion_overflow(Quantity<U, R> q, TargetU
     return detail::would_value_overflow<Op>(q.in(U{}));
 }
 
-// Check conversion for truncation (no change of rep).
+// Check conversion for truncation (implicit rep).
 template <typename U, typename R, typename TargetUnitSlot>
 AU_DEVICE_FUNC constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
                                                   R,
-                                                  R,
+                                                  void,
                                                   UnitRatio<U, AssociatedUnit<TargetUnitSlot>>>;
     return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
-// Check conversion for truncation (new rep).
+// Check conversion for truncation (explicit rep).
 template <typename TargetRep, typename U, typename R, typename TargetUnitSlot>
 AU_DEVICE_FUNC constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetUnitSlot) {
     using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast,
@@ -8643,7 +8690,7 @@ AU_DEVICE_FUNC constexpr bool will_conversion_truncate(Quantity<U, R> q, TargetU
     return detail::TruncationRiskFor<Op>::would_value_truncate(q.in(U{}));
 }
 
-// Check for any lossiness in conversion (no change of rep).
+// Check for any lossiness in conversion (implicit rep).
 template <typename U, typename R, typename TargetUnitSlot>
 AU_DEVICE_FUNC constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSlot target_unit) {
     return will_conversion_truncate(q, target_unit) || will_conversion_overflow(q, target_unit);
@@ -10874,15 +10921,15 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 
         constexpr bool has_unacceptable_overflow =
             RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow) &&
-            will_conversion_overflow(this_value, OtherUnit{});
+            will_conversion_overflow<T>(this_value, OtherUnit{});
         static_assert(!has_unacceptable_overflow, "Constant conversion known to overflow");
 
         constexpr bool has_unacceptable_truncation =
             RiskPolicyT{}.should_check(detail::ConversionRisk::Truncation) &&
-            will_conversion_truncate(this_value, OtherUnit{});
+            will_conversion_truncate<T>(this_value, OtherUnit{});
         static_assert(!has_unacceptable_truncation, "Constant conversion known to truncate");
 
-        return this_value.as(OtherUnit{}, ignore(ALL_RISKS));
+        return this_value.template as<T>(OtherUnit{}, ignore(ALL_RISKS));
     }
 
     // Get the value of this constant in the given unit and rep, ignoring safety checks.
