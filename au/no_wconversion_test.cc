@@ -144,6 +144,7 @@ TEST(Quantity, CanAssignFromPromotedTypeToOriginalType) {
     // Assigning back narrows, which is the same `-Wconversion` behavior as raw integers.
     auto x = feet(int8_t{10});
     auto promoted = x + x;
+    EXPECT_THAT(promoted, SameTypeAndValue(feet(int{20})));
     x = promoted;
     EXPECT_THAT(x, SameTypeAndValue(feet(int8_t{20})));
 }
