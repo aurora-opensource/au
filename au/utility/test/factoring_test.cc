@@ -95,6 +95,15 @@ TEST(FindFactor, CanFactorChallengingCompositeNumbers) {
         constexpr auto factor = find_prime_factor(55'245'642'489'451u);
         EXPECT_THAT(factor, AnyOf(Eq(3'716'371u), Eq(14'865'481u)));
     }
+    {
+        // Regression test for https://github.com/aurora-opensource/au/issues/328.  Factoring this
+        // number used to exceed the compiler's constexpr "step limit": first because the recursive
+        // `mul_mod` was too expensive, and then because Pollard's rho took a `gcd` on every step.
+        // Computing it as a `constexpr` forces compile-time evaluation, guarding both regressions.
+        // 18'000'000'000'000'001 = 89'278'723 * 201'615'787 (both prime).
+        constexpr auto factor = find_prime_factor(18'000'000'000'000'001u);
+        EXPECT_THAT(factor, AnyOf(Eq(89'278'723u), Eq(201'615'787u)));
+    }
 }
 
 TEST(IsPrime, FalseForLessThan2) {

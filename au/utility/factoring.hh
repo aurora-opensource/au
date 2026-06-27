@@ -41,6 +41,62 @@ constexpr std::uintmax_t absolute_diff(std::uintmax_t a, std::uintmax_t b) {
     return a > b ? a - b : b - a;
 }
 
+// A single attempt at Pollard's rho, using Brent's cycle detection method, with the polynomial
+// `x^2 + t`.  Returns a nontrivial factor of `n` on success, or `n` itself if this particular
+// parameterization fails to find one (in which case the caller should retry with a different `t`).
+//
+// To keep the number of (relatively expensive) `gcd` calls small, we accumulate the product of the
+// position differences modulo `n` across a batch of steps, and take only a single `gcd` per batch.
+// This is the standard batched form of Brent's algorithm; it trades many `gcd` calls for many
+// (much cheaper) `mul_mod` calls, which is what makes it tractable at compile time.  See
+// <https://github.com/aurora-opensource/au/issues/328>.
+//
+// Precondition: `n` is known to be composite.
+constexpr std::uintmax_t pollard_rho_attempt(std::uintmax_t n, std::uintmax_t t) {
+    constexpr std::uintmax_t batch_size = 128u;
+
+    std::uintmax_t x = 2u;
+    std::uintmax_t y = 2u;
+    std::uintmax_t ys = 2u;
+    std::uintmax_t q = 1u;
+    std::uintmax_t g = 1u;
+    std::uintmax_t r = 1u;
+
+    do {
+        x = y;
+        for (std::uintmax_t i = 0u; i < r; ++i) {
+            y = x_squared_plus_t_mod_n(y, t, n);
+        }
+
+        std::uintmax_t k = 0u;
+        while (k < r && g == 1u) {
+            ys = y;
+            const std::uintmax_t steps = (batch_size < (r - k)) ? batch_size : (r - k);
+            for (std::uintmax_t i = 0u; i < steps; ++i) {
+                y = x_squared_plus_t_mod_n(y, t, n);
+                q = mul_mod(q, absolute_diff(x, y), n);
+            }
+            g = gcd(q, n);
+            k += batch_size;
+        }
+
+        r *= 2u;
+    } while (g == 1u);
+
+    // If the batched product happened to accumulate _all_ of `n`'s factors at once (`g == n`), the
+    // batch hid the real factor.  Recover it by walking the same steps one at a time, taking a
+    // `gcd` after each, until we isolate a single nontrivial factor.
+    if (g == n) {
+        g = 1u;
+        do {
+            ys = x_squared_plus_t_mod_n(ys, t, n);
+            g = gcd(absolute_diff(x, ys), n);
+        } while (g == 1u);
+    }
+
+    return g;
+}
+
 // Pollard's rho algorithm, using Brent's cycle detection method.
 //
 // Precondition: `n` is known to be composite.
@@ -50,23 +106,8 @@ constexpr std::uintmax_t find_pollard_rho_factor(std::uintmax_t n) {
     // will succeed on the first iteration, and we don't expect that any will _ever_ come anywhere
     // _near_ to hitting this limit.
     for (std::uintmax_t t = 1u; t < n / 2u; ++t) {
-        std::size_t max_cycle_length = 1u;
-        std::size_t cycle_length = 1u;
-        std::uintmax_t tortoise = 2u;
-        std::uintmax_t hare = x_squared_plus_t_mod_n(tortoise, t, n);
-
-        std::uintmax_t factor = gcd(n, absolute_diff(tortoise, hare));
-        while (factor == 1u) {
-            if (max_cycle_length == cycle_length) {
-                tortoise = hare;
-                max_cycle_length *= 2u;
-                cycle_length = 0u;
-            }
-            hare = x_squared_plus_t_mod_n(hare, t, n);
-            ++cycle_length;
-            factor = gcd(n, absolute_diff(tortoise, hare));
-        }
-        if (factor < n) {
+        const std::uintmax_t factor = pollard_rho_attempt(n, t);
+        if (factor != n) {
             return factor;
         }
     }

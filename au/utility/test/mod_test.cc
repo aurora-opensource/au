@@ -15,6 +15,7 @@
 #include "au/utility/mod.hh"
 
 #include <limits>
+#include <vector>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -59,6 +60,40 @@ TEST(MulMod, HandlesHugeNumbers) {
     EXPECT_THAT(mul_mod(JUST_UNDER_HALF, 10u, MAX), Eq(MAX - 5u));
 }
 
+TEST(MulMod, HandlesProductOfTwoLargeOperands) {
+    // When both operands are large, their product overflows `uint64_t`, exercising the
+    // wide-multiply path.  We use identities that hold for any modulus: since `(n - k)` is
+    // congruent to `-k`, we have e.g. `(n - 1) * (n - 1)` congruent to `1`, and `(n - 3) * (n - 5)`
+    // to `15`.
+    EXPECT_THAT(mul_mod(MAX - 1u, MAX - 1u, MAX), Eq(1u));
+    EXPECT_THAT(mul_mod(MAX - 1u, MAX - 2u, MAX), Eq(2u));
+    EXPECT_THAT(mul_mod(MAX - 3u, MAX - 5u, MAX), Eq(15u));
+}
+
+TEST(MulModViaDoubling, HandlesSimpleCases) {
+    EXPECT_THAT(mul_mod_via_doubling(6u, 7u, 10u), Eq(2u));
+    EXPECT_THAT(mul_mod_via_doubling(13u, 11u, 50u), Eq(43u));
+}
+
+TEST(MulModViaDoubling, MatchesMulModIncludingOverflowingProducts) {
+    // The portable fallback must agree with `mul_mod` everywhere -- including the cases that
+    // overflow `uint64_t` -- because it is the implementation used on compilers without a 128-bit
+    // integer type.  We cross-check it directly so it stays covered even where `mul_mod` itself
+    // takes the wide-multiply path instead.
+    const std::vector<uint64_t> moduli{2u, 3u, 7u, 11u, 8'723'493u, MAX / 2u, MAX - 1u, MAX};
+    for (const auto &n : moduli) {
+        const std::vector<uint64_t> values{0u, 1u, 2u, n / 3u, n / 2u, n - 2u, n - 1u};
+        for (const auto &a : values) {
+            for (const auto &b : values) {
+                if (a < n && b < n) {
+                    EXPECT_THAT(mul_mod_via_doubling(a, b, n), Eq(mul_mod(a, b, n)))
+                        << "a=" << a << ", b=" << b << ", n=" << n;
+                }
+            }
+        }
+    }
+}
+
 TEST(HalfModOdd, HalvesEvenNumbers) {
     EXPECT_THAT(half_mod_odd(0u, 11u), Eq(0u));
     EXPECT_THAT(half_mod_odd(10u, 11u), Eq(5u));
@@ -78,8 +113,8 @@ TEST(HalfModOdd, SameAsMultiplyingByCeilOfNOver2WhenNIsOdd) {
     //
     // In principle, we could replace our `half_mod_odd` implementation with this, and it would have
     // the same preconditions, but there's a chance it would be less efficient (because `mul_mod`
-    // may recurse multiple times).  Also, keeping them separate lets us use this test case as an
-    // independent check.
+    // does more work than a simple halving).  Also, keeping them separate lets us use this test
+    // case as an independent check.
     std::vector<uint64_t> n_values{9u, 11u, 8723493u, MAX};
     for (const auto &n : n_values) {
         const auto half_n = n / 2u + 1u;
