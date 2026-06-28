@@ -64,12 +64,70 @@ struct Vec {
     }
 };
 
+// Minimal expression template mock.  Arithmetic on HeapDouble returns a lightweight HeapExpr that
+// stores a pointer to the source data on the heap, deferring evaluation.  Because HeapDouble
+// heap-allocates, ASAN reliably detects use-after-free if a conversion path lets the source die
+// before the expression is evaluated --- exactly the bug that RefOrScaledCopyIn prevents.
+struct HeapExpr {
+    const double *source;
+    double scale;
+    double eval() const { return *source * scale; }
+
+    friend double operator+(HeapExpr a, HeapExpr b) { return a.eval() + b.eval(); }
+    friend double operator-(HeapExpr a, HeapExpr b) { return a.eval() - b.eval(); }
+};
+
+struct HeapDouble {
+    double *ptr;
+
+    HeapDouble() : ptr(new double(0.0)) {}
+    explicit HeapDouble(double v) : ptr(new double(v)) {}
+    HeapDouble(const HeapDouble &other) : ptr(new double(*other.ptr)) {}
+    HeapDouble(HeapDouble &&other) noexcept : ptr(other.ptr) { other.ptr = nullptr; }
+    HeapDouble &operator=(const HeapDouble &other) {
+        *ptr = *other.ptr;
+        return *this;
+    }
+    HeapDouble &operator=(HeapDouble &&other) noexcept {
+        delete ptr;
+        ptr = other.ptr;
+        other.ptr = nullptr;
+        return *this;
+    }
+    ~HeapDouble() { delete ptr; }
+
+    operator HeapExpr() const { return {ptr, 1.0}; }
+
+    friend HeapExpr operator*(const HeapDouble &v, double s) { return {v.ptr, s}; }
+    friend HeapExpr operator*(double s, const HeapDouble &v) { return {v.ptr, s}; }
+    friend HeapExpr operator/(const HeapDouble &v, double s) { return {v.ptr, 1.0 / s}; }
+
+    friend HeapDouble operator+(const HeapDouble &a, const HeapDouble &b) {
+        return HeapDouble{*a.ptr + *b.ptr};
+    }
+    friend HeapDouble operator-(const HeapDouble &a, const HeapDouble &b) {
+        return HeapDouble{*a.ptr - *b.ptr};
+    }
+};
+
 }  // namespace test_types
+
+template <>
+struct std::numeric_limits<test_types::HeapExpr> : std::numeric_limits<double> {};
+
+template <>
+struct std::numeric_limits<test_types::HeapDouble> : std::numeric_limits<double> {};
 
 namespace au {
 
 template <typename T, std::size_t N>
 struct ScalarOfTrait<test_types::Vec<T, N>> : stdx::type_identity<T> {};
+
+template <>
+struct ScalarOfTrait<test_types::HeapDouble> : stdx::type_identity<double> {};
+
+template <>
+struct ScalarOfTrait<test_types::HeapExpr> : stdx::type_identity<double> {};
 
 using ::testing::DoubleEq;
 using ::testing::DoubleNear;
@@ -141,6 +199,12 @@ constexpr auto days = QuantityMaker<Days>{};
 
 struct PerDay : decltype(UnitInverse<Days>{}) {};
 constexpr auto per_day = QuantityMaker<PerDay>{};
+
+struct Degrees : UnitImpl<Angle> {};
+constexpr auto degrees = QuantityMaker<Degrees>{};
+
+struct Radians : decltype(Degrees{} * mag<180>() / Magnitude<Pi>{}) {};
+constexpr auto radians = QuantityMaker<Radians>{};
 
 template <typename... Us>
 constexpr auto num_units_in_product(UnitProductPack<Us...>) {
@@ -651,6 +715,10 @@ TEST(Quantity, InCanExplicitlyOptOutOfTruncationRiskCheckForExplicitRep) {
 TEST(Quantity, IgnoringOverflowRiskCanProduceOverflow) {
     EXPECT_THAT(seconds(uint8_t{1}).as<uint8_t>(milli(seconds), ignore(OVERFLOW_RISK)),
                 SameTypeAndValue(milli(seconds)(uint8_t{1'000 % 256})));
+}
+
+TEST(Quantity, MixedRepMixedUnitSubtractionWorks) {
+    EXPECT_THAT(radians(1.0) - degrees(57), IsNear(degrees(0), degrees(1)));
 }
 
 TEST(Quantity, IgnoringTruncationRiskCanProduceTruncation) {
@@ -1405,6 +1473,29 @@ TEST(QuantityPassthrough, AssignmentToElementDoesNotCompile) {
     auto q = meters(make_vec(1.0, 2.0, 3.0));
     static_assert(!std::is_assignable<decltype(q[0]), decltype(meters(10.0))>::value, "");
     static_assert(!std::is_assignable<decltype(q(0)), decltype(meters(10.0))>::value, "");
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Mixed-unit arithmetic with expression-template-like rep.
+//
+// These tests exercise RefOrScaledCopyIn by using a rep type (HeapDouble) whose arithmetic returns
+// a lazy proxy (HeapExpr) holding a pointer to the source data.  Under ASAN, the old
+// cast_to_common_type / using_common_type path would trigger heap-use-after-free because it copies
+// the Quantity by value, converts to an expression referencing the copy's data, then destroys
+// the copy before the expression is evaluated.
+
+TEST(MixedUnitExprTemplate, AdditionEvaluatesCorrectly) {
+    // 2 feet + 6 inches = 24 inches + 6 inches = 30 inches.
+    auto q1 = feet(test_types::HeapDouble{2.0});
+    auto q2 = inches(test_types::HeapDouble{6.0});
+    EXPECT_THAT((q1 + q2).in(inches), DoubleEq(30.0));
+}
+
+TEST(MixedUnitExprTemplate, SubtractionEvaluatesCorrectly) {
+    // 3 feet - 12 inches = 36 inches - 12 inches = 24 inches.
+    auto q1 = feet(test_types::HeapDouble{3.0});
+    auto q2 = inches(test_types::HeapDouble{12.0});
+    EXPECT_THAT((q1 - q2).in(inches), DoubleEq(24.0));
 }
 
 }  // namespace au
