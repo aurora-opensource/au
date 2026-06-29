@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-117-g8cd8105
+// Version identifier: 0.5.0-base-118-ga9978ef
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -8358,36 +8358,6 @@ AU_DEVICE_FUNC constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSl
 // Comparing and/or combining Quantities of different types.
 
 namespace detail {
-// Helper to cast this Quantity to its common type with some other Quantity (explicitly supplied).
-//
-// Note that `TargetUnit` is supposed to be the common type of the input Quantity and some other
-// Quantity.  This function should never be called directly; it should only be called by
-// `using_common_type()`.  The program behaviour is undefined if anyone calls this function
-// directly.  (In particular, we explicitly assume that the conversion to the Rep of TargetUnit is
-// not narrowing for the input Quantity.)
-//
-// We would have liked this to just be a simple lambda, but some old compilers sometimes struggle
-// with understanding that the lambda implementation of this can be constexpr.
-template <typename TargetUnit, typename U, typename R>
-AU_DEVICE_FUNC constexpr auto cast_to_common_type(Quantity<U, R> q) {
-    // When we perform a unit conversion to U, we need to make sure the library permits this
-    // conversion *implicitly* for a rep R.  The form `rep_cast<R>(q).as(U{})` achieves
-    // this.  First, we cast the Rep to R (which will typically be the wider of the input Reps).
-    // Then, we use the *unit-only* form of the conversion operator: `as(U{})`, not
-    // `as<R>(U{})`, because only the former actually checks the conversion policy.
-    return rep_cast<typename TargetUnit::Rep>(q).as(TargetUnit::unit);
-}
-
-template <typename T, typename U, typename Func>
-AU_DEVICE_FUNC constexpr auto using_common_type(T t, U u, Func f) {
-    using C = std::common_type_t<T, U>;
-    static_assert(
-        std::is_same<typename C::Rep, std::common_type_t<typename T::Rep, typename U::Rep>>::value,
-        "Rep of common type is not common type of Reps (this should never occur)");
-
-    return f(cast_to_common_type<C>(t), cast_to_common_type<C>(u));
-}
-
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto convert_and_compare(const Quantity<U1, R1> &q1,
                                                   const Quantity<U2, R2> &q2) {
@@ -8426,14 +8396,105 @@ AU_DEVICE_FUNC constexpr bool operator>=(const Quantity<U1, R1> &q1, const Quant
     return detail::convert_and_compare<detail::GreaterEqual>(q1, q2);
 }
 
+namespace detail {
+
+//
+// The explicit rep in which to *host* an operand's unit conversion, or `void` for implicit rep.
+//
+// When two Quantities with different units are combined, one or both operands must be scaled by
+// some conversion magnitude `M`.  That scaling has to be carried out in some rep.  By default we
+// use the operand's own rep `R` (signaled by `void` here), which preserves expression-template
+// laziness for reps such as Eigen.  We relocate to a different "host" rep only when that host is a
+// *safer* place to apply `M` -- e.g. wide enough to avoid integer overflow, or able to represent a
+// non-integer `M` that `R` cannot.
+//
+// The decision is fundamentally per-operand and asymmetric: it depends on the operand's own rep
+// `R`, the conversion magnitude `M` it undergoes, and the other operand's rep `OtherR`.  Today, we
+// simply use `std::common_type`.  `M` is not consulted yet; it is part of the signature because a
+// future, rep-agnostic overflow/truncation risk model will need it to compare "risk of applying `M`
+// in `R`" against "risk of applying `M` in the host".
+//
+// Today we can only reliably reason about this for arithmetic reps: we relocate to
+// `std::common_type_t<R, OtherR>` when it differs from `R` (the usual arithmetic conversions yield
+// a type with more headroom, and make a non-integer `M` representable).  For non-arithmetic reps we
+// lack both a risk model and a meaningful common rep, so we never relocate yet.
+//
+template <typename R,
+          typename M,
+          typename OtherR,
+          bool BothArithmetic =
+              stdx::conjunction<std::is_arithmetic<R>, std::is_arithmetic<OtherR>>::value>
+struct ExplicitRepForImpl : stdx::type_identity<void> {};
+template <typename R, typename M, typename OtherR>
+struct ExplicitRepForImpl<R, M, OtherR, true>
+    : std::conditional<std::is_same<std::common_type_t<R, OtherR>, R>::value,
+                       void,
+                       std::common_type_t<R, OtherR>> {};
+template <typename R, typename M, typename OtherR>
+using ExplicitRepFor = typename ExplicitRepForImpl<R, M, OtherR>::type;
+
+//
+// `ref_or_scaled_copy<OtherR>(target, q)` converts `q` to `target`, choosing how to host the
+// conversion:
+//   - `q.data_in(target)` (a reference) when units are quantity-equivalent (no conversion);
+//   - `q.in<Host>(target)` some explicit "host" rep, `Host`, for cases where we determine that
+//     implicit-rep is not good enough (e.g., it needlessly increases overflow or truncation risk).
+//   - `q.in(target)` (implicit) otherwise.  Note that this pathway preserves expression templates
+//     (laziness) in the case of libraries, such as Eigen, which use this approach.
+//
+// `OtherR` is the rep of the *other* operand in the enclosing operation; see `ExplicitRepFor`.
+//
+
+// Scaled conversion, given the already-decided host rep (`void` => convert implicitly).
+template <typename Host, typename TargetUnit, typename U, typename R>
+struct ScaledCopy {  // Host is a concrete rep: materialize into it.
+    AU_DEVICE_FUNC constexpr auto operator()(const Quantity<U, R> &q) const {
+        return q.template in<Host>(TargetUnit{}, check_for(ALL_RISKS));
+    }
+};
+template <typename TargetUnit, typename U, typename R>
+struct ScaledCopy<void, TargetUnit, U, R> {  // No host rep: convert implicitly (lazy).
+    AU_DEVICE_FUNC constexpr auto operator()(const Quantity<U, R> &q) const {
+        return q.in(TargetUnit{});
+    }
+};
+
+// Top level: return a reference when no conversion is needed; otherwise, delegate to ScaledCopy.
+template <typename OtherR,
+          typename TargetUnit,
+          typename U,
+          typename R,
+          bool IsUnitEquivalent = are_units_quantity_equivalent(TargetUnit{}, U{})>
+struct RefOrScaledCopy {
+    static_assert(IsUnitEquivalent,
+                  "Primary template should only be instantiated when units are equivalent");
+    AU_DEVICE_FUNC constexpr decltype(auto) operator()(const Quantity<U, R> &q) const {
+        return q.data_in(TargetUnit{});
+    }
+};
+template <typename OtherR, typename TargetUnit, typename U, typename R>
+struct RefOrScaledCopy<OtherR, TargetUnit, U, R, false>
+    : ScaledCopy<ExplicitRepFor<R, UnitRatio<U, TargetUnit>, OtherR>, TargetUnit, U, R> {};
+
+template <typename OtherR, typename TargetUnit, typename U, typename R>
+AU_DEVICE_FUNC constexpr decltype(auto) ref_or_scaled_copy(TargetUnit, const Quantity<U, R> &q) {
+    return RefOrScaledCopy<OtherR, TargetUnit, U, R>{}(q);
+}
+
+}  // namespace detail
+
 // Addition and subtraction functions for compatible Quantity types.
 template <typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto operator+(const Quantity<U1, R1> &q1, const Quantity<U2, R2> &q2) {
-    return detail::using_common_type(q1, q2, detail::plus);
+    using U = CommonUnit<U1, U2>;
+    return make_quantity<U>(detail::ref_or_scaled_copy<R2>(U{}, q1) +
+                            detail::ref_or_scaled_copy<R1>(U{}, q2));
 }
 template <typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto operator-(const Quantity<U1, R1> &q1, const Quantity<U2, R2> &q2) {
-    return detail::using_common_type(q1, q2, detail::minus);
+    using U = CommonUnit<U1, U2>;
+    return make_quantity<U>(detail::ref_or_scaled_copy<R2>(U{}, q1) -
+                            detail::ref_or_scaled_copy<R1>(U{}, q2));
 }
 
 // Mixed-type operations with a left-Quantity, and right-Quantity-equivalent.
@@ -10985,8 +11046,15 @@ AU_DEVICE_FUNC constexpr auto int_round_as_explicit_rep_impl(RoundingUnits, QTyp
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
     auto trunced = val.template as<OutputRep>(target, ignore(TRUNCATION_RISK));
+
+    // Compute the fractional remainder `val - trunced` in an intermediate rep that is both precise
+    // enough to preserve `val`'s fractional part (so it must be at least as precise as `R`) and
+    // wide enough to hold the (already truncated) integer value (so it must cover `OutputRep`).
+    using CalcRep = typename detail::IntermediateRep<R, OutputRep>::type;
+
     trunced.data_in(target) +=
-        (val - trunced).template in<OutputRep>(target / mag<2>(), ignore(TRUNCATION_RISK));
+        (rep_cast<CalcRep>(val) - rep_cast<CalcRep>(trunced))
+            .template in<OutputRep>(target / mag<2>(), ignore(TRUNCATION_RISK));
     return trunced;
 }
 // (a) Version for Quantity.
