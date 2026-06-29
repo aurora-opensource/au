@@ -24,7 +24,7 @@ namespace au {
 //
 // Use this to materialize lazy expressions before the operands go out of scope.
 template <typename U, typename R>
-auto eval(Quantity<U, R> q) {
+auto eval(const Quantity<U, R> &q) {
     return make_quantity<U>(q.data_in(U{}).eval());
 }
 
