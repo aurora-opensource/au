@@ -67,7 +67,7 @@ struct Vec {
 // Minimal expression template mock.  Arithmetic on HeapDouble returns a lightweight HeapExpr that
 // stores a pointer to the source data on the heap, deferring evaluation.  Because HeapDouble
 // heap-allocates, ASAN reliably detects use-after-free if a conversion path lets the source die
-// before the expression is evaluated --- exactly the bug that RefOrScaledCopyIn prevents.
+// before the expression is evaluated --- exactly the bug that ref_or_scaled_copy prevents.
 struct HeapExpr {
     const double *source;
     double scale;
@@ -112,11 +112,13 @@ struct HeapDouble {
 
 }  // namespace test_types
 
+namespace std {
 template <>
-struct std::numeric_limits<test_types::HeapExpr> : std::numeric_limits<double> {};
+struct numeric_limits<test_types::HeapExpr> : numeric_limits<double> {};
 
 template <>
-struct std::numeric_limits<test_types::HeapDouble> : std::numeric_limits<double> {};
+struct numeric_limits<test_types::HeapDouble> : numeric_limits<double> {};
+}  // namespace std
 
 namespace au {
 
@@ -1478,7 +1480,7 @@ TEST(QuantityPassthrough, AssignmentToElementDoesNotCompile) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Mixed-unit arithmetic with expression-template-like rep.
 //
-// These tests exercise RefOrScaledCopyIn by using a rep type (HeapDouble) whose arithmetic returns
+// These tests exercise ref_or_scaled_copy by using a rep type (HeapDouble) whose arithmetic returns
 // a lazy proxy (HeapExpr) holding a pointer to the source data.  Under ASAN, the old
 // cast_to_common_type / using_common_type path would trigger heap-use-after-free because it copies
 // the Quantity by value, converts to an expression referencing the copy's data, then destroys

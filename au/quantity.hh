@@ -953,13 +953,15 @@ using ExplicitRepFor = typename ExplicitRepForImpl<R, M, OtherR>::type;
 // Scaled conversion, given the already-decided host rep (`void` => convert implicitly).
 template <typename Host, typename TargetUnit, typename U, typename R>
 struct ScaledCopy {  // Host is a concrete rep: materialize into it.
-    constexpr auto operator()(const Quantity<U, R> &q) const {
-        return q.template in<Host>(TargetUnit{});
+    AU_DEVICE_FUNC constexpr auto operator()(const Quantity<U, R> &q) const {
+        return q.template in<Host>(TargetUnit{}, check_for(ALL_RISKS));
     }
 };
 template <typename TargetUnit, typename U, typename R>
 struct ScaledCopy<void, TargetUnit, U, R> {  // No host rep: convert implicitly (lazy).
-    constexpr auto operator()(const Quantity<U, R> &q) const { return q.in(TargetUnit{}); }
+    AU_DEVICE_FUNC constexpr auto operator()(const Quantity<U, R> &q) const {
+        return q.in(TargetUnit{});
+    }
 };
 
 // Top level: return a reference when no conversion is needed; otherwise, delegate to ScaledCopy.
@@ -971,7 +973,7 @@ template <typename OtherR,
 struct RefOrScaledCopy {
     static_assert(IsUnitEquivalent,
                   "Primary template should only be instantiated when units are equivalent");
-    constexpr decltype(auto) operator()(const Quantity<U, R> &q) const {
+    AU_DEVICE_FUNC constexpr decltype(auto) operator()(const Quantity<U, R> &q) const {
         return q.data_in(TargetUnit{});
     }
 };
@@ -980,7 +982,7 @@ struct RefOrScaledCopy<OtherR, TargetUnit, U, R, false>
     : ScaledCopy<ExplicitRepFor<R, UnitRatio<U, TargetUnit>, OtherR>, TargetUnit, U, R> {};
 
 template <typename OtherR, typename TargetUnit, typename U, typename R>
-constexpr decltype(auto) ref_or_scaled_copy(TargetUnit, const Quantity<U, R> &q) {
+AU_DEVICE_FUNC constexpr decltype(auto) ref_or_scaled_copy(TargetUnit, const Quantity<U, R> &q) {
     return RefOrScaledCopy<OtherR, TargetUnit, U, R>{}(q);
 }
 
