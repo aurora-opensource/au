@@ -33,6 +33,7 @@ bazel_dep(
 
 # Primary deps that we use directly.
 bazel_dep(name = "bazel_skylib", version = "1.8.1", dev_dependency = True)
+bazel_dep(name = "eigen", version = "5.0.0", dev_dependency = True)
 bazel_dep(name = "fmt", version = "11.0.2", dev_dependency = True)
 bazel_dep(name = "gcc_toolchain", version = "0.9.0", dev_dependency = True)
 bazel_dep(name = "platforms", version = "1.0.0", dev_dependency = True)
