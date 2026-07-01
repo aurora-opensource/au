@@ -44,29 +44,47 @@ constexpr uint64_t sub_mod(uint64_t a, uint64_t b, uint64_t n) {
     }
 }
 
+// (a * b) % n, computed without ever overflowing `uint64_t`.
+//
+// This is a portable fallback for `mul_mod` (below), used when no wider integer type is available.
+// It accumulates the product via repeated doubling ("Russian peasant" multiplication), reducing
+// modulo `n` after every step so that no intermediate value can overflow.  It is bounded to
+// `O(log b)` iterations, which is what makes it cheap enough to use during compile-time prime
+// factorization (see https://github.com/aurora-opensource/au/issues/328).
+//
+// Precondition: (a < n).  (Note: unlike `mul_mod`, `b` may take any value.)
+constexpr uint64_t mul_mod_via_doubling(uint64_t a, uint64_t b, uint64_t n) {
+    uint64_t result = 0u;
+    while (b > 0u) {
+        if (b & 1u) {
+            result = add_mod(result, a, n);
+        }
+        a = add_mod(a, a, n);
+        b >>= 1u;
+    }
+    return result;
+}
+
 // (a * b) % n
 //
 // Precondition: (a < n).
 // Precondition: (b < n).
 constexpr uint64_t mul_mod(uint64_t a, uint64_t b, uint64_t n) {
-    // Start by trying the simplest case, where everything "fits".
+    // Start by trying the simplest case, where the product "fits" in a `uint64_t`.
     if (b == 0u || a < std::numeric_limits<uint64_t>::max() / b) {
         return (a * b) % n;
     }
 
-    // We know the "negative" result is smaller, because we've taken as many copies of `a` as will
-    // fit into `n`.  So, do the reduced calculation in "negative space", and then transform the
-    // result back at the end.
-    uint64_t chunk_size = n / a;
-    uint64_t num_chunks = b / chunk_size;
-    uint64_t negative_chunk = n - (a * chunk_size);  // == n % a  (but this should be cheaper)
-    uint64_t chunk_result = n - mul_mod(negative_chunk, num_chunks, n);
-
-    // Compute the leftover.  (We don't need to recurse, because we know it will fit.)
-    uint64_t leftover = b - num_chunks * chunk_size;
-    uint64_t leftover_result = (a * leftover) % n;
-
-    return add_mod(chunk_result, leftover_result, n);
+#if defined(__SIZEOF_INT128__)
+    // If the compiler provides a 128-bit integer type, we can form the full-width product and
+    // reduce it in a single step.  This is dramatically cheaper at compile time than the portable
+    // fallback, which matters because `mul_mod` dominates the cost of compile-time prime
+    // factorization (see https://github.com/aurora-opensource/au/issues/328).
+    return static_cast<uint64_t>((static_cast<__uint128_t>(a) * static_cast<__uint128_t>(b)) % n);
+#else
+    // No wider integer type is available (e.g. MSVC), so fall back to the portable algorithm.
+    return mul_mod_via_doubling(a, b, n);
+#endif
 }
 
 // (a / 2) % n
