@@ -14,6 +14,9 @@
 
 #pragma once
 
+#include <type_traits>
+#include <utility>
+
 #include "au/config.hh"
 #include "au/magnitude.hh"
 
@@ -84,9 +87,18 @@ template <typename T, typename U>
 struct OpOutputImpl<StaticCast<T, U>> : stdx::type_identity<U> {};
 
 // `StaticCast<T, U>` operation:
+//
+// This is an eager (materializing) operation: it produces a fresh `U`.  We take the input by
+// forwarding reference and forward it into the cast, so that when the chain hands us an rvalue
+// (e.g. the materialized result of a previous step), we *move* rather than copy a heap-backed rep.
 template <typename T, typename U>
 struct StaticCast {
-    static AU_DEVICE_FUNC constexpr U apply_to(const T &value) { return static_cast<U>(value); }
+    template <typename V>
+    static AU_DEVICE_FUNC constexpr U apply_to(V &&value) {
+        static_assert(std::is_same<std::decay_t<V>, std::decay_t<T>>::value,
+                      "Internal library error: input type does not match operation input");
+        return static_cast<U>(std::forward<V>(value));
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,9 +111,16 @@ template <typename T, typename U>
 struct OpOutputImpl<ImplicitConversion<T, U>> : stdx::type_identity<U> {};
 
 // `ImplicitConversion<T, U>` operation:
+//
+// Like `StaticCast`, this is eager: forward the input so an rvalue is moved into the produced `U`.
 template <typename T, typename U>
 struct ImplicitConversion {
-    static AU_DEVICE_FUNC constexpr U apply_to(const T &value) { return value; }
+    template <typename V>
+    static AU_DEVICE_FUNC constexpr U apply_to(V &&value) {
+        static_assert(std::is_same<std::decay_t<V>, std::decay_t<T>>::value,
+                      "Internal library error: input type does not match operation input");
+        return std::forward<V>(value);
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,9 +146,19 @@ struct MultiplyTypeBy {
 };
 
 // Specialization for identity magnitude: just return the value unchanged.
+//
+// This is eager (it produces a `T` by value), so forward the input: an rvalue coming from a prior
+// step in the chain is moved through rather than deep-copied.  (The non-identity `MultiplyTypeBy`
+// above stays a `const T &` overload on purpose: it returns a *lazy* expression that refers to its
+// input, so it must not take ownership of --- or dangle past --- that input.)
 template <typename T>
 struct MultiplyTypeBy<T, Magnitude<>> {
-    static AU_DEVICE_FUNC constexpr T apply_to(const T &value) { return value; }
+    template <typename V>
+    static AU_DEVICE_FUNC constexpr T apply_to(V &&value) {
+        static_assert(std::is_same<std::decay_t<V>, std::decay_t<T>>::value,
+                      "Internal library error: input type does not match operation input");
+        return std::forward<V>(value);
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,17 +209,24 @@ struct OpOutputImpl<OpSequenceImpl<Op, Ops...>>
 template <typename OnlyOp>
 struct OpOutputImpl<OpSequenceImpl<OnlyOp>> : stdx::type_identity<OpOutput<OnlyOp>> {};
 
+// We thread the value through the chain by forwarding reference.  Each step's result is a prvalue
+// (for eager steps) or a lazy expression referring to a still-live operand; forwarding lets the
+// next step *move* an eager result rather than copy it.  The very first step still receives the
+// caller's lvalue (e.g. a `Quantity`'s stored member), so it copies/converts exactly once --- that
+// inherent conversion pass is unavoidable --- while every subsequent step moves.
 template <typename Op>
 struct OpSequenceImpl<Op> {
-    static AU_DEVICE_FUNC constexpr auto apply_to(const OpInput<OpSequenceImpl> &value) {
-        return Op::apply_to(value);
+    template <typename V>
+    static AU_DEVICE_FUNC constexpr auto apply_to(V &&value) {
+        return Op::apply_to(std::forward<V>(value));
     }
 };
 
 template <typename Op, typename... Ops>
 struct OpSequenceImpl<Op, Ops...> {
-    static AU_DEVICE_FUNC constexpr auto apply_to(const OpInput<OpSequenceImpl> &value) {
-        return OpSequenceImpl<Ops...>::apply_to(Op::apply_to(value));
+    template <typename V>
+    static AU_DEVICE_FUNC constexpr auto apply_to(V &&value) {
+        return OpSequenceImpl<Ops...>::apply_to(Op::apply_to(std::forward<V>(value)));
     }
 };
 

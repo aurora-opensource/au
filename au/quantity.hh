@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <type_traits>
 #include <utility>
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
@@ -38,15 +39,35 @@ namespace au {
 //
 // Make a Quantity of the given Unit, which has this value as measured in the Unit.
 //
+// lvalue: copy.  (Never move something the caller still owns; also the only thing that works for a
+// packed field, which can't bind to a reference.)
 template <typename UnitT, typename T>
-AU_DEVICE_FUNC constexpr auto make_quantity(T value) {
+AU_DEVICE_FUNC constexpr auto make_quantity(const T &value) {
     return QuantityMaker<UnitT>{}(value);
 }
 
+// rvalue: move.
+template <typename UnitT,
+          typename T,
+          typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
+AU_DEVICE_FUNC constexpr auto make_quantity(T &&value) {
+    return QuantityMaker<UnitT>{}(std::move(value));
+}
+
+// lvalue: copy.  (See `make_quantity` above.)
 template <typename Unit, typename T>
-AU_DEVICE_FUNC constexpr auto make_quantity_unless_unitless(T value) {
+AU_DEVICE_FUNC constexpr auto make_quantity_unless_unitless(const T &value) {
     return std::conditional_t<IsUnitlessUnit<Unit>::value, stdx::identity, QuantityMaker<Unit>>{}(
         value);
+}
+
+// rvalue: move.
+template <typename Unit,
+          typename T,
+          typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
+AU_DEVICE_FUNC constexpr auto make_quantity_unless_unitless(T &&value) {
+    return std::conditional_t<IsUnitlessUnit<Unit>::value, stdx::identity, QuantityMaker<Unit>>{}(
+        std::move(value));
 }
 
 // Trait to check whether two Quantity types are exactly equivalent.
@@ -161,7 +182,7 @@ class Quantity {
               typename OtherRep,
               typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>>
     AU_DEVICE_FUNC constexpr Quantity(
-        Quantity<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
+        const Quantity<OtherUnit, OtherRep> &other)  // NOLINT(runtime/explicit)
         : value_{other.template in_impl<detail::UseImplicitConversion, Rep>(
               UnitT{}, check_for(ALL_RISKS))} {}
 
@@ -171,14 +192,15 @@ class Quantity {
               typename Enable = EnableIfImplicitOkIs<false, OtherUnit, OtherRep>,
               typename ThisUnusedTemplateParameterDistinguishesUsFromTheAboveConstructor = void>
     // Deleted: use `.as<NewRep>(new_unit)` to force a cast.
-    explicit constexpr Quantity(Quantity<OtherUnit, OtherRep> other) = delete;
+    explicit constexpr Quantity(const Quantity<OtherUnit, OtherRep> &other) = delete;
 
     // Constructor for another Quantity with an explicit conversion risk policy.
     template <typename OtherUnit,
               typename OtherRep,
               typename RiskPolicyT,
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
-    AU_DEVICE_FUNC constexpr Quantity(Quantity<OtherUnit, OtherRep> other, RiskPolicyT policy)
+    AU_DEVICE_FUNC constexpr Quantity(const Quantity<OtherUnit, OtherRep> &other,
+                                      RiskPolicyT policy)
         : value_{other.template in<Rep>(UnitT{}, policy)} {}
 
     // Construct this Quantity with a value of exactly Zero.
@@ -618,7 +640,7 @@ class Quantity {
         return Op::apply_to(value_);
     }
 
-    AU_DEVICE_FUNC constexpr Quantity(Rep value) : value_{value} {}
+    AU_DEVICE_FUNC constexpr Quantity(Rep value) : value_{std::move(value)} {}
 
     Rep value_{};
 };
@@ -738,9 +760,16 @@ struct QuantityMaker {
     using Unit = UnitT;
     static constexpr auto unit = Unit{};
 
+    // lvalue: copy. (See `make_quantity` above.)
     template <typename T>
-    AU_DEVICE_FUNC constexpr Quantity<Unit, T> operator()(T value) const {
-        return {value};
+    AU_DEVICE_FUNC constexpr Quantity<Unit, std::decay_t<T>> operator()(const T &value) const {
+        return Quantity<Unit, std::decay_t<T>>{value};
+    }
+
+    // rvalue: move.
+    template <typename T, typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
+    AU_DEVICE_FUNC constexpr Quantity<Unit, std::decay_t<T>> operator()(T &&value) const {
+        return Quantity<Unit, std::decay_t<T>>{std::move(value)};
     }
 
     template <typename U, typename R>
