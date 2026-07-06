@@ -81,11 +81,6 @@ constexpr uint64_t mul_mod_via_chunking(uint64_t a, uint64_t b, uint64_t n) {
 // Precondition: (a < n).
 // Precondition: (b < n).
 constexpr uint64_t mul_mod(uint64_t a, uint64_t b, uint64_t n) {
-    // Start by trying the simplest case, where the product "fits" in a `uint64_t`.
-    if (b == 0u || a < std::numeric_limits<uint64_t>::max() / b) {
-        return (a * b) % n;
-    }
-
 #if defined(__SIZEOF_INT128__)
     // If the compiler provides a 128-bit integer type, we can form the full-width product and
     // reduce it in a single step.  This is dramatically cheaper at compile time than the portable
