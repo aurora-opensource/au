@@ -748,8 +748,15 @@ AU_DEVICE_FUNC constexpr auto int_round_as_explicit_rep_impl(RoundingUnits, QTyp
 
     constexpr auto target = AppropriateAssociatedUnit<QType, RoundingUnits>{};
     auto trunced = val.template as<OutputRep>(target, ignore(TRUNCATION_RISK));
+
+    // Compute the fractional remainder `val - trunced` in an intermediate rep that is both precise
+    // enough to preserve `val`'s fractional part (so it must be at least as precise as `R`) and
+    // wide enough to hold the (already truncated) integer value (so it must cover `OutputRep`).
+    using CalcRep = typename detail::IntermediateRep<R, OutputRep>::type;
+
     trunced.data_in(target) +=
-        (val - trunced).template in<OutputRep>(target / mag<2>(), ignore(TRUNCATION_RISK));
+        (rep_cast<CalcRep>(val) - rep_cast<CalcRep>(trunced))
+            .template in<OutputRep>(target / mag<2>(), ignore(TRUNCATION_RISK));
     return trunced;
 }
 // (a) Version for Quantity.
