@@ -276,6 +276,21 @@ TEST(QuantityMaker, CreatesAppropriateQuantityIfCalled) {
     EXPECT_THAT(yards(3.14).in(yards), Eq(3.14));
 }
 
+// Regression test: a bitfield (packed member) cannot bind to a non-const reference, so the maker
+// and the `make_quantity`-style free functions must accept it via their `const T&` overload.  This
+// once failed to compile.
+TEST(QuantityMaker, WorksOnBitfieldMembers) {
+    struct Packed {
+        int meters_value : 20;
+        int feet_value : 20;
+    };
+    Packed p{5, 7};
+
+    EXPECT_THAT(meters(p.meters_value), SameTypeAndValue(meters(5)));
+    EXPECT_THAT(make_quantity<Meters>(p.meters_value), SameTypeAndValue(meters(5)));
+    EXPECT_THAT(make_quantity_unless_unitless<Feet>(p.feet_value), SameTypeAndValue(feet(7)));
+}
+
 TEST(QuantityMaker, CanBeMultipliedBySingularUnitToGetMakerOfProductUnit) {
     StaticAssertTypeEq<decltype(hour * feet), QuantityMaker<UnitProduct<Feet, Hours>>>();
 }

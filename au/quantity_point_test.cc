@@ -145,6 +145,19 @@ TEST(QuantityPoint, CanGetValueInDifferentUnits) {
     EXPECT_THAT(p.in(centi(meters_pt)), SameTypeAndValue(300));
 }
 
+// Regression test: a bitfield (packed member) cannot bind to a non-const reference, so the point
+// maker and `make_quantity_point` must accept it via their `const T&` overload.  This once failed
+// to compile.
+TEST(QuantityPointMaker, WorksOnBitfieldMembers) {
+    struct Packed {
+        int value : 20;
+    };
+    Packed p{5};
+
+    EXPECT_THAT(meters_pt(p.value), SameTypeAndValue(meters_pt(5)));
+    EXPECT_THAT(make_quantity_point<Meters>(p.value), SameTypeAndValue(meters_pt(5)));
+}
+
 TEST(QuantityPoint, IntermediateTypeIsSignedIfExplicitRepIsSigned) {
     EXPECT_THAT(milli(kelvins_pt)(0u).coerce_as<int>(celsius_pt),
                 SameTypeAndValue(celsius_pt(-273)));

@@ -33,3 +33,15 @@ cc_test(
         "@googletest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "materialization_copy_count_test",
+    size = "small",
+    srcs = ["materialization_copy_count_test.cc"],
+    deps = [
+        ":eigen",
+        "//au",
+        "//au:testing",
+        "@googletest//:gtest_main",
+    ],
+)
