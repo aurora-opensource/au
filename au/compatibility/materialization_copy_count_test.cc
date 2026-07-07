@@ -94,10 +94,12 @@ class Tracked {
     // requirement Au's arithmetic operators place on any rep, met by Eigen out of the box).  Each
     // builds a fresh `Tracked`, so neither is a copy of an existing one.
     Tracked operator+(const Tracked &other) const {
-        std::vector<double> out = data_;
-        for (std::size_t i = 0; i < out.size(); ++i) {
-            out[i] += other.data_[i];
-        }
+        std::vector<double> out(data_.size());
+        std::transform(data_.begin(),
+                       data_.end(),
+                       other.data_.begin(),
+                       out.begin(),
+                       std::plus<double>{});
         return Tracked{std::move(out)};
     }
     Tracked operator-(const Tracked &other) const {
