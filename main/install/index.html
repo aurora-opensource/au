@@ -389,6 +389,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="bazel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#legacy-workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Legacy WORKSPACE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2590,70 +2607,10 @@ packages are also the quickest way to start playing with the library.</p>
 <p>Here are the instructions for each installation method we support.</p>
 <h3 id="full">Full library installation<a class="headerlink" href="#full" title="Permanent link">&para;</a></h3>
 <h4 id="bazel">bazel<a class="headerlink" href="#bazel" title="Permanent link">&para;</a></h4>
-<ol>
-<li>
-<p><strong>Choose your Au version</strong>.</p>
-<ul>
-<li>This can be a tag, or a commit hash.  Let&rsquo;s take <code>0.3.5</code> as an example.</li>
-</ul>
-</li>
-<li>
-<p><strong>Form the URL to the archive</strong>.</p>
-<ul>
-<li>For <code>0.3.5</code>, this would be:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>https://github.com/aurora-opensource/au/releases/download/0.3.5/au-0.3.5.tar.gz
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                       NOTE: Your au version ID goes HERE ^^^^^    ^^^^^
-</code></pre></div></li>
-</ul>
-</li>
-<li>
-<p><strong>Compute your SHA256 hash</strong>.</p>
-<ol>
-<li>Follow the URL from the previous step to download the archive.</li>
-<li>Compute the SHA256 hash: <code>sha256sum au-0.3.5.tar.gz</code></li>
-<li>The first token that appears is the hash.  Save it for the next step.</li>
-</ol>
-</li>
-<li>
-<p><strong>Add <code>http_archive</code> rule to <code>WORKSPACE</code></strong>.</p>
-<ul>
-<li>Follow this pattern:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">http_archive</span><span class="p">(</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">sha256</span> <span class="o">=</span> <span class="s2">&quot;7ec826dc42968dc1633de56e4f9d06e70de73e820d2ac4788e8453343a622c9b&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">strip_prefix</span> <span class="o">=</span> <span class="s2">&quot;au-0.3.5&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://github.com/aurora-opensource/au/releases/download/0.3.5/au-0.3.5.tar.gz&quot;</span><span class="p">],</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">)</span>
-</code></pre></div></li>
-<li>In particular, here&rsquo;s how to fill out the fields:<ul>
-<li><code>sha256</code>: Use the SHA256 hash you got from step 3.</li>
-<li><code>strip_prefix</code>: write <code>"au-0.3.5"</code>, except use your ID from step 1 instead of <code>0.3.5</code>.</li>
-<li><code>urls</code>: This should be a list, whose only entry is the URL you formed in step 2.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
-<details class="note">
-<summary>For legacy WORKSPACE users: <code>@au//au:testing</code> and googletest</summary>
-<p><strong>This note applies only to legacy WORKSPACE users.</strong>  If you use bzlmod, you can ignore this.</p>
-<p>The <code>@au//au:testing</code> target depends on googletest via the <code>@googletest</code> repository name.  If
-your WORKSPACE defines googletest with a different name (such as <code>@com_google_googletest</code>),
-you&rsquo;ll need to add a <code>repo_mapping</code> to your Au dependency:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">http_archive</span><span class="p">(</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="c1"># ... other fields ...</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">repo_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;@googletest&quot;</span><span class="p">:</span> <span class="s2">&quot;@com_google_googletest&quot;</span><span class="p">},</span>  <span class="c1"># Map to your googletest name</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">)</span>
+<p>Au is available through the <a href="https://registry.bazel.build/modules/au">Bazel Central Registry</a>.
+Choose your version (take <code>0.5.1</code> as an example) and the dependency to your <code>MODULE.bazel</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.5.1&quot;</span><span class="p">)</span>
 </code></pre></div>
-<p>Or for <code>local_repository</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">local_repository</span><span class="p">(</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;path/to/au&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">repo_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;@googletest&quot;</span><span class="p">:</span> <span class="s2">&quot;@com_google_googletest&quot;</span><span class="p">},</span>  <span class="c1"># Map to your googletest name</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">)</span>
-</code></pre></div>
-</details>
 <p>At this point, the Au library is installed, and you can use it in your project!</p>
 <p>Here are the headers provided by each Au target.  To use, add the entry from the &ldquo;Dependency&rdquo; column
 to your <code>deps</code> attribute, and include the appropriate files.</p>
@@ -2688,6 +2645,71 @@ to your <code>deps</code> attribute, and include the appropriate files.</p>
 </tr>
 </tbody>
 </table>
+<h5 id="legacy-workspace">Legacy <code>WORKSPACE</code><a class="headerlink" href="#legacy-workspace" title="Permanent link">&para;</a></h5>
+<ol>
+<li>
+<p><strong>Choose your Au version</strong>.</p>
+<ul>
+<li>This can be a tag, or a commit hash.  Let&rsquo;s take <code>0.3.5</code> as an example.</li>
+</ul>
+</li>
+<li>
+<p><strong>Form the URL to the archive</strong>.</p>
+<ul>
+<li>For <code>0.3.5</code>, this would be:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>https://github.com/aurora-opensource/au/releases/download/0.3.5/au-0.3.5.tar.gz
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>                       NOTE: Your au version ID goes HERE ^^^^^    ^^^^^
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p><strong>Compute your SHA256 hash</strong>.</p>
+<ol>
+<li>Follow the URL from the previous step to download the archive.</li>
+<li>Compute the SHA256 hash: <code>sha256sum au-0.3.5.tar.gz</code></li>
+<li>The first token that appears is the hash.  Save it for the next step.</li>
+</ol>
+</li>
+<li>
+<p><strong>Add <code>http_archive</code> rule to <code>WORKSPACE</code></strong>.</p>
+<ul>
+<li>Follow this pattern:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">http_archive</span><span class="p">(</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">sha256</span> <span class="o">=</span> <span class="s2">&quot;7ec826dc42968dc1633de56e4f9d06e70de73e820d2ac4788e8453343a622c9b&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">strip_prefix</span> <span class="o">=</span> <span class="s2">&quot;au-0.3.5&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://github.com/aurora-opensource/au/releases/download/0.3.5/au-0.3.5.tar.gz&quot;</span><span class="p">],</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">)</span>
+</code></pre></div></li>
+<li>In particular, here&rsquo;s how to fill out the fields:<ul>
+<li><code>sha256</code>: Use the SHA256 hash you got from step 3.</li>
+<li><code>strip_prefix</code>: write <code>"au-0.3.5"</code>, except use your ID from step 1 instead of <code>0.3.5</code>.</li>
+<li><code>urls</code>: This should be a list, whose only entry is the URL you formed in step 2.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<details class="note">
+<summary><code>@au//au:testing</code> and googletest</summary>
+<p><strong>This note applies only to legacy WORKSPACE users.</strong>  If you use bzlmod, you can ignore this.</p>
+<p>The <code>@au//au:testing</code> target depends on googletest via the <code>@googletest</code> repository name.  If
+your WORKSPACE defines googletest with a different name (such as <code>@com_google_googletest</code>),
+you&rsquo;ll need to add a <code>repo_mapping</code> to your Au dependency:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">http_archive</span><span class="p">(</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="c1"># ... other fields ...</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">repo_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;@googletest&quot;</span><span class="p">:</span> <span class="s2">&quot;@com_google_googletest&quot;</span><span class="p">},</span>  <span class="c1"># Map to your googletest name</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">)</span>
+</code></pre></div>
+<p>Or for <code>local_repository</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">local_repository</span><span class="p">(</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;path/to/au&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">repo_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;@googletest&quot;</span><span class="p">:</span> <span class="s2">&quot;@com_google_googletest&quot;</span><span class="p">},</span>  <span class="c1"># Map to your googletest name</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="p">)</span>
+</code></pre></div>
+</details>
 <h4 id="cmake">CMake<a class="headerlink" href="#cmake" title="Permanent link">&para;</a></h4>
 <p>There are two ways to include the Au library in your CMake project.</p>
 <ol>
@@ -2736,14 +2758,14 @@ below.</p>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Add the following to your <code>CMakeLists.txt</code> file:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">include</span><span class="p">(</span><span class="s">FetchContent</span><span class="p">)</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nb">FetchContent_Declare</span><span class="p">(</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="s">Au</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/aurora-opensource/au</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="s">GIT_TAG</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="w">  </span><span class="c"># Or a specific tag.</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="s">EXCLUDE_FROM_ALL</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">)</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">Au</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">include</span><span class="p">(</span><span class="s">FetchContent</span><span class="p">)</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nb">FetchContent_Declare</span><span class="p">(</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="s">Au</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/aurora-opensource/au</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="s">GIT_TAG</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="w">  </span><span class="c"># Or a specific tag.</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span><span class="s">EXCLUDE_FROM_ALL</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">)</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">Au</span><span class="p">)</span>
 </code></pre></div>
 <p>You should now be able to depend on Au targets, such as <code>Au::au</code> or <code>Au::testing</code>, and include
 headers from them, such as <code>#include "au/au.hh"</code> or <code>#include "au/testing.hh"</code>.</p>
@@ -2752,34 +2774,34 @@ headers from them, such as <code>#include "au/au.hh"</code> or <code>#include "a
 <p>Before you can use <code>find_package</code>, you need to install the library to your system.  This means
 cloning the repo, building the library, running the tests, and installing it.</p>
 <p>First, clone the repository.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/aurora-opensource/au.git
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nb">cd</span><span class="w"> </span>au
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/aurora-opensource/au.git
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nb">cd</span><span class="w"> </span>au
 </code></pre></div>
 <p>If you want a specific release, check out the tag you want.  Note that the first version of Au
 that supports CMake is 0.3.5.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Optional, but recommended:</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>git<span class="w"> </span>checkout<span class="w"> </span><span class="s2">&quot;0.4.1&quot;</span><span class="w">  </span><span class="c1"># Or whichever tag you prefer.</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Optional, but recommended:</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>git<span class="w"> </span>checkout<span class="w"> </span><span class="s2">&quot;0.4.1&quot;</span><span class="w">  </span><span class="c1"># Or whichever tag you prefer.</span>
 </code></pre></div>
 <p>Now, build and test the library.  These commands will include both the explicit tests, and also
 several CMake-generated tests to make sure that the includes are set up correctly.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># CMake is a &quot;meta build system&quot;, not a build system.</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1"># This first command generates the actual build files.</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>cmake/build<span class="w"> </span>-DCMAKE_VERIFY_INTERFACE_HEADER_SETS<span class="o">=</span>TRUE
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># This command builds Au, checks include paths, and runs unit tests.</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>cmake<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span>--build<span class="w"> </span>cmake/build<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span>--target<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span>all<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span>all_verify_interface_header_sets<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">    </span><span class="nb">test</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># CMake is a &quot;meta build system&quot;, not a build system.</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># This first command generates the actual build files.</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>cmake/build<span class="w"> </span>-DCMAKE_VERIFY_INTERFACE_HEADER_SETS<span class="o">=</span>TRUE
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># This command builds Au, checks include paths, and runs unit tests.</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>cmake<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">  </span>--build<span class="w"> </span>cmake/build<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">  </span>--target<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">    </span>all<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">    </span>all_verify_interface_header_sets<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">    </span><span class="nb">test</span>
 </code></pre></div>
 <p>If the tests pass, you can install the library to your system.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>cmake<span class="w"> </span>--install<span class="w"> </span>cmake/build
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo<span class="w"> </span>cmake<span class="w"> </span>--install<span class="w"> </span>cmake/build
 </code></pre></div>
 <p>At this point, the <code>Au</code> CMake library is installed to your system, and can be found via the
 usual <code>find_package</code> mechanism!</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">find_package</span><span class="p">(</span><span class="s">Au</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nb">find_package</span><span class="p">(</span><span class="s">Au</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
@@ -2869,11 +2891,11 @@ should get you any other unit you&rsquo;re likely to want.  The units we include
 <p><em>How</em> do you go about constructing other units from these?  By <strong>composing</strong> them.  For example,
 you can make <a href="https://www.nist.gov/pml/owm/metric-si/si-units">other coherent SI units</a> like
 this:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">newtons</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kilo</span><span class="p">(</span><span class="n">gram</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">squared</span><span class="p">(</span><span class="n">second</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">newtons</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kilo</span><span class="p">(</span><span class="n">gram</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">squared</span><span class="p">(</span><span class="n">second</span><span class="p">);</span>
 </code></pre></div>
 <p>Now you can call, say, <code>newtons(10)</code> and get a quantity equivalent to 10 Newtons.  You can also
 <strong>scale</strong> a unit by multiplying by Magnitude objects.  For example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">degrees</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">radians</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Magnitude</span><span class="o">&lt;</span><span class="n">Pi</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">180</span><span class="o">&gt;</span><span class="p">();</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">degrees</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">radians</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Magnitude</span><span class="o">&lt;</span><span class="n">Pi</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">180</span><span class="o">&gt;</span><span class="p">();</span>
 </code></pre></div>
 <p>These will &ldquo;work&rdquo;, in the sense of producing correct results.  But these ad hoc unit definitions
 are far less usable than <a href="../howto/new-units/">fully defined units</a>.  Both the type names and
