@@ -15,6 +15,7 @@
 #include "au/rep.hh"
 
 #include <complex>
+#include <cstdint>
 
 #include "au/chrono_interop.hh"
 #include "au/constant.hh"
@@ -58,6 +59,17 @@ struct LeftMultiplyDoubleByThree {
 struct DivideTenByFloat {
     friend float operator/(const DivideTenByFloat &, float x) { return 10.0f / x; }
 };
+
+// A class rep with an implicit conversion to a standard integer.  Under a naive conversion-based
+// normalization it would be silently rewritten to `int`.  This helps us get coverage for the
+// `!is_class` guard.
+struct ConvertsToInt {
+    operator int() const { return 0; }  // NOLINT(google-explicit-constructor)
+};
+
+// An unscoped enum promotes to its underlying integer under unary `+`, so integer detection alone
+// would incorrectly scoop it up too.  This helps us get coverage for the `!is_enum` guard.
+enum UnscopedEnum : int { kUnscopedEnumValue = 0 };
 
 }  // namespace
 
@@ -169,6 +181,139 @@ TEST(ProductTypeOrVoid, GivesProductTypeForArithmeticInputs) {
 TEST(ProductTypeOrVoid, GivesVoidForInputsWithNoProductType) {
     StaticAssertTypeEq<void, ProductTypeOrVoid<IntWithNoOps, int>>();
     StaticAssertTypeEq<void, ProductTypeOrVoid<int, IntWithNoOps>>();
+}
+
+TEST(NormalizeRep, IsIdentityOnStandardIntegerTypes) {
+    StaticAssertTypeEq<NormalizeRep<bool>, bool>();
+    StaticAssertTypeEq<NormalizeRep<char>, char>();
+    StaticAssertTypeEq<NormalizeRep<signed char>, signed char>();
+    StaticAssertTypeEq<NormalizeRep<unsigned char>, unsigned char>();
+    StaticAssertTypeEq<NormalizeRep<short>, short>();
+    StaticAssertTypeEq<NormalizeRep<unsigned short>, unsigned short>();
+    StaticAssertTypeEq<NormalizeRep<int>, int>();
+    StaticAssertTypeEq<NormalizeRep<unsigned int>, unsigned int>();
+    StaticAssertTypeEq<NormalizeRep<long>, long>();
+    StaticAssertTypeEq<NormalizeRep<unsigned long>, unsigned long>();
+    StaticAssertTypeEq<NormalizeRep<long long>, long long>();
+    StaticAssertTypeEq<NormalizeRep<unsigned long long>, unsigned long long>();
+
+    StaticAssertTypeEq<NormalizeRep<int8_t>, int8_t>();
+    StaticAssertTypeEq<NormalizeRep<uint8_t>, uint8_t>();
+
+    StaticAssertTypeEq<NormalizeRep<int16_t>, int16_t>();
+    StaticAssertTypeEq<NormalizeRep<uint16_t>, uint16_t>();
+
+    StaticAssertTypeEq<NormalizeRep<int32_t>, int32_t>();
+    StaticAssertTypeEq<NormalizeRep<uint32_t>, uint32_t>();
+
+    StaticAssertTypeEq<NormalizeRep<int64_t>, int64_t>();
+    StaticAssertTypeEq<NormalizeRep<uint64_t>, uint64_t>();
+}
+
+TEST(NormalizeRep, IsIdentityOnNonIntegralTypes) {
+    StaticAssertTypeEq<NormalizeRep<float>, float>();
+    StaticAssertTypeEq<NormalizeRep<double>, double>();
+    StaticAssertTypeEq<NormalizeRep<long double>, long double>();
+    StaticAssertTypeEq<NormalizeRep<std::complex<double>>, std::complex<double>>();
+    StaticAssertTypeEq<NormalizeRep<IntWithNoOps>, IntWithNoOps>();
+}
+
+TEST(NormalizeRep, IsIdentityOnIntegerAdjacentClassEnumAndPointer) {
+    // Class with an implicit conversion to `int`: guarded by `!is_class`.
+    StaticAssertTypeEq<NormalizeRep<ConvertsToInt>, ConvertsToInt>();
+
+    // Unscoped enum (promotes to `int` under `+`): guarded by `!is_enum`.
+    StaticAssertTypeEq<NormalizeRep<UnscopedEnum>, UnscopedEnum>();
+
+    // Pointer (converts to `bool`; also `+ptr` is a pointer, not integral): left alone.
+    StaticAssertTypeEq<NormalizeRep<int *>, int *>();
+}
+
+// `rep_is_signed` recovers signedness by value (attribute-immune), not via `std::is_signed`.
+template <typename T>
+struct RepIsSignedAgreesWithStd
+    : stdx::bool_constant<rep_is_signed<T>() == std::is_signed<T>::value> {};
+
+TEST(NormalizeRep, RepIsSignedMatchesStdIsSignedForStandardIntegers) {
+    EXPECT_THAT(RepIsSignedAgreesWithStd<signed char>::value, IsTrue());
+    EXPECT_THAT(RepIsSignedAgreesWithStd<short>::value, IsTrue());
+    EXPECT_THAT(RepIsSignedAgreesWithStd<int>::value, IsTrue());
+    EXPECT_THAT(RepIsSignedAgreesWithStd<long long>::value, IsTrue());
+    EXPECT_THAT(RepIsSignedAgreesWithStd<unsigned char>::value, IsTrue());
+    EXPECT_THAT(RepIsSignedAgreesWithStd<unsigned short>::value, IsTrue());
+    EXPECT_THAT(RepIsSignedAgreesWithStd<unsigned int>::value, IsTrue());
+    EXPECT_THAT(RepIsSignedAgreesWithStd<unsigned long long>::value, IsTrue());
+}
+
+// `ShouldNormalizeRep` is false for everything we can spell portably (standard integers are already
+// standard; floats/classes/enums are excluded).  It goes true only for an integer-behaving type
+// that names no standard integer --- i.e. an attributed type, which we cannot spell portably.
+TEST(NormalizeRep, ShouldNormalizeRepIsFalseForAllPortablyExpressibleTypes) {
+    EXPECT_THAT(ShouldNormalizeRep<int>::value, IsFalse());
+    EXPECT_THAT(ShouldNormalizeRep<uint16_t>::value, IsFalse());
+    EXPECT_THAT(ShouldNormalizeRep<double>::value, IsFalse());
+    EXPECT_THAT(ShouldNormalizeRep<ConvertsToInt>::value, IsFalse());
+    EXPECT_THAT(ShouldNormalizeRep<UnscopedEnum>::value, IsFalse());
+    EXPECT_THAT(ShouldNormalizeRep<IntWithNoOps>::value, IsFalse());
+}
+
+// The mechanism that fires on GHS: the size+signedness remap that `NormalizeRep` uses for a
+// non-standard integral type (the portable stand-in for the non-portable attributed
+// `__packed uint16_t` that motivates the trait).  We exercise `FirstMatchingIntegerOr` directly,
+// since there is no portable way to spell an attributed integral type.
+TEST(NormalizeRep, RemapPicksStandardIntegerBySizeAndSignedness) {
+    StaticAssertTypeEq<FirstMatchingIntegerOr<void,
+                                              sizeof(int16_t),
+                                              true,
+                                              std::int8_t,
+                                              std::uint8_t,
+                                              std::int16_t,
+                                              std::uint16_t,
+                                              std::int32_t,
+                                              std::uint32_t,
+                                              std::int64_t,
+                                              std::uint64_t>::type,
+                       int16_t>();
+    StaticAssertTypeEq<FirstMatchingIntegerOr<void,
+                                              sizeof(uint16_t),
+                                              false,
+                                              std::int8_t,
+                                              std::uint8_t,
+                                              std::int16_t,
+                                              std::uint16_t,
+                                              std::int32_t,
+                                              std::uint32_t,
+                                              std::int64_t,
+                                              std::uint64_t>::type,
+                       uint16_t>();
+}
+
+// When no fixed-width standard integer matches (e.g. a hypothetical oversized integral), the remap
+// leaves the type untouched via its fallback, so exotic reps like `__int128` never become a hard
+// error.
+TEST(NormalizeRep, RemapFallsBackWhenNoStandardIntegerMatches) {
+    struct Tag {};  // stand-in for "some type"; only used as the fallback here
+    StaticAssertTypeEq<FirstMatchingIntegerOr<Tag,
+                                              sizeof(std::int64_t) * 2,
+                                              true,
+                                              std::int8_t,
+                                              std::int16_t,
+                                              std::int32_t,
+                                              std::int64_t>::type,
+                       Tag>();
+}
+
+// Identity across every fixed-width standard integer (each is already standard, so it round-trips
+// unchanged --- the full-width companion to the spot checks in `IsIdentityOnStandardIntegerTypes`).
+TEST(NormalizeRep, IsIdentityForAllFixedWidthStandardIntegers) {
+    StaticAssertTypeEq<NormalizeRep<int8_t>, int8_t>();
+    StaticAssertTypeEq<NormalizeRep<uint8_t>, uint8_t>();
+    StaticAssertTypeEq<NormalizeRep<int16_t>, int16_t>();
+    StaticAssertTypeEq<NormalizeRep<uint16_t>, uint16_t>();
+    StaticAssertTypeEq<NormalizeRep<int32_t>, int32_t>();
+    StaticAssertTypeEq<NormalizeRep<uint32_t>, uint32_t>();
+    StaticAssertTypeEq<NormalizeRep<int64_t>, int64_t>();
+    StaticAssertTypeEq<NormalizeRep<uint64_t>, uint64_t>();
 }
 
 }  // namespace detail
