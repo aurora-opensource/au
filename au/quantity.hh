@@ -40,7 +40,7 @@ namespace au {
 // Make a Quantity of the given Unit, which has this value as measured in the Unit.
 //
 // lvalue: copy.  (Never move something the caller still owns; also the only thing that works for a
-// packed field, which can't bind to a reference.)
+// packed field, which can't bind to a non-const reference.)
 template <typename UnitT, typename T>
 AU_DEVICE_FUNC constexpr auto make_quantity(const T &value) {
     return QuantityMaker<UnitT>{}(value);

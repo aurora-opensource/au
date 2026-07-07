@@ -46,7 +46,7 @@ namespace au {
 
 // Make a Quantity of the given Unit, which has this value as measured in the Unit.
 // lvalue: copy.  (Never move something the caller still owns; also the only thing that works for a
-// packed field, which can't bind to a reference.)
+// packed field, which can't bind to a non-const reference.)
 template <typename UnitT, typename T>
 AU_DEVICE_FUNC constexpr auto make_quantity_point(const T &value) {
     return QuantityPointMaker<UnitT>{}(value);
@@ -307,7 +307,7 @@ struct QuantityPointMaker {
     static constexpr auto unit = Unit{};
 
     // lvalue: copy.  (Never move something the caller still owns; also the only thing that works
-    // for a packed field, which can't bind to a reference.)
+    // for a packed field, which can't bind to a non-const reference.)
     template <typename T>
     AU_DEVICE_FUNC constexpr auto operator()(const T &value) const {
         return QuantityPoint<Unit, std::decay_t<T>>{make_quantity<Unit>(value)};
