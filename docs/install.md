@@ -82,6 +82,27 @@ Here are the instructions for each installation method we support.
 
 #### bazel
 
+Au is available through the [Bazel Central Registry](https://registry.bazel.build/modules/au).
+Choose your version (take `0.5.1` as an example) and the dependency to your `MODULE.bazel`:
+
+```python
+bazel_dep(name = "au", version = "0.5.1")
+```
+
+At this point, the Au library is installed, and you can use it in your project!
+
+Here are the headers provided by each Au target.  To use, add the entry from the "Dependency" column
+to your `deps` attribute, and include the appropriate files.
+
+| Dependency | Headers provided | Notes |
+|------------|------------------|-------|
+| `@au//au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) and [constants](./reference/constant.md#built-in) |
+| `@au//au:io` | `"au/io.hh"` | `operator<<` support |
+| `@au//au:std_format` | `"au/std_format.hh"` | `std::format` support[^1] |
+| `@au//au:testing` | `"au/testing.hh"` | Utilities for writing googletest tests<br>_Note:_ `testonly = True` |
+
+##### Legacy `WORKSPACE`
+
 1. **Choose your Au version**.
     - This can be a tag, or a commit hash.  Let's take `0.3.5` as an example.
 
@@ -113,7 +134,7 @@ Here are the instructions for each installation method we support.
         - `strip_prefix`: write `"au-0.3.5"`, except use your ID from step 1 instead of `0.3.5`.
         - `urls`: This should be a list, whose only entry is the URL you formed in step 2.
 
-??? note "For legacy WORKSPACE users: `@au//au:testing` and googletest"
+??? note "`@au//au:testing` and googletest"
     **This note applies only to legacy WORKSPACE users.**  If you use bzlmod, you can ignore this.
 
     The `@au//au:testing` target depends on googletest via the `@googletest` repository name.  If
@@ -137,18 +158,6 @@ Here are the instructions for each installation method we support.
         repo_mapping = {"@googletest": "@com_google_googletest"},  # Map to your googletest name
     )
     ```
-
-At this point, the Au library is installed, and you can use it in your project!
-
-Here are the headers provided by each Au target.  To use, add the entry from the "Dependency" column
-to your `deps` attribute, and include the appropriate files.
-
-| Dependency | Headers provided | Notes |
-|------------|------------------|-------|
-| `@au//au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) and [constants](./reference/constant.md#built-in) |
-| `@au//au:io` | `"au/io.hh"` | `operator<<` support |
-| `@au//au:std_format` | `"au/std_format.hh"` | `std::format` support[^1] |
-| `@au//au:testing` | `"au/testing.hh"` | Utilities for writing googletest tests<br>_Note:_ `testonly = True` |
 
 #### CMake
 
