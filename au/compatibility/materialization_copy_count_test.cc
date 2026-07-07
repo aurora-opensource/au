@@ -95,11 +95,8 @@ class Tracked {
     // builds a fresh `Tracked`, so neither is a copy of an existing one.
     Tracked operator+(const Tracked &other) const {
         std::vector<double> out(data_.size());
-        std::transform(data_.begin(),
-                       data_.end(),
-                       other.data_.begin(),
-                       out.begin(),
-                       std::plus<double>{});
+        std::transform(
+            data_.begin(), data_.end(), other.data_.begin(), out.begin(), std::plus<double>{});
         return Tracked{std::move(out)};
     }
     Tracked operator-(const Tracked &other) const {
