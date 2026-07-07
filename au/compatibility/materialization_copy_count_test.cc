@@ -26,7 +26,7 @@
 #include <vector>
 
 #include "au/au.hh"
-#include "au/compatibility/eigen.hh"  // For the unit-aware `eval()` free function.
+#include "au/compatibility/eigen.hh"
 #include "au/testing.hh"
 #include "gtest/gtest.h"
 
