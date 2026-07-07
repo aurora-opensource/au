@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-121-gd32c057
+// Version identifier: 0.5.0-base-122-gde4092e
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -6090,6 +6090,7 @@ struct IsUnitRatioRepresentableIn : IsUnitRatioRepresentableInImpl<T, U1, U2> {}
 }  // namespace au
 
 
+
 namespace au {
 namespace detail {
 
@@ -6157,9 +6158,18 @@ template <typename T, typename U>
 struct OpOutputImpl<StaticCast<T, U>> : stdx::type_identity<U> {};
 
 // `StaticCast<T, U>` operation:
+//
+// This is an eager (materializing) operation: it produces a fresh `U`.  We take the input by
+// forwarding reference and forward it into the cast, so that when the chain hands us an rvalue
+// (e.g. the materialized result of a previous step), we *move* rather than copy a heap-backed rep.
 template <typename T, typename U>
 struct StaticCast {
-    static AU_DEVICE_FUNC constexpr U apply_to(const T &value) { return static_cast<U>(value); }
+    template <typename V>
+    static AU_DEVICE_FUNC constexpr U apply_to(V &&value) {
+        static_assert(std::is_same<std::decay_t<V>, std::decay_t<T>>::value,
+                      "Internal library error: input type does not match operation input");
+        return static_cast<U>(std::forward<V>(value));
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6172,9 +6182,16 @@ template <typename T, typename U>
 struct OpOutputImpl<ImplicitConversion<T, U>> : stdx::type_identity<U> {};
 
 // `ImplicitConversion<T, U>` operation:
+//
+// Like `StaticCast`, this is eager: forward the input so an rvalue is moved into the produced `U`.
 template <typename T, typename U>
 struct ImplicitConversion {
-    static AU_DEVICE_FUNC constexpr U apply_to(const T &value) { return value; }
+    template <typename V>
+    static AU_DEVICE_FUNC constexpr U apply_to(V &&value) {
+        static_assert(std::is_same<std::decay_t<V>, std::decay_t<T>>::value,
+                      "Internal library error: input type does not match operation input");
+        return std::forward<V>(value);
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6200,9 +6217,19 @@ struct MultiplyTypeBy {
 };
 
 // Specialization for identity magnitude: just return the value unchanged.
+//
+// This is eager (it produces a `T` by value), so forward the input: an rvalue coming from a prior
+// step in the chain is moved through rather than deep-copied.  (The non-identity `MultiplyTypeBy`
+// above stays a `const T &` overload on purpose: it returns a *lazy* expression that refers to its
+// input, so it must not take ownership of --- or dangle past --- that input.)
 template <typename T>
 struct MultiplyTypeBy<T, Magnitude<>> {
-    static AU_DEVICE_FUNC constexpr T apply_to(const T &value) { return value; }
+    template <typename V>
+    static AU_DEVICE_FUNC constexpr T apply_to(V &&value) {
+        static_assert(std::is_same<std::decay_t<V>, std::decay_t<T>>::value,
+                      "Internal library error: input type does not match operation input");
+        return std::forward<V>(value);
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6253,17 +6280,24 @@ struct OpOutputImpl<OpSequenceImpl<Op, Ops...>>
 template <typename OnlyOp>
 struct OpOutputImpl<OpSequenceImpl<OnlyOp>> : stdx::type_identity<OpOutput<OnlyOp>> {};
 
+// We thread the value through the chain by forwarding reference.  Each step's result is a prvalue
+// (for eager steps) or a lazy expression referring to a still-live operand; forwarding lets the
+// next step *move* an eager result rather than copy it.  The very first step still receives the
+// caller's lvalue (e.g. a `Quantity`'s stored member), so it copies/converts exactly once --- that
+// inherent conversion pass is unavoidable --- while every subsequent step moves.
 template <typename Op>
 struct OpSequenceImpl<Op> {
-    static AU_DEVICE_FUNC constexpr auto apply_to(const OpInput<OpSequenceImpl> &value) {
-        return Op::apply_to(value);
+    template <typename V>
+    static AU_DEVICE_FUNC constexpr auto apply_to(V &&value) {
+        return Op::apply_to(std::forward<V>(value));
     }
 };
 
 template <typename Op, typename... Ops>
 struct OpSequenceImpl<Op, Ops...> {
-    static AU_DEVICE_FUNC constexpr auto apply_to(const OpInput<OpSequenceImpl> &value) {
-        return OpSequenceImpl<Ops...>::apply_to(Op::apply_to(value));
+    template <typename V>
+    static AU_DEVICE_FUNC constexpr auto apply_to(V &&value) {
+        return OpSequenceImpl<Ops...>::apply_to(Op::apply_to(std::forward<V>(value)));
     }
 };
 
@@ -7947,15 +7981,35 @@ namespace au {
 //
 // Make a Quantity of the given Unit, which has this value as measured in the Unit.
 //
+// lvalue: copy.  (Never move something the caller still owns; also the only thing that works for a
+// packed field, which can't bind to a non-const reference.)
 template <typename UnitT, typename T>
-AU_DEVICE_FUNC constexpr auto make_quantity(T value) {
+AU_DEVICE_FUNC constexpr auto make_quantity(const T &value) {
     return QuantityMaker<UnitT>{}(value);
 }
 
+// rvalue: move.
+template <typename UnitT,
+          typename T,
+          typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
+AU_DEVICE_FUNC constexpr auto make_quantity(T &&value) {
+    return QuantityMaker<UnitT>{}(std::move(value));
+}
+
+// lvalue: copy.  (See `make_quantity` above.)
 template <typename Unit, typename T>
-AU_DEVICE_FUNC constexpr auto make_quantity_unless_unitless(T value) {
+AU_DEVICE_FUNC constexpr auto make_quantity_unless_unitless(const T &value) {
     return std::conditional_t<IsUnitlessUnit<Unit>::value, stdx::identity, QuantityMaker<Unit>>{}(
         value);
+}
+
+// rvalue: move.
+template <typename Unit,
+          typename T,
+          typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
+AU_DEVICE_FUNC constexpr auto make_quantity_unless_unitless(T &&value) {
+    return std::conditional_t<IsUnitlessUnit<Unit>::value, stdx::identity, QuantityMaker<Unit>>{}(
+        std::move(value));
 }
 
 // Trait to check whether two Quantity types are exactly equivalent.
@@ -8070,7 +8124,7 @@ class Quantity {
               typename OtherRep,
               typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>>
     AU_DEVICE_FUNC constexpr Quantity(
-        Quantity<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
+        const Quantity<OtherUnit, OtherRep> &other)  // NOLINT(runtime/explicit)
         : value_{other.template in_impl<detail::UseImplicitConversion, Rep>(
               UnitT{}, check_for(ALL_RISKS))} {}
 
@@ -8080,14 +8134,15 @@ class Quantity {
               typename Enable = EnableIfImplicitOkIs<false, OtherUnit, OtherRep>,
               typename ThisUnusedTemplateParameterDistinguishesUsFromTheAboveConstructor = void>
     // Deleted: use `.as<NewRep>(new_unit)` to force a cast.
-    explicit constexpr Quantity(Quantity<OtherUnit, OtherRep> other) = delete;
+    explicit constexpr Quantity(const Quantity<OtherUnit, OtherRep> &other) = delete;
 
     // Constructor for another Quantity with an explicit conversion risk policy.
     template <typename OtherUnit,
               typename OtherRep,
               typename RiskPolicyT,
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
-    AU_DEVICE_FUNC constexpr Quantity(Quantity<OtherUnit, OtherRep> other, RiskPolicyT policy)
+    AU_DEVICE_FUNC constexpr Quantity(const Quantity<OtherUnit, OtherRep> &other,
+                                      RiskPolicyT policy)
         : value_{other.template in<Rep>(UnitT{}, policy)} {}
 
     // Construct this Quantity with a value of exactly Zero.
@@ -8527,7 +8582,7 @@ class Quantity {
         return Op::apply_to(value_);
     }
 
-    AU_DEVICE_FUNC constexpr Quantity(Rep value) : value_{value} {}
+    AU_DEVICE_FUNC constexpr Quantity(Rep value) : value_{std::move(value)} {}
 
     Rep value_{};
 };
@@ -8647,9 +8702,16 @@ struct QuantityMaker {
     using Unit = UnitT;
     static constexpr auto unit = Unit{};
 
+    // lvalue: copy. (See `make_quantity` above.)
     template <typename T>
-    AU_DEVICE_FUNC constexpr Quantity<Unit, T> operator()(T value) const {
-        return {value};
+    AU_DEVICE_FUNC constexpr Quantity<Unit, std::decay_t<T>> operator()(const T &value) const {
+        return Quantity<Unit, std::decay_t<T>>{value};
+    }
+
+    // rvalue: move.
+    template <typename T, typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
+    AU_DEVICE_FUNC constexpr Quantity<Unit, std::decay_t<T>> operator()(T &&value) const {
+        return Quantity<Unit, std::decay_t<T>>{std::move(value)};
     }
 
     template <typename U, typename R>
@@ -11363,6 +11425,7 @@ AU_DEVICE_VAR constexpr auto STANDARD_GRAVITY = make_constant(StandardGravity{})
 
 }  // namespace au
 
+
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 #endif
 
@@ -11384,9 +11447,19 @@ namespace au {
 // `std::chrono::duration`.
 
 // Make a Quantity of the given Unit, which has this value as measured in the Unit.
+// lvalue: copy.  (Never move something the caller still owns; also the only thing that works for a
+// packed field, which can't bind to a non-const reference.)
 template <typename UnitT, typename T>
-AU_DEVICE_FUNC constexpr auto make_quantity_point(T value) {
+AU_DEVICE_FUNC constexpr auto make_quantity_point(const T &value) {
     return QuantityPointMaker<UnitT>{}(value);
+}
+
+// rvalue: move.
+template <typename UnitT,
+          typename T,
+          typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
+AU_DEVICE_FUNC constexpr auto make_quantity_point(T &&value) {
+    return QuantityPointMaker<UnitT>{}(std::move(value));
 }
 
 // Trait to check whether two QuantityPoint types are exactly equivalent.
@@ -11456,7 +11529,7 @@ class QuantityPoint {
               typename OtherRep,
               typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>>
     AU_DEVICE_FUNC constexpr QuantityPoint(
-        QuantityPoint<OtherUnit, OtherRep> other)  // NOLINT(runtime/explicit)
+        const QuantityPoint<OtherUnit, OtherRep> &other)  // NOLINT(runtime/explicit)
         : QuantityPoint{other.template as<Rep>(unit)} {}
 
     template <typename OtherUnit,
@@ -11464,14 +11537,14 @@ class QuantityPoint {
               typename Enable = EnableIfImplicitOkIs<false, OtherUnit, OtherRep>,
               typename ThisUnusedTemplateParameterDistinguishesUsFromTheAboveConstructor = void>
     // Deleted: use `.as<NewRep>(new_unit)` to force a cast.
-    constexpr explicit QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other) = delete;
+    constexpr explicit QuantityPoint(const QuantityPoint<OtherUnit, OtherRep> &other) = delete;
 
     // Construct from another QuantityPoint with an explicit conversion risk policy.
     template <typename OtherUnit,
               typename OtherRep,
               typename RiskPolicyT,
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
-    AU_DEVICE_FUNC constexpr QuantityPoint(QuantityPoint<OtherUnit, OtherRep> other,
+    AU_DEVICE_FUNC constexpr QuantityPoint(const QuantityPoint<OtherUnit, OtherRep> &other,
                                            RiskPolicyT policy)
         : QuantityPoint{other.template as<Rep>(Unit{}, policy)} {}
 
@@ -11626,7 +11699,7 @@ class QuantityPoint {
         return intermediate_result.template in<OtherRep>(OtherUnit{}, policy);
     }
 
-    AU_DEVICE_FUNC constexpr explicit QuantityPoint(Diff x) : x_{x} {}
+    AU_DEVICE_FUNC constexpr explicit QuantityPoint(Diff x) : x_{std::move(x)} {}
 
     Diff x_;
 };
@@ -11635,9 +11708,17 @@ template <typename Unit>
 struct QuantityPointMaker {
     static constexpr auto unit = Unit{};
 
+    // lvalue: copy.  (Never move something the caller still owns; also the only thing that works
+    // for a packed field, which can't bind to a non-const reference.)
     template <typename T>
-    AU_DEVICE_FUNC constexpr auto operator()(T value) const {
-        return QuantityPoint<Unit, T>{make_quantity<Unit>(value)};
+    AU_DEVICE_FUNC constexpr auto operator()(const T &value) const {
+        return QuantityPoint<Unit, std::decay_t<T>>{make_quantity<Unit>(value)};
+    }
+
+    // rvalue: move.
+    template <typename T, typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
+    AU_DEVICE_FUNC constexpr auto operator()(T &&value) const {
+        return QuantityPoint<Unit, std::decay_t<T>>{make_quantity<Unit>(std::move(value))};
     }
 
     template <typename U, typename R>
