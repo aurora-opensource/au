@@ -41,7 +41,9 @@ constexpr auto meters = QuantityMaker<Meters>{};
 struct Feet : decltype(Meters{} * mag<381>() / mag<1250>()) {};
 constexpr auto feet = QuantityMaker<Feet>{};
 
-// Global tallies.  We reset them immediately before each measured operation.
+// Global tallies.  The `MaterializationCopyCount` fixture zeroes them in `SetUp()`, so each test
+// starts from a clean slate.  (Per-test setup --- building inputs from prvalues --- only ever
+// *moves*, contributing no copies or evals, so it does not disturb the quantities we assert on.)
 struct Counts {
     int copies = 0;  // copy-constructions + copy-assignments of `Tracked`
     int moves = 0;   // move-constructions + move-assignments of `Tracked`
@@ -148,11 +150,17 @@ Tracked make_tracked(std::size_t n) {
     return Tracked{std::move(data)};
 }
 
+// Zeroes the copy/move/eval tallies before each test, so no test has to remember to call
+// `reset_counts()` itself.
+class MaterializationCopyCount : public ::testing::Test {
+ protected:
+    void SetUp() override { reset_counts(); }
+};
+
 // (1a) `meters(v)` from an lvalue must copy exactly once (the input is not ours to steal).
-TEST(MaterializationCopyCount, MakerFromLvalueCopiesExactlyOnce) {
+TEST_F(MaterializationCopyCount, MakerFromLvalueCopiesExactlyOnce) {
     Tracked v = make_tracked(8);
 
-    reset_counts();
     auto q = meters(v);
     EXPECT_THAT(counts().copies, Eq(1));
 
@@ -161,10 +169,9 @@ TEST(MaterializationCopyCount, MakerFromLvalueCopiesExactlyOnce) {
 }
 
 // (1b) `meters(rvalue)` must never copy: an rvalue may be moved from freely.
-TEST(MaterializationCopyCount, MakerFromRvalueNeverCopies) {
+TEST_F(MaterializationCopyCount, MakerFromRvalueNeverCopies) {
     Tracked v = make_tracked(8);
 
-    reset_counts();
     auto q = meters(std::move(v));
     EXPECT_THAT(counts().copies, Eq(0));
 
@@ -172,8 +179,7 @@ TEST(MaterializationCopyCount, MakerFromRvalueNeverCopies) {
 }
 
 // (1c) `meters(prvalue)` (a pure temporary) must never copy either.
-TEST(MaterializationCopyCount, MakerFromPrvalueNeverCopies) {
-    reset_counts();
+TEST_F(MaterializationCopyCount, MakerFromPrvalueNeverCopies) {
     auto q = meters(make_tracked(8));
     EXPECT_THAT(counts().copies, Eq(0));
 
@@ -182,10 +188,9 @@ TEST(MaterializationCopyCount, MakerFromPrvalueNeverCopies) {
 
 // (2) `eval(q)` on an lvalue quantity with a concrete rep: exactly one copy (the inherent one from
 // `.eval()`); everything downstream (`make_quantity` and the constructor) must move.
-TEST(MaterializationCopyCount, EvalCopiesExactlyOnce) {
+TEST_F(MaterializationCopyCount, EvalCopiesExactlyOnce) {
     auto q = meters(make_tracked(8));
 
-    reset_counts();
     auto r = eval(q);
     EXPECT_THAT(counts().copies, Eq(1));
 
@@ -194,11 +199,10 @@ TEST(MaterializationCopyCount, EvalCopiesExactlyOnce) {
 
 // (3) Converting-constructor from an expression-rep quantity to the same unit with a concrete rep:
 // zero copies of the concrete rep, and the expression evaluated exactly once.
-TEST(MaterializationCopyCount, ConvertingCtorFromExpressionRepZeroCopiesOneEval) {
+TEST_F(MaterializationCopyCount, ConvertingCtorFromExpressionRepZeroCopiesOneEval) {
     Tracked src = make_tracked(8);
     auto q_expr = meters(TrackedExpr{src});
 
-    reset_counts();
     Quantity<Meters, Tracked> r = q_expr;
     EXPECT_THAT(counts().copies, Eq(0));
     EXPECT_THAT(counts().evals, Eq(1));
@@ -208,10 +212,9 @@ TEST(MaterializationCopyCount, ConvertingCtorFromExpressionRepZeroCopiesOneEval)
 
 // (4a) A genuine unit conversion on a concrete rep: exactly one conversion pass (the scalar
 // multiply, which builds a fresh vector), and zero copies of any existing `Tracked`.
-TEST(MaterializationCopyCount, UnitConversionZeroCopies) {
+TEST_F(MaterializationCopyCount, UnitConversionZeroCopies) {
     auto q = meters(make_tracked(8));
 
-    reset_counts();
     auto in_feet = q.as<Tracked>(feet);
     EXPECT_THAT(counts().copies, Eq(0));
 
@@ -221,10 +224,9 @@ TEST(MaterializationCopyCount, UnitConversionZeroCopies) {
 // (4b) A same-unit rep "conversion" (`.as<Rep>(same_unit)`) is an identity magnitude.  Here the one
 // conversion pass IS a copy: the result gets its own vector, duplicated from the (const) source
 // member --- there is nothing to move from --- so exactly one copy is the true minimum.
-TEST(MaterializationCopyCount, SameUnitAsCopiesExactlyOnce) {
+TEST_F(MaterializationCopyCount, SameUnitAsCopiesExactlyOnce) {
     auto q = meters(make_tracked(8));
 
-    reset_counts();
     auto same = q.as<Tracked>(meters);
     EXPECT_THAT(counts().copies, Eq(1));
 
