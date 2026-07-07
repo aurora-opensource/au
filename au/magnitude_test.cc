@@ -55,6 +55,14 @@ TEST(Magnitude, SupportsEqualityComparison) {
     EXPECT_THAT(mag_1, Ne(mag_2));
 }
 
+TEST(Magnitude, CanFactorNumberWithMultipleLargePrimeFactors) {
+    // Regression test for https://github.com/aurora-opensource/au/issues/328: this used to fail to
+    // compile, because factoring the number exceeded the compiler's constexpr "step limit".
+    // 9'000'000'000'000'000'500 = 2^2 * 5^3 * 89'278'723 * 201'615'787.
+    EXPECT_THAT(mag<9'000'000'000'000'000'500u>(),
+                Eq(pow<2>(mag<2>()) * pow<3>(mag<5>()) * mag<89'278'723>() * mag<201'615'787>()));
+}
+
 TEST(Magnitude, SupportsOrderingComparison) {
     // Basic ordering.
     EXPECT_THAT(mag<1>(), Lt(mag<2>()));
