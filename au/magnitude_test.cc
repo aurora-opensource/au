@@ -1043,8 +1043,7 @@ TEST(MagnitudeUDL, SupportsScientificNotationWithoutDecimalPoint) {
 
 TEST(MagnitudeUDL, SupportsScientificNotationWithDecimalPoint) {
     EXPECT_THAT(6.022e23_mag, SameTypeAndValue(mag<6022>() * pow<23 - 3>(mag<10>())));
-    EXPECT_THAT(6.62607015e-34_mag,
-                SameTypeAndValue(mag<662607015>() * pow<-34 - 8>(mag<10>())));
+    EXPECT_THAT(6.62607015e-34_mag, SameTypeAndValue(mag<662607015>() * pow<-34 - 8>(mag<10>())));
 }
 
 TEST(MagnitudeUDL, ScientificNotationProducesExactRationalMagnitude) {
