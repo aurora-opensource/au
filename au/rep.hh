@@ -110,7 +110,8 @@ struct IsStandardInteger : stdx::disjunction<std::is_same<T, bool>,
                                              std::is_same<T, long>,
                                              std::is_same<T, unsigned long>,
                                              std::is_same<T, long long>,
-                                             std::is_same<T, unsigned long long>> {};
+                                             std::is_same<T, unsigned long long>> {
+};
 
 // The type `T` promotes to under unary `+`.  Integral promotion produces a fresh standard prvalue,
 // which launders any vendor attribute off of `T`.  (Ill-formed --- hence a SFINAE removal below ---
