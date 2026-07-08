@@ -41,8 +41,8 @@ constexpr auto meters = QuantityMaker<Meters>{};
 struct Feet : decltype(Meters{} * mag<381>() / mag<1250>()) {};
 constexpr auto feet = QuantityMaker<Feet>{};
 
-// Global tallies.  The `MaterializationCopyCount` fixture zeroes them in `SetUp()`, so each test
-// starts from a clean slate.  (Per-test setup --- building inputs from prvalues --- only ever
+// Global tallies.  The `MaterializationCopyCount` fixture zeroes them in its constructor, so each
+// test starts from a clean slate.  (Per-test setup --- building inputs from prvalues --- only ever
 // *moves*, contributing no copies or evals, so it does not disturb the quantities we assert on.)
 struct Counts {
     int copies = 0;  // copy-constructions + copy-assignments of `Tracked`
@@ -154,7 +154,7 @@ Tracked make_tracked(std::size_t n) {
 // `reset_counts()` itself.
 class MaterializationCopyCount : public ::testing::Test {
  protected:
-    void SetUp() override { reset_counts(); }
+    MaterializationCopyCount() { reset_counts(); }
 };
 
 // (1a) `meters(v)` from an lvalue must copy exactly once (the input is not ours to steal).
