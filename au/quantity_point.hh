@@ -308,15 +308,17 @@ struct QuantityPointMaker {
 
     // lvalue: copy.  (Never move something the caller still owns; also the only thing that works
     // for a packed field, which can't bind to a non-const reference.)
-    template <typename T>
+    template <typename T, typename Rep = detail::NormalizeRep<std::decay_t<T>>>
     AU_DEVICE_FUNC constexpr auto operator()(const T &value) const {
-        return QuantityPoint<Unit, std::decay_t<T>>{make_quantity<Unit>(value)};
+        return QuantityPoint<Unit, Rep>{make_quantity<Unit>(value)};
     }
 
     // rvalue: move.
-    template <typename T, typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
+    template <typename T,
+              typename Rep = detail::NormalizeRep<std::decay_t<T>>,
+              typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
     AU_DEVICE_FUNC constexpr auto operator()(T &&value) const {
-        return QuantityPoint<Unit, std::decay_t<T>>{make_quantity<Unit>(std::move(value))};
+        return QuantityPoint<Unit, Rep>{make_quantity<Unit>(std::move(value))};
     }
 
     template <typename U, typename R>

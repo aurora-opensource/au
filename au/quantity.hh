@@ -761,15 +761,17 @@ struct QuantityMaker {
     static constexpr auto unit = Unit{};
 
     // lvalue: copy. (See `make_quantity` above.)
-    template <typename T>
-    AU_DEVICE_FUNC constexpr Quantity<Unit, std::decay_t<T>> operator()(const T &value) const {
-        return Quantity<Unit, std::decay_t<T>>{value};
+    template <typename T, typename Rep = detail::NormalizeRep<std::decay_t<T>>>
+    AU_DEVICE_FUNC constexpr Quantity<Unit, Rep> operator()(const T &value) const {
+        return Quantity<Unit, Rep>{value};
     }
 
     // rvalue: move.
-    template <typename T, typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
-    AU_DEVICE_FUNC constexpr Quantity<Unit, std::decay_t<T>> operator()(T &&value) const {
-        return Quantity<Unit, std::decay_t<T>>{std::move(value)};
+    template <typename T,
+              typename Rep = detail::NormalizeRep<std::decay_t<T>>,
+              typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
+    AU_DEVICE_FUNC constexpr Quantity<Unit, Rep> operator()(T &&value) const {
+        return Quantity<Unit, Rep>{std::move(value)};
     }
 
     template <typename U, typename R>
