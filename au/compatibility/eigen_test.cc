@@ -30,6 +30,10 @@ constexpr auto meters = QuantityMaker<Meters>{};
 struct Feet : decltype(Meters{} * mag<381>() / mag<1250>()) {};
 constexpr auto feet = QuantityMaker<Feet>{};
 
+struct Secs : UnitImpl<Time> {};
+constexpr auto secs = QuantityMaker<Secs>{};
+constexpr auto sec = SingularNameFor<Secs>{};
+
 using ::testing::Eq;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
@@ -232,6 +236,45 @@ TEST(EigenCompatibility, DifferentUnitAdditionWorks) {
 
     Eigen::Vector3d expected(200.0, 400.0, 600.0);
     EXPECT_THAT(sum.data_in(centi(meters)), Eq(expected));
+}
+
+TEST(EigenCompatibility, SameUnitAdditionOfDistinctExpressionRepsWorks) {
+    // Regression test: adding two same-unit quantities whose reps are *different* lazy Eigen
+    // expression templates used to fail to compile.  The hidden-friend `operator+(const Quantity&,
+    // const Quantity&)` is a candidate, and probing it asks whether one operand converts to the
+    // other's type via the implicit constructor -- whose SFINAE guard hard-errored inside
+    // `std::common_type`, which is undefined for two distinct Eigen expressions.
+    const Eigen::Vector3d v{4.0, 5.0, 6.0};
+
+    // `base` must outlive `term_a`/`term_b`: their lazy reps bind its `value_` by reference.  (Using
+    // the `meters(v)` temporaries inline would leave the reps dangling after each statement's `;`.)
+    const auto base = meters(v);
+
+    // Two `Quantity<Meters, ...>` values with distinct expression-template rep types.
+    auto term_a = base * 2.0;        // rep: one scalar-product node
+    auto term_b = 0.5 * base * 2.0;  // rep: nested scalar-product nodes (different type)
+    ASSERT_THAT((std::is_same<decltype(term_a), decltype(term_b)>::value), IsFalse());
+
+    auto sum = term_a + term_b;
+
+    // The result must still be a lazy expression (not a materialized Matrix), preserving fusion.
+    ASSERT_THAT((std::is_same<std::decay_t<decltype(sum.data_in(meters))>, Eigen::Vector3d>::value),
+                IsFalse());
+    EXPECT_THAT(eval(sum).data_in(meters), Eq(Eigen::Vector3d(12.0, 15.0, 18.0)));
+}
+
+TEST(EigenCompatibility, ConstantAccelerationKinematicsExpressionWorks) {
+    // The canonical `p0 + v*t + 0.5*a*t*t` expression, with an Eigen-vector rep.  Each product term
+    // is a distinct lazy Eigen expression that simplifies to the same unit (Meters), so summing
+    // them exercises the same-unit / distinct-expression-rep addition path.
+    const auto p0 = meters(Eigen::Vector3d{1.0, 2.0, 3.0});
+    const auto v = (meters / sec)(Eigen::Vector3d{4.0, 5.0, 6.0});
+    const auto a = (meters / squared(sec))(Eigen::Vector3d{1.0, 1.0, 1.0});
+    const auto t = secs(2.0);
+
+    auto trajectory = p0 + v * t + 0.5 * a * t * t;
+
+    EXPECT_THAT(eval(trajectory).data_in(meters), Eq(Eigen::Vector3d(11.0, 14.0, 17.0)));
 }
 
 TEST(EigenCompatibility, MixedInputAdditionWithConvertedQuantityWorks) {
