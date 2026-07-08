@@ -19,6 +19,7 @@
 #include <chrono>
 #include <cmath>
 #include <compare>
+#include <cstddef>
 #include <cstdint>
 #include <limits>
 #include <ostream>
@@ -26,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-122-gde4092e
+// Version identifier: 0.5.0-base-123-g7829e2e
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -1254,6 +1255,119 @@ struct IsAuType<::au::Quantity<U, R>> : std::true_type {};
 
 template <typename U, typename R>
 struct IsAuType<::au::QuantityPoint<U, R>> : std::true_type {};
+
+//
+// `NormalizeRep<T>`: strip vendor attributes (e.g. Green Hills' `__packed`) from an integral rep by
+// naming a clean standard type, rather than relying on `std::decay` to drop the attribute (which
+// GHS does not do).
+//
+// This is the _identity_ on every genuine standard type (integral or not), so it is a provable
+// no-op for any rep a user would normally write.  It only rewrites a type that behaves like an
+// integer, yet names *none* of the standard integer types.  This is the telltale sign of attributed
+// types, such as `__packed uint16_t`.  In these cases, we map it to the fixed-width standard
+// integer with the same `sizeof` and signedness.
+//
+// Critically, gating this on `std::is_integral<T>` won't work.  The whole reason `std::decay` fails
+// to help on GHS is that GHS keeps vendor attributes on the type --- and it *also* mis-answers
+// `std::is_integral` for such a type (it reports `false`).  So a normalization gated on
+// `is_integral` not only won't be reliable, but also fails on the motivating example.  Instead we
+// detect integer-ness through mechanisms the attribute does not defeat:
+//
+//   * Integer-ness: `is_integral<decltype(+declval<T>())>`.  Unary `+` triggers integral promotion,
+//     which yields a fresh prvalue of a *standard* type --- this reliably strips the vendor
+//     attribute.  (Note that Au already depends on exactly this behavior in `io.hh`).  We then ask
+//     `is_integral` about that clean, promoted type, which GHS answers correctly.
+//   * Width: `sizeof(T)` --- a core operator, unaffected by the attribute.
+//   * Signedness: the value test `T(-1) < T(0)` --- core arithmetic, not `std::is_signed`.
+//
+// We additionally leave every standard type untouched, and never normalize class, union, or enum
+// types, to keep this fix as targeted as possible.
+//
+
+// Is `T` *exactly* one of the standard integer types?  An attributed integral type compares unequal
+// to all of these, so it is not "standard" by this definition.
+template <typename T>
+struct IsStandardInteger : stdx::disjunction<std::is_same<T, bool>,
+                                             std::is_same<T, char>,
+                                             std::is_same<T, signed char>,
+                                             std::is_same<T, unsigned char>,
+#if defined(__cpp_char8_t)
+                                             std::is_same<T, char8_t>,
+#endif
+                                             std::is_same<T, char16_t>,
+                                             std::is_same<T, char32_t>,
+                                             std::is_same<T, wchar_t>,
+                                             std::is_same<T, short>,
+                                             std::is_same<T, unsigned short>,
+                                             std::is_same<T, int>,
+                                             std::is_same<T, unsigned int>,
+                                             std::is_same<T, long>,
+                                             std::is_same<T, unsigned long>,
+                                             std::is_same<T, long long>,
+                                             std::is_same<T, unsigned long long>> {
+};
+
+// The type `T` promotes to under unary `+`.  Integral promotion produces a fresh standard prvalue,
+// which launders any vendor attribute off of `T`.  (Ill-formed --- hence a SFINAE removal below ---
+// for types with no unary `+`, which is exactly what we want: they are not integers to normalize.)
+template <typename T>
+using PromotedRep = decltype(+std::declval<T>());
+
+// Attribute-immune signedness: for an unsigned type `T(-1)` wraps to the maximum value (not `< 0`);
+// for a signed type it is `-1`.  Uses arithmetic, not `std::is_signed` (which the attribute may
+// defeat on GHS).
+template <typename T>
+constexpr bool rep_is_signed() {
+    return static_cast<T>(-1) < static_cast<T>(0);
+}
+
+// Should we normalize `T`?  True exactly for an integer-behaving type that is not already a
+// standard integer and is not a class/union/enum.  See the mechanism notes above for why none of
+// these predicates route through `is_integral<T>` / `is_signed<T>` on the attributed type itself.
+template <typename T, typename Enable = void>
+struct ShouldNormalizeRep : std::false_type {};  // no unary `+` (e.g. most class reps): leave alone
+template <typename T>
+struct ShouldNormalizeRep<T, stdx::void_t<PromotedRep<T>>>
+    : stdx::conjunction<std::is_integral<PromotedRep<T>>,
+                        stdx::negation<IsStandardInteger<T>>,
+                        stdx::negation<std::is_class<T>>,
+                        stdx::negation<std::is_union<T>>,
+                        stdx::negation<std::is_enum<T>>> {};
+
+// Pick the fixed-width standard integer type (`int8_t` ... `int64_t` and unsigned counterparts)
+// with the given `sizeof` and signedness; if none matches, fall back to `Fallback` (so an exotic
+// integral such as `__int128`, whose width no fixed-width type covers, is left untouched rather
+// than becoming a hard error).  We use the fixed-width candidates deliberately: there is exactly
+// one per (size, signedness), so the selection is unambiguous --- no reliance on integer-rank
+// tie-breaking.
+template <typename Fallback, std::size_t Size, bool Signed, typename... Candidates>
+struct FirstMatchingIntegerOr : stdx::type_identity<Fallback> {};
+
+template <typename Fallback, std::size_t Size, bool Signed, typename C, typename... Rest>
+struct FirstMatchingIntegerOr<Fallback, Size, Signed, C, Rest...>
+    : std::conditional_t<sizeof(C) == Size && (std::is_signed<C>::value == Signed),
+                         stdx::type_identity<C>,
+                         FirstMatchingIntegerOr<Fallback, Size, Signed, Rest...>> {};
+
+template <typename T, typename Enable = void>
+struct NormalizeRepImpl : stdx::type_identity<T> {};  // non-integer or already-standard: identity
+
+template <typename T>
+struct NormalizeRepImpl<T, std::enable_if_t<ShouldNormalizeRep<T>::value>>
+    : FirstMatchingIntegerOr<T,
+                             sizeof(T),
+                             rep_is_signed<T>(),
+                             std::int8_t,
+                             std::uint8_t,
+                             std::int16_t,
+                             std::uint16_t,
+                             std::int32_t,
+                             std::uint32_t,
+                             std::int64_t,
+                             std::uint64_t> {};
+
+template <typename T>
+using NormalizeRep = typename NormalizeRepImpl<T>::type;
 
 template <typename T>
 using CorrespondingUnit = typename CorrespondingQuantity<T>::Unit;
@@ -8703,15 +8817,17 @@ struct QuantityMaker {
     static constexpr auto unit = Unit{};
 
     // lvalue: copy. (See `make_quantity` above.)
-    template <typename T>
-    AU_DEVICE_FUNC constexpr Quantity<Unit, std::decay_t<T>> operator()(const T &value) const {
-        return Quantity<Unit, std::decay_t<T>>{value};
+    template <typename T, typename Rep = detail::NormalizeRep<std::decay_t<T>>>
+    AU_DEVICE_FUNC constexpr Quantity<Unit, Rep> operator()(const T &value) const {
+        return Quantity<Unit, Rep>{value};
     }
 
     // rvalue: move.
-    template <typename T, typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
-    AU_DEVICE_FUNC constexpr Quantity<Unit, std::decay_t<T>> operator()(T &&value) const {
-        return Quantity<Unit, std::decay_t<T>>{std::move(value)};
+    template <typename T,
+              typename Rep = detail::NormalizeRep<std::decay_t<T>>,
+              typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
+    AU_DEVICE_FUNC constexpr Quantity<Unit, Rep> operator()(T &&value) const {
+        return Quantity<Unit, Rep>{std::move(value)};
     }
 
     template <typename U, typename R>
@@ -10010,15 +10126,17 @@ struct QuantityPointMaker {
 
     // lvalue: copy.  (Never move something the caller still owns; also the only thing that works
     // for a packed field, which can't bind to a non-const reference.)
-    template <typename T>
+    template <typename T, typename Rep = detail::NormalizeRep<std::decay_t<T>>>
     AU_DEVICE_FUNC constexpr auto operator()(const T &value) const {
-        return QuantityPoint<Unit, std::decay_t<T>>{make_quantity<Unit>(value)};
+        return QuantityPoint<Unit, Rep>{make_quantity<Unit>(value)};
     }
 
     // rvalue: move.
-    template <typename T, typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
+    template <typename T,
+              typename Rep = detail::NormalizeRep<std::decay_t<T>>,
+              typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
     AU_DEVICE_FUNC constexpr auto operator()(T &&value) const {
-        return QuantityPoint<Unit, std::decay_t<T>>{make_quantity<Unit>(std::move(value))};
+        return QuantityPoint<Unit, Rep>{make_quantity<Unit>(std::move(value))};
     }
 
     template <typename U, typename R>
