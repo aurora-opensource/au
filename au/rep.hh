@@ -97,6 +97,9 @@ struct IsStandardInteger : stdx::disjunction<std::is_same<T, bool>,
                                              std::is_same<T, char>,
                                              std::is_same<T, signed char>,
                                              std::is_same<T, unsigned char>,
+#if defined(__cpp_char8_t)
+                                             std::is_same<T, char8_t>,
+#endif
                                              std::is_same<T, char16_t>,
                                              std::is_same<T, char32_t>,
                                              std::is_same<T, wchar_t>,

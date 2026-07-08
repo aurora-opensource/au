@@ -197,6 +197,10 @@ TEST(NormalizeRep, IsIdentityOnStandardIntegerTypes) {
     StaticAssertTypeEq<NormalizeRep<long long>, long long>();
     StaticAssertTypeEq<NormalizeRep<unsigned long long>, unsigned long long>();
 
+#if defined(__cpp_char8_t)
+    StaticAssertTypeEq<NormalizeRep<char8_t>, char8_t>();
+#endif
+
     StaticAssertTypeEq<NormalizeRep<int8_t>, int8_t>();
     StaticAssertTypeEq<NormalizeRep<uint8_t>, uint8_t>();
 
