@@ -184,11 +184,10 @@ TEST(EigenCompatibility, EqualityOfDistinctExpressionRepsWorks) {
     const Eigen::Vector3d values{4.0, 5.0, 6.0};
     const auto base = meters(values);
 
-    auto twice = base * 2.0;             // (8, 10, 12) m; rep: one scalar-product node
-    auto also_twice = 0.5 * base * 4.0;  // (8, 10, 12) m; rep: nested nodes (different type)
-    auto thrice = 0.5 * base * 6.0;      // (12, 15, 18) m; different value *and* rep type
-    ASSERT_THAT((std::is_same<decltype(twice), decltype(also_twice)>::value), IsFalse());
-
+    auto twice = base * 2.0;        // (8, 10, 12) m; rep: one scalar-product node
+    auto also_twice = base + base;  // (8, 10, 12) m; rep: one sum node (different type)
+    auto thrice = base + twice;     // (12, 15, 18) m; different value *and* rep type
+    static_assert(!std::is_same<decltype(twice), decltype(also_twice)>::value, "");
     EXPECT_THAT(twice == also_twice, IsTrue());
     EXPECT_THAT(twice != also_twice, IsFalse());
     EXPECT_THAT(twice == thrice, IsFalse());
