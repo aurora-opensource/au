@@ -60,6 +60,28 @@ integer `N`.
 example, `123_mag` produces the exact same type and value as `mag<123>()`.  It also supports digit
 separators: `1'000'000_mag` is equivalent to `mag<1000000>()`.
 
+Beyond plain integers, `_mag` also accepts decimal and scientific-notation literals, and always
+produces the _exact_ rational `Magnitude` they represent (never a floating point approximation).
+The literal's digits form an integer mantissa, which is then scaled by the appropriate power of ten:
+
+- **Decimal point:** each digit after the `.` divides the mantissa by another factor of ten.  For
+  example, `12.34_mag` is equivalent to `mag<1234>() / pow<2>(mag<10>())` (i.e., exactly
+  $\frac{1234}{100}$).
+- **Exponent:** an `e` (or `E`) exponent multiplies by the corresponding power of ten.  For example,
+  `34e6_mag` is equivalent to `mag<34>() * pow<6>(mag<10>())` (exactly $34{,}000{,}000$), and
+  `5e-3_mag` is exactly $\frac{5}{1000}$.
+- **Both together:** the decimal places and exponent combine.  For example, `6.62607015e-34_mag`
+  produces `mag<662607015>() * pow<-42>(mag<10>())` --- the exact value of the Planck constant's
+  mantissa in SI units.
+
+| Literal | Equivalent to | Exact value |
+|---------|---------------|-------------|
+| `123_mag` | `mag<123>()` | $123$ |
+| `1'000'000_mag` | `mag<1000000>()` | $1{,}000{,}000$ |
+| `12.34_mag` | `mag<1234>() / pow<2>(mag<10>())` | $\frac{1234}{100}$ |
+| `34e6_mag` | `mag<34>() * pow<6>(mag<10>())` | $34{,}000{,}000$ |
+| `6.022e23_mag` | `mag<6022>() * pow<20>(mag<10>())` | $6.022 \times 10^{23}$ |
+
 To use it, add the following to your file:
 
 ```cpp
