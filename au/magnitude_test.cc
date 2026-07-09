@@ -1021,6 +1021,39 @@ TEST(MagnitudeUDL, WorksInConstexprContext) {
     EXPECT_THAT(m, SameTypeAndValue(mag<42>()));
 }
 
+TEST(MagnitudeUDL, SupportsDecimalPoint) {
+    EXPECT_THAT(12.34_mag, SameTypeAndValue(mag<1234>() / pow<2>(mag<10>())));
+    EXPECT_THAT(0.5_mag, SameTypeAndValue(mag<5>() / mag<10>()));
+    EXPECT_THAT(3.14159_mag, SameTypeAndValue(mag<314159>() / pow<5>(mag<10>())));
+}
+
+TEST(MagnitudeUDL, TrailingDecimalPointIsEquivalentToInteger) {
+    EXPECT_THAT(12._mag, SameTypeAndValue(mag<12>()));
+}
+
+TEST(MagnitudeUDL, DecimalPointComposesWithSeparators) {
+    EXPECT_THAT(1'234.567'8_mag, SameTypeAndValue(mag<12345678>() / pow<4>(mag<10>())));
+}
+
+TEST(MagnitudeUDL, SupportsScientificNotationWithoutDecimalPoint) {
+    EXPECT_THAT(34e6_mag, SameTypeAndValue(mag<34>() * pow<6>(mag<10>())));
+    EXPECT_THAT(5e-3_mag, SameTypeAndValue(mag<5>() * pow<-3>(mag<10>())));
+    EXPECT_THAT(2E3_mag, SameTypeAndValue(mag<2>() * pow<3>(mag<10>())));
+}
+
+TEST(MagnitudeUDL, SupportsScientificNotationWithDecimalPoint) {
+    EXPECT_THAT(6.022e23_mag, SameTypeAndValue(mag<6022>() * pow<23 - 3>(mag<10>())));
+    EXPECT_THAT(6.62607015e-34_mag, SameTypeAndValue(mag<662607015>() * pow<-34 - 8>(mag<10>())));
+}
+
+TEST(MagnitudeUDL, ScientificNotationProducesExactRationalMagnitude) {
+    // 34e6 is exactly 34'000'000.
+    EXPECT_THAT(34e6_mag, SameTypeAndValue(mag<34'000'000>()));
+
+    // 0.5e1 is exactly 5.
+    EXPECT_THAT(0.5e1_mag, SameTypeAndValue(mag<5>()));
+}
+
 }  // namespace au_literals
 
 namespace detail {
