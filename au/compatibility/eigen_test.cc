@@ -315,6 +315,37 @@ TEST(EigenCompatibility, ConstantAccelerationKinematicsExpressionWorks) {
     EXPECT_THAT(eval(trajectory).data_in(meters), Eq(Eigen::Vector3d(11.0, 14.0, 17.0)));
 }
 
+TEST(EigenCompatibility, ScalarQuantityTimesVectorQuantityDoesNotDangle) {
+    // Regression test: `scalar_quantity * vector_quantity` (scalar on the LEFT) used to build a
+    // lazy Eigen expression that referenced a *temporary* vector, produced by-value by `q.in()`
+    // inside `operator*`.  That temporary died when `operator*` returned, well before the full
+    // expression ended, so evaluating the product was undefined behavior (a size-0 vector at -O0, a
+    // `std::bad_alloc`, or a segfault in a loop).  The commutative form (scalar on the RIGHT) was
+    // always safe, because Eigen stores a `matrix * scalar` operand's scalar by value.
+    const auto x = (meters / sec)(Eigen::Vector3d{2.0, 4.0, 6.0});
+    const auto alpha = secs(5.0);
+
+    // Both orderings must give the same, correct Meters vector.
+    const Eigen::Vector3d expected{10.0, 20.0, 30.0};
+    EXPECT_THAT(eval(alpha * x).data_in(meters), Eq(expected));  // scalar on the left
+    EXPECT_THAT(eval(x * alpha).data_in(meters), Eq(expected));  // scalar on the right
+}
+
+TEST(EigenCompatibility, ScalarQuantityDividedByVectorQuantityDoesNotDangle) {
+    // `operator/` shares `operator*`'s flaw: the denominator's rep also came back by value from
+    // `q.in()`, so a `scalar / vector` quotient referenced a dead temporary.  Eigen only defines
+    // `scalar / vector` (coefficient-wise) for Array reps, so we use an Array here to exercise it.
+    const auto x = (meters / sec)(Eigen::Array3d{2.0, 4.0, 5.0});
+    const auto alpha = secs(10.0);
+
+    // 10 s / (2, 4, 5) m/s == (5, 2.5, 2) s^2/m.
+    auto quotient = eval(alpha / x);
+    using U = decltype(quotient)::Unit;
+    const Eigen::Array3d expected{5.0, 2.5, 2.0};
+    EXPECT_THAT(Eigen::Vector3d{quotient.data_in(U{}).matrix()},
+                Eq(Eigen::Vector3d{expected.matrix()}));
+}
+
 TEST(EigenCompatibility, MixedInputAdditionWithConvertedQuantityWorks) {
     auto q_m = meters(Eigen::Vector3d{1.0, 2.0, 3.0});
     auto q_cm = centi(meters)(Eigen::Vector3d{100.0, 200.0, 300.0});
