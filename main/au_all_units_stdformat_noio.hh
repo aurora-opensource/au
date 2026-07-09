@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-124-gc994ac3
+// Version identifier: 0.5.0-base-125-g1143776
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -4030,36 +4030,101 @@ AU_DEVICE_FUNC constexpr auto mag() {
 namespace detail {
 constexpr bool is_valid_magnitude_digit(char c) { return (c >= '0' && c <= '9') || c == '\''; }
 
+constexpr bool is_exponent_marker(char c) { return c == 'e' || c == 'E'; }
+
 template <char... Cs>
-constexpr bool all_valid_magnitude_digits() {
-    constexpr char digits[] = {Cs...};
+constexpr bool all_valid_magnitude_chars() {
+    constexpr char chars[] = {Cs...};
+    std::size_t num_decimal_points = 0u;
+    std::size_t num_exponent_markers = 0u;
     for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
-        if (!is_valid_magnitude_digit(digits[i])) {
+        const char c = chars[i];
+        if (c == '.') {
+            ++num_decimal_points;
+        } else if (is_exponent_marker(c)) {
+            ++num_exponent_markers;
+        } else if (c == '+' || c == '-') {
+            // A sign is only meaningful as part of an exponent; the compiler guarantees it appears
+            // there, so we accept it here without further checking.
+        } else if (!is_valid_magnitude_digit(c)) {
             return false;
         }
     }
-    return true;
+    return num_decimal_points <= 1u && num_exponent_markers <= 1u;
 }
 
+// Parse the significant digits (the mantissa) of a `_mag` literal, ignoring any decimal point and
+// stopping at the exponent.  For example, `1234_mag`, `12.34_mag`, and `1.234e3_mag` all produce
+// `1234`.
 template <char... Cs>
 constexpr std::uintmax_t parse_magnitude_integer() {
-    static_assert(all_valid_magnitude_digits<Cs...>(),
-                  "_mag literals must contain only decimal digits (and optional ' separators)");
+    static_assert(all_valid_magnitude_chars<Cs...>(),
+                  "_mag literals must contain only decimal digits, an optional decimal point, an "
+                  "optional exponent, and optional ' separators");
     constexpr char digits[] = {Cs...};
     std::uintmax_t result = 0u;
     for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
+        if (is_exponent_marker(digits[i])) {
+            break;
+        }
         if (digits[i] >= '0' && digits[i] <= '9') {
             result = result * 10u + static_cast<std::uintmax_t>(digits[i] - '0');
         }
     }
     return result;
 }
+
+// Count the number of mantissa digits after the decimal point in a `_mag` literal.  For example,
+// `12.34_mag` has two decimal places, while `1234_mag` has 0, and `1.234e3_mag` has three.
+template <char... Cs>
+constexpr int count_decimal_places() {
+    constexpr char chars[] = {Cs...};
+    int num_decimal_places = 0;
+    bool after_decimal_point = false;
+    for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
+        if (is_exponent_marker(chars[i])) {
+            break;
+        }
+        if (chars[i] == '.') {
+            after_decimal_point = true;
+        } else if (after_decimal_point && chars[i] >= '0' && chars[i] <= '9') {
+            ++num_decimal_places;
+        }
+    }
+    return num_decimal_places;
+}
+
+// Parse the (signed) exponent of a `_mag` literal: the integer following the `e`/`E` marker.  For
+// example, `6.022e23_mag` produces `23`, and `1e-3_mag` produces `-3`.  A literal with no exponent
+// produces `0`.
+template <char... Cs>
+constexpr std::int64_t parse_scientific_exponent() {
+    constexpr char chars[] = {Cs...};
+    std::uint64_t exponent = 0u;
+    std::int64_t sign = 1;
+    bool in_exponent = false;
+    for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
+        const char c = chars[i];
+        if (is_exponent_marker(c)) {
+            in_exponent = true;
+        } else if (in_exponent) {
+            if (c == '-') {
+                sign = -1;
+            } else if (c >= '0' && c <= '9') {
+                exponent = exponent * 10u + static_cast<std::uint64_t>(c - '0');
+            }
+        }
+    }
+    return sign * static_cast<std::int64_t>(exponent);
+}
 }  // namespace detail
 
 namespace au_literals {
 template <char... Cs>
 constexpr auto operator""_mag() {
-    return mag<detail::parse_magnitude_integer<Cs...>()>();
+    return mag<detail::parse_magnitude_integer<Cs...>()>() *
+           pow<detail::parse_scientific_exponent<Cs...>() - detail::count_decimal_places<Cs...>()>(
+               mag<10>());
 }
 }  // namespace au_literals
 

@@ -2853,6 +2853,56 @@ integer <code>N</code>.</p>
 <p><code>_mag</code> is a user-defined literal (UDL) that provides a more concise alternative to <code>mag&lt;N&gt;()</code>.  For
 example, <code>123_mag</code> produces the exact same type and value as <code>mag&lt;123&gt;()</code>.  It also supports digit
 separators: <code>1'000'000_mag</code> is equivalent to <code>mag&lt;1000000&gt;()</code>.</p>
+<p>Beyond plain integers, <code>_mag</code> also accepts decimal and scientific-notation literals, and always
+produces the <em>exact</em> rational <code>Magnitude</code> they represent (never a floating point approximation).
+The literal&rsquo;s digits form an integer mantissa, which is then scaled by the appropriate power of ten:</p>
+<ul>
+<li><strong>Decimal point:</strong> each digit after the <code>.</code> divides the mantissa by another factor of ten.  For
+  example, <code>12.34_mag</code> is equivalent to <code>mag&lt;1234&gt;() / pow&lt;2&gt;(mag&lt;10&gt;())</code> (i.e., exactly
+  <span class="arithmatex"><span class="MathJax_Preview">\frac{1234}{100}</span><script type="math/tex">\frac{1234}{100}</script></span>).</li>
+<li><strong>Exponent:</strong> an <code>e</code> (or <code>E</code>) exponent multiplies by the corresponding power of ten.  For example,
+  <code>34e6_mag</code> is equivalent to <code>mag&lt;34&gt;() * pow&lt;6&gt;(mag&lt;10&gt;())</code> (exactly <span class="arithmatex"><span class="MathJax_Preview">34{,}000{,}000</span><script type="math/tex">34{,}000{,}000</script></span>), and
+  <code>5e-3_mag</code> is exactly <span class="arithmatex"><span class="MathJax_Preview">\frac{5}{1000}</span><script type="math/tex">\frac{5}{1000}</script></span>.</li>
+<li><strong>Both together:</strong> the decimal places and exponent combine.  For example, <code>6.62607015e-34_mag</code>
+  produces <code>mag&lt;662607015&gt;() * pow&lt;-42&gt;(mag&lt;10&gt;())</code> &mdash; the exact value of the Planck constant&rsquo;s
+  mantissa in SI units.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Literal</th>
+<th>Equivalent to</th>
+<th>Exact value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>123_mag</code></td>
+<td><code>mag&lt;123&gt;()</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">123</span><script type="math/tex">123</script></span></td>
+</tr>
+<tr>
+<td><code>1'000'000_mag</code></td>
+<td><code>mag&lt;1000000&gt;()</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">1{,}000{,}000</span><script type="math/tex">1{,}000{,}000</script></span></td>
+</tr>
+<tr>
+<td><code>12.34_mag</code></td>
+<td><code>mag&lt;1234&gt;() / pow&lt;2&gt;(mag&lt;10&gt;())</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">\frac{1234}{100}</span><script type="math/tex">\frac{1234}{100}</script></span></td>
+</tr>
+<tr>
+<td><code>34e6_mag</code></td>
+<td><code>mag&lt;34&gt;() * pow&lt;6&gt;(mag&lt;10&gt;())</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">34{,}000{,}000</span><script type="math/tex">34{,}000{,}000</script></span></td>
+</tr>
+<tr>
+<td><code>6.022e23_mag</code></td>
+<td><code>mag&lt;6022&gt;() * pow&lt;20&gt;(mag&lt;10&gt;())</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">6.022 \times 10^{23}</span><script type="math/tex">6.022 \times 10^{23}</script></span></td>
+</tr>
+</tbody>
+</table>
 <p>To use it, add the following to your file:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="o">::</span><span class="nn">au</span><span class="o">::</span><span class="nn">au_literals</span><span class="p">;</span>
 </code></pre></div>
