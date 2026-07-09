@@ -175,6 +175,45 @@ TEST(EigenCompatibility, DifferentUnitEqualityWorks) {
     EXPECT_THAT(q_m == q_cm, IsTrue());
 }
 
+TEST(EigenCompatibility, EqualityOfDistinctExpressionRepsWorks) {
+    // `==` / `!=` between two same-unit quantities whose reps are *different* lazy Eigen expression
+    // templates.  Like heterogeneous addition, this used to fail to compile inside
+    // `std::common_type` (undefined for two distinct Eigen expressions).  Unlike order comparisons,
+    // equality is well-defined for vectors --- Eigen's `operator==` compares all coefficients ---
+    // so it should work.
+    const Eigen::Vector3d values{4.0, 5.0, 6.0};
+    const auto base = meters(values);
+
+    auto twice = base * 2.0;             // (8, 10, 12) m; rep: one scalar-product node
+    auto also_twice = 0.5 * base * 4.0;  // (8, 10, 12) m; rep: nested nodes (different type)
+    auto thrice = 0.5 * base * 6.0;      // (12, 15, 18) m; different value *and* rep type
+    ASSERT_THAT((std::is_same<decltype(twice), decltype(also_twice)>::value), IsFalse());
+
+    EXPECT_THAT(twice == also_twice, IsTrue());
+    EXPECT_THAT(twice != also_twice, IsFalse());
+    EXPECT_THAT(twice == thrice, IsFalse());
+    EXPECT_THAT(twice != thrice, IsTrue());
+}
+
+TEST(EigenCompatibility, CrossUnitEqualityOfExpressionRepsWorks) {
+    // Operands in *different* units, so one is scaled to the common unit (staying a lazy
+    // expression) before the coefficient-wise comparison.  Note that both operands here have the
+    // *same* expression rep type: this used to route through the common-rep path and try to
+    // `static_cast` one Eigen expression into another (a hard error).  Non-arithmetic reps now
+    // always take the `ref_or_scaled_copy` path instead.
+    const Eigen::Vector3d m_values{8.0, 10.0, 12.0};
+    const Eigen::Vector3d cm_values{800.0, 1000.0, 1200.0};
+    const auto in_m = meters(m_values);
+    const auto in_cm = centi(meters)(cm_values);
+
+    auto lhs = in_m * 2.0;   // (16, 20, 24) m
+    auto rhs = in_cm * 2.0;  // (1600, 2000, 2400) cm == (16, 20, 24) m; identical rep type
+    StaticAssertTypeEq<decltype(lhs)::Rep, decltype(rhs)::Rep>();
+
+    EXPECT_THAT(lhs == rhs, IsTrue());
+    EXPECT_THAT(lhs != rhs, IsFalse());
+}
+
 TEST(EigenCompatibility, ScalarMultiplicationWorks) {
     auto q = meters(Eigen::Vector3d{1.0, 2.0, 3.0});
 
