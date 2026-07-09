@@ -188,12 +188,23 @@ struct PermitAsCarveOutForIntegerPromotion
 template <typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion<void, ScaleFactor, SourceRep> : std::false_type {};
 
-template <typename CastStrategy, typename Rep, typename ScaleFactor, typename SourceRep>
+template <typename CastStrategy,
+          typename Rep,
+          typename ScaleFactor,
+          typename SourceRep,
+          bool = HasConversionRep<SourceRep, Rep>::value>
 struct PassesConversionRiskCheck
     : stdx::disjunction<
           PermitAsCarveOutForIntegerPromotion<Rep, ScaleFactor, SourceRep>,
           ConversionRiskAcceptablyLow<
               ConversionForRepsAndFactor<CastStrategy, SourceRep, Rep, ScaleFactor>>> {};
+
+// If the reps have no common type, the conversion arithmetic can't even be formed, so the
+// conversion is simply not permitted.  (This keeps the check SFINAE-friendly for reps like distinct
+// Eigen expression templates, rather than hard-erroring deep inside `std::common_type`.)
+template <typename CastStrategy, typename Rep, typename ScaleFactor, typename SourceRep>
+struct PassesConversionRiskCheck<CastStrategy, Rep, ScaleFactor, SourceRep, false>
+    : std::false_type {};
 
 template <typename CastStrategy, typename Rep, typename ScaleFactor, typename SourceRep>
 using ImplicitConversionPolicy =

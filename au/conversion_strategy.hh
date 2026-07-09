@@ -111,6 +111,27 @@ struct ConversionRepImpl
                        PromotedType<std::common_type_t<OldRep, NewRep>>> {};
 
 //
+// `HasConversionRep<OldRep, NewRep>` tells us (SFINAE-friendly) whether `ConversionRep<OldRep,
+// NewRep>` is well-formed.
+//
+// The conversion arithmetic is hosted in `std::common_type` of the two reps, but some reps have no
+// common type at all --- most notably, two *distinct* Eigen expression templates.  Asking
+// `std::common_type` for such a pair is a hard error rather than a soft one, which would otherwise
+// blow up any conversion *policy* check (e.g. the implicit-constructor's SFINAE guard) that merely
+// needs to answer "is this conversion permitted?" with `false`.  This trait lets those callers
+// short-circuit to `false` instead.
+//
+template <typename A, typename B>
+using CommonTypeMemberT = typename std::common_type<A, B>::type;
+template <typename A, typename B>
+struct HasCommonType : stdx::experimental::is_detected<CommonTypeMemberT, A, B> {};
+
+template <typename OldRep, typename NewRep>
+struct HasConversionRep : std::conditional_t<IsRealToComplex<OldRep, NewRep>::value,
+                                             HasCommonType<RealPart<OldRep>, RealPart<NewRep>>,
+                                             HasCommonType<OldRep, NewRep>> {};
+
+//
 // `CastStep<CastType, T, U>` is a single step of casting from type `T` to type `U`, using the
 // appropriate operation based on `CastType`.
 //
