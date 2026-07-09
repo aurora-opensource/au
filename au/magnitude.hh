@@ -769,7 +769,7 @@ constexpr int count_decimal_places() {
 template <char... Cs>
 constexpr int parse_scientific_exponent() {
     constexpr char chars[] = {Cs...};
-    int exponent = 0;
+    std::uintmax_t exponent = 0u;
     int sign = 1;
     bool in_exponent = false;
     for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
@@ -779,12 +779,14 @@ constexpr int parse_scientific_exponent() {
         } else if (in_exponent) {
             if (c == '-') {
                 sign = -1;
+            } else if (c == '+') {
+                // Explicitly ignore.
             } else if (c >= '0' && c <= '9') {
-                exponent = exponent * 10 + (c - '0');
+                exponent = exponent * 10u + static_cast<std::uintmax_t>(c - '0');
             }
         }
     }
-    return sign * exponent;
+    return sign * static_cast<int>(exponent);
 }
 }  // namespace detail
 
