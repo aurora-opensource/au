@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-127-gd46a0c7
+// Version identifier: 0.5.0-base-128-g464a707
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -8534,18 +8534,25 @@ class Quantity {
     }
 
     // Multiplication for dimensioned quantities.
+    //
+    // We take `q` by reference and read its value via `data_in` (a reference), rather than by value
+    // via `in` (a copy).  For lazy-expression reps (e.g. Eigen), the product node binds its operand
+    // by reference; a by-value operand would be a temporary that dies when this function returns,
+    // leaving the result's rep dangling.  `data_in` instead references the caller's live object.
     template <typename OtherUnit, typename OtherRep>
-    AU_DEVICE_FUNC constexpr auto operator*(Quantity<OtherUnit, OtherRep> q) const {
+    AU_DEVICE_FUNC constexpr auto operator*(const Quantity<OtherUnit, OtherRep> &q) const {
         return make_quantity_unless_unitless<UnitProduct<Unit, OtherUnit>>(value_ *
-                                                                           q.in(OtherUnit{}));
+                                                                           q.data_in(OtherUnit{}));
     }
 
     // Division for dimensioned quantities.
+    //
+    // See `operator*` above for why `q` is taken by reference and read via `data_in`.
     template <typename OtherUnit, typename OtherRep>
-    AU_DEVICE_FUNC constexpr auto operator/(Quantity<OtherUnit, OtherRep> q) const {
+    AU_DEVICE_FUNC constexpr auto operator/(const Quantity<OtherUnit, OtherRep> &q) const {
         warn_if_integer_division<OtherUnit, OtherRep>();
         return make_quantity_unless_unitless<UnitQuotient<Unit, OtherUnit>>(value_ /
-                                                                            q.in(OtherUnit{}));
+                                                                            q.data_in(OtherUnit{}));
     }
 
     // Copy and move assignment: lvalue-only.
