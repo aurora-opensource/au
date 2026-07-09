@@ -246,7 +246,7 @@ TEST(EigenCompatibility, SameUnitAdditionOfDistinctExpressionRepsWorks) {
     // `std::common_type`, which is undefined for two distinct Eigen expressions.
     const Eigen::Vector3d v{4.0, 5.0, 6.0};
 
-    // `base` must outlive `term_a`/`term_b`: their lazy reps bind its `value_` by reference.  (Using
+    // `base` must outlive `term_a`/`term_b`: their lazy reps bind its `value_` by reference. (Using
     // the `meters(v)` temporaries inline would leave the reps dangling after each statement's `;`.)
     const auto base = meters(v);
 

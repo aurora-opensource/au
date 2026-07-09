@@ -127,10 +127,9 @@ template <typename A, typename B>
 struct HasCommonType : stdx::experimental::is_detected<CommonTypeMemberT, A, B> {};
 
 template <typename OldRep, typename NewRep>
-struct HasConversionRep
-    : std::conditional_t<IsRealToComplex<OldRep, NewRep>::value,
-                         HasCommonType<RealPart<OldRep>, RealPart<NewRep>>,
-                         HasCommonType<OldRep, NewRep>> {};
+struct HasConversionRep : std::conditional_t<IsRealToComplex<OldRep, NewRep>::value,
+                                             HasCommonType<RealPart<OldRep>, RealPart<NewRep>>,
+                                             HasCommonType<OldRep, NewRep>> {};
 
 //
 // `CastStep<CastType, T, U>` is a single step of casting from type `T` to type `U`, using the
