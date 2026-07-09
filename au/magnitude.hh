@@ -767,10 +767,10 @@ constexpr int count_decimal_places() {
 // example, `6.022e23_mag` produces `23`, and `1e-3_mag` produces `-3`.  A literal with no exponent
 // produces `0`.
 template <char... Cs>
-constexpr int parse_scientific_exponent() {
+constexpr std::int64_t parse_scientific_exponent() {
     constexpr char chars[] = {Cs...};
-    std::uintmax_t exponent = 0u;
-    int sign = 1;
+    std::uint64_t exponent = 0u;
+    std::int64_t sign = 1;
     bool in_exponent = false;
     for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
         const char c = chars[i];
@@ -779,14 +779,12 @@ constexpr int parse_scientific_exponent() {
         } else if (in_exponent) {
             if (c == '-') {
                 sign = -1;
-            } else if (c == '+') {
-                // Explicitly ignore.
             } else if (c >= '0' && c <= '9') {
-                exponent = exponent * 10u + static_cast<std::uintmax_t>(c - '0');
+                exponent = exponent * 10u + static_cast<std::uint64_t>(c - '0');
             }
         }
     }
-    return sign * static_cast<int>(exponent);
+    return sign * static_cast<std::int64_t>(exponent);
 }
 }  // namespace detail
 
