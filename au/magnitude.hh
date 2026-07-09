@@ -744,7 +744,7 @@ constexpr std::uintmax_t parse_magnitude_integer() {
 }
 
 // Count the number of mantissa digits after the decimal point in a `_mag` literal.  For example,
-// `12.34_mag` has two decimal places, while `1234_mag` and `1.234e3_mag`... the latter has three.
+// `12.34_mag` has two decimal places, while `1234_mag` has 0, and `1.234e3_mag` has three.
 template <char... Cs>
 constexpr int count_decimal_places() {
     constexpr char chars[] = {Cs...};
