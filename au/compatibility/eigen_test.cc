@@ -180,7 +180,7 @@ TEST(EigenCompatibility, EqualityOfDistinctExpressionRepsWorks) {
     // templates.  Like heterogeneous addition, this used to fail to compile inside
     // `std::common_type` (undefined for two distinct Eigen expressions).  Unlike order comparisons,
     // equality is well-defined for vectors --- Eigen's `operator==` compares all coefficients ---
-    // so it's something we should expect it to work.  This regression test makes sure that it does.
+    // so it's something we should expect to work.  This regression test makes sure that it does.
     const Eigen::Vector3d values{4.0, 5.0, 6.0};
     const auto base = meters(values);
 
