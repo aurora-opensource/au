@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-126-gda658ff
+// Version identifier: 0.5.0-base-127-gd46a0c7
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -8699,15 +8699,50 @@ AU_DEVICE_FUNC constexpr bool is_conversion_lossy(Quantity<U, R> q, TargetUnitSl
 // Comparing and/or combining Quantities of different types.
 
 namespace detail {
+// Forward declaration; defined below, alongside the addition/subtraction helpers.
+template <typename OtherR, typename TargetUnit, typename U, typename R>
+AU_DEVICE_FUNC constexpr decltype(auto) ref_or_scaled_copy(TargetUnit, const Quantity<U, R> &q);
+
+// For *arithmetic* reps, we host comparisons in a rep shared by both operands
+// (`CommonTypeButPreserveIntSignedness`), which widens each operand to the common width while
+// preserving its own signedness so that mixed signed/unsigned comparisons stay correct.
+//
+// For *non-arithmetic* reps we take the same stance as `operator+`'s `ExplicitRepFor`: we have no
+// meaningful common rep, so we never relocate.  Instead we bring each operand to the common unit
+// via `ref_or_scaled_copy` (which keeps references / expression-template laziness) and let the
+// rep's own comparison operator do the work.
+template <typename Op,
+          typename U1,
+          typename U2,
+          typename R1,
+          typename R2,
+          bool BothArithmetic =
+              stdx::conjunction<std::is_arithmetic<R1>, std::is_arithmetic<R2>>::value>
+struct ConvertAndCompare {
+    AU_DEVICE_FUNC static constexpr auto compare(const Quantity<U1, R1> &q1,
+                                                 const Quantity<U2, R2> &q2) {
+        using U = CommonUnit<U1, U2>;
+        using ComRep1 = CommonTypeButPreserveIntSignedness<R1, R2>;
+        using ComRep2 = CommonTypeButPreserveIntSignedness<R2, R1>;
+        return SignAwareComparison<UnitSign<U>, Op>{}(
+            q1.template in<ComRep1>(U{}, check_for(ALL_RISKS)),
+            q2.template in<ComRep2>(U{}, check_for(ALL_RISKS)));
+    }
+};
+template <typename Op, typename U1, typename U2, typename R1, typename R2>
+struct ConvertAndCompare<Op, U1, U2, R1, R2, false> {
+    AU_DEVICE_FUNC static constexpr auto compare(const Quantity<U1, R1> &q1,
+                                                 const Quantity<U2, R2> &q2) {
+        using U = CommonUnit<U1, U2>;
+        return SignAwareComparison<UnitSign<U>, Op>{}(ref_or_scaled_copy<R2>(U{}, q1),
+                                                      ref_or_scaled_copy<R1>(U{}, q2));
+    }
+};
+
 template <typename Op, typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto convert_and_compare(const Quantity<U1, R1> &q1,
                                                   const Quantity<U2, R2> &q2) {
-    using U = CommonUnit<U1, U2>;
-    using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
-    using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
-    return detail::SignAwareComparison<UnitSign<U>, Op>{}(
-        q1.template in<ComRep1>(U{}, check_for(ALL_RISKS)),
-        q2.template in<ComRep2>(U{}, check_for(ALL_RISKS)));
+    return ConvertAndCompare<Op, U1, U2, R1, R2>::compare(q1, q2);
 }
 }  // namespace detail
 
