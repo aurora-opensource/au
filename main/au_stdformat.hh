@@ -28,7 +28,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-125-g1143776
+// Version identifier: 0.5.0-base-126-gda658ff
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -6231,6 +6231,27 @@ struct ConversionRepImpl
                        PromotedType<std::common_type_t<OldRep, NewRep>>> {};
 
 //
+// `HasConversionRep<OldRep, NewRep>` tells us (SFINAE-friendly) whether `ConversionRep<OldRep,
+// NewRep>` is well-formed.
+//
+// The conversion arithmetic is hosted in `std::common_type` of the two reps, but some reps have no
+// common type at all --- most notably, two *distinct* Eigen expression templates.  Asking
+// `std::common_type` for such a pair is a hard error rather than a soft one, which would otherwise
+// blow up any conversion *policy* check (e.g. the implicit-constructor's SFINAE guard) that merely
+// needs to answer "is this conversion permitted?" with `false`.  This trait lets those callers
+// short-circuit to `false` instead.
+//
+template <typename A, typename B>
+using CommonTypeMemberT = typename std::common_type<A, B>::type;
+template <typename A, typename B>
+struct HasCommonType : stdx::experimental::is_detected<CommonTypeMemberT, A, B> {};
+
+template <typename OldRep, typename NewRep>
+struct HasConversionRep : std::conditional_t<IsRealToComplex<OldRep, NewRep>::value,
+                                             HasCommonType<RealPart<OldRep>, RealPart<NewRep>>,
+                                             HasCommonType<OldRep, NewRep>> {};
+
+//
 // `CastStep<CastType, T, U>` is a single step of casting from type `T` to type `U`, using the
 // appropriate operation based on `CastType`.
 //
@@ -7742,12 +7763,23 @@ struct PermitAsCarveOutForIntegerPromotion
 template <typename ScaleFactor, typename SourceRep>
 struct PermitAsCarveOutForIntegerPromotion<void, ScaleFactor, SourceRep> : std::false_type {};
 
-template <typename CastStrategy, typename Rep, typename ScaleFactor, typename SourceRep>
+template <typename CastStrategy,
+          typename Rep,
+          typename ScaleFactor,
+          typename SourceRep,
+          bool = HasConversionRep<SourceRep, Rep>::value>
 struct PassesConversionRiskCheck
     : stdx::disjunction<
           PermitAsCarveOutForIntegerPromotion<Rep, ScaleFactor, SourceRep>,
           ConversionRiskAcceptablyLow<
               ConversionForRepsAndFactor<CastStrategy, SourceRep, Rep, ScaleFactor>>> {};
+
+// If the reps have no common type, the conversion arithmetic can't even be formed, so the
+// conversion is simply not permitted.  (This keeps the check SFINAE-friendly for reps like distinct
+// Eigen expression templates, rather than hard-erroring deep inside `std::common_type`.)
+template <typename CastStrategy, typename Rep, typename ScaleFactor, typename SourceRep>
+struct PassesConversionRiskCheck<CastStrategy, Rep, ScaleFactor, SourceRep, false>
+    : std::false_type {};
 
 template <typename CastStrategy, typename Rep, typename ScaleFactor, typename SourceRep>
 using ImplicitConversionPolicy =
