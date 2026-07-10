@@ -576,4 +576,8 @@ TEST(QuantityPointMaker, CanScaleByMagnitude) {
     StaticAssertTypeEq<decltype(kelvins_pt / mag<5>()),
                        QuantityPointMaker<decltype(Kelvins{} / mag<5>())>>();
 }
+
+TEST(QuantityPointMaker, CanScaleByMagnitudeOnTheLeft) {
+    StaticAssertTypeEq<decltype(mag<5>() * kelvins_pt), decltype(kelvins_pt * mag<5>())>();
+}
 }  // namespace au

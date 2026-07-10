@@ -704,3 +704,66 @@ We expect that the relation `m == sign(m) * abs(m)` will hold for every `Magnitu
     - `Sign<M>`
 - For an _instance_ `m`:
     - `sign(m)`
+
+### Combining with other types
+
+A `Magnitude` instance `m` can be multiplied or divided with the library's other value types.  In
+every case, the effect is _symbolic_: we scale the _unit_, never the underlying value.  This makes
+these operations exact, even for integral types.
+
+#### Raw numbers
+
+**Result:** A dimensionless `Quantity`, whose rep is the raw number's type, and whose unit is a
+scaled version of the unitless unit.  The `Magnitude` acts like its "corresponding constant":
+`m` behaves the same as `make_constant(UnitProduct<>{} * m)`.
+
+The stored value is the input number, untouched.  To retrieve the fully evaluated result, convert to
+a specific unit, as with any other dimensionless quantity.
+
+**Syntax**, for a raw number `x`:
+
+- `x * m`
+- `m * x`
+- `x / m`
+- `m / x`
+    - Only when `x` is not an integral type; dividing a `Magnitude` by an integer would almost
+      always produce 0, so it is a compile-time error.
+
+**Example:**
+
+- `(2.5 * mag<3>()).in(unos)` equals `7.5`
+
+#### `Quantity`
+
+**Result:** A `Quantity` of the same rep, whose unit is scaled by the `Magnitude` (or its inverse,
+for division).  The stored value is untouched, so the operation is always exact --- even for
+integral reps.
+
+**Syntax**, for a `Quantity` instance `q`:
+
+- `q * m`
+- `m * q`
+- `q / m`
+- `m / q`
+    - Only when the rep of `q` is not an integral type.
+
+**Example:**
+
+- `(feet(6.0) * mag<3>()).in(feet)` equals `18.0`
+
+#### Units, quantity makers, and other unit-adjacent types
+
+Instances of units, `QuantityMaker`, `QuantityPointMaker`, `SingularNameFor`, `Constant`, and
+`SymbolFor` can all be multiplied or divided by a `Magnitude`, on either side, producing the same
+kind of object with a scaled unit.  (The one exception is that you cannot divide a `Magnitude` _by_
+a `QuantityPointMaker`, because the inverse of a point unit is meaningless.)
+
+For example, `mag<3>() * feet` is a `QuantityMaker` for the unit "3 feet" --- the same as
+`feet * mag<3>()`.
+
+#### Unit slots
+
+A `Magnitude` instance can fill a [unit slot](../discussion/idioms/unit-slots.md), where it acts as
+a scaled version of the unitless unit.  For example, `make_constant(mag<3>())` is a dimensionless
+`Constant` representing the number 3, and `some_dimensionless_quantity.in(mag<3>())` retrieves the
+value of that quantity, as measured in units of "3".

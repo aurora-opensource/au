@@ -416,6 +416,18 @@ constexpr ComputeScaledUnit<U, MagInverse<Magnitude<BPs...>>> operator/(U, Magni
     return {};
 }
 
+// Scale this Unit by multiplying by a Magnitude on the left.
+template <typename U, typename = std::enable_if_t<IsUnit<U>::value>, typename... BPs>
+constexpr ComputeScaledUnit<U, Magnitude<BPs...>> operator*(Magnitude<BPs...>, U) {
+    return {};
+}
+
+// Divide a Magnitude by this Unit.
+template <typename U, typename = std::enable_if_t<IsUnit<U>::value>, typename... BPs>
+constexpr ComputeScaledUnit<UnitInverse<U>, Magnitude<BPs...>> operator/(Magnitude<BPs...>, U) {
+    return {};
+}
+
 // Compute the product of two unit instances.
 template <typename U1,
           typename U2,
@@ -469,11 +481,36 @@ struct SingularNameFor {
     constexpr auto operator*(SingularNameFor<OtherUnit>) const {
         return SingularNameFor<UnitProduct<Unit, OtherUnit>>{};
     }
+
+    // Scale by a Magnitude on the right or the left, or divide by a Magnitude.
+    template <typename... BPs>
+    constexpr auto operator*(Magnitude<BPs...> m) const {
+        return SingularNameFor<decltype(Unit{} * m)>{};
+    }
+    template <typename... BPs>
+    constexpr auto operator/(Magnitude<BPs...> m) const {
+        return SingularNameFor<decltype(Unit{} / m)>{};
+    }
+    template <typename... BPs>
+    friend constexpr auto operator*(Magnitude<BPs...> m, SingularNameFor) {
+        return SingularNameFor<decltype(m * Unit{})>{};
+    }
+
+    // Divide a Magnitude by this `SingularNameFor`.
+    template <typename... BPs>
+    friend constexpr auto operator/(Magnitude<BPs...> m, SingularNameFor) {
+        return SingularNameFor<decltype(m / Unit{})>{};
+    }
 };
 
 // Support `SingularNameFor` in (quantity) unit slots.
 template <typename U>
 struct AssociatedUnitImpl<SingularNameFor<U>> : stdx::type_identity<U> {};
+
+// Support `Magnitude` in (quantity) unit slots: it acts as a scaled version of the unitless unit.
+template <typename... BPs>
+struct AssociatedUnitImpl<Magnitude<BPs...>>
+    : stdx::type_identity<ComputeScaledUnit<UnitProduct<>, Magnitude<BPs...>>> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(SingularNameFor<Unit>) {
@@ -1234,6 +1271,31 @@ struct UnitLabel<ScaledUnit<U, Magnitude<Negative>>> {
 template <typename U>
 constexpr typename UnitLabel<ScaledUnit<U, Magnitude<Negative>>>::LabelT
     UnitLabel<ScaledUnit<U, Magnitude<Negative>>>::value;
+
+namespace detail {
+// Labeler for a scaled version of the unitless unit: the label is just the magnitude in brackets.
+//
+// (If we used the generic `ScaledUnit` labeler, the empty label of the unitless unit would leave a
+// dangling space, as in `"[3 ]"`.)
+template <typename M>
+struct UnitlessScaledLabel {
+    using MagLab = MagnitudeLabel<M>;
+    using LabelT = StringConstant<parens_if<MagLab::has_exposed_slash>(MagLab::value).size() + 2u>;
+    static constexpr LabelT value =
+        concatenate("[", parens_if<MagLab::has_exposed_slash>(MagLab::value), "]");
+};
+template <typename M>
+constexpr typename UnitlessScaledLabel<M>::LabelT UnitlessScaledLabel<M>::value;
+}  // namespace detail
+
+// Special case for a scaled version of the unitless unit, as in `"[3]"`.
+template <typename M>
+struct UnitLabel<ScaledUnit<UnitProductPack<>, M>> : detail::UnitlessScaledLabel<M> {};
+
+// Disambiguator between the "scaled unitless unit" and "unit scaled by (-1)" special cases.
+template <>
+struct UnitLabel<ScaledUnit<UnitProductPack<>, Magnitude<Negative>>>
+    : detail::UnitlessScaledLabel<Magnitude<Negative>> {};
 
 // Implementation for CommonUnitPack: give size in terms of each constituent unit.
 template <typename... Us>

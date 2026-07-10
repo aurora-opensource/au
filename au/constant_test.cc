@@ -118,6 +118,16 @@ TEST(MakeConstant, MakesConstantFromSymbol) {
     EXPECT_THAT(123 * ad_hoc_c, QuantityEquivalent(123 * c));
 }
 
+TEST(MakeConstant, MakesDimensionlessConstantFromMagnitude) {
+    constexpr auto three = make_constant(mag<3>());
+    StaticAssertTypeEq<decltype(make_constant(mag<3>())),
+                       Constant<decltype(UnitProduct<>{} * mag<3>())>>();
+
+    // A bare magnitude in numeric arithmetic acts like its corresponding constant.
+    EXPECT_THAT(2.5 * three, QuantityEquivalent((unos * three)(2.5)));
+    EXPECT_THAT(three * 2.5, QuantityEquivalent((unos * three)(2.5)));
+}
+
 TEST(Constant, CanGetQuantityBySpecifyingRep) {
     EXPECT_THAT(c.as<float>(), SameTypeAndValue(c * 1.0f));
     EXPECT_THAT(c.as<int>(), SameTypeAndValue(c * 1));
