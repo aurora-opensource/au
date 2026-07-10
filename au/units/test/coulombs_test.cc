@@ -14,9 +14,13 @@
 
 #include "au/units/coulombs.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/amperes.hh"
+#include "au/units/literals/coulombs.hh"
 #include "au/units/seconds.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -30,6 +34,12 @@ TEST(Coulombs, EquivalentToAmpereSeconds) {
 TEST(Coulombs, HasExpectedSymbol) {
     using symbols::C;
     EXPECT_THAT(5 * C, SameTypeAndValue(coulombs(5)));
+}
+
+TEST(Coulombs, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_C;
+    EXPECT_THAT(1.28e-4_C, SameTypeAndValue(make_constant(coulombs * 1.28e-4_mag)));
 }
 
 }  // namespace au

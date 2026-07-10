@@ -14,8 +14,11 @@
 
 #include "au/units/inches.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
+#include "au/units/literals/inches.hh"
 #include "au/units/meters.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -31,6 +34,12 @@ TEST(Inches, EquivalentTo2Point54CentiMeters) { EXPECT_THAT(centi(meters)(254), 
 TEST(Inches, HasExpectedSymbol) {
     using symbols::in;
     EXPECT_THAT(5 * in, SameTypeAndValue(inches(5)));
+}
+
+TEST(Inches, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_in;
+    EXPECT_THAT(1.28e-4_in, SameTypeAndValue(make_constant(inches * 1.28e-4_mag)));
 }
 
 }  // namespace au

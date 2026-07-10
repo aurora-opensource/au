@@ -14,9 +14,13 @@
 
 #include "au/units/farads.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/coulombs.hh"
+#include "au/units/literals/farads.hh"
 #include "au/units/volts.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -30,6 +34,12 @@ TEST(Farads, EquivalentToCoulombsPerVolt) {
 TEST(Farads, HasExpectedSymbol) {
     using symbols::F;
     EXPECT_THAT(5 * F, SameTypeAndValue(farads(5)));
+}
+
+TEST(Farads, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_F;
+    EXPECT_THAT(1.28e-4_F, SameTypeAndValue(make_constant(farads * 1.28e-4_mag)));
 }
 
 }  // namespace au

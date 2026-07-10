@@ -14,8 +14,11 @@
 
 #include "au/units/days.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/hours.hh"
+#include "au/units/literals/days.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -30,6 +33,12 @@ TEST(Days, EquivalentTo24Hours) { EXPECT_THAT(days(1), Eq(hours(24))); }
 TEST(Days, HasExpectedSymbol) {
     using symbols::d;
     EXPECT_THAT(5 * d, SameTypeAndValue(days(5)));
+}
+
+TEST(Days, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_d;
+    EXPECT_THAT(1.28e-4_d, SameTypeAndValue(make_constant(days * 1.28e-4_mag)));
 }
 
 }  // namespace au

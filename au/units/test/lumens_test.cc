@@ -14,9 +14,13 @@
 
 #include "au/units/lumens.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/candelas.hh"
+#include "au/units/literals/lumens.hh"
 #include "au/units/steradians.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -30,6 +34,12 @@ TEST(Lumens, EquivalentToCandelaSteradians) {
 TEST(Lumens, HasExpectedSymbol) {
     using symbols::lm;
     EXPECT_THAT(5 * lm, SameTypeAndValue(lumens(5)));
+}
+
+TEST(Lumens, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_lm;
+    EXPECT_THAT(1.28e-4_lm, SameTypeAndValue(make_constant(lumens * 1.28e-4_mag)));
 }
 
 }  // namespace au

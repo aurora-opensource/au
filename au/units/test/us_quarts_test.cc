@@ -14,7 +14,10 @@
 
 #include "au/units/us_quarts.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/us_quarts.hh"
 #include "au/units/us_gallons.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -30,6 +33,12 @@ TEST(USQuarts, FourInAGallon) { EXPECT_THAT(us_quarts(4), Eq(us_gallons(1))); }
 TEST(USQuarts, HasExpectedSymbol) {
     using symbols::US_qt;
     EXPECT_THAT(5 * US_qt, SameTypeAndValue(us_quarts(5)));
+}
+
+TEST(USQuarts, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_US_qt;
+    EXPECT_THAT(1.28e-4_US_qt, SameTypeAndValue(make_constant(us_quarts * 1.28e-4_mag)));
 }
 
 }  // namespace au

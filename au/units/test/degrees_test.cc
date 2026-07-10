@@ -14,7 +14,10 @@
 
 #include "au/units/degrees.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/degrees.hh"
 #include "au/units/radians.hh"
 #include "au/units/revolutions.hh"
 #include "gmock/gmock.h"
@@ -37,6 +40,12 @@ TEST(Degrees, One360thOfARevolution) { EXPECT_THAT(degrees(360), Eq(revolutions(
 TEST(Degrees, HasExpectedSymbol) {
     using symbols::deg;
     EXPECT_THAT(5 * deg, SameTypeAndValue(degrees(5)));
+}
+
+TEST(Degrees, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_deg;
+    EXPECT_THAT(1.28e-4_deg, SameTypeAndValue(make_constant(degrees * 1.28e-4_mag)));
 }
 
 }  // namespace au

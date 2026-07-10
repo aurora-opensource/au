@@ -14,9 +14,12 @@
 
 #include "au/units/meters.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/inches.hh"
+#include "au/units/literals/meters.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -33,6 +36,12 @@ TEST(Meters, HasExpectedRelationshipsWithInches) {
 TEST(Meters, HasExpectedSymbol) {
     using symbols::m;
     EXPECT_THAT(5 * m, SameTypeAndValue(meters(5)));
+}
+
+TEST(Meters, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_m;
+    EXPECT_THAT(1.28e-4_m, SameTypeAndValue(make_constant(meters * 1.28e-4_mag)));
 }
 
 }  // namespace au

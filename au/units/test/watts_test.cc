@@ -14,12 +14,16 @@
 
 #include "au/units/watts.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/amperes.hh"
 #include "au/units/joules.hh"
+#include "au/units/literals/watts.hh"
 #include "au/units/ohms.hh"
 #include "au/units/seconds.hh"
 #include "au/units/volts.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -43,6 +47,12 @@ TEST(Watts, EquivalentToOhmicHeating) {
 TEST(Watts, HasExpectedSymbol) {
     using symbols::W;
     EXPECT_THAT(5 * W, SameTypeAndValue(watts(5)));
+}
+
+TEST(Watts, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_W;
+    EXPECT_THAT(1.28e-4_W, SameTypeAndValue(make_constant(watts * 1.28e-4_mag)));
 }
 
 }  // namespace au

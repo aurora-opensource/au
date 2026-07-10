@@ -14,8 +14,11 @@
 
 #include "au/units/revolutions.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/degrees.hh"
+#include "au/units/literals/revolutions.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -30,6 +33,12 @@ TEST(Revolutions, ExactlyEquivalentTo360Degrees) { EXPECT_THAT(revolutions(1), E
 TEST(Revolutions, HasExpectedSymbol) {
     using symbols::rev;
     EXPECT_THAT(5 * rev, SameTypeAndValue(revolutions(5)));
+}
+
+TEST(Revolutions, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_rev;
+    EXPECT_THAT(1.28e-4_rev, SameTypeAndValue(make_constant(revolutions * 1.28e-4_mag)));
 }
 
 }  // namespace au

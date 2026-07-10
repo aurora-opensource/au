@@ -14,8 +14,12 @@
 
 #include "au/units/arcseconds.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/degrees.hh"
+#include "au/units/literals/arcseconds.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -29,6 +33,12 @@ TEST(Arcseconds, RelatesCorrectlyToDegrees) { EXPECT_THAT(arcseconds(7200.0), Eq
 TEST(Arcseconds, HasExpectedSymbol) {
     using symbols::as;
     EXPECT_THAT(5.f * as, SameTypeAndValue(arcseconds(5.f)));
+}
+
+TEST(Arcseconds, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_as;
+    EXPECT_THAT(1.28e-4_as, SameTypeAndValue(make_constant(arcseconds * 1.28e-4_mag)));
 }
 
 }  // namespace au

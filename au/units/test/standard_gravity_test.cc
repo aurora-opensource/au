@@ -14,8 +14,11 @@
 
 #include "au/units/standard_gravity.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
+#include "au/units/literals/standard_gravity.hh"
 #include "au/units/meters.hh"
 #include "au/units/seconds.hh"
 #include "gmock/gmock.h"
@@ -34,6 +37,12 @@ TEST(StandardGravity, HasExpectedValue) {
 TEST(StandardGravity, HasExpectedSymbol) {
     using symbols::g_0;
     EXPECT_THAT(5 * g_0, SameTypeAndValue(standard_gravity(5)));
+}
+
+TEST(StandardGravity, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_g_0;
+    EXPECT_THAT(1.28e-4_g_0, SameTypeAndValue(make_constant(standard_gravity * 1.28e-4_mag)));
 }
 
 }  // namespace au

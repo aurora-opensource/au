@@ -14,9 +14,13 @@
 
 #include "au/units/henries.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/amperes.hh"
+#include "au/units/literals/henries.hh"
 #include "au/units/webers.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -30,6 +34,12 @@ TEST(Henries, EquivalentToWebersPerAmpere) {
 TEST(Henries, HasExpectedSymbol) {
     using symbols::H;
     EXPECT_THAT(5 * H, SameTypeAndValue(henries(5)));
+}
+
+TEST(Henries, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_H;
+    EXPECT_THAT(1.28e-4_H, SameTypeAndValue(make_constant(henries * 1.28e-4_mag)));
 }
 
 }  // namespace au

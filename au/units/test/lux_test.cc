@@ -14,9 +14,13 @@
 
 #include "au/units/lux.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/lux.hh"
 #include "au/units/lumens.hh"
 #include "au/units/meters.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -30,6 +34,12 @@ TEST(Lux, ProductWithAreaGivesLumens) {
 TEST(Lux, HasExpectedSymbol) {
     using symbols::lx;
     EXPECT_THAT(5 * lx, SameTypeAndValue(lux(5)));
+}
+
+TEST(Lux, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_lx;
+    EXPECT_THAT(1.28e-4_lx, SameTypeAndValue(make_constant(lux * 1.28e-4_mag)));
 }
 
 }  // namespace au

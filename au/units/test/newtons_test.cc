@@ -14,11 +14,15 @@
 
 #include "au/units/newtons.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/grams.hh"
+#include "au/units/literals/newtons.hh"
 #include "au/units/meters.hh"
 #include "au/units/seconds.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -32,6 +36,12 @@ TEST(Newtons, EquivalentToKilogramMetersPerSquaredSecond) {
 TEST(Newtons, HasExpectedSymbol) {
     using symbols::N;
     EXPECT_THAT(5 * N, SameTypeAndValue(newtons(5)));
+}
+
+TEST(Newtons, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_N;
+    EXPECT_THAT(1.28e-4_N, SameTypeAndValue(make_constant(newtons * 1.28e-4_mag)));
 }
 
 }  // namespace au

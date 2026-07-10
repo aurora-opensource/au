@@ -14,9 +14,12 @@
 
 #include "au/units/fahrenheit.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/celsius.hh"
+#include "au/units/literals/fahrenheit.hh"
 #include "au/units/rankine.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -47,6 +50,12 @@ TEST(Fahrenheit, QuantityEquivalentToRankine) {
 
 TEST(Fahrenheit, HasCorrectRelationshipWithRankine) {
     EXPECT_THAT(centi(fahrenheit_pt)(0), Eq(centi(rankine_pt)(45967)));
+}
+
+TEST(Fahrenheit, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_degF_qty;
+    EXPECT_THAT(1.28e-4_degF_qty, SameTypeAndValue(make_constant(fahrenheit_qty * 1.28e-4_mag)));
 }
 
 }  // namespace au

@@ -14,8 +14,12 @@
 
 #include "au/units/hertz.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/hertz.hh"
 #include "au/units/seconds.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -29,6 +33,12 @@ TEST(Hertz, EquivalentToInverseSeconds) {
 TEST(Hertz, HasExpectedSymbol) {
     using symbols::Hz;
     EXPECT_THAT(5 * Hz, SameTypeAndValue(hertz(5)));
+}
+
+TEST(Hertz, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_Hz;
+    EXPECT_THAT(1.28e-4_Hz, SameTypeAndValue(make_constant(hertz * 1.28e-4_mag)));
 }
 
 }  // namespace au

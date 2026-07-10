@@ -14,7 +14,10 @@
 
 #include "au/units/football_fields.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/football_fields.hh"
 #include "au/units/meters.hh"
 #include "au/units/yards.hh"
 #include "gmock/gmock.h"
@@ -42,6 +45,12 @@ TEST(FootballFields, KnownLidarRangeIsAtLeastFourFootballFields) {
 TEST(FootballFields, HasExpectedSymbol) {
     using symbols::ftbl_fld;
     EXPECT_THAT(5 * ftbl_fld, SameTypeAndValue(football_fields(5)));
+}
+
+TEST(FootballFields, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_ftbl_fld;
+    EXPECT_THAT(1.28e-4_ftbl_fld, SameTypeAndValue(make_constant(football_fields * 1.28e-4_mag)));
 }
 
 }  // namespace au

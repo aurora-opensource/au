@@ -14,7 +14,10 @@
 
 #include "au/units/us_pints.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/us_pints.hh"
 #include "au/units/us_gallons.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -30,6 +33,12 @@ TEST(USPints, EightInAGallon) { EXPECT_THAT(us_pints(8), Eq(us_gallons(1))); }
 TEST(USPints, HasExpectedSymbol) {
     using symbols::US_pt;
     EXPECT_THAT(5 * US_pt, SameTypeAndValue(us_pints(5)));
+}
+
+TEST(USPints, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_US_pt;
+    EXPECT_THAT(1.28e-4_US_pt, SameTypeAndValue(make_constant(us_pints * 1.28e-4_mag)));
 }
 
 }  // namespace au

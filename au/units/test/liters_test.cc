@@ -14,8 +14,11 @@
 
 #include "au/units/liters.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
+#include "au/units/literals/liters.hh"
 #include "au/units/meters.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -36,6 +39,12 @@ TEST(Liters, HasExpectedRelationshipsWithLinearUnits) {
 TEST(Liters, HasExpectedSymbol) {
     using symbols::L;
     EXPECT_THAT(5 * L, SameTypeAndValue(liters(5)));
+}
+
+TEST(Liters, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_L;
+    EXPECT_THAT(1.28e-4_L, SameTypeAndValue(make_constant(liters * 1.28e-4_mag)));
 }
 
 }  // namespace au

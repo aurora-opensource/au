@@ -14,9 +14,12 @@
 
 #include "au/units/pounds_mass.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/grams.hh"
+#include "au/units/literals/pounds_mass.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -33,6 +36,12 @@ TEST(PoundsMass, EquivalentToAppropriateQuantityOfKilograms) {
 TEST(PoundsMass, HasExpectedSymbol) {
     using symbols::lb;
     EXPECT_THAT(5 * lb, SameTypeAndValue(pounds_mass(5)));
+}
+
+TEST(PoundsMass, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_lb;
+    EXPECT_THAT(1.28e-4_lb, SameTypeAndValue(make_constant(pounds_mass * 1.28e-4_mag)));
 }
 
 }  // namespace au

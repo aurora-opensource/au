@@ -14,10 +14,13 @@
 
 #include "au/units/rankine.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/fahrenheit.hh"
 #include "au/units/kelvins.hh"
+#include "au/units/literals/rankine.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -40,6 +43,12 @@ TEST(Rankine, QuantityEquivalentToFahrenheit) {
 
 TEST(Rankine, HasCorrectRelationshipWithFahrenheit) {
     EXPECT_THAT(centi(rankine_pt)(45967), Eq(centi(fahrenheit_pt)(0)));
+}
+
+TEST(Rankine, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_degR;
+    EXPECT_THAT(1.28e-4_degR, SameTypeAndValue(make_constant(rankine * 1.28e-4_mag)));
 }
 
 }  // namespace au

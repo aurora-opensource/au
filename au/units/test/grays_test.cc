@@ -14,10 +14,14 @@
 
 #include "au/units/grays.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/grams.hh"
 #include "au/units/joules.hh"
+#include "au/units/literals/grays.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -31,6 +35,12 @@ TEST(Grays, EquivalentToJoulesPerKilogram) {
 TEST(Grays, HasExpectedSymbol) {
     using symbols::Gy;
     EXPECT_THAT(5 * Gy, SameTypeAndValue(grays(5)));
+}
+
+TEST(Grays, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_Gy;
+    EXPECT_THAT(1.28e-4_Gy, SameTypeAndValue(make_constant(grays * 1.28e-4_mag)));
 }
 
 }  // namespace au

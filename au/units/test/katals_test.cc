@@ -14,9 +14,13 @@
 
 #include "au/units/katals.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/katals.hh"
 #include "au/units/moles.hh"
 #include "au/units/seconds.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -30,6 +34,12 @@ TEST(Katals, EquivalentToMolesPerSecond) {
 TEST(Katals, HasExpectedSymbol) {
     using symbols::kat;
     EXPECT_THAT(5 * kat, SameTypeAndValue(katals(5)));
+}
+
+TEST(Katals, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_kat;
+    EXPECT_THAT(1.28e-4_kat, SameTypeAndValue(make_constant(katals * 1.28e-4_mag)));
 }
 
 }  // namespace au

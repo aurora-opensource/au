@@ -14,7 +14,10 @@
 
 #include "au/units/minutes.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/minutes.hh"
 #include "au/units/seconds.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -30,6 +33,12 @@ TEST(Minutes, EquivalentTo60Seconds) { EXPECT_THAT(minutes(3), Eq(seconds(180)))
 TEST(Minutes, HasExpectedSymbol) {
     using symbols::min;
     EXPECT_THAT(5 * min, SameTypeAndValue(minutes(5)));
+}
+
+TEST(Minutes, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_min;
+    EXPECT_THAT(1.28e-4_min, SameTypeAndValue(make_constant(minutes * 1.28e-4_mag)));
 }
 
 }  // namespace au

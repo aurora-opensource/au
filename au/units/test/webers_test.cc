@@ -14,11 +14,15 @@
 
 #include "au/units/webers.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/amperes.hh"
 #include "au/units/henries.hh"
+#include "au/units/literals/webers.hh"
 #include "au/units/seconds.hh"
 #include "au/units/volts.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -36,6 +40,12 @@ TEST(Webers, EquivalentToHenryAmperes) {
 TEST(Webers, HasExpectedSymbol) {
     using symbols::Wb;
     EXPECT_THAT(5 * Wb, SameTypeAndValue(webers(5)));
+}
+
+TEST(Webers, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_Wb;
+    EXPECT_THAT(1.28e-4_Wb, SameTypeAndValue(make_constant(webers * 1.28e-4_mag)));
 }
 
 }  // namespace au

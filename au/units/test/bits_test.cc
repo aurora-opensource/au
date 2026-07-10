@@ -14,8 +14,11 @@
 
 #include "au/units/bits.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/bytes.hh"
+#include "au/units/literals/bits.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -30,6 +33,12 @@ TEST(Bits, OneEighthOfAByte) { EXPECT_THAT(bits(1.0), Eq(bytes(1.0 / 8.0))); }
 TEST(Bits, HasExpectedSymbol) {
     using symbols::b;
     EXPECT_THAT(5 * b, SameTypeAndValue(bits(5)));
+}
+
+TEST(Bits, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_b;
+    EXPECT_THAT(1.28e-4_b, SameTypeAndValue(make_constant(bits * 1.28e-4_mag)));
 }
 
 }  // namespace au

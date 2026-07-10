@@ -14,8 +14,11 @@
 
 #include "au/units/bars.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
+#include "au/units/literals/bars.hh"
 #include "au/units/pascals.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -31,6 +34,12 @@ TEST(Bars, HasCorrectRelationshipWithPascals) { EXPECT_THAT(bars(1), Eq(kilo(pas
 TEST(Bars, HasExpectedSymbol) {
     using symbols::bar;
     EXPECT_THAT(5 * bar, SameTypeAndValue(bars(5)));
+}
+
+TEST(Bars, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    using literals::operator""_bar;
+    EXPECT_THAT(1.28e-4_bar, SameTypeAndValue(make_constant(bars * 1.28e-4_mag)));
 }
 
 }  // namespace au
