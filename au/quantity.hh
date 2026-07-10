@@ -380,7 +380,9 @@ class Quantity {
         return make_quantity<decltype(pow<-1>(unit))>(s / a.value_);
     }
 
-    // Scaling by a Magnitude: scales the unit; for (m / q) we also take the reciprocal of q's stored value.
+    // Scaling by a Magnitude scales the unit.
+    //
+    // For (m / q) we also take the reciprocal of q's stored value.
     template <typename... BPs>
     friend AU_DEVICE_FUNC constexpr auto operator*(const Quantity &a, Magnitude<BPs...> m) {
         return make_quantity<decltype(unit * m)>(a.value_);
