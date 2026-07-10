@@ -707,9 +707,11 @@ We expect that the relation `m == sign(m) * abs(m)` will hold for every `Magnitu
 
 ### Combining with other types
 
-A `Magnitude` instance `m` can be multiplied or divided with the library's other value types.  In
-every case, the effect is _symbolic_: we scale the _unit_, never the underlying value.  This makes
-these operations exact, even for integral types.
+A `Magnitude` instance `m` can be multiplied or divided with the library's other value types. In
+many cases the effect is _symbolic_: we scale the _unit_ while leaving the stored value unchanged,
+which makes these operations exact even for integral reps. When `m` is divided by a numeric value or
+quantity (`m / x` or `m / q`), the stored value becomes the reciprocal of the divisor, so these
+overloads are only enabled for non-integral divisors.
 
 #### Raw numbers
 
@@ -717,8 +719,9 @@ these operations exact, even for integral types.
 scaled version of the unitless unit.  The `Magnitude` acts like its "corresponding constant":
 `m` behaves the same as `make_constant(UnitProduct<>{} * m)`.
 
-The stored value is the input number, untouched.  To retrieve the fully evaluated result, convert to
-a specific unit, as with any other dimensionless quantity.
+The stored value is the input number for `x * m`, `m * x`, and `x / m`. For `m / x`, the stored
+value is `1 / x` (so this overload is only enabled for non-integral `x`). To retrieve the fully
+evaluated result, convert to a specific unit, as with any other dimensionless quantity.
 
 **Syntax**, for a raw number `x`:
 
@@ -735,9 +738,10 @@ a specific unit, as with any other dimensionless quantity.
 
 #### `Quantity`
 
-**Result:** A `Quantity` of the same rep, whose unit is scaled by the `Magnitude` (or its inverse,
-for division).  The stored value is untouched, so the operation is always exact --- even for
-integral reps.
+**Result:** A `Quantity` of the same rep, whose unit is scaled by the `Magnitude` (or its inverse
+for division). For `q * m`, `m * q`, and `q / m`, the stored value is untouched (exact even for
+integral reps). For `m / q`, the stored value becomes the reciprocal of `q`'s stored value, so this
+overload is only enabled for non-integral reps.
 
 **Syntax**, for a `Quantity` instance `q`:
 
