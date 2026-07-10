@@ -29,6 +29,7 @@
 #include "au/units/radians.hh"
 #include "au/units/revolutions.hh"
 #include "au/units/seconds.hh"
+#include "au/units/unos.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
