@@ -37,7 +37,6 @@ TEST(Revolutions, HasExpectedSymbol) {
 
 TEST(Revolutions, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_rev;
     EXPECT_THAT(1.28e-4_rev, SameTypeAndValue(make_constant(revolutions * 1.28e-4_mag)));
 }
 

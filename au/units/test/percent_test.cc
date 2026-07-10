@@ -38,7 +38,6 @@ TEST(Percent, HasExpectedSymbol) {
 
 TEST(Percent, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_pct;
     EXPECT_THAT(1.28e-4_pct, SameTypeAndValue(make_constant(percent * 1.28e-4_mag)));
 }
 

@@ -19,13 +19,13 @@
 #include "au/units/standard_gravity.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_g_0` is a `Constant` equivalent to `make_constant(1.28e-4_mag * standard_gravity)`.
 template <char... Cs>
 constexpr auto operator""_g_0() {
-    return make_constant(standard_gravity * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(standard_gravity * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

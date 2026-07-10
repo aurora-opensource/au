@@ -37,7 +37,6 @@ TEST(Hours, HasExpectedSymbol) {
 
 TEST(Hours, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_h;
     EXPECT_THAT(1.28e-4_h, SameTypeAndValue(make_constant(hours * 1.28e-4_mag)));
 }
 

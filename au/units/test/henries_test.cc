@@ -38,7 +38,6 @@ TEST(Henries, HasExpectedSymbol) {
 
 TEST(Henries, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_H;
     EXPECT_THAT(1.28e-4_H, SameTypeAndValue(make_constant(henries * 1.28e-4_mag)));
 }
 

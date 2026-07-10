@@ -37,7 +37,6 @@ TEST(Becquerel, HasExpectedSymbol) {
 
 TEST(Becquerel, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_Bq;
     EXPECT_THAT(1.28e-4_Bq, SameTypeAndValue(make_constant(becquerel * 1.28e-4_mag)));
 }
 

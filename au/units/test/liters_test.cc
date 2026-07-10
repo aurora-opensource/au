@@ -43,7 +43,6 @@ TEST(Liters, HasExpectedSymbol) {
 
 TEST(Liters, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_L;
     EXPECT_THAT(1.28e-4_L, SameTypeAndValue(make_constant(liters * 1.28e-4_mag)));
 }
 

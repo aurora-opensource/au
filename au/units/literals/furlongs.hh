@@ -19,13 +19,13 @@
 #include "au/units/furlongs.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_fur` is a `Constant` equivalent to `make_constant(1.28e-4_mag * furlongs)`.
 template <char... Cs>
 constexpr auto operator""_fur() {
-    return make_constant(furlongs * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(furlongs * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

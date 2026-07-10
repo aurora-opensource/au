@@ -51,7 +51,6 @@ TEST(Watts, HasExpectedSymbol) {
 
 TEST(Watts, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_W;
     EXPECT_THAT(1.28e-4_W, SameTypeAndValue(make_constant(watts * 1.28e-4_mag)));
 }
 

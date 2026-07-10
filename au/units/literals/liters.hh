@@ -19,13 +19,13 @@
 #include "au/units/liters.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_L` is a `Constant` equivalent to `make_constant(1.28e-4_mag * liters)`.
 template <char... Cs>
 constexpr auto operator""_L() {
-    return make_constant(liters * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(liters * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

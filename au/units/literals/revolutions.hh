@@ -19,13 +19,13 @@
 #include "au/units/revolutions.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_rev` is a `Constant` equivalent to `make_constant(1.28e-4_mag * revolutions)`.
 template <char... Cs>
 constexpr auto operator""_rev() {
-    return make_constant(revolutions * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(revolutions * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

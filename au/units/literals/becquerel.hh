@@ -19,13 +19,13 @@
 #include "au/units/becquerel.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_Bq` is a `Constant` equivalent to `make_constant(1.28e-4_mag * becquerel)`.
 template <char... Cs>
 constexpr auto operator""_Bq() {
-    return make_constant(becquerel * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(becquerel * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

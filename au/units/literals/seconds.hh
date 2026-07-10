@@ -19,13 +19,13 @@
 #include "au/units/seconds.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_s` is a `Constant` equivalent to `make_constant(1.28e-4_mag * seconds)`.
 template <char... Cs>
 constexpr auto operator""_s() {
-    return make_constant(seconds * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(seconds * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

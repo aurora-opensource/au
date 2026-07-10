@@ -19,13 +19,13 @@
 #include "au/units/us_quarts.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_US_qt` is a `Constant` equivalent to `make_constant(1.28e-4_mag * us_quarts)`.
 template <char... Cs>
 constexpr auto operator""_US_qt() {
-    return make_constant(us_quarts * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(us_quarts * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

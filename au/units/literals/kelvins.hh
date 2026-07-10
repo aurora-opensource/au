@@ -19,13 +19,13 @@
 #include "au/units/kelvins.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_K` is a `Constant` equivalent to `make_constant(1.28e-4_mag * kelvins)`.
 template <char... Cs>
 constexpr auto operator""_K() {
-    return make_constant(kelvins * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(kelvins * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

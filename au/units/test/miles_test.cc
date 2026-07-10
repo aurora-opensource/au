@@ -37,7 +37,6 @@ TEST(Miles, HasExpectedSymbol) {
 
 TEST(Miles, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_mi;
     EXPECT_THAT(1.28e-4_mi, SameTypeAndValue(make_constant(miles * 1.28e-4_mag)));
 }
 

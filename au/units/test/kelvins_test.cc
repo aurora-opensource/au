@@ -37,7 +37,6 @@ TEST(Kelvins, HasExpectedSymbol) {
 
 TEST(Kelvins, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_K;
     EXPECT_THAT(1.28e-4_K, SameTypeAndValue(make_constant(kelvins * 1.28e-4_mag)));
 }
 

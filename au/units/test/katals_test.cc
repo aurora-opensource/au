@@ -38,7 +38,6 @@ TEST(Katals, HasExpectedSymbol) {
 
 TEST(Katals, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_kat;
     EXPECT_THAT(1.28e-4_kat, SameTypeAndValue(make_constant(katals * 1.28e-4_mag)));
 }
 

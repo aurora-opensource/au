@@ -38,7 +38,6 @@ TEST(Inches, HasExpectedSymbol) {
 
 TEST(Inches, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_in;
     EXPECT_THAT(1.28e-4_in, SameTypeAndValue(make_constant(inches * 1.28e-4_mag)));
 }
 

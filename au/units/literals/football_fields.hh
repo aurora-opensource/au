@@ -19,13 +19,13 @@
 #include "au/units/football_fields.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_ftbl_fld` is a `Constant` equivalent to `make_constant(1.28e-4_mag * football_fields)`.
 template <char... Cs>
 constexpr auto operator""_ftbl_fld() {
-    return make_constant(football_fields * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(football_fields * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

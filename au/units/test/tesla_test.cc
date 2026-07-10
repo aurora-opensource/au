@@ -38,7 +38,6 @@ TEST(Tesla, HasExpectedSymbol) {
 
 TEST(Tesla, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_T;
     EXPECT_THAT(1.28e-4_T, SameTypeAndValue(make_constant(tesla * 1.28e-4_mag)));
 }
 

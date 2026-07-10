@@ -40,7 +40,6 @@ TEST(Newtons, HasExpectedSymbol) {
 
 TEST(Newtons, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_N;
     EXPECT_THAT(1.28e-4_N, SameTypeAndValue(make_constant(newtons * 1.28e-4_mag)));
 }
 

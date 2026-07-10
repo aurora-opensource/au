@@ -19,13 +19,13 @@
 #include "au/units/moles.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_mol` is a `Constant` equivalent to `make_constant(1.28e-4_mag * moles)`.
 template <char... Cs>
 constexpr auto operator""_mol() {
-    return make_constant(moles * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(moles * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

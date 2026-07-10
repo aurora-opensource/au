@@ -19,13 +19,13 @@
 #include "au/units/pounds_mass.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_lb` is a `Constant` equivalent to `make_constant(1.28e-4_mag * pounds_mass)`.
 template <char... Cs>
 constexpr auto operator""_lb() {
-    return make_constant(pounds_mass * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(pounds_mass * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

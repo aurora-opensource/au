@@ -38,7 +38,6 @@ TEST(Pascals, HasExpectedSymbol) {
 
 TEST(Pascals, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_Pa;
     EXPECT_THAT(1.28e-4_Pa, SameTypeAndValue(make_constant(pascals * 1.28e-4_mag)));
 }
 

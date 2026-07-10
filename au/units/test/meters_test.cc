@@ -40,7 +40,6 @@ TEST(Meters, HasExpectedSymbol) {
 
 TEST(Meters, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_m;
     EXPECT_THAT(1.28e-4_m, SameTypeAndValue(make_constant(meters * 1.28e-4_mag)));
 }
 

@@ -44,7 +44,6 @@ TEST(Webers, HasExpectedSymbol) {
 
 TEST(Webers, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_Wb;
     EXPECT_THAT(1.28e-4_Wb, SameTypeAndValue(make_constant(webers * 1.28e-4_mag)));
 }
 

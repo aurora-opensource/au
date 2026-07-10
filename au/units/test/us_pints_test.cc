@@ -37,7 +37,6 @@ TEST(USPints, HasExpectedSymbol) {
 
 TEST(USPints, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_US_pt;
     EXPECT_THAT(1.28e-4_US_pt, SameTypeAndValue(make_constant(us_pints * 1.28e-4_mag)));
 }
 

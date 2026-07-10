@@ -37,7 +37,6 @@ TEST(Fathoms, HasExpectedSymbol) {
 
 TEST(Fathoms, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_ftm;
     EXPECT_THAT(1.28e-4_ftm, SameTypeAndValue(make_constant(fathoms * 1.28e-4_mag)));
 }
 

@@ -49,7 +49,6 @@ TEST(Ohms, HasExpectedSymbol) {
 
 TEST(Ohms, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_ohm;
     EXPECT_THAT(1.28e-4_ohm, SameTypeAndValue(make_constant(ohms * 1.28e-4_mag)));
 }
 

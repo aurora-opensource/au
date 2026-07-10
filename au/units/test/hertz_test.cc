@@ -37,7 +37,6 @@ TEST(Hertz, HasExpectedSymbol) {
 
 TEST(Hertz, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_Hz;
     EXPECT_THAT(1.28e-4_Hz, SameTypeAndValue(make_constant(hertz * 1.28e-4_mag)));
 }
 

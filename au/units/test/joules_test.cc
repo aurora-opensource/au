@@ -38,7 +38,6 @@ TEST(Joules, HasExpectedSymbol) {
 
 TEST(Joules, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_J;
     EXPECT_THAT(1.28e-4_J, SameTypeAndValue(make_constant(joules * 1.28e-4_mag)));
 }
 

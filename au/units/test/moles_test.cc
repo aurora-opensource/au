@@ -38,7 +38,6 @@ TEST(Moles, HasExpectedSymbol) {
 
 TEST(Moles, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_mol;
     EXPECT_THAT(1.28e-4_mol, SameTypeAndValue(make_constant(moles * 1.28e-4_mag)));
 }
 

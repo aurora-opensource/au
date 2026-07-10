@@ -37,7 +37,6 @@ TEST(Feet, HasExpectedSymbol) {
 
 TEST(Feet, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_ft;
     EXPECT_THAT(1.28e-4_ft, SameTypeAndValue(make_constant(feet * 1.28e-4_mag)));
 }
 

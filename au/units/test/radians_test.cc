@@ -40,7 +40,6 @@ TEST(Radians, HasExpectedSymbol) {
 
 TEST(Radians, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_rad;
     EXPECT_THAT(1.28e-4_rad, SameTypeAndValue(make_constant(radians * 1.28e-4_mag)));
 }
 

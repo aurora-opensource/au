@@ -41,7 +41,6 @@ TEST(Knots, HasExpectedSymbol) {
 
 TEST(Knots, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_kn;
     EXPECT_THAT(1.28e-4_kn, SameTypeAndValue(make_constant(knots * 1.28e-4_mag)));
 }
 

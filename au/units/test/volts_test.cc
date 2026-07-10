@@ -36,7 +36,6 @@ TEST(Volts, HasExpectedSymbol) {
 
 TEST(Volts, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_V;
     EXPECT_THAT(1.28e-4_V, SameTypeAndValue(make_constant(volts * 1.28e-4_mag)));
 }
 

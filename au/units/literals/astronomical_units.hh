@@ -19,13 +19,13 @@
 #include "au/units/astronomical_units.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_AU` is a `Constant` equivalent to `make_constant(1.28e-4_mag * astronomical_units)`.
 template <char... Cs>
 constexpr auto operator""_AU() {
-    return make_constant(astronomical_units * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(astronomical_units * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

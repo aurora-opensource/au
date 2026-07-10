@@ -19,13 +19,13 @@
 #include "au/units/slugs.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_slug` is a `Constant` equivalent to `make_constant(1.28e-4_mag * slugs)`.
 template <char... Cs>
 constexpr auto operator""_slug() {
-    return make_constant(slugs * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(slugs * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

@@ -37,7 +37,6 @@ TEST(Furlongs, HasExpectedSymbol) {
 
 TEST(Furlongs, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_fur;
     EXPECT_THAT(1.28e-4_fur, SameTypeAndValue(make_constant(furlongs * 1.28e-4_mag)));
 }
 

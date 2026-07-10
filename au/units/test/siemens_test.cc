@@ -37,7 +37,6 @@ TEST(Siemens, HasExpectedSymbol) {
 
 TEST(Siemens, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_S;
     EXPECT_THAT(1.28e-4_S, SameTypeAndValue(make_constant(siemens * 1.28e-4_mag)));
 }
 

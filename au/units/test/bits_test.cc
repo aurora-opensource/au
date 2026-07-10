@@ -37,7 +37,6 @@ TEST(Bits, HasExpectedSymbol) {
 
 TEST(Bits, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_b;
     EXPECT_THAT(1.28e-4_b, SameTypeAndValue(make_constant(bits * 1.28e-4_mag)));
 }
 

@@ -19,13 +19,13 @@
 #include "au/units/candelas.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_cd` is a `Constant` equivalent to `make_constant(1.28e-4_mag * candelas)`.
 template <char... Cs>
 constexpr auto operator""_cd() {
-    return make_constant(candelas * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(candelas * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

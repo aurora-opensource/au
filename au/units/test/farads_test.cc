@@ -38,7 +38,6 @@ TEST(Farads, HasExpectedSymbol) {
 
 TEST(Farads, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_F;
     EXPECT_THAT(1.28e-4_F, SameTypeAndValue(make_constant(farads * 1.28e-4_mag)));
 }
 

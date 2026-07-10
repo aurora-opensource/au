@@ -19,13 +19,13 @@
 #include "au/units/minutes.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_min` is a `Constant` equivalent to `make_constant(1.28e-4_mag * minutes)`.
 template <char... Cs>
 constexpr auto operator""_min() {
-    return make_constant(minutes * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(minutes * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

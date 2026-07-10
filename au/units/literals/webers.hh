@@ -19,13 +19,13 @@
 #include "au/units/webers.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_Wb` is a `Constant` equivalent to `make_constant(1.28e-4_mag * webers)`.
 template <char... Cs>
 constexpr auto operator""_Wb() {
-    return make_constant(webers * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(webers * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

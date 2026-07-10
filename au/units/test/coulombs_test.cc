@@ -38,7 +38,6 @@ TEST(Coulombs, HasExpectedSymbol) {
 
 TEST(Coulombs, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_C;
     EXPECT_THAT(1.28e-4_C, SameTypeAndValue(make_constant(coulombs * 1.28e-4_mag)));
 }
 

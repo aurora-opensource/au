@@ -50,7 +50,6 @@ TEST(Celsius, HasExpectedSymbol) {
 
 TEST(Celsius, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_degC_qty;
     EXPECT_THAT(1.28e-4_degC_qty, SameTypeAndValue(make_constant(celsius_qty * 1.28e-4_mag)));
 }
 

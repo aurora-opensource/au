@@ -37,7 +37,6 @@ TEST(Arcminutes, HasExpectedSymbol) {
 
 TEST(Arcminutes, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_am;
     EXPECT_THAT(1.28e-4_am, SameTypeAndValue(make_constant(arcminutes * 1.28e-4_mag)));
 }
 

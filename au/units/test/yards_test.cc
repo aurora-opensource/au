@@ -37,7 +37,6 @@ TEST(Yards, HasExpectedSymbol) {
 
 TEST(Yards, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_yd;
     EXPECT_THAT(1.28e-4_yd, SameTypeAndValue(make_constant(yards * 1.28e-4_mag)));
 }
 

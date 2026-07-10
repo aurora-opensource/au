@@ -38,7 +38,6 @@ TEST(Bars, HasExpectedSymbol) {
 
 TEST(Bars, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_bar;
     EXPECT_THAT(1.28e-4_bar, SameTypeAndValue(make_constant(bars * 1.28e-4_mag)));
 }
 

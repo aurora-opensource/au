@@ -43,7 +43,6 @@ TEST(USGallons, HasExpectedSymbol) {
 
 TEST(USGallons, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_US_gal;
     EXPECT_THAT(1.28e-4_US_gal, SameTypeAndValue(make_constant(us_gallons * 1.28e-4_mag)));
 }
 

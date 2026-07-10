@@ -19,13 +19,13 @@
 #include "au/units/us_pints.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_US_pt` is a `Constant` equivalent to `make_constant(1.28e-4_mag * us_pints)`.
 template <char... Cs>
 constexpr auto operator""_US_pt() {
-    return make_constant(us_pints * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(us_pints * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

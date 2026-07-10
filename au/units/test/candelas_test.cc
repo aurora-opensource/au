@@ -38,7 +38,6 @@ TEST(Candelas, HasExpectedSymbol) {
 
 TEST(Candelas, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_cd;
     EXPECT_THAT(1.28e-4_cd, SameTypeAndValue(make_constant(candelas * 1.28e-4_mag)));
 }
 

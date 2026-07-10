@@ -39,7 +39,6 @@ TEST(AstronomicalUnits, HasExpectedSymbol) {
 
 TEST(AstronomicalUnits, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_AU;
     EXPECT_THAT(1.28e-4_AU, SameTypeAndValue(make_constant(astronomical_units * 1.28e-4_mag)));
 }
 

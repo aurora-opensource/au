@@ -19,13 +19,13 @@
 #include "au/units/watts.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_W` is a `Constant` equivalent to `make_constant(1.28e-4_mag * watts)`.
 template <char... Cs>
 constexpr auto operator""_W() {
-    return make_constant(watts * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(watts * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

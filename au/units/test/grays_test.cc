@@ -39,7 +39,6 @@ TEST(Grays, HasExpectedSymbol) {
 
 TEST(Grays, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_Gy;
     EXPECT_THAT(1.28e-4_Gy, SameTypeAndValue(make_constant(grays * 1.28e-4_mag)));
 }
 

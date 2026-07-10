@@ -37,7 +37,6 @@ TEST(USQuarts, HasExpectedSymbol) {
 
 TEST(USQuarts, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_US_qt;
     EXPECT_THAT(1.28e-4_US_qt, SameTypeAndValue(make_constant(us_quarts * 1.28e-4_mag)));
 }
 

@@ -41,7 +41,6 @@ TEST(StandardGravity, HasExpectedSymbol) {
 
 TEST(StandardGravity, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_g_0;
     EXPECT_THAT(1.28e-4_g_0, SameTypeAndValue(make_constant(standard_gravity * 1.28e-4_mag)));
 }
 

@@ -44,7 +44,6 @@ TEST(Degrees, HasExpectedSymbol) {
 
 TEST(Degrees, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_deg;
     EXPECT_THAT(1.28e-4_deg, SameTypeAndValue(make_constant(degrees * 1.28e-4_mag)));
 }
 

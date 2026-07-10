@@ -19,13 +19,13 @@
 #include "au/units/feet.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_ft` is a `Constant` equivalent to `make_constant(1.28e-4_mag * feet)`.
 template <char... Cs>
 constexpr auto operator""_ft() {
-    return make_constant(feet * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(feet * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

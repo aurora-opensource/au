@@ -19,13 +19,13 @@
 #include "au/units/tesla.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_T` is a `Constant` equivalent to `make_constant(1.28e-4_mag * tesla)`.
 template <char... Cs>
 constexpr auto operator""_T() {
-    return make_constant(tesla * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(tesla * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

@@ -19,13 +19,13 @@
 #include "au/units/bytes.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_B` is a `Constant` equivalent to `make_constant(1.28e-4_mag * bytes)`.
 template <char... Cs>
 constexpr auto operator""_B() {
-    return make_constant(bytes * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(bytes * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

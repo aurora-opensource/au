@@ -49,7 +49,6 @@ TEST(Slugs, HasExpectedSymbol) {
 
 TEST(Slugs, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_slug;
     EXPECT_THAT(1.28e-4_slug, SameTypeAndValue(make_constant(slugs * 1.28e-4_mag)));
 }
 

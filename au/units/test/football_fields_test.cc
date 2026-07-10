@@ -49,7 +49,6 @@ TEST(FootballFields, HasExpectedSymbol) {
 
 TEST(FootballFields, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_ftbl_fld;
     EXPECT_THAT(1.28e-4_ftbl_fld, SameTypeAndValue(make_constant(football_fields * 1.28e-4_mag)));
 }
 

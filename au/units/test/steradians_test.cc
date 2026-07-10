@@ -37,7 +37,6 @@ TEST(Steradians, HasExpectedSymbol) {
 
 TEST(Steradians, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_sr;
     EXPECT_THAT(1.28e-4_sr, SameTypeAndValue(make_constant(steradians * 1.28e-4_mag)));
 }
 

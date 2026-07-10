@@ -40,7 +40,6 @@ TEST(PoundsMass, HasExpectedSymbol) {
 
 TEST(PoundsMass, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_lb;
     EXPECT_THAT(1.28e-4_lb, SameTypeAndValue(make_constant(pounds_mass * 1.28e-4_mag)));
 }
 

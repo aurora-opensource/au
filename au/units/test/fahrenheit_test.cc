@@ -54,7 +54,6 @@ TEST(Fahrenheit, HasCorrectRelationshipWithRankine) {
 
 TEST(Fahrenheit, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_degF_qty;
     EXPECT_THAT(1.28e-4_degF_qty, SameTypeAndValue(make_constant(fahrenheit_qty * 1.28e-4_mag)));
 }
 

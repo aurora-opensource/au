@@ -19,13 +19,13 @@
 #include "au/units/fathoms.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_ftm` is a `Constant` equivalent to `make_constant(1.28e-4_mag * fathoms)`.
 template <char... Cs>
 constexpr auto operator""_ftm() {
-    return make_constant(fathoms * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(fathoms * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

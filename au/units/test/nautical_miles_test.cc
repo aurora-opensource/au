@@ -43,7 +43,6 @@ TEST(NauticalMiles, HasExpectedSymbol) {
 
 TEST(NauticalMiles, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_nmi;
     EXPECT_THAT(1.28e-4_nmi, SameTypeAndValue(make_constant(nautical_miles * 1.28e-4_mag)));
 }
 

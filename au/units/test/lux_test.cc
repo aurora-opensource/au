@@ -38,7 +38,6 @@ TEST(Lux, HasExpectedSymbol) {
 
 TEST(Lux, LiteralMakesEquivalentConstant) {
     using namespace ::au::au_literals;
-    using literals::operator""_lx;
     EXPECT_THAT(1.28e-4_lx, SameTypeAndValue(make_constant(lux * 1.28e-4_mag)));
 }
 

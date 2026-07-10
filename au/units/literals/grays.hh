@@ -19,13 +19,13 @@
 #include "au/units/grays.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_Gy` is a `Constant` equivalent to `make_constant(1.28e-4_mag * grays)`.
 template <char... Cs>
 constexpr auto operator""_Gy() {
-    return make_constant(grays * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(grays * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

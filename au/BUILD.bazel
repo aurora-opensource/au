@@ -27,6 +27,7 @@ cc_library(
         ":constants",
         ":math",
         ":units",
+        ":units_literals",
     ],
 )
 

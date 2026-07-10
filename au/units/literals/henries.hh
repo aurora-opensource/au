@@ -19,13 +19,13 @@
 #include "au/units/henries.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_H` is a `Constant` equivalent to `make_constant(1.28e-4_mag * henries)`.
 template <char... Cs>
 constexpr auto operator""_H() {
-    return make_constant(henries * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(henries * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au

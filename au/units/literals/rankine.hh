@@ -19,13 +19,13 @@
 #include "au/units/rankine.hh"
 
 namespace au {
-namespace literals {
+namespace au_literals {
 
 // `1.28e-4_degR` is a `Constant` equivalent to `make_constant(1.28e-4_mag * rankine)`.
 template <char... Cs>
 constexpr auto operator""_degR() {
-    return make_constant(rankine * ::au::au_literals::operator""_mag < Cs... > ());
+    return make_constant(rankine * operator""_mag<Cs...>());
 }
 
-}  // namespace literals
+}  // namespace au_literals
 }  // namespace au
