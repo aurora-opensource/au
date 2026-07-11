@@ -14,7 +14,10 @@
 
 #include "au/units/radians.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/radians.hh"
 #include "au/units/revolutions.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -33,6 +36,11 @@ TEST(Radians, TwoPiPerRevolution) {
 TEST(Radians, HasExpectedSymbol) {
     using symbols::rad;
     EXPECT_THAT(5 * rad, SameTypeAndValue(radians(5)));
+}
+
+TEST(Radians, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_rad, SameTypeAndValue(make_constant(radians * 1.28e-4_mag)));
 }
 
 }  // namespace au

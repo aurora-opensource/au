@@ -60,8 +60,10 @@ they have two advantages that make them easier to read:
 ### Other expressions
 
 There are other monovalue types that would feel right at home in a unit slot.  We typically support
-those too!  Key examples include [unit symbols](../../reference/unit.md#symbols) and
-[constants](../../reference/constant.md).  Expand the block below to see a worked example.
+those too!  Key examples include [unit symbols](../../reference/unit.md#symbols),
+[constants](../../reference/constant.md), and even
+[magnitudes](../../reference/magnitude.md#unit-slots) (which act as scaled versions of the unitless
+unit).  Expand the block below to see a worked example.
 
 ??? example "Example: using unit symbols and constants in unit slots"
     Suppose we have the following preamble, simply to set everything up.
@@ -90,6 +92,19 @@ those too!  Key examples include [unit symbols](../../reference/unit.md#symbols)
     //                ^
     // Passing a constant to the unit slot.  Output:
     // "9.69257e-08 c"
+    ```
+
+??? example "Example: using a magnitude in a unit slot"
+    A `Magnitude` in a unit slot acts as a scaled version of the unitless unit, which can be handy
+    for re-expressing dimensionless quantities.
+
+    ```cpp
+    constexpr auto ratio = unos(0.35);
+
+    std::cout << ratio.as(mag<1>() / mag<100>()) << std::endl;
+    //                    ^^^^^^^^^^^^^^^^^^^^^
+    // Passing a magnitude to the unit slot: express as "hundredths".
+    // Output: "35 [(1 / 100)]"
     ```
 
 #### Notes for `QuantityPoint`

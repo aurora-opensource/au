@@ -14,8 +14,12 @@
 
 #include "au/units/siemens.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/siemens.hh"
 #include "au/units/ohms.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -29,6 +33,11 @@ TEST(Siemens, EquivalentToInverseOhms) {
 TEST(Siemens, HasExpectedSymbol) {
     using symbols::S;
     EXPECT_THAT(5 * S, SameTypeAndValue(siemens(5)));
+}
+
+TEST(Siemens, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_S, SameTypeAndValue(make_constant(siemens * 1.28e-4_mag)));
 }
 
 }  // namespace au

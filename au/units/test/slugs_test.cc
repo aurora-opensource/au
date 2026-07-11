@@ -14,9 +14,12 @@
 
 #include "au/units/slugs.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/grams.hh"
+#include "au/units/literals/slugs.hh"
 #include "au/units/pounds_mass.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -42,6 +45,11 @@ TEST(Slugs, ExactDefinitionIsCorrect) {
 TEST(Slugs, HasExpectedSymbol) {
     using symbols::slug;
     EXPECT_THAT(5 * slug, SameTypeAndValue(slugs(5)));
+}
+
+TEST(Slugs, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_slug, SameTypeAndValue(make_constant(slugs * 1.28e-4_mag)));
 }
 
 }  // namespace au

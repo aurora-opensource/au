@@ -210,6 +210,14 @@ Symbols compose: the product or quotient of two `SymbolFor` instances is a new `
 | `SymbolFor<Unit> * SymbolFor<OtherUnit>` | `SymbolFor<UnitProductT<Unit, OtherUnit>>` |
 | `SymbolFor<Unit> / SymbolFor<OtherUnit>` | `SymbolFor<UnitQuotientT<Unit, OtherUnit>>` |
 
+### Unit literals {#literals}
+
+A unit symbol multiplied by a raw number produces a `Quantity`.  If you instead want a
+[`Constant`](./constant.md) --- for example, a magic number to combine with quantities without any
+risk of rounding or overflow --- use the _unit literal_, whose suffix is the same as the symbol.
+For instance, `1.28e-4_s` produces a `Constant`, while `1.28e-4 * s` would produce a `Quantity`.
+See [Unit literals](./constant.md#unit-literals) for details.
+
 ## Unit origins {#origins}
 
 The "origin" of a unit is only useful for `QuantityPoint`, our [affine space
@@ -568,8 +576,9 @@ feet(6).in(Inches{});
 ```
 
 The underlined arguments are all unit slots.  The kinds of things that can be passed here include
-a `QuantityMaker` for a unit, a [constant](./constant.md), a [unit symbol](#symbols), or simply
-a unit type itself.
+a `QuantityMaker` for a unit, a [constant](./constant.md), a [unit symbol](#symbols),
+a [magnitude](./magnitude.md#unit-slots) (which acts as a scaled version of the unitless unit), or
+simply a unit type itself.
 
 The use case for this trait is to _implement_ the unit slot argument for a function.
 

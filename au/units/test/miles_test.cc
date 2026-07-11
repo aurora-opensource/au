@@ -14,8 +14,11 @@
 
 #include "au/units/miles.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/feet.hh"
+#include "au/units/literals/miles.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -30,6 +33,11 @@ TEST(Miles, EquivalentTo5280Feet) { EXPECT_THAT(miles(1), Eq(feet(5280))); }
 TEST(Miles, HasExpectedSymbol) {
     using symbols::mi;
     EXPECT_THAT(5 * mi, SameTypeAndValue(miles(5)));
+}
+
+TEST(Miles, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_mi, SameTypeAndValue(make_constant(miles * 1.28e-4_mag)));
 }
 
 }  // namespace au

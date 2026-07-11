@@ -14,9 +14,12 @@
 
 #include "au/units/us_gallons.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/inches.hh"
+#include "au/units/literals/us_gallons.hh"
 #include "au/units/liters.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -36,6 +39,11 @@ TEST(USGallons, WithinExpectationComparedToLiters) {
 TEST(USGallons, HasExpectedSymbol) {
     using symbols::US_gal;
     EXPECT_THAT(5 * US_gal, SameTypeAndValue(us_gallons(5)));
+}
+
+TEST(USGallons, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_US_gal, SameTypeAndValue(make_constant(us_gallons * 1.28e-4_mag)));
 }
 
 }  // namespace au

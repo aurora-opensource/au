@@ -127,6 +127,14 @@ TEST(ScaledUnit, IsTypeIdentityWhenScalingByOne) {
     StaticAssertTypeEq<decltype((Feet{} * mag<3>()) / mag<3>()), Feet>();
 }
 
+TEST(Unit, CanScaleByMagnitudeOnLeft) {
+    StaticAssertTypeEq<decltype(mag<3>() * Feet{}), decltype(Feet{} * mag<3>())>();
+}
+
+TEST(Unit, DividingMagnitudeByUnitScalesInverseOfUnit) {
+    StaticAssertTypeEq<decltype(mag<3>() / Feet{}), decltype(UnitInverse<Feet>{} * mag<3>())>();
+}
+
 TEST(IsUnit, TrueForUnitImpl) { EXPECT_THAT(IsUnit<UnitImpl<Length>>::value, IsTrue()); }
 
 TEST(IsUnit, TrueForOpaqueTypedef) { EXPECT_THAT(IsUnit<Feet>::value, IsTrue()); }
@@ -159,6 +167,8 @@ TEST(FitsInUnitSlot, TrueForUnitAndQuantityMakerAndSingularNameFor) {
 
     EXPECT_THAT(fits_in_unit_slot(1.2), IsFalse());
 }
+
+TEST(FitsInUnitSlot, TrueForMagnitude) { EXPECT_THAT(fits_in_unit_slot(mag<3>()), IsTrue()); }
 
 TEST(Product, IsUnitWithProductOfMagnitudesAndDimensions) {
     constexpr auto foot_yards = Feet{} * Yards{};
@@ -451,6 +461,25 @@ TEST(AssociatedUnit, HandlesWrappersWhichHaveSpecializedAssociatedUnit) {
 
 TEST(AssociatedUnit, SupportsSingularNameFor) {
     StaticAssertTypeEq<AssociatedUnit<SingularNameFor<Feet>>, Feet>();
+}
+
+TEST(AssociatedUnit, MagnitudeActsLikeScaledVersionOfUnitlessUnit) {
+    StaticAssertTypeEq<AssociatedUnit<decltype(mag<3>())>,
+                       decltype(UnitProductPack<>{} * mag<3>())>();
+}
+
+TEST(SingularNameFor, CanScaleByMagnitudeOnEitherSide) {
+    StaticAssertTypeEq<decltype(meter * mag<3>()),
+                       SingularNameFor<decltype(Meters{} * mag<3>())>>();
+    StaticAssertTypeEq<decltype(mag<3>() * meter),
+                       SingularNameFor<decltype(Meters{} * mag<3>())>>();
+    StaticAssertTypeEq<decltype(meter / mag<3>()),
+                       SingularNameFor<decltype(Meters{} / mag<3>())>>();
+}
+
+TEST(SingularNameFor, DividingMagnitudeScalesInverseOfUnit) {
+    StaticAssertTypeEq<decltype(mag<3>() / meter),
+                       SingularNameFor<decltype(mag<3>() / Meters{})>>();
 }
 
 TEST(AppropriateAssociatedUnit, GivesAssociatedUnitForQuantity) {
@@ -886,6 +915,13 @@ TEST(UnitLabel, ApplyingMultipleScaleFactorsComposesToOneSingleScaleFactor) {
 
 TEST(UnitLabel, NegatedUnitOmitsNumerals) {
     EXPECT_THAT(unit_label<decltype(Feet{} * (-mag<1>()))>(), StrEq("[-ft]"));
+}
+
+TEST(UnitLabel, ScaledUnitlessUnitContainsOnlyMagnitude) {
+    EXPECT_THAT(unit_label(UnitProductPack<>{} * mag<3>()), StrEq("[3]"));
+    EXPECT_THAT(unit_label(UnitProductPack<>{} * (-mag<3>())), StrEq("[-3]"));
+    EXPECT_THAT(unit_label(UnitProductPack<>{} * mag<3>() / mag<4>()), StrEq("[(3 / 4)]"));
+    EXPECT_THAT(unit_label(UnitProductPack<>{} * (-mag<1>())), StrEq("[-1]"));
 }
 
 TEST(UnitLabel, OmitsTrivialScaleFactor) {

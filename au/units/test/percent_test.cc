@@ -14,8 +14,11 @@
 
 #include "au/units/percent.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
+#include "au/units/literals/percent.hh"
 #include "au/units/unos.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -31,6 +34,11 @@ TEST(Percent, OneHundredthOfUnos) { EXPECT_THAT(percent(75.0), Eq(unos(0.75))); 
 TEST(Percent, HasExpectedSymbol) {
     using symbols::pct;
     EXPECT_THAT(5 * pct, SameTypeAndValue(percent(5)));
+}
+
+TEST(Percent, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_pct, SameTypeAndValue(make_constant(percent * 1.28e-4_mag)));
 }
 
 }  // namespace au

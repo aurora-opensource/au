@@ -343,6 +343,12 @@ struct QuantityPointMaker {
     AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BPs...> m) const {
         return QuantityPointMaker<decltype(unit / m)>{};
     }
+
+    // Note: there is no `(M / maker)` counterpart, because inverting a point unit is meaningless.
+    template <typename... BPs>
+    friend AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BPs...> m, QuantityPointMaker) {
+        return QuantityPointMaker<decltype(m * unit)>{};
+    }
 };
 
 template <typename U>

@@ -319,6 +319,15 @@ TEST(QuantityMaker, CanDivideByMagnitudeToGetMakerOfDescaledUnit) {
     EXPECT_THAT((feet / mag<12>())(1.234), QuantityEquivalent(inches(1.234)));
 }
 
+TEST(QuantityMaker, CanBeScaledByMagnitudeOnTheLeft) {
+    StaticAssertTypeEq<decltype(mag<3>() * feet), decltype(feet * mag<3>())>();
+    EXPECT_THAT((mag<3>() * feet)(1.234), QuantityEquivalent(yards(1.234)));
+}
+
+TEST(QuantityMaker, CanDivideMagnitudeToGetMakerOfScaledInverseUnit) {
+    StaticAssertTypeEq<decltype(mag<3>() / hours), QuantityMaker<decltype(mag<3>() / Hours{})>>();
+}
+
 TEST(QuantityMaker, CanMultiplyByMultipleSingularUnits) {
     StaticAssertTypeEq<decltype(mile * minute * days),
                        QuantityMaker<UnitProduct<Miles, Minutes, Days>>>();
@@ -826,6 +835,55 @@ TEST(Quantity, ScalarDivisionWorks) {
 TEST(Quantity, ScalarDivisionIsConstexprCompatible) {
     constexpr auto quotient = feet(10.) / 2;
     EXPECT_THAT(quotient, Eq(feet(5.)));
+}
+
+TEST(Quantity, CanScaleByMagnitudeOnEitherSide) {
+    constexpr auto q = feet(6.0) * mag<3>();
+    EXPECT_THAT(q, SameTypeAndValue(mag<3>() * feet(6.0)));
+    EXPECT_THAT(q, SameTypeAndValue((feet * mag<3>())(6.0)));
+    EXPECT_THAT(q.in(feet), SameTypeAndValue(18.0));
+}
+
+TEST(Quantity, ScalingByMagnitudePreservesUnderlyingValue) {
+    // Because we scale the unit, and leave the stored value untouched, even integer quantities
+    // remain exact under any rational scaling.
+    constexpr auto q = feet(5) * (mag<1>() / mag<3>());
+    EXPECT_THAT(q.in(inches), SameTypeAndValue(20));
+}
+
+TEST(Quantity, CanDivideByMagnitude) {
+    EXPECT_THAT(feet(6.0) / mag<3>(), SameTypeAndValue((feet / mag<3>())(6.0)));
+    EXPECT_THAT((feet(6.0) / mag<3>()).in(feet), SameTypeAndValue(2.0));
+}
+
+TEST(Quantity, CanDivideMagnitudeByQuantity) {
+    constexpr auto q = mag<3>() / feet(2.0);
+    EXPECT_THAT(q, SameTypeAndValue((mag<3>() / feet)(0.5)));
+    EXPECT_THAT(q.in(inverse(feet)), SameTypeAndValue(1.5));
+}
+
+TEST(Quantity, RawNumberTimesMagnitudeMakesDimensionlessQuantity) {
+    constexpr auto x = 2.5 * mag<3>();
+    EXPECT_THAT(x, SameTypeAndValue(mag<3>() * 2.5));
+    EXPECT_THAT(x.in(unos), SameTypeAndValue(7.5));
+
+    // The multiplication is symbolic, so even integer inputs are exact.
+    EXPECT_THAT((5 * mag<3>()).in(unos), SameTypeAndValue(15));
+}
+
+TEST(Quantity, RawNumberTimesMagnitudeOfOneIsUnitlessQuantity) {
+    constexpr double x = 4.5 * mag<1>();
+    EXPECT_THAT(x, SameTypeAndValue(4.5));
+}
+
+TEST(Quantity, CanDivideRawNumberAndMagnitudeInEitherOrder) {
+    EXPECT_THAT((7.5 / mag<3>()).in(unos), SameTypeAndValue(2.5));
+    EXPECT_THAT((mag<3>() / 2.0).in(unos), SameTypeAndValue(1.5));
+}
+
+TEST(Quantity, MagnitudeCanFillUnitSlot) {
+    EXPECT_THAT((2.5 * mag<3>()).in(mag<3>()), SameTypeAndValue(2.5));
+    EXPECT_THAT(unos(7.5).in(mag<3>()), SameTypeAndValue(2.5));
 }
 
 TEST(Quantity, ShortHandAdditionAssignmentWorks) {

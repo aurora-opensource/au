@@ -15,7 +15,6 @@
 #pragma once
 
 #include "au/quantity.hh"
-#include "au/stdx/type_traits.hh"
 
 // "Mixin" classes to add operations for a "unit wrapper" --- that is, a template with a _single
 // template parameter_ that is a unit.
@@ -36,19 +35,7 @@
 namespace au {
 namespace detail {
 
-// A SFINAE helper that is the identity, but only if we think a type is a valid rep.
-//
-// For now, we are restricting this to arithmetic types.  This doesn't mean they're the only reps we
-// support; it just means they're the only reps we can _construct via this method_.  Later on, we
-// would like to have a well-defined concept that defines what is and is not an acceptable rep for
-// our `Quantity`.  Once we have that, we can simply constrain on that concept.  For more on this
-// idea, see: https://github.com/aurora-opensource/au/issues/52
-struct NoTypeMember {};
-template <typename T>
-struct TypeIdentityIfLooksLikeValidRepImpl
-    : std::conditional_t<std::is_arithmetic<T>::value, stdx::type_identity<T>, NoTypeMember> {};
-template <typename T>
-using TypeIdentityIfLooksLikeValidRep = typename TypeIdentityIfLooksLikeValidRepImpl<T>::type;
+// (Note: `TypeIdentityIfLooksLikeValidRep`, which these mixins use, lives in "au/quantity.hh".)
 
 //
 // A mixin that enables turning a raw number into a Quantity by multiplying or dividing.

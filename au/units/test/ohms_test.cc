@@ -14,8 +14,11 @@
 
 #include "au/units/ohms.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/amperes.hh"
+#include "au/units/literals/ohms.hh"
 #include "au/units/volts.hh"
 #include "au/units/watts.hh"
 #include "gmock/gmock.h"
@@ -42,6 +45,11 @@ TEST(Ohms, SatisfiesOhmicHeatingEquation) {
 TEST(Ohms, HasExpectedSymbol) {
     using symbols::ohm;
     EXPECT_THAT(5 * ohm, SameTypeAndValue(ohms(5)));
+}
+
+TEST(Ohms, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_ohm, SameTypeAndValue(make_constant(ohms * 1.28e-4_mag)));
 }
 
 }  // namespace au
