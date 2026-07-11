@@ -28,7 +28,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-130-g4032be9
+// Version identifier: 0.5.0-base-131-gd8e4a86
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -3086,11 +3086,11 @@ struct PackProductImpl<Magnitude, Magnitude<Negative, LeftBPs...>, Magnitude<Neg
 
 // Define negation.
 template <typename... BPs>
-constexpr auto operator-(Magnitude<Negative, BPs...>) {
+AU_DEVICE_FUNC constexpr auto operator-(Magnitude<Negative, BPs...>) {
     return Magnitude<BPs...>{};
 }
 template <typename... BPs>
-constexpr auto operator-(Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr auto operator-(Magnitude<BPs...>) {
     return Magnitude<Negative, BPs...>{};
 }
 
@@ -3104,23 +3104,23 @@ constexpr const auto &mag_label(MagT = MagT{});
 
 // A helper function to create a Magnitude from an integer constant.
 template <std::uintmax_t N>
-constexpr auto mag();
+AU_DEVICE_FUNC constexpr auto mag();
 
 // A user-defined literal for Magnitude, which is equivalent to `mag<N>()`.
 //
 // To use, add `using namespace ::au::au_literals;`.
 namespace au_literals {
 template <char... Cs>
-constexpr auto operator""_mag();
+AU_DEVICE_FUNC constexpr auto operator""_mag();
 }  // namespace au_literals
 
 // Check whether a Magnitude is representable in type T.
 template <typename T, typename... BPs>
-constexpr bool representable_in(Magnitude<BPs...> m);
+AU_DEVICE_FUNC constexpr bool representable_in(Magnitude<BPs...> m);
 
 // Get the value of this Magnitude in a "traditional" numeric type T.
 template <typename T, typename... BPs>
-constexpr T get_value(Magnitude<BPs...>);
+AU_DEVICE_FUNC constexpr T get_value(Magnitude<BPs...>);
 
 // Let `Zero` "act like" a `Magnitude` for purposes of `get_value`.
 template <typename T>
@@ -3290,60 +3290,60 @@ using MagSum = typename MagSumImpl<Ms...>::type;
 static constexpr auto ONE = Magnitude<>{};
 
 template <typename... BP1s, typename... BP2s>
-constexpr auto operator*(Magnitude<BP1s...>, Magnitude<BP2s...>) {
+AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BP1s...>, Magnitude<BP2s...>) {
     return MagProduct<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
 }
 template <typename... BPs>
-constexpr Zero operator*(Zero, Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr Zero operator*(Zero, Magnitude<BPs...>) {
     return {};
 }
 template <typename... BPs>
-constexpr Zero operator*(Magnitude<BPs...>, Zero) {
+AU_DEVICE_FUNC constexpr Zero operator*(Magnitude<BPs...>, Zero) {
     return {};
 }
 
 template <typename... BP1s, typename... BP2s>
-constexpr auto operator/(Magnitude<BP1s...>, Magnitude<BP2s...>) {
+AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BP1s...>, Magnitude<BP2s...>) {
     return MagQuotient<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
 }
 template <typename... BPs>
-constexpr Zero operator/(Zero, Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr Zero operator/(Zero, Magnitude<BPs...>) {
     return {};
 }
 
 template <int E, typename... BPs>
-constexpr auto pow(Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr auto pow(Magnitude<BPs...>) {
     return MagPower<Magnitude<BPs...>, E>{};
 }
 
 template <int N, typename... BPs>
-constexpr auto root(Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr auto root(Magnitude<BPs...>) {
     return MagPower<Magnitude<BPs...>, 1, N>{};
 }
 
 template <typename... BP1s, typename... BP2s>
-constexpr auto operator==(Magnitude<BP1s...>, Magnitude<BP2s...>) {
+AU_DEVICE_FUNC constexpr auto operator==(Magnitude<BP1s...>, Magnitude<BP2s...>) {
     return std::is_same<Magnitude<BP1s...>, Magnitude<BP2s...>>::value;
 }
 template <typename... BPs>
-constexpr auto operator==(Zero, Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr auto operator==(Zero, Magnitude<BPs...>) {
     return false;
 }
 template <typename... BPs>
-constexpr auto operator==(Magnitude<BPs...>, Zero) {
+AU_DEVICE_FUNC constexpr auto operator==(Magnitude<BPs...>, Zero) {
     return false;
 }
 
 template <typename... BP1s, typename... BP2s>
-constexpr auto operator!=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+AU_DEVICE_FUNC constexpr auto operator!=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
     return !(m1 == m2);
 }
 template <typename... BPs>
-constexpr auto operator!=(Zero, Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr auto operator!=(Zero, Magnitude<BPs...>) {
     return true;
 }
 template <typename... BPs>
-constexpr auto operator!=(Magnitude<BPs...>, Zero) {
+AU_DEVICE_FUNC constexpr auto operator!=(Magnitude<BPs...>, Zero) {
     return true;
 }
 
@@ -3356,7 +3356,7 @@ namespace detail {
 //    0 if |m1| == |m2|
 //   +1 if |m1| > |m2|
 template <typename M1, typename M2>
-constexpr int compare_absolute_magnitudes(M1, M2) {
+AU_DEVICE_FUNC constexpr int compare_absolute_magnitudes(M1, M2) {
     using AbsM1OverM2 = Abs<MagQuotient<M1, M2>>;
     (void)AssertMagnitudeU64RationalCompatible<AbsM1OverM2>{};
 
@@ -3371,7 +3371,7 @@ constexpr int compare_absolute_magnitudes(M1, M2) {
 //
 // These will only be defined for the subset of Magnitudes where this is easy to compute.
 template <typename... BP1s, typename... BP2s>
-constexpr bool operator<(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+AU_DEVICE_FUNC constexpr bool operator<(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
     constexpr bool m1_positive = is_positive(m1);
     constexpr bool m2_positive = is_positive(m2);
 
@@ -3387,75 +3387,75 @@ constexpr bool operator<(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
 }
 
 template <typename... BP1s, typename... BP2s>
-constexpr bool operator>(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+AU_DEVICE_FUNC constexpr bool operator>(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
     return m2 < m1;
 }
 
 template <typename... BP1s, typename... BP2s>
-constexpr bool operator<=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+AU_DEVICE_FUNC constexpr bool operator<=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
     return !(m2 < m1);
 }
 
 template <typename... BP1s, typename... BP2s>
-constexpr bool operator>=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+AU_DEVICE_FUNC constexpr bool operator>=(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
     return !(m1 < m2);
 }
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename... BP1s, typename... BP2s>
-constexpr auto operator<=>(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+AU_DEVICE_FUNC constexpr auto operator<=>(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
     return ((m1 > m2) - (m1 < m2)) <=> 0;
 }
 #endif
 
 // Zero/Magnitude comparisons: Zero is less than any positive magnitude, greater than any negative.
 template <typename... BPs>
-constexpr bool operator<(Zero, Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr bool operator<(Zero, Magnitude<BPs...>) {
     return IsPositive<Magnitude<BPs...>>::value;
 }
 
 template <typename... BPs>
-constexpr bool operator>(Zero, Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr bool operator>(Zero, Magnitude<BPs...>) {
     return !IsPositive<Magnitude<BPs...>>::value;
 }
 
 template <typename... BPs>
-constexpr bool operator<=(Zero, Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr bool operator<=(Zero, Magnitude<BPs...>) {
     return IsPositive<Magnitude<BPs...>>::value;
 }
 
 template <typename... BPs>
-constexpr bool operator>=(Zero, Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr bool operator>=(Zero, Magnitude<BPs...>) {
     return !IsPositive<Magnitude<BPs...>>::value;
 }
 
 template <typename... BPs>
-constexpr bool operator<(Magnitude<BPs...>, Zero) {
+AU_DEVICE_FUNC constexpr bool operator<(Magnitude<BPs...>, Zero) {
     return !IsPositive<Magnitude<BPs...>>::value;
 }
 
 template <typename... BPs>
-constexpr bool operator>(Magnitude<BPs...>, Zero) {
+AU_DEVICE_FUNC constexpr bool operator>(Magnitude<BPs...>, Zero) {
     return IsPositive<Magnitude<BPs...>>::value;
 }
 
 template <typename... BPs>
-constexpr bool operator<=(Magnitude<BPs...>, Zero) {
+AU_DEVICE_FUNC constexpr bool operator<=(Magnitude<BPs...>, Zero) {
     return !IsPositive<Magnitude<BPs...>>::value;
 }
 
 template <typename... BPs>
-constexpr bool operator>=(Magnitude<BPs...>, Zero) {
+AU_DEVICE_FUNC constexpr bool operator>=(Magnitude<BPs...>, Zero) {
     return IsPositive<Magnitude<BPs...>>::value;
 }
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename... BPs>
-constexpr auto operator<=>(Zero, Magnitude<BPs...> m) {
+AU_DEVICE_FUNC constexpr auto operator<=>(Zero, Magnitude<BPs...> m) {
     return 0 <=> get_value<int>(sign(m));
 }
 template <typename... BPs>
-constexpr auto operator<=>(Magnitude<BPs...> m, Zero) {
+AU_DEVICE_FUNC constexpr auto operator<=>(Magnitude<BPs...> m, Zero) {
     return get_value<int>(sign(m)) <=> 0;
 }
 #endif
@@ -3468,7 +3468,7 @@ constexpr auto operator<=>(Magnitude<BPs...> m, Zero) {
 
 // `mag_trunc(m)`: truncates `m` toward zero.
 template <typename... BPs>
-constexpr auto mag_trunc(Magnitude<BPs...> m) {
+AU_DEVICE_FUNC constexpr auto mag_trunc(Magnitude<BPs...> m) {
     using AbsMag = Abs<Magnitude<BPs...>>;
     (void)detail::AssertMagnitudeU64RationalCompatible<AbsMag>{};
 
@@ -3484,7 +3484,7 @@ constexpr auto mag_trunc(Magnitude<BPs...> m) {
 
 // `mag_floor(m)`: rounds `m` down toward negative infinity.
 template <typename... BPs>
-constexpr auto mag_floor(Magnitude<BPs...> m) {
+AU_DEVICE_FUNC constexpr auto mag_floor(Magnitude<BPs...> m) {
     constexpr auto trunced = mag_trunc(m);
     return std::conditional_t<(is_positive(m) || (m == trunced)),
                               decltype(trunced),
@@ -3493,7 +3493,7 @@ constexpr auto mag_floor(Magnitude<BPs...> m) {
 
 // `mag_ceil(m)`: rounds `m` up toward positive infinity.
 template <typename... BPs>
-constexpr auto mag_ceil(Magnitude<BPs...> m) {
+AU_DEVICE_FUNC constexpr auto mag_ceil(Magnitude<BPs...> m) {
     constexpr auto trunced = mag_trunc(m);
     return std::conditional_t<(!is_positive(m) || (m == trunced)),
                               decltype(trunced),
@@ -3502,17 +3502,17 @@ constexpr auto mag_ceil(Magnitude<BPs...> m) {
 
 // `mag_round(m)`: rounds `m` to the nearest integer, rounding halfway cases away from zero.
 template <typename... BPs>
-constexpr auto mag_round(Magnitude<BPs...> m) {
+AU_DEVICE_FUNC constexpr auto mag_round(Magnitude<BPs...> m) {
     constexpr auto trunced = mag_trunc(m);
     return trunced + std::conditional_t<abs(m - trunced) >= Magnitude<Pow<Prime<2>, -1>>{},
                                         Sign<Magnitude<BPs...>>,
                                         Zero>{};
 }
 
-constexpr Zero mag_trunc(Zero) { return {}; }
-constexpr Zero mag_floor(Zero) { return {}; }
-constexpr Zero mag_ceil(Zero) { return {}; }
-constexpr Zero mag_round(Zero) { return {}; }
+AU_DEVICE_FUNC constexpr Zero mag_trunc(Zero) { return {}; }
+AU_DEVICE_FUNC constexpr Zero mag_floor(Zero) { return {}; }
+AU_DEVICE_FUNC constexpr Zero mag_ceil(Zero) { return {}; }
+AU_DEVICE_FUNC constexpr Zero mag_round(Zero) { return {}; }
 
 //
 // Addition, subtraction, and mod for Magnitudes (and Zero).
@@ -3522,39 +3522,39 @@ constexpr Zero mag_round(Zero) { return {}; }
 
 // Addition:
 template <typename... BP1s, typename... BP2s>
-constexpr auto operator+(Magnitude<BP1s...>, Magnitude<BP2s...>) {
+AU_DEVICE_FUNC constexpr auto operator+(Magnitude<BP1s...>, Magnitude<BP2s...>) {
     return MagSum<Magnitude<BP1s...>, Magnitude<BP2s...>>{};
 }
 template <typename... BPs>
-constexpr auto operator+(Zero, Magnitude<BPs...> m) {
+AU_DEVICE_FUNC constexpr auto operator+(Zero, Magnitude<BPs...> m) {
     return m;
 }
 template <typename... BPs>
-constexpr auto operator+(Magnitude<BPs...> m, Zero) {
+AU_DEVICE_FUNC constexpr auto operator+(Magnitude<BPs...> m, Zero) {
     return m;
 }
 
 // Subtraction:
 template <typename... BP1s, typename... BP2s>
-constexpr auto operator-(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+AU_DEVICE_FUNC constexpr auto operator-(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
     return m1 + (-m2);
 }
 template <typename... BPs>
-constexpr auto operator-(Zero, Magnitude<BPs...> m) {
+AU_DEVICE_FUNC constexpr auto operator-(Zero, Magnitude<BPs...> m) {
     return -m;
 }
 template <typename... BPs>
-constexpr auto operator-(Magnitude<BPs...> m, Zero) {
+AU_DEVICE_FUNC constexpr auto operator-(Magnitude<BPs...> m, Zero) {
     return m;
 }
 
 // Mod:
 template <typename... BP1s, typename... BP2s>
-constexpr auto operator%(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
+AU_DEVICE_FUNC constexpr auto operator%(Magnitude<BP1s...> m1, Magnitude<BP2s...> m2) {
     return m1 - mag_trunc(m1 / m2) * m2;
 }
 template <typename... BPs>
-constexpr Zero operator%(Zero, Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr Zero operator%(Zero, Magnitude<BPs...>) {
     return {};
 }
 
@@ -3563,43 +3563,43 @@ constexpr Zero operator%(Zero, Magnitude<BPs...>) {
 //
 
 template <typename... BPs>
-constexpr auto integer_part(Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr auto integer_part(Magnitude<BPs...>) {
     return IntegerPart<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
-constexpr auto abs(Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr auto abs(Magnitude<BPs...>) {
     return Abs<Magnitude<BPs...>>{};
 }
-constexpr auto abs(Zero z) { return z; }
+AU_DEVICE_FUNC constexpr auto abs(Zero z) { return z; }
 
 template <typename... BPs>
-constexpr auto sign(Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr auto sign(Magnitude<BPs...>) {
     return Sign<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
-constexpr auto numerator(Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr auto numerator(Magnitude<BPs...>) {
     return Numerator<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
-constexpr auto denominator(Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr auto denominator(Magnitude<BPs...>) {
     return Denominator<Magnitude<BPs...>>{};
 }
 
 template <typename... BPs>
-constexpr bool is_positive(Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr bool is_positive(Magnitude<BPs...>) {
     return IsPositive<Magnitude<BPs...>>::value;
 }
 
 template <typename... BPs>
-constexpr bool is_rational(Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr bool is_rational(Magnitude<BPs...>) {
     return IsRational<Magnitude<BPs...>>::value;
 }
 
 template <typename... BPs>
-constexpr bool is_integer(Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr bool is_integer(Magnitude<BPs...>) {
     return IsInteger<Magnitude<BPs...>>::value;
 }
 
@@ -3607,11 +3607,11 @@ constexpr bool is_integer(Magnitude<BPs...>) {
 //
 // If T is an integral type, then the Magnitude must be integral as well.
 template <typename T, typename... BPs>
-constexpr T get_value(Magnitude<BPs...>);
+AU_DEVICE_FUNC constexpr T get_value(Magnitude<BPs...>);
 
 // Value-based interface around CommonMagnitude.
 template <typename... Ms>
-constexpr auto common_magnitude(Ms...) {
+AU_DEVICE_FUNC constexpr auto common_magnitude(Ms...) {
     return CommonMagnitude<Ms...>{};
 }
 
@@ -3775,7 +3775,7 @@ constexpr std::int64_t parse_scientific_exponent() {
 
 namespace au_literals {
 template <char... Cs>
-constexpr auto operator""_mag() {
+AU_DEVICE_FUNC constexpr auto operator""_mag() {
     return mag<detail::parse_magnitude_integer<Cs...>()>() *
            pow<detail::parse_scientific_exponent<Cs...>() - detail::count_decimal_places<Cs...>()>(
                mag<10>());
@@ -4236,7 +4236,7 @@ struct IsExactlyLowestOfSignedIntegral<T, Magnitude<Negative, BPs...>, true>
           decltype(mag<static_cast<std::make_unsigned_t<T>>(std::numeric_limits<T>::max()) + 1u>()),
           Magnitude<BPs...>> {};
 template <typename T, typename... BPs>
-constexpr bool is_exactly_lowest_of_signed_integral(Magnitude<BPs...>) {
+AU_DEVICE_FUNC constexpr bool is_exactly_lowest_of_signed_integral(Magnitude<BPs...>) {
     return IsExactlyLowestOfSignedIntegral<
         T,
         Magnitude<BPs...>,
@@ -4263,7 +4263,7 @@ AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> get_value_result(
 }  // namespace detail
 
 template <typename T, typename... BPs>
-constexpr bool representable_in(Magnitude<BPs...> m) {
+AU_DEVICE_FUNC constexpr bool representable_in(Magnitude<BPs...> m) {
     using namespace detail;
 
     return get_value_result<T>(m).outcome == MagRepresentationOutcome::OK;
