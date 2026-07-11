@@ -14,9 +14,13 @@
 
 #include "au/units/pascals.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/pascals.hh"
 #include "au/units/meters.hh"
 #include "au/units/newtons.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -30,6 +34,11 @@ TEST(Pascals, EquivalentToForcePerArea) {
 TEST(Pascals, HasExpectedSymbol) {
     using symbols::Pa;
     EXPECT_THAT(5 * Pa, SameTypeAndValue(pascals(5)));
+}
+
+TEST(Pascals, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_Pa, SameTypeAndValue(make_constant(pascals * 1.28e-4_mag)));
 }
 
 }  // namespace au

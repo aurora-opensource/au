@@ -14,7 +14,10 @@
 
 #include "au/units/astronomical_units.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/astronomical_units.hh"
 #include "au/units/meters.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -32,6 +35,11 @@ TEST(AstronomicalUnits, EquivalentTo149597870700Meters) {
 TEST(AstronomicalUnits, HasExpectedSymbol) {
     using symbols::AU;
     EXPECT_THAT(5 * AU, SameTypeAndValue(astronomical_units(5)));
+}
+
+TEST(AstronomicalUnits, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_AU, SameTypeAndValue(make_constant(astronomical_units * 1.28e-4_mag)));
 }
 
 }  // namespace au

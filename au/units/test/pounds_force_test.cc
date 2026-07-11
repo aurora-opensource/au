@@ -14,9 +14,13 @@
 
 #include "au/units/pounds_force.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/pounds_force.hh"
 #include "au/units/pounds_mass.hh"
 #include "au/units/standard_gravity.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -30,6 +34,11 @@ TEST(PoundsForce, EquivalentToStandardGravityActingOnPoundMass) {
 TEST(PoundsForce, HasExpectedSymbol) {
     using symbols::lbf;
     EXPECT_THAT(5 * lbf, SameTypeAndValue(pounds_force(5)));
+}
+
+TEST(PoundsForce, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_lbf, SameTypeAndValue(make_constant(pounds_force * 1.28e-4_mag)));
 }
 
 }  // namespace au

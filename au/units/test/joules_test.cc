@@ -14,7 +14,10 @@
 
 #include "au/units/joules.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/joules.hh"
 #include "au/units/meters.hh"
 #include "au/units/newtons.hh"
 #include "gmock/gmock.h"
@@ -31,6 +34,11 @@ TEST(Joules, EquivalentToNewtonMeters) { EXPECT_THAT(joules(18), Eq((newton * me
 TEST(Joules, HasExpectedSymbol) {
     using symbols::J;
     EXPECT_THAT(5 * J, SameTypeAndValue(joules(5)));
+}
+
+TEST(Joules, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_J, SameTypeAndValue(make_constant(joules * 1.28e-4_mag)));
 }
 
 }  // namespace au

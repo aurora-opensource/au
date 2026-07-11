@@ -14,9 +14,12 @@
 
 #include "au/units/nautical_miles.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/hours.hh"
 #include "au/units/knots.hh"
+#include "au/units/literals/nautical_miles.hh"
 #include "au/units/meters.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -36,6 +39,11 @@ TEST(NauticalMiles, EquivalentToKnotHours) {
 TEST(NauticalMiles, HasExpectedSymbol) {
     using symbols::nmi;
     EXPECT_THAT(5 * nmi, SameTypeAndValue(nautical_miles(5)));
+}
+
+TEST(NauticalMiles, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_nmi, SameTypeAndValue(make_constant(nautical_miles * 1.28e-4_mag)));
 }
 
 }  // namespace au

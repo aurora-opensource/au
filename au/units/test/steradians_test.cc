@@ -14,8 +14,12 @@
 
 #include "au/units/steradians.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/steradians.hh"
 #include "au/units/radians.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -29,6 +33,11 @@ TEST(Steradians, EquivalentToSquaredRadians) {
 TEST(Steradians, HasExpectedSymbol) {
     using symbols::sr;
     EXPECT_THAT(5 * sr, SameTypeAndValue(steradians(5)));
+}
+
+TEST(Steradians, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_sr, SameTypeAndValue(make_constant(steradians * 1.28e-4_mag)));
 }
 
 }  // namespace au

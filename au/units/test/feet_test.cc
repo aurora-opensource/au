@@ -14,8 +14,11 @@
 
 #include "au/units/feet.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/inches.hh"
+#include "au/units/literals/feet.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -30,6 +33,11 @@ TEST(Feet, EquivalentTo12Inches) { EXPECT_THAT(feet(1), Eq(inches(12))); }
 TEST(Feet, HasExpectedSymbol) {
     using symbols::ft;
     EXPECT_THAT(5 * ft, SameTypeAndValue(feet(5)));
+}
+
+TEST(Feet, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_ft, SameTypeAndValue(make_constant(feet * 1.28e-4_mag)));
 }
 
 }  // namespace au

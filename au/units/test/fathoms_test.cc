@@ -14,8 +14,11 @@
 
 #include "au/units/fathoms.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/feet.hh"
+#include "au/units/literals/fathoms.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -30,6 +33,11 @@ TEST(Fathoms, EquivalentTo6Feet) { EXPECT_THAT(fathoms(1), Eq(feet(6))); }
 TEST(Fathoms, HasExpectedSymbol) {
     using symbols::ftm;
     EXPECT_THAT(5 * ftm, SameTypeAndValue(fathoms(5)));
+}
+
+TEST(Fathoms, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_ftm, SameTypeAndValue(make_constant(fathoms * 1.28e-4_mag)));
 }
 
 }  // namespace au

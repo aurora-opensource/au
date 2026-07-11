@@ -14,8 +14,11 @@
 
 #include "au/units/yards.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/feet.hh"
+#include "au/units/literals/yards.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -30,6 +33,11 @@ TEST(Yards, EquivalentTo3Feet) { EXPECT_THAT(yards(1), Eq(feet(3))); }
 TEST(Yards, HasExpectedSymbol) {
     using symbols::yd;
     EXPECT_THAT(5 * yd, SameTypeAndValue(yards(5)));
+}
+
+TEST(Yards, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_yd, SameTypeAndValue(make_constant(yards * 1.28e-4_mag)));
 }
 
 }  // namespace au

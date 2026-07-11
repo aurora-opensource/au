@@ -27,6 +27,7 @@ cc_library(
         ":constants",
         ":math",
         ":units",
+        ":units_literals",
     ],
 )
 
@@ -209,6 +210,17 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "units_literals",
+    hdrs = glob(["units/literals/*.hh"]),
+    visibility = ["//visibility:public"],
+    deps = [
+        ":constant",
+        ":magnitude",
+        ":units",
+    ],
+)
+
 cc_test(
     name = "units_test",
     size = "small",
@@ -216,6 +228,7 @@ cc_test(
     deps = [
         ":testing",
         ":units",
+        ":units_literals",
         "@googletest//:gtest_main",
     ],
 )

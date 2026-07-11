@@ -14,8 +14,12 @@
 
 #include "au/units/kelvins.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/celsius.hh"
+#include "au/units/literals/kelvins.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -29,6 +33,11 @@ TEST(Kelvins, QuantityEquivalentToCelsius) {
 TEST(Kelvins, HasExpectedSymbol) {
     using symbols::K;
     EXPECT_THAT(5 * K, SameTypeAndValue(kelvins(5)));
+}
+
+TEST(Kelvins, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_K, SameTypeAndValue(make_constant(kelvins * 1.28e-4_mag)));
 }
 
 }  // namespace au
