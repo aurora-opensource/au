@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-129-gb0725f3
+// Version identifier: 0.5.0-base-130-g4032be9
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -5265,6 +5265,18 @@ constexpr ComputeScaledUnit<U, MagInverse<Magnitude<BPs...>>> operator/(U, Magni
     return {};
 }
 
+// Scale this Unit by multiplying by a Magnitude on the left.
+template <typename U, typename = std::enable_if_t<IsUnit<U>::value>, typename... BPs>
+constexpr ComputeScaledUnit<U, Magnitude<BPs...>> operator*(Magnitude<BPs...>, U) {
+    return {};
+}
+
+// Divide a Magnitude by this Unit.
+template <typename U, typename = std::enable_if_t<IsUnit<U>::value>, typename... BPs>
+constexpr ComputeScaledUnit<UnitInverse<U>, Magnitude<BPs...>> operator/(Magnitude<BPs...>, U) {
+    return {};
+}
+
 // Compute the product of two unit instances.
 template <typename U1,
           typename U2,
@@ -5318,11 +5330,36 @@ struct SingularNameFor {
     constexpr auto operator*(SingularNameFor<OtherUnit>) const {
         return SingularNameFor<UnitProduct<Unit, OtherUnit>>{};
     }
+
+    // Scale by a Magnitude on the right or the left, or divide by a Magnitude.
+    template <typename... BPs>
+    constexpr auto operator*(Magnitude<BPs...> m) const {
+        return SingularNameFor<decltype(Unit{} * m)>{};
+    }
+    template <typename... BPs>
+    constexpr auto operator/(Magnitude<BPs...> m) const {
+        return SingularNameFor<decltype(Unit{} / m)>{};
+    }
+    template <typename... BPs>
+    friend constexpr auto operator*(Magnitude<BPs...> m, SingularNameFor) {
+        return SingularNameFor<decltype(m * Unit{})>{};
+    }
+
+    // Divide a Magnitude by this `SingularNameFor`.
+    template <typename... BPs>
+    friend constexpr auto operator/(Magnitude<BPs...> m, SingularNameFor) {
+        return SingularNameFor<decltype(m / Unit{})>{};
+    }
 };
 
 // Support `SingularNameFor` in (quantity) unit slots.
 template <typename U>
 struct AssociatedUnitImpl<SingularNameFor<U>> : stdx::type_identity<U> {};
+
+// Support `Magnitude` in (quantity) unit slots: it acts as a scaled version of the unitless unit.
+template <typename... BPs>
+struct AssociatedUnitImpl<Magnitude<BPs...>>
+    : stdx::type_identity<ComputeScaledUnit<UnitProduct<>, Magnitude<BPs...>>> {};
 
 template <int Exp, typename Unit>
 constexpr auto pow(SingularNameFor<Unit>) {
@@ -6083,6 +6120,31 @@ struct UnitLabel<ScaledUnit<U, Magnitude<Negative>>> {
 template <typename U>
 constexpr typename UnitLabel<ScaledUnit<U, Magnitude<Negative>>>::LabelT
     UnitLabel<ScaledUnit<U, Magnitude<Negative>>>::value;
+
+namespace detail {
+// Labeler for a scaled version of the unitless unit: the label is just the magnitude in brackets.
+//
+// (If we used the generic `ScaledUnit` labeler, the empty label of the unitless unit would leave a
+// dangling space, as in `"[3 ]"`.)
+template <typename M>
+struct UnitlessScaledLabel {
+    using MagLab = MagnitudeLabel<M>;
+    using LabelT = StringConstant<parens_if<MagLab::has_exposed_slash>(MagLab::value).size() + 2u>;
+    static constexpr LabelT value =
+        concatenate("[", parens_if<MagLab::has_exposed_slash>(MagLab::value), "]");
+};
+template <typename M>
+constexpr typename UnitlessScaledLabel<M>::LabelT UnitlessScaledLabel<M>::value;
+}  // namespace detail
+
+// Special case for a scaled version of the unitless unit, as in `"[3]"`.
+template <typename M>
+struct UnitLabel<ScaledUnit<UnitProductPack<>, M>> : detail::UnitlessScaledLabel<M> {};
+
+// Disambiguator between the "scaled unitless unit" and "unit scaled by (-1)" special cases.
+template <>
+struct UnitLabel<ScaledUnit<UnitProductPack<>, Magnitude<Negative>>>
+    : detail::UnitlessScaledLabel<Magnitude<Negative>> {};
 
 // Implementation for CommonUnitPack: give size in terms of each constituent unit.
 template <typename... Us>
@@ -8533,6 +8595,28 @@ class Quantity {
         return make_quantity<decltype(pow<-1>(unit))>(s / a.value_);
     }
 
+    // Scaling by a Magnitude scales the unit.
+    //
+    // For (m / q) we also take the reciprocal of q's stored value.
+    template <typename... BPs>
+    friend AU_DEVICE_FUNC constexpr auto operator*(const Quantity &a, Magnitude<BPs...> m) {
+        return make_quantity<decltype(unit * m)>(a.value_);
+    }
+    template <typename... BPs>
+    friend AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BPs...> m, const Quantity &a) {
+        return make_quantity<decltype(m * unit)>(a.value_);
+    }
+    template <typename... BPs>
+    friend AU_DEVICE_FUNC constexpr auto operator/(const Quantity &a, Magnitude<BPs...> m) {
+        return make_quantity<decltype(unit / m)>(a.value_);
+    }
+    template <typename... BPs>
+    friend AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BPs...> m, const Quantity &a) {
+        static_assert(!std::is_integral<RepT>::value,
+                      "Dividing by an integer value disallowed: would almost always produce 0");
+        return make_quantity<decltype(m / unit)>(RepT{1} / a.value_);
+    }
+
     // Multiplication for dimensioned quantities.
     //
     // We take `q` by reference and read its value via `data_in` (a reference), rather than by value
@@ -8915,6 +8999,71 @@ AU_DEVICE_FUNC constexpr auto rep_cast(Zero z) {
     return z;
 }
 
+namespace detail {
+
+// A SFINAE helper that is the identity, but only if we think a type is a valid rep.
+//
+// For now, we are restricting this to arithmetic types.  This doesn't mean they're the only reps we
+// support; it just means they're the only reps we can _construct via this method_.  Later on, we
+// would like to have a well-defined concept that defines what is and is not an acceptable rep for
+// our `Quantity`.  Once we have that, we can simply constrain on that concept.  For more on this
+// idea, see: https://github.com/aurora-opensource/au/issues/52
+struct NoTypeMember {};
+template <typename T>
+struct TypeIdentityIfLooksLikeValidRepImpl
+    : std::conditional_t<std::is_arithmetic<T>::value, stdx::type_identity<T>, NoTypeMember> {};
+template <typename T>
+using TypeIdentityIfLooksLikeValidRep = typename TypeIdentityIfLooksLikeValidRepImpl<T>::type;
+
+// The unit whose `Constant` corresponds to a bare `Magnitude`: a scaled version of the unitless
+// unit.
+template <typename M>
+using UnitForMagnitude = ComputeScaledUnit<UnitProduct<>, M>;
+
+}  // namespace detail
+
+//
+// Multiplication and division of raw numbers with Magnitudes.
+//
+// The Magnitude acts like its corresponding `Constant` (that is, the constant for a scaled version
+// of the unitless unit): the result is a dimensionless `Quantity` which stores the input value
+// untouched, and records the Magnitude in its unit.
+//
+
+// (N * M), for number N and magnitude M.
+template <typename T, typename... BPs>
+AU_DEVICE_FUNC constexpr auto operator*(T x, Magnitude<BPs...>)
+    -> Quantity<detail::UnitForMagnitude<Magnitude<BPs...>>,
+                detail::TypeIdentityIfLooksLikeValidRep<T>> {
+    return make_quantity<detail::UnitForMagnitude<Magnitude<BPs...>>>(x);
+}
+
+// (M * N), for number N and magnitude M.
+template <typename T, typename... BPs>
+AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BPs...>, T x)
+    -> Quantity<detail::UnitForMagnitude<Magnitude<BPs...>>,
+                detail::TypeIdentityIfLooksLikeValidRep<T>> {
+    return make_quantity<detail::UnitForMagnitude<Magnitude<BPs...>>>(x);
+}
+
+// (N / M), for number N and magnitude M.
+template <typename T, typename... BPs>
+AU_DEVICE_FUNC constexpr auto operator/(T x, Magnitude<BPs...>)
+    -> Quantity<detail::UnitForMagnitude<MagInverse<Magnitude<BPs...>>>,
+                detail::TypeIdentityIfLooksLikeValidRep<T>> {
+    return make_quantity<detail::UnitForMagnitude<MagInverse<Magnitude<BPs...>>>>(x);
+}
+
+// (M / N), for number N and magnitude M.
+template <typename T, typename... BPs>
+AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BPs...>, T x)
+    -> Quantity<detail::UnitForMagnitude<Magnitude<BPs...>>,
+                detail::TypeIdentityIfLooksLikeValidRep<T>> {
+    static_assert(!std::is_integral<T>::value,
+                  "Dividing by an integer value disallowed: would almost always produce 0");
+    return make_quantity<detail::UnitForMagnitude<Magnitude<BPs...>>>(T{1} / x);
+}
+
 template <typename UnitT>
 struct QuantityMaker {
     using Unit = UnitT;
@@ -8954,6 +9103,16 @@ struct QuantityMaker {
     template <typename... BPs>
     AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BPs...> m) const {
         return QuantityMaker<decltype(unit / m)>{};
+    }
+
+    template <typename... BPs>
+    friend AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BPs...> m, QuantityMaker) {
+        return QuantityMaker<decltype(m * unit)>{};
+    }
+
+    template <typename... BPs>
+    friend AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BPs...> m, QuantityMaker) {
+        return QuantityMaker<decltype(m / unit)>{};
     }
 
     template <typename DivisorUnit>
@@ -9485,19 +9644,7 @@ AU_DEVICE_VAR constexpr auto unos = QuantityMaker<Unos>{};
 namespace au {
 namespace detail {
 
-// A SFINAE helper that is the identity, but only if we think a type is a valid rep.
-//
-// For now, we are restricting this to arithmetic types.  This doesn't mean they're the only reps we
-// support; it just means they're the only reps we can _construct via this method_.  Later on, we
-// would like to have a well-defined concept that defines what is and is not an acceptable rep for
-// our `Quantity`.  Once we have that, we can simply constrain on that concept.  For more on this
-// idea, see: https://github.com/aurora-opensource/au/issues/52
-struct NoTypeMember {};
-template <typename T>
-struct TypeIdentityIfLooksLikeValidRepImpl
-    : std::conditional_t<std::is_arithmetic<T>::value, stdx::type_identity<T>, NoTypeMember> {};
-template <typename T>
-using TypeIdentityIfLooksLikeValidRep = typename TypeIdentityIfLooksLikeValidRepImpl<T>::type;
+// (Note: `TypeIdentityIfLooksLikeValidRep`, which these mixins use, lives in "au/quantity.hh".)
 
 //
 // A mixin that enables turning a raw number into a Quantity by multiplying or dividing.
@@ -10299,6 +10446,12 @@ struct QuantityPointMaker {
     template <typename... BPs>
     AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BPs...> m) const {
         return QuantityPointMaker<decltype(unit / m)>{};
+    }
+
+    // Note: there is no `(M / maker)` counterpart, because inverting a point unit is meaningless.
+    template <typename... BPs>
+    friend AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BPs...> m, QuantityPointMaker) {
+        return QuantityPointMaker<decltype(m * unit)>{};
     }
 };
 

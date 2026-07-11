@@ -2085,6 +2085,67 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#combining-with-other-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Combining with other types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Combining with other types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raw-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Raw numbers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quantity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#units-quantity-makers-and-other-unit-adjacent-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Units, quantity makers, and other unit-adjacent types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unit-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unit slots
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3516,6 +3577,65 @@ another <code>Magnitude</code>.</p>
 </ul>
 </li>
 </ul>
+<h3 id="combining-with-other-types">Combining with other types<a class="headerlink" href="#combining-with-other-types" title="Permanent link">&para;</a></h3>
+<p>A <code>Magnitude</code> instance <code>m</code> can be multiplied or divided with the library&rsquo;s other value types. In
+many cases the effect is <em>symbolic</em>: we scale the <em>unit</em> while leaving the stored value unchanged,
+which makes these operations exact even for integral reps. When <code>m</code> is divided by a numeric value or
+quantity (<code>m / x</code> or <code>m / q</code>), the stored value becomes the reciprocal of the divisor, so these
+overloads are only enabled for non-integral divisors.</p>
+<h4 id="raw-numbers">Raw numbers<a class="headerlink" href="#raw-numbers" title="Permanent link">&para;</a></h4>
+<p><strong>Result:</strong> A dimensionless <code>Quantity</code>, whose rep is the raw number&rsquo;s type, and whose unit is a
+scaled version of the unitless unit.  The <code>Magnitude</code> acts like its &ldquo;corresponding constant&rdquo;:
+<code>m</code> behaves the same as <code>make_constant(UnitProduct&lt;&gt;{} * m)</code>.</p>
+<p>The stored value is the input number for <code>x * m</code>, <code>m * x</code>, and <code>x / m</code>. For <code>m / x</code>, the stored
+value is <code>1 / x</code> (so this overload is only enabled for non-integral <code>x</code>). To retrieve the fully
+evaluated result, convert to a specific unit, as with any other dimensionless quantity.</p>
+<p><strong>Syntax</strong>, for a raw number <code>x</code>:</p>
+<ul>
+<li><code>x * m</code></li>
+<li><code>m * x</code></li>
+<li><code>x / m</code></li>
+<li><code>m / x</code><ul>
+<li>Only when <code>x</code> is not an integral type; dividing a <code>Magnitude</code> by an integer would almost
+  always produce 0, so it is a compile-time error.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Example:</strong></p>
+<ul>
+<li><code>(2.5 * mag&lt;3&gt;()).in(unos)</code> equals <code>7.5</code></li>
+</ul>
+<h4 id="quantity"><code>Quantity</code><a class="headerlink" href="#quantity" title="Permanent link">&para;</a></h4>
+<p><strong>Result:</strong> A <code>Quantity</code> of the same rep, whose unit is scaled by the <code>Magnitude</code> (or its inverse
+for division). For <code>q * m</code>, <code>m * q</code>, and <code>q / m</code>, the stored value is untouched (exact even for
+integral reps). For <code>m / q</code>, the stored value becomes the reciprocal of <code>q</code>&rsquo;s stored value, so this
+overload is only enabled for non-integral reps.</p>
+<p><strong>Syntax</strong>, for a <code>Quantity</code> instance <code>q</code>:</p>
+<ul>
+<li><code>q * m</code></li>
+<li><code>m * q</code></li>
+<li><code>q / m</code></li>
+<li><code>m / q</code><ul>
+<li>Only when the rep of <code>q</code> is not an integral type.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Example:</strong></p>
+<ul>
+<li><code>(feet(6.0) * mag&lt;3&gt;()).in(feet)</code> equals <code>18.0</code></li>
+</ul>
+<h4 id="units-quantity-makers-and-other-unit-adjacent-types">Units, quantity makers, and other unit-adjacent types<a class="headerlink" href="#units-quantity-makers-and-other-unit-adjacent-types" title="Permanent link">&para;</a></h4>
+<p>Instances of units, <code>QuantityMaker</code>, <code>QuantityPointMaker</code>, <code>SingularNameFor</code>, <code>Constant</code>, and
+<code>SymbolFor</code> can all be multiplied or divided by a <code>Magnitude</code>, on either side, producing the same
+kind of object with a scaled unit.  (The one exception is that you cannot divide a <code>Magnitude</code> <em>by</em>
+a <code>QuantityPointMaker</code>, because the inverse of a point unit is meaningless.)</p>
+<p>For example, <code>mag&lt;3&gt;() * feet</code> is a <code>QuantityMaker</code> for the unit &ldquo;3 feet&rdquo; &mdash; the same as
+<code>feet * mag&lt;3&gt;()</code>.</p>
+<h4 id="unit-slots">Unit slots<a class="headerlink" href="#unit-slots" title="Permanent link">&para;</a></h4>
+<p>A <code>Magnitude</code> instance can fill a <a href="../../discussion/idioms/unit-slots/">unit slot</a>, where it acts as
+a scaled version of the unitless unit.  For example, <code>make_constant(mag&lt;3&gt;())</code> is a dimensionless
+<code>Constant</code> representing the number 3, and <code>some_dimensionless_quantity.in(mag&lt;3&gt;())</code> retrieves the
+value of that quantity, as measured in units of &ldquo;3&rdquo;.</p>
 <div class="footnote">
 <hr />
 <ol>

@@ -3538,8 +3538,9 @@ is associated with a <code>Quantity</code> type.  Here are a few examples.</p>
 <a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="c1">//         ^^^^^^^^</span>
 </code></pre></div>
 <p>The underlined arguments are all unit slots.  The kinds of things that can be passed here include
-a <code>QuantityMaker</code> for a unit, a <a href="../constant/">constant</a>, a <a href="#symbols">unit symbol</a>, or simply
-a unit type itself.</p>
+a <code>QuantityMaker</code> for a unit, a <a href="../constant/">constant</a>, a <a href="#symbols">unit symbol</a>,
+a <a href="../magnitude/#unit-slots">magnitude</a> (which acts as a scaled version of the unitless unit), or
+simply a unit type itself.</p>
 <p>The use case for this trait is to <em>implement</em> the unit slot argument for a function.</p>
 <p><strong>Syntax:</strong></p>
 <ul>
