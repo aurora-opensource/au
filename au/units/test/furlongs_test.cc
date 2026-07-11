@@ -14,7 +14,10 @@
 
 #include "au/units/furlongs.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/furlongs.hh"
 #include "au/units/miles.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -30,6 +33,11 @@ TEST(Furlongs, EquivalentToOneEighthMile) { EXPECT_THAT(furlongs(8), Eq(miles(1)
 TEST(Furlongs, HasExpectedSymbol) {
     using symbols::fur;
     EXPECT_THAT(5 * fur, SameTypeAndValue(furlongs(5)));
+}
+
+TEST(Furlongs, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_fur, SameTypeAndValue(make_constant(furlongs * 1.28e-4_mag)));
 }
 
 }  // namespace au

@@ -14,8 +14,12 @@
 
 #include "au/units/becquerel.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/becquerel.hh"
 #include "au/units/seconds.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -29,6 +33,11 @@ TEST(Becquerel, EquivalentToInverseSeconds) {
 TEST(Becquerel, HasExpectedSymbol) {
     using symbols::Bq;
     EXPECT_THAT(5 * Bq, SameTypeAndValue(becquerel(5)));
+}
+
+TEST(Becquerel, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_Bq, SameTypeAndValue(make_constant(becquerel * 1.28e-4_mag)));
 }
 
 }  // namespace au

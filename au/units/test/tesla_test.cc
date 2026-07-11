@@ -14,9 +14,13 @@
 
 #include "au/units/tesla.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/tesla.hh"
 #include "au/units/meters.hh"
 #include "au/units/webers.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -30,6 +34,11 @@ TEST(Tesla, EquivalentToWebersPerMeterSquared) {
 TEST(Tesla, HasExpectedSymbol) {
     using symbols::T;
     EXPECT_THAT(5 * T, SameTypeAndValue(tesla(5)));
+}
+
+TEST(Tesla, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_T, SameTypeAndValue(make_constant(tesla * 1.28e-4_mag)));
 }
 
 }  // namespace au

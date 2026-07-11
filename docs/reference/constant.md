@@ -166,6 +166,42 @@ concise symbol.  The example below demonstrates the difference.
     There's no difference in the program that gets executed, but the printed label is a lot easier
     to understand.
 
+### Unit literals
+
+Every unit that ships with Au provides a _unit literal_: a [user-defined literal
+(UDL)](https://en.cppreference.com/w/cpp/language/user_literal) whose suffix is the unit's
+[symbol](./unit.md#symbols), and which produces a `Constant`.  The numeric part of the literal is
+forwarded to the [`_mag` literal](./magnitude.md#_mag-literal), and the result is the `Constant` you would
+get from `make_constant`.  For example, `1.28e-4_s` is equivalent to:
+
+```cpp
+make_constant(seconds * 1.28e-4_mag)
+```
+
+This makes very concise, readable constants:
+
+```cpp
+constexpr auto dt = 1.28e-4_s;  // A `Constant` for 128 microseconds.
+```
+
+Because a `Constant` is applied _symbolically_, a unit literal is a good choice for a magic number
+that you want to combine with quantities without any risk of rounding or overflow.
+
+Unit literals are **opt-in**, on a per-unit basis, to keep the base unit headers lightweight.  To
+use the literal for a unit, include its literals header --- for example,
+`"au/units/literals/seconds.hh"` --- and bring the literals into scope:
+
+```cpp
+#include "au/units/literals/seconds.hh"
+
+using namespace ::au::au_literals;  // Same namespace as `_mag`.
+
+constexpr auto dt = 1.28e-4_s;
+```
+
+The literals live in the `::au::au_literals` namespace, alongside `_mag`, so a single `using
+namespace ::au::au_literals;` brings in both.
+
 ## `Constant` and unit slots
 
 `Constant` can be passed to any API that takes a [unit slot](../discussion/idioms/unit-slots.md).

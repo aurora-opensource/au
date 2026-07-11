@@ -14,9 +14,13 @@
 
 #include "au/units/volts.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
 #include "au/units/amperes.hh"
+#include "au/units/literals/volts.hh"
 #include "au/units/ohms.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -28,6 +32,11 @@ TEST(Volts, SatisfiesOhmsLaw) { EXPECT_THAT(volts(8), QuantityEquivalent(amperes
 TEST(Volts, HasExpectedSymbol) {
     using symbols::V;
     EXPECT_THAT(5 * V, SameTypeAndValue(volts(5)));
+}
+
+TEST(Volts, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_V, SameTypeAndValue(make_constant(volts * 1.28e-4_mag)));
 }
 
 }  // namespace au

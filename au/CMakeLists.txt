@@ -181,6 +181,65 @@ header_only_library(
     units/webers_fwd.hh
     units/yards.hh
     units/yards_fwd.hh
+    units/literals/amperes.hh
+    units/literals/arcminutes.hh
+    units/literals/arcseconds.hh
+    units/literals/astronomical_units.hh
+    units/literals/bars.hh
+    units/literals/becquerel.hh
+    units/literals/bits.hh
+    units/literals/bytes.hh
+    units/literals/candelas.hh
+    units/literals/celsius.hh
+    units/literals/coulombs.hh
+    units/literals/days.hh
+    units/literals/degrees.hh
+    units/literals/fahrenheit.hh
+    units/literals/farads.hh
+    units/literals/fathoms.hh
+    units/literals/feet.hh
+    units/literals/football_fields.hh
+    units/literals/furlongs.hh
+    units/literals/grams.hh
+    units/literals/grays.hh
+    units/literals/henries.hh
+    units/literals/hertz.hh
+    units/literals/hours.hh
+    units/literals/inches.hh
+    units/literals/joules.hh
+    units/literals/katals.hh
+    units/literals/kelvins.hh
+    units/literals/knots.hh
+    units/literals/liters.hh
+    units/literals/lumens.hh
+    units/literals/lux.hh
+    units/literals/meters.hh
+    units/literals/miles.hh
+    units/literals/minutes.hh
+    units/literals/moles.hh
+    units/literals/nautical_miles.hh
+    units/literals/newtons.hh
+    units/literals/ohms.hh
+    units/literals/pascals.hh
+    units/literals/percent.hh
+    units/literals/pounds_force.hh
+    units/literals/pounds_mass.hh
+    units/literals/radians.hh
+    units/literals/rankine.hh
+    units/literals/revolutions.hh
+    units/literals/seconds.hh
+    units/literals/siemens.hh
+    units/literals/slugs.hh
+    units/literals/standard_gravity.hh
+    units/literals/steradians.hh
+    units/literals/tesla.hh
+    units/literals/us_gallons.hh
+    units/literals/us_pints.hh
+    units/literals/us_quarts.hh
+    units/literals/volts.hh
+    units/literals/watts.hh
+    units/literals/webers.hh
+    units/literals/yards.hh
     utility/factoring.hh
     utility/mod.hh
     utility/probable_primes.hh

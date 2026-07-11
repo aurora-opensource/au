@@ -14,10 +14,14 @@
 
 #include "au/units/amperes.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/testing.hh"
+#include "au/units/literals/amperes.hh"
 #include "au/units/ohms.hh"
 #include "au/units/volts.hh"
 #include "au/units/watts.hh"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace au {
@@ -35,6 +39,11 @@ TEST(Amperes, ProductWithVoltsGivesPower) {
 TEST(Amperes, HasExpectedSymbol) {
     using symbols::A;
     EXPECT_THAT(5 * A, SameTypeAndValue(amperes(5)));
+}
+
+TEST(Amperes, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_A, SameTypeAndValue(make_constant(amperes * 1.28e-4_mag)));
 }
 
 }  // namespace au

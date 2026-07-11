@@ -14,10 +14,13 @@
 
 #include "au/units/celsius.hh"
 
+#include "au/constant.hh"
+#include "au/magnitude.hh"
 #include "au/prefix.hh"
 #include "au/testing.hh"
 #include "au/units/fahrenheit.hh"
 #include "au/units/kelvins.hh"
+#include "au/units/literals/celsius.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -43,6 +46,11 @@ TEST(Celsius, QuantityPointMatchesUpCorrectlyWithFahrenheit) {
 TEST(Celsius, HasExpectedSymbol) {
     using symbols::degC_qty;
     EXPECT_THAT(5 * degC_qty, SameTypeAndValue(celsius_qty(5)));
+}
+
+TEST(Celsius, LiteralMakesEquivalentConstant) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(1.28e-4_degC_qty, SameTypeAndValue(make_constant(celsius_qty * 1.28e-4_mag)));
 }
 
 }  // namespace au
