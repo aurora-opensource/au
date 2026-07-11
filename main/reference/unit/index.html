@@ -2011,6 +2011,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#literals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unit literals
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3135,6 +3146,12 @@ that is, if the input quantity was <code>q</code>, then <code>x</code> is <code>
 </tr>
 </tbody>
 </table>
+<h3 id="literals">Unit literals<a class="headerlink" href="#literals" title="Permanent link">&para;</a></h3>
+<p>A unit symbol multiplied by a raw number produces a <code>Quantity</code>.  If you instead want a
+<a href="../constant/"><code>Constant</code></a> &mdash; for example, a magic number to combine with quantities without any
+risk of rounding or overflow &mdash; use the <em>unit literal</em>, whose suffix is the same as the symbol.
+For instance, <code>1.28e-4_s</code> produces a <code>Constant</code>, while <code>1.28e-4 * s</code> would produce a <code>Quantity</code>.
+See <a href="../constant/#unit-literals">Unit literals</a> for details.</p>
 <h2 id="origins">Unit origins<a class="headerlink" href="#origins" title="Permanent link">&para;</a></h2>
 <p>The &ldquo;origin&rdquo; of a unit is only useful for <code>QuantityPoint</code>, our <a href="http://videocortex.io/2018/Affine-Space-Types/">affine space
 type</a>.  Even then, the origin by itself is not
