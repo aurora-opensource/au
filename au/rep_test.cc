@@ -16,6 +16,7 @@
 
 #include <complex>
 #include <cstdint>
+#include <utility>
 
 #include "au/chrono_interop.hh"
 #include "au/constant.hh"
@@ -71,6 +72,35 @@ struct ConvertsToInt {
 // would incorrectly scoop it up too.  This helps us get coverage for the `!is_enum` guard.
 enum UnscopedEnum : int { kUnscopedEnumValue = 0 };
 
+// A vector whose scalar is advertised via the STL `value_type` convention, with a templated scalar
+// division operator, as in #666.
+template <typename T>
+struct VectorWithValueType {
+    using value_type = T;
+
+    T elements[3];
+
+    template <typename Scalar>
+    friend constexpr auto operator/(const VectorWithValueType &v, Scalar s)
+        -> VectorWithValueType<decltype(std::declval<T>() / std::declval<Scalar>())> {
+        return {{v.elements[0] / s, v.elements[1] / s, v.elements[2] / s}};
+    }
+};
+
+// A vector whose scalar is advertised via the Eigen `Scalar` convention.
+template <typename T>
+struct VectorWithScalar {
+    using Scalar = T;
+
+    T elements[3];
+};
+
+// A vector with no automatically detectable scalar; we specialize `ScalarOfTrait` below.
+template <typename T>
+struct OpaqueVector {
+    T elements[3];
+};
+
 }  // namespace
 
 // Set up the correspondence between `MyMeters` and `QuantityI<Meters>`.
@@ -79,6 +109,10 @@ struct CorrespondingQuantity<MyMeters> {
     using Unit = Meters;
     using Rep = int;
 };
+
+// Advertise the scalar of `OpaqueVector` via a `ScalarOfTrait` specialization.
+template <typename T>
+struct ScalarOfTrait<OpaqueVector<T>> : stdx::type_identity<T> {};
 
 TEST(IsValidRep, FalseForVoid) { EXPECT_THAT(IsValidRep<void>::value, IsFalse()); }
 
@@ -124,6 +158,30 @@ TEST(IsValidRep, FalseForTypeWithCorrespondingQuantity) {
     EXPECT_THAT(IsValidRep<std::chrono::nanoseconds>::value, IsFalse());
 }
 
+TEST(IsValidRep, FalseForTypeWhoseScalarIsQuantityLike) {
+    // A vector of quantities as a rep would produce nested units, so it can never be valid.  We
+    // catch every scalar type that `ScalarOf` can detect, whichever probe it fires on.
+    EXPECT_THAT((IsValidRep<VectorWithValueType<Quantity<Meters, float>>>::value), IsFalse());
+    EXPECT_THAT((IsValidRep<VectorWithScalar<Quantity<Meters, float>>>::value), IsFalse());
+    EXPECT_THAT((IsValidRep<std::complex<Quantity<Meters, float>>>::value), IsFalse());
+
+    // "Quantity-like" also covers `QuantityPoint`, and types with a `CorrespondingQuantity`.
+    EXPECT_THAT((IsValidRep<VectorWithValueType<QuantityPoint<Miles, double>>>::value), IsFalse());
+    EXPECT_THAT((IsValidRep<VectorWithValueType<MyMeters>>::value), IsFalse());
+}
+
+TEST(IsValidRep, TrueForVectorOfPlainScalars) {
+    EXPECT_THAT((IsValidRep<VectorWithValueType<float>>::value), IsTrue());
+    EXPECT_THAT((IsValidRep<VectorWithScalar<double>>::value), IsTrue());
+}
+
+TEST(IsValidRep, HonorsUserSpecializationsOfScalarOfTrait) {
+    // `OpaqueVector` has no automatically detectable scalar, so only its `ScalarOfTrait`
+    // specialization tells us that `OpaqueVector<Quantity<...>>` has a quantity-like scalar.
+    EXPECT_THAT((IsValidRep<OpaqueVector<Quantity<Meters, float>>>::value), IsFalse());
+    EXPECT_THAT((IsValidRep<OpaqueVector<float>>::value), IsTrue());
+}
+
 TEST(IsProductValidRep, FalseIfProductDoesNotExist) {
     EXPECT_THAT((IsProductValidRep<IntWithNoOps, int>::value), IsFalse());
     EXPECT_THAT((IsProductValidRep<int, IntWithNoOps>::value), IsFalse());
@@ -152,6 +210,18 @@ TEST(IsQuotientValidRep, TrueOnlyForSideWhereQuotientExists) {
 
     EXPECT_THAT((IsQuotientValidRep<float, DivideTenByFloat>::value), IsFalse());
     EXPECT_THAT((IsQuotientValidRep<DivideTenByFloat, float>::value), IsTrue());
+}
+
+TEST(IsQuotientValidRep, FalseWhenQuotientHasQuantityLikeScalar) {
+    // The gate that resolves #666: `VectorWithValueType<Quantity<...>> / float` exists, but its
+    // result is a vector of quantities, which is not a valid rep.  This is what disables the
+    // "divide into a scalar" overload of `Quantity::operator/`, so that it cannot be ambiguous
+    // with the vector's own scalar division operator.
+    EXPECT_THAT((IsQuotientValidRep<VectorWithValueType<Quantity<Meters, float>>, float>::value),
+                IsFalse());
+
+    // The same vector of _plain_ scalars remains a valid quotient rep.
+    EXPECT_THAT((IsQuotientValidRep<VectorWithValueType<float>, float>::value), IsTrue());
 }
 
 namespace detail {

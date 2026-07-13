@@ -20,6 +20,7 @@
 #include <utility>
 
 #include "au/fwd.hh"
+#include "au/magnitude.hh"
 #include "au/stdx/experimental/is_detected.hh"
 #include "au/stdx/type_traits.hh"
 
@@ -217,12 +218,22 @@ struct ResultIfNoneAreQuantityImpl
                                     Op,
                                     Ts...> {};
 
+// A type whose _scalar_ is itself quantity-like --- say, a vector whose elements are `Quantity`
+// --- can never be a valid rep, because using it as one would produce nested units.
+template <typename T>
+using ScalarOfOrVoid = stdx::experimental::detected_or_t<void, ::au::ScalarOf, T>;
+
+template <typename T>
+struct HasQuantityLikeScalar : LooksLikeAuOrOtherQuantity<ScalarOfOrVoid<T>> {};
+
 // The `std::is_empty` is a good way to catch all of the various unit and other monovalue types in
 // our library, which have little else in common.  It's also just intrinsically true that it
 // wouldn't make much sense to use an empty type as a rep.
 template <typename T>
-struct IsKnownInvalidRep
-    : stdx::disjunction<std::is_empty<T>, LooksLikeAuOrOtherQuantity<T>, std::is_same<void, T>> {};
+struct IsKnownInvalidRep : stdx::disjunction<std::is_empty<T>,
+                                             LooksLikeAuOrOtherQuantity<T>,
+                                             std::is_same<void, T>,
+                                             HasQuantityLikeScalar<T>> {};
 
 // The type of the product of two types.
 template <typename T, typename U>

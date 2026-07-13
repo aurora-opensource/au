@@ -15,6 +15,7 @@
 #include "au/quantity.hh"
 
 #include <complex>
+#include <utility>
 
 #include "au/prefix.hh"
 #include "au/testing.hh"
@@ -59,6 +60,46 @@ struct Vec {
         Vec r{};
         for (auto i = 0u; i < N; ++i) {
             r.data[i] = a.data[i] / s;
+        }
+        return r;
+    }
+};
+
+// A vector-of-quantities type in the style of #666: designed to hold `au::Quantity` elements, with
+// _templated_ scalar operators of its own.  `Quantity`'s scalar operators must not compete with
+// these: they would be ambiguous, and could only ever produce a rep with nested units anyway.
+template <typename T, std::size_t N>
+struct VectorOfQuantities {
+    using value_type = T;
+
+    T data[N];
+
+    template <typename Scalar>
+    friend constexpr auto operator*(const VectorOfQuantities &v, Scalar s)
+        -> VectorOfQuantities<decltype(std::declval<T>() * std::declval<Scalar>()), N> {
+        VectorOfQuantities<decltype(std::declval<T>() * std::declval<Scalar>()), N> r{};
+        for (auto i = 0u; i < N; ++i) {
+            r.data[i] = v.data[i] * s;
+        }
+        return r;
+    }
+
+    template <typename Scalar>
+    friend constexpr auto operator*(Scalar s, const VectorOfQuantities &v)
+        -> VectorOfQuantities<decltype(std::declval<Scalar>() * std::declval<T>()), N> {
+        VectorOfQuantities<decltype(std::declval<Scalar>() * std::declval<T>()), N> r{};
+        for (auto i = 0u; i < N; ++i) {
+            r.data[i] = s * v.data[i];
+        }
+        return r;
+    }
+
+    template <typename Scalar>
+    friend constexpr auto operator/(const VectorOfQuantities &v, Scalar s)
+        -> VectorOfQuantities<decltype(std::declval<T>() / std::declval<Scalar>()), N> {
+        VectorOfQuantities<decltype(std::declval<T>() / std::declval<Scalar>()), N> r{};
+        for (auto i = 0u; i < N; ++i) {
+            r.data[i] = v.data[i] / s;
         }
         return r;
     }
@@ -835,6 +876,24 @@ TEST(Quantity, ScalarDivisionWorks) {
 TEST(Quantity, ScalarDivisionIsConstexprCompatible) {
     constexpr auto quotient = feet(10.) / 2;
     EXPECT_THAT(quotient, Eq(feet(5.)));
+}
+
+TEST(Quantity, ScalarOperatorsDoNotCompeteWithVectorOfQuantityTypes) {
+    // Regression test for #666.  A vector whose elements are `Quantity`, with templated scalar
+    // operators of its own, must "own" its arithmetic with quantities: `Quantity`'s scalar
+    // overloads SFINAE themselves out, because they could only produce a rep with nested units.
+    constexpr test_types::VectorOfQuantities<decltype(meters(0.0f)), 3> distances{
+        {meters(6.0f), meters(12.0f), meters(18.0f)}};
+
+    constexpr auto velocities = distances / seconds(2.0f);
+    EXPECT_THAT(velocities.data[0], SameTypeAndValue((meters / seconds)(3.0f)));
+    EXPECT_THAT(velocities.data[2], SameTypeAndValue((meters / seconds)(9.0f)));
+
+    constexpr auto products_on_left = distances * hertz(2.0f);
+    EXPECT_THAT(products_on_left.data[0], SameTypeAndValue((meters * hertz)(12.0f)));
+
+    constexpr auto products_on_right = hertz(2.0f) * distances;
+    EXPECT_THAT(products_on_right.data[1], SameTypeAndValue((hertz * meters)(24.0f)));
 }
 
 TEST(Quantity, CanScaleByMagnitudeOnEitherSide) {

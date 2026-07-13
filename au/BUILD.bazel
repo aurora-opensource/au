@@ -671,6 +671,7 @@ cc_library(
     hdrs = ["rep.hh"],
     deps = [
         ":fwd",
+        ":magnitude",
         ":stdx",
     ],
 )
