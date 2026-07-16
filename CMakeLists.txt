@@ -24,11 +24,35 @@
 # [1]: https://cliutils.gitlab.io/modern-cmake/chapters/intro/dodonot.html
 cmake_minimum_required(VERSION 3.27...3.29)
 
+# Derive the project version from `au/version.hh`, which is the single source of truth for the
+# library version (it also defines the `AU_VERSION*` macros for C++ code).  This keeps the CMake
+# version and the C++ macros from ever drifting apart, and means a release only needs to bump the
+# version in one place.
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/au/version.hh" _au_version_hh)
+string(REGEX MATCH "#define AU_VERSION_MAJOR ([0-9]+)" _ "${_au_version_hh}")
+set(_au_version_major "${CMAKE_MATCH_1}")
+string(REGEX MATCH "#define AU_VERSION_MINOR ([0-9]+)" _ "${_au_version_hh}")
+set(_au_version_minor "${CMAKE_MATCH_1}")
+string(REGEX MATCH "#define AU_VERSION_PATCH ([0-9]+)" _ "${_au_version_hh}")
+set(_au_version_patch "${CMAKE_MATCH_1}")
+
+# Fail loudly if any component failed to parse, rather than silently building a malformed version
+# such as "0.5." (which would otherwise flow into `project()`, the docs URL, and installed configs).
+foreach(_part major minor patch)
+   if(NOT _au_version_${_part} MATCHES "^[0-9]+$")
+      message(FATAL_ERROR
+         "Could not parse AU_VERSION_${_part} from au/version.hh. "
+         "Expected a line like '#define AU_VERSION_${_part} <number>'.")
+   endif()
+endforeach()
+
+set(AU_VERSION "${_au_version_major}.${_au_version_minor}.${_au_version_patch}")
+
 project(
    Au
-   VERSION 0.5.0
+   VERSION ${AU_VERSION}
    DESCRIPTION "A C++ quantities and units library, by Aurora Innovation"
-   HOMEPAGE_URL "https://aurora-opensource.github.io/au/0.5.0/"
+   HOMEPAGE_URL "https://aurora-opensource.github.io/au/${AU_VERSION}/"
    LANGUAGES CXX
 )
 

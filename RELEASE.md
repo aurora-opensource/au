@@ -71,16 +71,29 @@ Any empty section can be omitted.
 We try to follow [semantic versioning](https://semver.org/).  Since we are currently in major
 version zero (0.y.z), incompatible changes don't force a major version upgrade.
 
-### Update the CMake version number
+### Update the version number
 
-Edit the `CMakeLists.txt` file in the root folder, updating the version number in the `project`
-command to the number chosen above.
+The version number lives in exactly one place: the `AU_VERSION_MAJOR`, `AU_VERSION_MINOR`, and
+`AU_VERSION_PATCH` macros in `au/version.hh`.  Edit those three macros to the number chosen above.
+Everything else is derived from them:
 
-Also update the version number in the `HOMEPAGE_URL` parameter, because we link to the docs for the
-latest release in our CMake project definition.  (True, this URL won't exist until you complete the
-remaining steps in this guide, but the danger of getting it wrong is pretty small.)
+- The C++ `AU_VERSION` macro (which downstream users read to detect the library and its version).
+- The CMake `project(... VERSION ...)` and `HOMEPAGE_URL`, which the root `CMakeLists.txt` parses
+  out of `au/version.hh`.  (The `HOMEPAGE_URL` points at the docs for this release, which won't
+  exist until you complete the remaining steps in this guide, but the danger of getting it wrong is
+  pretty small.)
 
-Make a PR with these changes and land it before creating the tag.
+**Where this commit lands depends on the release type:**
+
+- **Minor or major release** (e.g. `0.6.0`): make a PR that bumps `au/version.hh` and land it on
+  `main` _before_ creating the tag.  This is the "final commit", and it becomes the base commit for
+  the release branch (see "Prepare the release branch" below).  Note that `main` will continue to
+  report this version until the _next_ minor/major bump, even as new (unreleased) changes land on
+  top of it; this is expected, and matches how the version macros are documented to behave.
+- **Patch release** (`0.5.1` and later): the version bump does _not_ go on `main`.  Patch releases
+  are cherry-picked from `main` onto the pre-existing release branch (e.g. `release-0.5.0`).  Bump
+  `au/version.hh` in a commit _on the release branch_ alongside the cherry-picked fix(es), and tag
+  that.  `main` keeps whatever version it already had.
 
 ### Fill out release notes template
 
@@ -142,9 +155,9 @@ Issues!  Alphabetically:
 
 ### Prepare the release branch
 
-First, make sure the "final commit" (which updates the CMake variables) has already landed, and is
-currently checked out.  This will be the "base" commit for the release branch, which we'll create
-and push to GitHub.
+First, make sure the "final commit" (which updates the version in `au/version.hh`) has already
+landed, and is currently checked out.  This will be the "base" commit for the release branch, which
+we'll create and push to GitHub.
 
 ```sh
 # Remember to update the version number!
@@ -155,7 +168,7 @@ git push origin release-0.3.1
 Branches named similarly to `release-0.3.1` are protected in the Au repo, so we will need to make
 PRs for the final changes for the release.
 
-### PR: Update links
+### PR: Update links and mark as a release
 
 Several C++ files in the repository link to the documentation website, but they link to the version
 at `main`.  This version will change over time in ways that we can't predict.  It's important for
@@ -172,7 +185,19 @@ https://aurora-opensource.github.io/au/0.3.1/...
                                        ^^^^^
 ```
 
-We do this in a PR on the release branch in order to avoid churn commits on the main branch.
+In this same PR, flip the release flag in `au/version.hh`:
+
+```
+Find this:      #define AU_VERSION_IS_RELEASE 0
+Replace with:   #define AU_VERSION_IS_RELEASE 1
+```
+
+This value is `0` on `main` at all times, and this release-branch-only PR is the _only_ place it
+becomes `1`.  That's what lets downstream users distinguish an official release from an arbitrary
+`main` checkout (whose version numbers may otherwise be identical to the release it was branched
+from).  It must never be set to `1` on `main`.
+
+We do all of this in a PR on the release branch in order to avoid churn commits on the main branch.
 
 ### Create the tag for the release
 

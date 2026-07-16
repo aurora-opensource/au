@@ -98,6 +98,23 @@ cc_library(
     name = "config",
     hdrs = ["config.hh"],
     visibility = ["//visibility:public"],
+    deps = [":version"],
+)
+
+cc_library(
+    name = "version",
+    hdrs = ["version.hh"],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "version_test",
+    size = "small",
+    srcs = ["version_test.cc"],
+    deps = [
+        ":version",
+        "@googletest//:gtest_main",
+    ],
 )
 
 cc_library(
