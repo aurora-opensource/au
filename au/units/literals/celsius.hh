@@ -24,7 +24,10 @@ namespace au_literals {
 // `1.28e-4_degC_qty` is a `Constant` equivalent to `make_constant(1.28e-4_mag * celsius_qty)`.
 template <char... Cs>
 constexpr auto operator""_degC_qty() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
     return make_constant(celsius_qty * operator""_mag<Cs...>());
+    // clang-format on
 }
 
 }  // namespace au_literals
