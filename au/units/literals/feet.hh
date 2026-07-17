@@ -24,7 +24,10 @@ namespace au_literals {
 // `1.28e-4_ft` is a `Constant` equivalent to `make_constant(1.28e-4_mag * feet)`.
 template <char... Cs>
 constexpr auto operator""_ft() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
     return make_constant(feet * operator""_mag<Cs...>());
+    // clang-format on
 }
 
 }  // namespace au_literals
