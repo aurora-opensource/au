@@ -29,6 +29,12 @@ namespace {
 
 constexpr auto PI = Magnitude<Pi>{};
 
+// A minimal non-arithmetic rep.  We can't assess overflow or truncation risk for such types in
+// general, but an _integer multiple_ is always exact, so it should carry no truncation risk.
+struct NonArithmetic {
+    int value;
+};
+
 template <typename T, typename M>
 using ValueTimesIntIsNotInteger = ValueTimesRatioIsNotInteger<T, M>;
 
@@ -121,6 +127,25 @@ TEST(TruncationRiskFor, MultiplyAnythingByIntNeverTruncates) {
 
     StaticAssertTypeEq<TruncationRiskFor<MultiplyTypeBy<float, decltype(mag<3000>())>>,
                        NoTruncationRisk<float>>();
+}
+
+TEST(TruncationRiskFor, MultiplyNonArithmeticByIntNeverTruncates) {
+    // The identity factor (multiply by 1) is the case that arises for same-unit, same-rep
+    // conversions of non-arithmetic reps (e.g. inside `au::max`/`au::min`).
+    StaticAssertTypeEq<TruncationRiskFor<MultiplyTypeBy<NonArithmetic, decltype(mag<1>())>>,
+                       NoTruncationRisk<NonArithmetic>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<MultiplyTypeBy<NonArithmetic, decltype(mag<1000>())>>,
+                       NoTruncationRisk<NonArithmetic>>();
+}
+
+TEST(TruncationRiskFor, MultiplyNonArithmeticByNonIntegerCannotBeAssessed) {
+    StaticAssertTypeEq<
+        TruncationRiskFor<MultiplyTypeBy<NonArithmetic, decltype(mag<1>() / mag<2>())>>,
+        CannotAssessTruncationRiskFor<NonArithmetic>>();
+
+    StaticAssertTypeEq<TruncationRiskFor<MultiplyTypeBy<NonArithmetic, decltype(sqrt(mag<2>()))>>,
+                       CannotAssessTruncationRiskFor<NonArithmetic>>();
 }
 
 TEST(TruncationRiskFor, MultiplyFloatByInverseIntNeverTruncates) {
