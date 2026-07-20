@@ -54,22 +54,6 @@ AU_DEVICE_FUNC constexpr auto make_quantity(T &&value) {
     return QuantityMaker<UnitT>{}(std::move(value));
 }
 
-// lvalue: copy.  (See `make_quantity` above.)
-template <typename Unit, typename T>
-AU_DEVICE_FUNC constexpr auto make_quantity_unless_unitless(const T &value) {
-    return std::conditional_t<IsUnitlessUnit<Unit>::value, stdx::identity, QuantityMaker<Unit>>{}(
-        value);
-}
-
-// rvalue: move.
-template <typename Unit,
-          typename T,
-          typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
-AU_DEVICE_FUNC constexpr auto make_quantity_unless_unitless(T &&value) {
-    return std::conditional_t<IsUnitlessUnit<Unit>::value, stdx::identity, QuantityMaker<Unit>>{}(
-        std::move(value));
-}
-
 // Trait to check whether two Quantity types are exactly equivalent.
 //
 // For purposes of our library, "equivalent" means that they have the same Dimension and Magnitude.
@@ -410,8 +394,7 @@ class Quantity {
     // leaving the result's rep dangling.  `data_in` instead references the caller's live object.
     template <typename OtherUnit, typename OtherRep>
     AU_DEVICE_FUNC constexpr auto operator*(const Quantity<OtherUnit, OtherRep> &q) const {
-        return make_quantity_unless_unitless<UnitProduct<Unit, OtherUnit>>(value_ *
-                                                                           q.data_in(OtherUnit{}));
+        return make_quantity<UnitProduct<Unit, OtherUnit>>(value_ * q.data_in(OtherUnit{}));
     }
 
     // Division for dimensioned quantities.
@@ -420,8 +403,7 @@ class Quantity {
     template <typename OtherUnit, typename OtherRep>
     AU_DEVICE_FUNC constexpr auto operator/(const Quantity<OtherUnit, OtherRep> &q) const {
         warn_if_integer_division<OtherUnit, OtherRep>();
-        return make_quantity_unless_unitless<UnitQuotient<Unit, OtherUnit>>(value_ /
-                                                                            q.data_in(OtherUnit{}));
+        return make_quantity<UnitQuotient<Unit, OtherUnit>>(value_ / q.data_in(OtherUnit{}));
     }
 
     // Copy and move assignment: lvalue-only.
