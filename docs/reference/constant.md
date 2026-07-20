@@ -212,8 +212,8 @@ namespace ::au::au_literals;` brings in both.
 
 By default, this conversion policy is _perfect_.  This means that it permits converting to any
 `Quantity` that can represent the value exactly, and disallows all other conversions.  Users can
-also override this policy by choosing the "coerce" variant of any API (say, using `.coerce_as()`
-instead of `.as()`).
+also override this policy by providing a [conversion risk policy](./conversion_risk_policies.md) as
+a second argument (say, `.as<T>(u, ignore(TRUNCATION_RISK))` instead of `.as<T>(u)`).
 
 Finally, it's important to appreciate that `Constant` has no rep, no underlying numeric type.
 Therefore, every `Quantity` conversion API requires an explicit template parameter to specify the
@@ -262,9 +262,9 @@ specific conversion will _actually cause truncation_.
 ### `.coerce_as<T>(unit)`
 
 !!! warning
-    We plan to deprecate APIs with `coerce` in their name in the [0.6.0] release ([#481]).  For
-    a `Constant` `c`, instead of `c.coerce_as<T>(unit)`, prefer `c.as<T>(unit, policy)`, where
-    `policy` is the desired [conversion risk policy](./conversion_risk_policies.md).
+    These functions are deprecated.  For a `Constant` `c`, instead of `c.coerce_as<T>(unit)`, prefer
+    `c.as<T>(unit, policy)`, where `policy` is the desired [conversion risk
+    policy](./conversion_risk_policies.md).
 
 This function expresses the constant as a `Quantity` in the requested unit, using a rep of `T`.  It
 is similar to [`.as<T>(unit)`](#as-T-unit), except that it will ignore the safety checks that
@@ -314,9 +314,9 @@ specific conversion will _actually cause truncation_.
 ### `.coerce_in<T>(unit)`
 
 !!! warning
-    We plan to deprecate APIs with `coerce` in their name in the [0.6.0] release ([#481]).  For
-    a `Constant` `c`, instead of `c.coerce_in<T>(unit)`, prefer `c.in<T>(unit, policy)`, where
-    `policy` is the desired [conversion risk policy](./conversion_risk_policies.md).
+    These functions are deprecated.  For a `Constant` `c`, instead of `c.coerce_in<T>(unit)`, prefer
+    `c.in<T>(unit, policy)`, where `policy` is the desired [conversion risk
+    policy](./conversion_risk_policies.md).
 
 This function produces a raw numeric value, of type `T`, holding the value of the constant in the
 requested unit.  It is similar to [`.in<T>(unit)`](#in-T-unit), except that it will ignore the

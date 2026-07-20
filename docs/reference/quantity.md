@@ -364,16 +364,11 @@ To be concrete, here are the signatures of the functions that support the policy
 ### Forcing lossy conversions: `.coerce_as(unit)`, `.coerce_in(unit)` {#coerce}
 
 !!! warning
-    We are planning to deprecate these functions in the [0.6.0] release.  See [#481] to track the
-    progress.
-
-    In the meantime, here is how you convert.
+    These functions are deprecated.  Here is how you convert them.
 
     First, figure out which conversion risks you are trying to override: **overflow**, or
-    **truncation**, or **both**.  (If you don't have an explicit `<Rep>` argument, you can simply
-    delete the `"coerce_"` word and compile, and the error message will tell you which one is
-    relevant.  Otherwise, you will need to use your knowledge of the types and units involved to
-    figure this out.)
+    **truncation**, or **both**.  (You can simply delete the `"coerce_"` word and compile, and the
+    error message will tell you which one is relevant.)
 
     Then, follow this table to rewrite your conversion, using the conversion risk you identified
     above.
