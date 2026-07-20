@@ -100,9 +100,6 @@ __device__ double test_quantity_in_rep_and_unit() {
     return q.in<float>(centi(meters));
 }
 
-// NOTE: coerce_as and coerce_in are deliberately not supported on device code because they are
-// deprecated and will be removed in a future release.
-
 __device__ double test_quantity_data_in() {
     auto q = meters(5.0);
     return q.data_in(meters);
