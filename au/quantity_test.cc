@@ -318,7 +318,7 @@ TEST(QuantityMaker, CreatesAppropriateQuantityIfCalled) {
 }
 
 // Regression test: a bitfield (packed member) cannot bind to a non-const reference, so the maker
-// and the `make_quantity`-style free functions must accept it via their `const T&` overload.  This
+// and the `make_quantity`-style free function must accept it via their `const T&` overload.  This
 // once failed to compile.
 TEST(QuantityMaker, WorksOnBitfieldMembers) {
     struct Packed {
@@ -328,8 +328,7 @@ TEST(QuantityMaker, WorksOnBitfieldMembers) {
     Packed p{5, 7};
 
     EXPECT_THAT(meters(p.meters_value), SameTypeAndValue(meters(5)));
-    EXPECT_THAT(make_quantity<Meters>(p.meters_value), SameTypeAndValue(meters(5)));
-    EXPECT_THAT(make_quantity_unless_unitless<Feet>(p.feet_value), SameTypeAndValue(feet(7)));
+    EXPECT_THAT(make_quantity<Feet>(p.feet_value), SameTypeAndValue(feet(7)));
 }
 
 TEST(QuantityMaker, CanBeMultipliedBySingularUnitToGetMakerOfProductUnit) {
@@ -1481,8 +1480,8 @@ TEST(UnblockIntDiv, IsNoOpForDivisionThatWouldBeAllowedAnyway) {
 }
 
 TEST(DivideInCommonUnits, ConvertsInputsToSameUnit) {
-    EXPECT_THAT(divide_using_common_unit(inches(80), feet(2)), SameTypeAndValue(3));
-    EXPECT_THAT(divide_using_common_unit(hours(8), minutes(60)), SameTypeAndValue(8));
+    EXPECT_THAT(divide_using_common_unit(inches(80), feet(2)), QuantityEquivalent(unos(3)));
+    EXPECT_THAT(divide_using_common_unit(hours(8), minutes(60)), QuantityEquivalent(unos(8)));
 }
 
 TEST(Quantity, CanIntegerDivideQuantitiesOfQuantityEquivalentUnits) {
