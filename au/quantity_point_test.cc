@@ -262,7 +262,7 @@ TEST(QuantityPoint, InHandlesIntegerRepInUnitsWithNonzeroOffset) {
 }
 
 TEST(QuantityPoint, CanRequestOutputRepWhenCallingIn) {
-    EXPECT_THAT(celsius_pt(5.2).in<int>(Celsius{}), Eq(5));
+    EXPECT_THAT(celsius_pt(5.2).in<int>(Celsius{}, ignore(TRUNCATION_RISK)), Eq(5));
 }
 
 TEST(QuantityPoint, CanCastToUnitWithDifferentMagnitude) {
