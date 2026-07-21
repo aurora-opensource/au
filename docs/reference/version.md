@@ -1,7 +1,7 @@
 # Version macros
 
 Au provides preprocessor macros that let downstream code detect that the library is present, and
-which version of it is present.  They live in [`"au/version.hh"`](../../au/version.hh), which every
+which version of it is present.  They live in [`"au/version.hh"`](https://github.com/aurora-opensource/au/blob/main/au/version.hh), which every
 Au header transitively includes, so they are available whenever any part of Au is in scope --- and
 also in the single-file packages, since those always include `au/au.hh`.
 

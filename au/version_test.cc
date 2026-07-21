@@ -36,6 +36,7 @@ TEST(Version, ComponentMacrosAreDefined) {
     FAIL() << "AU_VERSION_PATCH is not defined";
 #endif
     // Each component must fit in the three decimal digits that `AU_VERSION_NUMBER` allots it.
+    EXPECT_THAT(AU_VERSION_MAJOR, Lt(1000));
     EXPECT_THAT(AU_VERSION_MINOR, Lt(1000));
     EXPECT_THAT(AU_VERSION_PATCH, Lt(1000));
 }

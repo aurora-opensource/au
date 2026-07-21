@@ -38,8 +38,9 @@ set(_au_version_patch "${CMAKE_MATCH_1}")
 
 # Fail loudly if any component failed to parse, rather than silently building a malformed version
 # such as "0.5." (which would otherwise flow into `project()`, the docs URL, and installed configs).
-foreach(_part major minor patch)
-   if(NOT _au_version_${_part} MATCHES "^[0-9]+$")
+foreach(_part MAJOR MINOR PATCH)
+   string(TOLOWER "${_part}" _part_lower)
+   if(NOT _au_version_${_part_lower} MATCHES "^[0-9]+$")
       message(FATAL_ERROR
          "Could not parse AU_VERSION_${_part} from au/version.hh. "
          "Expected a line like '#define AU_VERSION_${_part} <number>'.")
