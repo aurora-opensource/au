@@ -31,13 +31,24 @@
 //         // ... code for Au older than 0.5.1 ...
 //     #endif
 //
-// IMPORTANT (release model): these numbers are only authoritative for _tagged releases_.  Every Au
-// release is cut from a dedicated release branch, and the released commit never lives on `main`
-// (see `RELEASE.md`).  On `main`, these macros name the _most recent release_, mirroring the
-// version in the root `CMakeLists.txt` (which is derived from this file).  That means a `main`
-// checkout can report version `X.Y.Z` while actually containing changes made _after_ `X.Y.Z` was
-// released.  There is currently no programmatic way to tell such a `main` checkout apart from the
-// tagged `X.Y.Z` release; they report the same version number.
+// IMPORTANT (release model): these numbers are a contract for _tagged releases_ only.  On a tagged
+// release, `AU_VERSION` names exactly the feature set of that release, so version comparisons are
+// sound _release to release_ --- both "is the feature added in `X.Y.Z` present?" (`>=`) and "does
+// this predate the breaking change in `X.Y.Z`?" (`<`).  On `main`, these macros name the _most
+// recent release_ (mirroring the version in the root `CMakeLists.txt`, which is derived from this
+// file), and `main` is re-bumped to match _every_ release it contains (patches included; see
+// `RELEASE.md`).
+//
+// Do NOT use these macros to select behavior against a `main` checkout.  Because `main`'s number
+// lags the changes that have actually landed on it since the last release, such a check is
+// unreliable --- and the two directions fail differently: an additive `>=` check merely
+// under-reports (a safe false negative), but a breaking-change `<` check can silently report the
+// _old_ behavior on a `main` commit that already has the _new_ one (an unsafe false positive).
+// Version-gate behavior only against tagged releases.
+//
+// For detecting a _specific_ change robustly --- including on `main`, or to distinguish two changes
+// that ship in the same release --- introduce a dedicated per-feature macro in the same commit that
+// makes the change, rather than reaching for `AU_VERSION`.
 //
 // To keep the two build systems in sync, `CMakeLists.txt` parses the three component macros below
 // to populate its `project(... VERSION ...)`.  This file is therefore the single source of truth
@@ -54,14 +65,3 @@
 #define AU_VERSION_NUMBER(major, minor, patch) ((major) * 1000000 + (minor) * 1000 + (patch))
 
 #define AU_VERSION AU_VERSION_NUMBER(AU_VERSION_MAJOR, AU_VERSION_MINOR, AU_VERSION_PATCH)
-
-// Whether this is an actual tagged release (`1`) or an in-development checkout (`0`).
-//
-// Because a minor/major release branch is cut _from_ the `main` commit that bumps the version, that
-// commit's version numbers above are byte-identical to the release's --- so the version numbers
-// alone cannot tell `main` apart from the release it was branched from.  This flag closes that gap.
-// It is `0` on `main` at all times, and is flipped to `1` only on the release branch (as part of
-// the release-only step that also updates the doc links; see `RELEASE.md`).  Downstream code that
-// must be sure it is building against an official release, and not an arbitrary `main` checkout,
-// can therefore test `#if AU_VERSION_IS_RELEASE`.
-#define AU_VERSION_IS_RELEASE 0

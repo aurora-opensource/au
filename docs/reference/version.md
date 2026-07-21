@@ -16,10 +16,6 @@ also in the single-file packages, since those always include `au/au.hh`.
 - `AU_VERSION_NUMBER(major, minor, patch)`: computes the `AU_VERSION`-style integer for an arbitrary
   version, so you can compare against it.  Each component must be strictly less than `1000`.
 
-- `AU_VERSION_IS_RELEASE`: `1` if this is an official tagged release, and `0` for an in-development
-  (`main`) checkout.  See ["`main` versus tagged releases"](#caveat-main-versus-tagged-releases)
-  below.
-
 ## Use cases
 
 **Detecting that Au was included.**  Because every Au header pulls in the version macros, you can
@@ -44,20 +40,20 @@ version during a migration:
 
 ## Caveat: `main` versus tagged releases
 
-These macros are only authoritative for **tagged releases**.  Every Au release is cut from a
-dedicated release branch, and the released commit never lives on `main`.  On `main`, the macros name
-the _most recent release_ (they are kept in sync with the version in the root `CMakeLists.txt`,
-which is derived from `au/version.hh`).  That means a `main` checkout can report version `X.Y.Z`
-while actually containing changes made _after_ `X.Y.Z` was released.  In fact, because a
-minor/major release branch is cut _from_ the `main` commit that bumps the version, that `main`
-commit's three version numbers are byte-identical to the release's --- so the version numbers alone
-cannot tell them apart.
+These macros are a contract for **tagged releases** only.  On a tagged release, `AU_VERSION` names
+exactly that release's feature set, so version comparisons are sound when comparing one release
+against another --- both "is the feature from `X.Y.Z` present?" (`>=`) and "does this predate the
+breaking change in `X.Y.Z`?" (`<`).
 
-Use `AU_VERSION_IS_RELEASE` to close that gap.  It is `1` only on official tagged releases, and `0`
-on `main`:
+On `main`, the macros name the _most recent release_ (kept in sync with the version in the root
+`CMakeLists.txt`, which is derived from `au/version.hh`).  But `main`'s number lags the changes that
+have actually landed on it since that release, so **do not use these macros to select behavior
+against a `main` checkout.**  The two directions even fail differently: an additive `>=` check
+merely under-reports a not-yet-released feature (a safe false negative), but a breaking-change `<`
+check can silently report the _old_ behavior on a `main` commit that already has the _new_ one (an
+unsafe false positive).  Version-gate behavior only against tagged releases.
 
-```cpp
-#if !AU_VERSION_IS_RELEASE
-#warning "Building against an in-development checkout of Au, not a tagged release."
-#endif
-```
+If you need to detect a _specific_ change robustly --- including on `main`, or to distinguish two
+changes that ship in the same release --- the version number is the wrong tool.  The right one is a
+dedicated per-feature macro, introduced in the same commit that makes the change, which you can test
+with `#if defined(...)`.

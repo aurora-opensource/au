@@ -87,13 +87,17 @@ Everything else is derived from them:
 
 - **Minor or major release** (e.g. `0.6.0`): make a PR that bumps `au/version.hh` and land it on
   `main` _before_ creating the tag.  This is the "final commit", and it becomes the base commit for
-  the release branch (see "Prepare the release branch" below).  Note that `main` will continue to
-  report this version until the _next_ minor/major bump, even as new (unreleased) changes land on
-  top of it; this is expected, and matches how the version macros are documented to behave.
-- **Patch release** (`0.5.1` and later): the version bump does _not_ go on `main`.  Patch releases
-  are cherry-picked from `main` onto the pre-existing release branch (e.g. `release-0.5.0`).  Bump
-  `au/version.hh` in a commit _on the release branch_ alongside the cherry-picked fix(es), and tag
-  that.  `main` keeps whatever version it already had.
+  the release branch (see "Prepare the release branch" below).  `main` then reports this version
+  until the _next_ release bumps it again, even as new (unreleased) changes land on top; this is
+  expected, and matches how the version macros are documented to behave.
+- **Patch release** (`0.5.1` and later): patch releases are cherry-picked from `main` onto the
+  pre-existing release branch (e.g. `release-0.5.0`).  Bump `au/version.hh` in a commit _on the
+  release branch_ alongside the cherry-picked fix(es), and tag that.  **Then also bump
+  `au/version.hh` to the same patch version on `main`** (in an ordinary PR): since the patch is made
+  _entirely_ of cherry-picks from `main`, `main` already contains everything the patch does, so it
+  should advertise (at least) that version.  The one exception: if `main` has already advanced to a
+  _higher_ version than the patch --- e.g. a newer minor release has since landed --- leave `main`
+  alone, because it already reports a version greater than the patch.
 
 ### Fill out release notes template
 
@@ -168,7 +172,7 @@ git push origin release-0.3.1
 Branches named similarly to `release-0.3.1` are protected in the Au repo, so we will need to make
 PRs for the final changes for the release.
 
-### PR: Update links and mark as a release
+### PR: Update links
 
 Several C++ files in the repository link to the documentation website, but they link to the version
 at `main`.  This version will change over time in ways that we can't predict.  It's important for
@@ -185,19 +189,7 @@ https://aurora-opensource.github.io/au/0.3.1/...
                                        ^^^^^
 ```
 
-In this same PR, flip the release flag in `au/version.hh`:
-
-```
-Find this:      #define AU_VERSION_IS_RELEASE 0
-Replace with:   #define AU_VERSION_IS_RELEASE 1
-```
-
-This value is `0` on `main` at all times, and this release-branch-only PR is the _only_ place it
-becomes `1`.  That's what lets downstream users distinguish an official release from an arbitrary
-`main` checkout (whose version numbers may otherwise be identical to the release it was branched
-from).  It must never be set to `1` on `main`.
-
-We do all of this in a PR on the release branch in order to avoid churn commits on the main branch.
+We do this in a PR on the release branch in order to avoid churn commits on the main branch.
 
 ### Create the tag for the release
 

@@ -19,7 +19,6 @@
 
 namespace {
 
-using ::testing::AnyOf;
 using ::testing::Eq;
 using ::testing::Ge;
 using ::testing::Gt;
@@ -58,16 +57,6 @@ TEST(Version, VersionNumberOrdersLikeSemanticVersioning) {
 TEST(Version, IncludingAnyAuHeaderDefinesVersion) {
     // This is the "was Au included?" use case: `AU_VERSION` is truthy whenever Au is in scope.
     EXPECT_THAT(AU_VERSION, Ge(AU_VERSION_NUMBER(0, 5, 0)));
-}
-
-TEST(Version, IsReleaseFlagIsDefinedAndBoolean) {
-#ifndef AU_VERSION_IS_RELEASE
-    FAIL() << "AU_VERSION_IS_RELEASE is not defined";
-#endif
-    // Note: we deliberately do _not_ assert that this is `0`.  It is `0` on `main`, but `1` on the
-    // release branch (where CI also runs), so pinning the value would break release-branch builds.
-    // The "`main` must be `0`" invariant is a process guarantee (see `RELEASE.md`), not a test.
-    EXPECT_THAT(AU_VERSION_IS_RELEASE, AnyOf(Eq(0), Eq(1)));
 }
 
 }  // namespace
