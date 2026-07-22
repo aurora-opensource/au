@@ -33,6 +33,9 @@ Here's a guide to the main reference pages.
 
 - **[Math functions](./math.md).**  We provide many common mathematical functions out of the box.
 
+- **[Version macros](./version.md).**  Preprocessor macros (`AU_VERSION`, and friends) that let
+  downstream code detect that Au is present, and which version it is.
+
 - **[Format support](./format.md).**  Exercise fine-grained control over formatting `Quantity` and
   `QuantityPoint` to strings, using either the popular [{fmt}] library, or C++20's `std::format`.
 
