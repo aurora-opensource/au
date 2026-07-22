@@ -188,14 +188,20 @@ These costs purchase significant benefits, but we still want them to be as small
                 </ul>
             </details>
         </td>
-        <td class="na"></td>
-        <td class="poor">Very slow, but can be <i>greatly</i> improved by removing I/O support and most units</td>
-        <td class="na"></td>
-        <td class="na"></td>
+        <td class="good">Comparable to Au; sometimes less, sometimes more</td>
+        <td class="poor">Very slow (adds multiple seconds), but can be <i>greatly</i> improved by removing I/O support and most units</td>
+        <td class="good">Overall speed champ: roughly 2/3 the penalty of Au and Boost</td>
+        <td class="poor">
+            <ul>
+                <li class="x">Default config 2 to 3 times as expensive as nholthaus</li>
+                <li class="x"><a href="https://mpusz.github.io/mp-units/latest/users_guide/systems/si/#lean-umbrella-mp-unitssystemssicoreh">Lean includes</a> brings it on par with nholthaus, though lack of symbols hurts code quality</li>
+                <li>C++20 modules should mitigate all concerns</li>
+            </ul>
+        </td>
         <td class="good">
             <ul>
-                <li class="check">Includes `fwd.hh` headers</li>
-                <li>Possibly "best" overall, but will need to assess all libraries on the same code</li>
+                <li class="check">Baseline performance is great (only bernedom/SI is faster)</li>
+                <li class="check">Includes `fwd.hh` headers for even more flexibility</li>
             </ul>
         </td>
     </tr>
