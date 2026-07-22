@@ -12,10 +12,10 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/concepts/truncation/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/version/">
       
       
-        <link rel="prev" href="../quantity_point/">
+        <link rel="prev" href="../unit/">
       
       
         <link rel="next" href="../zero/">
@@ -24,16 +24,16 @@
         
       
       
-      <link rel="icon" href="../../../assets/favicon.ico">
+      <link rel="icon" href="../../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>Truncation - The Au units library</title>
+        <title>Version macros - The Au units library</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
@@ -52,9 +52,9 @@
       
     
     
-      <link rel="stylesheet" href="../../../tweaks.css">
+      <link rel="stylesheet" href="../../tweaks.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#truncation" class="md-skip">
+        <a href="#version-macros" class="md-skip">
           Skip to content
         </a>
       
@@ -92,9 +92,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../../assets/au-logo.png" alt="logo">
+  <img src="../../assets/au-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Truncation
+              Version macros
             
           </span>
         </div>
@@ -203,9 +203,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../../assets/au-logo.png" alt="logo">
+  <img src="../../assets/au-logo.png" alt="logo">
 
     </a>
     The Au units library
@@ -232,7 +232,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -259,7 +259,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../develop/" class="md-nav__link">
+      <a href="../../develop/" class="md-nav__link">
         
   
   
@@ -286,7 +286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../install/" class="md-nav__link">
+      <a href="../../install/" class="md-nav__link">
         
   
   
@@ -313,7 +313,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../supported-compilers/" class="md-nav__link">
+      <a href="../../supported-compilers/" class="md-nav__link">
         
   
   
@@ -340,7 +340,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../troubleshooting/" class="md-nav__link">
+      <a href="../../troubleshooting/" class="md-nav__link">
         
   
   
@@ -414,7 +414,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../alternatives/" class="md-nav__link">
+      <a href="../../alternatives/" class="md-nav__link">
         
   
   
@@ -446,20 +446,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
@@ -480,7 +478,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -498,7 +496,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../" class="md-nav__link">
+      <a href="../../discussion/" class="md-nav__link">
         
   
   
@@ -523,20 +521,18 @@
                 
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
         
           
           <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
@@ -557,7 +553,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -575,7 +571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../discussion/concepts/" class="md-nav__link">
         
   
   
@@ -603,7 +599,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../arithmetic/" class="md-nav__link">
+      <a href="../../discussion/concepts/arithmetic/" class="md-nav__link">
         
   
   
@@ -631,7 +627,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../common_unit/" class="md-nav__link">
+      <a href="../../discussion/concepts/common_unit/" class="md-nav__link">
         
   
   
@@ -659,7 +655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../conversion_risks/" class="md-nav__link">
+      <a href="../../discussion/concepts/conversion_risks/" class="md-nav__link">
         
   
   
@@ -687,7 +683,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dimensionless/" class="md-nav__link">
+      <a href="../../discussion/concepts/dimensionless/" class="md-nav__link">
         
   
   
@@ -715,7 +711,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../overflow/" class="md-nav__link">
+      <a href="../../discussion/concepts/overflow/" class="md-nav__link">
         
   
   
@@ -743,7 +739,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quantity_point/" class="md-nav__link">
+      <a href="../../discussion/concepts/quantity_point/" class="md-nav__link">
         
   
   
@@ -768,37 +764,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Truncation
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/truncation/" class="md-nav__link">
         
   
   
@@ -814,137 +783,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#aus-approach" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Au&rsquo;s approach
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#truncation-in-mathematical-operations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Truncation in mathematical operations
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Truncation in mathematical operations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#integral-types" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Integral types
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#float" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Floating point types
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#other-types" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Other types
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#truncation-in-casting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Truncation in casting
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Truncation in casting">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#arithmetic-to-arithmetic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Arithmetic to arithmetic
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#non-arithmetic-types" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Non-arithmetic types
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -957,7 +795,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../zero/" class="md-nav__link">
+      <a href="../../discussion/concepts/zero/" class="md-nav__link">
         
   
   
@@ -1040,7 +878,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../idioms/" class="md-nav__link">
+      <a href="../../discussion/idioms/" class="md-nav__link">
         
   
   
@@ -1068,7 +906,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../idioms/unit-slots/" class="md-nav__link">
+      <a href="../../discussion/idioms/unit-slots/" class="md-nav__link">
         
   
   
@@ -1151,7 +989,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../implementation/" class="md-nav__link">
+      <a href="../../discussion/implementation/" class="md-nav__link">
         
   
   
@@ -1179,7 +1017,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../implementation/applying_magnitudes/" class="md-nav__link">
+      <a href="../../discussion/implementation/applying_magnitudes/" class="md-nav__link">
         
   
   
@@ -1207,7 +1045,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../implementation/vector_space/" class="md-nav__link">
+      <a href="../../discussion/implementation/vector_space/" class="md-nav__link">
         
   
   
@@ -1297,7 +1135,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/" class="md-nav__link">
+      <a href="../../howto/" class="md-nav__link">
         
   
   
@@ -1325,7 +1163,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/forward-declarations/" class="md-nav__link">
+      <a href="../../howto/forward-declarations/" class="md-nav__link">
         
   
   
@@ -1353,7 +1191,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/new-constants/" class="md-nav__link">
+      <a href="../../howto/new-constants/" class="md-nav__link">
         
   
   
@@ -1381,7 +1219,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/new-dimensions/" class="md-nav__link">
+      <a href="../../howto/new-dimensions/" class="md-nav__link">
         
   
   
@@ -1409,7 +1247,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/new-units/" class="md-nav__link">
+      <a href="../../howto/new-units/" class="md-nav__link">
         
   
   
@@ -1437,7 +1275,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/quantity-template-parameters/" class="md-nav__link">
+      <a href="../../howto/quantity-template-parameters/" class="md-nav__link">
         
   
   
@@ -1465,7 +1303,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/upgrade/" class="md-nav__link">
+      <a href="../../howto/upgrade/" class="md-nav__link">
         
   
   
@@ -1540,7 +1378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/interop/" class="md-nav__link">
+      <a href="../../howto/interop/" class="md-nav__link">
         
   
   
@@ -1568,7 +1406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/interop/nholthaus/" class="md-nav__link">
+      <a href="../../howto/interop/nholthaus/" class="md-nav__link">
         
   
   
@@ -1608,18 +1446,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
@@ -1640,7 +1480,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1658,7 +1498,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   
@@ -1686,7 +1526,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/constant/" class="md-nav__link">
+      <a href="../constant/" class="md-nav__link">
         
   
   
@@ -1714,7 +1554,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/conversion_risk_policies/" class="md-nav__link">
+      <a href="../conversion_risk_policies/" class="md-nav__link">
         
   
   
@@ -1742,7 +1582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/corresponding_quantity/" class="md-nav__link">
+      <a href="../corresponding_quantity/" class="md-nav__link">
         
   
   
@@ -1770,7 +1610,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/format/" class="md-nav__link">
+      <a href="../format/" class="md-nav__link">
         
   
   
@@ -1798,7 +1638,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/magnitude/" class="md-nav__link">
+      <a href="../magnitude/" class="md-nav__link">
         
   
   
@@ -1826,7 +1666,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/math/" class="md-nav__link">
+      <a href="../math/" class="md-nav__link">
         
   
   
@@ -1854,7 +1694,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/powers/" class="md-nav__link">
+      <a href="../powers/" class="md-nav__link">
         
   
   
@@ -1882,7 +1722,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/prefix/" class="md-nav__link">
+      <a href="../prefix/" class="md-nav__link">
         
   
   
@@ -1910,7 +1750,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/quantity/" class="md-nav__link">
+      <a href="../quantity/" class="md-nav__link">
         
   
   
@@ -1938,7 +1778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/quantity_point/" class="md-nav__link">
+      <a href="../quantity_point/" class="md-nav__link">
         
   
   
@@ -1966,7 +1806,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/unit/" class="md-nav__link">
+      <a href="../unit/" class="md-nav__link">
         
   
   
@@ -1991,10 +1831,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../../reference/version/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Version macros
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2010,6 +1877,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#macros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Macros
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-cases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use cases
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caveat-main-versus-tagged-releases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caveat: main versus tagged releases
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2022,7 +1942,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/zero/" class="md-nav__link">
+      <a href="../zero/" class="md-nav__link">
         
   
   
@@ -2097,7 +2017,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/detail/" class="md-nav__link">
+      <a href="../detail/" class="md-nav__link">
         
   
   
@@ -2125,7 +2045,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/detail/dimension/" class="md-nav__link">
+      <a href="../detail/dimension/" class="md-nav__link">
         
   
   
@@ -2153,7 +2073,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/detail/monovalue_types/" class="md-nav__link">
+      <a href="../detail/monovalue_types/" class="md-nav__link">
         
   
   
@@ -2181,7 +2101,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/detail/packs/" class="md-nav__link">
+      <a href="../detail/packs/" class="md-nav__link">
         
   
   
@@ -2271,7 +2191,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/" class="md-nav__link">
+      <a href="../../tutorial/" class="md-nav__link">
         
   
   
@@ -2299,7 +2219,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/101-quantity-makers/" class="md-nav__link">
+      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
         
   
   
@@ -2327,7 +2247,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/102-api-types/" class="md-nav__link">
+      <a href="../../tutorial/102-api-types/" class="md-nav__link">
         
   
   
@@ -2355,7 +2275,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/103-unit-conversions/" class="md-nav__link">
+      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
         
   
   
@@ -2430,7 +2350,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
         
   
   
@@ -2458,7 +2378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/exercise/102-api-types/" class="md-nav__link">
+      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
         
   
   
@@ -2486,7 +2406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
         
   
   
@@ -2542,105 +2462,57 @@
   
 
 
-<h1 id="truncation">Truncation<a class="headerlink" href="#truncation" title="Permanent link">&para;</a></h1>
-<p><em>Truncation</em> occurs when the result of a unit conversion lands <em>in-between</em> representable values in
-the destination type.  Along with <a href="../overflow/">overflow</a>, it&rsquo;s one of the two main <a href="../conversion_risks/">conversion risks</a> in units
-libraries.</p>
-<h2 id="aus-approach">Au&rsquo;s approach<a class="headerlink" href="#aus-approach" title="Permanent link">&para;</a></h2>
-<p>Au implements unit conversions as <em>sequences of operations</em>.  Some operations multiply or divide by
-a particular number.  Others cast a value from one type to another.</p>
-<p>Au checks every operation in the sequence to see whether any input values might cause truncation.
-If we find <em>any</em> risk, we forbid the conversion &mdash; at least, by default.  There may be valid
-reasons to perform such a conversion anyway.  If users are confident this is what they want, they
-can pass <code>ignore(TRUNCATION_RISK)</code> as a second argument to any conversion operator.</p>
-<p>Usually, even conversions with truncation risk will truncate for only some values, and not for
-others.  Users can check <em>individual values</em> at runtime to see if that particular value is safe.
-<code>will_conversion_truncate(q, u)</code> examines converting the <em>specific</em> <code>Quantity</code> value <code>q</code> to the new
-unit <code>u</code>.  If the conversion being checked also changes the representation type (the &ldquo;rep&rdquo;), to
-a new type <code>T</code>, <code>will_conversion_truncate&lt;T&gt;(q, u)</code> is the right form to use.</p>
-<p>These tools complement each other.  A common pattern is to check an individual value at runtime, and
-then call the actual conversion function with <code>ignore(TRUNCATION_RISK)</code> if the check passes.
-Remember, the <code>TRUNCATION_RISK</code> flag refers to the risk of the <em>conversion as a whole</em>.  If you&rsquo;ve
-just proved that <em>your particular value</em> is safe, then ignoring that <em>general</em> risk is clearly fine.</p>
-<h2 id="truncation-in-mathematical-operations">Truncation in mathematical operations<a class="headerlink" href="#truncation-in-mathematical-operations" title="Permanent link">&para;</a></h2>
-<p>By &ldquo;mathematical operations&rdquo;, we mainly mean multiplying or dividing by numerical constants.  To
-understand the truncation risk, we first put the rep into one of several categories, because the
-risk profile strongly depends on the category.</p>
-<p>The main categories are the arithmetic<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> types: integral, and floating point.  We&rsquo;ll also briefly
-discuss how to think about other numeric types that we hope to support more fully in the future
-(<a href="https://github.com/aurora-opensource/au/issues/52">#52</a>).</p>
-<h3 id="integral-types">Integral types<a class="headerlink" href="#integral-types" title="Permanent link">&para;</a></h3>
-<p>Integral types are considered <em>exact</em>.  To see the implications for truncation, we need to consider
-various <a href="../../implementation/applying_magnitudes/">types of conversion factors</a>.</p>
-<p>First, we have multiplying by an integer.  This is easy: it stays within the domain of the integers,
-so it can never truncate.</p>
-<p>Next, we have multiplying by a non-integer rational (including reciprocal integers).  This will
-truncate for any input that isn&rsquo;t an exact integer multiple of the denominator, so the <em>conversion
-as a whole</em> clearly has truncation risk.  When checking <em>individual values</em>, we can use the built-in
-<code>%</code> operator.</p>
-<p>Finally, we have multiplication by an irrational number.  For integral types, this truncates for
-every nonzero input, because integers are exact types, and the only integer that produces an integer
-when multiplied by an irrational is zero.</p>
-<h3 id="float">Floating point types<a class="headerlink" href="#float" title="Permanent link">&para;</a></h3>
-<p>Mathematical operations on floating point types are governed by a very simple philosophy: <em>floating
-point never truncates</em>.</p>
-<p>This may surprise the reader: after all, truncation means the result falls in-between representable
-values, and floating point types certainly have gaps!  But consider the design philosophy of
-floating point.  The goal is to <em>emulate</em> a continuous real line.  Floating point values implicitly
-come with a <em>relative tolerance</em>: one that is small, but <em>not</em> zero.  Each representable value
-effectively stands in for a small range of real values around it, and the exact size of that range
-depends on the precise calculations.</p>
-<p>Or, more simply: floating point types are considered <em>inexact</em>.</p>
-<p>Now, we return to the problem of truncation in units libraries.  The very act of choosing a floating
-point representation is a statement, by the user, that <em>exact values do not matter</em> for their
-application.  It would be inappropriate for us to raise warnings about perfectly routine properties
-of the user&rsquo;s chosen type.  Hence: <em>floating point never truncates</em>.</p>
-<h3 id="other-types">Other types<a class="headerlink" href="#other-types" title="Permanent link">&para;</a></h3>
-<p>Currently, Au has only limited support for non-arithmetic rep types (full support is tracked in
-<a href="https://github.com/aurora-opensource/au/issues/52">#52</a>). As a stopgap, Au treats any non-arithmetic type conservatively, and assumes that it can
-truncate.  We hope to refine this approach when we strengthen our support for more rep types.</p>
-<h2 id="truncation-in-casting">Truncation in casting<a class="headerlink" href="#truncation-in-casting" title="Permanent link">&para;</a></h2>
-<p>Besides mathematical operations, the other main operation in unit conversions is casting from one
-type to another.  We assess truncation risk for these operations as well.</p>
-<h3 id="arithmetic-to-arithmetic">Arithmetic to arithmetic<a class="headerlink" href="#arithmetic-to-arithmetic" title="Permanent link">&para;</a></h3>
-<p>Casting from one <em>arithmetic</em> type to another is governed by simple rules.</p>
-<p>If the source and destination types are in the same <em>category</em> &mdash; that is, either both integral, or
-both floating point &mdash; then the cast never truncates.  The reason for integral types is
-straightforward: clearly, the source can&rsquo;t hold a non-integer value.  As for floating point types,
-they are governed by the <a href="#float">philsophy explained above</a>.</p>
-<p>Casting from a floating point type to an integral type does have truncation risk: we would truncate
-for any non-integer input.  We can check this for individual values by discarding the fractional
-part, and checking whether this changes the value.</p>
-<p>Casting from an integral type to a floating point type is an interesting case.  As floating point
-values get larger, they grow farther apart.  At some point, consecutive representable values can
-differ by <em>multiple</em> integers.  If we cast an input integer in this range, it may seem that we
-should consider this to truncate.  But recall the <a href="#float">philosophy above</a>: floating point types
-are all about <em>relative</em> position.  For this reason, we consider casting from integral to floating
-point as a <strong>non-truncating</strong> operation.</p>
-<h3 id="non-arithmetic-types">Non-arithmetic types<a class="headerlink" href="#non-arithmetic-types" title="Permanent link">&para;</a></h3>
-<p>Here, too, our support for non-arithmetic rep types is limited (see <a href="https://github.com/aurora-opensource/au/issues/52">#52</a>), and we take
-a conservative approach.  Any cast involving a non-arithmetic type, either as source or destination,
-is considered to have truncation risk, and will not be allowed by default: users must pass
-<code>ignore(TRUNCATION_RISK)</code> as a second argument to override this.  We hope to have better default
-behavior once we support non-arithmetic types more fully.</p>
-<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<p>Truncation happens when the result of an operation falls in-between representable values in the
-numeric type where we&rsquo;re storing it.  If any input values for a unit conversion can truncate &mdash; or,
-if we <em>don&rsquo;t know</em> whether any can &mdash; then we forbid the conversion.  Users can override this
-behavior by passing <code>ignore(TRUNCATION_RISK)</code> as a second argument.  Users can also check
-whether <em>individual values</em> truncate using the <code>will_conversion_truncate</code> function.</p>
-<p>Truncation risk depends strongly on the types involved.  Integral types are vulnerable to truncation
-for non-integer scale factors.  On the other hand, we treat floating point types as though they
-never &ldquo;truncate&rdquo;, because they&rsquo;re already inexact.  Finally, since we don&rsquo;t yet fully support
-non-arithmetic types, we treat them conservatively and assume that they carry truncation risk.</p>
-<div class="footnote">
-<hr />
-<ol>
-<li id="fn:1">
-<p>&ldquo;Arithmetic&rdquo; types are C++&rsquo;s built-in numeric types: <code>int</code>, <code>double</code>, <code>uint64_t</code>, and so on.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<h1 id="version-macros">Version macros<a class="headerlink" href="#version-macros" title="Permanent link">&para;</a></h1>
+<p>Au provides preprocessor macros that let downstream code detect that the library is present, and
+which version of it is present.  They live in <a href="https://github.com/aurora-opensource/au/blob/main/au/version.hh"><code>"au/version.hh"</code></a>, which every
+Au header transitively includes, so they are available whenever any part of Au is in scope &mdash; and
+also in the single-file packages, since those always include <code>au/au.hh</code>.</p>
+<h2 id="macros">Macros<a class="headerlink" href="#macros" title="Permanent link">&para;</a></h2>
+<ul>
+<li>
+<p><code>AU_VERSION_MAJOR</code>, <code>AU_VERSION_MINOR</code>, <code>AU_VERSION_PATCH</code>: the three components of the version, as
+  integer literals.</p>
 </li>
-</ol>
-</div>
+<li>
+<p><code>AU_VERSION</code>: a single integer that increases monotonically with the version, so that ordinary
+  integer comparisons order versions correctly.</p>
+</li>
+<li>
+<p><code>AU_VERSION_NUMBER(major, minor, patch)</code>: computes the <code>AU_VERSION</code>-style integer for an arbitrary
+  version, so you can compare against it.  Each component must be strictly less than <code>1000</code>.</p>
+</li>
+</ul>
+<h2 id="use-cases">Use cases<a class="headerlink" href="#use-cases" title="Permanent link">&para;</a></h2>
+<p><strong>Detecting that Au was included.</strong>  Because every Au header pulls in the version macros, you can
+<code>#error</code> (or warn) if the library is <em>not</em> in scope:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#if !defined(AU_VERSION)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="cp">#error &quot;This file requires the Au units library to be included first.&quot;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="cp">#endif</span>
+</code></pre></div>
+<p><strong>Detecting the version.</strong>  This is useful when writing code that must support more than one Au
+version during a migration:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="cp">#if AU_VERSION &lt; AU_VERSION_NUMBER(0, 5, 1)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="c1">// ... code path for Au older than 0.5.1 ...</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="cp">#else</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="c1">// ... code path for Au 0.5.1 and newer ...</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="cp">#endif</span>
+</code></pre></div>
+<h2 id="caveat-main-versus-tagged-releases">Caveat: <code>main</code> versus tagged releases<a class="headerlink" href="#caveat-main-versus-tagged-releases" title="Permanent link">&para;</a></h2>
+<p>These macros are a contract for <strong>tagged releases</strong> only.  On a tagged release, <code>AU_VERSION</code> names
+exactly that release&rsquo;s feature set, so version comparisons are sound when comparing one release
+against another &mdash; both &ldquo;is the feature from <code>X.Y.Z</code> present?&rdquo; (<code>&gt;=</code>) and &ldquo;does this predate the
+breaking change in <code>X.Y.Z</code>?&rdquo; (<code>&lt;</code>).</p>
+<p>On <code>main</code>, the macros name the <em>most recent release</em> (kept in sync with the version in the root
+<code>CMakeLists.txt</code>, which is derived from <code>au/version.hh</code>).  But <code>main</code>&rsquo;s number lags the changes that
+have actually landed on it since that release, so <strong>do not use these macros to select behavior
+against a <code>main</code> checkout.</strong>  The two directions even fail differently: an additive <code>&gt;=</code> check
+merely under-reports a not-yet-released feature (a safe false negative), but a breaking-change <code>&lt;</code>
+check can silently report the <em>old</em> behavior on a <code>main</code> commit that already has the <em>new</em> one (an
+unsafe false positive).  Version-gate behavior only against tagged releases.</p>
+<p>If you need to detect a <em>specific</em> change robustly &mdash; including on <code>main</code>, or to distinguish two
+changes that ship in the same release &mdash; the version number is the wrong tool.  The right one is a
+dedicated per-feature macro, introduced in the same commit that makes the change, which you can test
+with <code>#if defined(...)</code>.</p>
 
 
 
@@ -2670,7 +2542,7 @@ non-arithmetic types, we treat them conservatively and assume that they carry tr
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../quantity_point/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Quantity Point">
+          <a href="../unit/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Unit">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2680,7 +2552,7 @@ non-arithmetic types, we treat them conservatively and assume that they carry tr
                 Previous
               </span>
               <div class="md-ellipsis">
-                Quantity Point
+                Unit
               </div>
             </div>
           </a>
@@ -2734,10 +2606,10 @@ non-arithmetic types, we treat them conservatively and assume that they carry tr
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       

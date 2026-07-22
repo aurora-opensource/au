@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-133-g8133cb0
+// Version identifier: 0.5.0-base-134-gaf73722
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -293,31 +293,56 @@ struct Kibi;
 }  // namespace au
 
 //
-// Device/GPU support (CUDA, HIP)
+// Version macros for the Au library.
 //
-// AU_DEVICE_FUNC: marks functions as callable from both host and device.
-// AU_DEVICE_VAR: marks constexpr variables as accessible from device code.
+// These serve two purposes.  First, they let downstream code detect that Au has been included at
+// all (for example, to `#error` if it has _not_ been): any Au header transitively includes this
+// one, so `#if defined(AU_VERSION)` will be true whenever any part of Au is in scope.  Second, they
+// let downstream code detect _which version_ of Au is present, which is useful for writing code
+// that must support multiple Au versions during a migration.
 //
-// Note: AU_DEVICE_FUNC uses __CUDACC__ / __HIPCC__ (compiler detection) because functions need
-// the annotation during both host and device compilation passes.
+// The individual components are available as `AU_VERSION_MAJOR`, `AU_VERSION_MINOR`, and
+// `AU_VERSION_PATCH`.  For convenience, `AU_VERSION` combines them into a single integer that
+// increases monotonically with the version, so that ordinary integer comparisons work:
 //
-// AU_DEVICE_VAR uses __CUDA_ARCH__ / __HIP_DEVICE_COMPILE__ (device pass detection) because
-// __device__ on a variable makes it device-only, which would break host code. By only applying
-// __device__ during the device compilation pass, the same variable is visible to both host and
-// device code.
+//     #if AU_VERSION < AU_VERSION_NUMBER(0, 5, 1)
+//         // ... code for Au older than 0.5.1 ...
+//     #endif
+//
+// IMPORTANT (release model): these numbers are a contract for _tagged releases_ only.  On a tagged
+// release, `AU_VERSION` names exactly the feature set of that release, so version comparisons are
+// sound _release to release_ --- both "is the feature added in `X.Y.Z` present?" (`>=`) and "does
+// this predate the breaking change in `X.Y.Z`?" (`<`).  On `main`, these macros name the _most
+// recent release_ (mirroring the version in the root `CMakeLists.txt`, which is derived from this
+// file), and `main` is re-bumped to match _every_ release it contains (patches included; see
+// `RELEASE.md`).
+//
+// Do NOT use these macros to select behavior against a `main` checkout.  Because `main`'s number
+// lags the changes that have actually landed on it since the last release, such a check is
+// unreliable --- and the two directions fail differently: an additive `>=` check merely
+// under-reports (a safe false negative), but a breaking-change `<` check can silently report the
+// _old_ behavior on a `main` commit that already has the _new_ one (an unsafe false positive).
+// Version-gate behavior only against tagged releases.
+//
+// For detecting a _specific_ change robustly --- including on `main`, or to distinguish two changes
+// that ship in the same release --- introduce a dedicated per-feature macro in the same commit that
+// makes the change, rather than reaching for `AU_VERSION`.
+//
+// To keep the two build systems in sync, `CMakeLists.txt` parses the three component macros below
+// to populate its `project(... VERSION ...)`.  This file is therefore the single source of truth
+// for the library version, and it is the _only_ place that needs to be edited when bumping the
+// version for a release.
 //
 
-#if defined(__CUDACC__) || defined(__HIPCC__)
-#define AU_DEVICE_FUNC __host__ __device__
-#else
-#define AU_DEVICE_FUNC
-#endif
+#define AU_VERSION_MAJOR 0
+#define AU_VERSION_MINOR 5
+#define AU_VERSION_PATCH 0
 
-#if defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__)
-#define AU_DEVICE_VAR __device__
-#else
-#define AU_DEVICE_VAR
-#endif
+// Combine major/minor/patch components into a single monotonically increasing integer.  Each
+// component gets three decimal digits, so components must be strictly less than 1000.
+#define AU_VERSION_NUMBER(major, minor, patch) ((major) * 1000000 + (minor) * 1000 + (patch))
+
+#define AU_VERSION AU_VERSION_NUMBER(AU_VERSION_MAJOR, AU_VERSION_MINOR, AU_VERSION_PATCH)
 
 
 namespace au {
@@ -786,107 +811,6 @@ constexpr uint64_t pow_mod(uint64_t base, uint64_t exp, uint64_t n) {
 }  // namespace au
 
 
-
-namespace au {
-namespace stdx {
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
-//
-// For C++14 compatibility, we needed to change `if constexpr` to SFINAE.
-template <typename T, typename U, typename Enable = void>
-struct CmpEqualImpl;
-template <class T, class U>
-AU_DEVICE_FUNC constexpr bool cmp_equal(T t, U u) noexcept {
-    return CmpEqualImpl<T, U>{}(t, u);
-}
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
-template <class T, class U>
-AU_DEVICE_FUNC constexpr bool cmp_not_equal(T t, U u) noexcept {
-    return !cmp_equal(t, u);
-}
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
-//
-// For C++14 compatibility, we needed to change `if constexpr` to SFINAE.
-template <typename T, typename U, typename Enable = void>
-struct CmpLessImpl;
-template <class T, class U>
-AU_DEVICE_FUNC constexpr bool cmp_less(T t, U u) noexcept {
-    return CmpLessImpl<T, U>{}(t, u);
-}
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
-template <class T, class U>
-AU_DEVICE_FUNC constexpr bool cmp_greater(T t, U u) noexcept {
-    return cmp_less(u, t);
-}
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
-template <class T, class U>
-AU_DEVICE_FUNC constexpr bool cmp_less_equal(T t, U u) noexcept {
-    return !cmp_greater(t, u);
-}
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
-template <class T, class U>
-AU_DEVICE_FUNC constexpr bool cmp_greater_equal(T t, U u) noexcept {
-    return !cmp_less(t, u);
-}
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/utility/in_range).
-template <class R, class T>
-AU_DEVICE_FUNC constexpr bool in_range(T t) noexcept {
-    return cmp_greater_equal(t, std::numeric_limits<R>::min()) &&
-           cmp_less_equal(t, std::numeric_limits<R>::max());
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Implementation details below.
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template <typename T, typename U>
-struct CmpEqualImpl<T, U, std::enable_if_t<std::is_signed<T>::value == std::is_signed<U>::value>> {
-    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) { return t == u; }
-};
-
-template <typename T, typename U>
-struct CmpEqualImpl<T, U, std::enable_if_t<std::is_signed<T>::value && !std::is_signed<U>::value>> {
-    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
-        return t < 0 ? false : std::make_unsigned_t<T>(t) == u;
-    }
-};
-
-template <typename T, typename U>
-struct CmpEqualImpl<T, U, std::enable_if_t<!std::is_signed<T>::value && std::is_signed<U>::value>> {
-    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
-        return u < 0 ? false : t == std::make_unsigned_t<U>(u);
-    }
-};
-
-template <typename T, typename U>
-struct CmpLessImpl<T, U, std::enable_if_t<std::is_signed<T>::value == std::is_signed<U>::value>> {
-    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) { return t < u; }
-};
-
-template <typename T, typename U>
-struct CmpLessImpl<T, U, std::enable_if_t<std::is_signed<T>::value && !std::is_signed<U>::value>> {
-    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
-        return t < 0 ? true : std::make_unsigned_t<T>(t) < u;
-    }
-};
-
-template <typename T, typename U>
-struct CmpLessImpl<T, U, std::enable_if_t<!std::is_signed<T>::value && std::is_signed<U>::value>> {
-    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
-        return u < 0 ? false : t < std::make_unsigned_t<U>(u);
-    }
-};
-
-}  // namespace stdx
-}  // namespace au
-
-
 namespace au {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1197,209 +1121,6 @@ using detected_or_t = typename detected_or<Default, Op, Args...>::type;
 
 }  // namespace experimental
 }  // namespace stdx
-}  // namespace au
-
-
-
-namespace au {
-namespace stdx {
-
-// Source: adapted from (https://en.cppreference.com/w/cpp/utility/functional/identity)
-struct identity {
-    template <class T>
-    AU_DEVICE_FUNC constexpr T &&operator()(T &&t) const noexcept {
-        return std::forward<T>(t);
-    }
-};
-
-}  // namespace stdx
-}  // namespace au
-
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
-#endif
-
-
-// This file provides alternatives to certain standard library function objects for comparison and
-// arithmetic: `std::less<void>`, `std::plus<void>`, etc.
-//
-// These are _not_ intended as _fully general_ replacements.  They are _only_ intended for certain
-// specific use cases in this library.  External user code should not use these utilities: their
-// contract is subject to change at any time to suit the needs of Au.
-//
-// The biggest change is that these function objects produce mathematically correct results when
-// comparing built-in integral types with mixed signedness.  As a concrete example: in the C++
-// language, `-1 < 1u` is `false`, because the common type of the input types is `unsigned int`, and
-// the `int` input `-1` gets converted to a (very large) `unsigned int` value.  However, using these
-// types, `Lt{}(-1, 1u)` will correctly return `true`!
-//
-// There were two initial motivations to roll our own versions instead of just using the ones from
-// the standard library (as we had done earlier).  First, the `<functional>` header is moderately
-// expensive to include---using these alternatives could save 100 ms or more on every file.  Second,
-// certain compilers (such as the Green Hills compiler) struggle with the trailing return types in,
-// say, `std::less<void>::operator()`, but work correctly with our alternatives.
-
-namespace au {
-namespace detail {
-
-// These tag types act as a kind of "compile time enum".
-struct CompareBuiltInIntegers {};
-struct DefaultComparison {};
-
-// `ComparisonCategory<T, U>` acts like a function which takes two _types_, and returns the correct
-// instance of the above "compile time enum".
-template <typename T, typename U>
-using ComparisonCategory =
-    std::conditional_t<stdx::conjunction<std::is_integral<T>, std::is_integral<U>>::value,
-                       CompareBuiltInIntegers,
-                       DefaultComparison>;
-
-//
-// Comparison operators.
-//
-
-struct Equal {
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
-        return op_impl(ComparisonCategory<T, U>{}, a, b);
-    }
-
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
-        return a == b;
-    }
-
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
-        return stdx::cmp_equal(a, b);
-    }
-};
-constexpr auto equal = Equal{};
-
-struct NotEqual {
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
-        return op_impl(ComparisonCategory<T, U>{}, a, b);
-    }
-
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
-        return a != b;
-    }
-
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
-        return stdx::cmp_not_equal(a, b);
-    }
-};
-constexpr auto not_equal = NotEqual{};
-
-struct Greater {
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
-        return op_impl(ComparisonCategory<T, U>{}, a, b);
-    }
-
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
-        return a > b;
-    }
-
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
-        return stdx::cmp_greater(a, b);
-    }
-};
-constexpr auto greater = Greater{};
-
-struct Less {
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
-        return op_impl(ComparisonCategory<T, U>{}, a, b);
-    }
-
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
-        return a < b;
-    }
-
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
-        return stdx::cmp_less(a, b);
-    }
-};
-constexpr auto less = Less{};
-
-struct GreaterEqual {
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
-        return op_impl(ComparisonCategory<T, U>{}, a, b);
-    }
-
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
-        return a >= b;
-    }
-
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
-        return stdx::cmp_greater_equal(a, b);
-    }
-};
-constexpr auto greater_equal = GreaterEqual{};
-
-struct LessEqual {
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
-        return op_impl(ComparisonCategory<T, U>{}, a, b);
-    }
-
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
-        return a <= b;
-    }
-
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
-        return stdx::cmp_less_equal(a, b);
-    }
-};
-constexpr auto less_equal = LessEqual{};
-
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
-struct ThreeWayCompare {
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr auto operator()(const T &a, const U &b) const {
-        // Note that we do not need special treatment for the case where `T` and `U` are both
-        // integral types, because the C++ language already prohibits narrowing conversions (such as
-        // `int` to `uint`) for `operator<=>`.  We can rely on this implicit warning to induce users
-        // to fix their code.
-        return a <=> b;
-    }
-};
-constexpr auto three_way_compare = ThreeWayCompare{};
-#endif
-
-//
-// Arithmetic operators.
-//
-
-struct Plus {
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr auto operator()(const T &a, const U &b) const {
-        return a + b;
-    }
-};
-constexpr auto plus = Plus{};
-
-struct Minus {
-    template <typename T, typename U>
-    AU_DEVICE_FUNC constexpr auto operator()(const T &a, const U &b) const {
-        return a - b;
-    }
-};
-constexpr auto minus = Minus{};
-
-}  // namespace detail
 }  // namespace au
 
 namespace au {
@@ -1762,66 +1483,35 @@ struct Lux;
 
 }  // namespace au
 
+// Make the version macros (`AU_VERSION`, etc.) available anywhere `config.hh` reaches --- which is
+// effectively the entire library, since the core machinery includes this header.
 
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+//
+// Device/GPU support (CUDA, HIP)
+//
+// AU_DEVICE_FUNC: marks functions as callable from both host and device.
+// AU_DEVICE_VAR: marks constexpr variables as accessible from device code.
+//
+// Note: AU_DEVICE_FUNC uses __CUDACC__ / __HIPCC__ (compiler detection) because functions need
+// the annotation during both host and device compilation passes.
+//
+// AU_DEVICE_VAR uses __CUDA_ARCH__ / __HIP_DEVICE_COMPILE__ (device pass detection) because
+// __device__ on a variable makes it device-only, which would break host code. By only applying
+// __device__ during the device compilation pass, the same variable is visible to both host and
+// device code.
+//
+
+#if defined(__CUDACC__) || defined(__HIPCC__)
+#define AU_DEVICE_FUNC __host__ __device__
+#else
+#define AU_DEVICE_FUNC
 #endif
 
-
-namespace au {
-
-// A type representing a quantity of "zero" in any units.
-//
-// Zero is special: it's the only number that we can meaningfully compare or assign to a Quantity of
-// _any_ dimension.  Giving it a special type (and a predefined constant of that type, `ZERO`,
-// defined below) lets our code be both concise and readable.
-//
-// For example, we can zero-initialize any arbitrary Quantity, even if it doesn't have a
-// user-defined literal, and even if it's in a header file so we couldn't use the literals anyway:
-//
-//   struct PathPoint {
-//       QuantityD<RadiansPerMeter> curvature = ZERO;
-//   };
-struct Zero {
-    // Implicit conversion to arithmetic types.
-    template <typename T, typename Enable = std::enable_if_t<std::is_arithmetic<T>::value>>
-    AU_DEVICE_FUNC constexpr operator T() const {
-        return 0;
-    }
-
-    // Implicit conversion to chrono durations.
-    template <typename Rep, typename Period>
-    AU_DEVICE_FUNC constexpr operator std::chrono::duration<Rep, Period>() const {
-        return std::chrono::duration<Rep, Period>{0};
-    }
-};
-
-// A value of Zero.
-//
-// This exists purely for convenience, so people don't have to call the initializer.  i.e., it lets
-// us write `ZERO` instead of `Zero{}`.
-AU_DEVICE_VAR constexpr auto ZERO = Zero{};
-
-// Addition, subtraction, and comparison of Zero are well defined.
-inline AU_DEVICE_FUNC constexpr Zero operator+(Zero, Zero) { return ZERO; }
-inline AU_DEVICE_FUNC constexpr Zero operator-(Zero, Zero) { return ZERO; }
-inline AU_DEVICE_FUNC constexpr bool operator==(Zero, Zero) { return true; }
-inline AU_DEVICE_FUNC constexpr bool operator>=(Zero, Zero) { return true; }
-inline AU_DEVICE_FUNC constexpr bool operator<=(Zero, Zero) { return true; }
-inline AU_DEVICE_FUNC constexpr bool operator!=(Zero, Zero) { return false; }
-inline AU_DEVICE_FUNC constexpr bool operator>(Zero, Zero) { return false; }
-inline AU_DEVICE_FUNC constexpr bool operator<(Zero, Zero) { return false; }
-
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
-inline AU_DEVICE_FUNC constexpr auto operator<=>(Zero, Zero) { return 0 <=> 0; }
+#if defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__)
+#define AU_DEVICE_VAR __device__
+#else
+#define AU_DEVICE_VAR
 #endif
-
-// Implementation helper for "a type where value() returns 0".
-template <typename T>
-struct ValueOfZero {
-    static AU_DEVICE_FUNC constexpr T value() { return ZERO; }
-};
-
-}  // namespace au
 
 
 
@@ -2155,6 +1845,107 @@ constexpr PrimeResult baillie_psw(uint64_t n) {
 }
 
 }  // namespace detail
+}  // namespace au
+
+
+
+namespace au {
+namespace stdx {
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
+//
+// For C++14 compatibility, we needed to change `if constexpr` to SFINAE.
+template <typename T, typename U, typename Enable = void>
+struct CmpEqualImpl;
+template <class T, class U>
+AU_DEVICE_FUNC constexpr bool cmp_equal(T t, U u) noexcept {
+    return CmpEqualImpl<T, U>{}(t, u);
+}
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
+template <class T, class U>
+AU_DEVICE_FUNC constexpr bool cmp_not_equal(T t, U u) noexcept {
+    return !cmp_equal(t, u);
+}
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
+//
+// For C++14 compatibility, we needed to change `if constexpr` to SFINAE.
+template <typename T, typename U, typename Enable = void>
+struct CmpLessImpl;
+template <class T, class U>
+AU_DEVICE_FUNC constexpr bool cmp_less(T t, U u) noexcept {
+    return CmpLessImpl<T, U>{}(t, u);
+}
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
+template <class T, class U>
+AU_DEVICE_FUNC constexpr bool cmp_greater(T t, U u) noexcept {
+    return cmp_less(u, t);
+}
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
+template <class T, class U>
+AU_DEVICE_FUNC constexpr bool cmp_less_equal(T t, U u) noexcept {
+    return !cmp_greater(t, u);
+}
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/utility/intcmp).
+template <class T, class U>
+AU_DEVICE_FUNC constexpr bool cmp_greater_equal(T t, U u) noexcept {
+    return !cmp_less(t, u);
+}
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/utility/in_range).
+template <class R, class T>
+AU_DEVICE_FUNC constexpr bool in_range(T t) noexcept {
+    return cmp_greater_equal(t, std::numeric_limits<R>::min()) &&
+           cmp_less_equal(t, std::numeric_limits<R>::max());
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Implementation details below.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <typename T, typename U>
+struct CmpEqualImpl<T, U, std::enable_if_t<std::is_signed<T>::value == std::is_signed<U>::value>> {
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) { return t == u; }
+};
+
+template <typename T, typename U>
+struct CmpEqualImpl<T, U, std::enable_if_t<std::is_signed<T>::value && !std::is_signed<U>::value>> {
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
+        return t < 0 ? false : std::make_unsigned_t<T>(t) == u;
+    }
+};
+
+template <typename T, typename U>
+struct CmpEqualImpl<T, U, std::enable_if_t<!std::is_signed<T>::value && std::is_signed<U>::value>> {
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
+        return u < 0 ? false : t == std::make_unsigned_t<U>(u);
+    }
+};
+
+template <typename T, typename U>
+struct CmpLessImpl<T, U, std::enable_if_t<std::is_signed<T>::value == std::is_signed<U>::value>> {
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) { return t < u; }
+};
+
+template <typename T, typename U>
+struct CmpLessImpl<T, U, std::enable_if_t<std::is_signed<T>::value && !std::is_signed<U>::value>> {
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
+        return t < 0 ? true : std::make_unsigned_t<T>(t) < u;
+    }
+};
+
+template <typename T, typename U>
+struct CmpLessImpl<T, U, std::enable_if_t<!std::is_signed<T>::value && std::is_signed<U>::value>> {
+    AU_DEVICE_FUNC constexpr bool operator()(T t, U u) {
+        return u < 0 ? false : t < std::make_unsigned_t<U>(u);
+    }
+};
+
+}  // namespace stdx
 }  // namespace au
 
 
@@ -2939,6 +2730,270 @@ using Angle = Dimension<base_dim::Angle>;
 using Information = Dimension<base_dim::Information>;
 using AmountOfSubstance = Dimension<base_dim::AmountOfSubstance>;
 using LuminousIntensity = Dimension<base_dim::LuminousIntensity>;
+
+}  // namespace au
+
+
+
+namespace au {
+namespace stdx {
+
+// Source: adapted from (https://en.cppreference.com/w/cpp/utility/functional/identity)
+struct identity {
+    template <class T>
+    AU_DEVICE_FUNC constexpr T &&operator()(T &&t) const noexcept {
+        return std::forward<T>(t);
+    }
+};
+
+}  // namespace stdx
+}  // namespace au
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#endif
+
+
+// This file provides alternatives to certain standard library function objects for comparison and
+// arithmetic: `std::less<void>`, `std::plus<void>`, etc.
+//
+// These are _not_ intended as _fully general_ replacements.  They are _only_ intended for certain
+// specific use cases in this library.  External user code should not use these utilities: their
+// contract is subject to change at any time to suit the needs of Au.
+//
+// The biggest change is that these function objects produce mathematically correct results when
+// comparing built-in integral types with mixed signedness.  As a concrete example: in the C++
+// language, `-1 < 1u` is `false`, because the common type of the input types is `unsigned int`, and
+// the `int` input `-1` gets converted to a (very large) `unsigned int` value.  However, using these
+// types, `Lt{}(-1, 1u)` will correctly return `true`!
+//
+// There were two initial motivations to roll our own versions instead of just using the ones from
+// the standard library (as we had done earlier).  First, the `<functional>` header is moderately
+// expensive to include---using these alternatives could save 100 ms or more on every file.  Second,
+// certain compilers (such as the Green Hills compiler) struggle with the trailing return types in,
+// say, `std::less<void>::operator()`, but work correctly with our alternatives.
+
+namespace au {
+namespace detail {
+
+// These tag types act as a kind of "compile time enum".
+struct CompareBuiltInIntegers {};
+struct DefaultComparison {};
+
+// `ComparisonCategory<T, U>` acts like a function which takes two _types_, and returns the correct
+// instance of the above "compile time enum".
+template <typename T, typename U>
+using ComparisonCategory =
+    std::conditional_t<stdx::conjunction<std::is_integral<T>, std::is_integral<U>>::value,
+                       CompareBuiltInIntegers,
+                       DefaultComparison>;
+
+//
+// Comparison operators.
+//
+
+struct Equal {
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
+        return op_impl(ComparisonCategory<T, U>{}, a, b);
+    }
+
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+        return a == b;
+    }
+
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+        return stdx::cmp_equal(a, b);
+    }
+};
+constexpr auto equal = Equal{};
+
+struct NotEqual {
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
+        return op_impl(ComparisonCategory<T, U>{}, a, b);
+    }
+
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+        return a != b;
+    }
+
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+        return stdx::cmp_not_equal(a, b);
+    }
+};
+constexpr auto not_equal = NotEqual{};
+
+struct Greater {
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
+        return op_impl(ComparisonCategory<T, U>{}, a, b);
+    }
+
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+        return a > b;
+    }
+
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+        return stdx::cmp_greater(a, b);
+    }
+};
+constexpr auto greater = Greater{};
+
+struct Less {
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
+        return op_impl(ComparisonCategory<T, U>{}, a, b);
+    }
+
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+        return a < b;
+    }
+
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+        return stdx::cmp_less(a, b);
+    }
+};
+constexpr auto less = Less{};
+
+struct GreaterEqual {
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
+        return op_impl(ComparisonCategory<T, U>{}, a, b);
+    }
+
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+        return a >= b;
+    }
+
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+        return stdx::cmp_greater_equal(a, b);
+    }
+};
+constexpr auto greater_equal = GreaterEqual{};
+
+struct LessEqual {
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool operator()(const T &a, const U &b) const {
+        return op_impl(ComparisonCategory<T, U>{}, a, b);
+    }
+
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool op_impl(DefaultComparison, const T &a, const U &b) const {
+        return a <= b;
+    }
+
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr bool op_impl(CompareBuiltInIntegers, const T &a, const U &b) const {
+        return stdx::cmp_less_equal(a, b);
+    }
+};
+constexpr auto less_equal = LessEqual{};
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+struct ThreeWayCompare {
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr auto operator()(const T &a, const U &b) const {
+        // Note that we do not need special treatment for the case where `T` and `U` are both
+        // integral types, because the C++ language already prohibits narrowing conversions (such as
+        // `int` to `uint`) for `operator<=>`.  We can rely on this implicit warning to induce users
+        // to fix their code.
+        return a <=> b;
+    }
+};
+constexpr auto three_way_compare = ThreeWayCompare{};
+#endif
+
+//
+// Arithmetic operators.
+//
+
+struct Plus {
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr auto operator()(const T &a, const U &b) const {
+        return a + b;
+    }
+};
+constexpr auto plus = Plus{};
+
+struct Minus {
+    template <typename T, typename U>
+    AU_DEVICE_FUNC constexpr auto operator()(const T &a, const U &b) const {
+        return a - b;
+    }
+};
+constexpr auto minus = Minus{};
+
+}  // namespace detail
+}  // namespace au
+
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#endif
+
+
+namespace au {
+
+// A type representing a quantity of "zero" in any units.
+//
+// Zero is special: it's the only number that we can meaningfully compare or assign to a Quantity of
+// _any_ dimension.  Giving it a special type (and a predefined constant of that type, `ZERO`,
+// defined below) lets our code be both concise and readable.
+//
+// For example, we can zero-initialize any arbitrary Quantity, even if it doesn't have a
+// user-defined literal, and even if it's in a header file so we couldn't use the literals anyway:
+//
+//   struct PathPoint {
+//       QuantityD<RadiansPerMeter> curvature = ZERO;
+//   };
+struct Zero {
+    // Implicit conversion to arithmetic types.
+    template <typename T, typename Enable = std::enable_if_t<std::is_arithmetic<T>::value>>
+    AU_DEVICE_FUNC constexpr operator T() const {
+        return 0;
+    }
+
+    // Implicit conversion to chrono durations.
+    template <typename Rep, typename Period>
+    AU_DEVICE_FUNC constexpr operator std::chrono::duration<Rep, Period>() const {
+        return std::chrono::duration<Rep, Period>{0};
+    }
+};
+
+// A value of Zero.
+//
+// This exists purely for convenience, so people don't have to call the initializer.  i.e., it lets
+// us write `ZERO` instead of `Zero{}`.
+AU_DEVICE_VAR constexpr auto ZERO = Zero{};
+
+// Addition, subtraction, and comparison of Zero are well defined.
+inline AU_DEVICE_FUNC constexpr Zero operator+(Zero, Zero) { return ZERO; }
+inline AU_DEVICE_FUNC constexpr Zero operator-(Zero, Zero) { return ZERO; }
+inline AU_DEVICE_FUNC constexpr bool operator==(Zero, Zero) { return true; }
+inline AU_DEVICE_FUNC constexpr bool operator>=(Zero, Zero) { return true; }
+inline AU_DEVICE_FUNC constexpr bool operator<=(Zero, Zero) { return true; }
+inline AU_DEVICE_FUNC constexpr bool operator!=(Zero, Zero) { return false; }
+inline AU_DEVICE_FUNC constexpr bool operator>(Zero, Zero) { return false; }
+inline AU_DEVICE_FUNC constexpr bool operator<(Zero, Zero) { return false; }
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+inline AU_DEVICE_FUNC constexpr auto operator<=>(Zero, Zero) { return 0 <=> 0; }
+#endif
+
+// Implementation helper for "a type where value() returns 0".
+template <typename T>
+struct ValueOfZero {
+    static AU_DEVICE_FUNC constexpr T value() { return ZERO; }
+};
 
 }  // namespace au
 
