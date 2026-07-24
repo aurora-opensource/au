@@ -318,7 +318,7 @@ TEST(QuantityMaker, CreatesAppropriateQuantityIfCalled) {
 }
 
 // Regression test: a bitfield (packed member) cannot bind to a non-const reference, so the maker
-// and the `make_quantity`-style free functions must accept it via their `const T&` overload.  This
+// and the `make_quantity`-style free function must accept it via their `const T&` overload.  This
 // once failed to compile.
 TEST(QuantityMaker, WorksOnBitfieldMembers) {
     struct Packed {
@@ -328,8 +328,7 @@ TEST(QuantityMaker, WorksOnBitfieldMembers) {
     Packed p{5, 7};
 
     EXPECT_THAT(meters(p.meters_value), SameTypeAndValue(meters(5)));
-    EXPECT_THAT(make_quantity<Meters>(p.meters_value), SameTypeAndValue(meters(5)));
-    EXPECT_THAT(make_quantity_unless_unitless<Feet>(p.feet_value), SameTypeAndValue(feet(7)));
+    EXPECT_THAT(make_quantity<Feet>(p.feet_value), SameTypeAndValue(feet(7)));
 }
 
 TEST(QuantityMaker, CanBeMultipliedBySingularUnitToGetMakerOfProductUnit) {
@@ -840,20 +839,20 @@ TEST(Quantity, CanDivideArbitraryQuantities) {
     EXPECT_THAT(v, Eq(d / t));
 }
 
-TEST(Quantity, RatioOfSameTypeIsScalar) {
+TEST(Quantity, RatioOfSameTypeIsQuantity) {
     constexpr auto x = yards(8.2);
 
-    EXPECT_THAT(x / x, SameTypeAndValue(1.0));
+    EXPECT_THAT(x / x, QuantityEquivalent(unos(1.0)));
 }
 
-TEST(Quantity, RatioOfEquivalentTypesIsScalar) {
+TEST(Quantity, RatioOfEquivalentTypesIsQuantity) {
     constexpr auto x = feet(10.0);
     constexpr auto y = (feet * mag<1>())(5.0);
 
-    EXPECT_THAT(x / y, SameTypeAndValue(2.0));
+    EXPECT_THAT(x / y, QuantityEquivalent(unos(2.0)));
 }
 
-TEST(Quantity, ProductOfInvertingUnitsIsScalar) {
+TEST(Quantity, ProductOfInvertingUnitsIsQuantity) {
     // We pass `UnitProduct` to this function template, which ensures that we get a
     // `UnitProductPack` (note: NOT `UnitProduct`!) with the expected number of arguments.  Recall
     // that `UnitProduct` is the user-facing "unit computation" interface, and `UnitProductPack` is
@@ -864,7 +863,7 @@ TEST(Quantity, ProductOfInvertingUnitsIsScalar) {
     // unit---although, naturally, it must be **quantity-equivalent** to `UnitProductPack<>`.
     ASSERT_THAT(num_units_in_product(UnitProduct<Days, PerDay>{}), Eq(2));
 
-    EXPECT_THAT(days(3) * per_day(8), SameTypeAndValue(24));
+    EXPECT_THAT(days(3) * per_day(8), QuantityEquivalent(unos(24)));
 }
 
 TEST(Quantity, ScalarDivisionWorks) {
@@ -1481,13 +1480,13 @@ TEST(UnblockIntDiv, IsNoOpForDivisionThatWouldBeAllowedAnyway) {
 }
 
 TEST(DivideInCommonUnits, ConvertsInputsToSameUnit) {
-    EXPECT_THAT(divide_using_common_unit(inches(80), feet(2)), SameTypeAndValue(3));
-    EXPECT_THAT(divide_using_common_unit(hours(8), minutes(60)), SameTypeAndValue(8));
+    EXPECT_THAT(divide_using_common_unit(inches(80), feet(2)), QuantityEquivalent(unos(3)));
+    EXPECT_THAT(divide_using_common_unit(hours(8), minutes(60)), QuantityEquivalent(unos(8)));
 }
 
 TEST(Quantity, CanIntegerDivideQuantitiesOfQuantityEquivalentUnits) {
     constexpr auto ratio = meters(60) / meters(25);
-    EXPECT_THAT(ratio, Eq(2));
+    EXPECT_THAT(ratio, QuantityEquivalent(unos(2)));
 }
 
 TEST(Mod, ComputesRemainderForSameUnits) {
