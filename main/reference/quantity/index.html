@@ -3533,10 +3533,9 @@ we still want to check for overflow.</p>
 </ul>
 <h3 id="as-raw-number">Dimensionless and unitless results: <code>as_raw_number</code><a class="headerlink" href="#as-raw-number" title="Permanent link">&para;</a></h3>
 <p>Users may expect that the product of quantities such as <code>seconds</code> and <code>hertz</code> would completely
-cancel out, and produce a raw, simple C++ numeric type.  Currently, this is indeed the case, but we
-have also found that it makes the library harder to reason about.  Instead, we hope in the future to
-return a <code>Quantity</code> type <em>consistently</em> from arithmetical operations on <code>Quantity</code> inputs (see
-<a href="https://github.com/aurora-opensource/au/issues/185">#185</a>).</p>
+cancel out, and produce a raw, simple C++ numeric type.  While this was formerly the case, we found
+that it made the library harder to reason about consistently.  Instead, we return a <code>Quantity</code> type
+<em>consistently</em> from arithmetical operations on <code>Quantity</code> inputs.</p>
 <p>In order to obtain that raw number robustly, both now and in the future, you can use the
 <code>as_raw_number</code> function, a callsite-readable way to &ldquo;exit&rdquo; the library.  This will also opt into
 all mechanisms and safety features of the library.  In particular:</p>
@@ -3547,8 +3546,7 @@ all mechanisms and safety features of the library.  In particular:</p>
   represented exactly as a raw <code>int</code>), we will also fail to compile, unless users provide a second
   policy argument to override the safety check.</li>
 </ul>
-<p>Users should get in the habit of using <code>as_raw_number</code> whenever they really want a raw number.  This
-communicates intent, and also works both before and after <a href="https://github.com/aurora-opensource/au/issues/185">#185</a> is implemented.</p>
+<p>Users should use <code>as_raw_number</code> whenever they really want a raw number.  This communicates intent.</p>
 <p>Here are the available APIs:</p>
 <ul>
 <li><code>as_raw_number(q)</code><ul>
@@ -3752,7 +3750,7 @@ most common cases, and is generally much safer.  See
 <p>The <code>divide_using_common_unit()</code> utility takes two <code>Quantity</code> inputs, <code>a</code>, and <code>b</code>, whose dimension is
 the same.  It first converts each input to their <a href="../../discussion/concepts/common_unit/">common
 unit</a>, and then performs regular division.  The result
-will be a dimensionless and unitless number (or, after <a href="https://github.com/aurora-opensource/au/issues/185">#185</a>, a <code>Quantity</code>).</p>
+will be a dimensionless and unitless number (or, after [#185], a <code>Quantity</code>).</p>
 <p>There is no need to wrap the denominator in a call to <code>unblock_int_div</code>, because same-unit division
 is always allowed by Au.</p>
 <h3 id="unary-and-">Unary <code>+</code> and <code>-</code><a class="headerlink" href="#unary-and-" title="Permanent link">&para;</a></h3>
