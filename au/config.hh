@@ -14,6 +14,10 @@
 
 #pragma once
 
+// Make the version macros (`AU_VERSION`, etc.) available anywhere `config.hh` reaches --- which is
+// effectively the entire library, since the core machinery includes this header.
+#include "au/version.hh"
+
 //
 // Device/GPU support (CUDA, HIP)
 //

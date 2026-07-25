@@ -45,6 +45,7 @@ header_only_library(
     truncation_risk.hh
     unit_of_measure.hh
     unit_symbol.hh
+    version.hh
     view.hh
     wrapper_operations.hh
     zero.hh
@@ -642,6 +643,14 @@ gtest_based_test(
   DEPS
     au
     testing
+)
+
+gtest_based_test(
+  NAME version_test
+  SRCS
+    version_test.cc
+  DEPS
+    au
 )
 
 gtest_based_test(

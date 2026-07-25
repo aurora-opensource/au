@@ -126,10 +126,17 @@ struct TruncationRiskForMultiplyByRational
                          stdx::type_identity<CannotAssessTruncationRiskFor<T>>> {};
 
 template <typename T, typename M>
-struct TruncationRiskForMultiplyByAssumingScalar
+struct TruncationRiskForMultiplyByRationalOrIrrational
     : std::conditional_t<IsRational<M>::value,
                          TruncationRiskForMultiplyByRational<T, M>,
                          TruncationRiskForMultiplyByIrrational<T, M>> {};
+
+// We assume that multiplying by an integer magnitude can never truncate, for any rep.
+template <typename T, typename M>
+struct TruncationRiskForMultiplyByAssumingScalar
+    : std::conditional_t<IsInteger<M>::value,
+                         stdx::type_identity<NoTruncationRisk<T>>,
+                         TruncationRiskForMultiplyByRationalOrIrrational<T, M>> {};
 
 template <typename T, typename M>
 struct TruncationRiskForImpl<MultiplyTypeBy<T, M>>
