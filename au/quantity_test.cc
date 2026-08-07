@@ -490,7 +490,7 @@ TEST(Quantity, AsWithExplicitRepSetsOutputType) {
 
 TEST(Quantity, InWithPolicyParameterWillForceLossyConversion) {
     // Truncation.
-    EXPECT_THAT(inches(30).in(feet, ignore(TRUNCATION_RISK))), SameTypeAndValue(2));
+    EXPECT_THAT(inches(30).in(feet, ignore(TRUNCATION_RISK)), SameTypeAndValue(2));
 
     // Unsigned overflow.
     ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
