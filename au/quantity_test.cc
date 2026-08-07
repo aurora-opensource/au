@@ -733,49 +733,41 @@ TEST(Quantity, ConvertingByNegativeOneCanBeDoneImplicitly) {
 }
 
 TEST(Quantity, AsCanExplicitlyOptOutOfOverflowRiskCheck) {
-    // This line would fail to compile without the `ignore(OVERFLOW_RISK)` argument.
     constexpr auto q = seconds(int32_t{2}).as(nano(seconds), ignore(OVERFLOW_RISK));
     EXPECT_THAT(q, SameTypeAndValue(nano(seconds)(int32_t{2'000'000'000})));
 }
 
 TEST(Quantity, AsCanExplicitlyOptOutOfOverflowRiskCheckForExplicitRep) {
-    // This line would fail to compile without the `ignore(OVERFLOW_RISK)` argument.
     constexpr auto q = seconds(2u).as<int32_t>(nano(seconds), ignore(OVERFLOW_RISK));
     EXPECT_THAT(q, SameTypeAndValue(nano(seconds)(int32_t{2'000'000'000})));
 }
 
 TEST(Quantity, AsCanExplicitlyOptOutOfTruncationRiskCheck) {
-    // This line would fail to compile without the `ignore(TRUNCATION_RISK)` argument.
     constexpr auto q = inches(36).as(feet, ignore(TRUNCATION_RISK));
     EXPECT_THAT(q, SameTypeAndValue(feet(3)));
 }
 
 TEST(Quantity, AsCanExplicitlyOptOutOfTruncationRiskCheckForExplicitRep) {
-    // This line would fail to compile without the `ignore(TRUNCATION_RISK)` argument.
     constexpr auto q = inches(36u).as<int>(feet, ignore(TRUNCATION_RISK));
     EXPECT_THAT(q, SameTypeAndValue(feet(int{3})));
 }
 
 TEST(Quantity, InCanExplicitlyOptOutOfOverflowRiskCheck) {
-    // This line would fail to compile without the `ignore(OVERFLOW_RISK)` argument.
     constexpr auto q = seconds(int32_t{2}).in(nano(seconds), ignore(OVERFLOW_RISK));
     EXPECT_THAT(q, SameTypeAndValue(int32_t{2'000'000'000}));
 }
 
 TEST(Quantity, InCanExplicitlyOptOutOfOverflowRiskCheckForExplicitRep) {
-    // This line would fail to compile without the `ignore(OVERFLOW_RISK)` argument.
     constexpr auto q = seconds(2u).in<int32_t>(nano(seconds), ignore(OVERFLOW_RISK));
     EXPECT_THAT(q, SameTypeAndValue(int32_t{2'000'000'000}));
 }
 
 TEST(Quantity, InCanExplicitlyOptOutOfTruncationRiskCheck) {
-    // This line would fail to compile without the `ignore(TRUNCATION_RISK)` argument.
     constexpr auto q = inches(36).in(feet, ignore(TRUNCATION_RISK));
     EXPECT_THAT(q, SameTypeAndValue(3));
 }
 
 TEST(Quantity, InCanExplicitlyOptOutOfTruncationRiskCheckForExplicitRep) {
-    // This line would fail to compile without the `ignore(TRUNCATION_RISK)` argument.
     constexpr auto q = inches(36u).in<int>(feet, ignore(TRUNCATION_RISK));
     EXPECT_THAT(q, SameTypeAndValue(3));
 }
