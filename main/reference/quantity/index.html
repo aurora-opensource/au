@@ -3250,27 +3250,10 @@ returns a <code>Quantity&lt;Inches, int&gt;</code>, which is equal to <code>inch
 type <code>Inches</code>, writing <code>length.as(Inches{})</code>.  The former is generally preferable; the latter is
 mainly useful in generic code where the unit type may be all you have.</p>
 </details>
-<p><strong>Without</strong> a template argument, <code>.as(unit)</code> obeys the same safety checks as for the <a href="#implicit-from-quantity">implicit
-constructors</a>: conversions at high risk for integer overflow or truncation
-are forbidden.  Additionally, the <code>Rep</code> of the output is identical to the <code>Rep</code> of the input.</p>
-<p><strong>With</strong> a template argument, <code>.as&lt;T&gt;(unit)</code> has two differences.</p>
-<ol>
-<li>The output <code>Rep</code> will be <code>T</code>.</li>
-<li>The conversion is considered &ldquo;forcing&rdquo;, and will be permitted in spite of any overflow or
-   truncation risk.  The semantics are similar to <code>static_cast&lt;T&gt;</code>.</li>
-</ol>
-<p>However, note that we may change this second property in the future.  The version with the template
-arguments may be changed later so that it <em>does</em> prevent lossy conversions.  If you want this
-&ldquo;forcing&rdquo; semantic, prefer to use a policy argument, and add the explicit template parameter only if
-you want to change the rep.  See <a href="https://github.com/aurora-opensource/au/issues/122">#122</a> to track progress on this change, and see the <a href="#policy-argument">policy
-argument section</a> for an example of the <em>preferred</em> way to force a conversion.</p>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>Prefer to <strong>omit</strong> the template argument if possible, because you will get more safety checks.
-The risks which the no-template-argument version warns about are real.</p>
-<p>As of <a href="https://github.com/aurora-opensource/au/milestone/9">0.6.0</a> and <a href="https://github.com/aurora-opensource/au/issues/122">#122</a>, however, this advice will no longer apply.  At that point, the
-explicit-rep versions will have the same safety checks as the implicit-rep versions.</p>
-</div>
+<p><strong>Without</strong> a template argument, <code>.as(unit)</code>, the output <code>Rep</code> is whatever type would naturally be
+produced by the conversion operation.  (This is usually the same as the input <code>Rep</code>, but can differ
+in rare cases, such as integer promotion, or Eigen expression templates.)</p>
+<p><strong>With</strong> a template argument, <code>.as&lt;T&gt;(unit)</code>, the output <code>Rep</code> will be <code>T</code>.</p>
 <h3 id="inunit-intunit"><code>.in(unit)</code>, <code>.in&lt;T&gt;(unit)</code><a class="headerlink" href="#inunit-intunit" title="Permanent link">&para;</a></h3>
 <p>This function produces the value of the <code>Quantity</code>, re-expressed in the new unit.  <code>unit</code> can be
 either a <code>QuantityMaker</code> for the quantity&rsquo;s unit, or an instance of the unit itself. See the <a href="../../discussion/idioms/unit-slots/">unit
@@ -3286,27 +3269,10 @@ slots</a> discussion for valid choices for <code>unit</code>.</p>
 type <code>Inches</code>, writing <code>length.in(Inches{})</code>.  The former is generally preferable; the latter is
 mainly useful in generic code where the unit type may be all you have.</p>
 </details>
-<p><strong>Without</strong> a template argument, <code>.in(unit)</code> obeys the same safety checks as for the <a href="#implicit-from-quantity">implicit
-constructors</a>: conversions at high risk for integer overflow or truncation
-are forbidden.  Additionally, the <code>Rep</code> of the output is identical to the <code>Rep</code> of the input.</p>
-<p><strong>With</strong> a template argument, <code>.in&lt;T&gt;(unit)</code> has two differences.</p>
-<ol>
-<li>The output type will be <code>T</code>.</li>
-<li>The conversion is considered &ldquo;forcing&rdquo;, and will be permitted in spite of any overflow or
-   truncation risk.  The semantics are similar to <code>static_cast&lt;T&gt;</code>.</li>
-</ol>
-<p>However, note that we may change this second property in the future.  The version with the template
-arguments may be changed later so that it <em>does</em> prevent lossy conversions.  If you want this
-&ldquo;forcing&rdquo; semantic, prefer to use a policy argument, and add the explicit template parameter only if
-you want to change the rep.  See <a href="https://github.com/aurora-opensource/au/issues/122">#122</a> to track progress on this change, and see the <a href="#policy-argument">policy
-argument section</a> for an example of the <em>preferred</em> way to force a conversion.</p>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>Prefer to <strong>omit</strong> the template argument if possible, because you will get more safety checks.
-The risks which the no-template-argument version warns about are real.</p>
-<p>As of <a href="https://github.com/aurora-opensource/au/milestone/9">0.6.0</a> and <a href="https://github.com/aurora-opensource/au/issues/122">#122</a>, however, this advice will no longer apply.  At that point, the
-explicit-rep versions will have the same safety checks as the implicit-rep versions.</p>
-</div>
+<p><strong>Without</strong> a template argument, <code>.in(unit)</code>, the output <code>Rep</code> is whatever type would naturally be
+produced by the conversion operation.  (This is usually the same as the input <code>Rep</code>, but can differ
+in rare cases, such as integer promotion, or Eigen expression templates.)</p>
+<p><strong>With</strong> a template argument, <code>.in&lt;T&gt;(unit)</code>, the output type will be <code>T</code>.</p>
 <h3 id="policy-argument">Skipping risk checks: the <code>policy</code> argument<a class="headerlink" href="#policy-argument" title="Permanent link">&para;</a></h3>
 <p>Some unit conversions have too much <a href="../../discussion/concepts/conversion_risks/">conversion risk</a> to
 permit by default.  When that happens, the compiler will tell you which risk (overflow or
@@ -3750,7 +3716,7 @@ most common cases, and is generally much safer.  See
 <p>The <code>divide_using_common_unit()</code> utility takes two <code>Quantity</code> inputs, <code>a</code>, and <code>b</code>, whose dimension is
 the same.  It first converts each input to their <a href="../../discussion/concepts/common_unit/">common
 unit</a>, and then performs regular division.  The result
-will be a dimensionless and unitless number (or, after [#185], a <code>Quantity</code>).</p>
+will be a dimensionless and unitless <code>Quantity</code>.</p>
 <p>There is no need to wrap the denominator in a call to <code>unblock_int_div</code>, because same-unit division
 is always allowed by Au.</p>
 <h3 id="unary-and-">Unary <code>+</code> and <code>-</code><a class="headerlink" href="#unary-and-" title="Permanent link">&para;</a></h3>
@@ -3858,9 +3824,12 @@ the rep.  A good rule of thumb is that in situations where you would be using <c
 had raw numeric types, <code>rep_cast</code> is a good replacement for <code>Quantity</code> types.</p>
 <p>Given any <code>Quantity&lt;U, R&gt; q</code> whose rep is <code>R</code>, then <code>rep_cast&lt;T&gt;(q)</code> gives a <code>Quantity&lt;U, T&gt;</code>, whose
 underlying value is <code>static_cast&lt;T&gt;(q.in(U{}))</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Unlike <code>.as&lt;T&gt;()</code>, <code>rep_cast</code> won&rsquo;t guard against <a href="../../discussion/concepts/conversion_risks/">conversion
-risks</a>; it will force the conversion through regardless.
-This cannot be customized.</p>
+risks</a>; it will force the conversion through
+regardless.  This cannot be customized.</p>
+</div>
 <h2 id="templates-and-traits">Templates and Traits<a class="headerlink" href="#templates-and-traits" title="Permanent link">&para;</a></h2>
 <h3 id="matching-typename-u-typename-r">Matching: <code>typename U, typename R</code><a class="headerlink" href="#matching-typename-u-typename-r" title="Permanent link">&para;</a></h3>
 <p>To specialize a template to match any <code>Quantity</code>, declare two template parameters: one for the unit,

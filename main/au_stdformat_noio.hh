@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-137-g757cdb8
+// Version identifier: 0.5.0-base-138-gf272ed8
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -8107,8 +8107,9 @@ class Quantity {
               typename Enable = EnableIfImplicitOkIs<true, OtherUnit, OtherRep>>
     AU_DEVICE_FUNC constexpr Quantity(
         const Quantity<OtherUnit, OtherRep> &other)  // NOLINT(runtime/explicit)
-        : value_{other.template in_impl<detail::UseImplicitConversion, Rep>(
-              UnitT{}, check_for(ALL_RISKS))} {}
+        // `ignore(ALL_RISKS)` because we already determined that this implicit conversion is OK.
+        : value_{other.template in_impl<detail::UseImplicitConversion, Rep>(UnitT{},
+                                                                            ignore(ALL_RISKS))} {}
 
     // EXPLICIT constructor for another Quantity of the same Dimension.
     template <typename OtherUnit,
@@ -8152,7 +8153,7 @@ class Quantity {
     // `q.as<Rep>(new_unit)`, or `q.as<Rep>(new_unit, risk_policy)`
     template <typename NewRep,
               typename NewUnitSlot,
-              typename RiskPolicyT = decltype(ignore(ALL_RISKS)),
+              typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<!IsConversionRiskPolicy<NewUnitSlot>::value, int> = 0>
     AU_DEVICE_FUNC constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity<AssociatedUnit<NewUnitSlot>>(
@@ -8169,7 +8170,7 @@ class Quantity {
     // `q.in<Rep>(new_unit)`, or `q.in<Rep>(new_unit, risk_policy)`
     template <typename NewRep,
               typename NewUnitSlot,
-              typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
+              typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     AU_DEVICE_FUNC constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<detail::UseStaticCast, NewRep>(u, policy);
     }
@@ -8184,22 +8185,22 @@ class Quantity {
     template <typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
         // Usage example: `q.coerce_as(new_units)`.
-        return as<Rep>(NewUnit{});
+        return as<Rep>(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
         // Usage example: `q.coerce_as<T>(new_units)`.
-        return as<NewRep>(NewUnit{});
+        return as<NewRep>(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {
         // Usage example: `q.coerce_in(new_units)`.
-        return in<Rep>(NewUnit{});
+        return in<Rep>(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {
         // Usage example: `q.coerce_in<T>(new_units)`.
-        return in<NewRep>(NewUnit{});
+        return in<NewRep>(NewUnit{}, ignore(ALL_RISKS));
     }
 
     // Direct access to the underlying value member, with any Quantity-equivalent Unit.
@@ -8695,7 +8696,7 @@ struct AreQuantityTypesEquivalent<Quantity<U1, R1>, Quantity<U2, R2>>
 // Cast Quantity to a different underlying type.
 template <typename NewRep, typename Unit, typename Rep>
 AU_DEVICE_FUNC constexpr auto rep_cast(Quantity<Unit, Rep> q) {
-    return q.template as<NewRep>(Unit{});
+    return q.template as<NewRep>(Unit{}, ignore(ALL_RISKS));
 }
 
 // Help Zero act more faithfully like a Quantity.
@@ -10192,7 +10193,7 @@ class QuantityPoint {
     // `p.as<Rep>(new_unit)`, or `p.as<Rep>(new_unit, risk_policy)`
     template <typename NewRep,
               typename NewUnit,
-              typename RiskPolicyT = decltype(ignore(ALL_RISKS)),
+              typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<!IsConversionRiskPolicy<NewUnit>::value, int> = 0>
     AU_DEVICE_FUNC constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<NewRep>(u, policy));
@@ -10204,7 +10205,9 @@ class QuantityPoint {
         return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<Rep>(u, policy));
     }
 
-    template <typename NewRep, typename NewUnit, typename RiskPolicyT = decltype(ignore(ALL_RISKS))>
+    template <typename NewRep,
+              typename NewUnit,
+              typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     AU_DEVICE_FUNC constexpr NewRep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
         return in_impl<NewRep>(u, policy);
     }
@@ -10218,22 +10221,22 @@ class QuantityPoint {
     template <typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
         // Usage example: `p.coerce_as(new_units)`.
-        return as<Rep>(NewUnit{});
+        return as<Rep>(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
         // Usage example: `p.coerce_as<T>(new_units)`.
-        return as<NewRep>(NewUnit{});
+        return as<NewRep>(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {
         // Usage example: `p.coerce_in(new_units)`.
-        return in<Rep>(NewUnit{});
+        return in<Rep>(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {
         // Usage example: `p.coerce_in<T>(new_units)`.
-        return in<NewRep>(NewUnit{});
+        return in<NewRep>(NewUnit{}, ignore(ALL_RISKS));
     }
 
     // Direct access to the underlying value member, with any Point-equivalent Unit.
@@ -10416,7 +10419,7 @@ struct AreQuantityPointTypesEquivalent<QuantityPoint<U1, R1>, QuantityPoint<U2, 
 // Cast QuantityPoint to a different underlying type.
 template <typename NewRep, typename Unit, typename Rep>
 AU_DEVICE_FUNC constexpr auto rep_cast(QuantityPoint<Unit, Rep> q) {
-    return q.template as<NewRep>(Unit{});
+    return q.template as<NewRep>(Unit{}, ignore(ALL_RISKS));
 }
 
 namespace detail {
