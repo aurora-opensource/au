@@ -403,9 +403,10 @@ if you had raw numeric types, `rep_cast` is a good replacement for `QuantityPoin
 Given any `QuantityPoint<U, R> p` whose rep is `R`, then `rep_cast<T>(p)` gives a `QuantityPoint<U,
 T>`, whose underlying value is `static_cast<T>(p.in(U{}))`.
 
-Unlike `.as<T>()`, `rep_cast` won't guard against [conversion
-risks](../discussion/concepts/conversion_risks.md); it will force the conversion through regardless.
-This cannot be customized.
+!!! note
+    Unlike `.as<T>()`, `rep_cast` won't guard against [conversion
+    risks](../discussion/concepts/conversion_risks.md); it will force the conversion through
+    regardless.  This cannot be customized.
 
 ## Operations
 

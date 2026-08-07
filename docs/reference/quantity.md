@@ -906,9 +906,10 @@ had raw numeric types, `rep_cast` is a good replacement for `Quantity` types.
 Given any `Quantity<U, R> q` whose rep is `R`, then `rep_cast<T>(q)` gives a `Quantity<U, T>`, whose
 underlying value is `static_cast<T>(q.in(U{}))`.
 
-Unlike `.as<T>()`, `rep_cast` won't guard against [conversion
-risks](../discussion/concepts/conversion_risks.md); it will force the conversion through regardless.
-This cannot be customized.
+!!! note
+    Unlike `.as<T>()`, `rep_cast` won't guard against [conversion
+    risks](../discussion/concepts/conversion_risks.md); it will force the conversion through
+    regardless.  This cannot be customized.
 
 ## Templates and Traits
 
