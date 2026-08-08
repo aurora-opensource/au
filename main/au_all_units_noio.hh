@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-138-gf272ed8
+// Version identifier: 0.5.0-base-139-gf7a60a2
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -8531,7 +8531,7 @@ class Quantity {
     template <typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
         // Usage example: `q.coerce_as(new_units)`.
-        return as<Rep>(NewUnit{}, ignore(ALL_RISKS));
+        return as(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
@@ -8541,7 +8541,7 @@ class Quantity {
     template <typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {
         // Usage example: `q.coerce_in(new_units)`.
-        return in<Rep>(NewUnit{}, ignore(ALL_RISKS));
+        return in(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {
@@ -10310,7 +10310,7 @@ class QuantityPoint {
     template <typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
         // Usage example: `p.coerce_as(new_units)`.
-        return as<Rep>(NewUnit{}, ignore(ALL_RISKS));
+        return as(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
@@ -10320,7 +10320,7 @@ class QuantityPoint {
     template <typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {
         // Usage example: `p.coerce_in(new_units)`.
-        return in<Rep>(NewUnit{}, ignore(ALL_RISKS));
+        return in(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {
