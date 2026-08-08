@@ -189,7 +189,7 @@ class QuantityPoint {
     template <typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
         // Usage example: `p.coerce_as(new_units)`.
-        return as<Rep>(NewUnit{}, ignore(ALL_RISKS));
+        return as(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_as(NewUnit) const {
@@ -199,7 +199,7 @@ class QuantityPoint {
     template <typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {
         // Usage example: `p.coerce_in(new_units)`.
-        return in<Rep>(NewUnit{}, ignore(ALL_RISKS));
+        return in(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
     constexpr auto coerce_in(NewUnit) const {

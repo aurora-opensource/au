@@ -470,7 +470,8 @@ TEST(Quantity, CoerceAsWillForceLossyConversion) {
 
     // Unsigned overflow.
     ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
-    EXPECT_THAT(feet(uint8_t{30}).coerce_as(inches), SameTypeAndValue(inches(uint8_t{104})));
+    EXPECT_THAT(feet(uint8_t{30}).coerce_as<uint8_t>(inches),
+                SameTypeAndValue(inches(uint8_t{104})));
 }
 
 TEST(Quantity, CoerceAsExplicitRepSetsOutputType) {
@@ -491,7 +492,7 @@ TEST(Quantity, CoerceInWillForceLossyConversion) {
 
     // Unsigned overflow.
     ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
-    EXPECT_THAT(feet(uint8_t{30}).coerce_in(inches), SameTypeAndValue(uint8_t{104}));
+    EXPECT_THAT(feet(uint8_t{30}).coerce_in<uint8_t>(inches), SameTypeAndValue(uint8_t{104}));
 }
 
 TEST(Quantity, CoerceInExplicitRepSetsOutputType) {
@@ -1068,7 +1069,7 @@ TEST(Quantity, UnitCastRequiresExplicitTypeForDangerousReps) {
     //
     // To "test" these, try replacing `.coerce_as(...)` with `.as(...)`.  Make sure it fails with a
     // readable `static_assert`.
-    EXPECT_THAT(feet(uint16_t{1}).coerce_as(centi(feet)),
+    EXPECT_THAT(feet(uint16_t{1}).coerce_as<uint16_t>(centi(feet)),
                 SameTypeAndValue(centi(feet)(uint16_t{100})));
 }
 
@@ -1374,8 +1375,8 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
              i <= std::numeric_limits<uint16_t>::max();
              ++i) {
             const auto original = source_units(static_cast<uint16_t>(i));
-            const auto converted = original.coerce_as(target_units);
-            const auto round_trip = converted.coerce_as(source_units);
+            const auto converted = original.template coerce_as<uint16_t>(target_units);
+            const auto round_trip = converted.template coerce_as<uint16_t>(source_units);
 
             const bool did_value_change = (original != round_trip);
 
