@@ -1,5 +1,11 @@
 # Inter-library Interoperation
 
+!!! note
+    This guide covers interoperating with other _units_ libraries.  If you're looking for how to
+    use [Eigen](https://eigen.tuxfamily.org/) types with Au, that works differently --- Eigen types
+    act as the underlying _storage_ for quantities, rather than as equivalent types --- and it has
+    [its own guide](./eigen.md).
+
 This guide explains how to use Au's [corresponding quantity
 machinery](../../reference/corresponding_quantity.md) to set up minimum-friction interoperation
 between Au and some other C++ units library.  The main use case is for migrating either to or from
