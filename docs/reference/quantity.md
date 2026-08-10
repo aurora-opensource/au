@@ -347,11 +347,7 @@ the [unit slots](../discussion/idioms/unit-slots.md) discussion for valid choice
 produced by the conversion operation.  (This is usually the same as the input `Rep`, but can differ
 in rare cases, such as integer promotion, or Eigen expression templates.)
 
-!!! warning "Lifetime risk"
-    If the result of this operation is an Eigen expression template, it refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](./eigen.md#eval).  See
-    our [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-maybe-lazy.md"
 
 **With** a template argument, `.as<T>(unit)`, the output `Rep` will be `T`.
 
@@ -379,11 +375,7 @@ slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `uni
 produced by the conversion operation.  (This is usually the same as the input `Rep`, but can differ
 in rare cases, such as integer promotion, or Eigen expression templates.)
 
-!!! warning "Lifetime risk"
-    If the result of this operation is an Eigen expression template, it refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](./eigen.md#eval).  See
-    our [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-maybe-lazy.md"
 
 
 **With** a template argument, `.in<T>(unit)`, the output type will be `T`.

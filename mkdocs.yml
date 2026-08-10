@@ -58,6 +58,11 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.keys
   - pymdownx.smartsymbols
+  # Reusable text snippets, included via `--8<-- "file.md"`.  These live outside of `docs/` because
+  # they are not pages in their own right: they get inlined into the pages that include them.
+  - pymdownx.snippets:
+      base_path: [doc_snippets]
+      check_paths: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid

@@ -186,11 +186,7 @@ template <typename V, typename U, typename R>
 auto cross(const V &a, const Quantity<U, R> &b);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
 
 ### `normalized`
 
@@ -225,11 +221,7 @@ template <typename V, typename U, typename R>
 auto cwiseProduct(const V &a, const Quantity<U, R> &b);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
 
 ### `cwiseQuotient`
 
@@ -249,11 +241,7 @@ template <typename V, typename U, typename R>
 auto cwiseQuotient(const V &a, const Quantity<U, R> &b);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
 
 ### `cwiseAbs`
 
@@ -264,11 +252,7 @@ template <typename U, typename R>
 auto cwiseAbs(const Quantity<U, R> &q);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
 
 ### `cwiseSqrt`
 
@@ -279,11 +263,7 @@ template <typename U, typename R>
 auto cwiseSqrt(const Quantity<U, R> &q);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
 
 ## Views and accessors
 
@@ -298,11 +278,7 @@ template <typename U, typename R>
 auto transpose(const Quantity<U, R> &q);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
 
 ### `diagonal`
 
@@ -317,11 +293,7 @@ template <typename U, typename R>
 auto diagonal(const Quantity<U, R> &q, std::ptrdiff_t index);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
 
 ### `row`, `col`
 
@@ -335,11 +307,7 @@ template <typename U, typename R>
 auto col(const Quantity<U, R> &q, std::ptrdiff_t j);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
 
 ### `reverse`
 
@@ -350,11 +318,7 @@ template <typename U, typename R>
 auto reverse(const Quantity<U, R> &q);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
 
 ### `conjugate`
 
@@ -365,11 +329,7 @@ template <typename U, typename R>
 auto conjugate(const Quantity<U, R> &q);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
 
 ### `head`, `tail`, `segment`
 
@@ -397,11 +357,7 @@ template <typename U, typename R>
 auto segment(const Quantity<U, R> &q, std::ptrdiff_t start, std::ptrdiff_t n);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
 
 ### `block`
 
@@ -421,11 +377,7 @@ auto block(const Quantity<U, R> &q,
            std::ptrdiff_t cols);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
 
 ### `replicate`
 
@@ -441,11 +393,7 @@ template <typename U, typename R>
 auto replicate(const Quantity<U, R> &q, std::ptrdiff_t row_factor, std::ptrdiff_t col_factor);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
 
 ## Matrix operations
 
@@ -459,8 +407,4 @@ template <typename U, typename R>
 auto inverse(const Quantity<U, R> &q);
 ```
 
-!!! warning "Lifetime risk"
-    This operation is **lazy**: its result is an expression template, which refers to its operands
-    instead of owning its own copy of the data.  The result is valid only as long as its operands
-    are alive.  If it needs to outlive them, materialize it with [`eval()`](#eval).  See our
-    [Eigen safety guide](../discussion/concepts/eigen_safety.md) to learn more.
+--8<-- "lifetime-risk-lazy.md"
