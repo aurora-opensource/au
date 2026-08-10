@@ -245,6 +245,25 @@ in rare cases, such as integer promotion, or Eigen expression templates.)
 
 **With** a template argument, `.in<T>(unit)`, the output type will be `T`.
 
+### Keeping the same rep: `SameRep` {#same-rep}
+
+Sometimes you want to change the unit, but guarantee that the rep stays exactly what it was on the
+input --- even in the rare cases (integer promotion, Eigen expression templates) where the
+"implicit rep" form wouldn't preserve it.  You can achieve this by passing the `SameRep` tag as the
+explicit template argument.
+
+??? example "Example: forcing a same-rep, risky conversion"
+    ```cpp
+    auto point = feet_pt(uint8_t{30});
+
+    // `Rep` is `uint8_t` on both the input and the output.
+    auto result = point.as<SameRep>(inches_pt, ignore(OVERFLOW_RISK));
+    ```
+
+`p.as<SameRep>(unit)` is equivalent to `p.as<T>(unit)`, where `T` is `p`'s own `Rep`; likewise for
+`.in<SameRep>(unit)`.  This is most useful as a way to _express your intent_ to keep the rep the
+same.  It's also useful in generic code.
+
 ### Skipping risk checks: the `policy` argument {#policy-argument}
 
 Some unit conversions have too much [conversion risk](../discussion/concepts/conversion_risks.md) to
@@ -310,6 +329,9 @@ To be concrete, here are the signatures of the functions that support the policy
 
     These new versions are both more clear about their intent, and safer (because they only turn off
     the safety checks that they need to).
+
+    Note: if you were only providing `<T>` in order to keep the same rep as the input (rather than
+    to genuinely change it), use [`SameRep`](#same-rep) for `T` instead of naming the concrete type.
 
 This function performs the exact same kind of unit conversion as if the string `coerce_` were
 removed.  However, it will ignore any safety checks for overflow or truncation.

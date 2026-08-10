@@ -155,7 +155,8 @@ class QuantityPoint {
               typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
     AU_DEVICE_FUNC constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity_point<Unit>(in_impl<NewRep>(Unit{}, policy));
+        using ActualRep = detail::ResolveSameRep<Rep, NewRep>;
+        return make_quantity_point<Unit>(in_impl<ActualRep>(Unit{}, policy));
     }
 
     // `p.as<Rep>(new_unit)`, or `p.as<Rep>(new_unit, risk_policy)`
@@ -164,7 +165,8 @@ class QuantityPoint {
               typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<!IsConversionRiskPolicy<NewUnit>::value, int> = 0>
     AU_DEVICE_FUNC constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<NewRep>(u, policy));
+        using ActualRep = detail::ResolveSameRep<Rep, NewRep>;
+        return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<ActualRep>(u, policy));
     }
 
     // `p.as(new_unit)`, or `p.as(new_unit, risk_policy)`
@@ -176,8 +178,9 @@ class QuantityPoint {
     template <typename NewRep,
               typename NewUnit,
               typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
-    AU_DEVICE_FUNC constexpr NewRep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return in_impl<NewRep>(u, policy);
+    AU_DEVICE_FUNC constexpr auto in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+        using ActualRep = detail::ResolveSameRep<Rep, NewRep>;
+        return in_impl<ActualRep>(u, policy);
     }
 
     template <typename NewUnit, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>

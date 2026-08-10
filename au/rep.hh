@@ -34,6 +34,26 @@ template <typename T>
 struct IsValidRep;
 
 //
+// A tag type to pass to `.as<SameRep>(...)` or `.in<SameRep>(...)`, indicating that the result
+// should keep the same Rep as the input, rather than changing it.
+//
+// As a reminder: the "implicit rep" versions (i.e., no template parameter) _usually_ produce the
+// same rep, but not always.  The most notable counter-examples are integer promotion, and Eigen
+// expression templates.
+//
+struct SameRep;
+
+namespace detail {
+// Resolve `NewRep` to `Rep` when `NewRep` is the `SameRep` tag; otherwise, leave it untouched.
+template <typename Rep, typename NewRep>
+struct ResolveSameRepImpl : stdx::type_identity<NewRep> {};
+template <typename Rep>
+struct ResolveSameRepImpl<Rep, SameRep> : stdx::type_identity<Rep> {};
+template <typename Rep, typename NewRep>
+using ResolveSameRep = typename ResolveSameRepImpl<Rep, NewRep>::type;
+}  // namespace detail
+
+//
 // A type trait to indicate whether the product of two types is a valid rep.
 //
 // Will validly return `false` if the product does not exist.

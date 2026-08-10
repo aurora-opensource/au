@@ -20,6 +20,8 @@ namespace au {
 
 struct Zero;
 
+struct SameRep;
+
 template <typename B, std::intmax_t N>
 struct Pow;
 
