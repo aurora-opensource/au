@@ -59,7 +59,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
         "`coerce_as()` is deprecated.  Use `as()` instead, and pass a risk policy parameter.  "
         "Upgrade guide: "
         "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
-        "#coerce>")]] constexpr auto constexpr auto
+        "#coerce>")]] constexpr auto
     coerce_as(OtherUnit u) const {
         return as<T>().coerce_as(u);
     }
@@ -94,7 +94,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
         "`coerce_in()` is deprecated.  Use `in()` instead, and pass a risk policy parameter.  "
         "Upgrade guide: "
         "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
-        "#coerce>")]] constexpr auto constexpr auto
+        "#coerce>")]] constexpr auto
     coerce_in(OtherUnit u) const {
         return as<T>().coerce_in(u);
     }
