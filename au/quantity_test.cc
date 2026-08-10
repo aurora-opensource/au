@@ -464,52 +464,57 @@ TEST(Quantity, SupportsDirectConstAccessWithQuantityMakerOfEquivalentUnit) {
     //             Eq(static_cast<const void *>(&x)));
 }
 
-TEST(Quantity, CoerceAsWillForceLossyConversion) {
+TEST(Quantity, AsWithPolicyParameterWillForceLossyConversion) {
     // Truncation.
-    EXPECT_THAT(inches(30).coerce_as(feet), SameTypeAndValue(feet(2)));
+    EXPECT_THAT(inches(30).as(feet, ignore(TRUNCATION_RISK)), SameTypeAndValue(feet(2)));
 
     // Unsigned overflow.
     ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
-    EXPECT_THAT(feet(uint8_t{30}).coerce_as<uint8_t>(inches),
+    EXPECT_THAT(feet(uint8_t{30}).as<uint8_t>(inches, ignore(OVERFLOW_RISK)),
                 SameTypeAndValue(inches(uint8_t{104})));
 }
 
-TEST(Quantity, CoerceAsExplicitRepSetsOutputType) {
+TEST(Quantity, AsWithExplicitRepSetsOutputType) {
     // Coerced truncation.
-    EXPECT_THAT(inches(30).coerce_as<std::size_t>(feet), SameTypeAndValue(feet(std::size_t{2})));
+    EXPECT_THAT(inches(30).as<std::size_t>(feet, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(feet(std::size_t{2})));
 
     // Exact answer for floating point destination type.
-    EXPECT_THAT(inches(30).coerce_as<float>(feet), SameTypeAndValue(feet(2.5f)));
+    EXPECT_THAT(inches(30).as<float>(feet), SameTypeAndValue(feet(2.5f)));
 
     // Coerced unsigned overflow.
     ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
-    EXPECT_THAT(feet(30).coerce_as<uint8_t>(inches), SameTypeAndValue(inches(uint8_t{104})));
+    EXPECT_THAT(feet(30).as<uint8_t>(inches, ignore(OVERFLOW_RISK)),
+                SameTypeAndValue(inches(uint8_t{104})));
 }
 
-TEST(Quantity, CoerceInWillForceLossyConversion) {
+TEST(Quantity, InWithPolicyParameterWillForceLossyConversion) {
     // Truncation.
-    EXPECT_THAT(inches(30).coerce_in(feet), SameTypeAndValue(2));
+    EXPECT_THAT(inches(30).in(feet, ignore(TRUNCATION_RISK)), SameTypeAndValue(2));
 
     // Unsigned overflow.
     ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
-    EXPECT_THAT(feet(uint8_t{30}).coerce_in<uint8_t>(inches), SameTypeAndValue(uint8_t{104}));
+    EXPECT_THAT(feet(uint8_t{30}).in<uint8_t>(inches, ignore(OVERFLOW_RISK)),
+                SameTypeAndValue(uint8_t{104}));
 }
 
-TEST(Quantity, CoerceInExplicitRepSetsOutputType) {
+TEST(Quantity, InWithExplicitRepSetsOutputType) {
     // Coerced truncation.
-    EXPECT_THAT(inches(30).coerce_in<std::size_t>(feet), SameTypeAndValue(std::size_t{2}));
+    EXPECT_THAT(inches(30).in<std::size_t>(feet, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(std::size_t{2}));
 
     // Exact answer for floating point destination type.
-    EXPECT_THAT(inches(30).coerce_in<float>(feet), SameTypeAndValue(2.5f));
+    EXPECT_THAT(inches(30).in<float>(feet), SameTypeAndValue(2.5f));
 
     // Coerced unsigned overflow.
     ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
-    EXPECT_THAT(feet(30).coerce_in<uint8_t>(inches), SameTypeAndValue(uint8_t{104}));
+    EXPECT_THAT(feet(30).in<uint8_t>(inches, ignore(OVERFLOW_RISK)),
+                SameTypeAndValue(uint8_t{104}));
 }
 
-TEST(Quantity, CoerceAsPerformsConversionInWidestType) {
+TEST(Quantity, AsPerformsConversionInWidestType) {
     constexpr QuantityU32<Milli<Meters>> length = milli(meters)(313'150u);
-    EXPECT_THAT(length.coerce_as<uint16_t>(deci(meters)),
+    EXPECT_THAT(length.as<uint16_t>(deci(meters), ignore(TRUNCATION_RISK)),
                 SameTypeAndValue(deci(meters)(uint16_t{3131})));
 }
 
@@ -1067,20 +1072,20 @@ TEST(Quantity, UnitCastRequiresExplicitTypeForDangerousReps) {
 
     // Unsafe instances: small integral types.
     //
-    // To "test" these, try replacing `.coerce_as(...)` with `.as(...)`.  Make sure it fails with a
-    // readable `static_assert`.
-    EXPECT_THAT(feet(uint16_t{1}).coerce_as<uint16_t>(centi(feet)),
+    // To "test" these, try deleting the `ignore(OVERFLOW_RISK)` parameter.  Make sure it fails with
+    // a readable `static_assert`.
+    EXPECT_THAT(feet(uint16_t{1}).as<uint16_t>(centi(feet), ignore(OVERFLOW_RISK)),
                 SameTypeAndValue(centi(feet)(uint16_t{100})));
 }
 
 TEST(Quantity, CanCastToDifferentUnit) {
-    EXPECT_THAT(inches(6).coerce_as(feet), SameTypeAndValue(feet(0)));
+    EXPECT_THAT(inches(6).as(feet, ignore(TRUNCATION_RISK)), SameTypeAndValue(feet(0)));
     EXPECT_THAT(inches(6.).as(feet), SameTypeAndValue(feet(0.5)));
 }
 
 TEST(Quantity, QuantityCastSupportsConstexprAndConst) {
     constexpr auto eighteen_inches_double = inches(18.);
-    constexpr auto one_foot_int = eighteen_inches_double.coerce_as<int>(feet);
+    constexpr auto one_foot_int = eighteen_inches_double.as<int>(feet, ignore(TRUNCATION_RISK));
     EXPECT_THAT(one_foot_int, SameTypeAndValue(feet(1)));
 }
 
@@ -1105,7 +1110,7 @@ TEST(Quantity, QuantityCastAvoidsPreventableOverflowWhenGoingToSmallerType) {
     // Make sure we don't overflow in uint64_t.
     ASSERT_THAT(lots_of_nanoinches.in(nano(inches)), Eq(would_overflow_uint32));
 
-    EXPECT_THAT(lots_of_nanoinches.coerce_as<uint32_t>(inches),
+    EXPECT_THAT(lots_of_nanoinches.as<uint32_t>(inches, ignore(TRUNCATION_RISK | OVERFLOW_RISK)),
                 SameTypeAndValue(inches(uint32_t{9})));
 }
 
@@ -1375,8 +1380,9 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
              i <= std::numeric_limits<uint16_t>::max();
              ++i) {
             const auto original = source_units(static_cast<uint16_t>(i));
-            const auto converted = original.template coerce_as<uint16_t>(target_units);
-            const auto round_trip = converted.template coerce_as<uint16_t>(source_units);
+            const auto converted = original.template as<uint16_t>(target_units, ignore(ALL_RISKS));
+            const auto round_trip =
+                converted.template as<uint16_t>(source_units, ignore(ALL_RISKS));
 
             const bool did_value_change = (original != round_trip);
 
