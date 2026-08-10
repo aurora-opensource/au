@@ -23,7 +23,7 @@ and help you use units libraries more effectively.
   thing as "unitless"; we support dimensionless units, like `Percent`.  Here we explain how the
   library handles these situations, and avoids common pitfalls.
 
-- **[Eigen Safely](./eigen_safety.md)**.  Eigen's blazing speed famously comes at the cost of object
+- **[Eigen Safety](./eigen_safety.md)**.  Eigen's blazing speed famously comes at the cost of object
   lifetime risks.  Learn how to mitigate these risks when using Au with Eigen.
 
 - **[Overflow](./overflow.md)**.  Unit conversions risk overflow.  The degree of risk depends on
