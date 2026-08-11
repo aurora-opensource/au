@@ -1400,8 +1400,7 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
              ++i) {
             const auto original = source_units(static_cast<uint16_t>(i));
             const auto converted = original.template as<SameRep>(target_units, ignore(ALL_RISKS));
-            const auto round_trip =
-                converted.template as<SameRep>(source_units, ignore(ALL_RISKS));
+            const auto round_trip = converted.template as<SameRep>(source_units, ignore(ALL_RISKS));
 
             const bool did_value_change = (original != round_trip);
 
