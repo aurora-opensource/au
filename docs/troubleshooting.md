@@ -1085,6 +1085,29 @@ you can _force_ a particular ordering.  Choose one of the units `U`, and give it
 creating a specialization of `::au::UnitOrderTiebreaker<U>`.  As the name suggests, this will break
 the tie, and your program will compile.
 
+!!! warning "Removed: `au::detail::UnitAvoidance`"
+    We previously documented this same technique using `::au::detail::UnitAvoidance<U>`.  That was
+    our mistake: it asked you to name a type in our `detail` namespace, which is not part of our
+    public API.  Specializing `UnitAvoidance` is now a compiler error that points you here.
+
+    To migrate, change the specialized template's name, keeping the same value:
+
+    ```cpp
+    // Before (no longer supported):
+    namespace au {
+    namespace detail {
+    template <>
+    struct UnitAvoidance<::Trinches> : std::integral_constant<int, 100> {};
+    }
+    }
+
+    // After:
+    namespace au {
+    template <>
+    struct UnitOrderTiebreaker<::Trinches> : std::integral_constant<int, 100> {};
+    }
+    ```
+
 Again, this is pretty unusual.  For most normal ways of forming units, the library should
 automatically be able to define an ordering for them.  If you do hit this error, it may be worth
 pausing to double-check that you're using the library correctly.  If you've checked, and it still
