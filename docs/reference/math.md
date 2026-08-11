@@ -107,7 +107,16 @@ are additional signatures covering the case of identical inputs.  We need these 
 disambiguate our `min` or `max` implementations with respect to `std::min` and `std::max`.
 
 **Returns:** The value of the smallest (`min`) or largest (`max`) of the inputs, expressed in their
-[common type](./quantity.md#common-type).
+[common type](./quantity.md#common-type).  If the inputs compare equal, `min` returns the first
+input, and `max` returns the second --- so between them, the two functions "return" both inputs.
+(`std::min` and `std::max` both return the first input in this case, a design flaw acknowledged by
+their original author[^2].)
+
+[^2]: "It is hard for me to blame people who \[make this mistake\]: after all, they just follow the
+C++ standard specification of `max` written by me.  It took me several years to see that I was
+mistaken." --- Alexander Stepanov, [Notes on Programming], p. 63.
+
+[Notes on Programming]: https://www.stepanovpapers.com/notes.pdf
 
 !!! note
     unlike `std::min` and `std::max`, we return by **value**, not by reference.  This is because we
