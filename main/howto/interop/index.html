@@ -18,7 +18,7 @@
         <link rel="prev" href="../upgrade/">
       
       
-        <link rel="next" href="nholthaus/">
+        <link rel="next" href="eigen/">
       
       
         
@@ -691,6 +691,34 @@
     
   
     Dimensionless Units and Quantities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/eigen_safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using Eigen safely with Au
   
 
     
@@ -1507,6 +1535,34 @@
   
   
     <li class="md-nav__item">
+      <a href="eigen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eigen Interoperation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="nholthaus/" class="md-nav__link">
         
   
@@ -1689,6 +1745,34 @@
     
   
     Corresponding Quantity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/eigen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eigen Compatibility
   
 
     
@@ -1905,6 +1989,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/rep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Representation types (&ldquo;Rep&rdquo;)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/unit/" class="md-nav__link">
         
   
@@ -1997,10 +2109,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_15" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_17" >
         
           
-          <label class="md-nav__link" for="__nav_9_15" id="__nav_9_15_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9_17" id="__nav_9_17_label" tabindex="0">
             
   
   
@@ -2018,8 +2130,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_15_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_15">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_17">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2482,6 +2594,13 @@
 
 
 <h1 id="inter-library-interoperation">Inter-library Interoperation<a class="headerlink" href="#inter-library-interoperation" title="Permanent link">&para;</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This guide covers interoperating with other <em>units</em> libraries.  If you&rsquo;re looking for how to
+use <a href="https://eigen.tuxfamily.org/">Eigen</a> types with Au, that works differently &mdash; Eigen types
+act as the underlying <em>storage</em> for quantities, rather than as equivalent types &mdash; and it has
+<a href="eigen/">its own guide</a>.</p>
+</div>
 <p>This guide explains how to use Au&rsquo;s <a href="../../reference/corresponding_quantity/">corresponding quantity
 machinery</a> to set up minimum-friction interoperation
 between Au and some other C++ units library.  The main use case is for migrating either to or from
@@ -2796,13 +2915,13 @@ of using shims.</p>
         
         
           
-          <a href="nholthaus/" class="md-footer__link md-footer__link--next" aria-label="Next: nholthaus/units Interoperation">
+          <a href="eigen/" class="md-footer__link md-footer__link--next" aria-label="Next: Eigen Interoperation">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                nholthaus/units Interoperation
+                Eigen Interoperation
               </div>
             </div>
             <div class="md-footer__button md-icon">

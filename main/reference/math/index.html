@@ -711,6 +711,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../discussion/concepts/eigen_safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using Eigen safely with Au
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../discussion/concepts/overflow/" class="md-nav__link">
         
   
@@ -1406,6 +1434,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../howto/interop/eigen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eigen Interoperation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../howto/interop/nholthaus/" class="md-nav__link">
         
   
@@ -1590,6 +1646,34 @@
     
   
     Corresponding Quantity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../eigen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eigen Compatibility
   
 
     
@@ -2309,6 +2393,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../rep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Representation types (&ldquo;Rep&rdquo;)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../unit/" class="md-nav__link">
         
   
@@ -2401,10 +2513,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_15" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_17" >
         
           
-          <label class="md-nav__link" for="__nav_9_15" id="__nav_9_15_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9_17" id="__nav_9_17_label" tabindex="0">
             
   
   
@@ -2422,8 +2534,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_15_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_15">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_17">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2965,7 +3077,10 @@ support both <code>Quantity</code> and <code>QuantityPoint</code> inputs.</p>
 <a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="k">auto</span><span class="w"> </span><span class="n">max</span><span class="p">(</span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U1</span><span class="p">,</span><span class="w"> </span><span class="n">R1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="n">QuantityPoint</span><span class="o">&lt;</span><span class="n">U2</span><span class="p">,</span><span class="w"> </span><span class="n">R2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p2</span><span class="p">);</span>
 </code></pre></div>
 <p><strong>Returns:</strong> The value of the smallest (<code>min</code>) or largest (<code>max</code>) of the inputs, expressed in their
-<a href="../quantity/#common-type">common type</a>.</p>
+<a href="../quantity/#common-type">common type</a>.  If the inputs compare equal, <code>min</code> returns the first
+input, and <code>max</code> returns the second &mdash; so between them, the two functions &ldquo;return&rdquo; both inputs.
+(<code>std::min</code> and <code>std::max</code> both return the first input in this case, a design flaw acknowledged by
+their original author<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>.)</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>unlike <code>std::min</code> and <code>std::max</code>, we return by <strong>value</strong>, not by reference.  This is because we
@@ -3999,6 +4114,11 @@ of <code>U1</code> and <code>U2</code>, and <code>R</code> is the common type of
 <p>These signatures are for purposes of illustration, not completeness.  In the real code, there
 are additional signatures covering the case of identical inputs.  We need these in order to
 disambiguate our <code>min</code> or <code>max</code> implementations with respect to <code>std::min</code> and <code>std::max</code>.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>&ldquo;It is hard for me to blame people who [make this mistake]: after all, they just follow the
+C++ standard specification of <code>max</code> written by me.  It took me several years to see that I was
+mistaken.&rdquo; &mdash; Alexander Stepanov, <a href="https://www.stepanovpapers.com/notes.pdf">Notes on Programming</a>, p. 63.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

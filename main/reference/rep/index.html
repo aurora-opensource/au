@@ -12,28 +12,28 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/detail/dimension/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/rep/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../quantity_point/">
       
       
-        <link rel="next" href="../monovalue_types/">
+        <link rel="next" href="../unit/">
       
       
         
       
       
-      <link rel="icon" href="../../../assets/favicon.ico">
+      <link rel="icon" href="../../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>Dimension - The Au units library</title>
+        <title>Representation types (“Rep”) - The Au units library</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
@@ -52,9 +52,9 @@
       
     
     
-      <link rel="stylesheet" href="../../../tweaks.css">
+      <link rel="stylesheet" href="../../tweaks.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dimension" class="md-skip">
+        <a href="#representation-types-rep" class="md-skip">
           Skip to content
         </a>
       
@@ -92,9 +92,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../../assets/au-logo.png" alt="logo">
+  <img src="../../assets/au-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Dimension
+              Representation types (&ldquo;Rep&rdquo;)
             
           </span>
         </div>
@@ -203,9 +203,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../../assets/au-logo.png" alt="logo">
+  <img src="../../assets/au-logo.png" alt="logo">
 
     </a>
     The Au units library
@@ -232,7 +232,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -259,7 +259,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../develop/" class="md-nav__link">
+      <a href="../../develop/" class="md-nav__link">
         
   
   
@@ -286,7 +286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../install/" class="md-nav__link">
+      <a href="../../install/" class="md-nav__link">
         
   
   
@@ -313,7 +313,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../supported-compilers/" class="md-nav__link">
+      <a href="../../supported-compilers/" class="md-nav__link">
         
   
   
@@ -340,7 +340,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../troubleshooting/" class="md-nav__link">
+      <a href="../../troubleshooting/" class="md-nav__link">
         
   
   
@@ -414,7 +414,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../alternatives/" class="md-nav__link">
+      <a href="../../alternatives/" class="md-nav__link">
         
   
   
@@ -496,7 +496,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/" class="md-nav__link">
+      <a href="../../discussion/" class="md-nav__link">
         
   
   
@@ -571,7 +571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/" class="md-nav__link">
+      <a href="../../discussion/concepts/" class="md-nav__link">
         
   
   
@@ -599,7 +599,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/arithmetic/" class="md-nav__link">
+      <a href="../../discussion/concepts/arithmetic/" class="md-nav__link">
         
   
   
@@ -627,7 +627,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/common_unit/" class="md-nav__link">
+      <a href="../../discussion/concepts/common_unit/" class="md-nav__link">
         
   
   
@@ -655,7 +655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/conversion_risks/" class="md-nav__link">
+      <a href="../../discussion/concepts/conversion_risks/" class="md-nav__link">
         
   
   
@@ -683,7 +683,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/dimensionless/" class="md-nav__link">
+      <a href="../../discussion/concepts/dimensionless/" class="md-nav__link">
         
   
   
@@ -711,7 +711,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/eigen_safety/" class="md-nav__link">
+      <a href="../../discussion/concepts/eigen_safety/" class="md-nav__link">
         
   
   
@@ -739,7 +739,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/overflow/" class="md-nav__link">
+      <a href="../../discussion/concepts/overflow/" class="md-nav__link">
         
   
   
@@ -767,7 +767,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/quantity_point/" class="md-nav__link">
+      <a href="../../discussion/concepts/quantity_point/" class="md-nav__link">
         
   
   
@@ -795,7 +795,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/truncation/" class="md-nav__link">
+      <a href="../../discussion/concepts/truncation/" class="md-nav__link">
         
   
   
@@ -823,7 +823,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/zero/" class="md-nav__link">
+      <a href="../../discussion/concepts/zero/" class="md-nav__link">
         
   
   
@@ -906,7 +906,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/idioms/" class="md-nav__link">
+      <a href="../../discussion/idioms/" class="md-nav__link">
         
   
   
@@ -934,7 +934,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/idioms/unit-slots/" class="md-nav__link">
+      <a href="../../discussion/idioms/unit-slots/" class="md-nav__link">
         
   
   
@@ -1017,7 +1017,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/implementation/" class="md-nav__link">
+      <a href="../../discussion/implementation/" class="md-nav__link">
         
   
   
@@ -1045,7 +1045,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/implementation/applying_magnitudes/" class="md-nav__link">
+      <a href="../../discussion/implementation/applying_magnitudes/" class="md-nav__link">
         
   
   
@@ -1073,7 +1073,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/implementation/vector_space/" class="md-nav__link">
+      <a href="../../discussion/implementation/vector_space/" class="md-nav__link">
         
   
   
@@ -1163,7 +1163,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/" class="md-nav__link">
+      <a href="../../howto/" class="md-nav__link">
         
   
   
@@ -1191,7 +1191,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/forward-declarations/" class="md-nav__link">
+      <a href="../../howto/forward-declarations/" class="md-nav__link">
         
   
   
@@ -1219,7 +1219,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/new-constants/" class="md-nav__link">
+      <a href="../../howto/new-constants/" class="md-nav__link">
         
   
   
@@ -1247,7 +1247,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/new-dimensions/" class="md-nav__link">
+      <a href="../../howto/new-dimensions/" class="md-nav__link">
         
   
   
@@ -1275,7 +1275,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/new-units/" class="md-nav__link">
+      <a href="../../howto/new-units/" class="md-nav__link">
         
   
   
@@ -1303,7 +1303,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/quantity-template-parameters/" class="md-nav__link">
+      <a href="../../howto/quantity-template-parameters/" class="md-nav__link">
         
   
   
@@ -1331,7 +1331,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/upgrade/" class="md-nav__link">
+      <a href="../../howto/upgrade/" class="md-nav__link">
         
   
   
@@ -1406,7 +1406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/interop/" class="md-nav__link">
+      <a href="../../howto/interop/" class="md-nav__link">
         
   
   
@@ -1434,7 +1434,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/interop/eigen/" class="md-nav__link">
+      <a href="../../howto/interop/eigen/" class="md-nav__link">
         
   
   
@@ -1462,7 +1462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../howto/interop/nholthaus/" class="md-nav__link">
+      <a href="../../howto/interop/nholthaus/" class="md-nav__link">
         
   
   
@@ -1554,7 +1554,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   
@@ -1582,7 +1582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../constant/" class="md-nav__link">
+      <a href="../constant/" class="md-nav__link">
         
   
   
@@ -1610,7 +1610,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../conversion_risk_policies/" class="md-nav__link">
+      <a href="../conversion_risk_policies/" class="md-nav__link">
         
   
   
@@ -1638,7 +1638,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../corresponding_quantity/" class="md-nav__link">
+      <a href="../corresponding_quantity/" class="md-nav__link">
         
   
   
@@ -1666,7 +1666,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../eigen/" class="md-nav__link">
+      <a href="../eigen/" class="md-nav__link">
         
   
   
@@ -1694,7 +1694,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../format/" class="md-nav__link">
+      <a href="../format/" class="md-nav__link">
         
   
   
@@ -1722,7 +1722,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../magnitude/" class="md-nav__link">
+      <a href="../magnitude/" class="md-nav__link">
         
   
   
@@ -1750,7 +1750,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../math/" class="md-nav__link">
+      <a href="../math/" class="md-nav__link">
         
   
   
@@ -1778,7 +1778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../powers/" class="md-nav__link">
+      <a href="../powers/" class="md-nav__link">
         
   
   
@@ -1806,7 +1806,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prefix/" class="md-nav__link">
+      <a href="../prefix/" class="md-nav__link">
         
   
   
@@ -1834,7 +1834,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../quantity/" class="md-nav__link">
+      <a href="../quantity/" class="md-nav__link">
         
   
   
@@ -1862,7 +1862,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../quantity_point/" class="md-nav__link">
+      <a href="../quantity_point/" class="md-nav__link">
         
   
   
@@ -1870,195 +1870,6 @@
     
   
     QuantityPoint
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../rep/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Representation types (&ldquo;Rep&rdquo;)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../unit/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Unit
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../version/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Version macros
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../zero/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Zero
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_17" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_9_17" id="__nav_9_17_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Detail
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_17_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_9_17">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Detail
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Implementation Details
   
 
     
@@ -2095,7 +1906,7 @@
   <span class="md-ellipsis">
     
   
-    Dimension
+    Representation types (&ldquo;Rep&rdquo;)
   
 
     
@@ -2113,7 +1924,7 @@
   <span class="md-ellipsis">
     
   
-    Dimension
+    Representation types (&ldquo;Rep&rdquo;)
   
 
     
@@ -2139,22 +1950,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#operations" class="md-nav__link">
+  <a href="#scalar-of" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Operations
+        ScalarOf / ScalarOfTrait
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Operations">
+    <nav class="md-nav" aria-label="ScalarOf / ScalarOfTrait">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#multiplication" class="md-nav__link">
+  <a href="#automatic-detection" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Multiplication
+        Automatic detection
       
     </span>
   </a>
@@ -2162,10 +1973,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#division" class="md-nav__link">
+  <a href="#specializing-scalaroftrait" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Division
+        Specializing ScalarOfTrait
       
     </span>
   </a>
@@ -2173,32 +1984,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#powers" class="md-nav__link">
+  <a href="#timeline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Powers
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#roots" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Roots
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#helpers-for-powers-and-roots" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Helpers for powers and roots
+        Timeline
       
     </span>
   </a>
@@ -2207,17 +1996,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#included-base-dimensions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Included base dimensions
-      
-    </span>
-  </a>
   
 </li>
       
@@ -2237,7 +2015,194 @@
   
   
     <li class="md-nav__item">
-      <a href="../monovalue_types/" class="md-nav__link">
+      <a href="../unit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../version/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Version macros
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../zero/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zero
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_9_17" id="__nav_9_17_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detail
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_17">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Detail
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation Details
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/dimension/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dimension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/monovalue_types/" class="md-nav__link">
         
   
   
@@ -2265,7 +2230,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../packs/" class="md-nav__link">
+      <a href="../detail/packs/" class="md-nav__link">
         
   
   
@@ -2355,7 +2320,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/" class="md-nav__link">
+      <a href="../../tutorial/" class="md-nav__link">
         
   
   
@@ -2383,7 +2348,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/101-quantity-makers/" class="md-nav__link">
+      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
         
   
   
@@ -2411,7 +2376,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/102-api-types/" class="md-nav__link">
+      <a href="../../tutorial/102-api-types/" class="md-nav__link">
         
   
   
@@ -2439,7 +2404,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/103-unit-conversions/" class="md-nav__link">
+      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
         
   
   
@@ -2514,7 +2479,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
         
   
   
@@ -2542,7 +2507,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/exercise/102-api-types/" class="md-nav__link">
+      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
         
   
   
@@ -2570,7 +2535,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
         
   
   
@@ -2626,106 +2591,117 @@
   
 
 
-<h1 id="dimension">Dimension<a class="headerlink" href="#dimension" title="Permanent link">&para;</a></h1>
-<p><code>Dimension</code> is a family of <a href="../monovalue_types/">monovalue types</a> representing equivalence classes
-of units.  Each class defines a collection of units which can be meaningfully added, subtracted, and
-compared with each other.  Familiar examples of <code>Dimension</code> include length, time, temperature,
-speed, and so on.</p>
-<p>Dimensions form a <a href="../../../discussion/implementation/vector_space/">vector space</a>.  We choose
-certain &ldquo;base dimensions&rdquo; as the basis vectors for this space.  As with other vector spaces in our
-library, <code>Dimension</code> values can be multiplied, divided, and raised to (rational) powers, and this
-arithmetic always takes place at compile time.</p>
-<p><em><code>Dimension</code> is an implementation detail.</em>  Most end users will never name dimensions in their code,
-and never see them in their compiler errors.  Instead, users will work with <a href="../../unit/"><em>units</em></a>,
-which each carry their own dimension information.  The main situation where an end user would use
-<code>Dimension</code> directly is to define the <em>first</em> unit for a novel <em>base</em> dimension.</p>
-<h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
-<h3 id="multiplication">Multiplication<a class="headerlink" href="#multiplication" title="Permanent link">&para;</a></h3>
-<p><strong>Result:</strong> The product of two <code>Dimension</code> values.</p>
+<h1 id="representation-types-rep">Representation types (&ldquo;Rep&rdquo;)<a class="headerlink" href="#representation-types-rep" title="Permanent link">&para;</a></h1>
+<p>The <em>rep</em> of a <code>Quantity&lt;U, R&gt;</code> is its second template parameter, <code>R</code>: the underlying raw numeric
+type which holds the wrapped value.  Most reps are arithmetic types such as <code>double</code> or <code>int32_t</code>,
+but Au also supports other numeric types: <code>std::complex</code>, Eigen vectors and matrices, and other
+&ldquo;custom&rdquo; reps.</p>
+<p>Full documentation of the requirements for a valid rep is still in progress (see <a href="https://github.com/aurora-opensource/au/issues/52">#52</a>).  This page
+documents the traits that Au provides for working with reps.</p>
+<h2 id="scalar-of"><code>ScalarOf</code> / <code>ScalarOfTrait</code><a class="headerlink" href="#scalar-of" title="Permanent link">&para;</a></h2>
+<p><code>ScalarOf&lt;T&gt;</code> is the <em>scalar type</em> that the rep <code>T</code> is &ldquo;based on&rdquo;.  For a scalar rep, this is simply
+the rep itself.  For a &ldquo;compound&rdquo; rep &mdash; a complex number, a vector, a matrix &mdash; it&rsquo;s the type of
+the underlying components.</p>
+<p>The defining property of the scalar type is that it supports ordinary numeric comparisons, and has
+a meaningful notion of &ldquo;min&rdquo; and &ldquo;max&rdquo; values.  Au&rsquo;s <a href="../../discussion/concepts/conversion_risks/">conversion
+risk</a> checks are built on these properties, so
+<code>ScalarOf&lt;T&gt;</code> is what makes the overflow and truncation safety checks work for compound reps.</p>
 <p><strong>Syntax:</strong></p>
 <ul>
-<li>For <em>types</em> <code>D1</code> and <code>D2</code>:<ul>
-<li><code>DimProduct&lt;D1, D2&gt;</code></li>
+<li><code>ScalarOf&lt;T&gt;</code> is an alias for <code>typename ScalarOfTrait&lt;T&gt;::type</code>.</li>
+<li><code>ScalarOfTrait&lt;T&gt;</code> is the customization point: specialize it for types that Au can&rsquo;t handle
+  automatically.</li>
 </ul>
-</li>
-<li>For <em>instances</em> <code>d1</code> and <code>d2</code>:<ul>
-<li><code>d1 * d2</code></li>
-</ul>
-</li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Older releases used <code>DimProductT</code> (with the <code>T</code> suffix) instead of <code>DimProduct</code>.  Prefer
-<code>DimProduct</code>.  <code>DimProductT</code> is deprecated, and will be removed in future releases.</p>
+<h3 id="automatic-detection">Automatic detection<a class="headerlink" href="#automatic-detection" title="Permanent link">&para;</a></h3>
+<p>For most types, Au can detect the scalar type automatically, with no user action required.  We apply
+a prioritized sequence of probes, where the first matching probe wins:</p>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Probe</th>
+<th>Result</th>
+<th>Convention served</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>std::is_arithmetic&lt;T&gt;</code></td>
+<td><code>T</code> itself</td>
+<td>Arithmetic types</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>T::Scalar</code> member</td>
+<td><code>T::Scalar</code></td>
+<td>Eigen</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>T::value_type</code> member</td>
+<td><code>T::value_type</code></td>
+<td>STL containers</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>.real()</code> member function</td>
+<td><code>decltype(t.real())</code></td>
+<td><code>std::complex</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td><em>(none matched)</em></td>
+<td>No result; <code>ScalarOf&lt;T&gt;</code> does not exist</td>
+<td>(hard compiler error)</td>
+</tr>
+</tbody>
+</table>
+<p>Every probe tests an <em>intrinsic</em> property of <code>T</code>, so the answer is guaranteed to be the same in
+every translation unit.  This makes the automatic detection safe with respect to the One Definition
+Rule (ODR).</p>
+<h3 id="specializing-scalaroftrait">Specializing <code>ScalarOfTrait</code><a class="headerlink" href="#specializing-scalaroftrait" title="Permanent link">&para;</a></h3>
+<p>If none of the probes match your type, you must specialize <code>ScalarOfTrait</code> for it.  For example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">au</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;&gt;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">struct</span><span class="w"> </span><span class="nc">ScalarOfTrait</span><span class="o">&lt;</span><span class="n">my</span><span class="o">::</span><span class="n">UnusualNumber</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">double</span><span class="p">;</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">};</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span><span class="w">  </span><span class="c1">// namespace au</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Avoiding ODR violations</p>
+<p>It is critical to <strong>ensure that <code>ScalarOfTrait&lt;T&gt;</code> has only one implementation for every type
+<code>T</code></strong>.  This is called the &ldquo;One Definition Rule&rdquo; (ODR), and if you violate it, your program&rsquo;s
+behavior will be undefined.</p>
+<p>To avoid this problem, go through these steps in order until you find the first one that matches
+your situation.</p>
+<ol>
+<li>First, if the default <code>ScalarOfTrait</code> implementation works (see &ldquo;Automatic detection&rdquo; above),
+   then just use that.  <em>Never</em> specialize <code>ScalarOfTrait&lt;T&gt;</code> unless it gives a hard compiler
+   error.</li>
+<li>If it <em>does</em> give an error, that means you need the specialization.  <code>ScalarOfTrait</code> is
+   highly greppable, so grep your codebase to see whether there&rsquo;s an existing specialization for
+   your specific type.  If there is, then include that existing file.</li>
+<li>If neither of the above worked, then create the specialization, and put it in a file that
+   everyone can include.</li>
+</ol>
 </div>
-<h3 id="division">Division<a class="headerlink" href="#division" title="Permanent link">&para;</a></h3>
-<p><strong>Result:</strong> The quotient of two <code>Dimension</code> values.</p>
-<p><strong>Syntax:</strong></p>
+<h3 id="timeline">Timeline<a class="headerlink" href="#timeline" title="Permanent link">&para;</a></h3>
+<p>To provide a soft landing, <code>ScalarOf</code> support rolls out over two releases.</p>
 <ul>
-<li>For <em>types</em> <code>D1</code> and <code>D2</code>:<ul>
-<li><code>DimQuotient&lt;D1, D2&gt;</code></li>
-</ul>
+<li>
+<p>0.6.0 will be the first release that <em>provides</em> <code>ScalarOfTrait</code>, but it will not yet be <em>required</em>
+  (Au will fall back to the old machinery).</p>
 </li>
-<li>For <em>instances</em> <code>d1</code> and <code>d2</code>:<ul>
-<li><code>d1 / d2</code></li>
-</ul>
-</li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Older releases used <code>DimQuotientT</code> (with the <code>T</code> suffix) instead of <code>DimQuotient</code>.  Prefer
-<code>DimQuotient</code>.  <code>DimQuotientT</code> is deprecated, and will be removed in future releases.</p>
-</div>
-<h3 id="powers">Powers<a class="headerlink" href="#powers" title="Permanent link">&para;</a></h3>
-<p><strong>Result:</strong> A <code>Dimension</code> raised to an integral power.</p>
-<p><strong>Syntax:</strong></p>
-<ul>
-<li>For a <em>type</em> <code>D</code>, and an integral power <code>N</code>:<ul>
-<li><code>DimPower&lt;D, N&gt;</code></li>
-</ul>
-</li>
-<li>For an <em>instance</em> <code>d</code>, and an integral power <code>N</code>:<ul>
-<li><code>pow&lt;N&gt;(d)</code></li>
-</ul>
+<li>
+<p>0.7.0 will be the first release that <em>requires</em> <code>ScalarOfTrait</code> to exist for every rep.</p>
 </li>
 </ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Older releases used <code>DimPowerT</code> (with the <code>T</code> suffix) instead of <code>DimPower</code>.  Prefer
-<code>DimPower</code>.  <code>DimPowerT</code> is deprecated, and will be removed in future releases.</p>
-</div>
-<h3 id="roots">Roots<a class="headerlink" href="#roots" title="Permanent link">&para;</a></h3>
-<p><strong>Result:</strong> An integral root of a <code>Dimension</code>.</p>
-<p><strong>Syntax:</strong></p>
-<ul>
-<li>For a <em>type</em> <code>D</code>, and an integral root <code>N</code>:<ul>
-<li><code>DimPower&lt;D, 1, N&gt;</code> (because the <span class="arithmatex"><span class="MathJax_Preview">N^\text{th}</span><script type="math/tex">N^\text{th}</script></span> root is equivalent to the
-  <span class="arithmatex"><span class="MathJax_Preview">\left(\frac{1}{N}\right)^\text{th}</span><script type="math/tex">\left(\frac{1}{N}\right)^\text{th}</script></span> power)</li>
-</ul>
-</li>
-<li>For an <em>instance</em> <code>d</code>, and an integral root <code>N</code>:<ul>
-<li><code>root&lt;N&gt;(d)</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="helpers-for-powers-and-roots">Helpers for powers and roots<a class="headerlink" href="#helpers-for-powers-and-roots" title="Permanent link">&para;</a></h3>
-<p>Dimensions support all of the <a href="../../powers/#helpers">power helpers</a>.  So, for example, for
-a dimension instance <code>d</code>, you can write <code>sqrt(d)</code> as a more readable alternative to <code>root&lt;2&gt;(d)</code>.</p>
-<h2 id="included-base-dimensions">Included base dimensions<a class="headerlink" href="#included-base-dimensions" title="Permanent link">&para;</a></h2>
-<p>Au includes the following base dimensions:</p>
-<ul>
-<li><code>Length</code></li>
-<li><code>Mass</code></li>
-<li><code>Time</code></li>
-<li><code>Current</code></li>
-<li><code>Temperature</code></li>
-<li><code>Angle</code></li>
-<li><code>Information</code></li>
-<li><code>AmountOfSubstance</code></li>
-<li><code>LuminousIntensity</code></li>
-</ul>
-<p>These comprise each of the seven base dimensions in the SI, with the addition of <code>Angle</code> and
-<code>Information</code>.</p>
+<p>The upshot is that if you have a custom rep, and it is not covered under automatic detection, then
+you should specialize <code>ScalarOfTrait</code> now, to avoid breakages when 0.7.0 is released.</p>
 
 
 
@@ -2755,7 +2731,7 @@ a dimension instance <code>d</code>, you can write <code>sqrt(d)</code> as a mor
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Implementation Details">
+          <a href="../quantity_point/" class="md-footer__link md-footer__link--prev" aria-label="Previous: QuantityPoint">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2765,20 +2741,20 @@ a dimension instance <code>d</code>, you can write <code>sqrt(d)</code> as a mor
                 Previous
               </span>
               <div class="md-ellipsis">
-                Implementation Details
+                QuantityPoint
               </div>
             </div>
           </a>
         
         
           
-          <a href="../monovalue_types/" class="md-footer__link md-footer__link--next" aria-label="Next: Monovalue Types">
+          <a href="../unit/" class="md-footer__link md-footer__link--next" aria-label="Next: Unit">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Monovalue Types
+                Unit
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -2819,10 +2795,10 @@ a dimension instance <code>d</code>, you can write <code>sqrt(d)</code> as a mor
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       

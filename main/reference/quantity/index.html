@@ -711,6 +711,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../discussion/concepts/eigen_safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using Eigen safely with Au
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../discussion/concepts/overflow/" class="md-nav__link">
         
   
@@ -1406,6 +1434,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../howto/interop/eigen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eigen Interoperation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../howto/interop/nholthaus/" class="md-nav__link">
         
   
@@ -1590,6 +1646,34 @@
     
   
     Corresponding Quantity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../eigen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eigen Compatibility
   
 
     
@@ -1931,6 +2015,45 @@
     <span class="md-ellipsis">
       
         By reference: .data_in(unit)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#element-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Element access (vector and matrix reps)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Element access (vector and matrix reps)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#element-read" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading: operator[](i), operator()(i, j, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutable-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Writing: .mutable_view()
       
     </span>
   </a>
@@ -2413,6 +2536,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../rep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Representation types (&ldquo;Rep&rdquo;)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../unit/" class="md-nav__link">
         
   
@@ -2505,10 +2656,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_15" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_17" >
         
           
-          <label class="md-nav__link" for="__nav_9_15" id="__nav_9_15_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9_17" id="__nav_9_17_label" tabindex="0">
             
   
   
@@ -2526,8 +2677,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_15_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_15">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_17">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -3233,6 +3384,50 @@ slots</a> discussion for valid choices for <code>unit</code>.</p>
 <p>Since <code>length</code> is not <code>const</code>, the reference returned by <code>.data_in()</code> will be mutable, and we
 can treat it like any other <code>int</code> lvalue.  The above would result in <code>inches(61)</code>.</p>
 </details>
+<h2 id="element-access">Element access (vector and matrix reps)<a class="headerlink" href="#element-access" title="Permanent link">&para;</a></h2>
+<p>Some reps hold more than one element: for example, an Eigen vector or matrix.  When the rep supports
+element access, so does the <code>Quantity</code>.  (For reps that don&rsquo;t &mdash; including all arithmetic types &mdash;
+these operators simply don&rsquo;t exist.)</p>
+<h3 id="element-read">Reading: <code>operator[](i)</code>, <code>operator()(i, j, ...)</code><a class="headerlink" href="#element-read" title="Permanent link">&para;</a></h3>
+<p>These operators delegate to the corresponding operator on the underlying rep.  The result is
+a <code>Quantity</code> of the same unit, whose rep is the <em>element</em> type, and which is returned <strong>by value</strong>.</p>
+<details class="example">
+<summary>Example: reading elements of an Eigen-backed <code>Quantity</code></summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">displacement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0</span><span class="p">});</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">displacement</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span><span class="w">  </span><span class="c1">// `meters(1.0)`, a `Quantity&lt;Meters, double&gt;`</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">displacement</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span><span class="w">  </span><span class="c1">// `meters(3.0)`, a `Quantity&lt;Meters, double&gt;`</span>
+</code></pre></div>
+</details>
+<p>Because the result is a <em>new</em> <code>Quantity</code>, returned by value, writing to it would silently modify
+a temporary &mdash; so we make sure this does not compile:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">displacement</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="mf">4.0</span><span class="p">);</span><span class="w">  </span><span class="c1">// Compiler error (prevents unsafe usage)</span>
+</code></pre></div>
+<p>We achieve this by making every assignment operator on <code>Quantity</code> (<code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>)
+apply to <em>lvalues only</em>.  To write to an individual element, use
+<a href="#mutable-view"><code>.mutable_view()</code></a>, described next.</p>
+<h3 id="mutable-view">Writing: <code>.mutable_view()</code><a class="headerlink" href="#mutable-view" title="Permanent link">&para;</a></h3>
+<p>This function returns a <code>Quantity</code> whose rep is a <em>mutable view</em> of the original quantity&rsquo;s rep.
+Element access on this view produces assignable elements which write through to the original
+quantity, with full unit safety.</p>
+<details class="example">
+<summary>Example: writing elements of an Eigen-backed <code>Quantity</code></summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">displacement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0</span><span class="p">});</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">displacement</span><span class="p">.</span><span class="n">mutable_view</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="mf">4.0</span><span class="p">);</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="n">displacement</span><span class="p">.</span><span class="n">mutable_view</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">centi</span><span class="p">(</span><span class="n">meters</span><span class="p">)(</span><span class="mf">500.0</span><span class="p">);</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="c1">// `displacement` is now `meters(Eigen::Vector3d{4.0, 5.0, 3.0})`.</span>
+</code></pre></div>
+<p>Note that the second assignment performed a unit conversion, using all of the usual safety
+checks for <a href="#implicit-from-quantity">implicit conversions</a>.</p>
+</details>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The result of <code>.mutable_view()</code> refers to the quantity it was called on.  It is only valid as
+long as that quantity is alive.  We recommend <strong>never storing it in a variable</strong>: just call
+<code>.mutable_view()</code> inline and use it immediately, as in the example above.</p>
+</div>
 <h2 id="performing-unit-conversions">Performing unit conversions<a class="headerlink" href="#performing-unit-conversions" title="Permanent link">&para;</a></h2>
 <p>We have two methods for performing unit conversions.  They have identical APIs, but their names are
 different.  <code>as</code> returns another <code>Quantity</code>, but <code>in</code> exits the library and returns a raw number.</p>
@@ -3242,7 +3437,7 @@ the <a href="../../discussion/idioms/unit-slots/">unit slots</a> discussion for 
 <details class="example">
 <summary>Example: converting <code>feet(3)</code> to <code>inches</code></summary>
 <p>Consider this <code>Quantity&lt;Feet, int&gt;</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
 </code></pre></div>
 <p>Then <code>length.as(inches)</code> re-expresses this quantity in units of inches.  Specifically, it
 returns a <code>Quantity&lt;Inches, int&gt;</code>, which is equal to <code>inches(36)</code>.</p>
@@ -3253,6 +3448,13 @@ mainly useful in generic code where the unit type may be all you have.</p>
 <p><strong>Without</strong> a template argument, <code>.as(unit)</code>, the output <code>Rep</code> is whatever type would naturally be
 produced by the conversion operation.  (This is usually the same as the input <code>Rep</code>, but can differ
 in rare cases, such as integer promotion, or Eigen expression templates.)</p>
+<div class="admonition warning">
+<p class="admonition-title">Lifetime risk</p>
+<p>If the result of this operation is an Eigen expression template, it refers to its operands
+instead of owning its own copy of the data.  The result is valid only as long as its operands
+are alive.  If it needs to outlive them, materialize it with <a href="../eigen/#eval"><code>eval()</code></a>.  See
+our <a href="../../discussion/concepts/eigen_safety/">Eigen safety guide</a> to learn more.</p>
+</div>
 <p><strong>With</strong> a template argument, <code>.as&lt;T&gt;(unit)</code>, the output <code>Rep</code> will be <code>T</code>.</p>
 <h3 id="inunit-intunit"><code>.in(unit)</code>, <code>.in&lt;T&gt;(unit)</code><a class="headerlink" href="#inunit-intunit" title="Permanent link">&para;</a></h3>
 <p>This function produces the value of the <code>Quantity</code>, re-expressed in the new unit.  <code>unit</code> can be
@@ -3261,7 +3463,7 @@ slots</a> discussion for valid choices for <code>unit</code>.</p>
 <details class="example">
 <summary>Example: getting the value of <code>feet(3)</code> in <code>inches</code></summary>
 <p>Consider this <code>Quantity&lt;Feet, int&gt;</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
 </code></pre></div>
 <p>Then <code>length.in(inches)</code> converts this quantity to inches, and returns the value, <code>36</code>, as an
 <code>int</code>.</p>
@@ -3272,6 +3474,13 @@ mainly useful in generic code where the unit type may be all you have.</p>
 <p><strong>Without</strong> a template argument, <code>.in(unit)</code>, the output <code>Rep</code> is whatever type would naturally be
 produced by the conversion operation.  (This is usually the same as the input <code>Rep</code>, but can differ
 in rare cases, such as integer promotion, or Eigen expression templates.)</p>
+<div class="admonition warning">
+<p class="admonition-title">Lifetime risk</p>
+<p>If the result of this operation is an Eigen expression template, it refers to its operands
+instead of owning its own copy of the data.  The result is valid only as long as its operands
+are alive.  If it needs to outlive them, materialize it with <a href="../eigen/#eval"><code>eval()</code></a>.  See
+our <a href="../../discussion/concepts/eigen_safety/">Eigen safety guide</a> to learn more.</p>
+</div>
 <p><strong>With</strong> a template argument, <code>.in&lt;T&gt;(unit)</code>, the output type will be <code>T</code>.</p>
 <h3 id="policy-argument">Skipping risk checks: the <code>policy</code> argument<a class="headerlink" href="#policy-argument" title="Permanent link">&para;</a></h3>
 <p>Some unit conversions have too much <a href="../../discussion/concepts/conversion_risks/">conversion risk</a> to
@@ -3429,15 +3638,15 @@ emit a runtime instruction to check the lower bound of the target.</p>
 <li>
 <p><code>will_conversion_overflow(q, target_unit)</code> returns whether <code>q.as(target_unit)</code>, or
   <code>q.in(target_unit)</code>, would overflow.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">will_conversion_overflow</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">will_conversion_overflow</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
 </code></pre></div>
 </li>
 <li>
 <p><code>will_conversion_overflow&lt;T&gt;(q, target_unit)</code> returns whether <code>q.as&lt;T&gt;(target_unit)</code>, or
   <code>q.in&lt;T&gt;(target_unit)</code>, would overflow.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetRep</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">will_conversion_overflow</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetRep</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">will_conversion_overflow</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
 </code></pre></div>
 </li>
 </ul>
@@ -3456,15 +3665,15 @@ of our truncation discussion for more detail.</p>
 <li>
 <p><code>will_conversion_truncate(q, target_unit)</code> returns whether <code>q.as(target_unit)</code>, or
   <code>q.in(target_unit)</code>, would truncate.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">will_conversion_truncate</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">will_conversion_truncate</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
 </code></pre></div>
 </li>
 <li>
 <p><code>will_conversion_truncate&lt;T&gt;(q, target_unit)</code> returns whether <code>q.as&lt;T&gt;(target_unit)</code>, or
   <code>q.in&lt;T&gt;(target_unit)</code>, would truncate.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetRep</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">will_conversion_truncate</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetRep</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">will_conversion_truncate</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
 </code></pre></div>
 </li>
 </ul>
@@ -3485,15 +3694,15 @@ we still want to check for overflow.</p>
 <li>
 <p><code>is_conversion_lossy(q, target_unit)</code> returns whether <code>q.as(target_unit)</code>, or <code>q.in(target_unit)</code>,
   would either overflow or truncate.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_conversion_lossy</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_conversion_lossy</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
 </code></pre></div>
 </li>
 <li>
 <p><code>is_conversion_lossy&lt;T&gt;(q, target_unit)</code> returns whether <code>q.as&lt;T&gt;(target_unit)</code>, or
   <code>q.in&lt;T&gt;(target_unit)</code>, would either overflow or truncate.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetRep</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_conversion_lossy</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetRep</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_conversion_lossy</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target_unit</span><span class="p">);</span>
 </code></pre></div>
 </li>
 </ul>
@@ -3529,18 +3738,18 @@ all mechanisms and safety features of the library.  In particular:</p>
 </ul>
 <div class="admonition example">
 <p class="admonition-title">Example: <code>as_raw_number</code> with a non-truncating conversion</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">num_beats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as_raw_number</span><span class="p">(</span><span class="n">kilo</span><span class="p">(</span><span class="n">hertz</span><span class="p">)(</span><span class="mi">7</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="c1">// Result: 21&#39;000 (of type `int`)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">num_beats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as_raw_number</span><span class="p">(</span><span class="n">kilo</span><span class="p">(</span><span class="n">hertz</span><span class="p">)(</span><span class="mi">7</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">seconds</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="c1">// Result: 21&#39;000 (of type `int`)</span>
 </code></pre></div>
 </div>
 <div class="admonition example">
 <p class="admonition-title">Example: overriding safety checks for a truncating conversion</p>
 <p>The following will not compile:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">factor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as_raw_number</span><span class="p">(</span><span class="n">percent</span><span class="p">(</span><span class="mi">1234</span><span class="p">));</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">factor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as_raw_number</span><span class="p">(</span><span class="n">percent</span><span class="p">(</span><span class="mi">1234</span><span class="p">));</span>
 </code></pre></div>
 <p>The result would in principle be 12.34, but the rep is an <code>int</code>, which cannot hold this value.
 If truncation is truly desired, you can provide a second argument to override the safety check:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">factor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as_raw_number</span><span class="p">(</span><span class="n">percent</span><span class="p">(</span><span class="mi">1234</span><span class="p">),</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">TRUNCATION_RISK</span><span class="p">));</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">factor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as_raw_number</span><span class="p">(</span><span class="n">percent</span><span class="p">(</span><span class="mi">1234</span><span class="p">),</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">TRUNCATION_RISK</span><span class="p">));</span>
 </code></pre></div>
 <p>This produces <code>12</code> (of type <code>int</code>).</p>
 </div>
@@ -3567,12 +3776,12 @@ without prohibitive difficulty.</p>
 </div>
 <details class="example">
 <summary>Example: defining and using a template with a <code>Quantity</code> NTTP</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="n">QuantityI</span><span class="o">&lt;</span><span class="n">Hertz</span><span class="o">&gt;::</span><span class="n">NTTP</span><span class="w"> </span><span class="n">Frequency</span><span class="o">&gt;</span>
-<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">TemplatedOnFrequency</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">    </span><span class="n">QuantityI</span><span class="o">&lt;</span><span class="n">Hertz</span><span class="o">&gt;</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Frequency</span><span class="p">;</span><span class="w">      </span><span class="c1">// Assigning `Quantity` from NTTP</span>
-<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="p">};</span>
-<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>
-<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="k">using</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TemplatedOnFrequency</span><span class="o">&lt;</span><span class="n">hertz</span><span class="p">(</span><span class="mi">440</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span><span class="w">  </span><span class="c1">// Setting template parameter from `Quantity`</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="n">QuantityI</span><span class="o">&lt;</span><span class="n">Hertz</span><span class="o">&gt;::</span><span class="n">NTTP</span><span class="w"> </span><span class="n">Frequency</span><span class="o">&gt;</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">TemplatedOnFrequency</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="w">    </span><span class="n">QuantityI</span><span class="o">&lt;</span><span class="n">Hertz</span><span class="o">&gt;</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Frequency</span><span class="p">;</span><span class="w">      </span><span class="c1">// Assigning `Quantity` from NTTP</span>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="p">};</span>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a><span class="k">using</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TemplatedOnFrequency</span><span class="o">&lt;</span><span class="n">hertz</span><span class="p">(</span><span class="mi">440</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span><span class="w">  </span><span class="c1">// Setting template parameter from `Quantity`</span>
 </code></pre></div>
 </details>
 <h3 id="from_nttpquantityu-rnttp"><code>from_nttp(Quantity&lt;U, R&gt;::NTTP)</code><a class="headerlink" href="#from_nttpquantityu-rnttp" title="Permanent link">&para;</a></h3>
@@ -3601,7 +3810,7 @@ were</em> its corresponding quantity.</p>
 <summary>Example of corresponding quantity comparison</summary>
 <p>We provide built-in <a href="../corresponding_quantity/#chrono-duration">equivalence with <code>std::chrono::duration</code>
 types</a>.  Therefore, this comparison will work:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">greater</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">duration</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">{</span><span class="mf">1.0</span><span class="p">}</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">milli</span><span class="p">(</span><span class="n">seconds</span><span class="p">)(</span><span class="mf">999.9f</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">greater</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">duration</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">{</span><span class="mf">1.0</span><span class="p">}</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">milli</span><span class="p">(</span><span class="n">seconds</span><span class="p">)(</span><span class="mf">999.9f</span><span class="p">);</span>
 </code></pre></div>
 <p>Here, the <code>std::chrono::duration</code> variable will be treated identically to <code>seconds(1.0)</code>. The
 comparison will take place in units of <code>milli(seconds)</code> (since that is the common unit), and
@@ -3688,11 +3897,11 @@ the denominator.</p>
 <details class="example">
 <summary>Using <code>unblock_int_div()</code> to explicitly opt in to integer division</summary>
 <p>This will not work:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">miles</span><span class="p">(</span><span class="mi">115</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="c1">//         ^--- Forbidden!  Compiler error.</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">miles</span><span class="p">(</span><span class="mi">115</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="c1">//         ^--- Forbidden!  Compiler error.</span>
 </code></pre></div>
 <p>However, this will work just fine:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">miles</span><span class="p">(</span><span class="mi">115</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">unblock_int_div</span><span class="p">(</span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">miles</span><span class="p">(</span><span class="mi">115</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">unblock_int_div</span><span class="p">(</span><span class="n">hours</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
 </code></pre></div>
 <p>It produces <code>(miles / hour)(57)</code>.</p>
 </details>
@@ -3806,15 +4015,15 @@ policy</a> as an argument.</p>
 <details class="example">
 <summary>Example: truncating <code>feet(3.14)</code> to <code>int</code> storage</summary>
 <p>Now consider this quantity:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mf">3.14</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mf">3.14</span><span class="p">);</span>
 </code></pre></div>
 <p>Suppose we want to convert the storage type to <code>int</code> &mdash; a truncating operation.  The following
 would fail to compile:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">length</span><span class="p">.</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="n">length</span><span class="p">.</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span>
 </code></pre></div>
 <p>The problem is that there is too much truncation risk.  If we&rsquo;re sure that we want this, then we
 can provide a policy argument to override this risk check:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">length</span><span class="p">.</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ignore</span><span class="p">(</span><span class="n">TRUNCATION_RISK</span><span class="p">));</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="n">length</span><span class="p">.</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ignore</span><span class="p">(</span><span class="n">TRUNCATION_RISK</span><span class="p">));</span>
 </code></pre></div>
 <p>This would produce a value equivalent to <code>feet(3)</code>.</p>
 </details>
@@ -3836,27 +4045,27 @@ regardless.  This cannot be customized.</p>
 one for the rep.</p>
 <details class="example">
 <summary>Example: function template</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">negate</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">q</span><span class="p">;</span>
-<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">negate</span><span class="p">(</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">q</span><span class="p">;</span>
+<a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a><span class="p">}</span>
 </code></pre></div>
 <p>This function template will match any <code>Quantity</code> specialization, and nothing else.</p>
 </details>
 <details class="example">
 <summary>Example: type template</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="c1">// First, we need to declare the generic type template.  It matches a single type, `T`.</span>
-<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="p">;</span>
-<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>
-<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="c1">// Now we can declare a specialization that matches any `Quantity`, by templating on its unit</span>
-<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a><span class="c1">// and rep.</span>
-<a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
-<a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="o">&lt;</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a>
-<a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a><span class="w">    </span><span class="c1">// Note: this example uses inline variables, a C++17 feature.  It&#39;s just for illustration.</span>
-<a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">R</span><span class="p">);</span>
-<a id="__codelineno-30-12" name="__codelineno-30-12" href="#__codelineno-30-12"></a><span class="p">};</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="c1">// First, we need to declare the generic type template.  It matches a single type, `T`.</span>
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="p">;</span>
+<a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a>
+<a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a><span class="c1">// Now we can declare a specialization that matches any `Quantity`, by templating on its unit</span>
+<a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a><span class="c1">// and rep.</span>
+<a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="o">&gt;</span>
+<a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Size</span><span class="o">&lt;</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a>
+<a id="__codelineno-33-10" name="__codelineno-33-10" href="#__codelineno-33-10"></a><span class="w">    </span><span class="c1">// Note: this example uses inline variables, a C++17 feature.  It&#39;s just for illustration.</span>
+<a id="__codelineno-33-11" name="__codelineno-33-11" href="#__codelineno-33-11"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">R</span><span class="p">);</span>
+<a id="__codelineno-33-12" name="__codelineno-33-12" href="#__codelineno-33-12"></a><span class="p">};</span>
 </code></pre></div>
 <p>In this way, <code>Size&lt;T&gt;::value</code> will exist only when <code>T</code> is some <code>Quantity</code> type (unless, of
 course, other specializations get defined elsewhere).</p>

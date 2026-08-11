@@ -12,13 +12,13 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/reference/detail/dimension/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/concepts/eigen_safety/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../dimensionless/">
       
       
-        <link rel="next" href="../monovalue_types/">
+        <link rel="next" href="../overflow/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Dimension - The Au units library</title>
+        <title>Using Eigen safely with Au - The Au units library</title>
       
     
     
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dimension" class="md-skip">
+        <a href="#using-eigen-safely-with-au" class="md-skip">
           Skip to content
         </a>
       
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Dimension
+              Using Eigen safely with Au
             
           </span>
         </div>
@@ -446,18 +446,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
@@ -478,7 +480,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -496,7 +498,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/" class="md-nav__link">
+      <a href="../../" class="md-nav__link">
         
   
   
@@ -521,18 +523,20 @@
                 
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" checked>
         
           
           <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
@@ -553,7 +557,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -571,7 +575,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   
@@ -599,7 +603,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/arithmetic/" class="md-nav__link">
+      <a href="../arithmetic/" class="md-nav__link">
         
   
   
@@ -627,7 +631,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/common_unit/" class="md-nav__link">
+      <a href="../common_unit/" class="md-nav__link">
         
   
   
@@ -655,7 +659,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/conversion_risks/" class="md-nav__link">
+      <a href="../conversion_risks/" class="md-nav__link">
         
   
   
@@ -683,7 +687,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/dimensionless/" class="md-nav__link">
+      <a href="../dimensionless/" class="md-nav__link">
         
   
   
@@ -708,10 +712,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../../discussion/concepts/eigen_safety/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using Eigen safely with Au
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -727,6 +758,137 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-expression-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding expression templates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding expression templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#under-the-hood-proxy-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Under the hood: proxy types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-trap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The trap
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dangling-is-easy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dangling is easy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-ask-for-computation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to ask for computation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#you-need-sanitizers-too" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        You need sanitizers, too
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#risk-parity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Risk parity
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Risk parity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#element-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Beyond lifetimes: element access
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bottom-line-takeaways" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bottom line takeaways
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -739,7 +901,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/overflow/" class="md-nav__link">
+      <a href="../overflow/" class="md-nav__link">
         
   
   
@@ -767,7 +929,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/quantity_point/" class="md-nav__link">
+      <a href="../quantity_point/" class="md-nav__link">
         
   
   
@@ -795,7 +957,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/truncation/" class="md-nav__link">
+      <a href="../truncation/" class="md-nav__link">
         
   
   
@@ -823,7 +985,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/concepts/zero/" class="md-nav__link">
+      <a href="../zero/" class="md-nav__link">
         
   
   
@@ -906,7 +1068,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/idioms/" class="md-nav__link">
+      <a href="../../idioms/" class="md-nav__link">
         
   
   
@@ -934,7 +1096,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/idioms/unit-slots/" class="md-nav__link">
+      <a href="../../idioms/unit-slots/" class="md-nav__link">
         
   
   
@@ -1017,7 +1179,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/implementation/" class="md-nav__link">
+      <a href="../../implementation/" class="md-nav__link">
         
   
   
@@ -1045,7 +1207,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/implementation/applying_magnitudes/" class="md-nav__link">
+      <a href="../../implementation/applying_magnitudes/" class="md-nav__link">
         
   
   
@@ -1073,7 +1235,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../discussion/implementation/vector_space/" class="md-nav__link">
+      <a href="../../implementation/vector_space/" class="md-nav__link">
         
   
   
@@ -1502,20 +1664,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
@@ -1536,7 +1696,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1554,7 +1714,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../" class="md-nav__link">
+      <a href="../../../reference/" class="md-nav__link">
         
   
   
@@ -1582,7 +1742,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../constant/" class="md-nav__link">
+      <a href="../../../reference/constant/" class="md-nav__link">
         
   
   
@@ -1610,7 +1770,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../conversion_risk_policies/" class="md-nav__link">
+      <a href="../../../reference/conversion_risk_policies/" class="md-nav__link">
         
   
   
@@ -1638,7 +1798,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../corresponding_quantity/" class="md-nav__link">
+      <a href="../../../reference/corresponding_quantity/" class="md-nav__link">
         
   
   
@@ -1666,7 +1826,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../eigen/" class="md-nav__link">
+      <a href="../../../reference/eigen/" class="md-nav__link">
         
   
   
@@ -1694,7 +1854,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../format/" class="md-nav__link">
+      <a href="../../../reference/format/" class="md-nav__link">
         
   
   
@@ -1722,7 +1882,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../magnitude/" class="md-nav__link">
+      <a href="../../../reference/magnitude/" class="md-nav__link">
         
   
   
@@ -1750,7 +1910,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../math/" class="md-nav__link">
+      <a href="../../../reference/math/" class="md-nav__link">
         
   
   
@@ -1778,7 +1938,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../powers/" class="md-nav__link">
+      <a href="../../../reference/powers/" class="md-nav__link">
         
   
   
@@ -1806,7 +1966,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prefix/" class="md-nav__link">
+      <a href="../../../reference/prefix/" class="md-nav__link">
         
   
   
@@ -1834,7 +1994,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../quantity/" class="md-nav__link">
+      <a href="../../../reference/quantity/" class="md-nav__link">
         
   
   
@@ -1862,7 +2022,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../quantity_point/" class="md-nav__link">
+      <a href="../../../reference/quantity_point/" class="md-nav__link">
         
   
   
@@ -1890,7 +2050,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../rep/" class="md-nav__link">
+      <a href="../../../reference/rep/" class="md-nav__link">
         
   
   
@@ -1918,7 +2078,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../unit/" class="md-nav__link">
+      <a href="../../../reference/unit/" class="md-nav__link">
         
   
   
@@ -1946,7 +2106,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../version/" class="md-nav__link">
+      <a href="../../../reference/version/" class="md-nav__link">
         
   
   
@@ -1974,7 +2134,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../zero/" class="md-nav__link">
+      <a href="../../../reference/zero/" class="md-nav__link">
         
   
   
@@ -1999,20 +2159,18 @@
                 
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_17" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_17" >
         
           
           <label class="md-nav__link" for="__nav_9_17" id="__nav_9_17_label" tabindex="0">
@@ -2033,7 +2191,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_17_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_17_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9_17">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2051,7 +2209,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../../reference/detail/" class="md-nav__link">
         
   
   
@@ -2076,37 +2234,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Dimension
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../reference/detail/dimension/" class="md-nav__link">
         
   
   
@@ -2122,109 +2253,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#operations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Operations
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Operations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#multiplication" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Multiplication
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#division" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Division
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#powers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Powers
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#roots" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Roots
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#helpers-for-powers-and-roots" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Helpers for powers and roots
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#included-base-dimensions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Included base dimensions
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2237,7 +2265,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../monovalue_types/" class="md-nav__link">
+      <a href="../../../reference/detail/monovalue_types/" class="md-nav__link">
         
   
   
@@ -2265,7 +2293,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../packs/" class="md-nav__link">
+      <a href="../../../reference/detail/packs/" class="md-nav__link">
         
   
   
@@ -2626,106 +2654,278 @@
   
 
 
-<h1 id="dimension">Dimension<a class="headerlink" href="#dimension" title="Permanent link">&para;</a></h1>
-<p><code>Dimension</code> is a family of <a href="../monovalue_types/">monovalue types</a> representing equivalence classes
-of units.  Each class defines a collection of units which can be meaningfully added, subtracted, and
-compared with each other.  Familiar examples of <code>Dimension</code> include length, time, temperature,
-speed, and so on.</p>
-<p>Dimensions form a <a href="../../../discussion/implementation/vector_space/">vector space</a>.  We choose
-certain &ldquo;base dimensions&rdquo; as the basis vectors for this space.  As with other vector spaces in our
-library, <code>Dimension</code> values can be multiplied, divided, and raised to (rational) powers, and this
-arithmetic always takes place at compile time.</p>
-<p><em><code>Dimension</code> is an implementation detail.</em>  Most end users will never name dimensions in their code,
-and never see them in their compiler errors.  Instead, users will work with <a href="../../unit/"><em>units</em></a>,
-which each carry their own dimension information.  The main situation where an end user would use
-<code>Dimension</code> directly is to define the <em>first</em> unit for a novel <em>base</em> dimension.</p>
-<h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
-<h3 id="multiplication">Multiplication<a class="headerlink" href="#multiplication" title="Permanent link">&para;</a></h3>
-<p><strong>Result:</strong> The product of two <code>Dimension</code> values.</p>
-<p><strong>Syntax:</strong></p>
+<h1 id="using-eigen-safely-with-au">Using Eigen safely with Au<a class="headerlink" href="#using-eigen-safely-with-au" title="Permanent link">&para;</a></h1>
+<p><a href="https://eigen.tuxfamily.org/">Eigen</a> is a popular C++ library for vectors and matrices.  Using a technique called &ldquo;expression
+templates&rdquo;, Eigen gets blazing fast performance &mdash; comparable to hand-crafted loops!  The cost of
+this speed is a vastly increased risk of dangling references and undefined behavior.</p>
+<p>Au supports Eigen.  You can use Eigen types as the underlying storage type, or
+<a href="../../../reference/rep/">&ldquo;rep&rdquo;</a>, of a <code>Quantity</code>.  If you do, you can even get the full performance characteristics of &ldquo;raw&rdquo; Eigen.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>
+Unfortunately, this brings the same <em>cost</em> as &ldquo;raw&rdquo; Eigen: heightened risk of dangling references.</p>
+<p>This page explains what expression templates are, why they&rsquo;re so performant <em>and</em> so dangerous, and
+how to adapt the standard Eigen best practices to keep your Au code safe.  <strong>If you use Au with
+Eigen, we strongly recommend that you read and understand the concepts here.</strong></p>
+<h2 id="understanding-expression-templates">Understanding expression templates<a class="headerlink" href="#understanding-expression-templates" title="Permanent link">&para;</a></h2>
+<p>Naive linear algebra code can be inefficient compared to hand written code.  For example, consider
+adding three vectors:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+</code></pre></div>
+<p>Based on the rules of the C++ language, this line computes <code>(a + b)</code> first, and then <code>(temp + c)</code>,
+where <code>temp</code> is what we&rsquo;ll call the result of <code>(a + b)</code>.  Under the natural implementation for
+<code>operator+</code>, <code>temp</code> is a full fledged temporary vector, so we pay for writing it to memory, and then
+reading it back to add it to <code>c</code>.  However, this wouldn&rsquo;t be necessary if we wrote the loop by hand.
+We could simply iterate once over all the inputs, and store each element directly in the result:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
+</code></pre></div>
+<p>The first code sample is more natural, but the second is more efficient.  The point of expression
+templates is to let you write code that <em>looks like</em> the first sample but actually <em>performs like</em>
+the second one.</p>
+<h3 id="under-the-hood-proxy-types">Under the hood: proxy types<a class="headerlink" href="#under-the-hood-proxy-types" title="Permanent link">&para;</a></h3>
+<p>The key to this magic is <code>operator+</code>.  For <code>Eigen::Vector3d + Eigen::Vector3d</code>, it does <strong>not</strong>
+return another <code>Eigen::Vector3d</code>.  Instead, it returns an <code>Eigen::CwiseBinaryOp&lt;...&gt;</code>: a tiny object
+that holds <em>references</em> to the two operands, and a description of the operation.  Importantly,
+constructing this object performs <em>no actual computation</em>.  Instead, it just keeps track of what
+computation <em>needs to be performed</em>.</p>
+<p>By itself, this is useless: whether you do the work now, or later, it&rsquo;s still the same work.  The
+real value comes when you chain multiple operations together.  By waiting to perform the computation
+until we know <em>all</em> the ingredients, it gives the library a chance to produce the most efficient
+<em>overall</em> recipe.</p>
+<p>Let&rsquo;s elaborate, using our three-vector addition example (and omitting some namespaces to make the
+structure more clear).  The first operation, <code>a + b</code>, produces this type:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>CwiseBinaryOp&lt;scalar_sum_op&lt;double, double&gt;,
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>              const Vector3d,    // a
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>              const Vector3d&gt;    // b
+</code></pre></div>
+<p>The pieces make sense.</p>
 <ul>
-<li>For <em>types</em> <code>D1</code> and <code>D2</code>:<ul>
-<li><code>DimProduct&lt;D1, D2&gt;</code></li>
+<li><code>CwiseBinaryOp</code> tells us we have two inputs to keep track of.</li>
+<li><code>scalar_sum_op</code> indicates addition.</li>
+<li><code>const Vector3d</code> tells us the type of each input.</li>
 </ul>
-</li>
-<li>For <em>instances</em> <code>d1</code> and <code>d2</code>:<ul>
-<li><code>d1 * d2</code></li>
-</ul>
-</li>
-</ul>
+<p>So, we&rsquo;re adding two <code>Vector3d</code> objects.  And this type based reasoning <strong>composes</strong>: when we add
+this result to <code>c</code>, we find:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>CwiseBinaryOp&lt;scalar_sum_op&lt;double, double&gt;,
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>              const CwiseBinaryOp&lt;scalar_sum_op&lt;double, double&gt;, //
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>                                  const Vector3d,                // (a + b)
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>                                  const Vector3d&gt;,               //
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>              const Vector3d&gt;                                    // c
+</code></pre></div>
+<p>Notice that the type we already saw for <code>(a + b)</code> is nested within this new type.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Older releases used <code>DimProductT</code> (with the <code>T</code> suffix) instead of <code>DimProduct</code>.  Prefer
-<code>DimProduct</code>.  <code>DimProductT</code> is deprecated, and will be removed in future releases.</p>
+<p>It&rsquo;s worth emphasizing that Eigen does <em>not</em> store references to the <code>(a + b)</code> temporary object.
+Instead, it recognizes this as an expression template, so it stores it by <em>value</em>.  The upshot
+is that we get our own, fresh references to <code>a</code> and <code>b</code>.  Along with the new reference to <code>c</code>,
+this means the only references we store overall are to the original inputs.</p>
 </div>
-<h3 id="division">Division<a class="headerlink" href="#division" title="Permanent link">&para;</a></h3>
-<p><strong>Result:</strong> The quotient of two <code>Dimension</code> values.</p>
-<p><strong>Syntax:</strong></p>
-<ul>
-<li>For <em>types</em> <code>D1</code> and <code>D2</code>:<ul>
-<li><code>DimQuotient&lt;D1, D2&gt;</code></li>
-</ul>
+<p>Next, we <em>assign</em> this expression to <code>result</code>.  Assigning a <code>CwiseBinaryOp</code> to a <code>Vector3d</code> is what
+triggers the actual computation.  Eigen is responsible for generating the code.  In this case, it
+has enough information to see that we are ultimately adding three vectors. Therefore, it generates
+a single loop that looks very much like our <code>a[i] + b[i] + c[i]</code> example above<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>.</p>
+<h3 id="the-trap">The trap<a class="headerlink" href="#the-trap" title="Permanent link">&para;</a></h3>
+<p>The previous section has two <strong>critically important takeaways</strong>:</p>
+<ol>
+<li>
+<p><strong>Operations</strong> in Eigen <strong>do not compute</strong> results; they <strong>store references</strong> to their original
+   inputs.</p>
 </li>
-<li>For <em>instances</em> <code>d1</code> and <code>d2</code>:<ul>
-<li><code>d1 / d2</code></li>
-</ul>
+<li>
+<p><strong>Computation</strong> is deferred until you <strong>ask for it</strong>.</p>
 </li>
-</ul>
+</ol>
+<p>This means that your original inputs <em>must stay alive (and unaltered) until you request that
+computation</em>.</p>
+<p>For most of Eigen&rsquo;s early existence, this risk was very small, because C++ forced users to <em>name the
+type</em> when assigning a variable.  Computation is deferred until you ask for it, but assigning to
+a named type <em>is</em> &ldquo;asking for it&rdquo;, so all is well.</p>
+<p>For example, suppose we have a function <code>displacement(t)</code>, which returns an <code>Eigen::Vector3d</code>, and
+we want to compute a vector difference. Before C++11, you had to name the type of the result
+explicitly:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// ✅ `ds` is `Vector3d`, so assigning triggers the actual computation.</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">ds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">displacement</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">displacement</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
+</code></pre></div>
+<p>Assigning the <code>CwiseBinaryOp</code> to an <code>Eigen::Vector3d</code> triggers the computation, and all is well.</p>
+<p>All of that changed when C++11 introduced <code>auto</code>.<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>  Now, you can assign to a variable whose type is
+&ldquo;whatever is to the right of the equals sign&rdquo;.  If you replace <code>Vector3d</code> with <code>auto</code> to save
+typing, then the <code>CwiseBinaryOp&lt;...&gt;</code> that would have auto-converted to a <code>Vector3d</code> remains
+a <code>CwiseBinaryOp&lt;...&gt;</code> instead:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// ⛔ `ds` is `CwiseBinaryOp&lt;...&gt;`, which holds references to inputs.</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">ds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">displacement</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">displacement</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
+</code></pre></div>
+<p>The later the computation gets deferred, the more opportunity the original inputs have to change or
+die, and thus, to cause undefined behavior.  In fact, in this example, the inputs are already dead
+once we reach the semicolon, and this is a guaranteed dangle!</p>
+<h2 id="dangling-is-easy">Dangling is easy<a class="headerlink" href="#dangling-is-easy" title="Permanent link">&para;</a></h2>
+<p>Let&rsquo;s look at another example of how easy it is to dangle, this time in the context of the Au units
+library.</p>
+<p>With a scalar rep, an expression like this would be totally unremarkable, and indeed quite safe:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// ✅ Normal; safe.</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">displacement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2.0</span><span class="p">;</span>
+</code></pre></div>
+<p>However, the same exact code with an Eigen rep is <em>not</em> safe, and has undefined behavior:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// ⛔ Looks normal, but dangles!</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">displacement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0</span><span class="p">})</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2.0</span><span class="p">;</span>
+</code></pre></div>
+<p>The <code>Eigen::Vector3d{1.0, 2.0, 3.0}</code> inside the <code>Quantity</code> that <code>meters</code> creates is a <em>temporary</em>,
+which won&rsquo;t live past the end of the line.  Multiplying by 2.0 creates an expression template
+(stored in <code>displacement</code>) that refers to the soon-to-be-dead temporary: instant dangle!</p>
+<p>If you&rsquo;ve never seen this before, it probably looks quite shocking.  But the failure mode actually
+has nothing to do with Au; you could replace <code>meters</code> with <em>any</em> function that returns an Eigen
+vector.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">foo</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">);</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1">// ⛔ Looks normal, but dangles!</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">displacement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0</span><span class="p">})</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2.0</span><span class="p">;</span>
+</code></pre></div>
+<p>This example dangles just as much as the previous one.  In fact, we don&rsquo;t even need the function
+call to get dangling!</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// ⛔ Even this dangles!</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">displacement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0</span><span class="p">}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2.0</span><span class="p">;</span>
+</code></pre></div>
+<p>If you weren&rsquo;t already taking object lifetime seriously when using Eigen, I hope these sobering
+examples will help you reconsider.  But remember, too, that it isn&rsquo;t just arbitrary; there are two
+necessary ingredients for this undefined behavior.  Once more:</p>
+<ol>
+<li>
+<p>You need an <strong>operation</strong>.  (This could be arithmetic operators like <code>*</code> or <code>+</code>, Eigen&rsquo;s
+   built-in &ldquo;view&rdquo; functions such as <code>.transpose()</code> or <code>.row()</code>, or Au&rsquo;s unit conversion operators
+   such as <code>.as()</code> or <code>.in()</code>.)</p>
+</li>
+<li>
+<p>You need to <strong>defer computation</strong> &mdash; more specifically, defer it until after an <em>original</em> input
+   has <em>changed or died</em>.</p>
+</li>
+</ol>
+<p>You can&rsquo;t generally attack the first ingredient; after all, the operations are the things you want
+to do.  So your best approach is to focus on the second ingredient: either keep those original
+inputs alive (and unchanged) for longer, or <em>stop deferring the computation</em>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Older releases used <code>DimQuotientT</code> (with the <code>T</code> suffix) instead of <code>DimQuotient</code>.  Prefer
-<code>DimQuotient</code>.  <code>DimQuotientT</code> is deprecated, and will be removed in future releases.</p>
+<p>Ending an input&rsquo;s lifetime isn&rsquo;t the only way to trigger the second ingredient.  An input that
+merely <em>changes</em> is just as dangerous: <code>auto sum = a + b;</code> followed by
+<code>a = Eigen::Vector3d::Zero();</code> leaves <code>sum</code> silently reading the <em>new</em> value of <code>a</code>.</p>
 </div>
-<h3 id="powers">Powers<a class="headerlink" href="#powers" title="Permanent link">&para;</a></h3>
-<p><strong>Result:</strong> A <code>Dimension</code> raised to an integral power.</p>
-<p><strong>Syntax:</strong></p>
+<h2 id="how-to-ask-for-computation">How to ask for computation<a class="headerlink" href="#how-to-ask-for-computation" title="Permanent link">&para;</a></h2>
+<p>Eigen provides two ways to ask for computation.</p>
+<ol>
+<li>Assign the expression to a <strong>concrete</strong> type (i.e., a vector or matrix type).</li>
+<li>Call <code>.eval()</code> on the expression.</li>
+</ol>
+<p>The first approach is the one we&rsquo;ve already seen, and it works unchanged in Au.</p>
+<p>The second approach <em>can&rsquo;t</em> work the same, because <code>au::Quantity</code> doesn&rsquo;t have an <code>.eval()</code> member
+function.  So we provide <a href="../../../reference/eigen/#eval">a free function</a> instead: if your
+expression is <code>x</code>, you would write
+<code>eval(x)</code> instead of <code>x.eval()</code>.</p>
+<p>Interestingly, combining Eigen with a units library changes how often you reach for each, and makes
+the second method far more common than the first.  The reason is that the type names get another
+level of nesting, and become that much more complicated: instead of assigning to <code>Eigen::Vector3d</code>,
+you would need to assign to something like <code>Quantity&lt;Meters, Eigen::Vector3d&gt;</code>.  This is already
+a little unwieldy &mdash; and many unit type names are far more complicated than <code>Meters</code>!  In many
+cases, it&rsquo;s simpler to just follow the <code>auto x = eval(...)</code> pattern.</p>
+<p>The bottom line is that <em>the <code>eval()</code> free function should be at the forefront of your toolbox when
+using Eigen with Au</em>.  Wrap it around an expression to force it to materialize the results,
+automatically picking the most appropriate concrete type for the expression.  When in doubt,
+<code>eval(...)</code> is a safe choice.</p>
+<h2 id="you-need-sanitizers-too">You need sanitizers, too<a class="headerlink" href="#you-need-sanitizers-too" title="Permanent link">&para;</a></h2>
+<p>Sadly, experience has conclusively shown that even the best human review is not enough to mitigate
+Eigen&rsquo;s lifetime issues.  In fact, no single approach is: you will always do better with <em>defense in
+depth</em>, using multiple approaches with independent failure modes.  With Eigen, the most effective
+second line of defense is <em>sanitizers</em>, especially the Address Sanitizer (ASAN).</p>
+<p>A sanitizer takes your same source code as input, but produces a modified program as output when you
+compile.  It adds extra instructions that execute at runtime.  They keep track of each object&rsquo;s
+memory and lifetime, and guard against common memory errors &mdash; such as trying to access memory
+outside an object&rsquo;s bounds, or reading or writing to its memory after its lifetime ends.</p>
+<p>Of course, all this bookkeeping is extra work, so it slows down your program &mdash; often, very
+significantly.  Many projects cannot tolerate this slowness, so it doesn&rsquo;t always make sense to
+build the <em>main program</em> with sanitizers.  What <em>does</em> always make sense is <em>unit tests</em>.  This
+brings us to our guidance for using sanitizers to mitigate Eigen&rsquo;s lifetime issues:</p>
 <ul>
-<li>For a <em>type</em> <code>D</code>, and an integral power <code>N</code>:<ul>
-<li><code>DimPower&lt;D, N&gt;</code></li>
+<li>Every line of code that uses Eigen types <strong>must</strong> be covered by a unit test.</li>
+<li>Every one of those unit tests <strong>must</strong> be run under sanitizers.</li>
+</ul>
+<p>In fact, this guidance <em>always</em> applies to Eigen, completely independently of whether or not you
+also use Au.</p>
+<h2 id="risk-parity">Risk parity<a class="headerlink" href="#risk-parity" title="Permanent link">&para;</a></h2>
+<p>While these risks, and the multifaceted tools needed to fight them, might seem daunting, it&rsquo;s
+important to realize they&rsquo;re nothing new.  Everything we&rsquo;ve seen so far is something that users of
+Eigen <em>have already opted into</em>.  Therefore, they are no cause for concern from Au&rsquo;s point of view.</p>
+<p>What <em>would</em> be a serious concern is if Au added <em>new</em> lifetime risks on top of Eigen&rsquo;s.  In writing
+this feature, we found that it was surprisingly hard for a units library to avoid doing this.
+However, it <em>is</em> possible, and we believe it is the right standard to hold ourselves to.</p>
+<p>We call this philosophy <strong>risk parity</strong>:</p>
+<ul>
+<li>Any lifetime risks <em>already present</em> in raw Eigen are not problematic.</li>
+<li>Any <em>new</em> lifetime risks <em>introduced by</em> Au are <strong>unacceptable</strong>.</li>
+</ul>
+<p>Loosely, this means that if you take a program using raw Eigen, and migrate it to Au, you should
+find that the same risks are present, they manifest in similar ways, and you use similar tools and
+techniques to mitigate them.  They may not be <em>exactly</em> the same &mdash; for example, <code>eval</code> is a free
+function in Au, but a member function in Eigen &mdash; but they should be similar enough to be familiar.</p>
+<h3 id="element-access">Beyond lifetimes: element access<a class="headerlink" href="#element-access" title="Permanent link">&para;</a></h3>
+<p>We&rsquo;ve heavily emphasized lifetime issues because they&rsquo;re the most prevalent, and because they
+require manual work to avoid (just as in raw Eigen).  However, this is not the only safety risk that
+Au must mitigate in order to achieve risk parity.</p>
+<p>In a raw Eigen vector <code>v</code>, <code>v[i]</code> returns a reference to the <code>i</code>th element.  A quantity vector,
+<code>qv</code>, is necessarily different: <code>qv[i]</code> <a href="../../../reference/quantity/#element-access">returns a <em>brand new
+object</em></a>: a <em><code>Quantity</code></em> that adds unit safety to the
+<code>i</code>th element.</p>
+<p>This is mostly very natural, but it brings one serious pitfall.  In raw Eigen, <code>v[i] = 3.0</code> will
+update the <code>i</code>th value as expected.  However, <code>qv[i] = meters(3.0)</code> would be updating the <em>temporary
+object <code>qv[i]</code></em>: so the change gets immediately discarded, while the original
+<code>qv</code> remains unchanged!  This behavior would seriously violate our &ldquo;risk
+parity&rdquo; philosophy.</p>
+<p>Fortunately, we are able to prevent it at compile time.  The above assignment will <em>not compile</em>: Au
+will not let you assign to an rvalue <code>Quantity</code> in most cases.  Instead, you can explicitly request
+a <a href="../../../reference/quantity/#mutable-view"><code>mutable_view()</code></a>, which <em>will</em> let you write:
+<code>qv.mutable_view()[i] = meters(3.0)</code> <em>does</em> work, and does what would be expected.</p>
+<p>In practical, day to day Au use, this error category carries less risk than lifetime issues, because
+the compiler detects and prevents it.  You merely need to be aware that this <code>mutable_view()</code> option
+exists.  We mention it here to illustrate another way that the risk parity principle guides our
+design decisions.</p>
+<h2 id="bottom-line-takeaways">Bottom line takeaways<a class="headerlink" href="#bottom-line-takeaways" title="Permanent link">&para;</a></h2>
+<p>Taking advantage of Eigen&rsquo;s terrific performance requires understanding its pitfalls, and how to
+mitigate them.  Here are our rules of thumb for using it with Au specifically.</p>
+<ol>
+<li><strong>Understand</strong> the danger zone: having <em>both</em> of (a) Eigen operations, <em>and</em> (b) deferring
+   computation until after an <em>original</em> input has changed or died.<ul>
+<li><em>TIP:</em> by far the most common way this manifests is &ldquo;using <code>auto</code> with Eigen expressions&rdquo;.
+  That was true without Au, and it&rsquo;s still true with it.</li>
 </ul>
 </li>
-<li>For an <em>instance</em> <code>d</code>, and an integral power <code>N</code>:<ul>
-<li><code>pow&lt;N&gt;(d)</code></li>
+<li>Know how to <strong>mitigate</strong> it: <a href="../../../reference/eigen/#eval"><code>eval(...)</code></a> forces computation, and
+   is generally the most flexible tool.</li>
+<li>Use <strong>defense in depth</strong>: sanitizers complement human review.<ul>
+<li><em>TIP:</em> ensure <em>every</em> line of Eigen code is covered by unit tests, and that those tests run
+  automatically under sanitizers.</li>
 </ul>
 </li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Older releases used <code>DimPowerT</code> (with the <code>T</code> suffix) instead of <code>DimPower</code>.  Prefer
-<code>DimPower</code>.  <code>DimPowerT</code> is deprecated, and will be removed in future releases.</p>
+</ol>
+<p>Overall, Au&rsquo;s unique approach to Eigen support means you can add unit safety to your existing Eigen
+program, while retaining the existing levels of both performance and safety.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>We are the first open source units library to provide this feature, as far as we know!&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>In practice, it&rsquo;s likely to be even more efficient than that, because Eigen can use SIMD
+instructions to perform multiple additions in parallel.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>This <code>auto</code> pitfall is so notorious that Eigen documents it prominently in <a href="https://eigen.tuxfamily.org/dox/TopicPitfalls.html">their own list of
+common pitfalls</a>.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
 </div>
-<h3 id="roots">Roots<a class="headerlink" href="#roots" title="Permanent link">&para;</a></h3>
-<p><strong>Result:</strong> An integral root of a <code>Dimension</code>.</p>
-<p><strong>Syntax:</strong></p>
-<ul>
-<li>For a <em>type</em> <code>D</code>, and an integral root <code>N</code>:<ul>
-<li><code>DimPower&lt;D, 1, N&gt;</code> (because the <span class="arithmatex"><span class="MathJax_Preview">N^\text{th}</span><script type="math/tex">N^\text{th}</script></span> root is equivalent to the
-  <span class="arithmatex"><span class="MathJax_Preview">\left(\frac{1}{N}\right)^\text{th}</span><script type="math/tex">\left(\frac{1}{N}\right)^\text{th}</script></span> power)</li>
-</ul>
-</li>
-<li>For an <em>instance</em> <code>d</code>, and an integral root <code>N</code>:<ul>
-<li><code>root&lt;N&gt;(d)</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="helpers-for-powers-and-roots">Helpers for powers and roots<a class="headerlink" href="#helpers-for-powers-and-roots" title="Permanent link">&para;</a></h3>
-<p>Dimensions support all of the <a href="../../powers/#helpers">power helpers</a>.  So, for example, for
-a dimension instance <code>d</code>, you can write <code>sqrt(d)</code> as a more readable alternative to <code>root&lt;2&gt;(d)</code>.</p>
-<h2 id="included-base-dimensions">Included base dimensions<a class="headerlink" href="#included-base-dimensions" title="Permanent link">&para;</a></h2>
-<p>Au includes the following base dimensions:</p>
-<ul>
-<li><code>Length</code></li>
-<li><code>Mass</code></li>
-<li><code>Time</code></li>
-<li><code>Current</code></li>
-<li><code>Temperature</code></li>
-<li><code>Angle</code></li>
-<li><code>Information</code></li>
-<li><code>AmountOfSubstance</code></li>
-<li><code>LuminousIntensity</code></li>
-</ul>
-<p>These comprise each of the seven base dimensions in the SI, with the addition of <code>Angle</code> and
-<code>Information</code>.</p>
 
 
 
@@ -2755,7 +2955,7 @@ a dimension instance <code>d</code>, you can write <code>sqrt(d)</code> as a mor
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Implementation Details">
+          <a href="../dimensionless/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Dimensionless Units and Quantities">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2765,20 +2965,20 @@ a dimension instance <code>d</code>, you can write <code>sqrt(d)</code> as a mor
                 Previous
               </span>
               <div class="md-ellipsis">
-                Implementation Details
+                Dimensionless Units and Quantities
               </div>
             </div>
           </a>
         
         
           
-          <a href="../monovalue_types/" class="md-footer__link md-footer__link--next" aria-label="Next: Monovalue Types">
+          <a href="../overflow/" class="md-footer__link md-footer__link--next" aria-label="Next: Overflow">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Monovalue Types
+                Overflow
               </div>
             </div>
             <div class="md-footer__button md-icon">

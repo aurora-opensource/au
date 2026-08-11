@@ -873,6 +873,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../eigen_safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using Eigen safely with Au
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../overflow/" class="md-nav__link">
         
   
@@ -1568,6 +1596,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../howto/interop/eigen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eigen Interoperation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../howto/interop/nholthaus/" class="md-nav__link">
         
   
@@ -1750,6 +1806,34 @@
     
   
     Corresponding Quantity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/eigen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eigen Compatibility
   
 
     
@@ -1966,6 +2050,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../reference/rep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Representation types (&ldquo;Rep&rdquo;)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../reference/unit/" class="md-nav__link">
         
   
@@ -2058,10 +2170,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_15" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_17" >
         
           
-          <label class="md-nav__link" for="__nav_9_15" id="__nav_9_15_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9_17" id="__nav_9_17_label" tabindex="0">
             
   
   
@@ -2079,8 +2191,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_15_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_15">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_17">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2741,7 +2853,7 @@ converting to a new unit <code>u</code>, we provide these signatures:</p>
 <tbody>
 <tr>
 <td>Overflow</td>
-<td>same</td>
+<td>implicit<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 <td><code>will_conversion_overflow(q, u)</code></td>
 </tr>
 <tr>
@@ -2751,7 +2863,7 @@ converting to a new unit <code>u</code>, we provide these signatures:</p>
 </tr>
 <tr>
 <td>Truncation</td>
-<td>same</td>
+<td>implicit<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 <td><code>will_conversion_truncate(q, u)</code></td>
 </tr>
 <tr>
@@ -2761,7 +2873,7 @@ converting to a new unit <code>u</code>, we provide these signatures:</p>
 </tr>
 <tr>
 <td>Any lossiness</td>
-<td>same</td>
+<td>implicit<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
 <td><code>is_conversion_lossy(q, u)</code></td>
 </tr>
 <tr>
@@ -2810,6 +2922,11 @@ the error handling mechanism that&rsquo;s best for your project.</p>
 <p>In these docs, we assume that <code>unsigned int</code> values (such as <code>4u</code> and <code>9000u</code>) are 32 bits
 wide.  On architectures where this is not true, you could pattern-replace items such as <code>4u</code> with
 <code>uint32_t{4}</code> to reproduce the results in the tables.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>These forms check the corresponding <em>implicit-rep</em> conversion, <code>q.as(u)</code>.  This usually keeps
+the same rep, but see the <a href="../../../reference/quantity/#as"><code>.as(unit)</code> reference docs</a> for the
+exceptions (notably, integer promotion).&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -49,6 +49,10 @@
          <lastmod>2026-08-11</lastmod>
     </url>
     <url>
+         <loc>https://aurora-opensource.github.io/au/main/discussion/concepts/eigen_safety/</loc>
+         <lastmod>2026-08-11</lastmod>
+    </url>
+    <url>
          <loc>https://aurora-opensource.github.io/au/main/discussion/concepts/overflow/</loc>
          <lastmod>2026-08-11</lastmod>
     </url>
@@ -117,6 +121,10 @@
          <lastmod>2026-08-11</lastmod>
     </url>
     <url>
+         <loc>https://aurora-opensource.github.io/au/main/howto/interop/eigen/</loc>
+         <lastmod>2026-08-11</lastmod>
+    </url>
+    <url>
          <loc>https://aurora-opensource.github.io/au/main/howto/interop/nholthaus/</loc>
          <lastmod>2026-08-11</lastmod>
     </url>
@@ -134,6 +142,10 @@
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/corresponding_quantity/</loc>
+         <lastmod>2026-08-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aurora-opensource.github.io/au/main/reference/eigen/</loc>
          <lastmod>2026-08-11</lastmod>
     </url>
     <url>
@@ -162,6 +174,10 @@
     </url>
     <url>
          <loc>https://aurora-opensource.github.io/au/main/reference/quantity_point/</loc>
+         <lastmod>2026-08-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aurora-opensource.github.io/au/main/reference/rep/</loc>
          <lastmod>2026-08-11</lastmod>
     </url>
     <url>
