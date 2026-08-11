@@ -362,6 +362,20 @@ TEST(QuantityPoint, AsWithExplicitRepSetsOutputType) {
                 SameTypeAndValue(inches_pt(uint8_t{104})));
 }
 
+TEST(QuantityPoint, AsWithSameRepKeepsInputRepType) {
+    EXPECT_THAT(feet_pt(uint8_t{30}).as<SameRep>(inches_pt, ignore(OVERFLOW_RISK)),
+                SameTypeAndValue(inches_pt(uint8_t{104})));
+
+    EXPECT_THAT(inches_pt(30.0).as<SameRep>(feet_pt), SameTypeAndValue(feet_pt(2.5)));
+}
+
+TEST(QuantityPoint, InWithSameRepKeepsInputRepType) {
+    EXPECT_THAT(feet_pt(uint8_t{30}).in<SameRep>(inches_pt, ignore(OVERFLOW_RISK)),
+                SameTypeAndValue(uint8_t{104}));
+
+    EXPECT_THAT(inches_pt(30.0).in<SameRep>(feet_pt), SameTypeAndValue(2.5));
+}
+
 TEST(QuantityPoint, InWithPolicyParameterWillForceLossyConversion) {
     // Truncation.
     EXPECT_THAT(inches_pt(30).in(feet_pt, ignore(TRUNCATION_RISK)), SameTypeAndValue(2));

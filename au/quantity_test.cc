@@ -470,7 +470,7 @@ TEST(Quantity, AsWithPolicyParameterWillForceLossyConversion) {
 
     // Unsigned overflow.
     ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
-    EXPECT_THAT(feet(uint8_t{30}).as<uint8_t>(inches, ignore(OVERFLOW_RISK)),
+    EXPECT_THAT(feet(uint8_t{30}).as<SameRep>(inches, ignore(OVERFLOW_RISK)),
                 SameTypeAndValue(inches(uint8_t{104})));
 }
 
@@ -488,13 +488,32 @@ TEST(Quantity, AsWithExplicitRepSetsOutputType) {
                 SameTypeAndValue(inches(uint8_t{104})));
 }
 
+TEST(Quantity, AsWithSameRepKeepsInputRepType) {
+    EXPECT_THAT(meters(uint16_t{5}).as<SameRep>(milli(meters), ignore(OVERFLOW_RISK)),
+                SameTypeAndValue(milli(meters)(uint16_t{5000})));
+
+    // No conversion risk: no policy needed.
+    EXPECT_THAT(milli(meters)(uint16_t{5000}).as<SameRep>(meters, ignore(TRUNCATION_RISK)),
+                SameTypeAndValue(meters(uint16_t{5})));
+
+    // Works with floating point reps too, and needs no risk policy at all.
+    EXPECT_THAT(meters(1.5).as<SameRep>(milli(meters)), SameTypeAndValue(milli(meters)(1500.0)));
+}
+
+TEST(Quantity, InWithSameRepKeepsInputRepType) {
+    EXPECT_THAT(meters(uint16_t{5}).in<SameRep>(milli(meters), ignore(OVERFLOW_RISK)),
+                SameTypeAndValue(uint16_t{5000}));
+
+    EXPECT_THAT(meters(1.5).in<SameRep>(milli(meters)), SameTypeAndValue(1500.0));
+}
+
 TEST(Quantity, InWithPolicyParameterWillForceLossyConversion) {
     // Truncation.
     EXPECT_THAT(inches(30).in(feet, ignore(TRUNCATION_RISK)), SameTypeAndValue(2));
 
     // Unsigned overflow.
     ASSERT_THAT(static_cast<uint8_t>(30 * 12), Eq(104));
-    EXPECT_THAT(feet(uint8_t{30}).in<uint8_t>(inches, ignore(OVERFLOW_RISK)),
+    EXPECT_THAT(feet(uint8_t{30}).in<SameRep>(inches, ignore(OVERFLOW_RISK)),
                 SameTypeAndValue(uint8_t{104}));
 }
 
@@ -1074,7 +1093,7 @@ TEST(Quantity, UnitCastRequiresExplicitTypeForDangerousReps) {
     //
     // To "test" these, try deleting the `ignore(OVERFLOW_RISK)` parameter.  Make sure it fails with
     // a readable `static_assert`.
-    EXPECT_THAT(feet(uint16_t{1}).as<uint16_t>(centi(feet), ignore(OVERFLOW_RISK)),
+    EXPECT_THAT(feet(uint16_t{1}).as<SameRep>(centi(feet), ignore(OVERFLOW_RISK)),
                 SameTypeAndValue(centi(feet)(uint16_t{100})));
 }
 
@@ -1380,9 +1399,8 @@ TEST(IsConversionLossy, CorrectlyDiscriminatesBetweenLossyAndLosslessConversions
              i <= std::numeric_limits<uint16_t>::max();
              ++i) {
             const auto original = source_units(static_cast<uint16_t>(i));
-            const auto converted = original.template as<uint16_t>(target_units, ignore(ALL_RISKS));
-            const auto round_trip =
-                converted.template as<uint16_t>(source_units, ignore(ALL_RISKS));
+            const auto converted = original.template as<SameRep>(target_units, ignore(ALL_RISKS));
+            const auto round_trip = converted.template as<SameRep>(source_units, ignore(ALL_RISKS));
 
             const bool did_value_change = (original != round_trip);
 
