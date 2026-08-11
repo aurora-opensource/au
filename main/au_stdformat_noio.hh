@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-143-g9da99da
+// Version identifier: 0.5.0-base-144-gc55e679
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -96,6 +96,8 @@ using void_t = void;
 namespace au {
 
 struct Zero;
+
+struct SameRep;
 
 template <typename B, std::intmax_t N>
 struct Pow;
@@ -6051,6 +6053,26 @@ template <typename T>
 struct IsValidRep;
 
 //
+// A tag type to pass to `.as<SameRep>(...)` or `.in<SameRep>(...)`, indicating that the result
+// should keep the same Rep as the input, rather than changing it.
+//
+// As a reminder: the "implicit rep" versions (i.e., no template parameter) _usually_ produce the
+// same rep, but not always.  The most notable counter-examples are integer promotion, and Eigen
+// expression templates.
+//
+struct SameRep;
+
+namespace detail {
+// Resolve `NewRep` to `Rep` when `NewRep` is the `SameRep` tag; otherwise, leave it untouched.
+template <typename Rep, typename NewRep>
+struct ResolveSameRepImpl : stdx::type_identity<NewRep> {};
+template <typename Rep>
+struct ResolveSameRepImpl<Rep, SameRep> : stdx::type_identity<Rep> {};
+template <typename Rep, typename NewRep>
+using ResolveSameRep = typename ResolveSameRepImpl<Rep, NewRep>::type;
+}  // namespace detail
+
+//
 // A type trait to indicate whether the product of two types is a valid rep.
 //
 // Will validly return `false` if the product does not exist.
@@ -8168,7 +8190,8 @@ class Quantity {
               typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
     AU_DEVICE_FUNC constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity<Unit>(in_impl<detail::UseStaticCast, NewRep>(Unit{}, policy));
+        using ActualRep = detail::ResolveSameRep<Rep, NewRep>;
+        return make_quantity<Unit>(in_impl<detail::UseStaticCast, ActualRep>(Unit{}, policy));
     }
 
     // `q.as<Rep>(new_unit)`, or `q.as<Rep>(new_unit, risk_policy)`
@@ -8177,8 +8200,9 @@ class Quantity {
               typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<!IsConversionRiskPolicy<NewUnitSlot>::value, int> = 0>
     AU_DEVICE_FUNC constexpr auto as(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
+        using ActualRep = detail::ResolveSameRep<Rep, NewRep>;
         return make_quantity<AssociatedUnit<NewUnitSlot>>(
-            in_impl<detail::UseStaticCast, NewRep>(u, policy));
+            in_impl<detail::UseStaticCast, ActualRep>(u, policy));
     }
 
     // `q.as(new_unit)`, or `q.as(new_unit, risk_policy)`
@@ -8193,7 +8217,8 @@ class Quantity {
               typename NewUnitSlot,
               typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     AU_DEVICE_FUNC constexpr auto in(NewUnitSlot u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return in_impl<detail::UseStaticCast, NewRep>(u, policy);
+        using ActualRep = detail::ResolveSameRep<Rep, NewRep>;
+        return in_impl<detail::UseStaticCast, ActualRep>(u, policy);
     }
 
     // `q.in(new_unit)`, or `q.in(new_unit, risk_policy)`
@@ -10238,7 +10263,8 @@ class QuantityPoint {
               typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
     AU_DEVICE_FUNC constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity_point<Unit>(in_impl<NewRep>(Unit{}, policy));
+        using ActualRep = detail::ResolveSameRep<Rep, NewRep>;
+        return make_quantity_point<Unit>(in_impl<ActualRep>(Unit{}, policy));
     }
 
     // `p.as<Rep>(new_unit)`, or `p.as<Rep>(new_unit, risk_policy)`
@@ -10247,7 +10273,8 @@ class QuantityPoint {
               typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<!IsConversionRiskPolicy<NewUnit>::value, int> = 0>
     AU_DEVICE_FUNC constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<NewRep>(u, policy));
+        using ActualRep = detail::ResolveSameRep<Rep, NewRep>;
+        return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<ActualRep>(u, policy));
     }
 
     // `p.as(new_unit)`, or `p.as(new_unit, risk_policy)`
@@ -10259,8 +10286,9 @@ class QuantityPoint {
     template <typename NewRep,
               typename NewUnit,
               typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
-    AU_DEVICE_FUNC constexpr NewRep in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
-        return in_impl<NewRep>(u, policy);
+    AU_DEVICE_FUNC constexpr auto in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
+        using ActualRep = detail::ResolveSameRep<Rep, NewRep>;
+        return in_impl<ActualRep>(u, policy);
     }
 
     template <typename NewUnit, typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
