@@ -291,7 +291,7 @@ To be concrete, here are the signatures of the functions that support the policy
 
     First, figure out which conversion risks you are trying to override: **overflow**, or
     **truncation**, or **both**.  (You can simply delete the `"coerce_"` word and compile, and the
-    error message will tell you which one is relevant.)
+    error message will tell you which one, if any, is relevant.)
 
     Then, follow this table to rewrite your conversion, using the conversion risk you identified
     above.
