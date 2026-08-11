@@ -166,15 +166,15 @@ template <typename U, typename R, typename TargetUnitSlot>
 constexpr auto try_converting(au::Quantity<U, R> q, TargetUnitSlot target) {
     return is_conversion_lossy(q, target)
         ? std::nullopt
-        : std::make_optional(q.coerce_as(target));
+        : std::make_optional(q.as(target, ignore(ALL_RISKS)));
 }
 ```
 
 The goal of `is_conversion_lossy` is to produce an implementation for each individual conversion
 (based on both the numeric type, and the conversion factor) that is as _accurate and efficient_ as
 an expertly hand-written implementation.  If it passes those checks, then it's safe and correct to
-call `.coerce_as` instead of simply `.as`: we can override the _approximate_ safety checks of the
-latter because we've performed an _exact_ safety check.
+pass `ignore(ALL_RISKS)`: we are overriding _approximate_ safety checks because we've already
+performed _exact_ safety checks.
 
 ??? note "An example of the kind of details we take care of"
     When we say "expertly hand-written", we mean it.  We even handle obscure C++ minutae such as
