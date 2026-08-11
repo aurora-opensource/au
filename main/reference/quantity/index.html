@@ -3542,14 +3542,10 @@ the default compile-time safety surface (although at the cost of runtime operati
 <h3 id="coerce">Forcing lossy conversions: <code>.coerce_as(unit)</code>, <code>.coerce_in(unit)</code><a class="headerlink" href="#coerce" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>We are planning to deprecate these functions in the <a href="https://github.com/aurora-opensource/au/milestone/9">0.6.0</a> release.  See <a href="https://github.com/aurora-opensource/au/issues/481">#481</a> to track the
-progress.</p>
-<p>In the meantime, here is how you convert.</p>
+<p>These functions are deprecated.  Here is how you convert them.</p>
 <p>First, figure out which conversion risks you are trying to override: <strong>overflow</strong>, or
-<strong>truncation</strong>, or <strong>both</strong>.  (If you don&rsquo;t have an explicit <code>&lt;Rep&gt;</code> argument, you can simply
-delete the <code>"coerce_"</code> word and compile, and the error message will tell you which one is
-relevant.  Otherwise, you will need to use your knowledge of the types and units involved to
-figure this out.)</p>
+<strong>truncation</strong>, or <strong>both</strong>.  (You can simply delete the <code>"coerce_"</code> word and compile, and the
+error message will tell you which one, if any, is relevant.)</p>
 <p>Then, follow this table to rewrite your conversion, using the conversion risk you identified
 above.</p>
 <table>

@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-142-g903db43
+// Version identifier: 0.5.0-base-143-g9da99da
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -8204,22 +8204,42 @@ class Quantity {
 
     // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
     template <typename NewUnit>
-    constexpr auto coerce_as(NewUnit) const {
+    [[deprecated(
+        "`coerce_as()` is deprecated.  Use `as()` instead, and pass a risk policy parameter.  "
+        "Upgrade guide: "
+        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
+        "#coerce>")]] constexpr auto
+    coerce_as(NewUnit) const {
         // Usage example: `q.coerce_as(new_units)`.
         return as(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
-    constexpr auto coerce_as(NewUnit) const {
+    [[deprecated(
+        "`coerce_as()` is deprecated.  Use `as()` instead, and pass a risk policy parameter.  "
+        "Upgrade guide: "
+        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
+        "#coerce>")]] constexpr auto
+    coerce_as(NewUnit) const {
         // Usage example: `q.coerce_as<T>(new_units)`.
         return as<NewRep>(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewUnit>
-    constexpr auto coerce_in(NewUnit) const {
+    [[deprecated(
+        "`coerce_in()` is deprecated.  Use `in()` instead, and pass a risk policy parameter.  "
+        "Upgrade guide: "
+        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
+        "#coerce>")]] constexpr auto
+    coerce_in(NewUnit) const {
         // Usage example: `q.coerce_in(new_units)`.
         return in(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
-    constexpr auto coerce_in(NewUnit) const {
+    [[deprecated(
+        "`coerce_in()` is deprecated.  Use `in()` instead, and pass a risk policy parameter.  "
+        "Upgrade guide: "
+        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
+        "#coerce>")]] constexpr auto
+    coerce_in(NewUnit) const {
         // Usage example: `q.coerce_in<T>(new_units)`.
         return in<NewRep>(NewUnit{}, ignore(ALL_RISKS));
     }
@@ -9607,7 +9627,12 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 
     // Convert this constant to a Quantity of the given unit and rep, ignoring safety checks.
     template <typename T, typename OtherUnit>
-    constexpr auto coerce_as(OtherUnit u) const {
+    [[deprecated(
+        "`coerce_as()` is deprecated.  Use `as()` instead, and pass a risk policy parameter.  "
+        "Upgrade guide: "
+        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
+        "#coerce>")]] constexpr auto
+    coerce_as(OtherUnit u) const {
         return as<T>().coerce_as(u);
     }
 
@@ -9637,7 +9662,12 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 
     // Get the value of this constant in the given unit and rep, ignoring safety checks.
     template <typename T, typename OtherUnit>
-    constexpr auto coerce_in(OtherUnit u) const {
+    [[deprecated(
+        "`coerce_in()` is deprecated.  Use `in()` instead, and pass a risk policy parameter.  "
+        "Upgrade guide: "
+        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
+        "#coerce>")]] constexpr auto
+    coerce_in(OtherUnit u) const {
         return as<T>().coerce_in(u);
     }
 
@@ -10020,22 +10050,42 @@ class QuantityPoint {
 
     // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
     template <typename NewUnit>
-    constexpr auto coerce_as(NewUnit) const {
+    [[deprecated(
+        "`coerce_as()` is deprecated.  Use `as()` instead, and pass a risk policy parameter.  "
+        "Upgrade guide: "
+        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
+        "#coerce>")]] constexpr auto
+    coerce_as(NewUnit) const {
         // Usage example: `p.coerce_as(new_units)`.
         return as(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
-    constexpr auto coerce_as(NewUnit) const {
+    [[deprecated(
+        "`coerce_as()` is deprecated.  Use `as()` instead, and pass a risk policy parameter.  "
+        "Upgrade guide: "
+        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
+        "#coerce>")]] constexpr auto
+    coerce_as(NewUnit) const {
         // Usage example: `p.coerce_as<T>(new_units)`.
         return as<NewRep>(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewUnit>
-    constexpr auto coerce_in(NewUnit) const {
+    [[deprecated(
+        "`coerce_in()` is deprecated.  Use `in()` instead, and pass a risk policy parameter.  "
+        "Upgrade guide: "
+        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
+        "#coerce>")]] constexpr auto
+    coerce_in(NewUnit) const {
         // Usage example: `p.coerce_in(new_units)`.
         return in(NewUnit{}, ignore(ALL_RISKS));
     }
     template <typename NewRep, typename NewUnit>
-    constexpr auto coerce_in(NewUnit) const {
+    [[deprecated(
+        "`coerce_in()` is deprecated.  Use `in()` instead, and pass a risk policy parameter.  "
+        "Upgrade guide: "
+        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
+        "#coerce>")]] constexpr auto
+    coerce_in(NewUnit) const {
         // Usage example: `p.coerce_in<T>(new_units)`.
         return in<NewRep>(NewUnit{}, ignore(ALL_RISKS));
     }

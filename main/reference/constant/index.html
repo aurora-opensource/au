@@ -3118,8 +3118,8 @@ namespace ::au::au_literals;</code> brings in both.</p>
 <p><code>Constant</code> can be converted to any <code>Quantity</code> type of the same dimension.</p>
 <p>By default, this conversion policy is <em>perfect</em>.  This means that it permits converting to any
 <code>Quantity</code> that can represent the value exactly, and disallows all other conversions.  Users can
-also override this policy by choosing the &ldquo;coerce&rdquo; variant of any API (say, using <code>.coerce_as()</code>
-instead of <code>.as()</code>).</p>
+also override this policy by providing a <a href="../conversion_risk_policies/">conversion risk policy</a> as
+a second argument (say, <code>.as&lt;T&gt;(u, ignore(TRUNCATION_RISK))</code> instead of <code>.as&lt;T&gt;(u)</code>).</p>
 <p>Finally, it&rsquo;s important to appreciate that <code>Constant</code> has no rep, no underlying numeric type.
 Therefore, every <code>Quantity</code> conversion API requires an explicit template parameter to specify the
 desired rep.</p>
@@ -3157,9 +3157,9 @@ actual value.</p>
 <h3 id="coerce_astunit"><code>.coerce_as&lt;T&gt;(unit)</code><a class="headerlink" href="#coerce_astunit" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>We plan to deprecate APIs with <code>coerce</code> in their name in the <a href="https://github.com/aurora-opensource/au/milestone/9">0.6.0</a> release (<a href="https://github.com/aurora-opensource/au/issues/481">#481</a>).  For
-a <code>Constant</code> <code>c</code>, instead of <code>c.coerce_as&lt;T&gt;(unit)</code>, prefer <code>c.as&lt;T&gt;(unit, policy)</code>, where
-<code>policy</code> is the desired <a href="../conversion_risk_policies/">conversion risk policy</a>.</p>
+<p>These functions are deprecated.  For a <code>Constant</code> <code>c</code>, instead of <code>c.coerce_as&lt;T&gt;(unit)</code>, prefer
+<code>c.as&lt;T&gt;(unit, policy)</code>, where <code>policy</code> is the desired <a href="../conversion_risk_policies/">conversion risk
+policy</a>.</p>
 </div>
 <p>This function expresses the constant as a <code>Quantity</code> in the requested unit, using a rep of <code>T</code>.  It
 is similar to <a href="#as-T-unit"><code>.as&lt;T&gt;(unit)</code></a>, except that it will ignore the safety checks that
@@ -3202,9 +3202,9 @@ actual value.</p>
 <h3 id="coerce_intunit"><code>.coerce_in&lt;T&gt;(unit)</code><a class="headerlink" href="#coerce_intunit" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>We plan to deprecate APIs with <code>coerce</code> in their name in the <a href="https://github.com/aurora-opensource/au/milestone/9">0.6.0</a> release (<a href="https://github.com/aurora-opensource/au/issues/481">#481</a>).  For
-a <code>Constant</code> <code>c</code>, instead of <code>c.coerce_in&lt;T&gt;(unit)</code>, prefer <code>c.in&lt;T&gt;(unit, policy)</code>, where
-<code>policy</code> is the desired <a href="../conversion_risk_policies/">conversion risk policy</a>.</p>
+<p>These functions are deprecated.  For a <code>Constant</code> <code>c</code>, instead of <code>c.coerce_in&lt;T&gt;(unit)</code>, prefer
+<code>c.in&lt;T&gt;(unit, policy)</code>, where <code>policy</code> is the desired <a href="../conversion_risk_policies/">conversion risk
+policy</a>.</p>
 </div>
 <p>This function produces a raw numeric value, of type <code>T</code>, holding the value of the constant in the
 requested unit.  It is similar to <a href="#in-T-unit"><code>.in&lt;T&gt;(unit)</code></a>, except that it will ignore the

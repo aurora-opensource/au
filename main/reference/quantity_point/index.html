@@ -3060,7 +3060,7 @@ https://github.com/mkdocs/mkdocs/issues/1198#issuecomment-1253896100
 <p>Note that every case in the above table is <em>physically</em> meaningful (because the source and target
 have the same dimension), but some conversions are forbidden due to the risk of larger-than-usual
 errors.  The library can still perform these conversions, but not via this constructor, and it must
-be &ldquo;forced&rdquo; to do so. See <a href="#coerce"><code>.coerce_as(unit)</code></a> for more details.</p>
+be &ldquo;forced&rdquo; to do so. See the <a href="#policy-argument">policy argument</a> section for more details.</p>
 <h3 id="constructing-from-another-quantitypoint-with-explicit-risk-policy">Constructing from another <code>QuantityPoint</code>, with explicit risk policy<a class="headerlink" href="#constructing-from-another-quantitypoint-with-explicit-risk-policy" title="Permanent link">&para;</a></h3>
 <p>This constructor also performs a unit conversion, but the user selects which conversion risks are
 actively checked for.  This is done by passing an explicit <a href="../conversion_risk_policies/">conversion risk
@@ -3218,14 +3218,10 @@ to be absent.</p>
 <h3 id="coerce">Forcing lossy conversions: <code>.coerce_as(unit)</code>, <code>.coerce_in(unit)</code><a class="headerlink" href="#coerce" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>We are planning to deprecate these functions in the <a href="https://github.com/aurora-opensource/au/milestone/9">0.6.0</a> release.  See <a href="https://github.com/aurora-opensource/au/issues/481">#481</a> to track the
-progress.</p>
-<p>In the meantime, here is how you convert.</p>
+<p>These functions are deprecated.  Here is how you convert them.</p>
 <p>First, figure out which conversion risks you are trying to override: <strong>overflow</strong>, or
-<strong>truncation</strong>, or <strong>both</strong>.  (If you don&rsquo;t have an explicit <code>&lt;Rep&gt;</code> argument, you can simply
-delete the <code>"coerce_"</code> word and compile, and the error message will tell you which one is
-relevant.  Otherwise, you will need to use your knowledge of the types and units involved to
-figure this out.)</p>
+<strong>truncation</strong>, or <strong>both</strong>.  (You can simply delete the <code>"coerce_"</code> word and compile, and the
+error message will tell you which one, if any, is relevant.)</p>
 <p>Then, follow this table to rewrite your conversion, using the conversion risk you identified
 above.</p>
 <table>

@@ -2779,14 +2779,14 @@ choice.</p>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">try_converting</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">is_conversion_lossy</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">target</span><span class="p">)</span>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="o">?</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nullopt</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_optional</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">coerce_as</span><span class="p">(</span><span class="n">target</span><span class="p">));</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_optional</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">ALL_RISKS</span><span class="p">)));</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
 </code></pre></div>
 <p>The goal of <code>is_conversion_lossy</code> is to produce an implementation for each individual conversion
 (based on both the numeric type, and the conversion factor) that is as <em>accurate and efficient</em> as
 an expertly hand-written implementation.  If it passes those checks, then it&rsquo;s safe and correct to
-call <code>.coerce_as</code> instead of simply <code>.as</code>: we can override the <em>approximate</em> safety checks of the
-latter because we&rsquo;ve performed an <em>exact</em> safety check.</p>
+pass <code>ignore(ALL_RISKS)</code>: we are overriding <em>approximate</em> safety checks because we&rsquo;ve already
+performed <em>exact</em> safety checks.</p>
 <details class="note">
 <summary>An example of the kind of details we take care of</summary>
 <p>When we say &ldquo;expertly hand-written&rdquo;, we mean it.  We even handle obscure C++ minutae such as
