@@ -347,7 +347,7 @@ the [unit slots](../discussion/idioms/unit-slots.md) discussion for valid choice
 produced by the conversion operation.  (This is usually the same as the input `Rep`, but can differ
 in rare cases, such as integer promotion, or Eigen expression templates.)
 
---8<-- "lifetime-risk-maybe-lazy.md"
+--8<-- "eigen-lifetime-risk-maybe-lazy.md"
 
 **With** a template argument, `.as<T>(unit)`, the output `Rep` will be `T`.
 
@@ -375,7 +375,7 @@ slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `uni
 produced by the conversion operation.  (This is usually the same as the input `Rep`, but can differ
 in rare cases, such as integer promotion, or Eigen expression templates.)
 
---8<-- "lifetime-risk-maybe-lazy.md"
+--8<-- "eigen-lifetime-risk-maybe-lazy.md"
 
 
 **With** a template argument, `.in<T>(unit)`, the output type will be `T`.

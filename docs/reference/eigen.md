@@ -186,7 +186,7 @@ template <typename V, typename U, typename R>
 auto cross(const V &a, const Quantity<U, R> &b);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
 
 ### `normalized`
 
@@ -221,7 +221,7 @@ template <typename V, typename U, typename R>
 auto cwiseProduct(const V &a, const Quantity<U, R> &b);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
 
 ### `cwiseQuotient`
 
@@ -241,7 +241,7 @@ template <typename V, typename U, typename R>
 auto cwiseQuotient(const V &a, const Quantity<U, R> &b);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
 
 ### `cwiseAbs`
 
@@ -252,7 +252,7 @@ template <typename U, typename R>
 auto cwiseAbs(const Quantity<U, R> &q);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
 
 ### `cwiseSqrt`
 
@@ -263,7 +263,7 @@ template <typename U, typename R>
 auto cwiseSqrt(const Quantity<U, R> &q);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
 
 ## Views and accessors
 
@@ -278,7 +278,7 @@ template <typename U, typename R>
 auto transpose(const Quantity<U, R> &q);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
 
 ### `diagonal`
 
@@ -293,7 +293,7 @@ template <typename U, typename R>
 auto diagonal(const Quantity<U, R> &q, std::ptrdiff_t index);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
 
 ### `row`, `col`
 
@@ -307,7 +307,7 @@ template <typename U, typename R>
 auto col(const Quantity<U, R> &q, std::ptrdiff_t j);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
 
 ### `reverse`
 
@@ -318,7 +318,7 @@ template <typename U, typename R>
 auto reverse(const Quantity<U, R> &q);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
 
 ### `conjugate`
 
@@ -329,7 +329,7 @@ template <typename U, typename R>
 auto conjugate(const Quantity<U, R> &q);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
 
 ### `head`, `tail`, `segment`
 
@@ -357,7 +357,7 @@ template <typename U, typename R>
 auto segment(const Quantity<U, R> &q, std::ptrdiff_t start, std::ptrdiff_t n);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
 
 ### `block`
 
@@ -377,7 +377,7 @@ auto block(const Quantity<U, R> &q,
            std::ptrdiff_t cols);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
 
 ### `replicate`
 
@@ -393,7 +393,7 @@ template <typename U, typename R>
 auto replicate(const Quantity<U, R> &q, std::ptrdiff_t row_factor, std::ptrdiff_t col_factor);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
 
 ## Matrix operations
 
@@ -407,4 +407,4 @@ template <typename U, typename R>
 auto inverse(const Quantity<U, R> &q);
 ```
 
---8<-- "lifetime-risk-lazy.md"
+--8<-- "eigen-lifetime-risk-lazy.md"
