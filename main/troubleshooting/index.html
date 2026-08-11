@@ -3521,6 +3521,27 @@ this, we manifest this as a compiler error.</p>
 you can <em>force</em> a particular ordering.  Choose one of the units <code>U</code>, and give it a &ldquo;tiebreaker&rdquo; by
 creating a specialization of <code>::au::UnitOrderTiebreaker&lt;U&gt;</code>.  As the name suggests, this will break
 the tie, and your program will compile.</p>
+<div class="admonition warning">
+<p class="admonition-title">Removed: <code>au::detail::UnitAvoidance</code></p>
+<p>We previously documented this same technique using <code>::au::detail::UnitAvoidance&lt;U&gt;</code>.  That was
+our mistake: it asked you to name a type in our <code>detail</code> namespace, which is not part of our
+public API.  Specializing <code>UnitAvoidance</code> is now a compiler error that points you here.</p>
+<p>To migrate, change the specialized template&rsquo;s name, keeping the same value:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a><span class="c1">// Before (no longer supported):</span>
+<a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">au</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-50-3" name="__codelineno-50-3" href="#__codelineno-50-3"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">detail</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-50-4" name="__codelineno-50-4" href="#__codelineno-50-4"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;&gt;</span>
+<a id="__codelineno-50-5" name="__codelineno-50-5" href="#__codelineno-50-5"></a><span class="k">struct</span><span class="w"> </span><span class="nc">UnitAvoidance</span><span class="o">&lt;::</span><span class="n">Trinches</span><span class="o">&gt;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">integral_constant</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-50-6" name="__codelineno-50-6" href="#__codelineno-50-6"></a><span class="p">}</span>
+<a id="__codelineno-50-7" name="__codelineno-50-7" href="#__codelineno-50-7"></a><span class="p">}</span>
+<a id="__codelineno-50-8" name="__codelineno-50-8" href="#__codelineno-50-8"></a>
+<a id="__codelineno-50-9" name="__codelineno-50-9" href="#__codelineno-50-9"></a><span class="c1">// After:</span>
+<a id="__codelineno-50-10" name="__codelineno-50-10" href="#__codelineno-50-10"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">au</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-50-11" name="__codelineno-50-11" href="#__codelineno-50-11"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;&gt;</span>
+<a id="__codelineno-50-12" name="__codelineno-50-12" href="#__codelineno-50-12"></a><span class="k">struct</span><span class="w"> </span><span class="nc">UnitOrderTiebreaker</span><span class="o">&lt;::</span><span class="n">Trinches</span><span class="o">&gt;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">integral_constant</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-50-13" name="__codelineno-50-13" href="#__codelineno-50-13"></a><span class="p">}</span>
+</code></pre></div>
+</div>
 <p>Again, this is pretty unusual.  For most normal ways of forming units, the library should
 automatically be able to define an ordering for them.  If you do hit this error, it may be worth
 pausing to double-check that you&rsquo;re using the library correctly.  If you&rsquo;ve checked, and it still
@@ -3541,304 +3562,304 @@ error is pretty hard to hit in practice.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="9:2"><input checked="checked" id="__tabbed_9_1" name="__tabbed_9" type="radio" /><input id="__tabbed_9_2" name="__tabbed_9" type="radio" /><div class="tabbed-labels"><label for="__tabbed_9_1">Broken</label><label for="__tabbed_9_2">Fixed</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Quarterfeet</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Feet</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">4</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{};</span>
-<a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">quarterfeet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Quarterfeet</span><span class="o">&gt;</span><span class="p">{};</span>
-<a id="__codelineno-50-3" name="__codelineno-50-3" href="#__codelineno-50-3"></a>
-<a id="__codelineno-50-4" name="__codelineno-50-4" href="#__codelineno-50-4"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Trinches</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Inches</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">3</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{};</span>
-<a id="__codelineno-50-5" name="__codelineno-50-5" href="#__codelineno-50-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">trinches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Trinches</span><span class="o">&gt;</span><span class="p">{};</span>
-<a id="__codelineno-50-6" name="__codelineno-50-6" href="#__codelineno-50-6"></a>
-<a id="__codelineno-50-7" name="__codelineno-50-7" href="#__codelineno-50-7"></a><span class="c1">// (BROKEN): Can&#39;t tell how to order Quarterfeet and Trinches when forming common type</span>
-<a id="__codelineno-50-8" name="__codelineno-50-8" href="#__codelineno-50-8"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">quarterfeet</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">trinches</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-50-9" name="__codelineno-50-9" href="#__codelineno-50-9"></a><span class="w">    </span><span class="c1">// ...</span>
-<a id="__codelineno-50-10" name="__codelineno-50-10" href="#__codelineno-50-10"></a><span class="p">}</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Quarterfeet</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Feet</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">4</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{};</span>
 <a id="__codelineno-51-2" name="__codelineno-51-2" href="#__codelineno-51-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">quarterfeet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Quarterfeet</span><span class="o">&gt;</span><span class="p">{};</span>
 <a id="__codelineno-51-3" name="__codelineno-51-3" href="#__codelineno-51-3"></a>
 <a id="__codelineno-51-4" name="__codelineno-51-4" href="#__codelineno-51-4"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Trinches</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Inches</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">3</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{};</span>
 <a id="__codelineno-51-5" name="__codelineno-51-5" href="#__codelineno-51-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">trinches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Trinches</span><span class="o">&gt;</span><span class="p">{};</span>
 <a id="__codelineno-51-6" name="__codelineno-51-6" href="#__codelineno-51-6"></a>
-<a id="__codelineno-51-7" name="__codelineno-51-7" href="#__codelineno-51-7"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">au</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-51-8" name="__codelineno-51-8" href="#__codelineno-51-8"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;&gt;</span>
-<a id="__codelineno-51-9" name="__codelineno-51-9" href="#__codelineno-51-9"></a><span class="k">struct</span><span class="w"> </span><span class="nc">UnitOrderTiebreaker</span><span class="o">&lt;::</span><span class="n">Trinches</span><span class="o">&gt;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">integral_constant</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-51-7" name="__codelineno-51-7" href="#__codelineno-51-7"></a><span class="c1">// (BROKEN): Can&#39;t tell how to order Quarterfeet and Trinches when forming common type</span>
+<a id="__codelineno-51-8" name="__codelineno-51-8" href="#__codelineno-51-8"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">quarterfeet</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">trinches</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-51-9" name="__codelineno-51-9" href="#__codelineno-51-9"></a><span class="w">    </span><span class="c1">// ...</span>
 <a id="__codelineno-51-10" name="__codelineno-51-10" href="#__codelineno-51-10"></a><span class="p">}</span>
-<a id="__codelineno-51-11" name="__codelineno-51-11" href="#__codelineno-51-11"></a>
-<a id="__codelineno-51-12" name="__codelineno-51-12" href="#__codelineno-51-12"></a><span class="c1">// (FIXED): Trinches is no longer &quot;tied&quot; with Quarterfeet</span>
-<a id="__codelineno-51-13" name="__codelineno-51-13" href="#__codelineno-51-13"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">quarterfeet</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">trinches</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-51-14" name="__codelineno-51-14" href="#__codelineno-51-14"></a><span class="w">    </span><span class="c1">// ...</span>
-<a id="__codelineno-51-15" name="__codelineno-51-15" href="#__codelineno-51-15"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Quarterfeet</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Feet</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">4</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">quarterfeet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Quarterfeet</span><span class="o">&gt;</span><span class="p">{};</span>
+<a id="__codelineno-52-3" name="__codelineno-52-3" href="#__codelineno-52-3"></a>
+<a id="__codelineno-52-4" name="__codelineno-52-4" href="#__codelineno-52-4"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Trinches</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Inches</span><span class="p">{}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">3</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-52-5" name="__codelineno-52-5" href="#__codelineno-52-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">trinches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">QuantityMaker</span><span class="o">&lt;</span><span class="n">Trinches</span><span class="o">&gt;</span><span class="p">{};</span>
+<a id="__codelineno-52-6" name="__codelineno-52-6" href="#__codelineno-52-6"></a>
+<a id="__codelineno-52-7" name="__codelineno-52-7" href="#__codelineno-52-7"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">au</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-52-8" name="__codelineno-52-8" href="#__codelineno-52-8"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;&gt;</span>
+<a id="__codelineno-52-9" name="__codelineno-52-9" href="#__codelineno-52-9"></a><span class="k">struct</span><span class="w"> </span><span class="nc">UnitOrderTiebreaker</span><span class="o">&lt;::</span><span class="n">Trinches</span><span class="o">&gt;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">integral_constant</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{};</span>
+<a id="__codelineno-52-10" name="__codelineno-52-10" href="#__codelineno-52-10"></a><span class="p">}</span>
+<a id="__codelineno-52-11" name="__codelineno-52-11" href="#__codelineno-52-11"></a>
+<a id="__codelineno-52-12" name="__codelineno-52-12" href="#__codelineno-52-12"></a><span class="c1">// (FIXED): Trinches is no longer &quot;tied&quot; with Quarterfeet</span>
+<a id="__codelineno-52-13" name="__codelineno-52-13" href="#__codelineno-52-13"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">quarterfeet</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">trinches</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-52-14" name="__codelineno-52-14" href="#__codelineno-52-14"></a><span class="w">    </span><span class="c1">// ...</span>
+<a id="__codelineno-52-15" name="__codelineno-52-15" href="#__codelineno-52-15"></a><span class="p">}</span>
 </code></pre></div>
 </div>
 </div>
 </div>
 <p><strong>Compiler error (clang 14)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a>In file included from au/error_examples.cc:15:
-<a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a>In file included from ./au/au.hh:17:
-<a id="__codelineno-52-3" name="__codelineno-52-3" href="#__codelineno-52-3"></a>In file included from ./au/chrono_interop.hh:20:
-<a id="__codelineno-52-4" name="__codelineno-52-4" href="#__codelineno-52-4"></a>In file included from ./au/prefix.hh:18:
-<a id="__codelineno-52-5" name="__codelineno-52-5" href="#__codelineno-52-5"></a>In file included from ./au/quantity.hh:19:
-<a id="__codelineno-52-6" name="__codelineno-52-6" href="#__codelineno-52-6"></a>In file included from ./au/conversion_policy.hh:19:
-<a id="__codelineno-52-7" name="__codelineno-52-7" href="#__codelineno-52-7"></a>In file included from ./au/conversion_strategy.hh:17:
-<a id="__codelineno-52-8" name="__codelineno-52-8" href="#__codelineno-52-8"></a>In file included from ./au/abstract_operations.hh:17:
-<a id="__codelineno-52-9" name="__codelineno-52-9" href="#__codelineno-52-9"></a>In file included from ./au/magnitude.hh:21:
-<a id="__codelineno-52-10" name="__codelineno-52-10" href="#__codelineno-52-10"></a>./au/packs.hh:302:5: error: static_assert failed due to requirement &#39;std::is_same&lt;au::Quarterfeet, au::Trinches&gt;::value&#39; &quot;Broken strict total ordering: distinct input types compare equal&quot;
-<a id="__codelineno-52-11" name="__codelineno-52-11" href="#__codelineno-52-11"></a>    static_assert(std::is_same&lt;A, B&gt;::value,
-<a id="__codelineno-52-12" name="__codelineno-52-12" href="#__codelineno-52-12"></a>    ^             ~~~~~~~~~~~~~~~~~~~~~~~~~
-<a id="__codelineno-52-13" name="__codelineno-52-13" href="#__codelineno-52-13"></a>./au/packs.hh:318:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches&gt;&#39; requested here
-<a id="__codelineno-52-14" name="__codelineno-52-14" href="#__codelineno-52-14"></a>    std::conditional_t&lt;
-<a id="__codelineno-52-15" name="__codelineno-52-15" href="#__codelineno-52-15"></a>    ^
-<a id="__codelineno-52-16" name="__codelineno-52-16" href="#__codelineno-52-16"></a>./au/packs.hh:318:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByUnitOrderTiebreaker&gt;&#39; requested here
-<a id="__codelineno-52-17" name="__codelineno-52-17" href="#__codelineno-52-17"></a>./au/packs.hh:318:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39; requested here
-<a id="__codelineno-52-18" name="__codelineno-52-18" href="#__codelineno-52-18"></a>./au/packs.hh:318:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39; requested here
-<a id="__codelineno-52-19" name="__codelineno-52-19" href="#__codelineno-52-19"></a>./au/packs.hh:318:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39; requested here
-<a id="__codelineno-52-20" name="__codelineno-52-20" href="#__codelineno-52-20"></a>./au/packs.hh:318:5: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
-<a id="__codelineno-52-21" name="__codelineno-52-21" href="#__codelineno-52-21"></a>./au/unit_of_measure.hh:759:28: note: in instantiation of template class &#39;au::ComputeCommonUnitImpl&lt;au::Quarterfeet, au::Trinches&gt;&#39; requested here
-<a id="__codelineno-52-22" name="__codelineno-52-22" href="#__codelineno-52-22"></a>          typename detail::IncludeInPackIf&lt;IsNonzero, ComputeCommonUnitImpl, Us...&gt;::type&gt;::type&gt;&gt; {
-<a id="__codelineno-52-23" name="__codelineno-52-23" href="#__codelineno-52-23"></a>                           ^
-<a id="__codelineno-52-24" name="__codelineno-52-24" href="#__codelineno-52-24"></a>./au/unit_of_measure.hh:167:1: note: in instantiation of template class &#39;au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39; requested here
-<a id="__codelineno-52-25" name="__codelineno-52-25" href="#__codelineno-52-25"></a>using CommonUnitT = typename ComputeCommonUnit&lt;Us...&gt;::type;
-<a id="__codelineno-52-26" name="__codelineno-52-26" href="#__codelineno-52-26"></a>^
-<a id="__codelineno-52-27" name="__codelineno-52-27" href="#__codelineno-52-27"></a>./au/quantity.hh:732:15: note: in instantiation of template type alias &#39;CommonUnitT&#39; requested here
-<a id="__codelineno-52-28" name="__codelineno-52-28" href="#__codelineno-52-28"></a>    using U = CommonUnitT&lt;U1, U2&gt;;
-<a id="__codelineno-52-29" name="__codelineno-52-29" href="#__codelineno-52-29"></a>              ^
-<a id="__codelineno-52-30" name="__codelineno-52-30" href="#__codelineno-52-30"></a>./au/quantity.hh:743:20: note: in instantiation of function template specialization &#39;au::detail::convert_and_compare&lt;au::detail::Equal, au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
-<a id="__codelineno-52-31" name="__codelineno-52-31" href="#__codelineno-52-31"></a>    return detail::convert_and_compare&lt;detail::Equal&gt;(q1, q2);
-<a id="__codelineno-52-32" name="__codelineno-52-32" href="#__codelineno-52-32"></a>                   ^
-<a id="__codelineno-52-33" name="__codelineno-52-33" href="#__codelineno-52-33"></a>au/error_examples.cc:121:25: note: in instantiation of function template specialization &#39;au::operator==&lt;au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
-<a id="__codelineno-52-34" name="__codelineno-52-34" href="#__codelineno-52-34"></a>    if (quarterfeet(10) == trinches(10)) {
-<a id="__codelineno-52-35" name="__codelineno-52-35" href="#__codelineno-52-35"></a>                        ^
-<a id="__codelineno-52-36" name="__codelineno-52-36" href="#__codelineno-52-36"></a>In file included from au/error_examples.cc:15:
-<a id="__codelineno-52-37" name="__codelineno-52-37" href="#__codelineno-52-37"></a>In file included from ./au/au.hh:17:
-<a id="__codelineno-52-38" name="__codelineno-52-38" href="#__codelineno-52-38"></a>In file included from ./au/chrono_interop.hh:20:
-<a id="__codelineno-52-39" name="__codelineno-52-39" href="#__codelineno-52-39"></a>In file included from ./au/prefix.hh:18:
-<a id="__codelineno-52-40" name="__codelineno-52-40" href="#__codelineno-52-40"></a>In file included from ./au/quantity.hh:19:
-<a id="__codelineno-52-41" name="__codelineno-52-41" href="#__codelineno-52-41"></a>In file included from ./au/conversion_policy.hh:19:
-<a id="__codelineno-52-42" name="__codelineno-52-42" href="#__codelineno-52-42"></a>In file included from ./au/conversion_strategy.hh:17:
-<a id="__codelineno-52-43" name="__codelineno-52-43" href="#__codelineno-52-43"></a>In file included from ./au/abstract_operations.hh:17:
-<a id="__codelineno-52-44" name="__codelineno-52-44" href="#__codelineno-52-44"></a>./au/magnitude.hh:163:1: error: implicit instantiation of undefined template &#39;au::SignImpl&lt;void&gt;&#39;
-<a id="__codelineno-52-45" name="__codelineno-52-45" href="#__codelineno-52-45"></a>using Sign = typename SignImpl&lt;MagT&gt;::type;
-<a id="__codelineno-52-46" name="__codelineno-52-46" href="#__codelineno-52-46"></a>^
-<a id="__codelineno-52-47" name="__codelineno-52-47" href="#__codelineno-52-47"></a>./au/unit_of_measure.hh:140:1: note: in instantiation of template type alias &#39;Sign&#39; requested here
-<a id="__codelineno-52-48" name="__codelineno-52-48" href="#__codelineno-52-48"></a>using UnitSign = Sign&lt;detail::MagT&lt;U&gt;&gt;;
-<a id="__codelineno-52-49" name="__codelineno-52-49" href="#__codelineno-52-49"></a>^
-<a id="__codelineno-52-50" name="__codelineno-52-50" href="#__codelineno-52-50"></a>./au/quantity.hh:735:40: note: in instantiation of template type alias &#39;UnitSign&#39; requested here
-<a id="__codelineno-52-51" name="__codelineno-52-51" href="#__codelineno-52-51"></a>    return detail::SignAwareComparison&lt;UnitSign&lt;U&gt;, Op&gt;{}(q1.template in&lt;ComRep1&gt;(U{}),
-<a id="__codelineno-52-52" name="__codelineno-52-52" href="#__codelineno-52-52"></a>                                       ^
-<a id="__codelineno-52-53" name="__codelineno-52-53" href="#__codelineno-52-53"></a>./au/quantity.hh:743:20: note: in instantiation of function template specialization &#39;au::detail::convert_and_compare&lt;au::detail::Equal, au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
-<a id="__codelineno-52-54" name="__codelineno-52-54" href="#__codelineno-52-54"></a>    return detail::convert_and_compare&lt;detail::Equal&gt;(q1, q2);
-<a id="__codelineno-52-55" name="__codelineno-52-55" href="#__codelineno-52-55"></a>                   ^
-<a id="__codelineno-52-56" name="__codelineno-52-56" href="#__codelineno-52-56"></a>au/error_examples.cc:121:25: note: in instantiation of function template specialization &#39;au::operator==&lt;au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
-<a id="__codelineno-52-57" name="__codelineno-52-57" href="#__codelineno-52-57"></a>    if (quarterfeet(10) == trinches(10)) {
-<a id="__codelineno-52-58" name="__codelineno-52-58" href="#__codelineno-52-58"></a>                        ^
-<a id="__codelineno-52-59" name="__codelineno-52-59" href="#__codelineno-52-59"></a>./au/magnitude.hh:161:8: note: template is declared here
-<a id="__codelineno-52-60" name="__codelineno-52-60" href="#__codelineno-52-60"></a>struct SignImpl;
-<a id="__codelineno-52-61" name="__codelineno-52-61" href="#__codelineno-52-61"></a>       ^
+<div class="highlight"><pre><span></span><code><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a>In file included from au/error_examples.cc:15:
+<a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a>In file included from ./au/au.hh:17:
+<a id="__codelineno-53-3" name="__codelineno-53-3" href="#__codelineno-53-3"></a>In file included from ./au/chrono_interop.hh:20:
+<a id="__codelineno-53-4" name="__codelineno-53-4" href="#__codelineno-53-4"></a>In file included from ./au/prefix.hh:18:
+<a id="__codelineno-53-5" name="__codelineno-53-5" href="#__codelineno-53-5"></a>In file included from ./au/quantity.hh:19:
+<a id="__codelineno-53-6" name="__codelineno-53-6" href="#__codelineno-53-6"></a>In file included from ./au/conversion_policy.hh:19:
+<a id="__codelineno-53-7" name="__codelineno-53-7" href="#__codelineno-53-7"></a>In file included from ./au/conversion_strategy.hh:17:
+<a id="__codelineno-53-8" name="__codelineno-53-8" href="#__codelineno-53-8"></a>In file included from ./au/abstract_operations.hh:17:
+<a id="__codelineno-53-9" name="__codelineno-53-9" href="#__codelineno-53-9"></a>In file included from ./au/magnitude.hh:21:
+<a id="__codelineno-53-10" name="__codelineno-53-10" href="#__codelineno-53-10"></a>./au/packs.hh:302:5: error: static_assert failed due to requirement &#39;std::is_same&lt;au::Quarterfeet, au::Trinches&gt;::value&#39; &quot;Broken strict total ordering: distinct input types compare equal&quot;
+<a id="__codelineno-53-11" name="__codelineno-53-11" href="#__codelineno-53-11"></a>    static_assert(std::is_same&lt;A, B&gt;::value,
+<a id="__codelineno-53-12" name="__codelineno-53-12" href="#__codelineno-53-12"></a>    ^             ~~~~~~~~~~~~~~~~~~~~~~~~~
+<a id="__codelineno-53-13" name="__codelineno-53-13" href="#__codelineno-53-13"></a>./au/packs.hh:318:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches&gt;&#39; requested here
+<a id="__codelineno-53-14" name="__codelineno-53-14" href="#__codelineno-53-14"></a>    std::conditional_t&lt;
+<a id="__codelineno-53-15" name="__codelineno-53-15" href="#__codelineno-53-15"></a>    ^
+<a id="__codelineno-53-16" name="__codelineno-53-16" href="#__codelineno-53-16"></a>./au/packs.hh:318:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByUnitOrderTiebreaker&gt;&#39; requested here
+<a id="__codelineno-53-17" name="__codelineno-53-17" href="#__codelineno-53-17"></a>./au/packs.hh:318:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39; requested here
+<a id="__codelineno-53-18" name="__codelineno-53-18" href="#__codelineno-53-18"></a>./au/packs.hh:318:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39; requested here
+<a id="__codelineno-53-19" name="__codelineno-53-19" href="#__codelineno-53-19"></a>./au/packs.hh:318:5: note: in instantiation of template class &#39;au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39; requested here
+<a id="__codelineno-53-20" name="__codelineno-53-20" href="#__codelineno-53-20"></a>./au/packs.hh:318:5: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+<a id="__codelineno-53-21" name="__codelineno-53-21" href="#__codelineno-53-21"></a>./au/unit_of_measure.hh:759:28: note: in instantiation of template class &#39;au::ComputeCommonUnitImpl&lt;au::Quarterfeet, au::Trinches&gt;&#39; requested here
+<a id="__codelineno-53-22" name="__codelineno-53-22" href="#__codelineno-53-22"></a>          typename detail::IncludeInPackIf&lt;IsNonzero, ComputeCommonUnitImpl, Us...&gt;::type&gt;::type&gt;&gt; {
+<a id="__codelineno-53-23" name="__codelineno-53-23" href="#__codelineno-53-23"></a>                           ^
+<a id="__codelineno-53-24" name="__codelineno-53-24" href="#__codelineno-53-24"></a>./au/unit_of_measure.hh:167:1: note: in instantiation of template class &#39;au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39; requested here
+<a id="__codelineno-53-25" name="__codelineno-53-25" href="#__codelineno-53-25"></a>using CommonUnitT = typename ComputeCommonUnit&lt;Us...&gt;::type;
+<a id="__codelineno-53-26" name="__codelineno-53-26" href="#__codelineno-53-26"></a>^
+<a id="__codelineno-53-27" name="__codelineno-53-27" href="#__codelineno-53-27"></a>./au/quantity.hh:732:15: note: in instantiation of template type alias &#39;CommonUnitT&#39; requested here
+<a id="__codelineno-53-28" name="__codelineno-53-28" href="#__codelineno-53-28"></a>    using U = CommonUnitT&lt;U1, U2&gt;;
+<a id="__codelineno-53-29" name="__codelineno-53-29" href="#__codelineno-53-29"></a>              ^
+<a id="__codelineno-53-30" name="__codelineno-53-30" href="#__codelineno-53-30"></a>./au/quantity.hh:743:20: note: in instantiation of function template specialization &#39;au::detail::convert_and_compare&lt;au::detail::Equal, au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
+<a id="__codelineno-53-31" name="__codelineno-53-31" href="#__codelineno-53-31"></a>    return detail::convert_and_compare&lt;detail::Equal&gt;(q1, q2);
+<a id="__codelineno-53-32" name="__codelineno-53-32" href="#__codelineno-53-32"></a>                   ^
+<a id="__codelineno-53-33" name="__codelineno-53-33" href="#__codelineno-53-33"></a>au/error_examples.cc:121:25: note: in instantiation of function template specialization &#39;au::operator==&lt;au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
+<a id="__codelineno-53-34" name="__codelineno-53-34" href="#__codelineno-53-34"></a>    if (quarterfeet(10) == trinches(10)) {
+<a id="__codelineno-53-35" name="__codelineno-53-35" href="#__codelineno-53-35"></a>                        ^
+<a id="__codelineno-53-36" name="__codelineno-53-36" href="#__codelineno-53-36"></a>In file included from au/error_examples.cc:15:
+<a id="__codelineno-53-37" name="__codelineno-53-37" href="#__codelineno-53-37"></a>In file included from ./au/au.hh:17:
+<a id="__codelineno-53-38" name="__codelineno-53-38" href="#__codelineno-53-38"></a>In file included from ./au/chrono_interop.hh:20:
+<a id="__codelineno-53-39" name="__codelineno-53-39" href="#__codelineno-53-39"></a>In file included from ./au/prefix.hh:18:
+<a id="__codelineno-53-40" name="__codelineno-53-40" href="#__codelineno-53-40"></a>In file included from ./au/quantity.hh:19:
+<a id="__codelineno-53-41" name="__codelineno-53-41" href="#__codelineno-53-41"></a>In file included from ./au/conversion_policy.hh:19:
+<a id="__codelineno-53-42" name="__codelineno-53-42" href="#__codelineno-53-42"></a>In file included from ./au/conversion_strategy.hh:17:
+<a id="__codelineno-53-43" name="__codelineno-53-43" href="#__codelineno-53-43"></a>In file included from ./au/abstract_operations.hh:17:
+<a id="__codelineno-53-44" name="__codelineno-53-44" href="#__codelineno-53-44"></a>./au/magnitude.hh:163:1: error: implicit instantiation of undefined template &#39;au::SignImpl&lt;void&gt;&#39;
+<a id="__codelineno-53-45" name="__codelineno-53-45" href="#__codelineno-53-45"></a>using Sign = typename SignImpl&lt;MagT&gt;::type;
+<a id="__codelineno-53-46" name="__codelineno-53-46" href="#__codelineno-53-46"></a>^
+<a id="__codelineno-53-47" name="__codelineno-53-47" href="#__codelineno-53-47"></a>./au/unit_of_measure.hh:140:1: note: in instantiation of template type alias &#39;Sign&#39; requested here
+<a id="__codelineno-53-48" name="__codelineno-53-48" href="#__codelineno-53-48"></a>using UnitSign = Sign&lt;detail::MagT&lt;U&gt;&gt;;
+<a id="__codelineno-53-49" name="__codelineno-53-49" href="#__codelineno-53-49"></a>^
+<a id="__codelineno-53-50" name="__codelineno-53-50" href="#__codelineno-53-50"></a>./au/quantity.hh:735:40: note: in instantiation of template type alias &#39;UnitSign&#39; requested here
+<a id="__codelineno-53-51" name="__codelineno-53-51" href="#__codelineno-53-51"></a>    return detail::SignAwareComparison&lt;UnitSign&lt;U&gt;, Op&gt;{}(q1.template in&lt;ComRep1&gt;(U{}),
+<a id="__codelineno-53-52" name="__codelineno-53-52" href="#__codelineno-53-52"></a>                                       ^
+<a id="__codelineno-53-53" name="__codelineno-53-53" href="#__codelineno-53-53"></a>./au/quantity.hh:743:20: note: in instantiation of function template specialization &#39;au::detail::convert_and_compare&lt;au::detail::Equal, au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
+<a id="__codelineno-53-54" name="__codelineno-53-54" href="#__codelineno-53-54"></a>    return detail::convert_and_compare&lt;detail::Equal&gt;(q1, q2);
+<a id="__codelineno-53-55" name="__codelineno-53-55" href="#__codelineno-53-55"></a>                   ^
+<a id="__codelineno-53-56" name="__codelineno-53-56" href="#__codelineno-53-56"></a>au/error_examples.cc:121:25: note: in instantiation of function template specialization &#39;au::operator==&lt;au::Quarterfeet, au::Trinches, int, int&gt;&#39; requested here
+<a id="__codelineno-53-57" name="__codelineno-53-57" href="#__codelineno-53-57"></a>    if (quarterfeet(10) == trinches(10)) {
+<a id="__codelineno-53-58" name="__codelineno-53-58" href="#__codelineno-53-58"></a>                        ^
+<a id="__codelineno-53-59" name="__codelineno-53-59" href="#__codelineno-53-59"></a>./au/magnitude.hh:161:8: note: template is declared here
+<a id="__codelineno-53-60" name="__codelineno-53-60" href="#__codelineno-53-60"></a>struct SignImpl;
+<a id="__codelineno-53-61" name="__codelineno-53-61" href="#__codelineno-53-61"></a>       ^
 </code></pre></div></p>
 <p><strong>Compiler error (gcc 10)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a>In file included from ./au/magnitude.hh:21,
-<a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a>                 from ./au/abstract_operations.hh:17,
-<a id="__codelineno-53-3" name="__codelineno-53-3" href="#__codelineno-53-3"></a>                 from ./au/conversion_strategy.hh:17,
-<a id="__codelineno-53-4" name="__codelineno-53-4" href="#__codelineno-53-4"></a>                 from ./au/conversion_policy.hh:19,
-<a id="__codelineno-53-5" name="__codelineno-53-5" href="#__codelineno-53-5"></a>                 from ./au/quantity.hh:19,
-<a id="__codelineno-53-6" name="__codelineno-53-6" href="#__codelineno-53-6"></a>                 from ./au/prefix.hh:18,
-<a id="__codelineno-53-7" name="__codelineno-53-7" href="#__codelineno-53-7"></a>                 from ./au/chrono_interop.hh:20,
-<a id="__codelineno-53-8" name="__codelineno-53-8" href="#__codelineno-53-8"></a>                 from ./au/au.hh:17,
-<a id="__codelineno-53-9" name="__codelineno-53-9" href="#__codelineno-53-9"></a>                 from au/error_examples.cc:15:
-<a id="__codelineno-53-10" name="__codelineno-53-10" href="#__codelineno-53-10"></a>./au/packs.hh: In instantiation of &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches&gt;&#39;:
-<a id="__codelineno-53-11" name="__codelineno-53-11" href="#__codelineno-53-11"></a>./au/packs.hh:313:8:   recursively required from &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39;
-<a id="__codelineno-53-12" name="__codelineno-53-12" href="#__codelineno-53-12"></a>./au/packs.hh:313:8:   required from &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByCoarseUnitOrdering, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39;
-<a id="__codelineno-53-13" name="__codelineno-53-13" href="#__codelineno-53-13"></a>./au/unit_of_measure.hh:1184:8:   required from &#39;struct au::InOrderFor&lt;au::UnitProduct, au::Quarterfeet, au::Trinches&gt;&#39;
-<a id="__codelineno-53-14" name="__codelineno-53-14" href="#__codelineno-53-14"></a>./au/unit_of_measure.hh:595:8:   required from &#39;struct au::InOrderFor&lt;au::CommonUnit, au::Quarterfeet, au::Trinches&gt;&#39;
-<a id="__codelineno-53-15" name="__codelineno-53-15" href="#__codelineno-53-15"></a>./au/packs.hh:436:8:   required from &#39;struct au::FlatDedupedTypeList&lt;au::CommonUnit, au::CommonUnit&lt;au::Quarterfeet&gt;, au::CommonUnit&lt;au::Trinches&gt; &gt;&#39;
-<a id="__codelineno-53-16" name="__codelineno-53-16" href="#__codelineno-53-16"></a>./au/unit_of_measure.hh:745:8:   required from &#39;struct au::ComputeCommonUnitImpl&lt;au::Quarterfeet, au::Trinches&gt;&#39;
-<a id="__codelineno-53-17" name="__codelineno-53-17" href="#__codelineno-53-17"></a>./au/unit_of_measure.hh:756:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
-<a id="__codelineno-53-18" name="__codelineno-53-18" href="#__codelineno-53-18"></a>./au/unit_of_measure.hh:167:7:   required by substitution of &#39;template&lt;class ... Us&gt; using CommonUnitT = typename au::ComputeCommonUnit::type [with Us = {au::Quarterfeet, au::Trinches}]&#39;
-<a id="__codelineno-53-19" name="__codelineno-53-19" href="#__codelineno-53-19"></a>./au/quantity.hh:732:11:   required from &#39;constexpr auto au::detail::convert_and_compare(au::Quantity&lt;U2, R2&gt;, au::Quantity&lt;U2, R2&gt;) [with Op = au::detail::Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
-<a id="__codelineno-53-20" name="__codelineno-53-20" href="#__codelineno-53-20"></a>./au/quantity.hh:743:54:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
-<a id="__codelineno-53-21" name="__codelineno-53-21" href="#__codelineno-53-21"></a>au/error_examples.cc:121:39:   required from here
-<a id="__codelineno-53-22" name="__codelineno-53-22" href="#__codelineno-53-22"></a>./au/packs.hh:302:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
-<a id="__codelineno-53-23" name="__codelineno-53-23" href="#__codelineno-53-23"></a>  302 |     static_assert(std::is_same&lt;A, B&gt;::value,
-<a id="__codelineno-53-24" name="__codelineno-53-24" href="#__codelineno-53-24"></a>      |                                       ^~~~~
-<a id="__codelineno-53-25" name="__codelineno-53-25" href="#__codelineno-53-25"></a>./au/packs.hh: In instantiation of &#39;struct au::LexicographicTotalOrdering&lt;au::Trinches, au::Quarterfeet&gt;&#39;:
-<a id="__codelineno-53-26" name="__codelineno-53-26" href="#__codelineno-53-26"></a>./au/packs.hh:313:8:   recursively required from &#39;struct au::LexicographicTotalOrdering&lt;au::Trinches, au::Quarterfeet, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39;
-<a id="__codelineno-53-27" name="__codelineno-53-27" href="#__codelineno-53-27"></a>./au/packs.hh:313:8:   required from &#39;struct au::LexicographicTotalOrdering&lt;au::Trinches, au::Quarterfeet, au::detail::OrderByCoarseUnitOrdering, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39;
-<a id="__codelineno-53-28" name="__codelineno-53-28" href="#__codelineno-53-28"></a>./au/unit_of_measure.hh:1184:8:   required from &#39;struct au::InOrderFor&lt;au::UnitProduct, au::Trinches, au::Quarterfeet&gt;&#39;
-<a id="__codelineno-53-29" name="__codelineno-53-29" href="#__codelineno-53-29"></a>./au/unit_of_measure.hh:595:8:   required from &#39;struct au::InOrderFor&lt;au::CommonUnit, au::Trinches, au::Quarterfeet&gt;&#39;
-<a id="__codelineno-53-30" name="__codelineno-53-30" href="#__codelineno-53-30"></a>./au/unit_of_measure.hh:649:8:   required from &#39;struct au::detail::IsFirstUnitRedundant&lt;au::CommonUnit, au::Quarterfeet, au::Trinches&gt;&#39;
-<a id="__codelineno-53-31" name="__codelineno-53-31" href="#__codelineno-53-31"></a>./au/unit_of_measure.hh:660:8:   required from &#39;struct au::detail::EliminateRedundantUnitsImpl&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt; &gt;&#39;
-<a id="__codelineno-53-32" name="__codelineno-53-32" href="#__codelineno-53-32"></a>./au/unit_of_measure.hh:745:8:   required from &#39;struct au::ComputeCommonUnitImpl&lt;au::Quarterfeet, au::Trinches&gt;&#39;
-<a id="__codelineno-53-33" name="__codelineno-53-33" href="#__codelineno-53-33"></a>./au/unit_of_measure.hh:756:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
-<a id="__codelineno-53-34" name="__codelineno-53-34" href="#__codelineno-53-34"></a>./au/unit_of_measure.hh:167:7:   required by substitution of &#39;template&lt;class ... Us&gt; using CommonUnitT = typename au::ComputeCommonUnit::type [with Us = {au::Quarterfeet, au::Trinches}]&#39;
-<a id="__codelineno-53-35" name="__codelineno-53-35" href="#__codelineno-53-35"></a>./au/quantity.hh:732:11:   required from &#39;constexpr auto au::detail::convert_and_compare(au::Quantity&lt;U2, R2&gt;, au::Quantity&lt;U2, R2&gt;) [with Op = au::detail::Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
-<a id="__codelineno-53-36" name="__codelineno-53-36" href="#__codelineno-53-36"></a>./au/quantity.hh:743:54:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
-<a id="__codelineno-53-37" name="__codelineno-53-37" href="#__codelineno-53-37"></a>au/error_examples.cc:121:39:   required from here
-<a id="__codelineno-53-38" name="__codelineno-53-38" href="#__codelineno-53-38"></a>./au/packs.hh:302:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
-<a id="__codelineno-53-39" name="__codelineno-53-39" href="#__codelineno-53-39"></a>In file included from ./au/conversion_policy.hh:26,
-<a id="__codelineno-53-40" name="__codelineno-53-40" href="#__codelineno-53-40"></a>                 from ./au/quantity.hh:19,
-<a id="__codelineno-53-41" name="__codelineno-53-41" href="#__codelineno-53-41"></a>                 from ./au/prefix.hh:18,
-<a id="__codelineno-53-42" name="__codelineno-53-42" href="#__codelineno-53-42"></a>                 from ./au/chrono_interop.hh:20,
-<a id="__codelineno-53-43" name="__codelineno-53-43" href="#__codelineno-53-43"></a>                 from ./au/au.hh:17,
-<a id="__codelineno-53-44" name="__codelineno-53-44" href="#__codelineno-53-44"></a>                 from au/error_examples.cc:15:
-<a id="__codelineno-53-45" name="__codelineno-53-45" href="#__codelineno-53-45"></a>./au/unit_of_measure.hh: In instantiation of &#39;struct au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;&#39;:
-<a id="__codelineno-53-46" name="__codelineno-53-46" href="#__codelineno-53-46"></a>./au/packs.hh:220:8:   recursively required by substitution of &#39;template&lt;class Default, template&lt;class ...&gt; class Op, class ... Args&gt; struct au::stdx::experimental::detail::detector&lt;Default, au::stdx::void_t&lt;Op&lt;Args ...&gt; &gt;, Op, Args ...&gt; [with Default = void; Op = au::detail::DimMemberT; Args = {au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;}]&#39;
-<a id="__codelineno-53-47" name="__codelineno-53-47" href="#__codelineno-53-47"></a>./au/packs.hh:220:8:   required from &#39;struct au::detail::DimImpl&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt; &gt;&#39;
-<a id="__codelineno-53-48" name="__codelineno-53-48" href="#__codelineno-53-48"></a>./au/unit_of_measure.hh:545:8:   required from &#39;struct au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;&#39;
-<a id="__codelineno-53-49" name="__codelineno-53-49" href="#__codelineno-53-49"></a>./au/stdx/type_traits.hh:38:59:   required from &#39;struct au::stdx::conjunction&lt;au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;, au::detail::HasSameMagnitude&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt; &gt;&#39;
-<a id="__codelineno-53-50" name="__codelineno-53-50" href="#__codelineno-53-50"></a>./au/unit_of_measure.hh:560:8:   required from &#39;struct au::AreUnitsQuantityEquivalent&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;&#39;
-<a id="__codelineno-53-51" name="__codelineno-53-51" href="#__codelineno-53-51"></a>./au/unit_of_measure.hh:627:8:   required from &#39;struct au::detail::FirstMatchingUnit&lt;au::AreUnitsQuantityEquivalent, au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt; &gt;&#39;
-<a id="__codelineno-53-52" name="__codelineno-53-52" href="#__codelineno-53-52"></a>./au/unit_of_measure.hh:756:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
-<a id="__codelineno-53-53" name="__codelineno-53-53" href="#__codelineno-53-53"></a>./au/unit_of_measure.hh:167:7:   required by substitution of &#39;template&lt;class ... Us&gt; using CommonUnitT = typename au::ComputeCommonUnit::type [with Us = {au::Quarterfeet, au::Trinches}]&#39;
-<a id="__codelineno-53-54" name="__codelineno-53-54" href="#__codelineno-53-54"></a>./au/quantity.hh:732:11:   required from &#39;constexpr auto au::detail::convert_and_compare(au::Quantity&lt;U2, R2&gt;, au::Quantity&lt;U2, R2&gt;) [with Op = au::detail::Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
-<a id="__codelineno-53-55" name="__codelineno-53-55" href="#__codelineno-53-55"></a>./au/quantity.hh:743:54:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
-<a id="__codelineno-53-56" name="__codelineno-53-56" href="#__codelineno-53-56"></a>au/error_examples.cc:121:39:   required from here
-<a id="__codelineno-53-57" name="__codelineno-53-57" href="#__codelineno-53-57"></a>./au/unit_of_measure.hh:585:70: error: static assertion failed: Elements must be listed in ascending order
-<a id="__codelineno-53-58" name="__codelineno-53-58" href="#__codelineno-53-58"></a>  585 |     static_assert(AreElementsInOrder&lt;CommonUnit, CommonUnit&lt;Us...&gt;&gt;::value,
-<a id="__codelineno-53-59" name="__codelineno-53-59" href="#__codelineno-53-59"></a>      |                                                                      ^~~~~
+<div class="highlight"><pre><span></span><code><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a>In file included from ./au/magnitude.hh:21,
+<a id="__codelineno-54-2" name="__codelineno-54-2" href="#__codelineno-54-2"></a>                 from ./au/abstract_operations.hh:17,
+<a id="__codelineno-54-3" name="__codelineno-54-3" href="#__codelineno-54-3"></a>                 from ./au/conversion_strategy.hh:17,
+<a id="__codelineno-54-4" name="__codelineno-54-4" href="#__codelineno-54-4"></a>                 from ./au/conversion_policy.hh:19,
+<a id="__codelineno-54-5" name="__codelineno-54-5" href="#__codelineno-54-5"></a>                 from ./au/quantity.hh:19,
+<a id="__codelineno-54-6" name="__codelineno-54-6" href="#__codelineno-54-6"></a>                 from ./au/prefix.hh:18,
+<a id="__codelineno-54-7" name="__codelineno-54-7" href="#__codelineno-54-7"></a>                 from ./au/chrono_interop.hh:20,
+<a id="__codelineno-54-8" name="__codelineno-54-8" href="#__codelineno-54-8"></a>                 from ./au/au.hh:17,
+<a id="__codelineno-54-9" name="__codelineno-54-9" href="#__codelineno-54-9"></a>                 from au/error_examples.cc:15:
+<a id="__codelineno-54-10" name="__codelineno-54-10" href="#__codelineno-54-10"></a>./au/packs.hh: In instantiation of &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches&gt;&#39;:
+<a id="__codelineno-54-11" name="__codelineno-54-11" href="#__codelineno-54-11"></a>./au/packs.hh:313:8:   recursively required from &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39;
+<a id="__codelineno-54-12" name="__codelineno-54-12" href="#__codelineno-54-12"></a>./au/packs.hh:313:8:   required from &#39;struct au::LexicographicTotalOrdering&lt;au::Quarterfeet, au::Trinches, au::detail::OrderByCoarseUnitOrdering, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39;
+<a id="__codelineno-54-13" name="__codelineno-54-13" href="#__codelineno-54-13"></a>./au/unit_of_measure.hh:1184:8:   required from &#39;struct au::InOrderFor&lt;au::UnitProduct, au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-54-14" name="__codelineno-54-14" href="#__codelineno-54-14"></a>./au/unit_of_measure.hh:595:8:   required from &#39;struct au::InOrderFor&lt;au::CommonUnit, au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-54-15" name="__codelineno-54-15" href="#__codelineno-54-15"></a>./au/packs.hh:436:8:   required from &#39;struct au::FlatDedupedTypeList&lt;au::CommonUnit, au::CommonUnit&lt;au::Quarterfeet&gt;, au::CommonUnit&lt;au::Trinches&gt; &gt;&#39;
+<a id="__codelineno-54-16" name="__codelineno-54-16" href="#__codelineno-54-16"></a>./au/unit_of_measure.hh:745:8:   required from &#39;struct au::ComputeCommonUnitImpl&lt;au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-54-17" name="__codelineno-54-17" href="#__codelineno-54-17"></a>./au/unit_of_measure.hh:756:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-54-18" name="__codelineno-54-18" href="#__codelineno-54-18"></a>./au/unit_of_measure.hh:167:7:   required by substitution of &#39;template&lt;class ... Us&gt; using CommonUnitT = typename au::ComputeCommonUnit::type [with Us = {au::Quarterfeet, au::Trinches}]&#39;
+<a id="__codelineno-54-19" name="__codelineno-54-19" href="#__codelineno-54-19"></a>./au/quantity.hh:732:11:   required from &#39;constexpr auto au::detail::convert_and_compare(au::Quantity&lt;U2, R2&gt;, au::Quantity&lt;U2, R2&gt;) [with Op = au::detail::Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
+<a id="__codelineno-54-20" name="__codelineno-54-20" href="#__codelineno-54-20"></a>./au/quantity.hh:743:54:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
+<a id="__codelineno-54-21" name="__codelineno-54-21" href="#__codelineno-54-21"></a>au/error_examples.cc:121:39:   required from here
+<a id="__codelineno-54-22" name="__codelineno-54-22" href="#__codelineno-54-22"></a>./au/packs.hh:302:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
+<a id="__codelineno-54-23" name="__codelineno-54-23" href="#__codelineno-54-23"></a>  302 |     static_assert(std::is_same&lt;A, B&gt;::value,
+<a id="__codelineno-54-24" name="__codelineno-54-24" href="#__codelineno-54-24"></a>      |                                       ^~~~~
+<a id="__codelineno-54-25" name="__codelineno-54-25" href="#__codelineno-54-25"></a>./au/packs.hh: In instantiation of &#39;struct au::LexicographicTotalOrdering&lt;au::Trinches, au::Quarterfeet&gt;&#39;:
+<a id="__codelineno-54-26" name="__codelineno-54-26" href="#__codelineno-54-26"></a>./au/packs.hh:313:8:   recursively required from &#39;struct au::LexicographicTotalOrdering&lt;au::Trinches, au::Quarterfeet, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39;
+<a id="__codelineno-54-27" name="__codelineno-54-27" href="#__codelineno-54-27"></a>./au/packs.hh:313:8:   required from &#39;struct au::LexicographicTotalOrdering&lt;au::Trinches, au::Quarterfeet, au::detail::OrderByCoarseUnitOrdering, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker&gt;&#39;
+<a id="__codelineno-54-28" name="__codelineno-54-28" href="#__codelineno-54-28"></a>./au/unit_of_measure.hh:1184:8:   required from &#39;struct au::InOrderFor&lt;au::UnitProduct, au::Trinches, au::Quarterfeet&gt;&#39;
+<a id="__codelineno-54-29" name="__codelineno-54-29" href="#__codelineno-54-29"></a>./au/unit_of_measure.hh:595:8:   required from &#39;struct au::InOrderFor&lt;au::CommonUnit, au::Trinches, au::Quarterfeet&gt;&#39;
+<a id="__codelineno-54-30" name="__codelineno-54-30" href="#__codelineno-54-30"></a>./au/unit_of_measure.hh:649:8:   required from &#39;struct au::detail::IsFirstUnitRedundant&lt;au::CommonUnit, au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-54-31" name="__codelineno-54-31" href="#__codelineno-54-31"></a>./au/unit_of_measure.hh:660:8:   required from &#39;struct au::detail::EliminateRedundantUnitsImpl&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt; &gt;&#39;
+<a id="__codelineno-54-32" name="__codelineno-54-32" href="#__codelineno-54-32"></a>./au/unit_of_measure.hh:745:8:   required from &#39;struct au::ComputeCommonUnitImpl&lt;au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-54-33" name="__codelineno-54-33" href="#__codelineno-54-33"></a>./au/unit_of_measure.hh:756:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-54-34" name="__codelineno-54-34" href="#__codelineno-54-34"></a>./au/unit_of_measure.hh:167:7:   required by substitution of &#39;template&lt;class ... Us&gt; using CommonUnitT = typename au::ComputeCommonUnit::type [with Us = {au::Quarterfeet, au::Trinches}]&#39;
+<a id="__codelineno-54-35" name="__codelineno-54-35" href="#__codelineno-54-35"></a>./au/quantity.hh:732:11:   required from &#39;constexpr auto au::detail::convert_and_compare(au::Quantity&lt;U2, R2&gt;, au::Quantity&lt;U2, R2&gt;) [with Op = au::detail::Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
+<a id="__codelineno-54-36" name="__codelineno-54-36" href="#__codelineno-54-36"></a>./au/quantity.hh:743:54:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
+<a id="__codelineno-54-37" name="__codelineno-54-37" href="#__codelineno-54-37"></a>au/error_examples.cc:121:39:   required from here
+<a id="__codelineno-54-38" name="__codelineno-54-38" href="#__codelineno-54-38"></a>./au/packs.hh:302:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
+<a id="__codelineno-54-39" name="__codelineno-54-39" href="#__codelineno-54-39"></a>In file included from ./au/conversion_policy.hh:26,
+<a id="__codelineno-54-40" name="__codelineno-54-40" href="#__codelineno-54-40"></a>                 from ./au/quantity.hh:19,
+<a id="__codelineno-54-41" name="__codelineno-54-41" href="#__codelineno-54-41"></a>                 from ./au/prefix.hh:18,
+<a id="__codelineno-54-42" name="__codelineno-54-42" href="#__codelineno-54-42"></a>                 from ./au/chrono_interop.hh:20,
+<a id="__codelineno-54-43" name="__codelineno-54-43" href="#__codelineno-54-43"></a>                 from ./au/au.hh:17,
+<a id="__codelineno-54-44" name="__codelineno-54-44" href="#__codelineno-54-44"></a>                 from au/error_examples.cc:15:
+<a id="__codelineno-54-45" name="__codelineno-54-45" href="#__codelineno-54-45"></a>./au/unit_of_measure.hh: In instantiation of &#39;struct au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;&#39;:
+<a id="__codelineno-54-46" name="__codelineno-54-46" href="#__codelineno-54-46"></a>./au/packs.hh:220:8:   recursively required by substitution of &#39;template&lt;class Default, template&lt;class ...&gt; class Op, class ... Args&gt; struct au::stdx::experimental::detail::detector&lt;Default, au::stdx::void_t&lt;Op&lt;Args ...&gt; &gt;, Op, Args ...&gt; [with Default = void; Op = au::detail::DimMemberT; Args = {au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;}]&#39;
+<a id="__codelineno-54-47" name="__codelineno-54-47" href="#__codelineno-54-47"></a>./au/packs.hh:220:8:   required from &#39;struct au::detail::DimImpl&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt; &gt;&#39;
+<a id="__codelineno-54-48" name="__codelineno-54-48" href="#__codelineno-54-48"></a>./au/unit_of_measure.hh:545:8:   required from &#39;struct au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;&#39;
+<a id="__codelineno-54-49" name="__codelineno-54-49" href="#__codelineno-54-49"></a>./au/stdx/type_traits.hh:38:59:   required from &#39;struct au::stdx::conjunction&lt;au::HasSameDimension&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;, au::detail::HasSameMagnitude&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt; &gt;&#39;
+<a id="__codelineno-54-50" name="__codelineno-54-50" href="#__codelineno-54-50"></a>./au/unit_of_measure.hh:560:8:   required from &#39;struct au::AreUnitsQuantityEquivalent&lt;au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::Trinches&gt;&#39;
+<a id="__codelineno-54-51" name="__codelineno-54-51" href="#__codelineno-54-51"></a>./au/unit_of_measure.hh:627:8:   required from &#39;struct au::detail::FirstMatchingUnit&lt;au::AreUnitsQuantityEquivalent, au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt;, au::CommonUnit&lt;au::Trinches, au::Quarterfeet&gt; &gt;&#39;
+<a id="__codelineno-54-52" name="__codelineno-54-52" href="#__codelineno-54-52"></a>./au/unit_of_measure.hh:756:8:   required from &#39;struct au::ComputeCommonUnit&lt;au::Quarterfeet, au::Trinches&gt;&#39;
+<a id="__codelineno-54-53" name="__codelineno-54-53" href="#__codelineno-54-53"></a>./au/unit_of_measure.hh:167:7:   required by substitution of &#39;template&lt;class ... Us&gt; using CommonUnitT = typename au::ComputeCommonUnit::type [with Us = {au::Quarterfeet, au::Trinches}]&#39;
+<a id="__codelineno-54-54" name="__codelineno-54-54" href="#__codelineno-54-54"></a>./au/quantity.hh:732:11:   required from &#39;constexpr auto au::detail::convert_and_compare(au::Quantity&lt;U2, R2&gt;, au::Quantity&lt;U2, R2&gt;) [with Op = au::detail::Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
+<a id="__codelineno-54-55" name="__codelineno-54-55" href="#__codelineno-54-55"></a>./au/quantity.hh:743:54:   required from &#39;constexpr bool au::operator==(au::Quantity&lt;U1, R1&gt;, au::Quantity&lt;U2, R2&gt;) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]&#39;
+<a id="__codelineno-54-56" name="__codelineno-54-56" href="#__codelineno-54-56"></a>au/error_examples.cc:121:39:   required from here
+<a id="__codelineno-54-57" name="__codelineno-54-57" href="#__codelineno-54-57"></a>./au/unit_of_measure.hh:585:70: error: static assertion failed: Elements must be listed in ascending order
+<a id="__codelineno-54-58" name="__codelineno-54-58" href="#__codelineno-54-58"></a>  585 |     static_assert(AreElementsInOrder&lt;CommonUnit, CommonUnit&lt;Us...&gt;&gt;::value,
+<a id="__codelineno-54-59" name="__codelineno-54-59" href="#__codelineno-54-59"></a>      |                                                                      ^~~~~
 </code></pre></div></p>
 <p><strong>Compiler error (MSVC 2022 x64)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a>D:\a\au\au\au.hh(2109): error C2338: static_assert failed: &#39;Broken strict total ordering: distinct input types compare equal&#39;
-<a id="__codelineno-54-2" name="__codelineno-54-2" href="#__codelineno-54-2"></a>D:\a\au\au\au.hh(2109): note: the template instantiation context (the oldest one first) is
-<a id="__codelineno-54-3" name="__codelineno-54-3" href="#__codelineno-54-3"></a>error_examples.cc(123): note: see reference to function template instantiation &#39;bool au::operator ==&lt;au::Quarterfeet,au::Trinches,int,int&gt;(au::Quantity&lt;au::Quarterfeet,int&gt;,au::Quantity&lt;au::Trinches,int&gt;)&#39; being compiled
-<a id="__codelineno-54-4" name="__codelineno-54-4" href="#__codelineno-54-4"></a>D:\a\au\au\au.hh(7019): note: see reference to function template instantiation &#39;auto au::detail::convert_and_compare&lt;au::detail::Equal,au::Quarterfeet,au::Trinches,int,int&gt;(au::Quantity&lt;au::Quarterfeet,int&gt;,au::Quantity&lt;au::Trinches,int&gt;)&#39; being compiled
-<a id="__codelineno-54-5" name="__codelineno-54-5" href="#__codelineno-54-5"></a>D:\a\au\au\au.hh(7008): note: see reference to alias template instantiation &#39;au::CommonUnitT&lt;U1,U2&gt;&#39; being compiled
-<a id="__codelineno-54-6" name="__codelineno-54-6" href="#__codelineno-54-6"></a>        with
-<a id="__codelineno-54-7" name="__codelineno-54-7" href="#__codelineno-54-7"></a>        [
-<a id="__codelineno-54-8" name="__codelineno-54-8" href="#__codelineno-54-8"></a>            U1=au::Quarterfeet,
-<a id="__codelineno-54-9" name="__codelineno-54-9" href="#__codelineno-54-9"></a>            U2=au::Trinches
-<a id="__codelineno-54-10" name="__codelineno-54-10" href="#__codelineno-54-10"></a>        ]
-<a id="__codelineno-54-11" name="__codelineno-54-11" href="#__codelineno-54-11"></a>D:\a\au\au\au.hh(4800): note: see reference to class template instantiation &#39;au::ComputeCommonUnit&lt;U1,U2&gt;&#39; being compiled
-<a id="__codelineno-54-12" name="__codelineno-54-12" href="#__codelineno-54-12"></a>        with
-<a id="__codelineno-54-13" name="__codelineno-54-13" href="#__codelineno-54-13"></a>        [
-<a id="__codelineno-54-14" name="__codelineno-54-14" href="#__codelineno-54-14"></a>            U1=au::Quarterfeet,
-<a id="__codelineno-54-15" name="__codelineno-54-15" href="#__codelineno-54-15"></a>            U2=au::Trinches
-<a id="__codelineno-54-16" name="__codelineno-54-16" href="#__codelineno-54-16"></a>        ]
-<a id="__codelineno-54-17" name="__codelineno-54-17" href="#__codelineno-54-17"></a>D:\a\au\au\au.hh(5392): note: see reference to class template instantiation &#39;au::ComputeCommonUnitImpl&lt;U1,U2&gt;&#39; being compiled
-<a id="__codelineno-54-18" name="__codelineno-54-18" href="#__codelineno-54-18"></a>        with
-<a id="__codelineno-54-19" name="__codelineno-54-19" href="#__codelineno-54-19"></a>        [
-<a id="__codelineno-54-20" name="__codelineno-54-20" href="#__codelineno-54-20"></a>            U1=au::Quarterfeet,
-<a id="__codelineno-54-21" name="__codelineno-54-21" href="#__codelineno-54-21"></a>            U2=au::Trinches
-<a id="__codelineno-54-22" name="__codelineno-54-22" href="#__codelineno-54-22"></a>        ]
-<a id="__codelineno-54-23" name="__codelineno-54-23" href="#__codelineno-54-23"></a>D:\a\au\au\au.hh(5380): note: see reference to alias template instantiation &#39;au::FlatDedupedTypeListT&lt;au::CommonUnit,au::Quarterfeet,au::Trinches&gt;&#39; being compiled
-<a id="__codelineno-54-24" name="__codelineno-54-24" href="#__codelineno-54-24"></a>D:\a\au\au\au.hh(1930): note: see reference to class template instantiation &#39;au::FlatDedupedTypeList&lt;au::CommonUnit,au::CommonUnit&lt;T&gt;,au::CommonUnit&lt;au::Trinches&gt;&gt;&#39; being compiled
-<a id="__codelineno-54-25" name="__codelineno-54-25" href="#__codelineno-54-25"></a>        with
-<a id="__codelineno-54-26" name="__codelineno-54-26" href="#__codelineno-54-26"></a>        [
-<a id="__codelineno-54-27" name="__codelineno-54-27" href="#__codelineno-54-27"></a>            T=au::Quarterfeet
-<a id="__codelineno-54-28" name="__codelineno-54-28" href="#__codelineno-54-28"></a>        ]
-<a id="__codelineno-54-29" name="__codelineno-54-29" href="#__codelineno-54-29"></a>D:\a\au\au\au.hh(2251): note: see reference to class template instantiation &#39;au::InOrderFor&lt;List,T,H&gt;&#39; being compiled
-<a id="__codelineno-54-30" name="__codelineno-54-30" href="#__codelineno-54-30"></a>        with
-<a id="__codelineno-54-31" name="__codelineno-54-31" href="#__codelineno-54-31"></a>        [
-<a id="__codelineno-54-32" name="__codelineno-54-32" href="#__codelineno-54-32"></a>            List=au::CommonUnit,
-<a id="__codelineno-54-33" name="__codelineno-54-33" href="#__codelineno-54-33"></a>            T=au::Quarterfeet,
-<a id="__codelineno-54-34" name="__codelineno-54-34" href="#__codelineno-54-34"></a>            H=au::Trinches
-<a id="__codelineno-54-35" name="__codelineno-54-35" href="#__codelineno-54-35"></a>        ]
-<a id="__codelineno-54-36" name="__codelineno-54-36" href="#__codelineno-54-36"></a>D:\a\au\au\au.hh(5228): note: see reference to class template instantiation &#39;au::InOrderFor&lt;au::UnitProduct,A,B&gt;&#39; being compiled
-<a id="__codelineno-54-37" name="__codelineno-54-37" href="#__codelineno-54-37"></a>        with
-<a id="__codelineno-54-38" name="__codelineno-54-38" href="#__codelineno-54-38"></a>        [
-<a id="__codelineno-54-39" name="__codelineno-54-39" href="#__codelineno-54-39"></a>            A=au::Quarterfeet,
-<a id="__codelineno-54-40" name="__codelineno-54-40" href="#__codelineno-54-40"></a>            B=au::Trinches
-<a id="__codelineno-54-41" name="__codelineno-54-41" href="#__codelineno-54-41"></a>        ]
-<a id="__codelineno-54-42" name="__codelineno-54-42" href="#__codelineno-54-42"></a>D:\a\au\au\au.hh(5818): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderByCoarseUnitOrdering,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByScaleFactor,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
-<a id="__codelineno-54-43" name="__codelineno-54-43" href="#__codelineno-54-43"></a>        with
-<a id="__codelineno-54-44" name="__codelineno-54-44" href="#__codelineno-54-44"></a>        [
-<a id="__codelineno-54-45" name="__codelineno-54-45" href="#__codelineno-54-45"></a>            A=au::Quarterfeet,
-<a id="__codelineno-54-46" name="__codelineno-54-46" href="#__codelineno-54-46"></a>            B=au::Trinches
-<a id="__codelineno-54-47" name="__codelineno-54-47" href="#__codelineno-54-47"></a>        ]
-<a id="__codelineno-54-48" name="__codelineno-54-48" href="#__codelineno-54-48"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByScaleFactor,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
-<a id="__codelineno-54-49" name="__codelineno-54-49" href="#__codelineno-54-49"></a>        with
-<a id="__codelineno-54-50" name="__codelineno-54-50" href="#__codelineno-54-50"></a>        [
-<a id="__codelineno-54-51" name="__codelineno-54-51" href="#__codelineno-54-51"></a>            A=au::Quarterfeet,
-<a id="__codelineno-54-52" name="__codelineno-54-52" href="#__codelineno-54-52"></a>            B=au::Trinches
-<a id="__codelineno-54-53" name="__codelineno-54-53" href="#__codelineno-54-53"></a>        ]
-<a id="__codelineno-54-54" name="__codelineno-54-54" href="#__codelineno-54-54"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderByMag,au::detail::OrderByScaleFactor,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
-<a id="__codelineno-54-55" name="__codelineno-54-55" href="#__codelineno-54-55"></a>        with
-<a id="__codelineno-54-56" name="__codelineno-54-56" href="#__codelineno-54-56"></a>        [
-<a id="__codelineno-54-57" name="__codelineno-54-57" href="#__codelineno-54-57"></a>            A=au::Quarterfeet,
-<a id="__codelineno-54-58" name="__codelineno-54-58" href="#__codelineno-54-58"></a>            B=au::Trinches
-<a id="__codelineno-54-59" name="__codelineno-54-59" href="#__codelineno-54-59"></a>        ]
-<a id="__codelineno-54-60" name="__codelineno-54-60" href="#__codelineno-54-60"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderByScaleFactor,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
-<a id="__codelineno-54-61" name="__codelineno-54-61" href="#__codelineno-54-61"></a>        with
-<a id="__codelineno-54-62" name="__codelineno-54-62" href="#__codelineno-54-62"></a>        [
-<a id="__codelineno-54-63" name="__codelineno-54-63" href="#__codelineno-54-63"></a>            A=au::Quarterfeet,
-<a id="__codelineno-54-64" name="__codelineno-54-64" href="#__codelineno-54-64"></a>            B=au::Trinches
-<a id="__codelineno-54-65" name="__codelineno-54-65" href="#__codelineno-54-65"></a>        ]
-<a id="__codelineno-54-66" name="__codelineno-54-66" href="#__codelineno-54-66"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
-<a id="__codelineno-54-67" name="__codelineno-54-67" href="#__codelineno-54-67"></a>        with
-<a id="__codelineno-54-68" name="__codelineno-54-68" href="#__codelineno-54-68"></a>        [
-<a id="__codelineno-54-69" name="__codelineno-54-69" href="#__codelineno-54-69"></a>            A=au::Quarterfeet,
-<a id="__codelineno-54-70" name="__codelineno-54-70" href="#__codelineno-54-70"></a>            B=au::Trinches
-<a id="__codelineno-54-71" name="__codelineno-54-71" href="#__codelineno-54-71"></a>        ]
-<a id="__codelineno-54-72" name="__codelineno-54-72" href="#__codelineno-54-72"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderAsUnitProduct,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
-<a id="__codelineno-54-73" name="__codelineno-54-73" href="#__codelineno-54-73"></a>        with
-<a id="__codelineno-54-74" name="__codelineno-54-74" href="#__codelineno-54-74"></a>        [
-<a id="__codelineno-54-75" name="__codelineno-54-75" href="#__codelineno-54-75"></a>            A=au::Quarterfeet,
-<a id="__codelineno-54-76" name="__codelineno-54-76" href="#__codelineno-54-76"></a>            B=au::Trinches
-<a id="__codelineno-54-77" name="__codelineno-54-77" href="#__codelineno-54-77"></a>        ]
-<a id="__codelineno-54-78" name="__codelineno-54-78" href="#__codelineno-54-78"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
-<a id="__codelineno-54-79" name="__codelineno-54-79" href="#__codelineno-54-79"></a>        with
-<a id="__codelineno-54-80" name="__codelineno-54-80" href="#__codelineno-54-80"></a>        [
-<a id="__codelineno-54-81" name="__codelineno-54-81" href="#__codelineno-54-81"></a>            A=au::Quarterfeet,
-<a id="__codelineno-54-82" name="__codelineno-54-82" href="#__codelineno-54-82"></a>            B=au::Trinches
-<a id="__codelineno-54-83" name="__codelineno-54-83" href="#__codelineno-54-83"></a>        ]
-<a id="__codelineno-54-84" name="__codelineno-54-84" href="#__codelineno-54-84"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
-<a id="__codelineno-54-85" name="__codelineno-54-85" href="#__codelineno-54-85"></a>        with
-<a id="__codelineno-54-86" name="__codelineno-54-86" href="#__codelineno-54-86"></a>        [
-<a id="__codelineno-54-87" name="__codelineno-54-87" href="#__codelineno-54-87"></a>            A=au::Quarterfeet,
-<a id="__codelineno-54-88" name="__codelineno-54-88" href="#__codelineno-54-88"></a>            B=au::Trinches
-<a id="__codelineno-54-89" name="__codelineno-54-89" href="#__codelineno-54-89"></a>        ]
-<a id="__codelineno-54-90" name="__codelineno-54-90" href="#__codelineno-54-90"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B&gt;&#39; being compiled
-<a id="__codelineno-54-91" name="__codelineno-54-91" href="#__codelineno-54-91"></a>        with
-<a id="__codelineno-54-92" name="__codelineno-54-92" href="#__codelineno-54-92"></a>        [
-<a id="__codelineno-54-93" name="__codelineno-54-93" href="#__codelineno-54-93"></a>            A=au::Quarterfeet,
-<a id="__codelineno-54-94" name="__codelineno-54-94" href="#__codelineno-54-94"></a>            B=au::Trinches
-<a id="__codelineno-54-95" name="__codelineno-54-95" href="#__codelineno-54-95"></a>        ]
-<a id="__codelineno-54-96" name="__codelineno-54-96" href="#__codelineno-54-96"></a>D:\a\au\au\au.hh(5218): error C2338: static_assert failed: &#39;Elements must be listed in ascending order&#39;
-<a id="__codelineno-54-97" name="__codelineno-54-97" href="#__codelineno-54-97"></a>D:\a\au\au\au.hh(5218): note: the template instantiation context (the oldest one first) is
-<a id="__codelineno-54-98" name="__codelineno-54-98" href="#__codelineno-54-98"></a>D:\a\au\au\au.hh(5392): note: see reference to class template instantiation &#39;au::detail::FirstMatchingUnit&lt;au::AreUnitsQuantityEquivalent,T,TargetUnit&gt;&#39; being compiled
-<a id="__codelineno-54-99" name="__codelineno-54-99" href="#__codelineno-54-99"></a>        with
-<a id="__codelineno-54-100" name="__codelineno-54-100" href="#__codelineno-54-100"></a>        [
-<a id="__codelineno-54-101" name="__codelineno-54-101" href="#__codelineno-54-101"></a>            T=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;,
-<a id="__codelineno-54-102" name="__codelineno-54-102" href="#__codelineno-54-102"></a>            TargetUnit=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;
-<a id="__codelineno-54-103" name="__codelineno-54-103" href="#__codelineno-54-103"></a>        ]
-<a id="__codelineno-54-104" name="__codelineno-54-104" href="#__codelineno-54-104"></a>D:\a\au\au\au.hh(5261): note: see reference to class template instantiation &#39;au::AreUnitsQuantityEquivalent&lt;TargetUnit,H&gt;&#39; being compiled
-<a id="__codelineno-54-105" name="__codelineno-54-105" href="#__codelineno-54-105"></a>        with
-<a id="__codelineno-54-106" name="__codelineno-54-106" href="#__codelineno-54-106"></a>        [
-<a id="__codelineno-54-107" name="__codelineno-54-107" href="#__codelineno-54-107"></a>            TargetUnit=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;,
-<a id="__codelineno-54-108" name="__codelineno-54-108" href="#__codelineno-54-108"></a>            H=au::Trinches
-<a id="__codelineno-54-109" name="__codelineno-54-109" href="#__codelineno-54-109"></a>        ]
-<a id="__codelineno-54-110" name="__codelineno-54-110" href="#__codelineno-54-110"></a>D:\a\au\au\au.hh(5194): note: see reference to class template instantiation &#39;au::stdx::conjunction&lt;au::HasSameDimension&lt;U1,U2&gt;,au::detail::HasSameMagnitude&lt;U1,U2&gt;&gt;&#39; being compiled
-<a id="__codelineno-54-111" name="__codelineno-54-111" href="#__codelineno-54-111"></a>        with
-<a id="__codelineno-54-112" name="__codelineno-54-112" href="#__codelineno-54-112"></a>        [
-<a id="__codelineno-54-113" name="__codelineno-54-113" href="#__codelineno-54-113"></a>            U1=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;,
-<a id="__codelineno-54-114" name="__codelineno-54-114" href="#__codelineno-54-114"></a>            U2=au::Trinches
-<a id="__codelineno-54-115" name="__codelineno-54-115" href="#__codelineno-54-115"></a>        ]
-<a id="__codelineno-54-116" name="__codelineno-54-116" href="#__codelineno-54-116"></a>D:\a\au\au\au.hh(252): note: see reference to class template instantiation &#39;au::HasSameDimension&lt;U1,U2&gt;&#39; being compiled
-<a id="__codelineno-54-117" name="__codelineno-54-117" href="#__codelineno-54-117"></a>        with
-<a id="__codelineno-54-118" name="__codelineno-54-118" href="#__codelineno-54-118"></a>        [
-<a id="__codelineno-54-119" name="__codelineno-54-119" href="#__codelineno-54-119"></a>            U1=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;,
-<a id="__codelineno-54-120" name="__codelineno-54-120" href="#__codelineno-54-120"></a>            U2=au::Trinches
-<a id="__codelineno-54-121" name="__codelineno-54-121" href="#__codelineno-54-121"></a>        ]
-<a id="__codelineno-54-122" name="__codelineno-54-122" href="#__codelineno-54-122"></a>D:\a\au\au\au.hh(5179): note: see reference to alias template instantiation &#39;au::detail::DimT&lt;U1&gt;&#39; being compiled
-<a id="__codelineno-54-123" name="__codelineno-54-123" href="#__codelineno-54-123"></a>        with
-<a id="__codelineno-54-124" name="__codelineno-54-124" href="#__codelineno-54-124"></a>        [
-<a id="__codelineno-54-125" name="__codelineno-54-125" href="#__codelineno-54-125"></a>            U1=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;
-<a id="__codelineno-54-126" name="__codelineno-54-126" href="#__codelineno-54-126"></a>        ]
-<a id="__codelineno-54-127" name="__codelineno-54-127" href="#__codelineno-54-127"></a>D:\a\au\au\au.hh(2029): note: see reference to class template instantiation &#39;au::detail::DimImpl&lt;U1&gt;&#39; being compiled
-<a id="__codelineno-54-128" name="__codelineno-54-128" href="#__codelineno-54-128"></a>        with
-<a id="__codelineno-54-129" name="__codelineno-54-129" href="#__codelineno-54-129"></a>        [
-<a id="__codelineno-54-130" name="__codelineno-54-130" href="#__codelineno-54-130"></a>            U1=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;
-<a id="__codelineno-54-131" name="__codelineno-54-131" href="#__codelineno-54-131"></a>        ]
-<a id="__codelineno-54-132" name="__codelineno-54-132" href="#__codelineno-54-132"></a>D:\a\au\au\au.hh(2027): note: see reference to alias template instantiation &#39;au::detail::DimMemberT&lt;U&gt;&#39; being compiled
-<a id="__codelineno-54-133" name="__codelineno-54-133" href="#__codelineno-54-133"></a>        with
-<a id="__codelineno-54-134" name="__codelineno-54-134" href="#__codelineno-54-134"></a>        [
-<a id="__codelineno-54-135" name="__codelineno-54-135" href="#__codelineno-54-135"></a>            U=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;
-<a id="__codelineno-54-136" name="__codelineno-54-136" href="#__codelineno-54-136"></a>        ]
-<a id="__codelineno-54-137" name="__codelineno-54-137" href="#__codelineno-54-137"></a>D:\a\au\au\au.hh(2025): note: see reference to class template instantiation &#39;au::CommonUnit&lt;T,au::Quarterfeet&gt;&#39; being compiled
-<a id="__codelineno-54-138" name="__codelineno-54-138" href="#__codelineno-54-138"></a>        with
-<a id="__codelineno-54-139" name="__codelineno-54-139" href="#__codelineno-54-139"></a>        [
-<a id="__codelineno-54-140" name="__codelineno-54-140" href="#__codelineno-54-140"></a>            T=au::Trinches
-<a id="__codelineno-54-141" name="__codelineno-54-141" href="#__codelineno-54-141"></a>        ]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a>D:\a\au\au\au.hh(2109): error C2338: static_assert failed: &#39;Broken strict total ordering: distinct input types compare equal&#39;
+<a id="__codelineno-55-2" name="__codelineno-55-2" href="#__codelineno-55-2"></a>D:\a\au\au\au.hh(2109): note: the template instantiation context (the oldest one first) is
+<a id="__codelineno-55-3" name="__codelineno-55-3" href="#__codelineno-55-3"></a>error_examples.cc(123): note: see reference to function template instantiation &#39;bool au::operator ==&lt;au::Quarterfeet,au::Trinches,int,int&gt;(au::Quantity&lt;au::Quarterfeet,int&gt;,au::Quantity&lt;au::Trinches,int&gt;)&#39; being compiled
+<a id="__codelineno-55-4" name="__codelineno-55-4" href="#__codelineno-55-4"></a>D:\a\au\au\au.hh(7019): note: see reference to function template instantiation &#39;auto au::detail::convert_and_compare&lt;au::detail::Equal,au::Quarterfeet,au::Trinches,int,int&gt;(au::Quantity&lt;au::Quarterfeet,int&gt;,au::Quantity&lt;au::Trinches,int&gt;)&#39; being compiled
+<a id="__codelineno-55-5" name="__codelineno-55-5" href="#__codelineno-55-5"></a>D:\a\au\au\au.hh(7008): note: see reference to alias template instantiation &#39;au::CommonUnitT&lt;U1,U2&gt;&#39; being compiled
+<a id="__codelineno-55-6" name="__codelineno-55-6" href="#__codelineno-55-6"></a>        with
+<a id="__codelineno-55-7" name="__codelineno-55-7" href="#__codelineno-55-7"></a>        [
+<a id="__codelineno-55-8" name="__codelineno-55-8" href="#__codelineno-55-8"></a>            U1=au::Quarterfeet,
+<a id="__codelineno-55-9" name="__codelineno-55-9" href="#__codelineno-55-9"></a>            U2=au::Trinches
+<a id="__codelineno-55-10" name="__codelineno-55-10" href="#__codelineno-55-10"></a>        ]
+<a id="__codelineno-55-11" name="__codelineno-55-11" href="#__codelineno-55-11"></a>D:\a\au\au\au.hh(4800): note: see reference to class template instantiation &#39;au::ComputeCommonUnit&lt;U1,U2&gt;&#39; being compiled
+<a id="__codelineno-55-12" name="__codelineno-55-12" href="#__codelineno-55-12"></a>        with
+<a id="__codelineno-55-13" name="__codelineno-55-13" href="#__codelineno-55-13"></a>        [
+<a id="__codelineno-55-14" name="__codelineno-55-14" href="#__codelineno-55-14"></a>            U1=au::Quarterfeet,
+<a id="__codelineno-55-15" name="__codelineno-55-15" href="#__codelineno-55-15"></a>            U2=au::Trinches
+<a id="__codelineno-55-16" name="__codelineno-55-16" href="#__codelineno-55-16"></a>        ]
+<a id="__codelineno-55-17" name="__codelineno-55-17" href="#__codelineno-55-17"></a>D:\a\au\au\au.hh(5392): note: see reference to class template instantiation &#39;au::ComputeCommonUnitImpl&lt;U1,U2&gt;&#39; being compiled
+<a id="__codelineno-55-18" name="__codelineno-55-18" href="#__codelineno-55-18"></a>        with
+<a id="__codelineno-55-19" name="__codelineno-55-19" href="#__codelineno-55-19"></a>        [
+<a id="__codelineno-55-20" name="__codelineno-55-20" href="#__codelineno-55-20"></a>            U1=au::Quarterfeet,
+<a id="__codelineno-55-21" name="__codelineno-55-21" href="#__codelineno-55-21"></a>            U2=au::Trinches
+<a id="__codelineno-55-22" name="__codelineno-55-22" href="#__codelineno-55-22"></a>        ]
+<a id="__codelineno-55-23" name="__codelineno-55-23" href="#__codelineno-55-23"></a>D:\a\au\au\au.hh(5380): note: see reference to alias template instantiation &#39;au::FlatDedupedTypeListT&lt;au::CommonUnit,au::Quarterfeet,au::Trinches&gt;&#39; being compiled
+<a id="__codelineno-55-24" name="__codelineno-55-24" href="#__codelineno-55-24"></a>D:\a\au\au\au.hh(1930): note: see reference to class template instantiation &#39;au::FlatDedupedTypeList&lt;au::CommonUnit,au::CommonUnit&lt;T&gt;,au::CommonUnit&lt;au::Trinches&gt;&gt;&#39; being compiled
+<a id="__codelineno-55-25" name="__codelineno-55-25" href="#__codelineno-55-25"></a>        with
+<a id="__codelineno-55-26" name="__codelineno-55-26" href="#__codelineno-55-26"></a>        [
+<a id="__codelineno-55-27" name="__codelineno-55-27" href="#__codelineno-55-27"></a>            T=au::Quarterfeet
+<a id="__codelineno-55-28" name="__codelineno-55-28" href="#__codelineno-55-28"></a>        ]
+<a id="__codelineno-55-29" name="__codelineno-55-29" href="#__codelineno-55-29"></a>D:\a\au\au\au.hh(2251): note: see reference to class template instantiation &#39;au::InOrderFor&lt;List,T,H&gt;&#39; being compiled
+<a id="__codelineno-55-30" name="__codelineno-55-30" href="#__codelineno-55-30"></a>        with
+<a id="__codelineno-55-31" name="__codelineno-55-31" href="#__codelineno-55-31"></a>        [
+<a id="__codelineno-55-32" name="__codelineno-55-32" href="#__codelineno-55-32"></a>            List=au::CommonUnit,
+<a id="__codelineno-55-33" name="__codelineno-55-33" href="#__codelineno-55-33"></a>            T=au::Quarterfeet,
+<a id="__codelineno-55-34" name="__codelineno-55-34" href="#__codelineno-55-34"></a>            H=au::Trinches
+<a id="__codelineno-55-35" name="__codelineno-55-35" href="#__codelineno-55-35"></a>        ]
+<a id="__codelineno-55-36" name="__codelineno-55-36" href="#__codelineno-55-36"></a>D:\a\au\au\au.hh(5228): note: see reference to class template instantiation &#39;au::InOrderFor&lt;au::UnitProduct,A,B&gt;&#39; being compiled
+<a id="__codelineno-55-37" name="__codelineno-55-37" href="#__codelineno-55-37"></a>        with
+<a id="__codelineno-55-38" name="__codelineno-55-38" href="#__codelineno-55-38"></a>        [
+<a id="__codelineno-55-39" name="__codelineno-55-39" href="#__codelineno-55-39"></a>            A=au::Quarterfeet,
+<a id="__codelineno-55-40" name="__codelineno-55-40" href="#__codelineno-55-40"></a>            B=au::Trinches
+<a id="__codelineno-55-41" name="__codelineno-55-41" href="#__codelineno-55-41"></a>        ]
+<a id="__codelineno-55-42" name="__codelineno-55-42" href="#__codelineno-55-42"></a>D:\a\au\au\au.hh(5818): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderByCoarseUnitOrdering,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByScaleFactor,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
+<a id="__codelineno-55-43" name="__codelineno-55-43" href="#__codelineno-55-43"></a>        with
+<a id="__codelineno-55-44" name="__codelineno-55-44" href="#__codelineno-55-44"></a>        [
+<a id="__codelineno-55-45" name="__codelineno-55-45" href="#__codelineno-55-45"></a>            A=au::Quarterfeet,
+<a id="__codelineno-55-46" name="__codelineno-55-46" href="#__codelineno-55-46"></a>            B=au::Trinches
+<a id="__codelineno-55-47" name="__codelineno-55-47" href="#__codelineno-55-47"></a>        ]
+<a id="__codelineno-55-48" name="__codelineno-55-48" href="#__codelineno-55-48"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderByDim,au::detail::OrderByMag,au::detail::OrderByScaleFactor,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
+<a id="__codelineno-55-49" name="__codelineno-55-49" href="#__codelineno-55-49"></a>        with
+<a id="__codelineno-55-50" name="__codelineno-55-50" href="#__codelineno-55-50"></a>        [
+<a id="__codelineno-55-51" name="__codelineno-55-51" href="#__codelineno-55-51"></a>            A=au::Quarterfeet,
+<a id="__codelineno-55-52" name="__codelineno-55-52" href="#__codelineno-55-52"></a>            B=au::Trinches
+<a id="__codelineno-55-53" name="__codelineno-55-53" href="#__codelineno-55-53"></a>        ]
+<a id="__codelineno-55-54" name="__codelineno-55-54" href="#__codelineno-55-54"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderByMag,au::detail::OrderByScaleFactor,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
+<a id="__codelineno-55-55" name="__codelineno-55-55" href="#__codelineno-55-55"></a>        with
+<a id="__codelineno-55-56" name="__codelineno-55-56" href="#__codelineno-55-56"></a>        [
+<a id="__codelineno-55-57" name="__codelineno-55-57" href="#__codelineno-55-57"></a>            A=au::Quarterfeet,
+<a id="__codelineno-55-58" name="__codelineno-55-58" href="#__codelineno-55-58"></a>            B=au::Trinches
+<a id="__codelineno-55-59" name="__codelineno-55-59" href="#__codelineno-55-59"></a>        ]
+<a id="__codelineno-55-60" name="__codelineno-55-60" href="#__codelineno-55-60"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderByScaleFactor,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
+<a id="__codelineno-55-61" name="__codelineno-55-61" href="#__codelineno-55-61"></a>        with
+<a id="__codelineno-55-62" name="__codelineno-55-62" href="#__codelineno-55-62"></a>        [
+<a id="__codelineno-55-63" name="__codelineno-55-63" href="#__codelineno-55-63"></a>            A=au::Quarterfeet,
+<a id="__codelineno-55-64" name="__codelineno-55-64" href="#__codelineno-55-64"></a>            B=au::Trinches
+<a id="__codelineno-55-65" name="__codelineno-55-65" href="#__codelineno-55-65"></a>        ]
+<a id="__codelineno-55-66" name="__codelineno-55-66" href="#__codelineno-55-66"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderByOrigin,au::detail::OrderAsUnitProduct,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
+<a id="__codelineno-55-67" name="__codelineno-55-67" href="#__codelineno-55-67"></a>        with
+<a id="__codelineno-55-68" name="__codelineno-55-68" href="#__codelineno-55-68"></a>        [
+<a id="__codelineno-55-69" name="__codelineno-55-69" href="#__codelineno-55-69"></a>            A=au::Quarterfeet,
+<a id="__codelineno-55-70" name="__codelineno-55-70" href="#__codelineno-55-70"></a>            B=au::Trinches
+<a id="__codelineno-55-71" name="__codelineno-55-71" href="#__codelineno-55-71"></a>        ]
+<a id="__codelineno-55-72" name="__codelineno-55-72" href="#__codelineno-55-72"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderAsUnitProduct,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
+<a id="__codelineno-55-73" name="__codelineno-55-73" href="#__codelineno-55-73"></a>        with
+<a id="__codelineno-55-74" name="__codelineno-55-74" href="#__codelineno-55-74"></a>        [
+<a id="__codelineno-55-75" name="__codelineno-55-75" href="#__codelineno-55-75"></a>            A=au::Quarterfeet,
+<a id="__codelineno-55-76" name="__codelineno-55-76" href="#__codelineno-55-76"></a>            B=au::Trinches
+<a id="__codelineno-55-77" name="__codelineno-55-77" href="#__codelineno-55-77"></a>        ]
+<a id="__codelineno-55-78" name="__codelineno-55-78" href="#__codelineno-55-78"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderAsOriginDisplacementUnit,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
+<a id="__codelineno-55-79" name="__codelineno-55-79" href="#__codelineno-55-79"></a>        with
+<a id="__codelineno-55-80" name="__codelineno-55-80" href="#__codelineno-55-80"></a>        [
+<a id="__codelineno-55-81" name="__codelineno-55-81" href="#__codelineno-55-81"></a>            A=au::Quarterfeet,
+<a id="__codelineno-55-82" name="__codelineno-55-82" href="#__codelineno-55-82"></a>            B=au::Trinches
+<a id="__codelineno-55-83" name="__codelineno-55-83" href="#__codelineno-55-83"></a>        ]
+<a id="__codelineno-55-84" name="__codelineno-55-84" href="#__codelineno-55-84"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B,au::detail::OrderByUnitOrderTiebreaker&gt;&#39; being compiled
+<a id="__codelineno-55-85" name="__codelineno-55-85" href="#__codelineno-55-85"></a>        with
+<a id="__codelineno-55-86" name="__codelineno-55-86" href="#__codelineno-55-86"></a>        [
+<a id="__codelineno-55-87" name="__codelineno-55-87" href="#__codelineno-55-87"></a>            A=au::Quarterfeet,
+<a id="__codelineno-55-88" name="__codelineno-55-88" href="#__codelineno-55-88"></a>            B=au::Trinches
+<a id="__codelineno-55-89" name="__codelineno-55-89" href="#__codelineno-55-89"></a>        ]
+<a id="__codelineno-55-90" name="__codelineno-55-90" href="#__codelineno-55-90"></a>D:\a\au\au\au.hh(2125): note: see reference to class template instantiation &#39;au::LexicographicTotalOrdering&lt;A,B&gt;&#39; being compiled
+<a id="__codelineno-55-91" name="__codelineno-55-91" href="#__codelineno-55-91"></a>        with
+<a id="__codelineno-55-92" name="__codelineno-55-92" href="#__codelineno-55-92"></a>        [
+<a id="__codelineno-55-93" name="__codelineno-55-93" href="#__codelineno-55-93"></a>            A=au::Quarterfeet,
+<a id="__codelineno-55-94" name="__codelineno-55-94" href="#__codelineno-55-94"></a>            B=au::Trinches
+<a id="__codelineno-55-95" name="__codelineno-55-95" href="#__codelineno-55-95"></a>        ]
+<a id="__codelineno-55-96" name="__codelineno-55-96" href="#__codelineno-55-96"></a>D:\a\au\au\au.hh(5218): error C2338: static_assert failed: &#39;Elements must be listed in ascending order&#39;
+<a id="__codelineno-55-97" name="__codelineno-55-97" href="#__codelineno-55-97"></a>D:\a\au\au\au.hh(5218): note: the template instantiation context (the oldest one first) is
+<a id="__codelineno-55-98" name="__codelineno-55-98" href="#__codelineno-55-98"></a>D:\a\au\au\au.hh(5392): note: see reference to class template instantiation &#39;au::detail::FirstMatchingUnit&lt;au::AreUnitsQuantityEquivalent,T,TargetUnit&gt;&#39; being compiled
+<a id="__codelineno-55-99" name="__codelineno-55-99" href="#__codelineno-55-99"></a>        with
+<a id="__codelineno-55-100" name="__codelineno-55-100" href="#__codelineno-55-100"></a>        [
+<a id="__codelineno-55-101" name="__codelineno-55-101" href="#__codelineno-55-101"></a>            T=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;,
+<a id="__codelineno-55-102" name="__codelineno-55-102" href="#__codelineno-55-102"></a>            TargetUnit=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;
+<a id="__codelineno-55-103" name="__codelineno-55-103" href="#__codelineno-55-103"></a>        ]
+<a id="__codelineno-55-104" name="__codelineno-55-104" href="#__codelineno-55-104"></a>D:\a\au\au\au.hh(5261): note: see reference to class template instantiation &#39;au::AreUnitsQuantityEquivalent&lt;TargetUnit,H&gt;&#39; being compiled
+<a id="__codelineno-55-105" name="__codelineno-55-105" href="#__codelineno-55-105"></a>        with
+<a id="__codelineno-55-106" name="__codelineno-55-106" href="#__codelineno-55-106"></a>        [
+<a id="__codelineno-55-107" name="__codelineno-55-107" href="#__codelineno-55-107"></a>            TargetUnit=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;,
+<a id="__codelineno-55-108" name="__codelineno-55-108" href="#__codelineno-55-108"></a>            H=au::Trinches
+<a id="__codelineno-55-109" name="__codelineno-55-109" href="#__codelineno-55-109"></a>        ]
+<a id="__codelineno-55-110" name="__codelineno-55-110" href="#__codelineno-55-110"></a>D:\a\au\au\au.hh(5194): note: see reference to class template instantiation &#39;au::stdx::conjunction&lt;au::HasSameDimension&lt;U1,U2&gt;,au::detail::HasSameMagnitude&lt;U1,U2&gt;&gt;&#39; being compiled
+<a id="__codelineno-55-111" name="__codelineno-55-111" href="#__codelineno-55-111"></a>        with
+<a id="__codelineno-55-112" name="__codelineno-55-112" href="#__codelineno-55-112"></a>        [
+<a id="__codelineno-55-113" name="__codelineno-55-113" href="#__codelineno-55-113"></a>            U1=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;,
+<a id="__codelineno-55-114" name="__codelineno-55-114" href="#__codelineno-55-114"></a>            U2=au::Trinches
+<a id="__codelineno-55-115" name="__codelineno-55-115" href="#__codelineno-55-115"></a>        ]
+<a id="__codelineno-55-116" name="__codelineno-55-116" href="#__codelineno-55-116"></a>D:\a\au\au\au.hh(252): note: see reference to class template instantiation &#39;au::HasSameDimension&lt;U1,U2&gt;&#39; being compiled
+<a id="__codelineno-55-117" name="__codelineno-55-117" href="#__codelineno-55-117"></a>        with
+<a id="__codelineno-55-118" name="__codelineno-55-118" href="#__codelineno-55-118"></a>        [
+<a id="__codelineno-55-119" name="__codelineno-55-119" href="#__codelineno-55-119"></a>            U1=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;,
+<a id="__codelineno-55-120" name="__codelineno-55-120" href="#__codelineno-55-120"></a>            U2=au::Trinches
+<a id="__codelineno-55-121" name="__codelineno-55-121" href="#__codelineno-55-121"></a>        ]
+<a id="__codelineno-55-122" name="__codelineno-55-122" href="#__codelineno-55-122"></a>D:\a\au\au\au.hh(5179): note: see reference to alias template instantiation &#39;au::detail::DimT&lt;U1&gt;&#39; being compiled
+<a id="__codelineno-55-123" name="__codelineno-55-123" href="#__codelineno-55-123"></a>        with
+<a id="__codelineno-55-124" name="__codelineno-55-124" href="#__codelineno-55-124"></a>        [
+<a id="__codelineno-55-125" name="__codelineno-55-125" href="#__codelineno-55-125"></a>            U1=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;
+<a id="__codelineno-55-126" name="__codelineno-55-126" href="#__codelineno-55-126"></a>        ]
+<a id="__codelineno-55-127" name="__codelineno-55-127" href="#__codelineno-55-127"></a>D:\a\au\au\au.hh(2029): note: see reference to class template instantiation &#39;au::detail::DimImpl&lt;U1&gt;&#39; being compiled
+<a id="__codelineno-55-128" name="__codelineno-55-128" href="#__codelineno-55-128"></a>        with
+<a id="__codelineno-55-129" name="__codelineno-55-129" href="#__codelineno-55-129"></a>        [
+<a id="__codelineno-55-130" name="__codelineno-55-130" href="#__codelineno-55-130"></a>            U1=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;
+<a id="__codelineno-55-131" name="__codelineno-55-131" href="#__codelineno-55-131"></a>        ]
+<a id="__codelineno-55-132" name="__codelineno-55-132" href="#__codelineno-55-132"></a>D:\a\au\au\au.hh(2027): note: see reference to alias template instantiation &#39;au::detail::DimMemberT&lt;U&gt;&#39; being compiled
+<a id="__codelineno-55-133" name="__codelineno-55-133" href="#__codelineno-55-133"></a>        with
+<a id="__codelineno-55-134" name="__codelineno-55-134" href="#__codelineno-55-134"></a>        [
+<a id="__codelineno-55-135" name="__codelineno-55-135" href="#__codelineno-55-135"></a>            U=au::CommonUnit&lt;au::Trinches,au::Quarterfeet&gt;
+<a id="__codelineno-55-136" name="__codelineno-55-136" href="#__codelineno-55-136"></a>        ]
+<a id="__codelineno-55-137" name="__codelineno-55-137" href="#__codelineno-55-137"></a>D:\a\au\au\au.hh(2025): note: see reference to class template instantiation &#39;au::CommonUnit&lt;T,au::Quarterfeet&gt;&#39; being compiled
+<a id="__codelineno-55-138" name="__codelineno-55-138" href="#__codelineno-55-138"></a>        with
+<a id="__codelineno-55-139" name="__codelineno-55-139" href="#__codelineno-55-139"></a>        [
+<a id="__codelineno-55-140" name="__codelineno-55-140" href="#__codelineno-55-140"></a>            T=au::Trinches
+<a id="__codelineno-55-141" name="__codelineno-55-141" href="#__codelineno-55-141"></a>        ]
 </code></pre></div></p>
 </div>
 

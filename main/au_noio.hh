@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-140-g2fda32c
+// Version identifier: 0.5.0-base-141-gfccb377
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -5742,13 +5742,34 @@ template <typename A, typename B>
 struct OrderByUnitOrderTiebreaker
     : stdx::bool_constant<(UnitOrderTiebreaker<A>::value < UnitOrderTiebreaker<B>::value)> {};
 
+// DEPRECATED: specialize `au::UnitOrderTiebreaker<U>` instead.
+//
+// We used to instruct users to specialize this template, but it lives in our `detail` namespace, so
+// we shouldn't have.  Specializing it is now a hard error, directing users to the new name.
 template <typename U>
 struct UnitAvoidance : std::integral_constant<int, 0> {};
+
+// The default value for `UnitOrderTiebreaker<U>` is `0`.
+//
+// We dispatch on whether `UnitAvoidance<U>` was specialized so that the error below fires only for
+// users who actually specialized it, rather than for every unit in the library.
+template <typename U, bool IsSpecialized = (UnitAvoidance<U>::value != 0)>
+struct UnitAvoidanceOrZero : std::integral_constant<int, 0> {};
+
+// NOTE: we still inherit the user's value, even though this specialization always fails to compile.
+// If we fell back to `0`, their units would no longer be ordered, and the `static_assert` below
+// would be buried under cascading "Broken strict total ordering" errors.
+template <typename U>
+struct UnitAvoidanceOrZero<U, true> : std::integral_constant<int, UnitAvoidance<U>::value> {
+    static_assert(AlwaysFalse<U>::value,
+                  "Instead of specializing `au::detail::UnitAvoidance<T>`, specialize "
+                  "`au::UnitOrderTiebreaker<T>`");
+};
 
 }  // namespace detail
 
 template <typename U>
-struct UnitOrderTiebreaker : detail::UnitAvoidance<U> {};
+struct UnitOrderTiebreaker : detail::UnitAvoidanceOrZero<U> {};
 
 template <typename A, typename B>
 struct InOrderFor<UnitProductPack, A, B>
