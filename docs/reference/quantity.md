@@ -265,6 +265,60 @@ slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `uni
     Since `length` is not `const`, the reference returned by `.data_in()` will be mutable, and we
     can treat it like any other `int` lvalue.  The above would result in `inches(61)`.
 
+## Element access (vector and matrix reps) {#element-access}
+
+Some reps hold more than one element: for example, an Eigen vector or matrix.  When the rep supports
+element access, so does the `Quantity`.  (For reps that don't --- including all arithmetic types ---
+these operators simply don't exist.)
+
+### Reading: `operator[](i)`, `operator()(i, j, ...)` {#element-read}
+
+These operators delegate to the corresponding operator on the underlying rep.  The result is
+a `Quantity` of the same unit, whose rep is the _element_ type, and which is returned **by value**.
+
+??? example "Example: reading elements of an Eigen-backed `Quantity`"
+    ```cpp
+    auto displacement = meters(Eigen::Vector3d{1.0, 2.0, 3.0});
+
+    displacement[0];  // `meters(1.0)`, a `Quantity<Meters, double>`
+    displacement(2);  // `meters(3.0)`, a `Quantity<Meters, double>`
+    ```
+
+Because the result is a _new_ `Quantity`, returned by value, writing to it would silently modify
+a temporary --- so we make sure this does not compile:
+
+```cpp
+displacement[0] = meters(4.0);  // Compiler error (prevents unsafe usage)
+```
+
+We achieve this by making every assignment operator on `Quantity` (`=`, `+=`, `-=`, `*=`, `/=`)
+apply to _lvalues only_.  To write to an individual element, use
+[`.mutable_view()`](#mutable-view), described next.
+
+### Writing: `.mutable_view()` {#mutable-view}
+
+This function returns a `Quantity` whose rep is a _mutable view_ of the original quantity's rep.
+Element access on this view produces assignable elements which write through to the original
+quantity, with full unit safety.
+
+??? example "Example: writing elements of an Eigen-backed `Quantity`"
+    ```cpp
+    auto displacement = meters(Eigen::Vector3d{1.0, 2.0, 3.0});
+
+    displacement.mutable_view()[0] = meters(4.0);
+    displacement.mutable_view()[1] = centi(meters)(500.0);
+
+    // `displacement` is now `meters(Eigen::Vector3d{4.0, 5.0, 3.0})`.
+    ```
+
+    Note that the second assignment performed a unit conversion, using all of the usual safety
+    checks for [implicit conversions](#implicit-from-quantity).
+
+!!! warning
+    The result of `.mutable_view()` refers to the quantity it was called on.  It is only valid as
+    long as that quantity is alive.  We recommend **never storing it in a variable**: just call
+    `.mutable_view()` inline and use it immediately, as in the example above.
+
 ## Performing unit conversions
 
 We have two methods for performing unit conversions.  They have identical APIs, but their names are
@@ -293,6 +347,8 @@ the [unit slots](../discussion/idioms/unit-slots.md) discussion for valid choice
 produced by the conversion operation.  (This is usually the same as the input `Rep`, but can differ
 in rare cases, such as integer promotion, or Eigen expression templates.)
 
+--8<-- "eigen-lifetime-risk-maybe-lazy.md"
+
 **With** a template argument, `.as<T>(unit)`, the output `Rep` will be `T`.
 
 ### `.in(unit)`, `.in<T>(unit)`
@@ -318,6 +374,9 @@ slots](../discussion/idioms/unit-slots.md) discussion for valid choices for `uni
 **Without** a template argument, `.in(unit)`, the output `Rep` is whatever type would naturally be
 produced by the conversion operation.  (This is usually the same as the input `Rep`, but can differ
 in rare cases, such as integer promotion, or Eigen expression templates.)
+
+--8<-- "eigen-lifetime-risk-maybe-lazy.md"
+
 
 **With** a template argument, `.in<T>(unit)`, the output type will be `T`.
 
@@ -1001,3 +1060,4 @@ the following conditions hold.
 [#481]: https://github.com/aurora-opensource/au/issues/481
 [0.6.0]: https://github.com/aurora-opensource/au/milestone/9
 [integer division section]: ../troubleshooting.md#integer-division-forbidden
+[integer promotion]: https://en.cppreference.com/w/c/language/conversion#Integer_promotions

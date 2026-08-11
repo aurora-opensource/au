@@ -33,6 +33,14 @@ Here's a guide to the main reference pages.
 
 - **[Math functions](./math.md).**  We provide many common mathematical functions out of the box.
 
+- **[Representation types ("Rep")](./rep.md).**  The traits Au provides for the underlying storage
+  types of quantities, including the `ScalarOf` trait that custom rep authors may need to
+  specialize.
+
+- **[Eigen compatibility](./eigen.md).**  Unit-aware free function forms of
+  [Eigen](https://eigen.tuxfamily.org/) member functions, plus `eval()` for materializing lazy
+  results.
+
 - **[Version macros](./version.md).**  Preprocessor macros (`AU_VERSION`, and friends) that let
   downstream code detect that Au is present, and which version it is.
 

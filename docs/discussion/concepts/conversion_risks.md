@@ -155,12 +155,16 @@ converting to a new unit `u`, we provide these signatures:
 
 | Risk | Target rep | Function |
 |------|------------|----------|
-| Overflow | same | `will_conversion_overflow(q, u)` |
+| Overflow | implicit[^2] | `will_conversion_overflow(q, u)` |
 | Overflow | New rep `T` | `will_conversion_overflow<T>(q, u)` |
-| Truncation | same | `will_conversion_truncate(q, u)` |
+| Truncation | implicit[^2] | `will_conversion_truncate(q, u)` |
 | Truncation | New rep `T` | `will_conversion_truncate<T>(q, u)` |
-| Any lossiness | same | `is_conversion_lossy(q, u)` |
+| Any lossiness | implicit[^2] | `is_conversion_lossy(q, u)` |
 | Any lossiness | New rep `T` | `is_conversion_lossy<T>(q, u)` |
+
+[^2]: These forms check the corresponding _implicit-rep_ conversion, `q.as(u)`.  This usually keeps
+the same rep, but see the [`.as(unit)` reference docs](../../reference/quantity.md#as) for the
+exceptions (notably, integer promotion).
 
 In general, `is_conversion_lossy` will return true if either `will_conversion_overflow` or
 `will_conversion_truncate` returns true.

@@ -27,3 +27,6 @@ using the library.  Here's a summary of what you'll find.
     - **[nholthaus/units](./interop/nholthaus.md).**  How to use the ready-made interoperability
       with the [nholthaus/units](https://github.com/nholthaus/units) library.
 
+    - **[Eigen](./interop/eigen.md).**  How to use [Eigen](https://eigen.tuxfamily.org/) vector and
+      matrix types as the underlying storage of a `Quantity`.
+
