@@ -130,6 +130,59 @@ ingredient that lets Au users use a wide variety of integral types with confiden
 
 ![The overflow safety surface](../../assets/overflow-safety-surface.png)
 
+#### Integer promotion pitfalls {#integer-promotion}
+
+There's a key subtlety to appreciate here: the safety surface applies to the _destination_ rep.  For
+"explicit rep" callsites (e.g., `q.as<T>(unit)`), the destination rep is plain to see (it's `T`).
+But "implicit rep" callsites (e.g., `q.as(unit)`) require more care.
+
+Through Au 0.5.0, the destination rep for an implicit-rep callsite was just the same as the _input_
+rep: if `q` has type `Quantity<U, R>`, it would be `R`.  But we realized this choice was suboptimal
+overall: instead, Au should do as C++ does, and return the natural type.  [0.6.0] will be the first
+release that does so.  While it's a better state for the library overall, it does have some
+surprising implications.
+
+As a concrete example, consider `feet(int8_t{20}).as(inches)`.  This conversion multiplies the
+underlying `int8_t` value by 12.  In C++, any arithmetic on an `int8_t` first promotes it to `int`
+(this is [integer promotion]), so the result is **an `int`**, not an `int8_t`.  Therefore, we get
+the wider overflow safety surface for `int`, not the tiny one for `int8_t`, and the conversion is
+permitted.
+
+The conversion itself is perfectly safe, but the real danger comes if you assign back to `int8_t`:
+
+```cpp
+Quantity<Feet, int8_t> length_ft = feet(20);
+
+// Risky conversion: not caught by overflow safety surface!
+Quantity<Inches, int8_t> length_in = length_ft.as(inches);
+```
+
+In the second statement, `length_ft.as(inches)` produces a `Quantity<Inches, int>` --- note: `int`,
+not `int8_t`.  This can _implicitly_ convert to `Quantity<Inches, int8_t>`, but only because `int`
+is the _specific_ type that `int8_t` promotes to.  (If we disallowed this implicit conversion, then
+integer promotion would make small integer types completely unusable in practice.)  And so the
+overflow lands silently: 20 feet is 240 inches, which doesn't fit in an `int8_t`, and `length_in`
+ends up holding **-16 inches**.
+
+All these decisions --- returning the promoted type, permitting implicit conversion to the original
+type --- are reasonable individually, but taken together, they effectively bypass Au's overflow
+protection for small integer types.  Fortunately, there's a solution: _name the desired rep when you
+do the conversion_.  For small integer types, this should almost always be the same rep, so we
+provide a convenient syntax ([SameRep]) to ask for this.  Continuing with our earlier example:
+
+```cpp
+// Risky conversion caught when output rep specified:
+Quantity<Inches, int8_t> length_in = length_ft.as<SameRep>(inches);
+//      Names the rep at the point of conversion ^^^^^^^^^
+```
+
+The `<SameRep>` tag lets the conversion machinery know how much room we actually have to work with,
+and empowers Au to provide the full safety check.
+
+Users working with small integer types must already wrestle with their quirky properties in C++.
+We recommend these users make this technique a habit whenever they want to stay within the type in
+Au operations.
+
 ### Check every conversion at runtime {#check-at-runtime}
 
 While the overflow safety surface is a leap forward in safety and flexibility, it's still only
@@ -210,3 +263,5 @@ every conversion as it happens, and be prepared for it to fail.
 [threshold]: https://github.com/aurora-opensource/au/blob/dbd79b2/au/conversion_policy.hh#L27-L28
 [#352]: https://github.com/aurora-opensource/au/issues/352
 [integer promotion]: https://en.cppreference.com/w/c/language/conversion#Integer_promotions
+[SameRep]: ../../reference/quantity.md#same-rep
+[0.6.0]: https://github.com/aurora-opensource/au/milestone/9
