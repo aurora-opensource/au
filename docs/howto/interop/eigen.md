@@ -97,6 +97,23 @@ eval(transpose(v));  // Transposed vector, still in meters.
 
 See the [Eigen compatibility reference](../../reference/eigen.md) for the full list of functions.
 
+### Changing the scalar type {#cast}
+
+To change the _scalar_ type of an Eigen-backed `Quantity`, use
+[`cast<NewScalar>`](../../reference/eigen.md#cast), the free function form of Eigen's
+`.cast<NewScalar>()`.
+
+```cpp
+auto v_f = meters(Eigen::Vector3f{1.5f, 2.5f, 3.5f});
+
+eval(cast<double>(v_f));  // Quantity<Meters, Eigen::Vector3d>
+```
+
+Note that Au's usual tools for changing the rep do **not** work here.  Neither the preferred,
+risk-checked `.as<NewRep>(unit)` --- which can't form a common rep for two Eigen types with different
+scalars --- nor the forcing `rep_cast<NewRep>`, which performs a `static_cast` that Eigen
+deliberately rejects between types with different scalars.
+
 ## Run your tests under sanitizers
 
 Lifetime bugs with expression templates are easy to write and hard to spot in review --- again,

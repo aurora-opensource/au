@@ -35,6 +35,30 @@ auto eval(const Quantity<U, R> &q) {
     return make_quantity<U>(std::move(result));
 }
 
+// Cast the rep's _scalar_ type, preserving the unit.
+//
+// This is the free function form of Eigen's `.cast<NewScalar>()` member function.  Note that the
+// template parameter is the new _scalar_ type, not the new rep: as with Eigen, the shape and
+// options of the rep carry over automatically.  Contrast Au's usual tools for changing the rep,
+// which name a whole new rep, and which both fail for Eigen types with different scalars:
+// `.as<NewRep>(unit)` (the preferred one, since it checks conversion risk) can't form a common rep
+// for them, and `rep_cast<NewRep>` performs a `static_cast`, which Eigen deliberately rejects in
+// favor of `.cast<T>()`.
+//
+// Like every function in this header, this is a pure port of the Eigen member function: it performs
+// no unit conversion, and it does not participate in Au's conversion risk analysis.  In particular,
+// casting a floating point scalar to an integral one silently truncates, exactly as Eigen does.
+//
+// LIFETIME NOTE: Eigen's `.cast()` is lazy for dense and sparse types, so this is too; see the
+// lifetime note below.  (Eigen's geometry types --- `Quaternion`, `Transform`, ... --- cast
+// eagerly, but they can't be `Quantity` reps today anyway, because they don't support `operator+`.)
+// When `NewScalar` is already the rep's scalar type, Eigen hands back a reference to the original,
+// which `make_quantity` decays to an owning copy.
+template <typename NewScalar, typename U, typename R>
+auto cast(const Quantity<U, R> &q) {
+    return make_quantity<U>(q.data_in(U{}).template cast<NewScalar>());
+}
+
 //
 // Free-function forms of Eigen member functions, made unit-aware.
 //
