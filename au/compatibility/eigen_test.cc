@@ -744,4 +744,69 @@ TEST(EigenFreeFunctions, DeterminantRaisesUnitToMatrixDimension) {
     EXPECT_THAT(d.data_in(UnitPowerT<Meters, 3>{}), Eq(24.0));
 }
 
+TEST(EigenFreeFunctions, CastWidensScalarAndPreservesUnit) {
+    auto q = meters(Eigen::Vector3f{1.5f, 2.5f, 3.5f});
+
+    auto result = eval(cast<double>(q));
+
+    EXPECT_THAT(result.data_in(meters), SameTypeAndValue(Eigen::Vector3d(1.5, 2.5, 3.5)));
+}
+
+TEST(EigenFreeFunctions, CastNarrowsScalar) {
+    auto q = meters(Eigen::Vector3d{1.5, 2.5, 3.5});
+
+    auto result = eval(cast<float>(q));
+
+    EXPECT_THAT(result.data_in(meters), SameTypeAndValue(Eigen::Vector3f(1.5f, 2.5f, 3.5f)));
+}
+
+TEST(EigenFreeFunctions, CastToIntegralTruncatesSilently) {
+    // `cast` is a pure port of Eigen's `.cast<T>()`: it does not consult Au's conversion risk
+    // machinery, so a lossy scalar cast is permitted (and truncates) just as it does in Eigen.
+    auto q = meters(Eigen::Vector3d{1.5, -2.5, 3.9});
+
+    auto result = eval(cast<int>(q));
+
+    EXPECT_THAT(result.data_in(meters), SameTypeAndValue(Eigen::Vector3i(1, -2, 3)));
+}
+
+TEST(EigenFreeFunctions, CastPreservesNonTrivialUnit) {
+    auto q = feet(Eigen::Vector3f{1.0f, 2.0f, 3.0f});
+
+    auto result = eval(cast<double>(q));
+
+    EXPECT_THAT(result.data_in(feet), SameTypeAndValue(Eigen::Vector3d(1.0, 2.0, 3.0)));
+}
+
+TEST(EigenFreeFunctions, CastWorksForMatrices) {
+    Eigen::Matrix2f m;
+    m << 1.0f, 2.0f, 3.0f, 4.0f;
+    auto q = meters(m);
+
+    auto result = eval(cast<double>(q));
+
+    Eigen::Matrix2d expected;
+    expected << 1.0, 2.0, 3.0, 4.0;
+    EXPECT_THAT(result.data_in(meters), SameTypeAndValue(expected));
+}
+
+TEST(EigenFreeFunctions, CastToSameScalarProducesConcreteCopy) {
+    // Eigen's `.cast<T>()` returns a reference to the original when the scalar is unchanged.
+    // `make_quantity` stores `std::decay_t<T>`, so we get an owning copy rather than a dangling
+    // reference --- no `eval()` required.
+    auto q = meters(Eigen::Vector3d{1.0, 2.0, 3.0});
+
+    auto result = cast<double>(q);
+
+    EXPECT_THAT(result.data_in(meters), SameTypeAndValue(Eigen::Vector3d(1.0, 2.0, 3.0)));
+}
+
+TEST(EigenFreeFunctions, CastAcceptsExpressionTemplateInput) {
+    auto q = meters(Eigen::Vector3f{1.0f, 2.0f, 3.0f});
+
+    auto result = eval(cast<double>(q + q));
+
+    EXPECT_THAT(result.data_in(meters), SameTypeAndValue(Eigen::Vector3d(2.0, 4.0, 6.0)));
+}
+
 }  // namespace au
