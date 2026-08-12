@@ -51,6 +51,50 @@ auto eval(const Quantity<U, R> &q);
     auto safe = eval(q.as(centi(meters)));  // Concrete vector: owns its data.
     ```
 
+## Scalar type conversion
+
+### `cast` {#cast}
+
+Cast the rep's _scalar_ type, preserving the unit.  This is the free function form of Eigen's
+`.cast<NewScalar>()` member function.
+
+```cpp
+template <typename NewScalar, typename U, typename R>
+auto cast(const Quantity<U, R> &q);
+```
+
+Note that the template parameter is the new _scalar_ type, not the new rep: as in Eigen, the shape
+and options of the rep carry over automatically.  So casting a `Quantity<Meters, Eigen::Vector3f>`
+with `cast<double>` produces a `Quantity<Meters, Eigen::Vector3d>`.
+
+This is the only way to change the scalar type of an Eigen-backed `Quantity`.  Au's usual tools for
+changing the rep --- [`.as<NewRep>(unit)`](./quantity.md#as), which is preferred because it checks
+for [conversion risk](../discussion/concepts/conversion_risks.md), and the forcing
+[`rep_cast<NewRep>`](./quantity.md#rep_cast) --- both fail here.  `.as<NewRep>(unit)` cannot form
+a common rep for two Eigen types with different scalars, and `rep_cast<NewRep>` performs
+a `static_cast`, which Eigen _deliberately_ rejects between types with different scalars, directing
+users to `.cast<T>()` instead.
+
+!!! warning
+    Like every function on this page, `cast` is a pure port of the Eigen member function.  It does
+    **not** consult Au's [conversion risk](../discussion/concepts/conversion_risks.md) machinery, so
+    a lossy cast is permitted and will silently lose information, exactly as it does in Eigen.  For
+    instance, `cast<int>` on a `Quantity<Meters, Eigen::Vector3d>` holding `{1.5, -2.5, 3.9}` yields
+    `{1, -2, 3}`.
+
+??? example "Example: widening a float vector to double"
+    ```cpp
+    auto q = meters(Eigen::Vector3f{1.5f, 2.5f, 3.5f});
+
+    auto widened = eval(cast<double>(q));  // Quantity<Meters, Eigen::Vector3d>
+    ```
+
+--8<-- "eigen-lifetime-risk-lazy.md"
+
+When `NewScalar` is already the rep's scalar type, Eigen returns a reference to the original rather
+than an expression.  `Quantity` stores a decayed copy of that reference, so this case is always safe
+to store without `eval()`.
+
 ## Reductions
 
 These operations reduce a vector or matrix to a single scalar.  They are all evaluated eagerly, so
