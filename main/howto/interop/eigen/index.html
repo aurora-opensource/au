@@ -1539,6 +1539,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Eigen member functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changing the scalar type
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2680,6 +2697,18 @@ and include order doesn&rsquo;t matter.  Here are some usage examples.</p>
 <a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">eval</span><span class="p">(</span><span class="n">transpose</span><span class="p">(</span><span class="n">v</span><span class="p">));</span><span class="w">  </span><span class="c1">// Transposed vector, still in meters.</span>
 </code></pre></div>
 <p>See the <a href="../../../reference/eigen/">Eigen compatibility reference</a> for the full list of functions.</p>
+<h3 id="cast">Changing the scalar type<a class="headerlink" href="#cast" title="Permanent link">&para;</a></h3>
+<p>To change the <em>scalar</em> type of an Eigen-backed <code>Quantity</code>, use
+<a href="../../../reference/eigen/#cast"><code>cast&lt;NewScalar&gt;</code></a>, the free function form of Eigen&rsquo;s
+<code>.cast&lt;NewScalar&gt;()</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">v_f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3f</span><span class="p">{</span><span class="mf">1.5f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.5f</span><span class="p">,</span><span class="w"> </span><span class="mf">3.5f</span><span class="p">});</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">eval</span><span class="p">(</span><span class="n">cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">v_f</span><span class="p">));</span><span class="w">  </span><span class="c1">// Quantity&lt;Meters, Eigen::Vector3d&gt;</span>
+</code></pre></div>
+<p>Note that Au&rsquo;s usual tools for changing the rep do <strong>not</strong> work here.  Neither the preferred,
+risk-checked <code>.as&lt;NewRep&gt;(unit)</code> &mdash; which can&rsquo;t form a common rep for two Eigen types with different
+scalars &mdash; nor the forcing <code>rep_cast&lt;NewRep&gt;</code>, which performs a <code>static_cast</code> that Eigen
+deliberately rejects between types with different scalars.</p>
 <h2 id="run-your-tests-under-sanitizers">Run your tests under sanitizers<a class="headerlink" href="#run-your-tests-under-sanitizers" title="Permanent link">&para;</a></h2>
 <p>Lifetime bugs with expression templates are easy to write and hard to spot in review &mdash; again,
 exactly as with raw Eigen.  We strongly recommend making sure that every line of Eigen code is
