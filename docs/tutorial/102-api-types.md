@@ -56,6 +56,10 @@ a table of the ones we support out of the box:
 | `float` | `QuantityF` |
 | `int` | `QuantityI` |
 | `unsigned int` | `QuantityU` |
+| `int8_t` | `QuantityI8` |
+| `uint8_t` | `QuantityU8` |
+| `int16_t` | `QuantityI16` |
+| `uint16_t` | `QuantityU16` |
 | `int32_t` | `QuantityI32` |
 | `uint32_t` | `QuantityU32` |
 | `int64_t` | `QuantityI64` |
