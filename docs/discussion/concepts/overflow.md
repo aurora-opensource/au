@@ -172,16 +172,17 @@ provide a convenient syntax ([SameRep]) to ask for this.  Continuing with our ea
 
 ```cpp
 // Risky conversion caught when output rep specified:
-Quantity<Inches, int8_t> length_in = length_ft.as<SameRep>(inches);
-//      Names the rep at the point of conversion ^^^^^^^^^
+auto length_in = length_ft.as<SameRep>(inches);
+//                            ^^^^^^^ Names the rep at the point of conversion
 ```
 
-The `<SameRep>` tag lets the conversion machinery know how much room we actually have to work with,
-and empowers Au to provide the full safety check.
+Here, we switched to `auto` for conciseness, because the unit and rep are visibly determined by the
+right hand side.  The `<SameRep>` tag lets the conversion machinery know how much room we actually
+have to work with, and empowers Au to provide the full safety check.
 
 Users working with small integer types must already wrestle with their quirky properties in C++.
-We recommend these users make this technique a habit whenever they want to stay within the type in
-Au operations.
+We recommend these users make `SameRep` a habit whenever they want to stay within a promotable
+integer type in Au operations.
 
 ### Check every conversion at runtime {#check-at-runtime}
 

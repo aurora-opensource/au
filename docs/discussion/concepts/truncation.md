@@ -75,13 +75,12 @@ of the user's chosen type.  Hence: _floating point never truncates_.
 
 ### Compound types
 
-Not every rep is a plain arithmetic type.  Complex numbers, and Eigen vectors and matrices, are
-common examples of _compound_ reps: types built up out of some underlying _scalar_.  Au
-characterizes each such rep by that scalar --- its
-[`ScalarOf<T>`](../../reference/rep.md#scalar-of) --- and then applies the very same rules from
-above.  So an `Eigen::Vector3d`, whose scalar is `double`, is governed by the [floating point
-rule](#float) and never truncates; a vector of integers, on the other hand, follows the integral
-rules.
+Not every rep is a plain arithmetic type.  Complex numbers and Eigen vectors/matrices are common
+examples of _compound_ reps: types built up out of some underlying _scalar_.  Au characterizes each
+such rep by that scalar --- its [`ScalarOf<T>`](../../reference/rep.md#scalar-of) --- and then
+applies the very same rules from above.  So an `Eigen::Vector3d`, whose scalar is `double`, is
+governed by the [floating point rule](#float) and never truncates; a vector of integers, on the
+other hand, follows the integral rules.
 
 ### Other types
 
@@ -103,7 +102,7 @@ Casting from one _arithmetic_ type to another is governed by simple rules.
 If the source and destination types are in the same _category_ --- that is, either both integral, or
 both floating point --- then the cast never truncates.  The reason for integral types is
 straightforward: clearly, the source can't hold a non-integer value.  As for floating point types,
-they are governed by the [philsophy explained above](#float).
+they are governed by the [philosophy explained above](#float).
 
 Casting from a floating point type to an integral type does have truncation risk: we would truncate
 for any non-integer input.  We can check this for individual values by discarding the fractional
@@ -118,11 +117,11 @@ point as a **non-truncating** operation.
 
 ### Non-arithmetic types
 
-Here, too, our support for non-arithmetic rep types is limited (see [#52]), and we take
-a conservative approach.  Any cast involving a rep with non-arithmetic scalar type, either as source
-or destination, is considered to have truncation risk, and will not be allowed by default: users
-must pass `ignore(TRUNCATION_RISK)` as a second argument to override this.  We hope to have better
-default behavior once we support non-arithmetic types more fully.
+Here, too, our support for non-arithmetic rep types is limited, and we take a conservative approach.
+Any cast involving a rep with non-arithmetic scalar type, either as source or destination, is
+considered to have truncation risk, and will not be allowed by default: users must pass
+`ignore(TRUNCATION_RISK)` as a second argument to override this.  We hope to have better default
+behavior once we support non-arithmetic types more fully ([#52]).
 
 Note that this policy tells you only whether the _truncation rules_ object to a casting conversion.
 Passing those rules doesn't mean the conversion will work: the reps involved must also support the
