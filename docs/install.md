@@ -88,6 +88,18 @@ from inside the library. See the [required build
 configuration](./discussion/concepts/compiler_warnings.md#required-build-configuration) for the full
 explanation.
 
+!!! note "Help us keep this advice accurate"
+    We've tested the guidance below where we can.  The bazel and CMake instructions were checked by
+    building a real client project against Au, with both gcc and clang.  Other parts rest on
+    documented behavior that we can't easily exercise: notably MSVC's `/external:I`, and the conan and
+    vcpkg packages, which are [community maintained](#package-managers-conan-vcpkg).  Build systems
+    also change their defaults over time, and this page won't always notice.
+
+    So treat it as our best current understanding rather than a guarantee.  If you follow it and Au
+    still adds or subtracts a warning relative to the equivalent raw-number code, please [file an
+    issue](https://github.com/aurora-opensource/au/issues/new).  It's either a bug in Au, or a gap in
+    these instructions --- and we want to fix both.
+
 Here's what to check for each installation method.
 
 === "bazel"
@@ -167,17 +179,6 @@ Here's what to check for each installation method.
     `-isystem` (or `/external:I`).  If you keep it in, say, `third_party/`, and your build treats
     that whole folder as external, consider putting Au somewhere else.
 
-!!! note "Help us keep this advice accurate"
-    We've tested this guidance where we can.  The bazel and CMake instructions above were checked by
-    building a real client project against Au, with both gcc and clang.  Other parts rest on
-    documented behavior that we can't easily exercise: notably MSVC's `/external:I`, and the conan and
-    vcpkg packages, which are [community maintained](#package-managers-conan-vcpkg).  Build systems
-    also change their defaults over time, and this page won't always notice.
-
-    So treat this section as our best current understanding rather than a guarantee.  If you follow it
-    and Au still adds or subtracts a warning relative to the equivalent raw-number code, please [file
-    an issue](https://github.com/aurora-opensource/au/issues/new).  It's either a bug in Au, or a gap
-    in these instructions --- and we want to fix both.
 
 ## Installation instructions
 
