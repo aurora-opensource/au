@@ -73,6 +73,13 @@ point representation is a statement, by the user, that _exact values do not matt
 application.  It would be inappropriate for us to raise warnings about perfectly routine properties
 of the user's chosen type.  Hence: _floating point never truncates_.
 
+!!! note "This is separate from your compiler's `-Wconversion` flags"
+    "Never truncates" means Au's own [truncation risk](./conversion_risks.md) check won't
+    forbid the conversion.  It does _not_ mean we hide narrowing conversions from your compiler: an
+    implicit conversion from a `double` quantity to a `float` one still warns under
+    `-Wfloat-conversion`, exactly as it would for raw numbers.  See [compiler
+    warnings](./compiler_warnings.md).
+
 ### Other types
 
 Currently, Au has only limited support for non-arithmetic rep types (full support is tracked in

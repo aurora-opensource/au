@@ -14,6 +14,11 @@ and help you use units libraries more effectively.
   different units, the first step is to convert them to the same unit.  But which one?  This page
   teaches you what choice we make, and what advantages it has.
 
+- **[Compiler Warnings](./compiler_warnings.md)**.  A good library plays nicely with your compiler
+  flags: your code should be free from warnings when it's correct, but still produce all the same
+  warnings you rely on to catch mistakes.  Learn about Au's policy in this regard, and how to avoid
+  the common build setting that can silently defeat it.
+
 - **[Conversion Risks](./conversion_risks.md)**.  Unit conversions can be lossy.  This page explains
   how to think about conversion lossiness: both for individual input values, and for the overall
   conversion as a whole.  We'll learn about the safety checks built into Au's APIs, and how to

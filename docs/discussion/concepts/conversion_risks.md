@@ -7,9 +7,10 @@ Unit conversions turn one `Quantity` into another, where both the unit and the r
 2. The _target_ **rep**.
 3. The ratio between the _initial_ and _target_ **units**.
 
-Under the hood, we implement each conversion as a sequence of operations, including `static_cast`
-for changing the rep, and mathematical operations (mainly multiplying and dividing) for changing the
-value.  Each operation has an input type, and an output type (which might be the same as the input).
+Under the hood, we implement each conversion as a sequence of _operations_.  Each operation has an
+input type, and an output type (which might be the same as the input).  Elementary operations
+include type conversions (either `static_cast` or implicit conversion), multiplying or dividing by
+a constant, and so on.
 
 ## What can go wrong?
 

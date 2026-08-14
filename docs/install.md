@@ -74,6 +74,111 @@ Here's an overview of the tradeoffs involved.
   </tr>
 </table>
 
+## Compiler warning flags {#warning-flags}
+
+Whichever method you choose, there's one property we ask you to check: **Au's headers should _not_
+be on a "system" include path** (that is, `-isystem` on gcc and clang, or `/external:I` on MSVC).
+
+The reason is [Au's policy on compiler warnings](./discussion/concepts/compiler_warnings.md#policy):
+we aim to raise the same warnings and errors for `Quantity` that your compiler flags would raise for
+the underlying raw numbers --- no more, and no less.  Since Au is header-only, the numeric
+conversions physically happen _inside_ Au's headers.  If those headers are "system" headers, your
+compiler will silently suppress every one of those warnings, and there's nothing we can do about it
+from inside the library. See the [required build
+configuration](./discussion/concepts/compiler_warnings.md#required-build-configuration) for the full
+explanation.
+
+Here's what to check for each installation method.
+
+=== "bazel"
+    **Default behavior: correct; nothing to do.**  Bazel passes external repositories' include paths
+    as `-iquote`, which is _not_ a system include path.
+
+    The setting to watch out for is the `external_include_paths` feature, which adds `-isystem` for
+    every external repository.  If your project enables it (typically via
+    `--features=external_include_paths` in `.bazelrc`), you can turn it back off:
+
+    ```
+    # In .bazelrc:
+    build --features=-external_include_paths
+    ```
+
+    You can verify what your build actually passes:
+
+    ```sh
+    bazel aquery 'mnemonic("CppCompile", //your:target)' | grep -A1 -- -isystem
+    ```
+
+    !!! note "gcc and clang differ here"
+        With this feature enabled, Bazel passes _both_ `-iquote` and `-isystem` for the same
+        external repository directory.  In that situation, clang keeps the warnings (because the
+        quoted include `"au/au.hh"` resolves via the `-iquote` path), while gcc suppresses them.
+        Don't rely on this: disable the feature, or at least test with the compiler you care about.
+
+=== "CMake (`FetchContent`)"
+    **Default behavior: correct; nothing to do.**  Targets brought in this way are ordinary
+    (non-imported) targets, whose include directories are _not_ treated as system directories.
+
+    Just be sure not to opt in to the system treatment, which CMake 3.25 and newer offer via the
+    `SYSTEM` keyword:
+
+    ```cmake
+    FetchContent_Declare(
+      Au
+      # ...
+      SYSTEM  # <--- Don't do this for Au!
+    )
+    ```
+
+    The same applies to `add_subdirectory(... SYSTEM)`, and to setting the
+    [`SYSTEM`](https://cmake.org/cmake/help/latest/prop_tgt/SYSTEM.html) directory or target property
+    for Au.
+
+=== "CMake (`find_package`), conan, vcpkg"
+    **Default behavior: warnings suppressed; action required.**  These methods all deliver Au as an
+    _imported_ target, and CMake treats an imported target's
+    [`INTERFACE_INCLUDE_DIRECTORIES` as system directories by
+    default](https://cmake.org/cmake/help/latest/prop_tgt/IMPORTED_NO_SYSTEM.html).
+
+    To get Au's intended warning behavior, turn this off after finding the package:
+
+    ```cmake
+    find_package(Au REQUIRED)
+
+    # CMake 3.25 and newer:
+    set_target_properties(Au::au PROPERTIES SYSTEM OFF)
+
+    # CMake 3.23 and 3.24 (deprecated in 3.25):
+    # set_target_properties(Au::au PROPERTIES IMPORTED_NO_SYSTEM TRUE)
+    ```
+
+    Alternatively, you can set
+    [`NO_SYSTEM_FROM_IMPORTED`](https://cmake.org/cmake/help/latest/prop_tgt/NO_SYSTEM_FROM_IMPORTED.html)
+    on your own target (or as a directory property).  This works on much older CMake versions, but
+    note that it applies to _all_ of that target's imported dependencies, not just Au.
+
+    We've verified this for a `find_package` installation.  For conan and vcpkg, we know the
+    underlying cause is the same CMake default, but each has its own machinery for generating package
+    config files, so it's possible that they mark the include directories as "system" in a way that
+    these properties don't override.  If you find that to be the case, please let us know!
+
+=== "Single file"
+    **You're in control.**  Add the folder holding `au.hh` with `-I` (or `/I` on MSVC), not
+    `-isystem` (or `/external:I`).  If you keep it in, say, `third_party/`, and your build treats
+    that whole folder as external, consider putting Au somewhere else.
+
+!!! note "Help us keep this advice accurate"
+    We've tested this guidance where we can.  The bazel and CMake instructions above were checked by
+    building a real client project against Au, with both gcc and clang.  Other parts rest on
+    documented behavior that we can't easily exercise: notably MSVC's `/external:I`, and the conan and
+    vcpkg packages, which are [community maintained](#package-managers-conan-vcpkg).  Build systems
+    also change their defaults over time, and this page won't always notice.
+
+    So treat this section as our best current understanding rather than a guarantee.  If you follow it
+    and Au still adds or subtracts a warning relative to the equivalent raw-number code, please [file
+    an issue](https://github.com/aurora-opensource/au/issues/new).  It's either a bug in Au, or a gap
+    in these instructions --- and we want to fix both.
+
 ## Installation instructions
 
 Here are the instructions for each installation method we support.
