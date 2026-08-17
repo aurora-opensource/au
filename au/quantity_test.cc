@@ -269,6 +269,10 @@ TEST(Quantity, HasCorrectRepNamedAliases) {
     StaticAssertTypeEq<QuantityF<Feet>, Quantity<Feet, float>>();
     StaticAssertTypeEq<QuantityI<Feet>, Quantity<Feet, int>>();
     StaticAssertTypeEq<QuantityU<Feet>, Quantity<Feet, unsigned int>>();
+    StaticAssertTypeEq<QuantityI8<Feet>, Quantity<Feet, int8_t>>();
+    StaticAssertTypeEq<QuantityU8<Feet>, Quantity<Feet, uint8_t>>();
+    StaticAssertTypeEq<QuantityI16<Feet>, Quantity<Feet, int16_t>>();
+    StaticAssertTypeEq<QuantityU16<Feet>, Quantity<Feet, uint16_t>>();
     StaticAssertTypeEq<QuantityI32<Feet>, Quantity<Feet, int32_t>>();
     StaticAssertTypeEq<QuantityU32<Feet>, Quantity<Feet, uint32_t>>();
     StaticAssertTypeEq<QuantityI64<Feet>, Quantity<Feet, int64_t>>();
