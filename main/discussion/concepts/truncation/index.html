@@ -904,6 +904,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#compound-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compound types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#other-types" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2707,10 +2718,19 @@ depends on the precise calculations.</p>
 point representation is a statement, by the user, that <em>exact values do not matter</em> for their
 application.  It would be inappropriate for us to raise warnings about perfectly routine properties
 of the user&rsquo;s chosen type.  Hence: <em>floating point never truncates</em>.</p>
+<h3 id="compound-types">Compound types<a class="headerlink" href="#compound-types" title="Permanent link">&para;</a></h3>
+<p>Not every rep is a plain arithmetic type.  Complex numbers and Eigen vectors/matrices are common
+examples of <em>compound</em> reps: types built up out of some underlying <em>scalar</em>.  Au characterizes each
+such rep by that scalar &mdash; its <a href="../../../reference/rep/#scalar-of"><code>ScalarOf&lt;T&gt;</code></a> &mdash; and then
+applies the very same rules from above.  So an <code>Eigen::Vector3d</code>, whose scalar is <code>double</code>, is
+governed by the <a href="#float">floating point rule</a> and never truncates; a vector of integers, on the
+other hand, follows the integral rules.</p>
 <h3 id="other-types">Other types<a class="headerlink" href="#other-types" title="Permanent link">&para;</a></h3>
-<p>Currently, Au has only limited support for non-arithmetic rep types (full support is tracked in
-<a href="https://github.com/aurora-opensource/au/issues/52">#52</a>). As a stopgap, Au treats any non-arithmetic type conservatively, and assumes that it can
-truncate.  We hope to refine this approach when we strengthen our support for more rep types.</p>
+<p>For a rep that is neither a built-in arithmetic type, nor a compound type with an arithmetic
+<code>ScalarOf</code> trait, Au has no basis to reason about truncation.  Therefore, we fall back to the
+conservative assumption that the conversion can truncate, and forbid it by default.  This is just
+a stopgap measure; we plan to support non-arithmetic reps more broadly in the future.  See <a href="https://github.com/aurora-opensource/au/issues/52">#52</a> to
+track any progress.</p>
 <h2 id="truncation-in-casting">Truncation in casting<a class="headerlink" href="#truncation-in-casting" title="Permanent link">&para;</a></h2>
 <p>Besides mathematical operations, the other main operation in unit conversions is casting from one
 type to another.  We assess truncation risk for these operations as well.</p>
@@ -2719,7 +2739,7 @@ type to another.  We assess truncation risk for these operations as well.</p>
 <p>If the source and destination types are in the same <em>category</em> &mdash; that is, either both integral, or
 both floating point &mdash; then the cast never truncates.  The reason for integral types is
 straightforward: clearly, the source can&rsquo;t hold a non-integer value.  As for floating point types,
-they are governed by the <a href="#float">philsophy explained above</a>.</p>
+they are governed by the <a href="#float">philosophy explained above</a>.</p>
 <p>Casting from a floating point type to an integral type does have truncation risk: we would truncate
 for any non-integer input.  We can check this for individual values by discarding the fractional
 part, and checking whether this changes the value.</p>
@@ -2730,11 +2750,22 @@ should consider this to truncate.  But recall the <a href="#float">philosophy ab
 are all about <em>relative</em> position.  For this reason, we consider casting from integral to floating
 point as a <strong>non-truncating</strong> operation.</p>
 <h3 id="non-arithmetic-types">Non-arithmetic types<a class="headerlink" href="#non-arithmetic-types" title="Permanent link">&para;</a></h3>
-<p>Here, too, our support for non-arithmetic rep types is limited (see <a href="https://github.com/aurora-opensource/au/issues/52">#52</a>), and we take
-a conservative approach.  Any cast involving a non-arithmetic type, either as source or destination,
-is considered to have truncation risk, and will not be allowed by default: users must pass
+<p>Here, too, our support for non-arithmetic rep types is limited, and we take a conservative approach.
+Any cast involving a rep with non-arithmetic scalar type, either as source or destination, is
+considered to have truncation risk, and will not be allowed by default: users must pass
 <code>ignore(TRUNCATION_RISK)</code> as a second argument to override this.  We hope to have better default
-behavior once we support non-arithmetic types more fully.</p>
+behavior once we support non-arithmetic types more fully (<a href="https://github.com/aurora-opensource/au/issues/52">#52</a>).</p>
+<p>Note that this policy tells you only whether the <em>truncation rules</em> object to a casting conversion.
+Passing those rules doesn&rsquo;t mean the conversion will work: the reps involved must also support the
+cast in the first place.</p>
+<p>As a concrete example, <code>Eigen::Vector3d</code> is a compound rep that <em>does</em> have an arithmetic scalar
+type, so the truncation rules have no objection to casting it to <code>Eigen::Vector3f</code>.  Even so, the
+conversion doesn&rsquo;t compile: Au can&rsquo;t form a common rep for two Eigen types with different scalars,
+and so it never gets as far as the <code>static_cast</code> it would ordinarily perform.  That&rsquo;s no accident on
+Eigen&rsquo;s part &mdash; Eigen deliberately rejects <code>static_cast</code> between different scalar types, directing
+users to its <code>.cast&lt;T&gt;()</code> member function instead.  So this is the one case where you must reach for
+the <a href="../../../reference/eigen/#cast"><code>cast&lt;T&gt;</code> free function</a>, which wraps <code>.cast&lt;T&gt;()</code> for use with
+<code>Quantity</code>.</p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <p>Truncation happens when the result of an operation falls in-between representable values in the
 numeric type where we&rsquo;re storing it.  If any input values for a unit conversion can truncate &mdash; or,
@@ -2743,8 +2774,10 @@ behavior by passing <code>ignore(TRUNCATION_RISK)</code> as a second argument.  
 whether <em>individual values</em> truncate using the <code>will_conversion_truncate</code> function.</p>
 <p>Truncation risk depends strongly on the types involved.  Integral types are vulnerable to truncation
 for non-integer scale factors.  On the other hand, we treat floating point types as though they
-never &ldquo;truncate&rdquo;, because they&rsquo;re already inexact.  Finally, since we don&rsquo;t yet fully support
-non-arithmetic types, we treat them conservatively and assume that they carry truncation risk.</p>
+never &ldquo;truncate&rdquo;, because they&rsquo;re already inexact.  Finally, for compound reps such as complex
+numbers and Eigen vectors, we defer to the truncation rules of their underlying scalar type; only
+when that scalar can&rsquo;t be determined do we fall back to a conservative assumption of truncation
+risk.</p>
 <div class="footnote">
 <hr />
 <ol>

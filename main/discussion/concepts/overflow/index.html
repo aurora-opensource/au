@@ -870,6 +870,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#integer-promotion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integer promotion pitfalls
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2746,6 +2757,47 @@ that separates allowed conversions from forbidden ones, permitting bigger conver
 types. We call this abstract boundary the <strong>&ldquo;overflow safety surface&rdquo;</strong>, and it&rsquo;s the secret
 ingredient that lets Au users use a wide variety of integral types with confidence.</p>
 <p><img alt="The overflow safety surface" src="../../../assets/overflow-safety-surface.png" /></p>
+<h4 id="integer-promotion">Integer promotion pitfalls<a class="headerlink" href="#integer-promotion" title="Permanent link">&para;</a></h4>
+<p>There&rsquo;s a key subtlety to appreciate here: the safety surface applies to the <em>destination</em> rep.  For
+&ldquo;explicit rep&rdquo; callsites (e.g., <code>q.as&lt;T&gt;(unit)</code>), the destination rep is plain to see (it&rsquo;s <code>T</code>).
+But &ldquo;implicit rep&rdquo; callsites (e.g., <code>q.as(unit)</code>) require more care.</p>
+<p>Through Au 0.5.0, the destination rep for an implicit-rep callsite was just the same as the <em>input</em>
+rep: if <code>q</code> has type <code>Quantity&lt;U, R&gt;</code>, it would be <code>R</code>.  But we realized this choice was suboptimal
+overall: instead, Au should do as C++ does, and return the natural type.  <a href="https://github.com/aurora-opensource/au/milestone/9">0.6.0</a> will be the first
+release that does so.  While it&rsquo;s a better state for the library overall, it does have some
+surprising implications.</p>
+<p>As a concrete example, consider <code>feet(int8_t{20}).as(inches)</code>.  This conversion multiplies the
+underlying <code>int8_t</code> value by 12.  In C++, any arithmetic on an <code>int8_t</code> first promotes it to <code>int</code>
+(this is <a href="https://en.cppreference.com/w/c/language/conversion#Integer_promotions">integer promotion</a>), so the result is <strong>an <code>int</code></strong>, not an <code>int8_t</code>.  Therefore, we get
+the wider overflow safety surface for <code>int</code>, not the tiny one for <code>int8_t</code>, and the conversion is
+permitted.</p>
+<p>The conversion itself is perfectly safe, but the real danger comes if you assign back to <code>int8_t</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">Feet</span><span class="p">,</span><span class="w"> </span><span class="kt">int8_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">length_ft</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">// Risky conversion: not caught by overflow safety surface!</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">Inches</span><span class="p">,</span><span class="w"> </span><span class="kt">int8_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">length_in</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">length_ft</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">inches</span><span class="p">);</span>
+</code></pre></div>
+<p>In the second statement, <code>length_ft.as(inches)</code> produces a <code>Quantity&lt;Inches, int&gt;</code> &mdash; note: <code>int</code>,
+not <code>int8_t</code>.  This can <em>implicitly</em> convert to <code>Quantity&lt;Inches, int8_t&gt;</code>, but only because <code>int</code>
+is the <em>specific</em> type that <code>int8_t</code> promotes to.  (If we disallowed this implicit conversion, then
+integer promotion would make small integer types completely unusable in practice.)  And so the
+overflow lands silently: 20 feet is 240 inches, which doesn&rsquo;t fit in an <code>int8_t</code>, and <code>length_in</code>
+ends up holding <strong>-16 inches</strong>.</p>
+<p>All these decisions &mdash; returning the promoted type, permitting implicit conversion to the original
+type &mdash; are reasonable individually, but taken together, they effectively bypass Au&rsquo;s overflow
+protection for small integer types.  Fortunately, there&rsquo;s a solution: <em>name the desired rep when you
+do the conversion</em>.  For small integer types, this should almost always be the same rep, so we
+provide a convenient syntax (<a href="../../../reference/quantity/#same-rep">SameRep</a>) to ask for this.  Continuing with our earlier example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// Risky conversion caught when output rep specified:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">length_in</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">length_ft</span><span class="p">.</span><span class="n">as</span><span class="o">&lt;</span><span class="n">SameRep</span><span class="o">&gt;</span><span class="p">(</span><span class="n">inches</span><span class="p">);</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1">//                            ^^^^^^^ Names the rep at the point of conversion</span>
+</code></pre></div>
+<p>Here, we switched to <code>auto</code> for conciseness, because the unit and rep are visibly determined by the
+right hand side.  The <code>&lt;SameRep&gt;</code> tag lets the conversion machinery know how much room we actually
+have to work with, and empowers Au to provide the full safety check.</p>
+<p>Users working with small integer types must already wrestle with their quirky properties in C++.
+We recommend these users make <code>SameRep</code> a habit whenever they want to stay within a promotable
+integer type in Au operations.</p>
 <h3 id="check-at-runtime">Check every conversion at runtime<a class="headerlink" href="#check-at-runtime" title="Permanent link">&para;</a></h3>
 <p>While the overflow safety surface is a leap forward in safety and flexibility, it&rsquo;s still only
 a heuristic.  There will always be valid conversions which it forbids, and invalid ones which it
@@ -2775,12 +2827,12 @@ choice.</p>
 </ol>
 <p>Here&rsquo;s a complete worked example of how you would do this in a codebase using C++17&rsquo;s
 <code>std::optional</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">try_converting</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">is_conversion_lossy</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">target</span><span class="p">)</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="o">?</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nullopt</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_optional</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">ALL_RISKS</span><span class="p">)));</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TargetUnitSlot</span><span class="o">&gt;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">try_converting</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">TargetUnitSlot</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">is_conversion_lossy</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">        </span><span class="o">?</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nullopt</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_optional</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="n">ignore</span><span class="p">(</span><span class="n">ALL_RISKS</span><span class="p">)));</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">}</span>
 </code></pre></div>
 <p>The goal of <code>is_conversion_lossy</code> is to produce an implementation for each individual conversion
 (based on both the numeric type, and the conversion factor) that is as <em>accurate and efficient</em> as
