@@ -28,7 +28,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-146-g396ba7b
+// Version identifier: 0.5.0-base-147-g7ed35be
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -289,6 +289,14 @@ using QuantityI = Quantity<UnitT, int>;
 template <typename UnitT>
 using QuantityU = Quantity<UnitT, unsigned int>;
 template <typename UnitT>
+using QuantityI8 = Quantity<UnitT, int8_t>;
+template <typename UnitT>
+using QuantityU8 = Quantity<UnitT, uint8_t>;
+template <typename UnitT>
+using QuantityI16 = Quantity<UnitT, int16_t>;
+template <typename UnitT>
+using QuantityU16 = Quantity<UnitT, uint16_t>;
+template <typename UnitT>
 using QuantityI32 = Quantity<UnitT, int32_t>;
 template <typename UnitT>
 using QuantityU32 = Quantity<UnitT, uint32_t>;
@@ -316,6 +324,14 @@ template <typename UnitT>
 using QuantityPointI = QuantityPoint<UnitT, int>;
 template <typename UnitT>
 using QuantityPointU = QuantityPoint<UnitT, unsigned int>;
+template <typename UnitT>
+using QuantityPointI8 = QuantityPoint<UnitT, int8_t>;
+template <typename UnitT>
+using QuantityPointU8 = QuantityPoint<UnitT, uint8_t>;
+template <typename UnitT>
+using QuantityPointI16 = QuantityPoint<UnitT, int16_t>;
+template <typename UnitT>
+using QuantityPointU16 = QuantityPoint<UnitT, uint16_t>;
 template <typename UnitT>
 using QuantityPointI32 = QuantityPoint<UnitT, int32_t>;
 template <typename UnitT>
