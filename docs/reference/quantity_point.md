@@ -24,6 +24,10 @@ aliases", so you can express the rep more precisely, and put the visual focus on
 | `QuantityPointF<U>` | `QuantityPoint<U, float>` |
 | `QuantityPointI<U>` | `QuantityPoint<U, int>` |
 | `QuantityPointU<U>` | `QuantityPoint<U, unsigned int>` |
+| `QuantityPointI8<U>` | `QuantityPoint<U, int8_t>` |
+| `QuantityPointU8<U>` | `QuantityPoint<U, uint8_t>` |
+| `QuantityPointI16<U>` | `QuantityPoint<U, int16_t>` |
+| `QuantityPointU16<U>` | `QuantityPoint<U, uint16_t>` |
 | `QuantityPointI32<U>` | `QuantityPoint<U, int32_t>` |
 | `QuantityPointU32<U>` | `QuantityPoint<U, uint32_t>` |
 | `QuantityPointI64<U>` | `QuantityPoint<U, int64_t>` |
