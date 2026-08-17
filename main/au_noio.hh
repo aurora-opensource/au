@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-145-g96e75f4
+// Version identifier: 0.5.0-base-146-g396ba7b
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -40,6 +40,7 @@
 //   radians
 //   seconds
 //   unos
+// List of included unit literals:
 // List of included constants:
 
 
