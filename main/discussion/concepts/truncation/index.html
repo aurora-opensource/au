@@ -659,6 +659,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../compiler_warnings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compiler Warnings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../conversion_risks/" class="md-nav__link">
         
   
@@ -2718,6 +2746,14 @@ depends on the precise calculations.</p>
 point representation is a statement, by the user, that <em>exact values do not matter</em> for their
 application.  It would be inappropriate for us to raise warnings about perfectly routine properties
 of the user&rsquo;s chosen type.  Hence: <em>floating point never truncates</em>.</p>
+<div class="admonition note">
+<p class="admonition-title">This is separate from your compiler&rsquo;s <code>-Wconversion</code> flags</p>
+<p>&ldquo;Never truncates&rdquo; means Au&rsquo;s own <a href="../conversion_risks/">truncation risk</a> check won&rsquo;t
+forbid the conversion.  It does <em>not</em> mean we hide narrowing conversions from your compiler: an
+implicit conversion from a <code>double</code> quantity to a <code>float</code> one still warns under
+<code>-Wfloat-conversion</code>, exactly as it would for raw numbers.  See <a href="../compiler_warnings/">compiler
+warnings</a>.</p>
+</div>
 <h3 id="compound-types">Compound types<a class="headerlink" href="#compound-types" title="Permanent link">&para;</a></h3>
 <p>Not every rep is a plain arithmetic type.  Complex numbers and Eigen vectors/matrices are common
 examples of <em>compound</em> reps: types built up out of some underlying <em>scalar</em>.  Au characterizes each

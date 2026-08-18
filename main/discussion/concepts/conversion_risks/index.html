@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/concepts/conversion_risks/">
       
       
-        <link rel="prev" href="../common_unit/">
+        <link rel="prev" href="../compiler_warnings/">
       
       
         <link rel="next" href="../dimensionless/">
@@ -639,6 +639,34 @@
     
   
     Common Units
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compiler_warnings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compiler Warnings
   
 
     
@@ -2662,9 +2690,10 @@
 <li>The <em>target</em> <strong>rep</strong>.</li>
 <li>The ratio between the <em>initial</em> and <em>target</em> <strong>units</strong>.</li>
 </ol>
-<p>Under the hood, we implement each conversion as a sequence of operations, including <code>static_cast</code>
-for changing the rep, and mathematical operations (mainly multiplying and dividing) for changing the
-value.  Each operation has an input type, and an output type (which might be the same as the input).</p>
+<p>Under the hood, we implement each conversion as a sequence of <em>operations</em>.  Each operation has an
+input type, and an output type (which might be the same as the input).  Elementary operations
+include type conversions (either <code>static_cast</code> or implicit conversion), multiplying or dividing by
+a constant, and so on.</p>
 <h2 id="what-can-go-wrong">What can go wrong?<a class="headerlink" href="#what-can-go-wrong" title="Permanent link">&para;</a></h2>
 <p>On pen and paper, any unit conversion can be done exactly.  <em>In software</em>, this is not true.  Most
 representation types can only represent a limited range of numbers, and with only finite precision
@@ -2959,7 +2988,7 @@ exceptions (notably, integer promotion).&#160;<a class="footnote-backref" href="
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../common_unit/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Common Units">
+          <a href="../compiler_warnings/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Compiler Warnings">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2969,7 +2998,7 @@ exceptions (notably, integer promotion).&#160;<a class="footnote-backref" href="
                 Previous
               </span>
               <div class="md-ellipsis">
-                Common Units
+                Compiler Warnings
               </div>
             </div>
           </a>

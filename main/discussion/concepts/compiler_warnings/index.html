@@ -12,13 +12,13 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/implementation/applying_magnitudes/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/concepts/compiler_warnings/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../common_unit/">
       
       
-        <link rel="next" href="../vector_space/">
+        <link rel="next" href="../conversion_risks/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Applying Magnitudes - The Au units library</title>
+        <title>Compiler Warnings - The Au units library</title>
       
     
     
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#applying-magnitudes" class="md-skip">
+        <a href="#compiler-warnings" class="md-skip">
           Skip to content
         </a>
       
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Applying Magnitudes
+              Compiler Warnings
             
           </span>
         </div>
@@ -523,18 +523,20 @@
                 
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" checked>
         
           
           <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
@@ -555,7 +557,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -573,7 +575,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   
@@ -601,7 +603,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/arithmetic/" class="md-nav__link">
+      <a href="../arithmetic/" class="md-nav__link">
         
   
   
@@ -629,7 +631,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/common_unit/" class="md-nav__link">
+      <a href="../common_unit/" class="md-nav__link">
         
   
   
@@ -654,10 +656,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../concepts/compiler_warnings/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compiler Warnings
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -673,6 +702,93 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Au&rsquo;s core policy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Au’s core policy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#implementation-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#required-build-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Required build configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Required build configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#last-resort-forcing-warnings-back-on" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Last resort: forcing warnings back on
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#violations-are-bugs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Violations are bugs
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -685,7 +801,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/conversion_risks/" class="md-nav__link">
+      <a href="../conversion_risks/" class="md-nav__link">
         
   
   
@@ -713,7 +829,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/dimensionless/" class="md-nav__link">
+      <a href="../dimensionless/" class="md-nav__link">
         
   
   
@@ -741,7 +857,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/eigen_safety/" class="md-nav__link">
+      <a href="../eigen_safety/" class="md-nav__link">
         
   
   
@@ -769,7 +885,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/overflow/" class="md-nav__link">
+      <a href="../overflow/" class="md-nav__link">
         
   
   
@@ -797,7 +913,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/quantity_point/" class="md-nav__link">
+      <a href="../quantity_point/" class="md-nav__link">
         
   
   
@@ -825,7 +941,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/truncation/" class="md-nav__link">
+      <a href="../truncation/" class="md-nav__link">
         
   
   
@@ -853,7 +969,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/zero/" class="md-nav__link">
+      <a href="../zero/" class="md-nav__link">
         
   
   
@@ -997,20 +1113,18 @@
                 
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
         
           
           <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
@@ -1031,7 +1145,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1049,7 +1163,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../implementation/" class="md-nav__link">
         
   
   
@@ -1074,37 +1188,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Applying Magnitudes
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../implementation/applying_magnitudes/" class="md-nav__link">
         
   
   
@@ -1120,126 +1207,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#magnitude-categories" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Magnitude categories
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Magnitude categories">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#integers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Integers
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#reciprocal-integers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reciprocal integers
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#rational-numbers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Rational numbers
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Rational numbers">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#integral-types" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Integral types
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#floating-point-types" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Floating point types
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#irrational-numbers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Irrational numbers
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary-and-conclusion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary and conclusion
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1252,7 +1219,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vector_space/" class="md-nav__link">
+      <a href="../../implementation/vector_space/" class="md-nav__link">
         
   
   
@@ -2671,150 +2638,169 @@
   
 
 
-<h1 id="applying-magnitudes">Applying Magnitudes<a class="headerlink" href="#applying-magnitudes" title="Permanent link">&para;</a></h1>
-<p>Every unit conversion factor is a <a href="../../../reference/magnitude/"><em>magnitude</em></a> &mdash; a nonzero real
-number.  When we apply it to a value, conceptually, we&rsquo;re just multiplying the value by that number.
-However, that doesn&rsquo;t mean that multiplying by a number is the best <em>implementation</em>!  Consider
-these examples.</p>
+<h1 id="compiler-warnings">Compiler Warnings<a class="headerlink" href="#compiler-warnings" title="Permanent link">&para;</a></h1>
+<p>Every project has its own policy about compiler warnings: which ones to enable, and which of those
+to turn into errors.  That policy is expressed in <em>compiler flags</em>, and it belongs to <em>you</em>, the
+user &mdash; not to your units library.  Au&rsquo;s job is to respect your choices and avoid interfering with
+them.  This page explains how we do that.</p>
+<h2 id="policy">Au&rsquo;s core policy<a class="headerlink" href="#policy" title="Permanent link">&para;</a></h2>
+<p>The core of our approach can be summarized in a simple policy statement:</p>
+<blockquote>
+<p><strong>Au neither <em>adds</em> nor <em>subtracts</em> compiler warnings.</strong></p>
+</blockquote>
+<p>More precisely: for anything which is a property of the <em>underlying numeric types</em> &mdash; lost
+precision, narrowing, sign conversion, and so on &mdash; Au aims to give you <em>exactly</em> the diagnostics
+your compiler flags would give you for the equivalent raw numbers: no more, no less.</p>
+<p>Here&rsquo;s what each half of our policy statement actually <em>means</em>.</p>
 <ul>
-<li><strong>Factor: <span class="arithmatex"><span class="MathJax_Preview">\frac{5}{8}</span><script type="math/tex">\frac{5}{8}</script></span>; value: <code>12</code> (type: <code>int</code>).</strong><ul>
-<li>Computationally, we don&rsquo;t want to leave the integral domain.  But of course, <span class="arithmatex"><span class="MathJax_Preview">\frac{5}{8}</span><script type="math/tex">\frac{5}{8}</script></span>
-  can&rsquo;t be represented as an integer!  This suggests we should perform <em>two</em> operations: first
-  multiply by <code>5</code>, and then divide by <code>8</code>, yielding <code>7</code>.</li>
-</ul>
+<li>
+<p><strong>Don&rsquo;t add.</strong>  &ldquo;Adding&rdquo; warnings would mean that your basic (raw numeric) program compiles
+  without any warnings, but you start seeing warnings when you migrate it to use Au.  This implies
+  that Au&rsquo;s <em>library-internal code</em> is not clean under that warning: an incredibly frustrating
+  experience.</p>
 </li>
-<li><strong>Factor: <span class="arithmatex"><span class="MathJax_Preview">\frac{1}{13}</span><script type="math/tex">\frac{1}{13}</script></span>; value: <code>91.0f</code> (type: <code>float</code>).</strong><ul>
-<li>Conceptually, this has an exactly representable answer: <span class="arithmatex"><span class="MathJax_Preview">91\left(\frac{1}{13}\right) = 7</span><script type="math/tex">91\left(\frac{1}{13}\right) = 7</script></span>.
-  However, if we multiply by the single number <code>(1.0f / 13.0f)</code>, we obtain the approximation
-  <code>7.0000004768371582</code>!  This suggests that for <span class="arithmatex"><span class="MathJax_Preview">\frac{1}{13}</span><script type="math/tex">\frac{1}{13}</script></span>, at least, it would be better to
-  divide by <code>13.0f</code>.</li>
-</ul>
+<li>
+<p><strong>Don&rsquo;t subtract.</strong>  &ldquo;Subtracting&rdquo; is more subtle: it means that your basic (raw numeric) program
+  <em>would</em> produce a warning in a certain situation, but when you migrate it to Au, the warning
+  disappears.  This would be a silent leak in the safety net that those warnings provide.</p>
 </li>
 </ul>
-<p>Au is thoughtful about how we apply conversion factors.  We first compute a <em>category</em> for the
-factor, which dictates the best strategy for applying it.  We may also take into account whether
-we&rsquo;re dealing with an integral or floating point type.</p>
-<h2 id="magnitude-categories">Magnitude categories<a class="headerlink" href="#magnitude-categories" title="Permanent link">&para;</a></h2>
-<p>We represent conversion factors with <a href="../../../reference/magnitude/">magnitudes</a>.  These
-representations support <em>exact symbolic math</em> for products and rational powers.  They also support
-querying for <em>numeric properties</em> of the number, such as whether it is an integer, whether it&rsquo;s
-irrational, and so on.</p>
-<p>For purposes of <em>applying to a value</em>, we find four useful categories of magnitude.</p>
-<ol>
-<li>Integers.</li>
-<li>Reciprocal integers.</li>
-<li>Rational numbers (other than the first two categories).</li>
-<li>Irrational numbers.</li>
-</ol>
-<p>These categories are mutually exclusive and exhaustive.  Below, we&rsquo;ll explain the best strategy for
-each one.</p>
-<h3 id="integers">Integers<a class="headerlink" href="#integers" title="Permanent link">&para;</a></h3>
-<p>Applying an integer magnitude to a type <code>T</code> is simple: we multiply by that integer&rsquo;s representation
-in <code>T</code>.</p>
-<p>This always compiles to a single instruction, and always produces exact answers whenever they are
-representable in the type <code>T</code>.</p>
-<h3 id="reciprocal-integers">Reciprocal integers<a class="headerlink" href="#reciprocal-integers" title="Permanent link">&para;</a></h3>
-<p>If a magnitude is <em>not</em> an integer, but its <em>reciprocal is</em>, then we divide by its reciprocal.  For
-example, in converting a value from <code>inches</code> to <code>feet</code>, we will divide by <span class="arithmatex"><span class="MathJax_Preview">12</span><script type="math/tex">12</script></span>, instead of
-multiplying by the representation of <span class="arithmatex"><span class="MathJax_Preview">\frac{1}{12}</span><script type="math/tex">\frac{1}{12}</script></span>, which would be inexact.</p>
-<p>As with integers, this always compiles to a single instruction, and always produces exact answers
-whenever they are representable in the type <code>T</code>.</p>
-<h3 id="rational-numbers">Rational numbers<a class="headerlink" href="#rational-numbers" title="Permanent link">&para;</a></h3>
-<p>Again, to be clear, this category only includes rationals that are <em>neither</em> integers <em>nor</em>
-reciprocal integers.  So, for example, neither <span class="arithmatex"><span class="MathJax_Preview">2</span><script type="math/tex">2</script></span> nor <span class="arithmatex"><span class="MathJax_Preview">\frac{1}{5}</span><script type="math/tex">\frac{1}{5}</script></span> falls in this category, but
-<span class="arithmatex"><span class="MathJax_Preview">\frac{2}{5}</span><script type="math/tex">\frac{2}{5}</script></span> does.</p>
-<p>This category is interesting, because it&rsquo;s the first instance where our strategy <em>depends on the
-type <code>T</code></em> to which we&rsquo;re applying the factor.  The best approach differs between integral and
-non-integral types.</p>
-<h4 id="integral-types">Integral types<a class="headerlink" href="#integral-types" title="Permanent link">&para;</a></h4>
-<p>Here, we multiply by the numerator, then divide by the denominator.  This compiles to <em>two</em>
-operations instead of one, but it&rsquo;s the only way to get reasonable accuracy.</p>
-<p>There&rsquo;s another issue: the multiplication operation can overflow.  This means we can produce wrong
-answers in some instances, even when the correct answer is representable in the type!  For example,
-let&rsquo;s say our value is <code>std::numeric_limits&lt;uint64_t&gt;::max()</code>, and we apply the magnitude
-<span class="arithmatex"><span class="MathJax_Preview">\frac{2}{3}</span><script type="math/tex">\frac{2}{3}</script></span>: by the time we divide by <span class="arithmatex"><span class="MathJax_Preview">3</span><script type="math/tex">3</script></span>, the multiplication by <span class="arithmatex"><span class="MathJax_Preview">2</span><script type="math/tex">2</script></span> has already lost our value to
-overflow.</p>
-<p>We might be tempted to prevent this by doing the division first.  In the above example, this would
-certainly give us a much closer result!  However, the cost would be reduced accuracy for <em>smaller</em>
-values, which are far more common.  Consider applying <span class="arithmatex"><span class="MathJax_Preview">\frac{2}{3}</span><script type="math/tex">\frac{2}{3}</script></span> to a smaller number, such as
-<code>5</code>.  The exact rational answer is <span class="arithmatex"><span class="MathJax_Preview">\frac{10}{3}</span><script type="math/tex">\frac{10}{3}</script></span>, which truncates to <code>3</code>.  If we perform the
-multiplication first, this is what we get, but doing the division first would give <code>2</code>.</p>
-<p>In the future, we hope to be able to circumvent this dilemma entirely by introducing a fixed point
-rational strategy.  This would represent the fraction as a double-wide integer type &mdash; either
-built-in, or emulated &mdash; whose implicit denominator is <span class="arithmatex"><span class="MathJax_Preview">2^N</span><script type="math/tex">2^N</script></span> for an <span class="arithmatex"><span class="MathJax_Preview">N</span><script type="math/tex">N</script></span>-bit integer.  This would
-give us efficient performance (just a single multiplication and shift), maximum precision, and no
-&ldquo;extra&rdquo; overflow risk.  See <a href="https://github.com/aurora-opensource/au/issues/453">#453</a> to track progress.</p>
-<p>In the meanwhile, we&rsquo;ll stick with the multiply-and-divide approach, because the risk of overflow is
-generally much more tolerable than the reduced accuracy that would come from dividing first.</p>
-<h4 id="floating-point-types">Floating point types<a class="headerlink" href="#floating-point-types" title="Permanent link">&para;</a></h4>
-<p>Applying a rational magnitude <span class="arithmatex"><span class="MathJax_Preview">\frac{N}{D}</span><script type="math/tex">\frac{N}{D}</script></span> to a value of floating point type <code>T</code> presents a genuine
-tradeoff. On the one hand, we could take the same approach as for the integers, and perform two
-operations: multiplying by <span class="arithmatex"><span class="MathJax_Preview">N</span><script type="math/tex">N</script></span>, then dividing by <span class="arithmatex"><span class="MathJax_Preview">D</span><script type="math/tex">D</script></span>.  On the other hand, we could simply multiply
-by the single number which best represents <span class="arithmatex"><span class="MathJax_Preview">\frac{N}{D}</span><script type="math/tex">\frac{N}{D}</script></span>.  Here&rsquo;s a summary of the tradeoffs:</p>
+<p>Historically, Au has always paid careful attention to the first half (&ldquo;don&rsquo;t add&rdquo;), and strove to be
+clean under all warnings.  Noticing the other side of this coin (&ldquo;don&rsquo;t subtract&rdquo;) took a lot
+longer.  It wasn&rsquo;t until <a href="https://github.com/aurora-opensource/au/issues/528">#528</a> was filed that we recognized you can be <em>too</em> clean under warnings
+&mdash; that an absent warning can be just as dangerous as a present one.</p>
+<p>This half matters because of what warning flags <em>are</em>.  Every project needs some way to say which
+numerical operations it considers safe: whether narrowing a <code>double</code> to a <code>float</code> is routine or
+alarming is a <em>policy</em> choice, and different projects land in different places.  For raw numeric
+code, the canonical mechanism for expressing that choice already exists &mdash; it <em>is</em> the set of
+warning flags.  A library that subtracts warnings takes that mechanism away, and forces its users to
+invent a replacement.  One that doesn&rsquo;t lets you keep the mechanism you already have, and get the
+same answers for <code>Quantity</code> that you get for the numbers inside it.</p>
+<div class="admonition note">
+<p class="admonition-title">Unit-level safety checks are a separate matter</p>
+<p>Au <em>does</em> add errors of its own: mismatched dimensions, <a href="../../../troubleshooting/#integer-division-forbidden">forbidden integer
+division</a>, and <a href="../conversion_risks/">conversion
+risks</a> such as <a href="../truncation/">truncation</a> and
+<a href="../overflow/">overflow</a>.</p>
+<p>These are <em>unit-level</em> checks, and they&rsquo;re the entire point of the library: they catch mistakes
+that raw numbers can&rsquo;t even express.  The policy on this page is about the <em>numeric</em> layer
+underneath, where we defer entirely to your compiler flags.</p>
+</div>
+<h3 id="implementation-approach">Implementation approach<a class="headerlink" href="#implementation-approach" title="Permanent link">&para;</a></h3>
+<p>Au performs every unit conversion as a <a href="../conversion_risks/">sequence of operations</a>, and one of
+those operations is converting from one rep to another.  Which <em>kind</em> of conversion we use depends
+on how <em>you</em> asked for it:</p>
+<ul>
+<li>
+<p>The <strong>implicit constructor</strong> uses an <strong>implicit conversion</strong>, because that&rsquo;s what the equivalent
+  raw-number code (<code>float f = d;</code>) would do.  Your <code>-Wconversion</code> flags therefore fire exactly as
+  they would for raw numbers.</p>
+</li>
+<li>
+<p><strong><code>.as&lt;T&gt;(unit)</code> and <code>.in&lt;T&gt;(unit)</code></strong> use a <strong><code>static_cast</code></strong>, because naming the destination type
+  explicitly <em>is</em> an explicit request to convert.  Just as with a hand-written <code>static_cast</code>, no
+  warning is raised.</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="mf">1.0</span><span class="p">);</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">;</span><span class="w">         </span><span class="c1">// Warns under `-Wfloat-conversion`, as `float a = 1.0;` would.</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">auto</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">meters</span><span class="p">);</span><span class="w">    </span><span class="c1">// No warning, as `static_cast&lt;float&gt;(1.0)` wouldn&#39;t.</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kt">float</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">in</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">meters</span><span class="p">);</span><span class="w">   </span><span class="c1">// No warning, for the same reason.</span>
+</code></pre></div>
+</div>
+<h2 id="required-build-configuration">Required build configuration<a class="headerlink" href="#required-build-configuration" title="Permanent link">&para;</a></h2>
+<p>Historically, very few libraries have lived up to the &ldquo;don&rsquo;t <em>add</em> warnings&rdquo; half of our policy.
+Surprisingly, this has created a serious obstacle for libraries trying to live up to the &ldquo;don&rsquo;t
+<em>subtract</em> warnings&rdquo; half!</p>
+<p>The mechanism at work here began with the standard library and the operating system.  Those headers,
+as the <a href="https://gcc.gnu.org/onlinedocs/cpp/System-Headers.html">GCC manual</a> puts it, &ldquo;often cannot be written in strictly conforming C&rdquo;,
+so any warning they produce is a false positive that you can do nothing about.  The answer was to
+suppress essentially all warnings while processing a <em>system header</em>.  Later on, via flags such as
+<code>-isystem</code>, users could nominate <em>any</em> directory for that same treatment.<sup id="fnref:linters"><a class="footnote-ref" href="#fn:linters">1</a></sup></p>
+<p>That escape hatch proved irresistible for third party code, and understandably so: warnings from
+dependencies you don&rsquo;t control add noise and obscure your own mistakes &mdash; or, under <code>-Werror</code>,
+break your build entirely.  The upshot is that many build configurations now treat <em>every</em> external
+dependency as a system include path by default.</p>
+<p>Unfortunately, this situation hurts libraries that treat warnings more carefully.  For Au
+specifically, the effect is sweeping.  Every rep conversion physically <em>happens</em> inside Au&rsquo;s
+headers, no matter which line of <em>your</em> code requested it: that&rsquo;s simply where the library&rsquo;s code
+lives.  Compilers judge a diagnostic by the file it points to, so if Au&rsquo;s headers are considered
+&ldquo;system&rdquo; headers, then <strong>every</strong> numeric conversion warning in <strong>every</strong> unit conversion disappears
+&mdash; silently.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">narrowed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meters</span><span class="p">(</span><span class="mf">1.0</span><span class="p">);</span><span class="w">  </span><span class="c1">// `-Wfloat-conversion` warns...</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">                                           </span><span class="c1">// ...unless Au is on a system include path.</span>
+</code></pre></div>
+<p>That is precisely the &ldquo;subtract&rdquo; failure mode from <a href="#policy">the policy above</a>, and it&rsquo;s not
+something we can fix from inside the library.  It&rsquo;s a property of your build configuration.</p>
+<p>Therefore: <strong>configure Au as a normal (non-system) dependency.</strong>  See the
+<a href="../../../install/#warning-flags">installation docs</a> for details on how to do this for each supported
+installation method, and how to check what your build is actually doing.</p>
+<div class="admonition warning">
+<p class="admonition-title">Au can&rsquo;t do this; only users can</p>
+<p>A header can&rsquo;t &ldquo;opt out&rdquo; of warning suppression from inside itself.  This is the one part of our
+policy that we can&rsquo;t deliver on your behalf: as long as your build puts Au on a system include
+path, the &ldquo;neither add nor subtract&rdquo; promise simply does not apply, and warnings you rely on
+everywhere else in your project will silently fail to fire for quantities.</p>
+</div>
+<h3 id="last-resort-forcing-warnings-back-on">Last resort: forcing warnings back on<a class="headerlink" href="#last-resort-forcing-warnings-back-on" title="Permanent link">&para;</a></h3>
+<p>If your build genuinely cannot avoid putting Au on a system include path, these flags can restore
+the diagnostics.  Fixing the build configuration would be the better approach, but these options may
+be better than nothing.</p>
 <table>
 <thead>
 <tr>
-<th>Criterion</th>
-<th>Weighting</th>
-<th>Multiply-and-divide: <code>(val * N) / D</code></th>
-<th>Single number: <code>val * (N / D)</code></th>
+<th>Flag</th>
+<th>Compilers</th>
+<th>Effect</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Instructions</td>
-<td>medium</td>
-<td>2</td>
-<td>1</td>
+<td><code>--no-system-header-prefix=au/</code></td>
+<td>clang</td>
+<td>Treats headers included as <code>"au/..."</code> as non-system.  Nicely targeted, but clang-only.</td>
 </tr>
 <tr>
-<td>Overflow</td>
-<td>low</td>
-<td>More vulnerable</td>
-<td>Less vulnerable</td>
+<td><code>-Wsystem-headers</code></td>
+<td>gcc, clang</td>
+<td>Restores warnings in <em>all</em> system headers, including your standard library.  Usually far too noisy.</td>
 </tr>
 <tr>
-<td>Exact answers for multiples of <span class="arithmatex"><span class="MathJax_Preview">D</span><script type="math/tex">D</script></span></td>
-<td>low</td>
-<td>Guaranteed</td>
-<td>Not guaranteed</td>
+<td><code>/external:W4</code> (with <code>/external:I</code>)</td>
+<td>MSVC</td>
+<td>Sets the warning level applied to external headers.</td>
+</tr>
+<tr>
+<td><code>--system-headers</code> (or <code>SystemHeaders</code> in <code>.clang-tidy</code>)</td>
+<td>clang-tidy</td>
+<td>Reports findings from all system headers, with the same noise problem as <code>-Wsystem-headers</code>.</td>
 </tr>
 </tbody>
 </table>
-<p>Overall, we aren&rsquo;t worried much about missing out on exact answers.  Users of floating point know
-they need to handle the possibility that a calculation&rsquo;s result can be one or two representable
-values away from the best possible result.  (This is commonly called the &ldquo;usual floating point
-error&rdquo;.)</p>
-<p>We also aren&rsquo;t very worried about overflow.  Even float has a range of <span class="arithmatex"><span class="MathJax_Preview">10^{38}</span><script type="math/tex">10^{38}</script></span>, while going from
-femtometers to Astronomical Units (AU) spans a range of &ldquo;only&rdquo; about <span class="arithmatex"><span class="MathJax_Preview">10^{26}</span><script type="math/tex">10^{26}</script></span>.</p>
-<p>Going from 1 instruction to 2 is a moderate concern, which means that it outweighs the other two
-considerations.  It represents a runtime penalty relative to the usual approach people take without
-a units library, which is to compute a single conversion factor.  We always strive to avoid runtime
-penalties in units libraries! The reason we don&rsquo;t consider this even more serious is that unit
-conversions should never occur in the &ldquo;hot loop&rdquo; for a program; thus, this performance hit isn&rsquo;t
-really meaningful.</p>
-<p><strong>Outcome:</strong> we represent a rational conversion factor <span class="arithmatex"><span class="MathJax_Preview">\frac{N}{D}</span><script type="math/tex">\frac{N}{D}</script></span> with a <strong>single number</strong> when
-applying it to a floating point variable.</p>
-<h3 id="irrational-numbers">Irrational numbers<a class="headerlink" href="#irrational-numbers" title="Permanent link">&para;</a></h3>
-<p>There is no reason to try splitting an irrational number into parts to get an exact answer.  Since
-we&rsquo;re multiplying our variable by an irrational number, we know the result won&rsquo;t be exactly
-representable.  Therefore, we always simply multiply by the closest representation of this
-conversion factor.</p>
-<p>Of course, this assumes that we can <em>actually implement</em> this unit conversion.  For integral types,
-this is currently not the case: after all, we can&rsquo;t represent irrational numbers as integers!
-However, we hope to change this in the future, by introducing a fixed point rational strategy.  See
-<a href="https://github.com/aurora-opensource/au/issues/453">#453</a> for details, but in the meantime, applying irrational conversion factors to integral types
-simply produces a compiler error.</p>
-<h2 id="summary-and-conclusion">Summary and conclusion<a class="headerlink" href="#summary-and-conclusion" title="Permanent link">&para;</a></h2>
-<p>Applying a conversion factor to a numeric variable of type <code>T</code> can be a tricky and subtle business.
-Au takes a thoughtful, tailored approach, which can be summarized as follows:</p>
-<ul>
-<li>If the conversion factor multiplies &mdash; <em>or divides</em> &mdash; by an exact integer, then we do that.</li>
-<li>Otherwise, if it&rsquo;s a rational number <span class="arithmatex"><span class="MathJax_Preview">\frac{N}{D}</span><script type="math/tex">\frac{N}{D}</script></span>, and <code>T</code> is integral, then we multiply by <span class="arithmatex"><span class="MathJax_Preview">N</span><script type="math/tex">N</script></span>
-  and divide by <span class="arithmatex"><span class="MathJax_Preview">D</span><script type="math/tex">D</script></span> (each represented in <code>T</code>).</li>
-<li>Otherwise, we simply multiply by the nearest representation of the conversion factor in <code>T</code> &mdash;
-  with the exception that if <code>T</code> is integral, we raise a compiler error for irrational factors.</li>
-</ul>
+<h2 id="violations-are-bugs">Violations are bugs<a class="headerlink" href="#violations-are-bugs" title="Permanent link">&para;</a></h2>
+<p>Our policy is aspirational, not a strict guarantee, because it&rsquo;s hard to test every possible
+combination of compiler flags.  However, we take it very seriously, and we want to hear about it
+when we fall short.</p>
+<p>If you think you&rsquo;ve found a violation, the first thing to check is your <a href="#required-build-configuration">build
+configuration</a>: a system include path for Au explains most &ldquo;missing&rdquo;
+warnings, and it&rsquo;s the one cause that only <em>you</em> can fix.  Once you&rsquo;ve ruled that out, a violation in
+<em>either</em> direction is a bug in Au.  Please file an <a href="https://github.com/aurora-opensource/au/issues/new">issue</a> if you find one!</p>
+<p>It&rsquo;s possible, in principle, that someone could find a violation of this principle that is
+<em>architecturally impossible</em> for Au to fix.  If that happens, we&rsquo;ll add a section to this page that
+lists all known exceptions, and explains why they can&rsquo;t be fixed.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:linters">
+<p>Linters follow the compiler&rsquo;s lead here.  clang-tidy checks &mdash; including
+<code>cppcoreguidelines-narrowing-conversions</code>, which flags exactly the kind of narrowing this page is
+about &mdash; don&rsquo;t report findings in system headers either.&#160;<a class="footnote-backref" href="#fnref:linters" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
@@ -2844,7 +2830,7 @@ Au takes a thoughtful, tailored approach, which can be summarized as follows:</p
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Implementation Details">
+          <a href="../common_unit/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Common Units">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2854,20 +2840,20 @@ Au takes a thoughtful, tailored approach, which can be summarized as follows:</p
                 Previous
               </span>
               <div class="md-ellipsis">
-                Implementation Details
+                Common Units
               </div>
             </div>
           </a>
         
         
           
-          <a href="../vector_space/" class="md-footer__link md-footer__link--next" aria-label="Next: Vector Space Representations">
+          <a href="../conversion_risks/" class="md-footer__link md-footer__link--next" aria-label="Next: Conversion Risks">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Vector Space Representations
+                Conversion Risks
               </div>
             </div>
             <div class="md-footer__button md-icon">

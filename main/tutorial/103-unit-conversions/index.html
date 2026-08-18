@@ -655,6 +655,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../discussion/concepts/compiler_warnings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compiler Warnings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../discussion/concepts/conversion_risks/" class="md-nav__link">
         
   
@@ -2995,8 +3023,15 @@ dimension.)</p>
 <li>
 <p>Any conversion <strong>allowed by <code>.as(...)</code></strong> will also work as an <strong>implicit conversion</strong>.</p>
 <ul>
-<li>For example, if you have an API which takes <code>QuantityD&lt;Radians&gt;</code>, you can pass <code>degrees(45)</code>
-  directly to it.</li>
+<li>
+<p>For example, if you have an API which takes <code>QuantityD&lt;Radians&gt;</code>, you can pass <code>degrees(45)</code>
+  directly to it.</p>
+</li>
+<li>
+<p>Implicit conversions use <strong>implicit conversions of the underlying numbers</strong>, so your
+  <code>-Wconversion</code> flags apply to quantities just as they would to raw numbers.  See our <a href="../../discussion/concepts/compiler_warnings/">compiler
+  warnings</a> discussion doc for more details.</p>
+</li>
 </ul>
 </li>
 </ol>
