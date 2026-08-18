@@ -44,6 +44,54 @@ website](https://aurora-opensource.github.io/au).
 
 > _Try it out on [Compiler Explorer ("godbolt")](https://godbolt.org/z/o91nfh5Wc)!_
 
+## Example
+
+Imagine we need a utility function to convert (linear) road speed to revolutions per minute (RPM).
+Here's what we'd expect to see in raw C++:
+
+<!-- BEGIN EXAMPLE: examples/angular_velocity/raw.cc:headline -->
+```cpp
+// Speed must be m/s.  Radius must be meters.  Returns RPM.
+float wheel_rpm(float v_mps, float r_m) {
+    return v_mps / (2.0f * static_cast<float>(M_PI) * r_m) * 60.0f;
+}
+```
+<!-- END EXAMPLE -->
+
+It's a mess of magic numbers, and it's ripe for multiply-vs-divide errors.  The interface types are
+simple, but that's a two-edged sword: it means they'll let all kinds of inputs through, and the
+burden for checking is on the distant caller.
+
+Now let's see how Au can add safety and simplify the code.  (The includes, the `using` declarations
+that bring `QuantityF` and friends into scope, and a couple of unit aliases are all omitted here for
+brevity.  The link at the end of this section gives the complete, compiling file.)
+
+<!-- BEGIN EXAMPLE: examples/angular_velocity/au.cc:headline -->
+```cpp
+// The types state the units.  Nothing to remember; nothing to convert.
+QuantityF<RevolutionsPerMinute> wheel_rpm(QuantityF<MetersPerSecond> v, QuantityF<Meters> r) {
+    return v * rad / r;
+}
+```
+<!-- END EXAMPLE -->
+
+So: what changed?
+
+- 🛡️ Both the inputs and outputs are **robustly safe**: callers can only pass a speed for the first
+  argument, and a distance for the second.
+- 🔀 They're also **more flexible**: if you use different _units_ --- say, if you pass
+  `(miles / hour)(55.0f)`, Au will _automatically generate the correct conversion factor_
+  and apply it!
+- ✨ Magic numbers are gone, and the new implementation, `v * rad / r`, simply tells the truth
+  directly: rotational speed is proportional to linear speed, and the ratio `rad / r` --- "one
+  radian per radius" --- is the conversion factor.
+- 🚀 There is **no runtime performance penalty**: all the dimensional checking and conversion factor
+  generation happens at compile time.
+
+See the full discussion page for [this
+example](https://aurora-opensource.github.io/au/main/examples/angular-velocity/), and [many other
+examples](https://aurora-opensource.github.io/au/main/examples/).
+
 ## Why Au?
 
 There are many other C++ units libraries, several quite well established.  Each of them offers
@@ -74,7 +122,7 @@ up and running in minutes, in any project that supports C++14 or newer.
 To use the library effectively, we recommend working through the
 [tutorials](https://aurora-opensource.github.io/au/main/tutorial/), starting with [Au 101: Quantity
 Makers](https://aurora-opensource.github.io/au/main/tutorial/101-quantity-makers/).  To
-get set up with the tutorials — or, to contribute to the library — check out our [development
+get set up with the tutorials --- or, to contribute to the library --- check out our [development
 guide](https://aurora-opensource.github.io/au/main/develop/).
 
 ## As seen at CppCon 2021

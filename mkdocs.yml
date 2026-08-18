@@ -61,7 +61,9 @@ markdown_extensions:
   # Reusable text snippets, included via `--8<-- "file.md"`.  These live outside of `docs/` because
   # they are not pages in their own right: they get inlined into the pages that include them.
   - pymdownx.snippets:
-      base_path: [doc_snippets]
+      # `doc_snippets` holds reusable prose; `.` lets the code example pages pull real, compiled
+      # source straight out of `examples/`, so the docs can never drift from what CI builds.
+      base_path: [doc_snippets, "."]
       check_paths: true
   - pymdownx.superfences:
       custom_fences:
