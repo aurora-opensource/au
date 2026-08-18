@@ -32,6 +32,10 @@ aliases", so you can express the rep more precisely, and put the visual focus on
 | `QuantityF<U>` | `Quantity<U, float>` |
 | `QuantityI<U>` | `Quantity<U, int>` |
 | `QuantityU<U>` | `Quantity<U, unsigned int>` |
+| `QuantityI8<U>` | `Quantity<U, int8_t>` |
+| `QuantityU8<U>` | `Quantity<U, uint8_t>` |
+| `QuantityI16<U>` | `Quantity<U, int16_t>` |
+| `QuantityU16<U>` | `Quantity<U, uint16_t>` |
 | `QuantityI32<U>` | `Quantity<U, int32_t>` |
 | `QuantityU32<U>` | `Quantity<U, uint32_t>` |
 | `QuantityI64<U>` | `Quantity<U, int64_t>` |

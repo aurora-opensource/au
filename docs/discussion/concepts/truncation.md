@@ -80,11 +80,22 @@ of the user's chosen type.  Hence: _floating point never truncates_.
     `-Wfloat-conversion`, exactly as it would for raw numbers.  See [compiler
     warnings](./compiler_warnings.md).
 
+### Compound types
+
+Not every rep is a plain arithmetic type.  Complex numbers and Eigen vectors/matrices are common
+examples of _compound_ reps: types built up out of some underlying _scalar_.  Au characterizes each
+such rep by that scalar --- its [`ScalarOf<T>`](../../reference/rep.md#scalar-of) --- and then
+applies the very same rules from above.  So an `Eigen::Vector3d`, whose scalar is `double`, is
+governed by the [floating point rule](#float) and never truncates; a vector of integers, on the
+other hand, follows the integral rules.
+
 ### Other types
 
-Currently, Au has only limited support for non-arithmetic rep types (full support is tracked in
-[#52]). As a stopgap, Au treats any non-arithmetic type conservatively, and assumes that it can
-truncate.  We hope to refine this approach when we strengthen our support for more rep types.
+For a rep that is neither a built-in arithmetic type, nor a compound type with an arithmetic
+`ScalarOf` trait, Au has no basis to reason about truncation.  Therefore, we fall back to the
+conservative assumption that the conversion can truncate, and forbid it by default.  This is just
+a stopgap measure; we plan to support non-arithmetic reps more broadly in the future.  See [#52] to
+track any progress.
 
 ## Truncation in casting
 
@@ -98,7 +109,7 @@ Casting from one _arithmetic_ type to another is governed by simple rules.
 If the source and destination types are in the same _category_ --- that is, either both integral, or
 both floating point --- then the cast never truncates.  The reason for integral types is
 straightforward: clearly, the source can't hold a non-integer value.  As for floating point types,
-they are governed by the [philsophy explained above](#float).
+they are governed by the [philosophy explained above](#float).
 
 Casting from a floating point type to an integral type does have truncation risk: we would truncate
 for any non-integer input.  We can check this for individual values by discarding the fractional
@@ -113,11 +124,24 @@ point as a **non-truncating** operation.
 
 ### Non-arithmetic types
 
-Here, too, our support for non-arithmetic rep types is limited (see [#52]), and we take
-a conservative approach.  Any cast involving a non-arithmetic type, either as source or destination,
-is considered to have truncation risk, and will not be allowed by default: users must pass
+Here, too, our support for non-arithmetic rep types is limited, and we take a conservative approach.
+Any cast involving a rep with non-arithmetic scalar type, either as source or destination, is
+considered to have truncation risk, and will not be allowed by default: users must pass
 `ignore(TRUNCATION_RISK)` as a second argument to override this.  We hope to have better default
-behavior once we support non-arithmetic types more fully.
+behavior once we support non-arithmetic types more fully ([#52]).
+
+Note that this policy tells you only whether the _truncation rules_ object to a casting conversion.
+Passing those rules doesn't mean the conversion will work: the reps involved must also support the
+cast in the first place.
+
+As a concrete example, `Eigen::Vector3d` is a compound rep that _does_ have an arithmetic scalar
+type, so the truncation rules have no objection to casting it to `Eigen::Vector3f`.  Even so, the
+conversion doesn't compile: Au can't form a common rep for two Eigen types with different scalars,
+and so it never gets as far as the `static_cast` it would ordinarily perform.  That's no accident on
+Eigen's part --- Eigen deliberately rejects `static_cast` between different scalar types, directing
+users to its `.cast<T>()` member function instead.  So this is the one case where you must reach for
+the [`cast<T>` free function](../../reference/eigen.md#cast), which wraps `.cast<T>()` for use with
+`Quantity`.
 
 ## Summary
 
@@ -129,8 +153,10 @@ whether _individual values_ truncate using the `will_conversion_truncate` functi
 
 Truncation risk depends strongly on the types involved.  Integral types are vulnerable to truncation
 for non-integer scale factors.  On the other hand, we treat floating point types as though they
-never "truncate", because they're already inexact.  Finally, since we don't yet fully support
-non-arithmetic types, we treat them conservatively and assume that they carry truncation risk.
+never "truncate", because they're already inexact.  Finally, for compound reps such as complex
+numbers and Eigen vectors, we defer to the truncation rules of their underlying scalar type; only
+when that scalar can't be determined do we fall back to a conservative assumption of truncation
+risk.
 
 [overflow]: ./overflow.md
 [conversion risks]: ./conversion_risks.md

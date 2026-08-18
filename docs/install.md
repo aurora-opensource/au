@@ -202,7 +202,7 @@ to your `deps` attribute, and include the appropriate files.
 
 | Dependency | Headers provided | Notes |
 |------------|------------------|-------|
-| `@au//au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) and [constants](./reference/constant.md#built-in) |
+| `@au//au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/units/literals/*.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units), [unit literals](./reference/constant.md#unit-literals), and [constants](./reference/constant.md#built-in) |
 | `@au//au:io` | `"au/io.hh"` | `operator<<` support |
 | `@au//au:std_format` | `"au/std_format.hh"` | `std::format` support[^1] |
 | `@au//au:testing` | `"au/testing.hh"` | Utilities for writing googletest tests<br>_Note:_ `testonly = True` |
@@ -282,7 +282,7 @@ In either case, here are the main targets and include files provided by the Au l
 
 | Target | Headers provided | Notes |
 |--------|------------------|-------|
-| `Au::au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/io.hh"`<br>`"au/std_format.hh"`[^1]<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) |
+| `Au::au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/io.hh"`<br>`"au/std_format.hh"`[^1]<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/units/literals/*.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) and [unit literals](./reference/constant.md#unit-literals) |
 | `Au::testing` | `"au/testing.hh"` | Utilities for writing googletest tests |
 
 [^1]: Do not include `"au/std_format.hh"` unless you know that both your compiler and your build
@@ -532,6 +532,11 @@ Here's how:
     - Similarly, to see the full list of available constants, search the `.hh` files in the
       `au/constants/` folder.  For example, `speed_of_light` will include the contents of
       `"au/constants/speed_of_light.hh"`, which provides the constant `au::SPEED_OF_LIGHT`.
+    - To include [unit literals](./reference/constant.md#unit-literals), pass the `--literals` flag
+      with the units whose literals you want: for example,<br>
+      `tools/bin/make-single-file --units meters seconds --literals meters`.<br>
+      Each entry named here also pulls in the unit itself, so `--literals meters` works even if
+      `meters` isn't in the `--units` list.
     - Provide the `--noio` flag if you prefer to avoid the expense of the `<iostream>` library.
 
 Now you have a file, `~/au.hh`, which you can add to your `third_party` folder.

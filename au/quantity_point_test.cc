@@ -75,6 +75,10 @@ TEST(Quantity, HasCorrectRepNamedAliases) {
     StaticAssertTypeEq<QuantityPointF<Meters>, QuantityPoint<Meters, float>>();
     StaticAssertTypeEq<QuantityPointI<Meters>, QuantityPoint<Meters, int>>();
     StaticAssertTypeEq<QuantityPointU<Meters>, QuantityPoint<Meters, unsigned int>>();
+    StaticAssertTypeEq<QuantityPointI8<Meters>, QuantityPoint<Meters, int8_t>>();
+    StaticAssertTypeEq<QuantityPointU8<Meters>, QuantityPoint<Meters, uint8_t>>();
+    StaticAssertTypeEq<QuantityPointI16<Meters>, QuantityPoint<Meters, int16_t>>();
+    StaticAssertTypeEq<QuantityPointU16<Meters>, QuantityPoint<Meters, uint16_t>>();
     StaticAssertTypeEq<QuantityPointI32<Meters>, QuantityPoint<Meters, int32_t>>();
     StaticAssertTypeEq<QuantityPointU32<Meters>, QuantityPoint<Meters, uint32_t>>();
     StaticAssertTypeEq<QuantityPointI64<Meters>, QuantityPoint<Meters, int64_t>>();
