@@ -69,7 +69,7 @@ brevity.  The link at the end of this section gives the complete, compiling file
 <!-- BEGIN EXAMPLE: examples/angular_velocity/au.cc:headline -->
 ```cpp
 // The types state the units.  Nothing to remember; nothing to convert.
-QuantityF<RevolutionsPerMinute> wheel_rpm(QuantityF<MetersPerSecond> v, QuantityF<Meters> r) {
+QuantityF<Rpm> wheel_rpm(QuantityF<MetersPerSecond> v, QuantityF<Meters> r) {
     return v * rad / r;
 }
 ```

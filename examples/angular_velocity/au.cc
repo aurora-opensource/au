@@ -50,7 +50,7 @@ using au::symbols::rad;
 
 // Aliases for the compound units, so the signature below reads well.  A type alias introduces one
 // name we chose, so it is fine at namespace scope even in a header.
-using RevolutionsPerMinute = UnitQuotient<Revolutions, Minutes>;
+using Rpm = UnitQuotient<Revolutions, Minutes>;
 using MetersPerSecond = UnitQuotient<Meters, Seconds>;
 // --8<-- [end:frontmatter]
 
@@ -58,7 +58,7 @@ using MetersPerSecond = UnitQuotient<Meters, Seconds>;
 // --8<-- [start:example]
 // --8<-- [start:headline]
 // The types state the units.  Nothing to remember; nothing to convert.
-QuantityF<RevolutionsPerMinute> wheel_rpm(QuantityF<MetersPerSecond> v, QuantityF<Meters> r) {
+QuantityF<Rpm> wheel_rpm(QuantityF<MetersPerSecond> v, QuantityF<Meters> r) {
     return v * rad / r;
 }
 // --8<-- [end:headline]
