@@ -392,5 +392,9 @@ Check out the [Au 103: Unit Conversions Exercise](./exercise/103-unit-conversion
     - For example, if you have an API which takes `QuantityD<Radians>`, you can pass `degrees(45)`
       directly to it.
 
+    - Implicit conversions use **implicit conversions of the underlying numbers**, so your
+      `-Wconversion` flags apply to quantities just as they would to raw numbers.  See our [compiler
+      warnings](../discussion/concepts/compiler_warnings.md) discussion doc for more details.
+
 [threshold]: https://github.com/aurora-opensource/au/blob/dbd79b2/au/conversion_policy.hh#L27-L28
 [duration]: https://en.cppreference.com/w/cpp/chrono/duration/duration
