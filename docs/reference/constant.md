@@ -202,6 +202,51 @@ constexpr auto dt = 1.28e-4_s;
 The literals live in the `::au::au_literals` namespace, alongside `_mag`, so a single `using
 namespace ::au::au_literals;` brings in both.
 
+#### Prefixed unit literals {#prefixed-unit-literals}
+
+Unit literals exist for _named_ units only, so there is no `_kg`.  To get a prefixed unit literal,
+apply the [prefix applier](./prefix.md#constant) to the literal:
+
+```cpp
+constexpr auto m_e = kilo(9.1093837015e-31_g);  // The electron mass, in kg.
+```
+
+`kilo(1.234_g)` is a `Constant` for $1234\,\text{g}$, and its label is `[(617 / 500) kg]`: the
+prefix goes on the unit, and the digits you wrote stay put.  Every prefix applier works this way, so
+`micro(2.5_m)`, `mebi(3_B)`, and so on are all available.
+
+??? info "Why this unusual syntax?"
+    Grammatically, `kilo(1.234_g)` reads strangely, compared to `1.234_kg`.  We'd certainly much
+    rather write the latter!  However, C++ provides no convenient way to programmatically derive one
+    literal, such as `_kg`, from another, such as `_g`.  This means that supporting `_kg` (along
+    with every other prefixed unit) would create a tremendous implementation burden.  Thus, we stick
+    to defining literals for named units only.
+
+    And yet, literals have one key advantage that we can't get any other way: they support a highly
+    flexible, _human readable_ numeric syntax, which produces _exact_ results.  It's a huge
+    readability benefit to be able to define our physical constants using exactly the same digits,
+    same power of 10, and same units as the official definitions.  Therefore, we _must_ have _some_
+    way to (effectively) "apply a prefix to a literal".  The closest we could come up with was to
+    apply the prefix _to the result_ of the literal.  The syntax may be odd, but it is flexible, and
+    it is unambiguous.
+
+    Note, by contrast, that [unit symbols](./unit.md#prefixed-symbols) do not have this
+    restriction.  They _do_ compose naturally, so it's easy to create a `kg` _symbol_ on the fly.
+
+#### Compound unit literals {#compound-unit-literals}
+
+Unit literals also exist for _single_ units only, so there is no `_mph`.  To get a compound unit
+literal, divide or multiply by a [unit symbol](./unit.md#symbols):
+
+```cpp
+using symbols::h;
+
+constexpr auto speed_limit = 55_mi / h;  // A `Constant` for 55 miles per hour.
+```
+
+Composing a unit literal with a symbol produces another `Constant`, so the result behaves exactly
+like any other unit literal: it is applied symbolically, with no risk of rounding or overflow.
+
 ## `Constant` and unit slots
 
 `Constant` can be passed to any API that takes a [unit slot](../discussion/idioms/unit-slots.md).

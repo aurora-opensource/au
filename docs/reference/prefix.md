@@ -43,9 +43,26 @@ applier can be used.
 | `QuantityPointMaker` | `meters_pt` | `centi(meters_pt)` | `centi(meters_pt)(1.5)` |
 | `SingularNameFor` | `meter` | `centi(meter)` | `curvature.in(radians / centi(meter))` |
 | `SymbolFor` | `m` | `centi(m)` | `constexpr auto cm = centi(m); 170 * cm` |
+| [`Constant`](./constant.md) | `1.7_m` | `centi(1.7_m)` | `height.as<double>(centi(1.7_m))` |
 
 Note again that every output here is the same kind of thing as the input.  So, `centi(meters_pt)` is
 a `QuantityPointMaker`, and `centi(meters_pt)(1.5)` creates a `QuantityPoint` of $1.5\,\text{cm}$.
+
+Anything that is _not_ one of these kinds is rejected at the call site.  (Otherwise, the unit
+instance overload would swallow it and produce a prefixed type that is only ill-formed when you
+first use it, in an error message that mentions neither the prefix nor your code.)
+
+### Applying to a `Constant` {#constant}
+
+A [`Constant`](./constant.md) carries a value as well as a unit, so applying a prefix to one scales
+that value.  `kilo(1.234_g)` is a `Constant` for $1234\,\text{g}$.  This is the main way to apply
+a prefix to a [unit literal](./constant.md#unit-literals): see [prefixed unit
+literals](./constant.md#prefixed-unit-literals).
+
+The prefix goes on the _unit_, not on the value.  A unit literal such as `1.234_g` is grams
+_scaled_ by $1.234$, and we prefix the underlying grams: `kilo(1.234_g)` is labeled
+`[(617 / 500) kg]`, not `k[(617 / 500) g]`.  (The scale factor prints as a fraction because
+[magnitudes](./magnitude.md) are exact; that is independent of the prefix.)
 
 ## List of supported prefixes
 
