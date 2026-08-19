@@ -15,13 +15,6 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load(":defs.bzl", "ab_example")
 
-package(default_visibility = ["//visibility:public"])
-
-exports_files([
-    "check_ab_example.sh",
-    "check_readme_snippets.sh",
-])
-
 # Every code example on the doc site is real source that CI compiles and runs.  Each `ab_example`
 # contributes its own sources; list them here so that adding an example is a single, explicit edit.
 filegroup(
@@ -29,6 +22,8 @@ filegroup(
     srcs = [
         ":angular_velocity_doc_sources",
     ],
+    # Only the docs build consumes these.  Nothing here is part of the library's API.
+    visibility = ["//:__pkg__"],
 )
 
 ab_example(
