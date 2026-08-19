@@ -14,6 +14,7 @@
 
 #include "au/prefix.hh"
 
+#include "au/constant.hh"
 #include "au/testing.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -21,6 +22,8 @@
 namespace au {
 
 using ::testing::Eq;
+using ::testing::IsFalse;
+using ::testing::IsTrue;
 using ::testing::StaticAssertTypeEq;
 
 struct Bytes : UnitImpl<Information> {};
@@ -67,6 +70,39 @@ TEST(PrefixApplier, ConvertsSingularNameForToCorrespondingPrefixedType) {
 TEST(PrefixApplier, ConvertsSymbolForToCorrespondingPrefixedType) {
     constexpr auto X = symbol_for(XeroxedBytes{});
     StaticAssertTypeEq<decltype(kibi(X)), SymbolFor<Kibi<XeroxedBytes>>>();
+}
+
+// Detector for "can we apply a prefix to this at all?", so we can check that the unit overload
+// declines types that are not units, instead of silently producing an ill-formed prefixed type.
+template <typename T>
+using PrefixApplicationResult = decltype(kilo(std::declval<T>()));
+
+TEST(PrefixApplier, AppliesPrefixToUnscaledUnitUnderlyingConstant) {
+    constexpr auto two_bytes = make_constant(Bytes{} * mag<2>());
+    StaticAssertTypeEq<decltype(kilo(two_bytes)), Constant<decltype(Kilo<Bytes>{} * mag<2>())>>();
+    EXPECT_THAT(unit_ratio(associated_unit(kilo(two_bytes)), Bytes{}), Eq(mag<2'000>()));
+}
+
+TEST(PrefixApplier, AppliesPrefixDirectlyToUnitOfConstantWithNoScaleFactor) {
+    StaticAssertTypeEq<decltype(kilo(make_constant(Bytes{}))), Constant<Kilo<Bytes>>>();
+}
+
+TEST(PrefixApplier, PrefixedConstantLabelsPrefixTheUnitRatherThanTheScaleFactor) {
+    expect_label<decltype(associated_unit(kilo(make_constant(Inches{} * mag<2>()))))>("[2 kin]");
+}
+
+TEST(PrefixApplier, PrefixedConstantEquivalentToConstantWithPrefixFoldedIntoScaleFactor) {
+    // These are deliberately _different types_: the former prefixes the unit, while the latter
+    // scales it.  They must still be equal.
+    EXPECT_THAT(kilo(make_constant(Inches{} * mag<2>())),
+                Eq(make_constant(Inches{} * mag<2'000>())));
+}
+
+TEST(PrefixApplier, DeclinesTypesThatAreNotUnits) {
+    EXPECT_THAT((stdx::experimental::is_detected<PrefixApplicationResult, Inches>{}), IsTrue());
+    EXPECT_THAT((stdx::experimental::is_detected<PrefixApplicationResult, Magnitude<>>{}),
+                IsFalse());
+    EXPECT_THAT((stdx::experimental::is_detected<PrefixApplicationResult, int>{}), IsFalse());
 }
 
 TEST(SiPrefixes, HaveCorrectAbsoluteValues) {

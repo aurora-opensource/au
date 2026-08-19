@@ -349,6 +349,7 @@ cc_library(
         ":fwd",
         ":quantity",
         ":unit_of_measure",
+        ":unit_symbol",
         ":wrapper_operations",
     ],
 )
@@ -362,6 +363,7 @@ cc_test(
         ":constant",
         ":testing",
         ":units",
+        ":units_literals",
         "@googletest//:gtest_main",
     ],
 )
@@ -576,6 +578,7 @@ cc_library(
     name = "prefix",
     hdrs = ["prefix.hh"],
     deps = [
+        ":constant",
         ":fwd",
         ":quantity",
         ":quantity_point",
@@ -589,6 +592,7 @@ cc_test(
     size = "small",
     srcs = ["prefix_test.cc"],
     deps = [
+        ":constant",
         ":prefix",
         ":testing",
         "@googletest//:gtest_main",
