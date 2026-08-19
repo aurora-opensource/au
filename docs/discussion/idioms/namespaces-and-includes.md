@@ -43,11 +43,10 @@ for them:
 This is the same principle as above, applied to _features_ rather than units.  `"au/io.hh"` is the
 one you'll meet first, and it makes the point well: it pulls in the C++ streams machinery, which is
 famously expensive, and which many embedded projects avoid entirely.  Charging that cost to every
-Au user ---
-including those who never print a quantity --- would be a poor trade.  So we don't: you include it
-when you want it, and otherwise you never pay.  (We take this seriously enough that our
-[single-file packages](../../install.md#single-file) come in `noio` variants with the streaming
-support stripped out.)
+Au user --- including those who never print a quantity --- would be a poor trade.  So we don't:
+you include it when you want it, and otherwise you never pay.  (We take this seriously enough
+that our [single-file packages](../../install.md#single-file) come in `noio` variants with the
+streaming support stripped out.)
 
 These headers are _additions_ to `"au/au.hh"`, not replacements for it: `"au/io.hh"` teaches the
 library how to print, but it doesn't bring in the core.  Our examples that print a result include
@@ -79,7 +78,9 @@ an `au::` prefix: four characters).  However, we believe the benefits win out on
 
 What you will _not_ find in our examples is `using namespace au;`.  We don't recommend it, so we
 don't model it:[^1] `au::` is deliberately two characters, and a directive that drags in every unit,
-maker, and symbol in the library is a poor trade for saving them.
+maker, and symbol in the library is a poor trade for saving them.  (It's the same instinct that
+keeps `using namespace std;` out of most codebases.  `std::` is short for the same reason `au::` is,
+and in both cases the directive gives up a great deal of clarity to save very little typing.)
 
 [^1]: We _do_ use `using namespace au;` in the canonical "quickstart" [godbolt link] from our
 README, because the goal of that page is to make it as frictionless as possible to write Au code.
@@ -139,16 +140,22 @@ QuantityF<decltype(Kilo<Meters>{} / Hours{})> speed;
 QuantityF<UnitQuotient<Kilo<Meters>, Hours>> speed;
 ```
 
-We can make this easier to read by just defining a _type alias_ for the unit:
+We can make this easier to read by just defining a _type alias_ for the unit --- and here, too,
+either spelling will do:
 
 ```cpp
+// Either of these will do; pick one.
+using KiloMetersPerHour = decltype(Kilo<Meters>{} / Hours{});
 using KiloMetersPerHour = UnitQuotient<Kilo<Meters>, Hours>;
 
 QuantityF<KiloMetersPerHour> speed;
 ```
 
 All three of these `QuantityF` declarations refer to the _exact same type_, just with different
-spelling.
+spelling.  Which one to reach for is a matter of taste.  `decltype` lets you reuse the same
+arithmetic operators you already know from the object world, at the cost of the keyword;
+`UnitQuotient` names the operation outright, at the cost of learning and using a visually clunky
+trait.
 
 A type alias is a different thing from a `using` _declaration_, and the rules are correspondingly
 looser: it introduces one name you chose, rather than importing a set of names you did not.  That
@@ -158,8 +165,16 @@ above:
 - If you're in an implementation file (`.cc`, `.cpp`, etc.), use them without worrying about it.
 
 - If you're in a header file (`.hh`, `.hpp`, etc.), a unit alias at namespace scope is safe, but
-  keep in mind that it _is_ still a name your consumers will see.  Give it a descriptive name, or
-  hide it inside a function or class.
+  keep in mind that it becomes part of your _public API_.  Every consumer of the header will see it,
+  and may come to depend on it.  The [Google C++ Style Guide][google-aliases] puts it well:
+
+    > Don't put an alias in your public API just to save typing in the implementation; do so only if
+    > you intend it to be used by your clients.
+
+    So: if the alias is for your consumers, give it a descriptive name and treat it as the interface
+    it is.  If it's only for your own convenience, hide it inside a function or class.
+
+[google-aliases]: https://google.github.io/styleguide/cppguide.html#Aliases
 
 ## Summary
 
@@ -167,3 +182,8 @@ Every project has its own style, conventions, and rules.  We've provided the con
 a good _default_ style for using Au, and explained the reasons that we recommend them.  These aren't
 hard and fast rules that we intend to force on all projects; they simply convey our vision for how
 to use the library ergonomically.  We hope users will find them useful.
+
+Much of this guidance comes from experience with large C++ projects, where the costs of namespace
+pollution compound most visibly.  That doesn't mean it's for large projects only.  Remember that
+"small" projects have a well known habit of becoming larger than anyone originally envisioned!
+These habits are far cheaper to adopt early than to retrofit later.

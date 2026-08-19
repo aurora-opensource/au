@@ -77,15 +77,15 @@ QuantityF<Rpm> wheel_rpm(QuantityF<MetersPerSecond> v, QuantityF<Meters> r) {
 
 So: what changed?
 
-- 🛡️ Both the inputs and outputs are **robustly safe**: callers can only pass a speed for the first
+- Both the inputs and outputs are **robustly safe**: callers can only pass a speed for the first
   argument, and a distance for the second.
-- 🔀 They're also **more flexible**: if you use different _units_ --- say, if you pass
+- They're also **more flexible**: if you use different _units_ --- say, if you pass
   `(miles / hour)(55.0f)`, Au will _automatically generate the correct conversion factor_
   and apply it!
-- ✨ Magic numbers are gone, and the new implementation, `v * rad / r`, simply tells the truth
+- Magic numbers are gone, and the new implementation, `v * rad / r`, simply tells the truth
   directly: rotational speed is proportional to linear speed, and the ratio `rad / r` --- "one
   radian per radius" --- is the conversion factor.
-- 🚀 There is **no runtime performance penalty**: all the dimensional checking and conversion factor
+- There is **no runtime performance penalty**: all the dimensional checking and conversion factor
   generation happens at compile time.
 
 See the full discussion page for [this

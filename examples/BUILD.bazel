@@ -22,13 +22,13 @@ exports_files([
     "check_readme_snippets.sh",
 ])
 
-# The doc website inlines these sources directly (via `pymdownx.snippets`), so that every code
-# example on the site is real source that CI compiles and runs.
+# Every code example on the doc site is real source that CI compiles and runs.  Each `ab_example`
+# contributes its own sources; list them here so that adding an example is a single, explicit edit.
 filegroup(
     name = "doc_sources",
-    srcs = glob([
-        "**/*.cc",
-    ]),
+    srcs = [
+        ":angular_velocity_doc_sources",
+    ],
 )
 
 ab_example(

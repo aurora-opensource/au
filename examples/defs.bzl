@@ -68,6 +68,14 @@ def ab_example(name, expected_output, au_deps, raw_srcs = None, au_srcs = None):
         cmd = "printf '%b' {} > $@".format(repr(expected_output)),
     )
 
+    # The doc website inlines these sources directly (via `pymdownx.snippets`).  Declaring them
+    # here, rather than globbing in the BUILD file, guarantees that the sources the docs show are
+    # exactly the ones the tests below compile and run.
+    native.filegroup(
+        name = "{}_doc_sources".format(name),
+        srcs = raw_srcs + au_srcs,
+    )
+
     sh_test(
         name = "{}_test".format(name),
         srcs = ["check_ab_example.sh"],

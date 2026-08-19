@@ -151,8 +151,8 @@ The tests cover output and alignment:
 bazel test //examples/...
 ```
 
-CI builds `//...:all` with `-Werror`, so these examples are compiled by the clang11/14/17,
-gcc12/15, C++20, asan, and ubsan jobs.  All are verified clean.  The MSVC and CUDA jobs do not
+CI builds `//...` with `-Werror`, so these examples are compiled by the clang11/14/17, gcc12/15,
+C++20, asan, and ubsan jobs.  All are verified clean.  The MSVC and CUDA jobs do not
 build this directory (MSVC builds the single-file package with `cl.exe`; CUDA builds only
 `//au/cuda:cuda_test`), and neither does the CMake build, which only does `add_subdirectory(au)`.
 

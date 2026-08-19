@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Copyright 2026 Aurora Operations, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,8 +37,9 @@ status=0
 found=0
 
 # Each marked block, as "<line number> <file>:<region>".
+# `|| true`: no matches is not an error *here* --- we report it below, with a better message.
 grep -n 'BEGIN EXAMPLE:' "${readme}" |
-    sed 's/^\([0-9]*\):.*BEGIN EXAMPLE: *\([^ ]*\) *-->.*/\1 \2/' > "${tmp}/markers.txt"
+    sed 's/^\([0-9]*\):.*BEGIN EXAMPLE: *\([^ ]*\) *-->.*/\1 \2/' > "${tmp}/markers.txt" || true
 
 if [ ! -s "${tmp}/markers.txt" ]; then
     echo "FAIL: no 'BEGIN EXAMPLE:' blocks found in ${readme}." >&2

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Copyright 2026 Aurora Operations, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -62,7 +62,7 @@ region_lines() {
         grep -v -- '--8<--' |
         sed -e '/./,$!d' |
         sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' |
-        grep -c ''
+        grep -c '' || true  # An empty region makes `grep` exit non-zero; report it below instead.
 }
 raw_lines="$(region_lines "${raw_src}")"
 au_lines="$(region_lines "${au_src}")"
