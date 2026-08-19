@@ -28,7 +28,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-149-gb8f52d0
+// Version identifier: 0.5.0-base-150-g75ebe05
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -9917,6 +9917,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
                   detail::ComposesWith<Constant, Unit, Constant, Constant>,
                   detail::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
                   detail::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
+                  detail::ComposesWith<Constant, Unit, SymbolFor, Constant>,
                   detail::SupportsRationalPowers<Constant, Unit>,
                   detail::CanScaleByMagnitude<Constant, Unit> {
     // Convert this constant to a Quantity of the given rep.
@@ -10846,10 +10847,18 @@ constexpr auto make_prefixed_unit_label(const StringConstant<N> &prefix, U) {
 
 template <template <class U> class Prefix>
 struct PrefixApplier {
-    // Applying a Prefix to a Unit instance, creates an instance of the Prefixed Unit.
-    template <typename U>
+    // Applying a Prefix to a Unit instance, creates an instance of the Prefixed Unit.  (We
+    // constrain this, so that unhandled types fail here rather than at their first use.)
+    template <typename U, typename = std::enable_if_t<IsUnit<U>::value>>
     AU_DEVICE_FUNC constexpr auto operator()(U) const {
         return Prefix<U>{};
+    }
+
+    // Applying a Prefix to a Constant instance, prefixes the unit under its scale factor.
+    template <typename U>
+    AU_DEVICE_FUNC constexpr auto operator()(Constant<U>) const {
+        return Constant<
+            ComputeScaledUnit<Prefix<detail::UnscaledUnit<U>>, detail::UnitCoefficient<U>>>{};
     }
 
     // Applying a Prefix to a QuantityMaker instance, creates a maker for the Prefixed Unit.

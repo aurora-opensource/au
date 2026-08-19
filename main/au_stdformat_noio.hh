@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-149-gb8f52d0
+// Version identifier: 0.5.0-base-150-g75ebe05
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -9616,25 +9616,6 @@ struct SupportsRationalPowers {
 }  // namespace detail
 }  // namespace au
 
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct UnosLabel {
-    static constexpr const char label[] = "U";
-};
-template <typename T>
-constexpr const char UnosLabel<T>::label[];
-struct Unos : UnitProduct<>, UnosLabel<void> {
-    using UnosLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto unos = QuantityMaker<Unos>{};
-
-}  // namespace au
-
 
 namespace au {
 
@@ -9670,6 +9651,48 @@ constexpr auto symbol_for(UnitSlot) {
 template <typename U>
 struct AssociatedUnitImpl<SymbolFor<U>> : stdx::type_identity<U> {};
 
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct UnosLabel {
+    static constexpr const char label[] = "U";
+};
+template <typename T>
+constexpr const char UnosLabel<T>::label[];
+struct Unos : UnitProduct<>, UnosLabel<void> {
+    using UnosLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto unos = QuantityMaker<Unos>{};
+
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct BitsLabel {
+    static constexpr const char label[] = "b";
+};
+template <typename T>
+constexpr const char BitsLabel<T>::label[];
+struct Bits : UnitImpl<Information>, BitsLabel<void> {
+    using BitsLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto bit = SingularNameFor<Bits>{};
+AU_DEVICE_VAR constexpr auto bits = QuantityMaker<Bits>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto b = SymbolFor<Bits>{};
+}
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
@@ -9893,6 +9916,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
                   detail::ComposesWith<Constant, Unit, Constant, Constant>,
                   detail::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
                   detail::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
+                  detail::ComposesWith<Constant, Unit, SymbolFor, Constant>,
                   detail::SupportsRationalPowers<Constant, Unit>,
                   detail::CanScaleByMagnitude<Constant, Unit> {
     // Convert this constant to a Quantity of the given rep.
@@ -10123,29 +10147,6 @@ AU_DEVICE_FUNC constexpr auto operator-(Zero, Constant<U>) {
     return -Constant<U>{};
 }
 
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct BitsLabel {
-    static constexpr const char label[] = "b";
-};
-template <typename T>
-constexpr const char BitsLabel<T>::label[];
-struct Bits : UnitImpl<Information>, BitsLabel<void> {
-    using BitsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto bit = SingularNameFor<Bits>{};
-AU_DEVICE_VAR constexpr auto bits = QuantityMaker<Bits>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto b = SymbolFor<Bits>{};
-}
 }  // namespace au
 
 
@@ -10796,10 +10797,18 @@ constexpr auto make_prefixed_unit_label(const StringConstant<N> &prefix, U) {
 
 template <template <class U> class Prefix>
 struct PrefixApplier {
-    // Applying a Prefix to a Unit instance, creates an instance of the Prefixed Unit.
-    template <typename U>
+    // Applying a Prefix to a Unit instance, creates an instance of the Prefixed Unit.  (We
+    // constrain this, so that unhandled types fail here rather than at their first use.)
+    template <typename U, typename = std::enable_if_t<IsUnit<U>::value>>
     AU_DEVICE_FUNC constexpr auto operator()(U) const {
         return Prefix<U>{};
+    }
+
+    // Applying a Prefix to a Constant instance, prefixes the unit under its scale factor.
+    template <typename U>
+    AU_DEVICE_FUNC constexpr auto operator()(Constant<U>) const {
+        return Constant<
+            ComputeScaledUnit<Prefix<detail::UnscaledUnit<U>>, detail::UnitCoefficient<U>>>{};
     }
 
     // Applying a Prefix to a QuantityMaker instance, creates a maker for the Prefixed Unit.
