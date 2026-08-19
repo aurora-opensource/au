@@ -17,7 +17,7 @@
 #
 # Usage: check_ab_example.sh RAW_BIN AU_BIN EXPECTED_TXT RAW_SRC AU_SRC
 
-set -eu
+set -euo pipefail
 
 raw_bin="$1"
 au_bin="$2"

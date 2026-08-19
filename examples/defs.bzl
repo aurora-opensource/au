@@ -72,11 +72,11 @@ def ab_example(name, expected_output, au_deps, raw_srcs = None, au_srcs = None):
         name = "{}_test".format(name),
         srcs = ["check_ab_example.sh"],
         args = [
-            "$(location :{}_raw)".format(name),
-            "$(location :{}_au)".format(name),
-            "$(location :{}_expected.txt)".format(name),
-            "$(location {})".format(raw_srcs[0]),
-            "$(location {})".format(au_srcs[0]),
+            "$(rootpath :{}_raw)".format(name),
+            "$(rootpath :{}_au)".format(name),
+            "$(rootpath :{}_expected.txt)".format(name),
+            "$(rootpath {})".format(raw_srcs[0]),
+            "$(rootpath {})".format(au_srcs[0]),
         ],
         data = [
             ":{}_au".format(name),

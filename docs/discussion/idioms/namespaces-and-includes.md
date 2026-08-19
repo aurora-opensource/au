@@ -105,7 +105,7 @@ pollution", and experience has shown that it causes a litany of problems.
 
 - It becomes hard to understand where names come from.
 
-- The build can even break due to name collisions.
+- The build can break due to name collisions.
 
 So we can't use `using` declarations at namespace scope in a header file.  Instead, there are two
 alternatives that avoid this problem.

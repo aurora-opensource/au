@@ -66,7 +66,7 @@ QuantityF<Rpm> wheel_rpm(QuantityF<MetersPerSecond> v, QuantityF<Meters> r) {
 int main() {
 
     const auto omega = wheel_rpm((meters / second)(15.0f), milli(meters)(350.0f));
-    std::cout << omega.as(revolutions / minute) << std::endl;
+    std::cout << omega.as(revolutions / minute) << '\n';
 }
 // --8<-- [end:example]
 // clang-format on

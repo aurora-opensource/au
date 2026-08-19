@@ -46,7 +46,7 @@ ab_example(
 sh_test(
     name = "readme_snippets_test",
     srcs = ["check_readme_snippets.sh"],
-    args = ["$(location //:README.md)"],
+    args = ["$(rootpath //:README.md)"],
     data = [
         "angular_velocity/au.cc",
         "angular_velocity/raw.cc",

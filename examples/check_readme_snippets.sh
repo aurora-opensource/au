@@ -29,7 +29,7 @@
 #
 # Usage: check_readme_snippets.sh README.md
 
-set -eu
+set -euo pipefail
 
 readme="$1"
 tmp="${TEST_TMPDIR:-/tmp}"
