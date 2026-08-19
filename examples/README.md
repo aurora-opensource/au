@@ -34,8 +34,8 @@ show.  Hiding a real difference under padding would defeat the example.
 trailing blank lines from a code block, so blanks there buy no height on the page.  Put padding
 between two non-blank lines, where it survives --- or restructure so it isn't needed, which is why
 `angular_velocity` keeps its unit aliases in `frontmatter` rather than at the head of the region.
-`check_ab_example.sh` counts the way the renderer does, so it will catch this; the earlier version
-counted raw source lines and called a visibly broken page aligned.
+`check_ab_example.sh` counts the way the renderer does, so it will catch this; an earlier dev
+version counted raw source lines and called a visibly broken page aligned.
 
 ## Adding an example
 
@@ -74,7 +74,8 @@ block inside each tab.  Add one to any new example.  Collapsing it is what makes
 both tabs: collapsed blocks are the same height in each, so the alignment of the code below
 survives.
 
-The rule the frontmatter exists to make visible:
+The frontmatter exists such that we can follow our style guidance in these examples without
+distracting from the example itself:
 
 - **`.cc` files import names individually** --- `using au::meters;`, one per line, GoogleTest-style.
   **No `using namespace au;`.**  We do not recommend it to users, so we do not model it: `au::` is
