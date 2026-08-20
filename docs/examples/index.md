@@ -8,13 +8,18 @@ lines in place --- the two versions are kept line-aligned on purpose.
 
 ## The examples
 
+- **[Analog-to-digital converter counts to millivolts](./adc-millivolts.md).**  Au's secret strength
+  for embedded applications is not just the built-in units; it's the ability to define _custom_
+  units _specifically tailored to your hardware_.  This gets you unit safety from the moment the
+  value leaves the board.
+
+- **[Atomic units](./atomic-units.md).**  Building an entire system of units on top of Au --- exact
+  within itself, and as accurate as physics allows at the boundary.  Unlike most others, this one has
+  no plain-C++ counterpart: this example shows how to extend Au for a specific domain.
+
 - **[Linear speed to revolutions per minute](./angular-velocity.md).**  Converting a wheel's road
   speed into revolutions per minute (RPM), without fussing with manual conversion factors like `2π`
   or `60`.
-
-- **[Atomic units](./atomic-units.md).**  Building an entire system of units on top of Au --- exact
-  within itself, and as accurate as physics allows at the boundary.  Unlike the others, this one has
-  no plain-C++ counterpart: this example shows how to extend Au for a specific domain.
 
 ## How these examples are written {#front-matter}
 
