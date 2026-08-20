@@ -84,9 +84,8 @@ case that motivated it: it builds a whole new system of units on top of the libr
 
 The *second* invariant above does not apply: there is no second tab, so there is nothing to line up.
 The first one does, in adapted form --- the single program must print exactly `expected_output` ---
-and it is the whole test.  `check_output.sh` performs it, and `check_ab_example.sh` calls that same
-script once per program rather than keeping its own copy, so the two flavors cannot drift in what
-they consider correct output.
+and it is the whole test.  `check_output.sh` performs the check (and `check_ab_example.sh` calls that same
+script once per program).
 
 The layout differs from an A/B example in one way.  Where a pair is two standalone programs, a
 standalone example usually *defines* something reusable, so `single_example` splits it:
