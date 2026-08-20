@@ -66,6 +66,6 @@ jobs:
           for %%f in (sections\*.cc) do (
             echo ==================== BEGIN %%~nf
             copy /y %%f error_examples.cc > NUL
-            cl.exe /std:c++14 /nologo /c /Fo:NUL error_examples.cc 2>&1
+            cl.exe /std:c++14 /EHsc /nologo /c /Fo:NUL error_examples.cc 2>&1
             echo ==================== END %%~nf
           )
