@@ -20,6 +20,7 @@ blank lines, so that line numbers match the original file exactly.  With `--sing
 `#include "au/..."` block is replaced by a single `#include "au.hh"` (padded with blank lines, again
 to preserve line numbers), for use with the single-file package that MSVC builds consume.
 """
+
 import argparse
 import pathlib
 import re
@@ -29,7 +30,9 @@ BAR = "/" * 100
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", type=pathlib.Path, default=pathlib.Path("au") / "error_examples.cc")
+    parser.add_argument(
+        "--input", type=pathlib.Path, default=pathlib.Path("au") / "error_examples.cc"
+    )
     parser.add_argument("--outdir", type=pathlib.Path, default=pathlib.Path("sections"))
     parser.add_argument("--single-file", action="store_true")
     args = parser.parse_args()
@@ -45,7 +48,10 @@ def main():
     starts = [i for i, l in enumerate(lines) if l.startswith(BAR)]
     names = [lines[i + 1].replace("// SECTION: ", "") for i in starts]
     end = next(i for i, l in enumerate(lines) if l.startswith("}  // namespace au"))
-    bounds = [(starts[k], starts[k + 1] if k + 1 < len(starts) else end) for k in range(len(starts))]
+    bounds = [
+        (starts[k], starts[k + 1] if k + 1 < len(starts) else end)
+        for k in range(len(starts))
+    ]
 
     args.outdir.mkdir(parents=True, exist_ok=True)
     for k, (name, _) in enumerate(zip(names, bounds)):
