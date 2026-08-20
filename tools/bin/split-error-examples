@@ -21,7 +21,7 @@ blank lines, so that line numbers match the original file exactly.  With `--sing
 to preserve line numbers), for use with the single-file package that MSVC builds consume.
 """
 import argparse
-import os
+import pathlib
 import re
 
 BAR = "/" * 100
@@ -47,7 +47,7 @@ def main():
     end = next(i for i, l in enumerate(lines) if l.startswith("}  // namespace au"))
     bounds = [(starts[k], starts[k + 1] if k + 1 < len(starts) else end) for k in range(len(starts))]
 
-    args.outdir.mkdir(exist_ok=True)
+    args.outdir.mkdir(parents=True, exist_ok=True)
     for k, (name, _) in enumerate(zip(names, bounds)):
         out = list(lines)
         for j, (c, d) in enumerate(bounds):
@@ -57,7 +57,7 @@ def main():
         slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
         outfile = args.outdir / f"{k:02d}_{slug}.cc"
         outfile.write_text("\n".join(out))
-        print(path)
+        print(outfile)
 
 
 if __name__ == "__main__":
