@@ -13,7 +13,7 @@
 # limitations under the License.
 
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
-load(":defs.bzl", "ab_example")
+load(":defs.bzl", "ab_example", "single_example")
 
 # Every code example on the doc site is real source that CI compiles and runs.  Each `ab_example`
 # contributes its own sources; list them here so that adding an example is a single, explicit edit.
@@ -21,6 +21,7 @@ filegroup(
     name = "doc_sources",
     srcs = [
         ":angular_velocity_doc_sources",
+        ":atomic_units_doc_sources",
     ],
     # Only the docs build consumes these.  Nothing here is part of the library's API.
     visibility = ["//:__pkg__"],
@@ -33,6 +34,23 @@ ab_example(
         "//au:io",
     ],
     expected_output = "409.256 rev / min\n",
+)
+
+single_example(
+    name = "atomic_units",
+    hdrs = ["atomic_units/atomic_units.hh"],
+    expected_output = "\n".join([
+        "a_0 = 5.29177e-11 m",
+        "E_h = 4.35974e-18 J",
+        "t_a = 2.41888e-17 s",
+        "e = 1.60218e-19 C",
+        "h_bar = 1 E_h * t_a",
+    ]) + "\n",
+    lib_srcs = ["atomic_units/atomic_units.cc"],
+    deps = [
+        "//au",
+        "//au:io",
+    ],
 )
 
 # The doc website inlines example source directly, so it cannot go stale.  The README has to keep a

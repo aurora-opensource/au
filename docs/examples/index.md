@@ -12,6 +12,10 @@ lines in place --- the two versions are kept line-aligned on purpose.
   speed into revolutions per minute (RPM), without fussing with manual conversion factors like `2π`
   or `60`.
 
+- **[Atomic units](./atomic-units.md).**  Building an entire system of units on top of Au --- exact
+  within itself, and as accurate as physics allows at the boundary.  Unlike the others, this one has
+  no plain-C++ counterpart: this example shows how to extend Au for a specific domain.
+
 ## How these examples are written {#front-matter}
 
 Sharing code examples brings an intrinsic tension.  On the one hand, we want to minimize clutter,

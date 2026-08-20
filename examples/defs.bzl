@@ -18,6 +18,12 @@ Every example on the website is real source from this directory, compiled and ru
 inlined into the docs by `pymdownx.snippets`.  Nothing on those pages can drift out of date with
 the library without a test going red.
 
+There are two flavors.  `ab_example` is the common one: a "before and after" pair.  `single_example`
+is for examples that have no meaningful plain-C++ counterpart, such as building a whole system of
+units on top of Au.
+
+--------------------------------------------------------------------------------------------------
+
 `ab_example`: the "A/B" code examples.
 
 Each A/B example is a pair of complete, runnable programs that solve the same problem: `raw.cc`
@@ -33,9 +39,26 @@ both:
   2. The regions marked for inclusion in the docs must have the same number of lines, so that
      corresponding constructs sit at the same height in both tabs.  Where Au needs less code, pad
      with a blank line rather than letting the two versions drift out of alignment.
+
+--------------------------------------------------------------------------------------------------
+
+`single_example`: the standalone code examples.
+
+Some examples have no plain-C++ counterpart, because their subject *is* Au: `atomic_units` builds a
+whole new system of units on top of the library, and there is no "before" version of that to show.
+
+Invariant 2 above does not apply to these -- with no second tab, there is nothing to line up --
+but invariant 1 still holds in adapted form: the program must print exactly `expected_output`.
+That check lives in `check_output.sh`, which `check_ab_example.sh` also calls, so both flavors agree
+on what correct output means.
+
+These examples usually *define* something reusable rather than just computing something, so
+`single_example` splits the target: `hdrs` plus `lib_srcs` become a `cc_library`, and `main_src`
+becomes a program that depends on it.  That is the shape a reader copying these files into their own
+project will end up with, so it is the shape the example should build.
 """
 
-load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
 def ab_example(name, expected_output, au_deps, raw_srcs = None, au_srcs = None):
@@ -90,5 +113,76 @@ def ab_example(name, expected_output, au_deps, raw_srcs = None, au_srcs = None):
             ":{}_au".format(name),
             ":{}_expected.txt".format(name),
             ":{}_raw".format(name),
-        ] + raw_srcs + au_srcs,
+        ] + raw_srcs + au_srcs + ["check_output.sh"],
+    )
+
+def single_example(name, expected_output, deps, main_src = None, lib_srcs = None, hdrs = None):
+    """Defines a standalone example with no plain-C++ counterpart to compare against.
+
+    Most examples are an `ab_example` pair.  Use this instead when there is nothing meaningful to
+    compare against, because the example's subject *is* Au: building a new system of units on top
+    of it, for instance.  There is no line-alignment invariant to keep here, since there is no
+    second tab -- only the output check.
+
+    An example that defines something reusable (a header, plus the out-of-line definitions it
+    needs) gets a `cc_library` for that part, with the program depending on it.  That is how a
+    reader's own project will consume these files, so it is how the example should build them.
+
+    Args:
+      name: Name of the example.  Sources are read from this subdirectory.
+      expected_output: The exact stdout the program must produce.
+      deps: Deps of the example.  Applied to both the library and the program: the program includes
+        Au headers directly (to print, and to name the units it converts into), so it declares them
+        directly too, rather than leaning on the library's deps to supply them.
+      main_src: Sources for the program itself, as a list.  Defaults to `[<name>/main.cc]`.
+      lib_srcs: Non-`main` sources, compiled into the library.  In C++14 this is where the
+        out-of-line unit label definitions live.
+      hdrs: Headers the example defines and the program includes.
+    """
+    main_src = main_src or ["{}/main.cc".format(name)]
+    lib_srcs = lib_srcs or []
+    hdrs = hdrs or []
+
+    # Empty unless this example defines a library, in which case the program depends on it.
+    lib_deps = []
+    if lib_srcs or hdrs:
+        cc_library(
+            name = "{}_lib".format(name),
+            srcs = lib_srcs,
+            hdrs = hdrs,
+            deps = deps,
+        )
+        lib_deps = [":{}_lib".format(name)]
+
+    cc_binary(
+        name = name,
+        srcs = main_src,
+        deps = lib_deps + deps,
+    )
+
+    native.genrule(
+        name = "{}_expected".format(name),
+        outs = ["{}_expected.txt".format(name)],
+        cmd = "printf '%b' {} > $@".format(repr(expected_output)),
+    )
+
+    # As with `ab_example`: declaring the doc-inlined sources here, rather than globbing in the
+    # BUILD file, guarantees that the sources the docs show are exactly the ones the test below
+    # compiles and runs.
+    native.filegroup(
+        name = "{}_doc_sources".format(name),
+        srcs = main_src + lib_srcs + hdrs,
+    )
+
+    sh_test(
+        name = "{}_test".format(name),
+        srcs = ["check_output.sh"],
+        args = [
+            "$(rootpath :{})".format(name),
+            "$(rootpath :{}_expected.txt)".format(name),
+        ],
+        data = [
+            ":{}".format(name),
+            ":{}_expected.txt".format(name),
+        ],
     )
