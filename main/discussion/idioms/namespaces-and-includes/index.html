@@ -12,28 +12,28 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/implementation/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/idioms/namespaces-and-includes/">
       
       
-        <link rel="prev" href="../idioms/unit-slots/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="applying_magnitudes/">
+        <link rel="next" href="../unit-slots/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/favicon.ico">
+      <link rel="icon" href="../../../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>Implementation Details - The Au units library</title>
+        <title>Namespaces and includes - The Au units library</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
@@ -52,9 +52,9 @@
       
     
     
-      <link rel="stylesheet" href="../../tweaks.css">
+      <link rel="stylesheet" href="../../../tweaks.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#implementation-details" class="md-skip">
+        <a href="#namespaces-and-includes" class="md-skip">
           Skip to content
         </a>
       
@@ -92,9 +92,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../assets/au-logo.png" alt="logo">
+  <img src="../../../assets/au-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Implementation Details
+              Namespaces and includes
             
           </span>
         </div>
@@ -203,9 +203,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href="../../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../assets/au-logo.png" alt="logo">
+  <img src="../../../assets/au-logo.png" alt="logo">
 
     </a>
     The Au units library
@@ -232,7 +232,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -259,7 +259,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../develop/" class="md-nav__link">
+      <a href="../../../develop/" class="md-nav__link">
         
   
   
@@ -286,7 +286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/" class="md-nav__link">
+      <a href="../../../install/" class="md-nav__link">
         
   
   
@@ -313,7 +313,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../supported-compilers/" class="md-nav__link">
+      <a href="../../../supported-compilers/" class="md-nav__link">
         
   
   
@@ -340,7 +340,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../troubleshooting/" class="md-nav__link">
+      <a href="../../../troubleshooting/" class="md-nav__link">
         
   
   
@@ -414,7 +414,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../alternatives/" class="md-nav__link">
+      <a href="../../../alternatives/" class="md-nav__link">
         
   
   
@@ -498,7 +498,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../" class="md-nav__link">
         
   
   
@@ -573,7 +573,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/" class="md-nav__link">
+      <a href="../../concepts/" class="md-nav__link">
         
   
   
@@ -601,7 +601,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/arithmetic/" class="md-nav__link">
+      <a href="../../concepts/arithmetic/" class="md-nav__link">
         
   
   
@@ -629,7 +629,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/common_unit/" class="md-nav__link">
+      <a href="../../concepts/common_unit/" class="md-nav__link">
         
   
   
@@ -657,7 +657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/compiler_warnings/" class="md-nav__link">
+      <a href="../../concepts/compiler_warnings/" class="md-nav__link">
         
   
   
@@ -685,7 +685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/conversion_risks/" class="md-nav__link">
+      <a href="../../concepts/conversion_risks/" class="md-nav__link">
         
   
   
@@ -713,7 +713,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/dimensionless/" class="md-nav__link">
+      <a href="../../concepts/dimensionless/" class="md-nav__link">
         
   
   
@@ -741,7 +741,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/eigen_safety/" class="md-nav__link">
+      <a href="../../concepts/eigen_safety/" class="md-nav__link">
         
   
   
@@ -769,7 +769,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/overflow/" class="md-nav__link">
+      <a href="../../concepts/overflow/" class="md-nav__link">
         
   
   
@@ -797,7 +797,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/quantity_point/" class="md-nav__link">
+      <a href="../../concepts/quantity_point/" class="md-nav__link">
         
   
   
@@ -825,7 +825,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/truncation/" class="md-nav__link">
+      <a href="../../concepts/truncation/" class="md-nav__link">
         
   
   
@@ -853,7 +853,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/zero/" class="md-nav__link">
+      <a href="../../concepts/zero/" class="md-nav__link">
         
   
   
@@ -861,145 +861,6 @@
     
   
     Zero
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Idioms
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Idioms
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../idioms/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Au Idioms
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../idioms/namespaces-and-includes/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Namespaces and includes
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../idioms/unit-slots/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Unit slots
   
 
     
@@ -1038,7 +899,271 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Idioms
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Idioms
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Au Idioms
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespaces and includes
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespaces and includes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#include-lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        #include lines
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="#include lines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-feature-headers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional feature headers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#individual-using-statements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Individual using statements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Individual using statements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#headers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Header files cannot take this approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unit-aliases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unit aliases
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unit-slots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit slots
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
         
           
           <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
@@ -1059,7 +1184,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1074,19 +1199,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../implementation/" class="md-nav__link">
         
   
   
@@ -1102,7 +1218,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1115,7 +1230,7 @@
   
   
     <li class="md-nav__item">
-      <a href="applying_magnitudes/" class="md-nav__link">
+      <a href="../../implementation/applying_magnitudes/" class="md-nav__link">
         
   
   
@@ -1143,7 +1258,7 @@
   
   
     <li class="md-nav__item">
-      <a href="vector_space/" class="md-nav__link">
+      <a href="../../implementation/vector_space/" class="md-nav__link">
         
   
   
@@ -1233,7 +1348,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/" class="md-nav__link">
+      <a href="../../../examples/" class="md-nav__link">
         
   
   
@@ -1261,7 +1376,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/angular-velocity/" class="md-nav__link">
+      <a href="../../../examples/angular-velocity/" class="md-nav__link">
         
   
   
@@ -1343,7 +1458,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/" class="md-nav__link">
+      <a href="../../../howto/" class="md-nav__link">
         
   
   
@@ -1371,7 +1486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/forward-declarations/" class="md-nav__link">
+      <a href="../../../howto/forward-declarations/" class="md-nav__link">
         
   
   
@@ -1399,7 +1514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/new-constants/" class="md-nav__link">
+      <a href="../../../howto/new-constants/" class="md-nav__link">
         
   
   
@@ -1427,7 +1542,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/new-dimensions/" class="md-nav__link">
+      <a href="../../../howto/new-dimensions/" class="md-nav__link">
         
   
   
@@ -1455,7 +1570,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/new-units/" class="md-nav__link">
+      <a href="../../../howto/new-units/" class="md-nav__link">
         
   
   
@@ -1483,7 +1598,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/quantity-template-parameters/" class="md-nav__link">
+      <a href="../../../howto/quantity-template-parameters/" class="md-nav__link">
         
   
   
@@ -1511,7 +1626,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/upgrade/" class="md-nav__link">
+      <a href="../../../howto/upgrade/" class="md-nav__link">
         
   
   
@@ -1586,7 +1701,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/interop/" class="md-nav__link">
+      <a href="../../../howto/interop/" class="md-nav__link">
         
   
   
@@ -1614,7 +1729,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/interop/eigen/" class="md-nav__link">
+      <a href="../../../howto/interop/eigen/" class="md-nav__link">
         
   
   
@@ -1642,7 +1757,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/interop/nholthaus/" class="md-nav__link">
+      <a href="../../../howto/interop/nholthaus/" class="md-nav__link">
         
   
   
@@ -1732,7 +1847,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/" class="md-nav__link">
+      <a href="../../../reference/" class="md-nav__link">
         
   
   
@@ -1760,7 +1875,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/constant/" class="md-nav__link">
+      <a href="../../../reference/constant/" class="md-nav__link">
         
   
   
@@ -1788,7 +1903,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/conversion_risk_policies/" class="md-nav__link">
+      <a href="../../../reference/conversion_risk_policies/" class="md-nav__link">
         
   
   
@@ -1816,7 +1931,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/corresponding_quantity/" class="md-nav__link">
+      <a href="../../../reference/corresponding_quantity/" class="md-nav__link">
         
   
   
@@ -1844,7 +1959,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/eigen/" class="md-nav__link">
+      <a href="../../../reference/eigen/" class="md-nav__link">
         
   
   
@@ -1872,7 +1987,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/format/" class="md-nav__link">
+      <a href="../../../reference/format/" class="md-nav__link">
         
   
   
@@ -1900,7 +2015,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/magnitude/" class="md-nav__link">
+      <a href="../../../reference/magnitude/" class="md-nav__link">
         
   
   
@@ -1928,7 +2043,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/math/" class="md-nav__link">
+      <a href="../../../reference/math/" class="md-nav__link">
         
   
   
@@ -1956,7 +2071,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/powers/" class="md-nav__link">
+      <a href="../../../reference/powers/" class="md-nav__link">
         
   
   
@@ -1984,7 +2099,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/prefix/" class="md-nav__link">
+      <a href="../../../reference/prefix/" class="md-nav__link">
         
   
   
@@ -2012,7 +2127,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/quantity/" class="md-nav__link">
+      <a href="../../../reference/quantity/" class="md-nav__link">
         
   
   
@@ -2040,7 +2155,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/quantity_point/" class="md-nav__link">
+      <a href="../../../reference/quantity_point/" class="md-nav__link">
         
   
   
@@ -2068,7 +2183,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/rep/" class="md-nav__link">
+      <a href="../../../reference/rep/" class="md-nav__link">
         
   
   
@@ -2096,7 +2211,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/unit/" class="md-nav__link">
+      <a href="../../../reference/unit/" class="md-nav__link">
         
   
   
@@ -2124,7 +2239,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/version/" class="md-nav__link">
+      <a href="../../../reference/version/" class="md-nav__link">
         
   
   
@@ -2152,7 +2267,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/zero/" class="md-nav__link">
+      <a href="../../../reference/zero/" class="md-nav__link">
         
   
   
@@ -2227,7 +2342,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/" class="md-nav__link">
+      <a href="../../../reference/detail/" class="md-nav__link">
         
   
   
@@ -2255,7 +2370,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/dimension/" class="md-nav__link">
+      <a href="../../../reference/detail/dimension/" class="md-nav__link">
         
   
   
@@ -2283,7 +2398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/monovalue_types/" class="md-nav__link">
+      <a href="../../../reference/detail/monovalue_types/" class="md-nav__link">
         
   
   
@@ -2311,7 +2426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/packs/" class="md-nav__link">
+      <a href="../../../reference/detail/packs/" class="md-nav__link">
         
   
   
@@ -2401,7 +2516,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/" class="md-nav__link">
+      <a href="../../../tutorial/" class="md-nav__link">
         
   
   
@@ -2429,7 +2544,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
+      <a href="../../../tutorial/101-quantity-makers/" class="md-nav__link">
         
   
   
@@ -2457,7 +2572,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/102-api-types/" class="md-nav__link">
+      <a href="../../../tutorial/102-api-types/" class="md-nav__link">
         
   
   
@@ -2485,7 +2600,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
+      <a href="../../../tutorial/103-unit-conversions/" class="md-nav__link">
         
   
   
@@ -2560,7 +2675,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
         
   
   
@@ -2588,7 +2703,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/102-api-types/" class="md-nav__link">
         
   
   
@@ -2616,7 +2731,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+      <a href="../../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
         
   
   
@@ -2672,22 +2787,206 @@
   
 
 
-<h1 id="implementation-details">Implementation Details<a class="headerlink" href="#implementation-details" title="Permanent link">&para;</a></h1>
-<p>This section provides in-depth discussion about core implementation details of Au.  If you want to
-understand <em>how</em> the library works, this is a good place to go.  Here&rsquo;s a rough guide.</p>
+<h1 id="namespaces-and-includes">Namespaces and includes<a class="headerlink" href="#namespaces-and-includes" title="Permanent link">&para;</a></h1>
+<p>Two questions come up as soon as you start writing Au code in earnest: which headers to include, and
+how to bring Au&rsquo;s names into scope.  This page gives our recommendations and the reasoning behind
+them.  Our <a href="../../../examples/">code examples</a> follow these conventions throughout, so you can
+see them applied to real programs.</p>
+<h2 id="include-lines"><code>#include</code> lines<a class="headerlink" href="#include-lines" title="Permanent link">&para;</a></h2>
+<p>Every file that uses Au will include <code>"au/au.hh"</code>, plus a collection of individual files from one or
+more of:</p>
+<ul>
+<li><code>"au/units/..."</code></li>
+<li><code>"au/units/literals/..."</code></li>
+<li><code>"au/constants/..."</code></li>
+</ul>
+<p>Sometimes, this can seem like a large number of files.  However, we believe experience shows this to
+be a strongly justified tradeoff.  Consider the following:</p>
+<ol>
+<li>
+<p>Giving each unit, literal, and constant its own file empowers users to include <em>only</em> what they
+   need.  Since accumulating these objects is the main cause of slow compilation in units libraries,
+   this <em>maximizes</em> compile time performance.</p>
+</li>
+<li>
+<p>Many other libraries try to &ldquo;group&rdquo; these items into related units: whether by system of
+   measurement (e.g., &ldquo;SI&rdquo;), or by dimension (e.g., &ldquo;length&rdquo;).  We consider this a clear design
+   mistake.  Not only does this harm compile time performance, but <em>it makes the headers harder to
+   guess</em> &mdash; and, therefore, it makes the library harder to use.</p>
+</li>
+</ol>
+<p>The pattern should quickly become clear: <code>"au/au.hh"</code> for the core, and one <em>easily guessable</em>
+header for each specific unit, literal, or constant that you actually use.</p>
+<h3 id="optional-feature-headers">Optional feature headers<a class="headerlink" href="#optional-feature-headers" title="Permanent link">&para;</a></h3>
+<p>A few pieces of functionality live behind their own header, because not every project wants to pay
+for them:</p>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>Provides</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"au/io.hh"</code></td>
+<td><code>operator&lt;&lt;</code>, for printing quantities to a stream</td>
+</tr>
+<tr>
+<td><code>"au/std_format.hh"</code></td>
+<td><code>std::format</code> support</td>
+</tr>
+<tr>
+<td><code>"au/testing.hh"</code></td>
+<td>Utilities for writing googletest tests</td>
+</tr>
+</tbody>
+</table>
+<p>This is the same principle as above, applied to <em>features</em> rather than units.  <code>"au/io.hh"</code> is the
+one you&rsquo;ll meet first, and it makes the point well: it pulls in the C++ streams machinery, which is
+famously expensive, and which many embedded projects avoid entirely.  Charging that cost to every
+Au user &mdash; including those who never print a quantity &mdash; would be a poor trade.  So we don&rsquo;t:
+you include it when you want it, and otherwise you never pay.  (We take this seriously enough
+that our <a href="../../../install/#single-file">single-file packages</a> come in <code>noio</code> variants with the
+streaming support stripped out.)</p>
+<p>These headers are <em>additions</em> to <code>"au/au.hh"</code>, not replacements for it: <code>"au/io.hh"</code> teaches the
+library how to print, but it doesn&rsquo;t bring in the core.  Our examples that print a result include
+both.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Under Bazel, each of these is a separate dependency as well as a separate header &mdash;
+<code>@au//au:io</code>, <code>@au//au:std_format</code>, <code>@au//au:testing</code> &mdash; so you&rsquo;ll need to add it to your
+<code>deps</code>.  Under CMake, the single <code>Au::au</code> target provides all of them, and you only need the
+<code>#include</code>.  See the <a href="../../../install/">installation instructions</a> for the full table.</p>
+</div>
+<h2 id="individual-using-statements">Individual <code>using</code> statements<a class="headerlink" href="#individual-using-statements" title="Permanent link">&para;</a></h2>
+<p>When code is within an implementation file (<code>.cc</code>, <code>.cpp</code>, etc.), we recommend giving every Au
+object a &ldquo;using declaration&rdquo;, making its name visible within that file.  This is the same convention
+that <a href="https://google.github.io/googletest/gmock_cook_book.html">Googletest recommends</a>.</p>
+<p>The downside is that this section of declarations can become lengthy.  If you&rsquo;d rather avoid this,
+it&rsquo;s fine; we&rsquo;ve designed Au so that even the fully qualified names are as concise as possible (just
+an <code>au::</code> prefix: four characters).  However, we believe the benefits win out on balance.</p>
+<ol>
+<li>
+<p>The prefix may be <em>small</em>, but Au is designed for <em>composability</em>, so it can be repeated many
+   times.  Compare <code>speed.in(au::kilo(au::meters) / au::hour)</code> to <code>speed.in(kilo(meters) / hour)</code>:
+   the latter has notably better readability and flow.</p>
+</li>
+<li>
+<p>The cost is small: it only affects one place in the file, and the location is predictable.</p>
+</li>
+<li>
+<p>The more times you use a name, the more the <code>using</code> declaration pays off.</p>
+</li>
+</ol>
+<p>What you will <em>not</em> find in our examples is <code>using namespace au;</code>.  We don&rsquo;t recommend it, so we
+don&rsquo;t model it:<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> <code>au::</code> is deliberately two characters, and a directive that drags in every unit,
+maker, and symbol in the library is a poor trade for saving them.  (It&rsquo;s the same instinct that
+keeps <code>using namespace std;</code> out of most codebases.  <code>std::</code> is short for the same reason <code>au::</code> is,
+and in both cases the directive gives up a great deal of clarity to save very little typing.)</p>
+<h3 id="headers">Header files cannot take this approach<a class="headerlink" href="#headers" title="Permanent link">&para;</a></h3>
+<p>The above advice applies to implementation files (<code>.cc</code>, <code>.cpp</code>, etc.) <em>only</em>.  <em>Header</em> files
+(<code>.hh</code>, <code>.hpp</code>, etc.) are a different story altogether.</p>
+<p>The core reason is that <code>#include</code> is simple textual inclusion in C++, and it works transitively.
+This means any names we expose in a header file will <em>silently leak</em> into every translation unit
+that includes it: an unbounded set that grows over time.  This problem is known as &ldquo;namespace
+pollution&rdquo;, and experience has shown that it causes a litany of problems.</p>
 <ul>
 <li>
-<p><strong><a href="applying_magnitudes/">Applying Magnitudes</a></strong>.  A conversion factor is a <em>magnitude</em>:
-  a nonzero real number.  The best way to apply it to a value of type <code>T</code> depends on what kind of
-  number it is (integer, rational, and so on), the runtime performance, and whether we can get exact
-  answers.</p>
+<p>Dependencies become entangled and hard to extract.</p>
 </li>
 <li>
-<p><strong><a href="vector_space/">Vector Space Representations</a></strong>.  We&rsquo;re not talking about position vectors
-  or velocity vectors!  There&rsquo;s a different kind of vector at the heart of every units library.
-  This is the core foundational concept on which we built Au&rsquo;s implementation.</p>
+<p>It becomes hard to understand where names come from.</p>
+</li>
+<li>
+<p>The build can break due to name collisions.</p>
 </li>
 </ul>
+<p>So we can&rsquo;t use <code>using</code> declarations at namespace scope in a header file.  Instead, there are two
+alternatives that avoid this problem.</p>
+<ol>
+<li>
+<p><strong>Qualify at the point of use</strong> &mdash; <code>au::QuantityD&lt;au::Meters&gt;</code>.  This is the default.</p>
+</li>
+<li>
+<p><strong>Scope the <code>using</code> down to a block</strong> where a name would otherwise repeat awkwardly.  A <code>using</code>
+  declaration <em>inside a function body</em> (or any other block) expires at the closing brace and leaks
+  nowhere.  This is the right tool for <a href="../../../reference/unit/#symbols">unit symbols</a> in a header&rsquo;s
+  inline function, where <code>au::symbols::rad</code> at every mention would drown the formula:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kr">inline</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">au</span><span class="o">::</span><span class="n">Radians</span><span class="o">&gt;</span><span class="w"> </span><span class="n">turn_angle</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">au</span><span class="o">::</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">arc</span><span class="p">,</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">                                             </span><span class="n">au</span><span class="o">::</span><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">au</span><span class="o">::</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">symbols</span><span class="o">::</span><span class="n">rad</span><span class="p">;</span><span class="w">  </span><span class="c1">// Confined to this function.</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">arc</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rad</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
+</code></pre></div>
+</li>
+</ol>
+<h2 id="unit-aliases">Unit aliases<a class="headerlink" href="#unit-aliases" title="Permanent link">&para;</a></h2>
+<p>Au has excellent composability for <em>objects</em>.  You can write <code>(kilo(meters) / hour)(100)</code>, for
+example, and it will automatically create the unit for &ldquo;km/h&rdquo; on the fly.  Unfortunately, this
+composability <em>can&rsquo;t</em> extend to <em>type names</em>.  For this same example unit, if we want to declare
+a quantity variable, all of our options are a little bit awkward.  They either need type traits, or
+<code>decltype</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">QuantityF</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">Kilo</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Hours</span><span class="p">{})</span><span class="o">&gt;</span><span class="w"> </span><span class="n">speed</span><span class="p">;</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">UnitQuotient</span><span class="o">&lt;</span><span class="n">Kilo</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">Hours</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">speed</span><span class="p">;</span>
+</code></pre></div>
+<p>We can make this easier to read by just defining a <em>type alias</em> for the unit &mdash; and here, too,
+either spelling will do:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// Either of these will do; pick one.</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">using</span><span class="w"> </span><span class="n">KiloMetersPerHour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Kilo</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Hours</span><span class="p">{});</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">using</span><span class="w"> </span><span class="n">KiloMetersPerHour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UnitQuotient</span><span class="o">&lt;</span><span class="n">Kilo</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">Hours</span><span class="o">&gt;</span><span class="p">;</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">KiloMetersPerHour</span><span class="o">&gt;</span><span class="w"> </span><span class="n">speed</span><span class="p">;</span>
+</code></pre></div>
+<p>All three of these <code>QuantityF</code> declarations refer to the <em>exact same type</em>, just with different
+spelling.  Which one to reach for is a matter of taste.  <code>decltype</code> lets you reuse the same
+arithmetic operators you already know from the object world, at the cost of the keyword;
+<code>UnitQuotient</code> names the operation outright, at the cost of learning and using a visually clunky
+trait.</p>
+<p>A type alias is a different thing from a <code>using</code> <em>declaration</em>, and the rules are correspondingly
+looser: it introduces one name you chose, rather than importing a set of names you did not.  That
+makes it fine at namespace scope even in a header.  That said, we recommend the same instincts as
+above:</p>
+<ul>
+<li>
+<p>If you&rsquo;re in an implementation file (<code>.cc</code>, <code>.cpp</code>, etc.), use them without worrying about it.</p>
+</li>
+<li>
+<p>If you&rsquo;re in a header file (<code>.hh</code>, <code>.hpp</code>, etc.), a unit alias at namespace scope is safe, but
+  keep in mind that it becomes part of your <em>public API</em>.  Every consumer of the header will see it,
+  and may come to depend on it.  The <a href="https://google.github.io/styleguide/cppguide.html#Aliases">Google C++ Style Guide</a> puts it well:</p>
+<blockquote>
+<p>Don&rsquo;t put an alias in your public API just to save typing in the implementation; do so only if
+you intend it to be used by your clients.</p>
+</blockquote>
+<p>So: if the alias is for your consumers, give it a descriptive name and treat it as the interface
+it is.  If it&rsquo;s only for your own convenience, hide it inside a function or class.</p>
+</li>
+</ul>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>Every project has its own style, conventions, and rules.  We&rsquo;ve provided the conventions here as
+a good <em>default</em> style for using Au, and explained the reasons that we recommend them.  These aren&rsquo;t
+hard and fast rules that we intend to force on all projects; they simply convey our vision for how
+to use the library ergonomically.  We hope users will find them useful.</p>
+<p>Much of this guidance comes from experience with large C++ projects, where the costs of namespace
+pollution compound most visibly.  That doesn&rsquo;t mean it&rsquo;s for large projects only.  Remember that
+&ldquo;small&rdquo; projects have a well known habit of becoming larger than anyone originally envisioned!
+These habits are far cheaper to adopt early than to retrofit later.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>We <em>do</em> use <code>using namespace au;</code> in the canonical &ldquo;quickstart&rdquo; <a href="https://godbolt.org/z/o91nfh5Wc">godbolt link</a> from our
+README, because the goal of that page is to make it as frictionless as possible to write Au code.
+It&rsquo;s not intended to showcase <em>landable</em> code; it&rsquo;s intended to make it as easy as possible to see
+how the library behaves in some situation, or to use it to get some result.  To further illustrate
+this point, note that our godbolt link also includes every unit, constant, and literal in the whole
+library, even though we would <em>never</em> recommend this in production code, because the compile time
+cost doesn&rsquo;t scale.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
@@ -2717,7 +3016,7 @@ understand <em>how</em> the library works, this is a good place to go.  Here&rsq
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../idioms/unit-slots/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Unit slots">
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Au Idioms">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2727,20 +3026,20 @@ understand <em>how</em> the library works, this is a good place to go.  Here&rsq
                 Previous
               </span>
               <div class="md-ellipsis">
-                Unit slots
+                Au Idioms
               </div>
             </div>
           </a>
         
         
           
-          <a href="applying_magnitudes/" class="md-footer__link md-footer__link--next" aria-label="Next: Applying Magnitudes">
+          <a href="../unit-slots/" class="md-footer__link md-footer__link--next" aria-label="Next: Unit slots">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Applying Magnitudes
+                Unit slots
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -2781,10 +3080,10 @@ understand <em>how</em> the library works, this is a good place to go.  Here&rsq
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       

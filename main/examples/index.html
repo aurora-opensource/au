@@ -12,28 +12,28 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/implementation/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/examples/">
       
       
-        <link rel="prev" href="../idioms/unit-slots/">
+        <link rel="prev" href="../discussion/implementation/vector_space/">
       
       
-        <link rel="next" href="applying_magnitudes/">
+        <link rel="next" href="angular-velocity/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/favicon.ico">
+      <link rel="icon" href="../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>Implementation Details - The Au units library</title>
+        <title>Code examples - The Au units library</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
@@ -52,9 +52,9 @@
       
     
     
-      <link rel="stylesheet" href="../../tweaks.css">
+      <link rel="stylesheet" href="../tweaks.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#implementation-details" class="md-skip">
+        <a href="#code-examples" class="md-skip">
           Skip to content
         </a>
       
@@ -92,9 +92,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href=".." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../assets/au-logo.png" alt="logo">
+  <img src="../assets/au-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Implementation Details
+              Code examples
             
           </span>
         </div>
@@ -203,9 +203,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+    <a href=".." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
       
-  <img src="../../assets/au-logo.png" alt="logo">
+  <img src="../assets/au-logo.png" alt="logo">
 
     </a>
     The Au units library
@@ -232,7 +232,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -259,7 +259,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../develop/" class="md-nav__link">
+      <a href="../develop/" class="md-nav__link">
         
   
   
@@ -286,7 +286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/" class="md-nav__link">
+      <a href="../install/" class="md-nav__link">
         
   
   
@@ -313,7 +313,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../supported-compilers/" class="md-nav__link">
+      <a href="../supported-compilers/" class="md-nav__link">
         
   
   
@@ -340,7 +340,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../troubleshooting/" class="md-nav__link">
+      <a href="../troubleshooting/" class="md-nav__link">
         
   
   
@@ -414,7 +414,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../alternatives/" class="md-nav__link">
+      <a href="../alternatives/" class="md-nav__link">
         
   
   
@@ -446,20 +446,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
@@ -480,7 +478,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -498,7 +496,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../discussion/" class="md-nav__link">
         
   
   
@@ -573,7 +571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/" class="md-nav__link">
+      <a href="../discussion/concepts/" class="md-nav__link">
         
   
   
@@ -601,7 +599,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/arithmetic/" class="md-nav__link">
+      <a href="../discussion/concepts/arithmetic/" class="md-nav__link">
         
   
   
@@ -629,7 +627,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/common_unit/" class="md-nav__link">
+      <a href="../discussion/concepts/common_unit/" class="md-nav__link">
         
   
   
@@ -657,7 +655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/compiler_warnings/" class="md-nav__link">
+      <a href="../discussion/concepts/compiler_warnings/" class="md-nav__link">
         
   
   
@@ -685,7 +683,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/conversion_risks/" class="md-nav__link">
+      <a href="../discussion/concepts/conversion_risks/" class="md-nav__link">
         
   
   
@@ -713,7 +711,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/dimensionless/" class="md-nav__link">
+      <a href="../discussion/concepts/dimensionless/" class="md-nav__link">
         
   
   
@@ -741,7 +739,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/eigen_safety/" class="md-nav__link">
+      <a href="../discussion/concepts/eigen_safety/" class="md-nav__link">
         
   
   
@@ -769,7 +767,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/overflow/" class="md-nav__link">
+      <a href="../discussion/concepts/overflow/" class="md-nav__link">
         
   
   
@@ -797,7 +795,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/quantity_point/" class="md-nav__link">
+      <a href="../discussion/concepts/quantity_point/" class="md-nav__link">
         
   
   
@@ -825,7 +823,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/truncation/" class="md-nav__link">
+      <a href="../discussion/concepts/truncation/" class="md-nav__link">
         
   
   
@@ -853,7 +851,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/zero/" class="md-nav__link">
+      <a href="../discussion/concepts/zero/" class="md-nav__link">
         
   
   
@@ -936,7 +934,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../idioms/" class="md-nav__link">
+      <a href="../discussion/idioms/" class="md-nav__link">
         
   
   
@@ -964,7 +962,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../idioms/namespaces-and-includes/" class="md-nav__link">
+      <a href="../discussion/idioms/namespaces-and-includes/" class="md-nav__link">
         
   
   
@@ -992,7 +990,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../idioms/unit-slots/" class="md-nav__link">
+      <a href="../discussion/idioms/unit-slots/" class="md-nav__link">
         
   
   
@@ -1025,20 +1023,18 @@
                 
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
         
           
           <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
@@ -1059,7 +1055,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1074,19 +1070,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../discussion/implementation/" class="md-nav__link">
         
   
   
@@ -1102,7 +1089,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1115,7 +1101,7 @@
   
   
     <li class="md-nav__item">
-      <a href="applying_magnitudes/" class="md-nav__link">
+      <a href="../discussion/implementation/applying_magnitudes/" class="md-nav__link">
         
   
   
@@ -1143,7 +1129,7 @@
   
   
     <li class="md-nav__item">
-      <a href="vector_space/" class="md-nav__link">
+      <a href="../discussion/implementation/vector_space/" class="md-nav__link">
         
   
   
@@ -1183,18 +1169,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
@@ -1215,7 +1203,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1230,10 +1218,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../examples/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code examples
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1249,6 +1264,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The examples
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#front-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How these examples are written
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-these-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About these examples
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1261,7 +1329,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/angular-velocity/" class="md-nav__link">
+      <a href="angular-velocity/" class="md-nav__link">
         
   
   
@@ -1343,7 +1411,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/" class="md-nav__link">
+      <a href="../howto/" class="md-nav__link">
         
   
   
@@ -1371,7 +1439,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/forward-declarations/" class="md-nav__link">
+      <a href="../howto/forward-declarations/" class="md-nav__link">
         
   
   
@@ -1399,7 +1467,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/new-constants/" class="md-nav__link">
+      <a href="../howto/new-constants/" class="md-nav__link">
         
   
   
@@ -1427,7 +1495,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/new-dimensions/" class="md-nav__link">
+      <a href="../howto/new-dimensions/" class="md-nav__link">
         
   
   
@@ -1455,7 +1523,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/new-units/" class="md-nav__link">
+      <a href="../howto/new-units/" class="md-nav__link">
         
   
   
@@ -1483,7 +1551,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/quantity-template-parameters/" class="md-nav__link">
+      <a href="../howto/quantity-template-parameters/" class="md-nav__link">
         
   
   
@@ -1511,7 +1579,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/upgrade/" class="md-nav__link">
+      <a href="../howto/upgrade/" class="md-nav__link">
         
   
   
@@ -1586,7 +1654,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/interop/" class="md-nav__link">
+      <a href="../howto/interop/" class="md-nav__link">
         
   
   
@@ -1614,7 +1682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/interop/eigen/" class="md-nav__link">
+      <a href="../howto/interop/eigen/" class="md-nav__link">
         
   
   
@@ -1642,7 +1710,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../howto/interop/nholthaus/" class="md-nav__link">
+      <a href="../howto/interop/nholthaus/" class="md-nav__link">
         
   
   
@@ -1732,7 +1800,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/" class="md-nav__link">
+      <a href="../reference/" class="md-nav__link">
         
   
   
@@ -1760,7 +1828,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/constant/" class="md-nav__link">
+      <a href="../reference/constant/" class="md-nav__link">
         
   
   
@@ -1788,7 +1856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/conversion_risk_policies/" class="md-nav__link">
+      <a href="../reference/conversion_risk_policies/" class="md-nav__link">
         
   
   
@@ -1816,7 +1884,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/corresponding_quantity/" class="md-nav__link">
+      <a href="../reference/corresponding_quantity/" class="md-nav__link">
         
   
   
@@ -1844,7 +1912,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/eigen/" class="md-nav__link">
+      <a href="../reference/eigen/" class="md-nav__link">
         
   
   
@@ -1872,7 +1940,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/format/" class="md-nav__link">
+      <a href="../reference/format/" class="md-nav__link">
         
   
   
@@ -1900,7 +1968,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/magnitude/" class="md-nav__link">
+      <a href="../reference/magnitude/" class="md-nav__link">
         
   
   
@@ -1928,7 +1996,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/math/" class="md-nav__link">
+      <a href="../reference/math/" class="md-nav__link">
         
   
   
@@ -1956,7 +2024,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/powers/" class="md-nav__link">
+      <a href="../reference/powers/" class="md-nav__link">
         
   
   
@@ -1984,7 +2052,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/prefix/" class="md-nav__link">
+      <a href="../reference/prefix/" class="md-nav__link">
         
   
   
@@ -2012,7 +2080,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/quantity/" class="md-nav__link">
+      <a href="../reference/quantity/" class="md-nav__link">
         
   
   
@@ -2040,7 +2108,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/quantity_point/" class="md-nav__link">
+      <a href="../reference/quantity_point/" class="md-nav__link">
         
   
   
@@ -2068,7 +2136,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/rep/" class="md-nav__link">
+      <a href="../reference/rep/" class="md-nav__link">
         
   
   
@@ -2096,7 +2164,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/unit/" class="md-nav__link">
+      <a href="../reference/unit/" class="md-nav__link">
         
   
   
@@ -2124,7 +2192,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/version/" class="md-nav__link">
+      <a href="../reference/version/" class="md-nav__link">
         
   
   
@@ -2152,7 +2220,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/zero/" class="md-nav__link">
+      <a href="../reference/zero/" class="md-nav__link">
         
   
   
@@ -2227,7 +2295,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/" class="md-nav__link">
+      <a href="../reference/detail/" class="md-nav__link">
         
   
   
@@ -2255,7 +2323,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/dimension/" class="md-nav__link">
+      <a href="../reference/detail/dimension/" class="md-nav__link">
         
   
   
@@ -2283,7 +2351,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/monovalue_types/" class="md-nav__link">
+      <a href="../reference/detail/monovalue_types/" class="md-nav__link">
         
   
   
@@ -2311,7 +2379,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/detail/packs/" class="md-nav__link">
+      <a href="../reference/detail/packs/" class="md-nav__link">
         
   
   
@@ -2401,7 +2469,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/" class="md-nav__link">
+      <a href="../tutorial/" class="md-nav__link">
         
   
   
@@ -2429,7 +2497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
+      <a href="../tutorial/101-quantity-makers/" class="md-nav__link">
         
   
   
@@ -2457,7 +2525,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/102-api-types/" class="md-nav__link">
+      <a href="../tutorial/102-api-types/" class="md-nav__link">
         
   
   
@@ -2485,7 +2553,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
+      <a href="../tutorial/103-unit-conversions/" class="md-nav__link">
         
   
   
@@ -2560,7 +2628,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+      <a href="../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
         
   
   
@@ -2588,7 +2656,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
+      <a href="../tutorial/exercise/102-api-types/" class="md-nav__link">
         
   
   
@@ -2616,7 +2684,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+      <a href="../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
         
   
   
@@ -2672,22 +2740,48 @@
   
 
 
-<h1 id="implementation-details">Implementation Details<a class="headerlink" href="#implementation-details" title="Permanent link">&para;</a></h1>
-<p>This section provides in-depth discussion about core implementation details of Au.  If you want to
-understand <em>how</em> the library works, this is a good place to go.  Here&rsquo;s a rough guide.</p>
+<h1 id="code-examples">Code examples<a class="headerlink" href="#code-examples" title="Permanent link">&para;</a></h1>
+<p>Short, complete programs that show what using Au actually looks like.</p>
+<p>Most of these come in two versions: the way the problem is usually solved in plain C++, and the way
+it looks with Au.  They are presented as tabs so you can flip between them and compare corresponding
+lines in place &mdash; the two versions are kept line-aligned on purpose.</p>
+<h2 id="the-examples">The examples<a class="headerlink" href="#the-examples" title="Permanent link">&para;</a></h2>
 <ul>
-<li>
-<p><strong><a href="applying_magnitudes/">Applying Magnitudes</a></strong>.  A conversion factor is a <em>magnitude</em>:
-  a nonzero real number.  The best way to apply it to a value of type <code>T</code> depends on what kind of
-  number it is (integer, rational, and so on), the runtime performance, and whether we can get exact
-  answers.</p>
-</li>
-<li>
-<p><strong><a href="vector_space/">Vector Space Representations</a></strong>.  We&rsquo;re not talking about position vectors
-  or velocity vectors!  There&rsquo;s a different kind of vector at the heart of every units library.
-  This is the core foundational concept on which we built Au&rsquo;s implementation.</p>
-</li>
+<li><strong><a href="angular-velocity/">Linear speed to revolutions per minute</a>.</strong>  Converting a wheel&rsquo;s road
+  speed into revolutions per minute (RPM), without fussing with manual conversion factors like <code>2π</code>
+  or <code>60</code>.</li>
 </ul>
+<h2 id="front-matter">How these examples are written<a class="headerlink" href="#front-matter" title="Permanent link">&para;</a></h2>
+<p>Sharing code examples brings an intrinsic tension.  On the one hand, we want to minimize clutter,
+and emphasize the core ideas and the way the APIs flow together.  On the other hand, the examples
+are how new users will begin using the library, so we can&rsquo;t compromise on including <em>everything</em>
+that&rsquo;s needed to get them running!</p>
+<p>Our solution is to distinguish <em>&ldquo;front matter&rdquo;</em> from the <em>core</em> of the example.  Front matter
+includes:</p>
+<ul>
+<li><code>#include</code> lines</li>
+<li>Individual <code>using</code> statements</li>
+<li>Any unit aliases we define for convenience</li>
+</ul>
+<p>We&rsquo;ll always provide this front matter, but we&rsquo;ll collapse it by default.  Look for the
+<strong>&ldquo;Includes and usings&rdquo;</strong> block inside each tab: expand it and you have the whole file.  Nothing on
+these pages depends on context we have hidden from you, and no snippet is a sketch with the awkward
+parts elided.</p>
+<p>These are also the same conventions we recommend for <em>your</em> code.  See <strong><a href="../discussion/idioms/namespaces-and-includes/">Namespaces and
+includes</a></strong> for our detailed reasoning.</p>
+<h2 id="about-these-examples">About these examples<a class="headerlink" href="#about-these-examples" title="Permanent link">&para;</a></h2>
+<p>Every example here is real source code from the
+<a href="https://github.com/aurora-opensource/au/tree/main/examples"><code>examples/</code></a> directory of the
+repository, inlined into these pages directly.  CI compiles and runs both versions of each one, and
+checks that they produce identical output &mdash; so the &ldquo;before&rdquo; and &ldquo;after&rdquo; really do solve the same
+problem, and neither can drift out of date with the library.</p>
+<!-- ADDING AN EXAMPLE: see `examples/README.md` in the repository.  It covers the invariants these
+pages depend on (line-aligned regions, one-line banners), the design decisions behind them, and what
+is still to do.  Deliberately kept in one place so the two copies cannot drift.
+
+  Quality over quantity.  A good example here is a real problem someone actually had, small enough
+  to read in one screenful, where the Au version is better in a way the reader can clearly see.
+-->
 
 
 
@@ -2717,7 +2811,7 @@ understand <em>how</em> the library works, this is a good place to go.  Here&rsq
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../idioms/unit-slots/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Unit slots">
+          <a href="../discussion/implementation/vector_space/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Vector Space Representations">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2727,20 +2821,20 @@ understand <em>how</em> the library works, this is a good place to go.  Here&rsq
                 Previous
               </span>
               <div class="md-ellipsis">
-                Unit slots
+                Vector Space Representations
               </div>
             </div>
           </a>
         
         
           
-          <a href="applying_magnitudes/" class="md-footer__link md-footer__link--next" aria-label="Next: Applying Magnitudes">
+          <a href="angular-velocity/" class="md-footer__link md-footer__link--next" aria-label="Next: Linear speed to revolutions per minute">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Applying Magnitudes
+                Linear speed to revolutions per minute
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -2781,10 +2875,10 @@ understand <em>how</em> the library works, this is a good place to go.  Here&rsq
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "toc.integrate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       

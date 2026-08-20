@@ -60,3 +60,65 @@ li.check:before {
 li.x:before {
     content: "\2717  ";
 }
+
+/*
+  A/B code examples (see docs/examples/).
+
+  Each example is a pair of tabs: the "before" version in plain C++, and the "after" version
+  using Au.  The reader flips between them to compare corresponding lines in place, so the layout
+  has one overriding job: keep the code at the *same height* in both tabs.  That is why the banner
+  below is a single fixed-height line.  Anything that makes one banner taller than the other shifts
+  that tab's code down, and the comparison stops working.  Put the actual explanation in the
+  "What's happening" section under the tabs, where its height costs nothing.
+
+  The colors deliberately reuse the comparison-matrix legend from the alternatives page: orange for
+  the version to move away from, blue for the recommended one.  That scheme was chosen because it
+  stays legible for colorblind readers (see the footnote on docs/alternatives/index.md), which is
+  also why the banner text carries an emoji and an explicit word -- the color is never the only
+  signal.
+*/
+
+.md-typeset p.ab-banner {
+    /* Fixed height is the whole point; keep banner text to one short line. */
+    box-sizing: border-box;
+    min-height: 2.4em;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+    margin: 0 0 0.8em 0;
+    padding: 0.4em 0.9em;
+    border-radius: 0.1rem;
+    font-size: 0.75rem;
+    line-height: 1.35;
+}
+
+.md-typeset p.ab-banner.ab-before {
+    background-color: #fdae61;
+    color: #000;
+}
+
+.md-typeset p.ab-banner.ab-after {
+    background-color: #abd9e9;
+    color: #000;
+}
+
+/* Inline code needs to stay readable against both banner backgrounds. */
+.md-typeset p.ab-banner code {
+    background-color: rgba(255, 255, 255, 0.75);
+    color: #000;
+}
+
+/*
+  Tint the tab buttons themselves, so a reader who never clicks still sees which version is which.
+  `:has()` scopes this to A/B tab sets only; browsers without it simply get stock tab styling.
+  The `> a` case covers Material's linked-tabs mode, which wraps each label in an anchor.
+*/
+.md-typeset .tabbed-set:has(p.ab-banner) > .tabbed-labels > label:first-child,
+.md-typeset .tabbed-set:has(p.ab-banner) > .tabbed-labels > label:first-child > a {
+    color: #a85800;
+}
+
+.md-typeset .tabbed-set:has(p.ab-banner) > .tabbed-labels > label:nth-child(2),
+.md-typeset .tabbed-set:has(p.ab-banner) > .tabbed-labels > label:nth-child(2) > a {
+    color: #2c7bb6;
+}
