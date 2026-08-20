@@ -210,6 +210,7 @@ class SourceFile:
         self.lines = []
 
         in_copyright_header = False
+        preproc_depth = 0
         with open(filename) as f:
             was_last_line_blank = False
             for line in f:
@@ -232,16 +233,25 @@ class SourceFile:
                         continue
                     was_last_line_blank = True
 
+                # Track `#if`/`#endif` nesting depth, so that we can tell
+                # whether an `#include` is guarded.
+                if line.startswith("#if"):
+                    preproc_depth += 1
+                elif line.startswith("#endif"):
+                    preproc_depth -= 1
+
                 # Put this line where it belongs.  If it's an `#include`, sort
                 # it with either the project-specific collection
                 # ("graph_includes"), or the global collection.  Otherwise,
-                # just add it to the list of content lines.
+                # just add it to the list of content lines.  Note that a
+                # _guarded_ global include (i.e., one inside of an `#if` block)
+                # must stay exactly where it is, because hoisting it to the top
+                # of the file would strip away its guard.
                 target = include_target(line)
-                if target:
-                    if target.startswith("au"):
-                        self.graph_includes.append(target)
-                    else:
-                        self.global_includes.append(line.rstrip())
+                if target and target.startswith("au"):
+                    self.graph_includes.append(target)
+                elif target and preproc_depth == 0:
+                    self.global_includes.append(line.rstrip())
                 else:
                     self.lines.append(line.rstrip())
 
