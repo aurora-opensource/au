@@ -122,3 +122,174 @@ li.x:before {
 .md-typeset .tabbed-set:has(p.ab-banner) > .tabbed-labels > label:nth-child(2) > a {
     color: #2c7bb6;
 }
+
+/*
+  The comparison matrices in the "Comparison of Alternatives" guide.
+
+  These tables carry seven columns, which the default content width can't hold.
+  mkdocs-material styles bare tables via `table:not([class])`, and that rule puts
+  a `min-width` on every `th`: seven of those add up to more than the content
+  column, so the whole page scrolled sideways.  Giving these tables a class opts
+  out of that rule entirely, so we can lay them out ourselves.
+*/
+
+/* Widen the content column on any page that holds a matrix. */
+.md-main:has(table.matrix) .md-grid {
+    max-width: 80rem;
+}
+
+.md-typeset table.matrix {
+    background-color: var(--md-default-bg-color);
+    border: .05rem solid var(--md-typeset-table-color);
+    border-collapse: collapse;
+    font-size: .6rem;
+    /* `fixed` plus `width: 100%` is what guarantees the table never overflows. */
+    table-layout: fixed;
+    width: 100%;
+}
+
+.md-typeset table.matrix th,
+.md-typeset table.matrix td {
+    overflow-wrap: break-word;
+    padding: .5em .6em;
+    text-align: left;
+    vertical-align: top;
+}
+
+/* Without this, two vertically adjacent cells that happen to share a rating
+   read as one tall cell. */
+.md-typeset table.matrix tbody td {
+    border-top: .05rem solid var(--md-default-bg-color);
+}
+
+.md-typeset table.matrix th {
+    font-weight: 700;
+    text-align: center;
+}
+
+/* The criterion column is wider; `fixed` layout splits the rest evenly. */
+.md-typeset table.matrix th:first-child,
+.md-typeset table.matrix td:first-child {
+    width: 17%;
+}
+
+.md-typeset table.matrix td > :first-child {
+    margin-top: 0;
+}
+
+.md-typeset table.matrix td > :last-child {
+    margin-bottom: 0;
+}
+
+.md-typeset table.matrix ul {
+    margin: 0;
+    padding-left: 0;
+}
+
+.md-typeset table.matrix code {
+    /* Long type names must not be able to push a column wider. */
+    overflow-wrap: anywhere;
+}
+
+/*
+  Sticky headers.  Material's own site header is `position: sticky` at
+  `top: 0` with `height: 2.4rem` and `z-index: 4`, so we park ours just below it
+  and give it a lower stacking order.
+
+  The two header rows are stacked rather than nested with `rowspan`, because a
+  `rowspan` cell can only have one sticky offset, which would collide with the
+  row below it.
+*/
+.md-typeset table.matrix thead th {
+    background-color: var(--md-default-bg-color);
+    position: sticky;
+    z-index: 2;
+}
+
+.md-typeset table.matrix thead tr:first-child th {
+    height: 1.3rem;
+    line-height: 1rem;
+    padding-bottom: .15rem;
+    padding-top: .15rem;
+    top: 2.4rem;
+}
+
+.md-typeset table.matrix thead tr:nth-child(2) th {
+    /* A hard bottom edge, so the pinned header reads as a lid over the rows
+       sliding underneath it. */
+    box-shadow: 0 .05rem 0 #999;
+    top: 3.7rem;
+}
+
+/*
+  Group the two nholthaus columns.  Every library cell gets a gutter on its
+  left, except the nholthaus 3.x cell, which gets a hairline instead --- so the
+  pair reads as one library with two lines.  This is done with `td + td` rather
+  than `nth-child` so that it survives the rows where the two nholthaus cells
+  are merged with `colspan`.
+
+  The gutter has to be drawn in a different color in the head than in the body.
+  A body cell sits on its rating color, so a gap the color of the page reads as
+  a separator; a header cell sits on the page color already, where that same
+  gap would be invisible.
+
+  Every color in the header is a flat, fully opaque value.  Material's own
+  `--md-*` grays are translucent, and the header is pinned: anything that isn't
+  opaque lets the rows scrolling underneath show straight through it.
+*/
+.md-typeset table.matrix tbody td + td {
+    border-left: .15rem solid var(--md-default-bg-color);
+}
+
+.md-typeset table.matrix thead tr:first-child th + th,
+.md-typeset table.matrix thead tr:nth-child(2) th + th {
+    border-left: .15rem solid #d5d5d5;
+}
+
+/*
+  Within the nholthaus group, the divider must be the *faintest* line in the
+  table --- lighter than the gutters that separate one library from the next.
+*/
+.md-typeset table.matrix tbody td.nh3 {
+    border-left: .05rem solid var(--md-default-bg-color);
+}
+
+.md-typeset table.matrix thead th.nh3 {
+    border-left: .05rem solid #e0e0e0;
+}
+
+/*
+  The nholthaus columns are deliberately left the same white as the other
+  third-party libraries: gray is reserved for Au's column, and a second gray
+  here only dilutes it.  The spanning "nholthaus" label and the fainter
+  divider between 2.x and 3.x are enough to group the pair.
+*/
+
+/* Au's column has to win over the sticky-header background. */
+.md-typeset table.matrix thead th.highlight {
+    background-color: #ccc;
+}
+
+/* Rating colors have to win over the sticky-header background above. */
+.md-typeset table.matrix td.poor {
+    background-color: #fdae61;
+}
+
+.md-typeset table.matrix td.fair {
+    background-color: #ffffbf;
+}
+
+.md-typeset table.matrix td.good {
+    background-color: #abd9e9;
+}
+
+.md-typeset table.matrix td.best,
+.md-typeset table.matrix td.best * {
+    background-color: #2c7bb6;
+    color: white;
+}
+
+.md-typeset table.matrix td.na,
+.md-typeset table.matrix td.invalid {
+    background-color: #d9d9d9;
+}
