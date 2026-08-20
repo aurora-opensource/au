@@ -29,12 +29,12 @@ BAR = "/" * 100
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", default=os.path.join("au", "error_examples.cc"))
-    parser.add_argument("--outdir", default="sections")
+    parser.add_argument("--input", type=pathlib.Path, default=pathlib.Path("au") / "error_examples.cc")
+    parser.add_argument("--outdir", type=pathlib.Path, default=pathlib.Path("sections"))
     parser.add_argument("--single-file", action="store_true")
     args = parser.parse_args()
 
-    lines = open(args.input).read().split("\n")
+    lines = args.input.read_text().split("\n")
 
     if args.single_file:
         includes = [i for i, l in enumerate(lines) if l.startswith('#include "au')]
@@ -47,7 +47,7 @@ def main():
     end = next(i for i, l in enumerate(lines) if l.startswith("}  // namespace au"))
     bounds = [(starts[k], starts[k + 1] if k + 1 < len(starts) else end) for k in range(len(starts))]
 
-    os.makedirs(args.outdir, exist_ok=True)
+    args.outdir.mkdir(exist_ok=True)
     for k, (name, _) in enumerate(zip(names, bounds)):
         out = list(lines)
         for j, (c, d) in enumerate(bounds):
@@ -55,8 +55,8 @@ def main():
                 for i in range(c, d):
                     out[i] = ""
         slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
-        path = os.path.join(args.outdir, f"{k:02d}_{slug}.cc")
-        open(path, "w").write("\n".join(out))
+        outfile = args.outdir / f"{k:02d}_{slug}.cc"
+        outfile.write_text("\n".join(out))
         print(path)
 
 
