@@ -47,17 +47,17 @@ int main() {
     //
     // Note that no unit label is written out below.  Every name in this output --- `a_0`, `m`, and
     // the rest --- is the label Au derives from the unit itself.
-    std::cout << BOHR_RADIUS << " = " << BOHR_RADIUS.as<double>(meters) << std::endl;
-    std::cout << HARTREE << " = " << HARTREE.as<double>(joules) << std::endl;
-    std::cout << ATOMIC_TIME << " = " << ATOMIC_TIME.as<double>(seconds) << std::endl;
+    std::cout << BOHR_RADIUS << " = " << BOHR_RADIUS.as<double>(meters) << '\n';
+    std::cout << HARTREE << " = " << HARTREE.as<double>(joules) << '\n';
+    std::cout << ATOMIC_TIME << " = " << ATOMIC_TIME.as<double>(seconds) << '\n';
 
     // The atomic unit of charge is the one that crosses to SI *exactly*: the elementary charge is
     // an SI-defining constant, so no measured quantity enters this conversion at all.
-    std::cout << e << " = " << e.as<double>(coulombs) << std::endl;
+    std::cout << e << " = " << e.as<double>(coulombs) << '\n';
 
     // Staying inside the system.  This prints `1`, not `0.9999999997`, because the atomic time unit
     // is *defined* as hbar / E_h rather than pasted in as a decimal.  (This claim also has stronger
     // evidence than just the printed output: the `static_assert` in the header file.)
-    std::cout << hbar << " = " << hbar.as<double>(hartrees * atomic_time_units) << std::endl;
+    std::cout << hbar << " = " << hbar.as<double>(hartrees * atomic_time_units) << '\n';
 }
 // --8<-- [end:usage]

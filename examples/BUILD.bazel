@@ -39,8 +39,13 @@ ab_example(
 single_example(
     name = "atomic_units",
     hdrs = ["atomic_units/atomic_units.hh"],
-    expected_output = "a_0 = 5.29177e-11 m\nE_h = 4.35974e-18 J\nt_a = 2.41888e-17 s\n" +
-                      "e = 1.60218e-19 C\nh_bar = 1 E_h * t_a\n",
+    expected_output = "\n".join([
+        "a_0 = 5.29177e-11 m",
+        "E_h = 4.35974e-18 J",
+        "t_a = 2.41888e-17 s",
+        "e = 1.60218e-19 C",
+        "h_bar = 1 E_h * t_a",
+     ]) + "\n",
     lib_srcs = ["atomic_units/atomic_units.cc"],
     deps = [
         "//au",

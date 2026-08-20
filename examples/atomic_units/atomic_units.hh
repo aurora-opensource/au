@@ -20,7 +20,7 @@
 #include "au/constants/speed_of_light.hh"
 #include "au/units/literals/grams.hh"
 
-// A drop-in set of Hartree atomic units, built on top of Au.
+// A drop-in set of hartree atomic units, built on top of Au.
 //
 // Au cannot ship these units itself, because they have no exact definition in terms of SI units:
 // two of the numbers below are *measured*, and the best known values change as experiments improve.
@@ -32,7 +32,7 @@
 // atomic unit is then defined *symbolically* in terms of those five, rather than by pasting in a
 // decimal value.  Two things follow:
 //
-//   - Relationships *within* the system are exact.  `hbar` really is exactly one Hartree times one
+//   - Relationships *within* the system are exact.  `hbar` really is exactly one hartree times one
 //     atomic time unit, because that is how the atomic time unit is defined here -- not a value
 //     that rounds to 1.0.
 //
@@ -67,7 +67,8 @@ constexpr auto fine_structure_constant() {
 // CODATA 2018: 9.109 383 7015(28) e-31 kg
 constexpr auto electron_mass() {
     using namespace ::au::au_literals;
-    return au::kilo(9.109'383'7015e-31_g);
+    using au::kilo;
+    return kilo(9.109'383'7015e-31_g);
 }
 
 }  // namespace detail
@@ -88,7 +89,7 @@ constexpr auto m_e = ELECTRON_MASS;
 // relationships among them are exact.
 //
 
-// Energy: the Hartree, E_h = m_e c^2 alpha^2.
+// Energy: the hartree, E_h = m_e c^2 alpha^2.
 struct Hartrees : decltype(associated_unit(m_e * squared(c * alpha))) {
     static constexpr const char label[] = "E_h";
 };
@@ -125,7 +126,7 @@ constexpr auto elementary_charges = au::QuantityMaker<ElementaryCharges>{};
 //
 // --8<-- [start:assert]
 static_assert(hbar.in<int>(hartrees * atomic_time_units) == 1,
-              "One reduced Planck constant must be exactly one Hartree times one atomic time unit");
+              "One reduced Planck constant must be exactly one hartree times one atomic time unit");
 // --8<-- [end:assert]
 
 }  // namespace atomic_units

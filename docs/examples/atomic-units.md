@@ -131,7 +131,7 @@ other way round.  The other two --- the electron mass and the fine structure con
 measured.  Separating them this way means that updating to a newer CODATA release is a two-line
 change, and you can see at a glance exactly which numbers in your program are experimental inputs.
 
-**Each unit is defined by its formula, not by a decimal value.**  The Hartree is written as
+**Each unit is defined by its formula, not by a decimal value.**  The hartree is written as
 `m_e * squared(c * alpha)`, not as `4.3597447e-18` joules.  That is the difference that makes the
 last line of the output read `1 E_h * t_a` rather than `0.999999999...`.  The atomic time unit is
 *defined* as $\hbar/E_h$, so within the system that relationship is exact --- Au carries it as an
@@ -143,11 +143,11 @@ The two core properties we outlined at the beginning follow from these definitio
   SI, no drift, no epsilon comparisons.
 
 - **Crossing out to SI is as accurate as physics currently allows.**  Au composes the entire
-  definition chain --- through the Hartree, through $\alpha^2$, through the electron mass --- into a
+  definition chain --- through the hartree, through $\alpha^2$, through the electron mass --- into a
   single exact rational factor, and applies it once. The only error is the uncertainty in the two
   measured inputs.
 
-**The first property is checked by the compiler:**  the header closes with a `static_assert` that
+**The first property is checked by the compiler:**  The header closes with a `static_assert` that
 asks for $\hbar$'s value in `hartrees * atomic_time_units` **as an `int`**.
 
 ```cpp
