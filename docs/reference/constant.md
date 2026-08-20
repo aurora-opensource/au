@@ -166,7 +166,7 @@ concise symbol.  The example below demonstrates the difference.
     There's no difference in the program that gets executed, but the printed label is a lot easier
     to understand.
 
-### Unit literals
+### Unit literals {#unit-literals}
 
 Every unit that ships with Au provides a _unit literal_: a [user-defined literal
 (UDL)](https://en.cppreference.com/w/cpp/language/user_literal) whose suffix is the unit's
