@@ -237,7 +237,7 @@ class SourceFile:
                 # whether an `#include` is guarded.
                 if line.startswith("#if"):
                     preproc_depth += 1
-                elif line.startswith("#endif"):
+                if line.startswith("#endif"):
                     preproc_depth -= 1
 
                 # Put this line where it belongs.  If it's an `#include`, sort
