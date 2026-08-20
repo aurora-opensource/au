@@ -18,7 +18,6 @@
 #include <array>
 #include <chrono>
 #include <cmath>
-#include <compare>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
@@ -27,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-152-g71ff7d4
+// Version identifier: 0.5.0-base-153-gfdb74a0
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -2828,6 +2827,7 @@ struct identity {
 }  // namespace au
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
 #endif
 
 
@@ -3016,6 +3016,7 @@ constexpr auto minus = Minus{};
 
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
 #endif
 
 
@@ -3257,6 +3258,7 @@ constexpr T int_pow(T base, std::uintmax_t exp) {
 
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
 #endif
 
 
@@ -8437,6 +8439,7 @@ struct ConstructionPolicy {
 
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
 #endif
 
 
@@ -10079,6 +10082,7 @@ struct AssociatedUnitImpl<SymbolFor<U>> : stdx::type_identity<U> {};
 }  // namespace au
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
 #endif
 
 
@@ -12068,6 +12072,7 @@ AU_DEVICE_VAR constexpr auto rad = SymbolFor<Radians>{};
 
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
 #endif
 
 

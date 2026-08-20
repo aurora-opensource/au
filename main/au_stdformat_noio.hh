@@ -18,7 +18,6 @@
 #include <array>
 #include <chrono>
 #include <cmath>
-#include <compare>
 #include <cstddef>
 #include <cstdint>
 #include <format>
@@ -27,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-152-g71ff7d4
+// Version identifier: 0.5.0-base-153-gfdb74a0
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -2422,6 +2421,7 @@ struct identity {
 }  // namespace au
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
 #endif
 
 
@@ -2610,6 +2610,7 @@ constexpr auto minus = Minus{};
 
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
 #endif
 
 
@@ -2851,6 +2852,7 @@ constexpr T int_pow(T base, std::uintmax_t exp) {
 
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
 #endif
 
 
@@ -8031,6 +8033,7 @@ struct ConstructionPolicy {
 
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
 #endif
 
 
@@ -9893,6 +9896,7 @@ AU_DEVICE_VAR constexpr auto h = SymbolFor<Hours>{};
 }  // namespace au
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
 #endif
 
 
@@ -10151,6 +10155,7 @@ AU_DEVICE_FUNC constexpr auto operator-(Zero, Constant<U>) {
 
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#include <compare>
 #endif
 
 
