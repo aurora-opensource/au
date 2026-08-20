@@ -1,0 +1,70 @@
+#!/usr/bin/python3
+# Copyright 2026 Aurora Operations, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Split `au/error_examples.cc` into one file per SECTION, for isolated compilation.
+
+Each output file contains exactly one section's code; every other section's lines are replaced with
+blank lines, so that line numbers match the original file exactly.  With `--single-file`, the
+`#include "au/..."` block is replaced by a single `#include "au.hh"` (padded with blank lines, again
+to preserve line numbers), for use with the single-file package that MSVC builds consume.
+"""
+
+import argparse
+import pathlib
+import re
+
+BAR = "/" * 100
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--input", type=pathlib.Path, default=pathlib.Path("au") / "error_examples.cc"
+    )
+    parser.add_argument("--outdir", type=pathlib.Path, default=pathlib.Path("sections"))
+    parser.add_argument("--single-file", action="store_true")
+    args = parser.parse_args()
+
+    lines = args.input.read_text().split("\n")
+
+    if args.single_file:
+        includes = [i for i, l in enumerate(lines) if l.startswith('#include "au')]
+        for i in includes:
+            lines[i] = ""
+        lines[includes[0]] = '#include "au.hh"'
+
+    starts = [i for i, l in enumerate(lines) if l.startswith(BAR)]
+    names = [lines[i + 1].replace("// SECTION: ", "") for i in starts]
+    end = next(i for i, l in enumerate(lines) if l.startswith("}  // namespace au"))
+    bounds = [
+        (starts[k], starts[k + 1] if k + 1 < len(starts) else end)
+        for k in range(len(starts))
+    ]
+
+    args.outdir.mkdir(parents=True, exist_ok=True)
+    for k, (name, _) in enumerate(zip(names, bounds)):
+        out = list(lines)
+        for j, (c, d) in enumerate(bounds):
+            if j != k:
+                for i in range(c, d):
+                    out[i] = ""
+        slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
+        outfile = args.outdir / f"{k:02d}_{slug}.cc"
+        outfile.write_text("\n".join(out))
+        print(outfile)
+
+
+if __name__ == "__main__":
+    main()
