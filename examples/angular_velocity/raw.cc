@@ -39,7 +39,7 @@ float wheel_rpm(float v_mps, float r_m) {
 int main() {
     // The wheel radius is 350 mm, so convert it to meters by hand first.
     const float omega_rpm = wheel_rpm(15.0f, 350.0f / 1000.0f);
-    std::cout << omega_rpm << " rev / min" << std::endl;  // Unit label typed by hand.
+    std::cout << omega_rpm << " rev / min" << '\n';  // Unit label typed by hand.
 }
 // --8<-- [end:example]
 // clang-format on
