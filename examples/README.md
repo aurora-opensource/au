@@ -12,9 +12,14 @@ Every code block on those pages is inlined from a file here, via `pymdownx.snipp
 those pages is hand-copied, so nothing there can drift out of date with the library without a test
 going red.  The README is the one exception, and it has its own drift check.
 
+There are two flavors.  Most examples are an **A/B pair** (`ab_example`) --- the next two sections
+are about those.  A few are **standalone** (`single_example`), for when the example's subject *is*
+Au and there is no plain-C++ version to compare against; see
+[Standalone examples](#standalone).
+
 ## The two invariants
 
-Most examples are a **pair**: `raw.cc` (plain C++, no units library) and `au.cc` (the same problem,
+An A/B example is a **pair**: `raw.cc` (plain C++, no units library) and `au.cc` (the same problem,
 using Au).  The website shows them as a pair of tabs, and the reader flips between them to compare
 corresponding lines *in place*.  That presentation only works if two things stay true, and
 `check_ab_example.sh` enforces both:
@@ -37,7 +42,7 @@ between two non-blank lines, where it survives --- or restructure so it isn't ne
 `check_ab_example.sh` counts the way the renderer does, so it will catch this; an earlier dev
 version counted raw source lines and called a visibly broken page aligned.
 
-## Adding an example
+## Adding an A/B example
 
 1. Write `<name>/raw.cc` and `<name>/au.cc` as complete, runnable programs.  Mark the doc-visible
    region of each with `// --8<-- [start:example]` and `// --8<-- [end:example]`.
@@ -50,7 +55,11 @@ version counted raw source lines and called a visibly broken page aligned.
 3. Register it in `BUILD.bazel` with `ab_example(...)`, giving the exact expected stdout.  The Au
    side needs `//au:io` in its deps if it prints (see below).
 
-4. Add a page under `docs/examples/`, modeled on `angular-velocity.md`: problem statement, tabs,
+4. Add `":<name>_doc_sources"` to the `doc_sources` filegroup at the top of `BUILD.bazel`.  Both
+   macros define that filegroup for you; listing it there is the one explicit edit per example, and
+   it is what lets the docs build see the source.
+
+5. Add a page under `docs/examples/`, modeled on `angular-velocity.md`: problem statement, tabs,
    "What's happening", "Related reading".  Link it from `docs/examples/index.md`.
 
 One rule for the doc page:
@@ -66,13 +75,46 @@ Nested regions work, and inner markers are stripped from the outer region's outp
 `angular_velocity` exposes short `headline` and `aliases` regions (used by the README and the docs
 front page) inside the full `example` region.
 
+## Standalone examples {#standalone}
+
+Reach for `single_example` when there is nothing meaningful to compare against, because the
+example's subject *is* Au rather than a computation Au happens to improve.  `atomic_units` is the
+case that motivated it: it builds a whole new system of units on top of the library, and a
+"plain C++" version of that is not a thing that exists.
+
+The *second* invariant above does not apply: there is no second tab, so there is nothing to line up.
+The first one does, in adapted form --- the single program must print exactly `expected_output` ---
+and it is the whole test.  `check_output.sh` performs the check (and `check_ab_example.sh` calls
+that same script once per program).
+
+The layout differs from an A/B example in one way.  Where a pair is two standalone programs, a
+standalone example usually *defines* something reusable, so `single_example` splits it:
+
+- `hdrs` and `lib_srcs` become a `cc_library`.  In C++14 `lib_srcs` is where the out-of-line unit
+  label definitions go (`constexpr const char Hartrees::label[];`); a C++17 project would not need
+  the file at all.
+- `main_src` (default `<name>/main.cc`) becomes the program, depending on that library.
+
+In other words, this will build it the way a reader's project would.  The doc page for
+`atomic_units` invites people to copy the files straight into their own code, and that invitation
+should be backed by a target shaped like the one they will write.
+
+To add an example: write the files, register with `single_example(...)`, add
+`":<name>_doc_sources"` to the `doc_sources` filegroup, and write the page.  Say on the index page
+why the example has no "before" version, so its entry does not read like an omission.
+
 ## Namespaces, and the `frontmatter` region
 
-Every file here carries a `frontmatter` region --- includes, plus the `using` declarations ---
-marked the same way as `example`, and every doc page shows it in a collapsed "Includes and usings"
-block inside each tab.  Add one to any new example.  Collapsing it is what makes it safe to put in
-both tabs: collapsed blocks are the same height in each, so the alignment of the code below
-survives.
+Every _program_ file here carries a `frontmatter` region --- includes, plus the `using`
+declarations --- marked the same way as `example`, and every doc page shows it in a collapsed
+"Includes and usings" block.  Add one to any new example's program.
+
+For an A/B pair that means both `raw.cc` and `au.cc`, and the collapsing is what makes it safe to
+show in both tabs: collapsed blocks are the same height in each, so the alignment of the code below
+survives.  A standalone example has one program, so it carries exactly one region and there is no
+alignment to protect.  The files such an example *defines* --- a header, plus the out-of-line
+definitions beside it --- carry regions of their own instead (`definitions`, `assert`, `labels`),
+and no frontmatter: their includes are part of what the example is teaching.
 
 The frontmatter exists such that we can follow our style guidance in these examples without
 distracting from the example itself:
@@ -90,8 +132,8 @@ distracting from the example itself:
 
 ## Printing
 
-Both sides print with `std::cout`, and the Au side exits via `.as(unit)` rather than `.in(unit)`,
-so the value stays a `Quantity` right up to the stream.  Two things fall out of that, and both are
+Every example prints with `std::cout`, and exits via `.as(unit)` rather than `.in(unit)`, so the
+value stays a `Quantity` right up to the stream.  Two things fall out of that, and both are
 deliberate:
 
 - **The unit label is derived, not typed.**  `omega.as(revolutions / minute)` prints
@@ -99,11 +141,17 @@ deliberate:
   kind of manual bookkeeping these examples exist to contrast --- so let it, and say so in a comment
   rather than quietly making both sides print something neutral.
 
-- **Don't reach for `setprecision`.**  The test only requires that the two sides agree with each
-  other and with `expected_output`.  Default stream precision is fine; if the printed digits
-  change, update `expected_output` rather than contorting the example to preserve an old string.
-  Do check that the two sides still agree bit-for-bit, since Au composes conversion factors
-  differently from hand-written arithmetic and the last digit can move.
+- **Don't reach for `setprecision`.**  The test only requires that the program --- or, for a pair,
+  both programs --- print exactly `expected_output`.  Default stream precision is fine; if the
+  printed digits change, update `expected_output` rather than contorting the example to preserve an
+  old string.  For a pair, do check that the two sides still agree bit-for-bit, since Au composes
+  conversion factors differently from hand-written arithmetic and the last digit can move.
+
+  This holds even when a printed value carries a *claim*.  `atomic_units` prints a line whose whole
+  point is that a value is exactly 1 --- and it still does not set the precision, because no
+  precision could prove that: an exact 1 and a `0.999...` that rounds to it print identically at
+  every width.  Make the claim to the compiler with a `static_assert` instead, and let the output
+  stay readable.  Wanting `setprecision` is a sign the claim belongs in an assertion.
 
 Printing pulls in `<iostream>`, so the Au target needs `//au:io`.  Many embedded projects avoid
 `<iostream>` for code size; nothing in Au depends on it, and `adc_millivolts` --- the embedded

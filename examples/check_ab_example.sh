@@ -29,22 +29,11 @@ status=0
 
 # 1. Both programs must produce exactly the expected output.  The Au version cannot be "better" by
 #    quietly computing something else.
+#    This is the same check a `single_example` makes, so delegate to the same script rather than
+#    keeping a second copy of it here.  It lives beside this one in the test's runfiles.
+check_output="$(dirname "$0")/check_output.sh"
 for pair in "raw:${raw_bin}" "au:${au_bin}"; do
-    label="${pair%%:*}"
-    binary="${pair#*:}"
-    actual_txt="${TEST_TMPDIR:-/tmp}/${label}_actual.txt"
-    if ! "${binary}" > "${actual_txt}"; then
-        echo "FAIL: the ${label} program exited nonzero." >&2
-        status=1
-        continue
-    fi
-    # Compare byte for byte, so that trailing whitespace and newlines count too.
-    if ! cmp -s "${actual_txt}" "${expected_txt}"; then
-        echo "FAIL: the ${label} program printed the wrong output." >&2
-        echo "  expected: $(od -c "${expected_txt}" | head -5)" >&2
-        echo "  actual:   $(od -c "${actual_txt}" | head -5)" >&2
-        status=1
-    fi
+    "${check_output}" "${pair#*:}" "${expected_txt}" "${pair%%:*}" || status=1
 done
 
 # 2. The doc-visible regions must have equal line counts, so corresponding lines sit at the same
