@@ -22,9 +22,12 @@
 #include "au/units/bytes.hh"
 #include "au/units/degrees.hh"
 #include "au/units/feet.hh"
+#include "au/units/hours.hh"
 #include "au/units/inches.hh"
 #include "au/units/joules.hh"
+#include "au/units/literals/miles.hh"
 #include "au/units/meters.hh"
+#include "au/units/miles.hh"
 #include "au/units/newtons.hh"
 #include "au/units/radians.hh"
 #include "au/units/revolutions.hh"
@@ -287,6 +290,39 @@ TEST(Constant, ChangesUnitsForSingularNameWhenPreMultiplying) {
 
 TEST(Constant, ChangesUnitsForSingularNameWhenDividedIntoIt) {
     StaticAssertTypeEq<decltype(c / meter), SingularNameFor<decltype(SpeedOfLight{} / Meters{})>>();
+}
+
+TEST(Constant, ChangesUnitsForSymbolWhenPostMultiplying) {
+    constexpr auto N = symbol_for(newtons);
+    StaticAssertTypeEq<decltype(N * c), Constant<decltype(Newtons{} * SpeedOfLight{})>>();
+}
+
+TEST(Constant, ChangesUnitsForSymbolWhenDividingIt) {
+    constexpr auto J = symbol_for(joules);
+    StaticAssertTypeEq<decltype(J / c), Constant<decltype(Joules{} / SpeedOfLight{})>>();
+}
+
+TEST(Constant, ChangesUnitsForSymbolWhenPreMultiplying) {
+    constexpr auto s = symbol_for(seconds);
+    StaticAssertTypeEq<decltype(c * s), Constant<decltype(SpeedOfLight{} * Seconds{})>>();
+}
+
+TEST(Constant, ChangesUnitsForSymbolWhenDividedIntoIt) {
+    constexpr auto m = symbol_for(meters);
+    StaticAssertTypeEq<decltype(c / m), Constant<decltype(SpeedOfLight{} / Meters{})>>();
+}
+
+TEST(Constant, ComposingUnitLiteralWithSymbolActsAsCompoundUnitLiteral) {
+    // Au provides unit literals for named units only, so there is no `_mph`.  Dividing a unit
+    // literal by a unit symbol gets the same effect.
+    using namespace ::au::au_literals;
+    using symbols::h;
+
+    constexpr auto speed_limit = 55_mi / h;
+
+    StaticAssertTypeEq<decltype(speed_limit),
+                       const Constant<decltype(Miles{} * mag<55>() / Hours{})>>();
+    EXPECT_THAT(speed_limit.as<double>(miles / hour), SameTypeAndValue((miles / hour)(55.0)));
 }
 
 TEST(Constant, ComposesViaMultiplication) {

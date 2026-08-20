@@ -23,6 +23,7 @@
 #include "au/quantity.hh"
 #include "au/stdx/type_traits.hh"
 #include "au/unit_of_measure.hh"
+#include "au/unit_symbol.hh"
 #include "au/wrapper_operations.hh"
 
 namespace au {
@@ -45,6 +46,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
                   detail::ComposesWith<Constant, Unit, Constant, Constant>,
                   detail::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
                   detail::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
+                  detail::ComposesWith<Constant, Unit, SymbolFor, Constant>,
                   detail::SupportsRationalPowers<Constant, Unit>,
                   detail::CanScaleByMagnitude<Constant, Unit> {
     // Convert this constant to a Quantity of the given rep.
