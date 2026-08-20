@@ -82,40 +82,37 @@ It's the "classic" error the units library aims to prevent.
     au/error_examples.cc:34:17: error: calling a private constructor of class 'au::Quantity<au::Seconds, double>'
         set_timeout(0.5);
                     ^
-    ./au/quantity.hh:483:15: note: declared private here
-        constexpr Quantity(Rep value) : value_{value} {}
-                  ^
+    ./au/quantity.hh:678:30: note: declared private here
+        AU_DEVICE_FUNC constexpr Quantity(Rep value) : value_{std::move(value)} {}
+                                 ^
     au/error_examples.cc:37:33: error: calling a private constructor of class 'au::Quantity<au::Meters, double>'
         constexpr QuantityD<Meters> length{5.5};
                                     ^
-    ./au/quantity.hh:483:15: note: declared private here
-        constexpr Quantity(Rep value) : value_{value} {}
-                  ^
+    ./au/quantity.hh:678:30: note: declared private here
+        AU_DEVICE_FUNC constexpr Quantity(Rep value) : value_{std::move(value)} {}
+                                 ^
     ```
 
-    **Compiler error (gcc 10)**
+    **Compiler error (gcc 12)**
     ```
     au/error_examples.cc: In function 'void au::example_private_constructor()':
-    au/error_examples.cc:34:20: error: 'constexpr au::Quantity<UnitT, RepT>::Quantity(au::Quantity<UnitT, RepT>::Rep) [with UnitT = au::Seconds; RepT = double; au::Quantity<UnitT, RepT>::Rep = double]' is private within this context
+    au/error_examples.cc:34:16: error: 'constexpr au::Quantity<UnitT, RepT>::Quantity(Rep) [with UnitT = au::Seconds; RepT = double; Rep = double]' is private within this context
        34 |     set_timeout(0.5);
-          |                    ^
-    In file included from ./au/prefix.hh:18,
+          |     ~~~~~~~~~~~^~~~~
+    In file included from ./au/constant.hh:23,
+                     from ./au/prefix.hh:18,
                      from ./au/chrono_interop.hh:20,
                      from ./au/au.hh:17,
                      from au/error_examples.cc:15:
-    ./au/quantity.hh:483:15: note: declared private here
-      483 |     constexpr Quantity(Rep value) : value_{value} {}
-          |               ^~~~~~~~
-    au/error_examples.cc:37:43: error: 'constexpr au::Quantity<UnitT, RepT>::Quantity(au::Quantity<UnitT, RepT>::Rep) [with UnitT = au::Meters; RepT = double; au::Quantity<UnitT, RepT>::Rep = double]' is private within this context
+    ./au/quantity.hh:678:30: note: declared private here
+      678 |     AU_DEVICE_FUNC constexpr Quantity(Rep value) : value_{std::move(value)} {}
+          |                              ^~~~~~~~
+    au/error_examples.cc:37:43: error: 'constexpr au::Quantity<UnitT, RepT>::Quantity(Rep) [with UnitT = au::Meters; RepT = double; Rep = double]' is private within this context
        37 |     constexpr QuantityD<Meters> length{5.5};
           |                                           ^
-    In file included from ./au/prefix.hh:18,
-                     from ./au/chrono_interop.hh:20,
-                     from ./au/au.hh:17,
-                     from au/error_examples.cc:15:
-    ./au/quantity.hh:483:15: note: declared private here
-      483 |     constexpr Quantity(Rep value) : value_{value} {}
-          |               ^~~~~~~~
+    ./au/quantity.hh:678:30: note: declared private here
+      678 |     AU_DEVICE_FUNC constexpr Quantity(Rep value) : value_{std::move(value)} {}
+          |                              ^~~~~~~~
     ```
 
     **Compiler error (MSVC 2022 x64)**
@@ -164,7 +161,12 @@ point maker), but it's _already_ a `Quantity` or `QuantityPoint`.
 
     **Compiler error (clang 14)**
     ```
-    ./au/quantity.hh:595:9: error: static_assert failed due to requirement 'is_not_already_a_quantity' "Input to QuantityMaker is already a Quantity"
+    In file included from au/error_examples.cc:15:
+    In file included from ./au/au.hh:17:
+    In file included from ./au/chrono_interop.hh:20:
+    In file included from ./au/prefix.hh:18:
+    In file included from ./au/constant.hh:23:
+    ./au/quantity.hh:880:9: error: static_assert failed due to requirement 'is_not_already_a_quantity' "Input to QuantityMaker is already a Quantity"
             static_assert(is_not_already_a_quantity, "Input to QuantityMaker is already a Quantity");
             ^             ~~~~~~~~~~~~~~~~~~~~~~~~~
     au/error_examples.cc:48:11: note: in instantiation of function template specialization 'au::QuantityMaker<au::Meters>::operator()<au::Meters, int>' requested here
@@ -173,39 +175,35 @@ point maker), but it's _already_ a `Quantity` or `QuantityPoint`.
     In file included from au/error_examples.cc:15:
     In file included from ./au/au.hh:17:
     In file included from ./au/chrono_interop.hh:20:
-    In file included from ./au/prefix.hh:19:
-    ./au/quantity_point.hh:273:9: error: static_assert failed due to requirement 'is_not_already_a_quantity_point' "Input to QuantityPointMaker is already a QuantityPoint"
+    In file included from ./au/prefix.hh:21:
+    ./au/quantity_point.hh:358:9: error: static_assert failed due to requirement 'is_not_already_a_quantity_point' "Input to QuantityPointMaker is already a QuantityPoint"
             static_assert(is_not_already_a_quantity_point,
             ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     au/error_examples.cc:51:14: note: in instantiation of function template specialization 'au::QuantityPointMaker<au::Meters>::operator()<au::Meters, int>' requested here
         meters_pt(x_pt);
                  ^
-    In file included from au/error_examples.cc:15:
-    In file included from ./au/au.hh:17:
-    In file included from ./au/chrono_interop.hh:20:
-    In file included from ./au/prefix.hh:18:
     ```
 
-    **Compiler error (gcc 10)**
+    **Compiler error (gcc 12)**
     ```
-    In file included from ./au/prefix.hh:18,
+    In file included from ./au/constant.hh:23,
+                     from ./au/prefix.hh:18,
                      from ./au/chrono_interop.hh:20,
                      from ./au/au.hh:17,
                      from au/error_examples.cc:15:
     ./au/quantity.hh: In instantiation of 'constexpr void au::QuantityMaker<UnitT>::operator()(au::Quantity<OtherUnit, OtherRep>) const [with U = au::Meters; R = int; UnitT = au::Meters]':
-    au/error_examples.cc:48:13:   required from here
-    ./au/quantity.hh:595:23: error: static assertion failed: Input to QuantityMaker is already a Quantity
-      595 |         static_assert(is_not_already_a_quantity, "Input to QuantityMaker is already a Quantity");
+    au/error_examples.cc:48:11:   required from here
+    ./au/quantity.hh:880:23: error: static assertion failed: Input to QuantityMaker is already a Quantity
+      880 |         static_assert(is_not_already_a_quantity, "Input to QuantityMaker is already a Quantity");
           |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
-    In file included from ./au/prefix.hh:19,
-                     from ./au/chrono_interop.hh:20,
-                     from ./au/au.hh:17,
-                     from au/error_examples.cc:15:
+    ./au/quantity.hh:880:23: note: 'is_not_already_a_quantity' evaluates to false
+    In file included from ./au/prefix.hh:21:
     ./au/quantity_point.hh: In instantiation of 'constexpr void au::QuantityPointMaker<UnitT>::operator()(au::QuantityPoint<U, R>) const [with U = au::Meters; R = int; Unit = au::Meters]':
-    au/error_examples.cc:51:19:   required from here
-    ./au/quantity_point.hh:273:23: error: static assertion failed: Input to QuantityPointMaker is already a QuantityPoint
-      273 |         static_assert(is_not_already_a_quantity_point,
+    au/error_examples.cc:51:14:   required from here
+    ./au/quantity_point.hh:358:23: error: static assertion failed: Input to QuantityPointMaker is already a QuantityPoint
+      358 |         static_assert(is_not_already_a_quantity_point,
           |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ./au/quantity_point.hh:358:23: note: 'is_not_already_a_quantity_point' evaluates to false
     ```
 
     **Compiler error (MSVC 2022 x64)**
@@ -301,12 +299,17 @@ you the risk set for your conversion, so you don't have to guess.
 
     **Compiler error (clang 14)**
     ```
-    ./au/quantity.hh:467:9: error: static_assert failed due to requirement '!is_truncation_only_unacceptable_risk' "Truncation risk too high.  See <https://aurora-opensource.github.io/au/main/troubleshooting/#risk-too-high>.  Your \"risk set\" is `TRUNCATION_RISK`."
+    In file included from au/error_examples.cc:15:
+    In file included from ./au/au.hh:17:
+    In file included from ./au/chrono_interop.hh:20:
+    In file included from ./au/prefix.hh:18:
+    In file included from ./au/constant.hh:23:
+    ./au/quantity.hh:662:9: error: static_assert failed due to requirement '!is_truncation_only_unacceptable_risk' "Truncation risk too high.  See <https://aurora-opensource.github.io/au/main/troubleshooting/#risk-too-high>.  Your \"risk set\" is `TRUNCATION_RISK`."
             static_assert(!is_truncation_only_unacceptable_risk,
             ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ./au/quantity.hh:192:60: note: in instantiation of function template specialization 'au::Quantity<au::Inches, int>::in_impl<int, au::QuantityMaker<au::Feet>, au::detail::CheckTheseRisks<au::detail::RiskSet<'\x03'>>>' requested here
-            return make_quantity<AssociatedUnitT<NewUnitSlot>>(in_impl<Rep>(u, policy));
-                                                               ^
+    ./au/quantity.hh:229:13: note: in instantiation of function template specialization 'au::Quantity<au::Inches, int>::in_impl<au::detail::UseStaticCast, void, au::QuantityMaker<au::Feet>, au::detail::CheckTheseRisks<au::detail::RiskSet<'\x03'>>>' requested here
+                in_impl<detail::UseStaticCast, void>(u, policy));
+                ^
     au/error_examples.cc:59:16: note: in instantiation of function template specialization 'au::Quantity<au::Inches, int>::as<au::QuantityMaker<au::Feet>, au::detail::CheckTheseRisks<au::detail::RiskSet<'\x03'>>>' requested here
         inches(24).as(feet);
                    ^
@@ -314,35 +317,39 @@ you the risk set for your conversion, so you don't have to guess.
     In file included from ./au/au.hh:17:
     In file included from ./au/chrono_interop.hh:20:
     In file included from ./au/prefix.hh:18:
-    ./au/quantity.hh:460:9: error: static_assert failed due to requirement '!is_overflow_only_unacceptable_risk' "Overflow risk too high.  See <https://aurora-opensource.github.io/au/main/troubleshooting/#risk-too-high>.  Your \"risk set\" is `OVERFLOW_RISK`."
+    In file included from ./au/constant.hh:23:
+    ./au/quantity.hh:655:9: error: static_assert failed due to requirement '!is_overflow_only_unacceptable_risk' "Overflow risk too high.  See <https://aurora-opensource.github.io/au/main/troubleshooting/#risk-too-high>.  Your \"risk set\" is `OVERFLOW_RISK`."
             static_assert(!is_overflow_only_unacceptable_risk,
             ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ./au/quantity.hh:192:60: note: in instantiation of function template specialization 'au::Quantity<au::Giga<au::Hertz>, int>::in_impl<int, au::QuantityMaker<au::Hertz>, au::detail::CheckTheseRisks<au::detail::RiskSet<'\x03'>>>' requested here
-            return make_quantity<AssociatedUnitT<NewUnitSlot>>(in_impl<Rep>(u, policy));
-                                                               ^
+    ./au/quantity.hh:229:13: note: in instantiation of function template specialization 'au::Quantity<au::Giga<au::Hertz>, int>::in_impl<au::detail::UseStaticCast, void, au::QuantityMaker<au::Hertz>, au::detail::CheckTheseRisks<au::detail::RiskSet<'\x03'>>>' requested here
+                in_impl<detail::UseStaticCast, void>(u, policy));
+                ^
     au/error_examples.cc:62:20: note: in instantiation of function template specialization 'au::Quantity<au::Giga<au::Hertz>, int>::as<au::QuantityMaker<au::Hertz>, au::detail::CheckTheseRisks<au::detail::RiskSet<'\x03'>>>' requested here
         giga(hertz)(1).as(hertz);
                        ^
     ```
 
-    **Compiler error (gcc 10)**
+    **Compiler error (gcc 12)**
     ```
-    In file included from ./au/prefix.hh:18,
+    In file included from ./au/constant.hh:23,
+                     from ./au/prefix.hh:18,
                      from ./au/chrono_interop.hh:20,
                      from ./au/au.hh:17,
                      from au/error_examples.cc:15:
-    ./au/quantity.hh: In instantiation of 'constexpr OtherRep au::Quantity<UnitT, RepT>::in_impl(OtherUnitSlot, RiskPolicyT) const [with OtherRep = int; OtherUnitSlot = au::QuantityMaker<au::Feet>; RiskPolicyT = au::detail::CheckTheseRisks<au::detail::RiskSet<3> >; UnitT = au::Inches; RepT = int]':
-    ./au/quantity.hh:192:72:   required from 'constexpr auto au::Quantity<UnitT, RepT>::as(NewUnitSlot, RiskPolicyT) const [with NewUnitSlot = au::QuantityMaker<au::Feet>; RiskPolicyT = au::detail::CheckTheseRisks<au::detail::RiskSet<3> >; UnitT = au::Inches; RepT = int]'
-    au/error_examples.cc:59:23:   required from here
-    ./au/quantity.hh:467:23: error: static assertion failed: Truncation risk too high.  See <https://aurora-opensource.github.io/au/main/troubleshooting/#risk-too-high>.  Your "risk set" is `TRUNCATION_RISK`.
-      467 |         static_assert(!is_truncation_only_unacceptable_risk,
-          |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ./au/quantity.hh: In instantiation of 'constexpr OtherRep au::Quantity<UnitT, RepT>::in_impl(OtherUnitSlot, RiskPolicyT) const [with OtherRep = int; OtherUnitSlot = au::QuantityMaker<au::Hertz>; RiskPolicyT = au::detail::CheckTheseRisks<au::detail::RiskSet<3> >; UnitT = au::Giga<au::Hertz>; RepT = int]':
-    ./au/quantity.hh:192:72:   required from 'constexpr auto au::Quantity<UnitT, RepT>::as(NewUnitSlot, RiskPolicyT) const [with NewUnitSlot = au::QuantityMaker<au::Hertz>; RiskPolicyT = au::detail::CheckTheseRisks<au::detail::RiskSet<3> >; UnitT = au::Giga<au::Hertz>; RepT = int]'
-    au/error_examples.cc:62:28:   required from here
-    ./au/quantity.hh:460:23: error: static assertion failed: Overflow risk too high.  See <https://aurora-opensource.github.io/au/main/troubleshooting/#risk-too-high>.  Your "risk set" is `OVERFLOW_RISK`.
-      460 |         static_assert(!is_overflow_only_unacceptable_risk,
-          |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ./au/quantity.hh: In instantiation of 'constexpr auto au::Quantity<UnitT, RepT>::in_impl(OtherUnitSlot, RiskPolicyT) const [with CastStrategy = au::detail::UseStaticCast; OtherRep = void; OtherUnitSlot = au::QuantityMaker<au::Feet>; RiskPolicyT = au::detail::CheckTheseRisks<au::detail::RiskSet<3> >; UnitT = au::Inches; RepT = int]':
+    ./au/quantity.hh:229:49:   required from 'constexpr auto au::Quantity<UnitT, RepT>::as(NewUnitSlot, RiskPolicyT) const [with NewUnitSlot = au::QuantityMaker<au::Feet>; RiskPolicyT = au::detail::CheckTheseRisks<au::detail::RiskSet<3> >; UnitT = au::Inches; RepT = int]'
+    au/error_examples.cc:59:18:   required from here
+    ./au/quantity.hh:662:24: error: static assertion failed: Truncation risk too high.  See <https://aurora-opensource.github.io/au/main/troubleshooting/#risk-too-high>.  Your "risk set" is `TRUNCATION_RISK`.
+      662 |         static_assert(!is_truncation_only_unacceptable_risk,
+          |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ./au/quantity.hh:662:24: note: '!(bool)is_truncation_only_unacceptable_risk' evaluates to false
+    ./au/quantity.hh: In instantiation of 'constexpr auto au::Quantity<UnitT, RepT>::in_impl(OtherUnitSlot, RiskPolicyT) const [with CastStrategy = au::detail::UseStaticCast; OtherRep = void; OtherUnitSlot = au::QuantityMaker<au::Hertz>; RiskPolicyT = au::detail::CheckTheseRisks<au::detail::RiskSet<3> >; UnitT = au::Giga<au::Hertz>; RepT = int]':
+    ./au/quantity.hh:229:49:   required from 'constexpr auto au::Quantity<UnitT, RepT>::as(NewUnitSlot, RiskPolicyT) const [with NewUnitSlot = au::QuantityMaker<au::Hertz>; RiskPolicyT = au::detail::CheckTheseRisks<au::detail::RiskSet<3> >; UnitT = au::Giga<au::Hertz>; RepT = int]'
+    au/error_examples.cc:62:22:   required from here
+    ./au/quantity.hh:655:24: error: static assertion failed: Overflow risk too high.  See <https://aurora-opensource.github.io/au/main/troubleshooting/#risk-too-high>.  Your "risk set" is `OVERFLOW_RISK`.
+      655 |         static_assert(!is_overflow_only_unacceptable_risk,
+          |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ./au/quantity.hh:655:24: note: '!(bool)is_overflow_only_unacceptable_risk' evaluates to false
     ```
 
     **Compiler error (MSVC 2022 x64)**
@@ -385,7 +392,12 @@ you the risk set for your conversion, so you don't have to guess.
             ]
     ```
 
-## No type named 'type' in 'std::common_type'
+## Can only compute ratio of same-dimension units
+
+**Other variants:**
+
+- "No type named 'type' in 'std::common_type'" (this was the main form of this error in Au 0.5.0 and
+  earlier, and it can still show up as a follow-on error)
 
 **Meaning:**  You probably tried to perform a ["common-unit
 operation"](./discussion/concepts/arithmetic.md#common-unit) (addition, subtraction, comparison)
@@ -416,49 +428,146 @@ dimension.  Then, figure out how to fix your expression so it has the right dime
     ```
     In file included from au/error_examples.cc:15:
     In file included from ./au/au.hh:17:
-    In file included from ./au/chrono_interop.hh:17:
-    In file included from external/llvm_14_toolchain_llvm/bin/../include/c++/v1/chrono:697:
-    In file included from external/llvm_14_toolchain_llvm/bin/../include/c++/v1/__chrono/calendar.h:13:
-    In file included from external/llvm_14_toolchain_llvm/bin/../include/c++/v1/__chrono/duration.h:14:
-    In file included from external/llvm_14_toolchain_llvm/bin/../include/c++/v1/limits:105:
-    external/llvm_14_toolchain_llvm/bin/../include/c++/v1/type_traits:2388:25: error: no type named 'type' in 'std::common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int>>'
-    template <class ..._Tp> using common_type_t = typename common_type<_Tp...>::type;
-                            ^~~~~
-    ./au/quantity.hh:722:20: note: in instantiation of template type alias 'common_type_t' requested here
-        using C = std::common_type_t<T, U>;
-                       ^
-    ./au/quantity.hh:769:20: note: in instantiation of function template specialization 'au::detail::using_common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int>, au::detail::Plus>' requested here
-        return detail::using_common_type(q1, q2, detail::plus);
-                       ^
+    In file included from ./au/chrono_interop.hh:20:
+    In file included from ./au/prefix.hh:18:
+    In file included from ./au/constant.hh:23:
+    In file included from ./au/quantity.hh:25:
+    In file included from ./au/conversion_policy.hh:27:
+    ./au/unit_of_measure.hh:132:5: error: static_assert failed due to requirement 'HasSameDimension<au::Meters, au::Seconds>::value' "Can only compute ratio of same-dimension units"
+        static_assert(HasSameDimension<U1, U2>::value,
+        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ./au/unit_of_measure.hh:136:1: note: in instantiation of template class 'au::UnitRatioImpl<au::Meters, au::Seconds>' requested here
+    using UnitRatio = typename UnitRatioImpl<U1, U2>::type;
+    ^
+    ./au/unit_of_measure.hh:742:73: note: in instantiation of template type alias 'UnitRatio' requested here
+                                                stdx::conjunction<IsInteger<UnitRatio<U1, U2>>,
+                                                                            ^
+    ./au/stdx/type_traits.hh:44:25: note: in instantiation of template class 'au::detail::IsFirstUnitRedundant<au::CommonUnitPack, au::Meters, au::Seconds>' requested here
+    struct disjunction<B> : B {};
+                            ^
+    ./au/unit_of_measure.hh:752:17: note: in instantiation of template class 'au::stdx::disjunction<au::detail::IsFirstUnitRedundant<au::CommonUnitPack, au::Meters, au::Seconds>>' requested here
+              stdx::disjunction<IsFirstUnitRedundant<Pack, H, Ts>...>::value,
+                    ^
+    ./au/unit_of_measure.hh:729:1: note: in instantiation of template class 'au::detail::EliminateRedundantUnitsImpl<au::CommonUnitPack<au::Meters, au::Seconds>>' requested here
+    using EliminateRedundantUnits = typename EliminateRedundantUnitsImpl<Pack>::type;
+    ^
+    ./au/unit_of_measure.hh:913:35: note: in instantiation of template type alias 'EliminateRedundantUnits' requested here
+        : stdx::type_identity<detail::EliminateRedundantUnits<
+                                      ^
+    ./au/unit_of_measure.hh:926:28: note: in instantiation of template class 'au::ComputeCommonUnitImpl<au::Meters, au::Seconds>' requested here
+              typename detail::IncludeInPackIf<IsNonzero, ComputeCommonUnitImpl, Us...>::type>::type>> {
+                               ^
+    ./au/unit_of_measure.hh:178:1: note: in instantiation of template class 'au::ComputeCommonUnit<au::Meters, au::Seconds>' requested here
+    using CommonUnit = typename ComputeCommonUnit<Us...>::type;
+    ^
+    ./au/quantity.hh:1170:15: note: in instantiation of template type alias 'CommonUnit' requested here
+        using U = CommonUnit<U1, U2>;
+                  ^
+    au/error_examples.cc:70:15: note: in instantiation of function template specialization 'au::operator+<au::Meters, au::Seconds, int, int>' requested here
+        meters(1) + seconds(1);
+                  ^
+    In file included from au/error_examples.cc:15:
+    In file included from ./au/au.hh:17:
+    In file included from ./au/chrono_interop.hh:20:
+    In file included from ./au/prefix.hh:18:
+    In file included from ./au/constant.hh:23:
+    In file included from ./au/quantity.hh:25:
+    In file included from ./au/conversion_policy.hh:20:
+    In file included from ./au/conversion_strategy.hh:17:
+    In file included from ./au/abstract_operations.hh:21:
+    In file included from ./au/magnitude.hh:27:
+    ./au/packs.hh:156:1: error: implicit instantiation of undefined template 'au::PackPowerImpl<au::Magnitude, void, std::ratio<-1, 1>>'
+    using PackPower =
+    ^
+    ./au/packs.hh:161:1: note: in instantiation of template type alias 'PackPower' requested here
+    using PackInverse = PackPower<Pack, T, -1>;
+    ^
+    ./au/packs.hh:165:1: note: in instantiation of template type alias 'PackInverse' requested here
+    using PackQuotient = PackProduct<Pack, T, PackInverse<Pack, U>>;
+    ^
+    ./au/magnitude.hh:72:1: note: in instantiation of template type alias 'PackQuotient' requested here
+    using MagQuotient = PackQuotient<Magnitude, T, U>;
+    ^
+    ./au/unit_of_measure.hh:131:44: note: in instantiation of template type alias 'MagQuotient' requested here
+    struct UnitRatioImpl : stdx::type_identity<MagQuotient<detail::MagT<U1>, detail::MagT<U2>>> {
+                                               ^
+    ./au/unit_of_measure.hh:136:1: note: in instantiation of template class 'au::UnitRatioImpl<au::Meters, int>' requested here
+    using UnitRatio = typename UnitRatioImpl<U1, U2>::type;
+    ^
+    ./au/quantity.hh:1158:36: note: in instantiation of template type alias 'UnitRatio' requested here
+        : ScaledCopy<ExplicitRepFor<R, UnitRatio<U, TargetUnit>, OtherR>, TargetUnit, U, R> {};
+                                       ^
+    ./au/quantity.hh:1162:12: note: in instantiation of template class 'au::detail::RefOrScaledCopy<int, int, au::Meters, int, false>' requested here
+        return RefOrScaledCopy<OtherR, TargetUnit, U, R>{}(q);
+               ^
+    ./au/quantity.hh:1171:37: note: in instantiation of function template specialization 'au::detail::ref_or_scaled_copy<int, int, au::Meters, int>' requested here
+        return make_quantity<U>(detail::ref_or_scaled_copy<R2>(U{}, q1) +
+                                        ^
+    au/error_examples.cc:70:15: note: in instantiation of function template specialization 'au::operator+<au::Meters, au::Seconds, int, int>' requested here
+        meters(1) + seconds(1);
+                  ^
+    ./au/packs.hh:151:8: note: template is declared here
+    struct PackPowerImpl;
+           ^
+    In file included from au/error_examples.cc:15:
+    In file included from ./au/au.hh:17:
+    In file included from ./au/chrono_interop.hh:20:
+    In file included from ./au/prefix.hh:18:
+    In file included from ./au/constant.hh:23:
+    In file included from ./au/quantity.hh:25:
+    In file included from ./au/conversion_policy.hh:27:
+    ./au/unit_of_measure.hh:132:5: error: static_assert failed due to requirement 'HasSameDimension<au::Meters, int>::value' "Can only compute ratio of same-dimension units"
+        static_assert(HasSameDimension<U1, U2>::value,
+        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ./au/unit_of_measure.hh:136:1: note: in instantiation of template class 'au::UnitRatioImpl<au::Meters, int>' requested here
+    using UnitRatio = typename UnitRatioImpl<U1, U2>::type;
+    ^
+    ./au/quantity.hh:1158:36: note: in instantiation of template type alias 'UnitRatio' requested here
+        : ScaledCopy<ExplicitRepFor<R, UnitRatio<U, TargetUnit>, OtherR>, TargetUnit, U, R> {};
+                                       ^
+    ./au/quantity.hh:1162:12: note: in instantiation of template class 'au::detail::RefOrScaledCopy<int, int, au::Meters, int, false>' requested here
+        return RefOrScaledCopy<OtherR, TargetUnit, U, R>{}(q);
+               ^
+    ./au/quantity.hh:1171:37: note: in instantiation of function template specialization 'au::detail::ref_or_scaled_copy<int, int, au::Meters, int>' requested here
+        return make_quantity<U>(detail::ref_or_scaled_copy<R2>(U{}, q1) +
+                                        ^
     au/error_examples.cc:70:15: note: in instantiation of function template specialization 'au::operator+<au::Meters, au::Seconds, int, int>' requested here
         meters(1) + seconds(1);
                   ^
     ```
 
-    **Compiler error (gcc 10)**
+    **Compiler error (gcc 12)**
     ```
-    In file included from external/sysroot_x86_64//include/c++/10.3.0/ratio:39,
-                     from external/sysroot_x86_64//include/c++/10.3.0/chrono:39,
-                     from ./au/chrono_interop.hh:17,
-                     from ./au/au.hh:17,
-                     from au/error_examples.cc:15:
-    external/sysroot_x86_64//include/c++/10.3.0/type_traits: In substitution of 'template<class ... _Tp> using common_type_t = typename std::common_type::type [with _Tp = {au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int>}]':
-    ./au/quantity.hh:722:11:   required from 'constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity<au::Meters, int>; U = au::Quantity<au::Seconds, int>; Func = au::detail::Plus]'
-    ./au/quantity.hh:769:37:   required from 'constexpr auto au::operator+(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Meters; U2 = au::Seconds; R1 = int; R2 = int]'
-    au/error_examples.cc:70:26:   required from here
-    external/sysroot_x86_64//include/c++/10.3.0/type_traits:2562:11: error: no type named 'type' in 'struct std::common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int> >'
-     2562 |     using common_type_t = typename common_type<_Tp...>::type;
-          |           ^~~~~~~~~~~~~
-    In file included from ./au/prefix.hh:18,
+    In file included from ./au/conversion_policy.hh:27,
+                     from ./au/quantity.hh:25,
+                     from ./au/constant.hh:23,
+                     from ./au/prefix.hh:18,
                      from ./au/chrono_interop.hh:20,
                      from ./au/au.hh:17,
                      from au/error_examples.cc:15:
-    ./au/quantity.hh: In instantiation of 'constexpr auto au::detail::using_common_type(T, U, Func) [with T = au::Quantity<au::Meters, int>; U = au::Quantity<au::Seconds, int>; Func = au::detail::Plus]':
-    ./au/quantity.hh:769:37:   required from 'constexpr auto au::operator+(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Meters; U2 = au::Seconds; R1 = int; R2 = int]'
+    ./au/unit_of_measure.hh: In instantiation of 'struct au::UnitRatioImpl<au::Meters, au::Seconds>':
+    ./au/unit_of_measure.hh:737:8:   required from 'struct au::detail::IsFirstUnitRedundant<au::CommonUnitPack, au::Meters, au::Seconds>'
+    ./au/stdx/type_traits.hh:44:8:   required from 'struct au::stdx::disjunction<au::detail::IsFirstUnitRedundant<au::CommonUnitPack, au::Meters, au::Seconds> >'
+    ./au/unit_of_measure.hh:748:8:   required from 'struct au::detail::EliminateRedundantUnitsImpl<au::CommonUnitPack<au::Meters, au::Seconds> >'
+    ./au/unit_of_measure.hh:912:8:   required from 'struct au::ComputeCommonUnitImpl<au::Meters, au::Seconds>'
+    ./au/unit_of_measure.hh:923:8:   required from 'struct au::ComputeCommonUnit<au::Meters, au::Seconds>'
+    ./au/unit_of_measure.hh:178:7:   required by substitution of 'template<class ... Us> using CommonUnit = typename au::ComputeCommonUnit::type [with Us = {au::Meters, au::Seconds}]'
+    ./au/quantity.hh:1170:11:   required from 'constexpr auto au::operator+(const Quantity<U1, R1>&, const Quantity<U2, R2>&) [with U1 = Meters; U2 = Seconds; R1 = int; R2 = int]'
     au/error_examples.cc:70:26:   required from here
-    ./au/quantity.hh:724:94: error: no type named 'type' in 'struct std::common_type<au::Quantity<au::Meters, int>, au::Quantity<au::Seconds, int> >'
-      724 |         std::is_same<typename C::Rep, std::common_type_t<typename T::Rep, typename U::Rep>>::value,
-          |                                                                                              ^~~~~
+    ./au/unit_of_measure.hh:132:45: error: static assertion failed: Can only compute ratio of same-dimension units
+      132 |     static_assert(HasSameDimension<U1, U2>::value,
+          |                                             ^~~~~
+    ./au/unit_of_measure.hh:132:45: note: 'std::integral_constant<bool, false>::value' evaluates to false
+    ./au/unit_of_measure.hh: In instantiation of 'struct au::UnitRatioImpl<au::Seconds, au::Meters>':
+    ./au/unit_of_measure.hh:737:8:   required from 'struct au::detail::IsFirstUnitRedundant<au::CommonUnitPack, au::Seconds, au::Meters>'
+    ./au/unit_of_measure.hh:748:8:   required from 'struct au::detail::EliminateRedundantUnitsImpl<au::CommonUnitPack<au::Meters, au::Seconds> >'
+    ./au/unit_of_measure.hh:912:8:   required from 'struct au::ComputeCommonUnitImpl<au::Meters, au::Seconds>'
+    ./au/unit_of_measure.hh:923:8:   required from 'struct au::ComputeCommonUnit<au::Meters, au::Seconds>'
+    ./au/unit_of_measure.hh:178:7:   required by substitution of 'template<class ... Us> using CommonUnit = typename au::ComputeCommonUnit::type [with Us = {au::Meters, au::Seconds}]'
+    ./au/quantity.hh:1170:11:   required from 'constexpr auto au::operator+(const Quantity<U1, R1>&, const Quantity<U2, R2>&) [with U1 = Meters; U2 = Seconds; R1 = int; R2 = int]'
+    au/error_examples.cc:70:26:   required from here
+    ./au/unit_of_measure.hh:132:45: error: static assertion failed: Can only compute ratio of same-dimension units
+    ./au/unit_of_measure.hh:132:45: note: 'std::integral_constant<bool, false>::value' evaluates to false
     ```
 
     **Compiler error (MSVC 2022 x64)**
@@ -592,67 +701,71 @@ a unit that you scale by a magnitude, `mag<N>()`.
     In file included from ./au/au.hh:17:
     In file included from ./au/chrono_interop.hh:20:
     In file included from ./au/prefix.hh:18:
-    ./au/quantity.hh:491:5: error: static_assert failed due to requirement 'detail::AlwaysFalse<au::Bytes, int>::value' "Can't pass `Quantity` to a unit slot (see: https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)"
+    In file included from ./au/constant.hh:23:
+    ./au/quantity.hh:686:5: error: static_assert failed due to requirement 'detail::AlwaysFalse<au::Bytes, int>::value' "Can't pass `Quantity` to a unit slot (see: https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)"
         static_assert(
         ^
-    ./au/unit_of_measure.hh:145:1: note: in instantiation of template class 'au::AssociatedUnit<au::Quantity<au::Bytes, int>>' requested here
-    using AssociatedUnitT = typename AssociatedUnit<U>::type;
+    ./au/unit_of_measure.hh:147:1: note: in instantiation of template class 'au::AssociatedUnitImpl<au::Quantity<au::Bytes, int>>' requested here
+    using AssociatedUnit = typename AssociatedUnitImpl<U>::type;
     ^
-    ./au/math.hh:497:26: note: in instantiation of template type alias 'AssociatedUnitT' requested here
-        return make_quantity<AssociatedUnitT<RoundingUnits>>(round_in<OutputRep>(rounding_units, q));
+    ./au/math.hh:538:26: note: in instantiation of template type alias 'AssociatedUnit' requested here
+        return make_quantity<AssociatedUnit<RoundingUnits>>(round_in<OutputRep>(rounding_units, q));
                              ^
     au/error_examples.cc:78:12: note: in instantiation of function template specialization 'au::round_as<int, au::Quantity<au::Bytes, int>, au::Bytes, int>' requested here
         size = round_as<int>(bytes(10), size);
                ^
     ```
 
-    **Compiler error (gcc 10)**
+    **Compiler error (gcc 12)**
     ```
-    In file included from ./au/prefix.hh:18,
-                     from ./au/chrono_interop.hh:20,
-                     from ./au/au.hh:17,
-                     from au/error_examples.cc:15:
-    ./au/quantity.hh: In instantiation of 'struct au::AssociatedUnit<au::Quantity<au::Bytes, int> >':
-    ./au/unit_of_measure.hh:145:7:   required by substitution of 'template<class U> using AssociatedUnitT = typename au::AssociatedUnit::type [with U = au::Quantity<au::Bytes, int>]'
-    ./au/math.hh:497:12:   required from 'auto au::round_as(RoundingUnits, au::Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = au::Quantity<au::Bytes, int>; U = au::Bytes; R = int]'
-    au/error_examples.cc:78:41:   required from here
-    ./au/quantity.hh:492:36: error: static assertion failed: Can't pass `Quantity` to a unit slot (see: https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)
-      492 |         detail::AlwaysFalse<U, R>::value,
-          |                                    ^~~~~
-    In file included from ./au/conversion_policy.hh:26,
-                     from ./au/quantity.hh:19,
+    In file included from ./au/constant.hh:23,
                      from ./au/prefix.hh:18,
                      from ./au/chrono_interop.hh:20,
                      from ./au/au.hh:17,
                      from au/error_examples.cc:15:
-    ./au/unit_of_measure.hh: In substitution of 'template<class U> using AssociatedUnitT = typename au::AssociatedUnit::type [with U = au::Quantity<au::Bytes, int>]':
-    ./au/math.hh:497:12:   required from 'auto au::round_as(RoundingUnits, au::Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = au::Quantity<au::Bytes, int>; U = au::Bytes; R = int]'
-    au/error_examples.cc:78:41:   required from here
-    ./au/unit_of_measure.hh:145:7: error: no type named 'type' in 'struct au::AssociatedUnit<au::Quantity<au::Bytes, int> >'
-      145 | using AssociatedUnitT = typename AssociatedUnit<U>::type;
-          |       ^~~~~~~~~~~~~~~
-    In file included from ./au/prefix.hh:18,
-                     from ./au/chrono_interop.hh:20,
-                     from ./au/au.hh:17,
-                     from au/error_examples.cc:15:
-    ./au/quantity.hh: In instantiation of 'constexpr OtherRep au::Quantity<UnitT, RepT>::in_impl(OtherUnitSlot, RiskPolicyT) const [with OtherRep = double; OtherUnitSlot = au::Quantity<au::Bytes, int>; RiskPolicyT = au::detail::CheckTheseRisks<au::detail::RiskSet<0> >; UnitT = au::Bytes; RepT = int]':
-    ./au/quantity.hh:200:31:   required from 'constexpr auto au::Quantity<UnitT, RepT>::in(NewUnitSlot, RiskPolicyT) const [with NewRep = double; NewUnitSlot = au::Quantity<au::Bytes, int>; RiskPolicyT = au::detail::CheckTheseRisks<au::detail::RiskSet<0> >; UnitT = au::Bytes; RepT = int]'
-    ./au/math.hh:445:52:   required from 'auto au::round_in(RoundingUnits, au::Quantity<Unit, Rep>) [with RoundingUnits = au::Quantity<au::Bytes, int>; U = au::Bytes; R = int]'
-    ./au/math.hh:463:43:   required from 'auto au::round_in(RoundingUnits, au::Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = au::Quantity<au::Bytes, int>; U = au::Bytes; R = int]'
-    ./au/math.hh:497:77:   required from 'auto au::round_as(RoundingUnits, au::Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = au::Quantity<au::Bytes, int>; U = au::Bytes; R = int]'
-    au/error_examples.cc:78:41:   required from here
-    ./au/quantity.hh:446:42: error: no type named 'type' in 'struct au::AssociatedUnit<au::Quantity<au::Bytes, int> >'
-      446 |         static_assert(IsUnit<OtherUnit>::value, "Invalid type passed to unit slot");
+    ./au/quantity.hh: In instantiation of 'struct au::AssociatedUnitImpl<au::Quantity<au::Bytes, int> >':
+    ./au/unit_of_measure.hh:147:7:   required by substitution of 'template<class U> using AssociatedUnit = typename au::AssociatedUnitImpl::type [with U = au::Quantity<au::Bytes, int>]'
+    ./au/math.hh:538:12:   required from 'auto au::round_as(RoundingUnits, Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = Quantity<Bytes, int>; U = Bytes; R = int]'
+    au/error_examples.cc:78:25:   required from here
+    ./au/quantity.hh:687:36: error: static assertion failed: Can't pass `Quantity` to a unit slot (see: https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)
+      687 |         detail::AlwaysFalse<U, R>::value,
+          |                                    ^~~~~
+    ./au/quantity.hh:687:36: note: 'std::integral_constant<bool, false>::value' evaluates to false
+    In file included from ./au/conversion_policy.hh:27,
+                     from ./au/quantity.hh:25:
+    ./au/unit_of_measure.hh: In substitution of 'template<class U> using AssociatedUnit = typename au::AssociatedUnitImpl::type [with U = au::Quantity<au::Bytes, int>]':
+    ./au/math.hh:538:12:   required from 'auto au::round_as(RoundingUnits, Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = Quantity<Bytes, int>; U = Bytes; R = int]'
+    au/error_examples.cc:78:25:   required from here
+    ./au/unit_of_measure.hh:147:7: error: no type named 'type' in 'struct au::AssociatedUnitImpl<au::Quantity<au::Bytes, int> >'
+      147 | using AssociatedUnit = typename AssociatedUnitImpl<U>::type;
+          |       ^~~~~~~~~~~~~~
+    ./au/quantity.hh: In instantiation of 'constexpr auto au::Quantity<UnitT, RepT>::in_impl(OtherUnitSlot, RiskPolicyT) const [with CastStrategy = au::detail::UseStaticCast; OtherRep = double; OtherUnitSlot = au::Quantity<au::Bytes, int>; RiskPolicyT = au::detail::CheckTheseRisks<au::detail::RiskSet<3> >; UnitT = au::Bytes; RepT = int]':
+    ./au/quantity.hh:238:57:   required from 'constexpr auto au::Quantity<UnitT, RepT>::in(NewUnitSlot, RiskPolicyT) const [with NewRep = double; NewUnitSlot = au::Quantity<au::Bytes, int>; RiskPolicyT = au::detail::CheckTheseRisks<au::detail::RiskSet<3> >; UnitT = au::Bytes; RepT = int]'
+    ./au/math.hh:477:52:   required from 'auto au::round_in(RoundingUnits, Quantity<Unit, Rep>) [with RoundingUnits = Quantity<Bytes, int>; U = Bytes; R = int]'
+    ./au/math.hh:495:43:   required from 'auto au::round_in(RoundingUnits, Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = Quantity<Bytes, int>; U = Bytes; R = int]'
+    ./au/math.hh:538:76:   required from 'auto au::round_as(RoundingUnits, Quantity<U2, R2>) [with OutputRep = int; RoundingUnits = Quantity<Bytes, int>; U = Bytes; R = int]'
+    au/error_examples.cc:78:25:   required from here
+    ./au/quantity.hh:636:42: error: no type named 'type' in 'struct au::AssociatedUnitImpl<au::Quantity<au::Bytes, int> >'
+      636 |         static_assert(IsUnit<OtherUnit>::value, "Invalid type passed to unit slot");
           |                                          ^~~~~
-    ./au/quantity.hh:448:15: error: no type named 'type' in 'struct au::AssociatedUnit<au::Quantity<au::Bytes, int> >'
-      448 |         using Op = detail::ConversionForRepsAndFactor<Rep, OtherRep, UnitRatioT<Unit, OtherUnit>>;
+    ./au/quantity.hh:638:15: error: no type named 'type' in 'struct au::AssociatedUnitImpl<au::Quantity<au::Bytes, int> >'
+      638 |         using Op = detail::
           |               ^~
-    ./au/quantity.hh:452:85: error: no type named 'type' in 'struct au::AssociatedUnit<au::Quantity<au::Bytes, int> >'
-      452 |         constexpr bool is_overflow_risk_ok = detail::OverflowRiskAcceptablyLow<Op>::value;
-          |                                                                                     ^~~~~
-    ./au/quantity.hh:456:89: error: no type named 'type' in 'struct au::AssociatedUnit<au::Quantity<au::Bytes, int> >'
-      456 |         constexpr bool is_truncation_risk_ok = detail::TruncationRiskAcceptablyLow<Op>::value;
+    ./au/quantity.hh:647:64: error: no type named 'type' in 'struct au::AssociatedUnitImpl<au::Quantity<au::Bytes, int> >'
+      647 |                                                         Rep>>::value;
+          |                                                                ^~~~~
+    ./au/quantity.hh:651:89: error: no type named 'type' in 'struct au::AssociatedUnitImpl<au::Quantity<au::Bytes, int> >'
+      651 |         constexpr bool is_truncation_risk_ok = detail::TruncationRiskAcceptablyLow<Op>::value;
           |                                                                                         ^~~~~
+    ./au/quantity.hh:655:23: error: non-constant condition for static assertion
+      655 |         static_assert(!is_overflow_only_unacceptable_risk,
+          |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ./au/quantity.hh:662:23: error: non-constant condition for static assertion
+      662 |         static_assert(!is_truncation_only_unacceptable_risk,
+          |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ./au/quantity.hh:670:23: error: non-constant condition for static assertion
+      670 |         static_assert(!are_both_overflow_and_truncation_unacceptably_risky,
+          |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ```
 
     **Compiler error (MSVC 2022 x64)**
@@ -834,29 +947,32 @@ approach: read the warning below first.
     In file included from ./au/au.hh:17:
     In file included from ./au/chrono_interop.hh:20:
     In file included from ./au/prefix.hh:18:
-    ./au/quantity.hh:436:9: error: static_assert failed due to requirement 'are_units_quantity_equivalent || !uses_integer_division' "Dangerous integer division forbidden.  See <https://aurora-opensource.github.io/au/main/troubleshooting/#integer-division-forbidden> for more details about the risks, and your options to resolve this error."
+    In file included from ./au/constant.hh:23:
+    ./au/quantity.hh:623:9: error: static_assert failed due to requirement 'are_units_quantity_equivalent || !uses_integer_division' "Integer division forbidden.  See <https://aurora-opensource.github.io/au/main/troubleshooting/#integer-division-forbidden> for more details about the risks, and your options to resolve this error."
             static_assert(are_units_quantity_equivalent || !uses_integer_division,
             ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ./au/quantity.hh:309:9: note: in instantiation of function template specialization 'au::Quantity<au::Meters, int>::warn_if_integer_division<au::UnitProduct<au::Miles, au::Pow<au::Hours, -1>>, int>' requested here
+    ./au/quantity.hh:429:9: note: in instantiation of function template specialization 'au::Quantity<au::Meters, int>::warn_if_integer_division<au::UnitProductPack<au::Miles, au::Pow<au::Hours, -1>>, int>' requested here
             warn_if_integer_division<OtherUnit, OtherRep>();
             ^
-    au/error_examples.cc:86:39: note: in instantiation of function template specialization 'au::Quantity<au::Meters, int>::operator/<au::UnitProduct<au::Miles, au::Pow<au::Hours, -1>>, int>' requested here
+    au/error_examples.cc:86:39: note: in instantiation of function template specialization 'au::Quantity<au::Meters, int>::operator/<au::UnitProductPack<au::Miles, au::Pow<au::Hours, -1>>, int>' requested here
         QuantityD<Seconds> t = meters(60) / (miles / hour)(65);
                                           ^
     ```
 
-    **Compiler error (gcc 10)**
+    **Compiler error (gcc 12)**
     ```
-    In file included from ./au/prefix.hh:18,
+    In file included from ./au/constant.hh:23,
+                     from ./au/prefix.hh:18,
                      from ./au/chrono_interop.hh:20,
                      from ./au/au.hh:17,
                      from au/error_examples.cc:15:
-    ./au/quantity.hh: In instantiation of 'static constexpr void au::Quantity<UnitT, RepT>::warn_if_integer_division() [with OtherUnit = au::UnitProduct<au::Miles, au::Pow<au::Hours, -1> >; OtherRep = int; UnitT = au::Meters; RepT = int]':
-    ./au/quantity.hh:309:54:   required from here
-    au/error_examples.cc:86:58:   in 'constexpr' expansion of 'au::meters.au::QuantityMaker<au::Meters>::operator()<int>(60).au::Quantity<au::Meters, int>::operator/<au::UnitProduct<au::Miles, au::Pow<au::Hours, -1> >, int>(au::miles.au::QuantityMaker<au::Miles>::operator/<au::Hours>((au::hour, const au::SingularNameFor<au::Hours>())).au::QuantityMaker<au::UnitProduct<au::Miles, au::Pow<au::Hours, -1> > >::operator()<int>(65))'
-    ./au/quantity.hh:436:53: error: static assertion failed: Dangerous integer division forbidden.  See <https://aurora-opensource.github.io/au/main/troubleshooting/#integer-division-forbidden> for more details about the risks, and your options to resolve this error.
-      436 |         static_assert(are_units_quantity_equivalent || !uses_integer_division,
+    ./au/quantity.hh: In instantiation of 'static constexpr void au::Quantity<UnitT, RepT>::warn_if_integer_division() [with OtherUnit = au::UnitProductPack<au::Miles, au::Pow<au::Hours, -1> >; OtherRep = int; UnitT = au::Meters; RepT = int]':
+    ./au/quantity.hh:429:54:   required from here
+    au/error_examples.cc:86:58:   in 'constexpr' expansion of 'au::meters.au::QuantityMaker<au::Meters>::operator()<int>(60).au::Quantity<au::Meters, int>::operator/<au::UnitProductPack<au::Miles, au::Pow<au::Hours, -1> >, int>(au::miles.au::QuantityMaker<au::Miles>::operator/<au::Hours>((au::hour, const au::SingularNameFor<au::Hours>())).au::QuantityMaker<au::UnitProductPack<au::Miles, au::Pow<au::Hours, -1> > >::operator()<int>(65))'
+    ./au/quantity.hh:623:53: error: static assertion failed: Integer division forbidden.  See <https://aurora-opensource.github.io/au/main/troubleshooting/#integer-division-forbidden> for more details about the risks, and your options to resolve this error.
+      623 |         static_assert(are_units_quantity_equivalent || !uses_integer_division,
           |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+    ./au/quantity.hh:623:53: note: '(((bool)are_units_quantity_equivalent) || (!(bool)uses_integer_division))' evaluates to false
     ```
 
     **Compiler error (MSVC 2022 x64)**
@@ -928,29 +1044,30 @@ $\left(\frac{1}{1,000}\right)^2 = \frac{1}{1,000,000}$.
     ```
     In file included from au/error_examples.cc:15:
     In file included from ./au/au.hh:19:
-    ./au/math.hh:272:5: error: static_assert failed due to requirement 'UNITY.in<int>(associated_unit(au::QuantityMaker<au::Seconds>{}) * au::Hertz{}) >= threshold || std::is_floating_point<int>::value' "Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired"
+    ./au/math.hh:274:5: error: static_assert failed due to requirement 'UNITY.in<int>(associated_unit(au::QuantityMaker<au::Seconds>{}) * au::Hertz{}) >= threshold || std::is_floating_point<int>::value' "Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired"
         static_assert(
         ^
-    ./au/math.hh:288:56: note: in instantiation of function template specialization 'au::inverse_in<au::QuantityMaker<au::Seconds>, au::Hertz, int>' requested here
-        return make_quantity<AssociatedUnitT<TargetUnits>>(inverse_in(target_units, q));
-                                                           ^
+    ./au/math.hh:290:55: note: in instantiation of function template specialization 'au::inverse_in<au::QuantityMaker<au::Seconds>, au::Hertz, int>' requested here
+        return make_quantity<AssociatedUnit<TargetUnits>>(inverse_in(target_units, q));
+                                                          ^
     au/error_examples.cc:94:5: note: in instantiation of function template specialization 'au::inverse_as<au::QuantityMaker<au::Seconds>, au::Hertz, int>' requested here
         inverse_as(seconds, hertz(5));
         ^
     ```
 
-    **Compiler error (gcc 10)**
+    **Compiler error (gcc 12)**
     ```
     In file included from ./au/au.hh:19,
                      from au/error_examples.cc:15:
-    ./au/math.hh: In instantiation of 'constexpr auto au::inverse_in(TargetUnits, au::Quantity<Unit, Rep>) [with TargetUnits = au::QuantityMaker<au::Seconds>; U = au::Hertz; R = int]':
-    ./au/math.hh:288:66:   required from 'constexpr auto au::inverse_as(TargetUnits, au::Quantity<Unit, Rep>) [with TargetUnits = au::QuantityMaker<au::Seconds>; U = au::Hertz; R = int]'
-    au/error_examples.cc:94:33:   required from here
-    ./au/math.hh:273:72: error: static assertion failed: Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired
-      273 |         UNITY.in<R>(associated_unit(TargetUnits{}) * U{}) >= threshold ||
+    ./au/math.hh: In instantiation of 'constexpr auto au::inverse_in(TargetUnits, Quantity<Unit, Rep>) [with TargetUnits = QuantityMaker<Seconds>; U = Hertz; R = int]':
+    ./au/math.hh:290:65:   required from 'constexpr auto au::inverse_as(TargetUnits, Quantity<Unit, Rep>) [with TargetUnits = QuantityMaker<Seconds>; U = Hertz; R = int]'
+    au/error_examples.cc:94:15:   required from here
+    ./au/math.hh:275:72: error: static assertion failed: Dangerous inversion risking truncation to 0; must supply explicit Rep if truly desired
+      275 |         UNITY.in<R>(associated_unit(TargetUnits{}) * U{}) >= threshold ||
           |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
-      274 |             std::is_floating_point<R>::value,
-          |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      276 |             std::is_floating_point<R>::value,
+          |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                            
+    ./au/math.hh:275:72: note: '((UNITY.au::Constant<au::UnitProductPack<> >::in<int, au::UnitProductPack<au::Hertz, au::Seconds> >((au::operator*<Seconds, Hertz>((au::associated_unit<QuantityMaker<Seconds> >((au::QuantityMaker<au::Seconds>(), au::QuantityMaker<au::Seconds>())), au::Seconds()), (au::Hertz(), au::Hertz())), au::UnitProduct<au::Seconds, au::Hertz>())) >= ((int)threshold)) || ((bool)std::integral_constant<bool, false>::value))' evaluates to false
     ```
 
     **Compiler error (MSVC 2022 x64)**
@@ -1020,12 +1137,12 @@ casting automatically when possible.
 
     **Compiler error (clang 14)**
     ```
-    au/error_examples.cc:102:34: error: deduced conflicting types ('Quantity<au::QuantityMaker<au::Hertz>::Unit, [...]>' vs 'Quantity<au::QuantityMaker<au::Pow<au::Seconds, -1>>::Unit, [...]>') for initializer list element type
+    au/error_examples.cc:102:34: error: deduced conflicting types ('Quantity<au::Hertz, [...]>' vs 'Quantity<au::Pow<au::Seconds, -1>, [...]>') for initializer list element type
         for (const auto &frequency : {
                                      ^
     ```
 
-    **Compiler error (gcc 10)**
+    **Compiler error (gcc 12)**
     ```
     au/error_examples.cc: In function 'void au::example_deduced_conflicting_types()':
     au/error_examples.cc:105:10: error: unable to deduce 'std::initializer_list<auto>&&' from '{au::hertz.au::QuantityMaker<au::Hertz>::operator()<double>(1.0e+0), au::operator/<int>(1, au::seconds.au::QuantityMaker<au::Seconds>::operator()<double>(2.0e+0))}'
@@ -1167,32 +1284,33 @@ ordering!
     In file included from ./au/au.hh:17:
     In file included from ./au/chrono_interop.hh:20:
     In file included from ./au/prefix.hh:18:
-    In file included from ./au/quantity.hh:19:
-    In file included from ./au/conversion_policy.hh:19:
+    In file included from ./au/constant.hh:23:
+    In file included from ./au/quantity.hh:25:
+    In file included from ./au/conversion_policy.hh:20:
     In file included from ./au/conversion_strategy.hh:17:
-    In file included from ./au/abstract_operations.hh:17:
-    In file included from ./au/magnitude.hh:21:
-    ./au/packs.hh:302:5: error: static_assert failed due to requirement 'std::is_same<au::Quarterfeet, au::Trinches>::value' "Broken strict total ordering: distinct input types compare equal"
+    In file included from ./au/abstract_operations.hh:21:
+    In file included from ./au/magnitude.hh:27:
+    ./au/packs.hh:312:5: error: static_assert failed due to requirement 'std::is_same<au::Quarterfeet, au::Trinches>::value' "Broken strict total ordering: distinct input types compare equal"
         static_assert(std::is_same<A, B>::value,
         ^             ~~~~~~~~~~~~~~~~~~~~~~~~~
-    ./au/packs.hh:318:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches>' requested here
+    ./au/packs.hh:328:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches>' requested here
         std::conditional_t<
         ^
-    ./au/packs.hh:318:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderByUnitOrderTiebreaker>' requested here
-    ./au/packs.hh:318:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>' requested here
-    ./au/packs.hh:318:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>' requested here
-    ./au/packs.hh:318:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>' requested here
-    ./au/packs.hh:318:5: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
-    ./au/unit_of_measure.hh:759:28: note: in instantiation of template class 'au::ComputeCommonUnitImpl<au::Quarterfeet, au::Trinches>' requested here
-              typename detail::IncludeInPackIf<IsNonzero, ComputeCommonUnitImpl, Us...>::type>::type>> {
-                               ^
-    ./au/unit_of_measure.hh:167:1: note: in instantiation of template class 'au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>' requested here
-    using CommonUnitT = typename ComputeCommonUnit<Us...>::type;
+    ./au/packs.hh:328:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderByUnitOrderTiebreaker>' requested here
+    ./au/packs.hh:328:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>' requested here
+    ./au/packs.hh:328:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderAsUnitProductPack, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>' requested here
+    ./au/packs.hh:328:5: note: in instantiation of template class 'au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderByOrigin, au::detail::OrderAsUnitProductPack, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>' requested here
+    ./au/packs.hh:328:5: note: (skipping 10 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+    ./au/unit_of_measure.hh:178:1: note: in instantiation of template class 'au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>' requested here
+    using CommonUnit = typename ComputeCommonUnit<Us...>::type;
     ^
-    ./au/quantity.hh:732:15: note: in instantiation of template type alias 'CommonUnitT' requested here
-        using U = CommonUnitT<U1, U2>;
-                  ^
-    ./au/quantity.hh:743:20: note: in instantiation of function template specialization 'au::detail::convert_and_compare<au::detail::Equal, au::Quarterfeet, au::Trinches, int, int>' requested here
+    ./au/quantity.hh:1029:19: note: in instantiation of template type alias 'CommonUnit' requested here
+            using U = CommonUnit<U1, U2>;
+                      ^
+    ./au/quantity.hh:1050:51: note: in instantiation of member function 'au::detail::ConvertAndCompare<au::detail::Equal, au::Quarterfeet, au::Trinches, int, int, true>::compare' requested here
+        return ConvertAndCompare<Op, U1, U2, R1, R2>::compare(q1, q2);
+                                                      ^
+    ./au/quantity.hh:1057:20: note: in instantiation of function template specialization 'au::detail::convert_and_compare<au::detail::Equal, au::Quarterfeet, au::Trinches, int, int>' requested here
         return detail::convert_and_compare<detail::Equal>(q1, q2);
                        ^
     au/error_examples.cc:121:25: note: in instantiation of function template specialization 'au::operator==<au::Quarterfeet, au::Trinches, int, int>' requested here
@@ -1202,91 +1320,97 @@ ordering!
     In file included from ./au/au.hh:17:
     In file included from ./au/chrono_interop.hh:20:
     In file included from ./au/prefix.hh:18:
-    In file included from ./au/quantity.hh:19:
-    In file included from ./au/conversion_policy.hh:19:
+    In file included from ./au/constant.hh:23:
+    In file included from ./au/quantity.hh:25:
+    In file included from ./au/conversion_policy.hh:20:
     In file included from ./au/conversion_strategy.hh:17:
-    In file included from ./au/abstract_operations.hh:17:
-    ./au/magnitude.hh:163:1: error: implicit instantiation of undefined template 'au::SignImpl<void>'
+    In file included from ./au/abstract_operations.hh:21:
+    ./au/magnitude.hh:205:1: error: implicit instantiation of undefined template 'au::SignImpl<void>'
     using Sign = typename SignImpl<MagT>::type;
     ^
-    ./au/unit_of_measure.hh:140:1: note: in instantiation of template type alias 'Sign' requested here
+    ./au/unit_of_measure.hh:142:1: note: in instantiation of template type alias 'Sign' requested here
     using UnitSign = Sign<detail::MagT<U>>;
     ^
-    ./au/quantity.hh:735:40: note: in instantiation of template type alias 'UnitSign' requested here
-        return detail::SignAwareComparison<UnitSign<U>, Op>{}(q1.template in<ComRep1>(U{}),
-                                           ^
-    ./au/quantity.hh:743:20: note: in instantiation of function template specialization 'au::detail::convert_and_compare<au::detail::Equal, au::Quarterfeet, au::Trinches, int, int>' requested here
+    ./au/quantity.hh:1032:36: note: in instantiation of template type alias 'UnitSign' requested here
+            return SignAwareComparison<UnitSign<U>, Op>{}(
+                                       ^
+    ./au/quantity.hh:1050:51: note: in instantiation of member function 'au::detail::ConvertAndCompare<au::detail::Equal, au::Quarterfeet, au::Trinches, int, int, true>::compare' requested here
+        return ConvertAndCompare<Op, U1, U2, R1, R2>::compare(q1, q2);
+                                                      ^
+    ./au/quantity.hh:1057:20: note: in instantiation of function template specialization 'au::detail::convert_and_compare<au::detail::Equal, au::Quarterfeet, au::Trinches, int, int>' requested here
         return detail::convert_and_compare<detail::Equal>(q1, q2);
                        ^
     au/error_examples.cc:121:25: note: in instantiation of function template specialization 'au::operator==<au::Quarterfeet, au::Trinches, int, int>' requested here
         if (quarterfeet(10) == trinches(10)) {
                             ^
-    ./au/magnitude.hh:161:8: note: template is declared here
+    ./au/magnitude.hh:203:8: note: template is declared here
     struct SignImpl;
            ^
     ```
 
-    **Compiler error (gcc 10)**
+    **Compiler error (gcc 12)**
     ```
-    In file included from ./au/magnitude.hh:21,
-                     from ./au/abstract_operations.hh:17,
+    In file included from ./au/magnitude.hh:27,
+                     from ./au/abstract_operations.hh:21,
                      from ./au/conversion_strategy.hh:17,
-                     from ./au/conversion_policy.hh:19,
-                     from ./au/quantity.hh:19,
+                     from ./au/conversion_policy.hh:20,
+                     from ./au/quantity.hh:25,
+                     from ./au/constant.hh:23,
                      from ./au/prefix.hh:18,
                      from ./au/chrono_interop.hh:20,
                      from ./au/au.hh:17,
                      from au/error_examples.cc:15:
     ./au/packs.hh: In instantiation of 'struct au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches>':
-    ./au/packs.hh:313:8:   recursively required from 'struct au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>'
-    ./au/packs.hh:313:8:   required from 'struct au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderByCoarseUnitOrdering, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>'
-    ./au/unit_of_measure.hh:1184:8:   required from 'struct au::InOrderFor<au::UnitProduct, au::Quarterfeet, au::Trinches>'
-    ./au/unit_of_measure.hh:595:8:   required from 'struct au::InOrderFor<au::CommonUnit, au::Quarterfeet, au::Trinches>'
-    ./au/packs.hh:436:8:   required from 'struct au::FlatDedupedTypeList<au::CommonUnit, au::CommonUnit<au::Quarterfeet>, au::CommonUnit<au::Trinches> >'
-    ./au/unit_of_measure.hh:745:8:   required from 'struct au::ComputeCommonUnitImpl<au::Quarterfeet, au::Trinches>'
-    ./au/unit_of_measure.hh:756:8:   required from 'struct au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>'
-    ./au/unit_of_measure.hh:167:7:   required by substitution of 'template<class ... Us> using CommonUnitT = typename au::ComputeCommonUnit::type [with Us = {au::Quarterfeet, au::Trinches}]'
-    ./au/quantity.hh:732:11:   required from 'constexpr auto au::detail::convert_and_compare(au::Quantity<U2, R2>, au::Quantity<U2, R2>) [with Op = au::detail::Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
-    ./au/quantity.hh:743:54:   required from 'constexpr bool au::operator==(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
+    ./au/packs.hh:323:8:   recursively required from 'struct au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProductPack, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>'
+    ./au/packs.hh:323:8:   required from 'struct au::LexicographicTotalOrdering<au::Quarterfeet, au::Trinches, au::detail::OrderByCoarseUnitOrdering, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProductPack, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>'
+    ./au/unit_of_measure.hh:1454:8:   required from 'struct au::InOrderFor<au::UnitProductPack, au::Quarterfeet, au::Trinches>'
+    ./au/unit_of_measure.hh:683:8:   required from 'struct au::InOrderFor<au::CommonUnitPack, au::Quarterfeet, au::Trinches>'
+    ./au/packs.hh:450:8:   required from 'struct au::FlatDedupedTypeListImpl<au::CommonUnitPack, au::CommonUnitPack<au::Quarterfeet>, au::CommonUnitPack<au::Trinches> >'
+    ./au/unit_of_measure.hh:912:8:   required from 'struct au::ComputeCommonUnitImpl<au::Quarterfeet, au::Trinches>'
+    ./au/unit_of_measure.hh:923:8:   required from 'struct au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>'
+    ./au/unit_of_measure.hh:178:7:   required by substitution of 'template<class ... Us> using CommonUnit = typename au::ComputeCommonUnit::type [with Us = {au::Quarterfeet, au::Trinches}]'
+    ./au/quantity.hh:1029:15:   required from 'static constexpr auto au::detail::ConvertAndCompare<Op, U1, U2, R1, R2, BothArithmetic>::compare(const au::Quantity<U2, R2>&, const au::Quantity<U2, R2>&) [with Op = au::detail::Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int; bool BothArithmetic = true]'
+    ./au/quantity.hh:1050:58:   required from 'constexpr auto au::detail::convert_and_compare(const au::Quantity<U2, R2>&, const au::Quantity<U2, R2>&) [with Op = Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
+    ./au/quantity.hh:1057:54:   required from 'constexpr bool au::operator==(const Quantity<U1, R1>&, const Quantity<U2, R2>&) [with U1 = Quarterfeet; U2 = Trinches; R1 = int; R2 = int]'
     au/error_examples.cc:121:39:   required from here
-    ./au/packs.hh:302:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
-      302 |     static_assert(std::is_same<A, B>::value,
+    ./au/packs.hh:312:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
+      312 |     static_assert(std::is_same<A, B>::value,
           |                                       ^~~~~
+    ./au/packs.hh:312:39: note: 'std::integral_constant<bool, false>::value' evaluates to false
     ./au/packs.hh: In instantiation of 'struct au::LexicographicTotalOrdering<au::Trinches, au::Quarterfeet>':
-    ./au/packs.hh:313:8:   recursively required from 'struct au::LexicographicTotalOrdering<au::Trinches, au::Quarterfeet, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>'
-    ./au/packs.hh:313:8:   required from 'struct au::LexicographicTotalOrdering<au::Trinches, au::Quarterfeet, au::detail::OrderByCoarseUnitOrdering, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProduct, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>'
-    ./au/unit_of_measure.hh:1184:8:   required from 'struct au::InOrderFor<au::UnitProduct, au::Trinches, au::Quarterfeet>'
-    ./au/unit_of_measure.hh:595:8:   required from 'struct au::InOrderFor<au::CommonUnit, au::Trinches, au::Quarterfeet>'
-    ./au/unit_of_measure.hh:649:8:   required from 'struct au::detail::IsFirstUnitRedundant<au::CommonUnit, au::Quarterfeet, au::Trinches>'
-    ./au/unit_of_measure.hh:660:8:   required from 'struct au::detail::EliminateRedundantUnitsImpl<au::CommonUnit<au::Trinches, au::Quarterfeet> >'
-    ./au/unit_of_measure.hh:745:8:   required from 'struct au::ComputeCommonUnitImpl<au::Quarterfeet, au::Trinches>'
-    ./au/unit_of_measure.hh:756:8:   required from 'struct au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>'
-    ./au/unit_of_measure.hh:167:7:   required by substitution of 'template<class ... Us> using CommonUnitT = typename au::ComputeCommonUnit::type [with Us = {au::Quarterfeet, au::Trinches}]'
-    ./au/quantity.hh:732:11:   required from 'constexpr auto au::detail::convert_and_compare(au::Quantity<U2, R2>, au::Quantity<U2, R2>) [with Op = au::detail::Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
-    ./au/quantity.hh:743:54:   required from 'constexpr bool au::operator==(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
+    ./au/packs.hh:323:8:   [ skipping 2 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
+    ./au/packs.hh:323:8:   recursively required from 'struct au::LexicographicTotalOrdering<au::Trinches, au::Quarterfeet, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProductPack, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>'
+    ./au/packs.hh:323:8:   required from 'struct au::LexicographicTotalOrdering<au::Trinches, au::Quarterfeet, au::detail::OrderByCoarseUnitOrdering, au::detail::OrderByDim, au::detail::OrderByMag, au::detail::OrderByScaleFactor, au::detail::OrderByOrigin, au::detail::OrderAsUnitProductPack, au::detail::OrderAsOriginDisplacementUnit, au::detail::OrderByUnitOrderTiebreaker>'
+    ./au/unit_of_measure.hh:1454:8:   required from 'struct au::InOrderFor<au::UnitProductPack, au::Trinches, au::Quarterfeet>'
+    ./au/unit_of_measure.hh:683:8:   required from 'struct au::InOrderFor<au::CommonUnitPack, au::Trinches, au::Quarterfeet>'
+    ./au/unit_of_measure.hh:737:8:   required from 'struct au::detail::IsFirstUnitRedundant<au::CommonUnitPack, au::Quarterfeet, au::Trinches>'
+    ./au/unit_of_measure.hh:748:8:   required from 'struct au::detail::EliminateRedundantUnitsImpl<au::CommonUnitPack<au::Trinches, au::Quarterfeet> >'
+    ./au/unit_of_measure.hh:912:8:   required from 'struct au::ComputeCommonUnitImpl<au::Quarterfeet, au::Trinches>'
+    ./au/unit_of_measure.hh:923:8:   required from 'struct au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>'
+    ./au/unit_of_measure.hh:178:7:   required by substitution of 'template<class ... Us> using CommonUnit = typename au::ComputeCommonUnit::type [with Us = {au::Quarterfeet, au::Trinches}]'
+    ./au/quantity.hh:1029:15:   required from 'static constexpr auto au::detail::ConvertAndCompare<Op, U1, U2, R1, R2, BothArithmetic>::compare(const au::Quantity<U2, R2>&, const au::Quantity<U2, R2>&) [with Op = au::detail::Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int; bool BothArithmetic = true]'
+    ./au/quantity.hh:1050:58:   required from 'constexpr auto au::detail::convert_and_compare(const au::Quantity<U2, R2>&, const au::Quantity<U2, R2>&) [with Op = Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
+    ./au/quantity.hh:1057:54:   required from 'constexpr bool au::operator==(const Quantity<U1, R1>&, const Quantity<U2, R2>&) [with U1 = Quarterfeet; U2 = Trinches; R1 = int; R2 = int]'
     au/error_examples.cc:121:39:   required from here
-    ./au/packs.hh:302:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
-    In file included from ./au/conversion_policy.hh:26,
-                     from ./au/quantity.hh:19,
-                     from ./au/prefix.hh:18,
-                     from ./au/chrono_interop.hh:20,
-                     from ./au/au.hh:17,
-                     from au/error_examples.cc:15:
-    ./au/unit_of_measure.hh: In instantiation of 'struct au::CommonUnit<au::Trinches, au::Quarterfeet>':
-    ./au/packs.hh:220:8:   recursively required by substitution of 'template<class Default, template<class ...> class Op, class ... Args> struct au::stdx::experimental::detail::detector<Default, au::stdx::void_t<Op<Args ...> >, Op, Args ...> [with Default = void; Op = au::detail::DimMemberT; Args = {au::CommonUnit<au::Trinches, au::Quarterfeet>}]'
-    ./au/packs.hh:220:8:   required from 'struct au::detail::DimImpl<au::CommonUnit<au::Trinches, au::Quarterfeet> >'
-    ./au/unit_of_measure.hh:545:8:   required from 'struct au::HasSameDimension<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches>'
-    ./au/stdx/type_traits.hh:38:59:   required from 'struct au::stdx::conjunction<au::HasSameDimension<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches>, au::detail::HasSameMagnitude<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches> >'
-    ./au/unit_of_measure.hh:560:8:   required from 'struct au::AreUnitsQuantityEquivalent<au::CommonUnit<au::Trinches, au::Quarterfeet>, au::Trinches>'
-    ./au/unit_of_measure.hh:627:8:   required from 'struct au::detail::FirstMatchingUnit<au::AreUnitsQuantityEquivalent, au::CommonUnit<au::Trinches, au::Quarterfeet>, au::CommonUnit<au::Trinches, au::Quarterfeet> >'
-    ./au/unit_of_measure.hh:756:8:   required from 'struct au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>'
-    ./au/unit_of_measure.hh:167:7:   required by substitution of 'template<class ... Us> using CommonUnitT = typename au::ComputeCommonUnit::type [with Us = {au::Quarterfeet, au::Trinches}]'
-    ./au/quantity.hh:732:11:   required from 'constexpr auto au::detail::convert_and_compare(au::Quantity<U2, R2>, au::Quantity<U2, R2>) [with Op = au::detail::Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
-    ./au/quantity.hh:743:54:   required from 'constexpr bool au::operator==(au::Quantity<U1, R1>, au::Quantity<U2, R2>) [with U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
+    ./au/packs.hh:312:39: error: static assertion failed: Broken strict total ordering: distinct input types compare equal
+    ./au/packs.hh:312:39: note: 'std::integral_constant<bool, false>::value' evaluates to false
+    In file included from ./au/conversion_policy.hh:27:
+    ./au/unit_of_measure.hh: In instantiation of 'struct au::CommonUnitPack<au::Trinches, au::Quarterfeet>':
+    ./au/packs.hh:228:7:   required by substitution of 'template<class U> using DimMemberT = typename U::Dim [with U = au::CommonUnitPack<au::Trinches, au::Quarterfeet>]'
+    ./au/packs.hh:230:8:   required from 'struct au::detail::DimImpl<au::CommonUnitPack<au::Trinches, au::Quarterfeet> >'
+    ./au/unit_of_measure.hh:633:8:   required from 'struct au::HasSameDimension<au::CommonUnitPack<au::Trinches, au::Quarterfeet>, au::Trinches>'
+    ./au/stdx/type_traits.hh:38:59:   [ skipping 2 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
+    ./au/unit_of_measure.hh:715:8:   required from 'struct au::detail::FirstMatchingUnit<au::AreUnitsQuantityEquivalent, au::CommonUnitPack<au::Trinches, au::Quarterfeet>, au::CommonUnitPack<au::Trinches, au::Quarterfeet> >'
+    ./au/unit_of_measure.hh:923:8:   required from 'struct au::ComputeCommonUnit<au::Quarterfeet, au::Trinches>'
+    ./au/unit_of_measure.hh:178:7:   required by substitution of 'template<class ... Us> using CommonUnit = typename au::ComputeCommonUnit::type [with Us = {au::Quarterfeet, au::Trinches}]'
+    ./au/quantity.hh:1029:15:   required from 'static constexpr auto au::detail::ConvertAndCompare<Op, U1, U2, R1, R2, BothArithmetic>::compare(const au::Quantity<U2, R2>&, const au::Quantity<U2, R2>&) [with Op = au::detail::Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int; bool BothArithmetic = true]'
+    ./au/quantity.hh:1050:58:   required from 'constexpr auto au::detail::convert_and_compare(const au::Quantity<U2, R2>&, const au::Quantity<U2, R2>&) [with Op = Equal; U1 = au::Quarterfeet; U2 = au::Trinches; R1 = int; R2 = int]'
+    ./au/quantity.hh:1057:54:   required from 'constexpr bool au::operator==(const Quantity<U1, R1>&, const Quantity<U2, R2>&) [with U1 = Quarterfeet; U2 = Trinches; R1 = int; R2 = int]'
     au/error_examples.cc:121:39:   required from here
-    ./au/unit_of_measure.hh:585:70: error: static assertion failed: Elements must be listed in ascending order
-      585 |     static_assert(AreElementsInOrder<CommonUnit, CommonUnit<Us...>>::value,
-          |                                                                      ^~~~~
+    ./au/unit_of_measure.hh:673:78: error: static assertion failed: Elements must be listed in ascending order
+      673 |     static_assert(AreElementsInOrder<CommonUnitPack, CommonUnitPack<Us...>>::value,
+          |                                                                              ^~~~~
+    ./au/unit_of_measure.hh:673:78: note: 'std::integral_constant<bool, false>::value' evaluates to false
     ```
 
     **Compiler error (MSVC 2022 x64)**
