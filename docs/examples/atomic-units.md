@@ -54,8 +54,10 @@ utilities found by argument-dependent lookup, discussed below.)
 The header also needs the two measured values.  By far the best way to express them is using Au
 literals: the [magnitude literal](../reference/magnitude.md#_mag-literal) `7.297'352'5693e-3_mag`,
 and the [prefixed unit literal](../reference/constant.md#prefixed-unit-literals)
-`kilo(9.109'383'7015e-31_g)`.  This lets the source code carry the published CODATA digits
-_verbatim_, making it easy to check at a glance.[^1]  Since it's a header file, we do still need to
+`kilo(9.109'383'7015e-31_g)`.  This lets the source code carry the published
+[CODATA](https://physics.nist.gov/cuu/Constants/) digits --- the internationally recommended values
+of the fundamental physical constants, revised every few years --- _verbatim_, making it easy to
+check at a glance.[^1]  Since it's a header file, we do still need to
 avoid namespace pollution, so each one goes inside its own function, where the using-directive
 expires at the closing brace and never reaches a consumer.
 

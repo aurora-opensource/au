@@ -13,10 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Checks that an example program prints exactly what the docs say it prints.  This is the whole
-# test for a `single_example`, and it is the first of the two checks that `check_ab_example.sh`
-# runs -- that script invokes this one once per program rather than keeping its own copy of the
-# comparison, so the two flavors of example cannot drift in what "correct output" means.
+# Checks that an example program prints exactly what the docs say it prints.
 #
 # Usage: check_output.sh BINARY EXPECTED_TXT [LABEL]
 #

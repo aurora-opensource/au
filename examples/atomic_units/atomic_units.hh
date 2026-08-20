@@ -39,7 +39,8 @@
 //   - Conversions *out* to SI are as accurate as the measured inputs allow, and no worse.  Au
 //     composes the whole chain as a single exact rational magnitude and applies it once.
 //
-// To update to a newer CODATA release, change the two measured values and nothing else.
+// To update to a newer CODATA release (https://physics.nist.gov/cuu/Constants/), change the two
+// measured values and nothing else.
 
 // --8<-- [start:definitions]
 namespace atomic_units {

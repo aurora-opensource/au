@@ -134,7 +134,7 @@ def single_example(name, expected_output, deps, main_src = None, lib_srcs = None
       deps: Deps of the example.  Applied to both the library and the program: the program includes
         Au headers directly (to print, and to name the units it converts into), so it declares them
         directly too, rather than leaning on the library's deps to supply them.
-      main_src: Source for the program itself.  Defaults to `<name>/main.cc`.
+      main_src: Sources for the program itself, as a list.  Defaults to `[<name>/main.cc]`.
       lib_srcs: Non-`main` sources, compiled into the library.  In C++14 this is where the
         out-of-line unit label definitions live.
       hdrs: Headers the example defines and the program includes.
