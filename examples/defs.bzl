@@ -143,6 +143,8 @@ def single_example(name, expected_output, deps, main_src = None, lib_srcs = None
     lib_srcs = lib_srcs or []
     hdrs = hdrs or []
 
+    # Empty unless this example defines a library, in which case the program depends on it.
+    lib_deps = []
     if lib_srcs or hdrs:
         cc_library(
             name = "{}_lib".format(name),
@@ -150,14 +152,12 @@ def single_example(name, expected_output, deps, main_src = None, lib_srcs = None
             hdrs = hdrs,
             deps = deps,
         )
-        binary_deps = [":{}_lib".format(name)] + deps
-    else:
-        binary_deps = deps
+        lib_deps = [":{}_lib".format(name)]
 
     cc_binary(
         name = name,
         srcs = main_src,
-        deps = binary_deps,
+        deps = lib_deps + deps,
     )
 
     native.genrule(
