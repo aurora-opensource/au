@@ -17,6 +17,10 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@rules_python//python:defs.bzl", "py_binary")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 
+# The README quotes code from `//examples`, and `//examples:readme_snippets_test` checks that those
+# copies still match their source.
+exports_files(["README.md"])
+
 # This rule adds a convenient way to update the requirements file.
 compile_pip_requirements(
     name = "requirements",
@@ -37,6 +41,7 @@ py_binary(
         ":au_noio_hh",
         ":au_stdformat_hh",
         ":au_stdformat_noio_hh",
+        "//examples:doc_sources",
     ] + glob([
         "docs/**",
         "doc_snippets/**",

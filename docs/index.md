@@ -7,6 +7,41 @@ developer experience.
 The library source is on GitHub, at
 [aurora-opensource/au](https://github.com/aurora-opensource/au).
 
+## What it looks like
+
+Here's a wheel's road speed, converted to revolutions per minute (RPM).  Click between the tabs to
+compare.
+
+=== "⚠️ Before: raw C++"
+
+    ⚠️ **Before** --- conversion factors are magic numbers, and units completely lack enforcement.
+    { .ab-banner .ab-before }
+
+    ```cpp
+    --8<-- "examples/angular_velocity/raw.cc:headline"
+    ```
+
+=== "✅ After: with Au"
+
+    ✅ **After** --- the types carry the units, and `rad / r` states the definition directly.
+    { .ab-banner .ab-after }
+
+    ```cpp
+    --8<-- "examples/angular_velocity/au.cc:headline"
+    ```
+
+The `2π` and the `60` vanish: in their place, Au _automatically_ generates the [_single_
+number](./discussion/implementation/applying_magnitudes/#summary-and-conclusion) that represents the
+overall conversion --- _at compile time_, so there's no runtime penalty.  And the code now directly
+states the physical truth: converting between linear and angular speed is just applying
+a length/angle ratio, and `rad / r` --- "one radian per radius" --- is nothing more than the
+_definition_ of a radian, applied as a formula.
+<!-- The last sentence above, in particular, sounds very "Claude-y" to me.  But I actually wrote
+this prose myself, from scratch!  I guess I have a robotic personality.  Beep boop. -->
+
+See **[Code examples](./examples/index.md)** for this one [in full](./examples/angular-velocity.md),
+and several more.
+
 ## Getting started
 
 These pages will be most useful as you begin your Au journey:
@@ -14,6 +49,9 @@ These pages will be most useful as you begin your Au journey:
 - **[Alternatives](./alternatives/index.md).**  First off: is Au the right fit for _your_ needs?
   What else is out there?  This page gives a detailed comparison to some of the most prominent other
   C++ units libraries.
+
+- **[Code examples](./examples/index.md).**  Short, complete programs showing what Au looks like on
+  real problems --- each one paired with the plain C++ version, so you can see exactly what changes.
 
 - **[Supported Compilers](./supported-compilers.md).**  Au aims to work with _any_ C++ compiler that
   fully supports C++14 or later.  That said, some platform/compiler combinations have more detailed
@@ -44,8 +82,8 @@ effectively:
 We also have a [GitHub Issues](https://github.com/aurora-opensource/au/issues) page for tracking
 problems and future work.  If you have a bug report or feature request, check the existing issues to
 see if it's been posted, and file a new one if it hasn't.  While we can't promise timely
-_resolution_, we will do our best to respond quickly so you know both that you've been heard and where we
-stand on the issue.
+_resolution_, we will do our best to respond quickly so you know both that you've been heard and
+where we stand on the issue.
 
 !!! tip
     Feel free to vote for existing issues by reacting to the main post with the :+1: emoji: we'll
