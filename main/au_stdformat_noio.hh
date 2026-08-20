@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-150-g75ebe05
+// Version identifier: 0.5.0-base-151-g7fa22d9
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -8862,7 +8862,7 @@ struct QuantityMaker {
 
     // lvalue: copy. (See `make_quantity` above.)
     template <typename T, typename Rep = detail::NormalizeRep<std::decay_t<T>>>
-    AU_DEVICE_FUNC constexpr Quantity<Unit, Rep> operator()(const T &value) const {
+    AU_DEVICE_FUNC constexpr Quantity<UnitT, Rep> operator()(const T &value) const {
         return Quantity<Unit, Rep>{value};
     }
 
@@ -8870,7 +8870,7 @@ struct QuantityMaker {
     template <typename T,
               typename Rep = detail::NormalizeRep<std::decay_t<T>>,
               typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
-    AU_DEVICE_FUNC constexpr Quantity<Unit, Rep> operator()(T &&value) const {
+    AU_DEVICE_FUNC constexpr Quantity<UnitT, Rep> operator()(T &&value) const {
         return Quantity<Unit, Rep>{std::move(value)};
     }
 
