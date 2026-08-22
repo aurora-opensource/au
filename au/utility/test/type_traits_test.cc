@@ -14,6 +14,9 @@
 
 #include "au/utility/type_traits.hh"
 
+#include <type_traits>
+
+#include "au/stdx/experimental/is_detected.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -32,6 +35,27 @@ struct Pack;
 TEST(Prepend, PrependsToPack) {
     StaticAssertTypeEq<Prepend<Pack<>, int>, Pack<int>>();
     StaticAssertTypeEq<Prepend<Pack<double, char>, int>, Pack<int, double, char>>();
+}
+
+// An overload constrained the way the library constrains its own: on the return type, so that a
+// failing `Condition` removes it from the overload set instead of erroring.  Declared, never
+// defined; we only ever ask whether a call to it would compile.
+template <typename T>
+auto only_for_integral(T) -> TypeIdentityIf<std::is_integral, T>;
+
+template <typename T>
+using CallOnlyForIntegral = decltype(only_for_integral(std::declval<T>()));
+
+TEST(TypeIdentityIf, IsTheIdentityWhenTheConditionHolds) {
+    StaticAssertTypeEq<TypeIdentityIf<std::is_integral, int>, int>();
+    StaticAssertTypeEq<TypeIdentityIf<std::is_floating_point, double>, double>();
+}
+
+TEST(TypeIdentityIf, HasNoTypeMemberWhenTheConditionFails) {
+    // The point of the trait: naming it is a substitution failure rather than a hard error, so an
+    // overload constrained on it simply drops out of the overload set.
+    EXPECT_THAT((stdx::experimental::is_detected<CallOnlyForIntegral, int>{}), IsTrue());
+    EXPECT_THAT((stdx::experimental::is_detected<CallOnlyForIntegral, double>{}), IsFalse());
 }
 
 TEST(SameTypeIgnoringCvref, IgnoresCvrefQualifiers) {

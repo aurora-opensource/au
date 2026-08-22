@@ -35,7 +35,7 @@
 namespace au {
 namespace detail {
 
-// (Note: `TypeIdentityIfLooksLikeValidRep`, which these mixins use, lives in "au/quantity.hh".)
+// (Note: `TypeIdentityIfValidRep`, which these mixins use, lives in "au/quantity.hh".)
 
 //
 // A mixin that enables turning a raw number into a Quantity by multiplying or dividing.
@@ -45,28 +45,28 @@ struct MakesQuantityFromNumber {
     // (N * W), for number N and wrapper W.
     template <typename T>
     friend constexpr auto operator*(T x, UnitWrapper<Unit>)
-        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRep<T>> {
+        -> Quantity<Unit, TypeIdentityIfValidRep<T>> {
         return make_quantity<Unit>(x);
     }
 
     // (W * N), for number N and wrapper W.
     template <typename T>
     friend constexpr auto operator*(UnitWrapper<Unit>, T x)
-        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRep<T>> {
+        -> Quantity<Unit, TypeIdentityIfValidRep<T>> {
         return make_quantity<Unit>(x);
     }
 
     // (N / W), for number N and wrapper W.
     template <typename T>
     friend constexpr auto operator/(T x, UnitWrapper<Unit>)
-        -> Quantity<UnitInverse<Unit>, TypeIdentityIfLooksLikeValidRep<T>> {
+        -> Quantity<UnitInverse<Unit>, TypeIdentityIfValidRep<T>> {
         return make_quantity<UnitInverse<Unit>>(x);
     }
 
     // (W / N), for number N and wrapper W.
     template <typename T>
     friend constexpr auto operator/(UnitWrapper<Unit>, T x)
-        -> Quantity<Unit, TypeIdentityIfLooksLikeValidRep<T>> {
+        -> Quantity<Unit, TypeIdentityIfValidRep<T>> {
         static_assert(!std::is_integral<T>::value,
                       "Dividing by an integer value disallowed: would almost always produce 0");
         return make_quantity<Unit>(T{1} / x);
