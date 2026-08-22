@@ -28,6 +28,7 @@ cc_test(
     deps = [
         ":eigen",
         "//au",
+        "//au:io",
         "//au:testing",
         "@eigen",
         "@googletest//:gtest_main",
