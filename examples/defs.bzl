@@ -61,22 +61,27 @@ project will end up with, so it is the shape the example should build.
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
-def ab_example(name, expected_output, au_deps, raw_srcs = None, au_srcs = None):
+def ab_example(name, expected_output, au_deps, raw_deps = None, raw_srcs = None, au_srcs = None):
     """Defines a raw-vs-Au example pair, plus the tests that keep the pair trustworthy.
 
     Args:
       name: Name of the example.  Sources are read from this subdirectory.
       expected_output: The exact stdout both programs must produce.
-      au_deps: Deps for the Au version (the raw version must have none by construction).
+      au_deps: Deps for the Au version.
+      raw_deps: Deps for the raw version.  Usually empty: the point of the raw version is that it
+        uses no units library.  A non-units dependency that both sides share is fine, though --
+        `eigen_kinematics` needs Eigen in both, since Eigen is the *rep*, not the units.
       raw_srcs: Sources for the raw version.  Defaults to `<name>/raw.cc`.
       au_srcs: Sources for the Au version.  Defaults to `<name>/au.cc`.
     """
     raw_srcs = raw_srcs or ["{}/raw.cc".format(name)]
+    raw_deps = raw_deps or []
     au_srcs = au_srcs or ["{}/au.cc".format(name)]
 
     cc_binary(
         name = "{}_raw".format(name),
         srcs = raw_srcs,
+        deps = raw_deps,
     )
 
     cc_binary(

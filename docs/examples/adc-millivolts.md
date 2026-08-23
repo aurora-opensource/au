@@ -1,4 +1,4 @@
-# Analog-to-digital converter counts to millivolts
+# Analog-to-digital converter: counts to millivolts
 
 A 12-bit analog-to-digital converter (ADC) measures voltages against a 3300 millivolt (mV)
 reference, and reports them as integer counts from 0 to 4095.  One count --- one least significant

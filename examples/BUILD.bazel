@@ -23,6 +23,7 @@ filegroup(
         ":adc_millivolts_doc_sources",
         ":angular_velocity_doc_sources",
         ":atomic_units_doc_sources",
+        ":eigen_kinematics_doc_sources",
     ],
     # Only the docs build consumes these.  Nothing here is part of the library's API.
     visibility = ["//:__pkg__"],
@@ -44,6 +45,21 @@ ab_example(
         "//au:io",
     ],
     expected_output = "409.256 rev / min\n",
+)
+
+ab_example(
+    name = "eigen_kinematics",
+    au_deps = [
+        "//au",
+        "//au:io",
+        "//au/compatibility:eigen",
+        "@eigen",
+    ],
+    expected_output = "\n".join([
+        "      5       0 119.694 m",
+        "119.798 m",
+    ]) + "\n",
+    raw_deps = ["@eigen"],
 )
 
 single_example(
