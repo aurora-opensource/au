@@ -52,6 +52,15 @@ constexpr bool same_type_ignoring_cvref(T, U) {
 template <typename... Ts>
 struct AlwaysFalse : std::false_type {};
 
+//
+// `TypeIdentityIf<Condition, T>` is `T` when `Condition<T>` holds, and a substitution failure when
+// it doesn't: a way to constrain an overload through its return type.
+//
+template <bool Condition, typename T>
+struct TypeIdentityIfImpl;
+template <template <typename> class Condition, typename T>
+using TypeIdentityIf = typename TypeIdentityIfImpl<Condition<T>::value, T>::type;
+
 template <typename R1, typename R2>
 struct CommonTypeButPreserveIntSignednessImpl;
 template <typename R1, typename R2>
@@ -70,6 +79,15 @@ using PromotedType = typename PromotedTypeImpl<T>::type;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation details below.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// `TypeIdentityIf` implementation.
+
+struct NoTypeMember {};
+template <bool Condition, typename T>
+struct TypeIdentityIfImpl : NoTypeMember {};
+template <typename T>
+struct TypeIdentityIfImpl<true, T> : stdx::type_identity<T> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `PrependImpl` implementation.

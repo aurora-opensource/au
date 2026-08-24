@@ -17,14 +17,20 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <Eigen/LU>
+#include <sstream>
+#include <string>
 
 #include "au/au.hh"
+#include "au/io.hh"
 #include "au/testing.hh"
 #include "gtest/gtest.h"
 
 namespace au {
 
-struct Meters : UnitImpl<Length> {};
+struct Meters : UnitImpl<Length> {
+    static constexpr const char label[] = "m";
+};
+constexpr const char Meters::label[];
 constexpr auto meters = QuantityMaker<Meters>{};
 
 struct Feet : decltype(Meters{} * mag<381>() / mag<1250>()) {};
@@ -38,6 +44,7 @@ using ::testing::Eq;
 using ::testing::IsFalse;
 using ::testing::IsTrue;
 using ::testing::StaticAssertTypeEq;
+using ::testing::StrEq;
 
 TEST(EigenCompatibility, CanCreateQuantityOfVector3d) {
     Eigen::Vector3d v(1.0, 2.0, 3.0);
@@ -807,6 +814,105 @@ TEST(EigenFreeFunctions, CastAcceptsExpressionTemplateInput) {
     auto result = eval(cast<double>(q + q));
 
     EXPECT_THAT(result.data_in(meters), SameTypeAndValue(Eigen::Vector3d(2.0, 4.0, 6.0)));
+}
+
+template <typename T>
+std::string streamed(const T &x) {
+    std::ostringstream oss;
+    oss << x;
+    return oss.str();
+}
+
+TEST(EigenCompatibility, CanStreamVectorQuantity) {
+    const Eigen::Vector3d v{1.0, 2.0, 3.0};
+
+    EXPECT_THAT(streamed(meters(v)), StrEq(streamed(v) + " m"));
+}
+
+TEST(EigenCompatibility, CanStreamExpressionRepQuantity) {
+    const Eigen::Vector3d v{1.0, 2.0, 3.0};
+
+    EXPECT_THAT(streamed(eval(transpose(meters(v)))), StrEq(streamed(v.transpose()) + " m"));
+}
+
+//
+// Unit symbols with Eigen reps.
+//
+
+TEST(EigenUnitSymbols, SymbolOnRightMakesQuantityFromVector) {
+    constexpr auto m = symbol_for(meters);
+
+    const auto q = Eigen::Vector3d{1.0, 2.0, 3.0} * m;
+
+    StaticAssertTypeEq<decltype(q), const Quantity<Meters, Eigen::Vector3d>>();
+    EXPECT_THAT(q.data_in(meters), Eq(Eigen::Vector3d(1.0, 2.0, 3.0)));
+}
+
+TEST(EigenUnitSymbols, SymbolOnLeftMakesQuantityFromVector) {
+    constexpr auto m = symbol_for(meters);
+
+    const auto q = m * Eigen::Vector3d{1.0, 2.0, 3.0};
+
+    StaticAssertTypeEq<decltype(q), const Quantity<Meters, Eigen::Vector3d>>();
+    EXPECT_THAT(q.data_in(meters), Eq(Eigen::Vector3d(1.0, 2.0, 3.0)));
+}
+
+TEST(EigenUnitSymbols, DividingVectorBySymbolMakesInverseUnit) {
+    constexpr auto s = symbol_for(secs);
+
+    const auto q = Eigen::Vector3d{1.0, 2.0, 3.0} / s;
+
+    StaticAssertTypeEq<decltype(q), const Quantity<UnitInverseT<Secs>, Eigen::Vector3d>>();
+    EXPECT_THAT(q.data_in(inverse(secs)), Eq(Eigen::Vector3d(1.0, 2.0, 3.0)));
+}
+
+TEST(EigenUnitSymbols, ComposedSymbolsMakeCompoundUnit) {
+    constexpr auto m = symbol_for(meters);
+    constexpr auto s = symbol_for(secs);
+
+    const auto v = Eigen::Vector3d{4.0, 5.0, 6.0} * m / s;
+
+    StaticAssertTypeEq<decltype(v), const Quantity<UnitQuotientT<Meters, Secs>, Eigen::Vector3d>>();
+    EXPECT_THAT(v.data_in(meters / sec), Eq(Eigen::Vector3d(4.0, 5.0, 6.0)));
+}
+
+TEST(EigenUnitSymbols, MatrixRepWorksToo) {
+    constexpr auto m = symbol_for(meters);
+
+    const auto q = Eigen::Matrix2d{{1.0, 2.0}, {3.0, 4.0}} * m;
+
+    StaticAssertTypeEq<decltype(q), const Quantity<Meters, Eigen::Matrix2d>>();
+    EXPECT_THAT(q.data_in(meters), Eq(Eigen::Matrix2d({{1.0, 2.0}, {3.0, 4.0}})));
+}
+
+TEST(EigenUnitSymbols, IntegralScalarWorks) {
+    constexpr auto m = symbol_for(meters);
+
+    const auto q = Eigen::Vector3i{1, 2, 3} * m;
+
+    StaticAssertTypeEq<decltype(q), const Quantity<Meters, Eigen::Vector3i>>();
+    EXPECT_THAT(q.data_in(meters), Eq(Eigen::Vector3i(1, 2, 3)));
+}
+
+TEST(EigenUnitSymbols, ResultComposesWithTheRestOfTheLibrary) {
+    constexpr auto m = symbol_for(meters);
+    constexpr auto s = symbol_for(secs);
+
+    const auto p0 = Eigen::Vector3d{1.0, 2.0, 3.0} * m;
+    const auto v = Eigen::Vector3d{4.0, 5.0, 6.0} * m / s;
+    const auto t = 2.0 * s;
+
+    EXPECT_THAT(eval(p0 + v * t).data_in(meters), Eq(Eigen::Vector3d(9.0, 12.0, 15.0)));
+}
+
+TEST(EigenUnitSymbols, ExpressionTemplateInputIsAcceptedAsRep) {
+    // An expression template names a `Scalar` too, so it qualifies -- with the usual lifetime risk.
+    constexpr auto m = symbol_for(meters);
+    const Eigen::Vector3d v{1.0, 2.0, 3.0};
+
+    const auto q = eval((v + v) * m);
+
+    EXPECT_THAT(q.data_in(meters), Eq(Eigen::Vector3d(2.0, 4.0, 6.0)));
 }
 
 }  // namespace au

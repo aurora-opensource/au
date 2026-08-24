@@ -25,15 +25,23 @@
 
 namespace au {
 
+namespace detail {
+// Unary `+` promotes a char-like rep (e.g. `int8_t`), so that `<<` prints a number rather than a
+// character.  Not every rep has one --- an Eigen vector does not --- so promote only where we can.
+template <typename T>
+constexpr auto promote_for_streaming(const T &x, int) -> decltype(+x) {
+    return +x;
+}
+template <typename T>
+constexpr const T &promote_for_streaming(const T &x, ...) {
+    return x;
+}
+}  // namespace detail
+
 // Streaming output support for Quantity types.
 template <typename U, typename R>
 std::ostream &operator<<(std::ostream &out, const Quantity<U, R> &q) {
-    // In the case that the Rep is a type that resolves to 'char' (e.g. int8_t),
-    // the << operator will match the implementation that takes a character
-    // literal.  Using the unary + operator will trigger an integer promotion on
-    // the operand, which will then match an appropriate << operator that will
-    // output the integer representation.
-    out << +q.in(U{}) << " " << unit_label(U{});
+    out << detail::promote_for_streaming(q.in(U{}), 0) << " " << unit_label(U{});
     return out;
 }
 
