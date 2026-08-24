@@ -31,9 +31,9 @@ compare.
     ```
 
 The `2π` and the `60` vanish: in their place, Au _automatically_ generates the [_single_
-number](./discussion/implementation/applying_magnitudes/#summary-and-conclusion) that represents the
-overall conversion --- _at compile time_, so there's no runtime penalty.  And the code now directly
-states the physical truth: converting between linear and angular speed is just applying
+number](./discussion/implementation/applying_magnitudes.md#summary-and-conclusion) that represents
+the overall conversion --- _at compile time_, so there's no runtime penalty.  And the code now
+directly states the physical truth: converting between linear and angular speed is just applying
 a length/angle ratio, and `rad / r` --- "one radian per radius" --- is nothing more than the
 _definition_ of a radian, applied as a formula.
 <!-- The last sentence above, in particular, sounds very "Claude-y" to me.  But I actually wrote

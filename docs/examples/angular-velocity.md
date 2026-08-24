@@ -1,4 +1,4 @@
-# Linear speed to revolutions per minute
+# Angular velocity in RPM
 
 A wheel rolls along the ground at some speed.  How fast is it turning, in revolutions per minute?
 

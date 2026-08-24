@@ -20,11 +20,21 @@ load(":defs.bzl", "ab_example", "single_example")
 filegroup(
     name = "doc_sources",
     srcs = [
+        ":adc_millivolts_doc_sources",
         ":angular_velocity_doc_sources",
         ":atomic_units_doc_sources",
     ],
     # Only the docs build consumes these.  Nothing here is part of the library's API.
     visibility = ["//:__pkg__"],
+)
+
+ab_example(
+    name = "adc_millivolts",
+    au_deps = [
+        "//au",
+        "//au:io",
+    ],
+    expected_output = "1611 mV\n",
 )
 
 ab_example(
