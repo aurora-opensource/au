@@ -34,7 +34,7 @@ ab_example(
         "//au",
         "//au:io",
     ],
-    expected_output = "1650 mV\n",
+    expected_output = "1611 mV\n",
 )
 
 ab_example(

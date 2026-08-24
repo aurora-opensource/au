@@ -28,6 +28,7 @@
 using au::mag;
 using au::Milli;
 using au::milli;
+using au::pow;
 using au::QuantityMaker;
 using au::TRUNCATION_RISK;
 using au::Volts;
@@ -36,16 +37,17 @@ using au::volts;
 
 // clang-format off
 // --8<-- [start:example]
-// A 12-bit analog-to-digital converter (ADC) reports `counts` out of 4095,
-// spanning a 3300 millivolt (mV) reference.  That ratio is exact, so name it a unit.
-struct AdcCounts : decltype(Milli<Volts>{} * mag<3300>() / mag<4095>()) {
-    static constexpr const char label[] = "counts";
-};
-constexpr const char AdcCounts::label[];  // C++14 needs this; C++17 does not.
+// A 12-bit analog-to-digital converter (ADC) reports `counts` from 0 to 4095, spanning a 3300
+// millivolt (mV) reference.  One count is one LSB: 3300 mV / 2^12.
+//
+// With Au, we can capture this as a custom unit.  Au even generates a readable label!
+using AdcCounts = decltype(Milli<Volts>{} * mag<3300>() / pow<12>(mag<2>()));
 constexpr auto adc_counts = QuantityMaker<AdcCounts>{};
 
+
+
 int main() {
-    const auto v = adc_counts(2048);
+    const auto v = adc_counts(2000);
     // Exact rational conversion, applied once.  Without `ignore(...)`, this would not compile.
     std::cout << v.as(milli(volts), ignore(TRUNCATION_RISK)) << '\n';
 }

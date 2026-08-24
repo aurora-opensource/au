@@ -22,17 +22,18 @@
 
 // clang-format off
 // --8<-- [start:example]
-// A 12-bit analog-to-digital converter (ADC) reports `counts` out of 4095,
-// spanning a 3300 millivolt (mV) reference.
+// A 12-bit analog-to-digital converter (ADC) reports `counts` from 0 to 4095, spanning a 3300
+// millivolt (mV) reference.  One count is one LSB: 3300 mV / 2^12.
+//
+// The scale factor and the unit label both live in this reader's head, and in a comment at best.
 int adc_to_millivolts(int counts) {
-    return counts * 3300 / 4095;  // Multiply first: 3300 / 4095 would truncate to 0.
+    return counts * 3300 / 4096;  // Multiply first: 3300 / 4096 would truncate to 0.
 }
 
 
-
 int main() {
-    const int mv = adc_to_millivolts(2048);
-    // Careful: `mv / 1000` would quietly report 1650 mV as "1 V".
+    const int mv = adc_to_millivolts(2000);
+    // Careful: `mv / 1000` would quietly report 1611 mV as "1 V".
     std::cout << mv << " mV" << '\n';
 }
 // --8<-- [end:example]
