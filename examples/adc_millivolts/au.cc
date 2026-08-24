@@ -41,13 +41,13 @@ using au::volts;
 // millivolt (mV) reference.  One count is one LSB: 3300 mV / 2^12.
 //
 // With Au, we can capture this as a custom unit.  Au even generates a readable label!
-using AdcCounts = decltype(Milli<Volts>{} * mag<3300>() / pow<12>(mag<2>()));
-constexpr auto adc_counts = QuantityMaker<AdcCounts>{};
+using AdcVolts = decltype(Milli<Volts>{} * mag<3300>() / pow<12>(mag<2>()));
+constexpr auto adc_volts = QuantityMaker<AdcVolts>{};
 
 
 
 int main() {
-    const auto v = adc_counts(2000);
+    const auto v = adc_volts(2000);
     // Exact rational conversion, applied once.  Without `ignore(...)`, this would not compile.
     std::cout << v.as(milli(volts), ignore(TRUNCATION_RISK)) << '\n';
 }

@@ -64,7 +64,7 @@ integer multiply-and-divide the raw version performs by hand.  Everything else f
   conversion factor to _any_ target unit, and apply it with a [tailor made
   strategy](../discussion/implementation/applying_magnitudes.md) for your specific situation.
 
-- **A reading is now a quantity, from the moment it arrives.**  `adc_counts(2000)` is a voltage,
+- **A reading is now a quantity, from the moment it arrives.**  `adc_volts(2000)` is a voltage,
   and can be passed anywhere a voltage belongs, compared against other voltages, or converted to
   any other voltage unit.  In the raw version it is an `int` until someone remembers to call the
   conversion function.
