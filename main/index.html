@@ -1336,6 +1336,34 @@
   
   
     <li class="md-nav__item">
+      <a href="examples/adc-millivolts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analog-to-digital converter counts to millivolts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="examples/angular-velocity/" class="md-nav__link">
         
   
@@ -1343,7 +1371,7 @@
   <span class="md-ellipsis">
     
   
-    Linear speed to revolutions per minute
+    Angular velocity in RPM
   
 
     
@@ -2804,10 +2832,10 @@ compare.</p>
 </div>
 </div>
 </div>
-<p>The <code>2π</code> and the <code>60</code> vanish: in their place, Au <em>automatically</em> generates the <a href="./discussion/implementation/applying_magnitudes/#summary-and-conclusion"><em>single</em>
-number</a> that represents the
-overall conversion &mdash; <em>at compile time</em>, so there&rsquo;s no runtime penalty.  And the code now directly
-states the physical truth: converting between linear and angular speed is just applying
+<p>The <code>2π</code> and the <code>60</code> vanish: in their place, Au <em>automatically</em> generates the <a href="discussion/implementation/applying_magnitudes/#summary-and-conclusion"><em>single</em>
+number</a> that represents
+the overall conversion &mdash; <em>at compile time</em>, so there&rsquo;s no runtime penalty.  And the code now
+directly states the physical truth: converting between linear and angular speed is just applying
 a length/angle ratio, and <code>rad / r</code> &mdash; &ldquo;one radian per radius&rdquo; &mdash; is nothing more than the
 <em>definition</em> of a radian, applied as a formula.</p>
 <!-- The last sentence above, in particular, sounds very "Claude-y" to me.  But I actually wrote
