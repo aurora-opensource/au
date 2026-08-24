@@ -33,7 +33,7 @@ int adc_to_millivolts(int counts) {
 int main() {
     const int mv = adc_to_millivolts(2048);
     // Careful: `mv / 1000` would quietly report 1650 mV as "1 V".
-    std::cout << mv << " mV" << std::endl;
+    std::cout << mv << " mV" << '\n';
 }
 // --8<-- [end:example]
 // clang-format on

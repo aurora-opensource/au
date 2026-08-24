@@ -47,7 +47,7 @@ constexpr auto adc_counts = QuantityMaker<AdcCounts>{};
 int main() {
     const auto v = adc_counts(2048);
     // Exact rational conversion, applied once.  Without `ignore(...)`, this would not compile.
-    std::cout << v.as(milli(volts), ignore(TRUNCATION_RISK)) << std::endl;
+    std::cout << v.as(milli(volts), ignore(TRUNCATION_RISK)) << '\n';
 }
 // --8<-- [end:example]
 // clang-format on
