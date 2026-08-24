@@ -792,7 +792,7 @@ AU_DEVICE_FUNC constexpr auto rep_cast(Zero z) {
 
 namespace detail {
 
-// The identity on `T`, but only for a `T` we will accept as a rep, in `3.5 * m` and friends.
+// The identity on `T`, but only for a `T` we will accept as a `Rep`.
 // `IsValidRep` excludes our own units, quantities, and other monovalue types, which is what keeps
 // these overloads from competing with the ones meant for those.
 template <typename T>
