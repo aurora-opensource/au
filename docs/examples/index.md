@@ -8,18 +8,21 @@ lines in place --- the two versions are kept line-aligned on purpose.
 
 ## The examples
 
-- **[Analog-to-digital converter counts to millivolts](./adc-millivolts.md).**  Au's secret strength
-  for embedded applications is not just the built-in units; it's the ability to define _custom_
-  units _specifically tailored to your hardware_.  This gets you unit safety from the moment the
-  value leaves the board.
+- **[Analog-to-digital converter: counts to millivolts](./adc-millivolts.md).**  Au's secret
+  strength for embedded applications is not just the built-in units; it's the ability to define
+  _custom_ units _specifically tailored to your hardware_.  This gets you unit safety from the
+  moment the value leaves the board.
+
+- **[Angular velocity in RPM](./angular-velocity.md).**  Converting a wheel's road speed into
+  revolutions per minute (RPM), without fussing with manual conversion factors like `2π` or `60`.
 
 - **[Atomic units](./atomic-units.md).**  Building an entire system of units on top of Au --- exact
-  within itself, and as accurate as physics allows at the boundary.  Unlike most others, this one has
-  no plain-C++ counterpart: this example shows how to extend Au for a specific domain.
+  within itself, and as accurate as physics allows at the boundary.  Unlike most others, this one
+  has no plain-C++ counterpart: this example shows how to extend Au for a specific domain.
 
-- **[Linear speed to revolutions per minute](./angular-velocity.md).**  Converting a wheel's road
-  speed into revolutions per minute (RPM), without fussing with manual conversion factors like `2π`
-  or `60`.
+- **[Eigen: 3D vector kinematics](./eigen-kinematics.md).**  Advancing a position, velocity, and
+  acceleration through a timestep, with `Eigen::Vector3d` as the underlying storage type of each
+  `Quantity`.
 
 ## How these examples are written {#front-matter}
 

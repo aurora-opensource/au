@@ -53,7 +53,9 @@ version counted raw source lines and called a visibly broken page aligned.
    region by hand, in house style.
 
 3. Register it in `BUILD.bazel` with `ab_example(...)`, giving the exact expected stdout.  The Au
-   side needs `//au:io` in its deps if it prints (see below).
+   side needs `//au:io` in its deps if it prints (see below).  The raw side usually has no deps at
+   all --- that is the point of it --- but `raw_deps` is there for a non-units library both sides
+   share, as `eigen_kinematics` shares Eigen.
 
 4. Add `":<name>_doc_sources"` to the `doc_sources` filegroup at the top of `BUILD.bazel`.  Both
    macros define that filegroup for you; listing it there is the one explicit edit per example, and
