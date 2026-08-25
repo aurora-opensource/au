@@ -779,7 +779,7 @@ features.
         </td>
         <td class="best">
             <ul>
-                <li class="check">Namespaces: just one, and it's short</li>
+                <li class="check">Namespaces: just one (for non-abbreviated names), and it's short</li>
                 <li class="check">Includes: either single-header, or easily-guessable header per unit</li>
                 <li class="check">Implicit conversions, and they adapt to the overflow risk</li>
             </ul>

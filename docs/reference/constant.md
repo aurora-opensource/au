@@ -202,6 +202,29 @@ constexpr auto dt = 1.28e-4_s;
 The literals live in the `::au::au_literals` namespace, alongside `_mag`, so a single `using
 namespace ::au::au_literals;` brings in both.
 
+As with [unit symbols](./unit.md#symbols-in-scope), literal suffixes are very short names, so bring
+them into scope no more widely than you must.  The `using namespace` directive above is appropriate
+in an **implementation file** (`.cc`, `.cpp`), where it affects a single translation unit.  In
+a **header file**, never use it at namespace scope --- the literals would leak into every
+translation unit that includes the header.  Put the directive _inside the function body_ that needs
+it, where it expires at the closing brace:
+
+```cpp
+constexpr au::QuantityD<au::Seconds> default_timeout() {
+    using namespace ::au::au_literals;  // Confined to this function.
+    return (1.5_s).as<double>(au::seconds);
+}
+```
+
+See [Namespaces and includes](../discussion/idioms/namespaces-and-includes.md#headers) for the
+fuller discussion.
+
+!!! warning "Watch out for the greedy suffix"
+    A literal suffix binds more tightly than you might expect: `1.5_s.as<double>(seconds)` does
+    _not_ parse, because the compiler reads the suffix as `_s.as`.  It's rare in practice to call
+    member functions directly on the literal like this, but if you ever do, make sure to wrap the
+    literal in parentheses: for example, `(1.5_s).as<double>(seconds)`.
+
 #### Prefixed unit literals {#prefixed-unit-literals}
 
 Unit literals exist for _named_ units only, so there is no `_kg`.  To get a prefixed unit literal,

@@ -126,6 +126,18 @@ alternatives that avoid this problem.
     }
     ```
 
+    [Unit literals](../../reference/constant.md#unit-literals) follow the same rule.  Their suffixes
+    are too arcane to spell out individually, so the conventional `using namespace
+    ::au::au_literals;` is the right tool --- but in a header, it belongs _inside the function
+    body_, not at namespace scope:
+
+    ```cpp
+    constexpr au::QuantityD<au::Seconds> default_timeout() {
+        using namespace ::au::au_literals;  // Confined to this function.
+        return (1.5_s).as<double>(au::seconds);
+    }
+    ```
+
 ## Unit aliases
 
 Au has excellent composability for _objects_.  You can write `(kilo(meters) / hour)(100)`, for

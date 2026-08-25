@@ -136,6 +136,32 @@ There are two ways to create an instance of a unit symbol.
         These are the fastest to compile, although they're a little more verbose, and composition
         uses awkward type traits such as `UnitQuotientT`.
 
+#### Bringing symbols into scope {#symbols-in-scope}
+
+Every unit that ships with Au also provides a symbol in the `au::symbols` namespace --- `symbols::m`
+for `Meters`, `symbols::s` for `Seconds`, and so on.
+
+Symbol names are the shortest names in the library, which makes them the most likely to collide.
+Bring them into scope no more widely than you must.
+
+- In an **implementation file** (`.cc`, `.cpp`), a file-scope `using ::au::symbols::m;` is fine: the
+  blast radius is a single translation unit.
+
+- In a **header file**, never do this at namespace scope: the name would leak into every translation
+  unit that includes the header.  Put the `using` declaration _inside the function body_ instead,
+  where it expires at the closing brace.
+
+    ```cpp
+    inline au::QuantityF<au::Radians> turn_angle(au::QuantityF<au::Meters> arc,
+                                                 au::QuantityF<au::Meters> r) {
+        using au::symbols::rad;  // Confined to this function.
+        return arc * rad / r;
+    }
+    ```
+
+See [Namespaces and includes](../discussion/idioms/namespaces-and-includes.md#headers) for the
+fuller discussion.
+
 #### Prefixed symbols
 
 To create a symbol for a prefixed unit, both of the ways mentioned above (namely, calling
