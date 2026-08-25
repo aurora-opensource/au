@@ -12,13 +12,13 @@
         <meta name="author" content="Au team">
       
       
-        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/examples/angular-velocity/">
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/main/examples/eigen-kinematics/">
       
       
-        <link rel="prev" href="../adc-millivolts/">
+        <link rel="prev" href="../atomic-units/">
       
       
-        <link rel="next" href="../atomic-units/">
+        <link rel="next" href="../../howto/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Angular velocity in RPM - The Au units library</title>
+        <title>Eigen: 3D vector kinematics - The Au units library</title>
       
     
     
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#angular-velocity-in-rpm" class="md-skip">
+        <a href="#eigen-3d-vector-kinematics" class="md-skip">
           Skip to content
         </a>
       
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Angular velocity in RPM
+              Eigen: 3D vector kinematics
             
           </span>
         </div>
@@ -1274,37 +1274,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Angular velocity in RPM
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../angular-velocity/" class="md-nav__link">
         
   
   
@@ -1320,48 +1293,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#whats-happening" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What&rsquo;s happening
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#related-reading" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Related reading
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1399,10 +1330,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../eigen-kinematics/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eigen: 3D vector kinematics
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1418,6 +1376,98 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#whats-happening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What&rsquo;s happening
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What’s happening">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unit-symbols-and-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unit symbols and constants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alias-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alias names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eigen-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Eigen safety
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related reading
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2813,8 +2863,9 @@
   
 
 
-<h1 id="angular-velocity-in-rpm">Angular velocity in RPM<a class="headerlink" href="#angular-velocity-in-rpm" title="Permanent link">&para;</a></h1>
-<p>A wheel rolls along the ground at some speed.  How fast is it turning, in revolutions per minute?</p>
+<h1 id="eigen-3d-vector-kinematics">Eigen: 3D vector kinematics<a class="headerlink" href="#eigen-3d-vector-kinematics" title="Permanent link">&para;</a></h1>
+<p>A body has a position, a velocity, and an acceleration, each a 3D vector.  Where is it one timestep
+later, and how far from the origin is it?</p>
 <!--
   AUTHORING NOTE.  The two tabs below are a blink comparison: readers flip between them and compare
   corresponding lines in place.  Keep each banner to one short line, or the code will start at
@@ -2825,144 +2876,241 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">⚠️ Before: raw C++</label><label for="__tabbed_1_2">✅ After: with Au</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p class="ab-banner ab-before">⚠️ <strong>Before</strong> &mdash; conversion factors are magic numbers, and units completely lack enforcement.</p>
+<p class="ab-banner ab-before">⚠️ <strong>Before</strong> &mdash; every vector is a bare <code>Vector3d</code>, and the units live only in the names.</p>
 <details class="note">
 <summary>Includes and usings</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cmath&gt;</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Eigen/Core&quot;</span>
 </code></pre></div>
 </details>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// Speed must be m/s.  Radius must be meters.  Returns RPM.</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kt">float</span><span class="w"> </span><span class="nf">wheel_rpm</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">v_mps</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">r_m</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">v_mps</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="mf">2.0f</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">M_PI</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">r_m</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">60.0f</span><span class="p">;</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">}</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="c1">// The wheel radius is 350 mm, so convert it to meters by hand first.</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">omega_rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wheel_rpm</span><span class="p">(</span><span class="mf">15.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">350.0f</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1000.0f</span><span class="p">);</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">omega_rpm</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; rev / min&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;\n&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">// Unit label typed by hand.</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// Position must be meters, velocity m/s, acceleration m/s^2, and the timestep seconds.</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">advanced_position</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x_m</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">                                  </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v_mps</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">                                  </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a_mps2</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">                                  </span><span class="kt">double</span><span class="w"> </span><span class="n">dt_s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">x_m</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">v_mps</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dt_s</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">a_mps2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dt_s</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dt_s</span><span class="p">;</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">}</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">x_m</span><span class="w">     </span><span class="p">{</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">120.0</span><span class="p">};</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="c1">// The velocity arrives as 72 km/h downrange, so keep a second copy of it, scaled into m/s.</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">v_kph</span><span class="w">   </span><span class="p">{</span><span class="mf">72.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">};</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">v_mps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v_kph</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="mf">1000.0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">3600.0</span><span class="p">);</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">a_mps2</span><span class="w">  </span><span class="p">{</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">-9.80665</span><span class="p">};</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">    </span><span class="c1">// The timestep is 250 ms; convert that by hand too.</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">x_new_m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">advanced_position</span><span class="p">(</span><span class="n">x_m</span><span class="p">,</span><span class="w"> </span><span class="n">v_mps</span><span class="p">,</span><span class="w"> </span><span class="n">a_mps2</span><span class="p">,</span><span class="w"> </span><span class="mf">250.0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1000.0</span><span class="p">);</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">x_new_m</span><span class="p">.</span><span class="n">transpose</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; m&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;\n&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">// Unit label typed by hand.</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">x_new_m</span><span class="p">.</span><span class="n">norm</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; m&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;\n&#39;</span><span class="p">;</span><span class="w">       </span><span class="c1">// ...and again, nothing checks it.</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="p">}</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<p class="ab-banner ab-after">✅ <strong>After</strong> &mdash; the types carry the units, and <code>rad / r</code> states the definition directly.</p>
+<p class="ab-banner ab-after">✅ <strong>After</strong> &mdash; each vector is a <code>Quantity</code> whose rep is <code>Vector3d</code>, so the units are checked.</p>
 <details class="note">
 <summary>Includes and usings</summary>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/au.hh&quot;</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/io.hh&quot;</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/units/meters.hh&quot;</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/units/minutes.hh&quot;</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/units/radians.hh&quot;</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/units/revolutions.hh&quot;</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/units/seconds.hh&quot;</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="c1">// This is a `.cc` file, so we import the names we use, one at a time.  See the &quot;Namespaces and</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="c1">// includes&quot; discussion page for why we do this rather than `using namespace au;`.</span>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">Meters</span><span class="p">;</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">meters</span><span class="p">;</span>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">milli</span><span class="p">;</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">minute</span><span class="p">;</span>
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">Minutes</span><span class="p">;</span>
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">QuantityF</span><span class="p">;</span>
-<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">Revolutions</span><span class="p">;</span>
-<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">revolutions</span><span class="p">;</span>
-<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">second</span><span class="p">;</span>
-<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">Seconds</span><span class="p">;</span>
-<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">UnitQuotient</span><span class="p">;</span>
-<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">symbols</span><span class="o">::</span><span class="n">rad</span><span class="p">;</span>
-<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>
-<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="c1">// Aliases for the compound units, so the signature below reads well.  A type alias introduces one</span>
-<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="c1">// name we chose, so it is fine at namespace scope even in a header.</span>
-<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="k">using</span><span class="w"> </span><span class="n">Rpm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UnitQuotient</span><span class="o">&lt;</span><span class="n">Revolutions</span><span class="p">,</span><span class="w"> </span><span class="n">Minutes</span><span class="o">&gt;</span><span class="p">;</span>
-<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="k">using</span><span class="w"> </span><span class="n">MetersPerSecond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UnitQuotient</span><span class="o">&lt;</span><span class="n">Meters</span><span class="p">,</span><span class="w"> </span><span class="n">Seconds</span><span class="o">&gt;</span><span class="p">;</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Eigen/Core&quot;</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/compatibility/eigen.hh&quot;</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/io.hh&quot;</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/units/hours.hh&quot;</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/constants/standard_gravity.hh&quot;</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/units/meters.hh&quot;</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;au/units/seconds.hh&quot;</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="c1">// This is a `.cc` file, so we import the names we use, one at a time.  See the &quot;Namespaces and</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="c1">// includes&quot; discussion page for why we do this rather than `using namespace au;`.</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">kilo</span><span class="p">;</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">Meters</span><span class="p">;</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">milli</span><span class="p">;</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">STANDARD_GRAVITY</span><span class="p">;</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">norm</span><span class="p">;</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">Quantity</span><span class="p">;</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">QuantityD</span><span class="p">;</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">Seconds</span><span class="p">;</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">transpose</span><span class="p">;</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">UnitPower</span><span class="p">;</span>
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">UnitQuotient</span><span class="p">;</span>
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">symbols</span><span class="o">::</span><span class="n">h</span><span class="p">;</span>
+<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">symbols</span><span class="o">::</span><span class="n">m</span><span class="p">;</span>
+<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">symbols</span><span class="o">::</span><span class="n">s</span><span class="p">;</span>
+<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>
+<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="c1">// Symbols for the prefixed units we use.  A prefix applier turns an existing symbol into one for</span>
+<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="c1">// the prefixed unit, which is the most readable of the three ways to spell this.</span>
+<a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">km</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kilo</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+<a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">milli</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a>
+<a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a><span class="c1">// Aliases for the vector quantity types, so the signature below reads well.  A type alias</span>
+<a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a><span class="c1">// introduces one name we chose, so it is fine at namespace scope even in a header.</span>
+<a id="__codelineno-2-37" name="__codelineno-2-37" href="#__codelineno-2-37"></a><span class="k">using</span><span class="w"> </span><span class="n">Position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">Meters</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&gt;</span><span class="p">;</span>
+<a id="__codelineno-2-38" name="__codelineno-2-38" href="#__codelineno-2-38"></a><span class="k">using</span><span class="w"> </span><span class="n">Velocity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">UnitQuotient</span><span class="o">&lt;</span><span class="n">Meters</span><span class="p">,</span><span class="w"> </span><span class="n">Seconds</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&gt;</span><span class="p">;</span>
+<a id="__codelineno-2-39" name="__codelineno-2-39" href="#__codelineno-2-39"></a><span class="k">using</span><span class="w"> </span><span class="n">Acceleration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">UnitQuotient</span><span class="o">&lt;</span><span class="n">Meters</span><span class="p">,</span><span class="w"> </span><span class="n">UnitPower</span><span class="o">&lt;</span><span class="n">Seconds</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 </details>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// The types state the units.  Nothing to remember; nothing to convert.</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">Rpm</span><span class="o">&gt;</span><span class="w"> </span><span class="n">wheel_rpm</span><span class="p">(</span><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">MetersPerSecond</span><span class="o">&gt;</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rad</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">}</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">omega</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wheel_rpm</span><span class="p">((</span><span class="n">meters</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">second</span><span class="p">)(</span><span class="mf">15.0f</span><span class="p">),</span><span class="w"> </span><span class="n">milli</span><span class="p">(</span><span class="n">meters</span><span class="p">)(</span><span class="mf">350.0f</span><span class="p">));</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">omega</span><span class="p">.</span><span class="n">as</span><span class="p">(</span><span class="n">revolutions</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">minute</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;\n&#39;</span><span class="p">;</span>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="p">}</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">Position</span><span class="w"> </span><span class="nf">advanced_position</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Position</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">,</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">                           </span><span class="k">const</span><span class="w"> </span><span class="n">Velocity</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">,</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">                           </span><span class="k">const</span><span class="w"> </span><span class="n">Acceleration</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">                           </span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">Seconds</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dt</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dt</span><span class="p">;</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">}</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">{</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">120.0</span><span class="p">}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m</span><span class="p">;</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span><span class="c1">// Any units of the right dimension will do: the conversion is generated at compile time.</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">{</span><span class="mf">72.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">km</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">h</span><span class="p">;</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">{</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">-1.0</span><span class="p">}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">STANDARD_GRAVITY</span><span class="p">;</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Position</span><span class="w"> </span><span class="n">x_new</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="n">advanced_position</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="mf">250.0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ms</span><span class="p">);</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">transpose</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;\n&#39;</span><span class="p">;</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">norm</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;\n&#39;</span><span class="p">;</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="p">}</span>
 </code></pre></div>
 </div>
 </div>
 </div>
-<p>Both programs print <code>409.256 rev / min</code><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.  Note where that unit label comes from: the Au version
-derives it from the return type, while the raw version has it typed in by hand: one more thing to
-keep in sync.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The two tabs are aligned for comparison: blank lines where one version needs fewer
+statements, and extra spaces so that corresponding expressions sit in the same column.
+Neither is a spelling we&rsquo;d recommend writing &mdash; they&rsquo;re here so that flipping between
+the tabs shows only the real differences.</p>
+</div>
+<p>Both programs print the same two lines<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>      5       0 119.694 m
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>119.798 m
+</code></pre></div>
 <h2 id="whats-happening">What&rsquo;s happening<a class="headerlink" href="#whats-happening" title="Permanent link">&para;</a></h2>
-<p>The raw version computes <span class="arithmatex"><span class="MathJax_Preview">\omega = \frac{v}{2 \pi r} \cdot 60</span><script type="math/tex">\omega = \frac{v}{2 \pi r} \cdot 60</script></span>.  The underlying physics gets
-obscured by manual unit bookkeeping:</p>
+<p>The physics is the same on both sides: <span class="arithmatex"><span class="MathJax_Preview">x + v \, \Delta t + \frac{1}{2} a \, \Delta t^2</span><script type="math/tex">x + v \, \Delta t + \frac{1}{2} a \, \Delta t^2</script></span>.  What
+changes is who is responsible for the units.  The raw code has three different unit conversions:</p>
+<ul>
+<li><code>km/h</code> to <code>m/s</code> for the velocity,</li>
+<li><code>ms</code> to <code>s</code> for the timestep, and</li>
+<li><code>g_0</code> to <code>m/s^2</code> for the acceleration.</li>
+</ul>
+<p>The first two are at least visible in the source.  The third one isn&rsquo;t, because the raw version
+doesn&rsquo;t convert anything.  Instead, it uses <code>-9.80665</code> directly as a magic number, leaving users to
+guess the intent.</p>
+<p>All of those conversions vanish from the source code in the Au version, because the library
+automatically generates the correct conversion factors &mdash; <em>at compile time</em>.</p>
+<p>The names simplify, too: unit-suffixed names such as <code>x_m</code>, which force the human to keep track of
+the units, get replaced by the simpler <code>x</code>.  In fact, for velocity, we get <em>even more</em>
+simplification: both <code>v_mps</code> and <code>v_kph</code> get replaced by a single <code>v</code>.  Its units happen to be <code>km
+/ h</code>, but we don&rsquo;t need to worry about that; we know the library will produce any necessary
+conversions.  These simpler names really pay off in the <code>advanced_position()</code> function body: when
+the suffixes vanish, the underlying physics shows through more clearly.</p>
+<p>The output lines simplify for the same reason.  The raw version types the unit label by hand &mdash;
+<code>&lt;&lt; " m"</code>, twice, with nothing checking that it still matches what the number means.  The Au version
+streams the quantities themselves, and the label comes from the type: <code>norm(x_new)</code> is a length, so
+it prints <code>m</code>, and <code>transpose(x_new)</code> is a whole vector, so it prints Eigen&rsquo;s formatting of the
+elements followed by the one unit they all share.</p>
+<h3 id="unit-symbols-and-constants">Unit symbols and constants<a class="headerlink" href="#unit-symbols-and-constants" title="Permanent link">&para;</a></h3>
+<p>This example leans on <a href="../../reference/unit/#symbols">Unit symbols</a>, such as <code>m</code> and <code>km</code>, and <a href="../../reference/constant/">Constants</a>, such as
+<code>STANDARD_GRAVITY</code>.  They both have the same effect here: when you <em>multiply</em> or <em>divide</em> by them,
+they <em>change the units</em>, but <strong>not</strong> the <em>underlying stored value</em>.  If the input is already
+a <code>Quantity</code>, you get another <code>Quantity</code>; and if it&rsquo;s not, then it <em>becomes</em> one.</p>
+<p>Unit symbols are a handy, <em>concise</em> way to annotate your variables with their units.  Writing <code>12.34
+* m / s</code> has exactly the same effect as <code>(meters / second)(12.34)</code>; it&rsquo;s just a little shorter.</p>
+<p>Again, keep in mind that unit symbols and constants do <em>not</em> change the underlying value.  So, if
+you&rsquo;re following our Eigen <a href="../../discussion/concepts/eigen_safety/">safety guide</a>, these do <em>not</em> count as &ldquo;operations&rdquo; that create risk for
+dangling references.  That&rsquo;s why the variable assignments here are perfectly safe, even without
+<code>eval()</code>.</p>
+<details class="note">
+<summary>More nuance on lifetime risk</summary>
+<p>To be clear: we mean that multiplying by symbols or constants doesn&rsquo;t <em>add</em> lifetime risk.  We
+<em>don&rsquo;t</em> mean unit symbols and constants <em>preclude</em> lifetime risk.  If there is <em>pre-existing</em>
+lifetime risk, these won&rsquo;t magically remove it.</p>
+<p>Consider this example.  Suppose we have two utility functions that return <code>Eigen::Vector3d</code>
+instances:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">v1</span><span class="p">();</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">v2</span><span class="p">();</span>
+</code></pre></div>
+<p>The following example is guaranteed to dangle:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">v1</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">v2</span><span class="p">())</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m</span><span class="p">;</span>
+</code></pre></div>
+<p>The sum holds references to its operands, which in this case are the temporary objects <code>v1()</code>
+and <code>v2()</code>, neither of which survives past the semicolon at the end of the line.  <code>m</code> doesn&rsquo;t
+make this safe, but it&rsquo;s also not the root of the problem: the following simpler example is also
+guaranteed to dangle!</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v1</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">v2</span><span class="p">();</span>
+</code></pre></div>
+<p>We hope this discussion clarifies how unit symbols and constants relate to lifetime risk.  For
+a fuller treatment of this topic, we recommend that all users read and understand the Eigen
+<a href="../../discussion/concepts/eigen_safety/">safety guide</a> before using Au with Eigen.</p>
+</details>
+<h3 id="alias-names">Alias names<a class="headerlink" href="#alias-names" title="Permanent link">&para;</a></h3>
+<p>In this example, we went with <code>Position</code>, <code>Velocity</code>, and <code>Acceleration</code>.  This is a fine approach,
+but not the only possible one.  If you want to use mixed units in your interfaces, you could also
+define a custom &ldquo;rep-named alias&rdquo; for <code>Eigen::Vector3d</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">U</span><span class="o">&gt;</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">using</span><span class="w"> </span><span class="n">QuantityV3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Quantity</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
+<p>Then you could write <code>QuantityV3&lt;Meters&gt;</code> for a position, <code>QuantityV3&lt;KilometersPerHour&gt;</code> (after
+defining a suitable <code>KilometersPerHour</code> alias), and so on.</p>
+<p>This question is mostly a matter of taste; Au is safe either way.</p>
+<h3 id="eigen-safety">Eigen safety<a class="headerlink" href="#eigen-safety" title="Permanent link">&para;</a></h3>
+<p>Eigen&rsquo;s famously fast performance comes in part from <em>lazy evaluation</em>.  The equally famous <em>cost</em>
+of this speed is an elevated risk of object lifetime bugs.  We have a whole Eigen <a href="../../discussion/concepts/eigen_safety/">safety guide</a>
+devoted to this topic in general.  We&rsquo;ll hit the highlights relevant to this example here.</p>
+<p>First, it&rsquo;s important to appreciate that Au has &ldquo;risk parity&rdquo; with Eigen.  This means that when you
+add Au to Eigen, you still have all the same risks, but you <em>don&rsquo;t</em> get <em>new</em> ones.  The <a href="../../discussion/concepts/eigen_safety/">safety
+guide</a> explains the details, but the upshot is that you should still be looking for the same warning
+signs as raw Eigen, and you&rsquo;ll still use the same strategies to mitigate the issues (even if some of
+the particulars might change, such as <code>eval()</code> being a free function instead of a member function).</p>
+<p>In this example, there are three places where expression templates occur, and thus three places that
+may carry object lifetime risk.</p>
 <ul>
 <li>
-<p><span class="arithmatex"><span class="MathJax_Preview">2\pi</span><script type="math/tex">2\pi</script></span> converts the angle units between radians and revolutions</p>
-</li>
-<li>
-<p><span class="arithmatex"><span class="MathJax_Preview">60</span><script type="math/tex">60</script></span> converts the time units between seconds and minutes</p>
-</li>
-</ul>
-<p>It&rsquo;s up to whoever writes this function to get these constants right, <em>and</em> to make sure they
-don&rsquo;t accidentally multiply when they should divide (or vice versa).</p>
-<p>The <em>real</em> vulnerability is in the <em>interface</em>.  The function needs very specific units, but they
-are only ever <em>described</em> &mdash; in a comment, and in the parameter name suffixes (<code>_mps</code> and <code>_m</code>).
-Nothing there is checked.  The callers will be in some other file, far away, where neither the
-comment nor the parameter names are easy to see.  Any mistakes will be hard to spot, and the
-compiler will let them right on through.</p>
-<p>Au tackles this vulnerability head-on.  With <code>QuantityF</code> parameters, we know that users can <em>only</em>
-pass the right kind of quantity: the <em>compiler</em> will produce a readable error if they get it wrong.
-We even get extra flexibility: if we change the units at the callsite, the compiler will <em>generate
-a correct and efficient conversion factor automatically</em>, and we&rsquo;ll still get the right answer!
-We&rsquo;ve seen this in action in the example above, where we pass a millimeter length to a function that
-takes the length in meters.</p>
-<p>The implementation gets a lot simpler, too.  All of the magic number conversion factors are gone.
-Instead, we just state the underlying physics directly and clearly:</p>
+<p>The arguments <code>v</code> and <code>a</code> that we pass to <code>advanced_position()</code> both need unit conversions.</p>
 <ul>
-<li>angular velocity is proportional to linear velocity</li>
-<li>the conversion factor is just a ratio between angle and length</li>
-<li>&ldquo;radian per radius&rdquo; (<code>rad / r</code> in code) is exactly that ratio, <em>by definition of the radian unit</em>.</li>
+<li>These are safe because they&rsquo;re assigned to a <em>concrete type</em>: <code>Velocity</code> and <code>Acceleration</code>,
+  respectively.</li>
 </ul>
-<p>It&rsquo;s instructive to consider what&rsquo;s happening <em>on the C++ level</em> in the <code>v * rad / r</code> expression.
-<code>v</code> and <code>r</code> are both <code>QuantityF</code> types, so they store a <code>float</code> under the hood.  But <code>rad</code> is
-different: it&rsquo;s a <em>unit symbol</em>, which means it takes up no space at all, and <em>never</em> consumes
-a runtime instruction.  Multiplying by <code>rad</code> only relabels the units, at compile time.  So if we
-looked at the assembly generated for <code>v * rad / r</code>, we would see only one <code>float</code> divided by
-another.</p>
-<p>Of course, <code>v * rad / r</code> is <em>not</em> expressed in revolutions per minute, but in radians per second.
-To close the loop, Au compares this to the return type, and automatically generates, <em>at compile
-time</em>, the <em>single</em> floating point number that combines all these conversion factors.  Thus, the
-only further runtime instruction is a single multiplication.</p>
-<p>That is two floating point instructions in total, against three for the raw version, which spends
-one on <code>2 * PI * r</code> before it can divide.</p>
-<p>To summarize the overall comparison:</p>
+</li>
+<li>
+<p>The <em>return value</em> of <code>advanced_position()</code>, <code>x + v * dt + 0.5 * a * dt * dt</code>, is also an
+  expression template.</p>
 <ul>
-<li>
-<p><strong>Runtime cost:</strong> Au is generally <em>at least</em> as good as the raw version.  In fact, in this
-  specific case, <em>it&rsquo;s even slightly better</em> (two floating point instructions vs three).</p>
+<li>This is safe because the return value is a concrete type: <code>Position</code>.  Evaluation happens when
+  we convert to the concrete type.</li>
+</ul>
 </li>
 <li>
-<p><strong>Conversion factor accuracy:</strong> Same in both cases, <em>except Au&rsquo;s version is guaranteed to be
-  correct, with no maintenance cost</em>.</p>
-</li>
-<li>
-<p><strong>Safety:</strong> Au&rsquo;s version is both vastly safer (guaranteeing callers pass the right dimension), and
-  more flexible (letting callers use any units they want).</p>
+<p>The <code>transpose(x_new)</code> that we stream on the last line is an expression template too: Eigen&rsquo;s
+  &ldquo;view&rdquo; functions are operations, just like arithmetic.</p>
+<ul>
+<li>This one is <em>not</em> assigned to a concrete type.  It&rsquo;s safe for the other reason: we consume it
+  inside the same full expression, so <code>x_new</code> cannot have died or changed in the meantime.</li>
+</ul>
 </li>
 </ul>
+<p>So, using concrete types for the input parameters and the return value automatically guarantees
+lifetime safety at those boundaries &mdash; and an expression you compute and consume on the spot is
+safe, because nothing gets deferred past its inputs.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>Au&rsquo;s Eigen support makes it easier to get your units right <em>robustly</em>, and often makes your code
+easier to read.  Lifetime safety is the one thing it leaves exactly as it found it, for better and
+for worse, so make sure you&rsquo;re familiar with the Eigen <a href="../../discussion/concepts/eigen_safety/">safety guide</a> before you start using Au with
+Eigen.</p>
 <h2 id="related-reading">Related reading<a class="headerlink" href="#related-reading" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../reference/unit/#symbols">Unit symbols</a>, such as the <code>rad</code> used here.</li>
-<li><a href="../../reference/quantity/">Quantity</a>, and how conversions are applied.</li>
-<li><a href="../../reference/unit/#types-for-combined-units">Types for combined units</a>, for expressions like
-  <code>UnitQuotient&lt;Revolutions, Minutes&gt;</code>.</li>
-<li><a href="../../discussion/idioms/namespaces-and-includes/">Namespaces and includes</a>, including why a <code>.cc</code>
-  imports names individually and a <code>.hh</code> does not.</li>
+<li><a href="../../howto/interop/eigen/">Eigen how-to guide</a>, for creating and using Eigen-backed quantities.</li>
+<li><a href="../../discussion/concepts/eigen_safety/">Eigen safety</a>, on expression templates and object lifetime.</li>
+<li><a href="../../reference/eigen/">Eigen compatibility reference</a>, for the full list of free functions.</li>
+<li><a href="../../reference/unit/#symbols">Unit symbols</a>, including the prefix-applier form used for <code>km</code>.</li>
+<li><a href="../../reference/constant/">Constants</a>, such as the <code>STANDARD_GRAVITY</code> used here.</li>
+<li><a href="../../reference/quantity/#element-access">Element access</a>, for reading and writing one component
+  of a vector quantity.</li>
 </ul>
 <div class="footnote">
 <hr />
@@ -3002,7 +3150,7 @@ output.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to foo
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../adc-millivolts/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Analog-to-digital converter: counts to millivolts">
+          <a href="../atomic-units/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Atomic units">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -3012,20 +3160,20 @@ output.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to foo
                 Previous
               </span>
               <div class="md-ellipsis">
-                Analog-to-digital converter: counts to millivolts
+                Atomic units
               </div>
             </div>
           </a>
         
         
           
-          <a href="../atomic-units/" class="md-footer__link md-footer__link--next" aria-label="Next: Atomic units">
+          <a href="../../howto/" class="md-footer__link md-footer__link--next" aria-label="Next: How-to guides">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Atomic units
+                How-to guides
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -1336,7 +1336,7 @@
   <span class="md-ellipsis">
     
   
-    Analog-to-digital converter counts to millivolts
+    Analog-to-digital converter: counts to millivolts
   
 
     
@@ -1393,6 +1393,34 @@
     
   
     Atomic units
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="eigen-kinematics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eigen: 3D vector kinematics
   
 
     
@@ -2804,20 +2832,24 @@ lines in place &mdash; the two versions are kept line-aligned on purpose.</p>
 <h2 id="the-examples">The examples<a class="headerlink" href="#the-examples" title="Permanent link">&para;</a></h2>
 <ul>
 <li>
-<p><strong><a href="adc-millivolts/">Analog-to-digital converter counts to millivolts</a>.</strong>  Au&rsquo;s secret strength
-  for embedded applications is not just the built-in units; it&rsquo;s the ability to define <em>custom</em>
-  units <em>specifically tailored to your hardware</em>.  This gets you unit safety from the moment the
-  value leaves the board.</p>
+<p><strong><a href="adc-millivolts/">Analog-to-digital converter: counts to millivolts</a>.</strong>  Au&rsquo;s secret
+  strength for embedded applications is not just the built-in units; it&rsquo;s the ability to define
+  <em>custom</em> units <em>specifically tailored to your hardware</em>.  This gets you unit safety from the
+  moment the value leaves the board.</p>
+</li>
+<li>
+<p><strong><a href="angular-velocity/">Angular velocity in RPM</a>.</strong>  Converting a wheel&rsquo;s road speed into
+  revolutions per minute (RPM), without fussing with manual conversion factors like <code>2π</code> or <code>60</code>.</p>
 </li>
 <li>
 <p><strong><a href="atomic-units/">Atomic units</a>.</strong>  Building an entire system of units on top of Au &mdash; exact
-  within itself, and as accurate as physics allows at the boundary.  Unlike most others, this one has
-  no plain-C++ counterpart: this example shows how to extend Au for a specific domain.</p>
+  within itself, and as accurate as physics allows at the boundary.  Unlike most others, this one
+  has no plain-C++ counterpart: this example shows how to extend Au for a specific domain.</p>
 </li>
 <li>
-<p><strong><a href="angular-velocity/">Linear speed to revolutions per minute</a>.</strong>  Converting a wheel&rsquo;s road
-  speed into revolutions per minute (RPM), without fussing with manual conversion factors like <code>2π</code>
-  or <code>60</code>.</p>
+<p><strong><a href="eigen-kinematics/">Eigen: 3D vector kinematics</a>.</strong>  Advancing a position, velocity, and
+  acceleration through a timestep, with <code>Eigen::Vector3d</code> as the underlying storage type of each
+  <code>Quantity</code>.</p>
 </li>
 </ul>
 <h2 id="front-matter">How these examples are written<a class="headerlink" href="#front-matter" title="Permanent link">&para;</a></h2>
@@ -2897,13 +2929,13 @@ is still to do.  Deliberately kept in one place so the two copies cannot drift.
         
         
           
-          <a href="adc-millivolts/" class="md-footer__link md-footer__link--next" aria-label="Next: Analog-to-digital converter counts to millivolts">
+          <a href="adc-millivolts/" class="md-footer__link md-footer__link--next" aria-label="Next: Analog-to-digital converter: counts to millivolts">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Analog-to-digital converter counts to millivolts
+                Analog-to-digital converter: counts to millivolts
               </div>
             </div>
             <div class="md-footer__button md-icon">
