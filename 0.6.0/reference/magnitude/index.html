@@ -1,0 +1,4172 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++ units library, by Aurora">
+      
+      
+        <meta name="author" content="Au team">
+      
+      
+        <link rel="canonical" href="https://aurora-opensource.github.io/au/0.6.0/reference/magnitude/">
+      
+      
+        <link rel="prev" href="../format/">
+      
+      
+        <link rel="next" href="../math/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Magnitude - The Au units library</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../tweaks.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#magnitude" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="The Au units library" class="md-header__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../assets/au-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            The Au units library
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Magnitude
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="The Au units library" class="md-nav__button md-logo" aria-label="The Au units library" data-md-component="logo">
+      
+  <img src="../../assets/au-logo.png" alt="logo">
+
+    </a>
+    The Au units library
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aurora-opensource/au" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Au documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../develop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../supported-compilers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Supported Compilers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alternatives
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Alternatives
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alternatives/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Comparison of Alternatives
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discussion
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Discussion
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discussion Docs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generic Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/arithmetic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arithmetic Operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/common_unit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Common Units
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/compiler_warnings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compiler Warnings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/conversion_risks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conversion Risks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/dimensionless/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dimensionless Units and Quantities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/eigen_safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using Eigen safely with Au
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/overflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/quantity_point/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quantity Point
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/truncation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Truncation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/concepts/zero/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zero
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Idioms
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Idioms
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/idioms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Au Idioms
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/idioms/abbreviated-quantity-construction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abbreviated Quantity Construction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/idioms/namespaces-and-includes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespaces and includes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/idioms/unit-slots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit slots
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation Details
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/applying_magnitudes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Applying Magnitudes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../discussion/implementation/vector_space/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vector Space Representations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/adc-millivolts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analog-to-digital converter: counts to millivolts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/angular-velocity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Angular velocity in RPM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/atomic-units/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Atomic units
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/eigen-kinematics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eigen: 3D vector kinematics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Howto
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Howto
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to guides
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/forward-declarations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Forward declarations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/new-constants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Defining new constants
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/new-dimensions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Defining new dimensions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/new-units/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Defining new units
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/quantity-template-parameters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quantity template parameters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/upgrade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Upgrading Au
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_9_8" id="__nav_9_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interop
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Interop
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/interop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inter-library Interoperation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/interop/eigen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eigen Interoperation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../howto/interop/nholthaus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    nholthaus/units Interoperation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference Docs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../constant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Constant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conversion_risk_policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conversion Risk Policies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../corresponding_quantity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Corresponding Quantity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../eigen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eigen Compatibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../format/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Format
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Magnitude
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Magnitude
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#forming-magnitudes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forming magnitudes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Forming magnitudes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#magn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mag&lt;N&gt;()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_mag-literal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _mag literal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-bases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom bases
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extracting-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extracting values
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extracting values">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#checking-for-representability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking for representability
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compile-time-arithmetic-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compile-time arithmetic limitations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#equality-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Equality comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ordering-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ordering comparison †
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiplication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiplication
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#division" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Division
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#addition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Addition †
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subtraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subtraction †
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modulo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modulo †
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Negation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#powers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Powers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Roots
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#helpers-for-powers-and-roots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Helpers for powers and roots
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rounding-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rounding helpers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rounding helpers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#truncation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Truncation †
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#floor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Floor †
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ceiling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ceiling †
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rounding †
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Traits
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Traits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#is-integer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is Integer?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-rational" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is Rational?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-positive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Is Positive?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integer-part" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integer part
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#numerator-integer-part" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Numerator (integer part)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#denominator-integer-part" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Denominator (integer part)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absolute-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sign
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combining-with-other-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Combining with other types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Combining with other types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raw-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Raw numbers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quantity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#units-quantity-makers-and-other-unit-adjacent-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Units, quantity makers, and other unit-adjacent types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unit-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unit slots
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../math/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Math functions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../powers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Powers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prefix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prefix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quantity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quantity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quantity_point/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QuantityPoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Representation types (&ldquo;Rep&rdquo;)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../version/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Version macros
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../zero/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zero
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_17" id="__nav_10_17_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detail
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_17">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Detail
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation Details
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/dimension/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dimension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/monovalue_types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monovalue Types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detail/packs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameter packs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorial
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorial
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials: home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/101-quantity-makers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Au 101: Quantity Makers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/102-api-types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Au 102: API Types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/103-unit-conversions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Au 103: Unit Conversions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_11_5" id="__nav_11_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exercise
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Exercise
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/101-quantity-makers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Au 101: Quantity Makers Exercise
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/102-api-types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Au 102: API Types Exercise
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/exercise/103-unit-conversions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Au 103: Unit Conversions Exercise
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="magnitude">Magnitude<a class="headerlink" href="#magnitude" title="Permanent link">&para;</a></h1>
+<p><code>Magnitude</code> is a family of <a href="../detail/monovalue_types/">monovalue types</a> representing nonzero real
+numbers.  These values can be multiplied, divided, and raised to (rational) powers, and this
+arithmetic always takes place at compile time.  Values can also be converted to more standard
+numeric types, such as <code>double</code> and <code>int</code>, as long as the receiving type can represent the
+magnitude&rsquo;s value faithfully.</p>
+<p>The core motivation is to represent ratios of different units that have the same dimension.  As
+a corollary, any unit can be scaled by a <code>Magnitude</code> to make a new unit of the same dimension.</p>
+<h2 id="forming-magnitudes">Forming magnitudes<a class="headerlink" href="#forming-magnitudes" title="Permanent link">&para;</a></h2>
+<p>There are 4 <strong>valid</strong> ways for end users to form a <code>Magnitude</code> instance.</p>
+<ol>
+<li><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2714.svg" title=":heavy_check_mark:" /> Using the <code>mag&lt;N&gt;()</code> helper to form the canonical representation of the
+   integer <code>N</code>.</li>
+<li><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2714.svg" title=":heavy_check_mark:" /> Using the <code>_mag</code> user-defined literal.  For example, <code>123_mag</code> is equivalent
+   to <code>mag&lt;123&gt;()</code>.  (Requires <code>using namespace ::au::au_literals;</code>.)</li>
+<li><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2714.svg" title=":heavy_check_mark:" /> Writing <code>Magnitude&lt;MyConstant&gt;{}</code>, where <code>MyConstant</code> is a valid <em>irrational
+   magnitude base</em>.  (See the <em>custom bases</em> section below for more details.)</li>
+<li><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2714.svg" title=":heavy_check_mark:" /> Forming products, quotients, powers, and roots of other valid <code>Magnitude</code>
+   instances.</li>
+</ol>
+<p>The following is a <strong>valid, but dis-preferred way</strong> to form a <code>Magnitude</code>.</p>
+<ul>
+<li><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/26a0.svg" title=":warning:" /> <code>Magnitude&lt;&gt;</code>.<ul>
+<li><strong>Explanation:</strong>  This represents the number 1, but it&rsquo;s less readable than writing
+  <code>mag&lt;1&gt;()</code>.</li>
+</ul>
+</li>
+</ul>
+<p>The following are <strong>not valid</strong> ways to form a <code>Magnitude</code>.</p>
+<ul>
+<li><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/274c.svg" title=":x:" /> <code>Magnitude&lt;Pi, MyConstant&gt;</code>.<ul>
+<li><strong>Explanation:</strong> Do not supply a manual sequence of template parameters.  <code>Magnitude</code> has
+  strict ordering requirements on its template parameters.  The approved methods listed above
+  are guaranteed to satisfy these requirements.</li>
+</ul>
+</li>
+<li><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/274c.svg" title=":x:" /> <code>Magnitude&lt;Prime&lt;3&gt;&gt;</code>.<ul>
+<li><strong>Explanation:</strong> Do not supply integer bases manually.  Integers are represented by their
+  prime factorization, which is performed automatically.  Instead, form integers, rationals, and
+  their powers only by starting with valid <code>Magnitude</code> instances, and performing arithmetic
+  operations as in option 4 above.</li>
+</ul>
+</li>
+</ul>
+<p>Below, we give more details on several concepts mentioned above.</p>
+<h3 id="magn"><code>mag&lt;N&gt;()</code><a class="headerlink" href="#magn" title="Permanent link">&para;</a></h3>
+<p><code>mag&lt;N&gt;()</code> gives an instance of the unique, canonical <code>Magnitude</code> type that represents the positive
+integer <code>N</code>.</p>
+<details class="info">
+<summary>More detail on integral <code>Magnitude</code> representations</summary>
+<p>Integers are stored as their prime factorization.  For example, <code>18</code> would be stored as the type
+<code>Magnitude&lt;Prime&lt;2&gt;, Pow&lt;Prime&lt;3&gt;, 2&gt;&gt;</code>, because <span class="arithmatex"><span class="MathJax_Preview">18 = 2 \cdot 3^2</span><script type="math/tex">18 = 2 \cdot 3^2</script></span>.</p>
+<p><code>mag&lt;N&gt;()</code> automatically performs the prime factorization of <code>N</code>, and constructs a well-formed
+<code>Magnitude</code>.</p>
+</details>
+<h3 id="_mag-literal"><code>_mag</code> literal<a class="headerlink" href="#_mag-literal" title="Permanent link">&para;</a></h3>
+<p><code>_mag</code> is a user-defined literal (UDL) that provides a more concise alternative to <code>mag&lt;N&gt;()</code>.  For
+example, <code>123_mag</code> produces the exact same type and value as <code>mag&lt;123&gt;()</code>.  It also supports digit
+separators: <code>1'000'000_mag</code> is equivalent to <code>mag&lt;1000000&gt;()</code>.</p>
+<p>Beyond plain integers, <code>_mag</code> also accepts decimal and scientific-notation literals, and always
+produces the <em>exact</em> rational <code>Magnitude</code> they represent (never a floating point approximation).
+The literal&rsquo;s digits form an integer mantissa, which is then scaled by the appropriate power of ten:</p>
+<ul>
+<li><strong>Decimal point:</strong> each digit after the <code>.</code> divides the mantissa by another factor of ten.  For
+  example, <code>12.34_mag</code> is equivalent to <code>mag&lt;1234&gt;() / pow&lt;2&gt;(mag&lt;10&gt;())</code> (i.e., exactly
+  <span class="arithmatex"><span class="MathJax_Preview">\frac{1234}{100}</span><script type="math/tex">\frac{1234}{100}</script></span>).</li>
+<li><strong>Exponent:</strong> an <code>e</code> (or <code>E</code>) exponent multiplies by the corresponding power of ten.  For example,
+  <code>34e6_mag</code> is equivalent to <code>mag&lt;34&gt;() * pow&lt;6&gt;(mag&lt;10&gt;())</code> (exactly <span class="arithmatex"><span class="MathJax_Preview">34{,}000{,}000</span><script type="math/tex">34{,}000{,}000</script></span>), and
+  <code>5e-3_mag</code> is exactly <span class="arithmatex"><span class="MathJax_Preview">\frac{5}{1000}</span><script type="math/tex">\frac{5}{1000}</script></span>.</li>
+<li><strong>Both together:</strong> the decimal places and exponent combine.  For example, <code>6.62607015e-34_mag</code>
+  produces <code>mag&lt;662607015&gt;() * pow&lt;-42&gt;(mag&lt;10&gt;())</code> &mdash; the exact value of the Planck constant&rsquo;s
+  mantissa in SI units.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Literal</th>
+<th>Equivalent to</th>
+<th>Exact value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>123_mag</code></td>
+<td><code>mag&lt;123&gt;()</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">123</span><script type="math/tex">123</script></span></td>
+</tr>
+<tr>
+<td><code>1'000'000_mag</code></td>
+<td><code>mag&lt;1000000&gt;()</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">1{,}000{,}000</span><script type="math/tex">1{,}000{,}000</script></span></td>
+</tr>
+<tr>
+<td><code>12.34_mag</code></td>
+<td><code>mag&lt;1234&gt;() / pow&lt;2&gt;(mag&lt;10&gt;())</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">\frac{1234}{100}</span><script type="math/tex">\frac{1234}{100}</script></span></td>
+</tr>
+<tr>
+<td><code>34e6_mag</code></td>
+<td><code>mag&lt;34&gt;() * pow&lt;6&gt;(mag&lt;10&gt;())</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">34{,}000{,}000</span><script type="math/tex">34{,}000{,}000</script></span></td>
+</tr>
+<tr>
+<td><code>6.022e23_mag</code></td>
+<td><code>mag&lt;6022&gt;() * pow&lt;20&gt;(mag&lt;10&gt;())</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">6.022 \times 10^{23}</span><script type="math/tex">6.022 \times 10^{23}</script></span></td>
+</tr>
+</tbody>
+</table>
+<p>To use it, add the following to your file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="o">::</span><span class="nn">au</span><span class="o">::</span><span class="nn">au_literals</span><span class="p">;</span>
+</code></pre></div>
+<p>As with any <code>using namespace</code> directive, avoid placing this at file scope in a header file; prefer
+<code>.cc</code> files, or scope it to a function or block.</p>
+<h3 id="custom-bases">Custom bases<a class="headerlink" href="#custom-bases" title="Permanent link">&para;</a></h3>
+<p><code>Magnitude</code> can handle some irrational numbers.  This even includes some transcendental numbers,
+such as <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span>.  Because <code>Magnitude</code> is closed under products and rational powers, this means that we
+also automatically support related values such as <span class="arithmatex"><span class="MathJax_Preview">\pi^2</span><script type="math/tex">\pi^2</script></span>, <span class="arithmatex"><span class="MathJax_Preview">\frac{1}{\sqrt{2\pi}}</span><script type="math/tex">\frac{1}{\sqrt{2\pi}}</script></span>, and so on.</p>
+<details class="question">
+<summary>What irrational numbers can <code>Magnitude</code> <em>not</em> handle?</summary>
+<p>A common example is any that are formed by addition.  For example, <span class="arithmatex"><span class="MathJax_Preview">(1 + \sqrt{2})</span><script type="math/tex">(1 + \sqrt{2})</script></span> cannot be
+represented by <code>Magnitude</code>.  Recall that <code>Magnitude</code> is designed to support products and
+rational powers, since these are the most important operations in quantity calculus.</p>
+<p>It is tempting to want a better representation &mdash; one which supports full symbolic algebra.
+Perhaps such a representation could be designed.  However, we haven&rsquo;t seen any real world use
+cases for it.  The current <code>Magnitude</code> implementation already handles the most critical use
+cases, such as handling <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span>, which most units libraries have traditionally struggled to
+support.</p>
+</details>
+<p>Because of its importance for angular variables, <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> is supported natively in the library, via the
+irrational magnitude base, <code>Pi</code>.  To define a magnitude <em>instance</em> for <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span>, you can write:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">PI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Magnitude</span><span class="o">&lt;</span><span class="n">Pi</span><span class="o">&gt;</span><span class="p">{};</span>
+</code></pre></div>
+<p>If you need to represent an irrational number which can&rsquo;t be formed via any product of powers of the
+existing <code>Magnitude</code> types &mdash; namely, integers and <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> &mdash; then you can define a new irrational
+magnitude base.  This is a <code>struct</code> with the following member:</p>
+<ul>
+<li><code>static constexpr long double value()</code>: the best approximation of your constant&rsquo;s value in the
+  <code>long double</code> storage type.</li>
+</ul>
+<details class="warning">
+<summary>Important information for defining your own constant</summary>
+<p>If you return a literal, you must add <code>L</code> on the end.  Otherwise it will be interpreted as
+<code>double</code>, and will lose precision.</p>
+<p>Here are the results of one example which was run on an arbitrary development machine.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>No suffix</th>
+<th><code>L</code> suffix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Literal</td>
+<td><code>3.141592653589793238</code></td>
+<td><code>3.141592653589793238L</code></td>
+</tr>
+<tr>
+<td>Actual Value</td>
+<td><code>3.141592653589793115</code></td>
+<td><code>3.141592653589793238</code></td>
+</tr>
+</tbody>
+</table>
+<p>The un-suffixed version has lost several digits of precision.  (The precise amount will depend
+on the computer architecture being used.)</p>
+</details>
+<p>Each time you add a new irrational magnitude base, you must make sure that it&rsquo;s <strong>independent:</strong>
+that is, that it can&rsquo;t be formed as any product of rational powers of existing <code>Magnitude</code> types.</p>
+<h2 id="extracting-values">Extracting values<a class="headerlink" href="#extracting-values" title="Permanent link">&para;</a></h2>
+<p>As a <a href="../detail/monovalue_types/">monovalue type</a>, <code>Magnitude</code> can only hold one value.  There are
+no computations we can perform at runtime; everything happens at compile time.  What we <em>can</em> do is
+to extract that represented value, and store it in a more conventional numeric type, such as <code>int</code>
+or <code>double</code>.</p>
+<p>To extract the value of a <code>Magnitude</code> instance <code>m</code> into a given numeric type <code>T</code>, call
+<code>get_value&lt;T&gt;(m)</code>.  This also works with <a href="../zero/"><code>Zero</code></a>: <code>get_value&lt;T&gt;(ZERO)</code> returns <code>T{0}</code>.</p>
+<p>Here are some important aspects of this utility.</p>
+<ol>
+<li>The computation takes place completely at compile time.</li>
+<li>The computation takes place in the widest type of the same kind.  (That is, when <code>T</code> is floating
+   point we use <code>long double</code>, and when <code>T</code> is integral we use <code>std::intmax_t</code> or <code>std::uintmax_t</code>
+   according to the signedness of <code>T</code>.)</li>
+<li>If <code>T</code> cannot hold the value represented by <code>m</code>, we produce a compile time error.</li>
+</ol>
+<details class="example">
+<summary>Example: <code>float</code> and <span class="arithmatex"><span class="MathJax_Preview">\pi^3</span><script type="math/tex">\pi^3</script></span></summary>
+<p>Suppose you are running on an architecture which has hardware support for <code>float</code>, but uses slow
+software emulation for <code>double</code> and <code>long double</code>.  With <code>Magnitude</code> and <code>get_value</code>, you can
+get the best of both worlds:</p>
+<ul>
+<li>The <strong>computation</strong> gets performed <em>at compile time</em> in <code>long double</code>, giving extra precision.</li>
+<li>The <strong>result</strong> gets cast to <code>float</code> and stored as a program constant.</li>
+</ul>
+<p>Thus, if you have a magnitude instance <code>PI</code>, then <code>get_value&lt;float&gt;(pow&lt;3&gt;(PI))</code> will be much
+more accurate than storing <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> in a <code>float</code>, and cubing it &mdash; yet, there will be no loss in
+runtime performance.</p>
+</details>
+<h3 id="checking-for-representability">Checking for representability<a class="headerlink" href="#checking-for-representability" title="Permanent link">&para;</a></h3>
+<p>If you need to check whether your magnitude <code>m</code> can be represented in a type <code>T</code>, you can call
+<code>representable_in&lt;T&gt;(m)</code>.  This function is <code>constexpr</code> compatible.</p>
+<details class="example">
+<summary>Example: integer and non-integer values</summary>
+<p>Here are some example test cases which will pass.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">EXPECT_THAT</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">()),</span><span class="w"> </span><span class="n">IsTrue</span><span class="p">());</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1">// (1 / 2) is not an integer.</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">EXPECT_THAT</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">()),</span><span class="w"> </span><span class="n">IsFalse</span><span class="p">());</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">EXPECT_THAT</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">()),</span><span class="w"> </span><span class="n">IsTrue</span><span class="p">());</span>
+</code></pre></div>
+</details>
+<details class="example">
+<summary>Example: range of the type</summary>
+<p>Here are some example test cases which will pass.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">EXPECT_THAT</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">4&#39;000&#39;000&#39;000</span><span class="o">&gt;</span><span class="p">()),</span><span class="w"> </span><span class="n">IsTrue</span><span class="p">());</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1">// 4 billion is larger than the max value representable in `int32_t`.</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">EXPECT_THAT</span><span class="p">(</span><span class="n">representable_in</span><span class="o">&lt;</span><span class="kt">int32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">4&#39;000&#39;000&#39;000</span><span class="o">&gt;</span><span class="p">()),</span><span class="w"> </span><span class="n">IsFalse</span><span class="p">());</span>
+</code></pre></div>
+</details>
+<p>Note that this function&rsquo;s return value also depends on <em>whether we can compute</em> the value, not just
+whether it is representable.   For example, <code>representable_in&lt;double&gt;(sqrt(mag&lt;2&gt;()))</code> is currently
+<code>false</code>, because we haven&rsquo;t yet added support for computing rational base powers.</p>
+<h2 id="compile-time-arithmetic-limitations">Compile-time arithmetic limitations<a class="headerlink" href="#compile-time-arithmetic-limitations" title="Permanent link">&para;</a></h2>
+<p>Some <code>Magnitude</code> operations need to perform arithmetic at compile time to compute their results.  For
+example, to compare two magnitudes, we need to determine which one is larger.  It is extremely hard,
+if not impossible, to do this for <em>all</em> magnitudes, which may involve arbitrary rational powers, and
+even transcendental numbers.  However, others can easily be computed using only 64-bit integer
+operations.</p>
+<p>We provide support for the subset of inputs where we can confidently produce exact answers, and
+guard other inputs behind compile-time errors.  This enables many practical use cases, while
+conservatively avoiding producing an incorrect program.</p>
+<p>Our concrete policy is to support only operations where we can produce exact answers using only
+64-bit integer arithmetic.  This does <em>not</em> mean that we only support exact integer magnitudes.
+These operations are <em>binary</em>, so the feasibility depends on the <em>relationship</em> between the two
+inputs.</p>
+<details class="example">
+<summary>Example</summary>
+<p>Suppose we had this variable:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">PI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Magnitude</span><span class="o">&lt;</span><span class="n">Pi</span><span class="o">&gt;</span><span class="p">{};</span>
+</code></pre></div>
+<p>Here are some examples of comparisons that would or would not be supported.</p>
+<ul>
+<li><code>PI &gt; mag&lt;3&gt;()</code> would <strong>not</strong> be supported: it would result in a compiler error.<ul>
+<li><strong>Reason:</strong> We cannot use the exact value of <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> in computations; we only have access to
+  the nearest representable floating point number.  Floating point arithmetic is inexact, so
+  this does not meet our criteria.</li>
+</ul>
+</li>
+<li><code>PI &gt; (mag&lt;3&gt;() * PI / mag&lt;2&gt;())</code> <strong>would</strong> be supported, and would evaluate to <code>false</code>.<ul>
+<li><strong>Reason:</strong> Regardless of the exact value of <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span>, we can see that <span class="arithmatex"><span class="MathJax_Preview">\pi</span><script type="math/tex">\pi</script></span> cancels out, so
+  this comparison is equivalent to checking whether <span class="arithmatex"><span class="MathJax_Preview">1 &gt; \frac{3}{2}</span><script type="math/tex">1 > \frac{3}{2}</script></span>, which we can convert
+  to <span class="arithmatex"><span class="MathJax_Preview">2 &gt; 3</span><script type="math/tex">2 > 3</script></span>.  This can be seen to be <code>false</code> using only integer arithmetic.</li>
+</ul>
+</li>
+</ul>
+</details>
+<p>When an operation cannot be computed &mdash; either because the relationship involves irrational
+factors, or because the integers involved are too large &mdash; you will get a <strong>compile-time error</strong>
+with a message explaining the problem.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Operations subject to this limitation will be marked with † in their documentation.</p>
+</div>
+<h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
+<p>These are the operations which <code>Magnitude</code> supports.  Because it is a <a href="../detail/monovalue_types/">monovalue
+type</a>, the value can take the form of either a <em>type</em> or an <em>instance</em>.
+In what follows, we&rsquo;ll use this convention:</p>
+<ul>
+<li><strong>Capital</strong> identifiers (<code>M</code>, <code>M1</code>, <code>M2</code>, &hellip;) refer to <strong>types</strong>.</li>
+<li><strong>Lowercase</strong> identifiers (<code>m</code>, <code>m1</code>, <code>m2</code>, &hellip;) refer to <strong>instances</strong>.</li>
+</ul>
+<h3 id="equality-comparison">Equality comparison<a class="headerlink" href="#equality-comparison" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A <code>bool</code> indicating whether two <code>Magnitude</code> values represent the same number.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>types</em> <code>M1</code> and <code>M2</code>:<ul>
+<li><code>std::is_same&lt;M1, M2&gt;::value</code></li>
+</ul>
+</li>
+<li>For <em>instances</em> <code>m1</code> and <code>m2</code>:<ul>
+<li><code>m1 == m2</code> (equality comparison)</li>
+<li><code>m1 != m2</code> (inequality comparison)</li>
+</ul>
+</li>
+</ul>
+<p><code>Zero</code> is never equal to any <code>Magnitude</code>:</p>
+<ul>
+<li><code>ZERO == m</code> is always <code>false</code></li>
+<li><code>ZERO != m</code> is always <code>true</code></li>
+</ul>
+<h3 id="ordering-comparison">Ordering comparison †<a class="headerlink" href="#ordering-comparison" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A <code>bool</code> indicating the relative ordering of two <code>Magnitude</code> values.</p>
+<p>Unlike equality comparison (which simply checks whether two types are the same), ordering comparison
+computes which magnitude is larger.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>instances</em> <code>m1</code> and <code>m2</code>:<ul>
+<li><code>m1 &lt; m2</code></li>
+<li><code>m1 &gt; m2</code></li>
+<li><code>m1 &lt;= m2</code></li>
+<li><code>m1 &gt;= m2</code></li>
+<li><code>m1 &lt;=&gt; m2</code> <em>(C++20 or later)</em></li>
+</ul>
+</li>
+</ul>
+<p><code>Zero</code> can also be compared with any <code>Magnitude</code>:</p>
+<ul>
+<li><code>ZERO &lt; m</code> is <code>true</code> when <code>m</code> is positive</li>
+<li><code>ZERO &gt; m</code> is <code>true</code> when <code>m</code> is negative</li>
+<li><code>ZERO &lt;=&gt; m</code> is less than <code>0</code> when <code>m</code> is positive, and greater than <code>0</code> when <code>m</code> is negative
+  <em>(C++20 or later)</em></li>
+</ul>
+<p>These <code>Magnitude</code>/<code>Zero</code> comparisons work in either direction.  <code>m OP ZERO</code> is the opposite of
+<code>ZERO OP m</code>, for any ordering comparison operator <code>OP</code>, where by &ldquo;opposite&rdquo; we mean:</p>
+<ul>
+<li><code>!b</code> for a <code>bool</code> result <code>b</code></li>
+<li>&ldquo;Negation&rdquo; (conceptually) for a three-way comparison (<code>&lt;=&gt;</code>) result^[1]</li>
+</ul>
+<h3 id="multiplication">Multiplication<a class="headerlink" href="#multiplication" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The product of two <code>Magnitude</code> values.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>types</em> <code>M1</code> and <code>M2</code>:<ul>
+<li><code>MagProduct&lt;M1, M2&gt;</code></li>
+</ul>
+</li>
+<li>For <em>instances</em> <code>m1</code> and <code>m2</code>:<ul>
+<li><code>m1 * m2</code></li>
+</ul>
+</li>
+</ul>
+<p><code>Zero</code> is an absorbing element:</p>
+<ul>
+<li><code>ZERO * m</code> equals <code>ZERO</code></li>
+<li><code>m * ZERO</code> equals <code>ZERO</code></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Older releases used <code>MagProductT</code> (with the <code>T</code> suffix) instead of <code>MagProduct</code>.  Prefer
+<code>MagProduct</code>.  <code>MagProductT</code> is deprecated, and will be removed in future releases.</p>
+</div>
+<h3 id="division">Division<a class="headerlink" href="#division" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The quotient of two <code>Magnitude</code> values.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>types</em> <code>M1</code> and <code>M2</code>:<ul>
+<li><code>MagQuotient&lt;M1, M2&gt;</code></li>
+</ul>
+</li>
+<li>For <em>instances</em> <code>m1</code> and <code>m2</code>:<ul>
+<li><code>m1 / m2</code></li>
+</ul>
+</li>
+</ul>
+<p><code>Zero</code> divided by any magnitude is <code>Zero</code>:</p>
+<ul>
+<li><code>ZERO / m</code> equals <code>ZERO</code></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Older releases used <code>MagQuotientT</code> (with the <code>T</code> suffix) instead of <code>MagQuotient</code>.  Prefer
+<code>MagQuotient</code>.  <code>MagQuotientT</code> is deprecated, and will be removed in future releases.</p>
+</div>
+<h3 id="addition">Addition †<a class="headerlink" href="#addition" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The sum of two <code>Magnitude</code> values.</p>
+<p>This operation also supports <code>Zero</code> as both an input and an output.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>instances</em> <code>m1</code> and <code>m2</code>:<ul>
+<li><code>m1 + m2</code></li>
+</ul>
+</li>
+</ul>
+<p><code>Zero</code> is the identity element:</p>
+<ul>
+<li><code>ZERO + m</code> equals <code>m</code></li>
+<li><code>m + ZERO</code> equals <code>m</code></li>
+</ul>
+<p>If the sum is zero, the result type is <code>Zero</code>:</p>
+<ul>
+<li><code>m + (-m)</code> has type <code>Zero</code></li>
+</ul>
+<h3 id="subtraction">Subtraction †<a class="headerlink" href="#subtraction" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The difference of two <code>Magnitude</code> values.</p>
+<p>This operation also supports <code>Zero</code> as both an input and an output.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>instances</em> <code>m1</code> and <code>m2</code>:<ul>
+<li><code>m1 - m2</code></li>
+</ul>
+</li>
+</ul>
+<p>When the operands are equal, the result type is <code>Zero</code>:</p>
+<ul>
+<li><code>m - m</code> has type <code>Zero</code></li>
+</ul>
+<p>When the result is negative, the return type is a negative <code>Magnitude</code>:</p>
+<ul>
+<li><code>mag&lt;3&gt;() - mag&lt;5&gt;()</code> equals <code>-mag&lt;2&gt;()</code></li>
+</ul>
+<p><code>Zero</code> interactions:</p>
+<ul>
+<li><code>m - ZERO</code> equals <code>m</code></li>
+<li><code>ZERO - m</code> equals <code>-m</code></li>
+</ul>
+<h3 id="modulo">Modulo †<a class="headerlink" href="#modulo" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The remainder after dividing one <code>Magnitude</code> by another.</p>
+<p>This operation uses <strong>truncated division</strong> semantics (matching C++ <code>%</code>): the result has the same sign
+as the dividend (first operand).</p>
+<p>This operation also supports <code>Zero</code> as both an input and an output.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For <em>instances</em> <code>m1</code> and <code>m2</code>:<ul>
+<li><code>m1 % m2</code></li>
+</ul>
+</li>
+</ul>
+<p>When the dividend is exactly divisible by the divisor, the result type is <code>Zero</code>:</p>
+<ul>
+<li><code>mag&lt;6&gt;() % mag&lt;3&gt;()</code> has type <code>Zero</code></li>
+</ul>
+<p>When the dividend is <code>Zero</code>, the result is <code>Zero</code>:</p>
+<ul>
+<li><code>ZERO % m</code> has type <code>Zero</code></li>
+</ul>
+<p>Sign convention examples (result sign matches dividend):</p>
+<ul>
+<li><code>mag&lt;7&gt;() % mag&lt;3&gt;()</code> equals <code>mag&lt;1&gt;()</code></li>
+<li><code>(-mag&lt;7&gt;()) % mag&lt;3&gt;()</code> equals <code>-mag&lt;1&gt;()</code></li>
+<li><code>mag&lt;7&gt;() % (-mag&lt;3&gt;())</code> equals <code>mag&lt;1&gt;()</code></li>
+<li><code>(-mag&lt;7&gt;()) % (-mag&lt;3&gt;())</code> equals <code>-mag&lt;1&gt;()</code></li>
+</ul>
+<p>Irrational common factors are handled correctly:</p>
+<ul>
+<li><code>(mag&lt;14&gt;() * PI) % (mag&lt;3&gt;() * PI)</code> equals <code>mag&lt;2&gt;() * PI</code></li>
+</ul>
+<p>When the divisor is <code>Zero</code>, the operation produces a <strong>compile-time error</strong> (since division by zero is
+undefined).</p>
+<p>The result satisfies the <strong>division invariant</strong>: for any magnitudes <code>a</code> and <code>b</code> (with <code>b</code> nonzero),
+if <code>q</code> is the truncated quotient, then <code>q * b + (a % b)</code> equals <code>a</code>.</p>
+<h3 id="negation">Negation<a class="headerlink" href="#negation" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The negative of a <code>Magnitude</code>.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li>No special support, but you can form the product with <code>Magnitude&lt;Negative&gt;</code>, which represents
+  <code>-1</code>.</li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>-m</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="powers">Powers<a class="headerlink" href="#powers" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A <code>Magnitude</code> raised to an integral power.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>, and an integral power <code>N</code>:<ul>
+<li><code>MagPower&lt;M, N&gt;</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>, and an integral power <code>N</code>:<ul>
+<li><code>pow&lt;N&gt;(m)</code></li>
+</ul>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Older releases used <code>MagPowerT</code> (with the <code>T</code> suffix) instead of <code>MagPower</code>.  Prefer
+<code>MagPower</code>.  <code>MagPowerT</code> is deprecated, and will be removed in future releases.</p>
+</div>
+<h3 id="roots">Roots<a class="headerlink" href="#roots" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> An integral root of a <code>Magnitude</code>.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>, and an integral root <code>N</code>:<ul>
+<li><code>MagPower&lt;M, 1, N&gt;</code> (because the <span class="arithmatex"><span class="MathJax_Preview">N^\text{th}</span><script type="math/tex">N^\text{th}</script></span> root is equivalent to the
+  <span class="arithmatex"><span class="MathJax_Preview">\left(\frac{1}{N}\right)^\text{th}</span><script type="math/tex">\left(\frac{1}{N}\right)^\text{th}</script></span> power)</li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>, and an integral root <code>N</code>:<ul>
+<li><code>root&lt;N&gt;(m)</code></li>
+</ul>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If <code>m</code> is negative, and <code>N</code> is even, then <code>root&lt;N&gt;(m)</code> produces a hard compiler error, because
+the result cannot be represented as a <code>Magnitude</code>.</p>
+</div>
+<h3 id="helpers-for-powers-and-roots">Helpers for powers and roots<a class="headerlink" href="#helpers-for-powers-and-roots" title="Permanent link">&para;</a></h3>
+<p>Magnitudes support all of the <a href="../powers/#helpers">power helpers</a>.  So, for example, for
+a magnitude instance <code>m</code>, you can write <code>sqrt(m)</code> as a more readable alternative to <code>root&lt;2&gt;(m)</code>.</p>
+<h3 id="rounding-helpers">Rounding helpers<a class="headerlink" href="#rounding-helpers" title="Permanent link">&para;</a></h3>
+<p>These operations round a <code>Magnitude</code> to an integer <code>Magnitude</code>.  They all support <code>Zero</code> as both an
+input and an output.</p>
+<p>These features are generally subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.  We will include a warning
+directly in the subsection for each affected feature below.</p>
+<h4 id="truncation">Truncation †<a class="headerlink" href="#truncation" title="Permanent link">&para;</a></h4>
+<p><strong>Result:</strong> The integer part of a <code>Magnitude</code>, truncating toward zero.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>mag_trunc(m)</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>mag_trunc(mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>mag&lt;2&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\frac{7}{3} \approx 2.33</span><script type="math/tex">\frac{7}{3} \approx 2.33</script></span>)</li>
+<li><code>mag_trunc(-mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>-mag&lt;2&gt;()</code> (truncates toward zero)</li>
+<li><code>mag_trunc(mag&lt;1&gt;() / mag&lt;3&gt;())</code> has type <code>Zero</code> (since <span class="arithmatex"><span class="MathJax_Preview">\frac{1}{3} \approx 0.33</span><script type="math/tex">\frac{1}{3} \approx 0.33</script></span>)</li>
+<li><code>mag_trunc(ZERO)</code> has type <code>Zero</code></li>
+</ul>
+<h4 id="floor">Floor †<a class="headerlink" href="#floor" title="Permanent link">&para;</a></h4>
+<p><strong>Result:</strong> The largest integer <code>Magnitude</code> less than or equal to the input.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>mag_floor(m)</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>mag_floor(mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>mag&lt;2&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lfloor 2.33 \rfloor = 2</span><script type="math/tex">\lfloor 2.33 \rfloor = 2</script></span>)</li>
+<li><code>mag_floor(-mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>-mag&lt;3&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lfloor -2.33 \rfloor = -3</span><script type="math/tex">\lfloor -2.33 \rfloor = -3</script></span>)</li>
+<li><code>mag_floor(mag&lt;1&gt;() / mag&lt;2&gt;())</code> has type <code>Zero</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lfloor 0.5 \rfloor = 0</span><script type="math/tex">\lfloor 0.5 \rfloor = 0</script></span>)</li>
+<li><code>mag_floor(-mag&lt;1&gt;() / mag&lt;2&gt;())</code> equals <code>-mag&lt;1&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lfloor -0.5 \rfloor = -1</span><script type="math/tex">\lfloor -0.5 \rfloor = -1</script></span>)</li>
+<li><code>mag_floor(ZERO)</code> has type <code>Zero</code></li>
+</ul>
+<h4 id="ceiling">Ceiling †<a class="headerlink" href="#ceiling" title="Permanent link">&para;</a></h4>
+<p><strong>Result:</strong> The smallest integer <code>Magnitude</code> greater than or equal to the input.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>mag_ceil(m)</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>mag_ceil(mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>mag&lt;3&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lceil 2.33 \rceil = 3</span><script type="math/tex">\lceil 2.33 \rceil = 3</script></span>)</li>
+<li><code>mag_ceil(-mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>-mag&lt;2&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lceil -2.33 \rceil = -2</span><script type="math/tex">\lceil -2.33 \rceil = -2</script></span>)</li>
+<li><code>mag_ceil(mag&lt;1&gt;() / mag&lt;2&gt;())</code> equals <code>mag&lt;1&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lceil 0.5 \rceil = 1</span><script type="math/tex">\lceil 0.5 \rceil = 1</script></span>)</li>
+<li><code>mag_ceil(-mag&lt;1&gt;() / mag&lt;2&gt;())</code> has type <code>Zero</code> (since <span class="arithmatex"><span class="MathJax_Preview">\lceil -0.5 \rceil = 0</span><script type="math/tex">\lceil -0.5 \rceil = 0</script></span>)</li>
+<li><code>mag_ceil(ZERO)</code> has type <code>Zero</code></li>
+</ul>
+<h4 id="rounding">Rounding †<a class="headerlink" href="#rounding" title="Permanent link">&para;</a></h4>
+<p><strong>Result:</strong> The nearest integer <code>Magnitude</code> to the input, with half-values rounding away from zero.</p>
+<p>† <em>This feature is subject to <a href="#compile-time-arithmetic-limitations">compile-time arithmetic
+limitations</a>.</em></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>mag_round(m)</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>mag_round(mag&lt;7&gt;() / mag&lt;3&gt;())</code> equals <code>mag&lt;2&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">2.33</span><script type="math/tex">2.33</script></span> is closer to <span class="arithmatex"><span class="MathJax_Preview">2</span><script type="math/tex">2</script></span>)</li>
+<li><code>mag_round(mag&lt;8&gt;() / mag&lt;3&gt;())</code> equals <code>mag&lt;3&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">2.67</span><script type="math/tex">2.67</script></span> is closer to <span class="arithmatex"><span class="MathJax_Preview">3</span><script type="math/tex">3</script></span>)</li>
+<li><code>mag_round(mag&lt;5&gt;() / mag&lt;2&gt;())</code> equals <code>mag&lt;3&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">2.5</span><script type="math/tex">2.5</script></span> rounds away from zero)</li>
+<li><code>mag_round(-mag&lt;5&gt;() / mag&lt;2&gt;())</code> equals <code>-mag&lt;3&gt;()</code> (since <span class="arithmatex"><span class="MathJax_Preview">-2.5</span><script type="math/tex">-2.5</script></span> rounds away from zero)</li>
+<li><code>mag_round(mag&lt;1&gt;() / mag&lt;3&gt;())</code> has type <code>Zero</code> (since <span class="arithmatex"><span class="MathJax_Preview">0.33</span><script type="math/tex">0.33</script></span> rounds to <span class="arithmatex"><span class="MathJax_Preview">0</span><script type="math/tex">0</script></span>)</li>
+<li><code>mag_round(ZERO)</code> has type <code>Zero</code></li>
+</ul>
+<h2 id="traits">Traits<a class="headerlink" href="#traits" title="Permanent link">&para;</a></h2>
+<p>These traits provide information, at compile time, about the number represented by a <code>Magnitude</code>.</p>
+<h3 id="is-integer">Is Integer?<a class="headerlink" href="#is-integer" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A <code>bool</code> indicating whether a <code>Magnitude</code> represents an <em>integer</em> (<code>true</code> if it does;
+<code>false</code> otherwise).</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li><code>IsInteger&lt;M&gt;::value</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>is_integer(m)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="is-rational">Is Rational?<a class="headerlink" href="#is-rational" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A <code>bool</code> indicating whether a <code>Magnitude</code> represents a <em>rational number</em> (<code>true</code> if it
+does; <code>false</code> otherwise).</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li><code>IsRational&lt;M&gt;::value</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>is_rational(m)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="is-positive">Is Positive?<a class="headerlink" href="#is-positive" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A <code>bool</code> indicating whether a <code>Magnitude</code> represents a <em>positive number</em> (<code>true</code> if it
+does; <code>false</code> otherwise).</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li><code>IsPositive&lt;M&gt;::value</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>is_positive(m)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="integer-part">Integer part<a class="headerlink" href="#integer-part" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The integer part of a <code>Magnitude</code>, which is another <code>Magnitude</code>.</p>
+<p>For example, the &ldquo;integer part&rdquo; of <span class="arithmatex"><span class="MathJax_Preview">\frac{\sqrt{18}}{5\pi}</span><script type="math/tex">\frac{\sqrt{18}}{5\pi}</script></span> would be <span class="arithmatex"><span class="MathJax_Preview">3</span><script type="math/tex">3</script></span>, because <span class="arithmatex"><span class="MathJax_Preview">\sqrt{27}
+= 3\sqrt{2}</span><script type="math/tex">\sqrt{27}
+= 3\sqrt{2}</script></span>, and <span class="arithmatex"><span class="MathJax_Preview">3</span><script type="math/tex">3</script></span> is the integer part of <span class="arithmatex"><span class="MathJax_Preview">3\sqrt{2}</span><script type="math/tex">3\sqrt{2}</script></span>.</p>
+<p>If the input magnitude is an integer, then this operation is the identity.</p>
+<p>If the input magnitude is <em>not</em> an integer, then this operation produces the largest integer factor
+that can be extracted from the numerator (that is, the base powers with positive exponent).<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li><code>IntegerPart&lt;M&gt;</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>integer_part(m)</code></li>
+</ul>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Older releases used <code>IntegerPartT</code> (with the <code>T</code> suffix) instead of <code>IntegerPart</code>.  Prefer
+<code>IntegerPart</code>.  <code>IntegerPartT</code> is deprecated, and will be removed in future releases.</p>
+</div>
+<h3 id="numerator-integer-part">Numerator (integer part)<a class="headerlink" href="#numerator-integer-part" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The numerator we would have if a <code>Magnitude</code> were written as a fraction.  This result is
+another <code>Magnitude</code>.</p>
+<p>For example, the &ldquo;numerator&rdquo; of <span class="arithmatex"><span class="MathJax_Preview">\frac{3\sqrt{3}}{5\pi}</span><script type="math/tex">\frac{3\sqrt{3}}{5\pi}</script></span> would be <span class="arithmatex"><span class="MathJax_Preview">3\sqrt{3}</span><script type="math/tex">3\sqrt{3}</script></span>.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li><code>Numerator&lt;M&gt;</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>numerator(m)</code></li>
+</ul>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Older releases used <code>NumeratorT</code> (with the <code>T</code> suffix) instead of <code>Numerator</code>.  Prefer
+<code>Numerator</code>.  <code>NumeratorT</code> is deprecated, and will be removed in future releases.</p>
+</div>
+<h3 id="denominator-integer-part">Denominator (integer part)<a class="headerlink" href="#denominator-integer-part" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The denominator we would have if a <code>Magnitude</code> were written as a fraction.  This result is
+another <code>Magnitude</code>.</p>
+<p>For example, the &ldquo;denominator&rdquo; of <span class="arithmatex"><span class="MathJax_Preview">\frac{3\sqrt{3}}{5\pi}</span><script type="math/tex">\frac{3\sqrt{3}}{5\pi}</script></span> would be <span class="arithmatex"><span class="MathJax_Preview">5\pi</span><script type="math/tex">5\pi</script></span>.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li><code>Denominator&lt;M&gt;</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>denominator(m)</code></li>
+</ul>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Older releases used <code>DenominatorT</code> (with the <code>T</code> suffix) instead of <code>Denominator</code>.  Prefer
+<code>Denominator</code>.  <code>DenominatorT</code> is deprecated, and will be removed in future releases.</p>
+</div>
+<h3 id="absolute-value">Absolute value<a class="headerlink" href="#absolute-value" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> The absolute value of a <code>Magnitude</code>, which is another <code>Magnitude</code>.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li><code>Abs&lt;M&gt;</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>abs(m)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="sign">Sign<a class="headerlink" href="#sign" title="Permanent link">&para;</a></h3>
+<p><strong>Result:</strong> A <code>Magnitude</code>: <code>1</code> if the input is positive, and <code>-1</code> if the input is negative.</p>
+<p>We expect that the relation <code>m == sign(m) * abs(m)</code> will hold for every <code>Magnitude</code> <code>m</code>.</p>
+<p><strong>Syntax:</strong></p>
+<ul>
+<li>For a <em>type</em> <code>M</code>:<ul>
+<li><code>Sign&lt;M&gt;</code></li>
+</ul>
+</li>
+<li>For an <em>instance</em> <code>m</code>:<ul>
+<li><code>sign(m)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="combining-with-other-types">Combining with other types<a class="headerlink" href="#combining-with-other-types" title="Permanent link">&para;</a></h3>
+<p>A <code>Magnitude</code> instance <code>m</code> can be multiplied or divided with the library&rsquo;s other value types. In
+many cases the effect is <em>symbolic</em>: we scale the <em>unit</em> while leaving the stored value unchanged,
+which makes these operations exact even for integral reps. When <code>m</code> is divided by a numeric value or
+quantity (<code>m / x</code> or <code>m / q</code>), the stored value becomes the reciprocal of the divisor, so these
+overloads are only enabled for non-integral divisors.</p>
+<h4 id="raw-numbers">Raw numbers<a class="headerlink" href="#raw-numbers" title="Permanent link">&para;</a></h4>
+<p><strong>Result:</strong> A dimensionless <code>Quantity</code>, whose rep is the raw number&rsquo;s type, and whose unit is a
+scaled version of the unitless unit.  The <code>Magnitude</code> acts like its &ldquo;corresponding constant&rdquo;:
+<code>m</code> behaves the same as <code>make_constant(UnitProduct&lt;&gt;{} * m)</code>.</p>
+<p>The stored value is the input number for <code>x * m</code>, <code>m * x</code>, and <code>x / m</code>. For <code>m / x</code>, the stored
+value is <code>1 / x</code> (so this overload is only enabled for non-integral <code>x</code>). To retrieve the fully
+evaluated result, convert to a specific unit, as with any other dimensionless quantity.</p>
+<p><strong>Syntax</strong>, for a raw number <code>x</code>:</p>
+<ul>
+<li><code>x * m</code></li>
+<li><code>m * x</code></li>
+<li><code>x / m</code></li>
+<li><code>m / x</code><ul>
+<li>Only when <code>x</code> is not an integral type; dividing a <code>Magnitude</code> by an integer would almost
+  always produce 0, so it is a compile-time error.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Example:</strong></p>
+<ul>
+<li><code>(2.5 * mag&lt;3&gt;()).in(unos)</code> equals <code>7.5</code></li>
+</ul>
+<h4 id="quantity"><code>Quantity</code><a class="headerlink" href="#quantity" title="Permanent link">&para;</a></h4>
+<p><strong>Result:</strong> A <code>Quantity</code> of the same rep, whose unit is scaled by the <code>Magnitude</code> (or its inverse
+for division). For <code>q * m</code>, <code>m * q</code>, and <code>q / m</code>, the stored value is untouched (exact even for
+integral reps). For <code>m / q</code>, the stored value becomes the reciprocal of <code>q</code>&rsquo;s stored value, so this
+overload is only enabled for non-integral reps.</p>
+<p><strong>Syntax</strong>, for a <code>Quantity</code> instance <code>q</code>:</p>
+<ul>
+<li><code>q * m</code></li>
+<li><code>m * q</code></li>
+<li><code>q / m</code></li>
+<li><code>m / q</code><ul>
+<li>Only when the rep of <code>q</code> is not an integral type.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Example:</strong></p>
+<ul>
+<li><code>(feet(6.0) * mag&lt;3&gt;()).in(feet)</code> equals <code>18.0</code></li>
+</ul>
+<h4 id="units-quantity-makers-and-other-unit-adjacent-types">Units, quantity makers, and other unit-adjacent types<a class="headerlink" href="#units-quantity-makers-and-other-unit-adjacent-types" title="Permanent link">&para;</a></h4>
+<p>Instances of units, <code>QuantityMaker</code>, <code>QuantityPointMaker</code>, <code>SingularNameFor</code>, <code>Constant</code>, and
+<code>SymbolFor</code> can all be multiplied or divided by a <code>Magnitude</code>, on either side, producing the same
+kind of object with a scaled unit.  (The one exception is that you cannot divide a <code>Magnitude</code> <em>by</em>
+a <code>QuantityPointMaker</code>, because the inverse of a point unit is meaningless.)</p>
+<p>For example, <code>mag&lt;3&gt;() * feet</code> is a <code>QuantityMaker</code> for the unit &ldquo;3 feet&rdquo; &mdash; the same as
+<code>feet * mag&lt;3&gt;()</code>.</p>
+<h4 id="unit-slots">Unit slots<a class="headerlink" href="#unit-slots" title="Permanent link">&para;</a></h4>
+<p>A <code>Magnitude</code> instance can fill a <a href="../../discussion/idioms/unit-slots/">unit slot</a>, where it acts as
+a scaled version of the unitless unit.  For example, <code>make_constant(mag&lt;3&gt;())</code> is a dimensionless
+<code>Constant</code> representing the number 3, and <code>some_dimensionless_quantity.in(mag&lt;3&gt;())</code> retrieves the
+value of that quantity, as measured in units of &ldquo;3&rdquo;.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>The concept <code>integer_part()</code> is conceptually ambiguous when applied to non-integers.  So, too,
+for <code>numerator()</code> and <code>denominator()</code> applied to irrational numbers.  These utilities serve two
+purposes.  First, they provide a means for checking whether a given magnitude is a member of the
+unambiguous set &mdash; that is, we can check whether a magnitude is an integer by checking whether it&rsquo;s
+equal to its &ldquo;integer part&rdquo;.  Second, they enable us to automatically construct labels for
+magnitudes, by breaking them into the same kinds of pieces that a human reader would expect.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../format/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Format">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Format
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../math/" class="md-footer__link md-footer__link--next" aria-label="Next: Math functions">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Math functions
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022, Aurora Operations, Inc. All rights reserved
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.footer", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      
+    
+  </body>
+</html>
