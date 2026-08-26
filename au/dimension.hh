@@ -38,22 +38,14 @@ struct Dimension {
 // Define readable operations for product, quotient, power, inverse on Dimensions.
 template <typename... BPs>
 using DimProduct = PackProduct<Dimension, BPs...>;
-template <typename... BPs>
-using DimProductT = DimProduct<BPs...>;
 template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using DimPower = PackPower<Dimension, T, ExpNum, ExpDen>;
-template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
-using DimPowerT = DimPower<T, ExpNum, ExpDen>;
 
 template <typename T, typename U>
 using DimQuotient = PackQuotient<Dimension, T, U>;
-template <typename T, typename U>
-using DimQuotientT = DimQuotient<T, U>;
 
 template <typename T>
 using DimInverse = PackInverse<Dimension, T>;
-template <typename T>
-using DimInverseT = DimInverse<T>;
 
 template <typename... BP1s, typename... BP2s>
 constexpr auto operator*(Dimension<BP1s...>, Dimension<BP2s...>) {
@@ -79,8 +71,6 @@ template <typename... Dims>
 struct CommonDimensionImpl;
 template <typename... Dims>
 using CommonDimension = typename CommonDimensionImpl<Dims...>::type;
-template <typename... Dims>
-using CommonDimensionT = CommonDimension<Dims...>;
 
 template <typename... BaseDims>
 struct CommonDimensionImpl<Dimension<BaseDims...>> : stdx::type_identity<Dimension<BaseDims...>> {};
