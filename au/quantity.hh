@@ -159,7 +159,7 @@ class Quantity {
     using Unit = UnitT;
     static constexpr auto unit = Unit{};
 
-    static_assert(IsValidRep<Rep>::value, "Rep must meet our requirements for a rep");
+    static_assert(detail::AssertValidRep<Rep>::value, "Rep must meet our requirements for a rep");
 
     // IMPLICIT constructor for another Quantity of the same Dimension.
     template <typename OtherUnit,
