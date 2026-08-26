@@ -84,8 +84,8 @@ These oddities turn out to be just the tip of the iceberg.  Mateusz Pusz (lead a
 for quantities.  Some of the key [problems] he identifies include:
 
 - **UDLs compose poorly.**  If you have `_m` and `_s`, you can't make one for `_mps` (meters per
-  second) without writing an entirely new overload.  Actually, make that _two_ new overloads,
-  because...
+  second) without writing an entirely new overload.  Actually, make that _two_ new overloads --- one
+  for floating point, and one for integral.  That means...
 
 - **UDLs are expensive.**  We need two copies for every unit, so the _maintenance_ cost is high.
   Additionally, within Aurora, we found that the _compile time cost_ of having many UDLs adds up to
@@ -131,7 +131,13 @@ Let's see how all of our UDL problems melt away with unit symbols:
 
 - **Unit symbols compose naturally.**  We've already seen how `m / s` is a symbol for meters per
   second, composed on the fly.  We can also apply prefixes inline: `kilo(m)` does just what it looks
-  like, and we can assign it to a local variable called `km` for even better readability.
+  like, and we can even make it into a new _named_ symbol locally in a file for even better
+  readability.[^4]
+
+[^4]: This would be a line like `constexpr auto km = kilo(m);`, in the same section at the top of
+    the file where we import the symbols we use.  Expand the "Includes and usings" section in the
+    [Au tab of our Eigen example](../../examples/eigen-kinematics.md#__tabbed_1_2) for an example of
+    this.
 
 - **Unit symbols are cheap.**  Just one definition covers every rep, so we'd expect it to be twice
   as fast as the two-definition UDL approach.  In practice, we've found it to be noticeably faster
@@ -145,12 +151,12 @@ Let's see how all of our UDL problems melt away with unit symbols:
   at a glance (`..._m * m`) that we've gotten the units right.
 
 It's not as if UDLs have _no_ advantages.  `3.5_mps` has a more concise, unified appearance than
-`3.5 * m / s`, or even than the closer analogue `3.5 * mps` (if we wanted to define an ad hoc `mps`
-symbol, which is easy to do).  Additionally, the multiplicative syntax might make new users
-(wrongly) fearful of runtime costs.  However, on adding up all of the costs and benefits, it's not
-even a close call: unit symbols win by a country mile.[^4]
+`3.5 * m / s`.  (Even if we defined an ad hoc `mps` symbol, to be as brief as possible, `3.5_mps` is
+still more concise than `3.5 * mps` would be.)  Additionally, the multiplicative syntax might make
+new users (wrongly) fearful of runtime costs.  However, on adding up all of the costs and benefits,
+it's not even a close call: unit symbols win by a country mile.[^5]
 
-[^4]: Technically, we have not been able to _strictly_ verify this claim, because Au does not
+[^5]: Technically, we have not been able to _strictly_ verify this claim, because Au does not
     include a definition for the "country mile" unit. 😁
 
 ## Au's Constants
