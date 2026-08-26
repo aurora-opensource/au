@@ -326,7 +326,7 @@ These costs purchase significant benefits, but we still want them to be as small
                 <li class="check">Short namespace minimizes clutter</li>
                 <li class="check">
                     Detailed <a
-                    href="https://aurora-opensource.github.io/au/main/troubleshooting/">troubleshooting
+                    href="https://aurora-opensource.github.io/au/0.6.0/troubleshooting/">troubleshooting
                     guide</a>
                 </li>
             </ul>
@@ -502,7 +502,7 @@ incremental as possible.
                 </li>
                 <li class="check">
                     Starting from 0.5.0, <a
-                    href="https://aurora-opensource.github.io/au/main/howto/upgrade/#future-proof-releases">future-proof
+                    href="https://aurora-opensource.github.io/au/0.6.0/howto/upgrade/#future-proof-releases">future-proof
                     releases</a> let you tackle breaking changes one at a time
                 </li>
             </ul>
@@ -1063,7 +1063,7 @@ features.
         <td class="good">Can add new units and dimensions</td>
         <td class="best">Can even handle, e.g., systems of "natural" units</td>
         <td class="good">
-            Can add <a href="https://aurora-opensource.github.io/au/main/howto/new-units/">new units</a>
+            Can add <a href="https://aurora-opensource.github.io/au/0.6.0/howto/new-units/">new units</a>
             and dimensions
         </td>
     </tr>
@@ -1104,13 +1104,13 @@ features.
         <td class="good">
             <ul>
                 <li class="check">
-                    <a href="https://aurora-opensource.github.io/au/main/howto/interop/">
+                    <a href="https://aurora-opensource.github.io/au/0.6.0/howto/interop/">
                         <code>CorrespondingQuantity</code> supports bidirectional implicit conversions
                     </a>
                 </li>
                 <li class="check">
                     Supports <a
-                    href="https://aurora-opensource.github.io/au/main/reference/corresponding_quantity/#conversions">"two-hop"
+                    href="https://aurora-opensource.github.io/au/0.6.0/reference/corresponding_quantity/#conversions">"two-hop"
                     conversions</a>
                 </li>
             </ul>
@@ -1275,7 +1275,7 @@ features.
             Unit symbols
         </td>
         <td class="good">
-            <a href="https://aurora-opensource.github.io/au/main/reference/unit/#symbols">
+            <a href="https://aurora-opensource.github.io/au/0.6.0/reference/unit/#symbols">
                 Unit symbols
             </a>
         </td>
@@ -1419,7 +1419,7 @@ features.
         </td>
         <td class="good">
             Can use <a
-            href="https://aurora-opensource.github.io/au/main/discussion/concepts/zero/"><code>ZERO</code></a>
+            href="https://aurora-opensource.github.io/au/0.6.0/discussion/concepts/zero/"><code>ZERO</code></a>
             to construct or compare any quantity
         </td>
     </tr>
@@ -1472,7 +1472,7 @@ features.
                 <li class="check">Constants as types</li>
                 <li class="check">Perfect conversion policy</li>
                 <li class="check">Implicit Quantity conversion</li>
-                <li class="check"><a href="https://aurora-opensource.github.io/au/main/reference/constant/#built-in">Includes</a> exact constants from SI 2019</li>
+                <li class="check"><a href="https://aurora-opensource.github.io/au/0.6.0/reference/constant/#built-in">Includes</a> exact constants from SI 2019</li>
             </ul>
         </td>
     </tr>

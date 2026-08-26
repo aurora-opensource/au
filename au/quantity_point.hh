@@ -389,14 +389,14 @@ struct AssociatedUnitImpl<QuantityPoint<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Cannot pass QuantityPoint to a unit slot (see: "
-        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+        "https://aurora-opensource.github.io/au/0.6.0/troubleshooting/#quantity-to-unit-slot)");
 };
 template <typename U, typename R>
 struct AssociatedUnitForPointsImpl<QuantityPoint<U, R>> {
     static_assert(
         detail::AlwaysFalse<U, R>::value,
         "Cannot pass QuantityPoint to a unit slot (see: "
-        "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
+        "https://aurora-opensource.github.io/au/0.6.0/troubleshooting/#quantity-to-unit-slot)");
 };
 
 // Type trait to detect whether two QuantityPoint types are equivalent.
