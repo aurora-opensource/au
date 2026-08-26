@@ -32,6 +32,10 @@ constexpr auto PI = Magnitude<Pi>{};
 // A minimal non-arithmetic rep.  We can't assess overflow or truncation risk for such types in
 // general, but an _integer multiple_ is always exact, so it should carry no truncation risk.
 struct NonArithmetic {
+    // A non-arithmetic type can still be its own scalar: `NonArithmetic` is what the overflow and
+    // truncation machinery compares against.
+    using Scalar = NonArithmetic;
+
     int value;
 };
 
