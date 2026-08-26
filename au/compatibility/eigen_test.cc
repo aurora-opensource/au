@@ -427,7 +427,7 @@ TEST(EigenFreeFunctions, SquaredNormSquaresTheUnit) {
 
     auto sq = squaredNorm(q);
 
-    StaticAssertTypeEq<decltype(sq), Quantity<UnitPowerT<Meters, 2>, double>>();
+    StaticAssertTypeEq<decltype(sq), Quantity<UnitPower<Meters, 2>, double>>();
     EXPECT_THAT(sq.in(meters * meters), Eq(25.0));
 }
 
@@ -473,7 +473,7 @@ TEST(EigenFreeFunctions, DotProductMultipliesUnits) {
 
     auto d = dot(a, b);
 
-    StaticAssertTypeEq<decltype(d), Quantity<UnitProductT<Meters, Feet>, double>>();
+    StaticAssertTypeEq<decltype(d), Quantity<UnitProduct<Meters, Feet>, double>>();
     EXPECT_THAT(d.in(meters * feet), Eq(6.0));
 }
 
@@ -591,8 +591,8 @@ TEST(EigenFreeFunctions, CwiseProductMultipliesUnits) {
 
     auto c = cwiseProduct(a, b);
 
-    StaticAssertTypeEq<decltype(eval(c)), Quantity<UnitProductT<Meters, Feet>, Eigen::Vector3d>>();
-    EXPECT_THAT(eval(c).data_in(UnitProductT<Meters, Feet>{}), Eq(Eigen::Vector3d(2.0, 4.0, 6.0)));
+    StaticAssertTypeEq<decltype(eval(c)), Quantity<UnitProduct<Meters, Feet>, Eigen::Vector3d>>();
+    EXPECT_THAT(eval(c).data_in(UnitProduct<Meters, Feet>{}), Eq(Eigen::Vector3d(2.0, 4.0, 6.0)));
 }
 
 TEST(EigenFreeFunctions, CwiseProductWithRawEigenObjectKeepsQuantityUnit) {
@@ -609,8 +609,8 @@ TEST(EigenFreeFunctions, CwiseQuotientDividesUnits) {
 
     auto c = cwiseQuotient(a, b);
 
-    StaticAssertTypeEq<decltype(eval(c)), Quantity<UnitQuotientT<Meters, Feet>, Eigen::Vector3d>>();
-    EXPECT_THAT(eval(c).data_in(UnitQuotientT<Meters, Feet>{}), Eq(Eigen::Vector3d(2.0, 2.0, 2.0)));
+    StaticAssertTypeEq<decltype(eval(c)), Quantity<UnitQuotient<Meters, Feet>, Eigen::Vector3d>>();
+    EXPECT_THAT(eval(c).data_in(UnitQuotient<Meters, Feet>{}), Eq(Eigen::Vector3d(2.0, 2.0, 2.0)));
 }
 
 TEST(EigenFreeFunctions, CwiseQuotientWithRawEigenObject) {
@@ -624,8 +624,8 @@ TEST(EigenFreeFunctions, CwiseQuotientWithRawEigenObject) {
 
     // raw / Quantity -> inverts the unit.
     auto den = cwiseQuotient(raw, a);
-    StaticAssertTypeEq<decltype(eval(den)), Quantity<UnitInverseT<Meters>, Eigen::Vector3d>>();
-    EXPECT_THAT(eval(den).data_in(UnitInverseT<Meters>{}), Eq(Eigen::Vector3d(0.5, 0.5, 0.5)));
+    StaticAssertTypeEq<decltype(eval(den)), Quantity<UnitInverse<Meters>, Eigen::Vector3d>>();
+    EXPECT_THAT(eval(den).data_in(UnitInverse<Meters>{}), Eq(Eigen::Vector3d(0.5, 0.5, 0.5)));
 }
 
 TEST(EigenFreeFunctions, CwiseAbsIsUnitPreserving) {
@@ -716,8 +716,8 @@ TEST(EigenFreeFunctions, CwiseSqrtTakesSquareRootOfUnit) {
 
     auto r = cwiseSqrt(q);
 
-    StaticAssertTypeEq<decltype(eval(r)), Quantity<UnitPowerT<Meters, 1, 2>, Eigen::Vector3d>>();
-    EXPECT_THAT(eval(r).data_in(UnitPowerT<Meters, 1, 2>{}), Eq(Eigen::Vector3d(2.0, 3.0, 4.0)));
+    StaticAssertTypeEq<decltype(eval(r)), Quantity<UnitPower<Meters, 1, 2>, Eigen::Vector3d>>();
+    EXPECT_THAT(eval(r).data_in(UnitPower<Meters, 1, 2>{}), Eq(Eigen::Vector3d(2.0, 3.0, 4.0)));
 }
 
 TEST(EigenFreeFunctions, InverseInvertsTheUnit) {
@@ -726,10 +726,10 @@ TEST(EigenFreeFunctions, InverseInvertsTheUnit) {
 
     auto r = inverse(q);
 
-    StaticAssertTypeEq<decltype(eval(r)), Quantity<UnitInverseT<Meters>, Eigen::Matrix2d>>();
+    StaticAssertTypeEq<decltype(eval(r)), Quantity<UnitInverse<Meters>, Eigen::Matrix2d>>();
 
     Eigen::Matrix2d expected = Eigen::Vector2d(0.5, 0.25).asDiagonal();
-    EXPECT_THAT(eval(r).data_in(UnitInverseT<Meters>{}), Eq(expected));
+    EXPECT_THAT(eval(r).data_in(UnitInverse<Meters>{}), Eq(expected));
 }
 
 TEST(EigenFreeFunctions, ProdRaisesUnitToCoefficientCount) {
@@ -737,8 +737,8 @@ TEST(EigenFreeFunctions, ProdRaisesUnitToCoefficientCount) {
 
     auto p = prod(q);
 
-    StaticAssertTypeEq<decltype(p), Quantity<UnitPowerT<Meters, 3>, double>>();
-    EXPECT_THAT(p.data_in(UnitPowerT<Meters, 3>{}), Eq(24.0));
+    StaticAssertTypeEq<decltype(p), Quantity<UnitPower<Meters, 3>, double>>();
+    EXPECT_THAT(p.data_in(UnitPower<Meters, 3>{}), Eq(24.0));
 }
 
 TEST(EigenFreeFunctions, DeterminantRaisesUnitToMatrixDimension) {
@@ -747,8 +747,8 @@ TEST(EigenFreeFunctions, DeterminantRaisesUnitToMatrixDimension) {
 
     auto d = determinant(q);
 
-    StaticAssertTypeEq<decltype(d), Quantity<UnitPowerT<Meters, 3>, double>>();
-    EXPECT_THAT(d.data_in(UnitPowerT<Meters, 3>{}), Eq(24.0));
+    StaticAssertTypeEq<decltype(d), Quantity<UnitPower<Meters, 3>, double>>();
+    EXPECT_THAT(d.data_in(UnitPower<Meters, 3>{}), Eq(24.0));
 }
 
 TEST(EigenFreeFunctions, CastWidensScalarAndPreservesUnit) {
@@ -862,7 +862,7 @@ TEST(EigenUnitSymbols, DividingVectorBySymbolMakesInverseUnit) {
 
     const auto q = Eigen::Vector3d{1.0, 2.0, 3.0} / s;
 
-    StaticAssertTypeEq<decltype(q), const Quantity<UnitInverseT<Secs>, Eigen::Vector3d>>();
+    StaticAssertTypeEq<decltype(q), const Quantity<UnitInverse<Secs>, Eigen::Vector3d>>();
     EXPECT_THAT(q.data_in(inverse(secs)), Eq(Eigen::Vector3d(1.0, 2.0, 3.0)));
 }
 
@@ -872,7 +872,7 @@ TEST(EigenUnitSymbols, ComposedSymbolsMakeCompoundUnit) {
 
     const auto v = Eigen::Vector3d{4.0, 5.0, 6.0} * m / s;
 
-    StaticAssertTypeEq<decltype(v), const Quantity<UnitQuotientT<Meters, Secs>, Eigen::Vector3d>>();
+    StaticAssertTypeEq<decltype(v), const Quantity<UnitQuotient<Meters, Secs>, Eigen::Vector3d>>();
     EXPECT_THAT(v.data_in(meters / sec), Eq(Eigen::Vector3d(4.0, 5.0, 6.0)));
 }
 

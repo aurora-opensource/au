@@ -70,7 +70,7 @@ from it:
     ```cpp
     template <class T, class UnitSlot, class U, class R, class Policy = decltype(check_for(ALL_RISKS))>
     constexpr auto clamped_convert_to(UnitSlot unit, Quantity<U, R> q, Policy policy = {}) {
-        using ResultLimits = std::numeric_limits<Quantity<AssociatedUnitT<UnitSlot>, T>>;
+        using ResultLimits = std::numeric_limits<Quantity<AssociatedUnit<UnitSlot>, T>>;
         return will_conversion_overflow<T>(q, unit)
                    ? (q > ZERO ? ResultLimits::max() : ResultLimits::lowest())
                    : q.template as<T>(unit, policy.but_ignoring(OVERFLOW_RISK))

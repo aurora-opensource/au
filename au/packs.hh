@@ -48,16 +48,12 @@ template <typename T>
 struct BaseImpl : stdx::type_identity<T> {};
 template <typename T>
 using Base = typename BaseImpl<T>::type;
-template <typename T>
-using BaseT = Base<T>;
 
 // Type trait for the rational exponent of a type, interpreted as a base power.
 template <typename T>
 struct ExpImpl : stdx::type_identity<std::ratio<1>> {};
 template <typename T>
 using Exp = typename ExpImpl<T>::type;
-template <typename T>
-using ExpT = Exp<T>;
 
 // Type trait for treating an arbitrary type as a given type of pack.
 //
@@ -67,8 +63,6 @@ template <template <class... Ts> class Pack, typename T>
 struct AsPackImpl : stdx::type_identity<Pack<T>> {};
 template <template <class... Ts> class Pack, typename T>
 using AsPack = typename AsPackImpl<Pack, T>::type;
-template <template <class... Ts> class Pack, typename T>
-using AsPackT = AsPack<Pack, T>;
 
 // Type trait to remove a Pack enclosing a single item.
 //
@@ -78,8 +72,6 @@ template <template <class... Ts> class Pack, typename T>
 struct UnpackIfSoloImpl;
 template <template <class... Ts> class Pack, typename T>
 using UnpackIfSolo = typename UnpackIfSoloImpl<Pack, T>::type;
-template <template <class... Ts> class Pack, typename T>
-using UnpackIfSoloT = UnpackIfSolo<Pack, T>;
 
 // Trait to define whether two types are in order, based on the total ordering for some pack.
 //
@@ -121,16 +113,14 @@ using SortAs = typename SortAsImpl<PackForOrdering, ListT>::type;
 // ordering for List, with duplicates removed.  It will be "flattened" in that any elements which
 // are already `List<Ts...>` will be effectively replaced by `Ts...`.
 //
-// A precondition for `FlatDedupedTypeListT` is that any inputs which are already of type
+// A precondition for `FlatDedupedTypeList` is that any inputs which are already of type
 // `List<...>`, respect the _ordering_ for `List`, with no duplicates.  Otherwise, behaviour is
 // undefined.  (This precondition will automatically be satisfied if *every* instance of `List<...>`
-// arises as the result of a call to `FlatDedupedTypeListT<...>`.)
+// arises as the result of a call to `FlatDedupedTypeList<...>`.)
 template <template <class...> class List, typename... Ts>
 struct FlatDedupedTypeListImpl;
 template <template <class...> class List, typename... Ts>
 using FlatDedupedTypeList = typename FlatDedupedTypeListImpl<List, AsPack<List, Ts>...>::type;
-template <template <class...> class List, typename... Ts>
-using FlatDedupedTypeListT = FlatDedupedTypeList<List, Ts...>;
 
 namespace detail {
 // Express a base power in its simplest form (base alone if power is 1, or Pow if exp is integral).
@@ -424,7 +414,7 @@ struct SortAsImpl<PackForOrdering, Pack<T, Ts...>>
           InsertUsingOrderingFor<PackForOrdering, T, SortAs<PackForOrdering, Pack<Ts...>>>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// `FlatDedupedTypeListT` implementation.
+// `FlatDedupedTypeList` implementation.
 
 // 0-ary trivial case:
 template <template <class...> class List>
@@ -461,8 +451,7 @@ struct FlatDedupedTypeListImpl<List, List<T>, List<H, Ts...>> :
                            // If we're here, we know the candidate comes after the head.  So, try
                            // inserting it (recursively) in the tail, and then prepend the old Head
                            // (because we know it comes first).
-                           detail::Prepend<FlatDedupedTypeListT<List, List<T>, List<Ts...>>, H>>> {
-};
+                           detail::Prepend<FlatDedupedTypeList<List, List<T>, List<Ts...>>, H>>> {};
 
 // 2-ary recursive case, multi-element head: insert head of second element, and recurse.
 template <template <class...> class List,
@@ -474,7 +463,7 @@ template <template <class...> class List,
 struct FlatDedupedTypeListImpl<List, List<H1, N1, T1...>, List<H2, T2...>>
     : FlatDedupedTypeListImpl<List,
                               // Put H2 first so we can use single-element-head case from above.
-                              FlatDedupedTypeListT<List, List<H2>, List<H1, N1, T1...>>,
+                              FlatDedupedTypeList<List, List<H2>, List<H1, N1, T1...>>,
                               List<T2...>> {};
 
 // N-ary case, multi-element head: peel off tail-of-head, and recurse.
@@ -482,7 +471,7 @@ struct FlatDedupedTypeListImpl<List, List<H1, N1, T1...>, List<H2, T2...>>
 // Note that this also handles the 2-ary case where the head list has more than one element.
 template <template <class...> class List, typename L1, typename L2, typename L3, typename... Ls>
 struct FlatDedupedTypeListImpl<List, L1, L2, L3, Ls...>
-    : FlatDedupedTypeListImpl<List, FlatDedupedTypeListT<List, L1, L2>, L3, Ls...> {};
+    : FlatDedupedTypeListImpl<List, FlatDedupedTypeList<List, L1, L2>, L3, Ls...> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `PackProduct` implementation.

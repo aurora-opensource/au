@@ -83,7 +83,7 @@ auto norm(const Quantity<U, R> &q) {
 // The squared Euclidean norm (sum of squared coefficients).  Squares the unit; avoids a `sqrt`.
 template <typename U, typename R>
 auto squaredNorm(const Quantity<U, R> &q) {
-    return make_quantity<UnitPowerT<U, 2>>(q.data_in(U{}).squaredNorm());
+    return make_quantity<UnitPower<U, 2>>(q.data_in(U{}).squaredNorm());
 }
 
 // The sum of all coefficients.  Unit-preserving.
@@ -119,7 +119,7 @@ auto transpose(const Quantity<U, R> &q) {
 // The dot (inner) product.  The result unit is the product of the operand units.
 template <typename U1, typename R1, typename U2, typename R2>
 auto dot(const Quantity<U1, R1> &a, const Quantity<U2, R2> &b) {
-    return make_quantity<UnitProductT<U1, U2>>(a.data_in(U1{}).dot(b.data_in(U2{})));
+    return make_quantity<UnitProduct<U1, U2>>(a.data_in(U1{}).dot(b.data_in(U2{})));
 }
 
 // `dot` overloads where one operand is a raw (dimensionless) Eigen object.  The result carries the
@@ -137,7 +137,7 @@ auto dot(const V &a, const Quantity<U, R> &b) {
 // note above.
 template <typename U1, typename R1, typename U2, typename R2>
 auto cross(const Quantity<U1, R1> &a, const Quantity<U2, R2> &b) {
-    return make_quantity<UnitProductT<U1, U2>>(a.data_in(U1{}).cross(b.data_in(U2{})));
+    return make_quantity<UnitProduct<U1, U2>>(a.data_in(U1{}).cross(b.data_in(U2{})));
 }
 
 // `cross` overloads where one operand is a raw (dimensionless) Eigen object.  The result carries
@@ -204,7 +204,7 @@ auto trace(const Quantity<U, R> &q) {
 // Coefficient-wise (Hadamard) product.  The result unit is the product of the operand units.
 template <typename U1, typename R1, typename U2, typename R2>
 auto cwiseProduct(const Quantity<U1, R1> &a, const Quantity<U2, R2> &b) {
-    return make_quantity<UnitProductT<U1, U2>>(a.data_in(U1{}).cwiseProduct(b.data_in(U2{})));
+    return make_quantity<UnitProduct<U1, U2>>(a.data_in(U1{}).cwiseProduct(b.data_in(U2{})));
 }
 template <typename U, typename R, typename V>
 auto cwiseProduct(const Quantity<U, R> &a, const V &b) {
@@ -218,7 +218,7 @@ auto cwiseProduct(const V &a, const Quantity<U, R> &b) {
 // Coefficient-wise quotient.  The result unit is the quotient of the operand units.
 template <typename U1, typename R1, typename U2, typename R2>
 auto cwiseQuotient(const Quantity<U1, R1> &a, const Quantity<U2, R2> &b) {
-    return make_quantity<UnitQuotientT<U1, U2>>(a.data_in(U1{}).cwiseQuotient(b.data_in(U2{})));
+    return make_quantity<UnitQuotient<U1, U2>>(a.data_in(U1{}).cwiseQuotient(b.data_in(U2{})));
 }
 template <typename U, typename R, typename V>
 auto cwiseQuotient(const Quantity<U, R> &a, const V &b) {
@@ -226,7 +226,7 @@ auto cwiseQuotient(const Quantity<U, R> &a, const V &b) {
 }
 template <typename V, typename U, typename R>
 auto cwiseQuotient(const V &a, const Quantity<U, R> &b) {
-    return make_quantity<UnitInverseT<U>>(a.cwiseQuotient(b.data_in(U{})));
+    return make_quantity<UnitInverse<U>>(a.cwiseQuotient(b.data_in(U{})));
 }
 
 // Coefficient-wise absolute value.  Unit-preserving.
@@ -341,7 +341,7 @@ auto replicate(const Quantity<U, R> &q, std::ptrdiff_t row_factor, std::ptrdiff_
 // above.
 template <typename U, typename R>
 auto cwiseSqrt(const Quantity<U, R> &q) {
-    return make_quantity<UnitPowerT<U, 1, 2>>(q.data_in(U{}).cwiseSqrt());
+    return make_quantity<UnitPower<U, 1, 2>>(q.data_in(U{}).cwiseSqrt());
 }
 
 // The matrix inverse.  Inverts the unit (since `A * A.inverse()` is dimensionless).  LAZY: see the
@@ -354,7 +354,7 @@ auto cwiseSqrt(const Quantity<U, R> &q) {
 // planned future work.  Until then, this is a known (temporary) gap.
 template <typename U, typename R>
 auto inverse(const Quantity<U, R> &q) {
-    return make_quantity<UnitInverseT<U>>(q.data_in(U{}).inverse());
+    return make_quantity<UnitInverse<U>>(q.data_in(U{}).inverse());
 }
 
 // The product of all coefficients.  Raises the unit to the power of the coefficient count.
@@ -368,7 +368,7 @@ auto prod(const Quantity<U, R> &q) {
     static_assert(N != -1,  // i.e. not Eigen::Dynamic
                   "prod() requires a fixed-size operand: its result unit is U^(coefficient count), "
                   "which cannot be expressed when the size is only known at runtime");
-    return make_quantity<UnitPowerT<U, N>>(q.data_in(U{}).prod());
+    return make_quantity<UnitPower<U, N>>(q.data_in(U{}).prod());
 }
 
 // The determinant.  Raises the unit to the power of the matrix dimension.
@@ -381,7 +381,7 @@ auto determinant(const Quantity<U, R> &q) {
     static_assert(N != -1,  // i.e. not Eigen::Dynamic
                   "determinant() requires a fixed-size operand: its result unit is U^N for an NxN "
                   "matrix, which cannot be expressed when the size is only known at runtime");
-    return make_quantity<UnitPowerT<U, N>>(q.data_in(U{}).determinant());
+    return make_quantity<UnitPower<U, N>>(q.data_in(U{}).determinant());
 }
 
 }  // namespace au
