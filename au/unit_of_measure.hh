@@ -134,8 +134,6 @@ struct UnitRatioImpl : stdx::type_identity<MagQuotient<detail::MagT<U1>, detail:
 };
 template <typename U1, typename U2>
 using UnitRatio = typename UnitRatioImpl<U1, U2>::type;
-template <typename U1, typename U2>
-using UnitRatioT = UnitRatio<U1, U2>;
 
 // The sign of a unit: almost always `mag<1>()`, but `-mag<1>()` for "negative" units.
 template <typename U>
@@ -145,15 +143,11 @@ template <typename U>
 struct AssociatedUnitImpl : stdx::type_identity<U> {};
 template <typename U>
 using AssociatedUnit = typename AssociatedUnitImpl<U>::type;
-template <typename U>
-using AssociatedUnitT = AssociatedUnit<U>;
 
 template <typename U>
 struct AssociatedUnitForPointsImpl : stdx::type_identity<U> {};
 template <typename U>
 using AssociatedUnitForPoints = typename AssociatedUnitForPointsImpl<U>::type;
-template <typename U>
-using AssociatedUnitForPointsT = AssociatedUnitForPoints<U>;
 
 template <template <class, class> class QType, typename U>
 struct AppropriateAssociatedUnitImpl;
@@ -176,8 +170,6 @@ template <typename... Us>
 struct ComputeCommonUnit;
 template <typename... Us>
 using CommonUnit = typename ComputeCommonUnit<Us...>::type;
-template <typename... Us>
-using CommonUnitT = CommonUnit<Us...>;
 
 // `CommonPointUnit`: the largest-magnitude, highest-origin unit which is "common" to the units of
 // a collection of `QuantityPoint` instances.
@@ -202,8 +194,6 @@ template <typename... Us>
 struct ComputeCommonPointUnit;
 template <typename... Us>
 using CommonPointUnit = typename ComputeCommonPointUnit<Us...>::type;
-template <typename... Us>
-using CommonPointUnitT = CommonPointUnit<Us...>;
 
 template <template <class, class> class QType, typename... Us>
 struct AppropriateCommonUnitImpl;
@@ -366,28 +356,20 @@ template <typename... UnitPows>
 using UnitProduct =
     UnpackIfSolo<UnitProductPack,
                  PackProduct<UnitProductPack, AsPack<UnitProductPack, UnitPows>...>>;
-template <typename... UnitPows>
-using UnitProductT = UnitProduct<UnitPows...>;
 
 // Raise a Unit to a (possibly rational) Power.
 template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using UnitPower =
     UnpackIfSolo<UnitProductPack,
                  PackPower<UnitProductPack, AsPack<UnitProductPack, U>, ExpNum, ExpDen>>;
-template <typename U, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
-using UnitPowerT = UnitPower<U, ExpNum, ExpDen>;
 
 // Compute the inverse of a unit.
 template <typename U>
 using UnitInverse = UnitPower<U, -1>;
-template <typename U>
-using UnitInverseT = UnitInverse<U>;
 
 // Compute the quotient of two units.
 template <typename U1, typename U2>
 using UnitQuotient = UnitProduct<U1, UnitInverse<U2>>;
-template <typename U1, typename U2>
-using UnitQuotientT = UnitQuotient<U1, U2>;
 
 template <typename... Us>
 constexpr bool is_forward_declared_unit_valid(ForwardDeclareUnitProduct<Us...>) {
@@ -797,7 +779,7 @@ template <typename U>
 using DistinctUnscaledUnits = typename DistinctUnscaledUnitsImpl<U>::type;
 template <typename... Us>
 struct DistinctUnscaledUnitsImpl<CommonUnitPack<Us...>>
-    : stdx::type_identity<FlatDedupedTypeListT<UnitList, UnscaledUnit<Us>...>> {};
+    : stdx::type_identity<FlatDedupedTypeList<UnitList, UnscaledUnit<Us>...>> {};
 
 template <typename U, typename DistinctUnits>
 struct SimplifyIfOnlyOneUnscaledUnitImpl;
@@ -906,13 +888,13 @@ template <typename... Us>
 using UnitSum = typename detail::UnitSumImpl<Us...>::type;
 
 template <typename... Us>
-using CommonUnitLabel = FlatDedupedTypeListT<detail::CommonUnitLabelImpl, Us...>;
+using CommonUnitLabel = FlatDedupedTypeList<detail::CommonUnitLabelImpl, Us...>;
 
 template <typename... Us>
 struct ComputeCommonUnitImpl
     : stdx::type_identity<detail::EliminateRedundantUnits<
-          FlatDedupedTypeListT<CommonUnitPack,
-                               detail::ReplaceCommonPointUnitWithCommonUnit<Us>...>>> {};
+          FlatDedupedTypeList<CommonUnitPack,
+                              detail::ReplaceCommonPointUnitWithCommonUnit<Us>...>>> {};
 template <>
 struct ComputeCommonUnitImpl<> : stdx::type_identity<Zero> {};
 
@@ -1055,7 +1037,7 @@ template <typename A, typename B>
 struct InOrderFor<CommonPointUnitPack, A, B> : InOrderFor<UnitProductPack, A, B> {};
 
 template <typename... Us>
-using ComputeCommonPointUnitImpl = FlatDedupedTypeListT<CommonPointUnitPack, Us...>;
+using ComputeCommonPointUnitImpl = FlatDedupedTypeList<CommonPointUnitPack, Us...>;
 
 template <typename... Us>
 struct ComputeCommonPointUnit
