@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.5.0-base-160-g5c60cf6
+// Version identifier: 0.5.0-base-161-g7e7e009
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -344,7 +344,7 @@ struct Kibi;
 //
 
 #define AU_VERSION_MAJOR 0
-#define AU_VERSION_MINOR 5
+#define AU_VERSION_MINOR 6
 #define AU_VERSION_PATCH 0
 
 // Combine major/minor/patch components into a single monotonically increasing integer.  Each
