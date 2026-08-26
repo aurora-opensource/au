@@ -57,7 +57,7 @@
 //
 
 #define AU_VERSION_MAJOR 0
-#define AU_VERSION_MINOR 5
+#define AU_VERSION_MINOR 6
 #define AU_VERSION_PATCH 0
 
 // Combine major/minor/patch components into a single monotonically increasing integer.  Each
