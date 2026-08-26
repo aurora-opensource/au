@@ -244,48 +244,6 @@ class Quantity {
         return in_impl<detail::UseStaticCast, void>(u, policy);
     }
 
-    // "Forcing" conversions, which explicitly ignore safety checks for overflow and truncation.
-    template <typename NewUnit>
-    [[deprecated(
-        "`coerce_as()` is deprecated.  Use `as()` instead, and pass a risk policy parameter.  "
-        "Upgrade guide: "
-        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
-        "#coerce>")]] constexpr auto
-    coerce_as(NewUnit) const {
-        // Usage example: `q.coerce_as(new_units)`.
-        return as(NewUnit{}, ignore(ALL_RISKS));
-    }
-    template <typename NewRep, typename NewUnit>
-    [[deprecated(
-        "`coerce_as()` is deprecated.  Use `as()` instead, and pass a risk policy parameter.  "
-        "Upgrade guide: "
-        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
-        "#coerce>")]] constexpr auto
-    coerce_as(NewUnit) const {
-        // Usage example: `q.coerce_as<T>(new_units)`.
-        return as<NewRep>(NewUnit{}, ignore(ALL_RISKS));
-    }
-    template <typename NewUnit>
-    [[deprecated(
-        "`coerce_in()` is deprecated.  Use `in()` instead, and pass a risk policy parameter.  "
-        "Upgrade guide: "
-        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
-        "#coerce>")]] constexpr auto
-    coerce_in(NewUnit) const {
-        // Usage example: `q.coerce_in(new_units)`.
-        return in(NewUnit{}, ignore(ALL_RISKS));
-    }
-    template <typename NewRep, typename NewUnit>
-    [[deprecated(
-        "`coerce_in()` is deprecated.  Use `in()` instead, and pass a risk policy parameter.  "
-        "Upgrade guide: "
-        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
-        "#coerce>")]] constexpr auto
-    coerce_in(NewUnit) const {
-        // Usage example: `q.coerce_in<T>(new_units)`.
-        return in<NewRep>(NewUnit{}, ignore(ALL_RISKS));
-    }
-
     // Direct access to the underlying value member, with any Quantity-equivalent Unit.
     //
     // Mutable access:
