@@ -246,6 +246,12 @@ using ScalarOfOrVoid = stdx::experimental::detected_or_t<void, ::au::ScalarOf, T
 template <typename T>
 struct HasQuantityLikeScalar : LooksLikeAuOrOtherQuantity<ScalarOfOrVoid<T>> {};
 
+// Every rep must have a `ScalarOf`: it's what the overflow and truncation risk checks are built on.
+// Most types are covered by the automatic detection, but a type that matches no probe needs a
+// `ScalarOfTrait` specialization before it can be used as a rep.
+template <typename T>
+struct HasNoScalar : stdx::negation<stdx::experimental::is_detected<::au::ScalarOf, T>> {};
+
 // The `std::is_empty` is a good way to catch all of the various unit and other monovalue types in
 // our library, which have little else in common.  It's also just intrinsically true that it
 // wouldn't make much sense to use an empty type as a rep.
@@ -253,6 +259,7 @@ template <typename T>
 struct IsKnownInvalidRep : stdx::disjunction<std::is_empty<T>,
                                              LooksLikeAuOrOtherQuantity<T>,
                                              std::is_same<void, T>,
+                                             HasNoScalar<T>,
                                              HasQuantityLikeScalar<T>> {};
 
 // The type of the product of two types.
@@ -284,5 +291,19 @@ struct IsProductValidRep
 template <typename T, typename U>
 struct IsQuotientValidRep
     : IsValidRep<detail::ResultIfNoneAreQuantity<detail::QuotientTypeOrVoid, T, U>> {};
+
+namespace detail {
+
+// `AssertValidRep<T>::value` is `IsValidRep<T>::value`, but instantiating it also explains the
+// specific requirement that `T` fails, when we can name one.  Use this instead of `IsValidRep` in
+// `static_assert`, so that users get actionable error messages.
+template <typename T>
+struct AssertValidRep : IsValidRep<T> {
+    static_assert(!HasNoScalar<T>::value,
+                  "No `ScalarOf<Rep>`: provide a `ScalarOfTrait<Rep>` specialization for this rep "
+                  "(see https://aurora-opensource.github.io/au/main/reference/rep/#scalar-of)");
+};
+
+}  // namespace detail
 
 }  // namespace au
