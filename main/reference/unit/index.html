@@ -962,6 +962,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../discussion/idioms/abbreviated-quantity-construction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abbreviated Quantity Construction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../discussion/idioms/namespaces-and-includes/" class="md-nav__link">
         
   
@@ -2308,6 +2336,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#symbols-in-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bringing symbols into scope
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#prefixed-symbols" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3405,6 +3444,30 @@ uses awkward type traits such as <code>UnitQuotientT</code>.</p>
 </div>
 </div>
 </details>
+<h4 id="symbols-in-scope">Bringing symbols into scope<a class="headerlink" href="#symbols-in-scope" title="Permanent link">&para;</a></h4>
+<p>Every unit that ships with Au also provides a symbol in the <code>au::symbols</code> namespace &mdash; <code>symbols::m</code>
+for <code>Meters</code>, <code>symbols::s</code> for <code>Seconds</code>, and so on.</p>
+<p>Symbol names are the shortest names in the library, which makes them the most likely to collide.
+Bring them into scope no more widely than you must.</p>
+<ul>
+<li>
+<p>In an <strong>implementation file</strong> (<code>.cc</code>, <code>.cpp</code>), a file-scope <code>using ::au::symbols::m;</code> is fine: the
+  blast radius is a single translation unit.</p>
+</li>
+<li>
+<p>In a <strong>header file</strong>, never do this at namespace scope: the name would leak into every translation
+  unit that includes the header.  Put the <code>using</code> declaration <em>inside the function body</em> instead,
+  where it expires at the closing brace.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kr">inline</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">au</span><span class="o">::</span><span class="n">Radians</span><span class="o">&gt;</span><span class="w"> </span><span class="n">turn_angle</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">au</span><span class="o">::</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">arc</span><span class="p">,</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">                                             </span><span class="n">au</span><span class="o">::</span><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">au</span><span class="o">::</span><span class="n">Meters</span><span class="o">&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">symbols</span><span class="o">::</span><span class="n">rad</span><span class="p">;</span><span class="w">  </span><span class="c1">// Confined to this function.</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">arc</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rad</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
+</code></pre></div>
+</li>
+</ul>
+<p>See <a href="../../discussion/idioms/namespaces-and-includes/#headers">Namespaces and includes</a> for the
+fuller discussion.</p>
 <h4 id="prefixed-symbols">Prefixed symbols<a class="headerlink" href="#prefixed-symbols" title="Permanent link">&para;</a></h4>
 <p>To create a symbol for a prefixed unit, both of the ways mentioned above (namely, calling
 <code>symbol_for()</code>, and creating a <code>SymbolFor&lt;&gt;</code> instance) will still work.  However, there is also
@@ -3417,15 +3480,15 @@ your three options for creating a symbol for the prefixed unit <code>Nano&lt;Met
 <div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Using <code>symbol_for</code></label><label for="__tabbed_2_2">Using <code>SymbolFor</code></label><label for="__tabbed_2_3">Using a prefix applier</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">nm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbol_for</span><span class="p">(</span><span class="n">nano</span><span class="p">(</span><span class="n">meters</span><span class="p">));</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">nm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbol_for</span><span class="p">(</span><span class="n">nano</span><span class="p">(</span><span class="n">meters</span><span class="p">));</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">nm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolFor</span><span class="o">&lt;</span><span class="n">Nano</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;&gt;</span><span class="p">{};</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">nm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolFor</span><span class="o">&lt;</span><span class="n">Nano</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;&gt;</span><span class="p">{};</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">nm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nano</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">nm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nano</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
 </code></pre></div>
 </div>
 </div>
@@ -3913,19 +3976,19 @@ useful without <code>QuantityPoint</code> anyway, so this new home is acceptable
 <h3 id="associated-unit">Associated unit<a class="headerlink" href="#associated-unit" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> The actual unit associated with a <a href="../../discussion/idioms/unit-slots/">unit slot</a> that
 is associated with a <code>Quantity</code> type.  Here are a few examples.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">round_in</span><span class="p">(</span><span class="n">meters</span><span class="p">,</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">20</span><span class="p">));</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1">//       ^^^^^^</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">round_in</span><span class="p">(</span><span class="n">Meters</span><span class="p">{},</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">20</span><span class="p">));</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1">//       ^^^^^^^^</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="k">using</span><span class="w"> </span><span class="n">symbols</span><span class="o">::</span><span class="n">m</span><span class="p">;</span>
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">round_in</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">20</span><span class="p">));</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="c1">//       ^</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
-<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">inches</span><span class="p">);</span>
-<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="c1">//         ^^^^^^</span>
-<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">Inches</span><span class="p">{});</span>
-<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="c1">//         ^^^^^^^^</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">round_in</span><span class="p">(</span><span class="n">meters</span><span class="p">,</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">20</span><span class="p">));</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1">//       ^^^^^^</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">round_in</span><span class="p">(</span><span class="n">Meters</span><span class="p">{},</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">20</span><span class="p">));</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1">//       ^^^^^^^^</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="k">using</span><span class="w"> </span><span class="n">symbols</span><span class="o">::</span><span class="n">m</span><span class="p">;</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">round_in</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">feet</span><span class="p">(</span><span class="mi">20</span><span class="p">));</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="c1">//       ^</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">inches</span><span class="p">);</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="c1">//         ^^^^^^</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="n">feet</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">Inches</span><span class="p">{});</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="c1">//         ^^^^^^^^</span>
 </code></pre></div>
 <p>The underlined arguments are all unit slots.  The kinds of things that can be passed here include
 a <code>QuantityMaker</code> for a unit, a <a href="../constant/">constant</a>, a <a href="#symbols">unit symbol</a>,
@@ -3952,15 +4015,15 @@ release.  Please migrate all current instances of <code>AssociatedUnitT</code> t
 <h3 id="associated-unit-for-points">Associated unit (for points)<a class="headerlink" href="#associated-unit-for-points" title="Permanent link">&para;</a></h3>
 <p><strong>Result:</strong> The actual unit associated with a <a href="../../discussion/idioms/unit-slots/">unit slot</a> that
 is associated with a quantity point type. Here are a few examples.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">round_in</span><span class="p">(</span><span class="n">meters_pt</span><span class="p">,</span><span class="w"> </span><span class="n">milli</span><span class="p">(</span><span class="n">meters_pt</span><span class="p">)(</span><span class="mi">1200</span><span class="p">));</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1">//       ^^^^^^^^^</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">round_in</span><span class="p">(</span><span class="n">Meters</span><span class="p">{},</span><span class="w"> </span><span class="n">milli</span><span class="p">(</span><span class="n">meters_pt</span><span class="p">)(</span><span class="mi">1200</span><span class="p">));</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1">//       ^^^^^^^^</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">meters_pt</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">centi</span><span class="p">(</span><span class="n">meters_pt</span><span class="p">));</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1">//              ^^^^^^^^^^^^^^^^</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">meters_pt</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">Centi</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">{});</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="c1">//              ^^^^^^^^^^^^^^^</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">round_in</span><span class="p">(</span><span class="n">meters_pt</span><span class="p">,</span><span class="w"> </span><span class="n">milli</span><span class="p">(</span><span class="n">meters_pt</span><span class="p">)(</span><span class="mi">1200</span><span class="p">));</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1">//       ^^^^^^^^^</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">round_in</span><span class="p">(</span><span class="n">Meters</span><span class="p">{},</span><span class="w"> </span><span class="n">milli</span><span class="p">(</span><span class="n">meters_pt</span><span class="p">)(</span><span class="mi">1200</span><span class="p">));</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1">//       ^^^^^^^^</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">meters_pt</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">centi</span><span class="p">(</span><span class="n">meters_pt</span><span class="p">));</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1">//              ^^^^^^^^^^^^^^^^</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="n">meters_pt</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">in</span><span class="p">(</span><span class="n">Centi</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">{});</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="c1">//              ^^^^^^^^^^^^^^^</span>
 </code></pre></div>
 <p>The underlined arguments are unit slots for quantity points.  In practice, this will be either
 a <code>QuantityPointMaker</code> for some unit, or a unit itself.</p>
@@ -4126,17 +4189,17 @@ concept of <a href="../../discussion/concepts/common_unit/">common units</a>.)</
 </ul>
 <details class="example">
 <summary>Examples</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// `meters` and `feet` are quantity makers: pass them a number, they make a quantity.</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1">//</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1">// `make_common(meters, feet)` is also a quantity maker, so we can pass it `18`.</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_common</span><span class="p">(</span><span class="n">meters</span><span class="p">,</span><span class="w"> </span><span class="n">feet</span><span class="p">)(</span><span class="mi">18</span><span class="p">);</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="c1">// `m` and `ft` are unit symbols: multiply a number by them to make a quantity.</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1">//</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="c1">// `make_common(meters, feet)` is also a unit symbol, so we can multiply `9.5f` by it.</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="k">using</span><span class="w"> </span><span class="n">symbols</span><span class="o">::</span><span class="n">m</span><span class="p">;</span>
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="k">using</span><span class="w"> </span><span class="n">symbols</span><span class="o">::</span><span class="n">ft</span><span class="p">;</span>
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">9.5f</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">make_common</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">ft</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// `meters` and `feet` are quantity makers: pass them a number, they make a quantity.</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="c1">//</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1">// `make_common(meters, feet)` is also a quantity maker, so we can pass it `18`.</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_common</span><span class="p">(</span><span class="n">meters</span><span class="p">,</span><span class="w"> </span><span class="n">feet</span><span class="p">)(</span><span class="mi">18</span><span class="p">);</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="c1">// `m` and `ft` are unit symbols: multiply a number by them to make a quantity.</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1">//</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="c1">// `make_common(meters, feet)` is also a unit symbol, so we can multiply `9.5f` by it.</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="k">using</span><span class="w"> </span><span class="n">symbols</span><span class="o">::</span><span class="n">m</span><span class="p">;</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="k">using</span><span class="w"> </span><span class="n">symbols</span><span class="o">::</span><span class="n">ft</span><span class="p">;</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">9.5f</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">make_common</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">ft</span><span class="p">);</span>
 </code></pre></div>
 </details>
 <h3 id="make-common-point">Making common point units<a class="headerlink" href="#make-common-point" title="Permanent link">&para;</a></h3>
@@ -4151,10 +4214,10 @@ input origins.</p>
 </ul>
 <details class="example">
 <summary>Example</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// `meters_pt` and `feet_pt` are quantity point makers: pass them a number, they make a quantity point.</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="c1">//</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1">// `make_common_point(meters_pt, feet_pt)` is also a quantity point maker, so we can pass it `10`.</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_common_point</span><span class="p">(</span><span class="n">celsius_pt</span><span class="p">,</span><span class="w"> </span><span class="n">fahrenheit_pt</span><span class="p">)(</span><span class="mi">10</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// `meters_pt` and `feet_pt` are quantity point makers: pass them a number, they make a quantity point.</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1">//</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1">// `make_common_point(meters_pt, feet_pt)` is also a quantity point maker, so we can pass it `10`.</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_common_point</span><span class="p">(</span><span class="n">celsius_pt</span><span class="p">,</span><span class="w"> </span><span class="n">fahrenheit_pt</span><span class="p">)(</span><span class="mi">10</span><span class="p">);</span>
 </code></pre></div>
 </details>
 <script src="../assets/hrh4.js" async=false defer=false></script>

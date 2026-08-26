@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://aurora-opensource.github.io/au/main/discussion/idioms/namespaces-and-includes/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../abbreviated-quantity-construction/">
       
       
         <link rel="next" href="../unit-slots/">
@@ -946,6 +946,34 @@
     
   
     Au Idioms
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../abbreviated-quantity-construction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abbreviated Quantity Construction
   
 
     
@@ -3003,6 +3031,15 @@ alternatives that avoid this problem.</p>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">arc</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rad</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
 </code></pre></div>
+<p><a href="../../../reference/constant/#unit-literals">Unit literals</a> follow the same rule.  Their suffixes
+are too arcane to spell out individually, so the conventional <code>using namespace
+::au::au_literals;</code> is the right tool &mdash; but in a header, it belongs <em>inside the function
+body</em>, not at namespace scope:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">au</span><span class="o">::</span><span class="n">Seconds</span><span class="o">&gt;</span><span class="w"> </span><span class="n">default_timeout</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="o">::</span><span class="nn">au</span><span class="o">::</span><span class="nn">au_literals</span><span class="p">;</span><span class="w">  </span><span class="c1">// Confined to this function.</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="mf">1.5</span><span class="n">_s</span><span class="p">).</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">seconds</span><span class="p">);</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">}</span>
+</code></pre></div>
 </li>
 </ol>
 <h2 id="unit-aliases">Unit aliases<a class="headerlink" href="#unit-aliases" title="Permanent link">&para;</a></h2>
@@ -3011,17 +3048,17 @@ example, and it will automatically create the unit for &ldquo;km/h&rdquo; on the
 composability <em>can&rsquo;t</em> extend to <em>type names</em>.  For this same example unit, if we want to declare
 a quantity variable, all of our options are a little bit awkward.  They either need type traits, or
 <code>decltype</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">QuantityF</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">Kilo</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Hours</span><span class="p">{})</span><span class="o">&gt;</span><span class="w"> </span><span class="n">speed</span><span class="p">;</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">UnitQuotient</span><span class="o">&lt;</span><span class="n">Kilo</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">Hours</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">speed</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">QuantityF</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">Kilo</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Hours</span><span class="p">{})</span><span class="o">&gt;</span><span class="w"> </span><span class="n">speed</span><span class="p">;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">UnitQuotient</span><span class="o">&lt;</span><span class="n">Kilo</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">Hours</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">speed</span><span class="p">;</span>
 </code></pre></div>
 <p>We can make this easier to read by just defining a <em>type alias</em> for the unit &mdash; and here, too,
 either spelling will do:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// Either of these will do; pick one.</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">using</span><span class="w"> </span><span class="n">KiloMetersPerHour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Kilo</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Hours</span><span class="p">{});</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">using</span><span class="w"> </span><span class="n">KiloMetersPerHour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UnitQuotient</span><span class="o">&lt;</span><span class="n">Kilo</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">Hours</span><span class="o">&gt;</span><span class="p">;</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">KiloMetersPerHour</span><span class="o">&gt;</span><span class="w"> </span><span class="n">speed</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// Either of these will do; pick one.</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">using</span><span class="w"> </span><span class="n">KiloMetersPerHour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">Kilo</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">{}</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Hours</span><span class="p">{});</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">using</span><span class="w"> </span><span class="n">KiloMetersPerHour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UnitQuotient</span><span class="o">&lt;</span><span class="n">Kilo</span><span class="o">&lt;</span><span class="n">Meters</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">Hours</span><span class="o">&gt;</span><span class="p">;</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">QuantityF</span><span class="o">&lt;</span><span class="n">KiloMetersPerHour</span><span class="o">&gt;</span><span class="w"> </span><span class="n">speed</span><span class="p">;</span>
 </code></pre></div>
 <p>All three of these <code>QuantityF</code> declarations refer to the <em>exact same type</em>, just with different
 spelling.  Which one to reach for is a matter of taste.  <code>decltype</code> lets you reuse the same
@@ -3100,7 +3137,7 @@ cost doesn&rsquo;t scale.&#160;<a class="footnote-backref" href="#fnref:1" title
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Au Idioms">
+          <a href="../abbreviated-quantity-construction/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Abbreviated Quantity Construction">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -3110,7 +3147,7 @@ cost doesn&rsquo;t scale.&#160;<a class="footnote-backref" href="#fnref:1" title
                 Previous
               </span>
               <div class="md-ellipsis">
-                Au Idioms
+                Abbreviated Quantity Construction
               </div>
             </div>
           </a>

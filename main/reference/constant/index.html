@@ -962,6 +962,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../discussion/idioms/abbreviated-quantity-construction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abbreviated Quantity Construction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../discussion/idioms/namespaces-and-includes/" class="md-nav__link">
         
   
@@ -3390,10 +3418,30 @@ use the literal for a unit, include its literals header &mdash; for example,
 </code></pre></div>
 <p>The literals live in the <code>::au::au_literals</code> namespace, alongside <code>_mag</code>, so a single <code>using
 namespace ::au::au_literals;</code> brings in both.</p>
+<p>As with <a href="../unit/#symbols-in-scope">unit symbols</a>, literal suffixes are very short names, so bring
+them into scope no more widely than you must.  The <code>using namespace</code> directive above is appropriate
+in an <strong>implementation file</strong> (<code>.cc</code>, <code>.cpp</code>), where it affects a single translation unit.  In
+a <strong>header file</strong>, never use it at namespace scope &mdash; the literals would leak into every
+translation unit that includes the header.  Put the directive <em>inside the function body</em> that needs
+it, where it expires at the closing brace:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="n">au</span><span class="o">::</span><span class="n">QuantityD</span><span class="o">&lt;</span><span class="n">au</span><span class="o">::</span><span class="n">Seconds</span><span class="o">&gt;</span><span class="w"> </span><span class="n">default_timeout</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="o">::</span><span class="nn">au</span><span class="o">::</span><span class="nn">au_literals</span><span class="p">;</span><span class="w">  </span><span class="c1">// Confined to this function.</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="mf">1.5</span><span class="n">_s</span><span class="p">).</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">au</span><span class="o">::</span><span class="n">seconds</span><span class="p">);</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="p">}</span>
+</code></pre></div>
+<p>See <a href="../../discussion/idioms/namespaces-and-includes/#headers">Namespaces and includes</a> for the
+fuller discussion.</p>
+<div class="admonition warning">
+<p class="admonition-title">Watch out for the greedy suffix</p>
+<p>A literal suffix binds more tightly than you might expect: <code>1.5_s.as&lt;double&gt;(seconds)</code> does
+<em>not</em> parse, because the compiler reads the suffix as <code>_s.as</code>.  It&rsquo;s rare in practice to call
+member functions directly on the literal like this, but if you ever do, make sure to wrap the
+literal in parentheses: for example, <code>(1.5_s).as&lt;double&gt;(seconds)</code>.</p>
+</div>
 <h4 id="prefixed-unit-literals">Prefixed unit literals<a class="headerlink" href="#prefixed-unit-literals" title="Permanent link">&para;</a></h4>
 <p>Unit literals exist for <em>named</em> units only, so there is no <code>_kg</code>.  To get a prefixed unit literal,
 apply the <a href="../prefix/#constant">prefix applier</a> to the literal:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">m_e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kilo</span><span class="p">(</span><span class="mf">9.1093837015e-31</span><span class="n">_g</span><span class="p">);</span><span class="w">  </span><span class="c1">// The electron mass, in kg.</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">m_e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kilo</span><span class="p">(</span><span class="mf">9.1093837015e-31</span><span class="n">_g</span><span class="p">);</span><span class="w">  </span><span class="c1">// The electron mass, in kg.</span>
 </code></pre></div>
 <p><code>kilo(1.234_g)</code> is a <code>Constant</code> for <span class="arithmatex"><span class="MathJax_Preview">1234\,\text{g}</span><script type="math/tex">1234\,\text{g}</script></span>, and its label is <code>[(617 / 500) kg]</code>: the
 prefix goes on the unit, and the digits you wrote stay put.  Every prefix applier works this way, so
@@ -3418,9 +3466,9 @@ restriction.  They <em>do</em> compose naturally, so it&rsquo;s easy to create a
 <h4 id="compound-unit-literals">Compound unit literals<a class="headerlink" href="#compound-unit-literals" title="Permanent link">&para;</a></h4>
 <p>Unit literals also exist for <em>single</em> units only, so there is no <code>_mph</code>.  To get a compound unit
 literal, divide or multiply by a <a href="../unit/#symbols">unit symbol</a>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">using</span><span class="w"> </span><span class="n">symbols</span><span class="o">::</span><span class="n">h</span><span class="p">;</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">speed_limit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">55</span><span class="n">_mi</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">h</span><span class="p">;</span><span class="w">  </span><span class="c1">// A `Constant` for 55 miles per hour.</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">using</span><span class="w"> </span><span class="n">symbols</span><span class="o">::</span><span class="n">h</span><span class="p">;</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">speed_limit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">55</span><span class="n">_mi</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">h</span><span class="p">;</span><span class="w">  </span><span class="c1">// A `Constant` for 55 miles per hour.</span>
 </code></pre></div>
 <p>Composing a unit literal with a symbol produces another <code>Constant</code>, so the result behaves exactly
 like any other unit literal: it is applied symbolically, with no risk of rounding or overflow.</p>
@@ -3576,13 +3624,13 @@ returns a new <code>Constant</code> representing the negation.</p>
 <li><code>-c</code> returns a <code>Constant</code> with the negated value</li>
 </ul>
 <p><strong>Example:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SPEED_OF_LIGHT</span><span class="p">;</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="c1">// Unary plus returns the same constant.</span>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">pos_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">+</span><span class="n">c</span><span class="p">;</span>
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
-<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="c1">// Unary minus negates the constant.</span>
-<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">neg_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SPEED_OF_LIGHT</span><span class="p">;</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="c1">// Unary plus returns the same constant.</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">pos_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">+</span><span class="n">c</span><span class="p">;</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="c1">// Unary minus negates the constant.</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">neg_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="rounding">Rounding †<a class="headerlink" href="#rounding" title="Permanent link">&para;</a></h3>
 <p><code>Constant</code> can be passed to the rounding functions.  The <code>_as</code> functions return a new <code>Constant</code>,
@@ -3637,9 +3685,9 @@ number of bytes required to store it.  Let&rsquo;s say the key length is <em>not
 8 bits, so you couldn&rsquo;t just write <code>MAX_KEY_LEN.in&lt;std::size_t&gt;(bytes)</code>: the <code>Constant</code> would
 detect the truncation, and produce a compile-time error!  What we really need is the smallest
 number of <em>whole bytes</em> that can hold this many bits.  We can achieve this with <code>int_ceil_in</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">MAX_KEY_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">bits</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">250</span><span class="o">&gt;</span><span class="p">());</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">bytes_needed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">int_ceil_in</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bytes</span><span class="p">,</span><span class="w"> </span><span class="n">MAX_KEY_LEN</span><span class="p">);</span>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">uint8_t</span><span class="p">,</span><span class="w"> </span><span class="n">bytes_needed</span><span class="o">&gt;</span><span class="w"> </span><span class="n">key_storage</span><span class="p">;</span><span class="w">  </span><span class="c1">// Array of 32 bytes</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">MAX_KEY_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">bits</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">250</span><span class="o">&gt;</span><span class="p">());</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">bytes_needed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">int_ceil_in</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bytes</span><span class="p">,</span><span class="w"> </span><span class="n">MAX_KEY_LEN</span><span class="p">);</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">uint8_t</span><span class="p">,</span><span class="w"> </span><span class="n">bytes_needed</span><span class="o">&gt;</span><span class="w"> </span><span class="n">key_storage</span><span class="p">;</span><span class="w">  </span><span class="c1">// Array of 32 bytes</span>
 </code></pre></div>
 <p>In this particular case, we could just as well have used <code>ceil_in</code> as <code>int_ceil_in</code>: for
 <code>Constant</code>, they are identical.  However, using <code>int_ceil_in</code> makes us agnostic as to whether
@@ -3892,11 +3940,11 @@ computation is built on <code>Magnitude</code> modulo.</em></p>
 <p><strong>Result:</strong> A new <code>Constant</code> representing the remainder.  The result&rsquo;s unit is based on the common
 unit of the inputs, which generally produces human-friendly labels.</p>
 <p><strong>Example:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">five_feet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">feet</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">5</span><span class="o">&gt;</span><span class="p">());</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">seven_inches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">inches</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">7</span><span class="o">&gt;</span><span class="p">());</span>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1">// 5 feet = 60 inches; 60 % 7 = 4</span>
-<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">five_feet</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">seven_inches</span><span class="p">;</span><span class="w">  </span><span class="c1">// Constant representing 4 inches</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">five_feet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">feet</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">5</span><span class="o">&gt;</span><span class="p">());</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">seven_inches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">inches</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag</span><span class="o">&lt;</span><span class="mi">7</span><span class="o">&gt;</span><span class="p">());</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1">// 5 feet = 60 inches; 60 % 7 = 4</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">five_feet</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">seven_inches</span><span class="p">;</span><span class="w">  </span><span class="c1">// Constant representing 4 inches</span>
 </code></pre></div>
 <h3 id="addition-and-subtraction">Addition and subtraction †<a class="headerlink" href="#addition-and-subtraction" title="Permanent link">&para;</a></h3>
 <p>Two <code>Constant</code> instances of the same dimension can be added or subtracted, producing a new
@@ -3925,14 +3973,14 @@ the computation is built on <code>Magnitude</code> operations.</em></p>
 </ul>
 <p><strong>Result:</strong> Whenever the result is nonzero, a new <code>Constant</code> representing the sum or difference.</p>
 <p><strong>Example:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">one_foot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">feet</span><span class="p">);</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">one_inch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">inches</span><span class="p">);</span>
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
-<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1">// Sum of 1 foot and 1 inch</span>
-<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">one_foot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">one_inch</span><span class="p">;</span><span class="w">  </span><span class="c1">// Constant representing (ft + in)</span>
-<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
-<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="c1">// Difference</span>
-<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">diff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">one_foot</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">one_inch</span><span class="p">;</span><span class="w">  </span><span class="c1">// Constant representing (ft - in)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">one_foot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">feet</span><span class="p">);</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">one_inch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constant</span><span class="p">(</span><span class="n">inches</span><span class="p">);</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1">// Sum of 1 foot and 1 inch</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">one_foot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">one_inch</span><span class="p">;</span><span class="w">  </span><span class="c1">// Constant representing (ft + in)</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="c1">// Difference</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">diff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">one_foot</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">one_inch</span><span class="p">;</span><span class="w">  </span><span class="c1">// Constant representing (ft - in)</span>
 </code></pre></div>
 
 
