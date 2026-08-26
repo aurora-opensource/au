@@ -323,10 +323,6 @@ complicated, but it's still useful to think of it as essentially just negation.
 - `ZERO * m` equals `ZERO`
 - `m * ZERO` equals `ZERO`
 
-!!! note
-    Older releases used `MagProductT` (with the `T` suffix) instead of `MagProduct`.  Prefer
-    `MagProduct`.  `MagProductT` is deprecated, and will be removed in future releases.
-
 ### Division
 
 **Result:** The quotient of two `Magnitude` values.
@@ -341,10 +337,6 @@ complicated, but it's still useful to think of it as essentially just negation.
 `Zero` divided by any magnitude is `Zero`:
 
 - `ZERO / m` equals `ZERO`
-
-!!! note
-    Older releases used `MagQuotientT` (with the `T` suffix) instead of `MagQuotient`.  Prefer
-    `MagQuotient`.  `MagQuotientT` is deprecated, and will be removed in future releases.
 
 ### Addition †
 
@@ -460,10 +452,6 @@ if `q` is the truncated quotient, then `q * b + (a % b)` equals `a`.
     - `MagPower<M, N>`
 - For an _instance_ `m`, and an integral power `N`:
     - `pow<N>(m)`
-
-!!! note
-    Older releases used `MagPowerT` (with the `T` suffix) instead of `MagPower`.  Prefer
-    `MagPower`.  `MagPowerT` is deprecated, and will be removed in future releases.
 
 ### Roots
 
@@ -641,10 +629,6 @@ magnitudes, by breaking them into the same kinds of pieces that a human reader w
 - For an _instance_ `m`:
     - `integer_part(m)`
 
-!!! note
-    Older releases used `IntegerPartT` (with the `T` suffix) instead of `IntegerPart`.  Prefer
-    `IntegerPart`.  `IntegerPartT` is deprecated, and will be removed in future releases.
-
 ### Numerator (integer part)
 
 **Result:** The numerator we would have if a `Magnitude` were written as a fraction.  This result is
@@ -659,10 +643,6 @@ For example, the "numerator" of $\frac{3\sqrt{3}}{5\pi}$ would be $3\sqrt{3}$.
 - For an _instance_ `m`:
     - `numerator(m)`
 
-!!! note
-    Older releases used `NumeratorT` (with the `T` suffix) instead of `Numerator`.  Prefer
-    `Numerator`.  `NumeratorT` is deprecated, and will be removed in future releases.
-
 ### Denominator (integer part)
 
 **Result:** The denominator we would have if a `Magnitude` were written as a fraction.  This result is
@@ -676,10 +656,6 @@ For example, the "denominator" of $\frac{3\sqrt{3}}{5\pi}$ would be $5\pi$.
     - `Denominator<M>`
 - For an _instance_ `m`:
     - `denominator(m)`
-
-!!! note
-    Older releases used `DenominatorT` (with the `T` suffix) instead of `Denominator`.  Prefer
-    `Denominator`.  `DenominatorT` is deprecated, and will be removed in future releases.
 
 ### Absolute value
 

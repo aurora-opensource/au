@@ -411,7 +411,7 @@ This provides great flexibility and confidence in passing `Constant` values to A
     [overflow safety surface](../discussion/concepts/overflow.md), which is a more conservative
     heuristic.
 
-    For example, suppose you have an API accepting `Quantity<UnitQuotientT<Meters, Seconds>, int>`,
+    For example, suppose you have an API accepting `Quantity<UnitQuotient<Meters, Seconds>, int>`,
     and a constant `c` representing the speed of light.
 
     You will be able to pass `c` to this API, because the constant-to-quantity conversion operation
@@ -552,7 +552,7 @@ In the following table, we will use `x` to represent the value that was stored i
 | `Constant<Unit> * T` | `Quantity<Unit, T>` | `x` | |
 | `Constant<Unit> / T` | `Quantity<Unit, T>` | `T{1} / x` | Disallowed for integral `T` |
 | `T * Constant<Unit>` | `Quantity<Unit, T>` | `x` | |
-| `T / Constant<Unit>` | `Quantity<UnitInverseT<Unit>, T>` | `x` | |
+| `T / Constant<Unit>` | `Quantity<UnitInverse<Unit>, T>` | `x` | |
 
 #### `Quantity<U, R>`
 
@@ -564,10 +564,10 @@ that is, if the input quantity was `q`, then `x` is `q.in(U{})`.
 
 | Operation | Resulting Type | Underlying Value | Notes |
 | --------- | -------------- | ---------------- | ----- |
-| `Constant<Unit> * Quantity<U, R>` | `Quantity<UnitProductT<Unit, U>, R>` | `x` | |
-| `Constant<Unit> / Quantity<U, R>` | `Quantity<UnitQuotientT<Unit, U>, R>` | `R{1} / x` | Disallowed for integral `R` |
-| `Quantity<U, R> * Constant<Unit>` | `Quantity<UnitProductT<U, Unit>, R>` | `x` | |
-| `Quantity<U, R> / Constant<Unit>` | `Quantity<UnitQuotientT<U, Unit>, R>` | `x` | |
+| `Constant<Unit> * Quantity<U, R>` | `Quantity<UnitProduct<Unit, U>, R>` | `x` | |
+| `Constant<Unit> / Quantity<U, R>` | `Quantity<UnitQuotient<Unit, U>, R>` | `R{1} / x` | Disallowed for integral `R` |
+| `Quantity<U, R> * Constant<Unit>` | `Quantity<UnitProduct<U, Unit>, R>` | `x` | |
+| `Quantity<U, R> / Constant<Unit>` | `Quantity<UnitQuotient<U, Unit>, R>` | `x` | |
 
 #### `Constant<U>`
 
@@ -575,8 +575,8 @@ Constants compose: the product or quotient of two `Constant` instances is a new 
 
 | Operation | Resulting Type |
 | --------- | -------------- |
-| `Constant<Unit> * Constant<U>` | `Constant<UnitProductT<Unit, U>>` |
-| `Constant<Unit> / Constant<U>` | `Constant<UnitQuotientT<Unit, U>>` |
+| `Constant<Unit> * Constant<U>` | `Constant<UnitProduct<Unit, U>>` |
+| `Constant<Unit> / Constant<U>` | `Constant<UnitQuotient<Unit, U>>` |
 
 #### `QuantityMaker<U>`
 
@@ -585,10 +585,10 @@ whose unit is derived from `Unit` and `U`.
 
 | Operation | Resulting Type |
 | --------- | -------------- |
-| `Constant<Unit> * QuantityMaker<U>` | `QuantityMaker<UnitProductT<Unit, U>>` |
-| `Constant<Unit> / QuantityMaker<U>` | `QuantityMaker<UnitQuotientT<Unit, U>>` |
-| `QuantityMaker<U> * Constant<Unit>` | `QuantityMaker<UnitProductT<U, Unit>>` |
-| `QuantityMaker<U> / Constant<Unit>` | `QuantityMaker<UnitQuotientT<U, Unit>>` |
+| `Constant<Unit> * QuantityMaker<U>` | `QuantityMaker<UnitProduct<Unit, U>>` |
+| `Constant<Unit> / QuantityMaker<U>` | `QuantityMaker<UnitQuotient<Unit, U>>` |
+| `QuantityMaker<U> * Constant<Unit>` | `QuantityMaker<UnitProduct<U, Unit>>` |
+| `QuantityMaker<U> / Constant<Unit>` | `QuantityMaker<UnitQuotient<U, Unit>>` |
 
 #### `SingularNameFor<U>`
 
@@ -597,10 +597,10 @@ Multiplying or dividing `Constant<Unit>` with a `SingularNameFor<U>` produces a 
 
 | Operation | Resulting Type |
 | --------- | -------------- |
-| `Constant<Unit> * SingularNameFor<U>` | `SingularNameFor<UnitProductT<Unit, U>>` |
-| `Constant<Unit> / SingularNameFor<U>` | `SingularNameFor<UnitQuotientT<Unit, U>>` |
-| `SingularNameFor<U> * Constant<Unit>` | `SingularNameFor<UnitProductT<U, Unit>>` |
-| `SingularNameFor<U> / Constant<Unit>` | `SingularNameFor<UnitQuotientT<U, Unit>>` |
+| `Constant<Unit> * SingularNameFor<U>` | `SingularNameFor<UnitProduct<Unit, U>>` |
+| `Constant<Unit> / SingularNameFor<U>` | `SingularNameFor<UnitQuotient<Unit, U>>` |
+| `SingularNameFor<U> * Constant<Unit>` | `SingularNameFor<UnitProduct<U, Unit>>` |
+| `SingularNameFor<U> / Constant<Unit>` | `SingularNameFor<UnitQuotient<U, Unit>>` |
 
 #### `Magnitude<BPs...>`
 
@@ -614,7 +614,7 @@ In the following table, let `m` be an instance of `Magnitude<BPs...>`.
 | `Constant<Unit> * Magnitude<BPs...>` | `Constant<decltype(Unit{} * m)>` |
 | `Constant<Unit> / Magnitude<BPs...>` | `Constant<decltype(Unit{} / m)>` |
 | `Magnitude<BPs...> * Constant<Unit>` | `Constant<decltype(Unit{} * m)>` |
-| `Magnitude<BPs...> / Constant<Unit>` | `Constant<decltype(UnitInverseT<Unit>{} * m)>` |
+| `Magnitude<BPs...> / Constant<Unit>` | `Constant<decltype(UnitInverse<Unit>{} * m)>` |
 
 #### `Zero`
 

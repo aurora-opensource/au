@@ -38,8 +38,8 @@ something as simple as `Meters{}`, an instance of the unit type `Meters`.
 
 It could also be the result of _combining several_ such instances, via arithmetic.  For example,
 `Meters{} / squared(Seconds{})` is also a unit expression.  It's an instance of the type
-`UnitQuotientT<Meters, UnitPowerT<Seconds, 2>>`.  However, the unit expression is much easier to
-write and to read than the `UnitQuotientT<...>` version!  That's why we recommend using them to
+`UnitQuotient<Meters, UnitPower<Seconds, 2>>`.  However, the unit expression is much easier to
+write and to read than the `UnitQuotient<...>` version!  That's why we recommend using them to
 [create new units](../../howto/new-units.md).
 
 ### Quantity maker expression
@@ -162,7 +162,7 @@ constexpr auto rpm = round_as(Revolutions{} / Minutes{}, angular_velocity);
 
 // Alternative, clunkier unit-expression approach (doing arithmetic on *types*):
 constexpr auto rpm = round_as(
-   UnitQuotientT<Revolutions, Minutes>{}, angular_velocity);
+   UnitQuotient<Revolutions, Minutes>{}, angular_velocity);
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //            unit expression
 ```
@@ -187,7 +187,7 @@ approach in the wild!  Here is an example:
 // !!   Do not do this!   !!
 //
 constexpr auto rpm = round_as(
-    QuantityMaker<UnitQuotientT<Revolutions, Minutes>>{}, angular_velocity);
+    QuantityMaker<UnitQuotient<Revolutions, Minutes>>{}, angular_velocity);
 //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //           manual QuantityMaker instance
 ```
@@ -196,8 +196,8 @@ Presumably, this mistake comes from reading the signatures in the source code
 without understanding their core design goal: namely, to provide a place to specify the units,
 concisely and explicitly, at a callsite.
 
-This provides no benefit at all.  We could replace the `QuantityMaker<UnitQuotientT<Revolutions,
-Minutes>>` with its contents (`UnitQuotientT<Revolutions, Minutes>`) and it would be strictly
+This provides no benefit at all.  We could replace the `QuantityMaker<UnitQuotient<Revolutions,
+Minutes>>` with its contents (`UnitQuotient<Revolutions, Minutes>`) and it would be strictly
 better.
 
 The reason we endorse the `QuantityMaker` overloads is because of the convention to provide "canned"
