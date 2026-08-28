@@ -302,7 +302,7 @@ using MagSum = typename MagSumImpl<Ms...>::type;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Value based interface for Magnitude (and Zero).
 
-static constexpr auto ONE = Magnitude<>{};
+AU_DEVICE_VAR constexpr auto ONE = Magnitude<>{};
 
 template <typename... BP1s, typename... BP2s>
 AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BP1s...>, Magnitude<BP2s...>) {

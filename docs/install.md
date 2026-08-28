@@ -283,11 +283,15 @@ In either case, here are the main targets and include files provided by the Au l
 | Target | Headers provided | Notes |
 |--------|------------------|-------|
 | `Au::au` | `"au/au.hh"`<br>`"au/fwd.hh"`<br>`"au/io.hh"`<br>`"au/std_format.hh"`[^1]<br>`"au/units/*.hh"`<br>`"au/units/*_fwd.hh"`<br>`"au/units/literals/*.hh"`<br>`"au/constants/*.hh"` | Core library functionality.  See [all available units](https://github.com/aurora-opensource/au/tree/main/au/units) and [unit literals](./reference/constant.md#unit-literals) |
+| `Au::au_module` | (none --- use `import au;`) | C++20 module interface.  Opt in with `-DAU_BUILD_MODULE=ON`; requires CMake 3.28+, C++20, and a generator and compiler with C++ modules support |
 | `Au::testing` | `"au/testing.hh"` | Utilities for writing googletest tests |
 
 [^1]: Do not include `"au/std_format.hh"` unless you know that both your compiler and your build
 configuration fully supports `std::format`.  This requires at least C++20, but many compilers with
 nominal C++20 support do not actually support `std::format`.
+
+The `au` module exports every public-facing name in the library, except for macros (which modules
+cannot export).
 
 !!! note
     These instructions are for adding Au to a _project_ that uses CMake, not building Au itself
