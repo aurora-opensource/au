@@ -53,7 +53,7 @@ Here's what we'd expect to see in raw C++:
 ```cpp
 // Speed must be m/s.  Radius must be meters.  Returns RPM.
 float wheel_rpm(float v_mps, float r_m) {
-    return v_mps / (2.0f * static_cast<float>(M_PI) * r_m) * 60.0f;
+    return v_mps / (2.0f * static_cast<float>(std::numbers::pi) * r_m) * 60.0f;
 }
 ```
 <!-- END EXAMPLE -->
