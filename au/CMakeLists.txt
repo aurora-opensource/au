@@ -279,6 +279,14 @@ if (AU_BUILD_MODULE)
     EXPORT ${AU_EXPORT_SET_NAME}
     FILE_SET CXX_MODULES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
   )
+
+  gtest_based_test(
+    NAME module_test
+    SRCS
+      module_test.cc
+    DEPS
+      au_module
+  )
 endif()
 
 if (NOT AU_EXCLUDE_GTEST_DEPENDENCY)
