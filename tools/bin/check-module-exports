@@ -1,0 +1,274 @@
+#!/usr/bin/python3
+# Copyright 2026 Aurora Operations, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import re
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+CPPM = REPO_ROOT / "au" / "au.cppm"
+
+# Namespaces whose members are implementation details, not public API.
+EXCLUDED_NAMESPACES = {"detail", "stdx", "no_prior_declaration_workaround"}
+
+# Public headers which the module deliberately does not include (and why).
+HEADERS_NOT_IN_MODULE = {
+    "au/chrono_policy_validation.hh",  # Test-only; depends on GoogleTest.
+    "au/fwd_test_lib.hh",  # Test-only.
+    "au/std_format.hh",  # Requires `std::format` support; users include it separately.
+    "au/testing.hh",  # Depends on GoogleTest.
+}
+
+
+def main(argv=None):
+    includes, module_symbols = _parse_cppm(CPPM)
+
+    reachable = _transitive_includes(includes)
+    ok = _check_all_public_headers_are_reachable(reachable)
+
+    header_symbols = set()
+    for header in sorted(reachable):
+        header_symbols.update(_public_symbols(REPO_ROOT / header))
+
+    ok &= _check_equality_and_print_any_differences(
+        module_symbols=module_symbols, header_symbols=header_symbols
+    )
+
+    if ok:
+        print("`au/au.cppm` is in sync with the headers.")
+    return 0 if ok else 1
+
+
+################################################################################################
+# Check 1: header correspondence.
+
+
+def _check_all_public_headers_are_reachable(reachable):
+    missing = _all_public_headers() - reachable - HEADERS_NOT_IN_MODULE
+    if missing:
+        print("\n** ERROR **: Public headers not reachable from the includes in `au/au.cppm`:")
+        for header in sorted(missing):
+            print(f"  {header}")
+        print(
+            "\nAdd them to the global module fragment of `au/au.cppm` (or, if they must not"
+            "\nbe part of the module, to `HEADERS_NOT_IN_MODULE` in this script)."
+        )
+    return not missing
+
+
+def _all_public_headers():
+    """Every header a user might include: `au/*.hh` and the units/literals/constants dirs."""
+    patterns = ["*.hh", "units/*.hh", "units/literals/*.hh", "constants/*.hh"]
+    return {
+        str(p.relative_to(REPO_ROOT))
+        for pattern in patterns
+        for p in (REPO_ROOT / "au").glob(pattern)
+    }
+
+
+def _transitive_includes(includes):
+    """All au headers reachable by following `#include "au/..."` directives."""
+    reachable = set()
+    frontier = list(includes)
+    while frontier:
+        header = frontier.pop()
+        if header in reachable:
+            continue
+        reachable.add(header)
+        frontier.extend(_direct_includes(REPO_ROOT / header))
+    return reachable
+
+
+def _direct_includes(path):
+    return re.findall(r'^#include "(au/[^"]+)"', path.read_text(), flags=re.M)
+
+
+################################################################################################
+# Check 2: symbol correspondence.
+
+
+def _check_equality_and_print_any_differences(module_symbols, header_symbols):
+    result = module_symbols == header_symbols
+
+    if not result:
+        print("\n** ERROR **: Symbols in `au/au.cppm` and the headers are not identical.")
+    _print_any_only_in_first(
+        first=(header_symbols, "headers (missing from `au/au.cppm`)"),
+        second=(module_symbols, "au.cppm"),
+    )
+    _print_any_only_in_first(
+        first=(module_symbols, "`au/au.cppm` (not found in headers)"),
+        second=(header_symbols, "headers"),
+    )
+    return result
+
+
+def _print_any_only_in_first(first, second):
+    first_symbols, first_name = first
+    second_symbols, _ = second
+
+    extras = first_symbols - second_symbols
+    if extras:
+        print(f"\nSymbols in {first_name}:")
+        for symbol in sorted(extras):
+            print(f"  {symbol}")
+
+
+def _parse_cppm(path):
+    """The `#include "au/..."` directives, and the qualified names of all using-declarations."""
+    text = path.read_text()
+    includes = _direct_includes(path)
+    symbols = set(
+        re.findall(
+            r'^\s*using ((?:\w+::)+(?:operator\s*(?:""\s*_\w+|\S+)|\w+))\s*;',
+            text,
+            flags=re.M,
+        )
+    )
+    return includes, {s.replace(" ", "") for s in symbols}
+
+
+def _public_symbols(path):
+    """The qualified names of all public-facing namespace-scope declarations in one header."""
+    return {
+        "::".join(ns) + "::" + name
+        for ns, kind, name in _extract_declarations(path)
+        if not _is_excluded(ns, kind, name)
+    }
+
+
+def _is_excluded(ns, kind, name):
+    if ns[0] != "au" or any(part in EXCLUDED_NAMESPACES for part in ns):
+        return True
+    # Functions with an `_impl` suffix are implementation details of their non-`_impl`
+    # counterparts, even though they live at public namespace scope.
+    if kind == "func" and name.endswith("_impl"):
+        return True
+    return False
+
+
+################################################################################################
+# Lightweight extraction of namespace-scope declarations.
+
+_TYPE_PAT = re.compile(r"^(?:struct|class)\s+([A-Za-z_]\w*)")
+_ALIAS_PAT = re.compile(r"^using\s+([A-Za-z_]\w*)\s*=")
+_VAR_PAT = re.compile(
+    r"^(?:AU_DEVICE_VAR\s+)?(?:static\s+)?(?:inline\s+)?constexpr\s+"
+    r"(?:auto|const\s+auto|[\w:]+(?:<[^;=]*>)?)\s+"
+    r"([A-Za-z_]\w*)\s*="
+)
+_FUNC_PAT = re.compile(
+    r"^(?:AU_DEVICE_FUNC\s+)?(?:friend\s+)?(?:inline\s+)?(?:constexpr\s+|inline\s+)*"
+    r"(?:auto|void|bool|decltype\([^;]*\)|[\w:]+(?:<[^;(]*>)?)(?:\s*[&*]\s*|\s+)"
+    r'((?:operator\s*""\s*_\w+|operator\s*(?:<<|>>|<=|>=|==|!=|\+|-|\*|/|%|<|>|\(\))'
+    r"|[A-Za-z_]\w*))\s*\("
+)
+_KEYWORDS = {
+    "if", "for", "while", "switch", "return", "sizeof", "static_assert", "decltype",
+    "alignas", "defined", "template", "typename", "requires", "noexcept", "operator",
+    "explicit", "static", "friend",
+}  # fmt: skip
+
+
+def _extract_declarations(path):
+    """Yield (namespace_tuple, kind, name) for each namespace-scope declaration."""
+    text = _strip_comments(path.read_text())
+    lines = text.split("\n")
+    ns_per_line = _namespaces_per_line(text)
+    for idx, line in enumerate(lines):
+        ns = ns_per_line[idx] if idx < len(ns_per_line) else tuple()
+        if not ns or not line or line[0] in " \t}#":
+            continue
+        m = _TYPE_PAT.match(line)
+        if m:
+            yield (ns, "type", m.group(1))
+            continue
+        m = _ALIAS_PAT.match(line)
+        if m:
+            yield (ns, "alias", m.group(1))
+            continue
+        m = _VAR_PAT.match(line)
+        if m:
+            yield (ns, "var", m.group(1))
+            continue
+        m = _FUNC_PAT.match(line)
+        if m:
+            name = m.group(1).replace(" ", "")
+            if name not in _KEYWORDS:
+                yield (ns, "func", name)
+
+
+def _strip_comments(text):
+    def blank_out(m):
+        return re.sub(r"[^\n]", " ", m.group(0))
+
+    text = re.sub(r"/\*.*?\*/", blank_out, text, flags=re.S)
+    return re.sub(r"//[^\n]*", "", text)
+
+
+def _namespaces_per_line(text):
+    """For each line, the namespace stack in effect at the start of that line.
+
+    A character-level scan, so that brace depth is tracked exactly (skipping string and
+    character literals; comments must already be stripped).
+    """
+    ns_stack = []
+    depth = 0
+    result = []
+    ns_pat = re.compile(r"namespace\s+([A-Za-z_][\w:]*)\s*\{")
+    i, n = 0, len(text)
+    result.append(tuple(name for name, _ in ns_stack))
+    while i < n:
+        c = text[i]
+        if c == "\n":
+            result.append(tuple(name for name, _ in ns_stack))
+            i += 1
+        elif c == '"' or (c == "'" and not (i > 0 and (text[i - 1].isalnum() or text[i - 1] == "_"))):
+            # A string or character literal (but not a digit separator, as in `1'000`).
+            quote = c
+            i += 1
+            while i < n and text[i] != quote:
+                if text[i] == "\n":
+                    result.append(tuple(name for name, _ in ns_stack))
+                if text[i] == "\\":
+                    i += 1
+                i += 1
+            i += 1
+        elif c == "{":
+            depth += 1
+            i += 1
+        elif c == "}":
+            depth -= 1
+            if ns_stack and ns_stack[-1][1] == depth:
+                ns_stack.pop()
+            i += 1
+        elif text.startswith("namespace", i) and not (
+            i > 0 and (text[i - 1].isalnum() or text[i - 1] == "_")
+        ):
+            m = ns_pat.match(text, i)
+            if m:
+                for name in m.group(1).split("::"):
+                    ns_stack.append((name, depth))
+                    depth += 1
+                i = m.end()
+            else:
+                i += 1
+        else:
+            i += 1
+    return result
+
+
+if __name__ == "__main__":
+    sys.exit(main())
