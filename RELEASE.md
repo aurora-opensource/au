@@ -121,6 +121,9 @@ Upgrading from (a.b.x)
 User-facing library changes
 ---------------------------
 
+Compile time impact
+-------------------
+
 New units and constants
 -----------------------
 
@@ -136,16 +139,19 @@ Repo updates
 Future-proofing releases
 ------------------------
 
+Artifacts and SHA256 sums
+-------------------------
+
 Closed Issues
 -------------
 
-Here are all of the issues that were closed between these releases.  (Note that
-the resolution is at the level of days, so some of these issues might show up in
-the notes for more than one release.)
+Here are all of the issues that were closed since the last release.
 
-NOTE: change dates below!
+NOTE: change dates and milestones below!  The end date should be the date you
+are tagging the release.  Excluding the previous releases' milestones keeps
+issues from reappearing in more than one set of release notes.
 
-https://github.com/aurora-opensource/au/issues?q=is%3Aissue+closed%3A2022-12-20..2023-03-18
+https://github.com/aurora-opensource/au/issues?q=is%3Aissue%20closed%3A2022-12-20..2023-03-18%20-milestone%3A0.3.0
 
 Contributors
 ------------
@@ -172,12 +178,57 @@ git push origin release-0.3.1
 Branches named similarly to `release-0.3.1` are protected in the Au repo, so we will need to make
 PRs for the final changes for the release.
 
+#### Tag the mainline commit as `-base`
+
+The base commit is the last commit on `main` that is part of this release, so we tag it to record
+that fact.  This is an annotated tag, like every other tag in this guide.
+
+```sh
+# Remember to update the version number!
+git tag --annotate 0.3.1-base
+git push origin 0.3.1-base
+```
+
+Use a message of this form (first line is the tag name, then a blank line, then the body):
+
+```
+0.3.1-base
+
+This is the mainline commit that is equivalent to the 0.3.1 release.
+
+The only difference is that links in the C++ code and comments will
+point to `/main/`, not to `/0.3.1/`.
+```
+
+This tag is not just bookkeeping.  The single-file scripts derive their version identifier from
+`git describe`, so this is what makes the `main` doc website's `au.hh` report
+`Version identifier: 0.3.1-base` instead of something like `0.3.0-247-gabcd1234`.  Note that patch
+releases don't get a `-base` tag: they are made entirely of cherry-picks, so there is no distinct
+mainline commit that corresponds to them.
+
 ### PR: Update links
 
-Several C++ files in the repository link to the documentation website, but they link to the version
-at `main`.  This version will change over time in ways that we can't predict.  It's important for
-users who use a release to have permanent links.  Therefore, the first PR for the release branch is
-to find every link to `main` in C++ files, and replace it with a link to the release version.
+Several files in the repository link to the documentation website, but they link to the version at
+`main`.  This version will change over time in ways that we can't predict.  It's important for users
+who use a release to have permanent links.  Therefore, the first PR for the release branch is to
+find every link to `main` in those files, and replace it with a link to the release version.
+
+**Which files?**  The rule is: everything that ships to users as part of the release, plus
+everything we publish to the _versioned_ doc site.  Concretely:
+
+- **All C++ files.**  These links show up in comments and in `static_assert` messages, so users
+  encounter them directly in compiler output.
+- **Everything under `docs/`**, because `mkdocs` builds that directory into the versioned site.  A
+  `/main/` link on a release doc site sends readers to unversioned docs that will drift.
+
+Two deliberate exceptions:
+
+- **The compiler-output transcripts in `docs/troubleshooting.md`.**  These are illustrative rather
+  than verbatim --- the line numbers they quote already drift from release to release --- and users
+  are far more likely to search them for the error text than for a URL.
+- **Repo-root files** (`README.md`, `RELEASE.md`, `CONTRIBUTING.md`, `REQUIREMENTS_LOCK.md`,
+  `examples/README.md`).  These are not published to any versioned site, and `RELEASE.md`'s links
+  are part of these instructions.
 
 ```
 Find this:
@@ -190,6 +241,13 @@ https://aurora-opensource.github.io/au/0.3.1/...
 ```
 
 We do this in a PR on the release branch in order to avoid churn commits on the main branch.
+
+Since this can reflow lines, ensure that clang-format is up to date.  The following command may be
+useful:
+
+```sh
+git ls-files '*.hh' '*.cc' | xargs tools/bin/clang-format --style=file -i
+```
 
 ### Create the tag for the release
 
@@ -264,6 +322,30 @@ Finally, push the new tag to GitHub.
 git push origin 0.3.1-future
 ```
 
+### Audit the tags before pushing
+
+Tags are effectively immutable once published, so check them while they are still local.  This
+script verifies the whole family at once: that every tag exists and is _annotated_ (a missing `-m`
+silently produces a lightweight tag), that each is in the right place, and that the version macros
+and doc links are what we expect.
+
+```sh
+# Remember to update the version number!
+VER=0.3.1
+for t in $VER-base $VER $VER-future-NNN $VER-future; do
+  printf '%-20s ' "$t"
+  git rev-parse -q --verify "$t" >/dev/null || { echo "*** MISSING ***"; continue; }
+  git cat-file tag "$t" >/dev/null 2>&1 && k=annotated || k="*** LIGHTWEIGHT ***"
+  c=$(git rev-parse "$t^{}")
+  git merge-base --is-ancestor "$c" "release-$VER" && w="on release branch" || w="off-branch"
+  echo "$k  $w  $(git log -1 --format='%h %s' $c)"
+done
+```
+
+Expect the `-base` tag on `main`, the release tag and the final `-future` tag on the release branch,
+and each `-future-NNN` tag **off-branch** with the release commit as its parent.  Also confirm that
+`au/version.hh` reports the right version at every release-side tag.
+
 ### Download all artifacts
 
 Manually uploading releases helps future-proof us against known failure modes.  See:
@@ -272,6 +354,22 @@ https://github.blog/2023-02-21-update-on-the-future-stability-of-source-code-arc
 On the [tags page](https://github.com/aurora-opensource/au/tags), click the `.tar.gz` link to
 download every tarball.  This will always include the release tarball, and may also include one or
 more future-proof tarballs.
+
+Verify each one against its tag before you publish its checksum.  This catches a mis-clicked link or
+a truncated download at the one moment when it is still cheap to fix:
+
+```sh
+# Remember to update the version number!
+for t in 0.3.1 0.3.1-future-NNN 0.3.1-future; do
+  rm -rf /tmp/au-verify && mkdir -p /tmp/au-verify
+  tar -xzf ~/Downloads/au-$t.tar.gz -C /tmp/au-verify
+  (cd /tmp/au-verify/au-$t && find . -type f | sort | xargs sha256sum) > /tmp/from-tarball.txt
+  git archive --format=tar "$t" | tar -xf - -C /tmp/au-verify --one-top-level=from-git
+  (cd /tmp/au-verify/from-git && find . -type f | sort | xargs sha256sum) > /tmp/from-git.txt
+  printf '%-20s ' "$t"
+  diff -q /tmp/from-tarball.txt /tmp/from-git.txt >/dev/null && echo OK || echo "*** DIFFERS ***"
+done
+```
 
 ### Create the release
 
@@ -290,7 +388,11 @@ On the tags page, click the three-dots menu, and select "Create release".
 
 First, create the version of the doc website corresponding to this release.
 
+**Check out the release tag first.**  `mike` publishes whatever is in your working tree.
+
 ```sh
+# Remember to update the version number!
+git switch --detach 0.3.1
 bazel run //:mike -- deploy --push 0.3.1
 ```
 
@@ -299,6 +401,15 @@ includes this latest version tag.  Check out the `main` branch, and run a manual
 `main` doc website:
 
 ```sh
-git checkout main
+git switch main
 bazel run //:mike -- deploy --push main
 ```
+
+Afterwards, confirm the version identifier on each site is what you expect:
+
+```sh
+curl -s https://aurora-opensource.github.io/au/0.3.1/au.hh | grep -m1 'Version identifier'
+curl -s https://aurora-opensource.github.io/au/main/au.hh | grep -m1 'Version identifier'
+```
+
+The first should report the release version, and the second should report `0.3.1-base`.
