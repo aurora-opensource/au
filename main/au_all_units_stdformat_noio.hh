@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-1-gf389e44f
+// Version identifier: 0.6.0-base-2-g713c4701
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -12073,12 +12073,12 @@ AU_DEVICE_VAR constexpr auto LUMINOUS_EFFICACY_540_TERAHERTZ =
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_cd` is a `Constant` equivalent to `make_constant(1.28e-4_mag * candelas)`.
+// `1.28e-4_cd` is a `Constant` equivalent to `make_constant(candelas) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_cd() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(candelas * operator""_mag<Cs...>());
+    return make_constant(candelas) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12089,12 +12089,12 @@ constexpr auto operator""_cd() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_ftbl_fld` is a `Constant` equivalent to `make_constant(1.28e-4_mag * football_fields)`.
+// `1.28e-4_ftbl_fld` is a `Constant` equivalent to `make_constant(football_fields) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_ftbl_fld() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(football_fields * operator""_mag<Cs...>());
+    return make_constant(football_fields) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12105,12 +12105,12 @@ constexpr auto operator""_ftbl_fld() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_lm` is a `Constant` equivalent to `make_constant(1.28e-4_mag * lumens)`.
+// `1.28e-4_lm` is a `Constant` equivalent to `make_constant(lumens) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_lm() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(lumens * operator""_mag<Cs...>());
+    return make_constant(lumens) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12121,12 +12121,12 @@ constexpr auto operator""_lm() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_mi` is a `Constant` equivalent to `make_constant(1.28e-4_mag * miles)`.
+// `1.28e-4_mi` is a `Constant` equivalent to `make_constant(miles) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_mi() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(miles * operator""_mag<Cs...>());
+    return make_constant(miles) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12137,12 +12137,12 @@ constexpr auto operator""_mi() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_fur` is a `Constant` equivalent to `make_constant(1.28e-4_mag * furlongs)`.
+// `1.28e-4_fur` is a `Constant` equivalent to `make_constant(furlongs) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_fur() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(furlongs * operator""_mag<Cs...>());
+    return make_constant(furlongs) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12153,12 +12153,12 @@ constexpr auto operator""_fur() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_yd` is a `Constant` equivalent to `make_constant(1.28e-4_mag * yards)`.
+// `1.28e-4_yd` is a `Constant` equivalent to `make_constant(yards) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_yd() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(yards * operator""_mag<Cs...>());
+    return make_constant(yards) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12169,12 +12169,12 @@ constexpr auto operator""_yd() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_b` is a `Constant` equivalent to `make_constant(1.28e-4_mag * bits)`.
+// `1.28e-4_b` is a `Constant` equivalent to `make_constant(bits) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_b() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(bits * operator""_mag<Cs...>());
+    return make_constant(bits) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12185,12 +12185,12 @@ constexpr auto operator""_b() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_Hz` is a `Constant` equivalent to `make_constant(1.28e-4_mag * hertz)`.
+// `1.28e-4_Hz` is a `Constant` equivalent to `make_constant(hertz) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_Hz() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(hertz * operator""_mag<Cs...>());
+    return make_constant(hertz) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12201,12 +12201,12 @@ constexpr auto operator""_Hz() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_US_qt` is a `Constant` equivalent to `make_constant(1.28e-4_mag * us_quarts)`.
+// `1.28e-4_US_qt` is a `Constant` equivalent to `make_constant(us_quarts) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_US_qt() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(us_quarts * operator""_mag<Cs...>());
+    return make_constant(us_quarts) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12217,12 +12217,12 @@ constexpr auto operator""_US_qt() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_kat` is a `Constant` equivalent to `make_constant(1.28e-4_mag * katals)`.
+// `1.28e-4_kat` is a `Constant` equivalent to `make_constant(katals) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_kat() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(katals * operator""_mag<Cs...>());
+    return make_constant(katals) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12233,12 +12233,12 @@ constexpr auto operator""_kat() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_am` is a `Constant` equivalent to `make_constant(1.28e-4_mag * arcminutes)`.
+// `1.28e-4_am` is a `Constant` equivalent to `make_constant(arcminutes) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_am() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(arcminutes * operator""_mag<Cs...>());
+    return make_constant(arcminutes) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12249,12 +12249,12 @@ constexpr auto operator""_am() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_as` is a `Constant` equivalent to `make_constant(1.28e-4_mag * arcseconds)`.
+// `1.28e-4_as` is a `Constant` equivalent to `make_constant(arcseconds) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_as() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(arcseconds * operator""_mag<Cs...>());
+    return make_constant(arcseconds) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12265,12 +12265,12 @@ constexpr auto operator""_as() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_ft` is a `Constant` equivalent to `make_constant(1.28e-4_mag * feet)`.
+// `1.28e-4_ft` is a `Constant` equivalent to `make_constant(feet) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_ft() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(feet * operator""_mag<Cs...>());
+    return make_constant(feet) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12281,12 +12281,12 @@ constexpr auto operator""_ft() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_N` is a `Constant` equivalent to `make_constant(1.28e-4_mag * newtons)`.
+// `1.28e-4_N` is a `Constant` equivalent to `make_constant(newtons) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_N() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(newtons * operator""_mag<Cs...>());
+    return make_constant(newtons) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12297,12 +12297,12 @@ constexpr auto operator""_N() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_ohm` is a `Constant` equivalent to `make_constant(1.28e-4_mag * ohms)`.
+// `1.28e-4_ohm` is a `Constant` equivalent to `make_constant(ohms) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_ohm() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(ohms * operator""_mag<Cs...>());
+    return make_constant(ohms) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12313,12 +12313,12 @@ constexpr auto operator""_ohm() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_T` is a `Constant` equivalent to `make_constant(1.28e-4_mag * tesla)`.
+// `1.28e-4_T` is a `Constant` equivalent to `make_constant(tesla) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_T() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(tesla * operator""_mag<Cs...>());
+    return make_constant(tesla) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12329,12 +12329,12 @@ constexpr auto operator""_T() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_min` is a `Constant` equivalent to `make_constant(1.28e-4_mag * minutes)`.
+// `1.28e-4_min` is a `Constant` equivalent to `make_constant(minutes) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_min() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(minutes * operator""_mag<Cs...>());
+    return make_constant(minutes) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12345,12 +12345,12 @@ constexpr auto operator""_min() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_sr` is a `Constant` equivalent to `make_constant(1.28e-4_mag * steradians)`.
+// `1.28e-4_sr` is a `Constant` equivalent to `make_constant(steradians) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_sr() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(steradians * operator""_mag<Cs...>());
+    return make_constant(steradians) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12361,12 +12361,12 @@ constexpr auto operator""_sr() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_h` is a `Constant` equivalent to `make_constant(1.28e-4_mag * hours)`.
+// `1.28e-4_h` is a `Constant` equivalent to `make_constant(hours) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_h() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(hours * operator""_mag<Cs...>());
+    return make_constant(hours) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12377,12 +12377,12 @@ constexpr auto operator""_h() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_rad` is a `Constant` equivalent to `make_constant(1.28e-4_mag * radians)`.
+// `1.28e-4_rad` is a `Constant` equivalent to `make_constant(radians) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_rad() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(radians * operator""_mag<Cs...>());
+    return make_constant(radians) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12393,12 +12393,12 @@ constexpr auto operator""_rad() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_nmi` is a `Constant` equivalent to `make_constant(1.28e-4_mag * nautical_miles)`.
+// `1.28e-4_nmi` is a `Constant` equivalent to `make_constant(nautical_miles) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_nmi() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(nautical_miles * operator""_mag<Cs...>());
+    return make_constant(nautical_miles) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12409,12 +12409,12 @@ constexpr auto operator""_nmi() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_pct` is a `Constant` equivalent to `make_constant(1.28e-4_mag * percent)`.
+// `1.28e-4_pct` is a `Constant` equivalent to `make_constant(percent) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_pct() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(percent * operator""_mag<Cs...>());
+    return make_constant(percent) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12425,12 +12425,12 @@ constexpr auto operator""_pct() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_A` is a `Constant` equivalent to `make_constant(1.28e-4_mag * amperes)`.
+// `1.28e-4_A` is a `Constant` equivalent to `make_constant(amperes) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_A() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(amperes * operator""_mag<Cs...>());
+    return make_constant(amperes) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12441,12 +12441,12 @@ constexpr auto operator""_A() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_ftm` is a `Constant` equivalent to `make_constant(1.28e-4_mag * fathoms)`.
+// `1.28e-4_ftm` is a `Constant` equivalent to `make_constant(fathoms) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_ftm() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(fathoms * operator""_mag<Cs...>());
+    return make_constant(fathoms) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12457,12 +12457,12 @@ constexpr auto operator""_ftm() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_s` is a `Constant` equivalent to `make_constant(1.28e-4_mag * seconds)`.
+// `1.28e-4_s` is a `Constant` equivalent to `make_constant(seconds) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_s() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(seconds * operator""_mag<Cs...>());
+    return make_constant(seconds) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12473,12 +12473,12 @@ constexpr auto operator""_s() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_slug` is a `Constant` equivalent to `make_constant(1.28e-4_mag * slugs)`.
+// `1.28e-4_slug` is a `Constant` equivalent to `make_constant(slugs) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_slug() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(slugs * operator""_mag<Cs...>());
+    return make_constant(slugs) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12489,12 +12489,12 @@ constexpr auto operator""_slug() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_US_pt` is a `Constant` equivalent to `make_constant(1.28e-4_mag * us_pints)`.
+// `1.28e-4_US_pt` is a `Constant` equivalent to `make_constant(us_pints) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_US_pt() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(us_pints * operator""_mag<Cs...>());
+    return make_constant(us_pints) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12505,12 +12505,12 @@ constexpr auto operator""_US_pt() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_Bq` is a `Constant` equivalent to `make_constant(1.28e-4_mag * becquerel)`.
+// `1.28e-4_Bq` is a `Constant` equivalent to `make_constant(becquerel) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_Bq() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(becquerel * operator""_mag<Cs...>());
+    return make_constant(becquerel) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12521,12 +12521,12 @@ constexpr auto operator""_Bq() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_H` is a `Constant` equivalent to `make_constant(1.28e-4_mag * henries)`.
+// `1.28e-4_H` is a `Constant` equivalent to `make_constant(henries) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_H() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(henries * operator""_mag<Cs...>());
+    return make_constant(henries) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12537,12 +12537,12 @@ constexpr auto operator""_H() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_L` is a `Constant` equivalent to `make_constant(1.28e-4_mag * liters)`.
+// `1.28e-4_L` is a `Constant` equivalent to `make_constant(liters) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_L() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(liters * operator""_mag<Cs...>());
+    return make_constant(liters) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12553,12 +12553,12 @@ constexpr auto operator""_L() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_mol` is a `Constant` equivalent to `make_constant(1.28e-4_mag * moles)`.
+// `1.28e-4_mol` is a `Constant` equivalent to `make_constant(moles) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_mol() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(moles * operator""_mag<Cs...>());
+    return make_constant(moles) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12569,12 +12569,12 @@ constexpr auto operator""_mol() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_g_0` is a `Constant` equivalent to `make_constant(1.28e-4_mag * standard_gravity)`.
+// `1.28e-4_g_0` is a `Constant` equivalent to `make_constant(standard_gravity) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_g_0() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(standard_gravity * operator""_mag<Cs...>());
+    return make_constant(standard_gravity) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12585,12 +12585,12 @@ constexpr auto operator""_g_0() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_g` is a `Constant` equivalent to `make_constant(1.28e-4_mag * grams)`.
+// `1.28e-4_g` is a `Constant` equivalent to `make_constant(grams) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_g() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(grams * operator""_mag<Cs...>());
+    return make_constant(grams) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12601,12 +12601,12 @@ constexpr auto operator""_g() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_AU` is a `Constant` equivalent to `make_constant(1.28e-4_mag * astronomical_units)`.
+// `1.28e-4_AU` is a `Constant` equivalent to `make_constant(astronomical_units) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_AU() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(astronomical_units * operator""_mag<Cs...>());
+    return make_constant(astronomical_units) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12617,12 +12617,12 @@ constexpr auto operator""_AU() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_J` is a `Constant` equivalent to `make_constant(1.28e-4_mag * joules)`.
+// `1.28e-4_J` is a `Constant` equivalent to `make_constant(joules) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_J() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(joules * operator""_mag<Cs...>());
+    return make_constant(joules) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12633,12 +12633,12 @@ constexpr auto operator""_J() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_Wb` is a `Constant` equivalent to `make_constant(1.28e-4_mag * webers)`.
+// `1.28e-4_Wb` is a `Constant` equivalent to `make_constant(webers) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_Wb() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(webers * operator""_mag<Cs...>());
+    return make_constant(webers) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12649,12 +12649,12 @@ constexpr auto operator""_Wb() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_C` is a `Constant` equivalent to `make_constant(1.28e-4_mag * coulombs)`.
+// `1.28e-4_C` is a `Constant` equivalent to `make_constant(coulombs) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_C() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(coulombs * operator""_mag<Cs...>());
+    return make_constant(coulombs) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12665,12 +12665,12 @@ constexpr auto operator""_C() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_F` is a `Constant` equivalent to `make_constant(1.28e-4_mag * farads)`.
+// `1.28e-4_F` is a `Constant` equivalent to `make_constant(farads) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_F() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(farads * operator""_mag<Cs...>());
+    return make_constant(farads) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12681,12 +12681,12 @@ constexpr auto operator""_F() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_S` is a `Constant` equivalent to `make_constant(1.28e-4_mag * siemens)`.
+// `1.28e-4_S` is a `Constant` equivalent to `make_constant(siemens) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_S() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(siemens * operator""_mag<Cs...>());
+    return make_constant(siemens) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12697,12 +12697,12 @@ constexpr auto operator""_S() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_Gy` is a `Constant` equivalent to `make_constant(1.28e-4_mag * grays)`.
+// `1.28e-4_Gy` is a `Constant` equivalent to `make_constant(grays) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_Gy() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(grays * operator""_mag<Cs...>());
+    return make_constant(grays) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12713,12 +12713,12 @@ constexpr auto operator""_Gy() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_lbf` is a `Constant` equivalent to `make_constant(1.28e-4_mag * pounds_force)`.
+// `1.28e-4_lbf` is a `Constant` equivalent to `make_constant(pounds_force) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_lbf() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(pounds_force * operator""_mag<Cs...>());
+    return make_constant(pounds_force) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12729,12 +12729,12 @@ constexpr auto operator""_lbf() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_B` is a `Constant` equivalent to `make_constant(1.28e-4_mag * bytes)`.
+// `1.28e-4_B` is a `Constant` equivalent to `make_constant(bytes) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_B() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(bytes * operator""_mag<Cs...>());
+    return make_constant(bytes) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12745,12 +12745,12 @@ constexpr auto operator""_B() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_W` is a `Constant` equivalent to `make_constant(1.28e-4_mag * watts)`.
+// `1.28e-4_W` is a `Constant` equivalent to `make_constant(watts) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_W() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(watts * operator""_mag<Cs...>());
+    return make_constant(watts) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12761,12 +12761,12 @@ constexpr auto operator""_W() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_bar` is a `Constant` equivalent to `make_constant(1.28e-4_mag * bars)`.
+// `1.28e-4_bar` is a `Constant` equivalent to `make_constant(bars) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_bar() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(bars * operator""_mag<Cs...>());
+    return make_constant(bars) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12777,12 +12777,12 @@ constexpr auto operator""_bar() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_lb` is a `Constant` equivalent to `make_constant(1.28e-4_mag * pounds_mass)`.
+// `1.28e-4_lb` is a `Constant` equivalent to `make_constant(pounds_mass) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_lb() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(pounds_mass * operator""_mag<Cs...>());
+    return make_constant(pounds_mass) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12793,12 +12793,12 @@ constexpr auto operator""_lb() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_US_gal` is a `Constant` equivalent to `make_constant(1.28e-4_mag * us_gallons)`.
+// `1.28e-4_US_gal` is a `Constant` equivalent to `make_constant(us_gallons) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_US_gal() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(us_gallons * operator""_mag<Cs...>());
+    return make_constant(us_gallons) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12809,12 +12809,12 @@ constexpr auto operator""_US_gal() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_lx` is a `Constant` equivalent to `make_constant(1.28e-4_mag * lux)`.
+// `1.28e-4_lx` is a `Constant` equivalent to `make_constant(lux) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_lx() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(lux * operator""_mag<Cs...>());
+    return make_constant(lux) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12825,12 +12825,12 @@ constexpr auto operator""_lx() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_kn` is a `Constant` equivalent to `make_constant(1.28e-4_mag * knots)`.
+// `1.28e-4_kn` is a `Constant` equivalent to `make_constant(knots) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_kn() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(knots * operator""_mag<Cs...>());
+    return make_constant(knots) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12841,12 +12841,12 @@ constexpr auto operator""_kn() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_rev` is a `Constant` equivalent to `make_constant(1.28e-4_mag * revolutions)`.
+// `1.28e-4_rev` is a `Constant` equivalent to `make_constant(revolutions) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_rev() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(revolutions * operator""_mag<Cs...>());
+    return make_constant(revolutions) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12857,12 +12857,12 @@ constexpr auto operator""_rev() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_V` is a `Constant` equivalent to `make_constant(1.28e-4_mag * volts)`.
+// `1.28e-4_V` is a `Constant` equivalent to `make_constant(volts) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_V() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(volts * operator""_mag<Cs...>());
+    return make_constant(volts) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12873,12 +12873,12 @@ constexpr auto operator""_V() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_deg` is a `Constant` equivalent to `make_constant(1.28e-4_mag * degrees)`.
+// `1.28e-4_deg` is a `Constant` equivalent to `make_constant(degrees) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_deg() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(degrees * operator""_mag<Cs...>());
+    return make_constant(degrees) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12889,12 +12889,12 @@ constexpr auto operator""_deg() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_in` is a `Constant` equivalent to `make_constant(1.28e-4_mag * inches)`.
+// `1.28e-4_in` is a `Constant` equivalent to `make_constant(inches) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_in() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(inches * operator""_mag<Cs...>());
+    return make_constant(inches) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -12905,12 +12905,12 @@ constexpr auto operator""_in() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_d` is a `Constant` equivalent to `make_constant(1.28e-4_mag * days)`.
+// `1.28e-4_d` is a `Constant` equivalent to `make_constant(days) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_d() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(days * operator""_mag<Cs...>());
+    return make_constant(days) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -13516,12 +13516,12 @@ AU_DEVICE_VAR constexpr auto m = SymbolFor<Meters>{};
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_m` is a `Constant` equivalent to `make_constant(1.28e-4_mag * meters)`.
+// `1.28e-4_m` is a `Constant` equivalent to `make_constant(meters) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_m() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(meters * operator""_mag<Cs...>());
+    return make_constant(meters) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -14022,12 +14022,12 @@ AU_DEVICE_VAR constexpr auto degF_qty = SymbolFor<Fahrenheit>{};
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_K` is a `Constant` equivalent to `make_constant(1.28e-4_mag * kelvins)`.
+// `1.28e-4_K` is a `Constant` equivalent to `make_constant(kelvins) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_K() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(kelvins * operator""_mag<Cs...>());
+    return make_constant(kelvins) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -15377,12 +15377,12 @@ AU_DEVICE_VAR constexpr auto degC_qty = SymbolFor<Celsius>{};
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_degR` is a `Constant` equivalent to `make_constant(1.28e-4_mag * rankine)`.
+// `1.28e-4_degR` is a `Constant` equivalent to `make_constant(rankine) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_degR() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(rankine * operator""_mag<Cs...>());
+    return make_constant(rankine) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -15393,12 +15393,12 @@ constexpr auto operator""_degR() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_degF_qty` is a `Constant` equivalent to `make_constant(1.28e-4_mag * fahrenheit_qty)`.
+// `1.28e-4_degF_qty` is a `Constant` equivalent to `make_constant(fahrenheit_qty) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_degF_qty() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(fahrenheit_qty * operator""_mag<Cs...>());
+    return make_constant(fahrenheit_qty) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -15409,12 +15409,12 @@ constexpr auto operator""_degF_qty() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_Pa` is a `Constant` equivalent to `make_constant(1.28e-4_mag * pascals)`.
+// `1.28e-4_Pa` is a `Constant` equivalent to `make_constant(pascals) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_Pa() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(pascals * operator""_mag<Cs...>());
+    return make_constant(pascals) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -15426,12 +15426,12 @@ constexpr auto operator""_Pa() {
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_degC_qty` is a `Constant` equivalent to `make_constant(1.28e-4_mag * celsius_qty)`.
+// `1.28e-4_degC_qty` is a `Constant` equivalent to `make_constant(celsius_qty) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_degC_qty() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(celsius_qty * operator""_mag<Cs...>());
+    return make_constant(celsius_qty) * operator""_mag<Cs...>();
     // clang-format on
 }
 

@@ -3400,7 +3400,7 @@ to understand.</p>
 <a href="../unit/#symbols">symbol</a>, and which produces a <code>Constant</code>.  The numeric part of the literal is
 forwarded to the <a href="../magnitude/#_mag-literal"><code>_mag</code> literal</a>, and the result is the <code>Constant</code> you would
 get from <code>make_constant</code>.  For example, <code>1.28e-4_s</code> is equivalent to:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">make_constant</span><span class="p">(</span><span class="n">seconds</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">1.28e-4</span><span class="n">_mag</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">make_constant</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">1.28e-4</span><span class="n">_mag</span>
 </code></pre></div>
 <p>This makes very concise, readable constants:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.28e-4</span><span class="n">_s</span><span class="p">;</span><span class="w">  </span><span class="c1">// A `Constant` for 128 microseconds.</span>
