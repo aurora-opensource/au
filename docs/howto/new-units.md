@@ -43,7 +43,7 @@ a complete sample definition of a new Unit, with these features annotated and ex
     namespace literals {                                            //  [7]
     template <char... Cs>
     constexpr auto operator""_ftm() {
-        return au::make_constant(fathoms * au::au_literals::operator""_mag<Cs...>());
+        return au::make_constant(fathoms) * au::au_literals::operator""_mag<Cs...>();
     }
     }
 
@@ -73,7 +73,7 @@ a complete sample definition of a new Unit, with these features annotated and ex
     namespace literals {                                            //  [7]
     template <char... Cs>
     constexpr auto operator""_ftm() {
-        return au::make_constant(fathoms * au::au_literals::operator""_mag<Cs...>());
+        return au::make_constant(fathoms) * au::au_literals::operator""_mag<Cs...>();
     }
     }
     ```
@@ -148,9 +148,9 @@ Here are the features.
       (UDL)](https://en.cppreference.com/w/cpp/language/user_literal) whose suffix matches the unit
       symbol, and which produces a [`Constant`](../reference/constant.md).  It forwards the numeric
       part of the literal to the [`_mag` literal](../reference/magnitude.md#_mag-literal), so
-      `1.28e-4_ftm` is equivalent to `make_constant(fathoms * 1.28e-4_mag)`.  See [Unit
+      `1.28e-4_ftm` is equivalent to `make_constant(fathoms) * 1.28e-4_mag`.  See [Unit
       literals](../reference/constant.md#unit-literals).
-    - **If omitted:** Users can still write `make_constant(fathoms * 1.28e-4_mag)` explicitly; they
+    - **If omitted:** Users can still write `make_constant(fathoms) * 1.28e-4_mag` explicitly; they
       just won't have the concise literal form.
 
 !!! note
