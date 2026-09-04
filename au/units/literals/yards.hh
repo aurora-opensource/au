@@ -21,7 +21,7 @@
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_yd` is a `Constant` equivalent to `make_constant(1.28e-4_mag * yards)`.
+// `1.28e-4_yd` is a `Constant` equivalent to `make_constant(yards) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_yd() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135

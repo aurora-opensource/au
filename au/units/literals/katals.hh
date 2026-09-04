@@ -21,7 +21,7 @@
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_kat` is a `Constant` equivalent to `make_constant(1.28e-4_mag * katals)`.
+// `1.28e-4_kat` is a `Constant` equivalent to `make_constant(katals) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_kat() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135

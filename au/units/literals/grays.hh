@@ -21,7 +21,7 @@
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_Gy` is a `Constant` equivalent to `make_constant(1.28e-4_mag * grays)`.
+// `1.28e-4_Gy` is a `Constant` equivalent to `make_constant(grays) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_Gy() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135

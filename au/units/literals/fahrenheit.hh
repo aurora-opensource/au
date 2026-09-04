@@ -21,7 +21,7 @@
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_degF_qty` is a `Constant` equivalent to `make_constant(1.28e-4_mag * fahrenheit_qty)`.
+// `1.28e-4_degF_qty` is a `Constant` equivalent to `make_constant(fahrenheit_qty) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_degF_qty() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135

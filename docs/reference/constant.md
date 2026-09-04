@@ -175,7 +175,7 @@ forwarded to the [`_mag` literal](./magnitude.md#_mag-literal), and the result i
 get from `make_constant`.  For example, `1.28e-4_s` is equivalent to:
 
 ```cpp
-make_constant(seconds * 1.28e-4_mag)
+make_constant(seconds) * 1.28e-4_mag
 ```
 
 This makes very concise, readable constants:

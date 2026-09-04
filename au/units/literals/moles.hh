@@ -21,7 +21,7 @@
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_mol` is a `Constant` equivalent to `make_constant(1.28e-4_mag * moles)`.
+// `1.28e-4_mol` is a `Constant` equivalent to `make_constant(moles) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_mol() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135

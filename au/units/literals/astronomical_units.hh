@@ -21,7 +21,7 @@
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_AU` is a `Constant` equivalent to `make_constant(1.28e-4_mag * astronomical_units)`.
+// `1.28e-4_AU` is a `Constant` equivalent to `make_constant(astronomical_units) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_AU() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135

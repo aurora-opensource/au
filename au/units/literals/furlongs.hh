@@ -21,7 +21,7 @@
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_fur` is a `Constant` equivalent to `make_constant(1.28e-4_mag * furlongs)`.
+// `1.28e-4_fur` is a `Constant` equivalent to `make_constant(furlongs) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_fur() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
