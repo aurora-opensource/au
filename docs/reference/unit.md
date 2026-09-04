@@ -130,11 +130,11 @@ There are two ways to create an instance of a unit symbol.
 
         ```cpp
         constexpr auto m = SymbolFor<Meters>{};
-        constexpr auto mps = SymbolFor<UnitQuotient<Meters, Seconds>>{};
+        constexpr auto mps = SymbolFor<UnitQuotientT<Meters, Seconds>>{};
         ```
 
         These are the fastest to compile, although they're a little more verbose, and composition
-        uses awkward type traits such as `UnitQuotient`.
+        uses awkward type traits such as `UnitQuotientT`.
 
 #### Bringing symbols into scope {#symbols-in-scope}
 
@@ -210,7 +210,7 @@ In the following table, we will use `x` to represent the value that was stored i
 | `SymbolFor<Unit> * T` | `Quantity<Unit, T>` | `x` | |
 | `SymbolFor<Unit> / T` | `Quantity<Unit, T>` | `T{1} / x` | Disallowed for integral `T` |
 | `T * SymbolFor<Unit>` | `Quantity<Unit, T>` | `x` | |
-| `T / SymbolFor<Unit>` | `Quantity<UnitInverse<Unit>, T>` | `x` | |
+| `T / SymbolFor<Unit>` | `Quantity<UnitInverseT<Unit>, T>` | `x` | |
 
 #### `Quantity<U, R>`
 
@@ -222,10 +222,10 @@ that is, if the input quantity was `q`, then `x` is `q.in(U{})`.
 
 | Operation | Resulting Type | Underlying Value | Notes |
 |-----------|----------------|-------------------|-------|
-| `SymbolFor<Unit> * Quantity<U, R>` | `Quantity<UnitProduct<Unit, U>, R>` | `x` | |
-| `SymbolFor<Unit> / Quantity<U, R>` | `Quantity<UnitQuotient<Unit, U>, R>` | `R{1} / x` | Disallowed for integral `R` |
-| `Quantity<U, R> * SymbolFor<Unit>` | `Quantity<UnitProduct<U, Unit>, R>` | `x` | |
-| `Quantity<U, R> / SymbolFor<Unit>` | `Quantity<UnitQuotient<U, Unit>, R>` | `x` | |
+| `SymbolFor<Unit> * Quantity<U, R>` | `Quantity<UnitProductT<Unit, U>, R>` | `x` | |
+| `SymbolFor<Unit> / Quantity<U, R>` | `Quantity<UnitQuotientT<Unit, U>, R>` | `R{1} / x` | Disallowed for integral `R` |
+| `Quantity<U, R> * SymbolFor<Unit>` | `Quantity<UnitProductT<U, Unit>, R>` | `x` | |
+| `Quantity<U, R> / SymbolFor<Unit>` | `Quantity<UnitQuotientT<U, Unit>, R>` | `x` | |
 
 #### `SymbolFor<OtherUnit>`
 
@@ -233,8 +233,8 @@ Symbols compose: the product or quotient of two `SymbolFor` instances is a new `
 
 | Operation | Resulting Type |
 |-----------|----------------|
-| `SymbolFor<Unit> * SymbolFor<OtherUnit>` | `SymbolFor<UnitProduct<Unit, OtherUnit>>` |
-| `SymbolFor<Unit> / SymbolFor<OtherUnit>` | `SymbolFor<UnitQuotient<Unit, OtherUnit>>` |
+| `SymbolFor<Unit> * SymbolFor<OtherUnit>` | `SymbolFor<UnitProductT<Unit, OtherUnit>>` |
+| `SymbolFor<Unit> / SymbolFor<OtherUnit>` | `SymbolFor<UnitQuotientT<Unit, OtherUnit>>` |
 
 ### Unit literals {#literals}
 
@@ -305,6 +305,10 @@ In what follows, we'll use this convention:
 - For _instances_ `u1` and `u2`:
     - `u1 * u2`
 
+!!! note
+    Older releases used `UnitProductT` (with the `T` suffix) instead of `UnitProduct`.  Prefer
+    `UnitProduct`.  `UnitProductT` is deprecated, and will be removed in future releases.
+
 ### Division
 
 **Result:** The quotient of two units.
@@ -316,6 +320,10 @@ In what follows, we'll use this convention:
 - For _instances_ `u1` and `u2`:
     - `u1 / u2`
 
+!!! note
+    Older releases used `UnitQuotientT` (with the `T` suffix) instead of `UnitQuotient`.  Prefer
+    `UnitQuotient`.  `UnitQuotientT` is deprecated, and will be removed in future releases.
+
 ### Powers
 
 **Result:** A unit raised to an integral power.
@@ -326,6 +334,10 @@ In what follows, we'll use this convention:
     - `UnitPower<U, N>`
 - For an _instance_ `u`, and an integral power `N`:
     - `pow<N>(u)`
+
+!!! note
+    Older releases used `UnitPowerT` (with the `T` suffix) instead of `UnitPower`.  Prefer
+    `UnitPower`.  `UnitPowerT` is deprecated, and will be removed in future releases.
 
 ### Roots
 
@@ -507,9 +519,14 @@ as an inch.
 **Syntax:**
 
 - For _types_ `U1` and `U2`:
-    - `UnitRatio<U1, U2>`
+    - `UnitRatio<U1, U2>::value`
 - For _instances_ `u1` and `u2`:
     - `unit_ratio(u1, u2)`
+
+!!! note
+    Formerly, this was `UnitRatioT`, not `UnitRatio` (note the extra `T` on the end).  `UnitRatioT`
+    currently still works, but it is deprecated, and will be removed in a future release.  Please
+    migrate all current instances of `UnitRatioT` to `UnitRatio`.
 
 ### Unit sign
 
@@ -598,6 +615,11 @@ The use case for this trait is to _implement_ the unit slot argument for a funct
 - For an _instance_ `u`:
     - `associated_unit(u)`
 
+!!! note
+    Formerly, this was `AssociatedUnitT`, not `AssociatedUnit` (note the extra `T` on the end).
+    `AssociatedUnitT` currently still works, but it is deprecated, and will be removed in a future
+    release.  Please migrate all current instances of `AssociatedUnitT` to `AssociatedUnit`.
+
 ### Associated unit (for points) {#associated-unit-for-points}
 
 **Result:** The actual unit associated with a [unit slot](../discussion/idioms/unit-slots.md) that
@@ -627,6 +649,12 @@ associated with quantity points.
     - `AssociatedUnitForPoints<U>`
 - For an _instance_ `u`:
     - `associated_unit_for_points(u)`
+
+!!! note
+    Formerly, this was `AssociatedUnitForPointsT`, not `AssociatedUnitForPoints` (note the extra `T`
+    on the end).  `AssociatedUnitForPointsT` currently still works, but it is deprecated, and will
+    be removed in a future release.  Please migrate all current instances of
+    `AssociatedUnitForPointsT` to `AssociatedUnitForPoints`.
 
 ### Appropriate associated unit {#appropriate-associated-unit}
 

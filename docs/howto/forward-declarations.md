@@ -61,7 +61,7 @@ that takes, say, `const QuantityD<Kilo<Meters>>&` as an argument.
 
 This is _not_ enough to forward declare a _compound unit_, such as meters per second.  Our [best
 practices](./new-units.md#alias-vs-strong) for new units suggests using a simple _alias_ in this
-case, rather than a strong type (for example, `UnitQuotient<Meters, Seconds>`).  However, this
+case, rather than a strong type (for example, `UnitQuotientT<Meters, Seconds>`).  However, this
 cannot be computed without the full machinery of the library, which can cost tens of milliseconds.
 This may not sound like much, but it's far too slow for a forward declaration file.
 
@@ -137,8 +137,8 @@ Suppose, too, that we want our library to be as lightweight as possible: maybe s
 are interacting with all of their `Quantity` types by const-ref, so they don't actually need to see
 Au's definitions.
 
-Normally, we'd refer to our speed type as `QuantityD<UnitQuotient<Kilo<Meters>, Hours>>`.  However,
-`UnitQuotient` needs the full machinery of the library.  Instead, let's create an alias,
+Normally, we'd refer to our speed type as `QuantityD<UnitQuotientT<Kilo<Meters>, Hours>>`.  However,
+`UnitQuotientT` needs the full machinery of the library.  Instead, let's create an alias,
 `KilometersPerHour`, so we can write `QuantityD<KilometersPerHour>`.
 
 The first step is to find out which types go inside `UnitProductPack<...>`, and in which order.

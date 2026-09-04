@@ -28,6 +28,10 @@ which each carry their own dimension information.  The main situation where an e
 - For _instances_ `d1` and `d2`:
     - `d1 * d2`
 
+!!! note
+    Older releases used `DimProductT` (with the `T` suffix) instead of `DimProduct`.  Prefer
+    `DimProduct`.  `DimProductT` is deprecated, and will be removed in future releases.
+
 ### Division
 
 **Result:** The quotient of two `Dimension` values.
@@ -39,6 +43,10 @@ which each carry their own dimension information.  The main situation where an e
 - For _instances_ `d1` and `d2`:
     - `d1 / d2`
 
+!!! note
+    Older releases used `DimQuotientT` (with the `T` suffix) instead of `DimQuotient`.  Prefer
+    `DimQuotient`.  `DimQuotientT` is deprecated, and will be removed in future releases.
+
 ### Powers
 
 **Result:** A `Dimension` raised to an integral power.
@@ -49,6 +57,10 @@ which each carry their own dimension information.  The main situation where an e
     - `DimPower<D, N>`
 - For an _instance_ `d`, and an integral power `N`:
     - `pow<N>(d)`
+
+!!! note
+    Older releases used `DimPowerT` (with the `T` suffix) instead of `DimPower`.  Prefer
+    `DimPower`.  `DimPowerT` is deprecated, and will be removed in future releases.
 
 ### Roots
 

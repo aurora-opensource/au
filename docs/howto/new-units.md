@@ -174,7 +174,7 @@ the type directly.  The reason we do is that in C++ code generally, instances ar
 than types.  This is especially true for units, which support a variety of operations: multiplying
 and dividing by other units, scaling by magnitudes, and even raising to rational powers.
 
-If we used types directly, users would need to learn obscure new traits, like `UnitProduct` for
+If we used types directly, users would need to learn obscure new traits, like `UnitProductT` for
 unit-unit products, and `ScaledUnit` for unit-magnitude products.  With instances, we can simply
 write `*` as we would for any other kind of instances --- and this `*` covers both use cases!
 Wrapping the result in `decltype(...)` is a small price to pay for this familiarity and flexibility.

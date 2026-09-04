@@ -164,35 +164,35 @@ TEST(PackPower, MultipliesExponentsAndSimplifies) {
 }
 
 TEST(FlatDedupedTypeList, EmptyInputsYieldsEmptyPack) {
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack>, Pack<>>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack>, Pack<>>();
 }
 
-TEST(FlatDedupedTypeList, OrdersAsExpected) {
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, Pack<B<2>>>, Pack<B<2>>>();
+TEST(FlatDedupedTypeListT, OrdersAsExpected) {
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, Pack<B<2>>>, Pack<B<2>>>();
 
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, B<2>, B<3>>, Pack<B<2>, B<3>>>();
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, B<3>, B<2>>, Pack<B<2>, B<3>>>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, B<2>, B<3>>, Pack<B<2>, B<3>>>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, B<3>, B<2>>, Pack<B<2>, B<3>>>();
 
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, B<2>, B<3>, B<5>>, Pack<B<2>, B<3>, B<5>>>();
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, B<2>, B<5>, B<3>>, Pack<B<2>, B<3>, B<5>>>();
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, B<3>, B<2>, B<5>>, Pack<B<2>, B<3>, B<5>>>();
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, B<3>, B<5>, B<2>>, Pack<B<2>, B<3>, B<5>>>();
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, B<5>, B<2>, B<3>>, Pack<B<2>, B<3>, B<5>>>();
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, B<5>, B<3>, B<2>>, Pack<B<2>, B<3>, B<5>>>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, B<2>, B<3>, B<5>>, Pack<B<2>, B<3>, B<5>>>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, B<2>, B<5>, B<3>>, Pack<B<2>, B<3>, B<5>>>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, B<3>, B<2>, B<5>>, Pack<B<2>, B<3>, B<5>>>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, B<3>, B<5>, B<2>>, Pack<B<2>, B<3>, B<5>>>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, B<5>, B<2>, B<3>>, Pack<B<2>, B<3>, B<5>>>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, B<5>, B<3>, B<2>>, Pack<B<2>, B<3>, B<5>>>();
 }
 
-TEST(FlatDedupedTypeList, DedupesAtAnyPosition) {
+TEST(FlatDedupedTypeListT, DedupesAtAnyPosition) {
     using T = Pack<B<2>, B<3>, B<5>, B<7>, B<11>>;
 
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, B<2>, T>, T>();
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, B<3>, T>, T>();
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, B<5>, T>, T>();
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, B<7>, T>, T>();
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, B<11>, T>, T>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, B<2>, T>, T>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, B<3>, T>, T>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, B<5>, T>, T>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, B<7>, T>, T>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, B<11>, T>, T>();
 
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, T, T>, T>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, T, T>, T>();
 
-    StaticAssertTypeEq<FlatDedupedTypeList<Pack, T, Pack<B<2>>, T, B<11>, T>, T>();
+    StaticAssertTypeEq<FlatDedupedTypeListT<Pack, T, Pack<B<2>>, T, B<11>, T>, T>();
 }
 
 TEST(PackPower, SupportsRationalPowers) {

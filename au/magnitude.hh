@@ -60,15 +60,23 @@ struct Magnitude {
 // Define readable operations for product, quotient, power, inverse on Magnitudes.
 template <typename... BPs>
 using MagProduct = PackProduct<Magnitude, BPs...>;
+template <typename... BPs>
+using MagProductT = MagProduct<BPs...>;
 
 template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 using MagPower = PackPower<Magnitude, T, ExpNum, ExpDen>;
+template <typename T, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
+using MagPowerT = MagPower<T, ExpNum, ExpDen>;
 
 template <typename T, typename U>
 using MagQuotient = PackQuotient<Magnitude, T, U>;
+template <typename T, typename U>
+using MagQuotientT = MagQuotient<T, U>;
 
 template <typename T>
 using MagInverse = PackInverse<Magnitude, T>;
+template <typename T>
+using MagInverseT = MagInverse<T>;
 
 // Enable negative magnitudes with a type representing (-1) that appears/disappears under powers.
 struct Negative {};
@@ -183,6 +191,8 @@ template <typename MagT>
 struct IntegerPartImpl;
 template <typename MagT>
 using IntegerPart = typename IntegerPartImpl<MagT>::type;
+template <typename MagT>
+using IntegerPartT = IntegerPart<MagT>;
 
 template <typename MagT>
 struct AbsImpl;
@@ -198,9 +208,13 @@ template <typename MagT>
 struct NumeratorImpl;
 template <typename MagT>
 using Numerator = typename NumeratorImpl<MagT>::type;
+template <typename MagT>
+using NumeratorT = Numerator<MagT>;
 
 template <typename MagT>
 using Denominator = Numerator<MagInverse<Abs<MagT>>>;
+template <typename MagT>
+using DenominatorT = Denominator<MagT>;
 
 template <typename MagT>
 struct IsPositive : std::true_type {};
@@ -269,6 +283,8 @@ template <typename... Ms>
 struct CommonMagnitudeImpl;
 template <typename... Ms>
 using CommonMagnitude = typename CommonMagnitudeImpl<Ms...>::type;
+template <typename... Ms>
+using CommonMagnitudeT = CommonMagnitude<Ms...>;
 
 // The sum of arbitrarily many `Magnitude` and/or `Zero` types.
 //

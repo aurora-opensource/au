@@ -69,7 +69,7 @@ struct Dimension;
 
 using Length = Dimension<std::ratio<1>, std::ratio<0>>;
 using Time   = Dimension<std::ratio<0>, std::ratio<1>>;
-using Speed  = DimQuotient<Length, Time>;
+using Speed  = DimQuotientT<Length, Time>;
 ```
 
 This approach is easy to implement, but its simplicity comes at a cost.
@@ -92,7 +92,7 @@ struct Dimension;
 
 using Length = Dimension<base_dim::Length>;
 using Time   = Dimension<base_dim::Time>;
-using Speed  = DimQuotient<Length, Time>;  // As before.
+using Speed  = DimQuotientT<Length, Time>;  // As before.
 ```
 
 Compiler errors are now easy (or at least possible) to read: when we see something like
