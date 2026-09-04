@@ -1165,14 +1165,11 @@ struct ScalarOfTrait : detail::FirstValidTrait<T,
 
 namespace detail {
 
-// RealPart<T>: the scalar type underlying `T`.  This _requires_ `ScalarOf<T>` to exist: if none of
-// the automatic probes match `T`, then you must provide a `ScalarOfTrait<T>` specialization.
+// RealPart<T>: prefers ScalarOf<T> if available, falls back to T itself.
 template <typename T>
-struct RealPartImpl : ScalarOfTrait<T> {
-    static_assert(stdx::experimental::is_detected<ScalarOf, T>::value,
-                  "No `ScalarOf<T>`: provide a `ScalarOfTrait<T>` specialization for this rep "
-                  "(see https://aurora-opensource.github.io/au/main/reference/rep/#scalar-of)");
-};
+struct RealPartImpl : std::conditional_t<stdx::experimental::is_detected<ScalarOf, T>::value,
+                                         ScalarOfTrait<T>,
+                                         stdx::type_identity<T>> {};
 template <typename T>
 using RealPart = typename RealPartImpl<T>::type;
 

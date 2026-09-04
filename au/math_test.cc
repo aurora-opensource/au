@@ -99,8 +99,6 @@ auto IsConstantWithUnitMatching(InnerMatcher m) {
 // We have to add a fairly large number of operators just to get this to compile as a rep.
 template <typename T>
 struct LabeledNumber {
-    using Scalar = T;
-
     constexpr LabeledNumber() : value{}, label{'\0'} {}
     constexpr LabeledNumber(T v, char l) : value{v}, label{l} {}
     constexpr LabeledNumber(T v) : value{v}, label{'\0'} {}
