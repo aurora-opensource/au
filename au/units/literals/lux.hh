@@ -21,12 +21,12 @@
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_lx` is a `Constant` equivalent to `make_constant(1.28e-4_mag * lux)`.
+// `1.28e-4_lx` is a `Constant` equivalent to `make_constant(lux) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_lx() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(lux * operator""_mag<Cs...>());
+    return make_constant(lux) * operator""_mag<Cs...>();
     // clang-format on
 }
 

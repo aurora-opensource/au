@@ -21,12 +21,12 @@
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_US_qt` is a `Constant` equivalent to `make_constant(1.28e-4_mag * us_quarts)`.
+// `1.28e-4_US_qt` is a `Constant` equivalent to `make_constant(us_quarts) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_US_qt() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(us_quarts * operator""_mag<Cs...>());
+    return make_constant(us_quarts) * operator""_mag<Cs...>();
     // clang-format on
 }
 
