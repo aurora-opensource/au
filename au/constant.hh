@@ -55,6 +55,17 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
         return make_quantity<Unit>(static_cast<T>(1));
     }
 
+    // Convert this constant to a Quantity of the given unit and rep, ignoring safety checks.
+    template <typename T, typename OtherUnit>
+    [[deprecated(
+        "`coerce_as()` is deprecated.  Use `as()` instead, and pass a risk policy parameter.  "
+        "Upgrade guide: "
+        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
+        "#coerce>")]] constexpr auto
+    coerce_as(OtherUnit u) const {
+        return as<T>().coerce_as(u);
+    }
+
     // Convert this constant to a Quantity of the given unit and rep.
     template <typename T, typename OtherUnit>
     AU_DEVICE_FUNC constexpr auto as(OtherUnit u) const {
@@ -77,6 +88,17 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
         static_assert(!has_unacceptable_truncation, "Constant conversion known to truncate");
 
         return this_value.template as<T>(OtherUnit{}, ignore(ALL_RISKS));
+    }
+
+    // Get the value of this constant in the given unit and rep, ignoring safety checks.
+    template <typename T, typename OtherUnit>
+    [[deprecated(
+        "`coerce_in()` is deprecated.  Use `in()` instead, and pass a risk policy parameter.  "
+        "Upgrade guide: "
+        "<https://aurora-opensource.github.io/au/0.5.1/reference/quantity/"
+        "#coerce>")]] constexpr auto
+    coerce_in(OtherUnit u) const {
+        return as<T>().coerce_in(u);
     }
 
     // Get the value of this constant in the given unit and rep.
