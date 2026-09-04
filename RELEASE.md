@@ -90,14 +90,14 @@ Everything else is derived from them:
   the release branch (see "Prepare the release branch" below).  `main` then reports this version
   until the _next_ release bumps it again, even as new (unreleased) changes land on top; this is
   expected, and matches how the version macros are documented to behave.
-- **Patch release** (`0.5.1` and later): patch releases are cherry-picked from `main` onto the
-  pre-existing release branch (e.g. `release-0.5.0`).  Bump `au/version.hh` in a commit _on the
-  release branch_ alongside the cherry-picked fix(es), and tag that.  **Then also bump
-  `au/version.hh` to the same patch version on `main`** (in an ordinary PR): since the patch is made
-  _entirely_ of cherry-picks from `main`, `main` already contains everything the patch does, so it
-  should advertise (at least) that version.  The one exception: if `main` has already advanced to a
-  _higher_ version than the patch --- e.g. a newer minor release has since landed --- leave `main`
-  alone, because it already reports a version greater than the patch.
+- **Patch release** (`0.5.1` and later): the bump is one of the "bookkeeping" PRs on the patch's
+  _own_ release branch, landed after all the cherry-picks (see "Prepare the release branch"), and
+  the tag goes on that branch.  **Then also bump `au/version.hh` to the same patch version on
+  `main`** (in an ordinary PR): since the patch is made _entirely_ of cherry-picks from `main`,
+  `main` already contains everything the patch does, so it should advertise (at least) that
+  version.  The one exception: if `main` has already advanced to a _higher_ version than the patch
+  --- e.g. a newer minor release has since landed --- leave `main` alone, because it already reports
+  a version greater than the patch.
 
 ### Fill out release notes template
 
@@ -165,9 +165,12 @@ Issues!  Alphabetically:
 
 ### Prepare the release branch
 
-First, make sure the "final commit" (which updates the version in `au/version.hh`) has already
-landed, and is currently checked out.  This will be the "base" commit for the release branch, which
-we'll create and push to GitHub.
+Every release --- patch releases included --- gets its own branch, named `release-$VERSION`.  These
+branches are protected in the Au repo, so every change to one must go through a PR.
+
+**Minor or major release.**  First, make sure the "final commit" (which updates the version in
+`au/version.hh`) has already landed, and is currently checked out.  This will be the "base" commit
+for the release branch, which we'll create and push to GitHub.
 
 ```sh
 # Remember to update the version number!
@@ -175,8 +178,24 @@ git switch --create release-0.3.1
 git push origin release-0.3.1
 ```
 
-Branches named similarly to `release-0.3.1` are protected in the Au repo, so we will need to make
-PRs for the final changes for the release.
+**Patch release.**  Start the branch from the _immediately preceding release **tag**_ --- not from
+`main`, and not from the preceding release _branch_ (which has future-proofing commits stacked on
+top of that tag).
+
+```sh
+# Remember to update the version numbers!  0.6.1 is the new patch; 0.6.0 is the previous release.
+git fetch origin --tags
+git switch --create release-0.6.1 0.6.0
+git push origin release-0.6.1
+```
+
+Then cherry-pick, via PRs against the release branch, every _substantive_ PR that has landed on
+`main` and belongs in this patch, in the order they landed on `main`.  Nothing goes into a patch
+release that isn't a cherry-pick from `main`.
+
+Once all the substantive cherry-picks have landed, do the "bookkeeping" PRs, exactly as for a minor
+release: bump the version number (see "Update the version number"), then update the doc links (see
+"PR: Update links").  Skip the `-base` tag; go straight to "Create the tag for the release".
 
 #### Tag the mainline commit as `-base`
 
