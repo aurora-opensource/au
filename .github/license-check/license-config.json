@@ -10,6 +10,7 @@
       "tools/bin/au-docs-serve",
       "tools/bin/buildifier",
       "tools/bin/check-cmake-headers",
+      "tools/bin/check-module-exports",
       "tools/bin/clang-format",
       "tools/bin/make-single-file",
       "tools/bin/mkdocs",
@@ -39,6 +40,7 @@
   {
     "include": [
       "**/*.cc",
+      "**/*.cppm",
       "**/*.cu",
       "**/*.hh",
       "docs/assets/hrh4.js"

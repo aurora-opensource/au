@@ -256,6 +256,39 @@ set_source_files_properties(
   PROPERTIES SKIP_LINTING TRUE
 )
 
+#
+# C++ module build (opt-in via `AU_BUILD_MODULE`)
+#
+
+if (AU_BUILD_MODULE)
+  add_library(au_module)
+  target_sources(
+    au_module
+    PUBLIC
+      FILE_SET CXX_MODULES
+      BASE_DIRS "${PROJECT_SOURCE_DIR}"
+      FILES au.cppm
+  )
+  target_link_libraries(au_module PUBLIC au)
+  target_compile_features(au_module PUBLIC cxx_std_20)
+  add_library(Au::au_module ALIAS au_module)
+
+  include(GNUInstallDirs)
+  install(
+    TARGETS au_module
+    EXPORT ${AU_EXPORT_SET_NAME}
+    FILE_SET CXX_MODULES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+  )
+
+  gtest_based_test(
+    NAME module_test
+    SRCS
+      module_test.cc
+    DEPS
+      au_module
+  )
+endif()
+
 if (NOT AU_EXCLUDE_GTEST_DEPENDENCY)
   header_only_library(
     NAME testing
