@@ -21,12 +21,12 @@
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_K` is a `Constant` equivalent to `make_constant(1.28e-4_mag * kelvins)`.
+// `1.28e-4_K` is a `Constant` equivalent to `make_constant(kelvins) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_K() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(kelvins * operator""_mag<Cs...>());
+    return make_constant(kelvins) * operator""_mag<Cs...>();
     // clang-format on
 }
 

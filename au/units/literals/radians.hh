@@ -21,12 +21,12 @@
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_rad` is a `Constant` equivalent to `make_constant(1.28e-4_mag * radians)`.
+// `1.28e-4_rad` is a `Constant` equivalent to `make_constant(radians) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_rad() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(radians * operator""_mag<Cs...>());
+    return make_constant(radians) * operator""_mag<Cs...>();
     // clang-format on
 }
 

@@ -21,12 +21,12 @@
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_ftbl_fld` is a `Constant` equivalent to `make_constant(1.28e-4_mag * football_fields)`.
+// `1.28e-4_ftbl_fld` is a `Constant` equivalent to `make_constant(football_fields) * 1.28e-4_mag`.
 template <char... Cs>
 constexpr auto operator""_ftbl_fld() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(football_fields * operator""_mag<Cs...>());
+    return make_constant(football_fields) * operator""_mag<Cs...>();
     // clang-format on
 }
 
