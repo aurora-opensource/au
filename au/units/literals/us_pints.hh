@@ -26,7 +26,7 @@ template <char... Cs>
 constexpr auto operator""_US_pt() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(us_pints * operator""_mag<Cs...>());
+    return make_constant(us_pints) * operator""_mag<Cs...>();
     // clang-format on
 }
 

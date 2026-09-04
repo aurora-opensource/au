@@ -26,7 +26,7 @@ template <char... Cs>
 constexpr auto operator""_nmi() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(nautical_miles * operator""_mag<Cs...>());
+    return make_constant(nautical_miles) * operator""_mag<Cs...>();
     // clang-format on
 }
 
