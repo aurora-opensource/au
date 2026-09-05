@@ -188,14 +188,18 @@ auto hypot(Quantity<U1, R1> x, Quantity<U2, R2> y) {
     return make_quantity<U>(std::hypot(x.in(U{}), y.in(U{})));
 }
 
-// Copysign where the magnitude has units.
-template <typename U, typename R, typename T>
+// Copysign where the magnitude has units, and the sign is a raw number.
+//
+// We constrain `T` to be a valid rep, so that these overloads don't hijack calls where the other
+// argument is something implicitly convertible to `Quantity<U, R>` (such as a `Constant`).  Those
+// are handled by the hidden friend in "au/quantity.hh".
+template <typename U, typename R, typename T, typename = std::enable_if_t<IsValidRep<T>::value>>
 AU_DEVICE_FUNC constexpr auto copysign(Quantity<U, R> mag, T sgn) {
     return make_quantity<U>(std::copysign(mag.in(U{}), sgn));
 }
 
-// Copysign where the sign has units.
-template <typename T, typename U, typename R>
+// Copysign where the sign has units, and the magnitude is a raw number.
+template <typename T, typename U, typename R, typename = std::enable_if_t<IsValidRep<T>::value>>
 AU_DEVICE_FUNC constexpr auto copysign(T mag, Quantity<U, R> sgn) {
     return std::copysign(mag, sgn.in(U{}));
 }
