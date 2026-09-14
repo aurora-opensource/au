@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -3068,7 +3068,7 @@ every external repository.  If your project enables it (typically via
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>build --features=-external_include_paths
 </code></pre></div>
 <p>You can verify what your build actually passes:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>bazel<span class="w"> </span>aquery<span class="w"> </span><span class="s1">&#39;mnemonic(&quot;CppCompile&quot;, //your:target)&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span>--<span class="w"> </span>-isystem
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>bazel<span class="w"> </span>aquery<span class="w"> </span><span class="s1">'mnemonic("CppCompile", //your:target)'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span>--<span class="w"> </span>-isystem
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">gcc and clang differ here</p>
@@ -3086,7 +3086,7 @@ Don&rsquo;t rely on this: disable the feature, or at least test with the compile
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">FetchContent_Declare</span><span class="p">(</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="s">Au</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="c"># ...</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="s">SYSTEM</span><span class="w">  </span><span class="c"># &lt;--- Don&#39;t do this for Au!</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="s">SYSTEM</span><span class="w">  </span><span class="c"># &lt;--- Don't do this for Au!</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">)</span>
 </code></pre></div>
 <p>The same applies to <code>add_subdirectory(... SYSTEM)</code>, and to setting the
@@ -3129,7 +3129,7 @@ that whole folder as external, consider putting Au somewhere else.</p>
 <h4 id="bazel">bazel<a class="headerlink" href="#bazel" title="Permanent link">&para;</a></h4>
 <p>Au is available through the <a href="https://registry.bazel.build/modules/au">Bazel Central Registry</a>.
 Choose your version (take <code>0.5.1</code> as an example) and the dependency to your <code>MODULE.bazel</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.5.1&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"au"</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">"0.5.1"</span><span class="p">)</span>
 </code></pre></div>
 <p>At this point, the Au library is installed, and you can use it in your project!</p>
 <p>Here are the headers provided by each Au target.  To use, add the entry from the &ldquo;Dependency&rdquo; column
@@ -3195,10 +3195,10 @@ to your <code>deps</code> attribute, and include the appropriate files.</p>
 <ul>
 <li>Follow this pattern:
   <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">http_archive</span><span class="p">(</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">sha256</span> <span class="o">=</span> <span class="s2">&quot;7ec826dc42968dc1633de56e4f9d06e70de73e820d2ac4788e8453343a622c9b&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="n">strip_prefix</span> <span class="o">=</span> <span class="s2">&quot;au-0.3.5&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://github.com/aurora-opensource/au/releases/download/0.3.5/au-0.3.5.tar.gz&quot;</span><span class="p">],</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">"au"</span><span class="p">,</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">sha256</span> <span class="o">=</span> <span class="s2">"7ec826dc42968dc1633de56e4f9d06e70de73e820d2ac4788e8453343a622c9b"</span><span class="p">,</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="n">strip_prefix</span> <span class="o">=</span> <span class="s2">"au-0.3.5"</span><span class="p">,</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"https://github.com/aurora-opensource/au/releases/download/0.3.5/au-0.3.5.tar.gz"</span><span class="p">],</span>
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="p">)</span>
 </code></pre></div></li>
 <li>In particular, here&rsquo;s how to fill out the fields:<ul>
@@ -3217,16 +3217,16 @@ to your <code>deps</code> attribute, and include the appropriate files.</p>
 your WORKSPACE defines googletest with a different name (such as <code>@com_google_googletest</code>),
 you&rsquo;ll need to add a <code>repo_mapping</code> to your Au dependency:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">http_archive</span><span class="p">(</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">"au"</span><span class="p">,</span>
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="c1"># ... other fields ...</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">repo_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;@googletest&quot;</span><span class="p">:</span> <span class="s2">&quot;@com_google_googletest&quot;</span><span class="p">},</span>  <span class="c1"># Map to your googletest name</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">repo_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"@googletest"</span><span class="p">:</span> <span class="s2">"@com_google_googletest"</span><span class="p">},</span>  <span class="c1"># Map to your googletest name</span>
 <a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">)</span>
 </code></pre></div>
 <p>Or for <code>local_repository</code>:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">local_repository</span><span class="p">(</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;au&quot;</span><span class="p">,</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;path/to/au&quot;</span><span class="p">,</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">repo_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;@googletest&quot;</span><span class="p">:</span> <span class="s2">&quot;@com_google_googletest&quot;</span><span class="p">},</span>  <span class="c1"># Map to your googletest name</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">"au"</span><span class="p">,</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">path</span> <span class="o">=</span> <span class="s2">"path/to/au"</span><span class="p">,</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">repo_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"@googletest"</span><span class="p">:</span> <span class="s2">"@com_google_googletest"</span><span class="p">},</span>  <span class="c1"># Map to your googletest name</span>
 <a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="p">)</span>
 </code></pre></div>
 </details>
@@ -3282,7 +3282,7 @@ below.</p>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nb">FetchContent_Declare</span><span class="p">(</span>
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="s">Au</span>
 <a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/aurora-opensource/au</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="s">GIT_TAG</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="w">  </span><span class="c"># Or a specific tag.</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="s">GIT_TAG</span><span class="w"> </span><span class="s2">"main"</span><span class="w">  </span><span class="c"># Or a specific tag.</span>
 <a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="s">EXCLUDE_FROM_ALL</span>
 <a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="p">)</span>
 <a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">Au</span><span class="p">)</span>
@@ -3300,11 +3300,11 @@ cloning the repo, building the library, running the tests, and installing it.</p
 <p>If you want a specific release, check out the tag you want.  Note that the first version of Au
 that supports CMake is 0.3.5.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Optional, but recommended:</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>git<span class="w"> </span>checkout<span class="w"> </span><span class="s2">&quot;0.4.1&quot;</span><span class="w">  </span><span class="c1"># Or whichever tag you prefer.</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>git<span class="w"> </span>checkout<span class="w"> </span><span class="s2">"0.4.1"</span><span class="w">  </span><span class="c1"># Or whichever tag you prefer.</span>
 </code></pre></div>
 <p>Now, build and test the library.  These commands will include both the explicit tests, and also
 several CMake-generated tests to make sure that the includes are set up correctly.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># CMake is a &quot;meta build system&quot;, not a build system.</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># CMake is a "meta build system", not a build system.</span>
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c1"># This first command generates the actual build files.</span>
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>cmake/build<span class="w"> </span>-DCMAKE_VERIFY_INTERFACE_HEADER_SETS<span class="o">=</span>TRUE
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
@@ -3599,7 +3599,7 @@ nominal C++20 support do not actually support <code>std::format</code>.&#160;<a 
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.footer", "toc.integrate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       
