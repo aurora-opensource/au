@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import os
-import re
 import subprocess
 import sys
 
@@ -24,28 +23,9 @@ from mike.mkdocs_utils import docs_version_var
 
 
 # We need to monkey patch any function in mike which calls `mkdocs` via its
-# command line interface.  Fortunately, there are only two: `version` and
-# `build`.
-
-
-def override_version():
-    """Override mike's native logic for retrieving the version."""
-    # Original code:
-    #    output = subprocess.run(
-    #        ['mkdocs', '--version'],
-    #        check=True, stdout=subprocess.PIPE, universal_newlines=True
-    #    ).stdout.rstrip()
-    #    m = re.search('^mkdocs, version (\\S*)', output)
-    #    return m.group(1)
-    # Changed version (reformatted with Black):
-    output = subprocess.run(
-        ["update_docs", "--version"],
-        check=True,
-        stdout=subprocess.PIPE,
-        universal_newlines=True,
-    ).stdout.rstrip()
-    m = re.search("^\\S+, version (\\S*)", output)
-    return m.group(1)
+# command line interface.  As of mike 2.2.0, there is only one: `build`.  (Mike
+# used to shell out to `mkdocs --version`, but it now reads the version from
+# `importlib.metadata` at import time, so there is nothing to patch.)
 
 
 def override_build(config_file, version, *, quiet=False, output=None):
@@ -74,6 +54,5 @@ if __name__ == "__main__":
     # We need to add this folder to the PATH.
     os.environ["PATH"] = f"{os.path.join(os.getcwd())}:{os.environ['PATH']}"
 
-    with mock.patch("mike.mkdocs_utils.version", override_version):
-        with mock.patch("mike.mkdocs_utils.build", override_build):
-            sys.exit(mike.driver.main())
+    with mock.patch("mike.mkdocs_utils.build", override_build):
+        sys.exit(mike.driver.main())
