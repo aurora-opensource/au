@@ -1,0 +1,889 @@
+#!/usr/bin/python3
+# Copyright 2026 Aurora Operations, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Measure how a change affects compile time, across two or more branches.
+
+We retrieve the compile command via `bazel aquery`, and then just use it directly.  This avoids the
+overhead of the build system and lets us get lots of data points very quickly.
+
+Measurements are interleaved across branches so that a slow patch of CPU weather is spread across
+branches, rather than concentrated in one.
+
+Each branch gets its own git worktree, and its command is replayed in that worktree's execroot.
+This gives us _both_ tremendous speed _and_ the ability to avoid messing with our own working tree.
+The cost is space: each one needs a full toolchain, and this can easily be 8 GiB per branch.
+"""
+
+import argparse
+import datetime
+import json
+import os
+import pathlib
+import platform
+import secrets
+import shutil
+import subprocess
+import sys
+import tempfile
+import time
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "lib"))
+
+import compile_time_data as data  # noqa: E402
+import csv_stream  # noqa: E402
+
+
+# Every `cc_binary` and `cc_library` under `//examples`.
+ALL_EXAMPLES_QUERY = 'kind("cc_(binary|library) rule", //examples:all)'
+
+# Worktrees live outside the repository, but not beyond the run that made them: each one drags a
+# multi-GiB bazel output base along behind it, so a run cleans up after itself.  See
+# `_remove_worktrees_and_output_bases` for why keeping them is not the bargain it looks like.
+WORKTREE_ROOT = pathlib.Path.home() / ".cache" / "au-compile-time" / "worktrees"
+
+# A good first guess as to what one branch's bazel output base costs.  Used before we have actual
+# measurements.
+#
+# This turns out to mostly be extracted clang and gcc toolchains, which take up a lot of space.
+GUESSED_OUTPUT_BASE_SIZE_GB = 8.0
+
+# Where this machine's stable-but-meaningless name lives; see `_machine_id`.
+MACHINE_ID_PATH = pathlib.Path.home() / ".config" / "au" / "machine-id"
+
+
+####################################################################################################
+# The run's own record
+####################################################################################################
+
+
+class _Run:
+    """What this invocation is measuring, where it goes, and the manifest that records both.
+
+    The manifest is rewritten every time a fact lands in it, rather than once at the end, so a run
+    that dies partway through still describes itself truthfully.
+    """
+
+    def __init__(self, branches, targets, reps, keep_going, out_dir, commits):
+        self.branches = branches
+        self.targets = targets
+        self.reps = reps
+        self.keep_going = keep_going
+        self.out_dir = out_dir
+        self.csv_path = out_dir / "raw.csv"
+        self.manifest_path = out_dir / "manifest.json"
+        self.manifest = {
+            "reps": reps,
+            "branches": branches,
+            "targets": targets,
+            "started": _timestamp(),
+            "out_dir": str(out_dir),
+            "commits": commits,
+        }
+
+    def write_manifest(self):
+        self.manifest_path.write_text(json.dumps(self.manifest, indent=2) + "\n")
+
+    def record(self, **facts):
+        """Add facts to the manifest, and put it on disk before doing anything else."""
+        self.manifest.update(facts)
+        self.write_manifest()
+
+#
+# This file is structured according to the "newspaper rule": important stuff goes up top, and
+# anything below is just the next level of detail for what's above.  This way, you can read the file
+# until you get bored, and still get the gist of it to the level of detail that you want.
+#
+# We do this with sections of "Levels".  Level 0 is just `main()`; Level 1 is anything that was
+# first mentioned in `main()`; and so on.
+#
+
+####################################################################################################
+# Level 0: `main`.
+####################################################################################################
+
+
+def main():
+    args = _parse_args()
+    _work_from_the_workspace_root()
+
+    if args.clean:
+        return _remove_every_worktree_this_tool_made()
+
+    run = _plan_and_announce_the_run(args)
+    if args.dry_run:
+        return 0
+
+    _make_room_for_the_run(run)
+    try:
+        _perform_and_record_all_measurements(run)
+    finally:
+        _clean_up_after_this_run()
+    return 0
+
+
+####################################################################################################
+# Level 1: first called by Level 0.
+####################################################################################################
+
+
+def _parse_args():
+    parser = argparse.ArgumentParser(
+        description=__doc__.split("\n")[0],
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="With no -t, every example under //examples is measured.",
+    )
+    parser.add_argument(
+        "-b",
+        "--branch",
+        dest="branches",
+        action="append",
+        default=[],
+        metavar="BRANCH",
+        help="A branch to measure.  Pass it again for each one; the first is the baseline.",
+    )
+    parser.add_argument(
+        "-t",
+        "--target",
+        dest="targets",
+        action="append",
+        default=[],
+        metavar="TARGET",
+        help="A target to measure.  Pass it again for each one.  Defaults to every code "
+        "example.",
+    )
+    parser.add_argument(
+        "-n",
+        "--reps",
+        type=int,
+        default=100,
+        help="Repetitions per translation unit per branch.",
+    )
+    parser.add_argument("--out", type=pathlib.Path, help="Directory for results.")
+    parser.add_argument(
+        "--keep-going",
+        action="store_true",
+        help="Carry on when a translation unit fails to compile.",
+    )
+    parser.add_argument(
+        "--clean",
+        action="store_true",
+        help="Delete the worktrees this tool has created, and their bazel output bases, then "
+        "exit.  A run already does this for itself, so this is only for tidying up after one that "
+        "was killed outright.",
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Print the plan and stop."
+    )
+    args = parser.parse_args()
+
+    if args.clean:
+        return args
+    if len(args.branches) < 2:
+        _fail(
+            "Give at least two branches to compare (-b).  The first one is the baseline."
+        )
+    if args.reps < 1:
+        _fail("--reps must be positive.")
+    for branch in args.branches:
+        if not _ref_exists(branch):
+            _fail("No such branch or ref: {}".format(branch))
+    return args
+
+
+def _work_from_the_workspace_root():
+    """Run from the top of the repository, which every git and bazel command below assumes."""
+    os.chdir(_workspace_root())
+
+
+def _remove_every_worktree_this_tool_made():
+    """The `--clean` path: tidy up after a run that was killed before it could tidy up itself."""
+    return _remove_worktrees_and_output_bases()
+
+
+def _plan_and_announce_the_run(args):
+    """Settle what this run will measure, and print it in time for the user to stop it.
+
+    Every way the run could turn out to be impossible -- nothing to measure, a directory that
+    already holds measurements -- is decided here, while nothing expensive has happened yet.
+    """
+    _warn_that_the_working_tree_is_not_measured()
+
+    targets = args.targets or _query_targets(ALL_EXAMPLES_QUERY)
+    if not targets:
+        _fail("No targets to measure.")
+
+    out_dir = args.out or _default_out_dir()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    run = _Run(
+        branches=args.branches,
+        targets=targets,
+        reps=args.reps,
+        keep_going=args.keep_going,
+        out_dir=out_dir,
+        commits={branch: _commit_of(branch) for branch in args.branches},
+    )
+
+    # `csv_stream.create` refuses an existing file, but it is not reached until after the worktrees
+    # are built, which is minutes away.  Say so now instead of wasting that time.
+    if run.csv_path.exists():
+        _fail(
+            "{} already holds measurements.  Pick another --out.".format(run.csv_path)
+        )
+
+    _announce_the_plan(run, dry_run=args.dry_run)
+    return run
+
+
+def _make_room_for_the_run(run):
+    """Reclaim what earlier runs left behind, then say so if there still is not enough room."""
+    _remove_worktrees_and_output_bases(quiet_if_empty=True)
+    _warn_if_disk_space_is_tight(len(run.branches))
+
+
+def _perform_and_record_all_measurements(run):
+    """Build every branch, time every translation unit in it, and leave the results on disk."""
+    run.write_manifest()
+
+    prepared = _prepare_every_branch(run)
+    run.record(machine=_describe_this_machine(prepared), finished=None)
+
+    _time_every_translation_unit_on_every_branch(prepared, run)
+    run.record(finished=_timestamp())
+
+    print("\nMeasurements written to:\n  {}".format(run.csv_path))
+
+
+def _clean_up_after_this_run():
+    """Give back the disk, whether the run finished, failed, or was interrupted.
+
+    The results are files on disk by the time this is reached, so cleaning up can never cost us a
+    measurement.  This also covers the Ctrl-C case, since that arrives as an exception.
+    """
+    print()
+    _remove_worktrees_and_output_bases(quiet_if_empty=True)
+
+
+####################################################################################################
+# Level 2: first called by Level 1.
+####################################################################################################
+
+
+def _fail(message):
+    # Flush stdout first: it is block buffered when redirected to a file, so the error would
+    # otherwise surface above the progress output it belongs after.  stderr needs no flush of its
+    # own -- it is line buffered, and interpreter shutdown flushes it on the way out of sys.exit.
+    sys.stdout.flush()
+    sys.stderr.write("\nError: {}\n\n".format(message))
+    sys.exit(1)
+
+
+def _ref_exists(ref):
+    return (
+        _run(
+            ["git", "rev-parse", "--verify", "--quiet", ref + "^{commit}"],
+            capture=True,
+            check=False,
+            quiet=True,
+        ).returncode
+        == 0
+    )
+
+
+def _workspace_root():
+    return pathlib.Path(
+        _run(
+            ["git", "rev-parse", "--show-toplevel"], capture=True, quiet=True
+        ).stdout.strip()
+    )
+
+
+def _remove_worktrees_and_output_bases(quiet_if_empty=False):
+    """Remove every worktree this tool created, and the bazel output base behind each one.
+
+    The worktrees themselves are a few megabytes; their output bases are several gigabytes each,
+    and they are what actually fills a disk.  Keeping them looks like a cache but barely is one:
+    nearly all of that size is the extracted toolchains, identical in every base, while the
+    reusable build output is a handful of megabytes.  The downloads are not at stake either, since
+    bazel's repository cache is shared and survives this.  So retaining a base trades gigabytes for
+    the minute or two it takes to unpack a toolchain again, which is not a trade worth making.
+    """
+    bases = _managed_output_bases()
+    trees = sorted(WORKTREE_ROOT.glob("*")) if WORKTREE_ROOT.exists() else []
+    if not bases and not trees:
+        if not quiet_if_empty:
+            print("Nothing to clean: no measurement worktrees exist.")
+        return 0
+
+    freed = _footprint_gb([b for b, _ in bases] + trees)
+    for tree in trees:
+        print("  removing worktree {}".format(tree))
+        # Stop this worktree's bazel server before touching anything.  An interrupted run leaves
+        # its server alive for a moment, and a live server rebuilds its convenience symlinks --
+        # and a skeleton of its output base -- underneath a delete that is already in progress.
+        if (tree / "tools" / "bin" / "bazel").exists():
+            _run(["bazel", "shutdown"], check=False, quiet=True, cwd=tree)
+        _run(
+            ["git", "worktree", "remove", "--force", str(tree)], check=False, quiet=True
+        )
+        if tree.exists():
+            shutil.rmtree(tree, ignore_errors=True)
+        if tree.exists():
+            print("    warning: {} could not be removed".format(tree))
+    _run(["git", "worktree", "prune"], check=False, quiet=True)
+
+    for base, workspace in bases:
+        print("  removing output base for {}".format(pathlib.Path(workspace).name))
+        # Bazel marks external repository trees read-only, directories included, so a plain
+        # recursive delete stops partway.
+        subprocess.run(["chmod", "-R", "u+w", str(base)], capture_output=True)
+        shutil.rmtree(base, ignore_errors=True)
+
+    if WORKTREE_ROOT.exists() and not any(WORKTREE_ROOT.iterdir()):
+        WORKTREE_ROOT.rmdir()
+    print(
+        "\nFreed {:.1f} GiB.  Free space now {:.1f} GiB.".format(freed, _free_space_gb())
+    )
+    return 0
+
+
+def _warn_that_the_working_tree_is_not_measured():
+    """Say so if the user has uncommitted work: the one thing this tool cannot measure."""
+    if _working_tree_is_dirty():
+        print(
+            "\nNote: your working tree has uncommitted changes.  Measurements are taken from "
+            "committed refs in separate worktrees, so those changes are not included."
+        )
+
+
+def _query_targets(query):
+    result = _run(["bazel", "query", query], capture=True, quiet=True)
+    return sorted(line.strip() for line in result.stdout.splitlines() if line.strip())
+
+
+def _default_out_dir():
+    now = datetime.datetime.now()
+    return (
+        pathlib.Path.home()
+        / "compile-time-measurements"
+        / now.strftime("%Y-%m-%d")
+        / now.strftime("%H-%M-%S")
+    )
+
+
+def _commit_of(ref):
+    """Pin down what was measured.  A branch name moves; the commit it pointed at does not."""
+    return _run(["git", "rev-parse", ref], capture=True, quiet=True).stdout.strip()
+
+
+def _announce_the_plan(run, dry_run):
+    """Print what is about to happen, in time for the user to stop it."""
+    manifest = run.manifest
+    print("\nMeasuring compile time.")
+    print("\n  Branches (baseline first):")
+    for branch in manifest["branches"]:
+        print("    - {}".format(branch))
+    print("\n  Targets:")
+    for target in manifest["targets"]:
+        print("    - {}".format(target))
+    print("\n  Repetitions: {}".format(manifest["reps"]))
+    if dry_run:
+        print("\n**Dry run.**  Nothing was measured.")
+        return
+    print("\n  Results: {}".format(manifest["out_dir"]))
+    print("\n  To watch measurements arrive:  tail -f {}".format(run.csv_path))
+    print()
+
+
+def _warn_if_disk_space_is_tight(branch_count):
+    """Warn if the run looks likely to run out of disk partway through.
+
+    Every branch needs its own output base, and they all have to exist at once, since the
+    measurements are interleaved.  A build that runs out of space partway leaves a broken cache
+    behind, so it is worth saying something while there is still time to act.
+
+    This is the guess-based check, and it is deliberately the weaker of the two: nothing has been
+    built yet, so there is nothing to measure.
+    """
+    needed = branch_count * GUESSED_OUTPUT_BASE_SIZE_GB
+    free = _free_space_gb()
+    if free < needed:
+        print(
+            "\nwarning: {:.1f} GiB free, but {} branch(es) need roughly {:.0f} GiB of bazel output "
+            "base between them.  Running out of space partway through a build leaves a broken "
+            "cache behind.".format(free, branch_count, needed)
+        )
+
+
+def _prepare_every_branch(run):
+    """Give every branch its own checkout, and extract the compile command for every
+    translation unit in it.
+
+    Returns `{branch: {"commands": [...], "execroot": path}}`.
+    """
+    prepared = {}
+    for branch in run.branches:
+        print("\nPreparing '{}'...".format(branch))
+        free_before = _free_space_gb()
+        tree = _worktree_for(branch)
+        print("  worktree: {}".format(tree))
+
+        # This build has two purposes.  Not only does it warm the cache, but it also materializes
+        # any external repositories we need.  (If we skip this, the build command we're trying to
+        # measure might fail.)
+        _run(["bazel", "build"] + run.targets, quiet=True, cwd=tree)
+
+        commands = _compile_commands(run.targets, cwd=tree)
+        prepared[branch] = {"commands": commands, "execroot": _execution_root(cwd=tree)}
+        print("  {} translation unit(s)".format(len(commands)))
+
+        _warn_if_the_remaining_branches_will_not_fit(
+            consumed_gb=free_before - _free_space_gb(),
+            remaining=len(run.branches) - len(prepared),
+        )
+    return prepared
+
+
+def _describe_this_machine(prepared):
+    """Describe the machine, so a result stays interpretable long after the run.
+
+    Compile times are only meaningful relative to the hardware that produced them, and a report
+    filed on a pull request outlives whatever anyone remembers about the laptop it came from.  The
+    CPU governor and turbo state are here for a more specific reason: they are the usual explanation
+    when one run is noisier than another on the same machine.
+    """
+    return {
+        "machine_id": _machine_id(),
+        "model": _machine_model(),
+        "os": "{} {}".format(platform.system(), platform.release()),
+        "cpu": _cpu_model(),
+        "cores": os.cpu_count(),
+        "memory": _memory(),
+        "cpu_governor": _cpu_governor(),
+        "turbo": _turbo(),
+        "load_average": "{:.2f} {:.2f} {:.2f}".format(*os.getloadavg()),
+        "compiler": _compiler_version(prepared),
+        "bazel": _bazel_version(),
+        "python": platform.python_version(),
+    }
+
+
+def _time_every_translation_unit_on_every_branch(prepared, run):
+    """Time every (translation unit, branch) pair, `reps` times, writing results as they land."""
+    # Key by source path rather than by position.  A branch that adds or drops an example has a
+    # different list of translation units, and lining the lists up by index would silently time one
+    # branch's translation unit against a different one on the next branch.
+    by_source = {
+        b: {c["source"]: c for c in p["commands"]} for b, p in prepared.items()
+    }
+    execroots = {b: p["execroot"] for b, p in prepared.items()}
+    sources = sorted({s for cs in by_source.values() for s in cs})
+
+    total = run.reps * sum(len(cs) for cs in by_source.values())
+    done = 0
+    started = time.monotonic()
+
+    with tempfile.TemporaryDirectory() as scratch:
+        obj = str(pathlib.Path(scratch) / "measured.o")
+        with csv_stream.create(run.csv_path) as f:
+            writer = csv_stream.RowWriter(f)
+            for rep in range(run.reps):
+                for source in sources:
+                    # Branches innermost: adjacent measurements of the same translation unit on
+                    # different branches see as close to the same machine conditions as we can
+                    # arrange.
+                    for branch in run.branches:
+                        command = by_source[branch].get(source)
+                        if command is None:
+                            continue
+                        nanos, ok = _time_one_compile(command["argv"], obj, execroots[branch])
+                        if not ok:
+                            message = "Compile failed: {} on {}".format(
+                                command["source"], branch
+                            )
+                            if not run.keep_going:
+                                _fail(
+                                    message
+                                    + "  (Pass --keep-going to measure the rest anyway.)"
+                                )
+                            print("  warning: " + message, file=sys.stderr)
+                            continue
+                        tu = data.classify(command["source"])
+                        # A dict, so the row literal *is* the schema: a column that drifts out of
+                        # order still lands where its name says, and a new one needs no change
+                        # anywhere else.
+                        writer.writerow(
+                            {
+                                "timestamp": datetime.datetime.now().isoformat(
+                                    timespec="milliseconds"
+                                ),
+                                "example": tu.example,
+                                "flavor": tu.flavor,
+                                "source": command["source"],
+                                "target": command["target"],
+                                "branch": branch,
+                                "rep": rep,
+                                "nanos": nanos,
+                            }
+                        )
+                        done += 1
+                        _report_progress(done, total, started)
+    print()
+
+
+def _timestamp():
+    """When something happened, to the second.  Anything finer would be false precision."""
+    return datetime.datetime.now().isoformat(timespec="seconds")
+
+
+####################################################################################################
+# Level 3: first called by Level 2.
+####################################################################################################
+
+
+def _run(argv, capture=False, check=True, quiet=False, cwd=None):
+    if argv[0] == "bazel":
+        # Each worktree has its own `tools/bin/bazel`, and running it from there is what gives that
+        # worktree its own output base.
+        argv = [str(pathlib.Path(cwd or ".") / "tools" / "bin" / "bazel")] + argv[1:]
+    result = subprocess.run(
+        argv,
+        capture_output=capture or quiet,
+        text=True,
+        check=False,
+        cwd=cwd,
+    )
+    if check and result.returncode != 0:
+        if result.stderr:
+            sys.stderr.write(result.stderr)
+        _fail("Command failed: {}".format(" ".join(argv)))
+    return result
+
+
+def _managed_output_bases():
+    """Every bazel output base belonging to a worktree this tool created.
+
+    Found by scanning rather than by asking bazel, so that a base whose worktree has already been
+    deleted -- the expensive kind of leftover, and the invisible kind -- still turns up.
+
+    `DO_NOT_BUILD_HERE` is bazel's own marker, dropped at the top of every output base and again
+    in its execroot.  It exists because the execroot mirrors your source tree out of symlinks and
+    so invites you to build in it by mistake; bazel checks for the file and refuses.  What makes it
+    useful here is its contents: the absolute path of the workspace that base belongs to, which is
+    the only link back from an orphaned output base to the tree that created it.
+
+    A base counts as ours only if that workspace lives under `WORKTREE_ROOT`, which is why the
+    worktrees get a directory of their own -- containment is what separates this tool's trees from
+    everything else on the machine, and nothing outside it is a candidate for deletion.
+    """
+    found = []
+    for base in sorted(_output_base().parent.glob("*/")):
+        for marker in base.glob("*/DO_NOT_BUILD_HERE"):
+            workspace = pathlib.Path(marker.read_text().strip())
+            if workspace.is_relative_to(WORKTREE_ROOT):
+                found.append((base, str(workspace)))
+            break
+    return found
+
+
+def _footprint_gb(paths):
+    total = 0
+    for path in paths:
+        for child in pathlib.Path(path).rglob("*"):
+            try:
+                if child.is_file() and not child.is_symlink():
+                    total += child.stat().st_size
+            except OSError:
+                pass
+    # I miss Au already.
+    return total / 1024.0**3
+
+
+def _free_space_gb(path=None):
+    usage = shutil.disk_usage(str(path or pathlib.Path.home()))
+    # I miss Au already.
+    return usage.free / 1024.0**3
+
+
+def _working_tree_is_dirty():
+    return bool(
+        _run(["git", "status", "--porcelain"], capture=True, quiet=True).stdout.strip()
+    )
+
+
+def _worktree_for(ref):
+    """A fresh worktree checked out at `ref`."""
+    path = WORKTREE_ROOT / _slug(ref)
+    commit = _run(["git", "rev-parse", ref], capture=True, quiet=True).stdout.strip()
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    # A run that was killed outright, rather than interrupted, can leave the directory behind
+    # without git knowing it is gone.
+    if path.exists():
+        shutil.rmtree(path, ignore_errors=True)
+    _run(["git", "worktree", "prune"], quiet=True, check=False)
+    _run(
+        ["git", "worktree", "add", "--quiet", "--detach", str(path), commit], quiet=True
+    )
+    return path
+
+
+def _compile_commands(targets, cwd=None):
+    """Ask bazel for each translation unit's compile command, and adapt it for replay."""
+    query = 'mnemonic("CppCompile", set({}))'.format(" ".join(targets))
+    aquery = ["bazel", "aquery", query, "--output=jsonproto"]
+    result = _run(aquery, capture=True, quiet=True, cwd=cwd)
+    actions = json.loads(result.stdout).get("actions", [])
+
+    commands = []
+    for action in actions:
+        argv, source, object_path = _replayable(action["arguments"])
+        commands.append(
+            {"argv": argv, "source": source, "target": _target_of(object_path)}
+        )
+    commands.sort(key=lambda c: c["source"])
+    return commands
+
+
+def _execution_root(cwd=None):
+    """Where a replayed compile command must run: bazel's execroot, not the workspace."""
+    return pathlib.Path(
+        _run(
+            ["bazel", "info", "execution_root"], capture=True, quiet=True, cwd=cwd
+        ).stdout.strip()
+    )
+
+
+def _warn_if_the_remaining_branches_will_not_fit(consumed_gb, remaining):
+    """Check the rest of the run against what a branch just cost, rather than against a guess.
+
+    By now one branch has unpacked its own output base on this machine, with this toolchain, on
+    this filesystem, so there is a real number to multiply -- and it stays right as the toolchains
+    grow, which a constant in this file will not.  Still only a warning: the user may be freeing
+    space in another window, and only they know that.
+
+    Measured as the drop in free space rather than by walking the tree, which keeps it free: a
+    recursive size of one output base takes longer than most of the builds it would be checking.
+    """
+    if remaining <= 0 or consumed_gb <= 0:
+        return
+    needed = remaining * consumed_gb
+    free = _free_space_gb()
+    if free < needed:
+        print(
+            "\nwarning: that branch took {:.1f} GiB, so the remaining {} need roughly {:.0f} GiB "
+            "between them, and only {:.1f} GiB is free.".format(
+                consumed_gb, remaining, needed, free
+            )
+        )
+
+
+def _machine_id():
+    """A stable, meaningless name for this machine, generated once and kept locally.
+
+    Stable so that two reports from the same machine are recognizably comparable; meaningless so
+    that publishing one discloses nothing.  A hash of the hostname would not do: the usual
+    `user-<serial>` format is structured enough to brute force.
+    """
+    try:
+        if MACHINE_ID_PATH.exists():
+            return MACHINE_ID_PATH.read_text().strip()
+        MACHINE_ID_PATH.parent.mkdir(parents=True, exist_ok=True)
+        generated = secrets.token_hex(4)
+        MACHINE_ID_PATH.write_text(generated + "\n")
+        return generated
+    except OSError:
+        return "unknown"
+
+
+def _machine_model():
+    """The model name, when the machine will admit to one."""
+    return _dmi("product_version") or _dmi("product_name")
+
+
+def _cpu_model():
+    return _first_match("/proc/cpuinfo", "model name") or platform.processor() or "unknown"
+
+
+def _memory():
+    total = _first_match("/proc/meminfo", "MemTotal")
+    if not total:
+        return "unknown"
+    return "{:.0f} GiB".format(int(total.split()[0]) / 1024 / 1024)
+
+
+def _cpu_governor():
+    return _read("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor") or "unknown"
+
+
+def _turbo():
+    """Intel exposes this inverted, as `no_turbo`; other CPUs do not expose it at all."""
+    no_turbo = _read("/sys/devices/system/cpu/intel_pstate/no_turbo")
+    if no_turbo == "":
+        return "unknown"
+    return "disabled" if no_turbo == "1" else "enabled"
+
+
+def _compiler_version(prepared):
+    """The version banner of the compiler whose work we are about to time.
+
+    Taken from the first command we prepared, since every branch is built by the toolchain this
+    workspace pins.
+    """
+    first = next((c for p in prepared.values() for c in p["commands"]), None)
+    if first is None:
+        return "unknown"
+    result = subprocess.run(
+        [first["argv"][0], "--version"], capture_output=True, text=True, cwd=_execution_root()
+    )
+    return result.stdout.strip().splitlines()[0] if result.stdout.strip() else "unknown"
+
+
+def _bazel_version():
+    return _run(["bazel", "--version"], capture=True, check=False, quiet=True).stdout.strip()
+
+
+def _time_one_compile(argv, obj, execroot):
+    """Run one compile from the execroot and return `(nanoseconds, succeeded)`."""
+    argv = [obj if a is None else a for a in argv]
+    start = time.monotonic_ns()
+    result = subprocess.run(argv, cwd=execroot, capture_output=True)
+    elapsed = time.monotonic_ns() - start
+    return elapsed, result.returncode == 0
+
+
+def _report_progress(done, total, started):
+    elapsed = time.monotonic() - started
+    remaining = elapsed / done * (total - done) if done else 0
+    print(
+        "\r  {}/{} measurements  ({:.0%})  ~{} remaining   ".format(
+            done, total, done / total, _format_duration(remaining)
+        ),
+        end="",
+        flush=True,
+    )
+
+
+####################################################################################################
+# Level 4: first called by Level 3.
+####################################################################################################
+
+
+def _output_base():
+    """Where bazel keeps this workspace's own output base.  Its siblings are every other one."""
+    return pathlib.Path(
+        _run(["bazel", "info", "output_base"], capture=True, quiet=True).stdout.strip()
+    )
+
+
+def _slug(ref):
+    return "".join(c if c.isalnum() or c in "-._" else "-" for c in ref)
+
+
+def _replayable(arguments):
+    """Rewrite bazel's compile command into one we can run repeatedly ourselves.
+
+    Every flag stays exactly as the build would have it, with two exceptions:
+
+      * Drop `-MD` and `-MF <path>`.  We are not building anything, so nothing consumes the
+        generated dependency file, and writing it would only add I/O to the measurement.
+
+      * Send the object file to our own scratch path, so replays never race the real build outputs.
+        Note this rewrites *only* the argument right after `-o`.  `-frandom-seed=...` also ends in
+        `.pic.o`, and substituting that one turns it into a stray positional argument, which clang
+        then reports as a missing input file.
+    """
+    argv, source, object_path = [], None, None
+    skip = False
+    for i, arg in enumerate(arguments):
+        if skip:
+            skip = False
+            continue
+        if arg == "-MD":
+            continue
+        if arg == "-MF":
+            skip = True
+            continue
+        if arg == "-o":
+            # Remember where bazel would have written the object: it names the target, which is
+            # worth keeping even though we redirect the write itself.
+            object_path = arguments[i + 1]
+            argv += [
+                "-o",
+                None,
+            ]  # Filled in per invocation, so parallel runs cannot collide.
+            skip = True
+            continue
+        if arg == "-c":
+            source = arguments[i + 1]
+        argv.append(arg)
+    if source is None:
+        _fail(
+            "Could not find the source file in a compile command: {}".format(
+                " ".join(arguments)
+            )
+        )
+    return argv, source, object_path
+
+
+def _target_of(object_path):
+    """Recover a readable target name from the object path bazel chose for this action.
+
+    `bazel-out/k8-fastbuild/bin/examples/_objs/adc_millivolts_au/au.pic.o` names
+    `adc_millivolts_au`.
+    """
+    if object_path and "/_objs/" in object_path:
+        return object_path.split("/_objs/")[1].split("/")[0]
+    return "?"
+
+
+def _dmi(field):
+    """Read a DMI field.  The identifying ones need root, a good reason not to want them."""
+    return _read("/sys/class/dmi/id/{}".format(field))
+
+
+def _first_match(path, key):
+    for line in _read(path, whole=True).splitlines():
+        if line.startswith(key):
+            return line.split(":", 1)[1].strip()
+    return ""
+
+
+def _read(path, whole=False):
+    try:
+        text = pathlib.Path(path).read_text()
+    except OSError:
+        return ""
+    return text if whole else text.strip()
+
+
+def _format_duration(seconds):
+    minutes, seconds = divmod(int(seconds), 60)
+    hours, minutes = divmod(minutes, 60)
+    return (
+        "{}h{:02d}m".format(hours, minutes)
+        if hours
+        else "{}m{:02d}s".format(minutes, seconds)
+    )
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except KeyboardInterrupt:
+        # Ctrl-C is a normal way to end a long measurement, so it should not look like a crash.
+        # Cleanup has already happened on the way out; see `main`.
+        print("\nInterrupted.")
+        sys.exit(130)
