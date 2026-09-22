@@ -873,12 +873,15 @@ cc_test(
 )
 
 ################################################################################
-# Filegroups for the single-file tool
+# Filegroups for tools that read the headers as files, rather than compiling them
 
 filegroup(
     name = "headers",
     srcs = glob(["**/*.hh"]),
-    visibility = ["//:__pkg__"],
+    visibility = [
+        "//:__pkg__",
+        "//benchmarks:__pkg__",
+    ],
 )
 
 ################################################################################
