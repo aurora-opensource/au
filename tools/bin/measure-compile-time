@@ -42,6 +42,7 @@ import time
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "lib"))
 
 import compile_time_data as data  # noqa: E402
+import compile_time_report as report  # noqa: E402
 import csv_stream  # noqa: E402
 
 
@@ -118,6 +119,9 @@ def main():
     args = _parse_args()
     _work_from_the_workspace_root()
 
+    if args.report_only:
+        return _rerender_a_finished_run(args.report_only, args.record_machine)
+
     if args.clean:
         return _remove_every_worktree_this_tool_made()
 
@@ -131,7 +135,9 @@ def main():
     finally:
         _clean_up_after_this_run()
 
-    _plot_the_results(run)
+    plot_files = _plot_the_results(run.csv_path, run.out_dir)
+    measurements = data.load(run.csv_path, branch_order=run.branches)
+    _write_the_report(run.out_dir, measurements, run.manifest, plot_files)
     return 0
 
 
@@ -179,6 +185,18 @@ def _parse_args():
         help="Carry on when a translation unit fails to compile.",
     )
     parser.add_argument(
+        "--report-only",
+        type=pathlib.Path,
+        metavar="DIR",
+        help="Re-render the report and plots from a finished run's raw.csv, measuring nothing.",
+    )
+    parser.add_argument(
+        "--record-machine",
+        action="store_true",
+        help="With --report-only, describe the current machine and note that it was recorded "
+        "after the fact.  For runs taken before this tool recorded the machine.",
+    )
+    parser.add_argument(
         "--clean",
         action="store_true",
         help="Delete the worktrees this tool has created, and their bazel output bases, then "
@@ -190,6 +208,10 @@ def _parse_args():
     )
     args = parser.parse_args()
 
+    if args.report_only:
+        if not args.report_only.is_dir():
+            _fail("No such directory: {}".format(args.report_only))
+        return args
     if args.clean:
         return args
     if len(args.branches) < 2:
@@ -207,6 +229,36 @@ def _parse_args():
 def _work_from_the_workspace_root():
     """Run from the top of the repository, which every git and bazel command below assumes."""
     os.chdir(_workspace_root())
+
+
+def _rerender_a_finished_run(out_dir, record_machine):
+    """Rebuild the report and plots from a finished run's CSV, without measuring anything again.
+
+    Measuring is the expensive part and the report is the part that keeps changing, so those two
+    are not welded together.  This is also how an old run picks up an improvement to the report.
+    """
+    csv_path = out_dir / "raw.csv"
+    if not csv_path.exists():
+        _fail("No measurements found at {}".format(csv_path))
+
+    manifest_path = out_dir / "manifest.json"
+    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
+    measurements = data.load(csv_path, branch_order=manifest.get("branches"))
+
+    # A run from before a given manifest field simply does not have it, but the measurements
+    # themselves are real observations, so fill in whatever they imply rather than leaving a hole.
+    manifest.setdefault("reps", max(r["rep"] for r in measurements.rows) + 1)
+    stamps = sorted(r["timestamp"] for r in measurements.rows)
+    manifest.setdefault("started", stamps[0][:19])
+    manifest.setdefault("finished", stamps[-1][:19])
+
+    if record_machine:
+        manifest["machine"] = _describe_the_machine_after_the_fact(manifest)
+        manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
+
+    plot_files = _plot_the_results(csv_path, out_dir)
+    _write_the_report(out_dir, measurements, manifest, plot_files)
+    return 0
 
 
 def _remove_every_worktree_this_tool_made():
@@ -278,23 +330,34 @@ def _clean_up_after_this_run():
     _remove_worktrees_and_output_bases(quiet_if_empty=True)
 
 
-def _plot_the_results(run):
+def _plot_the_results(csv_path, out_dir):
     """Draw the plots for a finished run, if we can."""
-    plot_dir = run.out_dir / "plots"
+    plot_dir = out_dir / "plots"
 
     # Clear the directory first.  Whatever PNGs are in here are taken to be this run's, so a plot
     # that gets renamed or dropped would otherwise linger and be read as current.
     for stale in plot_dir.glob("*.png"):
         stale.unlink()
 
-    if not _render_plots_under_bazel(run.csv_path, plot_dir):
+    if not _render_plots_under_bazel(csv_path, plot_dir):
         # No data loss (data points are all in the CSV), but still worth warning if we fail.
         print(
             "warning: plot generation failed; the measurements are unaffected.",
             file=sys.stderr,
         )
-        return
+        return []
     print("Plots written to:\n  {}".format(plot_dir))
+
+    # Whatever PNGs are there now are this run's, by the clearing above.  Globbing rather than
+    # taking a list back from the plotting binary keeps the report honest about what is on disk.
+    return sorted(str(p.relative_to(out_dir)) for p in plot_dir.glob("*.png"))
+
+
+def _write_the_report(out_dir, measurements, manifest, plot_files):
+    """Render the Markdown report, which is the artifact a human actually reads."""
+    report_path = out_dir / "report.md"
+    report_path.write_text(report.render(measurements, manifest, plot_files))
+    print("\nReport written to:\n  {}".format(report_path))
 
 
 ####################################################################################################
@@ -329,6 +392,21 @@ def _workspace_root():
             ["git", "rev-parse", "--show-toplevel"], capture=True, quiet=True
         ).stdout.strip()
     )
+
+
+def _describe_the_machine_after_the_fact(manifest):
+    """Describe the machine for a run that was measured before this record existed.
+
+    The toolchain is pinned in `MODULE.bazel`, so for a run from the same checkout the compiler
+    this finds is the one that produced the measurements.  That is still an inference rather than
+    an observation, which is why the record itself says when it was taken.
+    """
+    targets = manifest.get("targets") or _query_targets(ALL_EXAMPLES_QUERY)
+    prepared = {}
+    if targets:
+        _run(["bazel", "build"] + targets, quiet=True, check=False)
+        prepared = {"this workspace": {"commands": _compile_commands(targets)}}
+    return _describe_this_machine(prepared, during_run=False)
 
 
 def _remove_worktrees_and_output_bases(quiet_if_empty=False):
@@ -477,15 +555,20 @@ def _prepare_every_branch(run):
     return prepared
 
 
-def _describe_this_machine(prepared):
+def _describe_this_machine(prepared, during_run=True):
     """Describe the machine, so a result stays interpretable long after the run.
 
     Compile times are only meaningful relative to the hardware that produced them, and a report
     filed on a pull request outlives whatever anyone remembers about the laptop it came from.  The
     CPU governor and turbo state are here for a more specific reason: they are the usual explanation
     when one run is noisier than another on the same machine.
+
+    With `during_run` false, this describes the machine some time after the measurements were
+    taken, which is a weaker claim: the hardware and the toolchain are almost certainly the same,
+    but nothing here was seen while the compiler was running.  Say so in the record, and drop the
+    load average outright, since that is the one field that is genuinely unrecoverable.
     """
-    return {
+    info = {
         "machine_id": _machine_id(),
         "model": _machine_model(),
         "os": "{} {}".format(platform.system(), platform.release()),
@@ -498,7 +581,11 @@ def _describe_this_machine(prepared):
         "compiler": _compiler_version(prepared),
         "bazel": _bazel_version(),
         "python": platform.python_version(),
+        "recorded": "during the run" if during_run else "after the fact",
     }
+    if not during_run:
+        del info["load_average"]
+    return info
 
 
 def _time_every_translation_unit_on_every_branch(prepared, run):
@@ -614,6 +701,22 @@ def _run(argv, capture=False, check=True, quiet=False, cwd=None):
     return result
 
 
+def _compile_commands(targets, cwd=None):
+    """Ask bazel for each translation unit's compile command, and adapt it for replay."""
+    query = 'mnemonic("CppCompile", set({}))'.format(" ".join(targets))
+    aquery = ["bazel", "aquery", query, "--output=jsonproto"]
+    result = _run(aquery, capture=True, quiet=True, cwd=cwd)
+    actions = json.loads(result.stdout).get("actions", [])
+
+    commands = []
+    for action in actions:
+        argv, source, object_path = _replayable(action["arguments"])
+        commands.append(
+            {"argv": argv, "source": source, "target": _target_of(object_path)}
+        )
+    commands.sort(key=lambda c: c["source"])
+    return commands
+
 def _managed_output_bases():
     """Every bazel output base belonging to a worktree this tool created.
 
@@ -680,23 +783,6 @@ def _worktree_for(ref):
         ["git", "worktree", "add", "--quiet", "--detach", str(path), commit], quiet=True
     )
     return path
-
-
-def _compile_commands(targets, cwd=None):
-    """Ask bazel for each translation unit's compile command, and adapt it for replay."""
-    query = 'mnemonic("CppCompile", set({}))'.format(" ".join(targets))
-    aquery = ["bazel", "aquery", query, "--output=jsonproto"]
-    result = _run(aquery, capture=True, quiet=True, cwd=cwd)
-    actions = json.loads(result.stdout).get("actions", [])
-
-    commands = []
-    for action in actions:
-        argv, source, object_path = _replayable(action["arguments"])
-        commands.append(
-            {"argv": argv, "source": source, "target": _target_of(object_path)}
-        )
-    commands.sort(key=lambda c: c["source"])
-    return commands
 
 
 def _execution_root(cwd=None):
@@ -823,17 +909,6 @@ def _report_progress(done, total, started):
 ####################################################################################################
 
 
-def _output_base():
-    """Where bazel keeps this workspace's own output base.  Its siblings are every other one."""
-    return pathlib.Path(
-        _run(["bazel", "info", "output_base"], capture=True, quiet=True).stdout.strip()
-    )
-
-
-def _slug(ref):
-    return "".join(c if c.isalnum() or c in "-._" else "-" for c in ref)
-
-
 def _replayable(arguments):
     """Rewrite bazel's compile command into one we can run repeatedly ourselves.
 
@@ -889,6 +964,16 @@ def _target_of(object_path):
     if object_path and "/_objs/" in object_path:
         return object_path.split("/_objs/")[1].split("/")[0]
     return "?"
+
+def _output_base():
+    """Where bazel keeps this workspace's own output base.  Its siblings are every other one."""
+    return pathlib.Path(
+        _run(["bazel", "info", "output_base"], capture=True, quiet=True).stdout.strip()
+    )
+
+
+def _slug(ref):
+    return "".join(c if c.isalnum() or c in "-._" else "-" for c in ref)
 
 
 def _dmi(field):
