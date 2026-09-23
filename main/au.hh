@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-5-ged1a907c
+// Version identifier: 0.6.0-base-6-ga81336e6
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -8611,7 +8611,7 @@ class Quantity {
     // Moving the implementation here lets us effortlessly support callsites where any number of
     // arguments are "shapeshifter" types that are compatible with this Quantity (such as `ZERO`, or
     // various physical constant).
-    //
+
     // Note that the min/max implementations return by _value_, for consistency with other Quantity
     // implementations (because in the general case, the return type can differ from the inputs).
     // Note, too, that we use the Walter Brown implementation for min/max, where min prefers `a`,
@@ -8623,19 +8623,8 @@ class Quantity {
         return (v < lo) ? lo : ((hi < v) ? hi : v);
     }
 
-    // `fmod`, `remainder`, and `copysign` for two `Quantity` values of the same type.
-    //
-    // Like `min` and `max` above, these are hidden friends whose parameters are the concrete
-    // `Quantity` type rather than deduced, so anything implicitly convertible to it --- notably, a
-    // `Constant` --- can be passed in _either_ argument slot.  Inputs whose units or reps differ
-    // are handled by the function templates in "au/math.hh".
-    //
-    // Each is a template on a defaulted parameter `T`, which is always `Rep`.  This keeps the
-    // return type out of the class instantiation, so that reps which have no `std::fmod` (say,
-    // `std::complex<double>`) simply don't get these overloads, instead of failing to compile.
-    // The _parameters_ stay concrete, which is the whole point.  Note that the return types
-    // promote the rep exactly as the underlying `std` functions do, which keeps these consistent
-    // with their "au/math.hh" counterparts.
+    // The `fmod`, `remainder`, and `copysign` implementations use a defaulted parameter `T`, which
+    // is always `Rep`, so that reps that have no `std::fmod` will still be able to compile.
     template <typename T = Rep>
     friend AU_DEVICE_FUNC auto fmod(Quantity a, Quantity b)
         -> Quantity<UnitT, decltype(std::fmod(T{}, T{}))> {

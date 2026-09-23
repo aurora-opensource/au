@@ -25,7 +25,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-5-ged1a907c
+// Version identifier: 0.6.0-base-6-ga81336e6
 // <iostream> support: EXCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -1219,13 +1219,7 @@ using detected_or_t = typename detected_or<Default, Op, Args...>::type;
 
 namespace au {
 
-struct Coulombs;
-
-}  // namespace au
-
-namespace au {
-
-struct Kelvins;
+struct Seconds;
 
 }  // namespace au
 
@@ -1237,31 +1231,19 @@ struct Joules;
 
 namespace au {
 
+struct Coulombs;
+
+}  // namespace au
+
+namespace au {
+
 struct Hertz;
 
 }  // namespace au
 
 namespace au {
 
-struct Seconds;
-
-}  // namespace au
-
-namespace au {
-
-struct Meters;
-
-}  // namespace au
-
-namespace au {
-
 struct Moles;
-
-}  // namespace au
-
-namespace au {
-
-struct StandardGravity;
 
 }  // namespace au
 
@@ -1279,127 +1261,19 @@ struct Lumens;
 
 namespace au {
 
-struct Candelas;
+struct Meters;
 
 }  // namespace au
 
 namespace au {
 
-struct FootballFields;
+struct Kelvins;
 
 }  // namespace au
 
 namespace au {
 
-struct Miles;
-
-}  // namespace au
-
-namespace au {
-
-struct Furlongs;
-
-}  // namespace au
-
-namespace au {
-
-struct Yards;
-
-}  // namespace au
-
-namespace au {
-
-struct Bits;
-
-}  // namespace au
-
-namespace au {
-
-struct USQuarts;
-
-}  // namespace au
-
-namespace au {
-
-struct Katals;
-
-}  // namespace au
-
-namespace au {
-
-struct Arcminutes;
-
-}  // namespace au
-
-namespace au {
-
-struct Arcseconds;
-
-}  // namespace au
-
-namespace au {
-
-struct Feet;
-
-}  // namespace au
-
-namespace au {
-
-struct Newtons;
-
-}  // namespace au
-
-namespace au {
-
-struct Ohms;
-
-}  // namespace au
-
-namespace au {
-
-struct Tesla;
-
-}  // namespace au
-
-namespace au {
-
-struct Minutes;
-
-}  // namespace au
-
-namespace au {
-
-struct Celsius;
-
-}  // namespace au
-
-namespace au {
-
-struct Steradians;
-
-}  // namespace au
-
-namespace au {
-
-struct Hours;
-
-}  // namespace au
-
-namespace au {
-
-struct Rankine;
-
-}  // namespace au
-
-namespace au {
-
-struct Radians;
-
-}  // namespace au
-
-namespace au {
-
-struct NauticalMiles;
+struct StandardGravity;
 
 }  // namespace au
 
@@ -1411,13 +1285,19 @@ struct Percent;
 
 namespace au {
 
-struct Amperes;
+struct Liters;
 
 }  // namespace au
 
 namespace au {
 
-struct Fathoms;
+struct Rankine;
+
+}  // namespace au
+
+namespace au {
+
+struct Arcminutes;
 
 }  // namespace au
 
@@ -1429,91 +1309,25 @@ struct Fahrenheit;
 
 namespace au {
 
-struct Slugs;
+struct Ohms;
 
 }  // namespace au
 
 namespace au {
 
-struct USPints;
+struct Hours;
 
 }  // namespace au
 
 namespace au {
 
-struct Becquerel;
+struct FootballFields;
 
 }  // namespace au
 
 namespace au {
 
-struct Henries;
-
-}  // namespace au
-
-namespace au {
-
-struct Liters;
-
-}  // namespace au
-
-namespace au {
-
-struct Pascals;
-
-}  // namespace au
-
-namespace au {
-
-struct Grams;
-
-}  // namespace au
-
-namespace au {
-
-struct AstronomicalUnits;
-
-}  // namespace au
-
-namespace au {
-
-struct Webers;
-
-}  // namespace au
-
-namespace au {
-
-struct Farads;
-
-}  // namespace au
-
-namespace au {
-
-struct Siemens;
-
-}  // namespace au
-
-namespace au {
-
-struct Grays;
-
-}  // namespace au
-
-namespace au {
-
-struct PoundsForce;
-
-}  // namespace au
-
-namespace au {
-
-struct Bytes;
-
-}  // namespace au
-
-namespace au {
-
-struct Bars;
+struct Katals;
 
 }  // namespace au
 
@@ -1525,37 +1339,7 @@ struct PoundsMass;
 
 namespace au {
 
-struct USGallons;
-
-}  // namespace au
-
-namespace au {
-
-struct Lux;
-
-}  // namespace au
-
-namespace au {
-
-struct Knots;
-
-}  // namespace au
-
-namespace au {
-
-struct Revolutions;
-
-}  // namespace au
-
-namespace au {
-
-struct Volts;
-
-}  // namespace au
-
-namespace au {
-
-struct Degrees;
+struct Grays;
 
 }  // namespace au
 
@@ -1567,7 +1351,223 @@ struct Inches;
 
 namespace au {
 
+struct AstronomicalUnits;
+
+}  // namespace au
+
+namespace au {
+
+struct Miles;
+
+}  // namespace au
+
+namespace au {
+
+struct Becquerel;
+
+}  // namespace au
+
+namespace au {
+
+struct Steradians;
+
+}  // namespace au
+
+namespace au {
+
+struct Slugs;
+
+}  // namespace au
+
+namespace au {
+
+struct Bars;
+
+}  // namespace au
+
+namespace au {
+
+struct Fathoms;
+
+}  // namespace au
+
+namespace au {
+
+struct Amperes;
+
+}  // namespace au
+
+namespace au {
+
+struct Farads;
+
+}  // namespace au
+
+namespace au {
+
+struct Celsius;
+
+}  // namespace au
+
+namespace au {
+
+struct PoundsForce;
+
+}  // namespace au
+
+namespace au {
+
+struct USQuarts;
+
+}  // namespace au
+
+namespace au {
+
+struct USGallons;
+
+}  // namespace au
+
+namespace au {
+
+struct Tesla;
+
+}  // namespace au
+
+namespace au {
+
+struct Henries;
+
+}  // namespace au
+
+namespace au {
+
+struct Grams;
+
+}  // namespace au
+
+namespace au {
+
+struct Revolutions;
+
+}  // namespace au
+
+namespace au {
+
+struct Bits;
+
+}  // namespace au
+
+namespace au {
+
+struct Yards;
+
+}  // namespace au
+
+namespace au {
+
+struct Radians;
+
+}  // namespace au
+
+namespace au {
+
+struct Volts;
+
+}  // namespace au
+
+namespace au {
+
+struct Candelas;
+
+}  // namespace au
+
+namespace au {
+
+struct USPints;
+
+}  // namespace au
+
+namespace au {
+
+struct Bytes;
+
+}  // namespace au
+
+namespace au {
+
+struct Pascals;
+
+}  // namespace au
+
+namespace au {
+
+struct Knots;
+
+}  // namespace au
+
+namespace au {
+
+struct Webers;
+
+}  // namespace au
+
+namespace au {
+
+struct Degrees;
+
+}  // namespace au
+
+namespace au {
+
 struct Days;
+
+}  // namespace au
+
+namespace au {
+
+struct Feet;
+
+}  // namespace au
+
+namespace au {
+
+struct Siemens;
+
+}  // namespace au
+
+namespace au {
+
+struct Newtons;
+
+}  // namespace au
+
+namespace au {
+
+struct Minutes;
+
+}  // namespace au
+
+namespace au {
+
+struct NauticalMiles;
+
+}  // namespace au
+
+namespace au {
+
+struct Lux;
+
+}  // namespace au
+
+namespace au {
+
+struct Arcseconds;
+
+}  // namespace au
+
+namespace au {
+
+struct Furlongs;
 
 }  // namespace au
 
@@ -9016,7 +9016,7 @@ class Quantity {
     // Moving the implementation here lets us effortlessly support callsites where any number of
     // arguments are "shapeshifter" types that are compatible with this Quantity (such as `ZERO`, or
     // various physical constant).
-    //
+
     // Note that the min/max implementations return by _value_, for consistency with other Quantity
     // implementations (because in the general case, the return type can differ from the inputs).
     // Note, too, that we use the Walter Brown implementation for min/max, where min prefers `a`,
@@ -9028,19 +9028,8 @@ class Quantity {
         return (v < lo) ? lo : ((hi < v) ? hi : v);
     }
 
-    // `fmod`, `remainder`, and `copysign` for two `Quantity` values of the same type.
-    //
-    // Like `min` and `max` above, these are hidden friends whose parameters are the concrete
-    // `Quantity` type rather than deduced, so anything implicitly convertible to it --- notably, a
-    // `Constant` --- can be passed in _either_ argument slot.  Inputs whose units or reps differ
-    // are handled by the function templates in "au/math.hh".
-    //
-    // Each is a template on a defaulted parameter `T`, which is always `Rep`.  This keeps the
-    // return type out of the class instantiation, so that reps which have no `std::fmod` (say,
-    // `std::complex<double>`) simply don't get these overloads, instead of failing to compile.
-    // The _parameters_ stay concrete, which is the whole point.  Note that the return types
-    // promote the rep exactly as the underlying `std` functions do, which keeps these consistent
-    // with their "au/math.hh" counterparts.
+    // The `fmod`, `remainder`, and `copysign` implementations use a defaulted parameter `T`, which
+    // is always `Rep`, so that reps that have no `std::fmod` will still be able to compile.
     template <typename T = Rep>
     friend AU_DEVICE_FUNC auto fmod(Quantity a, Quantity b)
         -> Quantity<UnitT, decltype(std::fmod(T{}, T{}))> {
@@ -10122,6 +10111,36 @@ struct AssociatedUnitImpl<SymbolFor<U>> : stdx::type_identity<U> {};
 
 }  // namespace au
 
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct JoulesLabel {
+    static constexpr const char label[] = "J";
+};
+template <typename T>
+constexpr const char JoulesLabel<T>::label[];
+struct Joules
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, 2>, base_dim::Mass, Pow<base_dim::Time, -2>>,
+               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
+      JoulesLabel<void> {
+    using JoulesLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto joule = SingularNameFor<Joules>{};
+AU_DEVICE_VAR constexpr auto joules = QuantityMaker<Joules>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto J = SymbolFor<Joules>{};
+}
+}  // namespace au
+
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 #include <compare>
 #endif
@@ -10378,6 +10397,145 @@ AU_DEVICE_FUNC constexpr auto operator-(Zero, Constant<U>) {
     return -Constant<U>{};
 }
 
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct CoulombsLabel {
+    static constexpr const char label[] = "C";
+};
+template <typename T>
+constexpr const char CoulombsLabel<T>::label[];
+struct Coulombs
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<base_dim::Time, base_dim::Current>>,
+      CoulombsLabel<void> {
+    using CoulombsLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto coulomb = SingularNameFor<Coulombs>{};
+AU_DEVICE_VAR constexpr auto coulombs = QuantityMaker<Coulombs>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto C = SymbolFor<Coulombs>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct HertzLabel {
+    static constexpr const char label[] = "Hz";
+};
+template <typename T>
+constexpr const char HertzLabel<T>::label[];
+struct Hertz
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Time, -1>>>,
+      HertzLabel<void> {
+    using HertzLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto hertz = QuantityMaker<Hertz>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto Hz = SymbolFor<Hertz>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct MolesLabel {
+    static constexpr const char label[] = "mol";
+};
+template <typename T>
+constexpr const char MolesLabel<T>::label[];
+struct Moles : UnitImpl<AmountOfSubstance>, MolesLabel<void> {
+    using MolesLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto mole = SingularNameFor<Moles>{};
+AU_DEVICE_VAR constexpr auto moles = QuantityMaker<Moles>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto mol = SymbolFor<Moles>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct WattsLabel {
+    static constexpr const char label[] = "W";
+};
+template <typename T>
+constexpr const char WattsLabel<T>::label[];
+struct Watts
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, 2>, base_dim::Mass, Pow<base_dim::Time, -3>>,
+               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
+      WattsLabel<void> {
+    using WattsLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto watt = SingularNameFor<Watts>{};
+AU_DEVICE_VAR constexpr auto watts = QuantityMaker<Watts>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto W = SymbolFor<Watts>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct LumensLabel {
+    static constexpr const char label[] = "lm";
+};
+template <typename T>
+constexpr const char LumensLabel<T>::label[];
+struct Lumens
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Angle, 2>, base_dim::LuminousIntensity>>,
+      LumensLabel<void> {
+    using LumensLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto lumen = SingularNameFor<Lumens>{};
+AU_DEVICE_VAR constexpr auto lumens = QuantityMaker<Lumens>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto lm = SymbolFor<Lumens>{};
+}
 }  // namespace au
 
 
@@ -10934,149 +11092,21 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct JoulesLabel {
-    static constexpr const char label[] = "J";
+struct KelvinsLabel {
+    static constexpr const char label[] = "K";
 };
 template <typename T>
-constexpr const char JoulesLabel<T>::label[];
-struct Joules
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Length, 2>, base_dim::Mass, Pow<base_dim::Time, -2>>,
-               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
-      JoulesLabel<void> {
-    using JoulesLabel<void>::label;
+constexpr const char KelvinsLabel<T>::label[];
+struct Kelvins : UnitImpl<Temperature>, KelvinsLabel<void> {
+    using KelvinsLabel<void>::label;
 };
-AU_DEVICE_VAR constexpr auto joule = SingularNameFor<Joules>{};
-AU_DEVICE_VAR constexpr auto joules = QuantityMaker<Joules>{};
+AU_DEVICE_VAR constexpr auto kelvin = SingularNameFor<Kelvins>{};
+AU_DEVICE_VAR constexpr auto kelvins = QuantityMaker<Kelvins>{};
+AU_DEVICE_VAR constexpr auto kelvins_pt = QuantityPointMaker<Kelvins>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto J = SymbolFor<Joules>{};
+AU_DEVICE_VAR constexpr auto K = SymbolFor<Kelvins>{};
 }
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct HertzLabel {
-    static constexpr const char label[] = "Hz";
-};
-template <typename T>
-constexpr const char HertzLabel<T>::label[];
-struct Hertz
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Time, -1>>>,
-      HertzLabel<void> {
-    using HertzLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto hertz = QuantityMaker<Hertz>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto Hz = SymbolFor<Hertz>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct SecondsLabel {
-    static constexpr const char label[] = "s";
-};
-template <typename T>
-constexpr const char SecondsLabel<T>::label[];
-struct Seconds : UnitImpl<Time>, SecondsLabel<void> {
-    using SecondsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto second = SingularNameFor<Seconds>{};
-AU_DEVICE_VAR constexpr auto seconds = QuantityMaker<Seconds>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto s = SymbolFor<Seconds>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct MetersLabel {
-    static constexpr const char label[] = "m";
-};
-template <typename T>
-constexpr const char MetersLabel<T>::label[];
-struct Meters : UnitImpl<Length>, MetersLabel<void> {
-    using MetersLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto meter = SingularNameFor<Meters>{};
-AU_DEVICE_VAR constexpr auto meters = QuantityMaker<Meters>{};
-AU_DEVICE_VAR constexpr auto meters_pt = QuantityPointMaker<Meters>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto m = SymbolFor<Meters>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct MolesLabel {
-    static constexpr const char label[] = "mol";
-};
-template <typename T>
-constexpr const char MolesLabel<T>::label[];
-struct Moles : UnitImpl<AmountOfSubstance>, MolesLabel<void> {
-    using MolesLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto mole = SingularNameFor<Moles>{};
-AU_DEVICE_VAR constexpr auto moles = QuantityMaker<Moles>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto mol = SymbolFor<Moles>{};
-}
-}  // namespace au
-
-
-namespace au {
-
-namespace detail {
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct ReducedPlanckConstantLabel {
-    static constexpr const char label[] = "h_bar";
-};
-template <typename T>
-constexpr const char ReducedPlanckConstantLabel<T>::label[];
-struct ReducedPlanckConstantUnit : decltype(Joules{} * Seconds{} * mag<662'607'015>() *
-                                            pow<-42>(mag<10>()) / mag<2>() / Magnitude<Pi>{}),
-                                   ReducedPlanckConstantLabel<void> {
-    using ReducedPlanckConstantLabel<void>::label;
-};
-}  // namespace detail
-
-AU_DEVICE_VAR constexpr auto REDUCED_PLANCK_CONSTANT =
-    make_constant(detail::ReducedPlanckConstantUnit{});
-
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
@@ -11110,140 +11140,6 @@ AU_DEVICE_VAR constexpr auto g_0 = SymbolFor<StandardGravity>{};
 
 
 namespace au {
-
-namespace detail {
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct PlanckConstantLabel {
-    static constexpr const char label[] = "h";
-};
-template <typename T>
-constexpr const char PlanckConstantLabel<T>::label[];
-struct PlanckConstantUnit
-    : decltype(Joules{} * Seconds{} * mag<662'607'015>() * pow<-42>(mag<10>())),
-      PlanckConstantLabel<void> {
-    using PlanckConstantLabel<void>::label;
-};
-}  // namespace detail
-
-AU_DEVICE_VAR constexpr auto PLANCK_CONSTANT = make_constant(detail::PlanckConstantUnit{});
-
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct WattsLabel {
-    static constexpr const char label[] = "W";
-};
-template <typename T>
-constexpr const char WattsLabel<T>::label[];
-struct Watts
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Length, 2>, base_dim::Mass, Pow<base_dim::Time, -3>>,
-               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
-      WattsLabel<void> {
-    using WattsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto watt = SingularNameFor<Watts>{};
-AU_DEVICE_VAR constexpr auto watts = QuantityMaker<Watts>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto W = SymbolFor<Watts>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct LumensLabel {
-    static constexpr const char label[] = "lm";
-};
-template <typename T>
-constexpr const char LumensLabel<T>::label[];
-struct Lumens
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Angle, 2>, base_dim::LuminousIntensity>>,
-      LumensLabel<void> {
-    using LumensLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto lumen = SingularNameFor<Lumens>{};
-AU_DEVICE_VAR constexpr auto lumens = QuantityMaker<Lumens>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto lm = SymbolFor<Lumens>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct CandelasLabel {
-    static constexpr const char label[] = "cd";
-};
-template <typename T>
-constexpr const char CandelasLabel<T>::label[];
-struct Candelas : UnitImpl<LuminousIntensity>, CandelasLabel<void> {
-    using CandelasLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto candela = SingularNameFor<Candelas>{};
-AU_DEVICE_VAR constexpr auto candelas = QuantityMaker<Candelas>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto cd = SymbolFor<Candelas>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct FootballFieldsLabel {
-    static constexpr const char label[] = "ftbl_fld";
-};
-template <typename T>
-constexpr const char FootballFieldsLabel<T>::label[];
-struct FootballFields
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Length, Magnitude<Prime<2>, Pow<Prime<3>, 2>, Pow<Prime<5>, -2>, Prime<127>>>,
-      FootballFieldsLabel<void> {
-    using FootballFieldsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto football_field = SingularNameFor<FootballFields>{};
-AU_DEVICE_VAR constexpr auto football_fields = QuantityMaker<FootballFields>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto ftbl_fld = SymbolFor<FootballFields>{};
-}
-}  // namespace au
-
-
-namespace au {
 namespace au_literals {
 
 // `1.28e-4_lm` is a `Constant` equivalent to `make_constant(lumens) * 1.28e-4_mag`.
@@ -11258,130 +11154,16 @@ constexpr auto operator""_lm() {
 }  // namespace au_literals
 }  // namespace au
 
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct MilesLabel {
-    static constexpr const char label[] = "mi";
-};
-template <typename T>
-constexpr const char MilesLabel<T>::label[];
-struct Miles
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<
-          Length,
-          Magnitude<Pow<Prime<2>, 4>, Pow<Prime<3>, 2>, Pow<Prime<5>, -3>, Prime<11>, Prime<127>>>,
-      MilesLabel<void> {
-    using MilesLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto mile = SingularNameFor<Miles>{};
-AU_DEVICE_VAR constexpr auto miles = QuantityMaker<Miles>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto mi = SymbolFor<Miles>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct FurlongsLabel {
-    static constexpr const char label[] = "fur";
-};
-template <typename T>
-constexpr const char FurlongsLabel<T>::label[];
-struct Furlongs
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Length,
-               Magnitude<Prime<2>, Pow<Prime<3>, 2>, Pow<Prime<5>, -3>, Prime<11>, Prime<127>>>,
-      FurlongsLabel<void> {
-    using FurlongsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto furlong = SingularNameFor<Furlongs>{};
-AU_DEVICE_VAR constexpr auto furlongs = QuantityMaker<Furlongs>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto fur = SymbolFor<Furlongs>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct YardsLabel {
-    static constexpr const char label[] = "yd";
-};
-template <typename T>
-constexpr const char YardsLabel<T>::label[];
-struct Yards
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Length,
-               Magnitude<Pow<Prime<2>, -1>, Pow<Prime<3>, 2>, Pow<Prime<5>, -4>, Prime<127>>>,
-      YardsLabel<void> {
-    using YardsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto yard = SingularNameFor<Yards>{};
-AU_DEVICE_VAR constexpr auto yards = QuantityMaker<Yards>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto yd = SymbolFor<Yards>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct BitsLabel {
-    static constexpr const char label[] = "b";
-};
-template <typename T>
-constexpr const char BitsLabel<T>::label[];
-struct Bits : UnitImpl<Information>, BitsLabel<void> {
-    using BitsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto bit = SingularNameFor<Bits>{};
-AU_DEVICE_VAR constexpr auto bits = QuantityMaker<Bits>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto b = SymbolFor<Bits>{};
-}
-}  // namespace au
-
 
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_Hz` is a `Constant` equivalent to `make_constant(hertz) * 1.28e-4_mag`.
+// `1.28e-4_W` is a `Constant` equivalent to `make_constant(watts) * 1.28e-4_mag`.
 template <char... Cs>
-constexpr auto operator""_Hz() {
+constexpr auto operator""_W() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(hertz) * operator""_mag<Cs...>();
+    return make_constant(watts) * operator""_mag<Cs...>();
     // clang-format on
 }
 
@@ -11395,33 +11177,25 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct USQuartsLabel {
-    static constexpr const char label[] = "US_qt";
+struct PercentLabel {
+    static constexpr const char label[] = "%";
 };
 template <typename T>
-constexpr const char USQuartsLabel<T>::label[];
-struct USQuarts
+constexpr const char PercentLabel<T>::label[];
+struct Percent
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Length, 3>>,
-               Magnitude<Pow<Prime<2>, -11>,
-                         Prime<3>,
-                         Pow<Prime<5>, -12>,
-                         Prime<7>,
-                         Prime<11>,
-                         Pow<Prime<127>, 3>>>,
-      USQuartsLabel<void> {
-    using USQuartsLabel<void>::label;
+    : UnitImpl<Dimension<>, Magnitude<Pow<Prime<2>, -2>, Pow<Prime<5>, -2>>>,
+      PercentLabel<void> {
+    using PercentLabel<void>::label;
 };
-AU_DEVICE_VAR constexpr auto us_quart = SingularNameFor<USQuarts>{};
-AU_DEVICE_VAR constexpr auto us_quarts = QuantityMaker<USQuarts>{};
+AU_DEVICE_VAR constexpr auto percent = QuantityMaker<Percent>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto US_qt = SymbolFor<USQuarts>{};
+AU_DEVICE_VAR constexpr auto pct = SymbolFor<Percent>{};
 }
-
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
@@ -11431,25 +11205,55 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct KatalsLabel {
-    static constexpr const char label[] = "kat";
+struct LitersLabel {
+    static constexpr const char label[] = "L";
 };
 template <typename T>
-constexpr const char KatalsLabel<T>::label[];
-struct Katals
+constexpr const char LitersLabel<T>::label[];
+struct Liters
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Time, -1>, base_dim::AmountOfSubstance>>,
-      KatalsLabel<void> {
-    using KatalsLabel<void>::label;
+    : UnitImpl<Dimension<Pow<base_dim::Length, 3>>,
+               Magnitude<Pow<Prime<2>, -3>, Pow<Prime<5>, -3>>>,
+      LitersLabel<void> {
+    using LitersLabel<void>::label;
 };
-AU_DEVICE_VAR constexpr auto katal = SingularNameFor<Katals>{};
-AU_DEVICE_VAR constexpr auto katals = QuantityMaker<Katals>{};
+AU_DEVICE_VAR constexpr auto liter = SingularNameFor<Liters>{};
+AU_DEVICE_VAR constexpr auto liters = QuantityMaker<Liters>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto kat = SymbolFor<Katals>{};
+AU_DEVICE_VAR constexpr auto L = SymbolFor<Liters>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct RankineLabel {
+    static constexpr const char label[] = "degR";
+};
+template <typename T>
+constexpr const char RankineLabel<T>::label[];
+struct Rankine
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Temperature, Magnitude<Pow<Prime<3>, -2>, Prime<5>>>,
+      RankineLabel<void> {
+    using RankineLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto rankine = QuantityMaker<Rankine>{};
+AU_DEVICE_VAR constexpr auto rankine_pt = QuantityPointMaker<Rankine>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto degR = SymbolFor<Rankine>{};
 }
 }  // namespace au
 
@@ -11487,196 +11291,16 @@ AU_DEVICE_VAR constexpr auto am = SymbolFor<Arcminutes>{};
 namespace au {
 namespace au_literals {
 
-// `1.28e-4_m` is a `Constant` equivalent to `make_constant(meters) * 1.28e-4_mag`.
+// `1.28e-4_K` is a `Constant` equivalent to `make_constant(kelvins) * 1.28e-4_mag`.
 template <char... Cs>
-constexpr auto operator""_m() {
+constexpr auto operator""_K() {
     // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
     // clang-format off
-    return make_constant(meters) * operator""_mag<Cs...>();
+    return make_constant(kelvins) * operator""_mag<Cs...>();
     // clang-format on
 }
 
 }  // namespace au_literals
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct ArcsecondsLabel {
-    static constexpr const char label[] = "\"";
-};
-template <typename T>
-constexpr const char ArcsecondsLabel<T>::label[];
-struct Arcseconds
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Angle, Magnitude<Pow<Prime<2>, -6>, Pow<Prime<3>, -4>, Pi, Pow<Prime<5>, -3>>>,
-      ArcsecondsLabel<void> {
-    using ArcsecondsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto arcsecond = SingularNameFor<Arcseconds>{};
-AU_DEVICE_VAR constexpr auto arcseconds = QuantityMaker<Arcseconds>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto as = SymbolFor<Arcseconds>{};
-}
-
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct FeetLabel {
-    static constexpr const char label[] = "ft";
-};
-template <typename T>
-constexpr const char FeetLabel<T>::label[];
-struct Feet
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Length, Magnitude<Pow<Prime<2>, -1>, Prime<3>, Pow<Prime<5>, -4>, Prime<127>>>,
-      FeetLabel<void> {
-    using FeetLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto foot = SingularNameFor<Feet>{};
-AU_DEVICE_VAR constexpr auto feet = QuantityMaker<Feet>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto ft = SymbolFor<Feet>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct NewtonsLabel {
-    static constexpr const char label[] = "N";
-};
-template <typename T>
-constexpr const char NewtonsLabel<T>::label[];
-struct Newtons
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<base_dim::Length, base_dim::Mass, Pow<base_dim::Time, -2>>,
-               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
-      NewtonsLabel<void> {
-    using NewtonsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto newton = SingularNameFor<Newtons>{};
-AU_DEVICE_VAR constexpr auto newtons = QuantityMaker<Newtons>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto N = SymbolFor<Newtons>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct OhmsLabel {
-    static constexpr const char label[] = "ohm";
-};
-template <typename T>
-constexpr const char OhmsLabel<T>::label[];
-struct Ohms
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Length, 2>,
-                         base_dim::Mass,
-                         Pow<base_dim::Time, -3>,
-                         Pow<base_dim::Current, -2>>,
-               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
-      OhmsLabel<void> {
-    using OhmsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto ohm = SingularNameFor<Ohms>{};
-AU_DEVICE_VAR constexpr auto ohms = QuantityMaker<Ohms>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto ohm = SymbolFor<Ohms>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct TeslaLabel {
-    static constexpr const char label[] = "T";
-};
-template <typename T>
-constexpr const char TeslaLabel<T>::label[];
-struct Tesla
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<base_dim::Mass, Pow<base_dim::Time, -2>, Pow<base_dim::Current, -1>>,
-               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
-      TeslaLabel<void> {
-    using TeslaLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto tesla = QuantityMaker<Tesla>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto T = SymbolFor<Tesla>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct MinutesLabel {
-    static constexpr const char label[] = "min";
-};
-template <typename T>
-constexpr const char MinutesLabel<T>::label[];
-struct Minutes
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Time, Magnitude<Pow<Prime<2>, 2>, Prime<3>, Prime<5>>>,
-      MinutesLabel<void> {
-    using MinutesLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto minute = SingularNameFor<Minutes>{};
-AU_DEVICE_VAR constexpr auto minutes = QuantityMaker<Minutes>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto min = SymbolFor<Minutes>{};
-}
 }  // namespace au
 
 
@@ -12109,25 +11733,29 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct SteradiansLabel {
-    static constexpr const char label[] = "sr";
+struct OhmsLabel {
+    static constexpr const char label[] = "ohm";
 };
 template <typename T>
-constexpr const char SteradiansLabel<T>::label[];
-struct Steradians
+constexpr const char OhmsLabel<T>::label[];
+struct Ohms
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Angle, 2>>>,
-      SteradiansLabel<void> {
-    using SteradiansLabel<void>::label;
+    : UnitImpl<Dimension<Pow<base_dim::Length, 2>,
+                         base_dim::Mass,
+                         Pow<base_dim::Time, -3>,
+                         Pow<base_dim::Current, -2>>,
+               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
+      OhmsLabel<void> {
+    using OhmsLabel<void>::label;
 };
-AU_DEVICE_VAR constexpr auto steradian = SingularNameFor<Steradians>{};
-AU_DEVICE_VAR constexpr auto steradians = QuantityMaker<Steradians>{};
+AU_DEVICE_VAR constexpr auto ohm = SingularNameFor<Ohms>{};
+AU_DEVICE_VAR constexpr auto ohms = QuantityMaker<Ohms>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto sr = SymbolFor<Steradians>{};
+AU_DEVICE_VAR constexpr auto ohm = SymbolFor<Ohms>{};
 }
 }  // namespace au
 
@@ -12167,25 +11795,25 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct RankineLabel {
-    static constexpr const char label[] = "degR";
+struct FootballFieldsLabel {
+    static constexpr const char label[] = "ftbl_fld";
 };
 template <typename T>
-constexpr const char RankineLabel<T>::label[];
-struct Rankine
+constexpr const char FootballFieldsLabel<T>::label[];
+struct FootballFields
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Temperature, Magnitude<Pow<Prime<3>, -2>, Prime<5>>>,
-      RankineLabel<void> {
-    using RankineLabel<void>::label;
+    : UnitImpl<Length, Magnitude<Prime<2>, Pow<Prime<3>, 2>, Pow<Prime<5>, -2>, Prime<127>>>,
+      FootballFieldsLabel<void> {
+    using FootballFieldsLabel<void>::label;
 };
-AU_DEVICE_VAR constexpr auto rankine = QuantityMaker<Rankine>{};
-AU_DEVICE_VAR constexpr auto rankine_pt = QuantityPointMaker<Rankine>{};
+AU_DEVICE_VAR constexpr auto football_field = SingularNameFor<FootballFields>{};
+AU_DEVICE_VAR constexpr auto football_fields = QuantityMaker<FootballFields>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto degR = SymbolFor<Rankine>{};
+AU_DEVICE_VAR constexpr auto ftbl_fld = SymbolFor<FootballFields>{};
 }
 }  // namespace au
 
@@ -12196,48 +11824,25 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct RadiansLabel {
-    static constexpr const char label[] = "rad";
+struct KatalsLabel {
+    static constexpr const char label[] = "kat";
 };
 template <typename T>
-constexpr const char RadiansLabel<T>::label[];
-struct Radians : UnitImpl<Angle>, RadiansLabel<void> {
-    using RadiansLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto radian = SingularNameFor<Radians>{};
-AU_DEVICE_VAR constexpr auto radians = QuantityMaker<Radians>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto rad = SymbolFor<Radians>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct NauticalMilesLabel {
-    static constexpr const char label[] = "nmi";
-};
-template <typename T>
-constexpr const char NauticalMilesLabel<T>::label[];
-struct NauticalMiles
+constexpr const char KatalsLabel<T>::label[];
+struct Katals
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Length, Magnitude<Pow<Prime<2>, 2>, Prime<463>>>,
-      NauticalMilesLabel<void> {
-    using NauticalMilesLabel<void>::label;
+    : UnitImpl<Dimension<Pow<base_dim::Time, -1>, base_dim::AmountOfSubstance>>,
+      KatalsLabel<void> {
+    using KatalsLabel<void>::label;
 };
-AU_DEVICE_VAR constexpr auto nautical_mile = SingularNameFor<NauticalMiles>{};
-AU_DEVICE_VAR constexpr auto nautical_miles = QuantityMaker<NauticalMiles>{};
+AU_DEVICE_VAR constexpr auto katal = SingularNameFor<Katals>{};
+AU_DEVICE_VAR constexpr auto katals = QuantityMaker<Katals>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto nmi = SymbolFor<NauticalMiles>{};
+AU_DEVICE_VAR constexpr auto kat = SymbolFor<Katals>{};
 }
 }  // namespace au
 
@@ -12248,24 +11853,31 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct PercentLabel {
-    static constexpr const char label[] = "%";
+struct PoundsMassLabel {
+    static constexpr const char label[] = "lb";
 };
 template <typename T>
-constexpr const char PercentLabel<T>::label[];
-struct Percent
+constexpr const char PoundsMassLabel<T>::label[];
+struct PoundsMass
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Dimension<>, Magnitude<Pow<Prime<2>, -2>, Pow<Prime<5>, -2>>>,
-      PercentLabel<void> {
-    using PercentLabel<void>::label;
+    : UnitImpl<Mass,
+               Magnitude<Pow<Prime<2>, -5>,
+                         Pow<Prime<5>, -5>,
+                         Prime<7>,
+                         Prime<11>,
+                         Prime<97>,
+                         Prime<6073>>>,
+      PoundsMassLabel<void> {
+    using PoundsMassLabel<void>::label;
 };
-AU_DEVICE_VAR constexpr auto percent = QuantityMaker<Percent>{};
+AU_DEVICE_VAR constexpr auto pound_mass = SingularNameFor<PoundsMass>{};
+AU_DEVICE_VAR constexpr auto pounds_mass = QuantityMaker<PoundsMass>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto pct = SymbolFor<Percent>{};
+AU_DEVICE_VAR constexpr auto lb = SymbolFor<PoundsMass>{};
 }
 }  // namespace au
 
@@ -12276,66 +11888,26 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct AmperesLabel {
-    static constexpr const char label[] = "A";
+struct GraysLabel {
+    static constexpr const char label[] = "Gy";
 };
 template <typename T>
-constexpr const char AmperesLabel<T>::label[];
-struct Amperes : UnitImpl<Current>, AmperesLabel<void> {
-    using AmperesLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto ampere = SingularNameFor<Amperes>{};
-AU_DEVICE_VAR constexpr auto amperes = QuantityMaker<Amperes>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto A = SymbolFor<Amperes>{};
-}
-
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct FathomsLabel {
-    static constexpr const char label[] = "ftm";
-};
-template <typename T>
-constexpr const char FathomsLabel<T>::label[];
-struct Fathoms
+constexpr const char GraysLabel<T>::label[];
+struct Grays
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Length, Magnitude<Pow<Prime<3>, 2>, Pow<Prime<5>, -4>, Prime<127>>>,
-      FathomsLabel<void> {
-    using FathomsLabel<void>::label;
+    : UnitImpl<Dimension<Pow<base_dim::Length, 2>, Pow<base_dim::Time, -2>>>,
+      GraysLabel<void> {
+    using GraysLabel<void>::label;
 };
-AU_DEVICE_VAR constexpr auto fathom = SingularNameFor<Fathoms>{};
-AU_DEVICE_VAR constexpr auto fathoms = QuantityMaker<Fathoms>{};
+AU_DEVICE_VAR constexpr auto gray = SingularNameFor<Grays>{};
+AU_DEVICE_VAR constexpr auto grays = QuantityMaker<Grays>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto ftm = SymbolFor<Fathoms>{};
+AU_DEVICE_VAR constexpr auto Gy = SymbolFor<Grays>{};
 }
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_s` is a `Constant` equivalent to `make_constant(seconds) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_s() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(seconds) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
@@ -12345,34 +11917,148 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct FahrenheitLabel {
-    static constexpr const char label[] = "degF";
+struct InchesLabel {
+    static constexpr const char label[] = "in";
 };
 template <typename T>
-constexpr const char FahrenheitLabel<T>::label[];
-struct Fahrenheit
+constexpr const char InchesLabel<T>::label[];
+struct Inches
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Temperature, Magnitude<Pow<Prime<3>, -2>, Prime<5>>>,
-      FahrenheitLabel<void> {
-    using FahrenheitLabel<void>::label;
-    static constexpr auto origin() {
-        // 459.67 Rankines = 45967 centi-rankines
-        return make_quantity<Centi<UnitImpl<Temperature, Magnitude<Pow<Prime<3>, -2>, Prime<5>>>>>(
-            45967);
-    }
+    : UnitImpl<Length, Magnitude<Pow<Prime<2>, -3>, Pow<Prime<5>, -4>, Prime<127>>>,
+      InchesLabel<void> {
+    using InchesLabel<void>::label;
 };
-AU_DEVICE_VAR constexpr auto fahrenheit_qty = QuantityMaker<Fahrenheit>{};
-AU_DEVICE_VAR constexpr auto fahrenheit_pt = QuantityPointMaker<Fahrenheit>{};
-
-[[deprecated(
-    "`fahrenheit()` is ambiguous.  Use `fahrenheit_pt()` for _points_, or `fahrenheit_qty()` for "
-    "_quantities_")]] AU_DEVICE_VAR constexpr auto fahrenheit = QuantityMaker<Fahrenheit>{};
+AU_DEVICE_VAR constexpr auto inch = SingularNameFor<Inches>{};
+AU_DEVICE_VAR constexpr auto inches = QuantityMaker<Inches>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto degF_qty = SymbolFor<Fahrenheit>{};
+AU_DEVICE_VAR constexpr auto in = SymbolFor<Inches>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct AstronomicalUnitsLabel {
+    static constexpr const char label[] = "AU";
+};
+template <typename T>
+constexpr const char AstronomicalUnitsLabel<T>::label[];
+struct AstronomicalUnits
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Length,
+               Magnitude<Pow<Prime<2>, 2>,
+                         Prime<3>,
+                         Pow<Prime<5>, 2>,
+                         Prime<73>,
+                         Prime<877>,
+                         Prime<7789>>>,
+      AstronomicalUnitsLabel<void> {
+    using AstronomicalUnitsLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto astronomical_unit = SingularNameFor<AstronomicalUnits>{};
+AU_DEVICE_VAR constexpr auto astronomical_units = QuantityMaker<AstronomicalUnits>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto AU = SymbolFor<AstronomicalUnits>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct MilesLabel {
+    static constexpr const char label[] = "mi";
+};
+template <typename T>
+constexpr const char MilesLabel<T>::label[];
+struct Miles
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<
+          Length,
+          Magnitude<Pow<Prime<2>, 4>, Pow<Prime<3>, 2>, Pow<Prime<5>, -3>, Prime<11>, Prime<127>>>,
+      MilesLabel<void> {
+    using MilesLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto mile = SingularNameFor<Miles>{};
+AU_DEVICE_VAR constexpr auto miles = QuantityMaker<Miles>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto mi = SymbolFor<Miles>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct BecquerelLabel {
+    static constexpr const char label[] = "Bq";
+};
+template <typename T>
+constexpr const char BecquerelLabel<T>::label[];
+struct Becquerel
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Time, -1>>>,
+      BecquerelLabel<void> {
+    using BecquerelLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto becquerel = QuantityMaker<Becquerel>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto Bq = SymbolFor<Becquerel>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct SteradiansLabel {
+    static constexpr const char label[] = "sr";
+};
+template <typename T>
+constexpr const char SteradiansLabel<T>::label[];
+struct Steradians
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Angle, 2>>>,
+      SteradiansLabel<void> {
+    using SteradiansLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto steradian = SingularNameFor<Steradians>{};
+AU_DEVICE_VAR constexpr auto steradians = QuantityMaker<Steradians>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto sr = SymbolFor<Steradians>{};
 }
 }  // namespace au
 
@@ -12421,187 +12107,27 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct USPintsLabel {
-    static constexpr const char label[] = "US_pt";
+struct BarsLabel {
+    static constexpr const char label[] = "bar";
 };
 template <typename T>
-constexpr const char USPintsLabel<T>::label[];
-struct USPints
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Length, 3>>,
-               Magnitude<Pow<Prime<2>, -12>,
-                         Prime<3>,
-                         Pow<Prime<5>, -12>,
-                         Prime<7>,
-                         Prime<11>,
-                         Pow<Prime<127>, 3>>>,
-      USPintsLabel<void> {
-    using USPintsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto us_pint = SingularNameFor<USPints>{};
-AU_DEVICE_VAR constexpr auto us_pints = QuantityMaker<USPints>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto US_pt = SymbolFor<USPints>{};
-}
-
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct BecquerelLabel {
-    static constexpr const char label[] = "Bq";
-};
-template <typename T>
-constexpr const char BecquerelLabel<T>::label[];
-struct Becquerel
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Time, -1>>>,
-      BecquerelLabel<void> {
-    using BecquerelLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto becquerel = QuantityMaker<Becquerel>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto Bq = SymbolFor<Becquerel>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct HenriesLabel {
-    static constexpr const char label[] = "H";
-};
-template <typename T>
-constexpr const char HenriesLabel<T>::label[];
-struct Henries
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Length, 2>,
-                         base_dim::Mass,
-                         Pow<base_dim::Time, -2>,
-                         Pow<base_dim::Current, -2>>,
-               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
-      HenriesLabel<void> {
-    using HenriesLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto henry = SingularNameFor<Henries>{};
-AU_DEVICE_VAR constexpr auto henries = QuantityMaker<Henries>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto H = SymbolFor<Henries>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct LitersLabel {
-    static constexpr const char label[] = "L";
-};
-template <typename T>
-constexpr const char LitersLabel<T>::label[];
-struct Liters
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Length, 3>>,
-               Magnitude<Pow<Prime<2>, -3>, Pow<Prime<5>, -3>>>,
-      LitersLabel<void> {
-    using LitersLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto liter = SingularNameFor<Liters>{};
-AU_DEVICE_VAR constexpr auto liters = QuantityMaker<Liters>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto L = SymbolFor<Liters>{};
-}
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_mol` is a `Constant` equivalent to `make_constant(moles) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_mol() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(moles) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct PascalsLabel {
-    static constexpr const char label[] = "Pa";
-};
-template <typename T>
-constexpr const char PascalsLabel<T>::label[];
-struct Pascals
+constexpr const char BarsLabel<T>::label[];
+struct Bars
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
     : UnitImpl<Dimension<Pow<base_dim::Length, -1>, base_dim::Mass, Pow<base_dim::Time, -2>>,
-               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
-      PascalsLabel<void> {
-    using PascalsLabel<void>::label;
+               Magnitude<Pow<Prime<2>, 8>, Pow<Prime<5>, 8>>>,
+      BarsLabel<void> {
+    using BarsLabel<void>::label;
 };
-
-AU_DEVICE_VAR constexpr auto pascals = QuantityMaker<Pascals>{};
-AU_DEVICE_VAR constexpr auto pascals_pt = QuantityPointMaker<Pascals>{};
+AU_DEVICE_VAR constexpr auto bar = SingularNameFor<Bars>{};
+AU_DEVICE_VAR constexpr auto bars = QuantityMaker<Bars>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto Pa = SymbolFor<Pascals>{};
-}
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_g_0` is a `Constant` equivalent to `make_constant(standard_gravity) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_g_0() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(standard_gravity) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
+AU_DEVICE_VAR constexpr auto bar = SymbolFor<Bars>{};
+}  // namespace symbols
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
@@ -12611,55 +12137,50 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct GramsLabel {
-    static constexpr const char label[] = "g";
+struct FathomsLabel {
+    static constexpr const char label[] = "ftm";
 };
 template <typename T>
-constexpr const char GramsLabel<T>::label[];
-struct Grams : UnitImpl<Mass>, GramsLabel<void> {
-    using GramsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto gram = SingularNameFor<Grams>{};
-AU_DEVICE_VAR constexpr auto grams = QuantityMaker<Grams>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto g = SymbolFor<Grams>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct AstronomicalUnitsLabel {
-    static constexpr const char label[] = "AU";
-};
-template <typename T>
-constexpr const char AstronomicalUnitsLabel<T>::label[];
-struct AstronomicalUnits
+constexpr const char FathomsLabel<T>::label[];
+struct Fathoms
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Length,
-               Magnitude<Pow<Prime<2>, 2>,
-                         Prime<3>,
-                         Pow<Prime<5>, 2>,
-                         Prime<73>,
-                         Prime<877>,
-                         Prime<7789>>>,
-      AstronomicalUnitsLabel<void> {
-    using AstronomicalUnitsLabel<void>::label;
+    : UnitImpl<Length, Magnitude<Pow<Prime<3>, 2>, Pow<Prime<5>, -4>, Prime<127>>>,
+      FathomsLabel<void> {
+    using FathomsLabel<void>::label;
 };
-AU_DEVICE_VAR constexpr auto astronomical_unit = SingularNameFor<AstronomicalUnits>{};
-AU_DEVICE_VAR constexpr auto astronomical_units = QuantityMaker<AstronomicalUnits>{};
+AU_DEVICE_VAR constexpr auto fathom = SingularNameFor<Fathoms>{};
+AU_DEVICE_VAR constexpr auto fathoms = QuantityMaker<Fathoms>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto AU = SymbolFor<AstronomicalUnits>{};
+AU_DEVICE_VAR constexpr auto ftm = SymbolFor<Fathoms>{};
 }
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct AmperesLabel {
+    static constexpr const char label[] = "A";
+};
+template <typename T>
+constexpr const char AmperesLabel<T>::label[];
+struct Amperes : UnitImpl<Current>, AmperesLabel<void> {
+    using AmperesLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto ampere = SingularNameFor<Amperes>{};
+AU_DEVICE_VAR constexpr auto amperes = QuantityMaker<Amperes>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto A = SymbolFor<Amperes>{};
+}
+
 }  // namespace au
 
 
@@ -12676,39 +12197,6 @@ constexpr auto operator""_J() {
 }
 
 }  // namespace au_literals
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct WebersLabel {
-    static constexpr const char label[] = "Wb";
-};
-template <typename T>
-constexpr const char WebersLabel<T>::label[];
-struct Webers
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Length, 2>,
-                         base_dim::Mass,
-                         Pow<base_dim::Time, -2>,
-                         Pow<base_dim::Current, -1>>,
-               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
-      WebersLabel<void> {
-    using WebersLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto weber = SingularNameFor<Webers>{};
-AU_DEVICE_VAR constexpr auto webers = QuantityMaker<Webers>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto Wb = SymbolFor<Webers>{};
-}
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
@@ -12751,59 +12239,60 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct SiemensLabel {
-    static constexpr const char label[] = "S";
+struct CelsiusLabel {
+    static constexpr const char label[] = "degC";
 };
 template <typename T>
-constexpr const char SiemensLabel<T>::label[];
-struct Siemens
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Length, -2>,
-                         Pow<base_dim::Mass, -1>,
-                         Pow<base_dim::Time, 3>,
-                         Pow<base_dim::Current, 2>>,
-               Magnitude<Pow<Prime<2>, -3>, Pow<Prime<5>, -3>>>,
-      SiemensLabel<void> {
-    using SiemensLabel<void>::label;
+constexpr const char CelsiusLabel<T>::label[];
+struct Celsius : UnitImpl<Temperature>, CelsiusLabel<void> {
+    using CelsiusLabel<void>::label;
+    static constexpr auto origin() {
+        // 273.15 K = 27315 centi-kelvins
+        return make_quantity<Centi<UnitImpl<Temperature>>>(27315);
+    }
 };
-AU_DEVICE_VAR constexpr auto siemen = SingularNameFor<Siemens>{};
-AU_DEVICE_VAR constexpr auto siemens = QuantityMaker<Siemens>{};
+AU_DEVICE_VAR constexpr auto celsius_qty = QuantityMaker<Celsius>{};
+AU_DEVICE_VAR constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
+
+[[deprecated(
+    "`celsius()` is ambiguous.  Use `celsius_pt()` for _points_, or `celsius_qty()` for "
+    "_quantities_")]] AU_DEVICE_VAR constexpr auto celsius = QuantityMaker<Celsius>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto S = SymbolFor<Siemens>{};
+AU_DEVICE_VAR constexpr auto degC_qty = SymbolFor<Celsius>{};
 }
 }  // namespace au
 
-// Keep corresponding `_fwd.hh` file on top.
 
 namespace au {
+namespace au_literals {
 
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct GraysLabel {
-    static constexpr const char label[] = "Gy";
-};
-template <typename T>
-constexpr const char GraysLabel<T>::label[];
-struct Grays
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Length, 2>, Pow<base_dim::Time, -2>>>,
-      GraysLabel<void> {
-    using GraysLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto gray = SingularNameFor<Grays>{};
-AU_DEVICE_VAR constexpr auto grays = QuantityMaker<Grays>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto Gy = SymbolFor<Grays>{};
+// `1.28e-4_Hz` is a `Constant` equivalent to `make_constant(hertz) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_Hz() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(hertz) * operator""_mag<Cs...>();
+    // clang-format on
 }
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_C` is a `Constant` equivalent to `make_constant(coulombs) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_C() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(coulombs) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
@@ -12849,107 +12338,33 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct BytesLabel {
-    static constexpr const char label[] = "B";
+struct USQuartsLabel {
+    static constexpr const char label[] = "US_qt";
 };
 template <typename T>
-constexpr const char BytesLabel<T>::label[];
-struct Bytes
+constexpr const char USQuartsLabel<T>::label[];
+struct USQuarts
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Information, Magnitude<Pow<Prime<2>, 3>>>,
-      BytesLabel<void> {
-    using BytesLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto byte = SingularNameFor<Bytes>{};
-AU_DEVICE_VAR constexpr auto bytes = QuantityMaker<Bytes>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto B = SymbolFor<Bytes>{};
-}
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_W` is a `Constant` equivalent to `make_constant(watts) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_W() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(watts) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct BarsLabel {
-    static constexpr const char label[] = "bar";
-};
-template <typename T>
-constexpr const char BarsLabel<T>::label[];
-struct Bars
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Length, -1>, base_dim::Mass, Pow<base_dim::Time, -2>>,
-               Magnitude<Pow<Prime<2>, 8>, Pow<Prime<5>, 8>>>,
-      BarsLabel<void> {
-    using BarsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto bar = SingularNameFor<Bars>{};
-AU_DEVICE_VAR constexpr auto bars = QuantityMaker<Bars>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto bar = SymbolFor<Bars>{};
-}  // namespace symbols
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct PoundsMassLabel {
-    static constexpr const char label[] = "lb";
-};
-template <typename T>
-constexpr const char PoundsMassLabel<T>::label[];
-struct PoundsMass
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Mass,
-               Magnitude<Pow<Prime<2>, -5>,
-                         Pow<Prime<5>, -5>,
+    : UnitImpl<Dimension<Pow<base_dim::Length, 3>>,
+               Magnitude<Pow<Prime<2>, -11>,
+                         Prime<3>,
+                         Pow<Prime<5>, -12>,
                          Prime<7>,
                          Prime<11>,
-                         Prime<97>,
-                         Prime<6073>>>,
-      PoundsMassLabel<void> {
-    using PoundsMassLabel<void>::label;
+                         Pow<Prime<127>, 3>>>,
+      USQuartsLabel<void> {
+    using USQuartsLabel<void>::label;
 };
-AU_DEVICE_VAR constexpr auto pound_mass = SingularNameFor<PoundsMass>{};
-AU_DEVICE_VAR constexpr auto pounds_mass = QuantityMaker<PoundsMass>{};
+AU_DEVICE_VAR constexpr auto us_quart = SingularNameFor<USQuarts>{};
+AU_DEVICE_VAR constexpr auto us_quarts = QuantityMaker<USQuarts>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto lb = SymbolFor<PoundsMass>{};
+AU_DEVICE_VAR constexpr auto US_qt = SymbolFor<USQuarts>{};
 }
+
 }  // namespace au
 
 // Keep corresponding `_fwd.hh` file on top.
@@ -12995,26 +12410,25 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct LuxLabel {
-    static constexpr const char label[] = "lx";
+struct TeslaLabel {
+    static constexpr const char label[] = "T";
 };
 template <typename T>
-constexpr const char LuxLabel<T>::label[];
-struct Lux
+constexpr const char TeslaLabel<T>::label[];
+struct Tesla
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Dimension<Pow<base_dim::Length, -2>,
-                         Pow<base_dim::Angle, 2>,
-                         base_dim::LuminousIntensity>>,
-      LuxLabel<void> {
-    using LuxLabel<void>::label;
+    : UnitImpl<Dimension<base_dim::Mass, Pow<base_dim::Time, -2>, Pow<base_dim::Current, -1>>,
+               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
+      TeslaLabel<void> {
+    using TeslaLabel<void>::label;
 };
-AU_DEVICE_VAR constexpr auto lux = QuantityMaker<Lux>{};
+AU_DEVICE_VAR constexpr auto tesla = QuantityMaker<Tesla>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto lx = SymbolFor<Lux>{};
+AU_DEVICE_VAR constexpr auto T = SymbolFor<Tesla>{};
 }
 }  // namespace au
 
@@ -13025,26 +12439,52 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct KnotsLabel {
-    static constexpr const char label[] = "kn";
+struct HenriesLabel {
+    static constexpr const char label[] = "H";
 };
 template <typename T>
-constexpr const char KnotsLabel<T>::label[];
-struct Knots
+constexpr const char HenriesLabel<T>::label[];
+struct Henries
     // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
     // ordering of the arguments is very particular, and could change out from under you in future
     // versions, making the program ill-formed.  Only units defined within the Au library itself can
     // safely use this pattern.
-    : UnitImpl<Dimension<base_dim::Length, Pow<base_dim::Time, -1>>,
-               Magnitude<Pow<Prime<2>, -2>, Pow<Prime<3>, -2>, Pow<Prime<5>, -2>, Prime<463>>>,
-      KnotsLabel<void> {
-    using KnotsLabel<void>::label;
+    : UnitImpl<Dimension<Pow<base_dim::Length, 2>,
+                         base_dim::Mass,
+                         Pow<base_dim::Time, -2>,
+                         Pow<base_dim::Current, -2>>,
+               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
+      HenriesLabel<void> {
+    using HenriesLabel<void>::label;
 };
-AU_DEVICE_VAR constexpr auto knot = SingularNameFor<Knots>{};
-AU_DEVICE_VAR constexpr auto knots = QuantityMaker<Knots>{};
+AU_DEVICE_VAR constexpr auto henry = SingularNameFor<Henries>{};
+AU_DEVICE_VAR constexpr auto henries = QuantityMaker<Henries>{};
 
 namespace symbols {
-AU_DEVICE_VAR constexpr auto kn = SymbolFor<Knots>{};
+AU_DEVICE_VAR constexpr auto H = SymbolFor<Henries>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct GramsLabel {
+    static constexpr const char label[] = "g";
+};
+template <typename T>
+constexpr const char GramsLabel<T>::label[];
+struct Grams : UnitImpl<Mass>, GramsLabel<void> {
+    using GramsLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto gram = SingularNameFor<Grams>{};
+AU_DEVICE_VAR constexpr auto grams = QuantityMaker<Grams>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto g = SymbolFor<Grams>{};
 }
 }  // namespace au
 
@@ -13074,6 +12514,82 @@ AU_DEVICE_VAR constexpr auto revolutions = QuantityMaker<Revolutions>{};
 
 namespace symbols {
 AU_DEVICE_VAR constexpr auto rev = SymbolFor<Revolutions>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct BitsLabel {
+    static constexpr const char label[] = "b";
+};
+template <typename T>
+constexpr const char BitsLabel<T>::label[];
+struct Bits : UnitImpl<Information>, BitsLabel<void> {
+    using BitsLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto bit = SingularNameFor<Bits>{};
+AU_DEVICE_VAR constexpr auto bits = QuantityMaker<Bits>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto b = SymbolFor<Bits>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct YardsLabel {
+    static constexpr const char label[] = "yd";
+};
+template <typename T>
+constexpr const char YardsLabel<T>::label[];
+struct Yards
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Length,
+               Magnitude<Pow<Prime<2>, -1>, Pow<Prime<3>, 2>, Pow<Prime<5>, -4>, Prime<127>>>,
+      YardsLabel<void> {
+    using YardsLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto yard = SingularNameFor<Yards>{};
+AU_DEVICE_VAR constexpr auto yards = QuantityMaker<Yards>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto yd = SymbolFor<Yards>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct RadiansLabel {
+    static constexpr const char label[] = "rad";
+};
+template <typename T>
+constexpr const char RadiansLabel<T>::label[];
+struct Radians : UnitImpl<Angle>, RadiansLabel<void> {
+    using RadiansLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto radian = SingularNameFor<Radians>{};
+AU_DEVICE_VAR constexpr auto radians = QuantityMaker<Radians>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto rad = SymbolFor<Radians>{};
 }
 }  // namespace au
 
@@ -13117,6 +12633,220 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
+struct CandelasLabel {
+    static constexpr const char label[] = "cd";
+};
+template <typename T>
+constexpr const char CandelasLabel<T>::label[];
+struct Candelas : UnitImpl<LuminousIntensity>, CandelasLabel<void> {
+    using CandelasLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto candela = SingularNameFor<Candelas>{};
+AU_DEVICE_VAR constexpr auto candelas = QuantityMaker<Candelas>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto cd = SymbolFor<Candelas>{};
+}
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_g_0` is a `Constant` equivalent to `make_constant(standard_gravity) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_g_0() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(standard_gravity) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_mol` is a `Constant` equivalent to `make_constant(moles) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_mol() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(moles) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct USPintsLabel {
+    static constexpr const char label[] = "US_pt";
+};
+template <typename T>
+constexpr const char USPintsLabel<T>::label[];
+struct USPints
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, 3>>,
+               Magnitude<Pow<Prime<2>, -12>,
+                         Prime<3>,
+                         Pow<Prime<5>, -12>,
+                         Prime<7>,
+                         Prime<11>,
+                         Pow<Prime<127>, 3>>>,
+      USPintsLabel<void> {
+    using USPintsLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto us_pint = SingularNameFor<USPints>{};
+AU_DEVICE_VAR constexpr auto us_pints = QuantityMaker<USPints>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto US_pt = SymbolFor<USPints>{};
+}
+
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct BytesLabel {
+    static constexpr const char label[] = "B";
+};
+template <typename T>
+constexpr const char BytesLabel<T>::label[];
+struct Bytes
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Information, Magnitude<Pow<Prime<2>, 3>>>,
+      BytesLabel<void> {
+    using BytesLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto byte = SingularNameFor<Bytes>{};
+AU_DEVICE_VAR constexpr auto bytes = QuantityMaker<Bytes>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto B = SymbolFor<Bytes>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct PascalsLabel {
+    static constexpr const char label[] = "Pa";
+};
+template <typename T>
+constexpr const char PascalsLabel<T>::label[];
+struct Pascals
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, -1>, base_dim::Mass, Pow<base_dim::Time, -2>>,
+               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
+      PascalsLabel<void> {
+    using PascalsLabel<void>::label;
+};
+
+AU_DEVICE_VAR constexpr auto pascals = QuantityMaker<Pascals>{};
+AU_DEVICE_VAR constexpr auto pascals_pt = QuantityPointMaker<Pascals>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto Pa = SymbolFor<Pascals>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct KnotsLabel {
+    static constexpr const char label[] = "kn";
+};
+template <typename T>
+constexpr const char KnotsLabel<T>::label[];
+struct Knots
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<base_dim::Length, Pow<base_dim::Time, -1>>,
+               Magnitude<Pow<Prime<2>, -2>, Pow<Prime<3>, -2>, Pow<Prime<5>, -2>, Prime<463>>>,
+      KnotsLabel<void> {
+    using KnotsLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto knot = SingularNameFor<Knots>{};
+AU_DEVICE_VAR constexpr auto knots = QuantityMaker<Knots>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto kn = SymbolFor<Knots>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct WebersLabel {
+    static constexpr const char label[] = "Wb";
+};
+template <typename T>
+constexpr const char WebersLabel<T>::label[];
+struct Webers
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, 2>,
+                         base_dim::Mass,
+                         Pow<base_dim::Time, -2>,
+                         Pow<base_dim::Current, -1>>,
+               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
+      WebersLabel<void> {
+    using WebersLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto weber = SingularNameFor<Webers>{};
+AU_DEVICE_VAR constexpr auto webers = QuantityMaker<Webers>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto Wb = SymbolFor<Webers>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
 struct DegreesLabel {
     static constexpr const char label[] = "deg";
 };
@@ -13146,35 +12876,6 @@ namespace au {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct InchesLabel {
-    static constexpr const char label[] = "in";
-};
-template <typename T>
-constexpr const char InchesLabel<T>::label[];
-struct Inches
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Length, Magnitude<Pow<Prime<2>, -3>, Pow<Prime<5>, -4>, Prime<127>>>,
-      InchesLabel<void> {
-    using InchesLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto inch = SingularNameFor<Inches>{};
-AU_DEVICE_VAR constexpr auto inches = QuantityMaker<Inches>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto in = SymbolFor<Inches>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
 struct DaysLabel {
     static constexpr const char label[] = "d";
 };
@@ -13194,6 +12895,246 @@ AU_DEVICE_VAR constexpr auto days = QuantityMaker<Days>{};
 
 namespace symbols {
 AU_DEVICE_VAR constexpr auto d = SymbolFor<Days>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct FeetLabel {
+    static constexpr const char label[] = "ft";
+};
+template <typename T>
+constexpr const char FeetLabel<T>::label[];
+struct Feet
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Length, Magnitude<Pow<Prime<2>, -1>, Prime<3>, Pow<Prime<5>, -4>, Prime<127>>>,
+      FeetLabel<void> {
+    using FeetLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto foot = SingularNameFor<Feet>{};
+AU_DEVICE_VAR constexpr auto feet = QuantityMaker<Feet>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto ft = SymbolFor<Feet>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct SiemensLabel {
+    static constexpr const char label[] = "S";
+};
+template <typename T>
+constexpr const char SiemensLabel<T>::label[];
+struct Siemens
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, -2>,
+                         Pow<base_dim::Mass, -1>,
+                         Pow<base_dim::Time, 3>,
+                         Pow<base_dim::Current, 2>>,
+               Magnitude<Pow<Prime<2>, -3>, Pow<Prime<5>, -3>>>,
+      SiemensLabel<void> {
+    using SiemensLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto siemen = SingularNameFor<Siemens>{};
+AU_DEVICE_VAR constexpr auto siemens = QuantityMaker<Siemens>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto S = SymbolFor<Siemens>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct NewtonsLabel {
+    static constexpr const char label[] = "N";
+};
+template <typename T>
+constexpr const char NewtonsLabel<T>::label[];
+struct Newtons
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<base_dim::Length, base_dim::Mass, Pow<base_dim::Time, -2>>,
+               Magnitude<Pow<Prime<2>, 3>, Pow<Prime<5>, 3>>>,
+      NewtonsLabel<void> {
+    using NewtonsLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto newton = SingularNameFor<Newtons>{};
+AU_DEVICE_VAR constexpr auto newtons = QuantityMaker<Newtons>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto N = SymbolFor<Newtons>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct MinutesLabel {
+    static constexpr const char label[] = "min";
+};
+template <typename T>
+constexpr const char MinutesLabel<T>::label[];
+struct Minutes
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Time, Magnitude<Pow<Prime<2>, 2>, Prime<3>, Prime<5>>>,
+      MinutesLabel<void> {
+    using MinutesLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto minute = SingularNameFor<Minutes>{};
+AU_DEVICE_VAR constexpr auto minutes = QuantityMaker<Minutes>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto min = SymbolFor<Minutes>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct NauticalMilesLabel {
+    static constexpr const char label[] = "nmi";
+};
+template <typename T>
+constexpr const char NauticalMilesLabel<T>::label[];
+struct NauticalMiles
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Length, Magnitude<Pow<Prime<2>, 2>, Prime<463>>>,
+      NauticalMilesLabel<void> {
+    using NauticalMilesLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto nautical_mile = SingularNameFor<NauticalMiles>{};
+AU_DEVICE_VAR constexpr auto nautical_miles = QuantityMaker<NauticalMiles>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto nmi = SymbolFor<NauticalMiles>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct LuxLabel {
+    static constexpr const char label[] = "lx";
+};
+template <typename T>
+constexpr const char LuxLabel<T>::label[];
+struct Lux
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Dimension<Pow<base_dim::Length, -2>,
+                         Pow<base_dim::Angle, 2>,
+                         base_dim::LuminousIntensity>>,
+      LuxLabel<void> {
+    using LuxLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto lux = QuantityMaker<Lux>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto lx = SymbolFor<Lux>{};
+}
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct ArcsecondsLabel {
+    static constexpr const char label[] = "\"";
+};
+template <typename T>
+constexpr const char ArcsecondsLabel<T>::label[];
+struct Arcseconds
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Angle, Magnitude<Pow<Prime<2>, -6>, Pow<Prime<3>, -4>, Pi, Pow<Prime<5>, -3>>>,
+      ArcsecondsLabel<void> {
+    using ArcsecondsLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto arcsecond = SingularNameFor<Arcseconds>{};
+AU_DEVICE_VAR constexpr auto arcseconds = QuantityMaker<Arcseconds>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto as = SymbolFor<Arcseconds>{};
+}
+
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct FurlongsLabel {
+    static constexpr const char label[] = "fur";
+};
+template <typename T>
+constexpr const char FurlongsLabel<T>::label[];
+struct Furlongs
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Length,
+               Magnitude<Prime<2>, Pow<Prime<3>, 2>, Pow<Prime<5>, -3>, Prime<11>, Prime<127>>>,
+      FurlongsLabel<void> {
+    using FurlongsLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto furlong = SingularNameFor<Furlongs>{};
+AU_DEVICE_VAR constexpr auto furlongs = QuantityMaker<Furlongs>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto fur = SymbolFor<Furlongs>{};
 }
 }  // namespace au
 
@@ -14360,6 +14301,1034 @@ constexpr bool numeric_limits<au::Quantity<U, R>>::tinyness_before;
 
 }  // namespace std
 
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct SecondsLabel {
+    static constexpr const char label[] = "s";
+};
+template <typename T>
+constexpr const char SecondsLabel<T>::label[];
+struct Seconds : UnitImpl<Time>, SecondsLabel<void> {
+    using SecondsLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto second = SingularNameFor<Seconds>{};
+AU_DEVICE_VAR constexpr auto seconds = QuantityMaker<Seconds>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto s = SymbolFor<Seconds>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+namespace detail {
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct PlanckConstantLabel {
+    static constexpr const char label[] = "h";
+};
+template <typename T>
+constexpr const char PlanckConstantLabel<T>::label[];
+struct PlanckConstantUnit
+    : decltype(Joules{} * Seconds{} * mag<662'607'015>() * pow<-42>(mag<10>())),
+      PlanckConstantLabel<void> {
+    using PlanckConstantLabel<void>::label;
+};
+}  // namespace detail
+
+AU_DEVICE_VAR constexpr auto PLANCK_CONSTANT = make_constant(detail::PlanckConstantUnit{});
+
+}  // namespace au
+
+
+namespace au {
+
+namespace detail {
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct ElementaryChargeLabel {
+    static constexpr const char label[] = "e";
+};
+template <typename T>
+constexpr const char ElementaryChargeLabel<T>::label[];
+struct ElementaryChargeUnit : decltype(Coulombs{} * mag<1'602'176'634>() * pow<-28>(mag<10>())),
+                              ElementaryChargeLabel<void> {
+    using ElementaryChargeLabel<void>::label;
+};
+}  // namespace detail
+
+AU_DEVICE_VAR constexpr auto ELEMENTARY_CHARGE = make_constant(detail::ElementaryChargeUnit{});
+
+}  // namespace au
+
+
+namespace au {
+
+namespace detail {
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct CesiumHyperfineTransitionFrequencyLabel {
+    static constexpr const char label[] = "Delta_nu_Cs";
+};
+template <typename T>
+constexpr const char CesiumHyperfineTransitionFrequencyLabel<T>::label[];
+struct CesiumHyperfineTransitionFrequencyUnit : decltype(Hertz{} * mag<9'192'631'770>()),
+                                                CesiumHyperfineTransitionFrequencyLabel<void> {
+    using CesiumHyperfineTransitionFrequencyLabel<void>::label;
+};
+}  // namespace detail
+
+AU_DEVICE_VAR constexpr auto CESIUM_HYPERFINE_TRANSITION_FREQUENCY =
+    make_constant(detail::CesiumHyperfineTransitionFrequencyUnit{});
+
+}  // namespace au
+
+
+namespace au {
+
+namespace detail {
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct AvogadroConstantLabel {
+    static constexpr const char label[] = "N_A";
+};
+template <typename T>
+constexpr const char AvogadroConstantLabel<T>::label[];
+struct AvogadroConstantUnit : decltype(inverse(Moles{}) * mag<602'214'076>() * pow<15>(mag<10>())),
+                              AvogadroConstantLabel<void> {
+    using AvogadroConstantLabel<void>::label;
+};
+}  // namespace detail
+
+AU_DEVICE_VAR constexpr auto AVOGADRO_CONSTANT = make_constant(detail::AvogadroConstantUnit{});
+
+}  // namespace au
+
+
+namespace au {
+
+namespace detail {
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct LuminousEfficacy540TerahertzLabel {
+    static constexpr const char label[] = "K_cd";
+};
+template <typename T>
+constexpr const char LuminousEfficacy540TerahertzLabel<T>::label[];
+struct LuminousEfficacy540TerahertzUnit : decltype((Lumens{} / Watts{}) * mag<683>()),
+                                          LuminousEfficacy540TerahertzLabel<void> {
+    using LuminousEfficacy540TerahertzLabel<void>::label;
+};
+}  // namespace detail
+
+AU_DEVICE_VAR constexpr auto LUMINOUS_EFFICACY_540_TERAHERTZ =
+    make_constant(detail::LuminousEfficacy540TerahertzUnit{});
+
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct MetersLabel {
+    static constexpr const char label[] = "m";
+};
+template <typename T>
+constexpr const char MetersLabel<T>::label[];
+struct Meters : UnitImpl<Length>, MetersLabel<void> {
+    using MetersLabel<void>::label;
+};
+AU_DEVICE_VAR constexpr auto meter = SingularNameFor<Meters>{};
+AU_DEVICE_VAR constexpr auto meters = QuantityMaker<Meters>{};
+AU_DEVICE_VAR constexpr auto meters_pt = QuantityPointMaker<Meters>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto m = SymbolFor<Meters>{};
+}
+}  // namespace au
+
+
+namespace au {
+
+namespace detail {
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct BoltzmannConstantLabel {
+    static constexpr const char label[] = "k_B";
+};
+template <typename T>
+constexpr const char BoltzmannConstantLabel<T>::label[];
+struct BoltzmannConstantUnit
+    : decltype((Joules{} / Kelvins{}) * mag<1'380'649>() * pow<-29>(mag<10>())),
+      BoltzmannConstantLabel<void> {
+    using BoltzmannConstantLabel<void>::label;
+};
+}  // namespace detail
+
+AU_DEVICE_VAR constexpr auto BOLTZMANN_CONSTANT = make_constant(detail::BoltzmannConstantUnit{});
+
+}  // namespace au
+
+
+namespace au {
+
+AU_DEVICE_VAR constexpr auto STANDARD_GRAVITY = make_constant(StandardGravity{});
+
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_pct` is a `Constant` equivalent to `make_constant(percent) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_pct() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(percent) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_m` is a `Constant` equivalent to `make_constant(meters) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_m() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(meters) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_L` is a `Constant` equivalent to `make_constant(liters) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_L() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(liters) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_degR` is a `Constant` equivalent to `make_constant(rankine) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_degR() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(rankine) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_am` is a `Constant` equivalent to `make_constant(arcminutes) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_am() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(arcminutes) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+// Keep corresponding `_fwd.hh` file on top.
+
+namespace au {
+
+// DO NOT follow this pattern to define your own units.  This is for library-defined units.
+// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
+template <typename T>
+struct FahrenheitLabel {
+    static constexpr const char label[] = "degF";
+};
+template <typename T>
+constexpr const char FahrenheitLabel<T>::label[];
+struct Fahrenheit
+    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
+    // ordering of the arguments is very particular, and could change out from under you in future
+    // versions, making the program ill-formed.  Only units defined within the Au library itself can
+    // safely use this pattern.
+    : UnitImpl<Temperature, Magnitude<Pow<Prime<3>, -2>, Prime<5>>>,
+      FahrenheitLabel<void> {
+    using FahrenheitLabel<void>::label;
+    static constexpr auto origin() {
+        // 459.67 Rankines = 45967 centi-rankines
+        return make_quantity<Centi<UnitImpl<Temperature, Magnitude<Pow<Prime<3>, -2>, Prime<5>>>>>(
+            45967);
+    }
+};
+AU_DEVICE_VAR constexpr auto fahrenheit_qty = QuantityMaker<Fahrenheit>{};
+AU_DEVICE_VAR constexpr auto fahrenheit_pt = QuantityPointMaker<Fahrenheit>{};
+
+[[deprecated(
+    "`fahrenheit()` is ambiguous.  Use `fahrenheit_pt()` for _points_, or `fahrenheit_qty()` for "
+    "_quantities_")]] AU_DEVICE_VAR constexpr auto fahrenheit = QuantityMaker<Fahrenheit>{};
+
+namespace symbols {
+AU_DEVICE_VAR constexpr auto degF_qty = SymbolFor<Fahrenheit>{};
+}
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_ohm` is a `Constant` equivalent to `make_constant(ohms) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_ohm() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(ohms) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_h` is a `Constant` equivalent to `make_constant(hours) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_h() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(hours) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_ftbl_fld` is a `Constant` equivalent to `make_constant(football_fields) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_ftbl_fld() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(football_fields) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_kat` is a `Constant` equivalent to `make_constant(katals) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_kat() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(katals) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_lb` is a `Constant` equivalent to `make_constant(pounds_mass) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_lb() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(pounds_mass) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_Gy` is a `Constant` equivalent to `make_constant(grays) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_Gy() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(grays) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_in` is a `Constant` equivalent to `make_constant(inches) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_in() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(inches) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_AU` is a `Constant` equivalent to `make_constant(astronomical_units) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_AU() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(astronomical_units) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_mi` is a `Constant` equivalent to `make_constant(miles) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_mi() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(miles) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_Bq` is a `Constant` equivalent to `make_constant(becquerel) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_Bq() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(becquerel) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_sr` is a `Constant` equivalent to `make_constant(steradians) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_sr() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(steradians) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_slug` is a `Constant` equivalent to `make_constant(slugs) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_slug() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(slugs) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_bar` is a `Constant` equivalent to `make_constant(bars) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_bar() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(bars) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_ftm` is a `Constant` equivalent to `make_constant(fathoms) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_ftm() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(fathoms) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_A` is a `Constant` equivalent to `make_constant(amperes) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_A() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(amperes) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_F` is a `Constant` equivalent to `make_constant(farads) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_F() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(farads) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_degC_qty` is a `Constant` equivalent to `make_constant(celsius_qty) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_degC_qty() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(celsius_qty) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_lbf` is a `Constant` equivalent to `make_constant(pounds_force) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_lbf() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(pounds_force) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_US_qt` is a `Constant` equivalent to `make_constant(us_quarts) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_US_qt() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(us_quarts) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_US_gal` is a `Constant` equivalent to `make_constant(us_gallons) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_US_gal() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(us_gallons) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_T` is a `Constant` equivalent to `make_constant(tesla) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_T() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(tesla) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_H` is a `Constant` equivalent to `make_constant(henries) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_H() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(henries) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_g` is a `Constant` equivalent to `make_constant(grams) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_g() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(grams) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_rev` is a `Constant` equivalent to `make_constant(revolutions) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_rev() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(revolutions) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_b` is a `Constant` equivalent to `make_constant(bits) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_b() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(bits) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_yd` is a `Constant` equivalent to `make_constant(yards) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_yd() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(yards) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_rad` is a `Constant` equivalent to `make_constant(radians) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_rad() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(radians) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_s` is a `Constant` equivalent to `make_constant(seconds) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_s() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(seconds) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_V` is a `Constant` equivalent to `make_constant(volts) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_V() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(volts) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_cd` is a `Constant` equivalent to `make_constant(candelas) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_cd() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(candelas) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_US_pt` is a `Constant` equivalent to `make_constant(us_pints) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_US_pt() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(us_pints) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_B` is a `Constant` equivalent to `make_constant(bytes) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_B() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(bytes) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_Pa` is a `Constant` equivalent to `make_constant(pascals) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_Pa() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(pascals) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_kn` is a `Constant` equivalent to `make_constant(knots) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_kn() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(knots) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_Wb` is a `Constant` equivalent to `make_constant(webers) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_Wb() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(webers) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_deg` is a `Constant` equivalent to `make_constant(degrees) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_deg() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(degrees) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_d` is a `Constant` equivalent to `make_constant(days) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_d() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(days) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_ft` is a `Constant` equivalent to `make_constant(feet) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_ft() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(feet) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_S` is a `Constant` equivalent to `make_constant(siemens) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_S() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(siemens) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_N` is a `Constant` equivalent to `make_constant(newtons) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_N() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(newtons) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_min` is a `Constant` equivalent to `make_constant(minutes) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_min() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(minutes) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_nmi` is a `Constant` equivalent to `make_constant(nautical_miles) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_nmi() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(nautical_miles) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_lx` is a `Constant` equivalent to `make_constant(lux) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_lx() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(lux) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_as` is a `Constant` equivalent to `make_constant(arcseconds) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_as() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(arcseconds) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
+
+namespace au {
+namespace au_literals {
+
+// `1.28e-4_fur` is a `Constant` equivalent to `make_constant(furlongs) * 1.28e-4_mag`.
+template <char... Cs>
+constexpr auto operator""_fur() {
+    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
+    // clang-format off
+    return make_constant(furlongs) * operator""_mag<Cs...>();
+    // clang-format on
+}
+
+}  // namespace au_literals
+}  // namespace au
+
 
 
 namespace au {
@@ -14423,59 +15392,6 @@ constexpr auto as_chrono_duration(Quantity<U, R> dt) {
 
 }  // namespace au
 
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct CoulombsLabel {
-    static constexpr const char label[] = "C";
-};
-template <typename T>
-constexpr const char CoulombsLabel<T>::label[];
-struct Coulombs
-    // In particular, do NOT manually specify `Dimension<...>` and `Magnitude<...>` types.  The
-    // ordering of the arguments is very particular, and could change out from under you in future
-    // versions, making the program ill-formed.  Only units defined within the Au library itself can
-    // safely use this pattern.
-    : UnitImpl<Dimension<base_dim::Time, base_dim::Current>>,
-      CoulombsLabel<void> {
-    using CoulombsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto coulomb = SingularNameFor<Coulombs>{};
-AU_DEVICE_VAR constexpr auto coulombs = QuantityMaker<Coulombs>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto C = SymbolFor<Coulombs>{};
-}
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct KelvinsLabel {
-    static constexpr const char label[] = "K";
-};
-template <typename T>
-constexpr const char KelvinsLabel<T>::label[];
-struct Kelvins : UnitImpl<Temperature>, KelvinsLabel<void> {
-    using KelvinsLabel<void>::label;
-};
-AU_DEVICE_VAR constexpr auto kelvin = SingularNameFor<Kelvins>{};
-AU_DEVICE_VAR constexpr auto kelvins = QuantityMaker<Kelvins>{};
-AU_DEVICE_VAR constexpr auto kelvins_pt = QuantityPointMaker<Kelvins>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto K = SymbolFor<Kelvins>{};
-}
-}  // namespace au
-
 
 namespace au {
 
@@ -14483,19 +15399,20 @@ namespace detail {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
-struct CesiumHyperfineTransitionFrequencyLabel {
-    static constexpr const char label[] = "Delta_nu_Cs";
+struct ReducedPlanckConstantLabel {
+    static constexpr const char label[] = "h_bar";
 };
 template <typename T>
-constexpr const char CesiumHyperfineTransitionFrequencyLabel<T>::label[];
-struct CesiumHyperfineTransitionFrequencyUnit : decltype(Hertz{} * mag<9'192'631'770>()),
-                                                CesiumHyperfineTransitionFrequencyLabel<void> {
-    using CesiumHyperfineTransitionFrequencyLabel<void>::label;
+constexpr const char ReducedPlanckConstantLabel<T>::label[];
+struct ReducedPlanckConstantUnit : decltype(Joules{} * Seconds{} * mag<662'607'015>() *
+                                            pow<-42>(mag<10>()) / mag<2>() / Magnitude<Pi>{}),
+                                   ReducedPlanckConstantLabel<void> {
+    using ReducedPlanckConstantLabel<void>::label;
 };
 }  // namespace detail
 
-AU_DEVICE_VAR constexpr auto CESIUM_HYPERFINE_TRANSITION_FREQUENCY =
-    make_constant(detail::CesiumHyperfineTransitionFrequencyUnit{});
+AU_DEVICE_VAR constexpr auto REDUCED_PLANCK_CONSTANT =
+    make_constant(detail::ReducedPlanckConstantUnit{});
 
 }  // namespace au
 
@@ -14523,457 +15440,6 @@ AU_DEVICE_VAR constexpr auto SPEED_OF_LIGHT = make_constant(detail::SpeedOfLight
 
 
 namespace au {
-
-namespace detail {
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct AvogadroConstantLabel {
-    static constexpr const char label[] = "N_A";
-};
-template <typename T>
-constexpr const char AvogadroConstantLabel<T>::label[];
-struct AvogadroConstantUnit : decltype(inverse(Moles{}) * mag<602'214'076>() * pow<15>(mag<10>())),
-                              AvogadroConstantLabel<void> {
-    using AvogadroConstantLabel<void>::label;
-};
-}  // namespace detail
-
-AU_DEVICE_VAR constexpr auto AVOGADRO_CONSTANT = make_constant(detail::AvogadroConstantUnit{});
-
-}  // namespace au
-
-
-namespace au {
-
-AU_DEVICE_VAR constexpr auto STANDARD_GRAVITY = make_constant(StandardGravity{});
-
-}  // namespace au
-
-
-namespace au {
-
-namespace detail {
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct LuminousEfficacy540TerahertzLabel {
-    static constexpr const char label[] = "K_cd";
-};
-template <typename T>
-constexpr const char LuminousEfficacy540TerahertzLabel<T>::label[];
-struct LuminousEfficacy540TerahertzUnit : decltype((Lumens{} / Watts{}) * mag<683>()),
-                                          LuminousEfficacy540TerahertzLabel<void> {
-    using LuminousEfficacy540TerahertzLabel<void>::label;
-};
-}  // namespace detail
-
-AU_DEVICE_VAR constexpr auto LUMINOUS_EFFICACY_540_TERAHERTZ =
-    make_constant(detail::LuminousEfficacy540TerahertzUnit{});
-
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_cd` is a `Constant` equivalent to `make_constant(candelas) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_cd() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(candelas) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_ftbl_fld` is a `Constant` equivalent to `make_constant(football_fields) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_ftbl_fld() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(football_fields) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_mi` is a `Constant` equivalent to `make_constant(miles) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_mi() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(miles) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_fur` is a `Constant` equivalent to `make_constant(furlongs) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_fur() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(furlongs) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_yd` is a `Constant` equivalent to `make_constant(yards) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_yd() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(yards) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_b` is a `Constant` equivalent to `make_constant(bits) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_b() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(bits) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_US_qt` is a `Constant` equivalent to `make_constant(us_quarts) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_US_qt() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(us_quarts) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_kat` is a `Constant` equivalent to `make_constant(katals) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_kat() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(katals) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_am` is a `Constant` equivalent to `make_constant(arcminutes) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_am() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(arcminutes) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_as` is a `Constant` equivalent to `make_constant(arcseconds) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_as() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(arcseconds) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_ft` is a `Constant` equivalent to `make_constant(feet) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_ft() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(feet) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_N` is a `Constant` equivalent to `make_constant(newtons) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_N() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(newtons) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_ohm` is a `Constant` equivalent to `make_constant(ohms) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_ohm() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(ohms) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_T` is a `Constant` equivalent to `make_constant(tesla) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_T() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(tesla) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_min` is a `Constant` equivalent to `make_constant(minutes) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_min() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(minutes) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-// Keep corresponding `_fwd.hh` file on top.
-
-namespace au {
-
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct CelsiusLabel {
-    static constexpr const char label[] = "degC";
-};
-template <typename T>
-constexpr const char CelsiusLabel<T>::label[];
-struct Celsius : UnitImpl<Temperature>, CelsiusLabel<void> {
-    using CelsiusLabel<void>::label;
-    static constexpr auto origin() {
-        // 273.15 K = 27315 centi-kelvins
-        return make_quantity<Centi<UnitImpl<Temperature>>>(27315);
-    }
-};
-AU_DEVICE_VAR constexpr auto celsius_qty = QuantityMaker<Celsius>{};
-AU_DEVICE_VAR constexpr auto celsius_pt = QuantityPointMaker<Celsius>{};
-
-[[deprecated(
-    "`celsius()` is ambiguous.  Use `celsius_pt()` for _points_, or `celsius_qty()` for "
-    "_quantities_")]] AU_DEVICE_VAR constexpr auto celsius = QuantityMaker<Celsius>{};
-
-namespace symbols {
-AU_DEVICE_VAR constexpr auto degC_qty = SymbolFor<Celsius>{};
-}
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_sr` is a `Constant` equivalent to `make_constant(steradians) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_sr() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(steradians) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_h` is a `Constant` equivalent to `make_constant(hours) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_h() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(hours) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_degR` is a `Constant` equivalent to `make_constant(rankine) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_degR() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(rankine) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_rad` is a `Constant` equivalent to `make_constant(radians) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_rad() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(radians) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_nmi` is a `Constant` equivalent to `make_constant(nautical_miles) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_nmi() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(nautical_miles) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_pct` is a `Constant` equivalent to `make_constant(percent) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_pct() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(percent) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_A` is a `Constant` equivalent to `make_constant(amperes) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_A() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(amperes) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_ftm` is a `Constant` equivalent to `make_constant(fathoms) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_ftm() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(fathoms) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
 namespace au_literals {
 
 // `1.28e-4_degF_qty` is a `Constant` equivalent to `make_constant(fahrenheit_qty) * 1.28e-4_mag`.
@@ -14988,480 +15454,3 @@ constexpr auto operator""_degF_qty() {
 }  // namespace au_literals
 }  // namespace au
 
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_slug` is a `Constant` equivalent to `make_constant(slugs) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_slug() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(slugs) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_US_pt` is a `Constant` equivalent to `make_constant(us_pints) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_US_pt() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(us_pints) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_Bq` is a `Constant` equivalent to `make_constant(becquerel) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_Bq() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(becquerel) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_K` is a `Constant` equivalent to `make_constant(kelvins) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_K() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(kelvins) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_H` is a `Constant` equivalent to `make_constant(henries) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_H() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(henries) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_L` is a `Constant` equivalent to `make_constant(liters) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_L() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(liters) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_Pa` is a `Constant` equivalent to `make_constant(pascals) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_Pa() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(pascals) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_g` is a `Constant` equivalent to `make_constant(grams) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_g() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(grams) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_AU` is a `Constant` equivalent to `make_constant(astronomical_units) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_AU() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(astronomical_units) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_Wb` is a `Constant` equivalent to `make_constant(webers) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_Wb() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(webers) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_C` is a `Constant` equivalent to `make_constant(coulombs) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_C() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(coulombs) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_F` is a `Constant` equivalent to `make_constant(farads) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_F() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(farads) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_S` is a `Constant` equivalent to `make_constant(siemens) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_S() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(siemens) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_Gy` is a `Constant` equivalent to `make_constant(grays) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_Gy() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(grays) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_lbf` is a `Constant` equivalent to `make_constant(pounds_force) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_lbf() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(pounds_force) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_B` is a `Constant` equivalent to `make_constant(bytes) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_B() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(bytes) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_bar` is a `Constant` equivalent to `make_constant(bars) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_bar() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(bars) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_lb` is a `Constant` equivalent to `make_constant(pounds_mass) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_lb() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(pounds_mass) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_US_gal` is a `Constant` equivalent to `make_constant(us_gallons) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_US_gal() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(us_gallons) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_lx` is a `Constant` equivalent to `make_constant(lux) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_lx() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(lux) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_kn` is a `Constant` equivalent to `make_constant(knots) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_kn() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(knots) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_rev` is a `Constant` equivalent to `make_constant(revolutions) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_rev() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(revolutions) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_V` is a `Constant` equivalent to `make_constant(volts) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_V() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(volts) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_deg` is a `Constant` equivalent to `make_constant(degrees) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_deg() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(degrees) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_in` is a `Constant` equivalent to `make_constant(inches) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_in() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(inches) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_d` is a `Constant` equivalent to `make_constant(days) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_d() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(days) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
-
-
-
-namespace au {
-
-namespace detail {
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct ElementaryChargeLabel {
-    static constexpr const char label[] = "e";
-};
-template <typename T>
-constexpr const char ElementaryChargeLabel<T>::label[];
-struct ElementaryChargeUnit : decltype(Coulombs{} * mag<1'602'176'634>() * pow<-28>(mag<10>())),
-                              ElementaryChargeLabel<void> {
-    using ElementaryChargeLabel<void>::label;
-};
-}  // namespace detail
-
-AU_DEVICE_VAR constexpr auto ELEMENTARY_CHARGE = make_constant(detail::ElementaryChargeUnit{});
-
-}  // namespace au
-
-
-namespace au {
-
-namespace detail {
-// DO NOT follow this pattern to define your own units.  This is for library-defined units.
-// Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
-template <typename T>
-struct BoltzmannConstantLabel {
-    static constexpr const char label[] = "k_B";
-};
-template <typename T>
-constexpr const char BoltzmannConstantLabel<T>::label[];
-struct BoltzmannConstantUnit
-    : decltype((Joules{} / Kelvins{}) * mag<1'380'649>() * pow<-29>(mag<10>())),
-      BoltzmannConstantLabel<void> {
-    using BoltzmannConstantLabel<void>::label;
-};
-}  // namespace detail
-
-AU_DEVICE_VAR constexpr auto BOLTZMANN_CONSTANT = make_constant(detail::BoltzmannConstantUnit{});
-
-}  // namespace au
-
-
-namespace au {
-namespace au_literals {
-
-// `1.28e-4_degC_qty` is a `Constant` equivalent to `make_constant(celsius_qty) * 1.28e-4_mag`.
-template <char... Cs>
-constexpr auto operator""_degC_qty() {
-    // clang-format mangles operator"" template-ids: llvm/llvm-project#210135
-    // clang-format off
-    return make_constant(celsius_qty) * operator""_mag<Cs...>();
-    // clang-format on
-}
-
-}  // namespace au_literals
-}  // namespace au
