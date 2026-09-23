@@ -61,6 +61,11 @@ TEST(Zero, MinusZeroIsZero) {
     EXPECT_THAT(zero_minus_zero, Eq(ZERO));
 }
 
+TEST(Zero, NegatedZeroIsZero) {
+    constexpr auto negative_zero = -ZERO;
+    EXPECT_THAT(negative_zero, SameTypeAndValue(ZERO));
+}
+
 TEST(Zero, PlusZeroIsZero) {
     constexpr auto zero_plus_zero = ZERO + ZERO;
     EXPECT_THAT(zero_plus_zero, Eq(ZERO));
