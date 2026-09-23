@@ -17,6 +17,7 @@
 #    bazel run //:requirements.update -- --upgrade
 #
 
+matplotlib
 mike
 mkdocs
 mkdocs-material
