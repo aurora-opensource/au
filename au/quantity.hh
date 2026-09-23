@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <cmath>
 #include <type_traits>
 #include <utility>
 
@@ -590,7 +591,7 @@ class Quantity {
     // Moving the implementation here lets us effortlessly support callsites where any number of
     // arguments are "shapeshifter" types that are compatible with this Quantity (such as `ZERO`, or
     // various physical constant).
-    //
+
     // Note that the min/max implementations return by _value_, for consistency with other Quantity
     // implementations (because in the general case, the return type can differ from the inputs).
     // Note, too, that we use the Walter Brown implementation for min/max, where min prefers `a`,
@@ -600,6 +601,30 @@ class Quantity {
     friend AU_DEVICE_FUNC constexpr Quantity max(Quantity a, Quantity b) { return b < a ? a : b; }
     friend AU_DEVICE_FUNC constexpr Quantity clamp(Quantity v, Quantity lo, Quantity hi) {
         return (v < lo) ? lo : ((hi < v) ? hi : v);
+    }
+
+    // The `fmod`, `remainder`, and `copysign` implementations use a defaulted parameter `T`, which
+    // is always `Rep`, so that reps that have no `std::fmod` will still be able to compile.
+    template <typename T = Rep>
+    friend AU_DEVICE_FUNC auto fmod(Quantity a, Quantity b)
+        -> Quantity<UnitT, decltype(std::fmod(T{}, T{}))> {
+        using R = decltype(std::fmod(T{}, T{}));
+        return make_quantity<UnitT>(
+            std::fmod(a.template in<R>(UnitT{}), b.template in<R>(UnitT{})));
+    }
+
+    template <typename T = Rep>
+    friend AU_DEVICE_FUNC auto remainder(Quantity a, Quantity b)
+        -> Quantity<UnitT, decltype(std::remainder(T{}, T{}))> {
+        using R = decltype(std::remainder(T{}, T{}));
+        return make_quantity<UnitT>(
+            std::remainder(a.template in<R>(UnitT{}), b.template in<R>(UnitT{})));
+    }
+
+    template <typename T = Rep>
+    friend AU_DEVICE_FUNC constexpr auto copysign(Quantity mag, Quantity sgn)
+        -> Quantity<UnitT, decltype(std::copysign(T{}, T{}))> {
+        return make_quantity<UnitT>(std::copysign(mag.in(UnitT{}), sgn.in(UnitT{})));
     }
 
 #if defined(__cpp_lib_interpolate) && __cpp_lib_interpolate >= 201902L

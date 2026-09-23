@@ -52,19 +52,28 @@ Adapts [`std::copysign`](https://en.cppreference.com/w/cpp/numeric/math/copysign
 
 ```cpp
 // 1: First argument Quantity, second argument raw numeric
+// (`T` must be a valid rep)
 template <typename U, typename R, typename T>
 constexpr auto copysign(Quantity<U, R> mag, T sgn);
 
 // 2: First argument raw numeric, second argument Quantity
+// (`T` must be a valid rep)
 template <typename T, typename U, typename R>
 constexpr auto copysign(T mag, Quantity<U, R> sgn);
 
 // 3: Both arguments Quantity
 template <typename U1, typename R1, typename U2, typename R2>
 constexpr auto copysign(Quantity<U1, R1> mag, Quantity<U2, R2> sgn);
+
+// 4: Both arguments the _same_ Quantity type
+constexpr auto copysign(Quantity<U, R> mag, Quantity<U, R> sgn);
 ```
 
 **Returns:** The first argument, with the sign from the second argument applied to it.
+
+"Shapeshifter" types, such as `Constant` or `Zero`, may be passed to either argument (but not both).
+If they are, they will be implicitly converted to the `Quantity` type of the other argument, if this
+conversion is allowed by the library.
 
 ### Comparison-based functions
 
@@ -1227,15 +1236,23 @@ inputs.
 As with the [integer modulus](./quantity.md#mod), we first express the inputs in their [common
 unit](../discussion/concepts/common_unit.md).
 
-**Signature:**
+**Signatures:**
 
 ```cpp
+// 1: Inputs of any units and reps
 template <typename U1, typename R1, typename U2, typename R2>
 auto fmod(Quantity<U1, R1> q1, Quantity<U2, R2> q2);
+
+// 2: Both arguments the _same_ Quantity type
+auto fmod(Quantity<U, R> q1, Quantity<U, R> q2);
 ```
 
 **Returns:** The remainder of `q1 / q2`, in the type `Quantity<U, R>`, where `U` is the common unit
 of `U1` and `U2`, and `R` is the common type of `R1` and `R2`.
+
+"Shapeshifter" types, such as `Constant` or `Zero`, may be passed to either argument (but not both).
+If they are, they will be implicitly converted to the `Quantity` type of the other argument, if this
+conversion is allowed by the library.
 
 #### `hypot`
 
@@ -1263,12 +1280,20 @@ the two inputs.
 As with the [integer modulus](./quantity.md#mod), we first express the inputs in their [common
 unit](../discussion/concepts/common_unit.md).
 
-**Signature:**
+**Signatures:**
 
 ```cpp
+// 1: Inputs of any units and reps
 template <typename U1, typename R1, typename U2, typename R2>
 auto remainder(Quantity<U1, R1> q1, Quantity<U2, R2> q2);
+
+// 2: Both arguments the _same_ Quantity type
+auto remainder(Quantity<U, R> q1, Quantity<U, R> q2);
 ```
 
 **Returns:** The remainder of `q1 / q2`, in the type `Quantity<U, R>`, where `U` is the common unit
 of `U1` and `U2`, and `R` is the common type of `R1` and `R2`.
+
+"Shapeshifter" types, such as `Constant` or `Zero`, may be passed to either argument (but not both).
+If they are, they will be implicitly converted to the `Quantity` type of the other argument, if this
+conversion is allowed by the library.
