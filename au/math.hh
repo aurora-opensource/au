@@ -547,6 +547,11 @@ auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(
         round_in<OutputRep>(rounding_units, p));
 }
+// c) Version for Constant.
+template <typename OutputRep, typename RoundingUnits, typename U>
+AU_DEVICE_FUNC constexpr auto round_as(RoundingUnits rounding_units, Constant<U> c) {
+    return make_quantity<AssociatedUnit<RoundingUnits>>(round_in<OutputRep>(rounding_units, c));
+}
 
 //
 // Return the largest integral value in `rounding_units` which is not greater than `q`.
@@ -624,6 +629,11 @@ template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(
         floor_in<OutputRep>(rounding_units, p));
+}
+// c) Version for Constant.
+template <typename OutputRep, typename RoundingUnits, typename U>
+AU_DEVICE_FUNC constexpr auto floor_as(RoundingUnits rounding_units, Constant<U> c) {
+    return make_quantity<AssociatedUnit<RoundingUnits>>(floor_in<OutputRep>(rounding_units, c));
 }
 
 //
@@ -703,6 +713,11 @@ auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return make_quantity_point<AssociatedUnitForPoints<RoundingUnits>>(
         ceil_in<OutputRep>(rounding_units, p));
 }
+// c) Version for Constant.
+template <typename OutputRep, typename RoundingUnits, typename U>
+AU_DEVICE_FUNC constexpr auto ceil_as(RoundingUnits rounding_units, Constant<U> c) {
+    return make_quantity<AssociatedUnit<RoundingUnits>>(ceil_in<OutputRep>(rounding_units, c));
+}
 
 //
 // Rounding function that does not leave the integral domain.  Does not use `std::round`.
@@ -772,6 +787,13 @@ AU_DEVICE_FUNC constexpr auto int_round_as(RoundingUnits rounding_units, Quantit
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 AU_DEVICE_FUNC constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_round_as_explicit_rep_impl<OutputRep>(rounding_units, p);
+}
+
+// c) Version for Constant.
+template <typename OutputRep, typename RoundingUnits, typename U>
+AU_DEVICE_FUNC constexpr auto int_round_as(RoundingUnits rounding_units, Constant<U> c) {
+    // For `Constant`, identical to `round_as`.
+    return round_as<OutputRep>(rounding_units, c);
 }
 
 //
@@ -873,6 +895,13 @@ AU_DEVICE_FUNC constexpr auto int_floor_as(RoundingUnits rounding_units, Quantit
     return int_floor_as_explicit_rep_impl<OutputRep>(rounding_units, p);
 }
 
+// c) Version for Constant.
+template <typename OutputRep, typename RoundingUnits, typename U>
+AU_DEVICE_FUNC constexpr auto int_floor_as(RoundingUnits rounding_units, Constant<U> c) {
+    // For `Constant`, identical to `floor_as`.
+    return floor_as<OutputRep>(rounding_units, c);
+}
+
 //
 // Version of `int_floor_as` with raw number outputs.
 //
@@ -970,6 +999,13 @@ AU_DEVICE_FUNC constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 AU_DEVICE_FUNC constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p) {
     return int_ceil_as_explicit_rep_impl<OutputRep>(rounding_units, p);
+}
+
+// c) Version for Constant.
+template <typename OutputRep, typename RoundingUnits, typename U>
+AU_DEVICE_FUNC constexpr auto int_ceil_as(RoundingUnits rounding_units, Constant<U> c) {
+    // For `Constant`, identical to `ceil_as`.
+    return ceil_as<OutputRep>(rounding_units, c);
 }
 
 //
