@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <cmath>
 #include <type_traits>
 #include <utility>
 
@@ -600,6 +601,41 @@ class Quantity {
     friend AU_DEVICE_FUNC constexpr Quantity max(Quantity a, Quantity b) { return b < a ? a : b; }
     friend AU_DEVICE_FUNC constexpr Quantity clamp(Quantity v, Quantity lo, Quantity hi) {
         return (v < lo) ? lo : ((hi < v) ? hi : v);
+    }
+
+    // `fmod`, `remainder`, and `copysign` for two `Quantity` values of the same type.
+    //
+    // Like `min` and `max` above, these are hidden friends whose parameters are the concrete
+    // `Quantity` type rather than deduced, so anything implicitly convertible to it --- notably, a
+    // `Constant` --- can be passed in _either_ argument slot.  Inputs whose units or reps differ
+    // are handled by the function templates in "au/math.hh".
+    //
+    // Each is a template on a defaulted parameter `T`, which is always `Rep`.  This keeps the
+    // return type out of the class instantiation, so that reps which have no `std::fmod` (say,
+    // `std::complex<double>`) simply don't get these overloads, instead of failing to compile.
+    // The _parameters_ stay concrete, which is the whole point.  Note that the return types
+    // promote the rep exactly as the underlying `std` functions do, which keeps these consistent
+    // with their "au/math.hh" counterparts.
+    template <typename T = Rep>
+    friend AU_DEVICE_FUNC auto fmod(Quantity a, Quantity b)
+        -> Quantity<UnitT, decltype(std::fmod(T{}, T{}))> {
+        using R = decltype(std::fmod(T{}, T{}));
+        return make_quantity<UnitT>(
+            std::fmod(a.template in<R>(UnitT{}), b.template in<R>(UnitT{})));
+    }
+
+    template <typename T = Rep>
+    friend AU_DEVICE_FUNC auto remainder(Quantity a, Quantity b)
+        -> Quantity<UnitT, decltype(std::remainder(T{}, T{}))> {
+        using R = decltype(std::remainder(T{}, T{}));
+        return make_quantity<UnitT>(
+            std::remainder(a.template in<R>(UnitT{}), b.template in<R>(UnitT{})));
+    }
+
+    template <typename T = Rep>
+    friend AU_DEVICE_FUNC constexpr auto copysign(Quantity mag, Quantity sgn)
+        -> Quantity<UnitT, decltype(std::copysign(T{}, T{}))> {
+        return make_quantity<UnitT>(std::copysign(mag.in(UnitT{}), sgn.in(UnitT{})));
     }
 
 #if defined(__cpp_lib_interpolate) && __cpp_lib_interpolate >= 201902L

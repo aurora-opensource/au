@@ -14,6 +14,7 @@
 
 #include "au/math.hh"
 
+#include <cmath>
 #include <string>
 
 #include "au/prefix.hh"
@@ -343,6 +344,26 @@ TEST(Copysign, ReturnsSameTypesAsStdCopysignForSameUnitInputs) {
     expect_consistent_with_std_copysign(4., 3.l);
 }
 
+TEST(Copysign, SupportsConstants) {
+    constexpr auto FULL_TURN = make_constant(revolutions);
+
+    EXPECT_THAT(copysign(FIVE_HALVES_METERS, meters(-1.0)), SameTypeAndValue(meters(-2.5)));
+    EXPECT_THAT(copysign(meters(-3.0), FIVE_HALVES_METERS), SameTypeAndValue(meters(3.0)));
+    EXPECT_THAT(copysign(degrees(-370.5), FULL_TURN), SameTypeAndValue(degrees(370.5)));
+    EXPECT_THAT(copysign(FULL_TURN, degrees(-1.0)), SameTypeAndValue(degrees(-360.0)));
+}
+
+TEST(Copysign, SupportsZero) {
+    // `Zero` converts to `Quantity`, and `std::copysign()` treats `+0.0` as positive.
+    EXPECT_THAT(copysign(degrees(-4.0), ZERO), SameTypeAndValue(degrees(4.0)));
+
+    // `Zero` works in the magnitude slot, too.  (Note that `degrees(-0.0)` compares _equal_ to
+    // `degrees(0.0)`, so we check the sign bit explicitly.)
+    EXPECT_THAT(copysign(ZERO, degrees(-1.0)), SameTypeAndValue(degrees(-0.0)));
+    EXPECT_THAT(std::signbit(copysign(ZERO, degrees(-1.0)).data_in(degrees)), IsTrue());
+    EXPECT_THAT(std::signbit(copysign(ZERO, degrees(1.0)).data_in(degrees)), IsFalse());
+}
+
 TEST(Cos, TypeDependsOnInputType) {
     // See: https://en.cppreference.com/w/cpp/numeric/math/cos
     StaticAssertTypeEq<decltype(cos(radians(0))), double>();
@@ -432,6 +453,28 @@ TEST(Fmod, HandlesIrrationalCommonUnit) {
     EXPECT_THAT(fmod(radians(1), degrees(57)), IsNear(degrees(0.2958), degrees(0.0001)));
 }
 
+TEST(Fmod, SupportsConstants) {
+    // The constant adapts to the units and rep of the other argument.
+    constexpr auto FULL_TURN = make_constant(revolutions);
+
+    EXPECT_THAT(fmod(degrees(400.0), FULL_TURN), SameTypeAndValue(degrees(40.0)));
+    EXPECT_THAT(fmod(FIVE_HALVES_METERS, meters(1.0)), SameTypeAndValue(meters(0.5)));
+    EXPECT_THAT(fmod(FULL_TURN, degrees(360.0)), SameTypeAndValue(degrees(0.0)));
+}
+
+TEST(Fmod, ConstantPromotesIntegralRepJustAsStdFmodDoes) {
+    constexpr auto FULL_TURN = make_constant(revolutions);
+
+    EXPECT_THAT(fmod(degrees(370), FULL_TURN), SameTypeAndValue(degrees(10.0)));
+}
+
+TEST(Fmod, ConstantAdaptsToIrrationalUnits) {
+    // The constant becomes `radians(2 * pi)`, in `double`, before the `fmod`.
+    constexpr auto FULL_TURN = make_constant(revolutions);
+
+    EXPECT_THAT(fmod(radians(7.0), FULL_TURN), IsNear(radians(0.716815), radians(1e-6)));
+}
+
 TEST(Remainder, SameAsStdRemainderForNumericTypes) {
     EXPECT_THAT(remainder(3.5, 3), Eq(std::remainder(3.5, 3)));
     EXPECT_THAT(remainder(2.5, 3), Eq(std::remainder(2.5, 3)));
@@ -449,6 +492,13 @@ TEST(Remainder, ReturnsSameTypesAsStdRemainderForSameUnitInputs) {
     expect_consistent_with_std_remainder(meters(4), meters(3.f));
     expect_consistent_with_std_remainder(meters(4), meters(3.l));
     expect_consistent_with_std_remainder(meters(4.), meters(3.l));
+}
+
+TEST(Remainder, SupportsConstants) {
+    constexpr auto FULL_TURN = make_constant(revolutions);
+
+    EXPECT_THAT(remainder(degrees(200.0), FULL_TURN), SameTypeAndValue(degrees(-160.0)));
+    EXPECT_THAT(remainder(FIVE_HALVES_METERS, meters(2.0)), SameTypeAndValue(meters(0.5)));
 }
 
 TEST(Remainder, MixedUnitsSupportedWithCasting) {
