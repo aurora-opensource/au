@@ -477,8 +477,9 @@ constexpr auto neg_c = -c;
 
 ### Rounding †
 
-`Constant` can be passed to the rounding functions.  The `_as` functions return a new `Constant`,
-while the `_in` functions return a raw numeric value of an explicitly specified type.
+`Constant` can be passed to the rounding functions.  The `_as` functions return a new `Constant`
+(or, if you specify an explicit rep, a `Quantity` with that rep), while the `_in` functions return
+a raw numeric value of an explicitly specified type.
 
 † _This feature is subject to the same [compile-time arithmetic
 limitations](./magnitude.md#compile-time-arithmetic-limitations) as `Magnitude` rounding, because
@@ -497,6 +498,15 @@ For a `Constant` instance `c` and a unit `u`:
 - `int_floor_as(u, c)` — same as `floor_as(u, c)` for `Constant` inputs
 - `int_ceil_as(u, c)` — same as `ceil_as(u, c)` for `Constant` inputs
 
+**Explicit-rep `_as` functions** (return a `Quantity` in unit `u`, with rep `T`):
+
+- `round_as<T>(u, c)` — rounds `c` to the nearest integer in unit `u`
+- `floor_as<T>(u, c)` — rounds `c` down, in unit `u`
+- `ceil_as<T>(u, c)` — rounds `c` up, in unit `u`
+- `int_round_as<T>(u, c)` — same as `round_as<T>(u, c)` for `Constant` inputs
+- `int_floor_as<T>(u, c)` — same as `floor_as<T>(u, c)` for `Constant` inputs
+- `int_ceil_as<T>(u, c)` — same as `ceil_as<T>(u, c)` for `Constant` inputs
+
 **`_in` functions** (return a raw numeric value; explicit `Rep` required):
 
 - `round_in<T>(u, c)` — rounds `c` to the nearest integer in unit `u`, returning type `T`
@@ -507,9 +517,9 @@ For a `Constant` instance `c` and a unit `u`:
 - `int_ceil_in<T>(u, c)` — same as `ceil_in<T>(u, c)` for `Constant` inputs
 
 !!! note
-    Pay attention to the peculiar pattern of presence and absence of the explicit `Rep` in these
-    functions.  In particular, an explicit rep is _required_ for the `_in` functions, but
-    _forbidden_ for the `_as` functions!
+    Pay attention to how the explicit `Rep` affects these functions.  An explicit rep is
+    _required_ for the `_in` functions, but _optional_ for the `_as` functions --- and for the
+    latter, providing one changes the category of the return type!
 
     This is a simple consequence of the fact that `Constant` _has_ no rep.  The type itself
     represents only a single, specific value (that is, it is a [monovalue
@@ -520,8 +530,11 @@ For a `Constant` instance `c` and a unit `u`:
     - The `_in` functions require an explicit rep because the input `Constant` has no rep, so we
       would have no idea what rep to use "by default".
 
-    - The `_as` functions forbid an explicit rep because the output is another `Constant`, and thus
-      no rep would even be possible.
+    - The `_as` functions without an explicit rep return another `Constant`, which needs no rep.
+
+    - The `_as` functions _with_ an explicit rep return a `Quantity`, because now we know
+      everything we need to form one: the unit `u`, and the rep `T`.  This is the same result you
+      would get from calling `.as<T>(u)` on the rep-less result.
 
 ??? example "Example: using `int_ceil_in` for array dimensions"
     Suppose you have a constant representing a key length in bits, and you need to determine the
