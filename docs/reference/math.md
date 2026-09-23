@@ -65,7 +65,7 @@ constexpr auto copysign(T mag, Quantity<U, R> sgn);
 template <typename U1, typename R1, typename U2, typename R2>
 constexpr auto copysign(Quantity<U1, R1> mag, Quantity<U2, R2> sgn);
 
-// 4: Both arguments the same Quantity type (hidden friend)
+// 4: Both arguments the _same_ Quantity type
 constexpr auto copysign(Quantity<U, R> mag, Quantity<U, R> sgn);
 ```
 
@@ -1243,7 +1243,7 @@ unit](../discussion/concepts/common_unit.md).
 template <typename U1, typename R1, typename U2, typename R2>
 auto fmod(Quantity<U1, R1> q1, Quantity<U2, R2> q2);
 
-// 2: Both arguments the same Quantity type (hidden friend)
+// 2: Both arguments the _same_ Quantity type
 auto fmod(Quantity<U, R> q1, Quantity<U, R> q2);
 ```
 
@@ -1287,7 +1287,7 @@ unit](../discussion/concepts/common_unit.md).
 template <typename U1, typename R1, typename U2, typename R2>
 auto remainder(Quantity<U1, R1> q1, Quantity<U2, R2> q2);
 
-// 2: Both arguments the same Quantity type (hidden friend)
+// 2: Both arguments the _same_ Quantity type
 auto remainder(Quantity<U, R> q1, Quantity<U, R> q2);
 ```
 
