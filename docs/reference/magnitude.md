@@ -81,6 +81,16 @@ The literal's digits form an integer mantissa, which is then scaled by the appro
 | `12.34_mag` | `mag<1234>() / pow<2>(mag<10>())` | $\frac{1234}{100}$ |
 | `34e6_mag` | `mag<34>() * pow<6>(mag<10>())` | $34{,}000{,}000$ |
 | `6.022e23_mag` | `mag<6022>() * pow<20>(mag<10>())` | $6.022 \times 10^{23}$ |
+| `0_mag` | `ZERO` | $0$ |
+
+#### Zero
+
+A literal whose value is zero produces [`Zero`](./zero.md), not a `Magnitude`.  (A `Magnitude` is a
+product of powers of basis numbers, so it can never represent $0$.)  This applies however the zero
+is spelled: `0_mag`, `0.000_mag`, and `0e5_mag` all produce `ZERO`.
+
+`Zero` supports the `Magnitude` operations where the answer is well defined --- for example,
+`0_mag * 5_mag` is `ZERO`, `0_mag + 5_mag` is `mag<5>()`, and `get_value<double>(0_mag)` is `0.0`.
 
 To use it, add the following to your file:
 

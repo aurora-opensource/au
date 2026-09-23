@@ -40,4 +40,16 @@ TEST(Seconds, LiteralMakesEquivalentConstant) {
     EXPECT_THAT(1.28e-4_s, SameTypeAndValue(make_constant(seconds * 1.28e-4_mag)));
 }
 
+TEST(Seconds, ZeroLiteralMakesZero) {
+    using namespace ::au::au_literals;
+    EXPECT_THAT(0_s, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0.0_s, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0.0e-5_s, SameTypeAndValue(ZERO));
+    EXPECT_THAT(-0_s, SameTypeAndValue(ZERO));
+
+    // `Zero` is assignable to a `Quantity` of any units, in any dimension.
+    constexpr QuantityD<Seconds> t = 0_s;
+    EXPECT_THAT(t, SameTypeAndValue(seconds(0.0)));
+}
+
 }  // namespace au

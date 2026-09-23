@@ -786,14 +786,32 @@ constexpr std::int64_t parse_scientific_exponent() {
     }
     return sign * static_cast<std::int64_t>(exponent);
 }
+
+// Compute the value of a `_mag` literal whose mantissa is `Mantissa`.  We specialize for a mantissa
+// of `0`, which is `Zero` rather than a `Magnitude`: `0` has no prime factorization.
+template <std::uintmax_t Mantissa>
+struct MagLiteralImpl {
+    template <char... Cs>
+    static AU_DEVICE_FUNC constexpr auto value() {
+        return mag<Mantissa>() *
+               pow<parse_scientific_exponent<Cs...>() - count_decimal_places<Cs...>()>(mag<10>());
+    }
+};
+template <>
+struct MagLiteralImpl<0u> {
+    template <char... Cs>
+    static AU_DEVICE_FUNC constexpr Zero value() {
+        return {};
+    }
+};
 }  // namespace detail
 
 namespace au_literals {
 template <char... Cs>
 AU_DEVICE_FUNC constexpr auto operator""_mag() {
-    return mag<detail::parse_magnitude_integer<Cs...>()>() *
-           pow<detail::parse_scientific_exponent<Cs...>() - detail::count_decimal_places<Cs...>()>(
-               mag<10>());
+    // Note that computing the mantissa also validates the characters in the literal.
+    return detail::MagLiteralImpl<detail::parse_magnitude_integer<Cs...>()>::template value<
+        Cs...>();
 }
 }  // namespace au_literals
 

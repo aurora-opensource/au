@@ -1046,6 +1046,52 @@ TEST(MagnitudeUDL, SupportsScientificNotationWithDecimalPoint) {
     EXPECT_THAT(6.62607015e-34_mag, SameTypeAndValue(mag<662607015>() * pow<-34 - 8>(mag<10>())));
 }
 
+TEST(MagnitudeUDL, ZeroProducesZero) {
+    EXPECT_THAT(0_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(00_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0'000_mag, SameTypeAndValue(ZERO));
+}
+
+TEST(MagnitudeUDL, ZeroWithDecimalPointProducesZero) {
+    EXPECT_THAT(0.0_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0.000_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0._mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(.0_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0.000'000_mag, SameTypeAndValue(ZERO));
+}
+
+TEST(MagnitudeUDL, ZeroWithScientificNotationProducesZero) {
+    EXPECT_THAT(0e0_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0e5_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0e-5_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0.00e-300_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0.0E10_mag, SameTypeAndValue(ZERO));
+}
+
+TEST(MagnitudeUDL, NegatedZeroIsStillZero) { EXPECT_THAT(-0_mag, SameTypeAndValue(ZERO)); }
+
+TEST(MagnitudeUDL, ZeroWorksInConstexprContext) {
+    constexpr auto m = 0_mag;
+    EXPECT_THAT(m, SameTypeAndValue(ZERO));
+}
+
+TEST(MagnitudeUDL, ZeroComposesWithOtherMagnitudeOperations) {
+    EXPECT_THAT(0_mag * 5_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(5_mag * 0_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0_mag / 5_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0_mag + 5_mag, SameTypeAndValue(mag<5>()));
+    EXPECT_THAT(5_mag - 0_mag, SameTypeAndValue(mag<5>()));
+    EXPECT_THAT(get_value<double>(0_mag), SameTypeAndValue(0.0));
+}
+
+TEST(MagnitudeUDL, LiteralsWithNonzeroMantissaAreUnaffectedByLeadingOrTrailingZeroes) {
+    EXPECT_THAT(0.5_mag, SameTypeAndValue(mag<5>() / mag<10>()));
+    EXPECT_THAT(10_mag, SameTypeAndValue(mag<10>()));
+    EXPECT_THAT(100_mag, SameTypeAndValue(mag<100>()));
+    EXPECT_THAT(0.001_mag, SameTypeAndValue(mag<1>() / mag<1000>()));
+    EXPECT_THAT(1e0_mag, SameTypeAndValue(mag<1>()));
+}
+
 TEST(MagnitudeUDL, ScientificNotationProducesExactRationalMagnitude) {
     // 34e6 is exactly 34'000'000.
     EXPECT_THAT(34e6_mag, SameTypeAndValue(mag<34'000'000>()));
