@@ -3405,6 +3405,11 @@ get from <code>make_constant</code>.  For example, <code>1.28e-4_s</code> is equ
 <p>This makes very concise, readable constants:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.28e-4</span><span class="n">_s</span><span class="p">;</span><span class="w">  </span><span class="c1">// A `Constant` for 128 microseconds.</span>
 </code></pre></div>
+<p>A unit literal whose value is zero produces <a href="../zero/"><code>Zero</code></a> rather than a <code>Constant</code>: <code>0_s</code>,
+<code>0.0_s</code>, and <code>0e5_s</code> are all simply <code>ZERO</code>.  This follows from the <code>_mag</code> literal, which
+<a href="../magnitude/#zero">produces <code>ZERO</code> for zero</a>.  <code>Zero</code> is comparable and assignable to a
+<code>Quantity</code> of <em>any</em> units, so <code>0_s</code> can generally convert to the same quantity types that <code>1_s</code>,
+a <code>Constant</code>, can.</p>
 <p>Because a <code>Constant</code> is applied <em>symbolically</em>, a unit literal is a good choice for a magic number
 that you want to combine with quantities without any risk of rounding or overflow.</p>
 <p>Unit literals are <strong>opt-in</strong>, on a per-unit basis, to keep the base unit headers lightweight.  To
@@ -3446,6 +3451,7 @@ apply the <a href="../prefix/#constant">prefix applier</a> to the literal:</p>
 <p><code>kilo(1.234_g)</code> is a <code>Constant</code> for <span class="arithmatex"><span class="MathJax_Preview">1234\,\text{g}</span><script type="math/tex">1234\,\text{g}</script></span>, and its label is <code>[(617 / 500) kg]</code>: the
 prefix goes on the unit, and the digits you wrote stay put.  Every prefix applier works this way, so
 <code>micro(2.5_m)</code>, <code>mebi(3_B)</code>, and so on are all available.</p>
+<p>Prefixing a zero literal is also fine: <code>kilo(0_g)</code> is <code>ZERO</code>, just like <code>0_g</code> itself.</p>
 <details class="info">
 <summary>Why this unusual syntax?</summary>
 <p>Grammatically, <code>kilo(1.234_g)</code> reads strangely, compared to <code>1.234_kg</code>.  We&rsquo;d certainly much

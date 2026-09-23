@@ -2091,6 +2091,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="_mag literal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zero" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -3380,8 +3397,19 @@ The literal&rsquo;s digits form an integer mantissa, which is then scaled by the
 <td><code>mag&lt;6022&gt;() * pow&lt;20&gt;(mag&lt;10&gt;())</code></td>
 <td><span class="arithmatex"><span class="MathJax_Preview">6.022 \times 10^{23}</span><script type="math/tex">6.022 \times 10^{23}</script></span></td>
 </tr>
+<tr>
+<td><code>0_mag</code></td>
+<td><code>ZERO</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">0</span><script type="math/tex">0</script></span></td>
+</tr>
 </tbody>
 </table>
+<h4 id="zero">Zero<a class="headerlink" href="#zero" title="Permanent link">&para;</a></h4>
+<p>A literal whose value is zero produces <a href="../zero/"><code>Zero</code></a>, not a <code>Magnitude</code>.  (A <code>Magnitude</code> is a
+product of powers of basis numbers, so it can never represent <span class="arithmatex"><span class="MathJax_Preview">0</span><script type="math/tex">0</script></span>.)  This applies however the zero
+is spelled: <code>0_mag</code>, <code>0.000_mag</code>, and <code>0e5_mag</code> all produce <code>ZERO</code>.</p>
+<p><code>Zero</code> supports the <code>Magnitude</code> operations where the answer is well defined &mdash; for example,
+<code>0_mag * 5_mag</code> is <code>ZERO</code>, <code>0_mag + 5_mag</code> is <code>mag&lt;5&gt;()</code>, and <code>get_value&lt;double&gt;(0_mag)</code> is <code>0.0</code>.</p>
 <p>To use it, add the following to your file:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="o">::</span><span class="nn">au</span><span class="o">::</span><span class="nn">au_literals</span><span class="p">;</span>
 </code></pre></div>
