@@ -51,6 +51,10 @@ The result is always `T{0}` for any numeric type `T`.
 
 `ZERO + ZERO` and `ZERO - ZERO` both yield `ZERO`.
 
+### Negation
+
+`-ZERO` yields `ZERO`.
+
 ### Comparison
 
 `ZERO` can be compared to `ZERO`.  `ZERO OP ZERO` yields the same result as `0 OP 0`, whenever `OP`

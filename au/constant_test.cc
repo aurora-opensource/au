@@ -507,6 +507,12 @@ TEST(Constant, ModWithZeroDividendReturnsZero) {
 
 TEST(MakeConstant, IdentityForZero) { EXPECT_THAT(make_constant(ZERO), SameTypeAndValue(ZERO)); }
 
+// This is the path that a zero-valued unit literal (say, `0_m`) takes.
+TEST(Constant, ScalingByZeroProducesZero) {
+    EXPECT_THAT(make_constant(meters) * ZERO, SameTypeAndValue(ZERO));
+    EXPECT_THAT(ZERO * make_constant(meters), SameTypeAndValue(ZERO));
+}
+
 TEST(CanStoreValueIn, ChecksRangeOfTypeForIntegers) {
     EXPECT_THAT(decltype(c)::can_store_value_in<int32_t>(meters / second), IsTrue());
     EXPECT_THAT(decltype(c)::can_store_value_in<int16_t>(meters / second), IsFalse());
