@@ -3639,8 +3639,9 @@ returns a new <code>Constant</code> representing the negation.</p>
 <a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">neg_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="rounding">Rounding †<a class="headerlink" href="#rounding" title="Permanent link">&para;</a></h3>
-<p><code>Constant</code> can be passed to the rounding functions.  The <code>_as</code> functions return a new <code>Constant</code>,
-while the <code>_in</code> functions return a raw numeric value of an explicitly specified type.</p>
+<p><code>Constant</code> can be passed to the rounding functions.  The <code>_as</code> functions return a new <code>Constant</code>
+(or, if you specify an explicit rep, a <code>Quantity</code> with that rep), while the <code>_in</code> functions return
+a raw numeric value of an explicitly specified type.</p>
 <p>† <em>This feature is subject to the same <a href="../magnitude/#compile-time-arithmetic-limitations">compile-time arithmetic
 limitations</a> as <code>Magnitude</code> rounding, because
 the computation is built on <code>Magnitude</code> rounding.</em></p>
@@ -3655,6 +3656,15 @@ the computation is built on <code>Magnitude</code> rounding.</em></p>
 <li><code>int_floor_as(u, c)</code> — same as <code>floor_as(u, c)</code> for <code>Constant</code> inputs</li>
 <li><code>int_ceil_as(u, c)</code> — same as <code>ceil_as(u, c)</code> for <code>Constant</code> inputs</li>
 </ul>
+<p><strong>Explicit-rep <code>_as</code> functions</strong> (return a <code>Quantity</code> in unit <code>u</code>, with rep <code>T</code>):</p>
+<ul>
+<li><code>round_as&lt;T&gt;(u, c)</code> — rounds <code>c</code> to the nearest integer in unit <code>u</code></li>
+<li><code>floor_as&lt;T&gt;(u, c)</code> — rounds <code>c</code> down, in unit <code>u</code></li>
+<li><code>ceil_as&lt;T&gt;(u, c)</code> — rounds <code>c</code> up, in unit <code>u</code></li>
+<li><code>int_round_as&lt;T&gt;(u, c)</code> — same as <code>round_as&lt;T&gt;(u, c)</code> for <code>Constant</code> inputs</li>
+<li><code>int_floor_as&lt;T&gt;(u, c)</code> — same as <code>floor_as&lt;T&gt;(u, c)</code> for <code>Constant</code> inputs</li>
+<li><code>int_ceil_as&lt;T&gt;(u, c)</code> — same as <code>ceil_as&lt;T&gt;(u, c)</code> for <code>Constant</code> inputs</li>
+</ul>
 <p><strong><code>_in</code> functions</strong> (return a raw numeric value; explicit <code>Rep</code> required):</p>
 <ul>
 <li><code>round_in&lt;T&gt;(u, c)</code> — rounds <code>c</code> to the nearest integer in unit <code>u</code>, returning type <code>T</code></li>
@@ -3666,9 +3676,9 @@ the computation is built on <code>Magnitude</code> rounding.</em></p>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Pay attention to the peculiar pattern of presence and absence of the explicit <code>Rep</code> in these
-functions.  In particular, an explicit rep is <em>required</em> for the <code>_in</code> functions, but
-<em>forbidden</em> for the <code>_as</code> functions!</p>
+<p>Pay attention to how the explicit <code>Rep</code> affects these functions.  An explicit rep is
+<em>required</em> for the <code>_in</code> functions, but <em>optional</em> for the <code>_as</code> functions &mdash; and for the
+latter, providing one changes the category of the return type!</p>
 <p>This is a simple consequence of the fact that <code>Constant</code> <em>has</em> no rep.  The type itself
 represents only a single, specific value (that is, it is a <a href="../detail/monovalue_types/">monovalue
 type</a>).</p>
@@ -3679,8 +3689,12 @@ type</a>).</p>
   would have no idea what rep to use &ldquo;by default&rdquo;.</p>
 </li>
 <li>
-<p>The <code>_as</code> functions forbid an explicit rep because the output is another <code>Constant</code>, and thus
-  no rep would even be possible.</p>
+<p>The <code>_as</code> functions without an explicit rep return another <code>Constant</code>, which needs no rep.</p>
+</li>
+<li>
+<p>The <code>_as</code> functions <em>with</em> an explicit rep return a <code>Quantity</code>, because now we know
+  everything we need to form one: the unit <code>u</code>, and the rep <code>T</code>.  This is the same result you
+  would get from calling <code>.as&lt;T&gt;(u)</code> on the rep-less result.</p>
 </li>
 </ul>
 </div>
