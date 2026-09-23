@@ -184,6 +184,12 @@ This makes very concise, readable constants:
 constexpr auto dt = 1.28e-4_s;  // A `Constant` for 128 microseconds.
 ```
 
+A unit literal whose value is zero produces [`Zero`](./zero.md) rather than a `Constant`: `0_s`,
+`0.0_s`, and `0e5_s` are all simply `ZERO`.  This follows from the `_mag` literal, which
+[produces `ZERO` for zero](./magnitude.md#zero).  `Zero` is comparable and assignable to a
+`Quantity` of _any_ units, so `0_s` can generally convert to the same quantity types that `1_s`,
+a `Constant`, can.
+
 Because a `Constant` is applied _symbolically_, a unit literal is a good choice for a magic number
 that you want to combine with quantities without any risk of rounding or overflow.
 
@@ -237,6 +243,8 @@ constexpr auto m_e = kilo(9.1093837015e-31_g);  // The electron mass, in kg.
 `kilo(1.234_g)` is a `Constant` for $1234\,\text{g}$, and its label is `[(617 / 500) kg]`: the
 prefix goes on the unit, and the digits you wrote stay put.  Every prefix applier works this way, so
 `micro(2.5_m)`, `mebi(3_B)`, and so on are all available.
+
+Prefixing a zero literal is also fine: `kilo(0_g)` is `ZERO`, just like `0_g` itself.
 
 ??? info "Why this unusual syntax?"
     Grammatically, `kilo(1.234_g)` reads strangely, compared to `1.234_kg`.  We'd certainly much

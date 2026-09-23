@@ -58,6 +58,9 @@ struct Zero {
 // us write `ZERO` instead of `Zero{}`.
 AU_DEVICE_VAR constexpr auto ZERO = Zero{};
 
+// Negation of Zero is Zero.
+inline AU_DEVICE_FUNC constexpr Zero operator-(Zero) { return ZERO; }
+
 // Addition, subtraction, and comparison of Zero are well defined.
 inline AU_DEVICE_FUNC constexpr Zero operator+(Zero, Zero) { return ZERO; }
 inline AU_DEVICE_FUNC constexpr Zero operator-(Zero, Zero) { return ZERO; }

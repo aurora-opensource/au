@@ -98,6 +98,12 @@ TEST(PrefixApplier, PrefixedConstantEquivalentToConstantWithPrefixFoldedIntoScal
                 Eq(make_constant(Inches{} * mag<2'000>())));
 }
 
+TEST(PrefixApplier, LeavesZeroUnchanged) {
+    // A zero-valued unit literal, such as `0_g`, is simply `ZERO`.
+    EXPECT_THAT(kilo(ZERO), SameTypeAndValue(ZERO));
+    EXPECT_THAT(micro(ZERO), SameTypeAndValue(ZERO));
+}
+
 TEST(PrefixApplier, DeclinesTypesThatAreNotUnits) {
     EXPECT_THAT((stdx::experimental::is_detected<PrefixApplicationResult, Inches>{}), IsTrue());
     EXPECT_THAT((stdx::experimental::is_detected<PrefixApplicationResult, Magnitude<>>{}),

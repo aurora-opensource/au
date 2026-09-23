@@ -89,6 +89,10 @@ struct PrefixApplier {
             ComputeScaledUnit<Prefix<detail::UnscaledUnit<U>>, detail::UnitCoefficient<U>>>{};
     }
 
+    // Applying a Prefix to `Zero` (as we would get from, say, `0_g`) leaves it unchanged: any
+    // prefixed version of zero is still zero.
+    AU_DEVICE_FUNC constexpr Zero operator()(Zero) const { return {}; }
+
     // Applying a Prefix to a QuantityMaker instance, creates a maker for the Prefixed Unit.
     template <typename U>
     AU_DEVICE_FUNC constexpr auto operator()(QuantityMaker<U>) const {
