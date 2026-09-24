@@ -32,6 +32,15 @@
 // __device__ during the device compilation pass, the same variable is visible to both host and
 // device code.
 //
+// Defining `AU_INLINE_VARIABLES` (requires C++17) makes AU_DEVICE_VAR declare the library's
+// namespace-scoped `constexpr` variables as `inline`, giving them external linkage.  The C++
+// module interface (`au.cppm`) defines this before including the library, because an exported
+// using-declaration may not name an entity with internal linkage.
+//
+
+#if defined(AU_INLINE_VARIABLES) && !defined(__cpp_inline_variables)
+#error "AU_INLINE_VARIABLES requires C++17 or later (inline variables)"
+#endif
 
 #if defined(__CUDACC__) || defined(__HIPCC__)
 #define AU_DEVICE_FUNC __host__ __device__
@@ -41,6 +50,8 @@
 
 #if defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__)
 #define AU_DEVICE_VAR __device__
+#elif defined(AU_INLINE_VARIABLES)
+#define AU_DEVICE_VAR inline
 #else
 #define AU_DEVICE_VAR
 #endif

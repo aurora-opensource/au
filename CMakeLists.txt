@@ -72,6 +72,13 @@ cmake_dependent_option(
    OFF
 )
 
+# C++ module support requires CMake 3.28 for the (non-experimental) `CXX_MODULES` file set.
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.28)
+   option(AU_BUILD_MODULE "Build the `au` C++ module (requires C++20)" OFF)
+else()
+   set(AU_BUILD_MODULE OFF)
+endif()
+
 # The export set for all of our headers.
 set(AU_EXPORT_SET_NAME AuHeaders)
 
