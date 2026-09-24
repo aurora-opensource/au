@@ -1136,6 +1136,19 @@ TEST(RoundAs, ConstantRoundsHalfAwayFromZero) {
                 AllOf(Eq(meters(-3)), IsConstantWithUnitMatching(LabelIs("[-3 m]"))));
 }
 
+TEST(RoundAs, ConstantWithExplicitRepSupportsConstexpr) {
+    constexpr auto result = round_as<int>(meters, SEVEN_THIRDS_METERS);
+    EXPECT_THAT(result, SameTypeAndValue(meters(2)));
+}
+
+TEST(RoundAs, ConstantWithExplicitRepReturnsQuantityWithThatRep) {
+    EXPECT_THAT(round_as<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(meters(2)));
+    EXPECT_THAT(round_as<int>(meters, FIVE_HALVES_METERS), SameTypeAndValue(meters(3)));
+    EXPECT_THAT(round_as<int>(meters, -FIVE_HALVES_METERS), SameTypeAndValue(meters(-3)));
+    EXPECT_THAT(round_as<int64_t>(meters, SEVEN_THIRDS_METERS),
+                SameTypeAndValue(meters(int64_t{2})));
+}
+
 TEST(RoundIn, SameAsRoundAs) {
     EXPECT_THAT(round_in(kilo(meters), meters(754)), SameTypeAndValue(1.0));
     EXPECT_THAT(round_in(kilo(meters), meters(754.28)), SameTypeAndValue(1.0));
@@ -1275,6 +1288,19 @@ TEST(FloorAs, ConstantReturnsLargestIntegerNotGreaterThanInput) {
                 AllOf(Eq(meters(-3)), IsConstantWithUnitMatching(LabelIs("[-3 m]"))));
 }
 
+TEST(FloorAs, ConstantWithExplicitRepSupportsConstexpr) {
+    constexpr auto result = floor_as<int>(meters, SEVEN_THIRDS_METERS);
+    EXPECT_THAT(result, SameTypeAndValue(meters(2)));
+}
+
+TEST(FloorAs, ConstantWithExplicitRepReturnsQuantityWithThatRep) {
+    EXPECT_THAT(floor_as<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(meters(2)));
+    EXPECT_THAT(floor_as<int>(meters, FIVE_HALVES_METERS), SameTypeAndValue(meters(2)));
+    EXPECT_THAT(floor_as<int>(meters, -FIVE_HALVES_METERS), SameTypeAndValue(meters(-3)));
+    EXPECT_THAT(floor_as<int64_t>(meters, SEVEN_THIRDS_METERS),
+                SameTypeAndValue(meters(int64_t{2})));
+}
+
 TEST(FloorIn, SameAsFloorAs) {
     EXPECT_THAT(floor_in(kilo(meters), meters(1154)), SameTypeAndValue(1.0));
     EXPECT_THAT(floor_in(kilo(meters), meters(1154.28)), SameTypeAndValue(1.0));
@@ -1403,6 +1429,19 @@ TEST(CeilAs, ConstantReturnsSmallestIntegerNotLessThanInput) {
                 AllOf(Eq(meters(3)), IsConstantWithUnitMatching(LabelIs("[3 m]"))));
     EXPECT_THAT(ceil_as(meters, -FIVE_HALVES_METERS),
                 AllOf(Eq(meters(-2)), IsConstantWithUnitMatching(LabelIs("[-2 m]"))));
+}
+
+TEST(CeilAs, ConstantWithExplicitRepSupportsConstexpr) {
+    constexpr auto result = ceil_as<int>(meters, SEVEN_THIRDS_METERS);
+    EXPECT_THAT(result, SameTypeAndValue(meters(3)));
+}
+
+TEST(CeilAs, ConstantWithExplicitRepReturnsQuantityWithThatRep) {
+    EXPECT_THAT(ceil_as<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(meters(3)));
+    EXPECT_THAT(ceil_as<int>(meters, FIVE_HALVES_METERS), SameTypeAndValue(meters(3)));
+    EXPECT_THAT(ceil_as<int>(meters, -FIVE_HALVES_METERS), SameTypeAndValue(meters(-2)));
+    EXPECT_THAT(ceil_as<int64_t>(meters, SEVEN_THIRDS_METERS),
+                SameTypeAndValue(meters(int64_t{3})));
 }
 
 TEST(CeilIn, SameAsCeilAs) {
@@ -1689,6 +1728,19 @@ TEST(IntRoundAs, ConstantBehavesIdenticallyToRoundAs) {
                 AllOf(Eq(meters(-3)), IsConstantWithUnitMatching(LabelIs("[-3 m]"))));
 }
 
+TEST(IntRoundAs, ConstantWithExplicitRepSupportsConstexpr) {
+    constexpr auto result = int_round_as<int>(meters, SEVEN_THIRDS_METERS);
+    EXPECT_THAT(result, SameTypeAndValue(meters(2)));
+}
+
+TEST(IntRoundAs, ConstantWithExplicitRepReturnsQuantityWithThatRep) {
+    EXPECT_THAT(int_round_as<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(meters(2)));
+    EXPECT_THAT(int_round_as<int>(meters, FIVE_HALVES_METERS), SameTypeAndValue(meters(3)));
+    EXPECT_THAT(int_round_as<int>(meters, -FIVE_HALVES_METERS), SameTypeAndValue(meters(-3)));
+    EXPECT_THAT(int_round_as<int64_t>(meters, SEVEN_THIRDS_METERS),
+                SameTypeAndValue(meters(int64_t{2})));
+}
+
 TEST(IntFloorIn, SupportsConstexpr) {
     constexpr auto result = int_floor_in(meters, milli(meters)(1'999));
     EXPECT_THAT(result, SameTypeAndValue(1));
@@ -1890,6 +1942,19 @@ TEST(IntFloorAs, ConstantBehavesIdenticallyToFloorAs) {
                 AllOf(Eq(meters(-3)), IsConstantWithUnitMatching(LabelIs("[-3 m]"))));
 }
 
+TEST(IntFloorAs, ConstantWithExplicitRepSupportsConstexpr) {
+    constexpr auto result = int_floor_as<int>(meters, SEVEN_THIRDS_METERS);
+    EXPECT_THAT(result, SameTypeAndValue(meters(2)));
+}
+
+TEST(IntFloorAs, ConstantWithExplicitRepReturnsQuantityWithThatRep) {
+    EXPECT_THAT(int_floor_as<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(meters(2)));
+    EXPECT_THAT(int_floor_as<int>(meters, FIVE_HALVES_METERS), SameTypeAndValue(meters(2)));
+    EXPECT_THAT(int_floor_as<int>(meters, -FIVE_HALVES_METERS), SameTypeAndValue(meters(-3)));
+    EXPECT_THAT(int_floor_as<int64_t>(meters, SEVEN_THIRDS_METERS),
+                SameTypeAndValue(meters(int64_t{2})));
+}
+
 TEST(IntCeilIn, SupportsConstexpr) {
     constexpr auto result = int_ceil_in(meters, milli(meters)(1'001));
     EXPECT_THAT(result, SameTypeAndValue(2));
@@ -2088,6 +2153,19 @@ TEST(IntCeilAs, ConstantBehavesIdenticallyToCeilAs) {
                 AllOf(Eq(meters(3)), IsConstantWithUnitMatching(LabelIs("[3 m]"))));
     EXPECT_THAT(int_ceil_as(meters, -FIVE_HALVES_METERS),
                 AllOf(Eq(meters(-2)), IsConstantWithUnitMatching(LabelIs("[-2 m]"))));
+}
+
+TEST(IntCeilAs, ConstantWithExplicitRepSupportsConstexpr) {
+    constexpr auto result = int_ceil_as<int>(meters, SEVEN_THIRDS_METERS);
+    EXPECT_THAT(result, SameTypeAndValue(meters(3)));
+}
+
+TEST(IntCeilAs, ConstantWithExplicitRepReturnsQuantityWithThatRep) {
+    EXPECT_THAT(int_ceil_as<int>(meters, SEVEN_THIRDS_METERS), SameTypeAndValue(meters(3)));
+    EXPECT_THAT(int_ceil_as<int>(meters, FIVE_HALVES_METERS), SameTypeAndValue(meters(3)));
+    EXPECT_THAT(int_ceil_as<int>(meters, -FIVE_HALVES_METERS), SameTypeAndValue(meters(-2)));
+    EXPECT_THAT(int_ceil_as<int64_t>(meters, SEVEN_THIRDS_METERS),
+                SameTypeAndValue(meters(int64_t{3})));
 }
 
 }  // namespace au

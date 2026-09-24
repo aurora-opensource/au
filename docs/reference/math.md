@@ -502,8 +502,9 @@ auto round_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto round_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 
-// (No explicit-rep version for `Constant`: since the result is another `Constant`, no rep is
-// needed.)
+// c) For `Constant` inputs (returns a `Quantity`) †
+template <typename OutputRep, typename RoundingUnits, typename Unit>
+constexpr auto round_as(RoundingUnits rounding_units, Constant<Unit> c);
 
 
 //
@@ -546,6 +547,8 @@ limitations](./magnitude.md#compile-time-arithmetic-limitations)._
 
 - For functions ending in `_as`, this will be the same Au type category (i.e., `Quantity`,
   `QuantityPoint`, or `Constant`) as the input.
+    - The one exception is the explicit-rep version for `Constant` inputs, which returns a
+      `Quantity` with the requested rep, since a `Constant` has no rep of its own.
 - For functions ending in `_in`, this will be a raw number.
 
 For the "explicit rep" versions, the provided type will be the _rep_ of the return value for `_as`
@@ -609,8 +612,9 @@ auto ceil_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 
-// (No explicit-rep version for `Constant`: since the result is another `Constant`, no rep is
-// needed.)
+// c) For `Constant` inputs (returns a `Quantity`) †
+template <typename OutputRep, typename RoundingUnits, typename Unit>
+constexpr auto ceil_as(RoundingUnits rounding_units, Constant<Unit> c);
 
 
 //
@@ -654,6 +658,8 @@ large as the input.
 
 - For functions ending in `_as`, this will be the same Au type category (i.e., `Quantity`,
   `QuantityPoint`, or `Constant`) as the input.
+    - The one exception is the explicit-rep version for `Constant` inputs, which returns a
+      `Quantity` with the requested rep, since a `Constant` has no rep of its own.
 - For functions ending in `_in`, this will be a raw number.
 
 For the "explicit rep" versions, the provided type will be the _rep_ of the return value for `_as`
@@ -717,8 +723,9 @@ auto floor_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 auto floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> q);
 
-// (No explicit-rep version for `Constant`: since the result is another `Constant`, no rep is
-// needed.)
+// c) For `Constant` inputs (returns a `Quantity`) †
+template <typename OutputRep, typename RoundingUnits, typename Unit>
+constexpr auto floor_as(RoundingUnits rounding_units, Constant<Unit> c);
 
 
 //
@@ -762,6 +769,8 @@ the input.
 
 - For functions ending in `_as`, this will be the same Au type category (i.e., `Quantity`,
   `QuantityPoint`, or `Constant`) as the input.
+    - The one exception is the explicit-rep version for `Constant` inputs, which returns a
+      `Quantity` with the requested rep, since a `Constant` has no rep of its own.
 - For functions ending in `_in`, this will be a raw number.
 
 For the "explicit rep" versions, the provided type will be the _rep_ of the return value for `_as`
@@ -821,8 +830,9 @@ constexpr auto int_round_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_round_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 
-// (No explicit-rep version for `Constant`: since the result is another `Constant`, no rep is
-// needed.)
+// c) For `Constant` inputs (returns a `Quantity`) †
+template <typename OutputRep, typename RoundingUnits, typename Unit>
+constexpr auto int_round_as(RoundingUnits rounding_units, Constant<Unit> c);
 
 
 //
@@ -867,6 +877,8 @@ zero** (e.g., `0.5` rounds to `1`, and `-0.5` rounds to `-1`).
 
 - For functions ending in `_as`, this will be the same Au type category (i.e., `Quantity`,
   `QuantityPoint`, or `Constant`) as the input.
+    - The one exception is the explicit-rep version for `Constant` inputs, which returns a
+      `Quantity` with the requested rep, since a `Constant` has no rep of its own.
 - For functions ending in `_in`, this will be a raw number.
 
 For the "explicit rep" versions, the provided type will be the _rep_ of the return value for `_as`
@@ -919,7 +931,9 @@ constexpr auto int_floor_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_floor_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 
-// (No explicit-rep version for `Constant`: since the result is another `Constant`, no rep is needed.)
+// c) For `Constant` inputs (returns a `Quantity`) †
+template <typename OutputRep, typename RoundingUnits, typename Unit>
+constexpr auto int_floor_as(RoundingUnits rounding_units, Constant<Unit> c);
 
 
 //
@@ -963,6 +977,8 @@ the input.
 
 - For functions ending in `_as`, this will be the same Au type category (i.e., `Quantity`,
   `QuantityPoint`, or `Constant`) as the input.
+    - The one exception is the explicit-rep version for `Constant` inputs, which returns a
+      `Quantity` with the requested rep, since a `Constant` has no rep of its own.
 - For functions ending in `_in`, this will be a raw number.
 
 For the "explicit rep" versions, the provided type will be the _rep_ of the return value for `_as`
@@ -1015,8 +1031,9 @@ constexpr auto int_ceil_as(RoundingUnits rounding_units, Quantity<U, R> q);
 template <typename OutputRep, typename RoundingUnits, typename U, typename R>
 constexpr auto int_ceil_as(RoundingUnits rounding_units, QuantityPoint<U, R> p);
 
-// (No explicit-rep version for `Constant`: since the result is another `Constant`, no rep is
-// needed.)
+// c) For `Constant` inputs (returns a `Quantity`) †
+template <typename OutputRep, typename RoundingUnits, typename Unit>
+constexpr auto int_ceil_as(RoundingUnits rounding_units, Constant<Unit> c);
 
 
 //
@@ -1060,6 +1077,8 @@ large as the input.
 
 - For functions ending in `_as`, this will be the same Au type category (i.e., `Quantity`,
   `QuantityPoint`, or `Constant`) as the input.
+    - The one exception is the explicit-rep version for `Constant` inputs, which returns a
+      `Quantity` with the requested rep, since a `Constant` has no rep of its own.
 - For functions ending in `_in`, this will be a raw number.
 
 For the "explicit rep" versions, the provided type will be the _rep_ of the return value for `_as`
