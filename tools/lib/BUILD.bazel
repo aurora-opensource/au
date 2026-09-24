@@ -27,3 +27,17 @@ py_test(
     srcs = ["compile_time_data_test.py"],
     deps = [":compile_time_data"],
 )
+
+py_library(
+    name = "csv_stream",
+    srcs = ["csv_stream.py"],
+    imports = ["."],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "csv_stream_test",
+    size = "small",
+    srcs = ["csv_stream_test.py"],
+    deps = [":csv_stream"],
+)

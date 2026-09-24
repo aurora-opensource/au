@@ -12,6 +12,7 @@
       "tools/bin/check-cmake-headers",
       "tools/bin/clang-format",
       "tools/bin/make-single-file",
+      "tools/bin/measure-compile-time",
       "tools/bin/mkdocs",
       "tools/bin/split-error-examples",
       "**/.bazelrc",
