@@ -49,6 +49,7 @@ header_only_library(
     view.hh
     wrapper_operations.hh
     zero.hh
+    compatibility/eigen.hh
     constants/avogadro_constant.hh
     constants/boltzmann_constant.hh
     constants/cesium_hyperfine_transition_frequency.hh

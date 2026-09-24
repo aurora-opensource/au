@@ -49,29 +49,37 @@ def _get_cmake_headers():
         check=True,
     )
 
-    # De-duplicate headers and remove common prefix.
-    return _as_set_relative_to_common_prefix(
-        [
-            path
-            for line in raw_output.stdout.decode().splitlines()
-            for path in _get_cmake_headers_from_line(line)
-        ]
+    # De-duplicate headers and make paths relative to the repo root.
+    return set(
+        os.path.relpath(path)
+        for line in raw_output.stdout.decode().splitlines()
+        for path in _get_cmake_headers_from_line(line)
     )
 
 
 def _get_bazel_headers():
-    deps_str = ' union '.join(f'deps(//au{target})' for target in ['', ':io', ':std_format'])
+    # Every header in the repo reachable from any public library, in any package under `//au`.
+    public_libs = 'attr(visibility, "//visibility:public", kind(cc_library, //au/...))'
     raw_output = subprocess.run(
         [
             "bazel",
             "query",
-            f"kind(source, filter(//au, {deps_str}))",
+            f"kind('source file', deps({public_libs})) intersect //au/...:*",
         ],
         stdout=subprocess.PIPE,
         check=True,
     )
-    paths = raw_output.stdout.decode().splitlines()
-    return _as_set_relative_to_common_prefix(paths)
+    return set(
+        _bazel_label_to_path(label)
+        for label in raw_output.stdout.decode().splitlines()
+        if label.endswith(".hh")
+    )
+
+
+def _bazel_label_to_path(label):
+    """Turn a label such as `//au/compatibility:eigen.hh` into `au/compatibility/eigen.hh`."""
+    package, name = label.removeprefix("//").split(":")
+    return f"{package}/{name}"
 
 
 def _check_equality_and_print_any_differences(cmake_headers, bazel_headers):
@@ -85,12 +93,6 @@ def _check_equality_and_print_any_differences(cmake_headers, bazel_headers):
     _print_any_only_in_first(first=bazel, second=cmake)
 
     return result
-
-
-def _as_set_relative_to_common_prefix(paths):
-    """Turn the input into a set, and remove the common prefix."""
-    p = os.path.commonprefix(paths)
-    return set([path.removeprefix(p) for path in paths])
 
 
 def _get_cmake_headers_from_line(line):
