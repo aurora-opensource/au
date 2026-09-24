@@ -138,8 +138,13 @@ install(
    DESTINATION ${AU_CMAKE_DIR}
 )
 
-# Enable listing all headers in au, so that we can test that CMake has identical headers to bazel.
-get_target_property(AU_ALL_HEADERS au HEADER_SET)
+# Enable listing all public headers, so that we can test that CMake has identical headers to bazel.
+get_property(AU_PUBLIC_TARGETS GLOBAL PROPERTY AU_PUBLIC_TARGETS)
+set(AU_ALL_HEADERS "")
+foreach(target IN LISTS AU_PUBLIC_TARGETS)
+   get_target_property(target_headers ${target} HEADER_SET)
+   list(APPEND AU_ALL_HEADERS ${target_headers})
+endforeach()
 add_custom_target(
    print_au_files
    COMMAND
