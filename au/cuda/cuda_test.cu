@@ -398,26 +398,138 @@ __device__ double test_make_constant() {
 // =============================================================================
 // SECTION 7: au/math.hh - Math functions
 // =============================================================================
-// NOTE: Most math.hh functions call <cmath> functions (sin, cos, sqrt, etc.)
-// which are NOT constexpr and require special handling for CUDA device code.
-// These functions would need to call CUDA's device math intrinsics instead.
-// For now, we test only the functions that don't depend on <cmath>.
+// NOTE: The `<cmath>` functions that `math.hh` wraps (sin, sqrt, round, ...) DO
+// have `__device__` overloads under both nvcc and clang-CUDA for `float` and
+// `double`, so these wrappers work on device once they carry AU_DEVICE_FUNC.
+//
+// Known exceptions, deliberately not tested here:
+// - `lerp`: `std::lerp` is C++20 and has no `__device__` overload.
+// - `long double` Reps: no device support (nvcc silently demotes to `double`).
+// - `abs` on integral Reps: relies on the integral `std::abs` overloads, which
+//   are host-only in some standard libraries; use floating-point Reps on device.
 
 __device__ double test_math_int_pow() {
     auto q = meters(2.0);
     return int_pow<3>(q).in(meters * meters * meters);
 }
 
-// TODO: Add tests for these functions once math.hh has CUDA-compatible implementations:
-// - abs, sqrt, cbrt (call std::abs, std::sqrt, std::cbrt)
-// - sin, cos, tan (call std::sin, std::cos, std::tan)
-// - arcsin, arccos, arctan, arctan2 (call std::asin, std::acos, std::atan, std::atan2)
-// - hypot (calls std::hypot)
-// - fmod, remainder (call std::fmod, std::remainder)
-// - copysign (calls std::copysign)
-// - round_in/as, floor_in/as, ceil_in/as (call std::round, std::floor, std::ceil)
-// - isnan, isinf (call std::isnan, std::isinf)
-// - mean (uses division which works, but need to test)
+__device__ double test_math_abs() { return abs(meters(-5.0)).in(meters); }
+
+__device__ double test_math_sqrt() {
+    auto area = meters(4.0) * meters(4.0);
+    return sqrt(area).in(meters);
+}
+
+__device__ double test_math_cbrt() {
+    auto volume = meters(2.0) * meters(2.0) * meters(2.0);
+    return cbrt(volume).in(meters);
+}
+
+__device__ double test_math_sin_cos_tan() {
+    auto angle = radians(0.5);
+    return sin(angle) + cos(angle) + tan(angle);
+}
+
+__device__ double test_math_arcsin_arccos_arctan() {
+    return (arcsin(0.5) + arccos(0.5) + arctan(0.5)).in(radians);
+}
+
+__device__ double test_math_arctan2_raw() { return arctan2(1.0, 2.0).in(radians); }
+
+__device__ double test_math_arctan2_quantities() {
+    return arctan2(meters(1.0), centi(meters)(200.0)).in(radians);
+}
+
+__device__ double test_math_hypot() { return hypot(meters(3.0), meters(4.0)).in(meters); }
+
+__device__ double test_math_fmod() { return fmod(meters(5.0), meters(2.0)).in(meters); }
+
+__device__ double test_math_remainder() { return remainder(meters(5.0), meters(2.0)).in(meters); }
+
+__device__ double test_math_copysign_units_on_magnitude() {
+    return copysign(meters(5.0), -1.0).in(meters);
+}
+
+__device__ double test_math_copysign_units_on_sign() { return copysign(5.0, meters(-1.0)); }
+
+__device__ double test_math_copysign_units_on_both() {
+    return copysign(meters(5.0), seconds(-1.0)).in(meters);
+}
+
+__device__ double test_math_round_in() { return round_in(meters, meters(5.5)); }
+
+__device__ double test_math_round_in_explicit_rep() { return round_in<int>(meters, meters(5.5)); }
+
+__device__ double test_math_round_as() { return round_as(meters, meters(5.5)).in(meters); }
+
+__device__ double test_math_round_as_explicit_rep() {
+    return round_as<int>(meters, meters(5.5)).in(meters);
+}
+
+__device__ double test_math_round_point() {
+    return round_as(meters_pt, meters_pt(5.5)).in(meters_pt);
+}
+
+__device__ double test_math_floor_in() { return floor_in(meters, meters(5.5)); }
+
+__device__ double test_math_floor_as() { return floor_as(meters, meters(5.5)).in(meters); }
+
+__device__ double test_math_floor_as_explicit_rep() {
+    return floor_as<int>(meters, meters(5.5)).in(meters);
+}
+
+__device__ double test_math_ceil_in() { return ceil_in(meters, meters(5.5)); }
+
+__device__ double test_math_ceil_as() { return ceil_as(meters, meters(5.5)).in(meters); }
+
+__device__ double test_math_ceil_as_explicit_rep() {
+    return ceil_as<int>(meters, meters(5.5)).in(meters);
+}
+
+__device__ int test_math_int_round_as() {
+    return int_round_as(meters, milli(meters)(5'500)).in(meters);
+}
+
+__device__ int test_math_int_floor_as() {
+    return int_floor_as<int>(meters, milli(meters)(5'500)).in(meters);
+}
+
+__device__ int test_math_int_ceil_as() {
+    return int_ceil_as<int>(meters, milli(meters)(5'500)).in(meters);
+}
+
+__device__ bool test_math_isnan() {
+    return isnan(meters(0.0 / 0.0)) || isnan(meters_pt(0.0 / 0.0));
+}
+
+__device__ bool test_math_isinf() {
+    return isinf(meters(1.0 / 0.0)) || isinf(meters_pt(1.0 / 0.0));
+}
+
+__device__ double test_math_mean() {
+    return mean(meters(1.0), meters(2.0), meters(3.0)).in(meters);
+}
+
+__device__ double test_math_mean_point() {
+    return mean(meters_pt(1.0), meters_pt(3.0)).in(meters_pt);
+}
+
+__device__ double test_math_inverse_as() { return inverse_as(seconds, hertz(4.0)).in(seconds); }
+
+__device__ double test_math_inverse_in_explicit_rep() {
+    return inverse_in<double>(seconds, hertz(4.0));
+}
+
+// Rounding a `Constant` in the explicit-Rep form.  (Note that the rep-less form
+// returns a `Constant`, whose unit arithmetic lives in `magnitude.hh` /
+// `unit_of_measure.hh` and is not yet device-decorated: see SECTIONS 4 and 5.)
+__device__ double test_math_floor_as_constant_explicit_rep() {
+    return floor_as<double>(meters / second, SPEED_OF_LIGHT).in(meters / second);
+}
+
+__device__ double test_math_ceil_as_constant_explicit_rep() {
+    return ceil_as<double>(meters / second, SPEED_OF_LIGHT).in(meters / second);
+}
 
 // =============================================================================
 // SECTION 8: au/operators.hh - Comparison operator functors
