@@ -48,7 +48,6 @@ py_test(
 py_binary(
     name = "plot_compile_time",
     srcs = ["plot_compile_time.py"],
-    visibility = ["//visibility:public"],
     deps = [
         ":compile_time_data",
         requirement("matplotlib"),

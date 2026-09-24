@@ -279,12 +279,7 @@ def _clean_up_after_this_run():
 
 
 def _plot_the_results(run):
-    """Draw the plots for a finished run, if we can.
-
-    The CSV carries every number without them, so a failure here costs nothing that was measured;
-    but these are the only plots there are, so it is worth a warning.  Drawn after the worktrees are
-    gone, since the plots need the main workspace's output base and nothing else.
-    """
+    """Draw the plots for a finished run, if we can."""
     plot_dir = run.out_dir / "plots"
 
     # Clear the directory first.  Whatever PNGs are in here are taken to be this run's, so a plot
@@ -293,6 +288,7 @@ def _plot_the_results(run):
         stale.unlink()
 
     if not _render_plots_under_bazel(run.csv_path, plot_dir):
+        # No data loss (data points are all in the CSV), but still worth warning if we fail.
         print(
             "warning: plot generation failed; the measurements are unaffected.",
             file=sys.stderr,
