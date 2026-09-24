@@ -61,6 +61,9 @@ function(header_only_library)
     set_target_properties(${ARG_NAME} PROPERTIES EXPORT_NAME "_Au_private_${ARG_NAME}")
   else()
     add_library(Au::${ARG_NAME} ALIAS ${ARG_NAME})
+
+    # Track every public target, so we can list all public headers (see `print_au_files`).
+    set_property(GLOBAL APPEND PROPERTY AU_PUBLIC_TARGETS ${ARG_NAME})
   endif()
 
   # Install the library.  (This is required for other projects to use Au via CMake.)
