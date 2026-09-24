@@ -135,6 +135,15 @@ TEST(QuantityPoint, PolicyConstructorDoesNotCreateAmbiguities) {
     overload_that_takes_a_quantity_point_or_a_combo({meters_pt(1.0), centi(meters_pt)(1.0)});
 }
 
+// See: https://github.com/aurora-opensource/au/issues/762
+int overload_across_dimensions(QuantityPointD<Meters>) { return 1; }
+int overload_across_dimensions(QuantityPointD<Celsius>) { return 2; }
+
+TEST(QuantityPoint, CanFormOverloadSetAcrossDimensionsWithCustomOrigin) {
+    EXPECT_THAT(overload_across_dimensions(meters_pt(1.0)), Eq(1));
+    EXPECT_THAT(overload_across_dimensions(celsius_pt(1.0)), Eq(2));
+}
+
 TEST(QuantityPoint, CanCreateAndRetrieveValue) {
     constexpr auto p = celsius_pt(3);
     EXPECT_THAT(p.in(Celsius{}), SameTypeAndValue(3));
