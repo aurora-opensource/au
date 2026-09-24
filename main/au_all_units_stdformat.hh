@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-13-gff7e82bb
+// Version identifier: 0.6.0-base-14-g6f1efbf9
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -13039,10 +13039,18 @@ class QuantityPoint {
     //      BAD: QuantityPoint<Celsius, int> -> QuantityPoint<Kelvins, int>
     //      OK : QuantityPoint<Celsius, int> -> QuantityPoint<Kelvins, double>
     //      OK : QuantityPoint<Celsius, int> -> QuantityPoint<Milli<Kelvins>, int>
-    template <typename OtherUnit, typename OtherRep>
+    template <typename OtherUnit,
+              typename OtherRep,
+              std::enable_if_t<HasSameDimension<UnitT, OtherUnit>::value, int> = 0>
     static constexpr bool should_enable_implicit_construction_from() {
-        using Com = CommonUnit<OtherUnit, detail::ComputeOriginDisplacementUnit<Unit, OtherUnit>>;
+        using Com = CommonUnit<OtherUnit, detail::ComputeOriginDisplacementUnit<UnitT, OtherUnit>>;
         return std::is_convertible<Quantity<Com, OtherRep>, QuantityPoint::Diff>::value;
+    }
+    template <typename OtherUnit,
+              typename OtherRep,
+              std::enable_if_t<!HasSameDimension<UnitT, OtherUnit>::value, int> = 0>
+    static constexpr bool should_enable_implicit_construction_from() {
+        return false;
     }
 
     // This machinery exists to give us a conditionally explicit constructor, using SFINAE to select
