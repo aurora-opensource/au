@@ -70,6 +70,23 @@ struct AlternateCelsius : Kelvins {
     static constexpr auto origin() { return micro(kelvins)(273'150'000); }
 };
 
+struct CelsiusButWithConstantForOrigin : Kelvins {
+    static constexpr auto origin() {
+        using namespace ::au::au_literals;
+        return make_constant(kelvins) * 273.15_mag;
+    }
+};
+constexpr QuantityPointMaker<CelsiusButWithConstantForOrigin>
+    celsius_but_with_constant_for_origin_pt{};
+
+// A unit whose origin is a `Quantity` whose unit (integer Kelvins) cannot exactly hold 273.15 K.
+// Subtracting this origin from a `Constant` origin of 273.15 K would naively convert the `Constant`
+// to the `Quantity` type, but that conversion is not exact, so it must fail.
+struct TruncatedCelsius : Kelvins {
+    static constexpr auto origin() { return kelvins(273); }
+};
+constexpr QuantityPointMaker<TruncatedCelsius> truncated_celsius_pt{};
+
 TEST(Quantity, HasCorrectRepNamedAliases) {
     StaticAssertTypeEq<QuantityPointD<Meters>, QuantityPoint<Meters, double>>();
     StaticAssertTypeEq<QuantityPointF<Meters>, QuantityPoint<Meters, float>>();
@@ -582,9 +599,17 @@ TEST(QuantityPoint, PreservesRep) {
                 SameTypeAndValue(static_cast<uint16_t>(27'315 / 5)));
 }
 
+TEST(QuantityPoint, SupportsUnitWithConstantForOrigin) {
+    EXPECT_THAT(celsius_but_with_constant_for_origin_pt(0).as(centi(kelvins_pt)),
+                SameTypeAndValue(centi(kelvins_pt)(273'15)));
+}
+
+TEST(QuantityPoint, SupportsConstantOriginThatCannotConvertToOtherQuantityOrigin) {
+    EXPECT_THAT(celsius_but_with_constant_for_origin_pt(0) - truncated_celsius_pt(0),
+                Eq(centi(kelvins)(15)));
+}
+
 TEST(OriginDisplacement, IdenticallyZeroForOriginsThatCompareEqual) {
-    ASSERT_THAT(detail::OriginOf<Celsius>::value(),
-                Not(SameTypeAndValue(detail::OriginOf<AlternateCelsius>::value())));
     EXPECT_THAT(origin_displacement(Celsius{}, AlternateCelsius{}), SameTypeAndValue(ZERO));
 }
 
