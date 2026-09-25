@@ -130,6 +130,8 @@ def main():
         _perform_and_record_all_measurements(run)
     finally:
         _clean_up_after_this_run()
+
+    _plot_the_results(run)
     return 0
 
 
@@ -274,6 +276,25 @@ def _clean_up_after_this_run():
     """
     print()
     _remove_worktrees_and_output_bases(quiet_if_empty=True)
+
+
+def _plot_the_results(run):
+    """Draw the plots for a finished run, if we can."""
+    plot_dir = run.out_dir / "plots"
+
+    # Clear the directory first.  Whatever PNGs are in here are taken to be this run's, so a plot
+    # that gets renamed or dropped would otherwise linger and be read as current.
+    for stale in plot_dir.glob("*.png"):
+        stale.unlink()
+
+    if not _render_plots_under_bazel(run.csv_path, plot_dir):
+        # No data loss (data points are all in the CSV), but still worth warning if we fail.
+        print(
+            "warning: plot generation failed; the measurements are unaffected.",
+            file=sys.stderr,
+        )
+        return
+    print("Plots written to:\n  {}".format(plot_dir))
 
 
 ####################################################################################################
@@ -546,6 +567,27 @@ def _time_every_translation_unit_on_every_branch(prepared, run):
 def _timestamp():
     """When something happened, to the second.  Anything finer would be false precision."""
     return datetime.datetime.now().isoformat(timespec="seconds")
+
+
+def _render_plots_under_bazel(csv_path, plot_dir):
+    """Run the plotting binary, and say whether it worked.
+
+    The plots live under bazel because matplotlib is a pinned dependency there, and this script
+    deliberately runs on nothing but the standard library.
+    """
+    result = _run(
+        [
+            "bazel",
+            "run",
+            "//tools/lib:plot_compile_time",
+            "--",
+            "--csv={}".format(csv_path.resolve()),
+            "--out-dir={}".format(plot_dir.resolve()),
+        ],
+        check=False,
+        quiet=True,
+    )
+    return result.returncode == 0
 
 
 ####################################################################################################
