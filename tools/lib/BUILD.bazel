@@ -30,6 +30,14 @@ py_test(
 )
 
 py_library(
+    name = "compile_time_report",
+    srcs = ["compile_time_report.py"],
+    imports = ["."],
+    visibility = ["//visibility:public"],
+    deps = [":compile_time_data"],
+)
+
+py_library(
     name = "csv_stream",
     srcs = ["csv_stream.py"],
     imports = ["."],
