@@ -87,6 +87,18 @@ struct TruncatedCelsius : Kelvins {
 };
 constexpr QuantityPointMaker<TruncatedCelsius> truncated_celsius_pt{};
 
+// A unit whose explicit `origin()` member is a `Quantity` of value 0.  This should be fully
+// compatible with `Kelvins`, whose origin is implicitly `ZERO`.
+struct KelvinsWithExplicitZeroOrigin : Kelvins {
+    static constexpr auto origin() { return kelvins(0); }
+};
+constexpr QuantityPointMaker<KelvinsWithExplicitZeroOrigin> kelvins_with_explicit_zero_origin_pt{};
+
+// This unit is identical to `Kelvins` in every way that the library uses to order units (dimension,
+// magnitude, and origin), so we need a tiebreaker to avoid "distinct input types compare equal".
+template <>
+struct UnitOrderTiebreaker<KelvinsWithExplicitZeroOrigin> : std::integral_constant<int, 1> {};
+
 TEST(Quantity, HasCorrectRepNamedAliases) {
     StaticAssertTypeEq<QuantityPointD<Meters>, QuantityPoint<Meters, double>>();
     StaticAssertTypeEq<QuantityPointF<Meters>, QuantityPoint<Meters, float>>();
@@ -611,6 +623,22 @@ TEST(QuantityPoint, SupportsConstantOriginThatCannotConvertToOtherQuantityOrigin
 
 TEST(OriginDisplacement, IdenticallyZeroForOriginsThatCompareEqual) {
     EXPECT_THAT(origin_displacement(Celsius{}, AlternateCelsius{}), SameTypeAndValue(ZERO));
+}
+
+TEST(OriginDisplacement, IdenticallyZeroForExplicitZeroQuantityOriginAndImplicitOrigin) {
+    EXPECT_THAT(origin_displacement(Kelvins{}, KelvinsWithExplicitZeroOrigin{}),
+                SameTypeAndValue(ZERO));
+    EXPECT_THAT(origin_displacement(KelvinsWithExplicitZeroOrigin{}, Kelvins{}),
+                SameTypeAndValue(ZERO));
+}
+
+TEST(QuantityPoint, ExplicitZeroQuantityOriginInteroperatesWithImplicitOrigin) {
+    EXPECT_THAT(kelvins_with_explicit_zero_origin_pt(5).as(kelvins_pt),
+                SameTypeAndValue(kelvins_pt(5)));
+    EXPECT_THAT(kelvins_pt(5).as(kelvins_with_explicit_zero_origin_pt),
+                SameTypeAndValue(kelvins_with_explicit_zero_origin_pt(5)));
+    EXPECT_THAT(kelvins_with_explicit_zero_origin_pt(5) - kelvins_pt(3), Eq(kelvins(2)));
+    EXPECT_THAT(kelvins_with_explicit_zero_origin_pt(5), Eq(kelvins_pt(5)));
 }
 
 TEST(OriginDisplacement, GivesDisplacementFromFirstToSecond) {
