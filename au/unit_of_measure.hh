@@ -541,85 +541,26 @@ struct IsUnitRatioRepresentableIn;
 // Origin displacement implementation.
 
 namespace detail {
-// Callable type trait for the default origin of a unit: choose ZERO.
-struct ZeroValue {
-    static constexpr Zero value() { return Zero{}; }
-};
+
+// `MakeShapeshifterFromOriginMemberImpl<OriginT, U>` converts the origin of unit `U` into a
+// "shapeshifter" type (that is, `Zero` or a `Constant`), so that origins can be compared and
+// subtracted exactly, at compile time.  `OriginT` must be `OriginType<U>`.  Each Au type which is
+// valid for an origin member should specialize this template, and provide a member alias `type`
+// for the resulting shapeshifter type.  (We can't do that here, because `:unit_of_measure` is lower
+// in the dependency hierarchy than `:constant`.)
+template <typename OriginT, typename U>
+struct MakeShapeshifterFromOriginMemberImpl;
 
 template <typename U>
 using OriginMemberType = decltype(U::origin());
 
-// If any unit U has an explicit origin member, then treat that as its origin.
 template <typename U>
-struct OriginMember {
-    static constexpr const OriginMemberType<U> value() { return U::origin(); }
-};
+using OriginType = stdx::experimental::detected_or_t<Zero, OriginMemberType, U>;
 
 template <typename U>
-struct OriginOf : std::conditional_t<stdx::experimental::is_detected<OriginMemberType, U>::value,
-                                     OriginMember<U>,
-                                     ZeroValue> {};
-
-template <typename T, typename U>
-struct ValueDifference {
-    static constexpr auto value() { return T::value() - U::value(); }
-};
-}  // namespace detail
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// `ValueDisplacementMagnitude` utility.
-namespace detail {
-
-// `ValueDisplacementMagnitude<T1, T2>` is a type that can be instantiated, and is either a
-// `Magnitude` type or else `Zero`.  It represents the magnitude of the unit that takes us from
-// `T1::value()` to `T2::value()` (and is `Zero` if and only if these values are equal).
-//
-// This is fully encapsulated inside of the `detail` namespace because we don't want end users
-// reasoning in terms of "the magnitude" of a unit.  This concept makes no sense generally.
-// However, it's useful to us internally, because it helps us compute the largest possible magnitude
-// of a common point unit.  Being fully encapsulated, we ourselves can be careful not to misuse it.
-enum class AreValuesEqual { YES, NO };
-template <typename U1, typename U2, AreValuesEqual>
-struct ValueDisplacementMagnitudeImpl;
-template <typename U1, typename U2>
-using ValueDisplacementMagnitude = typename ValueDisplacementMagnitudeImpl<
-    U1,
-    U2,
-    (U1::value() == U2::value() ? AreValuesEqual::YES : AreValuesEqual::NO)>::type;
-
-// Equal values case.
-template <typename U1, typename U2>
-struct ValueDisplacementMagnitudeImpl<U1, U2, AreValuesEqual::YES> : stdx::type_identity<Zero> {
-    static_assert(U1::value() == U2::value(), "Mismatched instantiation (internal library error)");
-};
-
-// Prep for handling unequal values: it's useful to be able to turn a signed integer into a
-// Magnitude.
-//
-// The `bool` template parameter in the `MagSign` interface has poor callsite readability, but it
-// doesn't matter because we're only using it right here.
-template <bool IsNeg>
-struct MagSign : stdx::type_identity<Magnitude<>> {};
-template <>
-struct MagSign<true> : stdx::type_identity<Magnitude<Negative>> {};
-template <std::intmax_t N>
-constexpr auto signed_mag() {
-    constexpr auto sign = typename MagSign<(N < 0)>::type{};
-    return sign * mag<static_cast<std::size_t>(N < 0 ? (-N) : N)>();
-}
-
-// Unequal values case implementation: scale up the magnitude of the diff's _unit_ by the diff's
-// _value in_ that unit.
-template <typename U1, typename U2>
-struct ValueDisplacementMagnitudeImpl<U1, U2, AreValuesEqual::NO> {
-    static_assert(U1::value() != U2::value(), "Mismatched instantiation (internal library error)");
-    static constexpr auto mag() {
-        constexpr auto diff = U2::value() - U1::value();
-        using D = typename decltype(diff)::Unit;
-        return MagT<D>{} * signed_mag<diff.in(D{})>();
-    }
-    using type = decltype(mag());
-};
+struct OriginOfImpl : MakeShapeshifterFromOriginMemberImpl<OriginType<U>, U> {};
+template <typename U>
+using OriginOf = typename OriginOfImpl<U>::type;
 
 }  // namespace detail
 
@@ -653,7 +594,7 @@ struct AreUnitsQuantityEquivalent
 
 namespace detail {
 template <typename U1, typename U2>
-struct HasSameOrigin : stdx::bool_constant<(OriginOf<U1>::value() == OriginOf<U2>::value())> {};
+struct HasSameOrigin : stdx::bool_constant<(OriginOf<U1>{} == OriginOf<U2>{})> {};
 }  // namespace detail
 
 template <typename U1, typename U2>
@@ -931,49 +872,35 @@ struct ComputeCommonUnit
 
 namespace detail {
 
-// For equal origins expressed in different units, we can compare the values in their native units
-// as a way to decide which unit has the biggest Magnitude.  Bigger Magnitude, smaller value.  (We
-// could have tried to assess the Magnitude directly, but this method works better with Zero, and we
-// will often encounter Zero when dealing with origins.)
-//
-// This will be used as a tiebreaker for different origin types.  (For example, the origin of
-// Celsius may be represented as Centikelvins or Millikelvins, and we want Centikelvins to "win"
-// because it will result in smaller multiplications.)
-template <typename T>
-constexpr auto get_value_in_native_unit(const T &t) {
-    return t.in(T::unit);
-}
-
-// If the input is "0", then its value _in any unit_ is 0.
-constexpr auto get_value_in_native_unit(const Zero &) { return 0; }
-
 // The common origin of a collection of units is the smallest origin.
 //
 // We try to keep the result symmetric under reordering of the inputs.
 template <typename... Us>
-struct CommonOrigin;
+struct CommonOriginImpl;
+template <typename... Us>
+using CommonOrigin = typename CommonOriginImpl<Us...>::type;
 
 template <typename U>
-struct CommonOrigin<U> : OriginOf<U> {};
+struct CommonOriginImpl<U> : stdx::type_identity<OriginOf<U>> {};
 
 template <typename Head, typename... Tail>
-struct CommonOrigin<Head, Tail...> :
+struct CommonOriginImpl<Head, Tail...> :
     // If the new value is strictly less than the common-so-far, then it wins, so choose it.
-    std::conditional_t<
-        (OriginOf<Head>::value() < CommonOrigin<Tail...>::value()),
+    std::conditional<
+        (OriginOf<Head>{} < CommonOrigin<Tail...>{}),
         OriginOf<Head>,
 
         // If the new value is strictly greater than the common-so-far, it's worse, so skip it.
         std::conditional_t<
-            (OriginOf<Head>::value() > CommonOrigin<Tail...>::value()),
+            (OriginOf<Head>{} > CommonOrigin<Tail...>{}),
             CommonOrigin<Tail...>,
 
-            // If we're here, the origins represent the same _quantity_, but may be expressed in
-            // different _units_.  We'd like the biggest unit, since it leads to the smallest
-            // multiplications.  For equal quantities, "biggest unit" is equivalent to "smallest
-            // value", so we compare the values.
-            std::conditional_t<(get_value_in_native_unit(OriginOf<Head>::value()) <
-                                get_value_in_native_unit(CommonOrigin<Tail...>::value())),
+            // If we're here, the origins are _quantity equivalent_.  We want to pick a standardized
+            // choice, but it doesn't matter much _which_ one we pick, since they are shapeshifter
+            // types, and will thus behave identically.  So we pick an arbitrary tiebreaker.
+            std::conditional_t<(InOrderFor<UnitProductPack,
+                                           AssociatedUnit<OriginOf<Head>>,
+                                           AssociatedUnit<CommonOrigin<Tail...>>>::value),
                                OriginOf<Head>,
                                CommonOrigin<Tail...>>>> {};
 
@@ -986,17 +913,14 @@ template <typename U>
 struct UnitOfLowestOriginImpl<U> : stdx::type_identity<U> {};
 template <typename U, typename U1, typename... Us>
 struct UnitOfLowestOriginImpl<U, U1, Us...>
-    : std::conditional<(OriginOf<U>::value() == CommonOrigin<U, U1, Us...>::value()),
+    : std::conditional<(OriginOf<U>{} == CommonOrigin<U, U1, Us...>{}),
                        U,
                        UnitOfLowestOrigin<U1, Us...>> {};
 
 template <typename U1, typename U2>
-struct OriginDisplacementUnit {
-    static_assert(OriginOf<U1>::value() != OriginOf<U2>::value(),
+struct OriginDisplacementUnit : decltype(associated_unit(OriginOf<U2>{} - OriginOf<U1>{})) {
+    static_assert(OriginOf<U1>{} != OriginOf<U2>{},
                   "OriginDisplacementUnit must be an actual unit, so it must be nonzero.");
-
-    using Dim = CommonDimension<DimT<U1>, DimT<U2>>;
-    using Mag = ValueDisplacementMagnitude<OriginOf<U1>, OriginOf<U2>>;
 };
 
 // `ComputeOriginDisplacementUnit<U1, U2>` produces an ad hoc unit equal to the displacement from
@@ -1004,9 +928,7 @@ struct OriginDisplacementUnit {
 // `Zero`.  Otherwise, it will be `OriginDisplacementUnit<U1, U2>`.
 template <typename U1, typename U2>
 using ComputeOriginDisplacementUnit =
-    std::conditional_t<(OriginOf<U1>::value() == OriginOf<U2>::value()),
-                       Zero,
-                       OriginDisplacementUnit<U1, U2>>;
+    std::conditional_t<(OriginOf<U1>{} == OriginOf<U2>{}), Zero, OriginDisplacementUnit<U1, U2>>;
 
 template <typename U1, typename U2>
 constexpr auto origin_displacement_unit(U1, U2) {
@@ -1042,7 +964,7 @@ struct CommonPointUnitPack : CommonAmongUnitsAndOriginDisplacements<Us...> {
     static_assert(HasSameDimension<Us...>::value,
                   "Common unit only meaningful if units have same dimension");
 
-    static constexpr auto origin() { return detail::CommonOrigin<Us...>::value(); }
+    static constexpr auto origin() { return detail::CommonOrigin<Us...>{}; }
 };
 
 namespace detail {
@@ -1380,8 +1302,7 @@ struct OrderAsOriginDisplacementUnit<OriginDisplacementUnit<A1, A2>, OriginDispl
                                  OrderBySecondInOriginDisplacementUnit> {};
 
 template <typename A, typename B>
-struct OrderByOrigin
-    : stdx::bool_constant<(detail::OriginOf<A>::value() < detail::OriginOf<B>::value())> {};
+struct OrderByOrigin : stdx::bool_constant<(detail::OriginOf<A>{} < detail::OriginOf<B>{})> {};
 
 // "Unit avoidance" is a tiebreaker for quantity-equivalent units.  Anonymous units, such as
 // `UnitImpl<...>`, `ScaledUnit<...>`, and `UnitProductPack<...>`, are more "avoidable" than units
