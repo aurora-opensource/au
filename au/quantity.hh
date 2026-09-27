@@ -1192,6 +1192,56 @@ AU_DEVICE_FUNC constexpr auto operator-(const Quantity<U1, R1> &q1, const Quanti
                             detail::ref_or_scaled_copy<R1>(U{}, q2));
 }
 
+// Comparison of `Zero` with Quantity-equivalent types.
+template <typename QLike>
+AU_DEVICE_FUNC constexpr auto operator==(Zero z, QLike q) -> decltype(z == as_quantity(q)) {
+    return z == as_quantity(q);
+}
+template <typename QLike>
+AU_DEVICE_FUNC constexpr auto operator==(QLike q, Zero z) -> decltype(as_quantity(q) == z) {
+    return as_quantity(q) == z;
+}
+template <typename QLike>
+AU_DEVICE_FUNC constexpr auto operator!=(Zero z, QLike q) -> decltype(z != as_quantity(q)) {
+    return z != as_quantity(q);
+}
+template <typename QLike>
+AU_DEVICE_FUNC constexpr auto operator!=(QLike q, Zero z) -> decltype(as_quantity(q) != z) {
+    return as_quantity(q) != z;
+}
+template <typename QLike>
+AU_DEVICE_FUNC constexpr auto operator<(Zero z, QLike q) -> decltype(z < as_quantity(q)) {
+    return z < as_quantity(q);
+}
+template <typename QLike>
+AU_DEVICE_FUNC constexpr auto operator<(QLike q, Zero z) -> decltype(as_quantity(q) < z) {
+    return as_quantity(q) < z;
+}
+template <typename QLike>
+AU_DEVICE_FUNC constexpr auto operator<=(Zero z, QLike q) -> decltype(z <= as_quantity(q)) {
+    return z <= as_quantity(q);
+}
+template <typename QLike>
+AU_DEVICE_FUNC constexpr auto operator<=(QLike q, Zero z) -> decltype(as_quantity(q) <= z) {
+    return as_quantity(q) <= z;
+}
+template <typename QLike>
+AU_DEVICE_FUNC constexpr auto operator>(Zero z, QLike q) -> decltype(z > as_quantity(q)) {
+    return z > as_quantity(q);
+}
+template <typename QLike>
+AU_DEVICE_FUNC constexpr auto operator>(QLike q, Zero z) -> decltype(as_quantity(q) > z) {
+    return as_quantity(q) > z;
+}
+template <typename QLike>
+AU_DEVICE_FUNC constexpr auto operator>=(Zero z, QLike q) -> decltype(z >= as_quantity(q)) {
+    return z >= as_quantity(q);
+}
+template <typename QLike>
+AU_DEVICE_FUNC constexpr auto operator>=(QLike q, Zero z) -> decltype(as_quantity(q) >= z) {
+    return as_quantity(q) >= z;
+}
+
 // Mixed-type operations with a left-Quantity, and right-Quantity-equivalent.
 template <typename U, typename R, typename QLike>
 AU_DEVICE_FUNC constexpr auto operator+(Quantity<U, R> q1, QLike q2)
