@@ -1,0 +1,88 @@
+#!/bin/bash
+# Copyright 2026 Aurora Operations, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Measure what the current branch does to compile time, and write a report you can paste into its
+# pull request.
+#
+# This is `measure-compile-time` with the arguments already filled in: the baseline is where this
+# branch left `main`, the comparison is what is checked out now, and every example is measured.
+# Reach for the underlying tool directly when you want to compare arbitrary branches or targets.
+
+set -euo pipefail
+
+# In case users haven't set up `direnv`.
+export PATH="$PATH:./tools/bin"
+
+REPS=100
+
+function usage() {
+  echo "Usage:  $0 [-n REPS] [-- EXTRA_ARGS...]"
+  echo
+  echo "  -n REPS   Repetitions per translation unit per branch (default: $REPS)."
+  echo
+  echo "Anything after -- is passed through to measure-compile-time."
+  exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -n) REPS="$2"; shift 2 ;;
+    --) shift; break ;;
+    -h|--help) usage ;;
+    *) usage ;;
+  esac
+done
+
+cd "$(git rev-parse --show-toplevel)"
+
+HEAD_REF=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse HEAD)
+
+# The baseline is the commit this branch diverged from, not the tip of `main`.  Comparing against
+# the tip would fold everything else that landed in the meantime into this branch's number.
+UPSTREAM=$(git rev-parse --symbolic-full-name '@{upstream}' 2>/dev/null || true)
+
+if [[ "$UPSTREAM" == refs/heads/* ]]; then
+  # Tracking another *local* branch means this branch sits on top of one that has not landed yet,
+  # so that branch is its parent.  Measuring against `main` instead would fold every branch
+  # underneath this one into its number -- and worse, would hide anything this branch adds, since
+  # a target that exists on only one side has nothing to compare against.
+  BASE=$(git merge-base "$UPSTREAM" HEAD)
+else
+  # Tracking a *remote* branch says nothing about where this branch diverged: that is just a
+  # published copy of the branch itself.  Diverging from `main` is the ordinary case.
+  BASE=$(git merge-base main HEAD 2>/dev/null || true)
+  if [[ -z "$BASE" && -n "$UPSTREAM" ]]; then
+    BASE=$(git merge-base "$UPSTREAM" HEAD)
+  fi
+fi
+
+if [[ -z "$BASE" ]]; then
+  echo "Error: cannot find a baseline.  No local 'main', and this branch tracks nothing." >&2
+  echo "Use measure-compile-time -b BASE -b $HEAD_REF instead." >&2
+  exit 1
+fi
+
+if [[ "$(git rev-parse "$BASE")" == "$(git rev-parse HEAD)" ]]; then
+  echo "Error: this branch has no commits beyond its baseline, so there is nothing to measure." >&2
+  exit 1
+fi
+
+if [[ "$UPSTREAM" == refs/heads/* ]]; then
+  echo "Baseline from the branch this one tracks: ${UPSTREAM#refs/heads/}"
+fi
+echo "Baseline: $(git rev-parse --short "$BASE")  ($(git log -1 --format=%s "$BASE"))"
+echo "Current:  $HEAD_REF"
+
+measure-compile-time -b "$BASE" -b "$HEAD_REF" -n "$REPS" "$@"

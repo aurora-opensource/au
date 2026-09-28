@@ -243,6 +243,82 @@ reload the page!
     At this point, as long as that command stays running on your _remote_ host, you should be able
     to visit the URL in your _local_ browser, and view the documentation website.
 
+### Measuring compile time impact
+
+Our code examples don't just show how to use the library; they also double as a built-in set of
+benchmarks for measuring its compile time costs.  We can measure _changes_ by compiling the same
+example on different commits.  In fact, since most examples have a curated "raw" (no Au) version
+built in, they even help us measure the _absolute magnitude_ of those costs.
+
+The most common use case is to measure the compile time impact of a single branch (typically for
+a pull request) against its parent.  For that, we provide a simple command:
+
+```sh
+measure-branch-impact -n 200
+```
+
+This compiles each example 200 times on both the current branch and its baseline --- the commit
+where this branch left `main`, rather than the tip of `main`, so that other people's changes don't
+get folded into yours.  200 repetitions is typically a good balance between getting enough data
+points to be meaningful, and not taking too long to complete: on a typical development machine,
+this takes less than an hour.  For best results, avoid running other programs while the measurement
+is in progress, and consider setting the CPU governor to `performance` if that is relevant to your
+machine (common on laptops).  However, even if you don't, the statistical analysis should be good
+enough to indicate the impact of the change.
+
+Note that only _committed_ work is measured: each branch is compiled in its own git worktree, so
+uncommitted changes in your working tree don't take part (the tool says so if you have any).
+
+The results can be found in the `~/compile-time-measurements/` folder, within a date/time-stamped
+subfolder.  The report can be viewed locally, but it's also meant to be easily pasted into a pull
+request comment on GitHub.  To do this, copy the contents of `report.md` into your comment, and
+attach every file in the `plots/` subfolder.
+
+??? note "Which commit is the baseline, for a branch in a stack"
+    A branch that tracks another _local_ branch is a branch sitting on top of another that hasn't
+    landed yet, so that branch is its parent, and the measurement is taken against it rather than
+    against `main`.  Measuring against `main` would fold every branch underneath this one into its
+    number.  Worse, it would hide whatever this branch adds: a target that exists on only one side
+    of the comparison has nothing to compare against, so it drops out of the report entirely.
+
+    A branch that tracks a _remote_ branch is just a published copy of itself, which says nothing
+    about where the branch diverged.  That case is measured against `main`, as usual.
+
+??? note "Disk space requirements and handling"
+    Every branch is measured in its own git worktree, and each worktree needs its own bazel output
+    base --- roughly 8 GiB, nearly all of it extracted toolchains.  These have to coexist, so
+    a comparison of `N` branches wants about `8 * N` GiB free while it runs.  A run deletes them
+    when it finishes, and sweeps up anything a previous run left behind when it starts, so this
+    space is not permanently lost.  If a run is killed outright, `measure-compile-time --clean`
+    reclaims it by hand.
+
+#### Reading the plots
+
+Begin by eyeballing the weather plot to look for any concerning trends.  If it looks reasonable,
+check the percentile plots (regular and zoomed) to see if there is any noticeable difference.
+After that, the percentile _difference_ plot can help you see how consistent that difference is.
+
+For assessing _changes_, the overall Au penalty plot doesn't give any new information beyond the
+plots above.  That plot is mainly useful for keeping track of the overall cost of the library, and
+how it varies by use case.
+
+#### More complicated comparisons
+
+The above tool is built on our more general `measure-compile-time` tool.  You can run with `--help`
+to see all of the options, but here's an example.
+
+```sh
+measure-compile-time -b main -b my-branch -n 200 -t //examples:eigen_kinematics_au
+```
+
+Note that you can specify any number of targets, and any number of branches (at least two: the
+first one you name is the baseline that the others are compared against).  With no `-t`, every code
+example is measured.
+
+If you want to change the report or the plots without paying for the measurements again, point
+`--report-only` at a finished run's folder: it re-renders both from the `raw.csv` that's already
+there.
+
 
 [fork]: https://docs.github.com/en/get-started/quickstart/fork-a-repo
 [clone]: https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository
