@@ -22,7 +22,7 @@ on:
 
 jobs:
   cmake-module-build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b #v4.1.5
@@ -33,8 +33,8 @@ jobs:
       # C++ modules need a generator with support for them, so we cannot use the default
       # ("Unix Makefiles"); and CMake's dependency scanning needs clang >= 16 (the runner's
       # default gcc is too old to scan).
-      - name: Install ninja
-        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Install ninja and clang
+        run: sudo apt-get update && sudo apt-get install -y ninja-build clang-18 clang-tools-18
       - name: Generate
         run: >
           cmake -S . -B cmake/build -G Ninja

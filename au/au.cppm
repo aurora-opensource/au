@@ -11,15 +11,27 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+// This file should only export every direct member of the following namespaces:
+//  - au
+//    - au::base_dim
+//    - au::symbols
+//    - au::au_literals
+// except for any other nested namespaces, and any functions ending in _impl.
 
 module;
+
+#include <version>
 
 #define AU_INLINE_VARIABLES
 
 #include "au/au.hh"
 #include "au/io.hh"
 #include "au/view.hh"
+
+#ifdef __cpp_lib_format
 #include "au/std_format.hh"
+#endif
 
 #include "au/constants/avogadro_constant.hh"
 #include "au/constants/boltzmann_constant.hh"
