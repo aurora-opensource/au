@@ -277,4 +277,40 @@ AU_DEVICE_FUNC constexpr auto operator-(Zero, Constant<U>) {
     return -Constant<U>{};
 }
 
+namespace detail {
+
+// If the origin is already `Zero`, just return it.
+template <typename U>
+struct MakeShapeshifterFromOriginMemberImpl<Zero, U> : stdx::type_identity<Zero> {
+    static_assert(std::is_same<OriginType<U>, Zero>::value, "Internal library error");
+};
+
+// If the origin is already a `Constant`, just return it.
+template <typename OriginUnit, typename U>
+struct MakeShapeshifterFromOriginMemberImpl<Constant<OriginUnit>, U>
+    : stdx::type_identity<Constant<OriginUnit>> {
+    static_assert(std::is_same<OriginType<U>, Constant<OriginUnit>>::value,
+                  "Internal library error");
+};
+
+// If the origin is a `Quantity`, we need to turn it into a `Constant` in a constexpr way.
+template <typename OriginUnit, typename U, typename T>
+struct MakeShapeshifterFromOriginMemberImpl<Quantity<OriginUnit, T>, U> {
+    static_assert(std::is_integral<T>::value, "Origin member must be an integral quantity");
+    static_assert(std::is_same<OriginType<U>, Quantity<OriginUnit, T>>::value,
+                  "Internal library error");
+
+    static constexpr auto value() {
+        constexpr auto N = U::origin().template in<T>(OriginUnit{});
+        constexpr auto sign = std::conditional_t<(N < 0), Magnitude<Negative>, Magnitude<>>{};
+        constexpr auto abs_mag = mag<static_cast<std::size_t>(N < 0 ? (-N) : N)>();
+
+        return make_constant(OriginUnit{}) * sign * abs_mag;
+    }
+
+    using type = decltype(value());
+};
+
+}  // namespace detail
+
 }  // namespace au

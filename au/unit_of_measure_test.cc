@@ -44,6 +44,8 @@ using ::testing::Not;
 using ::testing::StaticAssertTypeEq;
 using ::testing::StrEq;
 
+using namespace au_literals;
+
 struct Celsius : Kelvins {
     static constexpr auto origin() { return milli(kelvins)(273'150); }
     static constexpr const char label[] = "deg_C";
@@ -682,13 +684,10 @@ TEST(AreUnitsPointEquivalent, DifferentUnitsWithDifferentButEquivalentOriginsAre
     EXPECT_THAT(are_units_point_equivalent(Celsius{}, AlternateCelsius{}), IsTrue());
 }
 
+// The origin of this unit is exactly (5/3) K above the origin of `Celsius`.
 struct OffsetCelsius : Celsius {
-    // The origin is _specified_ in the common units of the Celsius origin (which we gave in mK),
-    // and a difference of 10 in units of [(1/6) K].  This means that the type of the origin should
-    // be in units of [(1/3000) K].  However, the difference should boil down to a constant of
-    // exactly (5/3 K)
     static constexpr auto origin() {
-        return detail::OriginOf<Celsius>::value() + (kelvins / mag<6>())(10);
+        return detail::OriginOf<Celsius>{} + make_constant(kelvins) * 5_mag / 3_mag;
     }
     static constexpr const char label[] = "offset_deg_C";
 };
@@ -1071,28 +1070,22 @@ TEST(UnitOrderTiebreaker, CanBreakTiesForDistinctButOtherwiseUnorderableUnits) {
 namespace detail {
 
 TEST(Origin, ZeroForUnitWithNoSpecifiedOrigin) {
-    EXPECT_THAT(OriginOf<Kelvins>::value(), SameTypeAndValue(ZERO));
+    EXPECT_THAT(OriginOf<Kelvins>{}, SameTypeAndValue(ZERO));
 }
 
 TEST(Origin, ValueOfOriginDataMemberIfAppropriate) {
-    EXPECT_THAT(OriginOf<Celsius>::value(), SameTypeAndValue(milli(kelvins)(273'150)));
+    EXPECT_THAT(OriginOf<Celsius>{}, Eq(milli(kelvins)(273'150)));
 }
 
 TEST(Origin, InheritedUnderScaling) {
-    EXPECT_THAT(OriginOf<Milli<Celsius>>::value(), SameTypeAndValue(OriginOf<Celsius>::value()));
-    EXPECT_THAT(OriginOf<decltype(Celsius{} * mag<5>() / mag<9>())>::value(),
-                SameTypeAndValue(OriginOf<Celsius>::value()));
+    StaticAssertTypeEq<OriginOf<Milli<Celsius>>, OriginOf<Celsius>>();
+    StaticAssertTypeEq<OriginOf<decltype(Celsius{} * 5_mag / 9_mag)>, OriginOf<Celsius>>();
 }
 
 TEST(CommonOrigin, SymmetricUnderReordering) {
     // Rearrange the order; the result shouldn't change.
-    StaticAssertTypeEq<decltype(CommonOrigin<Celsius, AlternateCelsius>::value()),
-                       decltype(CommonOrigin<AlternateCelsius, Celsius>::value())>();
-
-    // The bigger-Magnitude unit should "win".
-    constexpr auto common_origin_value = CommonOrigin<Celsius, AlternateCelsius>::value();
-    EXPECT_THAT(common_origin_value, SameTypeAndValue(Celsius::origin()));
-    EXPECT_THAT(common_origin_value, Not(SameTypeAndValue(AlternateCelsius::origin())));
+    StaticAssertTypeEq<decltype(CommonOrigin<Celsius, AlternateCelsius>{}),
+                       decltype(CommonOrigin<AlternateCelsius, Celsius>{})>();
 }
 
 TEST(UnitOfLowestOrigin, SelectsSingleUnit) {
