@@ -63,6 +63,8 @@ TEST(Magnitude, CanFactorNumberWithMultipleLargePrimeFactors) {
                 Eq(pow<2>(mag<2>()) * pow<3>(mag<5>()) * mag<89'278'723>() * mag<201'615'787>()));
 }
 
+TEST(Magnitude, MagOfZeroIsZero) { EXPECT_THAT(mag<0>(), SameTypeAndValue(ZERO)); }
+
 TEST(Magnitude, SupportsOrderingComparison) {
     // Basic ordering.
     EXPECT_THAT(mag<1>(), Lt(mag<2>()));
