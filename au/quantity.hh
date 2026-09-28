@@ -605,7 +605,14 @@ class Quantity {
 
     // The `fmod`, `remainder`, and `copysign` implementations use a defaulted parameter `T`, which
     // is always `Rep`, so that reps that have no `std::fmod` will still be able to compile.
-    template <typename T = Rep>
+    //
+    // We omit `fmod` and `remainder` for unitless quantities.  These implicitly convert to `Rep`,
+    // so mixing them with a raw number would make these hidden friends ambiguous with the C library
+    // overloads (such as `::fmod(double, double)`).  The templates in "au/math.hh" still handle the
+    // case where both arguments are `Quantity`.
+    template <typename T = Rep,
+              typename U = UnitT,
+              std::enable_if_t<!IsUnitlessUnit<U>::value, int> = 0>
     friend AU_DEVICE_FUNC auto fmod(Quantity a, Quantity b)
         -> Quantity<UnitT, decltype(std::fmod(T{}, T{}))> {
         using R = decltype(std::fmod(T{}, T{}));
@@ -613,7 +620,9 @@ class Quantity {
             std::fmod(a.template in<R>(UnitT{}), b.template in<R>(UnitT{})));
     }
 
-    template <typename T = Rep>
+    template <typename T = Rep,
+              typename U = UnitT,
+              std::enable_if_t<!IsUnitlessUnit<U>::value, int> = 0>
     friend AU_DEVICE_FUNC auto remainder(Quantity a, Quantity b)
         -> Quantity<UnitT, decltype(std::remainder(T{}, T{}))> {
         using R = decltype(std::remainder(T{}, T{}));
