@@ -419,6 +419,45 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#measuring-compile-time-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measuring compile time impact
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measuring compile time impact">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reading-the-plots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading the plots
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#more-complicated-comparisons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        More complicated comparisons
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3156,6 +3195,66 @@ the web server is running.  Here&rsquo;s how you do that.</p>
 <p>At this point, as long as that command stays running on your <em>remote</em> host, you should be able
 to visit the URL in your <em>local</em> browser, and view the documentation website.</p>
 </details>
+<h3 id="measuring-compile-time-impact">Measuring compile time impact<a class="headerlink" href="#measuring-compile-time-impact" title="Permanent link">&para;</a></h3>
+<p>Our code examples don&rsquo;t just show how to use the library; they also double as a built-in set of
+benchmarks for measuring its compile time costs.  We can measure <em>changes</em> by compiling the same
+example on different commits.  In fact, since most examples have a curated &ldquo;raw&rdquo; (no Au) version
+built in, they even help us measure the <em>absolute magnitude</em> of those costs.</p>
+<p>The most common use case is to measure the compile time impact of a single branch (typically for
+a pull request) against its parent.  For that, we provide a simple command:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>measure-branch-impact<span class="w"> </span>-n<span class="w"> </span><span class="m">200</span>
+</code></pre></div>
+<p>This compiles each example 200 times on both the current branch and its baseline &mdash; the commit
+where this branch left <code>main</code>, rather than the tip of <code>main</code>, so that other people&rsquo;s changes don&rsquo;t
+get folded into yours.  200 repetitions is typically a good balance between getting enough data
+points to be meaningful, and not taking too long to complete: on a typical development machine,
+this takes less than an hour.  For best results, avoid running other programs while the measurement
+is in progress, and consider setting the CPU governor to <code>performance</code> if that is relevant to your
+machine (common on laptops).  However, even if you don&rsquo;t, the statistical analysis should be good
+enough to indicate the impact of the change.</p>
+<p>Note that only <em>committed</em> work is measured: each branch is compiled in its own git worktree, so
+uncommitted changes in your working tree don&rsquo;t take part (the tool says so if you have any).</p>
+<p>The results can be found in the <code>~/compile-time-measurements/</code> folder, within a date/time-stamped
+subfolder.  The report can be viewed locally, but it&rsquo;s also meant to be easily pasted into a pull
+request comment on GitHub.  To do this, copy the contents of <code>report.md</code> into your comment, and
+attach every file in the <code>plots/</code> subfolder.</p>
+<details class="note">
+<summary>Which commit is the baseline, for a branch in a stack</summary>
+<p>A branch that tracks another <em>local</em> branch is a branch sitting on top of another that hasn&rsquo;t
+landed yet, so that branch is its parent, and the measurement is taken against it rather than
+against <code>main</code>.  Measuring against <code>main</code> would fold every branch underneath this one into its
+number.  Worse, it would hide whatever this branch adds: a target that exists on only one side
+of the comparison has nothing to compare against, so it drops out of the report entirely.</p>
+<p>A branch that tracks a <em>remote</em> branch is just a published copy of itself, which says nothing
+about where the branch diverged.  That case is measured against <code>main</code>, as usual.</p>
+</details>
+<details class="note">
+<summary>Disk space requirements and handling</summary>
+<p>Every branch is measured in its own git worktree, and each worktree needs its own bazel output
+base &mdash; roughly 8 GiB, nearly all of it extracted toolchains.  These have to coexist, so
+a comparison of <code>N</code> branches wants about <code>8 * N</code> GiB free while it runs.  A run deletes them
+when it finishes, and sweeps up anything a previous run left behind when it starts, so this
+space is not permanently lost.  If a run is killed outright, <code>measure-compile-time --clean</code>
+reclaims it by hand.</p>
+</details>
+<h4 id="reading-the-plots">Reading the plots<a class="headerlink" href="#reading-the-plots" title="Permanent link">&para;</a></h4>
+<p>Begin by eyeballing the weather plot to look for any concerning trends.  If it looks reasonable,
+check the percentile plots (regular and zoomed) to see if there is any noticeable difference.
+After that, the percentile <em>difference</em> plot can help you see how consistent that difference is.</p>
+<p>For assessing <em>changes</em>, the overall Au penalty plot doesn&rsquo;t give any new information beyond the
+plots above.  That plot is mainly useful for keeping track of the overall cost of the library, and
+how it varies by use case.</p>
+<h4 id="more-complicated-comparisons">More complicated comparisons<a class="headerlink" href="#more-complicated-comparisons" title="Permanent link">&para;</a></h4>
+<p>The above tool is built on our more general <code>measure-compile-time</code> tool.  You can run with <code>--help</code>
+to see all of the options, but here&rsquo;s an example.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>measure-compile-time<span class="w"> </span>-b<span class="w"> </span>main<span class="w"> </span>-b<span class="w"> </span>my-branch<span class="w"> </span>-n<span class="w"> </span><span class="m">200</span><span class="w"> </span>-t<span class="w"> </span>//examples:eigen_kinematics_au
+</code></pre></div>
+<p>Note that you can specify any number of targets, and any number of branches (at least two: the
+first one you name is the baseline that the others are compared against).  With no <code>-t</code>, every code
+example is measured.</p>
+<p>If you want to change the report or the plots without paying for the measurements again, point
+<code>--report-only</code> at a finished run&rsquo;s folder: it re-renders both from the <code>raw.csv</code> that&rsquo;s already
+there.</p>
 
 
 
