@@ -3345,8 +3345,9 @@ defining properties.</p>
    (<strong>not</strong> a <code>const char*</code>).<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 </li>
 <li>
-<p><strong>May</strong> contain a <code>static constexpr</code> member function <code>origin()</code>, which returns a quantity whose
-   dimension type is <code>U::Dim</code>.</p>
+<p><strong>May</strong> contain a <code>static constexpr</code> member function <code>origin()</code>, which returns either a
+   <a href="../constant/"><code>Constant</code></a>, or a <a href="../quantity/"><code>Quantity</code></a> with an <em>integral</em> rep.  Either way,
+   its dimension type must be <code>U::Dim</code>.</p>
 </li>
 </ol>
 <p>A custom <code>origin()</code> is very rarely needed.  Both <a href="#labels">labels</a> and <a href="#origins">origins</a> will be
@@ -3612,6 +3613,11 @@ meaningful.  Only the difference between the origins of two units is meaningful.
 <p>You would use this to implement an &ldquo;offset&rdquo; unit, such as <code>Celsius</code> or <code>Fahrenheit</code>.  However, note
 that both of these are already implemented in the library.</p>
 <p>The origin defaults to <code>ZERO</code> if not supplied.</p>
+<p>If you do supply an origin, it must be either a <a href="../constant/"><code>Constant</code></a>, or a
+<a href="../quantity/"><code>Quantity</code></a> with an <em>integral</em> rep (for example, <code>centi(kelvins)(273'15)</code>).
+Floating point <code>Quantity</code> origins are not supported, because the library needs to compute origin
+differences exactly.  If your origin can&rsquo;t be expressed as an integer in any convenient unit, use
+a <code>Constant</code> instead: for example, <code>make_constant(kelvins) * 273.15_mag</code>.<sup id="fnref:exact"><a class="footnote-ref" href="#fn:exact">2</a></sup></p>
 <h2 id="types-for-combined-units">Types for combined units<a class="headerlink" href="#types-for-combined-units" title="Permanent link">&para;</a></h2>
 <p>A core tenet of Au&rsquo;s design philosophy is to avoid giving any units special status.  Every named
 unit enters into a unit computation on equal footing.  We will keep track of the accumulated powers
@@ -4229,6 +4235,13 @@ input origins.</p>
 <p>Unit types defined by the library may also use <code>au::detail::StringConstant&lt;N&gt;</code> for some
 integer length <code>N</code>.  Since this is in the <code>detail</code> namespace, we wanted to de-emphasize it in this
 document.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:exact">
+<p>The expression <code>273.15_mag</code> looks superficially similar to the floating point expression
+<code>273.15</code>.  However, <code>_mag</code> literals are <em>always <a href="../magnitude/#_mag-literal">exact rational numbers</a></em>.
+<code>273.15</code> does not exactly represent the number <span class="arithmatex"><span class="MathJax_Preview">273.15</span><script type="math/tex">273.15</script></span>; instead, it produces the closest
+representable floating point number.  However, <code>273.15_mag</code> <em>is</em> exact, and is identical to
+<code>mag&lt;273'15&gt;() / mag&lt;100&gt;()</code>.&#160;<a class="footnote-backref" href="#fnref:exact" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

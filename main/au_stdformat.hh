@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-20-gb6a0e051
+// Version identifier: 0.6.0-base-21-g1ff22096
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -3533,11 +3533,19 @@ struct PrimeFactorizationImpl {
                             PrimeFactorization<remainder>>;
 };
 
+// `mag<0>()` is `Zero` rather than a `Magnitude`: `0` has no prime factorization.
+template <std::uintmax_t N>
+struct MagOrZeroImpl : PrimeFactorizationImpl<N> {};
+template <>
+struct MagOrZeroImpl<0u> : stdx::type_identity<Zero> {};
+template <std::uintmax_t N>
+using MagOrZero = typename MagOrZeroImpl<N>::type;
+
 }  // namespace detail
 
 template <std::uintmax_t N>
 AU_DEVICE_FUNC constexpr auto mag() {
-    return detail::PrimeFactorization<N>{};
+    return detail::MagOrZero<N>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3634,21 +3642,14 @@ constexpr std::int64_t parse_scientific_exponent() {
     return sign * static_cast<std::int64_t>(exponent);
 }
 
-// Compute the value of a `_mag` literal whose mantissa is `Mantissa`.  We specialize for a mantissa
-// of `0`, which is `Zero` rather than a `Magnitude`: `0` has no prime factorization.
+// Compute the value of a `_mag` literal whose mantissa is `Mantissa`.  This will be a `Magnitude`
+// if `Mantissa > 0`, or `Zero` if `Mantissa == 0`.
 template <std::uintmax_t Mantissa>
 struct MagLiteralImpl {
     template <char... Cs>
     static AU_DEVICE_FUNC constexpr auto value() {
         return mag<Mantissa>() *
                pow<parse_scientific_exponent<Cs...>() - count_decimal_places<Cs...>()>(mag<10>());
-    }
-};
-template <>
-struct MagLiteralImpl<0u> {
-    template <char... Cs>
-    static AU_DEVICE_FUNC constexpr Zero value() {
-        return {};
     }
 };
 }  // namespace detail

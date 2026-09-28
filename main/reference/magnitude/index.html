@@ -3338,6 +3338,7 @@ a corollary, any unit can be scaled by a <code>Magnitude</code> to make a new un
 <h3 id="magn"><code>mag&lt;N&gt;()</code><a class="headerlink" href="#magn" title="Permanent link">&para;</a></h3>
 <p><code>mag&lt;N&gt;()</code> gives an instance of the unique, canonical <code>Magnitude</code> type that represents the positive
 integer <code>N</code>.</p>
+<p>As a special case, <code>mag&lt;0&gt;()</code> gives <a href="../zero/"><code>ZERO</code></a>, because <code>0</code> is not a valid <code>Magnitude</code>.</p>
 <details class="info">
 <summary>More detail on integral <code>Magnitude</code> representations</summary>
 <p>Integers are stored as their prime factorization.  For example, <code>18</code> would be stored as the type
