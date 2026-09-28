@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-22-g764c063b
+// Version identifier: 0.6.0-base-23-gb3d03c84
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -1189,6 +1189,15 @@ struct Hours;
 // __device__ during the device compilation pass, the same variable is visible to both host and
 // device code.
 //
+// Defining `AU_INLINE_VARIABLES` (requires C++17) makes AU_DEVICE_VAR declare the library's
+// namespace-scoped `constexpr` variables as `inline`, giving them external linkage.  The C++
+// module interface (`au.cppm`) defines this before including the library, because an exported
+// using-declaration may not name an entity with internal linkage.
+//
+
+#if defined(AU_INLINE_VARIABLES) && !defined(__cpp_inline_variables)
+#error "AU_INLINE_VARIABLES requires C++17 or later (inline variables)"
+#endif
 
 #if defined(__CUDACC__) || defined(__HIPCC__)
 #define AU_DEVICE_FUNC __host__ __device__
@@ -1198,6 +1207,8 @@ struct Hours;
 
 #if defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__)
 #define AU_DEVICE_VAR __device__
+#elif defined(AU_INLINE_VARIABLES)
+#define AU_DEVICE_VAR inline
 #else
 #define AU_DEVICE_VAR
 #endif
@@ -3148,7 +3159,7 @@ using MagSum = typename MagSumImpl<Ms...>::type;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Value based interface for Magnitude (and Zero).
 
-static constexpr auto ONE = Magnitude<>{};
+AU_DEVICE_VAR constexpr auto ONE = Magnitude<>{};
 
 template <typename... BP1s, typename... BP2s>
 AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BP1s...>, Magnitude<BP2s...>) {
