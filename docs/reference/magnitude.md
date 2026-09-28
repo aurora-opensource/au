@@ -47,6 +47,8 @@ Below, we give more details on several concepts mentioned above.
 `mag<N>()` gives an instance of the unique, canonical `Magnitude` type that represents the positive
 integer `N`.
 
+As a special case, `mag<0>()` gives [`ZERO`](./zero.md), because `0` is not a valid `Magnitude`.
+
 ??? info "More detail on integral `Magnitude` representations"
     Integers are stored as their prime factorization.  For example, `18` would be stored as the type
     `Magnitude<Prime<2>, Pow<Prime<3>, 2>>`, because $18 = 2 \cdot 3^2$.

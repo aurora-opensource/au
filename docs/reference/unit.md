@@ -25,8 +25,9 @@ To be a unit, a type `U`:
 4. **May** contain a `static constexpr` member named `label`, which is a C-style `const char[]`
    (**not** a `const char*`).[^1]
 
-5. **May** contain a `static constexpr` member function `origin()`, which returns a quantity whose
-   dimension type is `U::Dim`.
+5. **May** contain a `static constexpr` member function `origin()`, which returns either a
+   [`Constant`](./constant.md), or a [`Quantity`](./quantity.md) with an _integral_ rep.  Either way,
+   its dimension type must be `U::Dim`.
 
 A custom `origin()` is very rarely needed.  Both [labels](#labels) and [origins](#origins) will be
 discussed further below.
@@ -254,6 +255,18 @@ You would use this to implement an "offset" unit, such as `Celsius` or `Fahrenhe
 that both of these are already implemented in the library.
 
 The origin defaults to `ZERO` if not supplied.
+
+If you do supply an origin, it must be either a [`Constant`](./constant.md), or a
+[`Quantity`](./quantity.md) with an _integral_ rep (for example, `centi(kelvins)(273'15)`).
+Floating point `Quantity` origins are not supported, because the library needs to compute origin
+differences exactly.  If your origin can't be expressed as an integer in any convenient unit, use
+a `Constant` instead: for example, `make_constant(kelvins) * 273.15_mag`.[^exact]
+
+[^exact]: The expression `273.15_mag` looks superficially similar to the floating point expression
+`273.15`.  However, `_mag` literals are _always [exact rational numbers](./magnitude.md#_mag-literal)_.
+`273.15` does not exactly represent the number $273.15$; instead, it produces the closest
+representable floating point number.  However, `273.15_mag` _is_ exact, and is identical to
+`mag<273'15>() / mag<100>()`.
 
 ## Types for combined units
 
