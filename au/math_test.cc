@@ -30,6 +30,7 @@
 #include "au/units/ohms.hh"
 #include "au/units/revolutions.hh"
 #include "au/units/seconds.hh"
+#include "au/units/unos.hh"
 #include "au/units/yards.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -37,6 +38,7 @@
 namespace au {
 
 using ::testing::AllOf;
+using ::testing::DoubleEq;
 using ::testing::DoubleNear;
 using ::testing::Eq;
 using ::testing::IsFalse;
@@ -428,6 +430,19 @@ TEST(Fmod, SameAsStdFmodForNumericTypes) {
     EXPECT_THAT(fmod(a, b), Eq(std::fmod(a, b)));
 }
 
+TEST(Fmod, TwoUnitlessQuantitiesOfSameTypeStillWork) {
+    const auto x = meters(1.0) / meters(3.0);
+    const auto y = meters(1.0) / meters(4.0);
+    EXPECT_THAT(fmod(x, y), QuantityEquivalent(unos(std::fmod(1.0 / 3.0, 1.0 / 4.0))));
+}
+
+TEST(Fmod, UnitlessQuantityAndRawNumberIsNotAmbiguousInsideNamespaceAu) {
+    // Inside `namespace au`, unqualified lookup finds `std::fmod` via the `using` in "au/math.hh".
+    const auto x = meters(1.0) / meters(3.0);
+    const double result = fmod(x, 1.0);
+    EXPECT_THAT(result, DoubleEq(std::fmod(1.0 / 3.0, 1.0)));
+}
+
 TEST(Fmod, ReturnsSameTypesAsStdModForSameUnitInputs) {
     const auto expect_consistent_with_std_fmod = expect_consistent_with(
         [](auto x, auto y) { return fmod(x, y); }, [](auto x, auto y) { return std::fmod(x, y); });
@@ -478,6 +493,20 @@ TEST(Fmod, ConstantAdaptsToIrrationalUnits) {
 TEST(Remainder, SameAsStdRemainderForNumericTypes) {
     EXPECT_THAT(remainder(3.5, 3), Eq(std::remainder(3.5, 3)));
     EXPECT_THAT(remainder(2.5, 3), Eq(std::remainder(2.5, 3)));
+}
+
+TEST(Remainder, TwoUnitlessQuantitiesOfSameTypeStillWork) {
+    const auto x = meters(1.0) / meters(3.0);
+    const auto y = meters(1.0) / meters(4.0);
+    EXPECT_THAT(remainder(x, y), QuantityEquivalent(unos(std::remainder(1.0 / 3.0, 1.0 / 4.0))));
+}
+
+TEST(Remainder, UnitlessQuantityAndRawNumberIsNotAmbiguousInsideNamespaceAu) {
+    // Inside `namespace au`, unqualified lookup finds `std::remainder` via the `using` in
+    // "au/math.hh".
+    const auto x = meters(1.0) / meters(3.0);
+    const double result = remainder(x, 1.0);
+    EXPECT_THAT(result, DoubleEq(std::remainder(1.0 / 3.0, 1.0)));
 }
 
 TEST(Remainder, ReturnsSameTypesAsStdRemainderForSameUnitInputs) {
@@ -2169,3 +2198,54 @@ TEST(IntCeilAs, ConstantWithExplicitRepReturnsQuantityWithThatRep) {
 }
 
 }  // namespace au
+
+// These tests must be outside of `namespace au`, so that unqualified lookup finds the global C
+// library overloads (e.g., `::fmod(double, double)`) alongside any `au` overloads found via ADL.
+TEST(Fmod, UnitlessQuantityAndRawNumberIsNotAmbiguous) {
+    const auto x = au::meters(1.0) / au::meters(3.0);
+    const double result = fmod(x, 1.0);
+    EXPECT_THAT(result, ::testing::DoubleEq(std::fmod(1.0 / 3.0, 1.0)));
+}
+
+TEST(Remainder, UnitlessQuantityAndRawNumberIsNotAmbiguous) {
+    const auto x = au::meters(1.0) / au::meters(3.0);
+    const double result = remainder(x, 1.0);
+    EXPECT_THAT(result, ::testing::DoubleEq(std::remainder(1.0 / 3.0, 1.0)));
+}
+
+TEST(Copysign, UnitlessQuantityAndRawNumberIsNotAmbiguous) {
+    const auto x = au::meters(1.0) / au::meters(3.0);
+    const double result = copysign(x, -1.0);
+    EXPECT_THAT(result, ::testing::DoubleEq(-1.0 / 3.0));
+}
+
+TEST(Fmod, RawNumberAndUnitlessQuantityIsNotAmbiguous) {
+    const auto x = au::meters(1.0) / au::meters(3.0);
+    const double result = fmod(1.0, x);
+    EXPECT_THAT(result, ::testing::DoubleEq(std::fmod(1.0, 1.0 / 3.0)));
+}
+
+TEST(Remainder, RawNumberAndUnitlessQuantityIsNotAmbiguous) {
+    const auto x = au::meters(1.0) / au::meters(3.0);
+    const double result = remainder(1.0, x);
+    EXPECT_THAT(result, ::testing::DoubleEq(std::remainder(1.0, 1.0 / 3.0)));
+}
+
+TEST(Copysign, RawNumberAndUnitlessQuantityIsNotAmbiguous) {
+    const auto x = au::meters(1.0) / au::meters(3.0);
+    const double result = copysign(-1.0, x);
+    EXPECT_THAT(result, ::testing::DoubleEq(1.0));
+}
+
+TEST(Fmod, TwoUnitlessQuantitiesOfSameTypeStillWorkOutsideNamespaceAu) {
+    const auto x = au::meters(1.0) / au::meters(3.0);
+    const auto y = au::meters(1.0) / au::meters(4.0);
+    EXPECT_THAT(fmod(x, y), au::QuantityEquivalent(au::unos(std::fmod(1.0 / 3.0, 1.0 / 4.0))));
+}
+
+TEST(Remainder, TwoUnitlessQuantitiesOfSameTypeStillWorkOutsideNamespaceAu) {
+    const auto x = au::meters(1.0) / au::meters(3.0);
+    const auto y = au::meters(1.0) / au::meters(4.0);
+    EXPECT_THAT(remainder(x, y),
+                au::QuantityEquivalent(au::unos(std::remainder(1.0 / 3.0, 1.0 / 4.0))));
+}
