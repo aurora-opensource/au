@@ -655,6 +655,18 @@ TEST(Constant, OrderingWorksWithScaledConstants) {
     EXPECT_THAT(double_c, Gt(half_c));
 }
 
+TEST(Constant, CanBeComparedWithCorrespondingQuantity) {
+    constexpr auto MICROSECOND = micro(make_constant(seconds));
+
+    EXPECT_THAT(std::chrono::nanoseconds{999}, Lt(MICROSECOND));
+    EXPECT_THAT(std::chrono::nanoseconds{1'000}, Eq(MICROSECOND));
+    EXPECT_THAT(std::chrono::nanoseconds{1'001}, Gt(MICROSECOND));
+
+    EXPECT_THAT(MICROSECOND, Gt(std::chrono::nanoseconds{999}));
+    EXPECT_THAT(MICROSECOND, Eq(std::chrono::nanoseconds{1'000}));
+    EXPECT_THAT(MICROSECOND, Lt(std::chrono::nanoseconds{1'001}));
+}
+
 TEST(ConstantAddition, SameConstantsDoubleTheValue) {
     constexpr auto one_foot = make_constant(feet);
     constexpr auto result = one_foot + one_foot;

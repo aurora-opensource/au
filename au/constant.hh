@@ -206,6 +206,56 @@ AU_DEVICE_FUNC constexpr bool operator>=(Constant<U1> lhs, Constant<U2> rhs) {
     return !(lhs < rhs);
 }
 
+// Comparison with types that have a `CorrespondingQuantity` (e.g., `std::chrono::duration`).
+template <typename U, typename QLike>
+AU_DEVICE_FUNC constexpr auto operator==(Constant<U> c, QLike q) -> decltype(c == as_quantity(q)) {
+    return c == as_quantity(q);
+}
+template <typename U, typename QLike>
+AU_DEVICE_FUNC constexpr auto operator!=(Constant<U> c, QLike q) -> decltype(c != as_quantity(q)) {
+    return c != as_quantity(q);
+}
+template <typename U, typename QLike>
+AU_DEVICE_FUNC constexpr auto operator<(Constant<U> c, QLike q) -> decltype(c < as_quantity(q)) {
+    return c < as_quantity(q);
+}
+template <typename U, typename QLike>
+AU_DEVICE_FUNC constexpr auto operator<=(Constant<U> c, QLike q) -> decltype(c <= as_quantity(q)) {
+    return c <= as_quantity(q);
+}
+template <typename U, typename QLike>
+AU_DEVICE_FUNC constexpr auto operator>(Constant<U> c, QLike q) -> decltype(c > as_quantity(q)) {
+    return c > as_quantity(q);
+}
+template <typename U, typename QLike>
+AU_DEVICE_FUNC constexpr auto operator>=(Constant<U> c, QLike q) -> decltype(c >= as_quantity(q)) {
+    return c >= as_quantity(q);
+}
+template <typename QLike, typename U>
+AU_DEVICE_FUNC constexpr auto operator==(QLike q, Constant<U> c) -> decltype(as_quantity(q) == c) {
+    return as_quantity(q) == c;
+}
+template <typename QLike, typename U>
+AU_DEVICE_FUNC constexpr auto operator!=(QLike q, Constant<U> c) -> decltype(as_quantity(q) != c) {
+    return as_quantity(q) != c;
+}
+template <typename QLike, typename U>
+AU_DEVICE_FUNC constexpr auto operator<(QLike q, Constant<U> c) -> decltype(as_quantity(q) < c) {
+    return as_quantity(q) < c;
+}
+template <typename QLike, typename U>
+AU_DEVICE_FUNC constexpr auto operator<=(QLike q, Constant<U> c) -> decltype(as_quantity(q) <= c) {
+    return as_quantity(q) <= c;
+}
+template <typename QLike, typename U>
+AU_DEVICE_FUNC constexpr auto operator>(QLike q, Constant<U> c) -> decltype(as_quantity(q) > c) {
+    return as_quantity(q) > c;
+}
+template <typename QLike, typename U>
+AU_DEVICE_FUNC constexpr auto operator>=(QLike q, Constant<U> c) -> decltype(as_quantity(q) >= c) {
+    return as_quantity(q) >= c;
+}
+
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename U1, typename U2>
 AU_DEVICE_FUNC constexpr std::strong_ordering operator<=>(Constant<U1>, Constant<U2>) {
