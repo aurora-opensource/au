@@ -27,7 +27,6 @@ EXCLUDED_NAMESPACES = {"detail", "stdx", "no_prior_declaration_workaround"}
 HEADERS_NOT_IN_MODULE = {
     "au/chrono_policy_validation.hh",  # Test-only; depends on GoogleTest.
     "au/fwd_test_lib.hh",  # Test-only.
-    "au/std_format.hh",  # Requires `std::format` support; users include it separately.
     "au/testing.hh",  # Depends on GoogleTest.
 }
 

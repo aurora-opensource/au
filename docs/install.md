@@ -291,8 +291,8 @@ configuration fully supports `std::format`.  This requires at least C++20, but m
 nominal C++20 support do not actually support `std::format`.  To guard against this, use the `__cpp_lib_format`
 macro provided with the `<version>` header to verify support.
 
-The `au` module exports every public-facing name in the library, including formatters, except for macros
-(which modules cannot export).
+The `au` module exports every public-facing name in the library, including formatters (whenever
+`std::format` is available), except for macros (which modules cannot export).
 
 !!! note
     These instructions are for adding Au to a _project_ that uses CMake, not building Au itself

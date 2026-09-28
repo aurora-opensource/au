@@ -38,7 +38,7 @@ jobs:
       - name: Generate
         run: >
           cmake -S . -B cmake/build -G Ninja
-          -DCMAKE_CXX_COMPILER=clang++
+          -DCMAKE_CXX_COMPILER=clang++-18
           -DAU_BUILD_MODULE=TRUE
       - name: Build the module and its test
         run: cmake --build cmake/build --target au_module module_test
