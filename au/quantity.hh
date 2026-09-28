@@ -591,7 +591,7 @@ class Quantity {
     // Moving the implementation here lets us effortlessly support callsites where any number of
     // arguments are "shapeshifter" types that are compatible with this Quantity (such as `ZERO`, or
     // various physical constant).
-    //
+
     // Note that the min/max implementations return by _value_, for consistency with other Quantity
     // implementations (because in the general case, the return type can differ from the inputs).
     // Note, too, that we use the Walter Brown implementation for min/max, where min prefers `a`,
@@ -603,20 +603,16 @@ class Quantity {
         return (v < lo) ? lo : ((hi < v) ? hi : v);
     }
 
-    // `fmod`, `remainder`, and `copysign` for two `Quantity` values of the same type.
+    // The `fmod`, `remainder`, and `copysign` implementations use a defaulted parameter `T`, which
+    // is always `Rep`, so that reps that have no `std::fmod` will still be able to compile.
     //
-    // Like `min` and `max` above, these are hidden friends whose parameters are the concrete
-    // `Quantity` type rather than deduced, so anything implicitly convertible to it --- notably, a
-    // `Constant` --- can be passed in _either_ argument slot.  Inputs whose units or reps differ
-    // are handled by the function templates in "au/math.hh".
-    //
-    // Each is a template on a defaulted parameter `T`, which is always `Rep`.  This keeps the
-    // return type out of the class instantiation, so that reps which have no `std::fmod` (say,
-    // `std::complex<double>`) simply don't get these overloads, instead of failing to compile.
-    // The _parameters_ stay concrete, which is the whole point.  Note that the return types
-    // promote the rep exactly as the underlying `std` functions do, which keeps these consistent
-    // with their "au/math.hh" counterparts.
-    template <typename T = Rep>
+    // We omit `fmod` and `remainder` for unitless quantities.  These implicitly convert to `Rep`,
+    // so mixing them with a raw number would make these hidden friends ambiguous with the C library
+    // overloads (such as `::fmod(double, double)`).  The templates in "au/math.hh" still handle the
+    // case where both arguments are `Quantity`.
+    template <typename T = Rep,
+              typename U = UnitT,
+              std::enable_if_t<!IsUnitlessUnit<U>::value, int> = 0>
     friend AU_DEVICE_FUNC auto fmod(Quantity a, Quantity b)
         -> Quantity<UnitT, decltype(std::fmod(T{}, T{}))> {
         using R = decltype(std::fmod(T{}, T{}));
@@ -624,7 +620,9 @@ class Quantity {
             std::fmod(a.template in<R>(UnitT{}), b.template in<R>(UnitT{})));
     }
 
-    template <typename T = Rep>
+    template <typename T = Rep,
+              typename U = UnitT,
+              std::enable_if_t<!IsUnitlessUnit<U>::value, int> = 0>
     friend AU_DEVICE_FUNC auto remainder(Quantity a, Quantity b)
         -> Quantity<UnitT, decltype(std::remainder(T{}, T{}))> {
         using R = decltype(std::remainder(T{}, T{}));
