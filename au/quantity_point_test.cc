@@ -70,23 +70,6 @@ struct AlternateCelsius : Kelvins {
     static constexpr auto origin() { return micro(kelvins)(273'150'000); }
 };
 
-struct CelsiusButWithConstantForOrigin : Kelvins {
-    static constexpr auto origin() {
-        using namespace ::au::au_literals;
-        return make_constant(kelvins) * 273.15_mag;
-    }
-};
-constexpr QuantityPointMaker<CelsiusButWithConstantForOrigin>
-    celsius_but_with_constant_for_origin_pt{};
-
-// A unit whose origin is a `Quantity` whose unit (integer Kelvins) cannot exactly hold 273.15 K.
-// Subtracting this origin from a `Constant` origin of 273.15 K would naively convert the `Constant`
-// to the `Quantity` type, but that conversion is not exact, so it must fail.
-struct TruncatedCelsius : Kelvins {
-    static constexpr auto origin() { return kelvins(273); }
-};
-constexpr QuantityPointMaker<TruncatedCelsius> truncated_celsius_pt{};
-
 // A unit whose explicit `origin()` member is a `Quantity` of value 0.  This should be fully
 // compatible with `Kelvins`, whose origin is implicitly `ZERO`.
 struct KelvinsWithExplicitZeroOrigin : Kelvins {
