@@ -24,6 +24,7 @@
 #include <format>
 #endif
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 import au;
