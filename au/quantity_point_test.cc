@@ -70,6 +70,35 @@ struct AlternateCelsius : Kelvins {
     static constexpr auto origin() { return micro(kelvins)(273'150'000); }
 };
 
+struct CelsiusButWithConstantForOrigin : Kelvins {
+    static constexpr auto origin() {
+        using namespace ::au::au_literals;
+        return make_constant(kelvins) * 273.15_mag;
+    }
+};
+constexpr QuantityPointMaker<CelsiusButWithConstantForOrigin>
+    celsius_but_with_constant_for_origin_pt{};
+
+// A unit whose origin is a `Quantity` whose unit (integer Kelvins) cannot exactly hold 273.15 K.
+// Subtracting this origin from a `Constant` origin of 273.15 K would naively convert the `Constant`
+// to the `Quantity` type, but that conversion is not exact, so it must fail.
+struct TruncatedCelsius : Kelvins {
+    static constexpr auto origin() { return kelvins(273); }
+};
+constexpr QuantityPointMaker<TruncatedCelsius> truncated_celsius_pt{};
+
+// A unit whose explicit `origin()` member is a `Quantity` of value 0.  This should be fully
+// compatible with `Kelvins`, whose origin is implicitly `ZERO`.
+struct KelvinsWithExplicitZeroOrigin : Kelvins {
+    static constexpr auto origin() { return kelvins(0); }
+};
+constexpr QuantityPointMaker<KelvinsWithExplicitZeroOrigin> kelvins_with_explicit_zero_origin_pt{};
+
+// This unit is identical to `Kelvins` in every way that the library uses to order units (dimension,
+// magnitude, and origin), so we need a tiebreaker to avoid "distinct input types compare equal".
+template <>
+struct UnitOrderTiebreaker<KelvinsWithExplicitZeroOrigin> : std::integral_constant<int, 1> {};
+
 TEST(Quantity, HasCorrectRepNamedAliases) {
     StaticAssertTypeEq<QuantityPointD<Meters>, QuantityPoint<Meters, double>>();
     StaticAssertTypeEq<QuantityPointF<Meters>, QuantityPoint<Meters, float>>();
@@ -586,6 +615,22 @@ TEST(OriginDisplacement, IdenticallyZeroForOriginsThatCompareEqual) {
     ASSERT_THAT(detail::OriginOf<Celsius>::value(),
                 Not(SameTypeAndValue(detail::OriginOf<AlternateCelsius>::value())));
     EXPECT_THAT(origin_displacement(Celsius{}, AlternateCelsius{}), SameTypeAndValue(ZERO));
+}
+
+TEST(OriginDisplacement, IdenticallyZeroForExplicitZeroQuantityOriginAndImplicitOrigin) {
+    EXPECT_THAT(origin_displacement(Kelvins{}, KelvinsWithExplicitZeroOrigin{}),
+                SameTypeAndValue(ZERO));
+    EXPECT_THAT(origin_displacement(KelvinsWithExplicitZeroOrigin{}, Kelvins{}),
+                SameTypeAndValue(ZERO));
+}
+
+TEST(QuantityPoint, ExplicitZeroQuantityOriginInteroperatesWithImplicitOrigin) {
+    EXPECT_THAT(kelvins_with_explicit_zero_origin_pt(5).as(kelvins_pt),
+                SameTypeAndValue(kelvins_pt(5)));
+    EXPECT_THAT(kelvins_pt(5).as(kelvins_with_explicit_zero_origin_pt),
+                SameTypeAndValue(kelvins_with_explicit_zero_origin_pt(5)));
+    EXPECT_THAT(kelvins_with_explicit_zero_origin_pt(5) - kelvins_pt(3), Eq(kelvins(2)));
+    EXPECT_THAT(kelvins_with_explicit_zero_origin_pt(5), Eq(kelvins_pt(5)));
 }
 
 TEST(OriginDisplacement, GivesDisplacementFromFirstToSecond) {
