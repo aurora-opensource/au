@@ -452,6 +452,11 @@ For instances `c1` and `c2`:
 - `c1 >= c2`
 - `c1 <=> c2` _(C++20 or later)_
 
+A `Constant` can also be compared with an instance of any type that has a [corresponding
+quantity](./corresponding_quantity.md), such as a `std::chrono::duration`.  For example,
+`std::chrono::nanoseconds{999} < micro(make_constant(seconds))` is `true`.  This works whenever the
+`Constant` can be exactly represented in the corresponding quantity's unit and rep.
+
 ### Unary `+` and `-`
 
 For a `Constant` instance `c`, you can apply a "unary plus" (`+c`) or "unary minus" (`-c`).  The

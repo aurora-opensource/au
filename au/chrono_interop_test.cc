@@ -21,6 +21,9 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+using ::testing::Eq;
+using ::testing::Gt;
+using ::testing::Lt;
 using ::testing::StrEq;
 
 using namespace std::chrono_literals;
@@ -79,6 +82,16 @@ TEST(AsChronoDuration, ProducesExpectedResults) {
     constexpr auto result = as_chrono_duration(original);
     EXPECT_THAT(result.count(), SameTypeAndValue(12.3f));
     EXPECT_THAT(as_quantity(result), QuantityEquivalent(original));
+}
+
+TEST(Zero, ComparableToChronoDuration) {
+    EXPECT_THAT(-1ns, Lt(ZERO));
+    EXPECT_THAT(0ns, Eq(ZERO));
+    EXPECT_THAT(1ns, Gt(ZERO));
+
+    EXPECT_THAT(ZERO, Gt(-1ns));
+    EXPECT_THAT(ZERO, Eq(0ns));
+    EXPECT_THAT(ZERO, Lt(1ns));
 }
 
 }  // namespace au

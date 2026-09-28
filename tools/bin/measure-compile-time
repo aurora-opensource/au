@@ -870,11 +870,12 @@ def _compiler_version(prepared):
     Taken from the first command we prepared, since every branch is built by the toolchain this
     workspace pins.
     """
-    first = next((c for p in prepared.values() for c in p["commands"]), None)
+    first = next(((c, p["execroot"]) for p in prepared.values() for c in p["commands"]), None)
     if first is None:
         return "unknown"
+    command, execroot = first
     result = subprocess.run(
-        [first["argv"][0], "--version"], capture_output=True, text=True, cwd=_execution_root()
+        [command["argv"][0], "--version"], capture_output=True, text=True, cwd=execroot
     )
     return result.stdout.strip().splitlines()[0] if result.stdout.strip() else "unknown"
 
