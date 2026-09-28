@@ -3620,6 +3620,10 @@ the comparison is built on <code>Magnitude</code> comparison.</em></p>
 <li><code>c1 &gt;= c2</code></li>
 <li><code>c1 &lt;=&gt; c2</code> <em>(C++20 or later)</em></li>
 </ul>
+<p>A <code>Constant</code> can also be compared with an instance of any type that has a <a href="../corresponding_quantity/">corresponding
+quantity</a>, such as a <code>std::chrono::duration</code>.  For example,
+<code>std::chrono::nanoseconds{999} &lt; micro(make_constant(seconds))</code> is <code>true</code>.  This works whenever the
+<code>Constant</code> can be exactly represented in the corresponding quantity&rsquo;s unit and rep.</p>
 <h3 id="unary-and-">Unary <code>+</code> and <code>-</code><a class="headerlink" href="#unary-and-" title="Permanent link">&para;</a></h3>
 <p>For a <code>Constant</code> instance <code>c</code>, you can apply a &ldquo;unary plus&rdquo; (<code>+c</code>) or &ldquo;unary minus&rdquo; (<code>-c</code>).  The
 unary plus returns the constant unchanged (it is the identity operation), while the unary minus

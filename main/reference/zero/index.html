@@ -2995,6 +2995,9 @@ is any of the following comparison operators:</p>
 <li><code>&gt;=</code></li>
 <li><code>&lt;=&gt;</code> <em>(C++20 or later)</em></li>
 </ul>
+<p><code>ZERO</code> can also be compared with an instance of any type that has a <a href="../corresponding_quantity/">corresponding
+quantity</a>, such as a <code>std::chrono::duration</code>.  For example,
+<code>std::chrono::nanoseconds{-1} &lt; ZERO</code> is <code>true</code>.</p>
 <h2 id="io">I/O<a class="headerlink" href="#io" title="Permanent link">&para;</a></h2>
 <p>If you include I/O support, then <code>Zero</code> will be streamed as <code>"0"</code>.</p>
 
