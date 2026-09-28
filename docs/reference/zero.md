@@ -68,6 +68,10 @@ is any of the following comparison operators:
 - `>=`
 - `<=>` _(C++20 or later)_
 
+`ZERO` can also be compared with an instance of any type that has a [corresponding
+quantity](./corresponding_quantity.md), such as a `std::chrono::duration`.  For example,
+`std::chrono::nanoseconds{-1} < ZERO` is `true`.
+
 ## I/O
 
 If you include I/O support, then `Zero` will be streamed as `"0"`.

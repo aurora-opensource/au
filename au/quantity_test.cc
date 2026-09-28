@@ -1532,6 +1532,16 @@ TEST(Zero, ComparableToArbitraryQuantities) {
     EXPECT_THAT(ZERO, Gt(hours(-1)));
 }
 
+TEST(Zero, ComparableToCorrespondingQuantityTypes) {
+    EXPECT_THAT(MyHours{-1}, Lt(ZERO));
+    EXPECT_THAT(MyHours{0}, Eq(ZERO));
+    EXPECT_THAT(MyHours{1}, Gt(ZERO));
+
+    EXPECT_THAT(ZERO, Gt(MyHours{-1}));
+    EXPECT_THAT(ZERO, Eq(MyHours{0}));
+    EXPECT_THAT(ZERO, Lt(MyHours{1}));
+}
+
 TEST(Zero, AssignableToArbitraryQuantities) {
     constexpr Quantity<Inches, double> zero_inches = ZERO;
     EXPECT_THAT(zero_inches, QuantityEquivalent(inches(0.)));
