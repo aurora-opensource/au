@@ -72,9 +72,7 @@ TEST(AuModule, ProvidesMathFunctions) {
 }
 
 TEST(AuModule, ProvidesConstants) {
-    static_assert(SPEED_OF_LIGHT.as<int>(meters / second) ==
-                      (meters / second)(299'792'458),
-                  "");
+    static_assert(SPEED_OF_LIGHT.as<int>(meters / second) == (meters / second)(299'792'458), "");
 }
 
 TEST(AuModule, ConversionRiskPoliciesWorkViaArgumentDependentLookup) {
@@ -99,10 +97,9 @@ TEST(AuModule, SupportsStdSpecializations) {
     static_assert(std::numeric_limits<QuantityI32<Meters>>::max() ==
                       meters(std::numeric_limits<int32_t>::max()),
                   "");
-    static_assert(
-        std::is_same<std::common_type_t<QuantityD<Meters>, QuantityD<Meters>>,
-                     QuantityD<Meters>>::value,
-        "");
+    static_assert(std::is_same<std::common_type_t<QuantityD<Meters>, QuantityD<Meters>>,
+                               QuantityD<Meters>>::value,
+                  "");
 }
 
 TEST(AuModule, SupportsStreamingOutput) {
@@ -112,8 +109,7 @@ TEST(AuModule, SupportsStreamingOutput) {
 }
 
 TEST(AuModule, ProvidesRepSpecificAliases) {
-    static_assert(std::is_same<QuantityF<Hertz>, Quantity<Hertz, float>>::value,
-                  "");
+    static_assert(std::is_same<QuantityF<Hertz>, Quantity<Hertz, float>>::value, "");
 }
 
 #ifdef __cpp_lib_format
