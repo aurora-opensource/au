@@ -62,9 +62,11 @@ As a special case, `mag<0>()` gives [`ZERO`](./zero.md), because `0` is not a va
 example, `123_mag` produces the exact same type and value as `mag<123>()`.  It also supports digit
 separators: `1'000'000_mag` is equivalent to `mag<1000000>()`.
 
-Beyond plain integers, `_mag` also accepts decimal and scientific-notation literals, and always
-produces the _exact_ rational `Magnitude` they represent (never a floating point approximation).
-The literal's digits form an integer mantissa, which is then scaled by the appropriate power of ten:
+Beyond plain integers, `_mag` also accepts decimal, hexadecimal, octal, and binary as well as
+scientific-notation and hexadecimal floating-point literals, and always produces the _exact_
+rational `Magnitude` they represent (never a floating point approximation).  The literal's digits
+form an integer mantissa, which a point or exponent then scales by the appropriate power (of ten for
+decimal literals, and of two for hexadecimal floating point literals):
 
 - **Decimal point:** each digit after the `.` divides the mantissa by another factor of ten.  For
   example, `12.34_mag` is equivalent to `mag<1234>() / pow<2>(mag<10>())` (i.e., exactly
@@ -75,6 +77,19 @@ The literal's digits form an integer mantissa, which is then scaled by the appro
 - **Both together:** the decimal places and exponent combine.  For example, `6.62607015e-34_mag`
   produces `mag<662607015>() * pow<-42>(mag<10>())` --- the exact value of the Planck constant's
   mantissa in SI units.
+- **Hexadecimal:** a `0x` (or `0X`) prefix parses the digits as a hexadecimal integer, with
+  optional `'` separators.  For example, `0xFF_mag` is equivalent to `mag<255>()`, and
+  `0xFFFF'FFFF_mag` to `mag<4294967295>()`.
+- **Hexadecimal floating point:** each hex digit after the `.` divides by another factor of 16, and
+  a `p` (or `P`) exponent multiplies by the corresponding power of _two_.  For example,
+  `0x1.8p3_mag` is exactly $\frac{24}{16} \times 2^3 = 12$, and `0x1p-3_mag` is exactly
+  $\frac{1}{8}$.  (Hex floating point literals are a C++17 feature, so this form needs C++17 or
+  later.)
+- **Binary:** a `0b` (or `0B`) prefix parses the digits as a binary integer, with optional `'`
+  separators.  For example, `0b1010'1010_mag` is equivalent to `mag<170>()`.
+- **Octal:** as in C++, an integer literal with a leading `0` is octal.  For example, `017_mag` is
+  equivalent to `mag<15>()`, not `mag<17>()`.  A leading `0` on a literal with a decimal point or
+  exponent does not make it octal, so `012.5_mag` is exactly $\frac{125}{10}$.
 
 | Literal | Equivalent to | Exact value |
 |---------|---------------|-------------|
@@ -83,13 +98,17 @@ The literal's digits form an integer mantissa, which is then scaled by the appro
 | `12.34_mag` | `mag<1234>() / pow<2>(mag<10>())` | $\frac{1234}{100}$ |
 | `34e6_mag` | `mag<34>() * pow<6>(mag<10>())` | $34{,}000{,}000$ |
 | `6.022e23_mag` | `mag<6022>() * pow<20>(mag<10>())` | $6.022 \times 10^{23}$ |
+| `0xFF_mag` | `mag<255>()` | $255$ |
+| `0b101_mag` | `mag<5>()` | $5$ |
+| `017_mag` | `mag<15>()` | $15$ |
+| `0x1.8p3_mag` | `mag<24>() / pow<4>(mag<2>()) * pow<3>(mag<2>())` | $12$ |
 | `0_mag` | `ZERO` | $0$ |
 
 #### Zero
 
 A literal whose value is zero produces [`Zero`](./zero.md), not a `Magnitude`.  (A `Magnitude` is a
 product of powers of basis numbers, so it can never represent $0$.)  This applies however the zero
-is spelled: `0_mag`, `0.000_mag`, and `0e5_mag` all produce `ZERO`.
+is spelled: `0_mag`, `0.000_mag`, `0e5_mag`, `0x0_mag`, and `0b0_mag` all produce `ZERO`.
 
 `Zero` supports the `Magnitude` operations where the answer is well defined --- for example,
 `0_mag * 5_mag` is `ZERO`, `0_mag + 5_mag` is `mag<5>()`, and `get_value<double>(0_mag)` is `0.0`.
