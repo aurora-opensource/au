@@ -1102,9 +1102,180 @@ TEST(MagnitudeUDL, ScientificNotationProducesExactRationalMagnitude) {
     EXPECT_THAT(0.5e1_mag, SameTypeAndValue(mag<5>()));
 }
 
+TEST(MagnitudeUDL, SupportsHexLiterals) {
+    EXPECT_THAT(0x1_mag, SameTypeAndValue(mag<1>()));
+    EXPECT_THAT(0xFF_mag, SameTypeAndValue(mag<255>()));
+    EXPECT_THAT(0xff_mag, SameTypeAndValue(mag<255>()));
+    EXPECT_THAT(0XAB_mag, SameTypeAndValue(mag<0xAB>()));
+    EXPECT_THAT(0xDeAdBeEf_mag, SameTypeAndValue(mag<0xDEADBEEF>()));
+}
+
+TEST(MagnitudeUDL, HexZeroProducesZero) {
+    EXPECT_THAT(0x0_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0X0'0_mag, SameTypeAndValue(ZERO));
+}
+
+TEST(MagnitudeUDL, HexDigitEIsNotAnExponent) {
+    EXPECT_THAT(0xE_mag, SameTypeAndValue(mag<14>()));
+    EXPECT_THAT(0x1E_mag, SameTypeAndValue(mag<30>()));
+    EXPECT_THAT(0x1e3_mag, SameTypeAndValue(mag<483>()));
+}
+
+TEST(MagnitudeUDL, HexSupportsDigitSeparators) {
+    EXPECT_THAT(0xFF'FF_mag, SameTypeAndValue(mag<65535>()));
+    EXPECT_THAT(0xDEAD'BEEF_mag, SameTypeAndValue(mag<0xDEADBEEF>()));
+    EXPECT_THAT(0x1'2'3_mag, SameTypeAndValue(mag<0x123>()));
+    EXPECT_THAT(0x1'E_mag, SameTypeAndValue(mag<30>()));
+}
+
+// Hexadecimal floating point literals are a C++17 feature.
+#if defined(__cpp_hex_float) && __cpp_hex_float >= 201603L
+TEST(MagnitudeUDL, SupportsHexFloatingPoint) {
+    EXPECT_THAT(0x1.8p0_mag, SameTypeAndValue(mag<3>() / mag<2>()));
+    EXPECT_THAT(0x1.8p3_mag, SameTypeAndValue(mag<12>()));
+    EXPECT_THAT(0x.8p0_mag, SameTypeAndValue(mag<1>() / mag<2>()));
+    EXPECT_THAT(0x1.p0_mag, SameTypeAndValue(mag<1>()));
+    EXPECT_THAT(0X1.8P3_mag, SameTypeAndValue(mag<12>()));
+}
+
+TEST(MagnitudeUDL, HexFloatingPointZeroProducesZero) {
+    EXPECT_THAT(0x0p5_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0x0.0p-3_mag, SameTypeAndValue(ZERO));
+}
+
+TEST(MagnitudeUDL, HexFloatingPointSupportsSignedBinaryExponents) {
+    EXPECT_THAT(0x1p10_mag, SameTypeAndValue(mag<1024>()));
+    EXPECT_THAT(0x1p+10_mag, SameTypeAndValue(mag<1024>()));
+    EXPECT_THAT(0x1p-3_mag, SameTypeAndValue(mag<1>() / mag<8>()));
+    EXPECT_THAT(0x3p-1_mag, SameTypeAndValue(mag<3>() / mag<2>()));
+}
+
+TEST(MagnitudeUDL, HexFloatingPointDigitEIsNotAnExponent) {
+    EXPECT_THAT(0x1.Ep0_mag, SameTypeAndValue(mag<15>() / mag<8>()));
+    EXPECT_THAT(0xE.Ep4_mag, SameTypeAndValue(mag<0xEE>()));
+}
+
+TEST(MagnitudeUDL, HexFloatingPointComposesWithSeparators) {
+    EXPECT_THAT(0x1'0.8p1_mag, SameTypeAndValue(mag<33>()));
+}
+
+TEST(MagnitudeUDL, HexFloatingPointProducesExactRationalMagnitude) {
+    // 0x1.999999999999Ap-4 is the double closest to 0.1; `_mag` keeps its exact value.
+    EXPECT_THAT(0x1.999999999999Ap-4_mag,
+                SameTypeAndValue(mag<0x1999999999999A>() / pow<56>(mag<2>())));
+}
+#endif
+
+TEST(MagnitudeUDL, SupportsBinaryLiterals) {
+    EXPECT_THAT(0b1_mag, SameTypeAndValue(mag<1>()));
+    EXPECT_THAT(0b101_mag, SameTypeAndValue(mag<5>()));
+    EXPECT_THAT(0B110_mag, SameTypeAndValue(mag<6>()));
+    EXPECT_THAT(0b0001_mag, SameTypeAndValue(mag<1>()));
+}
+
+TEST(MagnitudeUDL, BinaryZeroProducesZero) {
+    EXPECT_THAT(0b0_mag, SameTypeAndValue(ZERO));
+    EXPECT_THAT(0B0'0_mag, SameTypeAndValue(ZERO));
+}
+
+TEST(MagnitudeUDL, BinarySupportsDigitSeparators) {
+    EXPECT_THAT(0b1010'1010_mag, SameTypeAndValue(mag<0xAA>()));
+    EXPECT_THAT(0b1'0'1_mag, SameTypeAndValue(mag<5>()));
+}
+
+TEST(MagnitudeUDL, BinaryProducesSameTypeAndValueAsDecimal) {
+    EXPECT_THAT(0b1100100_mag, SameTypeAndValue(100_mag));
+    EXPECT_THAT(0b1111'1111'1111'1111'1111'1111'1111'1111_mag, SameTypeAndValue(4'294'967'295_mag));
+}
+
+TEST(MagnitudeUDL, SupportsOctalLiterals) {
+    EXPECT_THAT(010_mag, SameTypeAndValue(mag<8>()));
+    EXPECT_THAT(017_mag, SameTypeAndValue(mag<15>()));
+    EXPECT_THAT(0777_mag, SameTypeAndValue(mag<511>()));
+}
+
+TEST(MagnitudeUDL, OctalSupportsDigitSeparators) {
+    EXPECT_THAT(0'777'777_mag, SameTypeAndValue(mag<0777777>()));
+}
+
+TEST(MagnitudeUDL, LeadingZeroFloatingPointIsDecimal) {
+    EXPECT_THAT(012.5_mag, SameTypeAndValue(mag<125>() / mag<10>()));
+    EXPECT_THAT(01e3_mag, SameTypeAndValue(mag<1000>()));
+    EXPECT_THAT(08.5_mag, SameTypeAndValue(mag<85>() / mag<10>()));
+    EXPECT_THAT(010._mag, SameTypeAndValue(mag<10>()));
+}
+
+TEST(MagnitudeUDL, HexProducesSameTypeAndValueAsDecimal) {
+    EXPECT_THAT(0x64_mag, SameTypeAndValue(100_mag));
+    EXPECT_THAT(0xFFFF'FFFF_mag, SameTypeAndValue(4'294'967'295_mag));
+}
+
 }  // namespace au_literals
 
 namespace detail {
+
+TEST(AllValidLiteralChars, AcceptsValidLiteralsInEachBase) {
+    EXPECT_THAT((all_valid_literal_chars<10, '1', '2', '.', '5', 'e', '-', '3'>()), IsTrue());
+    EXPECT_THAT((all_valid_literal_chars<10, '.', '5'>()), IsTrue());
+    EXPECT_THAT((all_valid_literal_chars<16, '0', 'x', 'F', 'f'>()), IsTrue());
+    EXPECT_THAT((all_valid_literal_chars<16, '0', 'x', '1', '.', '8', 'p', '+', '3'>()), IsTrue());
+    EXPECT_THAT((all_valid_literal_chars<16, '0', 'x', '1', 'p', '3'>()), IsTrue());
+    EXPECT_THAT((all_valid_literal_chars<8, '0', '1', '7'>()), IsTrue());
+    EXPECT_THAT((all_valid_literal_chars<2, '0', 'b', '1', '0'>()), IsTrue());
+}
+
+TEST(AllValidLiteralChars, AcceptsSeparatorsInMantissaAndExponent) {
+    EXPECT_THAT((all_valid_literal_chars<10, '1', '\'', '0', 'e', '1', '\'', '0'>()), IsTrue());
+    EXPECT_THAT((all_valid_literal_chars<2, '0', 'b', '1', '\'', '0'>()), IsTrue());
+}
+
+TEST(AllValidLiteralChars, RejectsDigitsOutsideBase) {
+    EXPECT_THAT((all_valid_literal_chars<10, '1', 'a'>()), IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<16, '0', 'x', 'g'>()), IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<8, '0', '9'>()), IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<2, '0', 'b', '2'>()), IsFalse());
+}
+
+TEST(AllValidLiteralChars, UsesTheExponentMarkerForTheBase) {
+    EXPECT_THAT((all_valid_literal_chars<10, '1', 'p', '3'>()), IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<16, '0', 'x', '1', 'e', '3'>()), IsTrue());
+    EXPECT_THAT((all_valid_literal_chars<8, '0', '1', 'e', '1'>()), IsFalse());
+}
+
+TEST(AllValidLiteralChars, RequiresAMantissaDigit) {
+    EXPECT_THAT((all_valid_literal_chars<16, '0', 'x'>()), IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<2, '0', 'b'>()), IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<10, '.', 'e', '1'>()), IsFalse());
+}
+
+TEST(AllValidLiteralChars, AllowsAtMostOnePointAndOnlyInBasesTenAndSixteen) {
+    EXPECT_THAT((all_valid_literal_chars<10, '1', '.', '2', '.', '3'>()), IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<16, '0', 'x', '1', '.', '2', '.', '3', 'p', '0'>()),
+                IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<8, '0', '1', '.', '2'>()), IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<2, '0', 'b', '1', '.', '1'>()), IsFalse());
+}
+
+TEST(AllValidLiteralChars, RequiresABinaryExponentForHexWithAPoint) {
+    EXPECT_THAT((all_valid_literal_chars<16, '0', 'x', '1', '.', '8'>()), IsFalse());
+}
+
+TEST(AllValidLiteralChars, RequiresExponentDigits) {
+    EXPECT_THAT((all_valid_literal_chars<10, '1', 'e'>()), IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<10, '1', 'e', '-'>()), IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<16, '0', 'x', '1', 'p'>()), IsFalse());
+}
+
+TEST(AllValidLiteralChars, RequiresExponentToBeDecimalWithAtMostOneLeadingSign) {
+    EXPECT_THAT((all_valid_literal_chars<10, '1', 'e', 'x'>()), IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<10, '1', 'e', '1', '.', '5'>()), IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<10, '1', 'e', '+', '-', '1'>()), IsFalse());
+    EXPECT_THAT((all_valid_literal_chars<16, '0', 'x', '1', 'p', 'A'>()), IsFalse());
+}
+
+TEST(AllValidLiteralChars, RejectsSignInMantissa) {
+    EXPECT_THAT((all_valid_literal_chars<10, '+', '1'>()), IsFalse());
+}
 
 MATCHER(CannotFit, "") {
     return (arg.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT) && (arg.value == 0);
