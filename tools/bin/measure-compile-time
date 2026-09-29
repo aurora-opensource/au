@@ -46,8 +46,14 @@ import compile_time_report as report  # noqa: E402
 import csv_stream  # noqa: E402
 
 
-# Every `cc_binary` and `cc_library` under `//examples`.
-ALL_EXAMPLES_QUERY = 'kind("cc_(binary|library) rule", //examples:all)'
+# When the user omits explicit targets, measure everything under `//examples` and `//benchmarks`.
+DEFAULT_TARGETS_QUERY = (
+    'kind("cc_(binary|library) rule", //examples:all + //benchmarks:all)'
+)
+
+# What bazel returns from a `--keep_going` query that resolved some of what it was asked for and
+# not the rest.  Not an error here: see `_query_targets`.
+BAZEL_PARTIAL_SUCCESS = 3
 
 # Worktrees live outside the repository, but not beyond the run that made them: each one drags a
 # multi-GiB bazel output base along behind it, so a run cleans up after itself.  See
@@ -76,9 +82,10 @@ class _Run:
     that dies partway through still describes itself truthfully.
     """
 
-    def __init__(self, branches, targets, reps, keep_going, out_dir, commits):
+    def __init__(self, branches, targets, target_query, reps, keep_going, out_dir, commits):
         self.branches = branches
         self.targets = targets
+        self.target_query = target_query
         self.reps = reps
         self.keep_going = keep_going
         self.out_dir = out_dir
@@ -88,6 +95,7 @@ class _Run:
             "reps": reps,
             "branches": branches,
             "targets": targets,
+            "target_query": target_query,
             "started": _timestamp(),
             "out_dir": str(out_dir),
             "commits": commits,
@@ -150,7 +158,7 @@ def _parse_args():
     parser = argparse.ArgumentParser(
         description=__doc__.split("\n")[0],
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="With no -t, every example under //examples is measured.",
+        epilog="With no -t, every example and benchmark is measured.",
     )
     parser.add_argument(
         "-b",
@@ -168,8 +176,8 @@ def _parse_args():
         action="append",
         default=[],
         metavar="TARGET",
-        help="A target to measure.  Pass it again for each one.  Defaults to every code "
-        "example.",
+        help="A target to measure.  Pass it again for each one.  Defaults to every example "
+        "and benchmark.",
     )
     parser.add_argument(
         "-n",
@@ -274,7 +282,8 @@ def _plan_and_announce_the_run(args):
     """
     _warn_that_the_working_tree_is_not_measured()
 
-    targets = args.targets or _query_targets(ALL_EXAMPLES_QUERY)
+    target_query = _target_query(args.targets)
+    targets = _query_targets(target_query)
     if not targets:
         _fail("No targets to measure.")
 
@@ -284,6 +293,7 @@ def _plan_and_announce_the_run(args):
     run = _Run(
         branches=args.branches,
         targets=targets,
+        target_query=target_query,
         reps=args.reps,
         keep_going=args.keep_going,
         out_dir=out_dir,
@@ -312,7 +322,11 @@ def _perform_and_record_all_measurements(run):
     run.write_manifest()
 
     prepared = _prepare_every_branch(run)
-    run.record(machine=_describe_this_machine(prepared), finished=None)
+    run.record(
+        machine=_describe_this_machine(prepared),
+        targets_measured={b: p["targets"] for b, p in prepared.items()},
+        finished=None,
+    )
 
     _time_every_translation_unit_on_every_branch(prepared, run)
     run.record(finished=_timestamp())
@@ -401,7 +415,7 @@ def _describe_the_machine_after_the_fact(manifest):
     this finds is the one that produced the measurements.  That is still an inference rather than
     an observation, which is why the record itself says when it was taken.
     """
-    targets = manifest.get("targets") or _query_targets(ALL_EXAMPLES_QUERY)
+    targets = manifest.get("targets") or _query_targets(DEFAULT_TARGETS_QUERY)
     prepared = {}
     if targets:
         _run(["bazel", "build"] + targets, quiet=True, check=False)
@@ -467,8 +481,35 @@ def _warn_that_the_working_tree_is_not_measured():
         )
 
 
-def _query_targets(query):
-    result = _run(["bazel", "query", query], capture=True, quiet=True)
+def _target_query(explicit_targets):
+    """What to measure, expressed as a bazel query rather than as a resolved list of targets.
+
+    We keep it in query form because we can't assume every branch contains every example.  In
+    particular, we don't want our script to break when we add a _new_ example.
+    """
+    if explicit_targets:
+        return "set({})".format(" ".join(explicit_targets))
+    return DEFAULT_TARGETS_QUERY
+
+
+def _query_targets(query, cwd=None):
+    """Resolve a target query, tolerating targets this branch has never heard of.
+
+    `--keep_going` enables this tolerance.  If there are any new targets, we'll exit with code
+    `BAZEL_PARTIAL_SUCCESS`, which we'll treat as a normal, expected occurrence.  (This happens most
+    commonly when the branch we're measuring _adds_ one or more examples.)
+    """
+    result = _run(
+        ["bazel", "query", query, "--keep_going"],
+        capture=True,
+        quiet=True,
+        check=False,
+        cwd=cwd,
+    )
+    if result.returncode not in (0, BAZEL_PARTIAL_SUCCESS):
+        if result.stderr:
+            sys.stderr.write(result.stderr)
+        _fail("Could not resolve the targets to measure: {}".format(query))
     return sorted(line.strip() for line in result.stdout.splitlines() if line.strip())
 
 
@@ -494,7 +535,7 @@ def _announce_the_plan(run, dry_run):
     print("\n  Branches (baseline first):")
     for branch in manifest["branches"]:
         print("    - {}".format(branch))
-    print("\n  Targets:")
+    print("\n  Targets (as they resolve on this working tree):")
     for target in manifest["targets"]:
         print("    - {}".format(target))
     print("\n  Repetitions: {}".format(manifest["reps"]))
@@ -539,20 +580,44 @@ def _prepare_every_branch(run):
         tree = _worktree_for(branch)
         print("  worktree: {}".format(tree))
 
+        targets = _query_targets(run.target_query, cwd=tree)
+        if not targets:
+            _fail("Nothing to measure on '{}'.".format(branch))
+
         # This build has two purposes.  Not only does it warm the cache, but it also materializes
         # any external repositories we need.  (If we skip this, the build command we're trying to
         # measure might fail.)
-        _run(["bazel", "build"] + run.targets, quiet=True, cwd=tree)
+        _run(["bazel", "build"] + targets, quiet=True, cwd=tree)
 
-        commands = _compile_commands(run.targets, cwd=tree)
-        prepared[branch] = {"commands": commands, "execroot": _execution_root(cwd=tree)}
-        print("  {} translation unit(s)".format(len(commands)))
+        commands = _compile_commands(targets, cwd=tree)
+        prepared[branch] = {
+            "commands": commands,
+            "execroot": _execution_root(cwd=tree),
+            "targets": targets,
+        }
+        print("  {} target(s), {} translation unit(s)".format(len(targets), len(commands)))
 
         _warn_if_the_remaining_branches_will_not_fit(
             consumed_gb=free_before - _free_space_gb(),
             remaining=len(run.branches) - len(prepared),
         )
+
+    _say_which_targets_are_not_on_every_branch(prepared)
     return prepared
+
+
+def _say_which_targets_are_not_on_every_branch(prepared):
+    """Name the targets that only some branches have, while the user is still watching."""
+    everywhere = set.intersection(*(set(p["targets"]) for p in prepared.values()))
+    anywhere = set.union(*(set(p["targets"]) for p in prepared.values()))
+    partial = sorted(anywhere - everywhere)
+    if not partial:
+        return
+    print(
+        "\nNote: not on every branch, so there is nothing to compare them against:\n{}".format(
+            "\n".join("  - {}".format(target) for target in partial)
+        )
+    )
 
 
 def _describe_this_machine(prepared, during_run=True):
