@@ -3197,21 +3197,20 @@ to visit the URL in your <em>local</em> browser, and view the documentation webs
 </details>
 <h3 id="measuring-compile-time-impact">Measuring compile time impact<a class="headerlink" href="#measuring-compile-time-impact" title="Permanent link">&para;</a></h3>
 <p>Our code examples don&rsquo;t just show how to use the library; they also double as a built-in set of
-benchmarks for measuring its compile time costs.  We can measure <em>changes</em> by compiling the same
-example on different commits.  In fact, since most examples have a curated &ldquo;raw&rdquo; (no Au) version
-built in, they even help us measure the <em>absolute magnitude</em> of those costs.</p>
+benchmarks for measuring its compile time costs<sup id="fnref:benchmarks"><a class="footnote-ref" href="#fn:benchmarks">1</a></sup>.  We can measure <em>changes</em> by compiling
+the same example on different commits.  In fact, since most examples have a curated &ldquo;raw&rdquo; (no Au)
+version built in, they even help us measure the <em>absolute magnitude</em> of those costs.</p>
 <p>The most common use case is to measure the compile time impact of a single branch (typically for
 a pull request) against its parent.  For that, we provide a simple command:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>measure-branch-impact<span class="w"> </span>-n<span class="w"> </span><span class="m">200</span>
 </code></pre></div>
-<p>This compiles each example 200 times on both the current branch and its baseline &mdash; the commit
-where this branch left <code>main</code>, rather than the tip of <code>main</code>, so that other people&rsquo;s changes don&rsquo;t
-get folded into yours.  200 repetitions is typically a good balance between getting enough data
-points to be meaningful, and not taking too long to complete: on a typical development machine,
-this takes less than an hour.  For best results, avoid running other programs while the measurement
-is in progress, and consider setting the CPU governor to <code>performance</code> if that is relevant to your
-machine (common on laptops).  However, even if you don&rsquo;t, the statistical analysis should be good
-enough to indicate the impact of the change.</p>
+<p>This compiles each example and benchmark 200 times on both the current branch and its parent, so
+that only this branch&rsquo;s changes show up.  200 repetitions is typically a good balance between
+getting enough data points to be meaningful, and not taking too long to complete: on a typical
+development machine, this takes less than an hour.  For best results, avoid running other programs
+while the measurement is in progress, and consider setting the CPU governor to <code>performance</code> if that
+is relevant to your machine (common on laptops). However, even if you don&rsquo;t, the statistical
+analysis should be good enough to indicate the impact of the change.</p>
 <p>Note that only <em>committed</em> work is measured: each branch is compiled in its own git worktree, so
 uncommitted changes in your working tree don&rsquo;t take part (the tool says so if you have any).</p>
 <p>The results can be found in the <code>~/compile-time-measurements/</code> folder, within a date/time-stamped
@@ -3251,10 +3250,21 @@ to see all of the options, but here&rsquo;s an example.</p>
 </code></pre></div>
 <p>Note that you can specify any number of targets, and any number of branches (at least two: the
 first one you name is the baseline that the others are compared against).  With no <code>-t</code>, every code
-example is measured.</p>
+example and every compile time benchmark is measured.</p>
 <p>If you want to change the report or the plots without paying for the measurements again, point
 <code>--report-only</code> at a finished run&rsquo;s folder: it re-renders both from the <code>raw.csv</code> that&rsquo;s already
 there.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:benchmarks">
+<p>Although every code example is something we want to measure, not everything we want
+to measure makes sense as a code example.  Therefore, we added the <code>//benchmarks</code> folder.  These
+targets exist purely to measure performance on some aspect of the library that we expect to be
+sensitive to.&#160;<a class="footnote-backref" href="#fnref:benchmarks" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
