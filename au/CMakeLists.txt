@@ -272,7 +272,7 @@ if (AU_BUILD_MODULE)
   )
   target_link_libraries(au_module PUBLIC au)
   target_compile_features(au_module PUBLIC cxx_std_20)
-  add_library(Au::au_module ALIAS au_module)
+  add_library(Au::module ALIAS au_module)
 
   include(GNUInstallDirs)
   install(
