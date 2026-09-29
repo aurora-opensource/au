@@ -3350,9 +3350,11 @@ integer <code>N</code>.</p>
 <p><code>_mag</code> is a user-defined literal (UDL) that provides a more concise alternative to <code>mag&lt;N&gt;()</code>.  For
 example, <code>123_mag</code> produces the exact same type and value as <code>mag&lt;123&gt;()</code>.  It also supports digit
 separators: <code>1'000'000_mag</code> is equivalent to <code>mag&lt;1000000&gt;()</code>.</p>
-<p>Beyond plain integers, <code>_mag</code> also accepts decimal and scientific-notation literals, and always
-produces the <em>exact</em> rational <code>Magnitude</code> they represent (never a floating point approximation).
-The literal&rsquo;s digits form an integer mantissa, which is then scaled by the appropriate power of ten:</p>
+<p>Beyond plain integers, <code>_mag</code> also accepts decimal, hexadecimal, octal, and binary as well as
+scientific-notation and hexadecimal floating-point literals, and always produces the <em>exact</em>
+rational <code>Magnitude</code> they represent (never a floating point approximation).  The literal&rsquo;s digits
+form an integer mantissa, which a point or exponent then scales by the appropriate power (of ten for
+decimal literals, and of two for hexadecimal floating point literals):</p>
 <ul>
 <li><strong>Decimal point:</strong> each digit after the <code>.</code> divides the mantissa by another factor of ten.  For
   example, <code>12.34_mag</code> is equivalent to <code>mag&lt;1234&gt;() / pow&lt;2&gt;(mag&lt;10&gt;())</code> (i.e., exactly
@@ -3363,6 +3365,19 @@ The literal&rsquo;s digits form an integer mantissa, which is then scaled by the
 <li><strong>Both together:</strong> the decimal places and exponent combine.  For example, <code>6.62607015e-34_mag</code>
   produces <code>mag&lt;662607015&gt;() * pow&lt;-42&gt;(mag&lt;10&gt;())</code> &mdash; the exact value of the Planck constant&rsquo;s
   mantissa in SI units.</li>
+<li><strong>Hexadecimal:</strong> a <code>0x</code> (or <code>0X</code>) prefix parses the digits as a hexadecimal integer, with
+  optional <code>'</code> separators.  For example, <code>0xFF_mag</code> is equivalent to <code>mag&lt;255&gt;()</code>, and
+  <code>0xFFFF'FFFF_mag</code> to <code>mag&lt;4294967295&gt;()</code>.</li>
+<li><strong>Hexadecimal floating point:</strong> each hex digit after the <code>.</code> divides by another factor of 16, and
+  a <code>p</code> (or <code>P</code>) exponent multiplies by the corresponding power of <em>two</em>.  For example,
+  <code>0x1.8p3_mag</code> is exactly <span class="arithmatex"><span class="MathJax_Preview">\frac{24}{16} \times 2^3 = 12</span><script type="math/tex">\frac{24}{16} \times 2^3 = 12</script></span>, and <code>0x1p-3_mag</code> is exactly
+  <span class="arithmatex"><span class="MathJax_Preview">\frac{1}{8}</span><script type="math/tex">\frac{1}{8}</script></span>.  (Hex floating point literals are a C++17 feature, so this form needs C++17 or
+  later.)</li>
+<li><strong>Binary:</strong> a <code>0b</code> (or <code>0B</code>) prefix parses the digits as a binary integer, with optional <code>'</code>
+  separators.  For example, <code>0b1010'1010_mag</code> is equivalent to <code>mag&lt;170&gt;()</code>.</li>
+<li><strong>Octal:</strong> as in C++, an integer literal with a leading <code>0</code> is octal.  For example, <code>017_mag</code> is
+  equivalent to <code>mag&lt;15&gt;()</code>, not <code>mag&lt;17&gt;()</code>.  A leading <code>0</code> on a literal with a decimal point or
+  exponent does not make it octal, so <code>012.5_mag</code> is exactly <span class="arithmatex"><span class="MathJax_Preview">\frac{125}{10}</span><script type="math/tex">\frac{125}{10}</script></span>.</li>
 </ul>
 <table>
 <thead>
@@ -3399,6 +3414,26 @@ The literal&rsquo;s digits form an integer mantissa, which is then scaled by the
 <td><span class="arithmatex"><span class="MathJax_Preview">6.022 \times 10^{23}</span><script type="math/tex">6.022 \times 10^{23}</script></span></td>
 </tr>
 <tr>
+<td><code>0xFF_mag</code></td>
+<td><code>mag&lt;255&gt;()</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">255</span><script type="math/tex">255</script></span></td>
+</tr>
+<tr>
+<td><code>0b101_mag</code></td>
+<td><code>mag&lt;5&gt;()</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">5</span><script type="math/tex">5</script></span></td>
+</tr>
+<tr>
+<td><code>017_mag</code></td>
+<td><code>mag&lt;15&gt;()</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">15</span><script type="math/tex">15</script></span></td>
+</tr>
+<tr>
+<td><code>0x1.8p3_mag</code></td>
+<td><code>mag&lt;24&gt;() / pow&lt;4&gt;(mag&lt;2&gt;()) * pow&lt;3&gt;(mag&lt;2&gt;())</code></td>
+<td><span class="arithmatex"><span class="MathJax_Preview">12</span><script type="math/tex">12</script></span></td>
+</tr>
+<tr>
 <td><code>0_mag</code></td>
 <td><code>ZERO</code></td>
 <td><span class="arithmatex"><span class="MathJax_Preview">0</span><script type="math/tex">0</script></span></td>
@@ -3408,7 +3443,7 @@ The literal&rsquo;s digits form an integer mantissa, which is then scaled by the
 <h4 id="zero">Zero<a class="headerlink" href="#zero" title="Permanent link">&para;</a></h4>
 <p>A literal whose value is zero produces <a href="../zero/"><code>Zero</code></a>, not a <code>Magnitude</code>.  (A <code>Magnitude</code> is a
 product of powers of basis numbers, so it can never represent <span class="arithmatex"><span class="MathJax_Preview">0</span><script type="math/tex">0</script></span>.)  This applies however the zero
-is spelled: <code>0_mag</code>, <code>0.000_mag</code>, and <code>0e5_mag</code> all produce <code>ZERO</code>.</p>
+is spelled: <code>0_mag</code>, <code>0.000_mag</code>, <code>0e5_mag</code>, <code>0x0_mag</code>, and <code>0b0_mag</code> all produce <code>ZERO</code>.</p>
 <p><code>Zero</code> supports the <code>Magnitude</code> operations where the answer is well defined &mdash; for example,
 <code>0_mag * 5_mag</code> is <code>ZERO</code>, <code>0_mag + 5_mag</code> is <code>mag&lt;5&gt;()</code>, and <code>get_value&lt;double&gt;(0_mag)</code> is <code>0.0</code>.</p>
 <p>To use it, add the following to your file:</p>

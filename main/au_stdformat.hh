@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-25-g6f8fa312
+// Version identifier: 0.6.0-base-26-gb11dab0f
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -3563,84 +3563,86 @@ AU_DEVICE_FUNC constexpr auto mag() {
 // User-defined literal for magnitude.
 
 namespace detail {
-constexpr bool is_valid_magnitude_digit(char c) { return (c >= '0' && c <= '9') || c == '\''; }
+
+// The value of `c` as a digit in any base up to 16, or -1 if `c` is not a hexadecimal digit.
+constexpr int digit_value(char c) {
+    return c >= '0' && c <= '9'   ? c - '0'
+           : c >= 'a' && c <= 'f' ? c - 'a' + 10
+           : c >= 'A' && c <= 'F' ? c - 'A' + 10
+                                  : -1;
+}
+
+constexpr bool is_decimal_digit(char c) { return c >= '0' && c <= '9'; }
+
+constexpr bool is_hex_digit(char c) { return digit_value(c) >= 0; }
 
 constexpr bool is_exponent_marker(char c) { return c == 'e' || c == 'E'; }
 
+constexpr bool is_binary_exponent_marker(char c) { return c == 'p' || c == 'P'; }
+
+constexpr bool never_matches(char) { return false; }
+
+// Whether a `_mag` literal is a floating point literal, i.e., has a decimal point or an exponent.
+// Only meaningful for literals without a `0x`/`0X` prefix, where `e`/`E` are digits.
 template <char... Cs>
-constexpr bool all_valid_magnitude_chars() {
+constexpr bool is_decimal_floating_point() {
     constexpr char chars[] = {Cs...};
-    std::size_t num_decimal_points = 0u;
-    std::size_t num_exponent_markers = 0u;
     for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
-        const char c = chars[i];
-        if (c == '.') {
-            ++num_decimal_points;
-        } else if (is_exponent_marker(c)) {
-            ++num_exponent_markers;
-        } else if (c == '+' || c == '-') {
-            // A sign is only meaningful as part of an exponent; the compiler guarantees it appears
-            // there, so we accept it here without further checking.
-        } else if (!is_valid_magnitude_digit(c)) {
-            return false;
+        if (chars[i] == '.' || is_exponent_marker(chars[i])) {
+            return true;
         }
     }
-    return num_decimal_points <= 1u && num_exponent_markers <= 1u;
+    return false;
 }
 
-// Parse the significant digits (the mantissa) of a `_mag` literal, ignoring any decimal point and
-// stopping at the exponent.  For example, `1234_mag`, `12.34_mag`, and `1.234e3_mag` all produce
-// `1234`.
+// The base of a `_mag` literal, following the C++ rules: 16 for a `0x`/`0X` prefix, 2 for
+// `0b`/`0B`, 8 for an integer with a leading `0` (e.g., `017`), and 10 otherwise.  A floating point
+// literal with a leading `0` (e.g., `0.5`, `012.5`, or `01e3`) is decimal.
 template <char... Cs>
-constexpr std::uintmax_t parse_magnitude_integer() {
-    static_assert(all_valid_magnitude_chars<Cs...>(),
-                  "_mag literals must contain only decimal digits, an optional decimal point, an "
-                  "optional exponent, and optional ' separators");
-    constexpr char digits[] = {Cs...};
-    std::uintmax_t result = 0u;
-    for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
-        if (is_exponent_marker(digits[i])) {
-            break;
-        }
-        if (digits[i] >= '0' && digits[i] <= '9') {
-            result = result * 10u + static_cast<std::uintmax_t>(digits[i] - '0');
-        }
-    }
-    return result;
+constexpr int literal_base() {
+    constexpr char chars[] = {Cs..., '\0'};
+    return chars[0] != '0'                      ? 10
+           : chars[1] == 'x' || chars[1] == 'X' ? 16
+           : chars[1] == 'b' || chars[1] == 'B' ? 2
+           : is_decimal_floating_point<Cs...>() ? 10
+                                                : 8;
 }
 
-// Count the number of mantissa digits after the decimal point in a `_mag` literal.  For example,
-// `12.34_mag` has two decimal places, while `1234_mag` has 0, and `1.234e3_mag` has three.
+// Count the mantissa digits (as identified by `is_digit`) after the `.` in a `_mag` literal,
+// stopping at the first character for which `is_marker` returns true.  For example, `12.34_mag` and
+// `1.23e4_mag` have two decimal places, `0x1.8p0_mag` has one hex place, and `1234_mag` has none.
 template <char... Cs>
-constexpr int count_decimal_places() {
+constexpr int count_places(bool (*is_marker)(char), bool (*is_digit)(char)) {
     constexpr char chars[] = {Cs...};
-    int num_decimal_places = 0;
-    bool after_decimal_point = false;
+    int num_places = 0;
+    bool after_point = false;
     for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
-        if (is_exponent_marker(chars[i])) {
+        if (is_marker(chars[i])) {
             break;
         }
         if (chars[i] == '.') {
-            after_decimal_point = true;
-        } else if (after_decimal_point && chars[i] >= '0' && chars[i] <= '9') {
-            ++num_decimal_places;
+            after_point = true;
+        } else if (after_point && is_digit(chars[i])) {
+            ++num_places;
         }
     }
-    return num_decimal_places;
+    return num_places;
 }
 
-// Parse the (signed) exponent of a `_mag` literal: the integer following the `e`/`E` marker.  For
-// example, `6.022e23_mag` produces `23`, and `1e-3_mag` produces `-3`.  A literal with no exponent
+// Parse the (signed) exponent of a `_mag` literal: the decimal integer following the first
+// character for which `is_marker` returns true.  This serves both the `e`/`E` exponent of decimal
+// literals and the `p`/`P` exponent of hex literals, since C++ writes both in decimal.  For
+// example, `6.022e23_mag` produces `23`, and `0x1p-3_mag` produces `-3`.  A literal with no marker
 // produces `0`.
 template <char... Cs>
-constexpr std::int64_t parse_scientific_exponent() {
+constexpr std::int64_t parse_exponent(bool (*is_marker)(char)) {
     constexpr char chars[] = {Cs...};
     std::uint64_t exponent = 0u;
     std::int64_t sign = 1;
     bool in_exponent = false;
     for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
         const char c = chars[i];
-        if (is_exponent_marker(c)) {
+        if (is_marker(c)) {
             in_exponent = true;
         } else if (in_exponent) {
             if (c == '-') {
@@ -3653,24 +3655,124 @@ constexpr std::int64_t parse_scientific_exponent() {
     return sign * static_cast<std::int64_t>(exponent);
 }
 
-// Compute the value of a `_mag` literal whose mantissa is `Mantissa`.  This will be a `Magnitude`
-// if `Mantissa > 0`, or `Zero` if `Mantissa == 0`.
-template <std::uintmax_t Mantissa>
-struct MagLiteralImpl {
-    template <char... Cs>
-    static AU_DEVICE_FUNC constexpr auto value() {
-        return mag<Mantissa>() *
-               pow<parse_scientific_exponent<Cs...>() - count_decimal_places<Cs...>()>(mag<10>());
+// Parse the significant digits (the mantissa) of a `_mag` literal as an integer in `base`, ignoring
+// any `.` and `'`, and stopping at the first character for which `is_marker` returns true.  For
+// example, `12.34_mag` and `1.234e3_mag` produce `1234` in base 10, and `0x1.Ep4_mag` produces `30`
+// in base 16.  A `0x` prefix needs no special handling: its `0` is a leading zero, and `x` is not a
+// digit.
+template <char... Cs>
+constexpr std::uintmax_t parse_mantissa(bool (*is_marker)(char), int base) {
+    constexpr char chars[] = {Cs...};
+    std::uintmax_t result = 0u;
+    for (std::size_t i = 0u; i < sizeof...(Cs); ++i) {
+        if (is_marker(chars[i])) {
+            break;
+        }
+        const int value = digit_value(chars[i]);
+        if (value >= 0 && value < base) {
+            result =
+                result * static_cast<std::uintmax_t>(base) + static_cast<std::uintmax_t>(value);
+        }
+    }
+    return result;
+}
+
+template <int Base, char... Cs>
+struct MagLiteralParser;
+
+template <char... Cs>
+struct MagLiteralParser<10, Cs...> {
+    AU_DEVICE_FUNC static constexpr auto value() {
+        return mag<parse_mantissa<Cs...>(is_exponent_marker, 10)>() *
+               pow<parse_exponent<Cs...>(is_exponent_marker) -
+                   count_places<Cs...>(is_exponent_marker, is_decimal_digit)>(mag<10>());
     }
 };
+
+template <char... Cs>
+struct MagLiteralParser<16, Cs...> {
+    AU_DEVICE_FUNC static constexpr auto value() {
+        // Each hex place divides by 16, i.e., by 2^4.
+        return mag<parse_mantissa<Cs...>(is_binary_exponent_marker, 16)>() *
+               pow<parse_exponent<Cs...>(is_binary_exponent_marker) -
+                   4 * count_places<Cs...>(is_binary_exponent_marker, is_hex_digit)>(mag<2>());
+    }
+};
+
+template <char... Cs>
+struct MagLiteralParser<2, Cs...> {
+    AU_DEVICE_FUNC static constexpr auto value() {
+        return mag<parse_mantissa<Cs...>(never_matches, 2)>();
+    }
+};
+
+template <char... Cs>
+struct MagLiteralParser<8, Cs...> {
+    AU_DEVICE_FUNC static constexpr auto value() {
+        return mag<parse_mantissa<Cs...>(never_matches, 8)>();
+    }
+};
+
+// Whether `Cs...` has the form of a `_mag` literal in `Base`, which is `literal_base<Cs...>()`.
+// After the prefix (`0x`/`0X` for base 16, `0b`/`0B` for base 2), there must be at least one digit
+// below `Base`, and optional `'` separators.  Bases 10 and 16 also allow at most one `.`, and an
+// exponent (`e`/`E` for base 10, `p`/`P` for base 16) with an optional sign and at least one
+// decimal digit.  A base 16 literal with a `.` must have an exponent.
+//
+// The compiler only calls `operator""_mag` with valid literals, so this can only fail when someone
+// calls the operator directly.  We do not check where `'` separators appear, since they never
+// affect the value.
+template <int Base, char... Cs>
+constexpr bool all_valid_literal_chars() {
+    constexpr char chars[] = {Cs..., '\0'};
+    bool (*const is_marker)(char) = Base == 10   ? is_exponent_marker
+                                    : Base == 16 ? is_binary_exponent_marker
+                                                 : never_matches;
+    std::size_t i = Base == 16 || Base == 2 ? 2u : 0u;
+    std::size_t num_digits = 0u;
+    std::size_t num_points = 0u;
+    for (; i < sizeof...(Cs) && !is_marker(chars[i]); ++i) {
+        const int value = digit_value(chars[i]);
+        if (value >= 0 && value < Base) {
+            ++num_digits;
+        } else if (chars[i] == '.' && (Base == 10 || Base == 16)) {
+            ++num_points;
+        } else if (chars[i] != '\'') {
+            return false;
+        }
+    }
+    if (num_digits == 0u || num_points > 1u) {
+        return false;
+    }
+    if (i == sizeof...(Cs)) {
+        return !(Base == 16 && num_points > 0u);
+    }
+
+    // Skip the exponent marker, and its sign if it has one.
+    ++i;
+    if (i < sizeof...(Cs) && (chars[i] == '+' || chars[i] == '-')) {
+        ++i;
+    }
+    std::size_t num_exponent_digits = 0u;
+    for (; i < sizeof...(Cs); ++i) {
+        if (is_decimal_digit(chars[i])) {
+            ++num_exponent_digits;
+        } else if (chars[i] != '\'') {
+            return false;
+        }
+    }
+    return num_exponent_digits > 0u;
+}
+
 }  // namespace detail
 
 namespace au_literals {
 template <char... Cs>
 AU_DEVICE_FUNC constexpr auto operator""_mag() {
-    // Note that computing the mantissa also validates the characters in the literal.
-    return detail::MagLiteralImpl<detail::parse_magnitude_integer<Cs...>()>::template value<
-        Cs...>();
+    static_assert(detail::all_valid_literal_chars<detail::literal_base<Cs...>(), Cs...>(),
+                  "operator\"\"_mag must be called with the characters of a valid integer or "
+                  "floating point literal");
+    return detail::MagLiteralParser<detail::literal_base<Cs...>(), Cs...>::value();
 }
 }  // namespace au_literals
 
