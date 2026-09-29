@@ -246,9 +246,14 @@ reload the page!
 ### Measuring compile time impact
 
 Our code examples don't just show how to use the library; they also double as a built-in set of
-benchmarks for measuring its compile time costs.  We can measure _changes_ by compiling the same
-example on different commits.  In fact, since most examples have a curated "raw" (no Au) version
-built in, they even help us measure the _absolute magnitude_ of those costs.
+benchmarks for measuring its compile time costs[^benchmarks].  We can measure _changes_ by compiling
+the same example on different commits.  In fact, since most examples have a curated "raw" (no Au)
+version built in, they even help us measure the _absolute magnitude_ of those costs.
+
+[^benchmarks]: Although every code example is something we want to measure, not everything we want
+to measure makes sense as a code example.  Therefore, we added the `//benchmarks` folder.  These
+targets exist purely to measure performance on some aspect of the library that we expect to be
+sensitive to.
 
 The most common use case is to measure the compile time impact of a single branch (typically for
 a pull request) against its parent.  For that, we provide a simple command:
@@ -257,14 +262,13 @@ a pull request) against its parent.  For that, we provide a simple command:
 measure-branch-impact -n 200
 ```
 
-This compiles each example 200 times on both the current branch and its baseline --- the commit
-where this branch left `main`, rather than the tip of `main`, so that other people's changes don't
-get folded into yours.  200 repetitions is typically a good balance between getting enough data
-points to be meaningful, and not taking too long to complete: on a typical development machine,
-this takes less than an hour.  For best results, avoid running other programs while the measurement
-is in progress, and consider setting the CPU governor to `performance` if that is relevant to your
-machine (common on laptops).  However, even if you don't, the statistical analysis should be good
-enough to indicate the impact of the change.
+This compiles each example and benchmark 200 times on both the current branch and its parent, so
+that only this branch's changes show up.  200 repetitions is typically a good balance between
+getting enough data points to be meaningful, and not taking too long to complete: on a typical
+development machine, this takes less than an hour.  For best results, avoid running other programs
+while the measurement is in progress, and consider setting the CPU governor to `performance` if that
+is relevant to your machine (common on laptops). However, even if you don't, the statistical
+analysis should be good enough to indicate the impact of the change.
 
 Note that only _committed_ work is measured: each branch is compiled in its own git worktree, so
 uncommitted changes in your working tree don't take part (the tool says so if you have any).
@@ -313,7 +317,7 @@ measure-compile-time -b main -b my-branch -n 200 -t //examples:eigen_kinematics_
 
 Note that you can specify any number of targets, and any number of branches (at least two: the
 first one you name is the baseline that the others are compared against).  With no `-t`, every code
-example is measured.
+example and every compile time benchmark is measured.
 
 If you want to change the report or the plots without paying for the measurements again, point
 `--report-only` at a finished run's folder: it re-renders both from the `raw.csv` that's already

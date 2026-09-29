@@ -23,16 +23,20 @@ import sys
 FIELDS = ["timestamp", "example", "flavor", "source", "target", "branch", "rep", "nanos"]
 
 # One translation unit: the thing we actually time.  Its source path is its identity, since every
-# example source lives at a distinct path, and that path is stable across branches.
+# example and benchmark source lives at a distinct path, and that path is stable across branches.
 TranslationUnit = collections.namedtuple("TranslationUnit", ["source", "example", "flavor"])
 
 
 def classify(source):
-    """Derive the example name and flavor from an example source path.
+    """Derive the name and flavor of what we measured, from its source path.
 
     `examples/adc_millivolts/au.cc` is the `au` flavor of the `adc_millivolts` example; `raw.cc` is
-    its counterpart.  Any other stem gets the `single` flavor: it was built by the `single_example`
-    macro rather than `ab_example`, so it has no counterpart to pair against.
+    its counterpart.  Any other stem gets the `single` flavor, meaning there is no counterpart to
+    pair it against: either it came from the `single_example` macro rather than `ab_example`, or
+    it is a compile time benchmark under `//benchmarks`, which have no raw version by design.
+
+    Both directories use the same layout: the folder is the name of the test case, and the stem (if
+    there is more than one) gives the flavor.
     """
     parts = source.split("/")
     example = parts[1] if len(parts) > 2 else parts[0]

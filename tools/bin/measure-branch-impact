@@ -17,8 +17,9 @@
 # pull request.
 #
 # This is `measure-compile-time` with the arguments already filled in: the baseline is where this
-# branch left `main`, the comparison is what is checked out now, and every example is measured.
-# Reach for the underlying tool directly when you want to compare arbitrary branches or targets.
+# branch left `main`, the comparison is what is checked out now, and every code example and
+# compile time benchmark is measured.  Reach for the underlying tool directly when you want to
+# compare arbitrary branches or targets.
 
 set -euo pipefail
 

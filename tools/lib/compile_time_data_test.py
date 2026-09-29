@@ -78,6 +78,12 @@ class ClassifyTest(unittest.TestCase):
         tu = data.classify("examples/nested_dimensionless/main.cc")
         self.assertEqual((tu.example, tu.flavor), ("nested_dimensionless", "single"))
 
+    def test_benchmark_is_named_after_its_directory(self):
+        # `//benchmarks` targets share the examples' layout, so they need no special handling: the
+        # directory names them, and `single` is right, since they have no raw counterpart.
+        tu = data.classify("benchmarks/all_units/includes.cc")
+        self.assertEqual((tu.example, tu.flavor), ("all_units", "single"))
+
     def test_shallow_path_names_the_example_after_the_file(self):
         # Nothing to pull an example name out of, so the first component has to serve as one.
         tu = data.classify("single-file-test.cc")

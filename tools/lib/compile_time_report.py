@@ -149,7 +149,9 @@ def _machine_section(manifest):
 def _headline_section(m):
     """Per translation unit, the median on each branch, and how that median moved."""
     others = m.branches[1:]
-    header = ["Example", "Unit"] + ["`{}` median".format(data.branch_label(b)) for b in m.branches]
+    header = ["Example / benchmark", "Unit"] + [
+        "`{}` median".format(data.branch_label(b)) for b in m.branches
+    ]
     for b in others:
         # With a single comparison branch, "vs base" is unambiguous.  With more than one, every
         # delta column has a twin, so each has to say which branch it belongs to.
@@ -359,8 +361,9 @@ def _uncontrolled_note(m):
         return []
     return [""] + _prose(
         """
-        > Not shown here: {orphans}.  These come from `single_example`, which has no plain-C++
-        counterpart, so there is no control to difference against, and only the weaker per-unit
+        > Not shown here: {orphans}.  These are the translation units with no plain-C++
+        counterpart -- `single_example` code examples, and the `//benchmarks` compile time
+        benchmarks -- so there is no control to difference against, and only the weaker per-unit
         marks above apply to them.
         """.format(orphans=", ".join("`{}`".format(u.source) for u in orphans))
     )
