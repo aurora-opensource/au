@@ -1,0 +1,295 @@
+/*
+  Copyright 2022 Aurora Operations, Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+th {
+  text-align: center;
+}
+
+td.poor {
+    background-color: #fdae61;
+}
+
+td.fair {
+    background-color: #ffffbf;
+}
+
+td.good {
+    background-color: #abd9e9;
+}
+
+td.best, td.best * {
+    background-color: #2c7bb6;
+    color: white;
+}
+
+td.na, td.invalid {
+    background-color: #d9d9d9;
+}
+
+td.fair pre, td.poor pre, td.good pre, td.best pre {
+    display: inline;
+}
+
+a {
+    text-decoration: underline;
+}
+
+li.check, li.x {
+    list-style: none;
+    margin-left: 0;
+    text-indent: -2ch;
+}
+
+li.check:before {
+    content: "\2713  ";
+}
+
+li.x:before {
+    content: "\2717  ";
+}
+
+/*
+  A/B code examples (see docs/examples/).
+
+  Each example is a pair of tabs: the "before" version in plain C++, and the "after" version
+  using Au.  The reader flips between them to compare corresponding lines in place, so the layout
+  has one overriding job: keep the code at the *same height* in both tabs.  That is why the banner
+  below is a single fixed-height line.  Anything that makes one banner taller than the other shifts
+  that tab's code down, and the comparison stops working.  Put the actual explanation in the
+  "What's happening" section under the tabs, where its height costs nothing.
+
+  The colors deliberately reuse the comparison-matrix legend from the alternatives page: orange for
+  the version to move away from, blue for the recommended one.  That scheme was chosen because it
+  stays legible for colorblind readers (see the footnote on docs/alternatives/index.md), which is
+  also why the banner text carries an emoji and an explicit word -- the color is never the only
+  signal.
+*/
+
+.md-typeset p.ab-banner {
+    /* Fixed height is the whole point; keep banner text to one short line. */
+    box-sizing: border-box;
+    min-height: 2.4em;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+    margin: 0 0 0.8em 0;
+    padding: 0.4em 0.9em;
+    border-radius: 0.1rem;
+    font-size: 0.75rem;
+    line-height: 1.35;
+}
+
+.md-typeset p.ab-banner.ab-before {
+    background-color: #fdae61;
+    color: #000;
+}
+
+.md-typeset p.ab-banner.ab-after {
+    background-color: #abd9e9;
+    color: #000;
+}
+
+/* Inline code needs to stay readable against both banner backgrounds. */
+.md-typeset p.ab-banner code {
+    background-color: rgba(255, 255, 255, 0.75);
+    color: #000;
+}
+
+/*
+  Tint the tab buttons themselves, so a reader who never clicks still sees which version is which.
+  `:has()` scopes this to A/B tab sets only; browsers without it simply get stock tab styling.
+  The `> a` case covers Material's linked-tabs mode, which wraps each label in an anchor.
+*/
+.md-typeset .tabbed-set:has(p.ab-banner) > .tabbed-labels > label:first-child,
+.md-typeset .tabbed-set:has(p.ab-banner) > .tabbed-labels > label:first-child > a {
+    color: #a85800;
+}
+
+.md-typeset .tabbed-set:has(p.ab-banner) > .tabbed-labels > label:nth-child(2),
+.md-typeset .tabbed-set:has(p.ab-banner) > .tabbed-labels > label:nth-child(2) > a {
+    color: #2c7bb6;
+}
+
+/*
+  The comparison matrices in the "Comparison of Alternatives" guide.
+
+  These tables carry seven columns, which the default content width can't hold.
+  mkdocs-material styles bare tables via `table:not([class])`, and that rule puts
+  a `min-width` on every `th`: seven of those add up to more than the content
+  column, so the whole page scrolled sideways.  Giving these tables a class opts
+  out of that rule entirely, so we can lay them out ourselves.
+*/
+
+/* Widen the content column on any page that holds a matrix. */
+.md-main:has(table.matrix) .md-grid {
+    max-width: 80rem;
+}
+
+.md-typeset table.matrix {
+    background-color: var(--md-default-bg-color);
+    border: .05rem solid var(--md-typeset-table-color);
+    border-collapse: collapse;
+    font-size: .6rem;
+    /* `fixed` plus `width: 100%` is what guarantees the table never overflows. */
+    table-layout: fixed;
+    width: 100%;
+}
+
+.md-typeset table.matrix th,
+.md-typeset table.matrix td {
+    overflow-wrap: break-word;
+    padding: .5em .6em;
+    text-align: left;
+    vertical-align: top;
+}
+
+/* Without this, two vertically adjacent cells that happen to share a rating
+   read as one tall cell. */
+.md-typeset table.matrix tbody td {
+    border-top: .05rem solid var(--md-default-bg-color);
+}
+
+.md-typeset table.matrix th {
+    font-weight: 700;
+    text-align: center;
+}
+
+/* The criterion column is wider; `fixed` layout splits the rest evenly. */
+.md-typeset table.matrix th:first-child,
+.md-typeset table.matrix td:first-child {
+    width: 17%;
+}
+
+.md-typeset table.matrix td > :first-child {
+    margin-top: 0;
+}
+
+.md-typeset table.matrix td > :last-child {
+    margin-bottom: 0;
+}
+
+.md-typeset table.matrix ul {
+    margin: 0;
+    padding-left: 0;
+}
+
+.md-typeset table.matrix code {
+    /* Long type names must not be able to push a column wider. */
+    overflow-wrap: anywhere;
+}
+
+/*
+  Sticky headers.  Material's own site header is `position: sticky` at
+  `top: 0` with `height: 2.4rem` and `z-index: 4`, so we park ours just below it
+  and give it a lower stacking order.
+
+  The two header rows are stacked rather than nested with `rowspan`, because a
+  `rowspan` cell can only have one sticky offset, which would collide with the
+  row below it.
+*/
+.md-typeset table.matrix thead th {
+    background-color: var(--md-default-bg-color);
+    position: sticky;
+    z-index: 2;
+}
+
+.md-typeset table.matrix thead tr:first-child th {
+    height: 1.3rem;
+    line-height: 1rem;
+    padding-bottom: .15rem;
+    padding-top: .15rem;
+    top: 2.4rem;
+}
+
+.md-typeset table.matrix thead tr:nth-child(2) th {
+    /* A hard bottom edge, so the pinned header reads as a lid over the rows
+       sliding underneath it. */
+    box-shadow: 0 .05rem 0 #999;
+    top: 3.7rem;
+}
+
+/*
+  Group the two nholthaus columns.  Every library cell gets a gutter on its
+  left, except the nholthaus 3.x cell, which gets a hairline instead --- so the
+  pair reads as one library with two lines.  This is done with `td + td` rather
+  than `nth-child` so that it survives the rows where the two nholthaus cells
+  are merged with `colspan`.
+
+  The gutter has to be drawn in a different color in the head than in the body.
+  A body cell sits on its rating color, so a gap the color of the page reads as
+  a separator; a header cell sits on the page color already, where that same
+  gap would be invisible.
+
+  Every color in the header is a flat, fully opaque value.  Material's own
+  `--md-*` grays are translucent, and the header is pinned: anything that isn't
+  opaque lets the rows scrolling underneath show straight through it.
+*/
+.md-typeset table.matrix tbody td + td {
+    border-left: .15rem solid var(--md-default-bg-color);
+}
+
+.md-typeset table.matrix thead tr:first-child th + th,
+.md-typeset table.matrix thead tr:nth-child(2) th + th {
+    border-left: .15rem solid #d5d5d5;
+}
+
+/*
+  Within the nholthaus group, the divider must be the *faintest* line in the
+  table --- lighter than the gutters that separate one library from the next.
+*/
+.md-typeset table.matrix tbody td.nh3 {
+    border-left: .05rem solid var(--md-default-bg-color);
+}
+
+.md-typeset table.matrix thead th.nh3 {
+    border-left: .05rem solid #e0e0e0;
+}
+
+/*
+  The nholthaus columns are deliberately left the same white as the other
+  third-party libraries: gray is reserved for Au's column, and a second gray
+  here only dilutes it.  The spanning "nholthaus" label and the fainter
+  divider between 2.x and 3.x are enough to group the pair.
+*/
+
+/* Au's column has to win over the sticky-header background. */
+.md-typeset table.matrix thead th.highlight {
+    background-color: #ccc;
+}
+
+/* Rating colors have to win over the sticky-header background above. */
+.md-typeset table.matrix td.poor {
+    background-color: #fdae61;
+}
+
+.md-typeset table.matrix td.fair {
+    background-color: #ffffbf;
+}
+
+.md-typeset table.matrix td.good {
+    background-color: #abd9e9;
+}
+
+.md-typeset table.matrix td.best,
+.md-typeset table.matrix td.best * {
+    background-color: #2c7bb6;
+    color: white;
+}
+
+.md-typeset table.matrix td.na,
+.md-typeset table.matrix td.invalid {
+    background-color: #d9d9d9;
+}
