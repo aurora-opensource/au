@@ -101,6 +101,11 @@ struct OpaqueVector {
     T elements[3];
 };
 
+// A type with no automatically detectable scalar, and no `ScalarOfTrait` specialization.
+struct NoScalar {
+    double value;
+};
+
 }  // namespace
 
 // Set up the correspondence between `MyMeters` and `QuantityI<Meters>`.
@@ -173,6 +178,12 @@ TEST(IsValidRep, FalseForTypeWhoseScalarIsQuantityLike) {
 TEST(IsValidRep, TrueForVectorOfPlainScalars) {
     EXPECT_THAT((IsValidRep<VectorWithValueType<float>>::value), IsTrue());
     EXPECT_THAT((IsValidRep<VectorWithScalar<double>>::value), IsTrue());
+}
+
+TEST(IsValidRep, FalseForTypeWithNoScalar) {
+    // Every rep must have a `ScalarOf`, because the conversion risk checks are built on it.  A type
+    // that matches no probe needs a `ScalarOfTrait` specialization before it can be a rep.
+    EXPECT_THAT(IsValidRep<NoScalar>::value, IsFalse());
 }
 
 TEST(IsValidRep, HonorsUserSpecializationsOfScalarOfTrait) {
