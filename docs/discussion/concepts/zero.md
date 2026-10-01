@@ -98,7 +98,7 @@ left and right arrow keys to flip back and forth.)
 === "Without `ZERO`"
     ```cpp
     // Initialization
-    QuantityD<UnitQuotientT<Radians, Meters>> curvature = (radians / meter)(0);
+    QuantityD<UnitQuotient<Radians, Meters>> curvature = (radians / meter)(0);
 
     // Checking for negative numbers
     if (v_squared < squared(meters / second)(0)) { /* ... */ }
@@ -107,7 +107,7 @@ left and right arrow keys to flip back and forth.)
 === "With `ZERO`"
     ```cpp
     // Initialization
-    QuantityD<UnitQuotientT<Radians, Meters>> curvature = ZERO;
+    QuantityD<UnitQuotient<Radians, Meters>> curvature = ZERO;
 
     // Checking for negative numbers
     if (v_squared < ZERO) { /* ... */ }

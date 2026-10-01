@@ -89,7 +89,7 @@ auto IsConstantWithUnitMatching(InnerMatcher m) {
             ::testing::IsTrue()),
         ::testing::ResultOf(
             "unit",
-            [](const auto &c) { return AssociatedUnitT<stdx::remove_cvref_t<decltype(c)>>{}; },
+            [](const auto &c) { return AssociatedUnit<stdx::remove_cvref_t<decltype(c)>>{}; },
             m));
 }
 

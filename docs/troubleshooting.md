@@ -935,11 +935,11 @@ approach: read the warning below first.
 
     ```cpp
     // `v1`: Original example above.
-    Quantity<UnitQuotientT<Miles, Hours>> v1
+    Quantity<UnitQuotient<Miles, Hours>> v1
         = miles(115) / unblock_int_div(hours(2));
 
     // `v2`: Changing the denominator's units.
-    Quantity<UnitQuotientT<Miles, Hours>> v2
+    Quantity<UnitQuotient<Miles, Hours>> v2
         = miles(115) / unblock_int_div(minutes(120));
     ```
 
@@ -1243,7 +1243,7 @@ the units inside that pack.
 If that sounds obscure, it is: ordering units inside packs is a deep library implementation detail,
 and we try to avoid letting end users encounter this.  To reach this error, you need two _distinct_
 units that have the _same_ Dimension, Magnitude, _and_ Origin.  That's a necessary but not
-sufficient condition: for example, even `UnitInverseT<Seconds>` and `Hertz` won't trigger this!
+sufficient condition: for example, even `UnitInverse<Seconds>` and `Hertz` won't trigger this!
 
 ??? info "More background info on why this error exists"
     In case you want to understand more, here is the gist.
@@ -1543,7 +1543,7 @@ ordering!
                 U1=au::Quarterfeet,
                 U2=au::Trinches
             ]
-    D:\a\au\au\au.hh(5241): note: see reference to alias template instantiation 'au::FlatDedupedTypeListT<au::CommonUnitPack,au::Quarterfeet,au::Trinches>' being compiled
+    D:\a\au\au\au.hh(5241): note: see reference to alias template instantiation 'au::FlatDedupedTypeList<au::CommonUnitPack,au::Quarterfeet,au::Trinches>' being compiled
     D:\a\au\au\au.hh(1718): note: see reference to alias template instantiation 'au::FlatDedupedTypeList<au::CommonUnitPack,au::Quarterfeet,au::Trinches>' being compiled
     D:\a\au\au\au.hh(1716): note: see reference to class template instantiation 'au::FlatDedupedTypeListImpl<au::CommonUnitPack,au::CommonUnitPack<T>,au::CommonUnitPack<au::Trinches>>' being compiled
             with
