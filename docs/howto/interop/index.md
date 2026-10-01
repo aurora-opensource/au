@@ -219,15 +219,15 @@ here's an example using the nholthaus library:
         using NU = NholthausUnit;
 
         using type = decltype(
-            UnitPowerT<Meters, MeterExpT<NU>::num, MeterExpT<NU>::den>{} *
-            UnitPowerT<Kilo<Grams>, KilogramExpT<NU>::num, KilogramExpT<NU>::den>{} *
-            UnitPowerT<Seconds, SecondExpT<NU>::num, SecondExpT<NU>::den>{} *
-            UnitPowerT<Radians, RadianExpT<NU>::num, RadianExpT<NU>::den>{} *
-            UnitPowerT<Amperes, AmpExpT<NU>::num, AmpExpT<NU>::den>{} *
-            UnitPowerT<Kelvins, KelvinExpT<NU>::num, KelvinExpT<NU>::den>{} *
-            UnitPowerT<Bytes, ByteExpT<NU>::num, ByteExpT<NU>::den>{} *
-            UnitPowerT<Candelas, CandelaExpT<NU>::num, CandelaExpT<NU>::den>{} *
-            UnitPowerT<Moles, MoleExpT<NU>::num, MoleExpT<NU>::den>{} *
+            UnitPower<Meters, MeterExpT<NU>::num, MeterExpT<NU>::den>{} *
+            UnitPower<Kilo<Grams>, KilogramExpT<NU>::num, KilogramExpT<NU>::den>{} *
+            UnitPower<Seconds, SecondExpT<NU>::num, SecondExpT<NU>::den>{} *
+            UnitPower<Radians, RadianExpT<NU>::num, RadianExpT<NU>::den>{} *
+            UnitPower<Amperes, AmpExpT<NU>::num, AmpExpT<NU>::den>{} *
+            UnitPower<Kelvins, KelvinExpT<NU>::num, KelvinExpT<NU>::den>{} *
+            UnitPower<Bytes, ByteExpT<NU>::num, ByteExpT<NU>::den>{} *
+            UnitPower<Candelas, CandelaExpT<NU>::num, CandelaExpT<NU>::den>{} *
+            UnitPower<Moles, MoleExpT<NU>::num, MoleExpT<NU>::den>{} *
             NholthausUnitMagT<NU>{});
     };
     ```
