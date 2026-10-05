@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-29-g5879dcc0
+// Version identifier: 0.6.0-base-30-ga12743d4
 // <iostream> support: INCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -4310,7 +4310,7 @@ AU_DEVICE_FUNC constexpr T get_value(Magnitude<BPs...> m) {
     using namespace detail;
 
     constexpr auto result = get_value_result<T>(m);
-    return checked_value(detail::ErrorForMagRepOutcome<result.outcome>{}, result.value);
+    return checked_value(ErrorForMagRepOutcome<result.outcome>{}, result.value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
