@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-28-gb49a1028
+// Version identifier: 0.6.0-base-29-g5879dcc0
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -4659,6 +4659,48 @@ AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> get_value_result(
     }
     return {MagRepresentationOutcome::OK, static_cast<T>(-result.value)};
 }
+
+// Instantiating `ErrorForMagRepOutcome<M>` produces exactly one `static_assert` failure when `M` is
+// not `OK`, whose error message describes `M`.
+template <MagRepresentationOutcome Actual, MagRepresentationOutcome Expected>
+struct ErrorForMagRepOutcomeImpl {
+    // Default in case we forget to cover an enum value.
+    static_assert(Actual == Expected, "Unknown error occurred");
+};
+template <MagRepresentationOutcome Actual>
+using ErrorForMagRepOutcome = ErrorForMagRepOutcomeImpl<Actual, MagRepresentationOutcome::OK>;
+
+// Specializations for each error type below.
+template <MagRepresentationOutcome Expected>
+struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE,
+                                 Expected> {
+    static_assert(Expected == MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE,
+                  "Cannot represent non-integer in integral destination type");
+};
+template <MagRepresentationOutcome Expected>
+struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE,
+                                 Expected> {
+    static_assert(Expected == MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE,
+                  "Cannot represent negative number in unsigned destination type");
+};
+template <MagRepresentationOutcome Expected>
+struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ERR_INVALID_ROOT, Expected> {
+    static_assert(Expected == MagRepresentationOutcome::ERR_INVALID_ROOT,
+                  "Could not compute root for rational power of base");
+};
+template <MagRepresentationOutcome Expected>
+struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ERR_CANNOT_FIT, Expected> {
+    static_assert(Expected == MagRepresentationOutcome::ERR_CANNOT_FIT,
+                  "Value outside range of destination type");
+};
+
+// Return `x`, but force `ErrorType` to be instantiated first, so that any `static_assert` it
+// carries fires.
+template <typename ErrorType, typename T>
+AU_DEVICE_FUNC constexpr T checked_value(ErrorType, T x) {
+    return x;
+}
+
 }  // namespace detail
 
 template <typename T, typename... BPs>
@@ -4673,16 +4715,7 @@ AU_DEVICE_FUNC constexpr T get_value(Magnitude<BPs...> m) {
     using namespace detail;
 
     constexpr auto result = get_value_result<T>(m);
-
-    static_assert(result.outcome != MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE,
-                  "Cannot represent non-integer in integral destination type");
-    static_assert(result.outcome != MagRepresentationOutcome::ERR_INVALID_ROOT,
-                  "Could not compute root for rational power of base");
-    static_assert(result.outcome != MagRepresentationOutcome::ERR_CANNOT_FIT,
-                  "Value outside range of destination type");
-
-    static_assert(result.outcome == MagRepresentationOutcome::OK, "Unknown error occurred");
-    return result.value;
+    return checked_value(detail::ErrorForMagRepOutcome<result.outcome>{}, result.value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
