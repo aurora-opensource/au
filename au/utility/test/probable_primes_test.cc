@@ -35,12 +35,12 @@ namespace detail {
 // Make test output for `PrimeResult` easier to read.
 std::ostream &operator<<(std::ostream &out, const PrimeResult &m) {
     switch (m) {
-        case PrimeResult::COMPOSITE:
-            return (out << "COMPOSITE");
-        case PrimeResult::PROBABLY_PRIME:
-            return (out << "PROBABLY_PRIME");
-        case PrimeResult::BAD_INPUT:
-            return (out << "BAD_INPUT");
+        case PrimeResult::Composite:
+            return (out << "Composite");
+        case PrimeResult::ProbablyPrime:
+            return (out << "ProbablyPrime");
+        case PrimeResult::BadInput:
+            return (out << "BadInput");
     }
     return out;
 }
@@ -116,27 +116,27 @@ std::vector<uint64_t> miller_rabin_pseudoprimes_to_base_3() {
 }
 
 TEST(MillerRabin, EvenNumbersAreBadInput) {
-    EXPECT_THAT(miller_rabin(2u, 0u), Eq(PrimeResult::BAD_INPUT));
-    EXPECT_THAT(miller_rabin(2u, 2u), Eq(PrimeResult::BAD_INPUT));
-    EXPECT_THAT(miller_rabin(2u, 4u), Eq(PrimeResult::BAD_INPUT));
-    EXPECT_THAT(miller_rabin(2u, 6u), Eq(PrimeResult::BAD_INPUT));
-    EXPECT_THAT(miller_rabin(2u, 8u), Eq(PrimeResult::BAD_INPUT));
+    EXPECT_THAT(miller_rabin(2u, 0u), Eq(PrimeResult::BadInput));
+    EXPECT_THAT(miller_rabin(2u, 2u), Eq(PrimeResult::BadInput));
+    EXPECT_THAT(miller_rabin(2u, 4u), Eq(PrimeResult::BadInput));
+    EXPECT_THAT(miller_rabin(2u, 6u), Eq(PrimeResult::BadInput));
+    EXPECT_THAT(miller_rabin(2u, 8u), Eq(PrimeResult::BadInput));
 
-    EXPECT_THAT(miller_rabin(2u, 123456u), Eq(PrimeResult::BAD_INPUT));
+    EXPECT_THAT(miller_rabin(2u, 123456u), Eq(PrimeResult::BadInput));
 }
 
 TEST(MillerRabin, NumbersLessThanAPlusTwoAreBadInput) {
-    ASSERT_THAT(miller_rabin(9u, 11u), Eq(PrimeResult::PROBABLY_PRIME));
+    ASSERT_THAT(miller_rabin(9u, 11u), Eq(PrimeResult::ProbablyPrime));
 
-    EXPECT_THAT(miller_rabin(10u, 11u), Eq(PrimeResult::BAD_INPUT));
-    EXPECT_THAT(miller_rabin(11u, 11u), Eq(PrimeResult::BAD_INPUT));
+    EXPECT_THAT(miller_rabin(10u, 11u), Eq(PrimeResult::BadInput));
+    EXPECT_THAT(miller_rabin(11u, 11u), Eq(PrimeResult::BadInput));
 }
 
 TEST(MillerRabin, MarksEveryPrimeAsProbablyPrime) {
     auto expect_miller_rabin_probably_prime = [](std::size_t a, uint64_t n) {
         const auto result = miller_rabin(a, n);
         const auto expected =
-            (n < a + 2u || n % 2u == 0u) ? PrimeResult::BAD_INPUT : PrimeResult::PROBABLY_PRIME;
+            (n < a + 2u || n % 2u == 0u) ? PrimeResult::BadInput : PrimeResult::ProbablyPrime;
 
         EXPECT_THAT(result, Eq(expected)) << "a = " << a << ", n = " << n;
     };
@@ -174,33 +174,33 @@ TEST(MillerRabin, OddNumberIsProbablyPrimeIffPrimeOrPseudoprime) {
         }
 
         const auto expected =
-            (is_prime || is_pseudoprime) ? PrimeResult::PROBABLY_PRIME : PrimeResult::COMPOSITE;
+            (is_prime || is_pseudoprime) ? PrimeResult::ProbablyPrime : PrimeResult::Composite;
         EXPECT_THAT(miller_rabin(2u, n), Eq(expected)) << "n = " << n;
     }
 }
 
 TEST(MillerRabin, HasExpectedBase2Pseudoprimes) {
     for (const auto &n : miller_rabin_pseudoprimes_to_base_2()) {
-        EXPECT_THAT(miller_rabin(2u, n), Eq(PrimeResult::PROBABLY_PRIME)) << n;
+        EXPECT_THAT(miller_rabin(2u, n), Eq(PrimeResult::ProbablyPrime)) << n;
     }
 }
 
 TEST(MillerRabin, HasExpectedBase3Pseudoprimes) {
     for (const auto &n : miller_rabin_pseudoprimes_to_base_3()) {
-        EXPECT_THAT(miller_rabin(3u, n), Eq(PrimeResult::PROBABLY_PRIME)) << n;
+        EXPECT_THAT(miller_rabin(3u, n), Eq(PrimeResult::ProbablyPrime)) << n;
     }
 }
 
 TEST(MillerRabin, HandlesExtremelyLargePrimes) {
     for (const auto &base : {2ull, 3ull, 4ull, 5ull, 99ull, 12345ull, 9876543210123456789ull}) {
         EXPECT_THAT(miller_rabin(base, 18'446'744'073'709'551'557u),
-                    Eq(PrimeResult::PROBABLY_PRIME));
+                    Eq(PrimeResult::ProbablyPrime));
     }
 }
 
 TEST(MillerRabin, SupportsConstexpr) {
     constexpr auto result = miller_rabin(2u, 997u);
-    static_assert(result == PrimeResult::PROBABLY_PRIME, "997 is prime");
+    static_assert(result == PrimeResult::ProbablyPrime, "997 is prime");
 }
 
 TEST(IsPerfectSquare, ProducesCorrectAnswers) {
@@ -234,15 +234,15 @@ TEST(StrongLucas, AllPrimeNumbersAreProbablyPrime) {
     const auto primes = first_n_primes<3'000u>();
     for (const auto &p : primes) {
         if (p > 2u) {
-            EXPECT_THAT(strong_lucas(p), Eq(PrimeResult::PROBABLY_PRIME)) << p;
+            EXPECT_THAT(strong_lucas(p), Eq(PrimeResult::ProbablyPrime)) << p;
         }
     }
 }
 
 TEST(StrongLucas, GetsFooledByKnownPseudoprimes) {
     for (const auto &p : strong_lucas_pseudoprimes()) {
-        ASSERT_THAT(miller_rabin(2u, p), Eq(PrimeResult::COMPOSITE)) << p;
-        EXPECT_THAT(strong_lucas(p), Eq(PrimeResult::PROBABLY_PRIME)) << p;
+        ASSERT_THAT(miller_rabin(2u, p), Eq(PrimeResult::Composite)) << p;
+        EXPECT_THAT(strong_lucas(p), Eq(PrimeResult::ProbablyPrime)) << p;
     }
 }
 
@@ -268,17 +268,17 @@ TEST(StrongLucas, OddNumberIsProbablyPrimeIffPrimeOrPseudoprime) {
         }
 
         const auto expected =
-            (is_prime || is_pseudoprime) ? PrimeResult::PROBABLY_PRIME : PrimeResult::COMPOSITE;
+            (is_prime || is_pseudoprime) ? PrimeResult::ProbablyPrime : PrimeResult::Composite;
         EXPECT_THAT(strong_lucas(n), Eq(expected)) << "n = " << n;
     }
 }
 
 TEST(BailliePSW, BadInputForLessThanTwo) {
-    EXPECT_THAT(baillie_psw(0u), Eq(PrimeResult::BAD_INPUT));
-    EXPECT_THAT(baillie_psw(1u), Eq(PrimeResult::BAD_INPUT));
+    EXPECT_THAT(baillie_psw(0u), Eq(PrimeResult::BadInput));
+    EXPECT_THAT(baillie_psw(1u), Eq(PrimeResult::BadInput));
 }
 
-TEST(BailliePSW, TwoIsPrime) { EXPECT_THAT(baillie_psw(2u), Eq(PrimeResult::PROBABLY_PRIME)); }
+TEST(BailliePSW, TwoIsPrime) { EXPECT_THAT(baillie_psw(2u), Eq(PrimeResult::ProbablyPrime)); }
 
 TEST(BailliePSW, CorrectlyIdentifiesAllOddNumbersUpToTheFirstThousandPrimes) {
     const auto first_10k_primes = first_n_primes<10'000u>();
@@ -289,7 +289,7 @@ TEST(BailliePSW, CorrectlyIdentifiesAllOddNumbersUpToTheFirstThousandPrimes) {
         if (is_prime) {
             ++i_prime;
         }
-        const auto expected = is_prime ? PrimeResult::PROBABLY_PRIME : PrimeResult::COMPOSITE;
+        const auto expected = is_prime ? PrimeResult::ProbablyPrime : PrimeResult::Composite;
         EXPECT_THAT(baillie_psw(i), Eq(expected)) << "i = " << i;
     }
 }
@@ -297,8 +297,8 @@ TEST(BailliePSW, CorrectlyIdentifiesAllOddNumbersUpToTheFirstThousandPrimes) {
 TEST(BailliePSW, IdentifiesPerfectSquareAsComposite) {
     // (1093 ^ 2 = 1,194,649) is the smallest strong pseudoprime to base 2 that is a perfect square.
     constexpr auto n = 1093u * 1093u;
-    ASSERT_THAT(miller_rabin(2u, n), Eq(PrimeResult::PROBABLY_PRIME));
-    EXPECT_THAT(baillie_psw(n), Eq(PrimeResult::COMPOSITE));
+    ASSERT_THAT(miller_rabin(2u, n), Eq(PrimeResult::ProbablyPrime));
+    EXPECT_THAT(baillie_psw(n), Eq(PrimeResult::Composite));
 }
 
 TEST(BailliePSW, HandlesVeryLargePrimes) {
@@ -308,7 +308,7 @@ TEST(BailliePSW, HandlesVeryLargePrimes) {
              uint64_t{9'007'199'254'740'881u},
              uint64_t{18'446'744'073'709'551'557u},
          }) {
-        EXPECT_THAT(baillie_psw(p), Eq(PrimeResult::PROBABLY_PRIME)) << p;
+        EXPECT_THAT(baillie_psw(p), Eq(PrimeResult::ProbablyPrime)) << p;
     }
 }
 

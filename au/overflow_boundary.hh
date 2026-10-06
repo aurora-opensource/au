@@ -155,11 +155,11 @@ template <typename T, typename M, MagRepresentationOutcome Outcome>
 struct IsAbsProbablyBiggerThanOneHelper : std::false_type {};
 
 template <typename T, typename M>
-struct IsAbsProbablyBiggerThanOneHelper<T, M, MagRepresentationOutcome::OK>
+struct IsAbsProbablyBiggerThanOneHelper<T, M, MagRepresentationOutcome::Ok>
     : stdx::bool_constant<(get_value<T>(Abs<M>{}) >= T{1})> {};
 
 template <typename T, typename M>
-struct IsAbsProbablyBiggerThanOneHelper<T, M, MagRepresentationOutcome::ERR_CANNOT_FIT>
+struct IsAbsProbablyBiggerThanOneHelper<T, M, MagRepresentationOutcome::ErrCannotFit>
     : std::true_type {};
 
 template <typename T, typename M>
@@ -314,7 +314,7 @@ template <typename T, typename MagT, MagRepresentationOutcome Outcome>
 struct MagHelper {
     static constexpr bool equal(const T &, const T &) { return false; }
     static constexpr T div(const T &, const T &) {
-        static_assert(Outcome == MagRepresentationOutcome::ERR_CANNOT_FIT,
+        static_assert(Outcome == MagRepresentationOutcome::ErrCannotFit,
                       "Internal library error");
 
         // Dividing by a number that is too big to fit in the type implies a result of 0.
@@ -323,7 +323,7 @@ struct MagHelper {
 };
 
 template <typename T, typename MagT>
-struct MagHelper<T, MagT, MagRepresentationOutcome::OK> {
+struct MagHelper<T, MagT, MagRepresentationOutcome::Ok> {
     static constexpr bool equal(const T &x, const T &value) { return x == value; }
     static constexpr T div(const T &a, const T &b) { return a / b; }
 };
@@ -372,7 +372,7 @@ struct ClampLowestOfLimitsTimesInverseValue {
                 : clamped_negate(divide_by_mag(std::numeric_limits<T>::max(), ABS_DIVISOR));
         constexpr bool SHOULD_CLAMP = RELEVANT_BOUND >= RELEVANT_LIMIT;
 
-        // This value will be meaningless if `get_value_result<T>(ABS_DIVISOR).outcome` is not `OK`,
+        // This value will be meaningless if `get_value_result<T>(ABS_DIVISOR).outcome` is not `Ok`,
         // but we won't end up actually using the value in those cases.
         constexpr auto ABS_DIVISOR_AS_T = get_value_result<T>(ABS_DIVISOR).value;
 
@@ -422,7 +422,7 @@ struct ClampHighestOfLimitsTimesInverseValue {
                 : clamped_negate(divide_by_mag(std::numeric_limits<T>::lowest(), ABS_DIVISOR));
         constexpr bool SHOULD_CLAMP = RELEVANT_BOUND <= RELEVANT_LIMIT;
 
-        // This value will be meaningless if `get_value_result<T>(ABS_DIVISOR).outcome` is not `OK`,
+        // This value will be meaningless if `get_value_result<T>(ABS_DIVISOR).outcome` is not `Ok`,
         // but we won't end up actually using the value in those cases.
         constexpr auto ABS_DIVISOR_AS_T = get_value_result<T>(ABS_DIVISOR).value;
 
@@ -431,8 +431,8 @@ struct ClampHighestOfLimitsTimesInverseValue {
 };
 
 constexpr bool is_ok_or_err_cannot_fit(MagRepresentationOutcome outcome) {
-    return outcome == MagRepresentationOutcome::OK ||
-           outcome == MagRepresentationOutcome::ERR_CANNOT_FIT;
+    return outcome == MagRepresentationOutcome::Ok ||
+           outcome == MagRepresentationOutcome::ErrCannotFit;
 }
 
 template <typename T, typename M>

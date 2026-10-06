@@ -131,10 +131,10 @@ struct SettingPureRealFromMixedReal
 template <typename T>
 AU_DEVICE_FUNC constexpr bool meets_threshold(T x) {
     constexpr auto threshold_result = get_value_result<T>(OVERFLOW_THRESHOLD);
-    static_assert(threshold_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT ||
-                      threshold_result.outcome == MagRepresentationOutcome::OK,
+    static_assert(threshold_result.outcome == MagRepresentationOutcome::ErrCannotFit ||
+                      threshold_result.outcome == MagRepresentationOutcome::Ok,
                   "Overflow threshold must be a valid representation");
-    const auto threshold = (threshold_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT)
+    const auto threshold = (threshold_result.outcome == MagRepresentationOutcome::ErrCannotFit)
                                ? std::numeric_limits<T>::max()
                                : threshold_result.value;
     if (Less{}(x, T{0})) {

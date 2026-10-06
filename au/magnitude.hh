@@ -973,18 +973,18 @@ struct NumeratorImpl<Magnitude<BPs...>>
 namespace detail {
 
 enum class MagRepresentationOutcome {
-    OK,
-    ERR_NON_INTEGER_IN_INTEGER_TYPE,
-    ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE,
-    ERR_INVALID_ROOT,
-    ERR_CANNOT_FIT,
+    Ok,
+    ErrNonIntegerInIntegerType,
+    ErrNegativeNumberInUnsignedType,
+    ErrInvalidRoot,
+    ErrCannotFit,
 };
 
 template <typename T>
 struct MagRepresentationOrError {
     MagRepresentationOutcome outcome;
 
-    // Only valid/meaningful if `outcome` is `OK`.
+    // Only valid/meaningful if `outcome` is `Ok`.
     T value = {0};
 };
 
@@ -1001,11 +1001,11 @@ using Widen = std::conditional_t<
 
 template <typename T>
 AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> checked_int_pow(T base, std::uintmax_t exp) {
-    MagRepresentationOrError<T> result = {MagRepresentationOutcome::OK, T{1}};
+    MagRepresentationOrError<T> result = {MagRepresentationOutcome::Ok, T{1}};
     while (exp > 0u) {
         if (exp % 2u == 1u) {
             if (base > std::numeric_limits<T>::max() / result.value) {
-                return MagRepresentationOrError<T>{MagRepresentationOutcome::ERR_CANNOT_FIT};
+                return MagRepresentationOrError<T>{MagRepresentationOutcome::ErrCannotFit};
             }
             result.value *= base;
         }
@@ -1015,7 +1015,7 @@ AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> checked_int_pow(T base, std
         if (base > std::numeric_limits<T>::max() / base) {
             return (exp == 0u)
                        ? result
-                       : MagRepresentationOrError<T>{MagRepresentationOutcome::ERR_CANNOT_FIT};
+                       : MagRepresentationOrError<T>{MagRepresentationOutcome::ErrCannotFit};
         }
         base *= base;
     }
@@ -1035,7 +1035,7 @@ struct NontrivialRootForInt {
         // because all inputs are products of rational powers of basis numbers.  If the result were
         // an integer, then this would be made from rational powers of primes, and those rational
         // exponents would have been converted to lowest terms already.
-        return {MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE};
+        return {MagRepresentationOutcome::ErrNonIntegerInIntegerType};
     }
 };
 
@@ -1052,17 +1052,17 @@ template <typename T>
 AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> root(T x, std::uintmax_t n) {
     // The "zeroth root" would be mathematically undefined.
     if (n == 0) {
-        return {MagRepresentationOutcome::ERR_INVALID_ROOT};
+        return {MagRepresentationOutcome::ErrInvalidRoot};
     }
 
     // The "first root" is trivial.
     if (n == 1) {
-        return {MagRepresentationOutcome::OK, x};
+        return {MagRepresentationOutcome::Ok, x};
     }
 
     // Handle special cases of zero and one.
     if (x == 0 || x == 1) {
-        return {MagRepresentationOutcome::OK, x};
+        return {MagRepresentationOutcome::Ok, x};
     }
 
     return NontrivialRootImpl<T, IsKnownToBeInteger<T>::value>{}(x, n);
@@ -1074,24 +1074,24 @@ struct GeneralNontrivialRoot {
         // Handle negative numbers: only odd roots are allowed.
         if (x < 0) {
             if (n % 2 == 0) {
-                return {MagRepresentationOutcome::ERR_INVALID_ROOT};
+                return {MagRepresentationOutcome::ErrInvalidRoot};
             }
 
             const auto negative_result = root(-x, n);
-            if (negative_result.outcome != MagRepresentationOutcome::OK) {
+            if (negative_result.outcome != MagRepresentationOutcome::Ok) {
                 return {negative_result.outcome};
             }
 
-            return {MagRepresentationOutcome::OK, static_cast<T>(-negative_result.value)};
+            return {MagRepresentationOutcome::Ok, static_cast<T>(-negative_result.value)};
         }
 
         // Handle numbers bewtween 0 and 1.
         if (x < 1) {
             const auto inverse_result = root(T{1} / x, n);
-            if (inverse_result.outcome != MagRepresentationOutcome::OK) {
+            if (inverse_result.outcome != MagRepresentationOutcome::Ok) {
                 return {inverse_result.outcome};
             }
-            return {MagRepresentationOutcome::OK, static_cast<T>(T{1} / inverse_result.value)};
+            return {MagRepresentationOutcome::Ok, static_cast<T>(T{1} / inverse_result.value)};
         }
 
         //
@@ -1115,13 +1115,13 @@ struct GeneralNontrivialRoot {
 
             auto result = checked_int_pow(mid, n);
 
-            if (result.outcome != MagRepresentationOutcome::OK) {
+            if (result.outcome != MagRepresentationOutcome::Ok) {
                 return {result.outcome};
             }
 
             // Early return if we get lucky with an exact answer.
             if (result.value == x) {
-                return {MagRepresentationOutcome::OK, static_cast<T>(mid)};
+                return {MagRepresentationOutcome::Ok, static_cast<T>(mid)};
             }
 
             // Check for stagnation.
@@ -1140,10 +1140,10 @@ struct GeneralNontrivialRoot {
         // Pick whichever one gets closer to the target.
         const auto lo_diff = x - checked_int_pow(lo, n).value;
         const auto hi_diff = checked_int_pow(hi, n).value - x;
-        return {MagRepresentationOutcome::OK, static_cast<T>(lo_diff < hi_diff ? lo : hi)};
+        return {MagRepresentationOutcome::Ok, static_cast<T>(lo_diff < hi_diff ? lo : hi)};
     }
 };
-enum class SignOfExponent { POSITIVE_SIGN, NEGATIVE_SIGN };
+enum class SignOfExponent { PositiveSign, NegativeSign };
 
 template <typename T, std::uintmax_t N, std::uintmax_t D, typename B, SignOfExponent>
 struct BasePowerValueImpl;
@@ -1154,30 +1154,30 @@ AU_DEVICE_FUNC constexpr MagRepresentationOrError<Widen<T>> base_power_value(B b
                               static_cast<std::uintmax_t>(N < 0 ? -N : N),
                               D,
                               B,
-                              (N < 0 ? SignOfExponent::NEGATIVE_SIGN
-                                     : SignOfExponent::POSITIVE_SIGN)>{}(base);
+                              (N < 0 ? SignOfExponent::NegativeSign
+                                     : SignOfExponent::PositiveSign)>{}(base);
 }
 
 template <typename T, std::uintmax_t N, std::uintmax_t D, typename B>
-struct BasePowerValueImpl<T, N, D, B, SignOfExponent::NEGATIVE_SIGN> {
+struct BasePowerValueImpl<T, N, D, B, SignOfExponent::NegativeSign> {
     AU_DEVICE_FUNC constexpr MagRepresentationOrError<Widen<T>> operator()(B base) const {
         const auto inverse_result =
-            BasePowerValueImpl<T, N, D, B, SignOfExponent::POSITIVE_SIGN>{}(base);
-        if (inverse_result.outcome != MagRepresentationOutcome::OK) {
+            BasePowerValueImpl<T, N, D, B, SignOfExponent::PositiveSign>{}(base);
+        if (inverse_result.outcome != MagRepresentationOutcome::Ok) {
             return inverse_result;
         }
         return {
-            MagRepresentationOutcome::OK,
+            MagRepresentationOutcome::Ok,
             Widen<T>{1} / inverse_result.value,
         };
     }
 };
 
 template <typename T, std::uintmax_t N, std::uintmax_t D, typename B>
-struct BasePowerValueImpl<T, N, D, B, SignOfExponent::POSITIVE_SIGN> {
+struct BasePowerValueImpl<T, N, D, B, SignOfExponent::PositiveSign> {
     AU_DEVICE_FUNC constexpr MagRepresentationOrError<Widen<T>> operator()(B base) const {
         const auto power_result = checked_int_pow(static_cast<Widen<T>>(base), N);
-        if (power_result.outcome != MagRepresentationOutcome::OK) {
+        if (power_result.outcome != MagRepresentationOutcome::Ok) {
             return {power_result.outcome};
         }
         return (D > 1) ? root(power_result.value, D) : power_result;
@@ -1188,7 +1188,7 @@ template <typename T, std::size_t N>
 AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> product(
     const MagRepresentationOrError<T> (&values)[N]) {
     for (const auto &x : values) {
-        if (x.outcome != MagRepresentationOutcome::OK) {
+        if (x.outcome != MagRepresentationOutcome::Ok) {
             return x;
         }
     }
@@ -1196,11 +1196,11 @@ AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> product(
     T result{1};
     for (const auto &x : values) {
         if ((x.value > 1) && (result > std::numeric_limits<T>::max() / x.value)) {
-            return {MagRepresentationOutcome::ERR_CANNOT_FIT};
+            return {MagRepresentationOutcome::ErrCannotFit};
         }
         result *= x.value;
     }
-    return {MagRepresentationOutcome::OK, result};
+    return {MagRepresentationOutcome::Ok, result};
 }
 
 template <std::size_t N>
@@ -1321,7 +1321,7 @@ AU_DEVICE_FUNC constexpr bool safe_to_cast_to(InputT x) {
 template <typename T, typename MagT>
 struct GetValueResultImplForNonIntegerInIntegralType {
     AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> operator()() {
-        return {MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE};
+        return {MagRepresentationOutcome::ErrNonIntegerInIntegerType};
     }
 };
 
@@ -1336,12 +1336,12 @@ struct GetValueResultImplForDefaultCase<T, Magnitude<BPs...>> {
                               Exp<BPs>::num,
                               static_cast<std::uintmax_t>(Exp<BPs>::den)>(Base<BPs>::value())...});
 
-        constexpr bool will_fit = widened_result.outcome == MagRepresentationOutcome::OK &&
+        constexpr bool will_fit = widened_result.outcome == MagRepresentationOutcome::Ok &&
                                   safe_to_cast_to<T>(widened_result.value);
 
-        return will_fit ? MagRepresentationOrError<T>{MagRepresentationOutcome::OK,
+        return will_fit ? MagRepresentationOrError<T>{MagRepresentationOutcome::Ok,
                                                       static_cast<T>(widened_result.value)}
-                        : MagRepresentationOrError<T>{MagRepresentationOutcome::ERR_CANNOT_FIT};
+                        : MagRepresentationOrError<T>{MagRepresentationOutcome::ErrCannotFit};
     }
 };
 
@@ -1361,7 +1361,7 @@ AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> get_value_result(Magnitude<
 // This simple overload avoids edge cases with creating and passing zero-sized arrays.
 template <typename T>
 AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> get_value_result(Magnitude<>) {
-    return {MagRepresentationOutcome::OK, static_cast<T>(1)};
+    return {MagRepresentationOutcome::Ok, static_cast<T>(1)};
 }
 
 template <typename T, typename MagT, bool IsCandidate>
@@ -1383,51 +1383,50 @@ template <typename T, typename... BPs>
 AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> get_value_result(
     Magnitude<Negative, BPs...> m) {
     if (std::is_unsigned<T>::value) {
-        return {MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE};
+        return {MagRepresentationOutcome::ErrNegativeNumberInUnsignedType};
     }
 
     if (is_exactly_lowest_of_signed_integral<T>(m)) {
-        return {MagRepresentationOutcome::OK, std::numeric_limits<T>::lowest()};
+        return {MagRepresentationOutcome::Ok, std::numeric_limits<T>::lowest()};
     }
 
     const auto result = get_value_result<T>(Magnitude<BPs...>{});
-    if (result.outcome != MagRepresentationOutcome::OK) {
+    if (result.outcome != MagRepresentationOutcome::Ok) {
         return result;
     }
-    return {MagRepresentationOutcome::OK, static_cast<T>(-result.value)};
+    return {MagRepresentationOutcome::Ok, static_cast<T>(-result.value)};
 }
 
 // Instantiating `ErrorForMagRepOutcome<M>` produces exactly one `static_assert` failure when `M` is
-// not `OK`, whose error message describes `M`.
+// not `Ok`, whose error message describes `M`.
 template <MagRepresentationOutcome Actual, MagRepresentationOutcome Expected>
 struct ErrorForMagRepOutcomeImpl {
     // Default in case we forget to cover an enum value.
     static_assert(Actual == Expected, "Unknown error occurred");
 };
 template <MagRepresentationOutcome Actual>
-using ErrorForMagRepOutcome = ErrorForMagRepOutcomeImpl<Actual, MagRepresentationOutcome::OK>;
+using ErrorForMagRepOutcome = ErrorForMagRepOutcomeImpl<Actual, MagRepresentationOutcome::Ok>;
 
 // Specializations for each error type below.
 template <MagRepresentationOutcome Expected>
-struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE,
-                                 Expected> {
-    static_assert(Expected == MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE,
+struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ErrNonIntegerInIntegerType, Expected> {
+    static_assert(Expected == MagRepresentationOutcome::ErrNonIntegerInIntegerType,
                   "Cannot represent non-integer in integral destination type");
 };
 template <MagRepresentationOutcome Expected>
-struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE,
+struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ErrNegativeNumberInUnsignedType,
                                  Expected> {
-    static_assert(Expected == MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE,
+    static_assert(Expected == MagRepresentationOutcome::ErrNegativeNumberInUnsignedType,
                   "Cannot represent negative number in unsigned destination type");
 };
 template <MagRepresentationOutcome Expected>
-struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ERR_INVALID_ROOT, Expected> {
-    static_assert(Expected == MagRepresentationOutcome::ERR_INVALID_ROOT,
+struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ErrInvalidRoot, Expected> {
+    static_assert(Expected == MagRepresentationOutcome::ErrInvalidRoot,
                   "Could not compute root for rational power of base");
 };
 template <MagRepresentationOutcome Expected>
-struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ERR_CANNOT_FIT, Expected> {
-    static_assert(Expected == MagRepresentationOutcome::ERR_CANNOT_FIT,
+struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ErrCannotFit, Expected> {
+    static_assert(Expected == MagRepresentationOutcome::ErrCannotFit,
                   "Value outside range of destination type");
 };
 
@@ -1444,7 +1443,7 @@ template <typename T, typename... BPs>
 AU_DEVICE_FUNC constexpr bool representable_in(Magnitude<BPs...> m) {
     using namespace detail;
 
-    return get_value_result<T>(m).outcome == MagRepresentationOutcome::OK;
+    return get_value_result<T>(m).outcome == MagRepresentationOutcome::Ok;
 }
 
 template <typename T, typename... BPs>
@@ -1460,9 +1459,9 @@ AU_DEVICE_FUNC constexpr T get_value(Magnitude<BPs...> m) {
 
 namespace detail {
 enum class MagLabelCategory {
-    INTEGER,
-    RATIONAL,
-    UNSUPPORTED,
+    Integer,
+    Rational,
+    Unsupported,
 };
 
 template <typename... BPs>
@@ -1470,11 +1469,11 @@ constexpr MagLabelCategory categorize_mag_label(Magnitude<BPs...> m) {
     // This unsightly "nested ternary" approach makes this entire function into --- _technically_
     // --- a one-liner, which appeases the Green Hills compiler.
     return IsInteger<Magnitude<BPs...>>::value
-               ? (get_value_result<std::uintmax_t>(m).outcome == MagRepresentationOutcome::OK
-                      ? MagLabelCategory::INTEGER
-                      : MagLabelCategory::UNSUPPORTED)
-               : (IsRational<Magnitude<BPs...>>::value ? MagLabelCategory::RATIONAL
-                                                       : MagLabelCategory::UNSUPPORTED);
+               ? (get_value_result<std::uintmax_t>(m).outcome == MagRepresentationOutcome::Ok
+                      ? MagLabelCategory::Integer
+                      : MagLabelCategory::Unsupported)
+               : (IsRational<Magnitude<BPs...>>::value ? MagLabelCategory::Rational
+                                                       : MagLabelCategory::Unsupported);
 }
 
 template <typename MagT, MagLabelCategory Category>
@@ -1489,13 +1488,13 @@ template <typename MagT, MagLabelCategory Category>
 constexpr const bool MagnitudeLabelImplementation<MagT, Category>::has_exposed_slash;
 
 template <typename MagT>
-struct MagnitudeLabelImplementation<MagT, MagLabelCategory::INTEGER>
+struct MagnitudeLabelImplementation<MagT, MagLabelCategory::Integer>
     : detail::UIToA<get_value<std::uintmax_t>(MagT{})> {
     static constexpr const bool has_exposed_slash = false;
 };
 template <typename MagT>
 constexpr const bool
-    MagnitudeLabelImplementation<MagT, MagLabelCategory::INTEGER>::has_exposed_slash;
+    MagnitudeLabelImplementation<MagT, MagLabelCategory::Integer>::has_exposed_slash;
 
 // Analogous to `detail::ExtendedLabel`, but for magnitudes.
 //
@@ -1505,7 +1504,7 @@ using ExtendedMagLabel =
     StringConstant<concatenate(MagnitudeLabel<Mags>::value...).size() + ExtensionStrlen>;
 
 template <typename MagT>
-struct MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL> {
+struct MagnitudeLabelImplementation<MagT, MagLabelCategory::Rational> {
     using LabelT = ExtendedMagLabel<3u, Numerator<MagT>, Denominator<MagT>>;
     static constexpr LabelT value = join_by(
         " / ", MagnitudeLabel<Numerator<MagT>>::value, MagnitudeLabel<Denominator<MagT>>::value);
@@ -1513,11 +1512,11 @@ struct MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL> {
     static constexpr const bool has_exposed_slash = true;
 };
 template <typename MagT>
-constexpr typename MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL>::LabelT
-    MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL>::value;
+constexpr typename MagnitudeLabelImplementation<MagT, MagLabelCategory::Rational>::LabelT
+    MagnitudeLabelImplementation<MagT, MagLabelCategory::Rational>::value;
 template <typename MagT>
 constexpr const bool
-    MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL>::has_exposed_slash;
+    MagnitudeLabelImplementation<MagT, MagLabelCategory::Rational>::has_exposed_slash;
 
 }  // namespace detail
 

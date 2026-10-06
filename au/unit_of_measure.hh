@@ -1021,17 +1021,17 @@ struct ExpLabelForRatioPow {
 };
 
 enum class ParensPolicy {
-    OMIT,
-    ADD_IF_MULITPLE,
+    Omit,
+    AddIfMultiple,
 };
 
-template <typename T, ParensPolicy Policy = ParensPolicy::ADD_IF_MULITPLE>
+template <typename T, ParensPolicy Policy = ParensPolicy::AddIfMultiple>
 struct CompoundLabel;
 template <typename... Us, ParensPolicy Policy>
 struct CompoundLabel<UnitProductPack<Us...>, Policy> {
     static constexpr auto value() {
         constexpr bool add_parens =
-            (Policy == ParensPolicy::ADD_IF_MULITPLE) && (sizeof...(Us) > 1);
+            (Policy == ParensPolicy::AddIfMultiple) && (sizeof...(Us) > 1);
         return parens_if<add_parens>(join_by(" * ", unit_label<Us>()...));
     }
 };
@@ -1052,8 +1052,8 @@ constexpr typename QuotientLabeler<N, D, T>::LabelT QuotientLabeler<N, D, T>::va
 // Special case for denominator of 1.
 template <typename N, typename T>
 struct QuotientLabeler<N, UnitProductPack<>, T> {
-    using LabelT = StringConstant<CompoundLabel<N, ParensPolicy::OMIT>::value().size()>;
-    static constexpr LabelT value = CompoundLabel<N, ParensPolicy::OMIT>::value();
+    using LabelT = StringConstant<CompoundLabel<N, ParensPolicy::Omit>::value().size()>;
+    static constexpr LabelT value = CompoundLabel<N, ParensPolicy::Omit>::value();
 };
 template <typename N, typename T>
 constexpr typename QuotientLabeler<N, UnitProductPack<>, T>::LabelT
@@ -1078,25 +1078,25 @@ template <typename T>
 constexpr const char QuotientLabeler<UnitProductPack<>, UnitProductPack<>, T>::value[1];
 
 enum class SumTermPosition {
-    FIRST,
-    SUBSEQUENT,
+    First,
+    Subsequent,
 };
 
 // Sign label (if necessary) for a unit in a sum, adding spaces for later terms.
 template <SumTermPosition Pos, typename M>
 struct SignLabel;
 template <>
-struct SignLabel<SumTermPosition::FIRST, Magnitude<>> {
+struct SignLabel<SumTermPosition::First, Magnitude<>> {
     static constexpr auto value() { return as_string_constant(""); }
 };
 template <>
-struct SignLabel<SumTermPosition::SUBSEQUENT, Magnitude<>> {
+struct SignLabel<SumTermPosition::Subsequent, Magnitude<>> {
     static constexpr auto value() { return as_string_constant(" + "); }
 };
 template <SumTermPosition Pos>
 struct SignLabel<Pos, Magnitude<Negative>> {
     static constexpr auto value() {
-        return wrap_if<Pos == SumTermPosition::SUBSEQUENT, ' ', ' '>("-");
+        return wrap_if<Pos == SumTermPosition::Subsequent, ' ', ' '>("-");
     }
 };
 
@@ -1129,8 +1129,8 @@ template <typename U, typename... Us>
 struct SumPackLabeler {
     static constexpr auto value() {
         return concatenate("(",
-                           SumTermLabeler<SumTermPosition::FIRST, U>::value(),
-                           SumTermLabeler<SumTermPosition::SUBSEQUENT, Us>::value()...,
+                           SumTermLabeler<SumTermPosition::First, U>::value(),
+                           SumTermLabeler<SumTermPosition::Subsequent, Us>::value()...,
                            ")");
     }
 };
