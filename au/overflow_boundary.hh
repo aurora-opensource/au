@@ -314,8 +314,7 @@ template <typename T, typename MagT, MagRepresentationOutcome Outcome>
 struct MagHelper {
     static constexpr bool equal(const T &, const T &) { return false; }
     static constexpr T div(const T &, const T &) {
-        static_assert(Outcome == MagRepresentationOutcome::ErrCannotFit,
-                      "Internal library error");
+        static_assert(Outcome == MagRepresentationOutcome::ErrCannotFit, "Internal library error");
 
         // Dividing by a number that is too big to fit in the type implies a result of 0.
         return T{0};

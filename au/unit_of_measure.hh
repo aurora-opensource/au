@@ -1030,8 +1030,7 @@ struct CompoundLabel;
 template <typename... Us, ParensPolicy Policy>
 struct CompoundLabel<UnitProductPack<Us...>, Policy> {
     static constexpr auto value() {
-        constexpr bool add_parens =
-            (Policy == ParensPolicy::AddIfMultiple) && (sizeof...(Us) > 1);
+        constexpr bool add_parens = (Policy == ParensPolicy::AddIfMultiple) && (sizeof...(Us) > 1);
         return parens_if<add_parens>(join_by(" * ", unit_label<Us>()...));
     }
 };
