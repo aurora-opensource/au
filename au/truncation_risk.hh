@@ -151,8 +151,7 @@ struct TruncationRiskForDivideNonArithmeticByInteger
 
 template <typename T, typename M>
 struct TruncationRiskForDivideIntegralByInteger
-    : std::conditional<(get_value_result<T>(M{}).outcome ==
-                        MagRepresentationOutcome::ErrCannotFit),
+    : std::conditional<(get_value_result<T>(M{}).outcome == MagRepresentationOutcome::ErrCannotFit),
                        ValueIsNotZero<T>,
                        ValueTimesRatioIsNotInteger<T, MagInverse<M>>> {};
 
