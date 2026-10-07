@@ -27,7 +27,7 @@ constexpr bool is_prime(std::uintmax_t n) {
     static_assert(sizeof(std::uintmax_t) <= sizeof(std::uint64_t),
                   "Baillie-PSW only strictly guaranteed for 64-bit numbers");
 
-    return baillie_psw(n) == PrimeResult::ProbablyPrime;
+    return baillie_psw(n) == PrimeResult::kProbablyPrime;
 }
 
 // Compute the next step for Pollard's rho algorithm factoring `n`, with parameter `t`.

@@ -54,9 +54,9 @@ struct UseImplicitConversion {};
 //
 
 enum class MagKind {
-    Default,
-    IntegerDivide,
-    NontrivialRational,
+    kDefault,
+    kIntegerDivide,
+    kNontrivialRational,
 };
 
 template <MagKind>
@@ -68,9 +68,9 @@ struct MagKindForImpl
           stdx::conjunction<IsRational<M>,
                             stdx::negation<std::is_same<Denominator<M>, Magnitude<>>>>::value,
           std::conditional_t<std::is_same<Abs<Numerator<M>>, Magnitude<>>::value,
-                             MagKindHolder<MagKind::IntegerDivide>,
-                             MagKindHolder<MagKind::NontrivialRational>>,
-          MagKindHolder<MagKind::Default>> {};
+                             MagKindHolder<MagKind::kIntegerDivide>,
+                             MagKindHolder<MagKind::kNontrivialRational>>,
+          MagKindHolder<MagKind::kDefault>> {};
 template <typename M>
 using MagKindFor = typename MagKindForImpl<M>::type;
 
@@ -80,11 +80,11 @@ template <typename T, typename Mag>
 using ApplicationStrategyFor = typename ApplicationStrategyForImpl<T, Mag, MagKindFor<Mag>>::type;
 
 template <typename T, typename Mag>
-struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::IntegerDivide>>
+struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::kIntegerDivide>>
     : stdx::type_identity<DivideTypeByInteger<T, MagProduct<Sign<Mag>, Denominator<Mag>>>> {};
 
 template <typename T, typename Mag>
-struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::NontrivialRational>>
+struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::kNontrivialRational>>
     : std::conditional<std::is_integral<RealPart<T>>::value,
                        OpSequence<MultiplyTypeBy<T, Numerator<Mag>>,
                                   DivideTypeByInteger<OpOutput<MultiplyTypeBy<T, Numerator<Mag>>>,

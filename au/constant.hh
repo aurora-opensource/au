@@ -78,12 +78,12 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
         constexpr auto this_value = make_quantity<Unit>(static_cast<T>(1));
 
         constexpr bool has_unacceptable_overflow =
-            RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow) &&
+            RiskPolicyT{}.should_check(detail::ConversionRisk::kOverflow) &&
             will_conversion_overflow<T>(this_value, OtherUnit{});
         static_assert(!has_unacceptable_overflow, "Constant conversion known to overflow");
 
         constexpr bool has_unacceptable_truncation =
-            RiskPolicyT{}.should_check(detail::ConversionRisk::Truncation) &&
+            RiskPolicyT{}.should_check(detail::ConversionRisk::kTruncation) &&
             will_conversion_truncate<T>(this_value, OtherUnit{});
         static_assert(!has_unacceptable_truncation, "Constant conversion known to truncate");
 

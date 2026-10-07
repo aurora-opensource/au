@@ -25,9 +25,9 @@ namespace detail {
 // The possible results of a probable prime test.
 //
 enum class PrimeResult {
-    Composite,
-    ProbablyPrime,
-    BadInput,
+    kComposite,
+    kProbablyPrime,
+    kBadInput,
 };
 
 //
@@ -55,14 +55,14 @@ constexpr NumberDecomposition decompose(uint64_t n) {
 // Perform a Miller-Rabin primality test on `n` using base `a`.
 //
 // Preconditions: `n` is odd, and at least as big as `a + 2`.  Also, `2` is the smallest allowable
-// value for `a`.  We will return `BadInput` if these preconditions are violated.  Otherwise, we
-// will return `ProbablyPrime` for all prime inputs, and also all composite inputs which are
-// pseudoprime to base `a`, returning `Composite` for all other inputs (which are definitely known
+// value for `a`.  We will return `kBadInput` if these preconditions are violated.  Otherwise, we
+// will return `kProbablyPrime` for all prime inputs, and also all composite inputs which are
+// pseudoprime to base `a`, returning `kComposite` for all other inputs (which are definitely known
 // to be composite).
 //
 constexpr PrimeResult miller_rabin(std::size_t a, uint64_t n) {
     if (a < 2u || n < a + 2u || n % 2u == 0u) {
-        return PrimeResult::BadInput;
+        return PrimeResult::kBadInput;
     }
 
     const auto params = decompose(n - 1u);
@@ -71,17 +71,17 @@ constexpr PrimeResult miller_rabin(std::size_t a, uint64_t n) {
 
     uint64_t x = pow_mod(a, d, n);
     if (x == 1u) {
-        return PrimeResult::ProbablyPrime;
+        return PrimeResult::kProbablyPrime;
     }
 
     const auto minus_one = n - 1u;
     for (auto r = 0u; r < s; ++r) {
         if (x == minus_one) {
-            return PrimeResult::ProbablyPrime;
+            return PrimeResult::kProbablyPrime;
         }
         x = mul_mod(x, x, n);
     }
-    return PrimeResult::Composite;
+    return PrimeResult::kComposite;
 }
 
 //
@@ -290,11 +290,11 @@ constexpr LucasSequenceElement find_strong_lucas_element(uint64_t i,
 //
 constexpr PrimeResult strong_lucas(uint64_t n) {
     if (n < 2u || n % 2u == 0u) {
-        return PrimeResult::BadInput;
+        return PrimeResult::kBadInput;
     }
 
     if (is_perfect_square(n)) {
-        return PrimeResult::Composite;
+        return PrimeResult::kComposite;
     }
 
     const auto D = find_first_D_with_jacobi_symbol_neg_one(n);
@@ -305,43 +305,43 @@ constexpr PrimeResult strong_lucas(uint64_t n) {
 
     auto element = find_strong_lucas_element(d, n, D);
     if (element.U == 0u) {
-        return PrimeResult::ProbablyPrime;
+        return PrimeResult::kProbablyPrime;
     }
 
     for (std::size_t i = 0u; i < s; ++i) {
         if (element.V == 0u) {
-            return PrimeResult::ProbablyPrime;
+            return PrimeResult::kProbablyPrime;
         }
         element = double_strong_lucas_index(element, n, D);
     }
 
-    return PrimeResult::Composite;
+    return PrimeResult::kComposite;
 }
 
 //
 // Perform the Baillie-PSW test for primality.
 //
-// Returns `BadInput` for any number less than 2, `Composite` for any larger number that is _known_
-// to be composite, and `ProbablyPrime` for any larger number that is deemed "probably prime", which
-// includes all prime numbers.
+// Returns `kBadInput` for any number less than 2, `kComposite` for any larger number that is
+// _known_ to be composite, and `kProbablyPrime` for any larger number that is deemed "probably
+// prime", which includes all prime numbers.
 //
 // Actually, the Baillie-PSW test is known to be completely accurate for all 64-bit numbers;
-// therefore, since our input type is `uint64_t`, the output will be `ProbablyPrime` if and only if
+// therefore, since our input type is `uint64_t`, the output will be `kProbablyPrime` if and only if
 // the input is prime.
 //
 constexpr PrimeResult baillie_psw(uint64_t n) {
     if (n < 2u) {
-        return PrimeResult::BadInput;
+        return PrimeResult::kBadInput;
     }
     if (n < 4u) {
-        return PrimeResult::ProbablyPrime;
+        return PrimeResult::kProbablyPrime;
     }
     if (n % 2u == 0u) {
-        return PrimeResult::Composite;
+        return PrimeResult::kComposite;
     }
 
-    if (miller_rabin(2u, n) == PrimeResult::Composite) {
-        return PrimeResult::Composite;
+    if (miller_rabin(2u, n) == PrimeResult::kComposite) {
+        return PrimeResult::kComposite;
     }
 
     return strong_lucas(n);

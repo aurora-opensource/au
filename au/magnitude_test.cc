@@ -935,7 +935,7 @@ TEST(GetValue, WorksForNegativeNumber) {
 
 TEST(GetValue, HandlesMostNegativeValue) {
     EXPECT_THAT(detail::get_value_result<int16_t>(-mag<32769>()).outcome,
-                Eq(detail::MagRepresentationOutcome::ErrCannotFit));
+                Eq(detail::MagRepresentationOutcome::kErrCannotFit));
     EXPECT_THAT(get_value<int16_t>(-mag<32768>()),
                 SameTypeAndValue(std::numeric_limits<int16_t>::lowest()));
 }
@@ -1278,28 +1278,28 @@ TEST(AllValidLiteralChars, RejectsSignInMantissa) {
 }
 
 MATCHER(CannotFit, "") {
-    return (arg.outcome == MagRepresentationOutcome::ErrCannotFit) && (arg.value == 0);
+    return (arg.outcome == MagRepresentationOutcome::kErrCannotFit) && (arg.value == 0);
 }
 
 MATCHER(NegativeNumberInUnsignedType, "") {
-    return (arg.outcome == MagRepresentationOutcome::ErrNegativeNumberInUnsignedType) &&
+    return (arg.outcome == MagRepresentationOutcome::kErrNegativeNumberInUnsignedType) &&
            (arg.value == 0);
 }
 
 MATCHER(NonIntegerInIntegerType, "") {
-    return (arg.outcome == MagRepresentationOutcome::ErrNonIntegerInIntegerType) &&
+    return (arg.outcome == MagRepresentationOutcome::kErrNonIntegerInIntegerType) &&
            (arg.value == 0);
 }
 
 MATCHER(InvalidRoot, "") {
-    return (arg.outcome == MagRepresentationOutcome::ErrInvalidRoot) && (arg.value == 0);
+    return (arg.outcome == MagRepresentationOutcome::kErrInvalidRoot) && (arg.value == 0);
 }
 
 template <typename T, typename ValueMatcher>
 auto FitsAndMatchesValue(ValueMatcher &&matcher) {
     return ::testing::AllOf(
         ::testing::Field(&MagRepresentationOrError<T>::outcome,
-                         ::testing::Eq(MagRepresentationOutcome::Ok)),
+                         ::testing::Eq(MagRepresentationOutcome::kOk)),
         ::testing::Field(&MagRepresentationOrError<T>::value, std::forward<ValueMatcher>(matcher)));
 }
 
@@ -1362,13 +1362,13 @@ TEST(Root, OddRootOfNegativeOneIsItself) {
 TEST(Root, RecoversExactValueWherePossible) {
     {
         const auto sqrt_4f = root(4.0f, 2);
-        EXPECT_THAT(sqrt_4f.outcome, Eq(MagRepresentationOutcome::Ok));
+        EXPECT_THAT(sqrt_4f.outcome, Eq(MagRepresentationOutcome::kOk));
         EXPECT_THAT(sqrt_4f.value, SameTypeAndValue(2.0f));
     }
 
     {
         const auto cbrt_125L = root(125.0L, 3);
-        EXPECT_THAT(cbrt_125L.outcome, Eq(MagRepresentationOutcome::Ok));
+        EXPECT_THAT(cbrt_125L.outcome, Eq(MagRepresentationOutcome::kOk));
         EXPECT_THAT(cbrt_125L.value, SameTypeAndValue(5.0L));
     }
 }
@@ -1382,11 +1382,11 @@ TEST(Root, ResultIsVeryCloseToStdPowForPureRoots) {
     for (const double x : {55.5, 123.456, 789.012, 3456.789, 12345.6789, 5.67e25}) {
         for (const auto r : {2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u}) {
             const auto double_result = root(x, r);
-            EXPECT_THAT(double_result.outcome, Eq(MagRepresentationOutcome::Ok));
+            EXPECT_THAT(double_result.outcome, Eq(MagRepresentationOutcome::kOk));
             EXPECT_THAT(double_result.value, DoubleEq(static_cast<double>(std::pow(x, 1.0L / r))));
 
             const auto float_result = root(static_cast<float>(x), r);
-            EXPECT_THAT(float_result.outcome, Eq(MagRepresentationOutcome::Ok));
+            EXPECT_THAT(float_result.outcome, Eq(MagRepresentationOutcome::kOk));
             EXPECT_THAT(float_result.value, FloatEq(static_cast<float>(std::pow(x, 1.0L / r))));
         }
     }

@@ -169,13 +169,13 @@ constexpr TestCategory categorize_testing_scenario() {
     constexpr auto conversion_factor = UnitRatio<UnitT, DestUnitT>{};
 
     if (is_integer(conversion_factor) &&
-        (get_value_result<Common>(conversion_factor).outcome != MagRepresentationOutcome::Ok)) {
+        (get_value_result<Common>(conversion_factor).outcome != MagRepresentationOutcome::kOk)) {
         return TestCategory::IMPOSSIBLE;
     }
 
     if (is_integer(mag<1>() / conversion_factor) &&
         (get_value_result<Common>(mag<1>() / conversion_factor).outcome !=
-         MagRepresentationOutcome::Ok)) {
+         MagRepresentationOutcome::kOk)) {
         return TestCategory::IMPOSSIBLE;
     }
 
