@@ -113,7 +113,7 @@ void validate_spec(TestSpec spec) {
 
     using Num = decltype(numerator(MagT{}));
     constexpr auto num_value_result = get_value_result<PromotedT>(Num{});
-    const bool is_num_representable = (num_value_result.outcome == MagRepresentationOutcome::OK);
+    const bool is_num_representable = (num_value_result.outcome == MagRepresentationOutcome::kOk);
     const bool is_num_expected_to_be_representable = (spec.num_fits == NumFitsInPromotedType::YES);
     ASSERT_THAT(is_num_representable, Eq(is_num_expected_to_be_representable))
         << "Expected numerator " << (is_num_expected_to_be_representable ? "to be" : "not to be")
@@ -121,7 +121,7 @@ void validate_spec(TestSpec spec) {
 
     using Den = decltype(denominator(MagT{}));
     constexpr auto den_value_result = get_value_result<PromotedT>(Den{});
-    const bool is_den_representable = (den_value_result.outcome == MagRepresentationOutcome::OK);
+    const bool is_den_representable = (den_value_result.outcome == MagRepresentationOutcome::kOk);
     const bool is_den_expected_to_be_representable = (spec.den_fits == DenFitsInPromotedType::YES);
     ASSERT_THAT(is_den_representable, Eq(is_den_expected_to_be_representable))
         << "Expected denominator " << (is_den_expected_to_be_representable ? "to be" : "not to be")

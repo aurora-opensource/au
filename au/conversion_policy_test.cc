@@ -65,71 +65,71 @@ TEST(IsConversionRiskPolicy, FalseForNonConversionPolicy) {
 
 TEST(ConversionRisk, IgnoreOverflowRiskChecksTruncationRiskButNotOverflowRisk) {
     constexpr auto policy = ignore(OVERFLOW_RISK);
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsFalse());
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsTrue());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kOverflow), IsFalse());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kTruncation), IsTrue());
 }
 
 TEST(ConversionRisk, IgnoreTruncationRiskChecksOverflowRiskButNotTruncationRisk) {
     constexpr auto policy = ignore(TRUNCATION_RISK);
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsTrue());
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsFalse());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kOverflow), IsTrue());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kTruncation), IsFalse());
 }
 
 TEST(ConversionRisk, IgnoreAllRisksChecksNeitherRisk) {
     constexpr auto policy = ignore(ALL_RISKS);
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsFalse());
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsFalse());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kOverflow), IsFalse());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kTruncation), IsFalse());
 }
 
 TEST(ConversionRisk, CheckOverflowRiskChecksOverflowRiskButNotTruncationRisk) {
     constexpr auto policy = check_for(OVERFLOW_RISK);
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsTrue());
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsFalse());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kOverflow), IsTrue());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kTruncation), IsFalse());
 }
 
 TEST(ConversionRisk, CheckTruncationRiskChecksTruncationRiskButNotOverflowRisk) {
     constexpr auto policy = check_for(TRUNCATION_RISK);
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsFalse());
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsTrue());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kOverflow), IsFalse());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kTruncation), IsTrue());
 }
 
 TEST(ConversionRisk, CheckAllRisksChecksBothRisks) {
     constexpr auto policy = check_for(ALL_RISKS);
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsTrue());
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsTrue());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kOverflow), IsTrue());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kTruncation), IsTrue());
 }
 
 TEST(ConversionRisk, ButIgnoringRemovesSpecifiedRisksFromCheckedSet) {
     constexpr auto policy = check_for(ALL_RISKS).but_ignoring(OVERFLOW_RISK);
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsFalse());
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsTrue());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kOverflow), IsFalse());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kTruncation), IsTrue());
 }
 
 TEST(ConversionRisk, ButAlsoCheckingForAddsSpecifiedRisksToCheckedSet) {
     constexpr auto policy = ignore(ALL_RISKS).but_also_checking_for(TRUNCATION_RISK);
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Overflow), IsFalse());
-    EXPECT_THAT(policy.should_check(detail::ConversionRisk::Truncation), IsTrue());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kOverflow), IsFalse());
+    EXPECT_THAT(policy.should_check(detail::ConversionRisk::kTruncation), IsTrue());
 }
 
 TEST(ConversionRisk, ButIgnoringWorksWithAnyStartingPolicy) {
     constexpr auto from_check_all = check_for(ALL_RISKS).but_ignoring(TRUNCATION_RISK);
-    EXPECT_THAT(from_check_all.should_check(detail::ConversionRisk::Overflow), IsTrue());
-    EXPECT_THAT(from_check_all.should_check(detail::ConversionRisk::Truncation), IsFalse());
+    EXPECT_THAT(from_check_all.should_check(detail::ConversionRisk::kOverflow), IsTrue());
+    EXPECT_THAT(from_check_all.should_check(detail::ConversionRisk::kTruncation), IsFalse());
 
     constexpr auto from_ignore_overflow = ignore(OVERFLOW_RISK).but_ignoring(TRUNCATION_RISK);
-    EXPECT_THAT(from_ignore_overflow.should_check(detail::ConversionRisk::Overflow), IsFalse());
-    EXPECT_THAT(from_ignore_overflow.should_check(detail::ConversionRisk::Truncation), IsFalse());
+    EXPECT_THAT(from_ignore_overflow.should_check(detail::ConversionRisk::kOverflow), IsFalse());
+    EXPECT_THAT(from_ignore_overflow.should_check(detail::ConversionRisk::kTruncation), IsFalse());
 }
 
 TEST(ConversionRisk, ButAlsoCheckingForWorksWithAnyStartingPolicy) {
     constexpr auto from_ignore_all = ignore(ALL_RISKS).but_also_checking_for(OVERFLOW_RISK);
-    EXPECT_THAT(from_ignore_all.should_check(detail::ConversionRisk::Overflow), IsTrue());
-    EXPECT_THAT(from_ignore_all.should_check(detail::ConversionRisk::Truncation), IsFalse());
+    EXPECT_THAT(from_ignore_all.should_check(detail::ConversionRisk::kOverflow), IsTrue());
+    EXPECT_THAT(from_ignore_all.should_check(detail::ConversionRisk::kTruncation), IsFalse());
 
     constexpr auto from_check_overflow =
         check_for(OVERFLOW_RISK).but_also_checking_for(TRUNCATION_RISK);
-    EXPECT_THAT(from_check_overflow.should_check(detail::ConversionRisk::Overflow), IsTrue());
-    EXPECT_THAT(from_check_overflow.should_check(detail::ConversionRisk::Truncation), IsTrue());
+    EXPECT_THAT(from_check_overflow.should_check(detail::ConversionRisk::kOverflow), IsTrue());
+    EXPECT_THAT(from_check_overflow.should_check(detail::ConversionRisk::kTruncation), IsTrue());
 }
 
 TEST(ConversionRisk, MethodsAreConstexpr) {
@@ -137,10 +137,10 @@ TEST(ConversionRisk, MethodsAreConstexpr) {
     constexpr auto policy2 = ignore(ALL_RISKS).but_also_checking_for(TRUNCATION_RISK);
 
     // These static_asserts verify constexpr-ness.
-    static_assert(!policy1.should_check(detail::ConversionRisk::Overflow), "");
-    static_assert(policy1.should_check(detail::ConversionRisk::Truncation), "");
-    static_assert(!policy2.should_check(detail::ConversionRisk::Overflow), "");
-    static_assert(policy2.should_check(detail::ConversionRisk::Truncation), "");
+    static_assert(!policy1.should_check(detail::ConversionRisk::kOverflow), "");
+    static_assert(policy1.should_check(detail::ConversionRisk::kTruncation), "");
+    static_assert(!policy2.should_check(detail::ConversionRisk::kOverflow), "");
+    static_assert(policy2.should_check(detail::ConversionRisk::kTruncation), "");
 }
 
 TEST(ImplicitRepPermitted, TrueForIdentityMagnitude) {

@@ -673,7 +673,7 @@ class Quantity {
             ConversionForRepsAndFactor<CastStrategy, Rep, OtherRep, UnitRatio<Unit, OtherUnit>>;
 
         constexpr bool should_check_overflow =
-            RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow);
+            RiskPolicyT{}.should_check(detail::ConversionRisk::kOverflow);
         constexpr bool is_overflow_risk_ok = stdx::disjunction<
             detail::OverflowRiskAcceptablyLow<Op>,
             detail::PermitAsCarveOutForIntegerPromotion<OtherRep,
@@ -681,7 +681,7 @@ class Quantity {
                                                         Rep>>::value;
 
         constexpr bool should_check_truncation =
-            RiskPolicyT{}.should_check(detail::ConversionRisk::Truncation);
+            RiskPolicyT{}.should_check(detail::ConversionRisk::kTruncation);
         constexpr bool is_truncation_risk_ok = detail::TruncationRiskAcceptablyLow<Op>::value;
 
         constexpr bool is_overflow_only_unacceptable_risk =

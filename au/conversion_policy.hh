@@ -39,10 +39,11 @@ namespace au {
 
 namespace detail {
 enum class ConversionRisk : uint8_t {
-    // We use CamelCase instead of UPPER_CASE because `OVERFLOW` is the name of a macro that exists
-    // in the wild in some versions of glibc's `math.h`.
-    Overflow = (1u << 0u),
-    Truncation = (1u << 1u),
+    // We use `kCamelCase` instead of UPPER_CASE because `OVERFLOW` is the name of a macro that
+    // exists in the wild in some versions of glibc's `math.h`.  (This is also the Google C++ style
+    // guide convention for enumerators.)
+    kOverflow = (1u << 0u),
+    kTruncation = (1u << 1u),
 };
 
 template <typename T>
@@ -89,9 +90,9 @@ struct CheckTheseRisks<RiskSet<RiskFlags>> {
 };
 
 AU_DEVICE_VAR constexpr auto OVERFLOW_RISK =
-    RiskSet<static_cast<uint8_t>(ConversionRisk::Overflow)>{};
+    RiskSet<static_cast<uint8_t>(ConversionRisk::kOverflow)>{};
 AU_DEVICE_VAR constexpr auto TRUNCATION_RISK =
-    RiskSet<static_cast<uint8_t>(ConversionRisk::Truncation)>{};
+    RiskSet<static_cast<uint8_t>(ConversionRisk::kTruncation)>{};
 
 }  // namespace detail
 
@@ -131,10 +132,10 @@ struct SettingPureRealFromMixedReal
 template <typename T>
 AU_DEVICE_FUNC constexpr bool meets_threshold(T x) {
     constexpr auto threshold_result = get_value_result<T>(OVERFLOW_THRESHOLD);
-    static_assert(threshold_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT ||
-                      threshold_result.outcome == MagRepresentationOutcome::OK,
+    static_assert(threshold_result.outcome == MagRepresentationOutcome::kErrCannotFit ||
+                      threshold_result.outcome == MagRepresentationOutcome::kOk,
                   "Overflow threshold must be a valid representation");
-    const auto threshold = (threshold_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT)
+    const auto threshold = (threshold_result.outcome == MagRepresentationOutcome::kErrCannotFit)
                                ? std::numeric_limits<T>::max()
                                : threshold_result.value;
     if (Less{}(x, T{0})) {

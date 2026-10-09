@@ -174,13 +174,13 @@ struct OpOutputImpl<DivideTypeByInteger<T, M>>
 template <typename T, typename M, MagRepresentationOutcome MagOutcome>
 struct DivideTypeByIntegerImpl {
     static AU_DEVICE_FUNC constexpr OpOutput<DivideTypeByInteger<T, M>> apply_to(const T &value) {
-        static_assert(MagOutcome == MagRepresentationOutcome::OK, "Internal library error");
+        static_assert(MagOutcome == MagRepresentationOutcome::kOk, "Internal library error");
         return value / get_value<RealPart<T>>(M{});
     }
 };
 
 template <typename T, typename M>
-struct DivideTypeByIntegerImpl<T, M, MagRepresentationOutcome::ERR_CANNOT_FIT> {
+struct DivideTypeByIntegerImpl<T, M, MagRepresentationOutcome::kErrCannotFit> {
     // If a number is too big to fit in the type, then dividing by it should produce 0.
     static AU_DEVICE_FUNC constexpr OpOutput<DivideTypeByInteger<T, M>> apply_to(const T &) {
         return OpOutput<DivideTypeByInteger<T, M>>{0};

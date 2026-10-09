@@ -108,7 +108,7 @@ struct TruncationRiskForMultiplyByIrrational
 template <typename T, typename M>
 struct TruncationRiskForMultiplyArithmeticByRationalNontrivialDenominator
     : std::conditional<(get_value_result<RealPart<T>>(Denominator<M>{}).outcome ==
-                        MagRepresentationOutcome::ERR_CANNOT_FIT),
+                        MagRepresentationOutcome::kErrCannotFit),
                        ValueIsNotZero<T>,
                        ValueTimesRatioIsNotInteger<T, M>> {};
 
@@ -152,7 +152,7 @@ struct TruncationRiskForDivideNonArithmeticByInteger
 template <typename T, typename M>
 struct TruncationRiskForDivideIntegralByInteger
     : std::conditional<(get_value_result<T>(M{}).outcome ==
-                        MagRepresentationOutcome::ERR_CANNOT_FIT),
+                        MagRepresentationOutcome::kErrCannotFit),
                        ValueIsNotZero<T>,
                        ValueTimesRatioIsNotInteger<T, MagInverse<M>>> {};
 
@@ -305,7 +305,7 @@ struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits {
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForInt
     : std::conditional_t<get_value_result<RealPart<T>>(Denominator<M>{}).outcome ==
-                             MagRepresentationOutcome::ERR_CANNOT_FIT,
+                             MagRepresentationOutcome::kErrCannotFit,
                          ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorDoesNotFit<T, M>,
                          ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits<T, M>> {};
 

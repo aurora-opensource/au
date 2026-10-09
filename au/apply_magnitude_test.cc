@@ -158,9 +158,9 @@ TEST(ApplyMagnitude, SupportsNumeratorThatFitsInPromotedTypeButNotOriginalType) 
     // The whole point of this test case is to apply a magnitude whose numerator fits in the
     // promoted type, but does not fit in the target type itself.
     ASSERT_THAT(get_value_result<P>(numerator(roughly_one_half)).outcome,
-                Eq(MagRepresentationOutcome::OK));
+                Eq(MagRepresentationOutcome::kOk));
     ASSERT_THAT(get_value_result<T>(numerator(roughly_one_half)).outcome,
-                Eq(MagRepresentationOutcome::ERR_CANNOT_FIT));
+                Eq(MagRepresentationOutcome::kErrCannotFit));
 
     EXPECT_THAT(apply_magnitude(T{18}, roughly_one_half), SameTypeAndValue(T{9}));
 }
