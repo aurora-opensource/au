@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-30-ga12743d4
+// Version identifier: 0.6.0-base-31-gd30db858
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -1222,9 +1222,9 @@ namespace detail {
 // The possible results of a probable prime test.
 //
 enum class PrimeResult {
-    COMPOSITE,
-    PROBABLY_PRIME,
-    BAD_INPUT,
+    kComposite,
+    kProbablyPrime,
+    kBadInput,
 };
 
 //
@@ -1252,14 +1252,14 @@ constexpr NumberDecomposition decompose(uint64_t n) {
 // Perform a Miller-Rabin primality test on `n` using base `a`.
 //
 // Preconditions: `n` is odd, and at least as big as `a + 2`.  Also, `2` is the smallest allowable
-// value for `a`.  We will return `BAD_INPUT` if these preconditions are violated.  Otherwise, we
-// will return `PROBABLY_PRIME` for all prime inputs, and also all composite inputs which are
-// pseudoprime to base `a`, returning `COMPOSITE` for all other inputs (which are definitely known
+// value for `a`.  We will return `kBadInput` if these preconditions are violated.  Otherwise, we
+// will return `kProbablyPrime` for all prime inputs, and also all composite inputs which are
+// pseudoprime to base `a`, returning `kComposite` for all other inputs (which are definitely known
 // to be composite).
 //
 constexpr PrimeResult miller_rabin(std::size_t a, uint64_t n) {
     if (a < 2u || n < a + 2u || n % 2u == 0u) {
-        return PrimeResult::BAD_INPUT;
+        return PrimeResult::kBadInput;
     }
 
     const auto params = decompose(n - 1u);
@@ -1268,17 +1268,17 @@ constexpr PrimeResult miller_rabin(std::size_t a, uint64_t n) {
 
     uint64_t x = pow_mod(a, d, n);
     if (x == 1u) {
-        return PrimeResult::PROBABLY_PRIME;
+        return PrimeResult::kProbablyPrime;
     }
 
     const auto minus_one = n - 1u;
     for (auto r = 0u; r < s; ++r) {
         if (x == minus_one) {
-            return PrimeResult::PROBABLY_PRIME;
+            return PrimeResult::kProbablyPrime;
         }
         x = mul_mod(x, x, n);
     }
-    return PrimeResult::COMPOSITE;
+    return PrimeResult::kComposite;
 }
 
 //
@@ -1487,11 +1487,11 @@ constexpr LucasSequenceElement find_strong_lucas_element(uint64_t i,
 //
 constexpr PrimeResult strong_lucas(uint64_t n) {
     if (n < 2u || n % 2u == 0u) {
-        return PrimeResult::BAD_INPUT;
+        return PrimeResult::kBadInput;
     }
 
     if (is_perfect_square(n)) {
-        return PrimeResult::COMPOSITE;
+        return PrimeResult::kComposite;
     }
 
     const auto D = find_first_D_with_jacobi_symbol_neg_one(n);
@@ -1502,43 +1502,43 @@ constexpr PrimeResult strong_lucas(uint64_t n) {
 
     auto element = find_strong_lucas_element(d, n, D);
     if (element.U == 0u) {
-        return PrimeResult::PROBABLY_PRIME;
+        return PrimeResult::kProbablyPrime;
     }
 
     for (std::size_t i = 0u; i < s; ++i) {
         if (element.V == 0u) {
-            return PrimeResult::PROBABLY_PRIME;
+            return PrimeResult::kProbablyPrime;
         }
         element = double_strong_lucas_index(element, n, D);
     }
 
-    return PrimeResult::COMPOSITE;
+    return PrimeResult::kComposite;
 }
 
 //
 // Perform the Baillie-PSW test for primality.
 //
-// Returns `BAD_INPUT` for any number less than 2, `COMPOSITE` for any larger number that is _known_
-// to be prime, and `PROBABLY_PRIME` for any larger number that is deemed "probably prime", which
-// includes all prime numbers.
+// Returns `kBadInput` for any number less than 2, `kComposite` for any larger number that is
+// _known_ to be composite, and `kProbablyPrime` for any larger number that is deemed "probably
+// prime", which includes all prime numbers.
 //
 // Actually, the Baillie-PSW test is known to be completely accurate for all 64-bit numbers;
-// therefore, since our input type is `uint64_t`, the output will be `PROBABLY_PRIME` if and only if
+// therefore, since our input type is `uint64_t`, the output will be `kProbablyPrime` if and only if
 // the input is prime.
 //
 constexpr PrimeResult baillie_psw(uint64_t n) {
     if (n < 2u) {
-        return PrimeResult::BAD_INPUT;
+        return PrimeResult::kBadInput;
     }
     if (n < 4u) {
-        return PrimeResult::PROBABLY_PRIME;
+        return PrimeResult::kProbablyPrime;
     }
     if (n % 2u == 0u) {
-        return PrimeResult::COMPOSITE;
+        return PrimeResult::kComposite;
     }
 
-    if (miller_rabin(2u, n) == PrimeResult::COMPOSITE) {
-        return PrimeResult::COMPOSITE;
+    if (miller_rabin(2u, n) == PrimeResult::kComposite) {
+        return PrimeResult::kComposite;
     }
 
     return strong_lucas(n);
@@ -2712,7 +2712,7 @@ constexpr bool is_prime(std::uintmax_t n) {
     static_assert(sizeof(std::uintmax_t) <= sizeof(std::uint64_t),
                   "Baillie-PSW only strictly guaranteed for 64-bit numbers");
 
-    return baillie_psw(n) == PrimeResult::PROBABLY_PRIME;
+    return baillie_psw(n) == PrimeResult::kProbablyPrime;
 }
 
 // Compute the next step for Pollard's rho algorithm factoring `n`, with parameter `t`.
@@ -3830,18 +3830,18 @@ struct NumeratorImpl<Magnitude<BPs...>>
 namespace detail {
 
 enum class MagRepresentationOutcome {
-    OK,
-    ERR_NON_INTEGER_IN_INTEGER_TYPE,
-    ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE,
-    ERR_INVALID_ROOT,
-    ERR_CANNOT_FIT,
+    kOk,
+    kErrNonIntegerInIntegerType,
+    kErrNegativeNumberInUnsignedType,
+    kErrInvalidRoot,
+    kErrCannotFit,
 };
 
 template <typename T>
 struct MagRepresentationOrError {
     MagRepresentationOutcome outcome;
 
-    // Only valid/meaningful if `outcome` is `OK`.
+    // Only valid/meaningful if `outcome` is `kOk`.
     T value = {0};
 };
 
@@ -3858,11 +3858,11 @@ using Widen = std::conditional_t<
 
 template <typename T>
 AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> checked_int_pow(T base, std::uintmax_t exp) {
-    MagRepresentationOrError<T> result = {MagRepresentationOutcome::OK, T{1}};
+    MagRepresentationOrError<T> result = {MagRepresentationOutcome::kOk, T{1}};
     while (exp > 0u) {
         if (exp % 2u == 1u) {
             if (base > std::numeric_limits<T>::max() / result.value) {
-                return MagRepresentationOrError<T>{MagRepresentationOutcome::ERR_CANNOT_FIT};
+                return MagRepresentationOrError<T>{MagRepresentationOutcome::kErrCannotFit};
             }
             result.value *= base;
         }
@@ -3872,7 +3872,7 @@ AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> checked_int_pow(T base, std
         if (base > std::numeric_limits<T>::max() / base) {
             return (exp == 0u)
                        ? result
-                       : MagRepresentationOrError<T>{MagRepresentationOutcome::ERR_CANNOT_FIT};
+                       : MagRepresentationOrError<T>{MagRepresentationOutcome::kErrCannotFit};
         }
         base *= base;
     }
@@ -3892,7 +3892,7 @@ struct NontrivialRootForInt {
         // because all inputs are products of rational powers of basis numbers.  If the result were
         // an integer, then this would be made from rational powers of primes, and those rational
         // exponents would have been converted to lowest terms already.
-        return {MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE};
+        return {MagRepresentationOutcome::kErrNonIntegerInIntegerType};
     }
 };
 
@@ -3909,17 +3909,17 @@ template <typename T>
 AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> root(T x, std::uintmax_t n) {
     // The "zeroth root" would be mathematically undefined.
     if (n == 0) {
-        return {MagRepresentationOutcome::ERR_INVALID_ROOT};
+        return {MagRepresentationOutcome::kErrInvalidRoot};
     }
 
     // The "first root" is trivial.
     if (n == 1) {
-        return {MagRepresentationOutcome::OK, x};
+        return {MagRepresentationOutcome::kOk, x};
     }
 
     // Handle special cases of zero and one.
     if (x == 0 || x == 1) {
-        return {MagRepresentationOutcome::OK, x};
+        return {MagRepresentationOutcome::kOk, x};
     }
 
     return NontrivialRootImpl<T, IsKnownToBeInteger<T>::value>{}(x, n);
@@ -3931,24 +3931,24 @@ struct GeneralNontrivialRoot {
         // Handle negative numbers: only odd roots are allowed.
         if (x < 0) {
             if (n % 2 == 0) {
-                return {MagRepresentationOutcome::ERR_INVALID_ROOT};
+                return {MagRepresentationOutcome::kErrInvalidRoot};
             }
 
             const auto negative_result = root(-x, n);
-            if (negative_result.outcome != MagRepresentationOutcome::OK) {
+            if (negative_result.outcome != MagRepresentationOutcome::kOk) {
                 return {negative_result.outcome};
             }
 
-            return {MagRepresentationOutcome::OK, static_cast<T>(-negative_result.value)};
+            return {MagRepresentationOutcome::kOk, static_cast<T>(-negative_result.value)};
         }
 
         // Handle numbers bewtween 0 and 1.
         if (x < 1) {
             const auto inverse_result = root(T{1} / x, n);
-            if (inverse_result.outcome != MagRepresentationOutcome::OK) {
+            if (inverse_result.outcome != MagRepresentationOutcome::kOk) {
                 return {inverse_result.outcome};
             }
-            return {MagRepresentationOutcome::OK, static_cast<T>(T{1} / inverse_result.value)};
+            return {MagRepresentationOutcome::kOk, static_cast<T>(T{1} / inverse_result.value)};
         }
 
         //
@@ -3972,13 +3972,13 @@ struct GeneralNontrivialRoot {
 
             auto result = checked_int_pow(mid, n);
 
-            if (result.outcome != MagRepresentationOutcome::OK) {
+            if (result.outcome != MagRepresentationOutcome::kOk) {
                 return {result.outcome};
             }
 
             // Early return if we get lucky with an exact answer.
             if (result.value == x) {
-                return {MagRepresentationOutcome::OK, static_cast<T>(mid)};
+                return {MagRepresentationOutcome::kOk, static_cast<T>(mid)};
             }
 
             // Check for stagnation.
@@ -3997,10 +3997,10 @@ struct GeneralNontrivialRoot {
         // Pick whichever one gets closer to the target.
         const auto lo_diff = x - checked_int_pow(lo, n).value;
         const auto hi_diff = checked_int_pow(hi, n).value - x;
-        return {MagRepresentationOutcome::OK, static_cast<T>(lo_diff < hi_diff ? lo : hi)};
+        return {MagRepresentationOutcome::kOk, static_cast<T>(lo_diff < hi_diff ? lo : hi)};
     }
 };
-enum class SignOfExponent { POSITIVE_SIGN, NEGATIVE_SIGN };
+enum class SignOfExponent { kPositiveSign, kNegativeSign };
 
 template <typename T, std::uintmax_t N, std::uintmax_t D, typename B, SignOfExponent>
 struct BasePowerValueImpl;
@@ -4011,30 +4011,30 @@ AU_DEVICE_FUNC constexpr MagRepresentationOrError<Widen<T>> base_power_value(B b
                               static_cast<std::uintmax_t>(N < 0 ? -N : N),
                               D,
                               B,
-                              (N < 0 ? SignOfExponent::NEGATIVE_SIGN
-                                     : SignOfExponent::POSITIVE_SIGN)>{}(base);
+                              (N < 0 ? SignOfExponent::kNegativeSign
+                                     : SignOfExponent::kPositiveSign)>{}(base);
 }
 
 template <typename T, std::uintmax_t N, std::uintmax_t D, typename B>
-struct BasePowerValueImpl<T, N, D, B, SignOfExponent::NEGATIVE_SIGN> {
+struct BasePowerValueImpl<T, N, D, B, SignOfExponent::kNegativeSign> {
     AU_DEVICE_FUNC constexpr MagRepresentationOrError<Widen<T>> operator()(B base) const {
         const auto inverse_result =
-            BasePowerValueImpl<T, N, D, B, SignOfExponent::POSITIVE_SIGN>{}(base);
-        if (inverse_result.outcome != MagRepresentationOutcome::OK) {
+            BasePowerValueImpl<T, N, D, B, SignOfExponent::kPositiveSign>{}(base);
+        if (inverse_result.outcome != MagRepresentationOutcome::kOk) {
             return inverse_result;
         }
         return {
-            MagRepresentationOutcome::OK,
+            MagRepresentationOutcome::kOk,
             Widen<T>{1} / inverse_result.value,
         };
     }
 };
 
 template <typename T, std::uintmax_t N, std::uintmax_t D, typename B>
-struct BasePowerValueImpl<T, N, D, B, SignOfExponent::POSITIVE_SIGN> {
+struct BasePowerValueImpl<T, N, D, B, SignOfExponent::kPositiveSign> {
     AU_DEVICE_FUNC constexpr MagRepresentationOrError<Widen<T>> operator()(B base) const {
         const auto power_result = checked_int_pow(static_cast<Widen<T>>(base), N);
-        if (power_result.outcome != MagRepresentationOutcome::OK) {
+        if (power_result.outcome != MagRepresentationOutcome::kOk) {
             return {power_result.outcome};
         }
         return (D > 1) ? root(power_result.value, D) : power_result;
@@ -4045,7 +4045,7 @@ template <typename T, std::size_t N>
 AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> product(
     const MagRepresentationOrError<T> (&values)[N]) {
     for (const auto &x : values) {
-        if (x.outcome != MagRepresentationOutcome::OK) {
+        if (x.outcome != MagRepresentationOutcome::kOk) {
             return x;
         }
     }
@@ -4053,11 +4053,11 @@ AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> product(
     T result{1};
     for (const auto &x : values) {
         if ((x.value > 1) && (result > std::numeric_limits<T>::max() / x.value)) {
-            return {MagRepresentationOutcome::ERR_CANNOT_FIT};
+            return {MagRepresentationOutcome::kErrCannotFit};
         }
         result *= x.value;
     }
-    return {MagRepresentationOutcome::OK, result};
+    return {MagRepresentationOutcome::kOk, result};
 }
 
 template <std::size_t N>
@@ -4178,7 +4178,7 @@ AU_DEVICE_FUNC constexpr bool safe_to_cast_to(InputT x) {
 template <typename T, typename MagT>
 struct GetValueResultImplForNonIntegerInIntegralType {
     AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> operator()() {
-        return {MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE};
+        return {MagRepresentationOutcome::kErrNonIntegerInIntegerType};
     }
 };
 
@@ -4193,12 +4193,12 @@ struct GetValueResultImplForDefaultCase<T, Magnitude<BPs...>> {
                               Exp<BPs>::num,
                               static_cast<std::uintmax_t>(Exp<BPs>::den)>(Base<BPs>::value())...});
 
-        constexpr bool will_fit = widened_result.outcome == MagRepresentationOutcome::OK &&
+        constexpr bool will_fit = widened_result.outcome == MagRepresentationOutcome::kOk &&
                                   safe_to_cast_to<T>(widened_result.value);
 
-        return will_fit ? MagRepresentationOrError<T>{MagRepresentationOutcome::OK,
+        return will_fit ? MagRepresentationOrError<T>{MagRepresentationOutcome::kOk,
                                                       static_cast<T>(widened_result.value)}
-                        : MagRepresentationOrError<T>{MagRepresentationOutcome::ERR_CANNOT_FIT};
+                        : MagRepresentationOrError<T>{MagRepresentationOutcome::kErrCannotFit};
     }
 };
 
@@ -4218,7 +4218,7 @@ AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> get_value_result(Magnitude<
 // This simple overload avoids edge cases with creating and passing zero-sized arrays.
 template <typename T>
 AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> get_value_result(Magnitude<>) {
-    return {MagRepresentationOutcome::OK, static_cast<T>(1)};
+    return {MagRepresentationOutcome::kOk, static_cast<T>(1)};
 }
 
 template <typename T, typename MagT, bool IsCandidate>
@@ -4240,51 +4240,50 @@ template <typename T, typename... BPs>
 AU_DEVICE_FUNC constexpr MagRepresentationOrError<T> get_value_result(
     Magnitude<Negative, BPs...> m) {
     if (std::is_unsigned<T>::value) {
-        return {MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE};
+        return {MagRepresentationOutcome::kErrNegativeNumberInUnsignedType};
     }
 
     if (is_exactly_lowest_of_signed_integral<T>(m)) {
-        return {MagRepresentationOutcome::OK, std::numeric_limits<T>::lowest()};
+        return {MagRepresentationOutcome::kOk, std::numeric_limits<T>::lowest()};
     }
 
     const auto result = get_value_result<T>(Magnitude<BPs...>{});
-    if (result.outcome != MagRepresentationOutcome::OK) {
+    if (result.outcome != MagRepresentationOutcome::kOk) {
         return result;
     }
-    return {MagRepresentationOutcome::OK, static_cast<T>(-result.value)};
+    return {MagRepresentationOutcome::kOk, static_cast<T>(-result.value)};
 }
 
 // Instantiating `ErrorForMagRepOutcome<M>` produces exactly one `static_assert` failure when `M` is
-// not `OK`, whose error message describes `M`.
+// not `kOk`, whose error message describes `M`.
 template <MagRepresentationOutcome Actual, MagRepresentationOutcome Expected>
 struct ErrorForMagRepOutcomeImpl {
     // Default in case we forget to cover an enum value.
     static_assert(Actual == Expected, "Unknown error occurred");
 };
 template <MagRepresentationOutcome Actual>
-using ErrorForMagRepOutcome = ErrorForMagRepOutcomeImpl<Actual, MagRepresentationOutcome::OK>;
+using ErrorForMagRepOutcome = ErrorForMagRepOutcomeImpl<Actual, MagRepresentationOutcome::kOk>;
 
 // Specializations for each error type below.
 template <MagRepresentationOutcome Expected>
-struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE,
-                                 Expected> {
-    static_assert(Expected == MagRepresentationOutcome::ERR_NON_INTEGER_IN_INTEGER_TYPE,
+struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::kErrNonIntegerInIntegerType, Expected> {
+    static_assert(Expected == MagRepresentationOutcome::kErrNonIntegerInIntegerType,
                   "Cannot represent non-integer in integral destination type");
 };
 template <MagRepresentationOutcome Expected>
-struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE,
+struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::kErrNegativeNumberInUnsignedType,
                                  Expected> {
-    static_assert(Expected == MagRepresentationOutcome::ERR_NEGATIVE_NUMBER_IN_UNSIGNED_TYPE,
+    static_assert(Expected == MagRepresentationOutcome::kErrNegativeNumberInUnsignedType,
                   "Cannot represent negative number in unsigned destination type");
 };
 template <MagRepresentationOutcome Expected>
-struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ERR_INVALID_ROOT, Expected> {
-    static_assert(Expected == MagRepresentationOutcome::ERR_INVALID_ROOT,
+struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::kErrInvalidRoot, Expected> {
+    static_assert(Expected == MagRepresentationOutcome::kErrInvalidRoot,
                   "Could not compute root for rational power of base");
 };
 template <MagRepresentationOutcome Expected>
-struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::ERR_CANNOT_FIT, Expected> {
-    static_assert(Expected == MagRepresentationOutcome::ERR_CANNOT_FIT,
+struct ErrorForMagRepOutcomeImpl<MagRepresentationOutcome::kErrCannotFit, Expected> {
+    static_assert(Expected == MagRepresentationOutcome::kErrCannotFit,
                   "Value outside range of destination type");
 };
 
@@ -4301,7 +4300,7 @@ template <typename T, typename... BPs>
 AU_DEVICE_FUNC constexpr bool representable_in(Magnitude<BPs...> m) {
     using namespace detail;
 
-    return get_value_result<T>(m).outcome == MagRepresentationOutcome::OK;
+    return get_value_result<T>(m).outcome == MagRepresentationOutcome::kOk;
 }
 
 template <typename T, typename... BPs>
@@ -4317,9 +4316,9 @@ AU_DEVICE_FUNC constexpr T get_value(Magnitude<BPs...> m) {
 
 namespace detail {
 enum class MagLabelCategory {
-    INTEGER,
-    RATIONAL,
-    UNSUPPORTED,
+    kInteger,
+    kRational,
+    kUnsupported,
 };
 
 template <typename... BPs>
@@ -4327,11 +4326,11 @@ constexpr MagLabelCategory categorize_mag_label(Magnitude<BPs...> m) {
     // This unsightly "nested ternary" approach makes this entire function into --- _technically_
     // --- a one-liner, which appeases the Green Hills compiler.
     return IsInteger<Magnitude<BPs...>>::value
-               ? (get_value_result<std::uintmax_t>(m).outcome == MagRepresentationOutcome::OK
-                      ? MagLabelCategory::INTEGER
-                      : MagLabelCategory::UNSUPPORTED)
-               : (IsRational<Magnitude<BPs...>>::value ? MagLabelCategory::RATIONAL
-                                                       : MagLabelCategory::UNSUPPORTED);
+               ? (get_value_result<std::uintmax_t>(m).outcome == MagRepresentationOutcome::kOk
+                      ? MagLabelCategory::kInteger
+                      : MagLabelCategory::kUnsupported)
+               : (IsRational<Magnitude<BPs...>>::value ? MagLabelCategory::kRational
+                                                       : MagLabelCategory::kUnsupported);
 }
 
 template <typename MagT, MagLabelCategory Category>
@@ -4346,13 +4345,13 @@ template <typename MagT, MagLabelCategory Category>
 constexpr const bool MagnitudeLabelImplementation<MagT, Category>::has_exposed_slash;
 
 template <typename MagT>
-struct MagnitudeLabelImplementation<MagT, MagLabelCategory::INTEGER>
+struct MagnitudeLabelImplementation<MagT, MagLabelCategory::kInteger>
     : detail::UIToA<get_value<std::uintmax_t>(MagT{})> {
     static constexpr const bool has_exposed_slash = false;
 };
 template <typename MagT>
 constexpr const bool
-    MagnitudeLabelImplementation<MagT, MagLabelCategory::INTEGER>::has_exposed_slash;
+    MagnitudeLabelImplementation<MagT, MagLabelCategory::kInteger>::has_exposed_slash;
 
 // Analogous to `detail::ExtendedLabel`, but for magnitudes.
 //
@@ -4362,7 +4361,7 @@ using ExtendedMagLabel =
     StringConstant<concatenate(MagnitudeLabel<Mags>::value...).size() + ExtensionStrlen>;
 
 template <typename MagT>
-struct MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL> {
+struct MagnitudeLabelImplementation<MagT, MagLabelCategory::kRational> {
     using LabelT = ExtendedMagLabel<3u, Numerator<MagT>, Denominator<MagT>>;
     static constexpr LabelT value = join_by(
         " / ", MagnitudeLabel<Numerator<MagT>>::value, MagnitudeLabel<Denominator<MagT>>::value);
@@ -4370,11 +4369,11 @@ struct MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL> {
     static constexpr const bool has_exposed_slash = true;
 };
 template <typename MagT>
-constexpr typename MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL>::LabelT
-    MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL>::value;
+constexpr typename MagnitudeLabelImplementation<MagT, MagLabelCategory::kRational>::LabelT
+    MagnitudeLabelImplementation<MagT, MagLabelCategory::kRational>::value;
 template <typename MagT>
 constexpr const bool
-    MagnitudeLabelImplementation<MagT, MagLabelCategory::RATIONAL>::has_exposed_slash;
+    MagnitudeLabelImplementation<MagT, MagLabelCategory::kRational>::has_exposed_slash;
 
 }  // namespace detail
 
@@ -5550,17 +5549,16 @@ struct ExpLabelForRatioPow {
 };
 
 enum class ParensPolicy {
-    OMIT,
-    ADD_IF_MULITPLE,
+    kOmit,
+    kAddIfMultiple,
 };
 
-template <typename T, ParensPolicy Policy = ParensPolicy::ADD_IF_MULITPLE>
+template <typename T, ParensPolicy Policy = ParensPolicy::kAddIfMultiple>
 struct CompoundLabel;
 template <typename... Us, ParensPolicy Policy>
 struct CompoundLabel<UnitProductPack<Us...>, Policy> {
     static constexpr auto value() {
-        constexpr bool add_parens =
-            (Policy == ParensPolicy::ADD_IF_MULITPLE) && (sizeof...(Us) > 1);
+        constexpr bool add_parens = (Policy == ParensPolicy::kAddIfMultiple) && (sizeof...(Us) > 1);
         return parens_if<add_parens>(join_by(" * ", unit_label<Us>()...));
     }
 };
@@ -5581,8 +5579,8 @@ constexpr typename QuotientLabeler<N, D, T>::LabelT QuotientLabeler<N, D, T>::va
 // Special case for denominator of 1.
 template <typename N, typename T>
 struct QuotientLabeler<N, UnitProductPack<>, T> {
-    using LabelT = StringConstant<CompoundLabel<N, ParensPolicy::OMIT>::value().size()>;
-    static constexpr LabelT value = CompoundLabel<N, ParensPolicy::OMIT>::value();
+    using LabelT = StringConstant<CompoundLabel<N, ParensPolicy::kOmit>::value().size()>;
+    static constexpr LabelT value = CompoundLabel<N, ParensPolicy::kOmit>::value();
 };
 template <typename N, typename T>
 constexpr typename QuotientLabeler<N, UnitProductPack<>, T>::LabelT
@@ -5607,25 +5605,25 @@ template <typename T>
 constexpr const char QuotientLabeler<UnitProductPack<>, UnitProductPack<>, T>::value[1];
 
 enum class SumTermPosition {
-    FIRST,
-    SUBSEQUENT,
+    kFirst,
+    kSubsequent,
 };
 
 // Sign label (if necessary) for a unit in a sum, adding spaces for later terms.
 template <SumTermPosition Pos, typename M>
 struct SignLabel;
 template <>
-struct SignLabel<SumTermPosition::FIRST, Magnitude<>> {
+struct SignLabel<SumTermPosition::kFirst, Magnitude<>> {
     static constexpr auto value() { return as_string_constant(""); }
 };
 template <>
-struct SignLabel<SumTermPosition::SUBSEQUENT, Magnitude<>> {
+struct SignLabel<SumTermPosition::kSubsequent, Magnitude<>> {
     static constexpr auto value() { return as_string_constant(" + "); }
 };
 template <SumTermPosition Pos>
 struct SignLabel<Pos, Magnitude<Negative>> {
     static constexpr auto value() {
-        return wrap_if<Pos == SumTermPosition::SUBSEQUENT, ' ', ' '>("-");
+        return wrap_if<Pos == SumTermPosition::kSubsequent, ' ', ' '>("-");
     }
 };
 
@@ -5658,8 +5656,8 @@ template <typename U, typename... Us>
 struct SumPackLabeler {
     static constexpr auto value() {
         return concatenate("(",
-                           SumTermLabeler<SumTermPosition::FIRST, U>::value(),
-                           SumTermLabeler<SumTermPosition::SUBSEQUENT, Us>::value()...,
+                           SumTermLabeler<SumTermPosition::kFirst, U>::value(),
+                           SumTermLabeler<SumTermPosition::kSubsequent, Us>::value()...,
                            ")");
     }
 };
@@ -6084,13 +6082,13 @@ struct OpOutputImpl<DivideTypeByInteger<T, M>>
 template <typename T, typename M, MagRepresentationOutcome MagOutcome>
 struct DivideTypeByIntegerImpl {
     static AU_DEVICE_FUNC constexpr OpOutput<DivideTypeByInteger<T, M>> apply_to(const T &value) {
-        static_assert(MagOutcome == MagRepresentationOutcome::OK, "Internal library error");
+        static_assert(MagOutcome == MagRepresentationOutcome::kOk, "Internal library error");
         return value / get_value<RealPart<T>>(M{});
     }
 };
 
 template <typename T, typename M>
-struct DivideTypeByIntegerImpl<T, M, MagRepresentationOutcome::ERR_CANNOT_FIT> {
+struct DivideTypeByIntegerImpl<T, M, MagRepresentationOutcome::kErrCannotFit> {
     // If a number is too big to fit in the type, then dividing by it should produce 0.
     static AU_DEVICE_FUNC constexpr OpOutput<DivideTypeByInteger<T, M>> apply_to(const T &) {
         return OpOutput<DivideTypeByInteger<T, M>>{0};
@@ -6445,9 +6443,9 @@ struct UseImplicitConversion {};
 //
 
 enum class MagKind {
-    DEFAULT,
-    INTEGER_DIVIDE,
-    NONTRIVIAL_RATIONAL,
+    kDefault,
+    kIntegerDivide,
+    kNontrivialRational,
 };
 
 template <MagKind>
@@ -6459,9 +6457,9 @@ struct MagKindForImpl
           stdx::conjunction<IsRational<M>,
                             stdx::negation<std::is_same<Denominator<M>, Magnitude<>>>>::value,
           std::conditional_t<std::is_same<Abs<Numerator<M>>, Magnitude<>>::value,
-                             MagKindHolder<MagKind::INTEGER_DIVIDE>,
-                             MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>,
-          MagKindHolder<MagKind::DEFAULT>> {};
+                             MagKindHolder<MagKind::kIntegerDivide>,
+                             MagKindHolder<MagKind::kNontrivialRational>>,
+          MagKindHolder<MagKind::kDefault>> {};
 template <typename M>
 using MagKindFor = typename MagKindForImpl<M>::type;
 
@@ -6471,11 +6469,11 @@ template <typename T, typename Mag>
 using ApplicationStrategyFor = typename ApplicationStrategyForImpl<T, Mag, MagKindFor<Mag>>::type;
 
 template <typename T, typename Mag>
-struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::INTEGER_DIVIDE>>
+struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::kIntegerDivide>>
     : stdx::type_identity<DivideTypeByInteger<T, MagProduct<Sign<Mag>, Denominator<Mag>>>> {};
 
 template <typename T, typename Mag>
-struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::NONTRIVIAL_RATIONAL>>
+struct ApplicationStrategyForImpl<T, Mag, MagKindHolder<MagKind::kNontrivialRational>>
     : std::conditional<std::is_integral<RealPart<T>>::value,
                        OpSequence<MultiplyTypeBy<T, Numerator<Mag>>,
                                   DivideTypeByInteger<OpOutput<MultiplyTypeBy<T, Numerator<Mag>>>,
@@ -6760,11 +6758,11 @@ template <typename T, typename M, MagRepresentationOutcome Outcome>
 struct IsAbsProbablyBiggerThanOneHelper : std::false_type {};
 
 template <typename T, typename M>
-struct IsAbsProbablyBiggerThanOneHelper<T, M, MagRepresentationOutcome::OK>
+struct IsAbsProbablyBiggerThanOneHelper<T, M, MagRepresentationOutcome::kOk>
     : stdx::bool_constant<(get_value<T>(Abs<M>{}) >= T{1})> {};
 
 template <typename T, typename M>
-struct IsAbsProbablyBiggerThanOneHelper<T, M, MagRepresentationOutcome::ERR_CANNOT_FIT>
+struct IsAbsProbablyBiggerThanOneHelper<T, M, MagRepresentationOutcome::kErrCannotFit>
     : std::true_type {};
 
 template <typename T, typename M>
@@ -6919,8 +6917,7 @@ template <typename T, typename MagT, MagRepresentationOutcome Outcome>
 struct MagHelper {
     static constexpr bool equal(const T &, const T &) { return false; }
     static constexpr T div(const T &, const T &) {
-        static_assert(Outcome == MagRepresentationOutcome::ERR_CANNOT_FIT,
-                      "Internal library error");
+        static_assert(Outcome == MagRepresentationOutcome::kErrCannotFit, "Internal library error");
 
         // Dividing by a number that is too big to fit in the type implies a result of 0.
         return T{0};
@@ -6928,7 +6925,7 @@ struct MagHelper {
 };
 
 template <typename T, typename MagT>
-struct MagHelper<T, MagT, MagRepresentationOutcome::OK> {
+struct MagHelper<T, MagT, MagRepresentationOutcome::kOk> {
     static constexpr bool equal(const T &x, const T &value) { return x == value; }
     static constexpr T div(const T &a, const T &b) { return a / b; }
 };
@@ -6977,8 +6974,8 @@ struct ClampLowestOfLimitsTimesInverseValue {
                 : clamped_negate(divide_by_mag(std::numeric_limits<T>::max(), ABS_DIVISOR));
         constexpr bool SHOULD_CLAMP = RELEVANT_BOUND >= RELEVANT_LIMIT;
 
-        // This value will be meaningless if `get_value_result<T>(ABS_DIVISOR).outcome` is not `OK`,
-        // but we won't end up actually using the value in those cases.
+        // This value will be meaningless if `get_value_result<T>(ABS_DIVISOR).outcome` is not
+        // `kOk`, but we won't end up actually using the value in those cases.
         constexpr auto ABS_DIVISOR_AS_T = get_value_result<T>(ABS_DIVISOR).value;
 
         return SHOULD_CLAMP ? std::numeric_limits<T>::lowest() : RELEVANT_LIMIT * ABS_DIVISOR_AS_T;
@@ -7027,8 +7024,8 @@ struct ClampHighestOfLimitsTimesInverseValue {
                 : clamped_negate(divide_by_mag(std::numeric_limits<T>::lowest(), ABS_DIVISOR));
         constexpr bool SHOULD_CLAMP = RELEVANT_BOUND <= RELEVANT_LIMIT;
 
-        // This value will be meaningless if `get_value_result<T>(ABS_DIVISOR).outcome` is not `OK`,
-        // but we won't end up actually using the value in those cases.
+        // This value will be meaningless if `get_value_result<T>(ABS_DIVISOR).outcome` is not
+        // `kOk`, but we won't end up actually using the value in those cases.
         constexpr auto ABS_DIVISOR_AS_T = get_value_result<T>(ABS_DIVISOR).value;
 
         return SHOULD_CLAMP ? std::numeric_limits<T>::max() : RELEVANT_LIMIT * ABS_DIVISOR_AS_T;
@@ -7036,8 +7033,8 @@ struct ClampHighestOfLimitsTimesInverseValue {
 };
 
 constexpr bool is_ok_or_err_cannot_fit(MagRepresentationOutcome outcome) {
-    return outcome == MagRepresentationOutcome::OK ||
-           outcome == MagRepresentationOutcome::ERR_CANNOT_FIT;
+    return outcome == MagRepresentationOutcome::kOk ||
+           outcome == MagRepresentationOutcome::kErrCannotFit;
 }
 
 template <typename T, typename M>
@@ -7645,7 +7642,7 @@ struct TruncationRiskForMultiplyByIrrational
 template <typename T, typename M>
 struct TruncationRiskForMultiplyArithmeticByRationalNontrivialDenominator
     : std::conditional<(get_value_result<RealPart<T>>(Denominator<M>{}).outcome ==
-                        MagRepresentationOutcome::ERR_CANNOT_FIT),
+                        MagRepresentationOutcome::kErrCannotFit),
                        ValueIsNotZero<T>,
                        ValueTimesRatioIsNotInteger<T, M>> {};
 
@@ -7689,7 +7686,7 @@ struct TruncationRiskForDivideNonArithmeticByInteger
 template <typename T, typename M>
 struct TruncationRiskForDivideIntegralByInteger
     : std::conditional<(get_value_result<T>(M{}).outcome ==
-                        MagRepresentationOutcome::ERR_CANNOT_FIT),
+                        MagRepresentationOutcome::kErrCannotFit),
                        ValueIsNotZero<T>,
                        ValueTimesRatioIsNotInteger<T, MagInverse<M>>> {};
 
@@ -7842,7 +7839,7 @@ struct ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits {
 template <typename T, typename M>
 struct ValueTimesRatioIsNotIntegerImplForInt
     : std::conditional_t<get_value_result<RealPart<T>>(Denominator<M>{}).outcome ==
-                             MagRepresentationOutcome::ERR_CANNOT_FIT,
+                             MagRepresentationOutcome::kErrCannotFit,
                          ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorDoesNotFit<T, M>,
                          ValueTimesRatioIsNotIntegerImplForIntWhereDenominatorFits<T, M>> {};
 
@@ -7892,10 +7889,11 @@ namespace au {
 
 namespace detail {
 enum class ConversionRisk : uint8_t {
-    // We use CamelCase instead of UPPER_CASE because `OVERFLOW` is the name of a macro that exists
-    // in the wild in some versions of glibc's `math.h`.
-    Overflow = (1u << 0u),
-    Truncation = (1u << 1u),
+    // We use `kCamelCase` instead of UPPER_CASE because `OVERFLOW` is the name of a macro that
+    // exists in the wild in some versions of glibc's `math.h`.  (This is also the Google C++ style
+    // guide convention for enumerators.)
+    kOverflow = (1u << 0u),
+    kTruncation = (1u << 1u),
 };
 
 template <typename T>
@@ -7942,9 +7940,9 @@ struct CheckTheseRisks<RiskSet<RiskFlags>> {
 };
 
 AU_DEVICE_VAR constexpr auto OVERFLOW_RISK =
-    RiskSet<static_cast<uint8_t>(ConversionRisk::Overflow)>{};
+    RiskSet<static_cast<uint8_t>(ConversionRisk::kOverflow)>{};
 AU_DEVICE_VAR constexpr auto TRUNCATION_RISK =
-    RiskSet<static_cast<uint8_t>(ConversionRisk::Truncation)>{};
+    RiskSet<static_cast<uint8_t>(ConversionRisk::kTruncation)>{};
 
 }  // namespace detail
 
@@ -7984,10 +7982,10 @@ struct SettingPureRealFromMixedReal
 template <typename T>
 AU_DEVICE_FUNC constexpr bool meets_threshold(T x) {
     constexpr auto threshold_result = get_value_result<T>(OVERFLOW_THRESHOLD);
-    static_assert(threshold_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT ||
-                      threshold_result.outcome == MagRepresentationOutcome::OK,
+    static_assert(threshold_result.outcome == MagRepresentationOutcome::kErrCannotFit ||
+                      threshold_result.outcome == MagRepresentationOutcome::kOk,
                   "Overflow threshold must be a valid representation");
-    const auto threshold = (threshold_result.outcome == MagRepresentationOutcome::ERR_CANNOT_FIT)
+    const auto threshold = (threshold_result.outcome == MagRepresentationOutcome::kErrCannotFit)
                                ? std::numeric_limits<T>::max()
                                : threshold_result.value;
     if (Less{}(x, T{0})) {
@@ -8758,7 +8756,7 @@ class Quantity {
             ConversionForRepsAndFactor<CastStrategy, Rep, OtherRep, UnitRatio<Unit, OtherUnit>>;
 
         constexpr bool should_check_overflow =
-            RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow);
+            RiskPolicyT{}.should_check(detail::ConversionRisk::kOverflow);
         constexpr bool is_overflow_risk_ok = stdx::disjunction<
             detail::OverflowRiskAcceptablyLow<Op>,
             detail::PermitAsCarveOutForIntegerPromotion<OtherRep,
@@ -8766,7 +8764,7 @@ class Quantity {
                                                         Rep>>::value;
 
         constexpr bool should_check_truncation =
-            RiskPolicyT{}.should_check(detail::ConversionRisk::Truncation);
+            RiskPolicyT{}.should_check(detail::ConversionRisk::kTruncation);
         constexpr bool is_truncation_risk_ok = detail::TruncationRiskAcceptablyLow<Op>::value;
 
         constexpr bool is_overflow_only_unacceptable_risk =
@@ -10107,12 +10105,12 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
         constexpr auto this_value = make_quantity<Unit>(static_cast<T>(1));
 
         constexpr bool has_unacceptable_overflow =
-            RiskPolicyT{}.should_check(detail::ConversionRisk::Overflow) &&
+            RiskPolicyT{}.should_check(detail::ConversionRisk::kOverflow) &&
             will_conversion_overflow<T>(this_value, OtherUnit{});
         static_assert(!has_unacceptable_overflow, "Constant conversion known to overflow");
 
         constexpr bool has_unacceptable_truncation =
-            RiskPolicyT{}.should_check(detail::ConversionRisk::Truncation) &&
+            RiskPolicyT{}.should_check(detail::ConversionRisk::kTruncation) &&
             will_conversion_truncate<T>(this_value, OtherUnit{});
         static_assert(!has_unacceptable_truncation, "Constant conversion known to truncate");
 
