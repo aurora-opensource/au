@@ -23,26 +23,39 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 def compile_benchmark(name, srcs, deps):
     """Defines one compile time benchmark: a translation unit that exists to be timed.
 
-    The name of the benchmark is the name of the subfolder that holds its sources.  This gives it
-    the same shape as our code examples, which we built our compile time tooling around.
+    Sources live in `<group>/<file>`, where the group is a family of related benchmarks.  This gives
+    them the same shape as our code examples, which we built our compile time tooling around: the
+    folder names the group, and the file names the member within it.
 
     Args:
-      name: Name of the benchmark.  Its sources live in this subdirectory, and this is what the
-        measurement report calls it.
-      srcs: Sources for the benchmark, relative to this directory.  Must be under `<name>/`.
+      name: Name of the benchmark target.
+      srcs: Sources for the benchmark, relative to this directory.  All must sit directly in the
+        same subdirectory.
       deps: Deps of the benchmark.
     """
+    groups = {}
     for src in srcs:
-        if not src.startswith(name + "/"):
+        parts = src.split("/")
+        if len(parts) != 2:
             fail(
-                "Benchmark '{}' lists the source '{}', which is not under '{}/'.".format(
-                    name,
-                    src,
-                    name,
-                ) +
-                "  The report names a translation unit after the directory holding it, so a " +
-                "source outside this one would be reported under the wrong name.",
+                "Benchmark '{}' lists the source '{}', ".format(name, src) +
+                "which is not directly in a group folder." +
+                "  The report groups translation units by the folder holding them, so each " +
+                "source must be at `<group>/<file>`.",
             )
+        if parts[1].rsplit(".", 1)[0] in ("au", "raw"):
+            fail(
+                "Benchmark '{}' lists the source '{}', whose name is reserved.".format(name, src) +
+                "  The report treats `au` and `raw` as the two flavors of a code example.",
+            )
+        groups[parts[0]] = True
+    if len(groups) > 1:
+        fail(
+            "Benchmark '{}' has sources in more than one folder: {}.".format(
+                name,
+                ", ".join(sorted(groups.keys())),
+            ) + "  All of a benchmark's sources must share one group folder.",
+        )
 
     cc_library(
         name = name,
