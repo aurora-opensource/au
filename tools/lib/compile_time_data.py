@@ -35,8 +35,10 @@ def classify(source):
     pair it against: either it came from the `single_example` macro rather than `ab_example`, or
     it is a compile time benchmark under `//benchmarks`, which have no raw version by design.
 
-    Both directories use the same layout: the folder is the name of the test case, and the stem (if
-    there is more than one) gives the flavor.
+    Both directories use the same layout: the folder is the name of the group, and the stem (if
+    there is more than one file) tells its members apart.  For an example, the members are its
+    flavors; for a benchmark, they are related benchmarks at different sizes, such as
+    `benchmarks/includes/{si_base_units,common_units,all_units}.cc`.
     """
     parts = source.split("/")
     example = parts[1] if len(parts) > 2 else parts[0]

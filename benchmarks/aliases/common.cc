@@ -15,4 +15,4 @@
 // The benchmark is the header: a translation unit that does nothing but pull in the alias set,
 // which is how a project pays for one of these in practice.
 
-#include "benchmarks/common_aliases/aliases.hh"
+#include "benchmarks/aliases/common.hh"

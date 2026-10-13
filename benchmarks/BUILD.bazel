@@ -22,30 +22,34 @@ load(":defs.bzl", "compile_benchmark")
 # This package is patterned off of our code examples, which we also use for compile time benchmarks.
 # However, not every sensitivity makes sense as a code example.  So we made this package, and gave
 # it the same shape as the examples, in order to make it as easy as possible to reuse the machinery.
+#
+# Benchmarks that probe the same sensitivity at different sizes share a folder, one file each.  The
+# measurement tooling groups translation units by folder, so this is what puts related benchmarks
+# side by side in the plots.
 
 compile_benchmark(
     name = "si_base_units",
-    srcs = ["si_base_units/includes.cc"],
+    srcs = ["includes/si_base_units.cc"],
     deps = ["//au:units"],
 )
 
 compile_benchmark(
     name = "common_units",
-    srcs = ["common_units/includes.cc"],
+    srcs = ["includes/common_units.cc"],
     deps = ["//au:units"],
 )
 
 compile_benchmark(
     name = "all_units",
-    srcs = ["all_units/includes.cc"],
+    srcs = ["includes/all_units.cc"],
     deps = ["//au:units"],
 )
 
 compile_benchmark(
     name = "kinematics_aliases",
     srcs = [
-        "kinematics_aliases/aliases.cc",
-        "kinematics_aliases/aliases.hh",
+        "aliases/kinematics.cc",
+        "aliases/kinematics.hh",
     ],
     deps = ["//au:units"],
 )
@@ -53,8 +57,8 @@ compile_benchmark(
 compile_benchmark(
     name = "common_aliases",
     srcs = [
-        "common_aliases/aliases.cc",
-        "common_aliases/aliases.hh",
+        "aliases/common.cc",
+        "aliases/common.hh",
     ],
     deps = ["//au:units"],
 )
@@ -63,9 +67,9 @@ sh_test(
     name = "all_units_listing_test",
     size = "small",
     srcs = ["check_all_units_listing.sh"],
-    args = ["$(rootpath all_units/includes.cc)"],
+    args = ["$(rootpath includes/all_units.cc)"],
     data = [
-        "all_units/includes.cc",
+        "includes/all_units.cc",
         "//au:headers",
     ],
 )
