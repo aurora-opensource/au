@@ -101,6 +101,14 @@ cc_library(
     deps = [":version"],
 )
 
+# `//release:module_version_test` reads this file directly, to check it against the version declared
+# in `MODULE.bazel`.  Consumers should keep depending on `:version`.
+filegroup(
+    name = "version_hh",
+    srcs = ["version.hh"],
+    visibility = ["//release:__pkg__"],
+)
+
 cc_library(
     name = "version",
     hdrs = ["version.hh"],

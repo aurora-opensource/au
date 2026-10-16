@@ -24,10 +24,11 @@
 # [1]: https://cliutils.gitlab.io/modern-cmake/chapters/intro/dodonot.html
 cmake_minimum_required(VERSION 3.27...3.29)
 
-# Derive the project version from `au/version.hh`, which is the single source of truth for the
-# library version (it also defines the `AU_VERSION*` macros for C++ code).  This keeps the CMake
-# version and the C++ macros from ever drifting apart, and means a release only needs to bump the
-# version in one place.
+# Derive the project version from `au/version.hh`, which holds the authoritative library version
+# (it also defines the `AU_VERSION*` macros for C++ code).  This keeps the CMake version and the
+# C++ macros from ever drifting apart.  (`MODULE.bazel` cannot be derived this way --- Bazel
+# evaluates it before it can read any file --- so it holds a copy instead, which
+# `//:module_version_test` checks against `au/version.hh`.)
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/au/version.hh" _au_version_hh)
 string(REGEX MATCH "#define AU_VERSION_MAJOR ([0-9]+)" _ "${_au_version_hh}")
 set(_au_version_major "${CMAKE_MATCH_1}")

@@ -14,6 +14,10 @@
 
 module(
     name = "au",
+    # The Bazel Central Registry requires this to match the version directory, and to match the
+    # `MODULE.bazel` inside the source archive.  Keep it in sync with the `AU_VERSION_*` macros in
+    # `au/version.hh`; `//release:module_version_test` checks that it does.
+    version = "0.6.1",
 )
 
 bazel_dep(name = "rules_cc", version = "0.0.4")

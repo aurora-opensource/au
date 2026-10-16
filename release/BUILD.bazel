@@ -13,6 +13,23 @@
 # limitations under the License.
 
 load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+# Bazel cannot read `au/version.hh` when it evaluates `MODULE.bazel`, so the module version there is
+# a copy of the version macros.  This test is what keeps the copy from drifting.
+sh_test(
+    name = "module_version_test",
+    size = "small",
+    srcs = ["check_module_version.sh"],
+    args = [
+        "$(rootpath //:module_bazel)",
+        "$(rootpath //au:version_hh)",
+    ],
+    data = [
+        "//:module_bazel",
+        "//au:version_hh",
+    ],
+)
 
 cc_library(
     name = "common_test_cases",

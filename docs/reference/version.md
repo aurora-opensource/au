@@ -46,7 +46,8 @@ against another --- both "is the feature from `X.Y.Z` present?" (`>=`) and "does
 breaking change in `X.Y.Z`?" (`<`).
 
 On `main`, the macros name the _most recent release_ (kept in sync with the version in the root
-`CMakeLists.txt`, which is derived from `au/version.hh`).  But `main`'s number lags the changes that
+`CMakeLists.txt`, which is derived from `au/version.hh`, and in `MODULE.bazel`, which is checked
+against it).  But `main`'s number lags the changes that
 have actually landed on it since that release, so **do not use these macros to select behavior
 against a `main` checkout.**  The two directions even fail differently: an additive `>=` check
 merely under-reports a not-yet-released feature (a safe false negative), but a breaking-change `<`

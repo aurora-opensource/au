@@ -50,10 +50,11 @@
 // that ship in the same release --- introduce a dedicated per-feature macro in the same commit that
 // makes the change, rather than reaching for `AU_VERSION`.
 //
-// To keep the two build systems in sync, `CMakeLists.txt` parses the three component macros below
-// to populate its `project(... VERSION ...)`.  This file is therefore the single source of truth
-// for the library version, and it is the _only_ place that needs to be edited when bumping the
-// version for a release.
+// The three component macros below are the authoritative version of the library.  `CMakeLists.txt`
+// parses them to populate its `project(... VERSION ...)`.  The `version` in `MODULE.bazel` can't be
+// derived that way (Bazel evaluates that file before it can read any other), so it is a copy, which
+// `//:module_version_test` checks against these macros.  When bumping the version for a release,
+// edit both.
 //
 
 #define AU_VERSION_MAJOR 0

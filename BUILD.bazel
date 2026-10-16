@@ -21,6 +21,14 @@
 # copies still match their source.
 exports_files(["README.md"])
 
+# `//release:module_version_test` reads this to check the version declared in it against the macros
+# in `au/version.hh`.
+filegroup(
+    name = "module_bazel",
+    srcs = ["MODULE.bazel"],
+    visibility = ["//release:__pkg__"],
+)
+
 exports_files(
     [
         "requirements.in",

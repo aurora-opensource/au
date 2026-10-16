@@ -73,9 +73,9 @@ version zero (0.y.z), incompatible changes don't force a major version upgrade.
 
 ### Update the version number
 
-The version number lives in exactly one place: the `AU_VERSION_MAJOR`, `AU_VERSION_MINOR`, and
-`AU_VERSION_PATCH` macros in `au/version.hh`.  Edit those three macros to the number chosen above.
-Everything else is derived from them:
+The version number lives in `au/version.hh`, in the `AU_VERSION_MAJOR`, `AU_VERSION_MINOR`, and
+`AU_VERSION_PATCH` macros.  Edit those three macros to the number chosen above.  Everything else is
+derived from them:
 
 - The C++ `AU_VERSION` macro (which downstream users read to detect the library and its version).
 - The CMake `project(... VERSION ...)` and `HOMEPAGE_URL`, which the root `CMakeLists.txt` parses
@@ -83,21 +83,27 @@ Everything else is derived from them:
   exist until you complete the remaining steps in this guide, but the danger of getting it wrong is
   pretty small.)
 
+One thing can't be derived: the `version` in the `module()` block of `MODULE.bazel`.  Bazel
+evaluates `MODULE.bazel` before it can read any file, so that version has to be a literal.  Update
+it to match, in the same commit as the macros above.  `//release:module_version_test` fails if the
+two disagree.
+
 **Where this commit lands depends on the release type:**
 
-- **Minor or major release** (e.g. `0.6.0`): make a PR that bumps `au/version.hh` and land it on
-  `main` _before_ creating the tag.  This is the "final commit", and it becomes the base commit for
-  the release branch (see "Prepare the release branch" below).  `main` then reports this version
-  until the _next_ release bumps it again, even as new (unreleased) changes land on top; this is
-  expected, and matches how the version macros are documented to behave.
+- **Minor or major release** (e.g. `0.6.0`): make a PR that bumps `au/version.hh` and
+  `MODULE.bazel`, and land it on `main` _before_ creating the tag.  This is the "final commit",
+  and it becomes the base commit for the release branch (see "Prepare the release branch"
+  below).  `main` then reports this version until the _next_ release bumps it again, even as new
+  (unreleased) changes land on top; this is expected, and matches how the version macros are
+  documented to behave.
 - **Patch release** (`0.5.1` and later): the bump is one of the "bookkeeping" PRs on the patch's
   _own_ release branch, landed after all the cherry-picks (see "Prepare the release branch"), and
-  the tag goes on that branch.  **Then also bump `au/version.hh` to the same patch version on
-  `main`** (in an ordinary PR): since the patch is made _entirely_ of cherry-picks from `main`,
-  `main` already contains everything the patch does, so it should advertise (at least) that
-  version.  The one exception: if `main` has already advanced to a _higher_ version than the patch
-  --- e.g. a newer minor release has since landed --- leave `main` alone, because it already reports
-  a version greater than the patch.
+  the tag goes on that branch.  **Then also bump `au/version.hh` and `MODULE.bazel` to the same
+  patch version on `main`** (in an ordinary PR): since the patch is made _entirely_ of cherry-picks
+  from `main`, `main` already contains everything the patch does, so it should advertise (at least)
+  that version.  The one exception: if `main` has already advanced to a _higher_ version than the
+  patch --- e.g. a newer minor release has since landed --- leave `main` alone, because it already
+  reports a version greater than the patch.
 
 ### Fill out release notes template
 
@@ -169,8 +175,8 @@ Every release --- patch releases included --- gets its own branch, named `releas
 branches are protected in the Au repo, so every change to one must go through a PR.
 
 **Minor or major release.**  First, make sure the "final commit" (which updates the version in
-`au/version.hh`) has already landed, and is currently checked out.  This will be the "base" commit
-for the release branch, which we'll create and push to GitHub.
+`au/version.hh` and `MODULE.bazel`) has already landed, and is currently checked out.  This will be
+the "base" commit for the release branch, which we'll create and push to GitHub.
 
 ```sh
 # Remember to update the version number!
@@ -402,6 +408,43 @@ On the tags page, click the three-dots menu, and select "Create release".
       checksum.  (This both saves users the effort of downloading and hashing the files themselves,
       and also gives them an authoritatively correct value.)
 - Click the `Publish release` button.
+
+### Publish to the Bazel Central Registry
+
+This is how bazel users install Au (`bazel_dep(name = "au", version = "...")`; see
+[install docs]).  The registry holds one directory per version, and publishing means opening a PR
+against [bazel-central-registry].  This has to happen _after_ "Create the release" above, because
+the entry points at the tarball attached to that release.
+
+[install docs]: https://aurora-opensource.github.io/au/main/install/#bazel
+[bazel-central-registry]: https://github.com/bazelbuild/bazel-central-registry
+
+In a checkout of `bazel-central-registry`, add `modules/au/0.3.1/` containing three files.  (The
+registry's own `tools/add_module.py` scaffolds the directory and asks for all of this
+interactively; `--input` lets you reuse the answers from the previous release.)
+
+- `MODULE.bazel`: a copy of Au's root `MODULE.bazel`.
+- `source.json`: points at the tarball you attached to the release, which unpacks to a single
+  `au-0.3.1/` directory:
+
+    ```json
+    {
+        "url": "https://github.com/aurora-opensource/au/releases/download/0.3.1/au-0.3.1.tar.gz",
+        "integrity": "sha256-...",
+        "strip_prefix": "au-0.3.1"
+    }
+    ```
+
+    The `integrity` is the base64 of that tarball's SHA256 --- the same checksum you listed in the
+    release notes.  `python3 tools/calc_integrity.py <tarball>` computes it.
+- `presubmit.yml`: a copy of the previous version's.  It builds the public targets, and runs our
+  in-repo `bzlmod_test_client` as its test module.  Update it only if our targets changed.
+
+Then, still in the `bazel-central-registry` checkout, validate the entry, and open the PR:
+
+```sh
+python3 tools/bcr_validation.py --check=au@0.3.1
+```
 
 ### Regenerate the doc website
 
