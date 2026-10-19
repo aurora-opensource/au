@@ -433,6 +433,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#related-languages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related languages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Related languages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objective-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objective-C++
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3014,6 +3042,14 @@ to our attention.  If it&rsquo;s feasible for us to fix them, we will.</p>
 </tr>
 </tbody>
 </table>
+<h2 id="related-languages">Related languages<a class="headerlink" href="#related-languages" title="Permanent link">&para;</a></h2>
+<p>Au is a C++ library, but some languages closely related to C++ can also use it.  We track support
+for these separately from the compiler tiers above.</p>
+<h3 id="objective-c">Objective-C++<a class="headerlink" href="#objective-c" title="Permanent link">&para;</a></h3>
+<p>Objective-C++ has <strong>Best Effort Support</strong>.  We have CI coverage that includes both (a) compilation
+in Objective-C++ mode for all clang toolchains, and (b) a test that includes the <code>&lt;objc/objc.h&gt;</code>
+macros and typedefs (such as <code>YES</code>, <code>NO</code>, and so on) that are the biggest practical risk for Au
+compatibility.</p>
 
 
 
