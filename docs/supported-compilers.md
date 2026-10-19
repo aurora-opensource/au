@@ -89,6 +89,18 @@ This section will discuss our experience with a few specific compiler versions.
 |----------|----------|--------|
 | Ubuntu   | gcc 5.3  | Works on [0.3.5].  Broken on [0.4.0], [0.4.1], and [0.5.0], but expected to be fixed on [0.6.0]. |
 
+## Related languages
+
+Au is a C++ library, but some languages closely related to C++ can also use it.  We track support
+for these separately from the compiler tiers above.
+
+### Objective-C++
+
+Objective-C++ has **Best Effort Support**.  We have CI coverage that includes both (a) compilation
+in Objective-C++ mode for all clang toolchains, and (b) a test that includes the `<objc/objc.h>`
+macros and typedefs (such as `YES`, `NO`, and so on) that are the biggest practical risk for Au
+compatibility.
+
 [0.3.5]: https://github.com/aurora-opensource/au/releases/tag/0.3.5
 [0.4.0]: https://github.com/aurora-opensource/au/releases/tag/0.4.0
 [0.4.1]: https://github.com/aurora-opensource/au/releases/tag/0.4.1

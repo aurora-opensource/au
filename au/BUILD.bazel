@@ -499,6 +499,33 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "objcxx_test",
+    size = "small",
+    srcs = ["objcxx_test.cc"],
+    copts = [
+        "-x",
+        "objective-c++",
+        # Target Apple's runtime ABI, which is what nearly all Objective-C++ users have.  This also
+        # makes clang use the plain C++ exception personality, so we can link without any
+        # Objective-C runtime library.
+        "-fobjc-runtime=macosx",
+    ],
+    target_compatible_with = select({
+        # Among our hermetic toolchains, only clang supports Objective-C++.
+        "//build/compiler:clang_11": [],
+        "//build/compiler:clang_14": [],
+        "//build/compiler:clang_17": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    deps = [
+        ":au",
+        ":io",
+        ":testing",
+        "@googletest//:gtest_main",
+    ],
+)
+
 cc_library(
     name = "operators",
     hdrs = ["operators.hh"],
