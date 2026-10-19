@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This file is compiled as Objective-C++ (see `BUILD.bazel`).  The point is to make sure that Au's
-// headers stay compatible with the identifiers and macros that Objective-C++ users will have in
-// scope, so we define them _before_ including any Au headers.
+// On clang, this file is compiled as Objective-C++ (see `BUILD.bazel`); elsewhere, as plain C++.
+// The point is to make sure that Au's headers stay compatible with the identifiers and macros that
+// Objective-C++ users will have in scope, so we define them _before_ including any Au headers.
 
-#if !defined(__OBJC__)
-#error "This test must be compiled in Objective-C++ mode"
+#if defined(__clang__) && !defined(__OBJC__)
+#error "On clang, this test must be compiled in Objective-C++ mode"
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,13 @@ typedef struct objc_selector *SEL;
 typedef id (*IMP)(id, SEL, ...);
 typedef bool BOOL;
 
+#if defined(__has_feature)
 #if __has_feature(objc_bool)
+#define AU_OBJCXX_TEST_HAS_OBJC_BOOL
+#endif
+#endif
+
+#if defined(AU_OBJCXX_TEST_HAS_OBJC_BOOL)
 #define YES __objc_yes
 #define NO __objc_no
 #else

@@ -499,24 +499,29 @@ cc_test(
     ],
 )
 
+OBJCXX_COPTS = [
+    "-x",
+    "objective-c++",
+    # Target Apple's runtime ABI, which is what nearly all Objective-C++ users have.  This also
+    # makes clang use the plain C++ exception personality, so we can link without any Objective-C
+    # runtime library.
+    "-fobjc-runtime=macosx",
+]
+
 cc_test(
     name = "objcxx_test",
     size = "small",
     srcs = ["objcxx_test.cc"],
-    copts = [
-        "-x",
-        "objective-c++",
-        # Target Apple's runtime ABI, which is what nearly all Objective-C++ users have.  This also
-        # makes clang use the plain C++ exception personality, so we can link without any
-        # Objective-C runtime library.
-        "-fobjc-runtime=macosx",
-    ],
-    target_compatible_with = select({
-        # Among our hermetic toolchains, only clang supports Objective-C++.
-        "//build/compiler:clang_11": [],
-        "//build/compiler:clang_14": [],
-        "//build/compiler:clang_17": [],
-        "//conditions:default": ["@platforms//:incompatible"],
+    # Among our hermetic toolchains, only clang supports Objective-C++.  Elsewhere, we still build
+    # this test as plain C++, which checks that Au survives having the Objective-C names in scope.
+    #
+    # NOTE: we deliberately avoid `target_compatible_with`, because Bazel versions before 4.0 don't
+    # support it, which would break legacy WORKSPACE users who load this package.
+    copts = select({
+        "//build/compiler:clang_11": OBJCXX_COPTS,
+        "//build/compiler:clang_14": OBJCXX_COPTS,
+        "//build/compiler:clang_17": OBJCXX_COPTS,
+        "//conditions:default": [],
     }),
     deps = [
         ":au",
