@@ -200,6 +200,16 @@ def median_ci_half_width(values):
     return 1.58 * iqr / math.sqrt(len(s))
 
 
+def combined_half_width(*half_widths):
+    """The uncertainty of a sum or difference of medians, given each one's CI half-width.
+
+    Added in quadrature, which treats the medians as independent.  A difference of two medians is
+    how we judge a delta; a difference of four (a change in the Au penalty) is how we judge a
+    difference in differences.
+    """
+    return math.sqrt(sum(h**2 for h in half_widths))
+
+
 def quantile_label(q):
     """The key `summary` files a quantile under: `0.1` is `p10`, `0.999` is `p99.9`."""
     return "p" + "{:.10f}".format(q * 100).rstrip("0").rstrip(".")
@@ -223,6 +233,21 @@ def summary(values, quantiles=()):
     for q in quantiles:
         result[quantile_label(q)] = percentile(s, q)
     return result
+
+
+def au_penalty_with_error_ms(m, raw, au, branch):
+    """Median `au` minus median `raw` on one branch, with the ~95% uncertainty of that difference.
+
+    Returns `(penalty_ms, error_ms)`, where the error is the half-width of the ~95% interval.
+    """
+    raw_summary = summary(m.times_ms(raw.source, branch))
+    au_summary = summary(m.times_ms(au.source, branch))
+    return (
+        au_summary["p50"] - raw_summary["p50"],
+        combined_half_width(
+            au_summary["median_ci_half_width"], raw_summary["median_ci_half_width"]
+        ),
+    )
 
 
 def branch_label(branch):

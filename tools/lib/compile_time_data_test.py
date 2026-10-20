@@ -133,6 +133,33 @@ class MedianCiHalfWidthTest(unittest.TestCase):
         )
 
 
+class CombinedHalfWidthTest(unittest.TestCase):
+    def test_adds_in_quadrature(self):
+        self.assertAlmostEqual(data.combined_half_width(3.0, 4.0), 5.0)
+
+    def test_four_terms_for_a_difference_in_differences(self):
+        self.assertAlmostEqual(data.combined_half_width(1.0, 1.0, 1.0, 1.0), 2.0)
+
+    def test_infinite_input_stays_infinite(self):
+        self.assertEqual(data.combined_half_width(1.0, float("inf")), float("inf"))
+
+
+class AuPenaltyTest(unittest.TestCase):
+    def test_penalty_is_median_au_minus_median_raw_with_combined_uncertainty(self):
+        m = data.Measurements(
+            rows(
+                *[("examples/b/au.cc", "main", n * 1_000_000) for n in (5, 6, 7, 8, 9)],
+                *[("examples/b/raw.cc", "main", n * 1_000_000) for n in (1, 2, 3, 4, 5)],
+            )
+        )
+        raw, au = data.classify("examples/b/raw.cc"), data.classify("examples/b/au.cc")
+        penalty_ms, error_ms = data.au_penalty_with_error_ms(m, raw, au, "main")
+        self.assertAlmostEqual(penalty_ms, 4.0)
+        # Both series have an IQR of 2 ms over 5 points, so their half-widths are equal.
+        each_half_width_ms = 1.58 * 2.0 / math.sqrt(5)
+        self.assertAlmostEqual(error_ms, math.sqrt(2) * each_half_width_ms)
+
+
 class SummaryTest(unittest.TestCase):
     def test_describes_the_series_and_asks_for_no_grid_by_default(self):
         s = data.summary([3.0, 1.0, 2.0])
