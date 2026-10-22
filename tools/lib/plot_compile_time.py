@@ -20,10 +20,13 @@ Here are the plots, and their purposes:
 
 * `percentiles`
     * The inverse CDF function, showing the distribution of compile times on the vertical axis.
-      Good for showing the absolute compile times, and how much they vary, in context.
+      One panel per group (an example, or a family of benchmarks), with every member overlaid on an
+      axis that starts at zero.  Good for showing the absolute compile times, and how much they
+      vary, in context.
 * `percentiles_zoom`
-    * The same plot, zoomed in to the range of the data.  Better for seeing small differences, or
-      for eyeballing the difference between the lines, relative to how much each line varies.
+    * The same curves, one panel per translation unit, each zoomed in to the range of its own data.
+      Better for seeing small differences, or for eyeballing the difference between the lines,
+      relative to how much each line varies.
 * `percentile_diff`
     * The difference from the baseline across the percentiles.  This is the best one for estimating
       the overall impact of a change, and seeing how consistent that estimate is.
@@ -33,7 +36,7 @@ Here are the plots, and their purposes:
       unreliable.
 * `au_penalty`
     * For cases where we have both an Au and a raw flavor, this shows how expensive Au itself is.
-      Includes before and after for each instance.
+      Includes before and after for each instance, with the uncertainty of each.
 """
 
 import argparse
@@ -47,15 +50,15 @@ import matplotlib
 matplotlib.use("Agg")
 
 import matplotlib.dates as mdates  # noqa: E402
+import matplotlib.lines as mlines  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 import matplotlib.ticker as mticker  # noqa: E402
 
 import compile_time_data as data  # noqa: E402
 
 
-# Panel geometry.  The per-translation-unit plots lay themselves out by example (see
-# `_example_grid`); `COLUMNS` applies only to the plots with one panel per example, which wrap into
-# a grid.
+# Panel geometry.  Plots with one panel per group, or per translation unit, wrap into a grid this
+# many columns wide.
 COLUMNS = 4
 PANEL_SIZE = (4.2, 3.4)
 DPI = 110
@@ -67,6 +70,22 @@ QUANTILES = [i / 100.0 for i in range(101)]
 # vertical scale: five, so the scale is set by p5 through p95.  See `_plot_percentile_diff` for why
 # the extremes are excluded, and `_central` for the trimming itself.
 SCALE_TRIM = 5
+
+# Which top-level directories come first.  Code examples lead, since they are what users actually
+# write; benchmarks follow.  Anything else goes last.
+GROUP_ORDER = ["examples", "benchmarks"]
+
+# Colors for the members of a group in `percentile_diff`.  Deliberately disjoint from matplotlib's
+# default cycle (`C0`, `C1`, ...), which is what the branches use everywhere else.  Red and green
+# are left out too, since a reader takes those for "worse" and "better".
+MEMBER_COLORS = ["tab:purple", "tab:brown", "tab:olive", "tab:cyan", "tab:pink"]
+
+# The control: grey and dashed, so the eye reads it as a reference rather than a result.
+CONTROL_STYLE = {"color": "0.45", "linestyle": "--"}
+
+# Line styles that tell apart the branches in `percentile_diff`, for runs with more than two.  With
+# two (the usual case) there is one comparison branch, and every curve is solid.
+COMPARISON_LINESTYLES = ["-", ":", "-."]
 
 
 #
@@ -85,8 +104,8 @@ def main():
     _make_sure_the_output_directory_exists(args.out_dir)
     m = data.load(args.csv)
 
-    _plot_percentiles(m, args.out_dir / "percentiles.png", from_zero=True)
-    _plot_percentiles(m, args.out_dir / "percentiles_zoom.png", from_zero=False)
+    _plot_percentiles(m, args.out_dir / "percentiles.png")
+    _plot_percentiles_zoom(m, args.out_dir / "percentiles_zoom.png")
 
     # A one-branch run has nothing to difference against, and an example with no `au.cc`/`raw.cc`
     # pair has no penalty to show.  Both are ordinary, so both are skipped rather than complained
@@ -114,39 +133,58 @@ def _make_sure_the_output_directory_exists(out_dir):
     out_dir.mkdir(parents=True, exist_ok=True)
 
 
-def _plot_percentiles(m, path, from_zero):
-    """Compile time against percentile: an inverse CDF, with time on the vertical axis.
+def _plot_percentiles(m, path):
+    """Compile time against percentile, from zero: one panel per group, every member overlaid.
 
-    That orientation is what makes the plot read like a duration rather than a probability.  With
-    `from_zero`, the axis starts at zero, so a difference is seen against the size of the whole
-    compile; without it, the same plot is zoomed to whatever range the data occupies.
+    Time goes on the vertical axis, which is what makes the plot read like a duration rather than a
+    probability.  Starting from zero shows a difference against the size of the whole compile, and
+    sharing a panel puts an example's `raw.cc` and `au.cc` on one scale, so its Au penalty reads
+    directly as the gap between them.  Each curve is labeled with its file at the median, since
+    color is already spoken for by the branch.
     """
-    title = "Compile time by percentile" + ("" if from_zero else " (zoomed)")
-    fig, rows = _example_grid(m, title)
-    for _, panels in rows:
-        for tu, ax in panels:
+    groups = _groups(m)
+    fig, axes = _wrapped_grid(len(groups), "Compile time by percentile")
+    for ax, (example, tus) in zip(axes, groups):
+        for tu in tus:
             for branch in m.branches:
                 quantiles, values = _percentile_curve(m.times_ms(tu.source, branch))
-                ax.plot(
-                    quantiles,
-                    values,
-                    label=data.branch_label(branch),
-                    linewidth=1.6,
-                )
-            ax.set_title(_short(tu.source), fontsize=10)
-            _label_the_percentile_axis(ax)
-            ax.set_ylabel("Compile time (ms)")
-            ax.grid(alpha=0.3)
+                ax.plot(quantiles, values, linewidth=1.6, color=_branch_color(m, branch))
+            if len(tus) > 1:
+                _label_the_curve_at_its_median(ax, tu, m.times_ms(tu.source, m.baseline))
+        ax.set_title(example, fontsize=10)
+        _label_the_percentile_axis(ax)
+        ax.set_ylabel("Compile time (ms)")
+        ax.set_ylim(0, _slowest(m, tus) * 1.05)
+        ax.grid(alpha=0.3)
 
-        if from_zero:
-            _share_a_scale_starting_at_zero(m, panels)
+    _put_one_branch_legend_on_the_figure(fig, m)
+    _save(fig, path)
 
-    _put_one_legend_on_the_figure(fig)
+
+def _plot_percentiles_zoom(m, path):
+    """The same curves as `percentiles`, one panel per translation unit, each scaled to its data.
+
+    Members of a group stay out of each other's panels here on purpose.  A shared panel has to span
+    every member, and for an example, the distance from `raw.cc` to `au.cc` dwarfs anything a change
+    does to either one; the zoom would be gone.
+    """
+    tus = _translation_units_in_group_order(m)
+    fig, axes = _wrapped_grid(len(tus), "Compile time by percentile (zoomed)")
+    for ax, tu in zip(axes, tus):
+        for branch in m.branches:
+            quantiles, values = _percentile_curve(m.times_ms(tu.source, branch))
+            ax.plot(quantiles, values, linewidth=1.6, color=_branch_color(m, branch))
+        ax.set_title(_short(tu.source), fontsize=10)
+        _label_the_percentile_axis(ax)
+        ax.set_ylabel("Compile time (ms)")
+        ax.grid(alpha=0.3)
+
+    _put_one_branch_legend_on_the_figure(fig, m)
     _save(fig, path)
 
 
 def _plot_percentile_diff(m, path):
-    """Difference from the baseline, one panel per example, with `raw.cc` shown as the control.
+    """Difference from the baseline, one panel per group, with `raw.cc` shown as the control.
 
     Two choices matter here, and both are about not being fooled:
 
@@ -157,18 +195,27 @@ def _plot_percentile_diff(m, path):
       * Every panel shares a vertical scale, and that scale is set by the central percentiles.  The
         extreme percentiles of a compile time distribution are dominated by whatever else the
         machine was doing; left to set the scale, they squash the part worth reading into a line.
+        What runs off that scale is marked at the edge, rather than silently cut off.
     """
-    groups = _difference_curves_by_example(m)
+    groups = _difference_curves_by_group(m)
     limits = _common_limits(groups)
 
-    title = "Difference from '{}', by percentile".format(data.branch_label(m.baseline))
+    title = "\n".join(
+        [
+            "Difference from '{}', by percentile".format(data.branch_label(m.baseline)),
+            "Grey dashed: the raw.cc control, where a group has one.  "
+            "\N{BLACK UP-POINTING SMALL TRIANGLE}\N{BLACK DOWN-POINTING SMALL TRIANGLE} at an "
+            "edge: off the scale.",
+        ]
+    )
     fig, axes = _wrapped_grid(len(groups), title)
-    for ax, (example, curves, has_control) in zip(axes, groups):
+    for ax, (example, curves) in zip(axes, groups):
         for label, diffs, style in curves:
             ax.plot(QUANTILES, diffs, label=label, linewidth=1.6, **style)
+            _mark_what_runs_off_the_scale(ax, diffs, limits, style["color"])
         ax.axhline(0, color="black", linewidth=1)
         ax.set_ylim(limits)
-        ax.set_title(example + ("" if has_control else " (no control)"), fontsize=10)
+        ax.set_title(example, fontsize=10)
         _label_the_percentile_axis(ax)
         ax.set_ylabel("\N{GREEK CAPITAL LETTER DELTA} compile time (ms)")
         ax.grid(alpha=0.3)
@@ -180,27 +227,30 @@ def _plot_weather(m, path):
     """Every measurement against the clock, so drift in the machine is visible as drift here.
 
     Connected by lines, not just dots: a run that slowly heats up looks like a trend, and a trend is
-    much easier to see on a line than in a cloud of points.
+    much easier to see on a line than in a cloud of points.  Every panel shares one time axis, so an
+    event that hit the whole machine lines up from panel to panel.
     """
-    fig, rows = _example_grid(m, "Individual measurements over time (CPU weather check)")
-    for _, panels in rows:
-        for tu, ax in panels:
-            for branch in m.branches:
-                when, times_ms = _measurements_in_time_order(m, tu.source, branch)
-                ax.plot(
-                    when,
-                    times_ms,
-                    marker=".",
-                    markersize=3,
-                    linewidth=0.7,
-                    label=data.branch_label(branch),
-                )
-            ax.set_title(_short(tu.source), fontsize=10)
-            ax.set_ylabel("Compile time (ms)")
-            ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
-            ax.grid(alpha=0.3)
+    tus = _translation_units_in_group_order(m)
+    fig, axes = _wrapped_grid(
+        len(tus), "Individual measurements over time (CPU weather check)", sharex=True
+    )
+    for ax, tu in zip(axes, tus):
+        for branch in m.branches:
+            when, times_ms = _measurements_in_time_order(m, tu.source, branch)
+            ax.plot(
+                when,
+                times_ms,
+                marker=".",
+                markersize=3,
+                linewidth=0.7,
+                color=_branch_color(m, branch),
+            )
+        ax.set_title(_short(tu.source), fontsize=10)
+        ax.set_ylabel("Compile time (ms)")
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+        ax.grid(alpha=0.3)
 
-    _put_one_legend_on_the_figure(fig)
+    _put_one_branch_legend_on_the_figure(fig, m)
     _save(fig, path)
 
 
@@ -208,26 +258,35 @@ def _plot_au_penalty(m, path):
     """Median `au.cc` minus median `raw.cc`: the price of the library, per example.
 
     One group of bars per example, one bar per branch, so the change in the penalty is a change in
-    bar height within a group.
+    bar height within a group.  Each bar carries the ~95% uncertainty of its penalty, which is what
+    tells a real change from two bars that differ by chance.
     """
     pairs = m.ab_pairs()
-    fig, ax = plt.subplots(figsize=(max(6.0, 2.0 * len(pairs) + 3.0), 5.0))
+    fig, ax = plt.subplots(
+        figsize=(max(6.0, 2.0 * len(pairs) + 3.0), 5.0), layout="constrained"
+    )
 
     width = 0.8 / len(m.branches)
     for i, branch in enumerate(m.branches):
+        penalties_with_error_ms = [
+            data.au_penalty_with_error_ms(m, raw, au, branch) for _, raw, au in pairs
+        ]
         ax.bar(
             [j + i * width for j in range(len(pairs))],
-            _median_au_penalties_ms(m, pairs, branch),
+            [penalty_ms for penalty_ms, _ in penalties_with_error_ms],
+            yerr=[error_ms for _, error_ms in penalties_with_error_ms],
+            capsize=4,
             width=width,
+            color=_branch_color(m, branch),
             label=data.branch_label(branch),
         )
 
     ax.set_xticks([j + 0.4 - width / 2 for j in range(len(pairs))])
     ax.set_xticklabels([example for example, _, _ in pairs])
     ax.set_ylabel("Median au.cc \N{MINUS SIGN} median raw.cc (ms)")
-    ax.set_title("Au compile time penalty, per example")
+    ax.set_title("Au compile time penalty, per example (whiskers: ~95% uncertainty)")
     ax.grid(alpha=0.3, axis="y")
-    _put_one_legend_on_the_figure(fig)
+    ax.legend(fontsize=8)
     _save(fig, path)
 
 
@@ -236,31 +295,52 @@ def _plot_au_penalty(m, path):
 ####################################################################################################
 
 
-def _example_grid(m, title):
-    """A grid with one row per example and one column per translation unit within it.
+def _groups(m):
+    """The measured translation units, one list per group, in the order the plots lay them out.
 
-    Rows grow with the number of examples, which is the dimension that actually grows here, and a
-    tall figure is no problem for the place these end up: a pull request comment scrolls vertically.
-    Ragged rows (an example with fewer translation units than the widest one) get their spare panels
-    hidden.
+    A group is an example, or a family of benchmarks sharing a folder.  Examples come first, then
+    benchmarks; see `GROUP_ORDER`.  Within a group, see `_member_order`.
 
-    Returns `(fig, [(example, [(translation_unit, ax), ...]), ...])`.
+    Returns `[(example, [translation_unit, ...]), ...]`.
     """
-    groups = _translation_units_by_example(m)
-    columns = max(len(tus) for _, tus in groups)
+    groups = {}
+    for tu in m.translation_units_on_all_branches():
+        groups.setdefault(tu.example, []).append(tu)
+    return [
+        (example, sorted(tus, key=lambda tu: _member_order(m, tu)))
+        for example, tus in sorted(
+            groups.items(), key=lambda item: (_top_level_rank(item[1][0]), item[0])
+        )
+    ]
+
+
+def _wrapped_grid(count, title, sharex=False):
+    """A grid of `count` panels, wrapped `COLUMNS` wide, with any spare panels hidden.
+
+    Constrained layout, rather than `tight_layout`, because it leaves room for the figure's title
+    and legend; `tight_layout` lays the panels out as if neither existed, and the first row ends up
+    underneath them.
+    """
+    columns = min(COLUMNS, count)
+    rows = -(-count // columns)
     fig, axes = plt.subplots(
-        len(groups),
+        rows,
         columns,
-        figsize=(PANEL_SIZE[0] * columns, PANEL_SIZE[1] * len(groups)),
+        figsize=(PANEL_SIZE[0] * columns, PANEL_SIZE[1] * rows),
         squeeze=False,
+        sharex=sharex,
+        layout="constrained",
     )
-    laid_out = []
-    for row, (example, tus) in enumerate(groups):
-        for ax in axes[row][len(tus) :]:
-            ax.axis("off")
-        laid_out.append((example, list(zip(tus, axes[row]))))
+    flat = [ax for row in axes for ax in row]
+    for ax in flat[count:]:
+        ax.axis("off")
+    if sharex:
+        # A shared axis labels only the bottom row.  When the last row is ragged, the panels above
+        # its gaps are the bottom of their columns, and would otherwise have no time labels at all.
+        for ax in flat[max(0, count - columns) : count]:
+            ax.xaxis.set_tick_params(labelbottom=True)
     fig.suptitle(title)
-    return fig, laid_out
+    return fig, flat[:count]
 
 
 def _percentile_curve(times_ms):
@@ -283,10 +363,33 @@ def _percentile_curve(times_ms):
     return [i / (len(values) - 1) for i in range(len(values))], values
 
 
-def _short(source):
-    """`examples/adc_millivolts/au.cc` reads better on an axis as `adc_millivolts/au.cc`."""
-    parts = source.split("/")
-    return "/".join(parts[-2:]) if len(parts) > 1 else source
+def _branch_color(m, branch):
+    """The color of a branch, the same in every plot: matplotlib's default cycle, in CLI order."""
+    return "C{}".format(m.branches.index(branch) % 10)
+
+
+def _label_the_curve_at_its_median(ax, tu, times_ms):
+    """Name a curve's file just above its middle.
+
+    The tails are where a group's curves bunch up, since the extremes are dominated by the machine
+    rather than by the code, so the middle is where they are furthest apart.
+    """
+    ax.annotate(
+        _file_name(tu),
+        xy=(0.5, data.percentile(sorted(times_ms), 0.5)),
+        xytext=(0, 4),
+        textcoords="offset points",
+        ha="center",
+        va="bottom",
+        fontsize=7,
+        color="0.2",
+        bbox={
+            "boxstyle": "round,pad=0.15",
+            "facecolor": "white",
+            "edgecolor": "none",
+            "alpha": 0.8,
+        },
+    )
 
 
 def _label_the_percentile_axis(ax):
@@ -295,63 +398,76 @@ def _label_the_percentile_axis(ax):
     ax.xaxis.set_major_formatter(mticker.PercentFormatter(xmax=1.0, decimals=0))
 
 
-def _share_a_scale_starting_at_zero(m, panels):
-    """Give every panel in one row the same vertical scale, running from zero.
-
-    An example's Au penalty then reads directly as the height difference between its `raw.cc` and
-    `au.cc` panels.  The zoomed variant deliberately does not do this: there, each panel is scaled
-    to its own data, which is what makes a small difference visible at all.
-    """
-    top = max(max(m.times_ms(tu.source, b)) for tu, _ in panels for b in m.branches)
-    for _, ax in panels:
-        ax.set_ylim(0, top * 1.02)
+def _slowest(m, tus):
+    """The slowest measurement of any of these translation units, on any branch."""
+    return max(max(m.times_ms(tu.source, b)) for tu in tus for b in m.branches)
 
 
-def _put_one_legend_on_the_figure(fig):
-    """One legend, on the first panel.
+def _put_one_branch_legend_on_the_figure(fig, m):
+    """One legend for the whole figure, below the panels.
 
     Every panel carries the same branches in the same colors, so a legend on each would be the same
     key over and over, in the space the data should have.
     """
-    fig.axes[0].legend(fontsize=8)
+    handles = [
+        mlines.Line2D([], [], color=_branch_color(m, b), linewidth=1.6)
+        for b in m.branches
+    ]
+    fig.legend(
+        handles,
+        [data.branch_label(b) for b in m.branches],
+        # Not above: constrained layout puts an upper legend in the same band as the title.
+        loc="outside lower center",
+        ncols=len(m.branches),
+        fontsize=9,
+    )
 
 
 def _save(fig, path):
-    fig.tight_layout()
     fig.savefig(path, dpi=DPI)
     plt.close(fig)
     print("Wrote {}".format(path))
 
 
-def _difference_curves_by_example(m):
-    """One group per example: its difference curves, and whether one of them is a control.
+def _translation_units_in_group_order(m):
+    """Every translation unit, group by group, so related ones sit next to each other."""
+    return [tu for _, tus in _groups(m) for tu in tus]
 
-    `atomic_units` and anything else built by `single_example` has no `raw.cc`, so it gets a group
-    with no control in it.  Pairing its two translation units against each other would look like a
-    control without being one.
 
-    Returns `[(example, [(label, diffs, style), ...], has_control), ...]`.
+def _short(source):
+    """`examples/adc_millivolts/au.cc` reads better on an axis as `adc_millivolts/au.cc`."""
+    parts = source.split("/")
+    return "/".join(parts[-2:]) if len(parts) > 1 else source
+
+
+def _difference_curves_by_group(m):
+    """One entry per group: its difference curves, styled.
+
+    `atomic_units` and the benchmarks have no `raw.cc`, so their curves are all results, and none
+    is styled as a control.  Pairing two of them against each other would look like a control
+    without being one.
+
+    Returns `[(example, [(label, diffs, style), ...]), ...]`.
     """
     groups = []
-    for example, tus in _translation_units_by_example(m):
+    for example, tus in _groups(m):
+        results = [tu for tu in tus if tu.flavor != "raw"]
         curves = [
             (
                 _curve_label(m, tu, branch),
                 _difference_from_the_baseline(m, tu, branch),
-                _curve_style(tu),
+                _curve_style(tu, results, k),
             )
             for tu in tus
-            for branch in m.branches[1:]
+            for k, branch in enumerate(m.branches[1:])
         ]
-        groups.append((example, curves, any(tu.flavor == "raw" for tu in tus)))
+        groups.append((example, curves))
     return groups
 
 
 def _common_limits(groups):
     """One vertical scale for every difference panel, set by the central percentiles alone."""
-    central = [
-        d for _, curves, _ in groups for _, diffs, _ in curves for d in _central(diffs)
-    ]
+    central = [d for _, curves in groups for _, diffs, _ in curves for d in _central(diffs)]
     if not central:
         return (-1.0, 1.0)
     lo, hi = min(central + [0.0]), max(central + [0.0])
@@ -359,21 +475,26 @@ def _common_limits(groups):
     return (lo - pad, hi + pad)
 
 
-def _wrapped_grid(count, title):
-    """A wrapped grid of `count` panels, for plots with one panel per example."""
-    columns = min(COLUMNS, count)
-    rows = -(-count // columns)
-    fig, axes = plt.subplots(
-        rows,
-        columns,
-        figsize=(PANEL_SIZE[0] * columns, PANEL_SIZE[1] * rows),
-        squeeze=False,
-    )
-    flat = [ax for row in axes for ax in row]
-    for ax in flat[count:]:
-        ax.axis("off")
-    fig.suptitle(title)
-    return fig, flat[:count]
+def _mark_what_runs_off_the_scale(ax, diffs, limits, color):
+    """A small triangle on the edge at every percentile where a curve leaves the shared scale.
+
+    The scale is chosen to cut off the extremes, so cut-off curves are expected.  But a line that
+    simply exits the panel looks like a line that ends, and that hides the most alarming kind of
+    result: the one too big to fit.
+    """
+    lo, hi = limits
+    for marker, edge, off in (("^", hi, lambda d: d > hi), ("v", lo, lambda d: d < lo)):
+        qs = [q for q, d in zip(QUANTILES, diffs) if off(d)]
+        if qs:
+            ax.plot(
+                qs,
+                [edge] * len(qs),
+                linestyle="none",
+                marker=marker,
+                markersize=4,
+                color=color,
+                clip_on=False,
+            )
 
 
 def _measurements_in_time_order(m, source, branch):
@@ -386,39 +507,34 @@ def _measurements_in_time_order(m, source, branch):
     return [_parse_time(r["timestamp"]) for r in rows], [r["nanos"] / 1e6 for r in rows]
 
 
-def _median_au_penalties_ms(m, pairs, branch):
-    """For each `(example, raw, au)` pair, how much longer the Au flavor takes, at the median."""
-    return [
-        data.summary(m.times_ms(au.source, branch))["p50"]
-        - data.summary(m.times_ms(raw.source, branch))["p50"]
-        for _, raw, au in pairs
-    ]
-
-
 ####################################################################################################
 # Level 3: first called by Level 2.
 ####################################################################################################
 
 
-def _translation_units_by_example(m):
-    """The measured translation units, one list per example, `raw` before `au`.
+def _member_order(m, tu):
+    """Where a translation unit sits within its group: `raw` first, then fastest to slowest.
 
-    This grouping is the layout for the per-translation-unit plots: one row per example, so an
-    example's `raw.cc` and `au.cc` sit side by side.  That is the comparison a reader actually
-    makes, and it is the same pairing `_plot_percentile_diff` gets by overlaying the two curves.
+    `raw` first, because it is the control, and the eye should meet the reference before the
+    result.  Then by median compile time on the baseline, which puts a family of benchmarks at
+    different sizes in order of size, without anyone having to spell that order out.
     """
-    groups = {}
-    for tu in m.translation_units_on_all_branches():
-        groups.setdefault(tu.example, []).append(tu)
-    return [
-        (example, sorted(tus, key=lambda tu: (tu.flavor != "raw", tu.source)))
-        for example, tus in sorted(groups.items())
-    ]
+    return (tu.flavor != "raw", data.summary(m.times_ms(tu.source, m.baseline))["p50"])
+
+
+def _top_level_rank(tu):
+    """Where a translation unit's top-level directory comes in `GROUP_ORDER`."""
+    top = tu.source.split("/")[0]
+    return GROUP_ORDER.index(top) if top in GROUP_ORDER else len(GROUP_ORDER)
+
+
+def _file_name(tu):
+    return tu.source.split("/")[-1]
 
 
 def _curve_label(m, tu, branch):
     """The file name, plus the branch when there is more than one to tell apart."""
-    label = _short(tu.source).split("/")[-1]
+    label = _file_name(tu)
     if len(m.branches) > 2:
         return "{} @ {}".format(label, data.branch_label(branch))
     return label
@@ -428,18 +544,27 @@ def _difference_from_the_baseline(m, tu, branch):
     """`branch` minus the baseline, percentile by percentile, for one translation unit.
 
     Percentile against percentile, rather than measurement against measurement: the two runs are
-    interleaved but not paired, so the `k`th compile on one branch has no partner on the other.
+    interleaved, which spreads the machine's weather evenly across both, but run-to-run variation
+    is high even between neighbors, so the `k`th compile on one branch is no better a partner for
+    the `k`th on the other than any compile is.
     """
     base = sorted(m.times_ms(tu.source, m.baseline))
     other = sorted(m.times_ms(tu.source, branch))
     return [data.percentile(other, q) - data.percentile(base, q) for q in QUANTILES]
 
 
-def _curve_style(tu):
-    """Dashed and grey for the control, so the eye reads it as a reference rather than a result."""
+def _curve_style(tu, results, k):
+    """How one difference curve is drawn: the control in grey, each result in a color of its own.
+
+    `results` is the group's non-control members, which is what the colors are assigned over; `k`
+    counts the comparison branches, which get line styles only when there is more than one.
+    """
     if tu.flavor == "raw":
-        return {"color": "0.45", "linestyle": "--"}
-    return {"linestyle": "-"}
+        return dict(CONTROL_STYLE)
+    return {
+        "color": MEMBER_COLORS[results.index(tu) % len(MEMBER_COLORS)],
+        "linestyle": COMPARISON_LINESTYLES[k % len(COMPARISON_LINESTYLES)],
+    }
 
 
 def _central(curve):

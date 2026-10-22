@@ -202,12 +202,22 @@ def _au_penalty_section(m):
 
     rows = []
     for example, raw, au in pairs:
-        penalties = {
-            b: _summary(m, au, b)["p50"] - _summary(m, raw, b)["p50"] for b in m.branches
+        penalties_with_error_ms = {
+            b: data.au_penalty_with_error_ms(m, raw, au, b) for b in m.branches
         }
-        row = [example] + [_ms(penalties[b], signed=True) for b in m.branches]
+        row = [example] + [
+            "{} \N{PLUS-MINUS SIGN} {}".format(_ms(penalty_ms, signed=True), _ms(error_ms))
+            for penalty_ms, error_ms in (penalties_with_error_ms[b] for b in m.branches)
+        ]
+        base_penalty_ms, base_error_ms = penalties_with_error_ms[m.baseline]
         for b in others:
-            row.append(_ms(penalties[b] - penalties[m.baseline], signed=True))
+            penalty_ms, error_ms = penalties_with_error_ms[b]
+            change_error_ms = data.combined_half_width(error_ms, base_error_ms)
+            row.append(
+                "{} \N{PLUS-MINUS SIGN} {}".format(
+                    _marked(penalty_ms - base_penalty_ms, change_error_ms), _ms(change_error_ms)
+                )
+            )
         rows.append(row)
 
     return _prose(
@@ -229,9 +239,9 @@ def _au_penalty_section(m):
         branch and so cannot detect anything that slowed the whole machine down.  Where the two
         disagree, believe this one.
 
-        The penalty columns carry no mark, unlike the headline table: a difference of four medians
-        needs an uncertainty of its own to judge, and this report does not compute one yet.  Read
-        the column against the headline deltas beside it, which do come with a noise threshold.
+        Each penalty carries the ~95% uncertainty of a difference of two medians.  The _change_ in
+        the penalty is effectively a difference of four.  In all cases we compute uncertainties by
+        adding errors in quadrature.
         """
     ) + [""] + _table(header, rows) + _uncontrolled_note(m) + [""]
 
@@ -268,14 +278,17 @@ def _plot_footer(plot_files):
         render an image from a local path, so they are not linked inline: drag the files into the
         comment box and GitHub will upload them and insert a URL that works.
 
-        - `percentiles.png`, `percentiles_zoom.png`: the distribution per branch, time against
-        percentile.  The zoomed one is for seeing small differences.
+        - `percentiles.png`: the distribution per branch, time against percentile, from zero.  One
+        panel per example or benchmark family, with its members overlaid.
+        - `percentiles_zoom.png`: the same curves, one panel per translation unit, each zoomed to
+        its own data.  For seeing small differences.
         - `percentile_diff.png`: difference from the baseline, with each example's `raw.cc` drawn
         as a control.  A regression is `au.cc` pulling away from that control, not `au.cc` merely
         sitting above zero.
         - `weather.png`: every measurement against the clock.  Use this to sanity check the
         results, to see whether they were affected by machine load.
-        - `au_penalty.png`: what Au costs over hand-rolled C++, per example.
+        - `au_penalty.png`: what Au costs over hand-rolled C++, per example, with the uncertainty
+        of each.
 
         Files, relative to this report:
         """
@@ -336,10 +349,16 @@ def _ms(value, signed=False):
 
 def _signed_delta(base_summary, new_summary):
     """A signed delta of medians, marked for whether it clears the measurement noise."""
-    delta = new_summary["p50"] - base_summary["p50"]
-    uncertainty = (
-        base_summary["median_ci_half_width"] ** 2 + new_summary["median_ci_half_width"] ** 2
-    ) ** 0.5
+    return _marked(
+        new_summary["p50"] - base_summary["p50"],
+        data.combined_half_width(
+            base_summary["median_ci_half_width"], new_summary["median_ci_half_width"]
+        ),
+    )
+
+
+def _marked(delta, uncertainty):
+    """A signed delta, marked as better, worse, or within `uncertainty` of zero."""
     if abs(delta) <= uncertainty:
         mark = NOISE
     else:
