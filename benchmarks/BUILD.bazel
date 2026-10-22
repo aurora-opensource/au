@@ -63,6 +63,60 @@ compile_benchmark(
     deps = ["//au:units"],
 )
 
+compile_benchmark(
+    name = "mag_literals",
+    srcs = [
+        "literals/literal_list.hh",
+        "literals/mag.cc",
+    ],
+    deps = ["//au:units_literals"],
+)
+
+compile_benchmark(
+    name = "mag_literal_values",
+    srcs = [
+        "literals/literal_list.hh",
+        "literals/mag_values.cc",
+    ],
+    deps = ["//au:units_literals"],
+)
+
+compile_benchmark(
+    name = "unit_literals",
+    srcs = [
+        "literals/literal_list.hh",
+        "literals/unit.cc",
+    ],
+    deps = ["//au:units_literals"],
+)
+
+compile_benchmark(
+    name = "unit_literal_values",
+    srcs = [
+        "literals/literal_list.hh",
+        "literals/unit_values.cc",
+    ],
+    deps = ["//au:units_literals"],
+)
+
+compile_benchmark(
+    name = "prefixed_unit_literals",
+    srcs = [
+        "literals/literal_list.hh",
+        "literals/prefixed_unit.cc",
+    ],
+    deps = ["//au:units_literals"],
+)
+
+compile_benchmark(
+    name = "prefixed_unit_literal_values",
+    srcs = [
+        "literals/literal_list.hh",
+        "literals/prefixed_unit_values.cc",
+    ],
+    deps = ["//au:units_literals"],
+)
+
 sh_test(
     name = "all_units_listing_test",
     size = "small",
