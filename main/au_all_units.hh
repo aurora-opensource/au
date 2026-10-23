@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-36-g5484c148
+// Version identifier: 0.6.0-base-37-gd3dec27e
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
