@@ -518,27 +518,69 @@ using ComputeRationalPower = typename ComputeRationalPowerImpl<B, E1, E2>::type;
 }  // namespace detail
 
 // 2-ary Recursive case: two non-null packs.
+//
+// We compute which case applies first, and only then instantiate the (single) recursive product we
+// need.  Using `std::conditional` directly would instantiate every branch's recursive product.
+namespace detail {
+template <int BaseH1CmpBaseH2, typename ExpH1SumExpH2, typename Pack1, typename Pack2>
+struct PackProductCase;
+
+// Case where H1's base unambiguously comes before H2's base.
+template <typename ExpSum,
+          template <typename...>
+          class P,
+          typename H1,
+          typename... T1,
+          typename H2,
+          typename... T2>
+struct PackProductCase<1, ExpSum, P<H1, T1...>, P<H2, T2...>>
+    : stdx::type_identity<Prepend<typename PackProductImpl<P, P<T1...>, P<H2, T2...>>::type, H1>> {
+};
+
+// Case where H2's base unambiguously comes before H1's base.
+template <typename ExpSum,
+          template <typename...>
+          class P,
+          typename H1,
+          typename... T1,
+          typename H2,
+          typename... T2>
+struct PackProductCase<-1, ExpSum, P<H1, T1...>, P<H2, T2...>>
+    : stdx::type_identity<Prepend<typename PackProductImpl<P, P<H1, T1...>, P<T2...>>::type, H2>> {
+};
+
+//
+// Cases below are where the bases have the same _position_.  Assume they really _are_ the same
+// (because `InOrderFor` will verify this if it uses `LexicographicTotalOrdering`), and add the
+// exponents.
+//
+
+// Case where the exponents add to a nonzero value, so combine the terms.
+template <typename ExpSum,
+          template <typename...>
+          class P,
+          typename H1,
+          typename... T1,
+          typename H2,
+          typename... T2>
+struct PackProductCase<0, ExpSum, P<H1, T1...>, P<H2, T2...>>
+    : stdx::type_identity<Prepend<typename PackProductImpl<P, P<T1...>, P<T2...>>::type,
+                                  ComputeRationalPower<Base<H1>, Exp<H1>, Exp<H2>>>> {};
+
+// Case where the exponents add to zero, so omit the term.
 template <template <class...> class P, typename H1, typename... T1, typename H2, typename... T2>
-struct PackProductImpl<P, P<H1, T1...>, P<H2, T2...>> :
+struct PackProductCase<0, std::ratio<0>, P<H1, T1...>, P<H2, T2...>>
+    : PackProductImpl<P, P<T1...>, P<T2...>> {};
+}  // namespace detail
 
-    // If the bases for H1 and H2 are in-order, prepend H1 to the product of the remainder.
-    std::conditional<
-        (InOrderFor<P, Base<H1>, Base<H2>>::value),
-        detail::Prepend<PackProduct<P, P<T1...>, P<H2, T2...>>, H1>,
-
-        // If the bases for H2 and H1 are in-order, prepend H2 to the product of the remainder.
-        std::conditional_t<
-            (InOrderFor<P, Base<H2>, Base<H1>>::value),
-            detail::Prepend<PackProduct<P, P<T2...>, P<H1, T1...>>, H2>,
-
-            // If the bases have the same position, assume they really _are_ the same (because
-            // InOrderFor will verify this if it uses LexicographicTotalOrdering), and add the
-            // exponents.  (If the exponents add to zero, omit the term.)
-            std::conditional_t<
-                (std::ratio_add<Exp<H1>, Exp<H2>>::num == 0),
-                PackProduct<P, P<T1...>, P<T2...>>,
-                detail::Prepend<PackProduct<P, P<T2...>, P<T1...>>,
-                                detail::ComputeRationalPower<Base<H1>, Exp<H1>, Exp<H2>>>>>> {};
+// Finally, implement the non-trivial 2-ary recursive case, by just calling the right helper.
+template <template <class...> class P, typename H1, typename... T1, typename H2, typename... T2>
+struct PackProductImpl<P, P<H1, T1...>, P<H2, T2...>>
+    : detail::PackProductCase<(InOrderFor<P, Base<H1>, Base<H2>>::value -
+                               InOrderFor<P, Base<H2>, Base<H1>>::value),
+                              std::ratio_add<Exp<H1>, Exp<H2>>,
+                              P<H1, T1...>,
+                              P<H2, T2...>> {};
 
 // N-ary case, N > 2: recurse.
 template <template <class...> class P,
