@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# This `version` is the only place the library version is written down.  Version headers and the
+# like are built from this string by various build processes.  Some generators read it with a simple
+# pattern match, so keep this block to the two plain `name` and `version` lines.
 module(
     name = "au",
-    # The Bazel Central Registry requires this to match the version directory, and to match the
-    # `MODULE.bazel` inside the source archive.  Keep it in sync with the `AU_VERSION_*` macros in
-    # `au/version.hh`; `//release:module_version_test` checks that it does.
     version = "0.6.1",
 )
 

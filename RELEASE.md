@@ -73,33 +73,29 @@ version zero (0.y.z), incompatible changes don't force a major version upgrade.
 
 ### Update the version number
 
-The version number lives in `au/version.hh`, in the `AU_VERSION_MAJOR`, `AU_VERSION_MINOR`, and
-`AU_VERSION_PATCH` macros.  Edit those three macros to the number chosen above.  Everything else is
-derived from them:
+The version number lives in exactly one place: the `version` in the `module()` block of
+`MODULE.bazel`.  Edit it to the number chosen above.  Everything else is generated from it:
 
-- The C++ `AU_VERSION` macro (which downstream users read to detect the library and its version).
+- `au/version.hh`, with its `AU_VERSION_MAJOR`, `AU_VERSION_MINOR`, `AU_VERSION_PATCH`, and
+  `AU_VERSION` macros (which downstream users read to detect the library and its version).  Bazel,
+  CMake, and `tools/bin/make-single-file` each generate it from the template `au/version.hh.in`.
 - The CMake `project(... VERSION ...)` and `HOMEPAGE_URL`, which the root `CMakeLists.txt` parses
-  out of `au/version.hh`.  (The `HOMEPAGE_URL` points at the docs for this release, which won't
-  exist until you complete the remaining steps in this guide, but the danger of getting it wrong is
-  pretty small.)
-
-One thing can't be derived: the `version` in the `module()` block of `MODULE.bazel`.  Bazel
-evaluates `MODULE.bazel` before it can read any file, so that version has to be a literal.  Update
-it to match, in the same commit as the macros above.  `//release:module_version_test` fails if the
-two disagree.
+  out of `MODULE.bazel`.  (The `HOMEPAGE_URL` points at the docs for this release, which won't exist
+  until you complete the remaining steps in this guide, but the danger of getting it wrong is pretty
+  small.)
 
 **Where this commit lands depends on the release type:**
 
-- **Minor or major release** (e.g. `0.6.0`): make a PR that bumps `au/version.hh` and
-  `MODULE.bazel`, and land it on `main` _before_ creating the tag.  This is the "final commit",
+- **Minor or major release** (e.g. `0.6.0`): make a PR that bumps the version in `MODULE.bazel`,
+  and land it on `main` _before_ creating the tag.  This is the "final commit",
   and it becomes the base commit for the release branch (see "Prepare the release branch"
   below).  `main` then reports this version until the _next_ release bumps it again, even as new
   (unreleased) changes land on top; this is expected, and matches how the version macros are
   documented to behave.
 - **Patch release** (`0.5.1` and later): the bump is one of the "bookkeeping" PRs on the patch's
   _own_ release branch, landed after all the cherry-picks (see "Prepare the release branch"), and
-  the tag goes on that branch.  **Then also bump `au/version.hh` and `MODULE.bazel` to the same
-  patch version on `main`** (in an ordinary PR): since the patch is made _entirely_ of cherry-picks
+  the tag goes on that branch.  **Then also bump the version in `MODULE.bazel` to the same patch
+  version on `main`** (in an ordinary PR): since the patch is made _entirely_ of cherry-picks
   from `main`, `main` already contains everything the patch does, so it should advertise (at least)
   that version.  The one exception: if `main` has already advanced to a _higher_ version than the
   patch --- e.g. a newer minor release has since landed --- leave `main` alone, because it already
@@ -175,8 +171,8 @@ Every release --- patch releases included --- gets its own branch, named `releas
 branches are protected in the Au repo, so every change to one must go through a PR.
 
 **Minor or major release.**  First, make sure the "final commit" (which updates the version in
-`au/version.hh` and `MODULE.bazel`) has already landed, and is currently checked out.  This will be
-the "base" commit for the release branch, which we'll create and push to GitHub.
+`MODULE.bazel`) has already landed, and is currently checked out.  This will be the "base" commit
+for the release branch, which we'll create and push to GitHub.
 
 ```sh
 # Remember to update the version number!
@@ -369,7 +365,7 @@ done
 
 Expect the `-base` tag on `main`, the release tag and the final `-future` tag on the release branch,
 and each `-future-NNN` tag **off-branch** with the release commit as its parent.  Also confirm that
-`au/version.hh` reports the right version at every release-side tag.
+`MODULE.bazel` declares the right version at every release-side tag.
 
 ### Download all artifacts
 

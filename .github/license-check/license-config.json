@@ -45,6 +45,7 @@
       "**/*.cppm",
       "**/*.cu",
       "**/*.hh",
+      "**/*.hh.in",
       "docs/assets/hrh4.js"
     ],
     "exclude": [

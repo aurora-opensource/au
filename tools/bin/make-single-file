@@ -211,55 +211,98 @@ class SourceFile:
 
         in_copyright_header = False
         preproc_depth = 0
-        with open(filename) as f:
-            was_last_line_blank = False
-            for line in f:
-                if line.startswith("#pragma once"):
+        was_last_line_blank = False
+        for line in source_lines(filename):
+            if line.startswith("#pragma once"):
+                continue
+            if re.search(AURORA_COPYRIGHT.format(year="20.."), line):
+                in_copyright_header = True
+                continue
+            if in_copyright_header:
+                if line.startswith("//"):
                     continue
-                if re.search(AURORA_COPYRIGHT.format(year="20.."), line):
-                    in_copyright_header = True
+                else:
+                    in_copyright_header = False
+
+            # Collapse consecutive blank lines into one.
+            if line.strip():
+                was_last_line_blank = False
+            else:
+                if was_last_line_blank:
                     continue
-                if in_copyright_header:
-                    if line.startswith("//"):
-                        continue
-                    else:
-                        in_copyright_header = False
+                was_last_line_blank = True
 
-                # Collapse consecutive blank lines into one.
-                if line.strip():
-                    was_last_line_blank = False
-                else:
-                    if was_last_line_blank:
-                        continue
-                    was_last_line_blank = True
+            # Track `#if`/`#endif` nesting depth, so that we can tell
+            # whether an `#include` is guarded.
+            if line.startswith("#if"):
+                preproc_depth += 1
+            if line.startswith("#endif"):
+                preproc_depth -= 1
 
-                # Track `#if`/`#endif` nesting depth, so that we can tell
-                # whether an `#include` is guarded.
-                if line.startswith("#if"):
-                    preproc_depth += 1
-                if line.startswith("#endif"):
-                    preproc_depth -= 1
-
-                # Put this line where it belongs.  If it's an `#include`, sort
-                # it with either the project-specific collection
-                # ("graph_includes"), or the global collection.  Otherwise,
-                # just add it to the list of content lines.  Note that a
-                # _guarded_ global include (i.e., one inside of an `#if` block)
-                # must stay exactly where it is, because hoisting it to the top
-                # of the file would strip away its guard.
-                target = include_target(line)
-                if target and target.startswith("au"):
-                    self.graph_includes.append(target)
-                elif target and preproc_depth == 0:
-                    self.global_includes.append(line.rstrip())
-                else:
-                    self.lines.append(line.rstrip())
+            # Put this line where it belongs.  If it's an `#include`, sort
+            # it with either the project-specific collection
+            # ("graph_includes"), or the global collection.  Otherwise,
+            # just add it to the list of content lines.  Note that a
+            # _guarded_ global include (i.e., one inside of an `#if` block)
+            # must stay exactly where it is, because hoisting it to the top
+            # of the file would strip away its guard.
+            target = include_target(line)
+            if target and target.startswith("au"):
+                self.graph_includes.append(target)
+            elif target and preproc_depth == 0:
+                self.global_includes.append(line.rstrip())
+            else:
+                self.lines.append(line.rstrip())
 
 
 def include_target(line):
     """The name of the file if this is an `#include` line, else None."""
     m = re.match(r'\#include [<"]([^"]+)[>"]', line)
     return m.group(1) if m else None
+
+
+# `au/version.hh` is not checked in: every build generates it from its template, filling in the
+# version declared in `MODULE.bazel`.  We have to do the same, because this script also runs from a
+# plain checkout, with no build.  `//release:version_header_test` checks that we agree with Bazel.
+VERSION_HEADER = "au/version.hh"
+VERSION_TEMPLATE = "au/version.hh.in"
+
+
+def source_lines(filename):
+    """The lines of a project file (generating `au/version.hh`, rather than reading it)."""
+    if filename == VERSION_HEADER:
+        return generated_version_header().splitlines(keepends=True)
+    with open(filename) as f:
+        return f.readlines()
+
+
+def generated_version_header():
+    """The contents of `au/version.hh`: its template, filled in from `MODULE.bazel`."""
+    major, minor, patch = module_version("MODULE.bazel")
+    with open(VERSION_TEMPLATE) as f:
+        return (
+            f.read()
+            .replace("@AU_VERSION_MAJOR@", major)
+            .replace("@AU_VERSION_MINOR@", minor)
+            .replace("@AU_VERSION_PATCH@", patch)
+        )
+
+
+def module_version(module_file):
+    """The `(major, minor, patch)` in the `module()` block of `module_file`."""
+    with open(module_file) as f:
+        block = re.search(r"^module\((.*?)^\)", f.read(), flags=re.MULTILINE | re.DOTALL)
+
+    # Only the `module()` block's version: the file is full of other `version =` assignments, in the
+    # `bazel_dep` calls.
+    versions = re.findall(r'^\s*version = "([^"]*)"', block.group(1) if block else "", flags=re.M)
+    m = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", versions[0]) if len(versions) == 1 else None
+    if not m:
+        sys.exit(
+            "ERROR: could not read a MAJOR.MINOR.PATCH version from the module() block of "
+            f"{module_file} (got {versions})."
+        )
+    return m.groups()
 
 
 def sort_topologically(files):

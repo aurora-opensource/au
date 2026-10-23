@@ -15,19 +15,19 @@
 load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
-# Bazel cannot read `au/version.hh` when it evaluates `MODULE.bazel`, so the module version there is
-# a copy of the version macros.  This test is what keeps the copy from drifting.
+# `au/version.hh` has two generators that each parse `MODULE.bazel` on their own: Bazel's, and
+# `make-single-file`'s (which has to work with no build at all).  This checks that they agree.
 sh_test(
-    name = "module_version_test",
+    name = "version_header_test",
     size = "small",
-    srcs = ["check_module_version.sh"],
+    srcs = ["check_version_headers.sh"],
     args = [
-        "$(rootpath //:module_bazel)",
-        "$(rootpath //au:version_hh)",
+        "$(rootpath //au:version.hh)",
+        "$(rootpath :au_hh)",
     ],
     data = [
-        "//:module_bazel",
-        "//au:version_hh",
+        ":au_hh",
+        "//au:version.hh",
     ],
 )
 
@@ -115,12 +115,19 @@ CMD_ROOT = " ".join([
     "> $(OUTS)",
 ])
 
+# `make-single-file` generates `au/version.hh` itself, from the template and `MODULE.bazel`.
+SINGLE_FILE_SRCS = [
+    "//:module_bazel",
+    "//au:headers",
+    "//au:version_hh_template",
+]
+
 ################################################################################
 # Release single-file package `au.hh`
 
 genrule(
     name = "au_hh",
-    srcs = ["//au:headers"],
+    srcs = SINGLE_FILE_SRCS,
     outs = ["au.hh"],
     cmd = CMD_ROOT.format(
         all_constants = "",
@@ -139,7 +146,7 @@ genrule(
 
 genrule(
     name = "au_noio_hh",
-    srcs = ["//au:headers"],
+    srcs = SINGLE_FILE_SRCS,
     outs = ["au_noio.hh"],
     cmd = CMD_ROOT.format(
         all_constants = "",
@@ -158,7 +165,7 @@ genrule(
 
 genrule(
     name = "au_all_units_hh",
-    srcs = ["//au:headers"],
+    srcs = SINGLE_FILE_SRCS,
     outs = ["au_all_units.hh"],
     cmd = CMD_ROOT.format(
         all_constants = "--all-constants",
@@ -177,7 +184,7 @@ genrule(
 
 genrule(
     name = "au_all_units_noio_hh",
-    srcs = ["//au:headers"],
+    srcs = SINGLE_FILE_SRCS,
     outs = ["au_all_units_noio.hh"],
     cmd = CMD_ROOT.format(
         all_constants = "--all-constants",
@@ -196,7 +203,7 @@ genrule(
 
 genrule(
     name = "au_stdformat_hh",
-    srcs = ["//au:headers"],
+    srcs = SINGLE_FILE_SRCS,
     outs = ["au_stdformat.hh"],
     cmd = CMD_ROOT.format(
         all_constants = "",
@@ -215,7 +222,7 @@ genrule(
 
 genrule(
     name = "au_stdformat_noio_hh",
-    srcs = ["//au:headers"],
+    srcs = SINGLE_FILE_SRCS,
     outs = ["au_stdformat_noio.hh"],
     cmd = CMD_ROOT.format(
         all_constants = "",
@@ -234,7 +241,7 @@ genrule(
 
 genrule(
     name = "au_all_units_stdformat_hh",
-    srcs = ["//au:headers"],
+    srcs = SINGLE_FILE_SRCS,
     outs = ["au_all_units_stdformat.hh"],
     cmd = CMD_ROOT.format(
         all_constants = "--all-constants",
@@ -253,7 +260,7 @@ genrule(
 
 genrule(
     name = "au_all_units_stdformat_noio_hh",
-    srcs = ["//au:headers"],
+    srcs = SINGLE_FILE_SRCS,
     outs = ["au_all_units_stdformat_noio.hh"],
     cmd = CMD_ROOT.format(
         all_constants = "--all-constants",
