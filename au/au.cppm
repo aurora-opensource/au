@@ -17,7 +17,8 @@
 //    - au::base_dim
 //    - au::symbols
 //    - au::au_literals
-// except for any other nested namespaces, and any functions ending in _impl.
+// except for any other nested namespaces, and any functions ending in _impl.  The one exception is
+// `au::detail::wrapper_ops`, whose ADL-only operations must be exported for importers to use them.
 
 module;
 
@@ -411,6 +412,22 @@ using au::UnitRatioT;
 using au::UnitSign;
 using au::UnitSum;
 using au::UnitSumPack;
+
+// `au/wrapper_operations.hh`
+//
+// These operations are free function templates in a nested namespace, found only via ADL.  We must
+// export them explicitly: otherwise, nothing in the module purview refers to them, so they are not
+// visible to importers.
+namespace detail {
+namespace wrapper_ops {
+using au::detail::wrapper_ops::operator*;
+using au::detail::wrapper_ops::operator/;
+using au::detail::wrapper_ops::operator+;
+using au::detail::wrapper_ops::operator-;
+using au::detail::wrapper_ops::pow;
+using au::detail::wrapper_ops::root;
+}  // namespace wrapper_ops
+}  // namespace detail
 
 // `au/unit_symbol.hh`
 using au::symbol_for;
