@@ -911,7 +911,6 @@ filegroup(
     name = "headers",
     srcs = glob(["**/*.hh"]),
     visibility = [
-        "//:__pkg__",
         "//benchmarks:__pkg__",
         "//release:__pkg__",
     ],
