@@ -42,8 +42,8 @@ representative.
 
 First, visit the source code for the version of `mike` in the new release.  (You can find this on
 their [releases](https://github.com/jimporter/mike/releases) page; click the tag link on the left
-side to browse the code.)  Double check the functions that we monkey patch in `mike_bin.py`, to make
-sure their interfaces and/or implementations are still up to date.
+side to browse the code.)  Double check the functions that we monkey patch in
+`tools/docs/mike_bin.py`, to make sure their interfaces and/or implementations are still up to date.
 
 Next, make sure that our monkey patched version of mike works.  Here's a suggested sequence.
 
