@@ -23,6 +23,17 @@ CPPM = REPO_ROOT / "au" / "au.cppm"
 # Namespaces whose members are implementation details, not public API.
 EXCLUDED_NAMESPACES = {"detail", "stdx", "no_prior_declaration_workaround"}
 
+# ADL-only overloads in implementation namespaces.  Importers can only find these if the module
+# exports them, so the module must list them, even though they live in an excluded namespace.
+REQUIRED_ADL_EXPORTS = {
+    "au::detail::wrapper_ops::operator*",
+    "au::detail::wrapper_ops::operator+",
+    "au::detail::wrapper_ops::operator-",
+    "au::detail::wrapper_ops::operator/",
+    "au::detail::wrapper_ops::pow",
+    "au::detail::wrapper_ops::root",
+}
+
 # Public headers which the module deliberately does not include (and why).
 HEADERS_NOT_IN_MODULE = {
     "au/chrono_policy_validation.hh",  # Test-only; depends on GoogleTest.
@@ -149,6 +160,8 @@ def _public_symbols(path):
 
 
 def _is_excluded(ns, kind, name):
+    if "::".join(ns) + "::" + name in REQUIRED_ADL_EXPORTS:
+        return False
     if ns[0] != "au" or any(part in EXCLUDED_NAMESPACES for part in ns):
         return True
     # Functions with an `_impl` suffix are implementation details of their non-`_impl`
