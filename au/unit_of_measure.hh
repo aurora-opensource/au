@@ -482,7 +482,7 @@ struct SingularNameFor {
         return SingularNameFor<UnitProduct<Unit, OtherUnit>>{};
     }
 
-    // Scale by a Magnitude on the right or the left, or divide by a Magnitude.
+    // Scale by a Magnitude on the right, or divide by a Magnitude.
     template <typename... BPs>
     constexpr auto operator*(Magnitude<BPs...> m) const {
         return SingularNameFor<decltype(Unit{} * m)>{};
@@ -491,17 +491,19 @@ struct SingularNameFor {
     constexpr auto operator/(Magnitude<BPs...> m) const {
         return SingularNameFor<decltype(Unit{} / m)>{};
     }
-    template <typename... BPs>
-    friend constexpr auto operator*(Magnitude<BPs...> m, SingularNameFor) {
-        return SingularNameFor<decltype(m * Unit{})>{};
-    }
-
-    // Divide a Magnitude by this `SingularNameFor`.
-    template <typename... BPs>
-    friend constexpr auto operator/(Magnitude<BPs...> m, SingularNameFor) {
-        return SingularNameFor<decltype(m / Unit{})>{};
-    }
 };
+
+// Scale a `SingularNameFor` by a Magnitude on the left.
+template <typename... BPs, typename Unit>
+constexpr auto operator*(Magnitude<BPs...> m, SingularNameFor<Unit>) {
+    return SingularNameFor<decltype(m * Unit{})>{};
+}
+
+// Divide a Magnitude by a `SingularNameFor`.
+template <typename... BPs, typename Unit>
+constexpr auto operator/(Magnitude<BPs...> m, SingularNameFor<Unit>) {
+    return SingularNameFor<decltype(m / Unit{})>{};
+}
 
 // Support `SingularNameFor` in (quantity) unit slots.
 template <typename U>
