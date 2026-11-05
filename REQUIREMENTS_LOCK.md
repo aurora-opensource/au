@@ -8,7 +8,7 @@ need to refresh it periodically.)
 Run this command:
 
 ```sh
-bazel run //:requirements.update -- --upgrade
+bazel run //tools/docs:requirements.update -- --upgrade
 ```
 
 ## Testing the update
@@ -42,8 +42,8 @@ representative.
 
 First, visit the source code for the version of `mike` in the new release.  (You can find this on
 their [releases](https://github.com/jimporter/mike/releases) page; click the tag link on the left
-side to browse the code.)  Double check the functions that we monkey patch in `mike_bin.py`, to make
-sure their interfaces and/or implementations are still up to date.
+side to browse the code.)  Double check the functions that we monkey patch in
+`tools/docs/mike_bin.py`, to make sure their interfaces and/or implementations are still up to date.
 
 Next, make sure that our monkey patched version of mike works.  Here's a suggested sequence.
 
@@ -51,16 +51,16 @@ Next, make sure that our monkey patched version of mike works.  Here's a suggest
 # Create a new version of the docs, named "temp-test".
 #
 # NOTE: this will not deploy anything remotely.
-bazel run //:mike -- deploy temp-test
+bazel run //tools/docs:mike -- deploy temp-test
 
 # View the list of versions: make sure "temp-test" is in the list.
-bazel run //:mike -- list
+bazel run //tools/docs:mike -- list
 
 # Serve the documentation website.  (Open it in a browser; play around.)
-bazel run //:mike -- serve
+bazel run //tools/docs:mike -- serve
 
 # Delete the testing version.
-bazel run //:mike -- delete temp-test
+bazel run //tools/docs:mike -- delete temp-test
 
 # Nitpicky cleanup: don't want this in our public git history.
 git branch -f gh-pages origin/gh-pages

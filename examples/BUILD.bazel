@@ -26,7 +26,7 @@ filegroup(
         ":eigen_kinematics_doc_sources",
     ],
     # Only the docs build consumes these.  Nothing here is part of the library's API.
-    visibility = ["//:__pkg__"],
+    visibility = ["//tools/docs:__pkg__"],
 )
 
 ab_example(

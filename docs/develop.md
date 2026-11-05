@@ -188,10 +188,10 @@ It's easy to set up a local version of the documentation website.  Simply run th
 `au-docs-serve`.  Here's some example output:
 
 ```
-INFO: Analyzed target //:update_docs (0 packages loaded, 0 targets configured).
+INFO: Analyzed target //tools/docs:update_docs (0 packages loaded, 0 targets configured).
 INFO: Found 1 target...
-Target //:update_docs up-to-date:
-  bazel-bin/update_docs
+Target //tools/docs:update_docs up-to-date:
+  bazel-bin/tools/docs/update_docs
 INFO: Elapsed time: 0.309s, Critical Path: 0.06s
 INFO: 1 process: 1 internal.
 INFO: Build completed successfully, 1 total action

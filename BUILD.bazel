@@ -12,271 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("@au_pip_deps//:requirements.bzl", "requirement")
-load("@rules_cc//cc:defs.bzl", "cc_library")
-load("@rules_python//python:defs.bzl", "py_binary")
-load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+# Au's consumers load this package whenever one of their targets refers to a file in it, so it may
+# only load rules they are guaranteed to have: native rules, and `rules_cc`.  Anything that needs a
+# `dev_dependency` (`rules_python`, `rules_shell`, our pip hub, etc.) belongs in another package,
+# such as`//tools/docs` or `//release`.  Our workspace/module export tests will catch failures.
 
 # The README quotes code from `//examples`, and `//examples:readme_snippets_test` checks that those
 # copies still match their source.
 exports_files(["README.md"])
 
-# This rule adds a convenient way to update the requirements file.
-compile_pip_requirements(
-    name = "requirements",
-    requirements_in = "requirements.in",
-    requirements_txt = "requirements_lock.txt",
-)
-
-py_binary(
-    name = "update_docs",
-    srcs = ["update_docs.py"],
-    data = [
-        "mkdocs.yml",
-        ":au_all_units_hh",
-        ":au_all_units_noio_hh",
-        ":au_all_units_stdformat_hh",
-        ":au_all_units_stdformat_noio_hh",
-        ":au_hh",
-        ":au_noio_hh",
-        ":au_stdformat_hh",
-        ":au_stdformat_noio_hh",
-        "//examples:doc_sources",
-    ] + glob([
-        "docs/**",
-        "doc_snippets/**",
-    ]),
-    deps = [
-        requirement("mkdocs"),
-        requirement("mkdocs-material"),
+exports_files(
+    [
+        "requirements.in",
+        "requirements_lock.txt",
     ],
+    visibility = ["//tools/docs:__pkg__"],
 )
 
-py_binary(
-    name = "mike",
-    srcs = ["mike_bin.py"],
-    data = [
-        "mkdocs.yml",
-        ":au_all_units_hh",
-        ":au_all_units_noio_hh",
-        ":au_all_units_stdformat_hh",
-        ":au_all_units_stdformat_noio_hh",
-        ":au_hh",
-        ":au_noio_hh",
-        ":au_stdformat_hh",
-        ":au_stdformat_noio_hh",
-    ] + glob([
-        "docs/**",
-        "doc_snippets/**",
-    ]),
-    main = "mike_bin.py",
-    deps = [
-        ":update_docs",
-        requirement("mike"),
-        requirement("mkdocs"),
-        requirement("mkdocs-material"),
-    ],
+# `mkdocs` looks for this in the root of its runfiles, so it stays here.
+exports_files(
+    ["mkdocs.yml"],
+    visibility = ["//tools/docs:__pkg__"],
 )
 
-BASE_UNITS = [
-    "meters",
-    "seconds",
-    "grams",
-    "kelvins",
-    "amperes",
-    "moles",
-    "candelas",
-    "radians",
-    "bits",
-    "unos",
-]
-
-BASE_UNIT_STRING = " ".join(BASE_UNITS)
-
-GIT_ID_CMD = "cat bazel-out/stable-status.txt | grep STABLE_GIT_ID | sed 's/STABLE_GIT_ID \\(.*\\)/\\1/' | tr -d '\\n'"
-
-CMD_ROOT = "$(location tools/bin/make-single-file) {extra_opts} {units} {all_literals} {all_constants} --version-id $$({id_cmd}) > $(OUTS)"
-
-################################################################################
-# Release single-file package `au.hh`
-
-genrule(
-    name = "au_hh",
-    srcs = ["//au:headers"],
-    outs = ["docs/au.hh"],
-    cmd = CMD_ROOT.format(
-        all_constants = "",
-        all_literals = "",
-        extra_opts = "",
-        id_cmd = GIT_ID_CMD,
-        units = "--units " + BASE_UNIT_STRING,
-    ),
-    stamp = True,
-    tools = ["tools/bin/make-single-file"],
+# The single-file genrules in `//release` run this script.
+exports_files(
+    ["tools/bin/make-single-file"],
     visibility = ["//release:__pkg__"],
 )
-
-cc_library(
-    name = "au_hh_lib",
-    hdrs = ["docs/au.hh"],
-    visibility = ["//release:__pkg__"],
-)
-
-################################################################################
-# Release single-file package `au_noio.hh`
-
-genrule(
-    name = "au_noio_hh",
-    srcs = ["//au:headers"],
-    outs = ["docs/au_noio.hh"],
-    cmd = CMD_ROOT.format(
-        all_constants = "",
-        all_literals = "",
-        extra_opts = "--noio",
-        id_cmd = GIT_ID_CMD,
-        units = "--units " + BASE_UNIT_STRING,
-    ),
-    stamp = True,
-    tools = ["tools/bin/make-single-file"],
-    visibility = ["//release:__pkg__"],
-)
-
-cc_library(
-    name = "au_noio_hh_lib",
-    hdrs = ["docs/au_noio.hh"],
-    visibility = ["//release:__pkg__"],
-)
-
-################################################################################
-# Release single-file package `au_all_units.hh`
-
-genrule(
-    name = "au_all_units_hh",
-    srcs = ["//au:headers"],
-    outs = ["docs/au_all_units.hh"],
-    cmd = CMD_ROOT.format(
-        all_constants = "--all-constants",
-        all_literals = "--all-literals",
-        extra_opts = "",
-        id_cmd = GIT_ID_CMD,
-        units = "--all-units",
-    ),
-    stamp = True,
-    tools = ["tools/bin/make-single-file"],
-    visibility = ["//release:__pkg__"],
-)
-
-cc_library(
-    name = "au_all_units_hh_lib",
-    hdrs = ["docs/au_all_units.hh"],
-    visibility = ["//release:__pkg__"],
-)
-
-################################################################################
-# Release single-file package `au_all_units_noio.hh`
-
-genrule(
-    name = "au_all_units_noio_hh",
-    srcs = ["//au:headers"],
-    outs = ["docs/au_all_units_noio.hh"],
-    cmd = CMD_ROOT.format(
-        all_constants = "--all-constants",
-        all_literals = "--all-literals",
-        extra_opts = "--noio",
-        id_cmd = GIT_ID_CMD,
-        units = "--all-units",
-    ),
-    stamp = True,
-    tools = ["tools/bin/make-single-file"],
-    visibility = ["//release:__pkg__"],
-)
-
-cc_library(
-    name = "au_all_units_noio_hh_lib",
-    hdrs = ["docs/au_all_units_noio.hh"],
-    visibility = ["//release:__pkg__"],
-)
-
-################################################################################
-# Release single-file package `au_stdformat.hh`
-
-genrule(
-    name = "au_stdformat_hh",
-    srcs = ["//au:headers"],
-    outs = ["docs/au_stdformat.hh"],
-    cmd = CMD_ROOT.format(
-        all_constants = "",
-        all_literals = "",
-        extra_opts = "--std-format",
-        id_cmd = GIT_ID_CMD,
-        units = "--units " + BASE_UNIT_STRING,
-    ),
-    stamp = True,
-    tools = ["tools/bin/make-single-file"],
-    visibility = ["//release:__pkg__"],
-)
-
-# TODO(#508): no `cc_library`, because we don't yet have a toolchain that supports `std::format`.
-
-################################################################################
-# Release single-file package `au_stdformat_noio.hh`
-
-genrule(
-    name = "au_stdformat_noio_hh",
-    srcs = ["//au:headers"],
-    outs = ["docs/au_stdformat_noio.hh"],
-    cmd = CMD_ROOT.format(
-        all_constants = "",
-        all_literals = "",
-        extra_opts = "--std-format --noio",
-        id_cmd = GIT_ID_CMD,
-        units = "--units " + BASE_UNIT_STRING,
-    ),
-    stamp = True,
-    tools = ["tools/bin/make-single-file"],
-    visibility = ["//release:__pkg__"],
-)
-
-# TODO(#508): no `cc_library`, because we don't yet have a toolchain that supports `std::format`.
-
-################################################################################
-# Release single-file package `au_all_units_stdformat.hh`
-
-genrule(
-    name = "au_all_units_stdformat_hh",
-    srcs = ["//au:headers"],
-    outs = ["docs/au_all_units_stdformat.hh"],
-    cmd = CMD_ROOT.format(
-        all_constants = "--all-constants",
-        all_literals = "--all-literals",
-        extra_opts = "--std-format",
-        id_cmd = GIT_ID_CMD,
-        units = "--all-units",
-    ),
-    stamp = True,
-    tools = ["tools/bin/make-single-file"],
-    visibility = ["//release:__pkg__"],
-)
-
-# TODO(#508): no `cc_library`, because we don't yet have a toolchain that supports `std::format`.
-
-################################################################################
-# Release single-file package `au_all_units_stdformat_noio.hh`
-
-genrule(
-    name = "au_all_units_stdformat_noio_hh",
-    srcs = ["//au:headers"],
-    outs = ["docs/au_all_units_stdformat_noio.hh"],
-    cmd = CMD_ROOT.format(
-        all_constants = "--all-constants",
-        all_literals = "--all-literals",
-        extra_opts = "--std-format --noio",
-        id_cmd = GIT_ID_CMD,
-        units = "--all-units",
-    ),
-    stamp = True,
-    tools = ["tools/bin/make-single-file"],
-    visibility = ["//release:__pkg__"],
-)
-
-# TODO(#508): no `cc_library`, because we don't yet have a toolchain that supports `std::format`.

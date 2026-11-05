@@ -24,8 +24,8 @@ cc_test(
     size = "small",
     srcs = ["au_all_units_hh_test.cc"],
     deps = [
+        ":au_all_units_hh_lib",
         ":common_test_cases",
-        "//:au_all_units_hh_lib",
         "@googletest//:gtest_main",
     ],
 )
@@ -35,8 +35,8 @@ cc_test(
     size = "small",
     srcs = ["au_all_units_noio_hh_test.cc"],
     deps = [
+        ":au_all_units_noio_hh_lib",
         ":common_test_cases",
-        "//:au_all_units_noio_hh_lib",
         "@googletest//:gtest_main",
     ],
 )
@@ -46,8 +46,8 @@ cc_test(
     size = "small",
     srcs = ["au_hh_test.cc"],
     deps = [
+        ":au_hh_lib",
         ":common_test_cases",
-        "//:au_hh_lib",
         "@googletest//:gtest_main",
     ],
 )
@@ -57,8 +57,221 @@ cc_test(
     size = "small",
     srcs = ["au_noio_hh_test.cc"],
     deps = [
+        ":au_noio_hh_lib",
         ":common_test_cases",
-        "//:au_noio_hh_lib",
         "@googletest//:gtest_main",
     ],
+)
+
+################################################################################
+# The single-file packages.
+
+BASE_UNITS = [
+    "meters",
+    "seconds",
+    "grams",
+    "kelvins",
+    "amperes",
+    "moles",
+    "candelas",
+    "radians",
+    "bits",
+    "unos",
+]
+
+BASE_UNIT_STRING = " ".join(BASE_UNITS)
+
+GIT_ID_CMD = " | ".join([
+    "cat bazel-out/stable-status.txt",
+    "grep STABLE_GIT_ID",
+    "sed 's/STABLE_GIT_ID \\(.*\\)/\\1/'",
+    "tr -d '\\n'",
+])
+
+CMD_ROOT = " ".join([
+    "$(execpath //:tools/bin/make-single-file)",
+    "{extra_opts}",
+    "{units}",
+    "{all_literals}",
+    "{all_constants}",
+    "--version-id $$({id_cmd})",
+    "> $(OUTS)",
+])
+
+################################################################################
+# Release single-file package `au.hh`
+
+genrule(
+    name = "au_hh",
+    srcs = ["//au:headers"],
+    outs = ["au.hh"],
+    cmd = CMD_ROOT.format(
+        all_constants = "",
+        all_literals = "",
+        extra_opts = "",
+        id_cmd = GIT_ID_CMD,
+        units = "--units " + BASE_UNIT_STRING,
+    ),
+    stamp = True,
+    tools = ["//:tools/bin/make-single-file"],
+    visibility = ["//tools/docs:__pkg__"],
+)
+
+################################################################################
+# Release single-file package `au_noio.hh`
+
+genrule(
+    name = "au_noio_hh",
+    srcs = ["//au:headers"],
+    outs = ["au_noio.hh"],
+    cmd = CMD_ROOT.format(
+        all_constants = "",
+        all_literals = "",
+        extra_opts = "--noio",
+        id_cmd = GIT_ID_CMD,
+        units = "--units " + BASE_UNIT_STRING,
+    ),
+    stamp = True,
+    tools = ["//:tools/bin/make-single-file"],
+    visibility = ["//tools/docs:__pkg__"],
+)
+
+################################################################################
+# Release single-file package `au_all_units.hh`
+
+genrule(
+    name = "au_all_units_hh",
+    srcs = ["//au:headers"],
+    outs = ["au_all_units.hh"],
+    cmd = CMD_ROOT.format(
+        all_constants = "--all-constants",
+        all_literals = "--all-literals",
+        extra_opts = "",
+        id_cmd = GIT_ID_CMD,
+        units = "--all-units",
+    ),
+    stamp = True,
+    tools = ["//:tools/bin/make-single-file"],
+    visibility = ["//tools/docs:__pkg__"],
+)
+
+################################################################################
+# Release single-file package `au_all_units_noio.hh`
+
+genrule(
+    name = "au_all_units_noio_hh",
+    srcs = ["//au:headers"],
+    outs = ["au_all_units_noio.hh"],
+    cmd = CMD_ROOT.format(
+        all_constants = "--all-constants",
+        all_literals = "--all-literals",
+        extra_opts = "--noio",
+        id_cmd = GIT_ID_CMD,
+        units = "--all-units",
+    ),
+    stamp = True,
+    tools = ["//:tools/bin/make-single-file"],
+    visibility = ["//tools/docs:__pkg__"],
+)
+
+################################################################################
+# Release single-file package `au_stdformat.hh`
+
+genrule(
+    name = "au_stdformat_hh",
+    srcs = ["//au:headers"],
+    outs = ["au_stdformat.hh"],
+    cmd = CMD_ROOT.format(
+        all_constants = "",
+        all_literals = "",
+        extra_opts = "--std-format",
+        id_cmd = GIT_ID_CMD,
+        units = "--units " + BASE_UNIT_STRING,
+    ),
+    stamp = True,
+    tools = ["//:tools/bin/make-single-file"],
+    visibility = ["//tools/docs:__pkg__"],
+)
+
+################################################################################
+# Release single-file package `au_stdformat_noio.hh`
+
+genrule(
+    name = "au_stdformat_noio_hh",
+    srcs = ["//au:headers"],
+    outs = ["au_stdformat_noio.hh"],
+    cmd = CMD_ROOT.format(
+        all_constants = "",
+        all_literals = "",
+        extra_opts = "--std-format --noio",
+        id_cmd = GIT_ID_CMD,
+        units = "--units " + BASE_UNIT_STRING,
+    ),
+    stamp = True,
+    tools = ["//:tools/bin/make-single-file"],
+    visibility = ["//tools/docs:__pkg__"],
+)
+
+################################################################################
+# Release single-file package `au_all_units_stdformat.hh`
+
+genrule(
+    name = "au_all_units_stdformat_hh",
+    srcs = ["//au:headers"],
+    outs = ["au_all_units_stdformat.hh"],
+    cmd = CMD_ROOT.format(
+        all_constants = "--all-constants",
+        all_literals = "--all-literals",
+        extra_opts = "--std-format",
+        id_cmd = GIT_ID_CMD,
+        units = "--all-units",
+    ),
+    stamp = True,
+    tools = ["//:tools/bin/make-single-file"],
+    visibility = ["//tools/docs:__pkg__"],
+)
+
+################################################################################
+# Release single-file package `au_all_units_stdformat_noio.hh`
+
+genrule(
+    name = "au_all_units_stdformat_noio_hh",
+    srcs = ["//au:headers"],
+    outs = ["au_all_units_stdformat_noio.hh"],
+    cmd = CMD_ROOT.format(
+        all_constants = "--all-constants",
+        all_literals = "--all-literals",
+        extra_opts = "--std-format --noio",
+        id_cmd = GIT_ID_CMD,
+        units = "--all-units",
+    ),
+    stamp = True,
+    tools = ["//:tools/bin/make-single-file"],
+    visibility = ["//tools/docs:__pkg__"],
+)
+
+################################################################################
+# Wrappers, so that the tests above can compile the packages.
+
+# TODO(#508): no wrapper for the `std::format` packages, because we don't yet have a toolchain
+# that supports `std::format`.
+
+cc_library(
+    name = "au_hh_lib",
+    hdrs = ["au.hh"],
+)
+
+cc_library(
+    name = "au_noio_hh_lib",
+    hdrs = ["au_noio.hh"],
+)
+
+cc_library(
+    name = "au_all_units_hh_lib",
+    hdrs = ["au_all_units.hh"],
+)
+
+cc_library(
+    name = "au_all_units_noio_hh_lib",
+    hdrs = ["au_all_units_noio.hh"],
 )
