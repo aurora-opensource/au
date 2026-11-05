@@ -135,28 +135,6 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
         return as<typename CorrespondingQuantity<T>::Rep>(
             typename CorrespondingQuantity<T>::Unit{});
     }
-
-    // Comparison with Zero.
-    //
-    // A Constant represents a value of 1 in its unit, which is never zero.
-    AU_DEVICE_FUNC friend constexpr bool operator==(Constant, Zero) { return false; }
-    AU_DEVICE_FUNC friend constexpr bool operator!=(Constant, Zero) { return true; }
-    AU_DEVICE_FUNC friend constexpr bool operator<(Constant, Zero) { return !is_positive(); }
-    AU_DEVICE_FUNC friend constexpr bool operator<=(Constant, Zero) { return !is_positive(); }
-    AU_DEVICE_FUNC friend constexpr bool operator>(Constant, Zero) { return is_positive(); }
-    AU_DEVICE_FUNC friend constexpr bool operator>=(Constant, Zero) { return is_positive(); }
-
-    AU_DEVICE_FUNC friend constexpr bool operator==(Zero, Constant) { return false; }
-    AU_DEVICE_FUNC friend constexpr bool operator!=(Zero, Constant) { return true; }
-    AU_DEVICE_FUNC friend constexpr bool operator<(Zero, Constant) { return is_positive(); }
-    AU_DEVICE_FUNC friend constexpr bool operator<=(Zero, Constant) { return is_positive(); }
-    AU_DEVICE_FUNC friend constexpr bool operator>(Zero, Constant) { return !is_positive(); }
-    AU_DEVICE_FUNC friend constexpr bool operator>=(Zero, Constant) { return !is_positive(); }
-
- private:
-    AU_DEVICE_FUNC static constexpr bool is_positive() {
-        return IsPositive<detail::MagT<Unit>>::value;
-    }
 };
 
 // Make a constant from the given unit.
@@ -288,6 +266,69 @@ AU_DEVICE_FUNC constexpr auto operator%(Constant<U1>, Constant<U2>) {
     using CommonUnscaled = CommonUnit<detail::UnscaledUnit<U1>, detail::UnscaledUnit<U2>>;
     return make_constant(CommonUnscaled{}) * (UnitRatio<U1, U>{} % UnitRatio<U2, U>{}) *
            UnitRatio<U, CommonUnscaled>{};
+}
+
+namespace detail {
+template <typename U>
+AU_DEVICE_FUNC constexpr bool is_unit_positive() {
+    return IsPositive<MagT<U>>::value;
+}
+}  // namespace detail
+
+// Comparison of `Constant` with `Zero`.
+//
+// A Constant represents a value of 1 in its unit, which is never zero.
+//
+// (These are free function templates, rather than hidden friends, for compile time reasons: every
+// hidden friend adds work to instantiating each new `Constant` type.)
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator==(Constant<U>, Zero) {
+    return false;
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator!=(Constant<U>, Zero) {
+    return true;
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator<(Constant<U>, Zero) {
+    return !detail::is_unit_positive<U>();
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator<=(Constant<U>, Zero) {
+    return !detail::is_unit_positive<U>();
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator>(Constant<U>, Zero) {
+    return detail::is_unit_positive<U>();
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator>=(Constant<U>, Zero) {
+    return detail::is_unit_positive<U>();
+}
+
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator==(Zero, Constant<U>) {
+    return false;
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator!=(Zero, Constant<U>) {
+    return true;
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator<(Zero, Constant<U>) {
+    return detail::is_unit_positive<U>();
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator<=(Zero, Constant<U>) {
+    return detail::is_unit_positive<U>();
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator>(Zero, Constant<U>) {
+    return !detail::is_unit_positive<U>();
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator>=(Zero, Constant<U>) {
+    return !detail::is_unit_positive<U>();
 }
 
 // Arithmetic operators mixing `Constant` with `Zero`.
