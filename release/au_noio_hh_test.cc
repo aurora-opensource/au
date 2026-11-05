@@ -14,7 +14,7 @@
 
 #include <chrono>
 
-#include "docs/au_noio.hh"
+#include "release/au_noio.hh"
 #include "gtest/gtest.h"
 
 // clang-format off

@@ -412,7 +412,7 @@ First, create the version of the doc website corresponding to this release.
 ```sh
 # Remember to update the version number!
 git switch --detach 0.3.1
-bazel run //:mike -- deploy --push 0.3.1
+bazel run //tools/docs:mike -- deploy --push 0.3.1
 ```
 
 Next, we need to make sure the manifest for `au.hh` and `au_noio.hh` on the `main` doc website
@@ -421,7 +421,7 @@ includes this latest version tag.  Check out the `main` branch, and run a manual
 
 ```sh
 git switch main
-bazel run //:mike -- deploy --push main
+bazel run //tools/docs:mike -- deploy --push main
 ```
 
 Afterwards, confirm the version identifier on each site is what you expect:

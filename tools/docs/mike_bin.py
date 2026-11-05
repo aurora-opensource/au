@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import pathlib
 import subprocess
 import sys
 
@@ -51,8 +52,9 @@ def override_build(config_file, version, *, quiet=False, output=None):
 
 if __name__ == "__main__":
     # `update_docs` is our name for `mkdocs`.  It will be found in the same folder as this script.
-    # We need to add this folder to the PATH.
-    os.environ["PATH"] = f"{os.path.join(os.getcwd())}:{os.environ['PATH']}"
+    # We need to add this folder to the PATH.  (That is not the working directory: `bazel run` starts
+    # us at the root of our runfiles, which is where `mkdocs` expects to find `mkdocs.yml`.)
+    os.environ["PATH"] = f"{pathlib.Path(__file__).absolute().parent}:{os.environ['PATH']}"
 
     with mock.patch("mike.mkdocs_utils.build", override_build):
         sys.exit(mike.driver.main())

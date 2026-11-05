@@ -14,7 +14,7 @@
 
 #include <chrono>
 
-#include "docs/au.hh"
+#include "release/au.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

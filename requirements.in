@@ -14,7 +14,7 @@
 
 # To grab the latest version of every package, run:
 #
-#    bazel run //:requirements.update -- --upgrade
+#    bazel run //tools/docs:requirements.update -- --upgrade
 #
 
 matplotlib

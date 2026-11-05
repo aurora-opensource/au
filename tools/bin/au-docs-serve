@@ -16,4 +16,4 @@
 # In case users haven't set up `direnv`.
 export PATH="$PATH:./tools/bin"
 
-bazel run //:update_docs -- serve --livereload
+bazel run //tools/docs:update_docs -- serve --livereload
