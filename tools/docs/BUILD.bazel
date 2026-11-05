@@ -17,7 +17,7 @@ Tooling for the doc website.
 """
 
 load("@au_pip_deps//:requirements.bzl", "requirement")
-load("@rules_python//python:defs.bzl", "py_binary", "py_test")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 
 # This rule adds a convenient way to update the requirements file.
@@ -46,16 +46,26 @@ filegroup(
     ],
 )
 
+# The `mkdocs` hook that copies the single-file packages into the site.  `mkdocs` loads it by path
+# (see `mkdocs.yml`), but the test imports it as a module.  `imports = ["."]` puts this directory on
+# `sys.path`; we can't rely on Python adding the script's directory, because `rules_python` sets
+# `PYTHONSAFEPATH`, which Python 3.11+ honors.
+py_library(
+    name = "publish_single_file_packages",
+    srcs = ["publish_single_file_packages.py"],
+    data = [":site_inputs"],
+    imports = ["."],
+    deps = [requirement("mkdocs")],
+)
+
 # Both binaries run from the root of their runfiles, which is where `mkdocs` looks for
 # `mkdocs.yml`; that is why the doc sources stay in the root package.
 py_binary(
     name = "update_docs",
-    srcs = [
-        "publish_single_file_packages.py",
-        "update_docs.py",
-    ],
+    srcs = ["update_docs.py"],
     data = [":site_inputs"],
     deps = [
+        ":publish_single_file_packages",
         requirement("mkdocs"),
         requirement("mkdocs-material"),
     ],
@@ -79,13 +89,10 @@ py_binary(
 py_test(
     name = "publish_single_file_packages_test",
     size = "small",
-    srcs = [
-        "publish_single_file_packages.py",
-        "publish_single_file_packages_test.py",
-    ],
+    srcs = ["publish_single_file_packages_test.py"],
     data = [":site_inputs"],
-    main = "publish_single_file_packages_test.py",
     deps = [
+        ":publish_single_file_packages",
         requirement("mkdocs"),
         requirement("mkdocs-material"),
     ],
