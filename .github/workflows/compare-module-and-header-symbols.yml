@@ -28,6 +28,6 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f #v5.1.1
         with:
-          python-version: '3.10'
+          python-version: '3.13'
       - name: Check that the module's exports match the headers' public symbols
         run: ./tools/bin/check-module-exports

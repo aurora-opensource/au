@@ -164,13 +164,13 @@ python = use_extension(
     "python",
     dev_dependency = True,
 )
-python.defaults(python_version = "3.10")
-python.toolchain(python_version = "3.10")
+python.defaults(python_version = "3.13")
+python.toolchain(python_version = "3.13")
 
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip", dev_dependency = True)
 pip.parse(
     hub_name = "au_pip_deps",
-    python_version = "3.10",
+    python_version = "3.13",
     requirements_lock = "//:requirements_lock.txt",
 )
 use_repo(pip, "au_pip_deps")
