@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-39-g8eefa4d1
+// Version identifier: 0.6.0-base-40-g397d84ee
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -5052,7 +5052,7 @@ struct SingularNameFor {
         return SingularNameFor<UnitProduct<Unit, OtherUnit>>{};
     }
 
-    // Scale by a Magnitude on the right or the left, or divide by a Magnitude.
+    // Scale by a Magnitude on the right, or divide by a Magnitude.
     template <typename... BPs>
     constexpr auto operator*(Magnitude<BPs...> m) const {
         return SingularNameFor<decltype(Unit{} * m)>{};
@@ -5061,17 +5061,19 @@ struct SingularNameFor {
     constexpr auto operator/(Magnitude<BPs...> m) const {
         return SingularNameFor<decltype(Unit{} / m)>{};
     }
-    template <typename... BPs>
-    friend constexpr auto operator*(Magnitude<BPs...> m, SingularNameFor) {
-        return SingularNameFor<decltype(m * Unit{})>{};
-    }
-
-    // Divide a Magnitude by this `SingularNameFor`.
-    template <typename... BPs>
-    friend constexpr auto operator/(Magnitude<BPs...> m, SingularNameFor) {
-        return SingularNameFor<decltype(m / Unit{})>{};
-    }
 };
+
+// Scale a `SingularNameFor` by a Magnitude on the left.
+template <typename... BPs, typename Unit>
+constexpr auto operator*(Magnitude<BPs...> m, SingularNameFor<Unit>) {
+    return SingularNameFor<decltype(m * Unit{})>{};
+}
+
+// Divide a Magnitude by a `SingularNameFor`.
+template <typename... BPs, typename Unit>
+constexpr auto operator/(Magnitude<BPs...> m, SingularNameFor<Unit>) {
+    return SingularNameFor<decltype(m / Unit{})>{};
+}
 
 // Support `SingularNameFor` in (quantity) unit slots.
 template <typename U>
@@ -8260,6 +8262,19 @@ namespace detail {
 // so we can know which order to pass those underlying values (it gets reversed for negative units).
 template <typename SignMag, typename Op>
 struct SignAwareComparison;
+
+// Forbid integer division of quantities, unless their units are quantity-equivalent.
+template <typename U, typename R, typename OtherUnit, typename OtherRep>
+AU_DEVICE_FUNC constexpr void warn_if_integer_division() {
+    constexpr bool uses_integer_division =
+        (std::is_integral<R>::value && std::is_integral<OtherRep>::value);
+    constexpr bool are_units_quantity_equivalent = AreUnitsQuantityEquivalent<U, OtherUnit>::value;
+    static_assert(are_units_quantity_equivalent || !uses_integer_division,
+                  "Integer division forbidden.  See "
+                  "<https://aurora-opensource.github.io/au/main/troubleshooting/"
+                  "#integer-division-forbidden> for more details about the risks, "
+                  "and your options to resolve this error.");
+}
 }  // namespace detail
 
 template <typename UnitT, typename RepT>
@@ -8493,49 +8508,6 @@ class Quantity {
         return make_quantity<UnitT>(a.value_ - b.value_);
     }
 
-    // Scalar multiplication.
-    template <typename T, typename = std::enable_if_t<IsProductValidRep<RepT, T>::value>>
-    friend AU_DEVICE_FUNC constexpr auto operator*(const Quantity &a, T s) {
-        return make_quantity<UnitT>(a.value_ * s);
-    }
-    template <typename T, typename = std::enable_if_t<IsProductValidRep<T, RepT>::value>>
-    friend AU_DEVICE_FUNC constexpr auto operator*(T s, const Quantity &a) {
-        return make_quantity<UnitT>(s * a.value_);
-    }
-
-    // Scalar division.
-    template <typename T, typename = std::enable_if_t<IsQuotientValidRep<RepT, T>::value>>
-    friend AU_DEVICE_FUNC constexpr auto operator/(const Quantity &a, T s) {
-        return make_quantity<UnitT>(a.value_ / s);
-    }
-    template <typename T, typename = std::enable_if_t<IsQuotientValidRep<T, RepT>::value>>
-    friend AU_DEVICE_FUNC constexpr auto operator/(T s, const Quantity &a) {
-        warn_if_integer_division<UnitProduct<>, T>();
-        return make_quantity<decltype(pow<-1>(unit))>(s / a.value_);
-    }
-
-    // Scaling by a Magnitude scales the unit.
-    //
-    // For (m / q) we also take the reciprocal of q's stored value.
-    template <typename... BPs>
-    friend AU_DEVICE_FUNC constexpr auto operator*(const Quantity &a, Magnitude<BPs...> m) {
-        return make_quantity<decltype(unit * m)>(a.value_);
-    }
-    template <typename... BPs>
-    friend AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BPs...> m, const Quantity &a) {
-        return make_quantity<decltype(m * unit)>(a.value_);
-    }
-    template <typename... BPs>
-    friend AU_DEVICE_FUNC constexpr auto operator/(const Quantity &a, Magnitude<BPs...> m) {
-        return make_quantity<decltype(unit / m)>(a.value_);
-    }
-    template <typename... BPs>
-    friend AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BPs...> m, const Quantity &a) {
-        static_assert(!std::is_integral<RepT>::value,
-                      "Dividing by an integer value disallowed: would almost always produce 0");
-        return make_quantity<decltype(m / unit)>(RepT{1} / a.value_);
-    }
-
     // Multiplication for dimensioned quantities.
     //
     // We take `q` by reference and read its value via `data_in` (a reference), rather than by value
@@ -8552,7 +8524,7 @@ class Quantity {
     // See `operator*` above for why `q` is taken by reference and read via `data_in`.
     template <typename OtherUnit, typename OtherRep>
     AU_DEVICE_FUNC constexpr auto operator/(const Quantity<OtherUnit, OtherRep> &q) const {
-        warn_if_integer_division<OtherUnit, OtherRep>();
+        detail::warn_if_integer_division<UnitT, RepT, OtherUnit, OtherRep>();
         return make_quantity<UnitQuotient<Unit, OtherUnit>>(value_ / q.data_in(OtherUnit{}));
     }
 
@@ -8773,19 +8745,6 @@ class Quantity {
     friend class Quantity;
 
  private:
-    template <typename OtherUnit, typename OtherRep>
-    static AU_DEVICE_FUNC constexpr void warn_if_integer_division() {
-        constexpr bool uses_integer_division =
-            (std::is_integral<Rep>::value && std::is_integral<OtherRep>::value);
-        constexpr bool are_units_quantity_equivalent =
-            AreUnitsQuantityEquivalent<UnitT, OtherUnit>::value;
-        static_assert(are_units_quantity_equivalent || !uses_integer_division,
-                      "Integer division forbidden.  See "
-                      "<https://aurora-opensource.github.io/au/main/troubleshooting/"
-                      "#integer-division-forbidden> for more details about the risks, "
-                      "and your options to resolve this error.");
-    }
-
     template <typename CastStrategy,
               typename OtherRep,
               typename OtherUnitSlot,
@@ -8838,6 +8797,67 @@ class Quantity {
 
     Rep value_{};
 };
+
+// Scalar multiplication.
+//
+// These are function templates, rather than hidden friends of `Quantity`, because each hidden
+// friend makes every new `Quantity` specialization more expensive to instantiate (see
+// "au/wrapper_operations.hh").
+template <typename U,
+          typename R,
+          typename T,
+          typename = std::enable_if_t<IsProductValidRep<R, T>::value>>
+AU_DEVICE_FUNC constexpr auto operator*(const Quantity<U, R> &a, T s) {
+    return make_quantity<U>(a.data_in(U{}) * s);
+}
+template <typename T,
+          typename U,
+          typename R,
+          typename = std::enable_if_t<IsProductValidRep<T, R>::value>>
+AU_DEVICE_FUNC constexpr auto operator*(T s, const Quantity<U, R> &a) {
+    return make_quantity<U>(s * a.data_in(U{}));
+}
+
+// Scalar division.
+template <typename U,
+          typename R,
+          typename T,
+          typename = std::enable_if_t<IsQuotientValidRep<R, T>::value>>
+AU_DEVICE_FUNC constexpr auto operator/(const Quantity<U, R> &a, T s) {
+    return make_quantity<U>(a.data_in(U{}) / s);
+}
+template <typename T,
+          typename U,
+          typename R,
+          typename = std::enable_if_t<IsQuotientValidRep<T, R>::value>>
+AU_DEVICE_FUNC constexpr auto operator/(T s, const Quantity<U, R> &a) {
+    detail::warn_if_integer_division<U, R, UnitProduct<>, T>();
+    return make_quantity<decltype(pow<-1>(U{}))>(s / a.data_in(U{}));
+}
+
+// Scaling by a Magnitude scales the unit.
+//
+// For (m / q) we also take the reciprocal of q's stored value.
+//
+// These are also function templates rather than hidden friends for the same reason as above.
+template <typename U, typename R, typename... BPs>
+AU_DEVICE_FUNC constexpr auto operator*(const Quantity<U, R> &a, Magnitude<BPs...> m) {
+    return make_quantity<decltype(U{} * m)>(a.data_in(U{}));
+}
+template <typename... BPs, typename U, typename R>
+AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BPs...> m, const Quantity<U, R> &a) {
+    return make_quantity<decltype(m * U{})>(a.data_in(U{}));
+}
+template <typename U, typename R, typename... BPs>
+AU_DEVICE_FUNC constexpr auto operator/(const Quantity<U, R> &a, Magnitude<BPs...> m) {
+    return make_quantity<decltype(U{} / m)>(a.data_in(U{}));
+}
+template <typename... BPs, typename U, typename R>
+AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BPs...> m, const Quantity<U, R> &a) {
+    static_assert(!std::is_integral<R>::value,
+                  "Dividing by an integer value disallowed: would almost always produce 0");
+    return make_quantity<decltype(m / U{})>(R{1} / a.data_in(U{}));
+}
 
 // Give more readable error messages when passing `Quantity` to a unit slot.
 template <typename U, typename R>
@@ -9044,24 +9064,9 @@ struct QuantityMaker {
         return QuantityMaker<decltype(unit / m)>{};
     }
 
-    template <typename... BPs>
-    friend AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BPs...> m, QuantityMaker) {
-        return QuantityMaker<decltype(m * unit)>{};
-    }
-
-    template <typename... BPs>
-    friend AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BPs...> m, QuantityMaker) {
-        return QuantityMaker<decltype(m / unit)>{};
-    }
-
     template <typename DivisorUnit>
     AU_DEVICE_FUNC constexpr auto operator/(SingularNameFor<DivisorUnit>) const {
         return QuantityMaker<UnitQuotient<Unit, DivisorUnit>>{};
-    }
-
-    template <typename MultiplierUnit>
-    friend AU_DEVICE_FUNC constexpr auto operator*(SingularNameFor<MultiplierUnit>, QuantityMaker) {
-        return QuantityMaker<UnitProduct<MultiplierUnit, Unit>>{};
     }
 
     template <typename OtherUnit>
@@ -9074,6 +9079,21 @@ struct QuantityMaker {
         return QuantityMaker<UnitQuotient<Unit, OtherUnit>>{};
     }
 };
+
+template <typename... BPs, typename U>
+AU_DEVICE_FUNC constexpr auto operator*(Magnitude<BPs...> m, QuantityMaker<U>) {
+    return QuantityMaker<decltype(m * U{})>{};
+}
+
+template <typename... BPs, typename U>
+AU_DEVICE_FUNC constexpr auto operator/(Magnitude<BPs...> m, QuantityMaker<U>) {
+    return QuantityMaker<decltype(m / U{})>{};
+}
+
+template <typename MultiplierUnit, typename U>
+AU_DEVICE_FUNC constexpr auto operator*(SingularNameFor<MultiplierUnit>, QuantityMaker<U>) {
+    return QuantityMaker<UnitProduct<MultiplierUnit, U>>{};
+}
 
 template <typename U>
 struct AssociatedUnitImpl<QuantityMaker<U>> : stdx::type_identity<U> {};
@@ -10146,28 +10166,6 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
         return as<typename CorrespondingQuantity<T>::Rep>(
             typename CorrespondingQuantity<T>::Unit{});
     }
-
-    // Comparison with Zero.
-    //
-    // A Constant represents a value of 1 in its unit, which is never zero.
-    AU_DEVICE_FUNC friend constexpr bool operator==(Constant, Zero) { return false; }
-    AU_DEVICE_FUNC friend constexpr bool operator!=(Constant, Zero) { return true; }
-    AU_DEVICE_FUNC friend constexpr bool operator<(Constant, Zero) { return !is_positive(); }
-    AU_DEVICE_FUNC friend constexpr bool operator<=(Constant, Zero) { return !is_positive(); }
-    AU_DEVICE_FUNC friend constexpr bool operator>(Constant, Zero) { return is_positive(); }
-    AU_DEVICE_FUNC friend constexpr bool operator>=(Constant, Zero) { return is_positive(); }
-
-    AU_DEVICE_FUNC friend constexpr bool operator==(Zero, Constant) { return false; }
-    AU_DEVICE_FUNC friend constexpr bool operator!=(Zero, Constant) { return true; }
-    AU_DEVICE_FUNC friend constexpr bool operator<(Zero, Constant) { return is_positive(); }
-    AU_DEVICE_FUNC friend constexpr bool operator<=(Zero, Constant) { return is_positive(); }
-    AU_DEVICE_FUNC friend constexpr bool operator>(Zero, Constant) { return !is_positive(); }
-    AU_DEVICE_FUNC friend constexpr bool operator>=(Zero, Constant) { return !is_positive(); }
-
- private:
-    AU_DEVICE_FUNC static constexpr bool is_positive() {
-        return IsPositive<detail::MagT<Unit>>::value;
-    }
 };
 
 // Make a constant from the given unit.
@@ -10299,6 +10297,69 @@ AU_DEVICE_FUNC constexpr auto operator%(Constant<U1>, Constant<U2>) {
     using CommonUnscaled = CommonUnit<detail::UnscaledUnit<U1>, detail::UnscaledUnit<U2>>;
     return make_constant(CommonUnscaled{}) * (UnitRatio<U1, U>{} % UnitRatio<U2, U>{}) *
            UnitRatio<U, CommonUnscaled>{};
+}
+
+namespace detail {
+template <typename U>
+AU_DEVICE_FUNC constexpr bool is_unit_positive() {
+    return IsPositive<MagT<U>>::value;
+}
+}  // namespace detail
+
+// Comparison of `Constant` with `Zero`.
+//
+// A Constant represents a value of 1 in its unit, which is never zero.
+//
+// (These are free function templates, rather than hidden friends, for compile time reasons: every
+// hidden friend adds work to instantiating each new `Constant` type.)
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator==(Constant<U>, Zero) {
+    return false;
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator!=(Constant<U>, Zero) {
+    return true;
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator<(Constant<U>, Zero) {
+    return !detail::is_unit_positive<U>();
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator<=(Constant<U>, Zero) {
+    return !detail::is_unit_positive<U>();
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator>(Constant<U>, Zero) {
+    return detail::is_unit_positive<U>();
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator>=(Constant<U>, Zero) {
+    return detail::is_unit_positive<U>();
+}
+
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator==(Zero, Constant<U>) {
+    return false;
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator!=(Zero, Constant<U>) {
+    return true;
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator<(Zero, Constant<U>) {
+    return detail::is_unit_positive<U>();
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator<=(Zero, Constant<U>) {
+    return detail::is_unit_positive<U>();
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator>(Zero, Constant<U>) {
+    return !detail::is_unit_positive<U>();
+}
+template <typename U>
+AU_DEVICE_FUNC constexpr bool operator>=(Zero, Constant<U>) {
+    return !detail::is_unit_positive<U>();
 }
 
 // Arithmetic operators mixing `Constant` with `Zero`.
