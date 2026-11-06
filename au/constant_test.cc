@@ -14,6 +14,7 @@
 
 #include "au/constant.hh"
 
+#include <complex>
 #include <sstream>
 
 #include "au/chrono_interop.hh"
@@ -387,6 +388,14 @@ TEST(Constant, OverflowCheckUsesExplicitRep) {
     {
         // X.as<uint8_t>(bits);
     }
+}
+
+TEST(Constant, SupportsComplexRepsWhenValueIsRepresentableInRealPart) {
+    EXPECT_THAT(make_constant(feet).in<std::complex<double>>(inches),
+                SameTypeAndValue(std::complex<double>{12.0, 0.0}));
+    EXPECT_THAT(make_constant(degrees).as<std::complex<float>>(radians),
+                SameTypeAndValue(
+                    radians(std::complex<float>{make_constant(degrees).in<float>(radians), 0.0f})));
 }
 
 TEST(Constant, ImplicitlyConvertsToNonAuTypesWithAppropriateCorrespondingQuantity) {
