@@ -758,6 +758,28 @@ TEST(Sin, GivesCorrectAnswersForInputsInDegrees) {
     EXPECT_THAT(sin(degrees(90)), DoubleNear(1.0, TOL));
 }
 
+TEST(TrigonometricFunctions, SupportsConstants) {
+    constexpr auto THIRTY_DEGREES = make_constant(degrees * mag<30>());
+    constexpr auto ONE_RADIAN = make_constant(radians);
+    constexpr auto HALF = make_constant(mag<1>() / mag<2>());
+    constexpr auto ONE = make_constant(mag<1>());
+
+    EXPECT_THAT(sin(THIRTY_DEGREES), DoubleNear(0.5, 1e-15));
+    EXPECT_THAT(cos(ONE_RADIAN), Eq(std::cos(1.0)));
+    EXPECT_THAT(tan(THIRTY_DEGREES), DoubleNear(std::tan(std::acos(-1.0) / 6.0), 1e-15));
+    EXPECT_THAT(arcsin(HALF), SameTypeAndValue(radians(std::asin(0.5))));
+    EXPECT_THAT(arccos(HALF), SameTypeAndValue(radians(std::acos(0.5))));
+    EXPECT_THAT(arctan(ONE), SameTypeAndValue(radians(std::atan(1.0))));
+    EXPECT_THAT(arctan2(ONE, HALF), SameTypeAndValue(radians(std::atan2(1.0, 0.5))));
+    EXPECT_THAT(arctan2(ONE, 2.0), SameTypeAndValue(radians(std::atan2(1.0, 2.0))));
+    EXPECT_THAT(arctan2(2.0, ONE), SameTypeAndValue(radians(std::atan2(2.0, 1.0))));
+
+    EXPECT_THAT(arctan2(make_constant(meters), centi(meters)(10.0)),
+                SameTypeAndValue(radians(std::atan2(100.0, 10.0))));
+    EXPECT_THAT(arctan2(centi(meters)(10.0), make_constant(meters)),
+                SameTypeAndValue(radians(std::atan2(10.0, 100.0))));
+}
+
 TEST(Mean, QuantityMeanGivesCommonUnit) {
     EXPECT_THAT(mean(feet(1), inches(12), yards(2)), SameTypeAndValue(inches(32)));
 }
