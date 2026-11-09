@@ -30,7 +30,7 @@
 #include "au/units/unos.hh"
 #include "au/units/volts.hh"
 #include "au/units/watts.hh"
-#include "compatibility/nholthaus_units_example_usage.hh"
+#include "au/compatibility/nholthaus_units_example_usage.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

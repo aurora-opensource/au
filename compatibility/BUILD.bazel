@@ -12,28 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+load("@rules_cc//cc:defs.bzl", "cc_library")
 
+# DEPRECATED: use `//au/compatibility:nholthaus_units` instead.
+#
+# This target exists only for backwards compatibility, and will be removed in a future release.
 cc_library(
     name = "nholthaus_units",
     hdrs = ["nholthaus_units.hh"],
+    deprecation = "Use //au/compatibility:nholthaus_units instead",
     visibility = ["//visibility:public"],
-)
-
-cc_test(
-    name = "nholthaus_units_test",
-    size = "small",
-    srcs = [
-        "nholthaus_units_example_usage.hh",
-        "nholthaus_units_test.cc",
-    ],
-    # The external nholthaus_units library has -Wconversion issues we can't fix.
-    tags = ["no_wconversion"],
-    deps = [
-        ":nholthaus_units",
-        "//au",
-        "//au:testing",
-        "@googletest//:gtest_main",
-        "@nholthaus_units",
-    ],
+    deps = ["//au/compatibility:nholthaus_units"],
 )

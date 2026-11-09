@@ -39,6 +39,6 @@
 // Finally, include the compatibility layer.
 //
 // This file MUST be included AFTER all others.
-#include "compatibility/nholthaus_units.hh"
+#include "au/compatibility/nholthaus_units.hh"
 
 // clang-format on

@@ -196,7 +196,7 @@ here's an example using the nholthaus library:
     To save space, we'll simply _describe_ any utilities more low-level than `AuUnit`, omitting
     their implementations.  Of course, full implementations can be found in our [ready-made
     nholthaus conversion
-    file](https://github.com/aurora-opensource/au/blob/main/compatibility/nholthaus_units.hh).
+    file](https://github.com/aurora-opensource/au/blob/main/au/compatibility/nholthaus_units.hh).
 
     For the _base unit_, we know that nholthaus represents it as a set of [rational
     exponents](../../discussion/implementation/vector_space.md) of _units of base dimensions_.
