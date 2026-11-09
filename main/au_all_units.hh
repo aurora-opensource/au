@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-42-g12e913fc
+// Version identifier: 0.6.0-base-43-geb6df9fd
 // <iostream> support: INCLUDED
 // <format> support: EXCLUDED
 // List of included units:
@@ -10465,6 +10465,26 @@ struct AssociatedUnitImpl<SymbolFor<U>> : stdx::type_identity<U> {};
 
 namespace au {
 
+namespace detail {
+template <MagRepresentationOutcome Outcome>
+using MagRepresentationOutcomeTag = std::integral_constant<MagRepresentationOutcome, Outcome>;
+
+// The outcome of representing the magnitude `M` exactly in `RealPart<T>`, as a tag type for
+// dispatch.
+//
+// We only compute this when `RealPart<T>` is arithmetic.  Other types get a tag that is not any
+// outcome.
+struct ExactValueOutcomeNotComputed {};
+template <typename T, typename M, bool IsArithmetic = std::is_arithmetic<RealPart<T>>::value>
+struct ExactValueOutcomeImpl : stdx::type_identity<ExactValueOutcomeNotComputed> {};
+template <typename T, typename M>
+struct ExactValueOutcomeImpl<T, M, true>
+    : stdx::type_identity<MagRepresentationOutcomeTag<get_value_result<RealPart<T>>(M{}).outcome>> {
+};
+template <typename T, typename M>
+using ExactValueOutcome = typename ExactValueOutcomeImpl<T, M>::type;
+}  // namespace detail
+
 //
 // A monovalue type to represent a constant value, including its units, if any.
 //
@@ -10511,20 +10531,8 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 
     // Convert this constant to a Quantity of the given unit and rep, following this risk policy.
     template <typename T, typename OtherUnit, typename RiskPolicyT>
-    AU_DEVICE_FUNC constexpr auto as(OtherUnit, RiskPolicyT) const {
-        constexpr auto this_value = make_quantity<Unit>(static_cast<T>(1));
-
-        constexpr bool has_unacceptable_overflow =
-            RiskPolicyT{}.should_check(detail::ConversionRisk::kOverflow) &&
-            will_conversion_overflow<T>(this_value, OtherUnit{});
-        static_assert(!has_unacceptable_overflow, "Constant conversion known to overflow");
-
-        constexpr bool has_unacceptable_truncation =
-            RiskPolicyT{}.should_check(detail::ConversionRisk::kTruncation) &&
-            will_conversion_truncate<T>(this_value, OtherUnit{});
-        static_assert(!has_unacceptable_truncation, "Constant conversion known to truncate");
-
-        return this_value.template as<T>(OtherUnit{}, ignore(ALL_RISKS));
+    AU_DEVICE_FUNC constexpr auto as(OtherUnit u, RiskPolicyT policy) const {
+        return make_quantity<AssociatedUnit<OtherUnit>>(in<T>(u, policy));
     }
 
     // Get the value of this constant in the given unit and rep, ignoring safety checks.
@@ -10546,8 +10554,12 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
 
     // Get the value of this constant in the given unit and rep, following this risk policy.
     template <typename T, typename OtherUnit, typename RiskPolicyT>
-    AU_DEVICE_FUNC constexpr auto in(OtherUnit u, RiskPolicyT policy) const {
-        return as<T>(u, policy).in(u);
+    AU_DEVICE_FUNC constexpr auto in(OtherUnit, RiskPolicyT policy) const {
+        using TargetUnit = AssociatedUnit<OtherUnit>;
+        static_assert(IsUnit<TargetUnit>::value, "Invalid type passed to unit slot");
+
+        using Ratio = UnitRatio<Unit, TargetUnit>;
+        return in_impl<T, Ratio>(policy, detail::ExactValueOutcome<T, Ratio>{});
     }
 
     // Implicitly convert to any quantity type which passes safety checks.
@@ -10571,6 +10583,39 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     AU_DEVICE_FUNC constexpr operator T() const {
         return as<typename CorrespondingQuantity<T>::Rep>(
             typename CorrespondingQuantity<T>::Unit{});
+    }
+
+ private:
+    // General case: apply the conversion operation to the value `1`, following the risk policy.
+    //
+    // This is always correct, for any rep and any policy, but it can be expensive to compile.
+    template <typename T, typename Ratio, typename RiskPolicyT, typename OutcomeTag>
+    AU_DEVICE_FUNC static constexpr auto in_impl(RiskPolicyT, OutcomeTag) {
+        using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast, T, T, Ratio>;
+        constexpr auto one = static_cast<T>(1);
+
+        constexpr bool has_unacceptable_overflow =
+            RiskPolicyT{}.should_check(detail::ConversionRisk::kOverflow) &&
+            detail::would_value_overflow<Op>(one);
+        static_assert(!has_unacceptable_overflow, "Constant conversion known to overflow");
+
+        constexpr bool has_unacceptable_truncation =
+            RiskPolicyT{}.should_check(detail::ConversionRisk::kTruncation) &&
+            detail::TruncationRiskFor<Op>::would_value_truncate(one);
+        static_assert(!has_unacceptable_truncation, "Constant conversion known to truncate");
+
+        return Op::apply_to(one);
+    }
+
+    // Fast path: the exact value is representable in `RealPart<T>` (and therefore in `T`), so no
+    // policy can object to it.
+    //
+    // This is much cheaper to compile than the general case, which matters when a translation unit
+    // uses many distinct constants (e.g., unit literals).
+    template <typename T, typename Ratio, typename RiskPolicyT>
+    AU_DEVICE_FUNC static constexpr T in_impl(
+        RiskPolicyT, detail::MagRepresentationOutcomeTag<detail::MagRepresentationOutcome::kOk>) {
+        return static_cast<T>(detail::get_value_result<detail::RealPart<T>>(Ratio{}).value);
     }
 };
 
