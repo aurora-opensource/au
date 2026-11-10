@@ -19,12 +19,12 @@ install.
 - **Full Install:**  In this case, the file is already available.  Assuming `au/` is the root of
   your Au includes, the include path will be `"au/compatibility/nholthaus_units.hh"`.
 
-- **Single-file Install:**  Copy the file `compatibility/nholthaus_units.hh` from the Au repository
+- **Single-file Install:**  Copy the file `au/compatibility/nholthaus_units.hh` from the Au repository
   into a suitable location in your project.  Make a note of the include path.
 
 ## Step 2: Create a shim
 
-The file we provide, `compatibility/nholthaus_units.hh`, is written in a particular and unusual way:
+The file we provide, `au/compatibility/nholthaus_units.hh`, is written in a particular and unusual way:
 it doesn't have any explicit dependencies on either Au or nholthaus units.  This is because we can't
 know how you've included either library in your project.
 
@@ -36,7 +36,7 @@ things, in this order.
 
 1. Include the nholthaus-relevant parts of Au (in whatever manner is appropriate for your project).
 2. Include the nholthaus units library (in whatever manner is appropriate for your project).
-3. Include your copy of `compatibility/nholthaus_units.hh`, **after** every other file.
+3. Include your copy of `au/compatibility/nholthaus_units.hh`, **after** every other file.
     - (The include path comes from Step 1 above.)
 
 We have provided a [self-explaining example

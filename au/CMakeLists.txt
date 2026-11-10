@@ -290,6 +290,14 @@ if (AU_BUILD_MODULE)
   )
 endif()
 
+# This header intentionally does not include its dependencies (Au and nholthaus units), because it
+# can't know how end users include them.  Thus, it can't pass standalone header verification.
+header_only_library(
+  NAME nholthaus_units
+  SKIP_HEADER_VERIFICATION
+  HEADERS compatibility/nholthaus_units.hh
+)
+
 if (NOT AU_EXCLUDE_GTEST_DEPENDENCY)
   header_only_library(
     NAME testing
