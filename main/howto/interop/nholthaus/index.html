@@ -2872,12 +2872,12 @@ install.</p>
   your Au includes, the include path will be <code>"au/compatibility/nholthaus_units.hh"</code>.</p>
 </li>
 <li>
-<p><strong>Single-file Install:</strong>  Copy the file <code>compatibility/nholthaus_units.hh</code> from the Au repository
+<p><strong>Single-file Install:</strong>  Copy the file <code>au/compatibility/nholthaus_units.hh</code> from the Au repository
   into a suitable location in your project.  Make a note of the include path.</p>
 </li>
 </ul>
 <h2 id="step-2-create-a-shim">Step 2: Create a shim<a class="headerlink" href="#step-2-create-a-shim" title="Permanent link">&para;</a></h2>
-<p>The file we provide, <code>compatibility/nholthaus_units.hh</code>, is written in a particular and unusual way:
+<p>The file we provide, <code>au/compatibility/nholthaus_units.hh</code>, is written in a particular and unusual way:
 it doesn&rsquo;t have any explicit dependencies on either Au or nholthaus units.  This is because we can&rsquo;t
 know how you&rsquo;ve included either library in your project.</p>
 <p>One consequence of this is that <em>include order matters</em>: this file must be included <strong>after</strong> both
@@ -2888,7 +2888,7 @@ things, in this order.</p>
 <ol>
 <li>Include the nholthaus-relevant parts of Au (in whatever manner is appropriate for your project).</li>
 <li>Include the nholthaus units library (in whatever manner is appropriate for your project).</li>
-<li>Include your copy of <code>compatibility/nholthaus_units.hh</code>, <strong>after</strong> every other file.<ul>
+<li>Include your copy of <code>au/compatibility/nholthaus_units.hh</code>, <strong>after</strong> every other file.<ul>
 <li>(The include path comes from Step 1 above.)</li>
 </ul>
 </li>
