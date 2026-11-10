@@ -17,6 +17,11 @@ import os
 import subprocess
 import sys
 
+# The build directory this check configures for itself.  It cannot share `cmake/build`, which the
+# other CMake jobs also configure: the client job turns googletest off, and that drops
+# `au/testing.hh` from the header set, so reusing its directory reports a mismatch that isn't there.
+CMAKE_BUILD_DIR = "cmake/build-check-headers"
+
 
 def main(argv=None):
     cmake_headers = _get_cmake_headers()
@@ -36,7 +41,7 @@ def _get_cmake_headers():
             "-S",
             ".",
             "-B",
-            "cmake/build",
+            CMAKE_BUILD_DIR,
             "-DCMAKE_VERIFY_INTERFACE_HEADER_SETS=TRUE",
         ],
         check=True,
@@ -44,7 +49,7 @@ def _get_cmake_headers():
 
     # Run the actual CMake custom target that lists the relevant headers.
     raw_output = subprocess.run(
-        ["cmake", "--build", "cmake/build", "--target", "print_au_files"],
+        ["cmake", "--build", CMAKE_BUILD_DIR, "--target", "print_au_files"],
         stdout=subprocess.PIPE,
         check=True,
     )
