@@ -61,6 +61,11 @@ AU_DEVICE_FUNC auto in_radians(Quantity<U, R> q) {
     return q.template in<PromotedT>(radians);
 }
 
+template <typename U>
+AU_DEVICE_FUNC auto in_radians(Constant<U> c) {
+    return in_radians(c.template as<double>());
+}
+
 template <typename T>
 AU_DEVICE_FUNC constexpr T int_pow_impl(T x, int exp) {
     if (exp < 0) {
@@ -129,10 +134,20 @@ AU_DEVICE_FUNC auto arccos(T x) {
     return radians(std::acos(x));
 }
 
+template <typename U>
+AU_DEVICE_FUNC auto arccos(Constant<U> c) {
+    return arccos(c.template in<double>(UnitProduct<>{}));
+}
+
 // Wrapper for std::asin() which returns strongly typed angle quantity.
 template <typename T>
 AU_DEVICE_FUNC auto arcsin(T x) {
     return radians(std::asin(x));
+}
+
+template <typename U>
+AU_DEVICE_FUNC auto arcsin(Constant<U> c) {
+    return arcsin(c.template in<double>(UnitProduct<>{}));
 }
 
 // Wrapper for std::atan() which returns strongly typed angle quantity.
@@ -141,10 +156,40 @@ AU_DEVICE_FUNC auto arctan(T x) {
     return radians(std::atan(x));
 }
 
+template <typename U>
+AU_DEVICE_FUNC auto arctan(Constant<U> c) {
+    return arctan(c.template in<double>(UnitProduct<>{}));
+}
+
 // Wrapper for std::atan2() which returns strongly typed angle quantity.
 template <typename T, typename U>
 AU_DEVICE_FUNC auto arctan2(T y, U x) {
     return radians(std::atan2(y, x));
+}
+
+template <typename U1, typename U2>
+AU_DEVICE_FUNC auto arctan2(Constant<U1> y, Constant<U2> x) {
+    return arctan2(y.template as<double>(), x.template as<double>());
+}
+
+template <typename U1, typename U2, typename R2>
+AU_DEVICE_FUNC auto arctan2(Constant<U1> y, Quantity<U2, R2> x) {
+    return arctan2(y.template as<R2>(), x);
+}
+
+template <typename U1, typename R1, typename U2>
+AU_DEVICE_FUNC auto arctan2(Quantity<U1, R1> y, Constant<U2> x) {
+    return arctan2(y, x.template as<R1>());
+}
+
+template <typename U, typename T, std::enable_if_t<IsValidRep<T>::value, int> = 0>
+AU_DEVICE_FUNC auto arctan2(Constant<U> y, T x) {
+    return arctan2(y.template in<double>(UnitProduct<>{}), x);
+}
+
+template <typename T, typename U, std::enable_if_t<IsValidRep<T>::value, int> = 0>
+AU_DEVICE_FUNC auto arctan2(T y, Constant<U> x) {
+    return arctan2(y, x.template in<double>(UnitProduct<>{}));
 }
 
 // arctan2() overload which supports same-dimensioned Quantity types.
@@ -214,6 +259,11 @@ AU_DEVICE_FUNC constexpr auto copysign(Quantity<U1, R1> mag, Quantity<U2, R2> sg
 template <typename U, typename R>
 AU_DEVICE_FUNC auto cos(Quantity<U, R> q) {
     return std::cos(detail::in_radians(q));
+}
+
+template <typename U>
+AU_DEVICE_FUNC auto cos(Constant<U> c) {
+    return std::cos(detail::in_radians(c));
 }
 
 // The floating point remainder of two values of the same dimension.
@@ -1051,6 +1101,11 @@ AU_DEVICE_FUNC auto sin(Quantity<U, R> q) {
     return std::sin(detail::in_radians(q));
 }
 
+template <typename U>
+AU_DEVICE_FUNC auto sin(Constant<U> c) {
+    return std::sin(detail::in_radians(c));
+}
+
 // Wrapper for std::sqrt() which handles Quantity types.
 template <typename U, typename R>
 AU_DEVICE_FUNC auto sqrt(Quantity<U, R> q) {
@@ -1061,6 +1116,11 @@ AU_DEVICE_FUNC auto sqrt(Quantity<U, R> q) {
 template <typename U, typename R>
 AU_DEVICE_FUNC auto tan(Quantity<U, R> q) {
     return std::tan(detail::in_radians(q));
+}
+
+template <typename U>
+AU_DEVICE_FUNC auto tan(Constant<U> c) {
+    return std::tan(detail::in_radians(c));
 }
 
 }  // namespace au
