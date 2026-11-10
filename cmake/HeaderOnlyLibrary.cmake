@@ -18,7 +18,7 @@ function(header_only_library)
   #
 
   set(prefix ARG)
-  set(noValueVars INTERNAL_ONLY)
+  set(noValueVars INTERNAL_ONLY SKIP_HEADER_VERIFICATION)
   set(singleValueVars NAME)
   set(multiValueVars
     HEADERS
@@ -48,6 +48,11 @@ function(header_only_library)
   )
   if (DEFINED ARG_DEPS)
     target_link_libraries(${ARG_NAME} INTERFACE ${ARG_DEPS})
+  endif()
+
+  # Some headers are intentionally not self-contained, so we must skip verifying them.
+  if (ARG_SKIP_HEADER_VERIFICATION)
+    set_target_properties(${ARG_NAME} PROPERTIES VERIFY_INTERFACE_HEADER_SETS OFF)
   endif()
 
   # Require C++14 support.

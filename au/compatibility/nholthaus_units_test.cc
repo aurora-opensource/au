@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "au/au.hh"
+#include "au/compatibility/nholthaus_units_example_usage.hh"
 #include "au/testing.hh"
 #include "au/units/bars.hh"
 #include "au/units/degrees.hh"
@@ -30,7 +31,6 @@
 #include "au/units/unos.hh"
 #include "au/units/volts.hh"
 #include "au/units/watts.hh"
-#include "compatibility/nholthaus_units_example_usage.hh"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
