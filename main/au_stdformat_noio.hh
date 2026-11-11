@@ -26,7 +26,7 @@
 #include <type_traits>
 #include <utility>
 
-// Version identifier: 0.6.0-base-44-g34356b88
+// Version identifier: 0.6.0-base-45-g024d3cb2
 // <iostream> support: EXCLUDED
 // <format> support: INCLUDED
 // List of included units:
@@ -4650,8 +4650,18 @@ namespace detail {
 // While clunky, this approach is at least robust against errors.  If the user supplies the wrong
 // prefix length, it will fail to compile, because there is no assignment operator between
 // `StringConstant` instances of different lengths.
+//
+// We compute the concatenated length in a separate trait, rather than directly in the alias, to
+// avoid an internal compiler error on older MSVC versions (see #829).
+template <typename... Us>
+struct ConcatenatedLabelLength {
+    static constexpr std::size_t value = concatenate(unit_label<Us>()...).size();
+};
+template <typename... Us>
+constexpr std::size_t ConcatenatedLabelLength<Us...>::value;
+
 template <std::size_t ExtensionStrlen, typename... Us>
-using ExtendedLabel = StringConstant<concatenate(unit_label<Us>()...).size() + ExtensionStrlen>;
+using ExtendedLabel = StringConstant<ConcatenatedLabelLength<Us...>::value + ExtensionStrlen>;
 }  // namespace detail
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
