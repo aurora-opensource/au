@@ -19,7 +19,7 @@
 
 namespace au {
 
-namespace detail {
+namespace auimpl {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
@@ -33,9 +33,9 @@ struct ReducedPlanckConstantUnit : decltype(Joules{} * Seconds{} * mag<662'607'0
                                    ReducedPlanckConstantLabel<void> {
     using ReducedPlanckConstantLabel<void>::label;
 };
-}  // namespace detail
+}  // namespace auimpl
 
 AU_DEVICE_VAR constexpr auto REDUCED_PLANCK_CONSTANT =
-    make_constant(detail::ReducedPlanckConstantUnit{});
+    make_constant(auimpl::ReducedPlanckConstantUnit{});
 
 }  // namespace au

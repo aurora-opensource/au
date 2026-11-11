@@ -27,7 +27,7 @@ using ::testing::IsFalse;
 using ::testing::IsTrue;
 using ::testing::StaticAssertTypeEq;
 
-namespace detail {
+namespace auimpl {
 
 template <typename... Ts>
 struct Pack;
@@ -143,5 +143,5 @@ TEST(PromotedType, PromotesUint8TIntoLargerType) {
     EXPECT_THAT(sizeof(PromotedU8), Gt(sizeof(uint8_t)));
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

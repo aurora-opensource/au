@@ -21,7 +21,7 @@
 #include "au/stdx/type_traits.hh"
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 //
 // A constexpr-compatible string constant class of a given size.
@@ -323,5 +323,5 @@ constexpr auto as_char_array(const StringConstant<N> &x) -> const char (&)[N + 1
     return x.char_array();
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

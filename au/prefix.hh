@@ -24,7 +24,7 @@
 
 namespace au {
 
-namespace detail {
+namespace auimpl {
 
 // Trait to detect if a type is a Pow or RatioPow (i.e., has a non-trivial exponent).
 template <typename U>
@@ -71,7 +71,7 @@ constexpr auto make_prefixed_unit_label(const StringConstant<N> &prefix, U) {
     return concatenate(prefix, brackets_if<FirstInNumeratorHasPower<U>::value>(unit_label<U>()));
 }
 
-}  // namespace detail
+}  // namespace auimpl
 
 template <template <class U> class Prefix>
 struct PrefixApplier {
@@ -86,7 +86,7 @@ struct PrefixApplier {
     template <typename U>
     AU_DEVICE_FUNC constexpr auto operator()(Constant<U>) const {
         return Constant<
-            ComputeScaledUnit<Prefix<detail::UnscaledUnit<U>>, detail::UnitCoefficient<U>>>{};
+            ComputeScaledUnit<Prefix<auimpl::UnscaledUnit<U>>, auimpl::UnitCoefficient<U>>>{};
     }
 
     // Applying a Prefix to `Zero` (as we would get from, say, `0_g`) leaves it unchanged: any
@@ -125,9 +125,9 @@ struct PrefixApplier {
 
 template <typename U>
 struct Quetta : decltype(U{} * pow<30>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("Q"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("Q"), U{});
 };
 template <typename U>
 constexpr typename Quetta<U>::LabelT Quetta<U>::label;
@@ -135,9 +135,9 @@ AU_DEVICE_VAR constexpr auto quetta = PrefixApplier<Quetta>{};
 
 template <typename U>
 struct Ronna : decltype(U{} * pow<27>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("R"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("R"), U{});
 };
 template <typename U>
 constexpr typename Ronna<U>::LabelT Ronna<U>::label;
@@ -145,9 +145,9 @@ AU_DEVICE_VAR constexpr auto ronna = PrefixApplier<Ronna>{};
 
 template <typename U>
 struct Yotta : decltype(U{} * pow<24>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("Y"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("Y"), U{});
 };
 template <typename U>
 constexpr typename Yotta<U>::LabelT Yotta<U>::label;
@@ -155,9 +155,9 @@ AU_DEVICE_VAR constexpr auto yotta = PrefixApplier<Yotta>{};
 
 template <typename U>
 struct Zetta : decltype(U{} * pow<21>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("Z"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("Z"), U{});
 };
 template <typename U>
 constexpr typename Zetta<U>::LabelT Zetta<U>::label;
@@ -165,9 +165,9 @@ AU_DEVICE_VAR constexpr auto zetta = PrefixApplier<Zetta>{};
 
 template <typename U>
 struct Exa : decltype(U{} * pow<18>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("E"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("E"), U{});
 };
 template <typename U>
 constexpr typename Exa<U>::LabelT Exa<U>::label;
@@ -175,9 +175,9 @@ AU_DEVICE_VAR constexpr auto exa = PrefixApplier<Exa>{};
 
 template <typename U>
 struct Peta : decltype(U{} * pow<15>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("P"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("P"), U{});
 };
 template <typename U>
 constexpr typename Peta<U>::LabelT Peta<U>::label;
@@ -185,9 +185,9 @@ AU_DEVICE_VAR constexpr auto peta = PrefixApplier<Peta>{};
 
 template <typename U>
 struct Tera : decltype(U{} * pow<12>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("T"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("T"), U{});
 };
 template <typename U>
 constexpr typename Tera<U>::LabelT Tera<U>::label;
@@ -195,9 +195,9 @@ AU_DEVICE_VAR constexpr auto tera = PrefixApplier<Tera>{};
 
 template <typename U>
 struct Giga : decltype(U{} * pow<9>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("G"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("G"), U{});
 };
 template <typename U>
 constexpr typename Giga<U>::LabelT Giga<U>::label;
@@ -205,9 +205,9 @@ AU_DEVICE_VAR constexpr auto giga = PrefixApplier<Giga>{};
 
 template <typename U>
 struct Mega : decltype(U{} * pow<6>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("M"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("M"), U{});
 };
 template <typename U>
 constexpr typename Mega<U>::LabelT Mega<U>::label;
@@ -215,9 +215,9 @@ AU_DEVICE_VAR constexpr auto mega = PrefixApplier<Mega>{};
 
 template <typename U>
 struct Kilo : decltype(U{} * pow<3>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("k"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("k"), U{});
 };
 template <typename U>
 constexpr typename Kilo<U>::LabelT Kilo<U>::label;
@@ -225,9 +225,9 @@ AU_DEVICE_VAR constexpr auto kilo = PrefixApplier<Kilo>{};
 
 template <typename U>
 struct Hecto : decltype(U{} * pow<2>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("h"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("h"), U{});
 };
 template <typename U>
 constexpr typename Hecto<U>::LabelT Hecto<U>::label;
@@ -235,9 +235,9 @@ AU_DEVICE_VAR constexpr auto hecto = PrefixApplier<Hecto>{};
 
 template <typename U>
 struct Deka : decltype(U{} * pow<1>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<2, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<2, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("da"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("da"), U{});
 };
 template <typename U>
 constexpr typename Deka<U>::LabelT Deka<U>::label;
@@ -245,9 +245,9 @@ AU_DEVICE_VAR constexpr auto deka = PrefixApplier<Deka>{};
 
 template <typename U>
 struct Deci : decltype(U{} * pow<-1>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("d"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("d"), U{});
 };
 template <typename U>
 constexpr typename Deci<U>::LabelT Deci<U>::label;
@@ -255,9 +255,9 @@ AU_DEVICE_VAR constexpr auto deci = PrefixApplier<Deci>{};
 
 template <typename U>
 struct Centi : decltype(U{} * pow<-2>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("c"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("c"), U{});
 };
 template <typename U>
 constexpr typename Centi<U>::LabelT Centi<U>::label;
@@ -265,9 +265,9 @@ AU_DEVICE_VAR constexpr auto centi = PrefixApplier<Centi>{};
 
 template <typename U>
 struct Milli : decltype(U{} * pow<-3>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("m"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("m"), U{});
 };
 template <typename U>
 constexpr typename Milli<U>::LabelT Milli<U>::label;
@@ -275,9 +275,9 @@ AU_DEVICE_VAR constexpr auto milli = PrefixApplier<Milli>{};
 
 template <typename U>
 struct Micro : decltype(U{} * pow<-6>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("u"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("u"), U{});
 };
 template <typename U>
 constexpr typename Micro<U>::LabelT Micro<U>::label;
@@ -285,9 +285,9 @@ AU_DEVICE_VAR constexpr auto micro = PrefixApplier<Micro>{};
 
 template <typename U>
 struct Nano : decltype(U{} * pow<-9>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("n"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("n"), U{});
 };
 template <typename U>
 constexpr typename Nano<U>::LabelT Nano<U>::label;
@@ -295,9 +295,9 @@ AU_DEVICE_VAR constexpr auto nano = PrefixApplier<Nano>{};
 
 template <typename U>
 struct Pico : decltype(U{} * pow<-12>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("p"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("p"), U{});
 };
 template <typename U>
 constexpr typename Pico<U>::LabelT Pico<U>::label;
@@ -305,9 +305,9 @@ AU_DEVICE_VAR constexpr auto pico = PrefixApplier<Pico>{};
 
 template <typename U>
 struct Femto : decltype(U{} * pow<-15>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("f"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("f"), U{});
 };
 template <typename U>
 constexpr typename Femto<U>::LabelT Femto<U>::label;
@@ -315,9 +315,9 @@ AU_DEVICE_VAR constexpr auto femto = PrefixApplier<Femto>{};
 
 template <typename U>
 struct Atto : decltype(U{} * pow<-18>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("a"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("a"), U{});
 };
 template <typename U>
 constexpr typename Atto<U>::LabelT Atto<U>::label;
@@ -325,9 +325,9 @@ AU_DEVICE_VAR constexpr auto atto = PrefixApplier<Atto>{};
 
 template <typename U>
 struct Zepto : decltype(U{} * pow<-21>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("z"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("z"), U{});
 };
 template <typename U>
 constexpr typename Zepto<U>::LabelT Zepto<U>::label;
@@ -335,9 +335,9 @@ AU_DEVICE_VAR constexpr auto zepto = PrefixApplier<Zepto>{};
 
 template <typename U>
 struct Yocto : decltype(U{} * pow<-24>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("y"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("y"), U{});
 };
 template <typename U>
 constexpr typename Yocto<U>::LabelT Yocto<U>::label;
@@ -345,9 +345,9 @@ AU_DEVICE_VAR constexpr auto yocto = PrefixApplier<Yocto>{};
 
 template <typename U>
 struct Ronto : decltype(U{} * pow<-27>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("r"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("r"), U{});
 };
 template <typename U>
 constexpr typename Ronto<U>::LabelT Ronto<U>::label;
@@ -355,9 +355,9 @@ AU_DEVICE_VAR constexpr auto ronto = PrefixApplier<Ronto>{};
 
 template <typename U>
 struct Quecto : decltype(U{} * pow<-30>(mag<10>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<1, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<1, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("q"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("q"), U{});
 };
 template <typename U>
 constexpr typename Quecto<U>::LabelT Quecto<U>::label;
@@ -368,9 +368,9 @@ AU_DEVICE_VAR constexpr auto quecto = PrefixApplier<Quecto>{};
 
 template <typename U>
 struct Yobi : decltype(U{} * pow<80>(mag<2>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<2, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<2, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("Yi"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("Yi"), U{});
 };
 template <typename U>
 constexpr typename Yobi<U>::LabelT Yobi<U>::label;
@@ -378,9 +378,9 @@ AU_DEVICE_VAR constexpr auto yobi = PrefixApplier<Yobi>{};
 
 template <typename U>
 struct Zebi : decltype(U{} * pow<70>(mag<2>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<2, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<2, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("Zi"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("Zi"), U{});
 };
 template <typename U>
 constexpr typename Zebi<U>::LabelT Zebi<U>::label;
@@ -388,9 +388,9 @@ AU_DEVICE_VAR constexpr auto zebi = PrefixApplier<Zebi>{};
 
 template <typename U>
 struct Exbi : decltype(U{} * pow<60>(mag<2>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<2, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<2, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("Ei"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("Ei"), U{});
 };
 template <typename U>
 constexpr typename Exbi<U>::LabelT Exbi<U>::label;
@@ -398,9 +398,9 @@ AU_DEVICE_VAR constexpr auto exbi = PrefixApplier<Exbi>{};
 
 template <typename U>
 struct Pebi : decltype(U{} * pow<50>(mag<2>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<2, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<2, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("Pi"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("Pi"), U{});
 };
 template <typename U>
 constexpr typename Pebi<U>::LabelT Pebi<U>::label;
@@ -408,9 +408,9 @@ AU_DEVICE_VAR constexpr auto pebi = PrefixApplier<Pebi>{};
 
 template <typename U>
 struct Tebi : decltype(U{} * pow<40>(mag<2>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<2, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<2, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("Ti"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("Ti"), U{});
 };
 template <typename U>
 constexpr typename Tebi<U>::LabelT Tebi<U>::label;
@@ -418,9 +418,9 @@ AU_DEVICE_VAR constexpr auto tebi = PrefixApplier<Tebi>{};
 
 template <typename U>
 struct Gibi : decltype(U{} * pow<30>(mag<2>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<2, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<2, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("Gi"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("Gi"), U{});
 };
 template <typename U>
 constexpr typename Gibi<U>::LabelT Gibi<U>::label;
@@ -428,9 +428,9 @@ AU_DEVICE_VAR constexpr auto gibi = PrefixApplier<Gibi>{};
 
 template <typename U>
 struct Mebi : decltype(U{} * pow<20>(mag<2>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<2, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<2, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("Mi"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("Mi"), U{});
 };
 template <typename U>
 constexpr typename Mebi<U>::LabelT Mebi<U>::label;
@@ -438,9 +438,9 @@ AU_DEVICE_VAR constexpr auto mebi = PrefixApplier<Mebi>{};
 
 template <typename U>
 struct Kibi : decltype(U{} * pow<10>(mag<2>())) {
-    using LabelT = typename detail::PrefixedUnitLabel<2, U>::LabelT;
+    using LabelT = typename auimpl::PrefixedUnitLabel<2, U>::LabelT;
     static constexpr LabelT label =
-        detail::make_prefixed_unit_label(detail::as_string_constant("Ki"), U{});
+        auimpl::make_prefixed_unit_label(auimpl::as_string_constant("Ki"), U{});
 };
 template <typename U>
 constexpr typename Kibi<U>::LabelT Kibi<U>::label;

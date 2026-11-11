@@ -32,10 +32,10 @@ namespace {
 using ::testing::Eq;
 using ::testing::StaticAssertTypeEq;
 
-using ::au::detail::FloatingPointPrefixPart;
-using ::au::detail::MultiplyTypeBy;
-using ::au::detail::OpSequence;
-using ::au::detail::StaticCast;
+using ::au::auimpl::FloatingPointPrefixPart;
+using ::au::auimpl::MultiplyTypeBy;
+using ::au::auimpl::OpSequence;
+using ::au::auimpl::StaticCast;
 
 TEST(PrependToEach, PrependsElementToEachPack) {
     StaticAssertTypeEq<PrependToEach<int, ::testing::Types<>>, ::testing::Types<>>();

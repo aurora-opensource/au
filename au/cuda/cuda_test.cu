@@ -535,24 +535,24 @@ __device__ double test_math_ceil_as_constant_explicit_rep() {
 // SECTION 8: au/operators.hh - Comparison operator functors
 // =============================================================================
 
-__device__ bool test_operators_equal() { return detail::Equal{}(5, 5); }
+__device__ bool test_operators_equal() { return auimpl::Equal{}(5, 5); }
 
-__device__ bool test_operators_not_equal() { return detail::NotEqual{}(5, 3); }
+__device__ bool test_operators_not_equal() { return auimpl::NotEqual{}(5, 3); }
 
-__device__ bool test_operators_less() { return detail::Less{}(3, 5); }
+__device__ bool test_operators_less() { return auimpl::Less{}(3, 5); }
 
-__device__ bool test_operators_less_equal() { return detail::LessEqual{}(3, 5); }
+__device__ bool test_operators_less_equal() { return auimpl::LessEqual{}(3, 5); }
 
-__device__ bool test_operators_greater() { return detail::Greater{}(5, 3); }
+__device__ bool test_operators_greater() { return auimpl::Greater{}(5, 3); }
 
-__device__ bool test_operators_greater_equal() { return detail::GreaterEqual{}(5, 3); }
+__device__ bool test_operators_greater_equal() { return auimpl::GreaterEqual{}(5, 3); }
 
 __device__ double test_operators_plus() {
-    return detail::plus(meters(3.0), meters(2.0)).in(meters);
+    return auimpl::plus(meters(3.0), meters(2.0)).in(meters);
 }
 
 __device__ double test_operators_minus() {
-    return detail::minus(meters(5.0), meters(2.0)).in(meters);
+    return auimpl::minus(meters(5.0), meters(2.0)).in(meters);
 }
 
 // =============================================================================

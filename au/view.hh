@@ -126,7 +126,7 @@ struct IsView : std::false_type {};
 template <typename R>
 struct IsView<View<R>> : std::true_type {};
 
-namespace detail {
+namespace auimpl {
 
 // Get underlying type, stripping View wrapper if present.
 template <typename T>
@@ -140,7 +140,7 @@ using UnderlyingType = typename UnderlyingTypeImpl<T>::type;
 template <typename R>
 struct RealPartImpl<View<R>> : RealPartImpl<R> {};
 
-}  // namespace detail
+}  // namespace auimpl
 
 // ScalarOfTrait for View delegates to the underlying type.
 template <typename R>

@@ -30,7 +30,7 @@
 // `Eigen::Vector<U, N>`, then it would be `U`.
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 //
 // `MinPossible<Op>::value()` is the smallest representable value in the "scalar type" for
@@ -806,5 +806,5 @@ struct MaxValueCheckerImpl<Op, false> {
 template <typename Op>
 struct MaxValueChecker : MaxValueCheckerImpl<Op, CanOverflowAbove<Op>::value> {};
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au
