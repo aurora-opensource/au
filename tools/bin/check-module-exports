@@ -21,7 +21,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 CPPM = REPO_ROOT / "au" / "au.cppm"
 
 # Namespaces whose members are implementation details, not public API.
-EXCLUDED_NAMESPACES = {"detail", "stdx", "no_prior_declaration_workaround"}
+EXCLUDED_NAMESPACES = {"auimpl", "stdx", "no_prior_declaration_workaround"}
 
 # ADL-only overloads in implementation namespaces.  Importers can only find these if the module
 # exports them, so the module must list them, even though they live in an excluded namespace.
