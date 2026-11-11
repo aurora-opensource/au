@@ -19,7 +19,7 @@
 #include "au/stdx/type_traits.hh"
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 //
 // `ConversionForRepsAndFactor<CastType, OldRep, NewRep, Factor>` is the operation that takes a
@@ -232,5 +232,5 @@ template <typename CastType, typename OldRep>
 struct ConversionForRepsAndFactorImpl<CastType, OldRep, void, Magnitude<>>
     : FullConversionImpl<CastType, OldRep, OldRep, OldRep, Magnitude<>> {};
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

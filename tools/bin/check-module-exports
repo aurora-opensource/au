@@ -26,12 +26,12 @@ EXCLUDED_NAMESPACES = {"detail", "stdx", "no_prior_declaration_workaround"}
 # ADL-only overloads in implementation namespaces.  Importers can only find these if the module
 # exports them, so the module must list them, even though they live in an excluded namespace.
 REQUIRED_ADL_EXPORTS = {
-    "au::detail::wrapper_ops::operator*",
-    "au::detail::wrapper_ops::operator+",
-    "au::detail::wrapper_ops::operator-",
-    "au::detail::wrapper_ops::operator/",
-    "au::detail::wrapper_ops::pow",
-    "au::detail::wrapper_ops::root",
+    "au::auimpl::wrapper_ops::operator*",
+    "au::auimpl::wrapper_ops::operator+",
+    "au::auimpl::wrapper_ops::operator-",
+    "au::auimpl::wrapper_ops::operator/",
+    "au::auimpl::wrapper_ops::pow",
+    "au::auimpl::wrapper_ops::root",
 }
 
 # Public headers which the module deliberately does not include (and why).

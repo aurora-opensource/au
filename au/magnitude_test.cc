@@ -934,8 +934,8 @@ TEST(GetValue, WorksForNegativeNumber) {
 }
 
 TEST(GetValue, HandlesMostNegativeValue) {
-    EXPECT_THAT(detail::get_value_result<int16_t>(-mag<32769>()).outcome,
-                Eq(detail::MagRepresentationOutcome::kErrCannotFit));
+    EXPECT_THAT(auimpl::get_value_result<int16_t>(-mag<32769>()).outcome,
+                Eq(auimpl::MagRepresentationOutcome::kErrCannotFit));
     EXPECT_THAT(get_value<int16_t>(-mag<32768>()),
                 SameTypeAndValue(std::numeric_limits<int16_t>::lowest()));
 }
@@ -1212,7 +1212,7 @@ TEST(MagnitudeUDL, HexProducesSameTypeAndValueAsDecimal) {
 
 }  // namespace au_literals
 
-namespace detail {
+namespace auimpl {
 
 TEST(AllValidLiteralChars, AcceptsValidLiteralsInEachBase) {
     EXPECT_THAT((all_valid_literal_chars<10, '1', '2', '.', '5', 'e', '-', '3'>()), IsTrue());
@@ -1452,9 +1452,9 @@ TEST(DenominatorPart, OmitsSignForNegativeNumbers) {
 
 template <typename T>
 constexpr bool is_magnitude_u64_rational_compatible(T) {
-    return detail::IsMagnitudeU64RationalCompatibleHelper<T>::is_rational() &&
-           detail::IsMagnitudeU64RationalCompatibleHelper<T>::numerator_fits() &&
-           detail::IsMagnitudeU64RationalCompatibleHelper<T>::denominator_fits();
+    return auimpl::IsMagnitudeU64RationalCompatibleHelper<T>::is_rational() &&
+           auimpl::IsMagnitudeU64RationalCompatibleHelper<T>::numerator_fits() &&
+           auimpl::IsMagnitudeU64RationalCompatibleHelper<T>::denominator_fits();
 }
 
 TEST(IsMagnitudeU64RationalCompatible, TrueForReasonablySizedIntegers) {
@@ -1557,5 +1557,5 @@ TEST(AssertMagnitudeU64RationalCompatible, NoCompilerErrorForKnownValidInput) {
     (void)AssertMagnitudeU64RationalCompatible<decltype(-pow<63>(mag<2>()) / pow<32>(mag<3>()))>{};
     (void)AssertMagnitudeU64RationalCompatible<Zero>{};
 }
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

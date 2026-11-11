@@ -43,7 +43,7 @@ struct IsValidRep;
 //
 struct SameRep;
 
-namespace detail {
+namespace auimpl {
 // Resolve `NewRep` to `Rep` when `NewRep` is the `SameRep` tag; otherwise, leave it untouched.
 template <typename Rep, typename NewRep>
 struct ResolveSameRepImpl : stdx::type_identity<NewRep> {};
@@ -51,7 +51,7 @@ template <typename Rep>
 struct ResolveSameRepImpl<Rep, SameRep> : stdx::type_identity<Rep> {};
 template <typename Rep, typename NewRep>
 using ResolveSameRep = typename ResolveSameRepImpl<Rep, NewRep>::type;
-}  // namespace detail
+}  // namespace auimpl
 
 //
 // A type trait to indicate whether the product of two types is a valid rep.
@@ -73,7 +73,7 @@ struct IsQuotientValidRep;
 // Implementation details below.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace detail {
+namespace auimpl {
 template <typename T>
 struct IsAuType : std::false_type {};
 
@@ -268,21 +268,21 @@ using QuotientType = decltype(std::declval<T>() / std::declval<U>());
 
 template <typename T, typename U>
 using QuotientTypeOrVoid = stdx::experimental::detected_or_t<void, QuotientType, T, U>;
-}  // namespace detail
+}  // namespace auimpl
 
 // Implementation for `IsValidRep`.
 //
 // For now, we'll accept anything that isn't explicitly known to be invalid.  We may tighten this up
 // later, but this seems like a reasonable starting point.
 template <typename T>
-struct IsValidRep : stdx::negation<detail::IsKnownInvalidRep<T>> {};
+struct IsValidRep : stdx::negation<auimpl::IsKnownInvalidRep<T>> {};
 
 template <typename T, typename U>
 struct IsProductValidRep
-    : IsValidRep<detail::ResultIfNoneAreQuantity<detail::ProductTypeOrVoid, T, U>> {};
+    : IsValidRep<auimpl::ResultIfNoneAreQuantity<auimpl::ProductTypeOrVoid, T, U>> {};
 
 template <typename T, typename U>
 struct IsQuotientValidRep
-    : IsValidRep<detail::ResultIfNoneAreQuantity<detail::QuotientTypeOrVoid, T, U>> {};
+    : IsValidRep<auimpl::ResultIfNoneAreQuantity<auimpl::QuotientTypeOrVoid, T, U>> {};
 
 }  // namespace au

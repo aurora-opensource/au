@@ -35,7 +35,7 @@ struct nonesuch {
 // `is_detected` and friends: adapted from
 // (https://en.cppreference.com/w/cpp/experimental/is_detected).
 
-namespace detail {
+namespace auimpl {
 template <class Default, class AlwaysVoid, template <class...> class Op, class... Args>
 struct detector {
     using value_t = std::false_type;
@@ -48,16 +48,16 @@ struct detector<Default, stdx::void_t<Op<Args...>>, Op, Args...> {
     using type = Op<Args...>;
 };
 
-}  // namespace detail
+}  // namespace auimpl
 
 template <template <class...> class Op, class... Args>
-using is_detected = typename detail::detector<nonesuch, void, Op, Args...>::value_t;
+using is_detected = typename auimpl::detector<nonesuch, void, Op, Args...>::value_t;
 
 template <template <class...> class Op, class... Args>
-using detected_t = typename detail::detector<nonesuch, void, Op, Args...>::type;
+using detected_t = typename auimpl::detector<nonesuch, void, Op, Args...>::type;
 
 template <class Default, template <class...> class Op, class... Args>
-using detected_or = detail::detector<Default, void, Op, Args...>;
+using detected_or = auimpl::detector<Default, void, Op, Args...>;
 
 template <class Default, template <class...> class Op, class... Args>
 using detected_or_t = typename detected_or<Default, Op, Args...>::type;

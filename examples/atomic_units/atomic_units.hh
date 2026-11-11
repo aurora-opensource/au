@@ -53,7 +53,7 @@ constexpr auto c = au::SPEED_OF_LIGHT;
 constexpr auto hbar = au::REDUCED_PLANCK_CONSTANT;
 constexpr auto e = au::ELEMENTARY_CHARGE;
 
-namespace detail {
+namespace auimpl {
 
 //
 // Measured inputs.  These are the only two values here that a future experiment can revise.
@@ -72,14 +72,14 @@ constexpr auto electron_mass() {
     return kilo(9.109'383'7015e-31_g);
 }
 
-}  // namespace detail
+}  // namespace auimpl
 
 // Fine structure constant.
-constexpr auto alpha = detail::fine_structure_constant();
+constexpr auto alpha = auimpl::fine_structure_constant();
 
 // Electron mass.  Relabeled `m_e`: `associated_unit` recovers the unit the literal named, and
 // `make_constant` below rebuilds the constant on top of it.
-struct ElectronMasses : decltype(associated_unit(detail::electron_mass())) {
+struct ElectronMasses : decltype(associated_unit(auimpl::electron_mass())) {
     static constexpr const char label[] = "m_e";
 };
 constexpr auto ELECTRON_MASS = au::make_constant(ElectronMasses{});

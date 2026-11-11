@@ -19,7 +19,7 @@
 
 namespace au {
 
-namespace detail {
+namespace auimpl {
 // DO NOT follow this pattern to define your own units.  This is for library-defined units.
 // Instead, follow instructions at (https://aurora-opensource.github.io/au/main/howto/new-units/).
 template <typename T>
@@ -33,8 +33,8 @@ struct PlanckConstantUnit
       PlanckConstantLabel<void> {
     using PlanckConstantLabel<void>::label;
 };
-}  // namespace detail
+}  // namespace auimpl
 
-AU_DEVICE_VAR constexpr auto PLANCK_CONSTANT = make_constant(detail::PlanckConstantUnit{});
+AU_DEVICE_VAR constexpr auto PLANCK_CONSTANT = make_constant(auimpl::PlanckConstantUnit{});
 
 }  // namespace au

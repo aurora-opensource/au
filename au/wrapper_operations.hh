@@ -45,10 +45,10 @@
 // units (for example, many distinct unit literals).
 //
 // The operations live in their own namespace, so that they only participate in overload resolution
-// for types that inherit one of these mixins.  We re-export the mixin names into `au::detail`.
+// for types that inherit one of these mixins.  We re-export the mixin names into `au::auimpl`.
 
 namespace au {
-namespace detail {
+namespace auimpl {
 namespace wrapper_ops {
 
 // (Note: `TypeIdentityIfValidRep`, which these operations use, lives in "au/quantity.hh".)
@@ -394,5 +394,5 @@ using wrapper_ops::PrecomposesWith;
 using wrapper_ops::ScalesQuantity;
 using wrapper_ops::SupportsRationalPowers;
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

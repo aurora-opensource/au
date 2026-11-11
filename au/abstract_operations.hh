@@ -21,7 +21,7 @@
 #include "au/magnitude.hh"
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 //
 // `OpInput<Op>` and `OpOutput<Op>` are the input and output types of an operation.
@@ -230,5 +230,5 @@ struct OpSequenceImpl<Op, Ops...> {
     }
 };
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au
