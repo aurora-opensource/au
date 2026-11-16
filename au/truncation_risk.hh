@@ -18,7 +18,7 @@
 #include "au/config.hh"
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 template <typename Op>
 struct TruncationRiskForImpl;
@@ -257,17 +257,17 @@ struct OrderByDenominatorOfRatio
     : stdx::bool_constant<(get_value<uint64_t>(DenominatorOfRatio<Risk1>{}) <
                            get_value<uint64_t>(DenominatorOfRatio<Risk2>{}))> {};
 
-}  // namespace detail
+}  // namespace auimpl
 
 // Must be in `::au` namespace:
 template <typename Risk1, typename Risk2>
-struct InOrderFor<detail::TruncationRisks, Risk1, Risk2>
+struct InOrderFor<auimpl::TruncationRisks, Risk1, Risk2>
     : LexicographicTotalOrdering<Risk1,
                                  Risk2,
-                                 detail::OrderByTruncationRiskClass,
-                                 detail::OrderByDenominatorOfRatio> {};
+                                 auimpl::OrderByTruncationRiskClass,
+                                 auimpl::OrderByDenominatorOfRatio> {};
 
-namespace detail {
+namespace auimpl {
 
 template <typename Risk1, typename Risk2>
 struct BiggestRiskImpl
@@ -337,5 +337,5 @@ struct ValueTimesRatioIsNotIntegerImpl
                          ValueTimesRatioIsNotIntegerImplForInt<T, M>,
                          ValueTimesRatioIsNotIntegerImplForFloat<T, M>> {};
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

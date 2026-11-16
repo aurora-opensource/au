@@ -146,7 +146,7 @@ AU_DEVICE_FUNC constexpr T get_value(Zero) {
 // A base type for prime numbers.
 template <std::uintmax_t N>
 struct Prime {
-    static_assert(detail::is_prime(N), "Prime<N> requires that N is prime");
+    static_assert(auimpl::is_prime(N), "Prime<N> requires that N is prime");
 
     static AU_DEVICE_FUNC constexpr std::uintmax_t value() { return N; }
 };
@@ -167,7 +167,7 @@ struct Pi {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Define the lexicographic ordering of bases for Magnitude.
 
-namespace detail {
+namespace auimpl {
 template <typename T, typename U>
 struct OrderByValue : stdx::bool_constant<(T::value() < U::value())> {};
 
@@ -179,10 +179,10 @@ struct OrderByValue<T, Negative> : std::false_type {};
 
 template <>
 struct OrderByValue<Negative, Negative> : std::false_type {};
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename A, typename B>
-struct InOrderFor<Magnitude, A, B> : LexicographicTotalOrdering<A, B, detail::OrderByValue> {};
+struct InOrderFor<Magnitude, A, B> : LexicographicTotalOrdering<A, B, auimpl::OrderByValue> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Type trait based interface for Magnitude.
@@ -238,7 +238,7 @@ struct IsInteger : std::is_same<MagT, IntegerPart<MagT>> {};
 // 64-bit integer.  We have decided to provide these operations for _this subset only_, as it
 // satisfies many practical use cases.
 
-namespace detail {
+namespace auimpl {
 template <typename MagT>
 struct IsMagnitudeU64RationalCompatibleHelper {
     static constexpr bool is_rational() { return IsRational<MagT>::value; }
@@ -272,7 +272,7 @@ struct AssertMagnitudeU64RationalCompatible {
     static_assert(Check::numerator_fits(), "Mag numerator too large to fit in uint64_t");
     static_assert(Check::denominator_fits(), "Mag denominator too large to fit in uint64_t");
 };
-}  // namespace detail
+}  // namespace auimpl
 
 // The "common magnitude" of two Magnitudes is the largest Magnitude that evenly divides both.
 //
@@ -362,7 +362,7 @@ AU_DEVICE_FUNC constexpr auto operator!=(Magnitude<BPs...>, Zero) {
     return true;
 }
 
-namespace detail {
+namespace auimpl {
 
 // Compare absolute values of two magnitudes.
 //
@@ -380,7 +380,7 @@ AU_DEVICE_FUNC constexpr int compare_absolute_magnitudes(M1, M2) {
     return (lhs > rhs) - (lhs < rhs);
 }
 
-}  // namespace detail
+}  // namespace auimpl
 
 // Comparison operators for Magnitude types.
 //
@@ -397,7 +397,7 @@ AU_DEVICE_FUNC constexpr bool operator<(Magnitude<BP1s...> m1, Magnitude<BP2s...
         return false;
     }
 
-    constexpr int abs_cmp = detail::compare_absolute_magnitudes(m1, m2);
+    constexpr int abs_cmp = auimpl::compare_absolute_magnitudes(m1, m2);
     return m1_positive ? (abs_cmp < 0) : (abs_cmp > 0);
 }
 
@@ -485,7 +485,7 @@ AU_DEVICE_FUNC constexpr auto operator<=>(Magnitude<BPs...> m, Zero) {
 template <typename... BPs>
 AU_DEVICE_FUNC constexpr auto mag_trunc(Magnitude<BPs...> m) {
     using AbsMag = Abs<Magnitude<BPs...>>;
-    (void)detail::AssertMagnitudeU64RationalCompatible<AbsMag>{};
+    (void)auimpl::AssertMagnitudeU64RationalCompatible<AbsMag>{};
 
     constexpr auto abs_quotient = get_value<std::uint64_t>(Numerator<AbsMag>{}) /
                                   get_value<std::uint64_t>(Denominator<AbsMag>{});
@@ -662,7 +662,7 @@ using ScalarOf = typename ScalarOfTrait<T>::type;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `mag<N>()` implementation.
 
-namespace detail {
+namespace auimpl {
 
 // Helper to perform prime factorization.
 template <std::uintmax_t N>
@@ -694,17 +694,17 @@ struct MagOrZeroImpl<0u> : stdx::type_identity<Zero> {};
 template <std::uintmax_t N>
 using MagOrZero = typename MagOrZeroImpl<N>::type;
 
-}  // namespace detail
+}  // namespace auimpl
 
 template <std::uintmax_t N>
 AU_DEVICE_FUNC constexpr auto mag() {
-    return detail::MagOrZero<N>{};
+    return auimpl::MagOrZero<N>{};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // User-defined literal for magnitude.
 
-namespace detail {
+namespace auimpl {
 
 // The value of `c` as a digit in any base up to 16, or -1 if `c` is not a hexadecimal digit.
 constexpr int digit_value(char c) {
@@ -906,15 +906,15 @@ constexpr bool all_valid_literal_chars() {
     return num_exponent_digits > 0u;
 }
 
-}  // namespace detail
+}  // namespace auimpl
 
 namespace au_literals {
 template <char... Cs>
 AU_DEVICE_FUNC constexpr auto operator""_mag() {
-    static_assert(detail::all_valid_literal_chars<detail::literal_base<Cs...>(), Cs...>(),
+    static_assert(auimpl::all_valid_literal_chars<auimpl::literal_base<Cs...>(), Cs...>(),
                   "operator\"\"_mag must be called with the characters of a valid integer or "
                   "floating point literal");
-    return detail::MagLiteralParser<detail::literal_base<Cs...>(), Cs...>::value();
+    return auimpl::MagLiteralParser<auimpl::literal_base<Cs...>(), Cs...>::value();
 }
 }  // namespace au_literals
 
@@ -970,7 +970,7 @@ struct NumeratorImpl<Magnitude<BPs...>>
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `get_value<T>(Magnitude)` implementation.
 
-namespace detail {
+namespace auimpl {
 
 enum class MagRepresentationOutcome {
     kOk,
@@ -1274,17 +1274,17 @@ struct FirstValidTrait<T, First, Rest...>
                               T,
                               Rest...> {};
 
-}  // namespace detail
+}  // namespace auimpl
 
 // ScalarOf: default implementation uses FirstValidTrait to short-circuit through probes.
 template <typename T, typename Enable>
-struct ScalarOfTrait : detail::FirstValidTrait<T,
-                                               detail::ScalarForArithmetic,
-                                               detail::ScalarForScalarMember,
-                                               detail::ScalarForValueType,
-                                               detail::ScalarForRealMember> {};
+struct ScalarOfTrait : auimpl::FirstValidTrait<T,
+                                               auimpl::ScalarForArithmetic,
+                                               auimpl::ScalarForScalarMember,
+                                               auimpl::ScalarForValueType,
+                                               auimpl::ScalarForRealMember> {};
 
-namespace detail {
+namespace auimpl {
 
 // RealPart<T>: prefers ScalarOf<T> if available, falls back to T itself.
 template <typename T>
@@ -1437,18 +1437,18 @@ AU_DEVICE_FUNC constexpr T checked_value(ErrorType, T x) {
     return x;
 }
 
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename T, typename... BPs>
 AU_DEVICE_FUNC constexpr bool representable_in(Magnitude<BPs...> m) {
-    using namespace detail;
+    using namespace auimpl;
 
     return get_value_result<T>(m).outcome == MagRepresentationOutcome::kOk;
 }
 
 template <typename T, typename... BPs>
 AU_DEVICE_FUNC constexpr T get_value(Magnitude<BPs...> m) {
-    using namespace detail;
+    using namespace auimpl;
 
     constexpr auto result = get_value_result<T>(m);
     return checked_value(ErrorForMagRepOutcome<result.outcome>{}, result.value);
@@ -1457,7 +1457,7 @@ AU_DEVICE_FUNC constexpr T get_value(Magnitude<BPs...> m) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `MagnitudeLabel` implementation.
 
-namespace detail {
+namespace auimpl {
 enum class MagLabelCategory {
     kInteger,
     kRational,
@@ -1489,14 +1489,14 @@ constexpr const bool MagnitudeLabelImplementation<MagT, Category>::has_exposed_s
 
 template <typename MagT>
 struct MagnitudeLabelImplementation<MagT, MagLabelCategory::kInteger>
-    : detail::UIToA<get_value<std::uintmax_t>(MagT{})> {
+    : auimpl::UIToA<get_value<std::uintmax_t>(MagT{})> {
     static constexpr const bool has_exposed_slash = false;
 };
 template <typename MagT>
 constexpr const bool
     MagnitudeLabelImplementation<MagT, MagLabelCategory::kInteger>::has_exposed_slash;
 
-// Analogous to `detail::ExtendedLabel`, but for magnitudes.
+// Analogous to `auimpl::ExtendedLabel`, but for magnitudes.
 //
 // This makes it easier to name the exact type for compound labels.
 template <std::size_t ExtensionStrlen, typename... Mags>
@@ -1518,20 +1518,20 @@ template <typename MagT>
 constexpr const bool
     MagnitudeLabelImplementation<MagT, MagLabelCategory::kRational>::has_exposed_slash;
 
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename... BPs>
 struct MagnitudeLabel<Magnitude<BPs...>>
-    : detail::MagnitudeLabelImplementation<Magnitude<BPs...>,
-                                           detail::categorize_mag_label(Magnitude<BPs...>{})> {};
+    : auimpl::MagnitudeLabelImplementation<Magnitude<BPs...>,
+                                           auimpl::categorize_mag_label(Magnitude<BPs...>{})> {};
 
 template <typename... BPs>
 struct MagnitudeLabel<Magnitude<Negative, BPs...>> :
     // Inherit for "has exposed slash".
     MagnitudeLabel<Magnitude<BPs...>> {
-    using LabelT = detail::ExtendedMagLabel<1u, Magnitude<BPs...>>;
+    using LabelT = auimpl::ExtendedMagLabel<1u, Magnitude<BPs...>>;
     static constexpr LabelT value =
-        detail::concatenate("-", MagnitudeLabel<Magnitude<BPs...>>::value);
+        auimpl::concatenate("-", MagnitudeLabel<Magnitude<BPs...>>::value);
 };
 template <typename... BPs>
 constexpr typename MagnitudeLabel<Magnitude<Negative, BPs...>>::LabelT
@@ -1539,13 +1539,13 @@ constexpr typename MagnitudeLabel<Magnitude<Negative, BPs...>>::LabelT
 
 template <typename MagT>
 constexpr const auto &mag_label(MagT) {
-    return detail::as_char_array(MagnitudeLabel<MagT>::value);
+    return auimpl::as_char_array(MagnitudeLabel<MagT>::value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `CommonMagnitude` implementation.
 
-namespace detail {
+namespace auimpl {
 // Helper: prepend a base power, but only if the Exp is negative.
 template <typename BP, typename MagT>
 struct PrependIfExpNegativeImpl;
@@ -1558,7 +1558,7 @@ struct PrependIfExpNegativeImpl<BP, Magnitude<Ts...>>
 // Remove all positive powers from M.
 template <typename M>
 using NegativePowers = MagQuotient<M, NumeratorPart<M>>;
-}  // namespace detail
+}  // namespace auimpl
 
 // 1-ary case: identity.
 template <typename M>
@@ -1571,12 +1571,12 @@ struct CommonMagnitudeImpl<Magnitude<>, Magnitude<>> : stdx::type_identity<Magni
 // 2-ary base case: only left Magnitude is null.
 template <typename Head, typename... Tail>
 struct CommonMagnitudeImpl<Magnitude<>, Magnitude<Head, Tail...>>
-    : stdx::type_identity<detail::NegativePowers<Magnitude<Head, Tail...>>> {};
+    : stdx::type_identity<auimpl::NegativePowers<Magnitude<Head, Tail...>>> {};
 
 // 2-ary base case: only right Magnitude is null.
 template <typename Head, typename... Tail>
 struct CommonMagnitudeImpl<Magnitude<Head, Tail...>, Magnitude<>>
-    : stdx::type_identity<detail::NegativePowers<Magnitude<Head, Tail...>>> {};
+    : stdx::type_identity<auimpl::NegativePowers<Magnitude<Head, Tail...>>> {};
 
 // 2-ary recursive case: two non-null Magnitudes.
 template <typename H1, typename... T1, typename H2, typename... T2>
@@ -1585,12 +1585,12 @@ struct CommonMagnitudeImpl<Magnitude<H1, T1...>, Magnitude<H2, T2...>> :
     // If the bases for H1 and H2 are in-order, prepend H1-if-negative to the remainder.
     std::conditional<
         (InOrderFor<Magnitude, Base<H1>, Base<H2>>::value),
-        detail::PrependIfExpNegative<H1, CommonMagnitude<Magnitude<T1...>, Magnitude<H2, T2...>>>,
+        auimpl::PrependIfExpNegative<H1, CommonMagnitude<Magnitude<T1...>, Magnitude<H2, T2...>>>,
 
         // If the bases for H2 and H1 are in-order, prepend H2-if-negative to the remainder.
         std::conditional_t<
             (InOrderFor<Magnitude, Base<H2>, Base<H1>>::value),
-            detail::PrependIfExpNegative<H2,
+            auimpl::PrependIfExpNegative<H2,
                                          CommonMagnitude<Magnitude<T2...>, Magnitude<H1, T1...>>>,
 
             // If we got here, the bases must be the same.  (We can assume that `InOrderFor` does
@@ -1598,8 +1598,8 @@ struct CommonMagnitudeImpl<Magnitude<H1, T1...>, Magnitude<H2, T2...>> :
             // violate total ordering.)
             std::conditional_t<
                 (std::ratio_subtract<Exp<H1>, Exp<H2>>::num < 0),
-                detail::Prepend<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H1>,
-                detail::Prepend<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H2>>>> {};
+                auimpl::Prepend<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H1>,
+                auimpl::Prepend<CommonMagnitude<Magnitude<T1...>, Magnitude<T2...>>, H2>>>> {};
 
 // N-ary case: recurse.
 template <typename M1, typename M2, typename... Tail>
@@ -1617,7 +1617,7 @@ struct CommonMagnitudeImpl<Zero, Zero> : stdx::type_identity<Zero> {};
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `MagSum` implementation.
 
-namespace detail {
+namespace auimpl {
 
 // `U64MagSum<Ms...>` is the `Magnitude` (or `Zero`) equal to the sum of the Magnitudes `Ms...`, as
 // long as these preconditions are met:
@@ -1685,9 +1685,9 @@ struct MagSumImplHelper<> : stdx::type_identity<Zero> {};
 template <typename... Ms>
 struct MagSumImplHelper<Zero, Ms...> : MagSumImplHelper<Ms...> {};
 
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename... Ms>
-struct MagSumImpl : detail::MagSumImplHelper<Ms...> {};
+struct MagSumImpl : auimpl::MagSumImplHelper<Ms...> {};
 
 }  // namespace  au

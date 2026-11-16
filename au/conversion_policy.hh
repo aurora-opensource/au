@@ -37,7 +37,7 @@ namespace au {
 // passed as a second argument to conversion functions to control which checks are performed.
 //
 
-namespace detail {
+namespace auimpl {
 enum class ConversionRisk : uint8_t {
     // We use `kCamelCase` instead of UPPER_CASE because `OVERFLOW` is the name of a macro that
     // exists in the wild in some versions of glibc's `math.h`.  (This is also the Google C++ style
@@ -94,10 +94,10 @@ AU_DEVICE_VAR constexpr auto OVERFLOW_RISK =
 AU_DEVICE_VAR constexpr auto TRUNCATION_RISK =
     RiskSet<static_cast<uint8_t>(ConversionRisk::kTruncation)>{};
 
-}  // namespace detail
+}  // namespace auimpl
 
-AU_DEVICE_VAR constexpr auto OVERFLOW_RISK = detail::OVERFLOW_RISK;
-AU_DEVICE_VAR constexpr auto TRUNCATION_RISK = detail::TRUNCATION_RISK;
+AU_DEVICE_VAR constexpr auto OVERFLOW_RISK = auimpl::OVERFLOW_RISK;
+AU_DEVICE_VAR constexpr auto TRUNCATION_RISK = auimpl::TRUNCATION_RISK;
 AU_DEVICE_VAR constexpr auto ALL_RISKS = OVERFLOW_RISK | TRUNCATION_RISK;
 
 // `IsConversionRiskPolicy<T>` checks whether `T` is a conversion risk policy type.  For now, this
@@ -108,14 +108,14 @@ AU_DEVICE_VAR constexpr auto ALL_RISKS = OVERFLOW_RISK | TRUNCATION_RISK;
 template <typename T>
 struct IsConversionRiskPolicy : std::false_type {};
 template <uint8_t RiskFlags>
-struct IsConversionRiskPolicy<detail::CheckTheseRisks<detail::RiskSet<RiskFlags>>>
+struct IsConversionRiskPolicy<auimpl::CheckTheseRisks<auimpl::RiskSet<RiskFlags>>>
     : std::true_type {};
 
 //
 // "Main" conversion policy section.
 //
 
-namespace detail {
+namespace auimpl {
 // Chosen so as to allow populating a `QuantityI32<Hertz>` with an input in MHz.
 constexpr auto OVERFLOW_THRESHOLD = mag<2'147>();
 
@@ -212,11 +212,11 @@ using ImplicitConversionPolicy =
     stdx::conjunction<PassesConversionRiskCheck<CastStrategy, Rep, ScaleFactor, SourceRep>,
                       stdx::negation<SettingPureRealFromMixedReal<Rep, SourceRep>>>;
 
-}  // namespace detail
+}  // namespace auimpl
 
 template <typename Rep, typename ScaleFactor>
 struct ImplicitRepPermitted
-    : detail::ImplicitConversionPolicy<
+    : auimpl::ImplicitConversionPolicy<
 
           // NOTE: pardon the confusing terminology!  Seeing `ImplicitConversionPolicy`, one might
           // expect to see `UseImplicitConversion` rather than `UseStaticCast` (because of the word
@@ -224,7 +224,7 @@ struct ImplicitRepPermitted
           // applies to our `.in` and `.as` functions, which always use `static_cast`.  The
           // "implicit conversion" referred to by `UseImplicitConversion` is only used for the
           // (implicit) _constructor_.
-          detail::UseStaticCast,
+          auimpl::UseStaticCast,
 
           Rep,
           ScaleFactor,
@@ -249,12 +249,12 @@ struct ConstructionPolicy {
     // build in this hard error for safety.  Here, we need a soft error, so we do the dimension
     // check manually below.
     template <typename SourceUnit>
-    using ScaleFactor = MagQuotient<detail::MagT<SourceUnit>, detail::MagT<Unit>>;
+    using ScaleFactor = MagQuotient<auimpl::MagT<SourceUnit>, auimpl::MagT<Unit>>;
 
     template <typename SourceUnit, typename SourceRep>
     using PermitImplicitFrom =
         stdx::conjunction<HasSameDimension<Unit, SourceUnit>,
-                          detail::ImplicitConversionPolicy<detail::UseImplicitConversion,
+                          auimpl::ImplicitConversionPolicy<auimpl::UseImplicitConversion,
                                                            Rep,
                                                            ScaleFactor<SourceUnit>,
                                                            SourceRep>>;

@@ -224,7 +224,7 @@ TEST(IsQuotientValidRep, FalseWhenQuotientHasQuantityLikeScalar) {
     EXPECT_THAT((IsQuotientValidRep<VectorWithValueType<float>, float>::value), IsTrue());
 }
 
-namespace detail {
+namespace auimpl {
 
 TEST(ResultIfNoneAreQuantity, GivesResultWhenNoneAreQuantity) {
     StaticAssertTypeEq<int, ResultIfNoneAreQuantity<std::common_type_t, int, int>>();
@@ -390,5 +390,5 @@ TEST(NormalizeRep, IsIdentityForAllFixedWidthStandardIntegers) {
     StaticAssertTypeEq<NormalizeRep<uint64_t>, uint64_t>();
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

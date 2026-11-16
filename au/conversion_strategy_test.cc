@@ -20,7 +20,7 @@
 #include "gtest/gtest.h"
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 using ::testing::IsFalse;
 using ::testing::StaticAssertTypeEq;
@@ -187,5 +187,5 @@ TEST(ConversionForRepsAndFactor,
                                   ImplicitConversion<std::complex<double>, std::complex<float>>>>();
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

@@ -19,7 +19,7 @@
 #include "au/stdx/type_traits.hh"
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 template <typename PackT, typename T>
 struct PrependImpl;
@@ -148,7 +148,7 @@ template <typename T, template <class...> class Pack, typename H, typename... Ts
 struct DropAllImpl<T, Pack<H, Ts...>>
     : std::conditional<std::is_same<T, H>::value,
                        DropAll<T, Pack<Ts...>>,
-                       detail::Prepend<DropAll<T, Pack<Ts...>>, H>> {};
+                       auimpl::Prepend<DropAll<T, Pack<Ts...>>, H>> {};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // `FlattenAs` implementation.
@@ -227,5 +227,5 @@ struct PromotedTypeImpl : std::conditional_t<std::is_arithmetic<T>::value,
                                              PromotedArithmeticTypeImpl<T>,
                                              stdx::type_identity<T>> {};
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

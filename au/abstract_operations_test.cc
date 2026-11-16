@@ -21,7 +21,7 @@
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
-namespace detail {
+namespace auimpl {
 namespace {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,5 +149,5 @@ TEST(OpSequence, EliminatesRedundantOperations) {
 }
 
 }  // namespace
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

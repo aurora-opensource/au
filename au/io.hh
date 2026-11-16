@@ -25,7 +25,7 @@
 
 namespace au {
 
-namespace detail {
+namespace auimpl {
 // Unary `+` promotes a char-like rep (e.g. `int8_t`), so that `<<` prints a number rather than a
 // character.  Not every rep has one --- an Eigen vector does not --- so promote only where we can.
 template <typename T>
@@ -36,12 +36,12 @@ template <typename T>
 constexpr const T &promote_for_streaming(const T &x, ...) {
     return x;
 }
-}  // namespace detail
+}  // namespace auimpl
 
 // Streaming output support for Quantity types.
 template <typename U, typename R>
 std::ostream &operator<<(std::ostream &out, const Quantity<U, R> &q) {
-    out << detail::promote_for_streaming(q.in(U{}), 0) << " " << unit_label(U{});
+    out << auimpl::promote_for_streaming(q.in(U{}), 0) << " " << unit_label(U{});
     return out;
 }
 

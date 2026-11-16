@@ -28,7 +28,7 @@
 #include "gtest/gtest.h"
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 enum class RoundTripResult {
     IDENTICAL,
@@ -524,7 +524,7 @@ int main() {
                 using DestRepT = decltype(type_of(std::get<0>(dest_params)));
                 using DestUnitT = decltype(type_of(std::get<1>(dest_params)));
 
-                ::au::detail::TestBody<RepT, UnitT, DestRepT, DestUnitT>::test(value);
+                ::au::auimpl::TestBody<RepT, UnitT, DestRepT, DestUnitT>::test(value);
             });
         });
     }
@@ -532,7 +532,7 @@ int main() {
     return 0;
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au
 
-int main(int, char **) { return ::au::detail::main(); }
+int main(int, char **) { return ::au::auimpl::main(); }

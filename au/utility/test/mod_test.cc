@@ -24,7 +24,7 @@ namespace au {
 
 using ::testing::Eq;
 
-namespace detail {
+namespace auimpl {
 namespace {
 
 constexpr auto MAX = std::numeric_limits<uint64_t>::max();
@@ -150,5 +150,5 @@ TEST(PowMod, ProducesSameAnswerAsRepeatedModMulForLargeNumbers) {
 }
 
 }  // namespace
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

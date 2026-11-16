@@ -28,7 +28,7 @@
 
 namespace au {
 
-namespace detail {
+namespace auimpl {
 template <MagRepresentationOutcome Outcome>
 using MagRepresentationOutcomeTag = std::integral_constant<MagRepresentationOutcome, Outcome>;
 
@@ -46,7 +46,7 @@ struct ExactValueOutcomeImpl<T, M, true>
 };
 template <typename T, typename M>
 using ExactValueOutcome = typename ExactValueOutcomeImpl<T, M>::type;
-}  // namespace detail
+}  // namespace auimpl
 
 //
 // A monovalue type to represent a constant value, including its units, if any.
@@ -61,14 +61,14 @@ using ExactValueOutcome = typename ExactValueOutcomeImpl<T, M>::type;
 // correctly representable value will succeed, and every unrepresentable conversion will fail.
 //
 template <typename Unit>
-struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
-                  detail::ScalesQuantity<Constant, Unit>,
-                  detail::ComposesWith<Constant, Unit, Constant, Constant>,
-                  detail::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
-                  detail::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
-                  detail::ComposesWith<Constant, Unit, SymbolFor, Constant>,
-                  detail::SupportsRationalPowers<Constant, Unit>,
-                  detail::CanScaleByMagnitude<Constant, Unit> {
+struct Constant : auimpl::MakesQuantityFromNumber<Constant, Unit>,
+                  auimpl::ScalesQuantity<Constant, Unit>,
+                  auimpl::ComposesWith<Constant, Unit, Constant, Constant>,
+                  auimpl::ComposesWith<Constant, Unit, QuantityMaker, QuantityMaker>,
+                  auimpl::ComposesWith<Constant, Unit, SingularNameFor, SingularNameFor>,
+                  auimpl::ComposesWith<Constant, Unit, SymbolFor, Constant>,
+                  auimpl::SupportsRationalPowers<Constant, Unit>,
+                  auimpl::CanScaleByMagnitude<Constant, Unit> {
     // Convert this constant to a Quantity of the given rep.
     template <typename T>
     AU_DEVICE_FUNC constexpr auto as() const {
@@ -122,7 +122,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
         static_assert(IsUnit<TargetUnit>::value, "Invalid type passed to unit slot");
 
         using Ratio = UnitRatio<Unit, TargetUnit>;
-        return in_impl<T, Ratio>(policy, detail::ExactValueOutcome<T, Ratio>{});
+        return in_impl<T, Ratio>(policy, auimpl::ExactValueOutcome<T, Ratio>{});
     }
 
     // Implicitly convert to any quantity type which passes safety checks.
@@ -135,7 +135,7 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // `T` and unit `OtherUnit`.
     template <typename T, typename OtherUnit>
     static constexpr bool can_store_value_in(OtherUnit) {
-        return detail::IsUnitRatioRepresentableIn<T, Unit, AssociatedUnit<OtherUnit>>::value;
+        return auimpl::IsUnitRatioRepresentableIn<T, Unit, AssociatedUnit<OtherUnit>>::value;
     }
 
     // Implicitly convert to type with an exactly corresponding quantity that passes safety checks.
@@ -154,17 +154,17 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // This is always correct, for any rep and any policy, but it can be expensive to compile.
     template <typename T, typename Ratio, typename RiskPolicyT, typename OutcomeTag>
     AU_DEVICE_FUNC static constexpr auto in_impl(RiskPolicyT, OutcomeTag) {
-        using Op = detail::ConversionForRepsAndFactor<detail::UseStaticCast, T, T, Ratio>;
+        using Op = auimpl::ConversionForRepsAndFactor<auimpl::UseStaticCast, T, T, Ratio>;
         constexpr auto one = static_cast<T>(1);
 
         constexpr bool has_unacceptable_overflow =
-            RiskPolicyT{}.should_check(detail::ConversionRisk::kOverflow) &&
-            detail::would_value_overflow<Op>(one);
+            RiskPolicyT{}.should_check(auimpl::ConversionRisk::kOverflow) &&
+            auimpl::would_value_overflow<Op>(one);
         static_assert(!has_unacceptable_overflow, "Constant conversion known to overflow");
 
         constexpr bool has_unacceptable_truncation =
-            RiskPolicyT{}.should_check(detail::ConversionRisk::kTruncation) &&
-            detail::TruncationRiskFor<Op>::would_value_truncate(one);
+            RiskPolicyT{}.should_check(auimpl::ConversionRisk::kTruncation) &&
+            auimpl::TruncationRiskFor<Op>::would_value_truncate(one);
         static_assert(!has_unacceptable_truncation, "Constant conversion known to truncate");
 
         return Op::apply_to(one);
@@ -177,8 +177,8 @@ struct Constant : detail::MakesQuantityFromNumber<Constant, Unit>,
     // uses many distinct constants (e.g., unit literals).
     template <typename T, typename Ratio, typename RiskPolicyT>
     AU_DEVICE_FUNC static constexpr T in_impl(
-        RiskPolicyT, detail::MagRepresentationOutcomeTag<detail::MagRepresentationOutcome::kOk>) {
-        return static_cast<T>(detail::get_value_result<detail::RealPart<T>>(Ratio{}).value);
+        RiskPolicyT, auimpl::MagRepresentationOutcomeTag<auimpl::MagRepresentationOutcome::kOk>) {
+        return static_cast<T>(auimpl::get_value_result<auimpl::RealPart<T>>(Ratio{}).value);
     }
 };
 
@@ -208,7 +208,7 @@ AU_DEVICE_FUNC constexpr bool operator==(Constant<U1>, Constant<U2>) {
 }
 template <typename U1, typename U2>
 AU_DEVICE_FUNC constexpr bool operator<(Constant<U1>, Constant<U2>) {
-    using SignU2 = Sign<detail::MagT<U2>>;
+    using SignU2 = Sign<auimpl::MagT<U2>>;
     using AbsU2 = decltype(U2{} * SignU2{});
     return UnitRatio<U1, AbsU2>{} < SignU2{};
 }
@@ -282,7 +282,7 @@ AU_DEVICE_FUNC constexpr auto operator>=(QLike q, Constant<U> c) -> decltype(as_
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename U1, typename U2>
 AU_DEVICE_FUNC constexpr std::strong_ordering operator<=>(Constant<U1>, Constant<U2>) {
-    using SignU2 = Sign<detail::MagT<U2>>;
+    using SignU2 = Sign<auimpl::MagT<U2>>;
     using AbsU2 = decltype(U2{} * SignU2{});
     return UnitRatio<U1, AbsU2>{} <=> SignU2{};
 }
@@ -308,17 +308,17 @@ AU_DEVICE_FUNC constexpr auto operator%(Constant<U1>, Constant<U2>) {
     // unit among all _unscaled_ input units.  Everything else is applied as a multiplicative
     // magnitude against this.
     using U = CommonUnit<U1, U2>;
-    using CommonUnscaled = CommonUnit<detail::UnscaledUnit<U1>, detail::UnscaledUnit<U2>>;
+    using CommonUnscaled = CommonUnit<auimpl::UnscaledUnit<U1>, auimpl::UnscaledUnit<U2>>;
     return make_constant(CommonUnscaled{}) * (UnitRatio<U1, U>{} % UnitRatio<U2, U>{}) *
            UnitRatio<U, CommonUnscaled>{};
 }
 
-namespace detail {
+namespace auimpl {
 template <typename U>
 AU_DEVICE_FUNC constexpr bool is_unit_positive() {
     return IsPositive<MagT<U>>::value;
 }
-}  // namespace detail
+}  // namespace auimpl
 
 // Comparison of `Constant` with `Zero`.
 //
@@ -336,19 +336,19 @@ AU_DEVICE_FUNC constexpr bool operator!=(Constant<U>, Zero) {
 }
 template <typename U>
 AU_DEVICE_FUNC constexpr bool operator<(Constant<U>, Zero) {
-    return !detail::is_unit_positive<U>();
+    return !auimpl::is_unit_positive<U>();
 }
 template <typename U>
 AU_DEVICE_FUNC constexpr bool operator<=(Constant<U>, Zero) {
-    return !detail::is_unit_positive<U>();
+    return !auimpl::is_unit_positive<U>();
 }
 template <typename U>
 AU_DEVICE_FUNC constexpr bool operator>(Constant<U>, Zero) {
-    return detail::is_unit_positive<U>();
+    return auimpl::is_unit_positive<U>();
 }
 template <typename U>
 AU_DEVICE_FUNC constexpr bool operator>=(Constant<U>, Zero) {
-    return detail::is_unit_positive<U>();
+    return auimpl::is_unit_positive<U>();
 }
 
 template <typename U>
@@ -361,19 +361,19 @@ AU_DEVICE_FUNC constexpr bool operator!=(Zero, Constant<U>) {
 }
 template <typename U>
 AU_DEVICE_FUNC constexpr bool operator<(Zero, Constant<U>) {
-    return detail::is_unit_positive<U>();
+    return auimpl::is_unit_positive<U>();
 }
 template <typename U>
 AU_DEVICE_FUNC constexpr bool operator<=(Zero, Constant<U>) {
-    return detail::is_unit_positive<U>();
+    return auimpl::is_unit_positive<U>();
 }
 template <typename U>
 AU_DEVICE_FUNC constexpr bool operator>(Zero, Constant<U>) {
-    return !detail::is_unit_positive<U>();
+    return !auimpl::is_unit_positive<U>();
 }
 template <typename U>
 AU_DEVICE_FUNC constexpr bool operator>=(Zero, Constant<U>) {
-    return !detail::is_unit_positive<U>();
+    return !auimpl::is_unit_positive<U>();
 }
 
 // Arithmetic operators mixing `Constant` with `Zero`.
@@ -413,7 +413,7 @@ AU_DEVICE_FUNC constexpr auto operator-(Zero, Constant<U>) {
     return -Constant<U>{};
 }
 
-namespace detail {
+namespace auimpl {
 
 // If the origin is already `Zero`, just return it.
 template <typename U>
@@ -447,6 +447,6 @@ struct MakeShapeshifterFromOriginMemberImpl<Quantity<OriginUnit, T>, U> {
     using type = decltype(value());
 };
 
-}  // namespace detail
+}  // namespace auimpl
 
 }  // namespace au

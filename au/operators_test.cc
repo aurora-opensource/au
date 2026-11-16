@@ -23,7 +23,7 @@ namespace au {
 using ::testing::Eq;
 using ::testing::Not;
 
-namespace detail {
+namespace auimpl {
 
 std::ostream &operator<<(std::ostream &out, Equal) { return out << " == "; }
 std::ostream &operator<<(std::ostream &out, NotEqual) { return out << " != "; }
@@ -113,5 +113,5 @@ TEST(Arithmetic, ResultsMatchUnderlyingOperatorForSameTypes) {
     expect_arithmetic_works(int8_t{5}, int8_t{10});
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

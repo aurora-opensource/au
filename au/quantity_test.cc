@@ -758,7 +758,7 @@ TEST(Quantity, SupportsConvertingUnitsForComplexQuantity) {
 TEST(Quantity, ConvertingByNegativeOneCanBeDoneImplicitly) {
     constexpr auto neginches = inches * (-mag<1>());
     constexpr auto q = inches(int8_t{-10});
-    EXPECT_THAT(q.as(neginches), SameTypeAndValue(neginches(detail::PromotedType<int8_t>{10})));
+    EXPECT_THAT(q.as(neginches), SameTypeAndValue(neginches(auimpl::PromotedType<int8_t>{10})));
 }
 
 TEST(Quantity, AsCanExplicitlyOptOutOfOverflowRiskCheck) {

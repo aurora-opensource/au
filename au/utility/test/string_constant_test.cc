@@ -24,7 +24,7 @@ using ::testing::Eq;
 using ::testing::IsEmpty;
 using ::testing::StrEq;
 
-namespace detail {
+namespace auimpl {
 
 TEST(StringConstant, CanCreateFromStringLiteral) {
     constexpr StringConstant<5> x{"hello"};
@@ -149,5 +149,5 @@ TEST(ParensIf, WrapsInParensIfTrue) {
     EXPECT_THAT(parens_if<false>("123"), StrEq("123"));
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

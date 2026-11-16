@@ -28,11 +28,11 @@ namespace au {
 //     constexpr auto m = SymbolFor<Meters>{};
 //
 template <typename Unit>
-struct SymbolFor : detail::MakesQuantityFromNumber<SymbolFor, Unit>,
-                   detail::ScalesQuantity<SymbolFor, Unit>,
-                   detail::ComposesWith<SymbolFor, Unit, SymbolFor, SymbolFor>,
-                   detail::SupportsRationalPowers<SymbolFor, Unit>,
-                   detail::CanScaleByMagnitude<SymbolFor, Unit> {};
+struct SymbolFor : auimpl::MakesQuantityFromNumber<SymbolFor, Unit>,
+                   auimpl::ScalesQuantity<SymbolFor, Unit>,
+                   auimpl::ComposesWith<SymbolFor, Unit, SymbolFor, SymbolFor>,
+                   auimpl::SupportsRationalPowers<SymbolFor, Unit>,
+                   auimpl::CanScaleByMagnitude<SymbolFor, Unit> {};
 
 //
 // Create a unit symbol using the more fluent APIs that unit slots make possible.  For example:

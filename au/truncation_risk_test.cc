@@ -24,7 +24,7 @@ using ::testing::IsTrue;
 using ::testing::StaticAssertTypeEq;
 
 namespace au {
-namespace detail {
+namespace auimpl {
 namespace {
 
 constexpr auto PI = Magnitude<Pi>{};
@@ -596,5 +596,5 @@ TEST(UpdateRisk, MultiplyFloatByIntBeforeValueDivIntIsNotIntegerUpdatesRatio) {
 }
 
 }  // namespace
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

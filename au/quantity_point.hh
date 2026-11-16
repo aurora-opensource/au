@@ -64,17 +64,17 @@ AU_DEVICE_FUNC constexpr auto make_quantity_point(T &&value) {
 template <typename P1, typename P2>
 struct AreQuantityPointTypesEquivalent;
 
-namespace detail {
+namespace auimpl {
 template <typename FromRep, typename ToRep>
 struct IntermediateRep;
-}  // namespace detail
+}  // namespace auimpl
 
 // Some units have an "origin".  This is not meaningful by itself, but its difference w.r.t. the
 // "origin" of another unit of the same Dimension _is_ meaningful.  This type trait provides access
 // to that difference.
 template <typename U1, typename U2>
 AU_DEVICE_FUNC constexpr auto origin_displacement(U1, U2) {
-    return make_constant(detail::ComputeOriginDisplacementUnit<AssociatedUnitForPoints<U1>,
+    return make_constant(auimpl::ComputeOriginDisplacementUnit<AssociatedUnitForPoints<U1>,
                                                                AssociatedUnitForPoints<U2>>{});
 }
 
@@ -102,7 +102,7 @@ class QuantityPoint {
               typename OtherRep,
               std::enable_if_t<HasSameDimension<UnitT, OtherUnit>::value, int> = 0>
     static constexpr bool should_enable_implicit_construction_from() {
-        using Com = CommonUnit<OtherUnit, detail::ComputeOriginDisplacementUnit<UnitT, OtherUnit>>;
+        using Com = CommonUnit<OtherUnit, auimpl::ComputeOriginDisplacementUnit<UnitT, OtherUnit>>;
         return std::is_convertible<Quantity<Com, OtherRep>, QuantityPoint::Diff>::value;
     }
     template <typename OtherUnit,
@@ -163,7 +163,7 @@ class QuantityPoint {
               typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<IsConversionRiskPolicy<RiskPolicyT>::value, int> = 0>
     AU_DEVICE_FUNC constexpr auto as(RiskPolicyT policy = RiskPolicyT{}) const {
-        using ActualRep = detail::ResolveSameRep<Rep, NewRep>;
+        using ActualRep = auimpl::ResolveSameRep<Rep, NewRep>;
         return make_quantity_point<Unit>(in_impl<ActualRep>(Unit{}, policy));
     }
 
@@ -173,7 +173,7 @@ class QuantityPoint {
               typename RiskPolicyT = decltype(check_for(ALL_RISKS)),
               std::enable_if_t<!IsConversionRiskPolicy<NewUnit>::value, int> = 0>
     AU_DEVICE_FUNC constexpr auto as(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
-        using ActualRep = detail::ResolveSameRep<Rep, NewRep>;
+        using ActualRep = auimpl::ResolveSameRep<Rep, NewRep>;
         return make_quantity_point<AssociatedUnitForPoints<NewUnit>>(in_impl<ActualRep>(u, policy));
     }
 
@@ -187,7 +187,7 @@ class QuantityPoint {
               typename NewUnit,
               typename RiskPolicyT = decltype(check_for(ALL_RISKS))>
     AU_DEVICE_FUNC constexpr auto in(NewUnit u, RiskPolicyT policy = RiskPolicyT{}) const {
-        using ActualRep = detail::ResolveSameRep<Rep, NewRep>;
+        using ActualRep = auimpl::ResolveSameRep<Rep, NewRep>;
         return in_impl<ActualRep>(u, policy);
     }
 
@@ -320,10 +320,10 @@ class QuantityPoint {
     template <typename OtherRep, typename OtherPointUnitSlot, typename RiskPolicyT>
     AU_DEVICE_FUNC constexpr OtherRep in_impl(OtherPointUnitSlot, RiskPolicyT policy) const {
         using OtherUnit = AssociatedUnitForPoints<OtherPointUnitSlot>;
-        using OriginDisplacementUnit = detail::ComputeOriginDisplacementUnit<Unit, OtherUnit>;
+        using OriginDisplacementUnit = auimpl::ComputeOriginDisplacementUnit<Unit, OtherUnit>;
         using Common = CommonUnit<Unit, OtherUnit, OriginDisplacementUnit>;
 
-        using CalcRep = typename detail::IntermediateRep<Rep, OtherRep>::type;
+        using CalcRep = typename auimpl::IntermediateRep<Rep, OtherRep>::type;
 
         Quantity<Common, CalcRep> intermediate_result = rep_cast<CalcRep>(
             x_.template as<CalcRep>(Common{}, policy) + origin_displacement(OtherUnit{}, unit));
@@ -341,14 +341,14 @@ struct QuantityPointMaker {
 
     // lvalue: copy.  (Never move something the caller still owns; also the only thing that works
     // for a packed field, which can't bind to a non-const reference.)
-    template <typename T, typename Rep = detail::NormalizeRep<std::decay_t<T>>>
+    template <typename T, typename Rep = auimpl::NormalizeRep<std::decay_t<T>>>
     AU_DEVICE_FUNC constexpr auto operator()(const T &value) const {
         return QuantityPoint<Unit, Rep>{make_quantity<Unit>(value)};
     }
 
     // rvalue: move.
     template <typename T,
-              typename Rep = detail::NormalizeRep<std::decay_t<T>>,
+              typename Rep = auimpl::NormalizeRep<std::decay_t<T>>,
               typename = std::enable_if_t<!std::is_lvalue_reference<T>::value>>
     AU_DEVICE_FUNC constexpr auto operator()(T &&value) const {
         return QuantityPoint<Unit, Rep>{make_quantity<Unit>(std::move(value))};
@@ -356,13 +356,13 @@ struct QuantityPointMaker {
 
     template <typename U, typename R>
     AU_DEVICE_FUNC constexpr void operator()(Quantity<U, R>) const {
-        constexpr bool is_not_a_quantity = detail::AlwaysFalse<U, R>::value;
+        constexpr bool is_not_a_quantity = auimpl::AlwaysFalse<U, R>::value;
         static_assert(is_not_a_quantity, "Input to QuantityPointMaker is a Quantity");
     }
 
     template <typename U, typename R>
     AU_DEVICE_FUNC constexpr void operator()(QuantityPoint<U, R>) const {
-        constexpr bool is_not_already_a_quantity_point = detail::AlwaysFalse<U, R>::value;
+        constexpr bool is_not_already_a_quantity_point = auimpl::AlwaysFalse<U, R>::value;
         static_assert(is_not_already_a_quantity_point,
                       "Input to QuantityPointMaker is already a QuantityPoint");
     }
@@ -395,14 +395,14 @@ struct AppropriateCommonUnitImpl<QuantityPoint, Us...> : ComputeCommonPointUnit<
 template <typename U, typename R>
 struct AssociatedUnitImpl<QuantityPoint<U, R>> {
     static_assert(
-        detail::AlwaysFalse<U, R>::value,
+        auimpl::AlwaysFalse<U, R>::value,
         "Cannot pass QuantityPoint to a unit slot (see: "
         "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
 };
 template <typename U, typename R>
 struct AssociatedUnitForPointsImpl<QuantityPoint<U, R>> {
     static_assert(
-        detail::AlwaysFalse<U, R>::value,
+        auimpl::AlwaysFalse<U, R>::value,
         "Cannot pass QuantityPoint to a unit slot (see: "
         "https://aurora-opensource.github.io/au/main/troubleshooting/#quantity-to-unit-slot)");
 };
@@ -421,7 +421,7 @@ AU_DEVICE_FUNC constexpr auto rep_cast(QuantityPoint<Unit, Rep> q) {
     return q.template as<NewRep>(Unit{}, ignore(ALL_RISKS));
 }
 
-namespace detail {
+namespace auimpl {
 template <typename X, typename Y, typename Func>
 AU_DEVICE_FUNC constexpr auto using_common_point_unit(X x, Y y, Func f) {
     using R = std::common_type_t<typename X::Rep, typename Y::Rep>;
@@ -433,47 +433,47 @@ template <typename Op, typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto convert_and_compare(const QuantityPoint<U1, R1> &p1,
                                                   const QuantityPoint<U2, R2> &p2) {
     using U = CommonPointUnit<U1, U2>;
-    using ComRep1 = detail::CommonTypeButPreserveIntSignedness<R1, R2>;
-    using ComRep2 = detail::CommonTypeButPreserveIntSignedness<R2, R1>;
-    return detail::SignAwareComparison<UnitSign<U>, Op>{}(
+    using ComRep1 = auimpl::CommonTypeButPreserveIntSignedness<R1, R2>;
+    using ComRep2 = auimpl::CommonTypeButPreserveIntSignedness<R2, R1>;
+    return auimpl::SignAwareComparison<UnitSign<U>, Op>{}(
         p1.template in<ComRep1>(U{}, check_for(ALL_RISKS)),
         p2.template in<ComRep2>(U{}, check_for(ALL_RISKS)));
 }
-}  // namespace detail
+}  // namespace auimpl
 
 // Comparison functions for compatible QuantityPoint types.
 template <typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto operator<(const QuantityPoint<U1, R1> &p1,
                                         const QuantityPoint<U2, R2> &p2) {
-    return detail::convert_and_compare<detail::Less>(p1, p2);
+    return auimpl::convert_and_compare<auimpl::Less>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto operator>(const QuantityPoint<U1, R1> &p1,
                                         const QuantityPoint<U2, R2> &p2) {
-    return detail::convert_and_compare<detail::Greater>(p1, p2);
+    return auimpl::convert_and_compare<auimpl::Greater>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto operator<=(const QuantityPoint<U1, R1> &p1,
                                          const QuantityPoint<U2, R2> &p2) {
-    return detail::convert_and_compare<detail::LessEqual>(p1, p2);
+    return auimpl::convert_and_compare<auimpl::LessEqual>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto operator>=(const QuantityPoint<U1, R1> &p1,
                                          const QuantityPoint<U2, R2> &p2) {
-    return detail::convert_and_compare<detail::GreaterEqual>(p1, p2);
+    return auimpl::convert_and_compare<auimpl::GreaterEqual>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto operator==(const QuantityPoint<U1, R1> &p1,
                                          const QuantityPoint<U2, R2> &p2) {
-    return detail::convert_and_compare<detail::Equal>(p1, p2);
+    return auimpl::convert_and_compare<auimpl::Equal>(p1, p2);
 }
 template <typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto operator!=(const QuantityPoint<U1, R1> &p1,
                                          const QuantityPoint<U2, R2> &p2) {
-    return detail::convert_and_compare<detail::NotEqual>(p1, p2);
+    return auimpl::convert_and_compare<auimpl::NotEqual>(p1, p2);
 }
 
-namespace detail {
+namespace auimpl {
 // Another subtlety arises when we mix QuantityPoint and Quantity in adding or subtracting.  We
 // actually don't want to use `CommonPointUnit`, because this is too restrictive if the units have
 // different origins.  Imagine adding a `Quantity<Kelvins>` to a `QuantityPoint<Celsius>`---we
@@ -489,42 +489,42 @@ template <typename Target, typename U>
 AU_DEVICE_FUNC constexpr auto borrow_origin(U u) {
     return Target{} * unit_ratio(u, Target{});
 }
-}  // namespace detail
+}  // namespace auimpl
 
 // Addition and subtraction functions for compatible QuantityPoint types.
 template <typename UnitP, typename UnitQ, typename RepP, typename RepQ>
 AU_DEVICE_FUNC constexpr auto operator+(const QuantityPoint<UnitP, RepP> &p,
                                         const Quantity<UnitQ, RepQ> &q) {
-    constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
-    return detail::using_common_point_unit(p, q.as(new_unit_q), detail::plus);
+    constexpr auto new_unit_q = auimpl::borrow_origin<UnitP>(UnitQ{});
+    return auimpl::using_common_point_unit(p, q.as(new_unit_q), auimpl::plus);
 }
 template <typename UnitQ, typename UnitP, typename RepQ, typename RepP>
 AU_DEVICE_FUNC constexpr auto operator+(const Quantity<UnitQ, RepQ> &q,
                                         const QuantityPoint<UnitP, RepP> &p) {
-    constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
-    return detail::using_common_point_unit(q.as(new_unit_q), p, detail::plus);
+    constexpr auto new_unit_q = auimpl::borrow_origin<UnitP>(UnitQ{});
+    return auimpl::using_common_point_unit(q.as(new_unit_q), p, auimpl::plus);
 }
 template <typename UnitP, typename UnitQ, typename R1, typename RepQ>
 AU_DEVICE_FUNC constexpr auto operator-(const QuantityPoint<UnitP, R1> &p,
                                         const Quantity<UnitQ, RepQ> &q) {
-    constexpr auto new_unit_q = detail::borrow_origin<UnitP>(UnitQ{});
-    return detail::using_common_point_unit(p, q.as(new_unit_q), detail::minus);
+    constexpr auto new_unit_q = auimpl::borrow_origin<UnitP>(UnitQ{});
+    return auimpl::using_common_point_unit(p, q.as(new_unit_q), auimpl::minus);
 }
 template <typename U1, typename U2, typename R1, typename R2>
 AU_DEVICE_FUNC constexpr auto operator-(const QuantityPoint<U1, R1> &p1,
                                         const QuantityPoint<U2, R2> &p2) {
-    return detail::using_common_point_unit(p1, p2, detail::minus);
+    return auimpl::using_common_point_unit(p1, p2, auimpl::minus);
 }
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
 template <typename U1, typename R1, typename U2, typename R2>
 AU_DEVICE_FUNC constexpr auto operator<=>(const QuantityPoint<U1, R1> &lhs,
                                           const QuantityPoint<U2, R2> &rhs) {
-    return detail::convert_and_compare<detail::ThreeWayCompare>(lhs, rhs);
+    return auimpl::convert_and_compare<auimpl::ThreeWayCompare>(lhs, rhs);
 }
 #endif
 
-namespace detail {
+namespace auimpl {
 
 // We simply want a version of `std::make_signed_t` that won't choke on non-integral types.
 template <typename T>
@@ -544,7 +544,7 @@ template <typename FromRep, typename ToRep>
 struct IntermediateRep
     : IntermediateRepImpl<std::common_type_t<FromRep, ToRep>, std::is_signed<ToRep>::value> {};
 
-}  // namespace detail
+}  // namespace auimpl
 
 //
 // Formatter implementation for fmtlib or `std::format`.

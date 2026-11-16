@@ -163,13 +163,13 @@ TEST(IsView, FalseForNonViewTypes) {
 }
 
 TEST(UnderlyingType, StripsViewWrapper) {
-    StaticAssertTypeEq<detail::UnderlyingType<View<double>>, double>();
-    StaticAssertTypeEq<detail::UnderlyingType<View<int>>, int>();
+    StaticAssertTypeEq<auimpl::UnderlyingType<View<double>>, double>();
+    StaticAssertTypeEq<auimpl::UnderlyingType<View<int>>, int>();
 }
 
 TEST(UnderlyingType, PassesThroughNonViewTypes) {
-    StaticAssertTypeEq<detail::UnderlyingType<double>, double>();
-    StaticAssertTypeEq<detail::UnderlyingType<int>, int>();
+    StaticAssertTypeEq<auimpl::UnderlyingType<double>, double>();
+    StaticAssertTypeEq<auimpl::UnderlyingType<int>, int>();
 }
 
 struct HasScalar {
@@ -181,7 +181,7 @@ TEST(ScalarOfTrait, ViewDelegatesToUnderlyingType) {
 }
 
 TEST(RealPartImpl, ViewDelegatesToUnderlyingType) {
-    StaticAssertTypeEq<detail::RealPart<View<double>>, double>();
+    StaticAssertTypeEq<auimpl::RealPart<View<double>>, double>();
 }
 
 }  // namespace au

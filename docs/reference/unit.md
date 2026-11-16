@@ -32,8 +32,8 @@ To be a unit, a type `U`:
 A custom `origin()` is very rarely needed.  Both [labels](#labels) and [origins](#origins) will be
 discussed further below.
 
-[^1]: Unit types defined by the library may also use `au::detail::StringConstant<N>` for some
-integer length `N`.  Since this is in the `detail` namespace, we wanted to de-emphasize it in this
+[^1]: Unit types defined by the library may also use `au::auimpl::StringConstant<N>` for some
+integer length `N`.  Since this is in the `auimpl` namespace, we wanted to de-emphasize it in this
 document.
 
 ### Making unit types

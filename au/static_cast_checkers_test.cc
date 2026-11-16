@@ -22,7 +22,7 @@ namespace au {
 using ::testing::IsFalse;
 using ::testing::IsTrue;
 
-namespace detail {
+namespace auimpl {
 
 //
 // This file held the unit tests for an older library, `:static_cast_checkers`, which we no longer
@@ -132,5 +132,5 @@ TEST(WillStaticCastTruncate, IgnoresLimitsOfDestinationType) {
     EXPECT_THAT(will_static_cast_truncate<uint8_t>(9999999.0), IsFalse());
 }
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

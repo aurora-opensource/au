@@ -42,7 +42,7 @@
 // say, `std::less<void>::operator()`, but work correctly with our alternatives.
 
 namespace au {
-namespace detail {
+namespace auimpl {
 
 // These tag types act as a kind of "compile time enum".
 struct CompareBuiltInIntegers {};
@@ -202,5 +202,5 @@ struct Minus {
 };
 constexpr auto minus = Minus{};
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au

@@ -123,7 +123,7 @@ template <typename T, typename... Packs>
 using PrependToEach = typename PrependToEachImpl<T, Packs...>::type;
 template <template <class...> class Pack, typename T, typename... Ts>
 struct PrependToEachImpl<T, Pack<Ts...>> {
-    using type = Pack<detail::Prepend<Ts, T>...>;
+    using type = Pack<auimpl::Prepend<Ts, T>...>;
 };
 
 template <template <class...> class Tuple,
@@ -135,7 +135,7 @@ struct CartesianProductImpl<Tuple, Pack<Ts...>, Packs...> {
     using type = Flatten<PrependToEach<Ts, CartesianProduct<Tuple, Packs...>>...>;
 };
 
-namespace detail {
+namespace auimpl {
 
 template <typename OpSeq>
 struct FloatingPointPrefixPartImpl;
@@ -152,5 +152,5 @@ struct FloatingPointPrefixPartImpl<OpSequenceImpl<Op, Ops...>>
 template <>
 struct FloatingPointPrefixPartImpl<OpSequenceImpl<>> : stdx::type_identity<OpSequence<>> {};
 
-}  // namespace detail
+}  // namespace auimpl
 }  // namespace au
