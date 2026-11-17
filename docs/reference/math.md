@@ -329,7 +329,7 @@ of the input quantity's value.
 The value of the named trigonometric function ($\sin$, $\cos$, or $\tan$), evaluated at an input
 `Quantity` representing an angle.
 
-If called with any `Quantity` which is not an angle, we produce a hard compiler error.
+If called with any `Quantity` which is not an angle, or any `Constant` whose unit is not an angle, we produce a hard compiler error. `Constant` inputs are evaluated as `double` values after conversion to radians.
 
 **Signatures:**
 
@@ -351,6 +351,15 @@ auto cos(Quantity<U, R> q);
 //
 template <typename U, typename R>
 auto tan(Quantity<U, R> q);
+
+template <typename U>
+auto sin(Constant<U> c);
+
+template <typename U>
+auto cos(Constant<U> c);
+
+template <typename U>
+auto tan(Constant<U> c);
 ```
 
 **Returns:** The result of converting the input to `Radians`, and then calling the corresponding STL
@@ -370,7 +379,7 @@ the [`std::sin` documentation](https://en.cppreference.com/w/cpp/numeric/math/si
 
 #### `arcsin`, `arccos`, `arctan`
 
-The standard inverse trigonometric functions, each returning a `Quantity` of `Radians`.
+The standard inverse trigonometric functions, each returning a `Quantity` of `Radians`. In addition to raw numeric inputs, they accept dimensionless `Constant` inputs, converting them to `double` in the unitless unit first. Constants with a non-dimensionless unit are rejected at compile time.
 
 Each function corresponds to an STL function, except with `arc` replaced by `a`.  For example,
 `arcsin()` corresponds to `std::asin()`, and so on.  This library's functions return
@@ -403,6 +412,15 @@ auto arccos(T x);
 //
 template <typename T>
 auto arctan(T x);
+
+template <typename U>
+auto arcsin(Constant<U> c);
+
+template <typename U>
+auto arccos(Constant<U> c);
+
+template <typename U>
+auto arctan(Constant<U> c);
 ```
 
 **Returns:** `radians(stl_func(x))`, where `stl_func` is the corresponding STL function (that is,
@@ -433,10 +451,7 @@ number.
 This two-argument version is more robust than the single-argument version.  `arctan2(y, x)` is
 equivalent to `arctan(y / x)`, but it avoids the problems faced by the latter whenever `x` is zero.
 
-Unlike the other inverse trigonometric functions, which only support raw numeric inputs, `arctan2`
-also supports `Quantity` inputs.  These inputs must have the same dimension, or else we will produce
-a hard compiler error.  We convert them to their common unit, if necessary, before delegating to
-`std::atan2`.
+Unlike the other inverse trigonometric functions, `arctan2` also supports `Quantity` and `Constant` inputs. Two unit-bearing arguments must have the same dimension, or else we will produce a hard compiler error. Constants paired with raw numbers must be dimensionless. Quantity/Constant pairs are converted to a common unit before delegating to `std::atan2`.
 
 **Signatures:**
 
@@ -448,6 +463,23 @@ auto arctan2(T y, U x);
 // 2. Quantity inputs (must be same dimension).
 template <typename U1, typename R1, typename U2, typename R2>
 auto arctan2(Quantity<U1, R1> y, Quantity<U2, R2> x);
+
+// 3. Constant inputs.
+template <typename U1, typename U2>
+auto arctan2(Constant<U1> y, Constant<U2> x);
+
+template <typename U1, typename U2, typename R2>
+auto arctan2(Constant<U1> y, Quantity<U2, R2> x);
+
+template <typename U1, typename R1, typename U2>
+auto arctan2(Quantity<U1, R1> y, Constant<U2> x);
+
+// Raw-number overloads require the Constant to be dimensionless.
+template <typename U, typename T>
+auto arctan2(Constant<U> y, T x);
+
+template <typename T, typename U>
+auto arctan2(T y, Constant<U> x);
 ```
 
 **Returns:** `radians(std::atan2(y, x))`.  If the inputs are `Quantity` types, then instead of
