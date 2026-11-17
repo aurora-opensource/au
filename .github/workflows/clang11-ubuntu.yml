@@ -25,4 +25,5 @@ jobs:
     uses: ./.github/workflows/build-and-test.yml
     with:
       config: clang11
+      container: ubuntu:24.04
       cpp20_extra_args: --test_tag_filters=-requires_std_format --build_tag_filters=-requires_std_format
