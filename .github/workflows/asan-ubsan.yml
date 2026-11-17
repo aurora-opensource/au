@@ -22,37 +22,19 @@ on:
 
 jobs:
   asan:
-    runs-on: ubuntu-latest
-    # Prebuilt LLVM 17 binaries need `libxml2.so.2`, which newer Ubuntu runner images lack.
-    container: ubuntu:24.04
+    # TODO(#834): Prebuilt LLVM binaries need `libxml2.so.2`, missing from newer Ubuntu runner images.
+    runs-on: ubuntu-24.04
 
     steps:
-      - name: Install container dependencies
-        run: |
-          apt-get update
-          apt-get install -y --no-install-recommends ca-certificates curl g++ git libxml2 python3
-          curl -fsSL -o /usr/local/bin/bazel https://github.com/bazelbuild/bazelisk/releases/download/v1.27.0/bazelisk-linux-amd64
-          chmod +x /usr/local/bin/bazel
       - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b #v4.1.5
-      - name: Mark checkout as safe for git inside container
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Test with ASAN (clang17)
         run: bazel test --config=clang17 --config=asan --copt=-Werror --test_tag_filters=-no_asan --build_tag_filters=-no_asan //...:all
 
   ubsan:
-    runs-on: ubuntu-latest
-    # Prebuilt LLVM 17 binaries need `libxml2.so.2`, which newer Ubuntu runner images lack.
-    container: ubuntu:24.04
+    # TODO(#834): Prebuilt LLVM binaries need `libxml2.so.2`, missing from newer Ubuntu runner images.
+    runs-on: ubuntu-24.04
 
     steps:
-      - name: Install container dependencies
-        run: |
-          apt-get update
-          apt-get install -y --no-install-recommends ca-certificates curl g++ git libxml2 python3
-          curl -fsSL -o /usr/local/bin/bazel https://github.com/bazelbuild/bazelisk/releases/download/v1.27.0/bazelisk-linux-amd64
-          chmod +x /usr/local/bin/bazel
       - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b #v4.1.5
-      - name: Mark checkout as safe for git inside container
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Test with UBSAN (clang17)
         run: bazel test --config=clang17 --config=ubsan --copt=-Werror --test_tag_filters=-no_ubsan --build_tag_filters=-no_ubsan //...:all

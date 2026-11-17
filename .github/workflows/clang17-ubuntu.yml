@@ -25,4 +25,5 @@ jobs:
     uses: ./.github/workflows/build-and-test.yml
     with:
       config: clang17
-      container: ubuntu:24.04
+      # TODO(#834): Prebuilt LLVM binaries need `libxml2.so.2`, missing from newer runner images.
+      runs-on: ubuntu-24.04
