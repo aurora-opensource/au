@@ -422,7 +422,6 @@ interactively; `--input` lets you reuse the answers from the previous release.)
 - `MODULE.bazel`: a copy of Au's root `MODULE.bazel`.
 - `source.json`: points at the tarball you attached to the release, which unpacks to a single
   `au-0.3.1/` directory:
-
     ```json
     {
         "url": "https://github.com/aurora-opensource/au/releases/download/0.3.1/au-0.3.1.tar.gz",
@@ -430,7 +429,6 @@ interactively; `--input` lets you reuse the answers from the previous release.)
         "strip_prefix": "au-0.3.1"
     }
     ```
-
     The `integrity` is the base64 of that tarball's SHA256 --- the same checksum you listed in the
     release notes.  `python3 tools/calc_integrity.py <tarball>` computes it.
 - `presubmit.yml`: a copy of the previous version's.  It builds the public targets, and runs our
