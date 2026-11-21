@@ -1,9 +1,11 @@
 # Version macros
 
 Au provides preprocessor macros that let downstream code detect that the library is present, and
-which version of it is present.  They live in [`"au/version.hh"`](https://github.com/aurora-opensource/au/blob/main/au/version.hh), which every
-Au header transitively includes, so they are available whenever any part of Au is in scope --- and
-also in the single-file packages, since those always include `au/au.hh`.
+which version of it is present.  They live in `"au/version.hh"`, which every Au header transitively
+includes, so they are available whenever any part of Au is in scope --- and also in the single-file
+packages, since those always include `au/au.hh`.  (That header is generated at build time, from the
+template [`au/version.hh.in`](https://github.com/aurora-opensource/au/blob/main/au/version.hh.in)
+and the version declared in `MODULE.bazel`.)
 
 ## Macros
 
@@ -45,13 +47,13 @@ exactly that release's feature set, so version comparisons are sound when compar
 against another --- both "is the feature from `X.Y.Z` present?" (`>=`) and "does this predate the
 breaking change in `X.Y.Z`?" (`<`).
 
-On `main`, the macros name the _most recent release_ (kept in sync with the version in the root
-`CMakeLists.txt`, which is derived from `au/version.hh`).  But `main`'s number lags the changes that
-have actually landed on it since that release, so **do not use these macros to select behavior
-against a `main` checkout.**  The two directions even fail differently: an additive `>=` check
-merely under-reports a not-yet-released feature (a safe false negative), but a breaking-change `<`
-check can silently report the _old_ behavior on a `main` commit that already has the _new_ one (an
-unsafe false positive).  Version-gate behavior only against tagged releases.
+On `main`, the macros name the _most recent release_ (the version declared in `MODULE.bazel`, which
+they are generated from).  But `main`'s number lags the changes that have actually landed on it
+since that release, so **do not use these macros to select behavior against a `main` checkout.**
+The two directions even fail differently: an additive `>=` check merely under-reports a
+not-yet-released feature (a safe false negative), but a breaking-change `<` check can silently
+report the _old_ behavior on a `main` commit that already has the _new_ one (an unsafe false
+positive).  Version-gate behavior only against tagged releases.
 
 If you need to detect a _specific_ change robustly --- including on `main`, or to distinguish two
 changes that ship in the same release --- the version number is the wrong tool.  The right one is a

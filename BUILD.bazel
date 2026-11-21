@@ -21,6 +21,16 @@
 # copies still match their source.
 exports_files(["README.md"])
 
+# Read by build processes that use the MODULE version to generate version headers and the like.
+filegroup(
+    name = "module_bazel",
+    srcs = ["MODULE.bazel"],
+    visibility = [
+        "//au:__pkg__",
+        "//release:__pkg__",
+    ],
+)
+
 exports_files(
     [
         "requirements.in",

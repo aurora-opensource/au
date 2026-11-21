@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import difflib
 import os
 import subprocess
 import sys
@@ -23,12 +24,20 @@ import sys
 CMAKE_BUILD_DIR = "cmake/build-check-headers"
 
 
+# Headers that each build system generates for itself.
+GENERATED_HEADERS = ["au/version.hh"]
+
+# Where CMake puts the generated headers: their own base directory in the build tree.
+CMAKE_GENERATED_DIR = os.path.join(CMAKE_BUILD_DIR, "generated")
+
+
 def main(argv=None):
     cmake_headers = _get_cmake_headers()
     bazel_headers = _get_bazel_headers()
     ok = _check_equality_and_print_any_differences(
         cmake_headers=cmake_headers, bazel_headers=bazel_headers
     )
+    ok &= _check_generated_headers_are_identical()
     return 0 if ok else 1
 
 
@@ -56,20 +65,35 @@ def _get_cmake_headers():
 
     # De-duplicate headers and make paths relative to the repo root.
     return set(
-        os.path.relpath(path)
+        _cmake_header_to_path(path)
         for line in raw_output.stdout.decode().splitlines()
         for path in _get_cmake_headers_from_line(line)
     )
 
 
+def _cmake_header_to_path(path):
+    """
+    The repo-relative path of a CMake header, such as `au/version.hh`.
+
+    Generated headers (such as `au/version.hh`) live in their own base directory in the build tree.
+    Relative to that directory, they have the path they would have in the source tree, which is also
+    how bazel reports them.
+    """
+    path = os.path.relpath(path)
+    if path.startswith(CMAKE_GENERATED_DIR + os.sep):
+        return os.path.relpath(path, CMAKE_GENERATED_DIR)
+    return path
+
+
 def _get_bazel_headers():
-    # Every header in the repo reachable from any public library, in any package under `//au`.
+    # Every header reachable from any public library, in any package under `//au`, whether it is in
+    # the repo or generated (such as `au/version.hh`).
     public_libs = 'attr(visibility, "//visibility:public", kind(cc_library, //au/...))'
     raw_output = subprocess.run(
         [
             "bazel",
             "query",
-            f"kind('source file', deps({public_libs})) intersect //au/...:*",
+            f"kind('(source|generated) file', deps({public_libs})) intersect //au/...:*",
         ],
         stdout=subprocess.PIPE,
         check=True,
@@ -98,6 +122,38 @@ def _check_equality_and_print_any_differences(cmake_headers, bazel_headers):
     _print_any_only_in_first(first=bazel, second=cmake)
 
     return result
+
+
+def _check_generated_headers_are_identical():
+    """Compare each generated header, as CMake configured it, against bazel's."""
+    ok = True
+    for header in GENERATED_HEADERS:
+        cmake = _read_lines(os.path.join(CMAKE_GENERATED_DIR, header))
+        bazel = _read_lines(_bazel_generated_file(header))
+        if cmake != bazel:
+            ok = False
+            print(f"\n** ERROR **: CMake and bazel generated different `{header}`:")
+            sys.stdout.writelines(
+                difflib.unified_diff(cmake, bazel, fromfile="CMake", tofile="bazel")
+            )
+    return ok
+
+
+def _bazel_generated_file(header):
+    """Build `header` with bazel, and return the path of the result."""
+    label = f"//{os.path.dirname(header)}:{os.path.basename(header)}"
+    subprocess.run(["bazel", "build", label], check=True)
+    raw_output = subprocess.run(
+        ["bazel", "cquery", "--output=files", label],
+        stdout=subprocess.PIPE,
+        check=True,
+    )
+    return raw_output.stdout.decode().strip()
+
+
+def _read_lines(path):
+    with open(path) as f:
+        return f.readlines()
 
 
 def _get_cmake_headers_from_line(line):

@@ -101,6 +101,33 @@ cc_library(
     deps = [":version"],
 )
 
+# The single-file genrules in `//release` read the template directly: `make-single-file` fills it in
+# itself, because it also has to work from a plain checkout, with no build.
+filegroup(
+    name = "version_hh_template",
+    srcs = ["version.hh.in"],
+    visibility = ["//release:__pkg__"],
+)
+
+# Read `MODULE.bazel` as a file, rather than calling `native.module_version()`.  That function needs
+# Bazel 6.2 or later, and even then it only reports our version for a `bazel_dep` on this module
+# (including one replaced by `local_path_override`).  In WORKSPACE builds it returns `None`, and in
+# a repo that a consumer's own module extension creates from our archive, it returns the version of
+# the module hosting the extension (Bazel 6) or `""` (Bazel 7 and later).  Switching to it would
+# mean dropping both WORKSPACE support and those extension-based consumers.
+genrule(
+    name = "version_hh",
+    srcs = [
+        "version.hh.in",
+        "//:module_bazel",
+    ],
+    outs = ["version.hh"],
+    cmd = "$(execpath generate_version_hh.sh) $(execpath //:module_bazel) $(execpath version.hh.in) > $@",
+    tools = ["generate_version_hh.sh"],
+    # For `//release:version_header_test`.  Consumers should depend on `:version`.
+    visibility = ["//release:__pkg__"],
+)
+
 cc_library(
     name = "version",
     hdrs = ["version.hh"],

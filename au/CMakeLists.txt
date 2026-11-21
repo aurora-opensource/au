@@ -18,8 +18,16 @@ include("${PROJECT_SOURCE_DIR}/cmake/HeaderOnlyLibrary.cmake")
 # Publicly exported targets
 #
 
+# `version.hh` is generated, from the version that the root `CMakeLists.txt` read out of
+# `MODULE.bazel`.  It goes in its own base directory in the build tree, so that it still installs as
+# `au/version.hh`.
+set(AU_GENERATED_INCLUDE_DIR "${PROJECT_BINARY_DIR}/generated")
+configure_file(version.hh.in "${AU_GENERATED_INCLUDE_DIR}/au/version.hh" @ONLY)
+
 header_only_library(
   NAME au
+  GENERATED_BASE_DIR "${AU_GENERATED_INCLUDE_DIR}"
+  GENERATED_HEADERS "${AU_GENERATED_INCLUDE_DIR}/au/version.hh"
   HEADERS
     abstract_operations.hh
     au.hh
@@ -45,7 +53,6 @@ header_only_library(
     truncation_risk.hh
     unit_of_measure.hh
     unit_symbol.hh
-    version.hh
     view.hh
     wrapper_operations.hh
     zero.hh

@@ -35,9 +35,8 @@
 // release, `AU_VERSION` names exactly the feature set of that release, so version comparisons are
 // sound _release to release_ --- both "is the feature added in `X.Y.Z` present?" (`>=`) and "does
 // this predate the breaking change in `X.Y.Z`?" (`<`).  On `main`, these macros name the _most
-// recent release_ (mirroring the version in the root `CMakeLists.txt`, which is derived from this
-// file), and `main` is re-bumped to match _every_ release it contains (patches included; see
-// `RELEASE.md`).
+// recent release_ (the version declared in `MODULE.bazel`), and `main` is re-bumped to match
+// _every_ release it contains (patches included; see `RELEASE.md`).
 //
 // Do NOT use these macros to select behavior against a `main` checkout.  Because `main`'s number
 // lags the changes that have actually landed on it since the last release, such a check is
@@ -50,15 +49,13 @@
 // that ship in the same release --- introduce a dedicated per-feature macro in the same commit that
 // makes the change, rather than reaching for `AU_VERSION`.
 //
-// To keep the two build systems in sync, `CMakeLists.txt` parses the three component macros below
-// to populate its `project(... VERSION ...)`.  This file is therefore the single source of truth
-// for the library version, and it is the _only_ place that needs to be edited when bumping the
-// version for a release.
+// This header is generated from `au/version.hh.in`, which every build system (and
+// `tools/bin/make-single-file`) fills in with the version declared in `MODULE.bazel`.
 //
 
-#define AU_VERSION_MAJOR 0
-#define AU_VERSION_MINOR 6
-#define AU_VERSION_PATCH 1
+#define AU_VERSION_MAJOR @AU_VERSION_MAJOR@
+#define AU_VERSION_MINOR @AU_VERSION_MINOR@
+#define AU_VERSION_PATCH @AU_VERSION_PATCH@
 
 // Combine major/minor/patch components into a single monotonically increasing integer.  Each
 // component gets three decimal digits, so components must be strictly less than 1000.

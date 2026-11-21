@@ -24,30 +24,37 @@
 # [1]: https://cliutils.gitlab.io/modern-cmake/chapters/intro/dodonot.html
 cmake_minimum_required(VERSION 3.27...3.29)
 
-# Derive the project version from `au/version.hh`, which is the single source of truth for the
-# library version (it also defines the `AU_VERSION*` macros for C++ code).  This keeps the CMake
-# version and the C++ macros from ever drifting apart, and means a release only needs to bump the
-# version in one place.
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/au/version.hh" _au_version_hh)
-string(REGEX MATCH "#define AU_VERSION_MAJOR ([0-9]+)" _ "${_au_version_hh}")
-set(_au_version_major "${CMAKE_MATCH_1}")
-string(REGEX MATCH "#define AU_VERSION_MINOR ([0-9]+)" _ "${_au_version_hh}")
-set(_au_version_minor "${CMAKE_MATCH_1}")
-string(REGEX MATCH "#define AU_VERSION_PATCH ([0-9]+)" _ "${_au_version_hh}")
-set(_au_version_patch "${CMAKE_MATCH_1}")
+# Read the library version from the `module()` block of `MODULE.bazel`, the only place it is written
+# down (Bazel evaluates that file before it can read any other, so it can't live anywhere else).  It
+# feeds `project()` below, and `au/CMakeLists.txt` generates `au/version.hh` from it.
+set(_au_module_bazel "${CMAKE_CURRENT_SOURCE_DIR}/MODULE.bazel")
+file(READ "${_au_module_bazel}" _au_module_bazel_contents)
 
-# Fail loudly if any component failed to parse, rather than silently building a malformed version
-# such as "0.5." (which would otherwise flow into `project()`, the docs URL, and installed configs).
-foreach(_part MAJOR MINOR PATCH)
-   string(TOLOWER "${_part}" _part_lower)
-   if(NOT _au_version_${_part_lower} MATCHES "^[0-9]+$")
-      message(FATAL_ERROR
-         "Could not parse AU_VERSION_${_part} from au/version.hh. "
-         "Expected a line like '#define AU_VERSION_${_part} <number>'.")
-   endif()
-endforeach()
+# The `module()` block only: the file is full of other `version =` assignments, in the `bazel_dep`
+# calls.
+string(REGEX MATCH "\nmodule\\([^)]*\n\\)" _au_module_block "${_au_module_bazel_contents}")
+string(REGEX MATCH
+   "\n[ \t]*version = \"([0-9]+)\\.([0-9]+)\\.([0-9]+)\""
+   _au_module_version_line
+   "${_au_module_block}"
+)
 
-set(AU_VERSION "${_au_version_major}.${_au_version_minor}.${_au_version_patch}")
+# Fail loudly rather than silently building a malformed version such as "0.5." (which would
+# otherwise flow into `project()`, the docs URL, `au/version.hh`, and installed configs).
+if(NOT _au_module_version_line)
+   message(FATAL_ERROR
+      "Could not read a MAJOR.MINOR.PATCH version from the module() block of ${_au_module_bazel}. "
+      "Expected a line like 'version = \"1.2.3\",'.")
+endif()
+
+set(AU_VERSION_MAJOR "${CMAKE_MATCH_1}")
+set(AU_VERSION_MINOR "${CMAKE_MATCH_2}")
+set(AU_VERSION_PATCH "${CMAKE_MATCH_3}")
+set(AU_VERSION "${AU_VERSION_MAJOR}.${AU_VERSION_MINOR}.${AU_VERSION_PATCH}")
+
+# CMake can't know that the configuration depends on a file we merely read; tell it, so that bumping
+# the version regenerates `au/version.hh`.
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_au_module_bazel}")
 
 project(
    Au
@@ -149,8 +156,17 @@ install(
 get_property(AU_PUBLIC_TARGETS GLOBAL PROPERTY AU_PUBLIC_TARGETS)
 set(AU_ALL_HEADERS "")
 foreach(target IN LISTS AU_PUBLIC_TARGETS)
-   get_target_property(target_headers ${target} HEADER_SET)
-   list(APPEND AU_ALL_HEADERS ${target_headers})
+   # Every header set, not just the default one: generated headers have a set of their own (see
+   # `header_only_library`).
+   get_target_property(header_sets ${target} INTERFACE_HEADER_SETS)
+   foreach(header_set IN LISTS header_sets)
+      if(header_set STREQUAL "HEADERS")
+         get_target_property(target_headers ${target} HEADER_SET)
+      else()
+         get_target_property(target_headers ${target} HEADER_SET_${header_set})
+      endif()
+      list(APPEND AU_ALL_HEADERS ${target_headers})
+   endforeach()
 endforeach()
 add_custom_target(
    print_au_files

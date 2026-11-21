@@ -19,9 +19,13 @@ function(header_only_library)
 
   set(prefix ARG)
   set(noValueVars INTERNAL_ONLY SKIP_HEADER_VERIFICATION)
-  set(singleValueVars NAME)
+  set(singleValueVars
+    NAME
+    GENERATED_BASE_DIR
+  )
   set(multiValueVars
     HEADERS
+    GENERATED_HEADERS
     DEPS
   )
 
@@ -46,6 +50,26 @@ function(header_only_library)
     BASE_DIRS "${PROJECT_SOURCE_DIR}"
     FILES ${ARG_HEADERS}
   )
+
+  # Generated headers live in the build tree, so they get a file set of their own: the base
+  # directories of a single file set may not be nested, and an in-tree build directory (such as
+  # `cmake/build`) would nest the build tree inside `PROJECT_SOURCE_DIR`.
+  set(file_sets FILE_SET HEADERS)
+  if (DEFINED ARG_GENERATED_HEADERS)
+    if (NOT DEFINED ARG_GENERATED_BASE_DIR)
+      message(FATAL_ERROR "header_only_library: GENERATED_HEADERS requires GENERATED_BASE_DIR")
+    endif()
+    target_sources(
+      ${ARG_NAME}
+      INTERFACE
+      FILE_SET generated_headers
+      TYPE HEADERS
+      BASE_DIRS "${ARG_GENERATED_BASE_DIR}"
+      FILES ${ARG_GENERATED_HEADERS}
+    )
+    list(APPEND file_sets FILE_SET generated_headers)
+  endif()
+
   if (DEFINED ARG_DEPS)
     target_link_libraries(${ARG_NAME} INTERFACE ${ARG_DEPS})
   endif()
@@ -76,7 +100,7 @@ function(header_only_library)
   install(
     TARGETS ${ARG_NAME}
     EXPORT ${AU_EXPORT_SET_NAME}
-    FILE_SET HEADERS
+    ${file_sets}
     INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
   )
 endfunction()

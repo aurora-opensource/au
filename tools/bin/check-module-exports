@@ -41,6 +41,12 @@ HEADERS_NOT_IN_MODULE = {
     "au/testing.hh",  # Depends on GoogleTest.
 }
 
+# Headers that are generated rather than checked in, mapped onto the templates they come from.  The
+# template has the same includes and symbols, so we read it in place of the header.
+GENERATED_HEADER_TEMPLATES = {
+    "au/version.hh": "au/version.hh.in",
+}
+
 
 def main(argv=None):
     includes, module_symbols = _parse_cppm(CPPM)
@@ -50,7 +56,7 @@ def main(argv=None):
 
     header_symbols = set()
     for header in sorted(reachable):
-        header_symbols.update(_public_symbols(REPO_ROOT / header))
+        header_symbols.update(_public_symbols(_header_path(header)))
 
     ok &= _check_equality_and_print_any_differences(
         module_symbols=module_symbols, header_symbols=header_symbols
@@ -97,8 +103,13 @@ def _transitive_includes(includes):
         if header in reachable:
             continue
         reachable.add(header)
-        frontier.extend(_direct_includes(REPO_ROOT / header))
+        frontier.extend(_direct_includes(_header_path(header)))
     return reachable
+
+
+def _header_path(header):
+    """The file to read for `header`: the header itself, or its template if it is generated."""
+    return REPO_ROOT / GENERATED_HEADER_TEMPLATES.get(header, header)
 
 
 def _direct_includes(path):
